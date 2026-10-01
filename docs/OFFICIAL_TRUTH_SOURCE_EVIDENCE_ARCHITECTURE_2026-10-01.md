@@ -155,11 +155,11 @@ The #677 contract slice has no database migration of its own, no Candidate-Evide
 
 ## 11. Historical next step for the contract slice
 
-At contract delivery, Draft PR #677 was the writer and the next action was independent Technical-Lead review. That review completed and #677 merged. The sentence is historical. The current persistence writer is section 12.
+At contract delivery, Draft PR #677 was the writer and the next action was independent Technical-Lead review. That review completed and #677 merged. The sentence is historical. The persistence schema is section 12. The current writer is section 13.
 
 ## 12. Accepted Rule Claim persistence — repository schema only
 
-Draft PR #679 adds one repository migration, `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. ADR-0219. The filename came from `supabase migration new`. The timestamp was not invented by hand. Cursor does not apply the file to Development or Production.
+The canonical repository migration is `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. ADR-0219. That version is the Development history version from the one Technical-Lead apply. It was not invented by hand. The original local CLI file was `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. `git mv` changed only the filename. The SQL bytes are unchanged, SHA-256 `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. Cursor does not apply the file again. Production is not applied.
 
 The migration stores only an already accepted Rule Claim. It does not store a candidate, a model proposal, `research_gap`, `unresolved_conflict`, or stale candidate facts as accepted truth. `regelKandidatAkzeptieren()` remains the acceptance function. There is still no runtime writer and no store adapter. `requirementsProviderAus()` stays `null`.
 
@@ -171,8 +171,10 @@ A deferred constraint trigger requires every accepted claim to have at least one
 
 A present `transit_airport_codes` list has no finite maximum. `private.official_rule_claim_transit_airports_ok` is an immutable security-invoker helper. It requires a non-empty, IATA-shaped, strictly sorted and unique list. `flughaefenLesen` is unchanged: it canonicalizes a valid list and rejects a malformed code. Persistence stores that canonical list and rejects an unsorted, duplicate or malformed array. The three integrity functions are private, security invoker, use `search_path = pg_catalog`, and are not executable by `PUBLIC`, `anon`, `authenticated` or `service_role`.
 
-No Candidate Evidence is imported. No CH research batch is imported. No seed row is inserted. Development and Production are untouched by this slice. Applying the migration to Development, then reading it back, is Technical-Lead work after an independent exact-head PASS. Production is not authorized.
+No Candidate Evidence is imported. No CH research batch is imported. No seed row is inserted. The schema slice itself did not apply SQL. The Technical Lead later applied that same SQL once to Development. The repository filename now matches that history version. A second Development apply is not allowed. Production is not authorized.
 
 ## 13. Next step
 
-The current writer is Draft PR #679. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL, import evidence, or start a follow-up.
+At persistence delivery, Draft PR #679 was the writer. That review completed and #679 merged at `main@0fa5f7f0255ade1d7a9e9307cd275019ac9e8506`. The sentence that named #679 as the current writer is historical.
+
+The current writer is Draft PR #681, Issue #680: repository migration-identity reconciliation only. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL again, import evidence, or start a follow-up.

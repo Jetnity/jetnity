@@ -9,6 +9,10 @@ Cursor-Agent: **Jetnity Official Truth Rule Claim migration identity reconciliat
 Generation: **1**
 Required model: **Grok 4.7 High Fast** — not Auto.
 
+## 0. How to read versions in this task
+
+After this slice, the canonical repository file and the Development migration-history version are `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1`. Every `20261001140356` below is the original local CLI filename before `git mv`. It is not the canonical repository path and it is not a second apply.
+
 ## 1. Why this slice exists
 
 PR #679 is merged and independently verified.

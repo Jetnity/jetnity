@@ -12,13 +12,21 @@ Session: https://cursor.com/agents/bc-2a2f9c56-970f-4445-a26b-191272ae7dd4
 
 ## Current state
 
-Repository schema is written. It is not applied to Development. It is not applied to Production. There is no Technical-Lead PASS, no Ready and no merge.
+Identity reconciliation on 1 October 2026 supersedes the delivery-time apply sentence below.
+
+- Original local CLI filename/version: `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. That timestamp came from Supabase CLI `2.48.3` via `supabase migration new`. It was not typed by hand.
+- Canonical reconciled repository file and Development migration-history version: `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1`. That version was not invented by hand. Supabase recorded it when the Technical Lead applied the accepted SQL once.
+- `git mv` changed only the filename. SHA-256 before and after is `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`.
+- This reconciliation did not apply, repair, rebase, reset or re-apply the migration. Production was not touched. A second remote apply is not allowed.
+- Issue #680. Draft PR #681. No Ready, no merge, no Technical-Lead PASS for the identity slice.
+
+Delivery-time state, true when this handoff was first written for #679: the repository schema was not yet applied to Development or Production, and there was no Technical-Lead PASS. #679 later merged at `main@0fa5f7f0255ade1d7a9e9307cd275019ac9e8506`.
 
 Migration file:
 
-`supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`
+`supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`
 
-The timestamp came from Supabase CLI `2.48.3` via `supabase migration new official_truth_accepted_rule_claim_persistence_schema_1`. It was not typed by hand. The CLI warned that `2.119.0` exists. The file was not recreated with a newer CLI.
+The original CLI timestamp was `20261001140356`. The CLI warned that `2.119.0` exists. The file was not recreated with a newer CLI.
 
 Read first:
 
@@ -30,7 +38,9 @@ Read first:
 `docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_TASK_2026-10-01.md` is inside the task allowlist. Section 0 is the Technical-Lead R1 override: a present airport list has no finite maximum, and a deferred constraint trigger requires a matching fact payload at commit. The old `1..16` bullet is historical and superseded. Do not restore it.
 `docs/ACTIVE_WORK_STATUS.md` was not updated. It is outside the task allowlist. This handoff is the continuity pointer for the slice.
 
-## Session facts
+## Session facts — #679 delivery
+
+These facts belong to the schema delivery. They are not the current apply state. The current migration identity is in Current state above.
 
 - Machine mode: `NORMAL`
 - `git fetch origin main` in this session: `f4ed316714687ca597c59ce47bfb69f5a290440b`
@@ -59,8 +69,8 @@ Airport lists have no finite maximum. A present list must be non-empty, IATA-sha
 
 Stay Draft.
 
-Cursor does not Ready, merge, apply this migration to Development or Production, call OpenAI or the web, activate a provider, contact Sherpa/IATA/KAYAK, continue #626, change indexing or launch, or start a follow-up slice.
+Cursor does not Ready, merge, apply this migration again, repair remote history, call OpenAI or the web, activate a provider, contact Sherpa/IATA/KAYAK, continue #626, change indexing or launch, or start a follow-up slice. The one Development apply already happened. Production remains untouched.
 
-**STOP for independent Technical-Lead exact-head review.**
+**STOP for independent Technical-Lead exact-head review of the identity reconciliation.**
 
-After PASS, the Technical Lead may apply this exact migration to Development only and run readback and advisors. Production remains a Product-Owner gate. A second remote apply is not allowed. Cursor does not perform that apply.
+The delivery-time sentence that said the Technical Lead may still apply this migration was true before that apply. It is historical. A second remote apply is not allowed. Cursor does not perform another apply. Production remains a Product-Owner gate.

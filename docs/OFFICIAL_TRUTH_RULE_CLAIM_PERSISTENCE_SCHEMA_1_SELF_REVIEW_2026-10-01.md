@@ -21,7 +21,7 @@ No remote Supabase command was run. `supabase migration new` only created the em
 
 ## What I checked
 
-- The migration filename came from `supabase migration new`, CLI `2.48.3`, after the binary was downloaded outside the repo. I did not invent the timestamp `20261001140356`.
+- The migration filename came from `supabase migration new`, CLI `2.48.3`, after the binary was downloaded outside the repo. I did not invent the timestamp `20261001140356`. That timestamp is the original local CLI identity only. The canonical reconciled repository and Development history version is `20261001151048`. See the later note at the end of this file.
 - The CLI warned that `2.119.0` is newer. I did not recreate the file with a newer CLI, because that would mint a second timestamp.
 - The same CLI wrote gitignored `supabase/.temp/cli-latest`. I deleted it. The sanitation test expects that path to be absent.
 - Static test `lib/readiness/rule-claim-store-schema.test.ts`: 12/12 after the R1 correction. It reads constraint bodies after comments are stripped. It imports `REGEL_FAKT_ARTEN`, `AUFENTHALT_WERT_MAX`, `REGEL_TRANSIT_MINUTEN_MAX`, the temporal constants, visa modes, action purposes, requirement types and document types. One test calls `regelKandidatAkzeptieren` with 17 sorted IATA codes and does not edit `lib/readiness/rule-claims.ts`.
@@ -50,3 +50,7 @@ No remote Supabase command was run. `supabase migration new` only created the em
 ## Exact-head gates
 
 The pushed tip is the review head. GitHub CI, Auth and Vercel Preview must be read on that SHA after the push. This self-review does not copy a run id into git, because that copy would be a newer head. A parent SHA or `main` is not this head's gate.
+
+## Later identity reconciliation — 1 October 2026
+
+This note is not part of the original #679 author self-review above. Issue #680 / Draft PR #681 moved the repository file with `git mv` from `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql` to `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. The second version is the Development history version from the one Technical-Lead apply. It was not invented by hand. SHA-256 before and after is `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. The SQL was not edited. The static test already accepts exactly one `*_official_truth_accepted_rule_claim_persistence_schema_1.sql`, so its expectations were not changed. The reconciliation did not apply the migration again and did not touch Production.
