@@ -233,7 +233,7 @@ describe('Official Truth research request contract', () => {
       status: 'not_required',
       ruleScopeKey: basis.key,
       factKind: 'stay_limit',
-    } as OfficialTruthAbdeckung
+    } as unknown as OfficialTruthAbdeckung
     const entscheidung = officialTruthRechercheEntscheiden(alsWirkung, basis.scope)
     assert.equal(entscheidung.action, 'blocked_invalid')
     if (entscheidung.action === 'blocked_invalid') assert.equal(entscheidung.reason, 'coverage_unreadable')
@@ -242,7 +242,7 @@ describe('Official Truth research request contract', () => {
     const mitWirkung = {
       ...fehlend(basis.key),
       effect: 'not_required',
-    } as OfficialTruthAbdeckung
+    } as unknown as OfficialTruthAbdeckung
     const extra = officialTruthRechercheEntscheiden(mitWirkung, basis.scope)
     assert.equal(extra.action, 'blocked_invalid')
     if (extra.action === 'blocked_invalid') assert.equal(extra.reason, 'unexpected_fields')
@@ -369,14 +369,14 @@ describe('Official Truth research request contract', () => {
     const basis = zelle()
     const ohneDokument = { ...roh() }
     delete ohneDokument.credentialOption
-    const block = officialTruthRechercheEntscheiden(fehlend(basis.key), ohneDokument as RegelScope)
+    const block = officialTruthRechercheEntscheiden(fehlend(basis.key), ohneDokument as unknown as RegelScope)
     assert.equal(block.action, 'blocked_invalid')
     if (block.action === 'blocked_invalid') assert.equal(block.reason, 'invalid_scope')
     assert.equal('request' in block, false)
     assert.equal(JSON.stringify(block).includes('passport'), false)
 
     const flughafen = { ...roh(), transitAirportCodes: ['NRT'] }
-    const flughafenBlock = officialTruthRechercheEntscheiden(fehlend(basis.key), flughafen as RegelScope)
+    const flughafenBlock = officialTruthRechercheEntscheiden(fehlend(basis.key), flughafen as unknown as RegelScope)
     assert.equal(flughafenBlock.action, 'blocked_invalid')
     if (flughafenBlock.action === 'blocked_invalid') assert.equal(flughafenBlock.reason, 'unexpected_fields')
     assert.equal(JSON.stringify(flughafenBlock).includes('NRT'), false)
@@ -405,7 +405,7 @@ describe('Official Truth research request contract', () => {
     const basis = zelle()
     for (const feld of VERBOTEN) {
       const geheim = `geheim-${feld}-wert`
-      const entscheidung = officialTruthRechercheEntscheiden(fehlend(basis.key), { ...basis.scope, [feld]: geheim } as RegelScope)
+      const entscheidung = officialTruthRechercheEntscheiden(fehlend(basis.key), { ...basis.scope, [feld]: geheim } as unknown as RegelScope)
       assert.equal(entscheidung.action, 'blocked_invalid', feld)
       if (entscheidung.action === 'blocked_invalid') {
         assert.equal(entscheidung.reason, 'personal_identifier_forbidden', feld)
@@ -417,14 +417,14 @@ describe('Official Truth research request contract', () => {
     const verschachtelt = officialTruthRechercheEntscheiden(aktuell(basis.key), {
       ...basis.scope,
       citizenship: { ...basis.scope.citizenship, passportNumber: 'C12345678' },
-    } as RegelScope)
+    } as unknown as RegelScope)
     assert.equal(verschachtelt.action, 'blocked_invalid')
     assert.equal(JSON.stringify(verschachtelt).includes('C12345678'), false)
 
     const url = officialTruthRechercheEntscheiden(fehlend(basis.key), {
       ...roh(),
       canonicalUrl: 'https://secret.example/path',
-    } as RegelScope)
+    } as unknown as RegelScope)
     assert.equal(url.action, 'blocked_invalid')
     if (url.action === 'blocked_invalid') assert.equal(url.reason, 'unexpected_fields')
     assert.equal(JSON.stringify(url).includes('secret.example'), false)
