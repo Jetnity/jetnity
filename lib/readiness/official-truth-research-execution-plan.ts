@@ -90,11 +90,12 @@ function identitaet(entscheidung: BereiteRoute) {
 }
 
 /**
- * Dieselbe Host-Beziehung wie die Registry: ein gesperrter Name deckt sich
- * selbst und seine Unterlabels. Hier wird daraus keine Adresse gebaut.
+ * Zwei bereits normalisierte Hostnamen überlappen, wenn sie gleich sind
+ * oder einer ein Unterlabel des anderen ist. Die Prüfung läuft in beide
+ * Richtungen. Sie erzeugt keine Wildcard, keinen Pfad und keine Query.
  */
-function hostGehoertZu(host: string, domain: string): boolean {
-  return host === domain || host.endsWith(`.${domain}`)
+function hostnamenUeberlappen(links: string, rechts: string): boolean {
+  return links === rechts || links.endsWith(`.${rechts}`) || rechts.endsWith(`.${links}`)
 }
 
 /**
@@ -124,14 +125,15 @@ function registryLesen(registry: unknown): { quellen: readonly Quellenzeile[]; g
 
 /**
  * Hostnamen bleiben die Registry-Zeichenketten, wenn sie bereits normalisiert,
- * eindeutig und nicht gesperrt sind. Sonst gibt es keinen Teilplan.
+ * eindeutig und von jedem gesperrten Namen getrennt sind. Ein Überlapp in
+ * eine Richtung verwirft die ganze Liste. Es wird nichts gekürzt.
  */
 function domainsLesen(domains: readonly unknown[], gesperrt: readonly string[]): readonly string[] | null {
   const gesehen = new Set<string>()
   for (const eintrag of domains) {
     if (typeof eintrag !== 'string' || domaeneNormalisieren(eintrag) !== eintrag) return null
     if (gesehen.has(eintrag)) return null
-    if (gesperrt.some((domain) => hostGehoertZu(eintrag, domain))) return null
+    if (gesperrt.some((domain) => hostnamenUeberlappen(eintrag, domain))) return null
     gesehen.add(eintrag)
   }
   if (gesehen.size === 0) return null

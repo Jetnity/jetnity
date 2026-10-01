@@ -268,12 +268,34 @@ describe('Official Truth research execution allowlist plan', () => {
     assert.deepEqual(gesperrterPlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
     assert.equal(text(gesperrterPlan).includes('gov.example'), false)
 
-    const unterlabel = registry([amt('example-border-authority', ['www.gov.example'])], ['gov.example'])
+    const unterlabel = registry([amt('example-border-authority', ['sub.gov.example'])], ['gov.example'])
     const unterlabelPlan = officialTruthRechercheAusfuehrungsplan(request, unterlabel, [
       deskriptor(unterlabel, 'example-border-authority'),
     ])
     assert.deepEqual(unterlabelPlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
-    assert.equal(text(unterlabelPlan).includes('www.gov.example'), false)
+    assert.equal(text(unterlabelPlan).includes('sub.gov.example'), false)
+    assert.equal(text(unterlabelPlan).includes('gov.example'), false)
+    assert.equal(text(unterlabelPlan).includes('*'), false)
+
+    const kind = registry([amt('example-border-authority', ['gov.example', 'other.example'])], ['blocked.gov.example'])
+    const kindPlan = officialTruthRechercheAusfuehrungsplan(request, kind, [deskriptor(kind, 'example-border-authority')])
+    assert.deepEqual(kindPlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
+    assert.equal(text(kindPlan).includes('gov.example'), false)
+    assert.equal(text(kindPlan).includes('other.example'), false)
+    assert.equal(text(kindPlan).includes('blocked.gov.example'), false)
+    assert.equal(text(kindPlan).includes('*'), false)
+    assert.equal(text(kindPlan).includes('/'), false)
+    assert.equal(text(kindPlan).includes('?'), false)
+
+    const unbeteiligt = registry([amt('example-border-authority', ['gov.example'])], ['other.example'])
+    const unbeteiligtPlan = officialTruthRechercheAusfuehrungsplan(request, unbeteiligt, [
+      deskriptor(unbeteiligt, 'example-border-authority'),
+    ])
+    assert.deepEqual(bereit(unbeteiligtPlan), [{ sourceId: 'example-border-authority', domains: ['gov.example'] }])
+    assert.equal(text(unbeteiligtPlan).includes('other.example'), false)
+    assert.equal(text(unbeteiligtPlan).includes('*'), false)
+    assert.equal(text(unbeteiligtPlan).includes('/'), false)
+    assert.equal(text(unbeteiligtPlan).includes('?'), false)
 
     const amtlich = quelle(registry([amt('example-border-authority', ['gov.example'])]), 'example-border-authority')
     const unnormalisiert = {
