@@ -151,8 +151,24 @@ Evidence support is a sorted unique list of at most eight `versionId` values. Ev
 
 `OFFICIAL_REQUIREMENT_TYPES` is unchanged. Research labels are not requirement types. Structured fact kinds are `requirement_effect`, `visa_options`, `stay_limit`, `passport_validity`, `blank_passport_pages`, `transit_conditions`, `official_actions` and `temporal_rule`. Duration units are not converted. A valid-on-entry passport rule does not store zero months. Unknown transit fields stay null. Official actions resolve through the Source Registry to `official_authority` only. Temporal rules use `temporalRuleLesen`.
 
-This rule-claim slice has no database migration, no Candidate-Evidence import and no CH research batch. Development evidence tables stay empty. There is no runtime provider or engine integration. The next persistence change, if the Technical Lead selects one, is a separate Development-only slice. Production remains a Product-Owner gate. This section does not start that slice.
+The #677 contract slice has no database migration of its own, no Candidate-Evidence import and no CH research batch. It does not wire a runtime provider or the engine. #677 later merged at `main@f4ed316714687ca597c59ce47bfb69f5a290440b`. The persistence selected after that merge is section 12. Production remains a Product-Owner gate.
 
-## 11. Next step
+## 11. Historical next step for the contract slice
 
-The current writer is Draft PR #677. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL, import evidence or start a follow-up.
+At contract delivery, Draft PR #677 was the writer and the next action was independent Technical-Lead review. That review completed and #677 merged. The sentence is historical. The current persistence writer is section 12.
+
+## 12. Accepted Rule Claim persistence — repository schema only
+
+Draft PR #679 adds one repository migration, `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. ADR-0219. The filename came from `supabase migration new`. The timestamp was not invented by hand. Cursor does not apply the file to Development or Production.
+
+The migration stores only an already accepted Rule Claim. It does not store a candidate, a model proposal, `research_gap`, `unresolved_conflict`, or stale candidate facts as accepted truth. `regelKandidatAkzeptieren()` remains the acceptance function. There is still no runtime writer and no store adapter. `requirementsProviderAus()` stays `null`.
+
+`private.official_evidence_versions` gains `rule_scope_key`. SQL does not compute it and does not prove that it matches the typed scope columns. The source-specific `evidence-key:v2:` lookup key is unchanged. `private.official_rule_claims.claim_id` is a generated bigint identity. It is persistence identity, not Product Truth. One current accepted fact is allowed per rule scope key and fact kind. Eight typed fact tables hold the accepted fact. There is no unrestricted JSONB fact blob.
+
+`private.official_rule_claim_support` uses composite foreign keys to prove the same rule scope key, the exact evidence version, evidence lifecycle `accepted`, evidence validation `valid`, the same source id, and source class `official_authority`. Official actions use the same source-class key. A licensed provider cannot be a support source or an official action source. Support count and distinct-source count stay with the later trusted writer. This migration has no trigger for them.
+
+No Candidate Evidence is imported. No CH research batch is imported. No seed row is inserted. Development and Production are untouched by this slice. Applying the migration to Development, then reading it back, is Technical-Lead work after an independent exact-head PASS. Production is not authorized.
+
+## 13. Next step
+
+The current writer is Draft PR #679. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL, import evidence, or start a follow-up.
