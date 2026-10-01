@@ -88,9 +88,9 @@ The compact Back bar now follows the rendered public header. Before the first me
 
 `docs/ACTIVE_WORK_STATUS.md` is restored to `origin/main`. This slice keeps its report, handoff, self-review, and evidence only.
 
-`origin/main` re-fetched for the live-main update: `1930e61a0a409b83bd18b99e21939a89f73bbbd6`, Merge #669. Local merge `177f5b15`. This branch is 0 behind that main. The `/planen` page, `PlanenEinstiegNavigation.tsx`, `Reiseidee.tsx` and `TripPlanner.tsx` match that main. `TripWorkspaceNavigation.tsx` still matches the R1 runtime `f5f228f2`. `docs/ACTIVE_WORK_STATUS.md` was not edited.
+`origin/main` re-fetched after #663 merged: `85d730993148b058a2dd3acd19947c025bdcf7f7`. That main already contains Merge #669 `1930e61`. Local merge `1150fa6c`. This branch is 0 behind that main. The `/planen` page, `PlanenEinstiegNavigation.tsx`, `Reiseidee.tsx` and `TripPlanner.tsx` match that main. `TripWorkspacePlan.tsx` matches that main and was not edited by this slice. `TripWorkspaceNavigation.tsx` still matches the R1 runtime `f5f228f2`. `docs/ACTIVE_WORK_STATUS.md` was not edited.
 
-Local gates after that merge: `npm test` 4115 pass, typecheck pass, lint exit 0 with the existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass. The Organisieren device audit remains the PASS on `f5f228f2` because this merge does not change that runtime. CI on the pushed integration tip still has to be re-read. The green gate on `2cb78056` stays with that commit.
+Local gates after that merge: `npm test` 4121 pass, typecheck pass, lint exit 0 with the existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass. The Organisieren device audit remains the PASS on `f5f228f2` because this merge does not change that runtime. CI on the pushed integration tip still has to be re-read. The green gate on `aa8433b4` stays with that commit.
 
 ## 4. Parallel safety
 

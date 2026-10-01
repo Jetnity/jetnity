@@ -15,12 +15,12 @@ Checked against `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_TASK_2026-10-01.md`.
 - Forms gained groups only. Payloads in `FlugSuche`, `MobilitaetBereich` and `MietwagenBereich` were not edited.
 - The device addendum in PR comment `5920703563` was measured again after R1: 320, 360, 375, 390, 412, 430, landscape 844×390, 768, 820, 1024, 1280, 1440, 1728, 1920, 200% at 360, zoom 125% and 150% at 1440, and reduced motion. No horizontal overflow. Compact Back stayed below the measured public header, including 200% text. Workspace touch targets were at least 44px.
 - R1-F2: this integration does not edit `docs/ACTIVE_WORK_STATUS.md`.
-- Live main `1930e61a0a409b83bd18b99e21939a89f73bbbd6` is contained. The branch is 0 behind. `/planen` matches that main. The R1 Back measurement is unchanged.
+- Live main `85d730993148b058a2dd3acd19947c025bdcf7f7` is contained. The branch is 0 behind. `/planen` and Reiseplan match that main. The R1 Back measurement is unchanged.
 
 ## Not claimed
 
 - Independent review
-- CI, Auth and Vercel on the integration tip after `177f5b15`. Those results have to be re-read on the exact pushed head. The green gate on `2cb78056` stays with that commit.
+- CI, Auth and Vercel on the integration tip after `1150fa6c`. Those results have to be re-read on the exact pushed head. The green gate on `aa8433b4` stays with that commit.
 - Physical device
 - Signed-in workspace
 - Sticky rail. It would need the parent scroll-offset measurement, which is outside this slice.
