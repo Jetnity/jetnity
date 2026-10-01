@@ -9,6 +9,38 @@ Cursor-Agent: **Jetnity Official Truth accepted Rule Claim persistence schema 1*
 Generation: **1**
 Required model: **Grok 4.7 High Fast** — not Auto.
 
+## 0. Technical-Lead R1 override
+
+Technical-Lead review R1 (`5380789875`) is accepted. R2 (`5381107826`) requires this override to live in this binding task. It supersedes every conflicting sentence below, including the historical `1..16` airport bullet in section 8.6. Do not restore the obsolete cap.
+
+This file is inside the section 14 allowlist. It is one of the four named task, report, handoff and self-review docs. It is not outside the allowlist. `docs/ACTIVE_WORK_STATUS.md` remains outside the allowlist.
+
+### Airport lists
+
+The original section 8.6 rule “if non-null, 1..16 codes” is superseded.
+
+A present `transit_airport_codes` list has **no finite maximum**. Persistence must accept the canonical list:
+
+- non-empty;
+- IATA-shaped `A-Z{3}`;
+- sorted;
+- unique.
+
+`NULL` remains valid when the path is not scoped to explicit airports. The database does not prove that an airport exists. `lib/readiness/rule-claims.ts` stays unchanged. `flughaefenLesen` still canonicalizes a valid list and still rejects a malformed code. Persistence stores that canonical list and rejects an unsorted, duplicate or malformed array.
+
+### Matching fact payload
+
+Every persisted accepted claim must have at least one matching typed fact row for its own `fact_kind` when the transaction commits. This is the deferred constraint-trigger requirement accepted in R1.
+
+- A claim with no matching fact row fails at `COMMIT`.
+- Deleting the last matching fact row while the claim remains fails at `COMMIT`.
+- Scalar fact kinds keep their one-row primary key.
+- `visa_options`, `transit_conditions` and `official_actions` require at least one row. Their ordinal maximums stay.
+- The claim and its fact may be inserted in either order inside one transaction, because the completeness check and the fact-table foreign keys are deferred.
+- The trigger does not count supports and does not enforce distinct-source acceptance. Those stay with the later trusted writer. It is not a second truth engine.
+
+The section 9 sentence “no triggers unless absolutely required” still stands for support-count and acceptance logic. The deferred fact-payload trigger is the accepted exception, because the completeness rule is cross-table.
+
 ## 1. Authority / parents
 
 Product-Owner Official-Truth strategy:
@@ -349,7 +381,8 @@ Unknown = NULL.
 
 `transit_airport_codes`:
 - NULL when not scoped to explicit airports;
-- if non-null, 1..16 codes;
+- historical original wording, superseded by section 0: if non-null, 1..16 codes;
+- current rule, section 0: if non-null, non-empty, IATA-shaped, sorted and unique, with no finite maximum;
 - each code IATA-shape A-Z{3};
 - do not prove airport existence.
 
@@ -414,6 +447,7 @@ Requirements:
 - no public RPC
 - no SECURITY DEFINER
 - no triggers unless absolutely required; prefer relational FKs/checks
+- section 0 exception: one deferred constraint trigger requires the matching fact payload at commit and does not count supports
 - no default-privilege/global-grant changes.
 
 This persistence store is global non-personal infrastructure.

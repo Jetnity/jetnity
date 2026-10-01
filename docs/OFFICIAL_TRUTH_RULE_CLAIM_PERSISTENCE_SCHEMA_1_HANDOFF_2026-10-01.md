@@ -27,6 +27,7 @@ Read first:
 3. `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md` section 12
 4. ADR-0219 in `DECISIONS.md`
 
+`docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_TASK_2026-10-01.md` is inside the task allowlist. Section 0 is the Technical-Lead R1 override: a present airport list has no finite maximum, and a deferred constraint trigger requires a matching fact payload at commit. The old `1..16` bullet is historical and superseded. Do not restore it.
 `docs/ACTIVE_WORK_STATUS.md` was not updated. It is outside the task allowlist. This handoff is the continuity pointer for the slice.
 
 ## Session facts

@@ -119,18 +119,21 @@ Allowlist only:
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
 - `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md`
+- `docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_TASK_2026-10-01.md`
 - `docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_REPORT_2026-10-01.md`
 - `docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_HANDOFF_2026-10-01.md`
 - `docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_SELF_REVIEW_2026-10-01.md`
 
-`docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_TASK_2026-10-01.md` is the unchanged binding task from the seed commit.
+`docs/OFFICIAL_TRUTH_RULE_CLAIM_PERSISTENCE_SCHEMA_1_TASK_2026-10-01.md` is inside the section 14 allowlist. It is one of the four named task, report, handoff and self-review docs. Technical-Lead R2 writes the R1 override into that file. The historical `1..16` airport bullet remains in section 8.6 and is superseded by section 0. Section 0 also records the deferred matching-fact completeness requirement.
 `docs/ACTIVE_WORK_STATUS.md` is outside the allowlist and was not edited. This report and the handoff are the continuity record for the slice.
 
 `lib/readiness/rule-claims.ts`, `lib/readiness/evidence.ts` and `lib/readiness/official.ts` were not edited.
 
 ## 7. Validation
 
-Recorded in this session before the push:
+The table below is the local evidence for the R1 implementation head. The R2 correction is docs-only: it amends the binding task and the continuity docs. It does not change SQL or TypeScript, so those local commands were not rerun for this docs head. Exact-head GitHub CI, Auth and Vercel Preview must be read on the R2 tip. The R1 head and `main` do not gate it.
+
+Recorded before the R1 push:
 
 | Check | Result |
 | --- | --- |

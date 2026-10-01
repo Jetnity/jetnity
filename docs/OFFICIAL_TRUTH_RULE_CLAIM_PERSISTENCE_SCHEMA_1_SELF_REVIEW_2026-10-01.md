@@ -13,7 +13,7 @@ This is the author self-review. It is not a Technical-Lead PASS.
 
 ## Scope check
 
-The diff stays inside the task allowlist. The binding task file is unchanged. `docs/ACTIVE_WORK_STATUS.md` was not edited, because the allowlist forbids it. Continuity for this slice is the report and this handoff pair.
+The diff stays inside the task allowlist. The binding task file is inside that allowlist and now carries the Technical-Lead R1 override in section 0. An earlier note that treated the task file as unchanged, or as outside the allowlist, is withdrawn. `docs/ACTIVE_WORK_STATUS.md` was not edited, because the allowlist forbids it. Continuity for this slice is the report and this handoff pair.
 
 No remote Supabase command was run. `supabase migration new` only created the empty local file. The migration was applied only to a local throwaway PostgreSQL 16.15 database, which was then dropped.
 
