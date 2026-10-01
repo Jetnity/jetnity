@@ -1,11 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 1. Oktober 2026
-Status: **NORMAL / #655 #657 #659 #661 #669 #663 #667 #665 CLOSED / CURRENT MAIN 63af11cda231b26ada4717d29b78fc7f9ab4d828 / NEXT 16.3.8 / PREMIUM HOMEPAGE AND OFFICIAL BRAND INTEGRATED / TRIP WORKSPACE COCKPIT / PLANEN / REISEPLAN / ORGANISIEREN / VORBEREITUNG INTEGRATED / PHONE-FIRST / INDEXING FAIL-CLOSED / DRAFT #671 IS THE ONLY NEW BOUNDED WRITER / #626 OPEN AND BLOCKED / NO RUNTIME FOLLOW-UP SELECTED / NOT A LAUNCH PASS / LIVE-EVIDENCE WINS**
+Status: **NORMAL / DRAFT #683 IS THE CURRENT WRITER / OFFICIAL TRUTH TRUSTED ACCEPTED-STORE WRITER 1 / BASELINE main@7c3dc2835622355d3dd8f5fb9efa4b3e63899b9e / DEVELOPMENT HISTORY 20261001180549 APPLIED ONCE / PRODUCTION NOT TOUCHED / NOT A LAUNCH PASS / LIVE-EVIDENCE WINS**
 
-## 0-current. Post-premium parallel continuity — no runtime follow-up selected
+## 0-current. Official Truth trusted accepted-store writer 1
 
-- Current pointer: `docs/POST_PREMIUM_PARALLEL_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-10-01.md`, then `docs/POST_PREMIUM_PARALLEL_CONTINUITY_RECONCILIATION_1_REPORT_2026-10-01.md`. Issue #670. Draft [PR #671](https://github.com/Jetnity/jetnity/pull/671), branch `docs/post-premium-parallel-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #671.
+- Current pointer: `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_HANDOFF_2026-10-01.md`, then `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_REPORT_2026-10-01.md`. Issue #682. Draft [PR #683](https://github.com/Jetnity/jetnity/pull/683), branch `feat/official-truth-trusted-store-writer-1`.
+- Logical agent **Jetnity Official Truth trusted accepted-store writer 1**, Generation 1. Session https://cursor.com/agents/bc-9f6575c9-7aa3-4b97-b0a4-4ff4db26f877. `originalModelName=grok-4.7-high-fast`. Not Auto.
+- Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
+- Baseline: `main@7c3dc2835622355d3dd8f5fb9efa4b3e63899b9e`. Re-fetch before treating a later SHA as current. The post-premium pin `63af11cda231b26ada4717d29b78fc7f9ab4d828` and Draft #671 are not the live writer.
+- The writer is dormant. It stores only Evidence accepted by `evidenceKandidatAkzeptieren` and Rule Claims returned by `regelKandidatAkzeptieren`, through one server-only RPC. `accepted_evidence` persists only lifecycle `accepted` and validation `valid`. `check:schema-bezug` lists `official_truth_store_accepted_v1` as LOCAL/UNAPPLIED. No direct `private.official_*` grant. No import. No source-catalog seed. `requirementsProviderAus()` stays `null`.
+- Technical-Lead R1 review `5383176732` on `7eff82b7bc3fee950dc85f4525e6f57b152f1c13` is corrected on this tip. That head's CI, Auth and Vercel Preview are historical. The next review is independent and exact-head.
+- Canonical migration `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`. Original CLI filename `20261001171111` is historical. SHA-256 `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4` is unchanged. Development has this gateway exactly once. Production is not touched. Do not apply it again.
+- Exact-head GitHub CI, Auth and Vercel Preview belong to the pushed tip. This status does not embed a run id.
+- Cursor does not Ready or merge and does not start a follow-up slice.
+
+The post-premium section below is the previous continuity snapshot. Its Draft #671 sentence is not the current writer.
+
+## 0-historical. Post-premium parallel continuity — superseded as the current pointer
+
+- Historical pointer, not the live writer: `docs/POST_PREMIUM_PARALLEL_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-10-01.md`, then `docs/POST_PREMIUM_PARALLEL_CONTINUITY_RECONCILIATION_1_REPORT_2026-10-01.md`. Issue #670. Draft [PR #671](https://github.com/Jetnity/jetnity/pull/671), branch `docs/post-premium-parallel-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #671.
 - Logical agent **Jetnity post-premium parallel continuity reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-bd487a26-e9ad-4d28-9f9f-c03a9e1ca052. `originalModelName=grok-4.7-high-fast`. Not Auto.
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - Re-fetch before treating any later SHA as current. Pre-edit `git fetch origin main` in this session: `origin/main` `63af11cda231b26ada4717d29b78fc7f9ab4d828`, merge-base the same SHA, 0 ahead / 0 behind versus that pin. That SHA is `Merge #665: structure Vorbereitung premium workspace`.
