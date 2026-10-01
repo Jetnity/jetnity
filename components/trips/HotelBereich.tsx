@@ -11,6 +11,8 @@ import type { HotelOptionSichtbar, HotelSucheAntwort } from '@/lib/hotels/client
 import { HOTEL_ABDECKUNGSHINWEIS } from '@/lib/hotels/domain'
 import { checkInAus, checkOutAus, hotelSucheEingabeAusReise, naechteZwischen } from '@/lib/hotels/quartier-kontext'
 import HotelKarte from '@/components/trips/HotelKarte'
+import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
+import { cn } from '@/lib/utils'
 import type { Trip, TripStage } from '@/types/trips'
 
 const kurzesDatum = new Intl.DateTimeFormat('de-CH', {
@@ -52,8 +54,10 @@ export default function HotelBereich({
     return (
       <section
         aria-label="Unterkunft"
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+        data-organisieren-flaeche="suche"
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
       >
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterkunft</p>
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           Gegend für diese Reise
@@ -168,17 +172,22 @@ function HotelEtappe({
   return (
     <section
       aria-label={`Unterkunft ${etappe.name}`}
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="suche"
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
     >
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterkunft</p>
           <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
             {etappe.name}
           </h2>
-          <p className="mt-1 text-sm text-ink-800">
-            {zeitraumText(checkIn, checkOut)}
-            {naechte ? ` · ${naechte} ${naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+          <p className="mt-3 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3 text-sm leading-6 text-ink-800">
+            <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Zeitraum</span>
+            <span className="mt-1 block">
+              {zeitraumText(checkIn, checkOut)}
+              {naechte ? ` · ${naechte} ${naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+            </span>
           </p>
         </div>
         <BedDouble className="h-5 w-5 text-brand-600" aria-hidden="true" />
@@ -186,7 +195,7 @@ function HotelEtappe({
 
       {laeuft && (
         <p aria-busy="true" className="mt-5 flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
-          <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600" />
+          <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" />
           Jetnity ordnet die Gegend für diese Etappe ein.
         </p>
       )}

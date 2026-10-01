@@ -4,7 +4,7 @@ import type { ComponentType } from 'react'
 import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
-import type { DetailDomain } from '@/lib/trips/detail'
+import { DETAIL_LAGE_TEXT, type DetailDomain } from '@/lib/trips/detail'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 
@@ -25,16 +25,21 @@ export default function TripWorkspaceDomainNavigation({
   onWaehlen: (domain: DetailDomain, tastatur: boolean) => void
 }) {
   return (
-    <nav aria-label="Reisebereiche" data-workspace-domain-nav className="min-w-0">
-      <ul className="grid gap-px overflow-hidden rounded-[24px] border border-line-200 bg-line-100">
-        {abdeckungen.map((eintrag) => {
+    <nav aria-label="Reisebereiche" data-workspace-domain-nav data-organisieren-leiste className="min-w-0">
+      <ul className="overflow-hidden rounded-[24px] border border-line-200 bg-white shadow-[0_8px_24px_rgba(15,46,42,0.04)]">
+        {abdeckungen.map((eintrag, index) => {
           const Symbol = SYMBOL[eintrag.bereich]
           const gewaehlt = aktiv === eintrag.bereich
+          const status = gewaehlt ? DETAIL_LAGE_TEXT[eintrag.lage] : eintrag.text
           return (
-            <li key={eintrag.bereich} className={gewaehlt ? 'bg-brand-800' : 'bg-white'}>
+            <li
+              key={eintrag.bereich}
+              className={cn(index > 0 && !gewaehlt && 'border-t border-line-200', gewaehlt && 'bg-brand-800')}
+            >
               <button
                 type="button"
                 data-bereich={eintrag.bereich}
+                data-organisieren-lage={eintrag.lage}
                 aria-current={gewaehlt ? 'page' : undefined}
                 aria-label={ARBEITSBEREICH_BEZEICHNUNG[eintrag.bereich]}
                 onClick={(ereignis) => onWaehlen(eintrag.bereich, ereignis.detail === 0)}
@@ -43,6 +48,10 @@ export default function TripWorkspaceDomainNavigation({
                   gewaehlt ? 'bg-brand-800 text-white' : 'bg-white text-brand-800 hover:bg-surface-50',
                 )}
               >
+                <span
+                  aria-hidden="true"
+                  className={cn('w-1 self-stretch rounded-full', gewaehlt ? 'bg-citrus-400' : 'bg-transparent')}
+                />
                 <span
                   className={cn(
                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
@@ -56,7 +65,7 @@ export default function TripWorkspaceDomainNavigation({
                     {ARBEITSBEREICH_BEZEICHNUNG[eintrag.bereich]}
                   </strong>
                   <span className={cn('mt-0.5 block text-xs leading-5', gewaehlt ? 'text-white/75' : 'text-ink-800')}>
-                    {eintrag.text}
+                    {status}
                   </span>
                 </span>
               </button>

@@ -18,7 +18,13 @@ import {
   type FlughafenAuswahl,
 } from '@/lib/airports/auswahl'
 import FlugKarte from '@/components/trips/FlugKarte'
+import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
+import {
+  ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_FLAECHE_KLASSE,
+  ORGANISIEREN_PRIMAR_KLASSE,
+} from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
 
@@ -142,8 +148,10 @@ export default function FlugSuche({
   return (
     <section
       aria-label="Flugoptionen"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="suche"
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
     >
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Flüge</p>
@@ -155,101 +163,103 @@ export default function FlugSuche({
       </div>
 
       <form onSubmit={suchen} className="mt-5 grid gap-3">
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Von
-            <FlughafenSuche
-              value={herkunft}
-              onChange={(wert, roh) => {
-                setHerkunft(wert)
-                setHerkunftText(roh)
-                if (wert) setMeldung('')
-              }}
-              placeholder="Stadt oder Flughafen"
-              ungueltig={Boolean(meldung) && !herkunft}
-              inputClassName="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            />
-          </label>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Nach
-            <FlughafenSuche
-              value={ziel}
-              onChange={(wert, roh) => {
-                setZiel(wert)
-                setZielText(roh)
-                if (wert) setMeldung('')
-              }}
-              placeholder="Stadt oder Flughafen"
-              ungueltig={Boolean(meldung) && !ziel}
-              inputClassName="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Route">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Von
+              <FlughafenSuche
+                value={herkunft}
+                onChange={(wert, roh) => {
+                  setHerkunft(wert)
+                  setHerkunftText(roh)
+                  if (wert) setMeldung('')
+                }}
+                placeholder="Stadt oder Flughafen"
+                ungueltig={Boolean(meldung) && !herkunft}
+                inputClassName={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Nach
+              <FlughafenSuche
+                value={ziel}
+                onChange={(wert, roh) => {
+                  setZiel(wert)
+                  setZielText(roh)
+                  if (wert) setMeldung('')
+                }}
+                placeholder="Stadt oder Flughafen"
+                ungueltig={Boolean(meldung) && !ziel}
+                inputClassName={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Hinflug
-            <input
-              type="date"
-              value={hin}
-              onChange={(e) => setHin(e.target.value)}
-              required
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            />
-          </label>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Rückflug, optional
-            <input
-              type="date"
-              value={rueck}
-              onChange={(e) => {
-                setRueck(e.target.value)
-                setMitRueck(Boolean(e.target.value))
-              }}
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Zeitraum">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Hinflug
+              <input
+                type="date"
+                value={hin}
+                onChange={(e) => setHin(e.target.value)}
+                required
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Rückflug, optional
+              <input
+                type="date"
+                value={rueck}
+                onChange={(e) => {
+                  setRueck(e.target.value)
+                  setMitRueck(Boolean(e.target.value))
+                }}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Kabine
-            <select
-              value={kabine}
-              onChange={(e) => setKabine(e.target.value as FlugKabine)}
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            >
-              {(Object.keys(KABINE_TEXT) as FlugKabine[]).map((wert) => (
-                <option key={wert} value={wert}>
-                  {KABINE_TEXT[wert]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Zwischenlandungen
-            <select
-              value={stopps}
-              onChange={(e) => setStopps(e.target.value as FlugStoppPraeferenz)}
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-            >
-              <option value="any">Alle Verbindungen</option>
-              <option value="nonstop">Nur Direktflüge</option>
-              <option value="at_most_one">Höchstens ein Stopp</option>
-            </select>
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Optionen">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Kabine
+              <select
+                value={kabine}
+                onChange={(e) => setKabine(e.target.value as FlugKabine)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                {(Object.keys(KABINE_TEXT) as FlugKabine[]).map((wert) => (
+                  <option key={wert} value={wert}>
+                    {KABINE_TEXT[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Zwischenlandungen
+              <select
+                value={stopps}
+                onChange={(e) => setStopps(e.target.value as FlugStoppPraeferenz)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="any">Alle Verbindungen</option>
+                <option value="nonstop">Nur Direktflüge</option>
+                <option value="at_most_one">Höchstens ein Stopp</option>
+              </select>
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs leading-5 text-ink-700">
             {reise.travellers} {reise.travellers === 1 ? 'Person' : 'Personen'} · {reise.currency}
           </p>
-          <button
-            type="submit"
-            disabled={laeuft}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
-          >
-            {laeuft ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+          <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
+            {laeuft ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Search className="h-4 w-4" />}
             {laeuft ? 'Suche läuft …' : 'Flüge suchen'}
           </button>
         </div>
