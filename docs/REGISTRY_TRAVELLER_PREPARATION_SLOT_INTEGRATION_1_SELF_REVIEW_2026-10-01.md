@@ -11,6 +11,10 @@ Session: https://cursor.com/agents/bc-9ea87fd0-84d7-4c15-9fad-bfa5cc51c53d
 
 This is the author review. It is not an independent Technical-Lead PASS.
 
+## R1-F1
+
+The first head treated every ref other than in-range `traveller:1..N` as fill material. That included canonical `traveller:4` when the headcount was 3, and the test required it to become `Reisende 1`. R1 correctly rejects that. The corrected split keeps out-of-range canonical refs non-applicable. The replacement test shows `traveller:4` does not take the empty slot even when its `createdAt` is earlier than a UUID snapshot, and three out-of-range canonical refs do not mark the headcount full. UUID snapshots still fill and still reach Requirements, Preparation checks, and Safety.
+
 ## What holds
 
 - Applicable slot count stays equal to the clamped headcount. Canonical `traveller:N` is reserved before non-canonical fill.
@@ -29,9 +33,9 @@ This is the author review. It is not an independent Technical-Lead PASS.
 - Trips that already stored a non-canonical snapshot will change their applicable party, official fingerprints, and safety context on the next read. Readiness rows tied to the old empty `traveller:N` context can become stale. That is the correction of the ignored snapshot, not a silent second person.
 - A second import of the same Registry person, while a slot remains, creates another independent snapshot. Same labels are not merged. That matches the task. It can fill two slots with two copies of one saved person.
 - `party_schreiben` still receives only the new snapshot. This slice does not re-prove the RPC's upsert behaviour in a database. Existing orchestration tests already require that the write payload excludes current travellers.
-- Local `npm test` is not fully green: 4190 pass / 1 fail, `initdb` missing at `/usr/lib/postgresql/16/bin/initdb`. The failing file is the trusted-store throwaway cluster, untouched here. GitHub CI is the exact-head proof for that test.
+- Local `npm test` is not fully green: 4211 pass / 1 fail, `initdb` missing at `/usr/lib/postgresql/16/bin/initdb`. The failing file is the trusted-store throwaway cluster, untouched by this lane. GitHub CI on the R1 tip is the exact-head proof for that test. The 4190/1 count belongs to `98f09deb` and is historical.
 - No browser session and no real account trip were exercised. The Production reproduction must not be replayed with real personal data in this slice.
 
 ## Verdict
 
-The author considers the slot contract and the fail-closed import inside the task. Independent review still has to read the tip diff and the exact-head checks. This review does not Ready or merge.
+R1-F1 is corrected on this branch, and `main@ed5350e702f2b6b248cf49ae366420cf1b49039a` is merged with the #687 files unchanged. Independent R2 still has to read the new tip. This review does not Ready or merge.
