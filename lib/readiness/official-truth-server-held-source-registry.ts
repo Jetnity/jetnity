@@ -284,8 +284,15 @@ export async function officialTruthServerHeldReviewPacket(
   return officialTruthRegelReviewPacket({ supports, metadata: gelesen.metadata })
 }
 
-function gleicheIds(links: readonly string[], rechts: readonly string[]): boolean {
-  return links.length === rechts.length && links.every((id, index) => id === rechts[index])
+function idVergleich(links: string, rechts: string): number {
+  return links < rechts ? -1 : links > rechts ? 1 : 0
+}
+
+/** Dieselbe Menge, unabhängig von der Aufruferreihenfolge. Duplikate bleiben sichtbar. */
+function gleicheIdMenge(links: readonly string[], rechts: readonly string[]): boolean {
+  const a = [...links].sort(idVergleich)
+  const b = [...rechts].sort(idVergleich)
+  return a.length === b.length && a.every((id, index) => id === b[index])
 }
 
 function reproofStuetze(
@@ -304,7 +311,8 @@ function reproofStuetze(
  * Belegt Paket und v2-Fingerabdruck aus einer Kataloglesung.
  * Die servergehaltene Registry wird in jede Stütze eingesetzt. Beide
  * Prüfungen sehen danach dasselbe rekonstruierte Objekt. Zelle und
- * Stütz-IDs müssen übereinstimmen. Die Registry verlässt diese Funktion
+ * Stütz-IDs müssen übereinstimmen. Die Identität ist reihenfolgeunabhängig,
+ * wie der v2-Fingerabdruck. Die Registry verlässt diese Funktion
  * nicht. Das ist kein Zeuge und keine Annahme.
  */
 export async function officialTruthServerHeldReviewReproof(
@@ -331,19 +339,20 @@ export async function officialTruthServerHeldReviewReproof(
   if (finger.ruleScopeKey !== paket.kandidat.key) return blockiert('scope_mismatch')
   const stuetzIds = paket.supports.map((support) => support.versionId)
   if (
-    !gleicheIds(finger.supportVersionIds, paket.kandidat.supportVersionIds) ||
-    !gleicheIds(finger.supportVersionIds, stuetzIds)
+    !gleicheIdMenge(finger.supportVersionIds, paket.kandidat.supportVersionIds) ||
+    !gleicheIdMenge(finger.supportVersionIds, stuetzIds)
   ) {
     return blockiert('support_mismatch')
   }
+  const supports = [...paket.supports].sort((links, rechts) => idVergleich(links.versionId, rechts.versionId))
   return Object.freeze({
     status: 'server_held_review_reproof',
     reviewPacketKey: finger.reviewPacketKey,
     ruleScopeKey: finger.ruleScopeKey,
     factKind: paket.kandidat.factKind,
     evidenceQuality: paket.kandidat.evidenceQuality,
-    supportVersionIds: Object.freeze([...finger.supportVersionIds]),
-    supports: Object.freeze(paket.supports.map(reproofStuetze)),
+    supportVersionIds: Object.freeze([...finger.supportVersionIds].sort(idVergleich)),
+    supports: Object.freeze(supports.map(reproofStuetze)),
   })
 }
 

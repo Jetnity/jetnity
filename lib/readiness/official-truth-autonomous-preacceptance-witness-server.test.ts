@@ -24,6 +24,7 @@ import {
   decideOfficialTruthAutonomousPreacceptanceWitness,
   loadOfficialTruthAutonomousPreacceptanceWitness,
 } from '@/lib/readiness/official-truth-autonomous-preacceptance-witness-server'
+import { officialTruthServerHeldReviewReproof } from '@/lib/readiness/official-truth-server-held-source-registry'
 import {
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogTransport,
@@ -614,5 +615,64 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     if (gemischt.ergebnis.status !== 'blocked') return
     assert.equal(gemischt.ergebnis.reason, 'scope_mismatch')
     assert.notEqual(anfrage().ruleScopeKey, serbisch.ruleScopeKey)
+  })
+
+  test('umgekehrte Stützreihenfolge bleibt dieselbe review-packet:v2 Identität', async () => {
+    const basis = registry(realeEingaben())
+    const gebiet = coverage()
+    const erste = buendel(aufrufer({ descriptors: [deskriptor(basis, REAL, gebiet)] }))
+    const zweite = buendel(
+      aufrufer({
+        descriptors: [deskriptor(basis, REAL, gebiet), deskriptor(basis, INTERIOR, gebiet)],
+        sourceId: INTERIOR,
+        material: {
+          canonicalUrl: 'https://www.real-interior.example/rules',
+          retrievedAt: INNERHALB,
+          sourceSnapshot: 'interior reversed page',
+        },
+      }),
+    )
+    const metadata = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
+    assert.deepEqual(
+      [erste, zweite].map((bund) => bund.umschlag.sourceId),
+      [REAL, INTERIOR],
+    )
+    assert.deepEqual(
+      [zweite, erste].map((bund) => bund.umschlag.sourceId),
+      [INTERIOR, REAL],
+    )
+
+    const katalogVorwaerts = transportFuer(realeEingaben())
+    const katalogRueckwaerts = transportFuer(realeEingaben())
+    const vorwaerts = await officialTruthServerHeldReviewReproof(
+      { supports: [erste, zweite], metadata },
+      { transport: katalogVorwaerts.transport },
+    )
+    const rueckwaerts = await officialTruthServerHeldReviewReproof(
+      { supports: [zweite, erste], metadata },
+      { transport: katalogRueckwaerts.transport },
+    )
+    assert.equal(vorwaerts.status, 'server_held_review_reproof')
+    assert.equal(rueckwaerts.status, 'server_held_review_reproof')
+    if (vorwaerts.status !== 'server_held_review_reproof' || rueckwaerts.status !== 'server_held_review_reproof') return
+    assert.match(vorwaerts.reviewPacketKey, SCHLUESSEL)
+    assert.equal(rueckwaerts.reviewPacketKey, vorwaerts.reviewPacketKey)
+    assert.deepEqual([...rueckwaerts.supportVersionIds], [...vorwaerts.supportVersionIds])
+    assert.deepEqual([...vorwaerts.supportVersionIds], [...vorwaerts.supportVersionIds].sort())
+    assert.equal(vorwaerts.supportVersionIds.length, 2)
+    assert.deepEqual(katalogVorwaerts.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
+    assert.deepEqual(katalogRueckwaerts.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
+
+    const zeuge = await entscheiden({
+      supports: [zweite, erste],
+      metadata,
+    })
+    assert.equal(zeuge.ergebnis.status, 'authorized_preacceptance_witness')
+    if (zeuge.ergebnis.status !== 'authorized_preacceptance_witness') return
+    assert.equal(zeuge.katalog, 1)
+    assert.equal(zeuge.ergebnis.reviewPacketKey, vorwaerts.reviewPacketKey)
+    assert.deepEqual([...zeuge.ergebnis.supportVersionIds], [...vorwaerts.supportVersionIds])
+    assert.equal(zeuge.ergebnis.freshness, 'current')
+    assert.equal(zeuge.ergebnis.serverReferenceTime, JETZT)
   })
 })

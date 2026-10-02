@@ -43,7 +43,7 @@ Issue #766 closes only the #749 F7 same-request precondition. This note binds th
 
 Authority comes only from `loadOfficialTruthFactEntryAuthority()`. The witness continues only for exactly `{ status: 'authorized', grant: 'role', capability: 'official-truth-freigeben' }`. Any other result fails closed before the catalog read.
 
-One successful re-proof calls `officialTruthServerHeldReviewReproof`. That function loads `quellenKatalogLesen` once, injects that registry, recomputes #723 and #726 v2 from the same reconstructed input, and requires the packet scope and support identities to match the `review-packet:v2:` fingerprint. It returns no caller registry.
+One successful re-proof calls `officialTruthServerHeldReviewReproof`. That function loads `quellenKatalogLesen` once, injects that registry, recomputes #723 and #726 v2 from the same reconstructed input, and requires the packet scope and support identities to match the `review-packet:v2:` fingerprint. That identity is order-invariant: the same supports in reversed caller order remain the same key and the same sorted support ids. It returns no caller registry.
 
 Every re-proved support must be exactly `current` from `officialFrische`. `checkedAt` is the support `retrievedAt`. `validFrom` and `validUntil` are the re-proved accepted window. Content identity is the re-proved `sourceContentHash`. `now` is a server-owned reference time. No caller `maxAgeMs` is accepted. The existing global ceiling stays in force. A re-proved official source is treated as source-available only inside that helper. `requirementsProviderAus()` stays `null`. Any freshness other than `current` fails closed.
 
