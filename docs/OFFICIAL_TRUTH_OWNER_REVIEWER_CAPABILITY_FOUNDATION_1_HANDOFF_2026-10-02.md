@@ -12,7 +12,7 @@ Session: https://cursor.com/agents/bc-b12805ca-1d17-4171-9f96-40c873ab2585
 
 ## Current state
 
-The branch adds the owner-only capability foundation and one unapplied migration. It is a Draft. It is not Ready and not merged. No endpoint, trusted fact, Rule acceptance, audit store or remote apply exists on this head.
+The branch adds the owner-only capability foundation and one unapplied migration. Technical-Lead R1 `5394162809` on `d3017b169a189baf322a9544bc819a0c4a8d7e23` authorized the existing test-only change in `lib/admin/analyst/system-health-insights.test.ts`. The task amendment is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. That file is an R1-authorized dependency. It is not a self-granted scope exception. No Analyst runtime file was edited. The branch is a Draft. It is not Ready and not merged. No endpoint, trusted fact, Rule acceptance, audit store or remote apply exists on this head.
 
 Read first:
 
@@ -25,9 +25,9 @@ Read first:
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The implementation commit `6f293687e8828b6e5884640af4d1b76016122b22` was 0 behind that SHA. Re-fetch before treating any later SHA as current. The final push must stay 0 behind.
-- Local gates ran on `6f293687e8828b6e5884640af4d1b76016122b22`. `npm test` was 4416 pass / 0 fail across 759 suites. Typecheck, lint (0 errors, 148 warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs.
-- The docs commit after that SHA adds only this handoff, the report and the self-review.
+- `git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The branch was 0 behind that SHA. Re-fetch before treating any later SHA as current. The final push must stay 0 behind.
+- First-delivery gates ran on `6f293687e8828b6e5884640af4d1b76016122b22`. `npm test` was 4416 pass / 0 fail across 759 suites. Those results belong to the pre-R1 tree.
+- R1 parent is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. R1 re-gates are recorded in the report. The R1 commit adds only this handoff, the report and the self-review.
 - PostgreSQL 16.15 was installed locally for the existing throwaway proofs. The package cluster was not started. No remote database was contacted.
 - Supabase CLI `2.116.0` created `supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql`. The timestamp was not chosen by hand.
 
@@ -42,6 +42,8 @@ This function does not accept a Rule, write a trusted fact, or persist a decisio
 `types/supabase.ts` does not yet list `darf_official_truth_freigeben`. No application caller exists. Do not treat the generated types as updated.
 
 `lib/rollout/aal2-prod-apply.ts` still covers only the historical five capabilities. Do not use that runner to apply this migration.
+
+`lib/admin/analyst/system-health-insights.test.ts` stays the R1-authorized frozen inventory of global capability names. Do not treat it as an Analyst feature, and do not edit Analyst runtime from this slice.
 
 ## What this slice did not do
 

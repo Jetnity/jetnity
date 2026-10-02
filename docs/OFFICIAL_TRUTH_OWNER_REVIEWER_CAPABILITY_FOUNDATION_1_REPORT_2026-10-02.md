@@ -12,6 +12,12 @@ Session: https://cursor.com/agents/bc-b12805ca-1d17-4171-9f96-40c873ab2585
 
 This report is the author record. A Technical-Lead PASS requires an independent exact-head review. This report is not Ready and not a merge.
 
+## Technical-Lead R1
+
+Independent review `5394162809` on exact head `d3017b169a189baf322a9544bc819a0c4a8d7e23` found one governance issue. The approved capability changes the repository-wide `CAPABILITIES` inventory, and `lib/admin/analyst/system-health-insights.test.ts` freezes that global list.
+
+The Technical Lead amended the binding task in `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. That test-only file is now an R1-authorized dependency. The existing semantic change on the R1 head stays. No Analyst runtime file is part of this fix. No other R1 finding exists.
+
 ## Result
 
 The canonical capability model now contains exactly one new entry:
@@ -42,9 +48,11 @@ The function returns boolean, is `language sql`, `stable`, `parallel safe`, `sec
 - `lib/auth/faehigkeiten-datenbank.test.ts` was left unchanged. Its generic lockstep coverage passed with the new pair.
 - `types/supabase.ts` was not edited. Nothing in the application calls the new function yet, so `check:schema-bezug` does not require a generated signature. A later caller must regenerate types from the applied schema. Hand-editing the generated file was outside this allowlist.
 
-## Allowlist exception
+## R1-authorized test dependency
 
-`lib/admin/analyst/system-health-insights.test.ts` is outside the written allowlist. Its test `T-no-new-capability` asserted that `CAPABILITIES` was still exactly the previous five names. After the approved capability landed, that assertion was false and `npm test` could not pass. The expected list now includes `official-truth-freigeben` in insertion order. The analyst source checks are unchanged: `laden.ts` still requires `betrieb-lesen` and does not invent `analyst-lesen` or `copilot-ausfuehren`. No analyst runtime file was edited.
+`lib/admin/analyst/system-health-insights.test.ts` is the Technical-Lead-authorized R1 dependency from review `5394162809` and task amendment `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. It is not a self-granted scope exception.
+
+The test freezes the global capability names. The expected list includes `official-truth-freigeben` in insertion order, and the test name records that the Analyst does not invent its own capability. `laden.ts` still requires `betrieb-lesen` and does not invent `analyst-lesen` or `copilot-ausfuehren`. No Analyst runtime file was edited.
 
 ## Local database probe
 
@@ -68,11 +76,13 @@ The CLI also wrote gitignored `supabase/.temp/cli-latest`. The project-sanitatio
 
 ## Integration
 
-`git fetch origin main` resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The branch was 0 behind that SHA before and after the implementation commit `6f293687e8828b6e5884640af4d1b76016122b22`. Re-fetch before treating any later SHA as current.
+`git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The branch was 0 behind that SHA. The R1 parent is the Technical-Lead task amendment `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. Re-fetch before treating any later SHA as current.
 
-## Validation
+The first delivery gates ran on `6f293687e8828b6e5884640af4d1b76016122b22`. Those results belong to the pre-R1 tree. R1 does not change runtime, tests or SQL. It records the authorized test dependency and reruns the gates.
 
-Gates below ran on `6f293687e8828b6e5884640af4d1b76016122b22`, before this docs commit. The docs commit adds only the three lane files. It does not change runtime, tests or SQL.
+## R1 validation
+
+Gates below ran on the R1 working tree whose parent is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. The only R1 delta from that parent is this report, the handoff and the self-review.
 
 | Check | Result |
 | --- | --- |
