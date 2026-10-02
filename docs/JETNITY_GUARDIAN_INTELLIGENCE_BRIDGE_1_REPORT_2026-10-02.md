@@ -22,7 +22,7 @@ The contract defines the report envelope, stable `report_id` dedupe, Technical-L
 
 The one-time external prompt is prepared and unsent.
 
-Technical-Lead R1 `5394779466` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` found that the delivery rewrote deeper historical headings and sentences in the three startup files. That exceeded the binding top-pointer scope. The delivery self-review said those deeper sentences were not rewritten. That sentence was false for `dea9ea54`.
+Technical-Lead R1 `5394784249` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` found that the delivery rewrote deeper historical headings and sentences in the three startup files. That exceeded the binding top-pointer scope. The delivery self-review said those deeper sentences were not rewritten. That sentence was false for `dea9ea54`.
 
 This correction:
 
