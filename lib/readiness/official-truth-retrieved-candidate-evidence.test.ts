@@ -411,6 +411,35 @@ describe('Official Truth retrieved material candidate evidence', () => {
     assert.equal(serbischeEvidence.scope.credentialOption.issuingCountryCode, 'RS')
     assert.equal(serbischeEvidence.scope.credentialOption.relatedCitizenshipCountryCode, 'RS')
     assert.equal(schweizerEvidence.scope.credentialOption.issuingCountryCode, 'CH')
+    assert.equal(serbischeEvidence.sourceContentHash, schweizerEvidence.sourceContentHash)
+    assert.equal(serbischeEvidence.canonicalUrl, schweizerEvidence.canonicalUrl)
+    assert.equal(serbischeEvidence.retrievedAt, schweizerEvidence.retrievedAt)
+    assert.notEqual(serbischeEvidence.versionId, schweizerEvidence.versionId)
+    assert.match(serbischeEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(schweizerEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
+
+    const passAbdeckung = abdeckung({
+      citizenship: { mode: 'exact', countryCodes: ['CH', 'RS'] },
+      documents: {
+        mode: 'exact',
+        options: [
+          { documentType: 'passport', issuingCountryCode: 'CH' },
+          { documentType: 'passport', issuingCountryCode: 'RS' },
+        ],
+      },
+      requirementTypes: ['visa', 'passport_validity'],
+    })
+    const passEvidence = kandidat(
+      bauen(huelle({
+        request: anfrage({ requirementType: 'passport_validity' }),
+        registry: basis,
+        descriptors: [deskriptor(basis, QUELLE, passAbdeckung)],
+      })),
+    )
+    assert.equal(passEvidence.sourceContentHash, schweizerEvidence.sourceContentHash)
+    assert.notEqual(passEvidence.lookupKey, schweizerEvidence.lookupKey)
+    assert.notEqual(passEvidence.versionId, schweizerEvidence.versionId)
+    assert.match(passEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
 
     const wohnsitz = anfrage({
       transitCountryCode: 'TH',

@@ -1348,11 +1348,12 @@ describe('server-reproved accepted Evidence store entry', () => {
     })
     const schweizerRoh = transportAufzeichnen()
     const serbischRoh = transportAufzeichnen()
+    const gemeinsameSeite = 'gemeinsame amtsseite'
     const schweizer = await evidenceAusAbrufSpeichern(
       basis,
       'example-border-authority',
       'gov.example',
-      'zelle schweiz',
+      gemeinsameSeite,
       atom(),
       evidenceDeps(schweizerRoh.transport),
     )
@@ -1360,7 +1361,7 @@ describe('server-reproved accepted Evidence store entry', () => {
       basis,
       'example-border-authority',
       'gov.example',
-      'zelle serbien',
+      gemeinsameSeite,
       serbisch,
       evidenceDeps(serbischRoh.transport),
     )
@@ -1378,6 +1379,29 @@ describe('server-reproved accepted Evidence store entry', () => {
     assert.equal(rechts.related_citizenship_country_code, 'RS')
     assert.notEqual(links.rule_scope_key, rechts.rule_scope_key)
     assert.notEqual(links.lookup_key, rechts.lookup_key)
+    assert.equal(links.source_content_hash, rechts.source_content_hash)
+    assert.equal(links.canonical_url, rechts.canonical_url)
+    assert.equal(links.retrieved_at, rechts.retrieved_at)
+    assert.notEqual(links.version_id, rechts.version_id)
+    assert.match(String(links.version_id), /^ev1_[a-f0-9]{32}$/)
+    assert.match(String(rechts.version_id), /^ev1_[a-f0-9]{32}$/)
+
+    const passRoh = transportAufzeichnen()
+    const passZelle = await evidenceAusAbrufSpeichern(
+      basis,
+      'example-border-authority',
+      'gov.example',
+      gemeinsameSeite,
+      atom({ requirementType: 'passport_validity' }),
+      evidenceDeps(passRoh.transport),
+    )
+    assert.equal(passZelle.ok, true)
+    if (!passZelle.ok || passZelle.operation !== 'accepted_evidence') return
+    assert.notEqual(passZelle.versionId, schweizer.versionId)
+    assert.match(passZelle.versionId, /^ev1_[a-f0-9]{32}$/)
+    const passPayload = passRoh.aufrufe[0]?.evidence as Record<string, unknown>
+    assert.equal(passPayload.source_content_hash, links.source_content_hash)
+    assert.notEqual(passPayload.version_id, links.version_id)
   })
 
   test('keine Route und kein neuer Regel-Annahmeweg ruft den Evidence-Schreiber', () => {
@@ -1840,6 +1864,55 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
         cluster.aufruf(`select count(*) from private.official_rule_claim_support where version_id = '${fehlendeStuetze}'`),
         '0',
       )
+
+      const gemeinsameSeite = 'same official page snapshot'
+      const vorZellen = Number(cluster.aufruf('select count(*) from private.official_evidence_versions'))
+      const chZelle = await evidenceAusAbrufSpeichern(
+        basis,
+        'example-border-authority',
+        'gov.example',
+        gemeinsameSeite,
+        atom(),
+        deps,
+      )
+      const rsZelle = await evidenceAusAbrufSpeichern(
+        basis,
+        'example-border-authority',
+        'gov.example',
+        gemeinsameSeite,
+        atom({
+          credentialOption: {
+            mode: 'option',
+            documentType: 'passport',
+            issuingCountryCode: 'RS',
+            relatedCitizenshipCountryCode: 'RS',
+          },
+        }),
+        deps,
+      )
+      assert.equal(chZelle.ok, true)
+      assert.equal(rsZelle.ok, true)
+      if (!chZelle.ok || !rsZelle.ok || chZelle.operation !== 'accepted_evidence' || rsZelle.operation !== 'accepted_evidence') return
+      assert.equal(chZelle.outcome, 'inserted')
+      assert.equal(rsZelle.outcome, 'inserted')
+      assert.match(chZelle.versionId, /^ev1_[a-f0-9]{32}$/)
+      assert.match(rsZelle.versionId, /^ev1_[a-f0-9]{32}$/)
+      assert.notEqual(chZelle.versionId, rsZelle.versionId)
+      assert.notEqual(chZelle.ruleScopeKey, rsZelle.ruleScopeKey)
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), String(vorZellen + 2))
+      const chNochmal = await evidenceAusAbrufSpeichern(
+        basis,
+        'example-border-authority',
+        'gov.example',
+        gemeinsameSeite,
+        atom(),
+        deps,
+      )
+      assert.equal(chNochmal.ok, true)
+      if (!chNochmal.ok || chNochmal.operation !== 'accepted_evidence') return
+      assert.equal(chNochmal.outcome, 'idempotent')
+      assert.equal(chNochmal.versionId, chZelle.versionId)
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), String(vorZellen + 2))
 
       const kr = atom({ destinationCountryCode: 'KR', sourceId: 'example-licensed-provider' })
       const vorLizenz = evidencePayloads.length
