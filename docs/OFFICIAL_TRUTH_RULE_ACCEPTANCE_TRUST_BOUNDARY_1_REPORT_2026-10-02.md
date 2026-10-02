@@ -85,7 +85,23 @@ This VM did not have PostgreSQL 16 when the session started. PostgreSQL 16.15 wa
 
 ## R1 validation
 
-R1 gates are not yet recorded. Until this section names a SHA and results, the R1 wording has not claimed a gate pass.
+R1 gates below were run on `db33cfbe6f5a0656e7d2df4df9b3535b6f7b2e9a`. That SHA is the wording correction. This gate-record commit does not change the architecture again. `git fetch origin main` before the R1 commit resolved `origin/main` to `5e291ed7c4814f034224eda46c3bd62cc9815ea3`. The branch was 0 behind and 3 ahead. Re-fetch before the final push.
+
+No new SQL. No remote database. PostgreSQL 16.15 was already installed from the first delivery. The package cluster stays unstarted.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `npm test` | 4381 pass / 0 fail, 756 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in these docs |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass, 12 admin routes use `requireAdminApi()` |
+| `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice added none. |
 
 ## Exact-head gates
 

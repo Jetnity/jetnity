@@ -28,7 +28,8 @@ Read first:
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - The task baseline remains `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`.
 - `git fetch origin main` at the start of this session resolved `origin/main` to that same SHA. The branch was 0 behind and 1 ahead, which was the task seed `b0e8f21bd0412ef14a9339b27fe0351e3bb45b3b`. Re-fetch before treating any later SHA as current.
-- Local gates on the first delivery were run on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`. `npm test` was 4381 pass / 0 fail across 756 suites. Typecheck, lint (0 errors, 148 pre-existing warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs. Those results belong to the pre-R1 tree. R1 changes the architecture wording. Its gates are recorded after they run on the R1 tree. PostgreSQL 16.15 was installed locally for the existing throwaway proofs. The package cluster was not started. No remote database was contacted.
+- Local gates on the first delivery were run on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`. `npm test` was 4381 pass / 0 fail across 756 suites. Those results belong to the pre-R1 tree.
+- R1 gates were run on `db33cfbe6f5a0656e7d2df4df9b3535b6f7b2e9a`. `npm test` was again 4381 pass / 0 fail across 756 suites. Typecheck, lint (0 errors, 148 pre-existing warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs. This handoff records those results. The architecture wording is the R1 commit. PostgreSQL 16.15 stayed local. The package cluster was not started. No remote database was contacted.
 
 ## Trust rule for the next reader
 
