@@ -19,6 +19,8 @@ Delivered on Draft #754. Stopped for independent Technical-Lead exact-head revie
 
 #751 is bound as the compact live Current State. #748 remains the append-only raw MATERIAL inbox. New Technical-Lead chats read live main and live mode, then #751, then only referenced open or material reports and newer unread MATERIAL reports after the last processed marker. Resolved, `STALE` and `SUPERSEDED` reports stay audit history.
 
+Same-session Technical-Lead clarification, still Generation 1: contract §2a and the top pointer now bind an event-driven re-read. The six boundaries are a new, resumed, or materially paused chat; Cursor STOP after a material slice; a new material pull-request head; before FINAL PASS on a Truth, Security, Auth, database, or release slice; after merge and post-merge verification, before the next slice; and before a reserved Product-Owner gate when Guardian or Chief of Staff evidence may be relevant. Each re-read stays on the §2 selection. It does not rescan all of #748. The hourly ChatGPT watch is a backstop, not the canonical handoff. Guardian and Chief of Staff do not report every git commit. Their trigger is a material event, a material new head, or a material risk. A commit with no material change may produce no #748 report.
+
 The public-repository privacy rule now forbids personal data by default, including names, email addresses, phone numbers, postal addresses, user or account or traveller identifiers, passport or document numbers, MRZ, biometrics, health information, birth dates, IP addresses, and any other person-identifying value.
 
 The top pointer in `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md` and `docs/ACTIVE_WORK_STATUS.md` is refreshed. Deeper blocks in those files are unchanged. #750 is recorded as merged. Live mode is `NORMAL`. `AI_OS_BUILD_HOLD` remains historical evidence.
@@ -44,6 +46,8 @@ Recorded on this delivery tree before the delivery commit:
 - `git rev-list --left-right --count origin/main...HEAD`: 0 behind `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d` before this delivery commit. Re-fetch after the commit; a later main SHA invalidates the pin.
 - Against `HEAD` before this commit, each of the three startup files changes only at line 3. No other line in those files changes.
 - Typecheck, lint, `npm test`, hygiene checks other than `check:operating-mode`, and the production build were not run. The binding task's validation list is the local gate, and the diff is docs and governance only. Exact-head GitHub CI and Vercel on this tip exist only after the push and are not claimed in this report.
+- Clarification tree, before the clarification commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `262343cb34f55208baceded145ba6aad2fd941f4` only at line 3.
+- Before this clarification commit, PR #754 head `262343cb34f55208baceded145ba6aad2fd941f4` had Auth job `110974184791` **success** and Vercel Preview Comments **success**. Typecheck, Lint & Build job `110974185125` was still in progress. Those runs do not gate the clarification tip.
 
 ## Build
 

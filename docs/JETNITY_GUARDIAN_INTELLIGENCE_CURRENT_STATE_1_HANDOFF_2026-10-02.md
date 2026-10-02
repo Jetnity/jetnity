@@ -17,7 +17,7 @@ Live machine mode is `NORMAL`. `AI_OS_BUILD_HOLD` remains historical evidence. T
 
 Delivery fetch of `origin/main`: `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`, `Merge #750: add Guardian Intelligence Bridge contract`. The branch is 0 behind that SHA. Re-fetch before treating a later SHA as current. #750 is merged.
 
-#751 is the compact live Current State. #748 is the append-only raw MATERIAL inbox. New Technical-Lead chats read live main and live mode, then #751, then only open or material report ids referenced by #751 and newer unread MATERIAL #748 reports after the last processed marker.
+#751 is the compact live Current State. #748 is the append-only raw MATERIAL inbox. During an active Technical-Lead workflow the canonical handoff is an event-driven re-read: #751 first, then only reports #751 still lists as open and newer unread MATERIAL #748 reports after the last processed marker. Do not rescan all of #748. The boundaries are a new, resumed, or materially paused chat; a Cursor STOP after a material slice; a new material pull-request head; before FINAL PASS on a Truth, Security, Auth, database, or release slice; after merge and post-merge verification, before the next slice; and before a reserved Product-Owner gate when Guardian or Chief of Staff evidence may be relevant. The hourly ChatGPT watch is a backstop. Guardian and Chief of Staff post on a material event, a material new head, or a material risk. A commit with no material change may produce no #748 report. Contract §2a is the rule.
 
 Last processed markers on the delivery read of #751: report `COS-20261002-2010-001`, comment `5958628250`.
 

@@ -5,6 +5,12 @@ Reviewer: the same Cursor writer, Generation 1. This is not an independent Techn
 Draft PR: #754
 `originalModelName=grok-4.7-high-fast`. Not Auto.
 
+## Clarification on the same Draft
+
+The Technical Lead clarified read cadence on the same logical agent and the same Draft #754. The review head is the branch tip after the clarification commit. Head `262343cb34f55208baceded145ba6aad2fd941f4` is the prior delivery. Its CI does not gate the clarification tip.
+
+The clarification adds contract §2a and refreshes line 3 of the three startup files. It does not change product runtime.
+
 ## Scope check
 
 Against the pre-delivery `HEAD`, the working tree for this slice is:
@@ -22,7 +28,10 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | --- | --- |
 | #751 is the compact Current State | Contract §1 and the three top pointers. |
 | #748 remains the raw MATERIAL inbox | Contract §1. Comments stay append-only. |
-| New chats read #751, then only referenced or newer unread MATERIAL reports | Contract §2, §4a, and the top pointer. |
+| New chats read #751, then only referenced or newer unread MATERIAL reports | Contract §2 and the top pointer. |
+| Event-driven re-read at the six Technical-Lead boundaries | Contract §2a and the top pointer. No full #748 rescan. |
+| Hourly ChatGPT watch is a backstop | Contract §2a. It is not the canonical handoff. |
+| No #748 report required for every commit | Contract §2a. Trigger is a material event, a material new head, or a material risk. |
 | Resolved, STALE and SUPERSEDED reports stay out of the default read | Contract §2. |
 | No monthly or quarterly rotation | Contract §1. |
 | No personal data on the public repository | Contract §3, Bridge contract §4, operating standard §4a. |
@@ -37,9 +46,18 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | Cursor does not mutate issue bodies | No issue-body write in this slice. |
 | Stay Draft; no Ready, merge, or follow-up | This review does not do those. |
 
-## Local gates on this delivery tree
+## Local gates on this clarification tree
 
-Run before the delivery commit:
+Run before the clarification commit, against `262343cb34f55208baceded145ba6aad2fd941f4`:
+
+- `git diff --check`: pass.
+- `npm run check:operating-mode`: PASS.
+- `git fetch origin main`: `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`. `git rev-list --left-right --count origin/main...HEAD`: 0 behind.
+- Startup-file diff: `@@ -3 +3 @@` only in each of the three files.
+
+## Local gates on the prior delivery tree
+
+Run before the first delivery commit:
 
 - `git diff --check`: pass.
 - `npm run check:operating-mode`: PASS.

@@ -53,6 +53,25 @@ An unread report is evidence waiting for triage. It is not a confirmed defect an
 
 At the delivery read of #751 (`updated_at` `2026-10-02T18:22:26Z`), the last processed report marker is `COS-20261002-2010-001` and the last processed comment marker is `5958628250`. Re-read #751 before treating a later marker as current.
 
+## 2a. Event-driven read cadence
+
+The canonical handoff is an event-driven re-read. It is not an hourly poll and it is not a full #748 rescan.
+
+During an active Jetnity Technical-Lead workflow, re-read #751 and the selected #748 reports at each of these boundaries:
+
+1. a new chat, a resumed chat, or a chat after a material pause;
+2. immediately after a Cursor agent declares a material slice finished, or stops for Technical-Lead review;
+3. immediately after any new material pull-request head that invalidates older Guardian evidence;
+4. before Technical-Lead FINAL PASS on a Truth, Security, Auth, database, or release-relevant slice;
+5. immediately after merge and post-merge verification, before selecting or dispatching the next slice;
+6. before crossing any reserved Product-Owner gate when Guardian or Chief of Staff evidence may be relevant.
+
+Each re-read uses §2. Read #751 first. Then read only newer unread MATERIAL #748 reports after the last processed marker, plus the reports #751 explicitly references as still open. Do not rescan the full #748 history at these boundaries.
+
+The hourly ChatGPT watch remains a backstop. It is not the canonical handoff mechanism. A missed hour does not replace a missed boundary above.
+
+Guardian and Chief of Staff do not emit a #748 report for every git commit. Their trigger is a material event, a material new head, or a material risk. A commit with no material change may produce no #748 report. Absence of a new report after a non-material commit is not a missed handoff. Boundary 3 still requires the §2 re-read. No new #748 comment on that head means no new material report was posted. It does not move older evidence onto the new head.
+
 ## 3. Public-repository privacy
 
 Jetnity/jetnity is public.
