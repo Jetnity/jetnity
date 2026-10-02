@@ -28,7 +28,7 @@ Read first:
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - The task baseline remains `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`.
 - `git fetch origin main` at the start of this session resolved `origin/main` to that same SHA. The branch was 0 behind and 1 ahead, which was the task seed `b0e8f21bd0412ef14a9339b27fe0351e3bb45b3b`. Re-fetch before treating any later SHA as current.
-- Local gate results belong to the report's validation section after they are run. Do not treat this handoff as a gate pass before that section names the SHA.
+- Local gates were run on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`. `npm test` was 4381 pass / 0 fail across 756 suites. Typecheck, lint (0 errors, 148 pre-existing warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs. This handoff records those results. The architecture file is unchanged. PostgreSQL 16.15 was installed locally for the existing throwaway proofs. The package cluster was not started. No remote database was contacted.
 
 ## Trust rule for the next reader
 

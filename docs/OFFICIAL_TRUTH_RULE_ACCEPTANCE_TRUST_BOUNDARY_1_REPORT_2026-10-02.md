@@ -53,7 +53,25 @@ Issue #728 defines the advisory suggestion assessments. This slice does not impl
 
 ## Validation
 
-Local gates are recorded in the gate section below after they run on this docs tree. Until that section names a SHA and results, this delivery has not claimed a gate pass.
+Local gates below were run on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0` before this gate-record commit. That SHA is the architecture delivery. This commit records the results and does not change the architecture. `git fetch origin main` at the start of the session resolved `origin/main` to `5e291ed7c4814f034224eda46c3bd62cc9815ea3`, the task baseline. Re-fetch before treating any later SHA as current. The final push re-fetches and must stay 0 behind.
+
+This VM did not have PostgreSQL 16 when the session started. PostgreSQL 16.15 was installed from Ubuntu packages so the existing throwaway store proofs could run. Package setup initialized a local cluster. `policy-rc.d` denied starting it. The suite then created its own temporary clusters through `/usr/lib/postgresql/16/bin/initdb`. No remote database was contacted. This slice did not add or apply SQL. Development and Production were not touched.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `npm test` | 4381 pass / 0 fail, 756 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the new docs |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass, 12 admin routes use `requireAdminApi()` |
+| `check:schema-bezug` | pass. It still lists the already known LOCAL/UNAPPLIED RPCs `admin_account_counts_v1`, `official_truth_source_catalog_v1` and `official_truth_store_accepted_v1`. This slice did not add an RPC. |
+
+`auth:pruefen` was not run locally because it needs repository secrets. This slice does not change Auth.
 
 ## Exact-head gates
 

@@ -59,7 +59,9 @@ No remote Supabase command was run. No migration file was added. `lib/readiness/
 
 ## Tests and gates
 
-This self-review does not claim a local gate pass until the report's validation section names the SHA and the results. Docs-only changes do not add a test file. The required repo gates are still run on the docs tree and recorded there.
+Docs-only changes add no test file. Full `npm test` on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`: 4381 pass / 0 fail, 756 suites. Typecheck, lint, build, diff check, operating-mode guard and the hygiene checks passed. Lint reports 0 errors and 148 pre-existing warnings, none in the new docs. Schema reference still lists the three already known unapplied RPCs. This slice added none.
+
+PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 16.15 locally, the suite passed, including the existing throwaway cluster proofs. The package cluster was not started. Those proof clusters are local and temporary. No remote database was contacted. This slice did not apply SQL.
 
 ## Stop line
 
