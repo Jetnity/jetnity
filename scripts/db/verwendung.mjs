@@ -68,6 +68,11 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sourcePath: 'lib/readiness/official-truth-source-catalog-server.ts',
     sqlPath: 'supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql',
   }),
+  Object.freeze({
+    name: 'darf_official_truth_freigeben',
+    sourcePath: 'lib/readiness/official-truth-fact-entry-authority-server.ts',
+    sqlPath: 'supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql',
+  }),
 ])
 
 function lokaleRpcRegel(name) {

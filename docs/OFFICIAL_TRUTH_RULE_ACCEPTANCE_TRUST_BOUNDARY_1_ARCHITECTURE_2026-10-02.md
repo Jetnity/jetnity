@@ -15,6 +15,26 @@ This file is the binding architecture for the authority boundary before `regelKa
 
 Issue #737 corrects section 5 of this binding architecture. The correction is this note and the section 5 text below. The original #731 task, report and handoff stay the historical author record of that delivery. They are not rewritten to look as if they already contained this correction. No runtime file changes with this reconciliation.
 
+## Fact-entry authority binding — 2 October 2026
+
+Issue #760 closes #749 F9 as a dedicated server precondition. This note binds every future fact-entry or acceptance path to that guard. It does not add a route, and it does not call `regelKandidatAkzeptieren`.
+
+`loadOfficialTruthFactEntryAuthority()` in `lib/readiness/official-truth-fact-entry-authority-server.ts` is the only live authority entry. A future F7, F8 or #741 gate must call that function and continue only when the result is exactly `{ status: 'authorized', grant: 'role', capability: 'official-truth-freigeben' }`. Any other status fails closed.
+
+The loader proves all of the following on the server, in this order:
+
+1. `evaluateAdminAccess({ capability: 'official-truth-freigeben' })`, which is the existing verified-user and current-AAL2 admin guard.
+2. `decision.allowed`.
+3. `decision.grant === 'role'`.
+4. `reachesDatabase(decision) === true`.
+5. The user-scoped RPC `public.darf_official_truth_freigeben()` returns exactly boolean `true`.
+
+The loader accepts no caller role, grant, reviewer, AAL, capability, user id, email, RPC result, environment snapshot or dependency override. Break-glass returns `role_grant_required` before the RPC. A missing or unapplied function returns `database_capability_unavailable`. An RPC error, a thrown read, null, or any value other than boolean `true` stays blocked. The result carries no email, user id, role string or database error text.
+
+`decideOfficialTruthFactEntryAuthority` is the deterministic test seam. It is not the live entry. A future route that calls the seam, `requireAdminPage`, or the RPC by itself reopens F9.
+
+The database function remains the merged LOCAL/UNAPPLIED `SECURITY INVOKER` function from `supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql`. This binding does not edit or apply that migration. `types/supabase.ts` does not list the RPC. The call is one narrow user-scoped wrapper. This guard does not construct a service-role or admin client.
+
 The original #731 section 5 said that a composed packet whose supports share one source can exist as review material, because distinct sources are enforced at acceptance, and that the decision contract must refuse `proceed_to_trusted_fact_entry` for that packet with `same_source_composition`. That statement conflicts with accepted #717 and #723 runtime semantics. It is superseded here.
 
 ## 1. Binding principle
@@ -107,7 +127,7 @@ Current capabilities in `lib/auth/roles.ts` are:
 | `inhalte-moderieren` | moderator | Review other people's content |
 | `konfiguration-verwalten` | admin | System configuration. It currently covers no table |
 
-This document does not map Official Truth acceptance onto any of those capabilities. A moderator read capability is not acceptance authority. `betrieb-eingreifen` is not acceptance authority. Reusing `konfiguration-verwalten` would allow every admin who holds that capability to mint Official Truth. That reuse is an authority decision. Adding a new capability changes `CAPABILITY_MINIMUM` and the matching `darf_*` database function, which `lib/auth/faehigkeiten-datenbank.test.ts` keeps in lockstep. That change is a major Auth/role/RLS change and a special Product-Owner gate. Until an explicit later decision names the capability, no acceptance endpoint is authorized.
+This document does not map Official Truth acceptance onto any of those capabilities. A moderator read capability is not acceptance authority. `betrieb-eingreifen` is not acceptance authority. Reusing `konfiguration-verwalten` would allow every admin who holds that capability to mint Official Truth. That reuse is an authority decision. Adding a new capability changes `CAPABILITY_MINIMUM` and the matching `darf_*` database function, which `lib/auth/faehigkeiten-datenbank.test.ts` keeps in lockstep. That change is a major Auth/role/RLS change and a special Product-Owner gate. Until an explicit later decision names the capability, no acceptance endpoint is authorized. That later decision is #739 APPROVE A: dedicated `official-truth-freigeben`, minimum role `owner`. The merged foundation already added that capability and `public.darf_official_truth_freigeben()`. This file still authorizes no acceptance endpoint. The fact-entry authority binding above is the required check before any later endpoint.
 
 ### AAL
 
@@ -115,7 +135,7 @@ Current admin and security contracts require `currentLevel === 'aal2'`. `applyAd
 
 ### Database grant
 
-`reachesDatabase` is true only for `grant: 'role'`. Break-glass (`ADMIN_ALLOWED_EMAILS`) opens the admin surface and leaves the database closed (ADR-0036). A future step that can reach `regelKandidatAkzeptieren` followed by the store writer requires `grant: 'role'` after the capability check and after AAL2. Break-glass is insufficient for `proceed_to_trusted_fact_entry` and insufficient for fact entry.
+`reachesDatabase` is true only for `grant: 'role'`. Break-glass (`ADMIN_ALLOWED_EMAILS`) opens the admin surface and leaves the database closed (ADR-0036). A future step that can reach `regelKandidatAkzeptieren` followed by the store writer requires `grant: 'role'` after the capability check and after AAL2. Break-glass is insufficient for `proceed_to_trusted_fact_entry` and insufficient for fact entry. That step must call `loadOfficialTruthFactEntryAuthority()` and continue only on its authorized result. The binding section at the top of this file is that guard.
 
 ### Browser storage
 
@@ -179,7 +199,7 @@ If a later UX pre-fills the form from the proposal, the pre-fill stays visibly u
 
 The submitted fact must pass the existing `regelFaktLesen` rules for the packet's `factKind` and requirement type. Fact kinds remain the current set: `requirement_effect`, `visa_options`, `stay_limit`, `passport_validity`, `blank_passport_pages`, `transit_conditions`, `official_actions` and `temporal_rule`. This boundary does not add a fact kind and does not invent a visa, transit, health, carrier or document rule. Personal-identifier keys still fail closed inside the existing reader.
 
-The same verified user who made the server-held proceed decision is the user who may submit the fact. Both identities come from `getUser()`.
+The same verified user who made the server-held proceed decision is the user who may submit the fact. Both identities come from `getUser()`. Before that submission can reach acceptance, `loadOfficialTruthFactEntryAuthority()` must return authorized for capability `official-truth-freigeben`.
 
 ## 7. Revalidation before acceptance
 
@@ -252,7 +272,7 @@ The sequence below is the only authorized **current V1** implementation path. It
 
 1. **Pure decision-intent contract.** Re-prove the #726 key from original packet input. Accept only the three decision states, and only after #723 returns a packet. Same-source composition is already rejected by #717 and never enters this contract as review material. The #734 proceed-path source-count check remains defense in depth. Refuse `proceed_to_trusted_fact_entry` when acceptance predicates fail on a packet that does exist. Reject caller authority fields and caller packet identity. Return no trusted fact and no accepted claim.
 2. **Authenticated server review endpoint.** The verified session is `getUser()`. The endpoint shows the re-proven candidate and the official support snapshots. It records a decision only after the checks in sections 3 and 4.
-3. **Privileged reviewer authorization check.** Role, capability, AAL2 `currentLevel` and `grant: 'role'`, all server-side. This step waits for the capability decision in section 4. Break-glass stops before fact entry.
+3. **Privileged reviewer authorization check.** Role, capability, AAL2 `currentLevel` and `grant: 'role'`, all server-side. The capability named by the later owner decision is `official-truth-freigeben`. The check is `loadOfficialTruthFactEntryAuthority()`, which also requires `reachesDatabase` and user-scoped `darf_official_truth_freigeben() === true`. Break-glass stops before fact entry and before that RPC. This architecture still authorizes no acceptance endpoint.
 4. **Fact-entry validation.** A separate explicit human submission. The server re-proves the key and the server-held proceed binding, then validates the submitted fact with the existing fact reader. It does not copy the proposal.
 5. **Canonical `regelKandidatAkzeptieren`.** The only acceptance function, called on this V1 path with the re-proven inputs from section 7.
 6. **Separate persistence.** Only the returned claim, through the existing `akzeptierteRegelClaimSpeichern` writer. The writer stays dormant until a later slice is explicitly assigned. Production apply stays gated.
