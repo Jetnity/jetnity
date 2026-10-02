@@ -5,13 +5,18 @@ Issue: #766
 Draft PR: #767
 Branch: `fix/official-truth-autonomous-freshness-witness-1`
 Baseline: `main@c04964e715c0ea6810dae18d7c3d573707672392`
-Implementation commit: `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea`
+Implementation commit: `d43711afd6cbd0ff02c9ed9bfebe63b45c81b136`
+R1 corrects intermediate head `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea`. That head is not the review head.
 Logical agent: **Jetnity Official Truth autonomous freshness authority witness 1**
 Generation: **1**
 Session: https://cursor.com/agents/bc-46d4f594-e303-4969-b3ce-10d4392fbd48
 `originalModelName`: `grok-4.7-high-fast`. Not Auto.
 
 This report is the author record. A Technical-Lead PASS requires an independent exact-head review of the branch tip. This report is not Ready and not a merge.
+
+## F7-R1
+
+Technical-Lead early finding on `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea`: the combined re-proof compared packet support ids in array order. #726 identity is order-invariant. `officialTruthServerHeldReviewReproof` now compares the fingerprint ids with the candidate ids and the packet support ids as the same canonical multiset. Duplicate and mismatch protection stays. Reversed caller order of the same composed supports keeps one catalog read, the same `review-packet:v2:` key, and the same sorted `supportVersionIds`. The authorized witness still succeeds for that reversed input when freshness is `current`.
 
 ## Result
 
@@ -34,7 +39,7 @@ Eligible re-proved quality is only `explicit_primary_statement` or `composed_fro
 3. A missing or failed catalog returns no witness and no secret or thrown error text.
 4. Caller `registry`, `sourceClass`, `domains`, and `blockedDomains` stay `caller_authority_forbidden` before the catalog read.
 5. Caller role, grant, capability, reviewer, user, email, AAL, clock, `maxAgeMs`, freshness, `reviewPacketKey`, `supportVersionIds`, trusted fact, accepted claim, lifecycle, suggestion, model authority, and decision fields are rejected before authority and before the catalog read.
-6. One successful combined re-proof performs one `read_registry` call. The key equals the canonical `review-packet:v2:` fingerprint of the same server-held material. Packet and fingerprint agree on rule scope and support ids.
+6. One successful combined re-proof performs one `read_registry` call. The key equals the canonical `review-packet:v2:` fingerprint of the same server-held material. Packet and fingerprint agree on rule scope and support ids. Reversing the caller support order does not change the key or the sorted ids.
 7. Exactly the existing max-age boundary, an older retrieval, a future `validFrom`, and an elapsed `validUntil` are `freshness_not_current`.
 8. A malformed or non-finite server reference time is `invalid_reference_time` and does not read the catalog.
 9. `research_gap`, `stale_primary_evidence`, and `unresolved_conflict` are `quality_not_acceptable`. Same-source composition remains `same_source_composition`. Two credential options in one packet remain `scope_mismatch`.
@@ -57,11 +62,11 @@ Not changed, and not claimed as fixed:
 
 ## Validation
 
-Re-run on `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea`, before the documentation commit. At that fetch, `origin/main` was `c04964e715c0ea6810dae18d7c3d573707672392`. Merge-base was that same SHA. The branch was 2 ahead and 0 behind, including the task seed. Re-fetch before treating a later SHA as current.
+Re-run on `d43711afd6cbd0ff02c9ed9bfebe63b45c81b136`, before the R1 documentation commit. At that fetch, `origin/main` was `c04964e715c0ea6810dae18d7c3d573707672392`. Merge-base was that same SHA. Re-fetch before treating a later SHA as current. The earlier validation on `c0a9e707` is historical.
 
-- Witness file: 12 tests, 12 pass, 0 fail.
+- Witness file: 13 tests, 13 pass, 0 fail. The added test is the reversed composed-support order.
 - Server-held registry file: 10 tests, 10 pass, 0 fail.
-- `npm test`: 4473 pass, 0 fail, 763 suites. The two throwaway PostgreSQL proofs ran on local PostgreSQL 16.15. No remote database was contacted.
+- `npm test`: 4474 pass, 0 fail, 763 suites. The two throwaway PostgreSQL proofs ran on local PostgreSQL 16.15. No remote database was contacted.
 - `npm run typecheck`: pass.
 - `npm run lint`: 0 errors, 148 pre-existing warnings.
 - `npm run build`: pass. Next.js 16.3.8. Compiled successfully. 25 static pages.
