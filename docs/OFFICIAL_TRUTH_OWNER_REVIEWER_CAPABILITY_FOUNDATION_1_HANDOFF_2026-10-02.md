@@ -12,7 +12,9 @@ Session: https://cursor.com/agents/bc-b12805ca-1d17-4171-9f96-40c873ab2585
 
 ## Current state
 
-The branch adds the owner-only capability foundation and one unapplied migration. Technical-Lead R1 `5394162809` on `d3017b169a189baf322a9544bc819a0c4a8d7e23` authorized the existing test-only change in `lib/admin/analyst/system-health-insights.test.ts`. The task amendment is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. That file is an R1-authorized dependency. It is not a self-granted scope exception. No Analyst runtime file was edited. The branch is a Draft. It is not Ready and not merged. No endpoint, trusted fact, Rule acceptance, audit store or remote apply exists on this head.
+The branch adds the owner-only capability foundation and one unapplied migration. Technical-Lead R1 `5394162809` on `d3017b169a189baf322a9544bc819a0c4a8d7e23` authorized the existing test-only change in `lib/admin/analyst/system-health-insights.test.ts`. The task amendment is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. That file is an R1-authorized dependency. It is not a self-granted scope exception. No Analyst runtime file was edited.
+
+PR #745 is merged at `513912647aa6cae32e07a4f37c3e2e47f9b0f5fc`. Merge `238bf3a17deb1c85a1b5cdb2867f85c650b0c988` keeps `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md` and `docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md` identical to that main commit. The #743 capability files match R1 head `5150305d97fef778d856e263e68f2007eeebbaca`. The branch is a Draft. It is not Ready and not merged. No endpoint, trusted fact, Rule acceptance, audit store or remote apply exists on this head.
 
 Read first:
 
@@ -20,12 +22,13 @@ Read first:
 2. `docs/OFFICIAL_TRUTH_OWNER_REVIEWER_CAPABILITY_FOUNDATION_1_REPORT_2026-10-02.md`
 3. `docs/OFFICIAL_TRUTH_OWNER_REVIEWER_CAPABILITY_FOUNDATION_1_SELF_REVIEW_2026-10-02.md`
 
-`docs/ACTIVE_WORK_STATUS.md` was not edited. The task forbids global current-state files. This handoff is the continuity pointer for the slice. The status file still describes an older writer. Do not treat that older section as this slice.
+`docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md` and `JETNITY_START_HERE.md` are the #745 main versions. This slice did not rewrite them. This handoff remains the continuity pointer for the capability slice. Do not treat the global status file as a substitute for this slice's report.
 
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The branch was 0 behind that SHA. Re-fetch before treating any later SHA as current. The final push must stay 0 behind.
+- `git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. That pin is historical.
+- Final integration fetch resolved `origin/main` to `513912647aa6cae32e07a4f37c3e2e47f9b0f5fc`. Merge `238bf3a17deb1c85a1b5cdb2867f85c650b0c988` is 0 behind that SHA. Re-fetch before treating any later SHA as current. The final push must stay 0 behind.
 - First-delivery gates ran on `6f293687e8828b6e5884640af4d1b76016122b22`. `npm test` was 4416 pass / 0 fail across 759 suites. Those results belong to the pre-R1 tree.
 - R1 parent is `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. R1 re-gates are recorded in the report. The R1 commit adds only this handoff, the report and the self-review.
 - PostgreSQL 16.15 was installed locally for the existing throwaway proofs. The package cluster was not started. No remote database was contacted.
@@ -62,4 +65,4 @@ The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview ar
 
 No Ready. No merge. No Supabase apply. No acceptance endpoint. No model call. No Copilot Autopilot. No follow-up slice.
 
-**STOP for independent Technical-Lead review of the exact branch tip.**
+**STOP for final independent Technical-Lead review of the exact branch tip.**

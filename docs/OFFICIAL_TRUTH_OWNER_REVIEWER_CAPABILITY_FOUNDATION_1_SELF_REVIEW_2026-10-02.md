@@ -110,6 +110,33 @@ R1 re-gates ran on the working tree whose parent is `458a3b9075b9ab010b3a65a61f0
 
 No remote database was contacted. PostgreSQL 16.15 was already present locally. The package cluster was not started.
 
+## Final main integration
+
+PR #745 merged at `513912647aa6cae32e07a4f37c3e2e47f9b0f5fc`. This branch integrates it in `238bf3a17deb1c85a1b5cdb2867f85c650b0c988` and is 0 behind that main SHA.
+
+Blob identity with `origin/main` for the #745 files:
+
+- `JETNITY_HANDOFF.md` `112203d0b8a5be912fbae6f57c40e88bb22d772b`
+- `JETNITY_START_HERE.md` `bdfcc21796daaca6ef717531fe0b908ee0bbab77`
+- `docs/ACTIVE_WORK_STATUS.md` `f9353ae654c9ef9f2309c8c92b7c9e68071f1cd0`
+- `docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md` `e220c045661db8489feefff0cdb27b8178449c04`
+
+`lib/auth/roles.ts`, `lib/auth/roles.test.ts`, `lib/auth/admin-access.test.ts`, `lib/auth/admin-aal2-alignment.test.ts`, `lib/admin/analyst/system-health-insights.test.ts` and `supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql` match R1 head `5150305d97fef778d856e263e68f2007eeebbaca`.
+
+Final integration gates ran on that merge tree. The docs commit after it records the integration and those gates. It does not change runtime, tests, SQL or the #745 files.
+
+- `git diff --check`: clean
+- focused role/admin/AAL2/capability tests: 113 pass / 0 fail
+- `npm test`: 4416 pass / 0 fail, 759 suites
+- typecheck: pass
+- lint: 0 errors, 148 warnings
+- production build: pass
+- operating-mode guard: PASS
+- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: pass, with the same three LOCAL/UNAPPLIED RPCs
+- migration list: 68 files, no duplicate version, latest remains `20261002154952_official_truth_owner_reviewer_capability_1.sql`
+
+No remote database was contacted.
+
 ## Stop
 
 No Ready. No merge. No follow-up slice. Self-review is not Technical-Lead PASS.

@@ -76,7 +76,20 @@ The CLI also wrote gitignored `supabase/.temp/cli-latest`. The project-sanitatio
 
 ## Integration
 
-`git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. The branch was 0 behind that SHA. The R1 parent is the Technical-Lead task amendment `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`. Re-fetch before treating any later SHA as current.
+`git fetch origin main` during R1 resolved `origin/main` to `4a47190226d1d52bdb65374ad479393f0cdd0d4f`. That pin is historical. The R1 parent is the Technical-Lead task amendment `458a3b9075b9ab010b3a65a61f09f8a42ee1e6b3`.
+
+## Final main integration
+
+Canonical continuity PR #745 is merged. `git fetch origin main` for this re-gate resolved `origin/main` to `513912647aa6cae32e07a4f37c3e2e47f9b0f5fc`, `Merge #745: canonize Entry Requirements Copilot autonomy model`. Merge commit `238bf3a17deb1c85a1b5cdb2867f85c650b0c988` is 0 behind that SHA.
+
+The #745 files are byte-identical to that main commit:
+
+- `JETNITY_HANDOFF.md`
+- `JETNITY_START_HERE.md`
+- `docs/ACTIVE_WORK_STATUS.md`
+- `docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md`
+
+This integration does not rewrite them. The accepted #743 capability semantics are unchanged from R1 head `5150305d97fef778d856e263e68f2007eeebbaca`: `lib/auth/roles.ts`, the four capability tests, the analyst inventory test, and `supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql` match that head. Re-fetch before treating any later SHA as current.
 
 The first delivery gates ran on `6f293687e8828b6e5884640af4d1b76016122b22`. Those results belong to the pre-R1 tree. R1 does not change runtime, tests or SQL. It records the authorized test dependency and reruns the gates.
 
@@ -101,6 +114,28 @@ Gates below ran on the R1 working tree whose parent is `458a3b9075b9ab010b3a65a6
 | migration list | 68 SQL files, no duplicate version, latest is `20261002154952_official_truth_owner_reviewer_capability_1.sql` |
 
 The 148 lint warnings match the existing tree. This slice did not add a lint error. No remote migration was applied. `db:reproduzierbarkeit` was not run because it needs a live database.
+
+## Final integration gates
+
+These gates ran on the integrated tree after merge `238bf3a17deb1c85a1b5cdb2867f85c650b0c988`. The only later delta is this report, the handoff and the self-review. Runtime, tests, SQL and the #745 files stay as in that merge.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | clean |
+| `npm run check:operating-mode` | PASS |
+| focused role/admin/AAL2/capability tests | 113 pass / 0 fail |
+| `npm test` | 4416 pass / 0 fail, 759 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | 0 errors, 148 warnings |
+| `npm run build` | pass. Setup check warned that no `.env` / `.env.local` is present. |
+| `check:dead` | 0 unwarranted orphans |
+| `check:exports` | 0 unwarranted exports |
+| `check:deps` | 0 unused checked packages |
+| `check:api-schutz` | 12 admin routes, all use `requireAdminApi()` |
+| `check:schema-bezug` | generated structures match. Three known LOCAL/UNAPPLIED RPCs remain: `admin_account_counts_v1`, `official_truth_source_catalog_v1`, `official_truth_store_accepted_v1`. |
+| migration list | 68 SQL files, no duplicate version, latest is `20261002154952_official_truth_owner_reviewer_capability_1.sql` |
+
+No remote migration was applied.
 
 ## Traveller context
 
