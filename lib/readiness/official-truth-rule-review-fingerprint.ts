@@ -1,0 +1,174 @@
+// lib/readiness/official-truth-rule-review-fingerprint.ts
+//
+// Deterministische Identität eines neu belegten Regel-Prüfpakets.
+// Der Aufrufer liefert nur die ursprüngliche Paket-Eingabe. Das Paket
+// wird neu gebaut. Ein mitgeliefertes Paket oder ein mitgelieferter
+// Hash ist keine Identität. Die Identität bindet Prüfstoff, keine
+// angenommene Regel und keinen Wahrheitsfakt.
+
+import { sha256Hex } from '@/lib/readiness/digest'
+import {
+  officialTruthRegelReviewPacket,
+  type OfficialTruthRegelReviewPacketErgebnis,
+  type OfficialTruthRegelReviewPacketSperrgrund,
+  type OfficialTruthRegelReviewSupport,
+} from '@/lib/readiness/official-truth-rule-review-packet'
+
+type RegelReviewPacket = Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>
+
+const PRAEFIX = 'review-packet:v1:'
+const HEX64 = /^[a-f0-9]{64}$/
+
+const PROVENIENZ_FELDER = ['versionId', 'sourceId', 'canonicalUrl', 'retrievedAt', 'sourceContentHash'] as const
+
+type Provenienz = {
+  readonly versionId: string
+  readonly sourceId: string
+  readonly canonicalUrl: string
+  readonly retrievedAt: string
+  readonly sourceContentHash: string
+}
+
+type Identitaet =
+  | { readonly ok: true; readonly digest: string; readonly ruleScopeKey: string; readonly supportVersionIds: readonly string[] }
+  | { readonly ok: false; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
+
+/**
+ * `rule_review_packet_fingerprint` ist die Identität des Prüfpakets.
+ * Sie enthält weder Schnappschuss, URL, Inhaltshash, Vorschlag noch
+ * eine angenommene Regel.
+ */
+export type OfficialTruthRegelReviewFingerprintErgebnis =
+  | {
+      readonly status: 'rule_review_packet_fingerprint'
+      readonly reviewPacketKey: string
+      readonly ruleScopeKey: string
+      readonly supportVersionIds: readonly string[]
+    }
+  | { readonly status: 'blocked'; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
+
+function sperre(reason: OfficialTruthRegelReviewPacketSperrgrund): OfficialTruthRegelReviewFingerprintErgebnis {
+  return Object.freeze({ status: 'blocked', reason })
+}
+
+function text(wert: unknown): string | null {
+  return typeof wert === 'string' && wert.length > 0 ? wert : null
+}
+
+function vergleich(links: string, rechts: string): number {
+  return links < rechts ? -1 : links > rechts ? 1 : 0
+}
+
+function kanonisieren(wert: unknown): { ok: true; wert: unknown } | { ok: false } {
+  if (wert === null) return { ok: true, wert: null }
+  const art = typeof wert
+  if (art === 'string' || art === 'boolean') return { ok: true, wert }
+  if (art === 'number') return Number.isFinite(wert) ? { ok: true, wert } : { ok: false }
+  if (Array.isArray(wert)) {
+    const liste: unknown[] = []
+    for (const eintrag of wert) {
+      const kind = kanonisieren(eintrag)
+      if (!kind.ok) return kind
+      liste.push(kind.wert)
+    }
+    return { ok: true, wert: liste }
+  }
+  if (art !== 'object') return { ok: false }
+  const prototyp = Object.getPrototypeOf(wert)
+  if (prototyp !== Object.prototype && prototyp !== null) return { ok: false }
+  const satz = wert as Record<string, unknown>
+  const aus: Record<string, unknown> = {}
+  for (const name of Object.keys(satz).sort()) {
+    const kind = kanonisieren(satz[name])
+    if (!kind.ok) return kind
+    aus[name] = kind.wert
+  }
+  return { ok: true, wert: aus }
+}
+
+function provenienz(support: OfficialTruthRegelReviewSupport): Provenienz | null {
+  const versionId = text(support.versionId)
+  const sourceId = text(support.sourceId)
+  const canonicalUrl = text(support.canonicalUrl)
+  const retrievedAt = text(support.retrievedAt)
+  const sourceContentHash = text(support.sourceContentHash)
+  if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
+  return { versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash }
+}
+
+function provenienzVergleich(links: Provenienz, rechts: Provenienz): number {
+  for (const feld of PROVENIENZ_FELDER) {
+    const unterschied = vergleich(links[feld], rechts[feld])
+    if (unterschied !== 0) return unterschied
+  }
+  return 0
+}
+
+function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly OfficialTruthRegelReviewSupport[]): Identitaet {
+  const ruleScopeKey = text(kandidat.key)
+  if (!ruleScopeKey) return { ok: false, reason: 'invalid_scope' }
+  if (!Array.isArray(kandidat.supportVersionIds) || kandidat.supportVersionIds.length === 0) {
+    return { ok: false, reason: 'invalid_support' }
+  }
+  const supportVersionIds = [...kandidat.supportVersionIds]
+  if (supportVersionIds.some((id) => !text(id))) return { ok: false, reason: 'invalid_support' }
+  supportVersionIds.sort(vergleich)
+
+  const provenienzen: Provenienz[] = []
+  for (const support of supports) {
+    const eintrag = provenienz(support)
+    if (!eintrag) return { ok: false, reason: 'invalid_support' }
+    provenienzen.push(eintrag)
+  }
+  provenienzen.sort(provenienzVergleich)
+  const ids = provenienzen.map((eintrag) => eintrag.versionId)
+  if (ids.length !== supportVersionIds.length || ids.some((id, index) => id !== supportVersionIds[index])) {
+    return { ok: false, reason: 'support_mismatch' }
+  }
+
+  const form = kanonisieren({
+    v: 1,
+    candidate: {
+      scope: kandidat.scope,
+      key: ruleScopeKey,
+      factKind: kandidat.factKind,
+      evidenceQuality: kandidat.evidenceQuality,
+      supportVersionIds,
+      proposal: kandidat.proposal,
+    },
+    supports: provenienzen,
+  })
+  if (!form.ok) return { ok: false, reason: 'invalid_fact' }
+  let kanonisch: string
+  try {
+    kanonisch = JSON.stringify(form.wert)
+  } catch {
+    return { ok: false, reason: 'invalid_fact' }
+  }
+  if (!kanonisch) return { ok: false, reason: 'invalid_fact' }
+  const digest = sha256Hex(kanonisch)
+  if (!HEX64.test(digest)) return { ok: false, reason: 'invalid_fact' }
+  return { ok: true, digest, ruleScopeKey, supportVersionIds }
+}
+
+/**
+ * Bildet die Identität eines Prüfpakets.
+ * Die Eingabe ist dieselbe Hülle wie bei `officialTruthRegelReviewPacket`:
+ * Stützen aus Abrufumschlag, Uhr und Extraktion, plus Faktart,
+ * Evidence-Qualität und Vorschlag. Das Paket wird hier neu erzeugt.
+ * Die kanonische Form enthält nur die Kandidatenzelle und die
+ * Provenienz der Stützen. Der Seitenschnappschuss bleibt draussen.
+ * `sourceContentHash` ist die schon vorhandene Materialidentität.
+ */
+export function officialTruthRegelReviewPacketFingerprint(eingabe: unknown): OfficialTruthRegelReviewFingerprintErgebnis {
+  const ergebnis = officialTruthRegelReviewPacket(eingabe)
+  if (ergebnis.status !== 'rule_review_packet') return ergebnis
+  const gebaut = identitaet(ergebnis.kandidat, ergebnis.supports)
+  if (!gebaut.ok) return sperre(gebaut.reason)
+  return Object.freeze({
+    status: 'rule_review_packet_fingerprint',
+    reviewPacketKey: `${PRAEFIX}${gebaut.digest}`,
+    ruleScopeKey: gebaut.ruleScopeKey,
+    supportVersionIds: Object.freeze(gebaut.supportVersionIds),
+  })
+}
