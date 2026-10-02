@@ -7,7 +7,7 @@ Draft PR: #750
 
 ## R1 correction
 
-Technical-Lead R1 `5394779466` reviewed `dea9ea549550f9e5d381603b42ed65f1c4dd563c` and required CHANGES REQUIRED.
+Technical-Lead R1 `5394784249` reviewed `dea9ea549550f9e5d381603b42ed65f1c4dd563c` and required CHANGES REQUIRED.
 
 That head rewrote deeper historical headings and sentences in `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, and `docs/ACTIVE_WORK_STATUS.md`. The delivery self-review said those deeper sentences were not rewritten and that a full historical rewrite was outside scope. That description did not match the diff. This section replaces it.
 
