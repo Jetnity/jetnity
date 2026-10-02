@@ -68,9 +68,26 @@ During an active Jetnity Technical-Lead workflow, re-read #751 and the selected 
 
 Each re-read uses §2. Read #751 first. Then read only newer unread MATERIAL #748 reports after the last processed marker, plus the reports #751 explicitly references as still open. Do not rescan the full #748 history at these boundaries.
 
-The hourly ChatGPT watch remains a backstop. It is not the canonical handoff mechanism. A missed hour does not replace a missed boundary above.
+The hourly ChatGPT watch remains a backstop. It is not the canonical handoff mechanism. A missed hour does not replace a missed boundary above. The hourly watch is not the writer of #751 unless a separately versioned task explicitly gives it that action authority.
 
 Guardian and Chief of Staff do not emit a #748 report for every git commit. Their trigger is a material event, a material new head, or a material risk. A commit with no material change may produce no #748 report. Absence of a new report after a non-material commit is not a missed handoff. Boundary 3 still requires the §2 re-read. No new #748 comment on that head means no new material report was posted. It does not move older evidence onto the new head.
+
+## 2b. Technical-Lead duty to maintain #751
+
+The active Technical Lead must update #751 in the same workflow after any of these material state changes:
+
+1. posting or changing a Technical-Lead receipt for a MATERIAL #748 report;
+2. confirming, resolving, or reopening a material finding;
+3. merging or post-merge-verifying work that changes the open finding set;
+4. changing the current material writer or work queue;
+5. changing live mode or current `main` when that materially affects Guardian state;
+6. receiving a Product-Owner decision that changes an open Guardian or Chief-of-Staff gate.
+
+The #751 update happens before dispatching the next dependent slice and before a later FINAL PASS that relies on that state.
+
+#751 advances its last processed report id and last processed comment id only to evidence the Technical Lead has actually read and triaged. A comment that has not been read does not become the marker.
+
+If #751 cannot be updated, the workflow fails visibly as `CURRENT_STATE_STALE`. Do not treat the compact index as current in that state. Newer unread MATERIAL #748 reports after the old marker remain the recovery path.
 
 ## 3. Public-repository privacy
 

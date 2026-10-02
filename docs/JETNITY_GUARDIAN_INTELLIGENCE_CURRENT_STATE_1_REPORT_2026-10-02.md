@@ -13,7 +13,7 @@ Session: https://cursor.com/agents/bc-d557a675-e0fc-4955-93cd-e68acd9bb418
 
 ## Status
 
-R1 correction on the same Draft. Technical-Lead R1 `5395542078` on `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` is corrected on this tip. That reviewed head is not the review head. Stopped for independent exact-head re-review.
+R2 correction on the same Draft. Technical-Lead R2 `5395684434` on `607f26d4c9026b178432be1d3d5a4f1684acb66f` is corrected on this tip. That reviewed head is not the review head. `origin/main` remains `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`. Stopped for independent exact-head re-review.
 
 ## Umgesetzt
 
@@ -28,6 +28,8 @@ Technical-Lead R1 `5395542078` required a durable top pointer. The three startup
 The same review authorized the external setup prompt. Its sanitization section now forbids all personal data on the public repository and matches the Current State contract. The earlier mismatch residual is closed. The prompt is still unsent.
 
 Chief of Staff -> #748 is proven for `COS-20261002-2010-001`, comment `5958412971`. Receipt `5958628250` is `PARTIAL`. Guardian direct posting is not proven. The delivery re-read of #748 returned those two comments and no Guardian report.
+
+Technical-Lead R2 `5395684434` adds contract §2b. The active Technical Lead must update #751 in the same workflow after a material receipt, triage, merge, writer, mode, or Product-Owner gate change, and before the next dependent slice or a later FINAL PASS that relies on that state. The last processed marker advances only to evidence actually read and triaged. If #751 cannot be updated, the visible failure is `CURRENT_STATE_STALE`, and newer unread #748 reports after the old marker remain the recovery path. The hourly ChatGPT watch remains a backstop and is not the #751 writer unless a separately versioned task gives it that authority.
 
 Final integration of `main@ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (`Merge #755`). #749 F1 is resolved for the binding server-held live/autonomous entry. Accepted head `057f91ef28be93e27bf283e6e490aa3d7fb5cc94`. #741 remains blocked by F2, F3, F5, F7, F8 and F9. The Technical Lead already updated the #751 body, read at `updated_at` `2026-10-02T18:57:38Z`, and that body remains the live index. Its last processed comment marker is `5959311398`. This slice does not edit #751, does not remediate the remaining findings, and does not modify the #755 runtime files or lane docs. The #748 issue body is still untouched by Cursor.
 
@@ -52,6 +54,7 @@ Recorded on this delivery tree before the delivery commit:
 - Before this clarification commit, PR #754 head `262343cb34f55208baceded145ba6aad2fd941f4` had Auth job `110974184791` **success** and Vercel Preview Comments **success**. Typecheck, Lint & Build job `110974185125` was still in progress. Those runs do not gate the clarification tip.
 - R1 tree, before the R1 commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` only at line 3. The external prompt diff is the sanitization block only. CI on that prior head does not gate this tip.
 - Integration tree, after merging `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` and before the integration docs commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `git rev-list --left-right --count origin/main...HEAD` is 0 behind. The #755 runtime files and lane docs match that main commit. Each startup file differs from the merge commit only at line 3. Exact-head CI for the integration tip exists only after the push and is not claimed here.
+- R2 tree, before the R2 commit, against `607f26d4c9026b178432be1d3d5a4f1684acb66f`: `git diff --check` pass; `npm run check:operating-mode` PASS; `git fetch origin main` still `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`; `git rev-list --left-right --count origin/main...HEAD` is 0 behind and 6 ahead. The working diff is the four Current State lane docs only. Startup pointers, the external prompt, the #755 files, and product runtime are unchanged. Exact-head CI for this tip exists only after the push and is not claimed here.
 
 ## Build
 
@@ -89,15 +92,15 @@ No new recurring cost. No paid call.
 
 ## Offene Punkte
 
-- Independent Technical-Lead exact-head re-review of the tip after R1 `5395542078`. This report is not that review. CI on `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` does not gate this tip.
-- Exact-head CI and Vercel for the R1 tip exist only after the push and are not claimed here.
+- Independent Technical-Lead exact-head re-review of the tip after R2 `5395684434`. This report is not that review. CI on `607f26d4c9026b178432be1d3d5a4f1684acb66f` does not gate this tip.
+- Exact-head CI and Vercel for the R2 tip exist only after the push and are not claimed here.
 - #748 and #751 issue-body alignment remains with the Technical Lead after merge.
 - Guardian direct posting remains unproven.
 - #741 remains open. F1 is resolved for the binding server-held live/autonomous entry by merged #755. F2, F3, F5, F7, F8 and F9 remain. This slice does not start that remediation.
 
 ## Risiken
 
-A new chat that ignores #751 and reads all of #748 still works as audit, and it is no longer the default startup path. If #751 is left stale after a new MATERIAL report, the default read still includes newer unread reports after the last processed comment marker.
+A new chat that ignores #751 and reads all of #748 still works as audit, and it is no longer the default startup path. If #751 cannot be updated after a material state change, the workflow fails visibly as `CURRENT_STATE_STALE`. Newer unread MATERIAL #748 reports after the old marker remain the recovery path.
 
 The external prompt's sanitization section now states the full public-repo privacy rule. Sending it does not by itself prove Guardian direct posting.
 

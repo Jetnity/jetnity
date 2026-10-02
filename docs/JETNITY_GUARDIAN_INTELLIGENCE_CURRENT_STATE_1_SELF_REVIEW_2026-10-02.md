@@ -5,6 +5,14 @@ Reviewer: the same Cursor writer, Generation 1. This is not an independent Techn
 Draft PR: #754
 `originalModelName=grok-4.7-high-fast`. Not Auto.
 
+## R2 correction
+
+Technical-Lead R2 `5395684434` reviewed `607f26d4c9026b178432be1d3d5a4f1684acb66f` and required CHANGES REQUIRED. That head is not the review head.
+
+R2-F1: contract §2b now requires the active Technical Lead to update #751 in the same workflow after a material receipt, finding confirmation or resolution or reopening, a merge that changes the open finding set, a writer or work-queue change, a material mode or `main` change, or a Product-Owner decision that changes an open Guardian or Chief-of-Staff gate. The update precedes the next dependent slice and a later FINAL PASS that relies on that state. The last processed marker advances only to evidence actually read and triaged. Failure to update #751 is the visible state `CURRENT_STATE_STALE`. Newer unread #748 reports after the old marker remain the recovery path. The hourly ChatGPT watch remains a backstop and is not the #751 writer unless a separately versioned task gives it that authority.
+
+`origin/main` at this correction is still `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`. No main integration was required. No startup-pointer, prompt, #755, or product-runtime file changes.
+
 ## Final main integration
 
 `origin/main` `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (`Merge #755`) is merged into this branch. The #755 runtime files and lane docs are unchanged from that main commit. R1 semantics stay: the durable #751 pointer, the event-driven read cadence, the full public-repo privacy rule, and the hardened external prompt.
@@ -46,7 +54,10 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | #748 remains the raw MATERIAL inbox | Contract §1. Comments stay append-only. |
 | New chats read #751, then only referenced or newer unread MATERIAL reports | Contract §2 and the top pointer. |
 | Event-driven re-read at the six Technical-Lead boundaries | Contract §2a and the top pointer. No full #748 rescan. |
-| Hourly ChatGPT watch is a backstop | Contract §2a. It is not the canonical handoff. |
+| Hourly ChatGPT watch is a backstop | Contract §2a. It is not the canonical handoff and it is not the #751 writer unless a separately versioned task gives it that authority. |
+| Technical Lead updates #751 after material state changes | Contract §2b. Same workflow, before the next dependent slice or a later FINAL PASS that relies on that state. |
+| Marker advances only for read and triaged evidence | Contract §2b. |
+| Failure to update #751 is `CURRENT_STATE_STALE` | Contract §2b. Newer unread #748 reports after the old marker remain the recovery path. |
 | No #748 report required for every commit | Contract §2a. Trigger is a material event, a material new head, or a material risk. |
 | Resolved, STALE and SUPERSEDED reports stay out of the default read | Contract §2. |
 | No monthly or quarterly rotation | Contract §1. |
@@ -63,6 +74,15 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | Top pointer only in the three global files | `git diff -U0` hunks are `@@ -3 +3 @@` for each file. |
 | Cursor does not mutate issue bodies | No issue-body write in this slice. |
 | Stay Draft; no Ready, merge, or follow-up | This review does not do those. |
+
+## Local gates on this R2 tree
+
+Run before the R2 commit, against `607f26d4c9026b178432be1d3d5a4f1684acb66f`:
+
+- `git diff --check`: pass.
+- `npm run check:operating-mode`: PASS.
+- `git fetch origin main`: `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`. `git rev-list --left-right --count origin/main...HEAD`: 0 behind, 6 ahead.
+- Working diff: the four Current State lane docs only. No startup-pointer, external-prompt, #755, or product-runtime change. `next-env.d.ts` stays unstaged.
 
 ## Local gates on the integration tree
 
@@ -120,4 +140,4 @@ The #748 issue body still describes the narrower sensitive-payload exclusion. Re
 
 ## Stop
 
-Independent Technical-Lead exact-head review is the next step. This self-review is not that review.
+Independent Technical-Lead exact-head re-review after R2 `5395684434` is the next step. This self-review is not that review.

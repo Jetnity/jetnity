@@ -42,9 +42,13 @@ The three startup files differ from the pre-R1 tip by the durable top pointer on
 
 Later blocks in the three startup files that still say "current" are earlier snapshots. This slice does not retitle them.
 
+## R2 maintenance duty
+
+Technical-Lead R2 `5395684434` on `607f26d4c9026b178432be1d3d5a4f1684acb66f` is corrected on this tip. That reviewed head is not the review head. Contract §2b makes #751 maintenance a binding Technical-Lead duty in the same workflow after a material receipt, triage, merge, writer, mode, or Product-Owner gate change. The update comes before the next dependent slice and before a later FINAL PASS that relies on that state. The last processed marker advances only to evidence actually read and triaged. If #751 cannot be updated, the visible failure is `CURRENT_STATE_STALE`. The hourly ChatGPT watch stays a backstop and is not the #751 writer unless a separately versioned task gives it that authority.
+
 ## Exact next step
 
-Independent Technical-Lead exact-head review of Draft #754. Stay Draft. Cursor does not Ready, merge, mutate #748 or #751 issue bodies, configure an external bot, or start a follow-up.
+Independent Technical-Lead exact-head re-review of Draft #754 after R2. Stay Draft. Cursor does not Ready, merge, mutate #748 or #751 issue bodies, configure an external bot, or start a follow-up.
 
 After merge, the Technical Lead aligns the #748 and #751 issue bodies with this contract if the bodies still lag it. The #748 body still states the narrower sensitive-payload exclusion. The #751 body is already the compact index and still says the pre-this-slice startup pointer needs a refresh. This repository pointer is that refresh. Cursor does not perform the issue-body edit.
 
