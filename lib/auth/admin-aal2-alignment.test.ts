@@ -24,7 +24,10 @@ const MINDESTROLLEN = {
   darf_konten_verwalten: 'moderator',
   darf_inhalte_moderieren: 'moderator',
   darf_konfiguration_verwalten: 'admin',
+  darf_official_truth_freigeben: 'owner',
 } as const
+
+const OFFICIAL_TRUTH_MIGRATION_SUFFIX = '_official_truth_owner_reviewer_capability_1.sql'
 
 const ADMIN_RLS_CONSUMER = [
   { policy: 'profiles_lesen', capability: 'darf_konten_verwalten', selfService: true },
@@ -253,6 +256,14 @@ describe('P1-AAL2-PROD-01 Capability-Matrix', () => {
     { name: 'AAL2 + operator => betrieb-eingreifen true', rolle: 'operator', aal: 'aal2', capability: 'betrieb-eingreifen', erwartet: true },
     { name: 'AAL2 + admin => konfiguration-verwalten true', rolle: 'admin', aal: 'aal2', capability: 'konfiguration-verwalten', erwartet: true },
     { name: 'AAL2 + moderator => konfiguration-verwalten false', rolle: 'moderator', aal: 'aal2', capability: 'konfiguration-verwalten', erwartet: false },
+    { name: 'AAL1 + owner => official-truth-freigeben false', rolle: 'owner', aal: 'aal1', capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'fehlender AAL + owner => official-truth-freigeben false', rolle: 'owner', aal: null, capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'AAL2 + owner => official-truth-freigeben true', rolle: 'owner', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: true },
+    { name: 'AAL2 + admin => official-truth-freigeben false', rolle: 'admin', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'AAL2 + operator => official-truth-freigeben false', rolle: 'operator', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'AAL2 + moderator => official-truth-freigeben false', rolle: 'moderator', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'AAL2 + creator => official-truth-freigeben false', rolle: 'creator', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: false },
+    { name: 'AAL2 + user => official-truth-freigeben false', rolle: 'user', aal: 'aal2', capability: 'official-truth-freigeben', erwartet: false },
   ]
 
   for (const fall of faelle) {
@@ -321,6 +332,38 @@ describe('P1-AAL2-PROD-01 Consumer-Inventur', () => {
   test('Consumer-Self-Service-OR-Zweige bleiben in der Alignment-Migration unangetastet', () => {
     assert.match(sql, /user_id = \(select auth\.uid\(\)\) or public\.darf_konten_verwalten\(\)/)
     assert.equal(/user_id|auth\.uid\(\)/.test(alignment), false)
+  })
+
+  test('Official Truth freigeben ist owner UND AAL2, ohne Fläche und ohne DEFINER', () => {
+    const dateienNamen = dateien().filter(name => name.endsWith(OFFICIAL_TRUTH_MIGRATION_SUFFIX))
+    assert.deepEqual(dateienNamen.length, 1)
+    const datei = dateienNamen[0]
+    const migration = lies(datei)
+    const name = 'darf_official_truth_freigeben'
+    const definition = letzteFunktionsdefinition(sql, name)
+    const koerper = letzterFunktionskoerper(sql, name)
+
+    assert.match(definition, /security invoker/i)
+    assert.equal(/security definer/i.test(definition), false)
+    assert.match(definition, /language sql/i)
+    assert.match(definition, /\bstable\b/i)
+    assert.match(definition, /parallel safe/i)
+    assert.match(definition, /search_path\s*=\s*pg_catalog/)
+    assert.match(koerper, /hat_rolle_mindestens\('owner'\)/)
+    assert.match(koerper, /aktuelles_admin_aal2\(\)/)
+    assert.match(koerper, /and/i)
+    assert.equal(/security definer/i.test(definition), false)
+    assert.equal(/user_metadata|auth\.uid\(\)|break-glass/i.test(koerper), false)
+    assert.equal(/create table|alter table|drop table|create policy|drop policy|alter policy/i.test(migration), false)
+    assert.equal(/create or replace function public\.darf_official_truth_freigeben\([^)]+\)/i.test(migration), false)
+
+    assert.match(migration, /revoke all on function public\.darf_official_truth_freigeben\(\) from public, anon/)
+    const grants = [...migration.matchAll(/grant\s+execute\s+on\s+function\s+public\.darf_official_truth_freigeben\(\)\s+to\s+([^;]+)/gi)]
+    assert.deepEqual(
+      grants.map(treffer => treffer[1].trim()),
+      ['authenticated, service_role'],
+    )
+    assert.equal(/grant\s+(all|execute)[^;]*darf_official_truth_freigeben\(\)[^;]*\b(public|anon|postgres)\b/i.test(migration), false)
   })
 
   test('vier administrative SECURITY-DEFINER-RPCs prüfen intern darf_betrieb_lesen()', () => {

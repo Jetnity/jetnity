@@ -4,14 +4,18 @@ import assert from 'node:assert/strict'
 
 import {
   ACCOUNT_STATUSES,
+  CAPABILITY_MINIMUM,
   ROLES,
   assignableRoles,
+  can,
   canAccessAdminArea,
   canAssignRole,
   canManageUsers,
+  databaseFunctionFor,
   hasAtLeast,
   isAccountStatus,
   isRole,
+  minimumRoleFor,
   parseRole,
   rankOf,
   ROLE_LABELS,
@@ -161,5 +165,24 @@ describe('Rollenvergabe', () => {
     assert.equal(list.includes('operator'), true)
     assert.deepEqual(assignableRoles('user'), [])
     assert.deepEqual(assignableRoles('owner'), [...ROLES])
+  })
+})
+
+describe('Official Truth freigeben', () => {
+  test('die Mindestrolle ist owner und nur der Owner erfüllt sie', () => {
+    assert.equal(minimumRoleFor('official-truth-freigeben'), 'owner')
+    assert.equal(databaseFunctionFor('official-truth-freigeben'), 'darf_official_truth_freigeben')
+    assert.equal(CAPABILITY_MINIMUM['official-truth-freigeben'], 'owner')
+    for (const role of ROLES) {
+      assert.equal(can(role, 'official-truth-freigeben'), role === 'owner', role)
+    }
+  })
+
+  test('bestehende Fähigkeitsstufen bleiben unverändert', () => {
+    assert.equal(CAPABILITY_MINIMUM['betrieb-lesen'], 'moderator')
+    assert.equal(CAPABILITY_MINIMUM['betrieb-eingreifen'], 'operator')
+    assert.equal(CAPABILITY_MINIMUM['konten-verwalten'], 'moderator')
+    assert.equal(CAPABILITY_MINIMUM['inhalte-moderieren'], 'moderator')
+    assert.equal(CAPABILITY_MINIMUM['konfiguration-verwalten'], 'admin')
   })
 })

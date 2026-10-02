@@ -95,6 +95,14 @@ export const CAPABILITY_MINIMUM = {
    * weist sie direkt über `darf_konfiguration_verwalten()` nach.
    */
   'konfiguration-verwalten': 'admin',
+  /**
+   * Official Truth freigeben.
+   *
+   * V1-Mindestrolle ist ausschliesslich `owner`. Die Datenbank verlangt
+   * zusätzlich aktuelles AAL2 über `public.darf_official_truth_freigeben()`.
+   * Break-Glass öffnet keine Datenbankautorität für diese Fähigkeit.
+   */
+  'official-truth-freigeben': 'owner',
 } as const satisfies Record<string, Role>
 
 export type Capability = keyof typeof CAPABILITY_MINIMUM
