@@ -43,8 +43,8 @@ const VORSCHLAG = { kind: 'requirement_effect', effect: 'required', visaMode: 'e
 const GEHEIM = 'personal-secret-91f3'
 const MARKER = 'TRUSTED-MARKER-SHOULD-NOT-ECHO'
 const FREMDE_ID = 'not-in-packet-91f3'
-const NOTIZ = 'primary page states the requirement'
-const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'assessment', 'citedSupportVersionIds', 'reasonCodes', 'reviewNote']
+const FREITEXT = 'Ada Beispiel passport XC-44821 born 1984-03-17'
+const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'assessment', 'citedSupportVersionIds', 'reasonCodes']
 const SCHLUESSEL = /^review-packet:v1:[a-f0-9]{64}$/
 
 const PERSONEN = [
@@ -269,7 +269,6 @@ function vorschlag(teil?: Record<string, unknown>, ids: readonly string[] = []) 
     assessment: 'supports_candidate',
     citedSupportVersionIds: [...ids],
     reasonCodes: ['support_text_matches_candidate'],
-    reviewNote: NOTIZ,
     ...teil,
   }
 }
@@ -307,13 +306,12 @@ describe('Official Truth review suggestion contract', () => {
     assert.equal(ergebnis.ruleScopeKey, paket.kandidat.key)
     assert.deepEqual(ergebnis.citedSupportVersionIds, identitaet.supportVersionIds)
     assert.deepEqual(ergebnis.reasonCodes, ['support_text_matches_candidate'])
-    assert.equal(ergebnis.reviewNote, NOTIZ)
     assert.equal(ergebnis.assessment, 'supports_candidate')
-    ohneStoff(ergebnis, [SNAPSHOT, paket.supports[0]!.canonicalUrl, paket.supports[0]!.sourceContentHash])
+    assert.equal(JSON.stringify(ergebnis).includes('reviewNote'), false)
+    ohneStoff(ergebnis, [SNAPSHOT, paket.supports[0]!.canonicalUrl, paket.supports[0]!.sourceContentHash, FREITEXT])
     assert.equal(JSON.stringify(paketEingabe([stuetze])), vorher)
     assert.equal(requirementsProviderAus(), null)
 
-    const ohneNotiz = offen(hinweis([stuetze], vorschlag({ reviewNote: null }, identitaet.supportVersionIds)))
     const ohneFeld = offen(
       hinweis([stuetze], {
         assessment: 'insufficient_evidence',
@@ -321,10 +319,7 @@ describe('Official Truth review suggestion contract', () => {
         reasonCodes: ['support_insufficient_for_claim'],
       }),
     )
-    assert.equal(ohneNotiz.reviewNote, null)
-    assert.equal(ohneNotiz.reviewPacketKey, identitaet.reviewPacketKey)
     assert.deepEqual(ohneFeld.citedSupportVersionIds, [])
-    assert.equal(ohneFeld.reviewNote, null)
     assert.equal(ohneFeld.assessment, 'insufficient_evidence')
     assert.equal(ohneFeld.reviewPacketKey, identitaet.reviewPacketKey)
     const ohneGrund = offen(
@@ -349,11 +344,9 @@ describe('Official Truth review suggestion contract', () => {
           assessment,
           citedSupportVersionIds: [...identitaet.supportVersionIds],
           reasonCodes: [code, 'support_stale_or_time_unclear'],
-          reviewNote: `  ${NOTIZ}  `,
         }),
       )
       assert.equal(fall.assessment, assessment)
-      assert.equal(fall.reviewNote, NOTIZ)
       assert.deepEqual(fall.reasonCodes, [code, 'support_stale_or_time_unclear'].sort())
       assert.equal(fall.reviewPacketKey, identitaet.reviewPacketKey)
       ohneStoff(fall, [SNAPSHOT])
@@ -366,7 +359,6 @@ describe('Official Truth review suggestion contract', () => {
           assessment: 'insufficient_evidence',
           citedSupportVersionIds: [],
           reasonCodes: ['support_insufficient_for_claim'],
-          reviewNote: null,
         },
         meta({ evidenceQuality: 'research_gap', proposal: null }),
       ),
@@ -392,7 +384,6 @@ describe('Official Truth review suggestion contract', () => {
           assessment: 'needs_human_review',
           citedSupportVersionIds: rueckwaerts,
           reasonCodes: [...gruende].reverse(),
-          reviewNote: NOTIZ,
         },
         metadata,
       ),
@@ -467,13 +458,11 @@ describe('Official Truth review suggestion contract', () => {
         packetInput: paketEingabe([stuetze]),
         suggestion: { ...basis, [feld]: GEHEIM },
       })
-      const inDerNotiz = hinweis([stuetze], vorschlag({ reviewNote: `see ${feld} later` }, identitaet.supportVersionIds))
       const imPaket = officialTruthRegelReviewVorschlag({
         packetInput: paketEingabe([stuetze], meta({ [feld]: GEHEIM })),
         suggestion: basis,
       })
       const imUmschlag = hinweis([buendel(huelle({ extra: { [feld]: GEHEIM } }))], basis)
-      assert.deepEqual(inDerNotiz, { status: 'blocked', reason: 'invalid_review_note' }, feld)
       for (const ergebnis of [imVorschlag, imPaket, imUmschlag]) {
         assert.equal(ergebnis.status, 'blocked', feld)
         const text = JSON.stringify(ergebnis)
@@ -490,19 +479,42 @@ describe('Official Truth review suggestion contract', () => {
     assert.deepEqual(verschachtelt, { status: 'blocked', reason: 'personal_identifier_forbidden' })
     assert.equal(JSON.stringify(verschachtelt).includes(GEHEIM), false)
     assert.equal(JSON.stringify(verschachtelt).includes('passportNumber'), false)
+  })
 
-    const geheim = 'sk-live-should-not-echo'
-    const notiz = hinweis([stuetze], vorschlag({ reviewNote: `prefix ${geheim} suffix` }, identitaet.supportVersionIds))
-    assert.deepEqual(notiz, { status: 'blocked', reason: 'invalid_review_note' })
-    assert.equal(JSON.stringify(notiz).includes(geheim), false)
-    const lang = 'a'.repeat(501)
-    const zuLang = hinweis([stuetze], vorschlag({ reviewNote: lang }, identitaet.supportVersionIds))
-    assert.deepEqual(zuLang, { status: 'blocked', reason: 'invalid_review_note' })
-    assert.equal(JSON.stringify(zuLang).includes('aaa'), false)
-    const grenze = offen(hinweis([stuetze], vorschlag({ reviewNote: 'a'.repeat(500) }, identitaet.supportVersionIds)))
-    assert.equal(grenze.reviewNote?.length, 500)
-    const leer = hinweis([stuetze], vorschlag({ reviewNote: '   ' }, identitaet.supportVersionIds))
-    assert.deepEqual(leer, { status: 'blocked', reason: 'invalid_review_note' })
+  test('Freitext bleibt draussen, auch wenn er persönlich aussieht', () => {
+    const stuetze = buendel()
+    const identitaet = finger([stuetze])
+    const basis = vorschlag({}, identitaet.supportVersionIds)
+    const felder = ['reviewNote', 'summary', 'explanation', 'message', 'annotation', 'comment', 'note', 'freeText'] as const
+    for (const feld of felder) {
+      const ergebnis = hinweis([stuetze], { ...basis, [feld]: FREITEXT })
+      assert.equal(ergebnis.status, 'blocked', feld)
+      const text = JSON.stringify(ergebnis)
+      assert.equal(text.includes(FREITEXT), false, feld)
+      assert.equal(text.includes('XC-44821'), false, feld)
+      assert.equal(text.includes('Ada Beispiel'), false, feld)
+      assert.equal(text.includes('1984-03-17'), false, feld)
+      assert.equal(text.includes('review_suggestion'), false, feld)
+      assert.equal(text.includes(identitaet.reviewPacketKey), false, feld)
+      assert.equal(text.includes('reviewNote'), false, feld)
+    }
+    const leer = hinweis([stuetze], { ...basis, reviewNote: null })
+    const imGrund = hinweis([stuetze], vorschlag({ reasonCodes: [FREITEXT] }, identitaet.supportVersionIds))
+    const imZitat = hinweis([stuetze], vorschlag({ citedSupportVersionIds: [FREITEXT] }))
+    const alsBewertung = hinweis([stuetze], vorschlag({ assessment: FREITEXT }, identitaet.supportVersionIds))
+    for (const ergebnis of [leer, imGrund, imZitat, alsBewertung]) {
+      assert.equal(ergebnis.status, 'blocked')
+      const text = JSON.stringify(ergebnis)
+      assert.equal(text.includes(FREITEXT), false)
+      assert.equal(text.includes('XC-44821'), false)
+      assert.equal(text.includes('review_suggestion'), false)
+      assert.equal(text.includes(identitaet.reviewPacketKey), false)
+    }
+    assert.deepEqual(leer, { status: 'blocked', reason: 'unexpected_fields' })
+    assert.deepEqual(hinweis([stuetze], { ...basis, reviewNote: FREITEXT }), { status: 'blocked', reason: 'unexpected_fields' })
+    assert.deepEqual(imGrund, { status: 'blocked', reason: 'invalid_reason_code' })
+    assert.deepEqual(imZitat, { status: 'blocked', reason: 'citation_not_in_packet' })
+    assert.deepEqual(alsBewertung, { status: 'blocked', reason: 'invalid_assessment' })
   })
 
   test('mitgeliefertes Paket, Identität, Wahrheitsfakt und Stützlisten scheitern', () => {
@@ -607,7 +619,6 @@ describe('Official Truth review suggestion contract', () => {
       assessment: 'needs_human_review',
       citedSupportVersionIds: cited,
       reasonCodes: codes,
-      reviewNote: `  ${NOTIZ}  `,
     })
     const packetInput = paketEingabe([stuetze])
     const eingabe = { packetInput, suggestion }
@@ -617,7 +628,7 @@ describe('Official Truth review suggestion contract', () => {
     assert.deepEqual(cited, [...identitaet.supportVersionIds].reverse())
     assert.deepEqual(ergebnis.citedSupportVersionIds, identitaet.supportVersionIds)
     assert.deepEqual([...codes], ['support_sources_conflict', 'proposal_requires_human_judgment'])
-    assert.equal(ergebnis.reviewNote, NOTIZ)
+    assert.equal(JSON.stringify(ergebnis).includes('reviewNote'), false)
   })
 
   test('der Hinweis ruft nur das Prüfpaket und seine Identität auf', () => {
@@ -630,6 +641,7 @@ describe('Official Truth review suggestion contract', () => {
     assert.match(text, /officialTruthRegelReviewPacket\(/)
     assert.match(text, /officialTruthRegelReviewPacketFingerprint\(/)
     assert.match(text, /packet_fingerprint_mismatch/)
+    assert.doesNotMatch(text, /reviewNote|invalid_review_note/)
     assert.doesNotMatch(text, /regelKandidatAkzeptieren|regelKandidatErstellen|trustedRuleFact/)
     assert.doesNotMatch(text, /officialTruthAkzeptierteEvidenceAusAbruf|officialTruthRegelKandidatAusEvidence|officialTruthAbgerufenMaterialPruefen/)
     assert.doesNotMatch(text, /official_truth_store_accepted_v1|official_truth_source_catalog_v1/)

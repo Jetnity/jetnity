@@ -13,10 +13,8 @@ import {
 import { officialTruthRegelReviewPacketFingerprint } from '@/lib/readiness/official-truth-rule-review-fingerprint'
 
 const TIEFE_MAX = 16
-const NOTIZ_MAX = 500
 const EINGABE_FELDER = ['packetInput', 'suggestion'] as const
-const VORSCHLAG_PFLICHT = ['assessment', 'citedSupportVersionIds', 'reasonCodes'] as const
-const VORSCHLAG_OPTIONAL = ['reviewNote'] as const
+const VORSCHLAG_FELDER = ['assessment', 'citedSupportVersionIds', 'reasonCodes'] as const
 
 /**
  * Dieselbe Kennungsmenge wie im Prüfpaket. Jene Menge ist modulprivat.
@@ -62,7 +60,6 @@ const PERSONEN_SCHLUESSEL = [
 ] as const
 
 const PERSONEN_MENGE = new Set<string>(PERSONEN_SCHLUESSEL)
-const PERSONEN_IM_TEXT = new RegExp(`\\b(?:${PERSONEN_SCHLUESSEL.join('|')})\\b`, 'i')
 
 const BEWERTUNGEN = [
   'supports_candidate',
@@ -84,14 +81,6 @@ const GRUENDE = [
 const BEWERTUNG_MENGE = new Set<string>(BEWERTUNGEN)
 const GRUND_MENGE = new Set<string>(GRUENDE)
 
-const GEHEIM_MUSTER = [
-  /sk-[A-Za-z0-9]/,
-  /-----BEGIN [A-Z0-9 ]+-----/,
-  /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/,
-  /(?:api[_-]?key|password|secret|token|credential)\s*[:=]/i,
-  /\bbearer\s+[A-Za-z0-9._~+/-]{8,}/i,
-] as const
-
 export type OfficialTruthRegelReviewBewertung = (typeof BEWERTUNGEN)[number]
 export type OfficialTruthRegelReviewGrund = (typeof GRUENDE)[number]
 
@@ -102,7 +91,6 @@ export type OfficialTruthRegelReviewVorschlagSperrgrund =
   | 'duplicate_reason_code'
   | 'duplicate_citation'
   | 'citation_not_in_packet'
-  | 'invalid_review_note'
   | 'packet_fingerprint_mismatch'
 
 /**
@@ -117,7 +105,6 @@ export type OfficialTruthRegelReviewVorschlagErgebnis =
       readonly assessment: OfficialTruthRegelReviewBewertung
       readonly citedSupportVersionIds: readonly string[]
       readonly reasonCodes: readonly OfficialTruthRegelReviewGrund[]
-      readonly reviewNote: string | null
     }
   | { readonly status: 'blocked'; readonly reason: OfficialTruthRegelReviewVorschlagSperrgrund }
 
@@ -194,16 +181,6 @@ function eindeutigeTexte(
   return { ok: true, werte }
 }
 
-function notiz(wert: unknown): { ok: true; text: string | null } | { ok: false } {
-  if (wert === null) return { ok: true, text: null }
-  if (typeof wert !== 'string' || wert.length > NOTIZ_MAX) return { ok: false }
-  const text = wert.trim()
-  if (text.length === 0 || text.length > NOTIZ_MAX) return { ok: false }
-  if (PERSONEN_IM_TEXT.test(text)) return { ok: false }
-  if (GEHEIM_MUSTER.some((muster) => muster.test(text))) return { ok: false }
-  return { ok: true, text }
-}
-
 function gleicheIds(links: readonly string[], rechts: readonly string[]): boolean {
   return links.length === rechts.length && links.every((id, index) => id === rechts[index])
 }
@@ -211,8 +188,7 @@ function gleicheIds(links: readonly string[], rechts: readonly string[]): boolea
 /**
  * Prüft einen Hinweisvorschlag gegen ein neu belegtes Prüfpaket.
  * `packetInput` ist die ursprüngliche Eingabe von #723. `suggestion` trägt
- * nur Bewertung, zitierte Stütz-IDs, Grundcodes und optional eine Notiz.
- * Die Notiz wird gekürzt und begrenzt. Sie wird kein Fakt.
+ * nur Bewertung, zitierte Stütz-IDs und Grundcodes. Freitext ist kein Feld.
  */
 export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTruthRegelReviewVorschlagErgebnis {
   const satz = datensatz(eingabe)
@@ -241,7 +217,7 @@ export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTru
 
   const vorschlag = datensatz(satz.suggestion)
   if (!vorschlag) return sperre('unexpected_fields')
-  if (!schluesselPassen(vorschlag, VORSCHLAG_PFLICHT, VORSCHLAG_OPTIONAL)) return sperre('unexpected_fields')
+  if (!schluesselPassen(vorschlag, VORSCHLAG_FELDER, [])) return sperre('unexpected_fields')
 
   const assessment = bewertung(vorschlag.assessment)
   if (!assessment) return sperre('invalid_assessment')
@@ -260,9 +236,6 @@ export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTru
   const erlaubt = new Set(finger.supportVersionIds)
   if (zitate.werte.some((id) => !erlaubt.has(id))) return sperre('citation_not_in_packet')
 
-  const review = Object.hasOwn(vorschlag, 'reviewNote') ? notiz(vorschlag.reviewNote) : { ok: true as const, text: null }
-  if (!review.ok) return sperre('invalid_review_note')
-
   return Object.freeze({
     status: 'review_suggestion',
     reviewPacketKey: finger.reviewPacketKey,
@@ -270,6 +243,5 @@ export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTru
     assessment,
     citedSupportVersionIds: Object.freeze([...zitate.werte].sort(vergleich)),
     reasonCodes: Object.freeze([...gruende.werte].sort(vergleich)) as readonly OfficialTruthRegelReviewGrund[],
-    reviewNote: review.text,
   })
 }
