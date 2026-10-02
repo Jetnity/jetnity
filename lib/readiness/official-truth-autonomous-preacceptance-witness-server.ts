@@ -252,7 +252,7 @@ export async function decideOfficialTruthAutonomousPreacceptanceWitness(
 
   let reproof: OfficialTruthServerHeldReviewReproofErgebnis
   try {
-    reproof = await officialTruthServerHeldReviewReproof(eingabe, abhaengigkeiten.catalog)
+    reproof = await officialTruthServerHeldReviewReproof(eingabe, abhaengigkeiten.catalog, () => new Date(zeit))
   } catch {
     return blockiert('catalog_failed')
   }

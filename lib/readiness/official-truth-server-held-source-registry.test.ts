@@ -633,7 +633,7 @@ describe('Official Truth server-held source registry', () => {
     )
     const vorschlag = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
     const eingabe = { supports: [erste, zweite], metadata: vorschlag }
-    const live = await officialTruthServerHeldReviewReproof(eingabe, { transport: katalog.transport })
+    const live = await officialTruthServerHeldReviewReproof(eingabe, { transport: katalog.transport }, () => new Date(UHR))
     assert.equal(live.status, 'server_held_review_reproof')
     if (live.status !== 'server_held_review_reproof') return
     assert.match(live.reviewPacketKey, /^review-packet:v2:[a-f0-9]{64}$/)
@@ -670,5 +670,59 @@ describe('Official Truth server-held source registry', () => {
     assert.equal(text.includes('interior page'), false)
     assert.equal(text.includes('real-government.example'), false)
     assert.equal(text.includes('blockedDomains'), false)
+  })
+
+  test('die Neubewertung führt die Aufruferuhr nicht aus', async () => {
+    let aufrufe = 0
+    const aufruferUhr = () => {
+      aufrufe += 1
+      return new Date('2099-01-01T00:00:00.000Z')
+    }
+    const basis = registry(realeEingaben())
+    const coverage = abdeckung()
+    const buendelMitUhr = {
+      ...buendel(aufrufer({ descriptors: [deskriptor(basis, REAL, coverage)] })),
+      uhr: aufruferUhr,
+    }
+    const katalog = transportFuer(realeEingaben())
+    const ohneServeruhr = await officialTruthServerHeldReviewReproof(
+      { supports: [buendelMitUhr], metadata: meta() },
+      { transport: katalog.transport },
+    )
+    assert.deepEqual(ohneServeruhr, { status: 'blocked', reason: 'invalid_reference_time' })
+    assert.equal(aufrufe, 0)
+    assert.deepEqual(katalog.aufrufe, [])
+
+    const zukunft = transportFuer(realeEingaben())
+    const kuenftigerAbruf = await officialTruthServerHeldReviewReproof(
+      {
+        supports: [
+          {
+            umschlag: aufrufer({
+              descriptors: [deskriptor(basis, REAL, coverage)],
+              material: { retrievedAt: '2026-10-02T00:00:00.000Z' },
+            }),
+            uhr: aufruferUhr,
+            extraktion: null,
+          },
+        ],
+        metadata: meta(),
+      },
+      { transport: zukunft.transport },
+      () => new Date(UHR),
+    )
+    assert.deepEqual(kuenftigerAbruf, { status: 'blocked', reason: 'retrieved_at_in_future' })
+    assert.equal(aufrufe, 0)
+    assert.deepEqual(zukunft.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
+
+    const unabhaengig = transportFuer(realeEingaben())
+    const trotzFrueherUhr = await officialTruthServerHeldReviewReproof(
+      { supports: [buendelMitUhr], metadata: meta() },
+      { transport: unabhaengig.transport },
+      () => new Date(UHR),
+    )
+    assert.equal(trotzFrueherUhr.status, 'server_held_review_reproof')
+    assert.equal(aufrufe, 0)
+    assert.deepEqual(unabhaengig.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
   })
 })

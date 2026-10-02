@@ -644,13 +644,16 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
 
     const katalogVorwaerts = transportFuer(realeEingaben())
     const katalogRueckwaerts = transportFuer(realeEingaben())
+    const serverUhr = () => new Date(JETZT)
     const vorwaerts = await officialTruthServerHeldReviewReproof(
       { supports: [erste, zweite], metadata },
       { transport: katalogVorwaerts.transport },
+      serverUhr,
     )
     const rueckwaerts = await officialTruthServerHeldReviewReproof(
       { supports: [zweite, erste], metadata },
       { transport: katalogRueckwaerts.transport },
+      serverUhr,
     )
     assert.equal(vorwaerts.status, 'server_held_review_reproof')
     assert.equal(rueckwaerts.status, 'server_held_review_reproof')
@@ -674,5 +677,61 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     assert.deepEqual([...zeuge.ergebnis.supportVersionIds], [...vorwaerts.supportVersionIds])
     assert.equal(zeuge.ergebnis.freshness, 'current')
     assert.equal(zeuge.ergebnis.serverReferenceTime, JETZT)
+  })
+
+  test('eine Aufruferuhr macht einen zukünftigen Abruf nicht aktuell', async () => {
+    let aufrufe = 0
+    const zukunftsUhr = () => {
+      aufrufe += 1
+      return new Date('2099-01-01T00:00:00.000Z')
+    }
+    const basis = registry(realeEingaben())
+    const gebiet = coverage()
+    const { ergebnis, katalog } = await entscheiden({
+      supports: [
+        {
+          umschlag: aufrufer({
+            descriptors: [deskriptor(basis, REAL, gebiet)],
+            material: { retrievedAt: '2026-10-02T00:00:00.000Z' },
+          }),
+          uhr: zukunftsUhr,
+          extraktion: null,
+        },
+      ],
+      metadata: meta(),
+    })
+    assert.equal(ergebnis.status, 'blocked')
+    if (ergebnis.status !== 'blocked') return
+    assert.equal(ergebnis.reason, 'retrieved_at_in_future')
+    assert.equal(aufrufe, 0)
+    assert.equal(katalog, 1)
+    assert.equal(JSON.stringify(ergebnis).includes('2099-01-01'), false)
+  })
+
+  test('die Aufruferuhr beeinflusst den autonomen Zeugen nicht', async () => {
+    let aufrufe = 0
+    const frueheUhr = () => {
+      aufrufe += 1
+      throw new Error('caller clock must not run')
+    }
+    const basis = registry(realeEingaben())
+    const gebiet = coverage()
+    const { ergebnis, katalog } = await entscheiden({
+      supports: [
+        {
+          umschlag: aufrufer({ descriptors: [deskriptor(basis, REAL, gebiet)] }),
+          uhr: frueheUhr,
+          extraktion: null,
+        },
+      ],
+      metadata: meta(),
+    })
+    assert.equal(ergebnis.status, 'authorized_preacceptance_witness')
+    if (ergebnis.status !== 'authorized_preacceptance_witness') return
+    assert.equal(ergebnis.serverReferenceTime, JETZT)
+    assert.equal(ergebnis.freshness, 'current')
+    assert.equal(aufrufe, 0)
+    assert.equal(katalog, 1)
+    assert.equal(JSON.stringify(ergebnis).includes('caller clock'), false)
   })
 })

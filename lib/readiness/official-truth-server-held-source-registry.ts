@@ -94,6 +94,8 @@ export type OfficialTruthServerHeldReviewReproofSupport = {
 /**
  * Eine Kataloglesung, dann #723 und #726 v2 auf derselben rekonstruierten
  * Eingabe. Der Rückgabewert enthält keine Registry.
+ * `invalid_reference_time` heisst: die servereigene Prüfuhr fehlt oder ist ungültig.
+ * Die Aufruferuhr ist dann keine Ersatzuhr.
  */
 export type OfficialTruthServerHeldReviewReproofErgebnis =
   | {
@@ -105,7 +107,12 @@ export type OfficialTruthServerHeldReviewReproofErgebnis =
       readonly supportVersionIds: readonly string[]
       readonly supports: readonly OfficialTruthServerHeldReviewReproofSupport[]
     }
-  | Extract<OfficialTruthServerHeldReviewErgebnis, { status: 'blocked' }>
+  | {
+      readonly status: 'blocked'
+      readonly reason:
+        | Extract<OfficialTruthServerHeldReviewErgebnis, { status: 'blocked' }>['reason']
+        | 'invalid_reference_time'
+    }
 
 export type OfficialTruthServerHeldRegelErgebnis =
   | Extract<RegelKandidatErgebnis, { ok: true }>
@@ -308,25 +315,48 @@ function reproofStuetze(
 }
 
 /**
+ * Prüfuhr nur aus dem servereigenen Instant. Die Funktion des Aufrufers
+ * wird nicht gelesen und nicht ausgeführt. Ein ungültiger Instant scheitert
+ * vor dem Katalog.
+ */
+function serverPruefuhr(uhr: unknown): (() => Date) | null {
+  if (typeof uhr !== 'function') return null
+  let instant: unknown
+  try {
+    instant = uhr()
+  } catch {
+    return null
+  }
+  if (!(instant instanceof Date)) return null
+  const ms = instant.getTime()
+  if (!Number.isFinite(ms)) return null
+  return () => new Date(ms)
+}
+
+/**
  * Belegt Paket und v2-Fingerabdruck aus einer Kataloglesung.
- * Die servergehaltene Registry wird in jede Stütze eingesetzt. Beide
- * Prüfungen sehen danach dasselbe rekonstruierte Objekt. Zelle und
- * Stütz-IDs müssen übereinstimmen. Die Identität ist reihenfolgeunabhängig,
- * wie der v2-Fingerabdruck. Die Registry verlässt diese Funktion
- * nicht. Das ist kein Zeuge und keine Annahme.
+ * Die servergehaltene Registry wird in jede Stütze eingesetzt. Die Prüfuhr
+ * ist der übergebene servereigene Instant, nicht `bund.uhr`. Beide Prüfungen
+ * sehen danach dasselbe rekonstruierte Objekt. Zelle und Stütz-IDs müssen
+ * übereinstimmen. Die Identität ist reihenfolgeunabhängig, wie der
+ * v2-Fingerabdruck. Die Registry verlässt diese Funktion nicht. Das ist
+ * kein Zeuge und keine Annahme.
  */
 export async function officialTruthServerHeldReviewReproof(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
+  serverUhr?: () => Date,
 ): Promise<OfficialTruthServerHeldReviewReproofErgebnis> {
   const gelesen = reviewLesen(eingabe)
   if (!gelesen.ok) return blockiert(gelesen.reason)
+  const pruefuhr = serverPruefuhr(serverUhr)
+  if (!pruefuhr) return blockiert('invalid_reference_time')
   const katalog = await registryLaden(abhaengigkeiten)
   if (!katalog.ok) return blockiert(katalog.reason)
   const rekonstruiert = {
     supports: gelesen.supports.map((bund) => ({
       umschlag: umschlagMitRegistry(datensatz(bund.umschlag) as Record<string, unknown>, katalog.registry),
-      uhr: bund.uhr,
+      uhr: pruefuhr,
       extraktion: bund.extraktion,
     })),
     metadata: gelesen.metadata,
