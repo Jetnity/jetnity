@@ -7,7 +7,18 @@ Branch: `docs/post-official-truth-chain-continuity-1`
 Session: https://cursor.com/agents/bc-8c2330bb-3ff0-4ed1-afc4-7596d9814927
 `originalModelName`: `grok-4.7-high-fast`
 
-Logical agent **Jetnity post Official Truth chain continuity reconciliation 1**, Generation 1, is complete for this delivery. Do not restart it to implement a product slice. Do not continue Draft #726 from this session.
+Logical agent **Jetnity post Official Truth chain continuity reconciliation 1**, Generation 1, is complete for this delivery. Do not restart it to implement a product slice. Do not continue #726 from this session. #726 later merged. The R1 block below is the current pointer.
+
+## R1 current truth
+
+Technical-Lead R1 `5390511598` on `8b39e6638d7146d279bc776f96955b79e2527fe0` is `COMMENTED` and its body names CHANGES REQUIRED. That head is not the review head. The sections below this block that call #726 an open Draft, and that leave `JETNITY_HANDOFF.md` outside the allowlist, are the pre-R1 delivery snapshot. They were true before this correction. They are not the current pointer. Live evidence wins.
+
+- Current `main` at the pre-commit R1 re-read: `8aeed0e576a98de9b1a00644acc11a36e70e1851`. Re-fetch before treating a later SHA as current. That SHA is `Merge #726: fingerprint Official Truth Rule review packets`. This correction integrates it and stays 0 behind. The earlier pin `146664ac006fc0e79ecbb4d3f77f29cc25c861cf` is Merge #723 and is not current `main`.
+- #726 is **MERGED**. Accepted head `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`. Technical-Lead FINAL PASS review `5390504658` is `COMMENTED`; the review body names FINAL PASS on that head. Issue #724 is **CLOSED / COMPLETED**. `officialTruthRegelReviewPacketFingerprint` identifies review material only. It does not mint Rule truth and it does not accept a Rule Claim. The merge did not activate a model, a network call, a database write, or a provider.
+- Post-merge CI `36992642993` on that SHA is **SUCCESS**. Auth job `110792162779` **SUCCESS**. Typecheck, Lint & Build job `110792162380` **SUCCESS**. Those jobs gate `main`, not this branch tip. Vercel commit status **success**, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/7ZJFBq5sfUUXcLHSRCgJuc6PhVpw`. GitHub deployment `6805899006` environment `Production`, status **success**, `production_environment` false. Public `https://jetnity.com/` returned `data-dpl-id="dpl_7ZJFBq5sfUUXcLHSRCgJuc6PhVpw"`, H1 **Deine ganze Reise. Intelligent an einem Ort.**, meta robots `noindex, nofollow`. Public `robots.txt` remains `Disallow: /`. `aliasError` was not re-read. This public read is not a launch PASS.
+- The chain through #723 remains merged. #719 remains **CLOSED / SUPERSEDED / UNMERGED**. The OpenAI Developers plugin remains installed and enabled and still cannot mint Official Truth or authorize a key, secret, paid call, live call, or cost. `requirementsProviderAus()` remains `null`. No provider is selected or activated. #626, #395, #585, #294 and #440 are unchanged: latest comments `5908548520`, `5908413693`, `5874769319`, `5937384129` and `5913367968`.
+- R1-F2 updates only the current top block of `JETNITY_HANDOFF.md` so it matches `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md`. Historical sections below that block stay intact.
+- Draft #727 remains the bounded writer for this branch. It is not current `main`. Cursor does not Ready or merge and does not start a follow-up slice.
 
 ## Read this first
 
@@ -16,9 +27,11 @@ Logical agent **Jetnity post Official Truth chain continuity reconciliation 1**,
 3. `docs/POST_OFFICIAL_TRUTH_CHAIN_CONTINUITY_1_SELF_REVIEW_2026-10-02.md`.
 4. Re-fetch live `main`, open PRs, open issues, the latest #626 / #395 / #294 / #585 / #440 comments, Actions and Vercel.
 
-If `main` has moved past `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`, live evidence wins.
+If `main` has moved past `8aeed0e576a98de9b1a00644acc11a36e70e1851`, live evidence wins. The R1 block above is the current pointer.
 
-## Current truth for a new chat
+## Pre-R1 delivery snapshot — superseded as the current pointer
+
+The bullets in this section were the current truth before R1. #726 was then an open Draft. That is no longer the current pointer.
 
 - Machine mode: `NORMAL`.
 - Current `main` at the pre-edit fetch: `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`. Re-fetch before treating it as current. That SHA is `Merge #723: build Official Truth Rule review packets`.
@@ -55,9 +68,9 @@ The review head is the branch tip. Do not review the task seed. Re-fetch `main` 
 
 Post-merge CI `36990191420` gates `main`, not this branch. The task-seed Preview is not a review gate. No runtime acceptance is claimed from a Preview.
 
-## #726 / #727 at the pre-push re-read
+## #726 / #727 at the pre-R1 push re-read — historical
 
-`origin/main` was still `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`. Do not invent a later completion.
+This table is the observation before #726 merged. It is not the current pointer. The R1 block at the top records the later merge. `origin/main` was still `146664ac006fc0e79ecbb4d3f77f29cc25c861cf` at that earlier read. Do not invent a later completion from this table.
 
 | Item | Value at the pre-push re-read |
 | --- | --- |

@@ -12,7 +12,9 @@ Logical agent: **Jetnity post Official Truth chain continuity reconciliation 1**
 Session: https://cursor.com/agents/bc-8c2330bb-3ff0-4ed1-afc4-7596d9814927
 `originalModelName`: `grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. Recorded from this run before editing.
 
-Status: **DOCS CONTINUITY DELIVERED / DRAFT / NO TL PASS / NO READY / NO MERGE**
+Status: **R1 CORRECTION / DOCS CONTINUITY / DRAFT / NO TL PASS / NO READY / NO MERGE**
+
+The sections below through section 8 are the pre-R1 delivery record. Section 9 is the current R1 pointer. Where they disagree, section 9 wins. Live evidence wins over both.
 
 ## 1. What this report is
 
@@ -128,9 +130,9 @@ Against `origin/main` `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`, after the deli
 
 No other path is intended.
 
-## 7. Final pre-push re-read
+## 7. Pre-R1 final re-read — historical
 
-Re-fetched `origin/main` immediately before the delivery commit. It is still `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`. This branch is 0 behind and 1 ahead. The ahead commit is still the task seed.
+This section is the observation before #726 merged. It is not the current pointer. Section 9 supersedes it. Re-fetched `origin/main` immediately before the first delivery commit. It was then still `146664ac006fc0e79ecbb4d3f77f29cc25c861cf`. This branch was 0 behind and 1 ahead. The ahead commit was the task seed.
 
 | Item | Then-current state |
 | --- | --- |
@@ -139,4 +141,32 @@ Re-fetched `origin/main` immediately before the delivery commit. It is still `14
 
 ## 8. Residual the Technical Lead should see
 
-`JETNITY_HANDOFF.md` is named by `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md` as a durable global pointer, and its top block is now false: it still says Draft #671 is the current writer, and #671 is merged. This task's update list does not include that file. This writer did not expand the allowlist. A same-session review fix can refresh only the top block of `JETNITY_HANDOFF.md` if the Technical Lead wants that file current inside this Draft.
+At the pre-R1 delivery, `JETNITY_HANDOFF.md` still opened on Draft #671, and the binding task's update list did not include that file. That residual was true then. R1 `5390511598` permits the current top block only. Section 9 records the correction. The sentences above this section that call #726 an open Draft were true at the pre-R1 re-read. They are not the current pointer.
+
+## 9. R1 correction — current pointer
+
+Technical-Lead R1 `5390511598` on `8b39e6638d7146d279bc776f96955b79e2527fe0` is `COMMENTED` and its body names CHANGES REQUIRED. That head is not the review head.
+
+Re-read immediately before this R1 commit, after `git fetch origin main`:
+
+| Fact | Result |
+| --- | --- |
+| `origin/main` | `8aeed0e576a98de9b1a00644acc11a36e70e1851` — `Merge #726: fingerprint Official Truth Rule review packets` |
+| Ahead / behind before this R1 commit | 0 behind. The local merge of that SHA is already on this branch. |
+| #726 | **MERGED** `2026-10-02T09:56:16Z`. Accepted head `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`. Merge is current `main`. FINAL PASS review `5390504658` is `COMMENTED`; the body names FINAL PASS on that head. |
+| #724 | **CLOSED / COMPLETED** `2026-10-02T09:56:17Z`. |
+| Fingerprint | `officialTruthRegelReviewPacketFingerprint` identifies review material only. It does not mint Rule truth and it does not accept a Rule Claim. No model, network, database, or provider activation. |
+| Post-merge CI `36992642993` | **SUCCESS** on current `main`. Auth job `110792162779` **SUCCESS**. Typecheck, Lint & Build job `110792162380` **SUCCESS**. These jobs gate `main`, not this branch tip. |
+| Vercel / public site | Commit status **success**, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/7ZJFBq5sfUUXcLHSRCgJuc6PhVpw`. Deployment `6805899006`, environment `Production`, status success, `production_environment` false. Public `data-dpl-id="dpl_7ZJFBq5sfUUXcLHSRCgJuc6PhVpw"`, H1 **Deine ganze Reise. Intelligent an einem Ort.**, `noindex, nofollow`. `robots.txt` `Disallow: /`. `aliasError` not re-read. Not a launch PASS. |
+| #727 | OPEN Draft. Not merged. |
+| #719 | Still **CLOSED / SUPERSEDED / UNMERGED**. Published head `41f24c265d04cd8d56e5a5ff7f1955f4b2969242` must never be merged. |
+| Open issues | #725, #626, #585, #440, #395, #294, #236, #20. Latest comments unchanged: `5908548520`, `5874769319`, `5913367968`, `5908413693`, `5937384129`. #724 is closed. |
+| Open PRs | #727 and historical #52, #50, #40, #39, #28. #726 is not open. |
+| `JETNITY_HANDOFF.md` | Only the current top block is updated to this same truth. The post-premium section is relabeled historical. Its body paragraphs stay intact. Live evidence wins over older sections. |
+| Unchanged gates | Plugin installed and enabled; no key, secret, paid call, live call, or cost authorization. `requirementsProviderAus()` remains `null`. No provider selected. Prelaunch/`noindex` remains. |
+
+Intended paths against current `main` after this R1 commit: the six files from section 6, plus `JETNITY_HANDOFF.md`. No runtime, database, Auth, provider, Production, indexing, or package path.
+
+R1 local gates, rerun before this commit: `git diff --check` pass; `check:operating-mode` PASS; typecheck pass; lint 0 errors and 148 pre-existing warnings; `npm test` 4381 pass / 0 fail across 756 suites; `check:api-schutz`, `check:schema-bezug`, `check:dead`, `check:exports`, `check:deps` and the production build pass. The same three LOCAL/UNAPPLIED RPCs remain. No remote database was contacted. `auth:pruefen` was not run locally. Exact-head GitHub CI, Auth and Vercel for the new branch tip exist only after the push. This report does not paste those future run ids into the review head.
+
+STOP for independent Technical-Lead review. Cursor does not Ready or merge and does not start a follow-up slice.

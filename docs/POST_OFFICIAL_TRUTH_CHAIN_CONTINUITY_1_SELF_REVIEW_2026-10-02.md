@@ -27,7 +27,7 @@ The task file was already the branch seed. This delivery does not rewrite its bi
 
 No runtime, `app/`, `components/`, `lib/`, `public/`, Supabase, Auth, provider, payment, dependency, PrivacyBee, robots, operating-mode, or Production file is in the intended diff.
 
-`JETNITY_HANDOFF.md` is intentionally absent. The binding task says to update only the startup file, the active status, and the lane docs. The handoff file remains stale. That is recorded as a residual, not silently “fixed” outside the allowlist.
+The pre-R1 delivery left `JETNITY_HANDOFF.md` out because the binding task allowlist excluded it. R1 `5390511598` permits only the current top pointer of that file. This correction adds that top block and relabels the old post-premium heading as historical. The historical body paragraphs below that heading stay intact. The intended diff against current `main` is the six files above plus `JETNITY_HANDOFF.md`.
 
 `next-env.d.ts` was dirty in the worktree (`./.next/types` rewritten to `./.next/dev/types`). It was restored with `git checkout -- next-env.d.ts` and is not staged.
 
@@ -48,7 +48,7 @@ Old dated paragraphs were not rewritten into post-#723 history. Current status l
 - The OpenAI Developers plugin sentence was already on `main` in the startup banner. This delivery repeats the boundary in the current pointer. It does not authorize a key, a secret, a paid call, or a live call.
 - #294 comment `5937384129` is the latest comment on that issue. It does not select Timatic or Sherpa. It does not close #395. KAYAK comment `5908413693` is still the latest on #395.
 - #626 was not retried. Provider mailboxes were not read. No newer comment exists on #626, #395 or #585. #294 does have comments newer than the previous continuity pointer; those were read.
-- #726's head changed more than once before the final push. `aaab5e93` had Typecheck in progress. `fa15a813a72619163d4eb523e9918b0005c8a576` later had green Auth, Typecheck and Vercel checks. The last pre-push tip is `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`, still Draft, still unmerged, still without a review. On that tip, Auth is SUCCESS, Typecheck is IN_PROGRESS, and the Vercel commit status is SUCCESS. The green checks on `fa15a813` are not a gate for `b9c5fa63`. This review does not call the fingerprint slice complete.
+- Before the first delivery push, #726's head changed more than once. `aaab5e93` had Typecheck in progress. `fa15a813a72619163d4eb523e9918b0005c8a576` later had green Auth, Typecheck and Vercel checks. The last pre-R1 tip recorded here was `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`, then still Draft. That observation was true then. R1 records the later merge of that same head. It is not an open writer. The green checks on `fa15a813` were not a gate for `b9c5fa63`.
 - The task-seed Preview is not acceptance evidence.
 - No Ready. No merge. No follow-up slice. PR stays Draft.
 
@@ -72,12 +72,24 @@ The suite and the build ran before the final #726 head wording. That wording is 
 
 `npm run auth:pruefen` was not run in this workspace. It is fail-closed without repository secrets. The Auth job on current `main` was re-read as success. The Auth job for this branch tip is the GitHub run on the pushed head.
 
+## R1 correction
+
+R1 `5390511598` is `COMMENTED` on `8b39e6638d7146d279bc776f96955b79e2527fe0`. The body names CHANGES REQUIRED. That head is not the review head.
+
+Before this R1 commit, `origin/main` was re-read as `8aeed0e576a98de9b1a00644acc11a36e70e1851`, 0 behind. #726 is **MERGED** at that SHA. Accepted head `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`. FINAL PASS review `5390504658` is `COMMENTED`; the body names FINAL PASS. Issue #724 is **CLOSED / COMPLETED**. Post-merge CI `36992642993` is **SUCCESS**, including Auth job `110792162779` and Typecheck, Lint & Build job `110792162380`. Those jobs gate `main`. The fingerprint identifies review material only. It does not mint Rule truth, accept a Rule Claim, or activate a model, network, database, or provider.
+
+The current top block of `JETNITY_HANDOFF.md` now matches `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md`. The old post-premium heading is historical. Its body stays intact. Live evidence wins over older sections.
+
+R1 local gates on this tree, before the R1 commit: `git diff --check` pass; `check:operating-mode` PASS; typecheck pass; lint 0 errors and 148 pre-existing warnings; `npm test` 4381 pass / 0 fail across 756 suites; hygiene checks and the production build pass. The same three LOCAL/UNAPPLIED RPCs remain. No remote database was contacted. `auth:pruefen` was not run locally.
+
+#626, #395, #585, #294 and #440 were re-read. Latest comments remain `5908548520`, `5908413693`, `5874769319`, `5937384129` and `5913367968`. Public `https://jetnity.com/` still returns `data-dpl-id="dpl_7ZJFBq5sfUUXcLHSRCgJuc6PhVpw"` and `noindex, nofollow`. This self-review is not a Technical-Lead PASS.
+
 ## Residual risk
 
-Canonical pointers can go stale again after the next material merge if post-merge verification does not update them. `JETNITY_HANDOFF.md` is already stale and was left stale because the task allowlist excludes it. A reader who starts there will still see Draft #671.
+Canonical pointers can go stale again after the next material merge if post-merge verification does not update them. The current top block of `JETNITY_HANDOFF.md` matches this correction. Older sections in that file remain historical on purpose.
 
-A later reader who treats GitHub review state `COMMENTED` on #719 as the absence of a verdict will miss the CHANGES REQUIRED body. The docs name both.
+A later reader who treats GitHub review state `COMMENTED` on #719 as the absence of a verdict will miss the CHANGES REQUIRED body. The docs name both. The same applies to FINAL PASS review `5390504658` on #726 and to R1 `5390511598` on the earlier #727 head: both are `COMMENTED`, and the bodies name the verdict.
 
 A later reader who treats `production_environment=false` as proof that `jetnity.com` is not that deployment will miss the public `data-dpl-id` read. The docs name both.
 
-A later reader who treats Draft #726's in-progress Typecheck as success, or who treats this continuity text as completion of #724, will be wrong. The docs say to re-read #726 live.
+A later reader who treats the pre-R1 table that calls #726 an open Draft as the current pointer will be wrong. The R1 blocks supersede that table. #726 is merged. This continuity text is not the fingerprint implementation.
