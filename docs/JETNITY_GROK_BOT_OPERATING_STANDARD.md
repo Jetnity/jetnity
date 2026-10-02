@@ -4,6 +4,8 @@ Stand: 17. September 2026
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
 Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
 Erweitert: 18. September 2026 – Future specialized Grok-app setup pack (documentation only; no bots created)  
+Inbox-Bindung: 2. Oktober 2026 – Issue #748 ist der kanonische GitHub-Evidence-Inbox; automatisches externes Posten ist nicht bewiesen
+
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
 ## 1. Rolle und Zweck
@@ -233,6 +235,24 @@ Standardmodus ohne separat versionierte Freigabe:
 
 Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags. Ein Lauf beginnt erst, wenn der Product Owner den aktuellen Technical-Lead-Prompt in der separaten Jetnity-Guardian-App startet.
 
+## 4a. Kanonischer GitHub-Evidence-Inbox — Issue #748
+
+Stand: 2. Oktober 2026. Vertrag: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`. Einmal-Prompt, ungesendet: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`.
+
+[Issue #748](https://github.com/Jetnity/jetnity/issues/748) ist der kanonische GitHub-Evidence-Inbox für materielle Berichte von Jetnity Guardian, Jetnity Chief of Staff und den genehmigten read-only Grok-Intelligence-Rollen.
+
+Der OS-2-Daily-Vertrag bleibt gültig. Die Daily-Routine schreibt GitHub standardmäßig nicht (`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`, Abschnitt 6, Punkt 6). Ein `NO_MATERIAL`-Brief bleibt im externen Workspace. Ein MATERIAL-Bericht darf als strukturierter Kommentar nach #748, wenn eine bereits verbundene GitHub-Kommentarfähigkeit das kann.
+
+Automatisches externes Posten ist in Bridge 1 nicht beobachtet. Der Kommentarstand von #748 war bei der Repository-Bindung leer. Der erste unabhängig gelesene Berichtskommentar mit der Markierung `jetnity_guardian_inbox: report` ist der früheste Beweis.
+
+Guardian bleibt gegenüber Code, Branches, PRs, Ready und Merge read-only. Ein #748-Kommentar ist Evidence. Er autorisiert keinen Codefix. Cursor verarbeitet ein Finding nur, wenn der aktuelle versionierte Task dieselbe `report_id` ausdrücklich bindet und der letzte Technical-Lead-Beleg auf #748 `CONFIRMED` oder `PARTIAL` ist.
+
+Neue Technical-Lead-Chats lesen beim Startup und bei der Live-Rekonstruktion ungelesene und materielle #748-Kommentare. Ein Guardian-Lauf mit GitHub-Leserechten tut dasselbe, bevor er Continuity als aktuell bezeichnet. Ein Bericht, dessen `observed_main_sha` oder Exact Head nicht mehr aktuell ist, bleibt Historie. Er sperrt oder autorisiert den aktuellen Head erst nach einem Recheck mit neuer `report_id`.
+
+Bestehende Artefakte unter `/workspace/jetnity/intelligence/...` bleiben Quellhistorie. Dieser Abschnitt schreibt sie nicht um.
+
+Keine Secrets, Tokens, PATs, Webhooks oder rohen Pass-/MRZ-/Biometrie-/Gesundheitsdaten in #748. Chief of Staff darf synthetisieren und routen. Der Rohbericht bleibt sichtbar. Die Synthese ersetzt ihn nicht.
+
 ## 5. Wann der Guardian eingesetzt werden soll
 
 Der Guardian ist keine nur gelegentliche Notfallrolle. Der Technical Lead soll ihn systematisch dort einsetzen, wo unabhängige Gegenprüfung einen hohen Wert hat.
@@ -295,6 +315,7 @@ Der Guardian erhält grundsätzlich nur die Rechte, die für den konkreten Evide
 Initial zulässiger Capability-Scope, nachdem der Product Owner den aktuellen Technical-Lead-Prompt in Jetnity Guardian gestartet hat:
 
 - GitHub Repository, Commits, Branches, PRs, Issues und Actions **read-only**;
+- die einzige benannte Ausnahme ist ein sanitisierter MATERIAL-Kommentar auf Issue #748, und nur wenn eine bereits verbundene GitHub-Kommentarfähigkeit das kann. Die Ausnahme steht in §4a und in `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`. Dieses Repository vergibt die Fähigkeit nicht. Automatisches Posten gilt erst als beobachtet, wenn ein echter #748-Berichtskommentar unabhängig gelesen wurde;
 - CI-/Status-Evidence **read-only**;
 - kanonische Repository-Dokumente **read-only**;
 - Vercel Deployment-/Preview-/Production-Metadaten und Logs **read-only**, erst nach Verbindung/Freigabe;
@@ -337,6 +358,8 @@ Daher gilt verbindlich:
 - keine Code-, Runtime-, Business-Logic- oder Continuity-Mutation;
 - keine stillen Fixes aus Findings;
 - keine Repository-Schreibrechte als Bestandteil eines normalen Guardian-Auftrags.
+
+Ein sanitisierter Kommentar auf Issue #748 ist keine Dateiänderung, kein Branch, kein Commit und kein Codefix. Er bleibt an die bereits verbundene Kommentarfähigkeit gebunden. Solange kein echter Berichtskommentar unabhängig gelesen ist, ist diese Ausnahme nicht in Betrieb. Ein #748-Kommentar autorisiert keine Codeänderung.
 
 Wenn ein Guardian Finding eine Änderung erfordert, konsolidiert der Technical Lead das Finding und gibt die Korrektur an denselben zuständigen Cursor-Writer oder einen separat gebundenen Docs-/Implementation-Slice.
 
