@@ -104,4 +104,6 @@ The classifier still labels the RPC LOCAL/UNAPPLIED because `types/supabase.ts` 
 
 This slice applies nothing. Do not re-apply the Development migration. A future Production apply or activation remains a separate Product-Owner gate. The only runtime-file edit is a comment in `lib/readiness/official-truth-store-server.ts`: the canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. No migration, route, Auth, RLS, provider, model, #741, #626, or F6 file changed.
 
+Gates on `7937fe5cfd8400861d5433fe80f8d7f4f836568f`, before this gate note: `npm test` 4460 pass / 0 fail / 762 suites; typecheck pass; lint 0 errors and 148 pre-existing warnings; production build pass on Next.js 16.3.8 with 25 static pages; hygiene and operating-mode guard pass. `check:schema-bezug` still lists the same four LOCAL/UNAPPLIED RPCs, including `official_truth_store_accepted_v1`. That print is the classifier. No remote Supabase access. This branch is 0 behind `main@6e1d29e2db0c0b468460e1306ab7d5101607021b`.
+
 No Ready. No merge. No follow-up slice. This section is not an independent Technical-Lead PASS.

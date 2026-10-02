@@ -84,4 +84,6 @@ This slice applies nothing. Do not re-apply Development. A future Production app
 
 The store-file comment now says the canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. Behavior is unchanged.
 
+Gates on `7937fe5cfd8400861d5433fe80f8d7f4f836568f`: `npm test` 4460/4460 across 762 suites, typecheck, lint 0 errors and 148 pre-existing warnings, production build, hygiene, and operating-mode guard pass. The schema check still prints four LOCAL/UNAPPLIED RPCs. No remote database was contacted. This branch is 0 behind `main@6e1d29e2db0c0b468460e1306ab7d5101607021b`.
+
 The review head is the branch tip after the commit that adds this section. Re-fetch before review. Stay Draft. STOP for independent exact-head re-review. Cursor does not Ready, merge, or start a follow-up.

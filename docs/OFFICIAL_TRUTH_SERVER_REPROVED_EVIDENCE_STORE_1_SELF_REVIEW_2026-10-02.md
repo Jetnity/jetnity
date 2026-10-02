@@ -98,4 +98,6 @@ The handoff no longer says a Development apply is the same future gate as Produc
 
 `lib/readiness/official-truth-store-server.ts` changes only the header comment. The canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. No function body changed. No migration, route, Auth, RLS, provider, model, #741, #626, or F6 file changed.
 
+Gates on `7937fe5cfd8400861d5433fe80f8d7f4f836568f`: `npm test` 4460/4460 across 762 suites, typecheck, lint 0 errors / 148 warnings, production build, hygiene, operating-mode guard, and `git diff --check`. `check:schema-bezug` still lists four LOCAL/UNAPPLIED RPCs. No remote Supabase.
+
 No Ready. No merge. No follow-up. STOP for independent exact-head re-review.
