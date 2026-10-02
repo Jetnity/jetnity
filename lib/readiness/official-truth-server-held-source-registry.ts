@@ -111,7 +111,11 @@ function blockiert<R extends string>(reason: R): { readonly status: 'blocked'; r
 
 async function registryLaden(
   abhaengigkeiten: OfficialTruthSourceCatalogAbhaengigkeiten | undefined,
-): Promise<{ ok: true; registry: QuellenRegistry } | { ok: false; reason: 'catalog_not_configured' | 'catalog_failed' }> {
+): Promise<
+  | { ok: true; registry: QuellenRegistry }
+  | { ok: false; reason: 'caller_authority_forbidden' | 'catalog_not_configured' | 'catalog_failed' }
+> {
+  if (hatAutoritaet(datensatz(abhaengigkeiten))) return { ok: false, reason: 'caller_authority_forbidden' }
   const gelesen = await quellenKatalogLesen(abhaengigkeiten)
   if (!gelesen.ok) {
     return {

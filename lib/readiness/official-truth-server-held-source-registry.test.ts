@@ -27,6 +27,7 @@ import {
 } from '@/lib/readiness/official-truth-server-held-source-registry'
 import {
   quellenKatalogLesen,
+  type OfficialTruthSourceCatalogAbhaengigkeiten,
   type OfficialTruthSourceCatalogTransport,
 } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
@@ -562,6 +563,14 @@ describe('Official Truth server-held source registry', () => {
       { transport: katalog.transport },
     )
     assert.deepEqual(fremdeRegistry, { ok: false, reason: 'caller_authority_forbidden' })
+
+    const alsAbhaengigkeit = await officialTruthServerHeldMaterialPruefen(
+      aufrufer(),
+      uhr(),
+      basis as unknown as OfficialTruthSourceCatalogAbhaengigkeiten,
+    )
+    assert.deepEqual(alsAbhaengigkeit, { status: 'blocked', reason: 'caller_authority_forbidden' })
+    assert.equal(JSON.stringify(alsAbhaengigkeit).includes('real-government.example'), false)
   })
 
   test('zwei Credential-Optionen bleiben zwei Zellen', async () => {
