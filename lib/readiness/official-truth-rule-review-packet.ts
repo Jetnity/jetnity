@@ -78,7 +78,9 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
 
 /**
  * Eine Stütze im Prüfpaket. Der Schnappschuss ist das neu belegte
- * Behördenmaterial. Er ist keine Entscheidung.
+ * Behördenmaterial. `validFrom` und `validUntil` kommen aus der schon
+ * angenommenen Evidence. Die freie Extraktionsnotiz wird nicht übernommen.
+ * Nichts davon ist eine Entscheidung.
  */
 export type OfficialTruthRegelReviewSupport = {
   readonly versionId: string
@@ -86,6 +88,8 @@ export type OfficialTruthRegelReviewSupport = {
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
+  readonly validFrom: string | null
+  readonly validUntil: string | null
   readonly sourceSnapshot: string
 }
 
@@ -161,6 +165,8 @@ function stuetzEintrag(belegt: Belegt): OfficialTruthRegelReviewSupport {
     canonicalUrl: belegt.evidence.canonicalUrl,
     retrievedAt: belegt.evidence.retrievedAt,
     sourceContentHash: belegt.evidence.sourceContentHash,
+    validFrom: belegt.evidence.validFrom,
+    validUntil: belegt.evidence.validUntil,
     sourceSnapshot: belegt.beleg.material.sourceSnapshot,
   })
 }
