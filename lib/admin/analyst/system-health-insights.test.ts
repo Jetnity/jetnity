@@ -532,13 +532,14 @@ describe('System-Health-Analyst (synthetic fixtures)', () => {
     assert.doesNotMatch(text, /security_event_producer_origin/)
   })
 
-  test('T-no-new-capability: keine neue Capability', () => {
+  test('T-no-new-capability: Analyst erfindet keine eigene Capability', () => {
     assert.deepEqual(CAPABILITIES, [
       'betrieb-lesen',
       'betrieb-eingreifen',
       'konten-verwalten',
       'inhalte-moderieren',
       'konfiguration-verwalten',
+      'official-truth-freigeben',
     ])
     const text = readFileSync(join(process.cwd(), 'lib/admin/analyst/laden.ts'), 'utf8')
     assert.match(text, /betrieb-lesen/)

@@ -172,6 +172,27 @@ describe('Fähigkeiten einzelner Oberflächen', () => {
         })
         const erwartet = ROLES.indexOf(role) >= ROLES.indexOf(minimum)
         assert.equal(d.allowed, erwartet, `${capability} mit Rolle ${role}`)
+        if (d.allowed) assert.equal(d.grant, 'role')
+      }
+    }
+  })
+
+  test('official-truth-freigeben erfüllt nur der Owner über die Rolle', () => {
+    assert.equal(CAPABILITIES.includes('official-truth-freigeben'), true)
+    for (const role of ROLES) {
+      const d = decideAdminAccess({
+        user: USER,
+        lookup: ok(role),
+        allowlist: OHNE_LISTE,
+        capability: 'official-truth-freigeben',
+      })
+      if (role === 'owner') {
+        assert.equal(d.allowed, true)
+        assert.equal(d.grant, 'role')
+        assert.equal(reachesDatabase(d), true)
+      } else {
+        assert.equal(d.allowed, false, role)
+        assert.equal(reachesDatabase(d), false)
       }
     }
   })
@@ -219,6 +240,39 @@ describe('Notzugang trägt nicht bis in die Datenbank', () => {
   test('eine Ablehnung reicht ebenfalls nicht in die Datenbank', () => {
     const d = decideAdminAccess({ user: USER, lookup: ok('user'), allowlist: OHNE_LISTE })
     assert.equal(reachesDatabase(d), false)
+  })
+
+  test('Break-Glass wird für official-truth-freigeben nie zur Datenbankautorität', () => {
+    for (const role of ['user', 'creator', 'moderator', 'operator', 'admin'] as const) {
+      const d = decideAdminAccess({
+        user: USER,
+        lookup: ok(role),
+        allowlist,
+        capability: 'official-truth-freigeben',
+      })
+      assert.equal(d.allowed, true, role)
+      assert.equal(d.grant, 'break-glass', role)
+      assert.equal(reachesDatabase(d), false, role)
+    }
+
+    const owner = decideAdminAccess({
+      user: USER,
+      lookup: ok('owner'),
+      allowlist,
+      capability: 'official-truth-freigeben',
+    })
+    assert.equal(owner.allowed && owner.grant, 'role')
+    assert.equal(reachesDatabase(owner), true)
+
+    const ausgefallen = decideAdminAccess({
+      user: USER,
+      lookup: kaputt,
+      allowlist,
+      capability: 'official-truth-freigeben',
+    })
+    assert.equal(ausgefallen.allowed, true)
+    assert.equal(ausgefallen.grant, 'break-glass')
+    assert.equal(reachesDatabase(ausgefallen), false)
   })
 })
 
