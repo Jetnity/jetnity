@@ -1,27 +1,28 @@
 // lib/readiness/official-truth-store-server.ts
 //
 // Ruhender, serverseitiger Schreiber für bereits akzeptierte Official Truth.
-// Die Annahme bleibt evidenceKandidatAkzeptieren und regelKandidatAkzeptieren.
-// Diese Datei speichert das Ergebnis. Sie entscheidet keine Regel neu.
-// Der Requirements-Provider bleibt aus. Kein Import, kein Katalog, kein Netz
-// ausser dem einen Supabase-RPC, und der nur beim ausdrücklichen Aufruf.
+// Akzeptierte Evidence kommt nur aus officialTruthServerHeldEvidenceAnnehmen.
+// Ein freies Evidence-Objekt und eine Aufrufer-Registry sind kein Argument.
+// Regel-Claims bleiben der bestehende ruhende Weg über regelKandidatAkzeptieren.
+// Diese Datei entscheidet keine Regel neu und fügt keinen neuen Annahmeweg hinzu.
+// Der Requirements-Provider bleibt aus. Kein Import. Der Katalogzugriff bleibt
+// in der Servergrenze. Netz nur als der eine Speicher-RPC, und nur nach Beweis.
 
 import 'server-only'
 
 import { createClient } from '@supabase/supabase-js'
 
+import { type EvidenceAtom, type EvidenceVersion } from '@/lib/readiness/evidence'
+import { officialTruthServerHeldEvidenceAnnehmen } from '@/lib/readiness/official-truth-server-held-source-registry'
 import {
-  evidenceKandidatAkzeptieren,
-  type EvidenceAtom,
-  type EvidenceVersion,
-} from '@/lib/readiness/evidence'
+  type OfficialTruthSourceCatalogAbhaengigkeiten,
+} from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   regelKandidatAkzeptieren,
   regelScopeAusEvidenceScope,
   type AkzeptierteRegelClaim,
   type RegelFakt,
 } from '@/lib/readiness/rule-claims'
-import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 /**
  * Derselbe Name wie das String-Literal im rpc()-Aufruf. Der Aufruf selbst bleibt
@@ -43,6 +44,18 @@ export type OfficialTruthStoreAbhaengigkeiten = {
   env?: Record<string, string | undefined>
   jetzt?: () => string
 }
+
+/**
+ * Abhängigkeiten des Evidence-Schreibers. `transport` ist der ruhende Speicher.
+ * `katalog` ist die servergehaltene Katalogabhängigkeit, keine Anfrageautorität.
+ */
+export type OfficialTruthEvidenceStoreAbhaengigkeiten = {
+  transport?: OfficialTruthStoreTransport
+  env?: Record<string, string | undefined>
+  katalog?: OfficialTruthSourceCatalogAbhaengigkeiten
+}
+
+const AUTORITAET = ['registry', 'sourceClass', 'domains', 'blockedDomains'] as const
 
 export type OfficialTruthStoreErgebnis =
   | {
@@ -163,6 +176,18 @@ function faktSpalten(fact: RegelFakt): Record<string, unknown> {
   }
 }
 
+function datensatz(wert: unknown): Record<string, unknown> | null {
+  if (!wert || typeof wert !== 'object' || Array.isArray(wert)) return null
+  const prototyp = Object.getPrototypeOf(wert)
+  if (prototyp !== Object.prototype && prototyp !== null) return null
+  return wert as Record<string, unknown>
+}
+
+function hatAutoritaet(satz: Record<string, unknown> | null): boolean {
+  if (!satz) return false
+  return AUTORITAET.some((name) => Object.hasOwn(satz, name))
+}
+
 function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Record<string, unknown> {
   return {
     operation: 'accepted_evidence',
@@ -222,9 +247,27 @@ function dienstTransport(env: Record<string, string | undefined>): OfficialTruth
   }
 }
 
-function transportAus(deps: OfficialTruthStoreAbhaengigkeiten | undefined): OfficialTruthStoreTransport | null {
+function transportAus(
+  deps: { transport?: OfficialTruthStoreTransport; env?: Record<string, string | undefined> } | undefined,
+): OfficialTruthStoreTransport | null {
   if (deps?.transport) return deps.transport
   return dienstTransport(deps?.env ?? process.env)
+}
+
+function katalogAbhaengigkeit(
+  deps: OfficialTruthEvidenceStoreAbhaengigkeiten | undefined,
+): OfficialTruthSourceCatalogAbhaengigkeiten | undefined {
+  if (!deps) return undefined
+  if (deps.katalog) {
+    const transport = deps.katalog.transport
+    const env = deps.katalog.env
+    return {
+      ...(transport ? { transport } : {}),
+      ...(env ? { env } : {}),
+    }
+  }
+  if (deps.env) return { env: deps.env }
+  return undefined
 }
 
 function ausgang(operation: string, antwort: unknown, ruleScopeKey: string, versionId: string | null): OfficialTruthStoreErgebnis {
@@ -253,29 +296,39 @@ function ausgang(operation: string, antwort: unknown, ruleScopeKey: string, vers
 }
 
 /**
- * Nimmt einen Evidence-Kandidaten über den bestehenden Vertrag an und speichert
- * nur das angenommene Objekt plus den davon abgeleiteten rule_scope_key.
- * Ein bereits akzeptiertes Objekt ist kein zweiter Schreibweg.
+ * Beweist akzeptierte Evidence neu aus dem registryfreien Abruf und speichert
+ * nur dieses zurückgegebene Objekt plus den davon abgeleiteten rule_scope_key.
+ * Hash, Version, Lebenszyklus und Lookup kommen nicht aus dem Aufruf.
  */
 export async function akzeptierteEvidenceSpeichern(
-  kandidat: EvidenceVersion,
-  registry: QuellenRegistry,
-  abhaengigkeiten?: OfficialTruthStoreAbhaengigkeiten,
+  umschlag: unknown,
+  uhr: unknown,
+  extraktion: unknown,
+  abhaengigkeiten?: OfficialTruthEvidenceStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
-  const angenommen = evidenceKandidatAkzeptieren(kandidat, registry)
-  if (!angenommen.ok) return { ok: false, reason: angenommen.reason }
-  const scope = regelScopeAusEvidenceScope(angenommen.evidence.scope)
+  if (hatAutoritaet(datensatz(abhaengigkeiten)) || hatAutoritaet(datensatz(abhaengigkeiten?.katalog))) {
+    return { ok: false, reason: 'caller_authority_forbidden' }
+  }
+  const angenommen = await officialTruthServerHeldEvidenceAnnehmen(
+    umschlag,
+    uhr,
+    extraktion,
+    katalogAbhaengigkeit(abhaengigkeiten),
+  )
+  if (angenommen.status !== 'accepted_evidence') return { ok: false, reason: angenommen.reason }
+  const evidence = angenommen.evidence
+  const scope = regelScopeAusEvidenceScope(evidence.scope)
   if (!scope.ok) return { ok: false, reason: scope.reason }
   const transport = transportAus(abhaengigkeiten)
   if (!transport) return { ok: false, reason: 'store_not_configured' }
   let antwort: { ok: true; antwort: unknown } | { ok: false }
   try {
-    antwort = await transport.aufrufen(evidencePayload(angenommen.evidence, scope.key))
+    antwort = await transport.aufrufen(evidencePayload(evidence, scope.key))
   } catch {
     return { ok: false, reason: 'store_failed' }
   }
   if (!antwort.ok) return { ok: false, reason: 'store_failed' }
-  return ausgang('accepted_evidence', antwort.antwort, scope.key, angenommen.evidence.versionId)
+  return ausgang('accepted_evidence', antwort.antwort, scope.key, evidence.versionId)
 }
 
 /**

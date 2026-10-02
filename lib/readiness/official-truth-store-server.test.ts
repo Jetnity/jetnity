@@ -16,16 +16,28 @@ import {
   evidenceKandidatAusModell,
   type EvidenceVersion,
 } from '@/lib/readiness/evidence'
+import { officialTruthServerHeldEvidenceAnnehmen } from '@/lib/readiness/official-truth-server-held-source-registry'
+import { officialTruthRechercheEntscheiden } from '@/lib/readiness/official-truth-research-request'
+import {
+  type OfficialTruthSourceCatalogTransport,
+} from '@/lib/readiness/official-truth-source-catalog-server'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
   regelKandidatErstellen,
   regelScopeAusEvidenceScope,
 } from '@/lib/readiness/rule-claims'
-import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
+import { type QuellenAbdeckung, type QuellenDeskriptor } from '@/lib/readiness/source-router'
+import {
+  quellenRegistryErstellen,
+  quellenUrlAufloesen,
+  type QuellenEingabe,
+  type QuellenRegistry,
+} from '@/lib/readiness/source-registry'
 import {
   OFFICIAL_TRUTH_STORE_ACCEPTED_V1,
   akzeptierteEvidenceSpeichern,
   akzeptierteRegelClaimSpeichern,
+  type OfficialTruthEvidenceStoreAbhaengigkeiten,
   type OfficialTruthStoreTransport,
 } from '@/lib/readiness/official-truth-store-server'
 
@@ -62,8 +74,8 @@ function quelle(relativ: string): string {
   return readFileSync(join(ROOT, relativ), 'utf8')
 }
 
-function registry(): QuellenRegistry {
-  const ergebnis = quellenRegistryErstellen([
+function eingaben(): QuellenEingabe[] {
+  return [
     {
       sourceId: 'example-border-authority',
       sourceClass: 'official_authority',
@@ -91,10 +103,115 @@ function registry(): QuellenRegistry {
       publisherName: 'Example Licensed Publisher',
       domains: ['provider.example'],
     },
-  ])
+  ]
+}
+
+function registry(quellen: readonly QuellenEingabe[] = eingaben()): QuellenRegistry {
+  const ergebnis = quellenRegistryErstellen(quellen)
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
   return ergebnis.registry
+}
+
+function katalogZeile(eingabe: QuellenEingabe): Aufruf {
+  return {
+    source_id: eingabe.sourceId,
+    source_class: eingabe.sourceClass,
+    publisher_name: eingabe.publisherName,
+    authority_name: eingabe.authorityName ?? null,
+    domains: [...eingabe.domains],
+  }
+}
+
+function katalogTransport(quellen: readonly QuellenEingabe[] = eingaben()): OfficialTruthSourceCatalogTransport {
+  return {
+    async aufrufen(payload) {
+      if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
+      return {
+        ok: true,
+        antwort: { ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+      }
+    },
+  }
+}
+
+function abdeckungFuer(scope: Record<string, unknown>): QuellenAbdeckung {
+  const option = scope.credentialOption as {
+    documentType: 'passport'
+    issuingCountryCode: string
+    relatedCitizenshipCountryCode: string
+  }
+  return {
+    destinationCountryCodes: [String(scope.destinationCountryCode)],
+    transitCountryCodes: [],
+    requirementTypes: [scope.requirementType as QuellenAbdeckung['requirementTypes'][number]],
+    citizenship: { mode: 'exact', countryCodes: [option.relatedCitizenshipCountryCode] },
+    residence: { mode: 'not_applicable' },
+    documents: {
+      mode: 'exact',
+      options: [{ documentType: option.documentType, issuingCountryCode: option.issuingCountryCode }],
+    },
+  }
+}
+
+function abruf(
+  basis: QuellenRegistry,
+  sourceId: string,
+  host: string,
+  snapshot: string,
+  scope: Record<string, unknown> = atom(),
+  extraktion: unknown = null,
+): { umschlag: Record<string, unknown>; uhr: () => Date; extraktion: unknown } {
+  const zelle = regelScopeAusEvidenceScope(scope)
+  assert.equal(zelle.ok, true)
+  if (!zelle.ok) throw new Error('scope')
+  const entscheidung = officialTruthRechercheEntscheiden(
+    { status: 'missing', ruleScopeKey: zelle.key, factKind: 'requirement_effect' },
+    zelle.scope,
+  )
+  assert.equal(entscheidung.action, 'research')
+  if (entscheidung.action !== 'research') throw new Error('anfrage')
+  const source = basis.sources.find((eintrag) => eintrag.sourceId === sourceId)
+  assert.ok(source)
+  const deskriptor: QuellenDeskriptor = { source, coverage: abdeckungFuer(scope) }
+  return {
+    umschlag: {
+      request: entscheidung.request,
+      descriptors: [deskriptor],
+      sourceId,
+      material: {
+        canonicalUrl: `https://www.${host}/rules/visa`,
+        retrievedAt: ABGERUFEN,
+        sourceSnapshot: snapshot,
+      },
+    },
+    uhr: () => new Date(ABGERUFEN),
+    extraktion,
+  }
+}
+
+function evidenceDeps(
+  transport?: OfficialTruthStoreTransport,
+  quellen: readonly QuellenEingabe[] = eingaben(),
+  env?: Record<string, string | undefined>,
+): OfficialTruthEvidenceStoreAbhaengigkeiten {
+  return {
+    ...(transport ? { transport } : {}),
+    ...(env ? { env } : {}),
+    katalog: { transport: katalogTransport(quellen) },
+  }
+}
+
+function evidenceAusAbrufSpeichern(
+  basis: QuellenRegistry,
+  sourceId: string,
+  host: string,
+  snapshot: string,
+  scope: Record<string, unknown> | undefined,
+  deps: OfficialTruthEvidenceStoreAbhaengigkeiten,
+) {
+  const paket = abruf(basis, sourceId, host, snapshot, scope ?? atom())
+  return akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, paket.extraktion, deps)
 }
 
 function atom(teil?: Record<string, unknown>) {
@@ -234,21 +351,43 @@ function ohneKommentare(sql: string): string {
 }
 
 describe('trusted Official Truth accepted-store writer', () => {
-  test('nur angenommene Evidence erreicht das Gateway, mit kanonischem rule_scope_key', async () => {
+  test('nur neu bewiesene Evidence erreicht das Gateway, mit kanonischem rule_scope_key', async () => {
     const basis = registry()
-    const entwurf = kandidat(basis, 'example-border-authority', 'gov.example', 'seite alpha')
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'seite alpha')
     const { transport, aufrufe } = transportAufzeichnen()
-    const gespeichert = await akzeptierteEvidenceSpeichern(entwurf, basis, { transport })
+    const bewiesen = await officialTruthServerHeldEvidenceAnnehmen(
+      paket.umschlag,
+      paket.uhr,
+      paket.extraktion,
+      { transport: katalogTransport() },
+    )
+    assert.equal(bewiesen.status, 'accepted_evidence')
+    if (bewiesen.status !== 'accepted_evidence') return
+    const gespeichert = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      paket.extraktion,
+      evidenceDeps(transport),
+    )
     assert.equal(gespeichert.ok, true)
     if (!gespeichert.ok) return
     assert.equal(gespeichert.operation, 'accepted_evidence')
+    assert.equal(gespeichert.versionId, bewiesen.evidence.versionId)
     assert.equal(aufrufe.length, 1)
     const evidence = aufrufe[0]?.evidence as Record<string, unknown>
-    const scope = regelScopeAusEvidenceScope(akzeptiert(basis, 'example-border-authority', 'gov.example', 'seite alpha').scope)
+    const scope = regelScopeAusEvidenceScope(bewiesen.evidence.scope)
     assert.equal(scope.ok, true)
     if (!scope.ok) return
     assert.equal(evidence.rule_scope_key, scope.key)
     assert.equal(gespeichert.ruleScopeKey, scope.key)
+    assert.equal(evidence.version_id, bewiesen.evidence.versionId)
+    assert.equal(evidence.source_content_hash, bewiesen.evidence.sourceContentHash)
+    assert.equal(evidence.lookup_key, bewiesen.evidence.lookupKey)
+    assert.equal(evidence.valid_from, bewiesen.evidence.validFrom)
+    assert.equal(evidence.valid_until, bewiesen.evidence.validUntil)
+    assert.equal(evidence.extraction_note, bewiesen.evidence.extractionNote)
+    assert.equal(evidence.canonical_url, bewiesen.evidence.canonicalUrl)
+    assert.equal(evidence.retrieved_at, bewiesen.evidence.retrievedAt)
     assert.match(String(evidence.rule_scope_key), /^rule-scope:v1:[a-f0-9]{64}$/)
     assert.notEqual(evidence.rule_scope_key, evidence.lookup_key)
     assert.equal(evidence.lifecycle, 'accepted')
@@ -257,18 +396,21 @@ describe('trusted Official Truth accepted-store writer', () => {
     assert.equal(evidence.related_citizenship_country_code, 'CH')
     assert.equal(JSON.stringify(aufrufe[0]).includes('source_class'), false)
     assert.equal(JSON.stringify(aufrufe[0]).includes('proposal'), false)
-
-    const schon = akzeptiert(basis, 'example-border-authority', 'gov.example', 'seite alpha')
-    const roh = transportAufzeichnen()
-    const abgelehnt = await akzeptierteEvidenceSpeichern(schon, basis, { transport: roh.transport })
-    assert.deepEqual(abgelehnt, { ok: false, reason: 'not_candidate' })
-    assert.equal(roh.aufrufe.length, 0)
+    assert.equal(JSON.stringify(aufrufe[0]).includes('registry'), false)
   })
 
   test('ein roh akzeptiertes Objekt ist keine zweite Schreib-API', async () => {
     const text = quelle('lib/readiness/official-truth-store-server.ts')
     assert.match(text, /^import 'server-only'$/m)
-    assert.match(text, /export async function akzeptierteEvidenceSpeichern/)
+    assert.match(
+      text,
+      /export async function akzeptierteEvidenceSpeichern\(\s*umschlag: unknown,\s*uhr: unknown,\s*extraktion: unknown,/,
+    )
+    assert.match(text, /officialTruthServerHeldEvidenceAnnehmen\(/)
+    assert.equal(text.includes('evidenceKandidatAkzeptieren'), false)
+    assert.equal(text.includes('QuellenRegistry'), false)
+    assert.equal((text.match(/regelKandidatAkzeptieren\(/g) ?? []).length, 1)
+    assert.equal((text.match(/officialTruthServerHeldEvidenceAnnehmen\(/g) ?? []).length, 1)
     assert.match(text, /export async function akzeptierteRegelClaimSpeichern/)
     assert.equal(text.includes('export async function storeAccepted'), false)
     assert.equal(text.includes('export function evidencePayload'), false)
@@ -561,22 +703,42 @@ describe('trusted Official Truth accepted-store writer', () => {
 
   test('fehlende Dienst-Zugangsdaten schliessen den Weg, ohne den RPC zu rufen', async () => {
     const basis = registry()
-    const entwurf = kandidat(basis, 'example-border-authority', 'gov.example', 'kein geheimnis')
-    const ohne = await akzeptierteEvidenceSpeichern(entwurf, basis, {
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'kein geheimnis')
+    const { transport, aufrufe } = transportAufzeichnen()
+    const ohneKatalog = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
+      transport,
+      katalog: {
+        env: {
+          NEXT_PUBLIC_SUPABASE_URL: '   ',
+          SUPABASE_SERVICE_ROLE_KEY: 'service-role-secret-sentinel',
+        },
+      },
+    })
+    assert.deepEqual(ohneKatalog, { ok: false, reason: 'catalog_not_configured' })
+    assert.equal(JSON.stringify(ohneKatalog).includes('service-role-secret-sentinel'), false)
+    assert.equal(aufrufe.length, 0)
+
+    const ohneSpeicher = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
       env: {
         NEXT_PUBLIC_SUPABASE_URL: 'https://example.test',
         NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: 'nicht-verwenden',
       },
+      katalog: { transport: katalogTransport() },
     })
-    assert.deepEqual(ohne, { ok: false, reason: 'store_not_configured' })
+    assert.deepEqual(ohneSpeicher, { ok: false, reason: 'store_not_configured' })
 
-    const { transport, aufrufe } = transportAufzeichnen()
-    transport.aufrufen = async () => {
+    const geworfenTransport = transportAufzeichnen()
+    geworfenTransport.transport.aufrufen = async () => {
       throw new Error('netz')
     }
-    const geworfen = await akzeptierteEvidenceSpeichern(entwurf, basis, { transport })
+    const geworfen = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      null,
+      evidenceDeps(geworfenTransport.transport),
+    )
     assert.deepEqual(geworfen, { ok: false, reason: 'store_failed' })
-    assert.equal(aufrufe.length, 0)
+    assert.equal(geworfenTransport.aufrufe.length, 0)
   })
 
   test('die Migration ist genau ein Gateway ohne Katalog-Seed', () => {
@@ -748,6 +910,46 @@ function clusterStarten(): Cluster {
   }
 }
 
+function beweisPayload(evidence: EvidenceVersion): Aufruf {
+  const scope = regelScopeAusEvidenceScope(evidence.scope)
+  if (!scope.ok) throw new Error('scope')
+  const citizenship = evidence.scope.citizenship
+  const option = evidence.scope.credentialOption
+  const residence = evidence.scope.residence
+  const validity = evidence.scope.validity
+  return {
+    operation: 'accepted_evidence',
+    evidence: {
+      version_id: evidence.versionId,
+      previous_version_id: evidence.previousVersionId,
+      lifecycle: evidence.lifecycle,
+      validation_state: evidence.validationState,
+      source_id: evidence.sourceId,
+      canonical_url: evidence.canonicalUrl,
+      retrieved_at: evidence.retrievedAt,
+      source_content_hash: evidence.sourceContentHash,
+      valid_from: evidence.validFrom,
+      valid_until: evidence.validUntil,
+      lookup_key: evidence.lookupKey,
+      extraction_note: evidence.extractionNote,
+      rule_scope_key: scope.key,
+      destination_country_code: evidence.scope.destinationCountryCode,
+      transit_country_code: evidence.scope.transitCountryCode,
+      citizenship_mode: citizenship.mode,
+      citizenship_country_codes: citizenship.mode === 'required' ? [...citizenship.countryCodes] : [],
+      credential_option_mode: option.mode,
+      document_type: option.mode === 'option' ? option.documentType : null,
+      issuing_country_code: option.mode === 'option' ? option.issuingCountryCode : null,
+      related_citizenship_country_code: option.mode === 'option' ? option.relatedCitizenshipCountryCode : null,
+      residence_mode: residence.mode,
+      residence_country_code: residence.mode === 'required' ? residence.countryCode : null,
+      requirement_type: evidence.scope.requirementType,
+      validity_mode: validity.mode,
+      travel_date: validity.mode === 'travel_date' ? validity.travelDate : null,
+    },
+  }
+}
+
 function claimAusEvidencePayload(
   evidencePayload: Aufruf,
   factKind: string,
@@ -790,6 +992,411 @@ function payloadTag(payload: unknown): string {
   if (json.includes(tag)) throw new Error('payload tag')
   return `public.official_truth_store_accepted_v1(${tag}${json}${tag}::jsonb)`
 }
+
+function appTexte(): string {
+  const texte: string[] = []
+  const stapel = [join(ROOT, 'app')]
+  while (stapel.length > 0) {
+    const ordner = stapel.pop()
+    if (!ordner) break
+    for (const eintrag of readdirSync(ordner, { withFileTypes: true })) {
+      const pfad = join(ordner, eintrag.name)
+      if (eintrag.isDirectory()) stapel.push(pfad)
+      else if (eintrag.name.endsWith('.ts') || eintrag.name.endsWith('.tsx')) texte.push(readFileSync(pfad, 'utf8'))
+    }
+  }
+  return texte.join('\n')
+}
+
+function katalogZaehler(quellen: readonly QuellenEingabe[] = eingaben()): {
+  transport: OfficialTruthSourceCatalogTransport
+  aufrufe: Aufruf[]
+} {
+  const aufrufe: Aufruf[] = []
+  return {
+    aufrufe,
+    transport: {
+      async aufrufen(payload) {
+        aufrufe.push({ ...payload })
+        if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
+        return {
+          ok: true,
+          antwort: { ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+        }
+      },
+    },
+  }
+}
+
+describe('server-reproved accepted Evidence store entry', () => {
+  test('Aufruferautorität und gebaute Evidence erreichen den Speicher nicht', async () => {
+    const basis = registry()
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'angriff alpha')
+    const schon = akzeptiert(basis, 'example-border-authority', 'gov.example', 'angriff alpha')
+    const felder = ['registry', 'sourceClass', 'domains', 'blockedDomains'] as const
+
+    for (const feld of felder) {
+      const wert = feld === 'sourceClass'
+        ? 'official_authority'
+        : feld === 'registry'
+          ? basis
+          : ['not-a-government.example']
+      const katalog = katalogZaehler()
+      const roh = transportAufzeichnen()
+      const oben = await akzeptierteEvidenceSpeichern(
+        { ...paket.umschlag, [feld]: wert },
+        paket.uhr,
+        null,
+        { transport: roh.transport, katalog: { transport: katalog.transport } },
+      )
+      assert.deepEqual(oben, { ok: false, reason: 'caller_authority_forbidden' }, feld)
+      assert.equal(roh.aufrufe.length, 0, feld)
+      assert.equal(katalog.aufrufe.length, 0, feld)
+
+      const imMaterial = katalogZaehler()
+      const materialRoh = transportAufzeichnen()
+      const material = paket.umschlag.material as Record<string, unknown>
+      const imMaterialErgebnis = await akzeptierteEvidenceSpeichern(
+        { ...paket.umschlag, material: { ...material, [feld]: wert } },
+        paket.uhr,
+        null,
+        { transport: materialRoh.transport, katalog: { transport: imMaterial.transport } },
+      )
+      assert.deepEqual(imMaterialErgebnis, { ok: false, reason: 'caller_authority_forbidden' }, feld)
+      assert.equal(materialRoh.aufrufe.length, 0, feld)
+    }
+
+    const abhaengig = transportAufzeichnen()
+    const registryAlsAbhaengigkeit = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
+      transport: abhaengig.transport,
+      katalog: basis as unknown as OfficialTruthEvidenceStoreAbhaengigkeiten['katalog'],
+    })
+    assert.deepEqual(registryAlsAbhaengigkeit, { ok: false, reason: 'caller_authority_forbidden' })
+    assert.equal(abhaengig.aufrufe.length, 0)
+
+    const gebaut = transportAufzeichnen()
+    const alsUmschlag = await akzeptierteEvidenceSpeichern(schon, paket.uhr, null, evidenceDeps(gebaut.transport))
+    assert.deepEqual(alsUmschlag, { ok: false, reason: 'caller_authority_forbidden' })
+    assert.equal(gebaut.aufrufe.length, 0)
+
+    const akzeptiertRoh = transportAufzeichnen()
+    const alsExtraktion = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      schon,
+      evidenceDeps(akzeptiertRoh.transport),
+    )
+    assert.deepEqual(alsExtraktion, { ok: false, reason: 'caller_authority_forbidden' })
+    assert.equal(akzeptiertRoh.aufrufe.length, 0)
+
+    const verschachtelt = transportAufzeichnen()
+    const mitEvidence = await akzeptierteEvidenceSpeichern(
+      { ...paket.umschlag, evidence: schon },
+      paket.uhr,
+      null,
+      evidenceDeps(verschachtelt.transport),
+    )
+    assert.equal(mitEvidence.ok, false)
+    if (mitEvidence.ok) return
+    assert.equal(mitEvidence.reason, 'invalid_envelope')
+    assert.equal(verschachtelt.aufrufe.length, 0)
+  })
+
+  test('Hash, Version und Lookup des Aufrufers überschreiben die bewiesene Evidence nicht', async () => {
+    const basis = registry()
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'hash alpha', atom(), {
+      validFrom: '2026-10-01',
+      validUntil: null,
+      extractionNote: 'Fenster aus der Extraktion',
+    })
+    const falscherHash = 'a'.repeat(64)
+    const falscheVersion = `ev1_${'ab'.repeat(16)}`
+    const hashFelder = ['sourceContentHash', 'contentHash', 'content'] as const
+    for (const feld of hashFelder) {
+      const roh = transportAufzeichnen()
+      const oben = await akzeptierteEvidenceSpeichern(
+        { ...paket.umschlag, [feld]: falscherHash },
+        paket.uhr,
+        null,
+        evidenceDeps(roh.transport),
+      )
+      assert.equal(oben.ok, false, feld)
+      assert.equal(roh.aufrufe.length, 0, feld)
+
+      const materialRoh = transportAufzeichnen()
+      const material = paket.umschlag.material as Record<string, unknown>
+      const imMaterial = await akzeptierteEvidenceSpeichern(
+        { ...paket.umschlag, material: { ...material, [feld]: falscherHash } },
+        paket.uhr,
+        null,
+        evidenceDeps(materialRoh.transport),
+      )
+      assert.deepEqual(imMaterial, { ok: false, reason: 'source_fingerprint_override_forbidden' }, feld)
+      assert.equal(materialRoh.aufrufe.length, 0, feld)
+      assert.equal(JSON.stringify(imMaterial).includes(falscherHash), false)
+
+      const extraktionRoh = transportAufzeichnen()
+      const inExtraktion = await akzeptierteEvidenceSpeichern(
+        paket.umschlag,
+        paket.uhr,
+        { validFrom: null, validUntil: null, extractionNote: null, [feld]: falscherHash },
+        evidenceDeps(extraktionRoh.transport),
+      )
+      assert.deepEqual(inExtraktion, { ok: false, reason: 'extraction_field_forbidden' }, feld)
+      assert.equal(extraktionRoh.aufrufe.length, 0, feld)
+    }
+
+    const overrides = ['versionId', 'lifecycle', 'validationState', 'lookupKey'] as const
+    for (const feld of overrides) {
+      const roh = transportAufzeichnen()
+      const abgelehnt = await akzeptierteEvidenceSpeichern(
+        paket.umschlag,
+        paket.uhr,
+        { validFrom: null, validUntil: null, extractionNote: null, [feld]: falscheVersion },
+        evidenceDeps(roh.transport),
+      )
+      assert.deepEqual(abgelehnt, { ok: false, reason: 'extraction_field_forbidden' }, feld)
+      assert.equal(roh.aufrufe.length, 0, feld)
+    }
+
+    const { transport, aufrufe } = transportAufzeichnen()
+    const deps = {
+      ...evidenceDeps(transport),
+      versionId: falscheVersion,
+      lifecycle: 'candidate',
+      validationState: 'pending',
+      lookupKey: 'caller-lookup',
+      sourceContentHash: falscherHash,
+    }
+    const gespeichert = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      paket.extraktion,
+      deps,
+    )
+    assert.equal(gespeichert.ok, true)
+    if (!gespeichert.ok || gespeichert.operation !== 'accepted_evidence') return
+    const evidence = aufrufe[0]?.evidence as Record<string, unknown>
+    assert.notEqual(evidence.version_id, falscheVersion)
+    assert.equal(evidence.lifecycle, 'accepted')
+    assert.equal(evidence.validation_state, 'valid')
+    assert.notEqual(evidence.lookup_key, 'caller-lookup')
+    assert.notEqual(evidence.source_content_hash, falscherHash)
+    assert.equal(evidence.extraction_note, 'Fenster aus der Extraktion')
+    assert.equal(evidence.valid_from, '2026-10-01')
+    assert.equal(gespeichert.versionId, evidence.version_id)
+    assert.equal(JSON.stringify(aufrufe[0]).includes(falscherHash), false)
+    assert.equal(JSON.stringify(aufrufe[0]).includes('caller-lookup'), false)
+  })
+
+  test('falsche Domains, Anbieter und Katalogfehler rufen den Speicher nicht', async () => {
+    const basis = registry()
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'domain alpha')
+    const material = paket.umschlag.material as Record<string, unknown>
+    const falsch = transportAufzeichnen()
+    const fake = await akzeptierteEvidenceSpeichern(
+      { ...paket.umschlag, material: { ...material, canonicalUrl: 'https://www.not-a-government.example/rules' } },
+      paket.uhr,
+      null,
+      evidenceDeps(falsch.transport),
+    )
+    assert.deepEqual(fake, { ok: false, reason: 'unregistered_domain' })
+    assert.equal(falsch.aufrufe.length, 0)
+    assert.equal(JSON.stringify(fake).includes('not-a-government.example'), false)
+
+    const anbieterRoh = transportAufzeichnen()
+    const lizenziert = await evidenceAusAbrufSpeichern(
+      basis,
+      'example-licensed-provider',
+      'provider.example',
+      'licensed alpha',
+      atom({ sourceId: 'example-licensed-provider' }),
+      evidenceDeps(anbieterRoh.transport),
+    )
+    assert.deepEqual(lizenziert, { ok: false, reason: 'source_not_official_authority' })
+    assert.equal(anbieterRoh.aufrufe.length, 0)
+
+    const umetikettiert = transportAufzeichnen()
+    const quelle = basis.sources.find((eintrag) => eintrag.sourceId === 'example-licensed-provider')
+    assert.ok(quelle)
+    const relabel = await akzeptierteEvidenceSpeichern(
+      {
+        ...abruf(basis, 'example-licensed-provider', 'provider.example', 'licensed beta', atom({
+          sourceId: 'example-licensed-provider',
+        })).umschlag,
+        descriptors: [{
+          source: { ...quelle, sourceClass: 'official_authority', authorityName: 'Fake Authority' },
+          coverage: abdeckungFuer(atom({ sourceId: 'example-licensed-provider' })),
+        }],
+      },
+      paket.uhr,
+      null,
+      evidenceDeps(umetikettiert.transport),
+    )
+    assert.deepEqual(relabel, { ok: false, reason: 'invalid_source_plan' })
+    assert.equal(umetikettiert.aufrufe.length, 0)
+
+    const katalogLeer = transportAufzeichnen()
+    const ohneKatalog = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
+      transport: katalogLeer.transport,
+      env: { NEXT_PUBLIC_SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '' },
+    })
+    assert.deepEqual(ohneKatalog, { ok: false, reason: 'catalog_not_configured' })
+    assert.equal(katalogLeer.aufrufe.length, 0)
+
+    const geworfen = transportAufzeichnen()
+    const katalogWurf = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
+      transport: geworfen.transport,
+      katalog: {
+        transport: {
+          async aufrufen() {
+            throw new Error('catalog-sentinel')
+          },
+        },
+      },
+    })
+    assert.deepEqual(katalogWurf, { ok: false, reason: 'catalog_failed' })
+    assert.equal(geworfen.aufrufe.length, 0)
+    assert.equal(JSON.stringify(katalogWurf).includes('catalog-sentinel'), false)
+
+    const abrufRoh = transportAufzeichnen()
+    const zukunft = await akzeptierteEvidenceSpeichern(
+      {
+        ...paket.umschlag,
+        material: { ...material, retrievedAt: '2026-10-02T00:00:00.000Z' },
+      },
+      paket.uhr,
+      null,
+      evidenceDeps(abrufRoh.transport),
+    )
+    assert.deepEqual(zukunft, { ok: false, reason: 'retrieved_at_in_future' })
+    assert.equal(abrufRoh.aufrufe.length, 0)
+
+    const speicherAus = transportAufzeichnen()
+    speicherAus.transport.aufrufen = async () => ({ ok: false })
+    const transportFehler = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      null,
+      evidenceDeps(speicherAus.transport),
+    )
+    assert.deepEqual(transportFehler, { ok: false, reason: 'store_failed' })
+  })
+
+  test('eingefügte und idempotente Antworten bleiben an die bewiesene Version gebunden', async () => {
+    const basis = registry()
+    const paket = abruf(basis, 'example-border-authority', 'gov.example', 'idempotent alpha')
+    const aufrufe: Aufruf[] = []
+    let runde = 0
+    const transport: OfficialTruthStoreTransport = {
+      async aufrufen(payload) {
+        aufrufe.push(payload)
+        runde += 1
+        const evidence = payload.evidence as { version_id?: string }
+        return {
+          ok: true,
+          antwort: {
+            ok: true,
+            operation: 'accepted_evidence',
+            outcome: runde === 1 ? 'inserted' : 'idempotent',
+            version_id: evidence.version_id,
+          },
+        }
+      },
+    }
+    const erste = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, evidenceDeps(transport))
+    const zweite = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, evidenceDeps(transport))
+    assert.equal(erste.ok, true)
+    assert.equal(zweite.ok, true)
+    if (!erste.ok || !zweite.ok || erste.operation !== 'accepted_evidence' || zweite.operation !== 'accepted_evidence') return
+    assert.equal(erste.outcome, 'inserted')
+    assert.equal(zweite.outcome, 'idempotent')
+    assert.equal(erste.versionId, zweite.versionId)
+    assert.equal(erste.ruleScopeKey, zweite.ruleScopeKey)
+
+    const falsch = transportAufzeichnen()
+    falsch.transport.aufrufen = async (payload) => {
+      const evidence = payload.evidence as { version_id?: string }
+      return {
+        ok: true,
+        antwort: {
+          ok: true,
+          operation: 'accepted_evidence',
+          outcome: 'inserted',
+          version_id: evidence.version_id === undefined ? 'ev1_missing' : `ev1_${'cd'.repeat(16)}`,
+        },
+      }
+    }
+    const abweichend = await akzeptierteEvidenceSpeichern(
+      paket.umschlag,
+      paket.uhr,
+      null,
+      evidenceDeps(falsch.transport),
+    )
+    assert.deepEqual(abweichend, { ok: false, reason: 'store_failed' })
+  })
+
+  test('zwei Credential-Optionen bleiben zwei Zellen', async () => {
+    const basis = registry()
+    const serbisch = atom({
+      credentialOption: {
+        mode: 'option',
+        documentType: 'passport',
+        issuingCountryCode: 'RS',
+        relatedCitizenshipCountryCode: 'RS',
+      },
+    })
+    const schweizerRoh = transportAufzeichnen()
+    const serbischRoh = transportAufzeichnen()
+    const schweizer = await evidenceAusAbrufSpeichern(
+      basis,
+      'example-border-authority',
+      'gov.example',
+      'zelle schweiz',
+      atom(),
+      evidenceDeps(schweizerRoh.transport),
+    )
+    const serbischeZelle = await evidenceAusAbrufSpeichern(
+      basis,
+      'example-border-authority',
+      'gov.example',
+      'zelle serbien',
+      serbisch,
+      evidenceDeps(serbischRoh.transport),
+    )
+    assert.equal(schweizer.ok, true)
+    assert.equal(serbischeZelle.ok, true)
+    if (!schweizer.ok || !serbischeZelle.ok) return
+    if (schweizer.operation !== 'accepted_evidence' || serbischeZelle.operation !== 'accepted_evidence') return
+    assert.notEqual(schweizer.ruleScopeKey, serbischeZelle.ruleScopeKey)
+    assert.notEqual(schweizer.versionId, serbischeZelle.versionId)
+    const links = schweizerRoh.aufrufe[0]?.evidence as Record<string, unknown>
+    const rechts = serbischRoh.aufrufe[0]?.evidence as Record<string, unknown>
+    assert.equal(links.issuing_country_code, 'CH')
+    assert.equal(links.related_citizenship_country_code, 'CH')
+    assert.equal(rechts.issuing_country_code, 'RS')
+    assert.equal(rechts.related_citizenship_country_code, 'RS')
+    assert.notEqual(links.rule_scope_key, rechts.rule_scope_key)
+    assert.notEqual(links.lookup_key, rechts.lookup_key)
+  })
+
+  test('keine Route und kein neuer Regel-Annahmeweg ruft den Evidence-Schreiber', () => {
+    const text = quelle('lib/readiness/official-truth-store-server.ts')
+    const evidenceStart = text.indexOf('export async function akzeptierteEvidenceSpeichern')
+    const claimStart = text.indexOf('export async function akzeptierteRegelClaimSpeichern')
+    assert.ok(evidenceStart > 0)
+    assert.ok(claimStart > evidenceStart)
+    const evidenceBody = text.slice(evidenceStart, claimStart)
+    assert.equal(evidenceBody.includes('regelKandidatAkzeptieren('), false)
+    assert.equal(evidenceBody.includes('evidenceKandidatAkzeptieren'), false)
+    assert.equal(evidenceBody.includes('officialTruthServerHeldEvidenceAnnehmen('), true)
+    const oberflaeche = appTexte()
+    assert.equal(oberflaeche.includes('akzeptierteEvidenceSpeichern'), false)
+    assert.equal(oberflaeche.includes('official-truth-store-server'), false)
+    assert.equal(oberflaeche.includes('officialTruthServerHeldEvidenceAnnehmen'), false)
+    assert.equal(requirementsProviderAus(), null)
+  })
+})
 
 describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
   test('Rollen, Rollback und genaue Duplikate', { timeout: 120_000 }, async () => {
@@ -887,8 +1494,15 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           return { ok: true, antwort: { ok: true, operation: 'accepted_evidence', outcome: antwort.outcome, version_id: antwort.version_id } }
         },
       }
-      const entwurf = kandidat(basis, 'example-border-authority', 'gov.example', 'store alpha')
-      const erste = await akzeptierteEvidenceSpeichern(entwurf, basis, { transport: evidenceTransport })
+      const deps = evidenceDeps(evidenceTransport)
+      const erste = await evidenceAusAbrufSpeichern(
+        basis,
+        'example-border-authority',
+        'gov.example',
+        'store alpha',
+        undefined,
+        deps,
+      )
       assert.equal(erste.ok, true)
       if (!erste.ok || erste.operation !== 'accepted_evidence') return
       assert.equal(cluster.aufruf('select count(*) from private.official_sources'), '4')
@@ -907,7 +1521,14 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
         cluster.aufruf(`select rule_scope_key || '|' || lifecycle || '|' || validation_state from private.official_evidence_versions`),
         `${erste.ruleScopeKey}|accepted|valid`,
       )
-      const zweite = await akzeptierteEvidenceSpeichern(entwurf, basis, { transport: evidenceTransport })
+      const zweite = await evidenceAusAbrufSpeichern(
+        basis,
+        'example-border-authority',
+        'gov.example',
+        'store alpha',
+        undefined,
+        deps,
+      )
       assert.equal(zweite.ok, true)
       if (!zweite.ok) return
       assert.equal(zweite.outcome, 'idempotent')
@@ -1011,14 +1632,15 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       assert.equal(aufenthalt.ok, true)
       assert.equal(cluster.aufruf(`select per_visit_value || per_visit_unit from private.official_rule_claim_stay_limit`), '90days')
 
-      const passEntwurf = kandidat(
+      const passScope = atom({ requirementType: 'passport_validity' })
+      const passGespeichert = await evidenceAusAbrufSpeichern(
         basis,
         'example-border-authority',
         'gov.example',
         'pass store',
-        atom({ requirementType: 'passport_validity' }),
+        passScope,
+        deps,
       )
-      const passGespeichert = await akzeptierteEvidenceSpeichern(passEntwurf, basis, { transport: evidenceTransport })
       assert.equal(passGespeichert.ok, true)
       const pass = akzeptiert(basis, 'example-border-authority', 'gov.example', 'pass store', atom({ requirementType: 'passport_validity' }))
       const passClaim = await akzeptierteRegelClaimSpeichern(
@@ -1034,14 +1656,15 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
         'valid_on_entry:true',
       )
 
-      const seitenEntwurf = kandidat(
+      const seitenScope = atom({ requirementType: 'blank_passport_pages' })
+      assert.equal((await evidenceAusAbrufSpeichern(
         basis,
         'example-border-authority',
         'gov.example',
         'seiten store',
-        atom({ requirementType: 'blank_passport_pages' }),
-      )
-      assert.equal((await akzeptierteEvidenceSpeichern(seitenEntwurf, basis, { transport: evidenceTransport })).ok, true)
+        seitenScope,
+        deps,
+      )).ok, true)
       const seiten = akzeptiert(basis, 'example-border-authority', 'gov.example', 'seiten store', atom({ requirementType: 'blank_passport_pages' }))
       assert.equal((await akzeptierteRegelClaimSpeichern(
         claimEingabe(basis, seiten.scope, 'blank_passport_pages', 'explicit_primary_statement', [seiten], {
@@ -1052,14 +1675,15 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       )).ok, true)
       assert.equal(cluster.aufruf(`select minimum_pages from private.official_rule_claim_blank_pages`), '2')
 
-      const transitEntwurf = kandidat(
+      const transitScope = atom({ requirementType: 'transit' })
+      assert.equal((await evidenceAusAbrufSpeichern(
         basis,
         'example-border-authority',
         'gov.example',
         'transit store',
-        atom({ requirementType: 'transit' }),
-      )
-      assert.equal((await akzeptierteEvidenceSpeichern(transitEntwurf, basis, { transport: evidenceTransport })).ok, true)
+        transitScope,
+        deps,
+      )).ok, true)
       const transit = akzeptiert(basis, 'example-border-authority', 'gov.example', 'transit store', atom({ requirementType: 'transit' }))
       const transitClaim = await akzeptierteRegelClaimSpeichern(
         claimEingabe(basis, transit.scope, 'transit_conditions', 'explicit_primary_statement', [transit], {
@@ -1130,15 +1754,21 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
 
       const nz = atom({ destinationCountryCode: 'NZ' })
       const nzInnenAtom = atom({ destinationCountryCode: 'NZ', sourceId: 'example-interior-authority' })
-      assert.equal((await akzeptierteEvidenceSpeichern(
-        kandidat(basis, 'example-border-authority', 'gov.example', 'nz border', nz),
+      assert.equal((await evidenceAusAbrufSpeichern(
         basis,
-        { transport: evidenceTransport },
+        'example-border-authority',
+        'gov.example',
+        'nz border',
+        nz,
+        deps,
       )).ok, true)
-      assert.equal((await akzeptierteEvidenceSpeichern(
-        kandidat(basis, 'example-interior-authority', 'interior.example', 'nz interior', nzInnenAtom),
+      assert.equal((await evidenceAusAbrufSpeichern(
         basis,
-        { transport: evidenceTransport },
+        'example-interior-authority',
+        'interior.example',
+        'nz interior',
+        nzInnenAtom,
+        deps,
       )).ok, true)
       const nzVisa = akzeptiert(basis, 'example-border-authority', 'gov.example', 'nz border', nz)
       const nzInnen = akzeptiert(basis, 'example-interior-authority', 'interior.example', 'nz interior', nzInnenAtom)
@@ -1160,10 +1790,13 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       `), '2:official_authority')
 
       const th = atom({ destinationCountryCode: 'TH' })
-      const thGespeichert = await akzeptierteEvidenceSpeichern(
-        kandidat(basis, 'example-border-authority', 'gov.example', 'th store', th),
+      const thGespeichert = await evidenceAusAbrufSpeichern(
         basis,
-        { transport: evidenceTransport },
+        'example-border-authority',
+        'gov.example',
+        'th store',
+        th,
+        deps,
       )
       assert.equal(thGespeichert.ok, true)
       if (!thGespeichert.ok || thGespeichert.operation !== 'accepted_evidence') return
@@ -1181,10 +1814,13 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       assert.equal(cluster.aufruf(`select count(*) from private.official_rule_claim_visa_options`), '2')
 
       const sg = atom({ destinationCountryCode: 'SG' })
-      const sgGespeichert = await akzeptierteEvidenceSpeichern(
-        kandidat(basis, 'example-border-authority', 'gov.example', 'sg store', sg),
+      const sgGespeichert = await evidenceAusAbrufSpeichern(
         basis,
-        { transport: evidenceTransport },
+        'example-border-authority',
+        'gov.example',
+        'sg store',
+        sg,
+        deps,
       )
       assert.equal(sgGespeichert.ok, true)
       if (!sgGespeichert.ok || sgGespeichert.operation !== 'accepted_evidence') return
@@ -1206,19 +1842,37 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       )
 
       const kr = atom({ destinationCountryCode: 'KR', sourceId: 'example-licensed-provider' })
-      const lizenziert = await akzeptierteEvidenceSpeichern(
-        kandidat(basis, 'example-licensed-provider', 'provider.example', 'licensed store', kr),
+      const vorLizenz = evidencePayloads.length
+      const lizenziert = await evidenceAusAbrufSpeichern(
         basis,
-        { transport: evidenceTransport },
+        'example-licensed-provider',
+        'provider.example',
+        'licensed store',
+        kr,
+        deps,
       )
-      assert.equal(lizenziert.ok, true)
-      if (!lizenziert.ok || lizenziert.operation !== 'accepted_evidence') return
+      assert.deepEqual(lizenziert, { ok: false, reason: 'source_not_official_authority' })
+      assert.equal(evidencePayloads.length, vorLizenz)
+      const lokaleLizenz = akzeptiert(
+        basis,
+        'example-licensed-provider',
+        'provider.example',
+        'licensed store',
+        kr,
+      )
+      const lizenzPayload = beweisPayload(lokaleLizenz)
+      const lizenzAntwort = JSON.parse(cluster.aufruf(`select ${payloadTag(lizenzPayload)}`, 'service_role')) as {
+        outcome: string
+        version_id: string
+      }
+      assert.equal(lizenzAntwort.outcome, 'inserted')
+      assert.equal(lizenzAntwort.version_id, lokaleLizenz.versionId)
       const vorAnbieter = zaehlstand()
       const lizenziertClaim = claimAusEvidencePayload(
-        evidenceFuer(lizenziert.versionId),
+        lizenzPayload,
         'requirement_effect',
         'explicit_primary_statement',
-        [lizenziert.versionId],
+        [lokaleLizenz.versionId],
         { effect: 'not_required', visa_mode: 'visa_exempt', source_class: 'official_authority' },
       )
       const anbieter = cluster.scheitert(`select ${payloadTag(lizenziertClaim)}`, 'service_role')
