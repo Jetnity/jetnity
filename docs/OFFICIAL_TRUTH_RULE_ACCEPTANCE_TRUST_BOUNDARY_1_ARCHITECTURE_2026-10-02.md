@@ -35,6 +35,24 @@ The loader accepts no caller role, grant, reviewer, AAL, capability, user id, em
 
 The database function remains the merged LOCAL/UNAPPLIED `SECURITY INVOKER` function from `supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql`. This binding does not edit or apply that migration. `types/supabase.ts` does not list the RPC. The call is one narrow user-scoped wrapper. This guard does not construct a service-role or admin client.
 
+## Autonomous pre-acceptance witness binding — 2 October 2026
+
+Issue #766 closes only the #749 F7 same-request precondition. This note binds that witness. It does not accept a Rule, call a store, add a route, or close F8.
+
+`loadOfficialTruthAutonomousPreacceptanceWitness(eingabe)` in `lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts` is the only live witness entry. It accepts the registry-free review material already required by `officialTruthServerHeldReviewPacket`. It accepts no caller registry, source class, domains, blocked domains, role, grant, capability, reviewer, user, AAL, clock, `maxAgeMs`, freshness result, `reviewPacketKey`, `supportVersionIds`, trusted fact, accepted claim, lifecycle override, suggestion, or model authority.
+
+Authority comes only from `loadOfficialTruthFactEntryAuthority()`. The witness continues only for exactly `{ status: 'authorized', grant: 'role', capability: 'official-truth-freigeben' }`. Any other result fails closed before the catalog read.
+
+One successful re-proof calls `officialTruthServerHeldReviewReproof`. That function loads `quellenKatalogLesen` once, injects that registry, recomputes #723 and #726 v2 from the same reconstructed input, and requires the packet scope and support identities to match the `review-packet:v2:` fingerprint. It returns no caller registry.
+
+Every re-proved support must be exactly `current` from `officialFrische`. `checkedAt` is the support `retrievedAt`. `validFrom` and `validUntil` are the re-proved accepted window. Content identity is the re-proved `sourceContentHash`. `now` is a server-owned reference time. No caller `maxAgeMs` is accepted. The existing global ceiling stays in force. A re-proved official source is treated as source-available only inside that helper. `requirementsProviderAus()` stays `null`. Any freshness other than `current` fails closed.
+
+The re-proved candidate quality must be `explicit_primary_statement` or `composed_from_multiple_primary_sources`. `research_gap`, `stale_primary_evidence`, `unresolved_conflict`, a blocked packet, and same-source composition fail closed. Suggestion output and `officialTruthRegelReviewEntscheidungsabsicht` are not authority for this witness.
+
+The success object is ephemeral proof metadata: status `authorized_preacceptance_witness`, the recomputed key, rule scope, fact kind, sorted support version ids, the server reference time, freshness `current`, and the authority echo `grant: 'role'` plus capability `official-truth-freigeben`. It is not a bearer capability, not acceptance, not a trusted fact, and not Official Truth. A later request must call the live entry again. This slice does not persist it.
+
+`decideOfficialTruthAutonomousPreacceptanceWitness` is the deterministic test seam. It is not the live entry. A future route that calls the seam, or that calls `regelKandidatAkzeptieren` from this witness, reopens F7. F8 remains open. This witness does not call `regelKandidatAkzeptieren` or either store writer.
+
 ## Evidence-store binding — 2 October 2026
 
 Issue #762 closes #749 F2 for the accepted-Evidence store entry. This note binds future Evidence persistence to that entry. It does not call the store, apply the RPC, accept a Rule, or add a route.

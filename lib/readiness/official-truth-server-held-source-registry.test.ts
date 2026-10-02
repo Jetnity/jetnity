@@ -17,6 +17,7 @@ import {
   type OfficialTruthRechercheGrund,
 } from '@/lib/readiness/official-truth-research-request'
 import { officialTruthAbgerufenMaterialPruefen } from '@/lib/readiness/official-truth-retrieved-material'
+import { officialTruthRegelReviewPacketFingerprint } from '@/lib/readiness/official-truth-rule-review-fingerprint'
 import { officialTruthRegelReviewPacket } from '@/lib/readiness/official-truth-rule-review-packet'
 import {
   OFFICIAL_TRUTH_LIVE_AUTONOMOUS_ENTRY,
@@ -24,6 +25,7 @@ import {
   officialTruthServerHeldMaterialPruefen,
   officialTruthServerHeldRegelKandidat,
   officialTruthServerHeldReviewPacket,
+  officialTruthServerHeldReviewReproof,
 } from '@/lib/readiness/official-truth-server-held-source-registry'
 import {
   quellenKatalogLesen,
@@ -278,6 +280,10 @@ describe('Official Truth server-held source registry', () => {
     assert.equal(text.includes('officialTruthAkzeptierteEvidenceAusAbruf('), true)
     assert.equal(text.includes('officialTruthRegelKandidatAusEvidence('), true)
     assert.equal(text.includes('officialTruthRegelReviewPacket('), true)
+    assert.equal(text.includes('officialTruthRegelReviewPacketFingerprint('), true)
+    assert.equal(text.includes('regelKandidatAkzeptieren'), false)
+    assert.equal(text.includes('akzeptierteRegelClaimSpeichern'), false)
+    assert.equal(text.includes('akzeptierteEvidenceSpeichern'), false)
     assert.equal(text.includes('quellenRegistryErstellen'), false)
     assert.equal(text.includes('quelleRegistrieren'), false)
     assert.equal(text.includes('register_source'), false)
@@ -611,5 +617,58 @@ describe('Official Truth server-held source registry', () => {
     assert.equal(gemischt.status, 'blocked')
     if (gemischt.status !== 'blocked') return
     assert.equal(gemischt.reason, 'scope_mismatch')
+  })
+
+  test('eine gemeinsame Neubewertung liest den Katalog einmal und trifft review-packet:v2', async () => {
+    const katalog = transportFuer(realeEingaben())
+    const basis = registry(realeEingaben())
+    const coverage = abdeckung()
+    const erste = buendel(aufrufer({ descriptors: [deskriptor(basis, REAL, coverage), deskriptor(basis, INTERIOR, coverage)] }))
+    const zweite = buendel(
+      aufrufer({
+        descriptors: [deskriptor(basis, REAL, coverage), deskriptor(basis, INTERIOR, coverage)],
+        sourceId: INTERIOR,
+        material: { canonicalUrl: 'https://www.real-interior.example/rules', sourceSnapshot: 'interior page' },
+      }),
+    )
+    const vorschlag = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
+    const eingabe = { supports: [erste, zweite], metadata: vorschlag }
+    const live = await officialTruthServerHeldReviewReproof(eingabe, { transport: katalog.transport })
+    assert.equal(live.status, 'server_held_review_reproof')
+    if (live.status !== 'server_held_review_reproof') return
+    assert.match(live.reviewPacketKey, /^review-packet:v2:[a-f0-9]{64}$/)
+    assert.deepEqual(katalog.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
+
+    const gelesen = await quellenKatalogLesen({ transport: transportFuer(realeEingaben()).transport })
+    assert.equal(gelesen.ok, true)
+    if (!gelesen.ok) return
+    const rekonstruiert = {
+      supports: [erste, zweite].map((bund) => ({
+        ...bund,
+        umschlag: { ...bund.umschlag, registry: gelesen.registry },
+      })),
+      metadata: vorschlag,
+    }
+    const paket = officialTruthRegelReviewPacket(rekonstruiert)
+    const finger = officialTruthRegelReviewPacketFingerprint(rekonstruiert)
+    assert.equal(paket.status, 'rule_review_packet')
+    assert.equal(finger.status, 'rule_review_packet_fingerprint')
+    if (paket.status !== 'rule_review_packet' || finger.status !== 'rule_review_packet_fingerprint') return
+    assert.equal(live.reviewPacketKey, finger.reviewPacketKey)
+    assert.equal(live.ruleScopeKey, finger.ruleScopeKey)
+    assert.equal(live.ruleScopeKey, paket.kandidat.key)
+    assert.deepEqual([...live.supportVersionIds], [...finger.supportVersionIds])
+    assert.deepEqual([...live.supportVersionIds], [...paket.kandidat.supportVersionIds])
+    assert.deepEqual(
+      live.supports.map((support) => support.versionId),
+      [...paket.supports.map((support) => support.versionId)],
+    )
+    const text = JSON.stringify(live)
+    assert.equal(text.includes('sourceSnapshot'), false)
+    assert.equal(text.includes('proposal'), false)
+    assert.equal(text.includes('registry'), false)
+    assert.equal(text.includes('interior page'), false)
+    assert.equal(text.includes('real-government.example'), false)
+    assert.equal(text.includes('blockedDomains'), false)
   })
 })

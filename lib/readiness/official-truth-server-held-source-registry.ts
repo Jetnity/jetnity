@@ -27,11 +27,20 @@ import {
   type OfficialTruthAbrufSperrgrund,
 } from '@/lib/readiness/official-truth-retrieved-material'
 import {
+  officialTruthRegelReviewPacketFingerprint,
+} from '@/lib/readiness/official-truth-rule-review-fingerprint'
+import {
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
   type OfficialTruthRegelReviewPacketSperrgrund,
 } from '@/lib/readiness/official-truth-rule-review-packet'
-import { REGEL_SUPPORT_MAX, type RegelClaimFehler, type RegelKandidatErgebnis } from '@/lib/readiness/rule-claims'
+import {
+  REGEL_SUPPORT_MAX,
+  type RegelClaimFehler,
+  type RegelEvidenceQualitaet,
+  type RegelFaktArt,
+  type RegelKandidatErgebnis,
+} from '@/lib/readiness/rule-claims'
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 /**
@@ -69,6 +78,34 @@ export type OfficialTruthServerHeldReviewErgebnis =
       readonly status: 'blocked'
       readonly reason: OfficialTruthRegelReviewPacketSperrgrund | OfficialTruthServerHeldGrenze
     }
+
+/**
+ * Enge Provenienz für den Frischevergleich. Kein Schnappschuss, kein
+ * Vorschlag, keine Registry und kein angenommener Claim.
+ */
+export type OfficialTruthServerHeldReviewReproofSupport = {
+  readonly versionId: string
+  readonly retrievedAt: string
+  readonly sourceContentHash: string
+  readonly validFrom: string | null
+  readonly validUntil: string | null
+}
+
+/**
+ * Eine Kataloglesung, dann #723 und #726 v2 auf derselben rekonstruierten
+ * Eingabe. Der Rückgabewert enthält keine Registry.
+ */
+export type OfficialTruthServerHeldReviewReproofErgebnis =
+  | {
+      readonly status: 'server_held_review_reproof'
+      readonly reviewPacketKey: string
+      readonly ruleScopeKey: string
+      readonly factKind: RegelFaktArt
+      readonly evidenceQuality: RegelEvidenceQualitaet
+      readonly supportVersionIds: readonly string[]
+      readonly supports: readonly OfficialTruthServerHeldReviewReproofSupport[]
+    }
+  | Extract<OfficialTruthServerHeldReviewErgebnis, { status: 'blocked' }>
 
 export type OfficialTruthServerHeldRegelErgebnis =
   | Extract<RegelKandidatErgebnis, { ok: true }>
@@ -245,6 +282,69 @@ export async function officialTruthServerHeldReviewPacket(
     extraktion: bund.extraktion,
   }))
   return officialTruthRegelReviewPacket({ supports, metadata: gelesen.metadata })
+}
+
+function gleicheIds(links: readonly string[], rechts: readonly string[]): boolean {
+  return links.length === rechts.length && links.every((id, index) => id === rechts[index])
+}
+
+function reproofStuetze(
+  support: Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>['supports'][number],
+): OfficialTruthServerHeldReviewReproofSupport {
+  return Object.freeze({
+    versionId: support.versionId,
+    retrievedAt: support.retrievedAt,
+    sourceContentHash: support.sourceContentHash,
+    validFrom: support.validFrom,
+    validUntil: support.validUntil,
+  })
+}
+
+/**
+ * Belegt Paket und v2-Fingerabdruck aus einer Kataloglesung.
+ * Die servergehaltene Registry wird in jede Stütze eingesetzt. Beide
+ * Prüfungen sehen danach dasselbe rekonstruierte Objekt. Zelle und
+ * Stütz-IDs müssen übereinstimmen. Die Registry verlässt diese Funktion
+ * nicht. Das ist kein Zeuge und keine Annahme.
+ */
+export async function officialTruthServerHeldReviewReproof(
+  eingabe: unknown,
+  abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
+): Promise<OfficialTruthServerHeldReviewReproofErgebnis> {
+  const gelesen = reviewLesen(eingabe)
+  if (!gelesen.ok) return blockiert(gelesen.reason)
+  const katalog = await registryLaden(abhaengigkeiten)
+  if (!katalog.ok) return blockiert(katalog.reason)
+  const rekonstruiert = {
+    supports: gelesen.supports.map((bund) => ({
+      umschlag: umschlagMitRegistry(datensatz(bund.umschlag) as Record<string, unknown>, katalog.registry),
+      uhr: bund.uhr,
+      extraktion: bund.extraktion,
+    })),
+    metadata: gelesen.metadata,
+  }
+  const paket = officialTruthRegelReviewPacket(rekonstruiert)
+  if (paket.status !== 'rule_review_packet') return paket
+  const finger = officialTruthRegelReviewPacketFingerprint(rekonstruiert)
+  if (finger.status !== 'rule_review_packet_fingerprint') return blockiert(finger.reason)
+  if (!finger.reviewPacketKey.startsWith('review-packet:v2:')) return blockiert('invalid_fact')
+  if (finger.ruleScopeKey !== paket.kandidat.key) return blockiert('scope_mismatch')
+  const stuetzIds = paket.supports.map((support) => support.versionId)
+  if (
+    !gleicheIds(finger.supportVersionIds, paket.kandidat.supportVersionIds) ||
+    !gleicheIds(finger.supportVersionIds, stuetzIds)
+  ) {
+    return blockiert('support_mismatch')
+  }
+  return Object.freeze({
+    status: 'server_held_review_reproof',
+    reviewPacketKey: finger.reviewPacketKey,
+    ruleScopeKey: finger.ruleScopeKey,
+    factKind: paket.kandidat.factKind,
+    evidenceQuality: paket.kandidat.evidenceQuality,
+    supportVersionIds: Object.freeze([...finger.supportVersionIds]),
+    supports: Object.freeze(paket.supports.map(reproofStuetze)),
+  })
 }
 
 /**
