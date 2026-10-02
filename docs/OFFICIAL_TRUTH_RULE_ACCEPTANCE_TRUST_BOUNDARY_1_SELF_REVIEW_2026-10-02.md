@@ -13,11 +13,11 @@ This is the author self-review. It is not a Technical-Lead PASS.
 
 ## Scope check
 
-The diff against `5e291ed7c4814f034224eda46c3bd62cc9815ea3` is the task seed plus the architecture, report, handoff and this self-review.
+The diff against `906fb4a5714f8c1836d1894acc6332084f7f6280` is this slice's docs only. `lib/readiness/official-truth-review-suggestion.ts` and `lib/readiness/official-truth-review-suggestion.test.ts` match `origin/main`. They were not edited after the merge.
 
-The binding task file is unchanged. `docs/ACTIVE_WORK_STATUS.md`, `DECISIONS.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `JETNITY_HANDOFF.md` and `JETNITY_START_HERE.md` were not edited. Continuity for this slice is the architecture, the report and the handoff.
+The binding task file is unchanged. The architecture file is unchanged from the R2-accepted head except by the merge, and the merge did not touch it. `docs/ACTIVE_WORK_STATUS.md`, `DECISIONS.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `JETNITY_HANDOFF.md` and `JETNITY_START_HERE.md` were not edited. Continuity for this slice is the architecture, the report and the handoff.
 
-No remote Supabase command was run. No migration file was added. `lib/readiness/rule-claims.ts`, `lib/readiness/official-truth-rule-review-packet.ts`, `lib/readiness/official-truth-rule-review-fingerprint.ts` and `lib/readiness/official-truth-store-server.ts` were not edited.
+No remote Supabase command was run. No migration file was added. `lib/readiness/rule-claims.ts`, `lib/readiness/official-truth-rule-review-packet.ts`, `lib/readiness/official-truth-rule-review-fingerprint.ts` and `lib/readiness/official-truth-store-server.ts` were not edited. The #730 suggestion module was not edited.
 
 ## Task coverage
 
@@ -40,6 +40,8 @@ No remote Supabase command was run. No migration file was added. `lib/readiness/
 | R1-F2 sequence is the current V1 human path, not the only permanent mechanism | Architecture §10 |
 | Minimal audit fields, no passport/MRZ/biometric/health, no retention choice | Architecture §8 |
 | #728 suggestions advisory; no model identity or approval | Architecture §9 |
+| R2 `5391464128` accepted the architecture on `8a5f8cf1`; no architecture edit in this re-gate | Architecture file unchanged by this integration |
+| #730 merged at `906fb4a`; suggestion runtime unchanged and still advisory | Report R2 section; `officialTruthRegelReviewVorschlag` |
 | OpenAI Developers plugin does not authorize secrets or cost | Architecture §9 |
 | Smallest future sequence, not started | Architecture §10 |
 | Gate classification; pure contracts are not special gates | Architecture §11 |
@@ -72,4 +74,4 @@ PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 1
 
 This remains a Draft. No Ready, no merge, and no follow-up acceptance, endpoint, Auth, database or model slice from this writer.
 
-**STOP for Technical-Lead R2 of the exact pushed tip.**
+**STOP for final Technical-Lead review of the exact pushed tip.**
