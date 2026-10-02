@@ -105,6 +105,21 @@ export type OfficialTruthRegelReviewPacketErgebnis =
     }
   | { readonly status: 'blocked'; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
 
+/**
+ * Dieselbe Prüfung wie das öffentliche Paket, plus die angenommenen
+ * EvidenceVersions, die das Paket dafür schon gebaut hat. Das öffentliche
+ * Paket gibt diese Versionen nicht zurück. Nur die servergehaltene Grenze
+ * darf sie für den gleichen Request behalten.
+ */
+export type OfficialTruthRegelReviewBelegErgebnis =
+  | {
+      readonly status: 'rule_review_packet'
+      readonly kandidat: RegelKandidat
+      readonly supports: readonly OfficialTruthRegelReviewSupport[]
+      readonly evidenceVersions: readonly Angenommen['evidence'][]
+    }
+  | { readonly status: 'blocked'; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
+
 type Angenommen = Extract<OfficialTruthAkzeptierteEvidenceErgebnis, { status: 'accepted_evidence' }>
 
 type Belegt = {
@@ -124,7 +139,9 @@ function genaueSchluessel(satz: object, erlaubt: readonly string[]): boolean {
   return namen.length === erlaubt.length && erlaubt.every((name) => Object.hasOwn(satz, name))
 }
 
-function sperre(reason: OfficialTruthRegelReviewPacketSperrgrund): OfficialTruthRegelReviewPacketErgebnis {
+function sperre(
+  reason: OfficialTruthRegelReviewPacketSperrgrund,
+): { readonly status: 'blocked'; readonly reason: OfficialTruthRegelReviewPacketSperrgrund } {
   return Object.freeze({ status: 'blocked', reason })
 }
 
@@ -204,15 +221,8 @@ function buendelLesen(wert: unknown): { ok: true; belegt: Belegt; registry: stri
   return { ok: true, belegt: { evidence, beleg }, registry, registryWert }
 }
 
-/**
- * Baut ein internes Prüfpaket.
- * Jede Stütze trägt den ursprünglichen Abrufumschlag, die injizierte Uhr
- * und die Extraktion. Die Metadaten tragen nur Faktart, Evidence-Qualität
- * und Vorschlag. Evidence, Regel-Kandidat, Beleg, Stütz-IDs und ein
- * Wahrheitsfakt des Aufrufers sind keine Argumente.
- * Eine Zelle, eine Registry, höchstens `REGEL_SUPPORT_MAX` Stützen.
- */
-export function officialTruthRegelReviewPacket(eingabe: unknown): OfficialTruthRegelReviewPacketErgebnis {
+/** Eine Zelle, eine Registry, höchstens `REGEL_SUPPORT_MAX` Stützen. */
+function regelReviewBauen(eingabe: unknown): OfficialTruthRegelReviewBelegErgebnis {
   const satz = datensatz(eingabe)
   if (!satz) return sperre('unexpected_fields')
   if (fremdePerson(satz, EINGABE_FELDER)) return sperre('personal_identifier_forbidden')
@@ -256,15 +266,45 @@ export function officialTruthRegelReviewPacket(eingabe: unknown): OfficialTruthR
 
   const nachId = new Map(belegt.map((eintrag) => [eintrag.evidence.versionId, eintrag]))
   const supports: OfficialTruthRegelReviewSupport[] = []
+  const evidenceVersions: Angenommen['evidence'][] = []
   for (const id of ids) {
     const eintrag = nachId.get(id)
     if (!eintrag) return sperre('support_mismatch')
     supports.push(stuetzEintrag(eintrag))
+    evidenceVersions.push(eintrag.evidence)
   }
 
   return Object.freeze({
     status: 'rule_review_packet',
     kandidat,
     supports: Object.freeze(supports),
+    evidenceVersions: Object.freeze(evidenceVersions),
+  })
+}
+
+/**
+ * Server-Naht. Behält die EvidenceVersions, die dieser Aufbau schon
+ * angenommen hat. Das ist kein öffentliches Prüfpaket.
+ */
+export function officialTruthRegelReviewBelege(eingabe: unknown): OfficialTruthRegelReviewBelegErgebnis {
+  return regelReviewBauen(eingabe)
+}
+
+/**
+ * Baut ein internes Prüfpaket.
+ * Jede Stütze trägt den ursprünglichen Abrufumschlag, die injizierte Uhr
+ * und die Extraktion. Die Metadaten tragen nur Faktart, Evidence-Qualität
+ * und Vorschlag. Evidence, Regel-Kandidat, Beleg, Stütz-IDs und ein
+ * Wahrheitsfakt des Aufrufers sind keine Argumente.
+ * Eine Zelle, eine Registry, höchstens `REGEL_SUPPORT_MAX` Stützen.
+ * Angenommene EvidenceVersions bleiben in `officialTruthRegelReviewBelege`.
+ */
+export function officialTruthRegelReviewPacket(eingabe: unknown): OfficialTruthRegelReviewPacketErgebnis {
+  const gebaut = regelReviewBauen(eingabe)
+  if (gebaut.status !== 'rule_review_packet') return gebaut
+  return Object.freeze({
+    status: 'rule_review_packet',
+    kandidat: gebaut.kandidat,
+    supports: gebaut.supports,
   })
 }

@@ -30,17 +30,21 @@ import {
   officialTruthRegelReviewPacketFingerprint,
 } from '@/lib/readiness/official-truth-rule-review-fingerprint'
 import {
+  officialTruthRegelReviewBelege,
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
   type OfficialTruthRegelReviewPacketSperrgrund,
+  type OfficialTruthRegelReviewSupport,
 } from '@/lib/readiness/official-truth-rule-review-packet'
 import {
   REGEL_SUPPORT_MAX,
   type RegelClaimFehler,
   type RegelEvidenceQualitaet,
   type RegelFaktArt,
+  type RegelKandidat,
   type RegelKandidatErgebnis,
 } from '@/lib/readiness/rule-claims'
+import type { EvidenceVersion } from '@/lib/readiness/evidence'
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 /**
@@ -113,6 +117,27 @@ export type OfficialTruthServerHeldReviewReproofErgebnis =
         | Extract<OfficialTruthServerHeldReviewErgebnis, { status: 'blocked' }>['reason']
         | 'invalid_reference_time'
     }
+
+/**
+ * Internes Material einer Kataloglesung. Die öffentliche Neubewertung
+ * projiziert daraus die enge Frischestütze. Registry, angenommene
+ * EvidenceVersions, Kandidat und Quellenschnappschuss bleiben hier für
+ * denselben Serveraufruf. Das ist keine Antwort und keine Annahme.
+ */
+export type OfficialTruthServerHeldSameRequestMaterialErgebnis =
+  | {
+      readonly status: 'server_held_same_request_material'
+      readonly registry: QuellenRegistry
+      readonly evidenceVersions: readonly EvidenceVersion[]
+      readonly kandidat: RegelKandidat
+      readonly reviewPacketKey: string
+      readonly ruleScopeKey: string
+      readonly factKind: RegelFaktArt
+      readonly evidenceQuality: RegelEvidenceQualitaet
+      readonly supportVersionIds: readonly string[]
+      readonly supports: readonly OfficialTruthRegelReviewSupport[]
+    }
+  | Extract<OfficialTruthServerHeldReviewReproofErgebnis, { status: 'blocked' }>
 
 export type OfficialTruthServerHeldRegelErgebnis =
   | Extract<RegelKandidatErgebnis, { ok: true }>
@@ -334,19 +359,16 @@ function serverPruefuhr(uhr: unknown): (() => Date) | null {
 }
 
 /**
- * Belegt Paket und v2-Fingerabdruck aus einer Kataloglesung.
- * Die servergehaltene Registry wird in jede Stütze eingesetzt. Die Prüfuhr
- * ist der übergebene servereigene Instant, nicht `bund.uhr`. Beide Prüfungen
- * sehen danach dasselbe rekonstruierte Objekt. Zelle und Stütz-IDs müssen
- * übereinstimmen. Die Identität ist reihenfolgeunabhängig, wie der
- * v2-Fingerabdruck. Die Registry verlässt diese Funktion nicht. Das ist
- * kein Zeuge und keine Annahme.
+ * Eine Kataloglesung, dann Evidence, Kandidat, #723 und #726 v2 auf
+ * derselben rekonstruierten Eingabe. Die Prüfuhr ist der übergebene
+ * servereigene Instant, nicht `bund.uhr`. Die Registry verlässt die
+ * öffentliche Neubewertung nicht. Dieses Material bleibt auf dem Server.
  */
-export async function officialTruthServerHeldReviewReproof(
+export async function officialTruthServerHeldSameRequestMaterial(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
   serverUhr?: () => Date,
-): Promise<OfficialTruthServerHeldReviewReproofErgebnis> {
+): Promise<OfficialTruthServerHeldSameRequestMaterialErgebnis> {
   const gelesen = reviewLesen(eingabe)
   if (!gelesen.ok) return blockiert(gelesen.reason)
   const pruefuhr = serverPruefuhr(serverUhr)
@@ -361,28 +383,64 @@ export async function officialTruthServerHeldReviewReproof(
     })),
     metadata: gelesen.metadata,
   }
-  const paket = officialTruthRegelReviewPacket(rekonstruiert)
-  if (paket.status !== 'rule_review_packet') return paket
+  const belegt = officialTruthRegelReviewBelege(rekonstruiert)
+  if (belegt.status !== 'rule_review_packet') return belegt
   const finger = officialTruthRegelReviewPacketFingerprint(rekonstruiert)
   if (finger.status !== 'rule_review_packet_fingerprint') return blockiert(finger.reason)
   if (!finger.reviewPacketKey.startsWith('review-packet:v2:')) return blockiert('invalid_fact')
-  if (finger.ruleScopeKey !== paket.kandidat.key) return blockiert('scope_mismatch')
-  const stuetzIds = paket.supports.map((support) => support.versionId)
+  if (finger.ruleScopeKey !== belegt.kandidat.key) return blockiert('scope_mismatch')
+  const versionsIds = belegt.evidenceVersions.map((version) => version.versionId)
+  const stuetzIds = belegt.supports.map((support) => support.versionId)
   if (
-    !gleicheIdMenge(finger.supportVersionIds, paket.kandidat.supportVersionIds) ||
-    !gleicheIdMenge(finger.supportVersionIds, stuetzIds)
+    !gleicheIdMenge(finger.supportVersionIds, belegt.kandidat.supportVersionIds) ||
+    !gleicheIdMenge(finger.supportVersionIds, stuetzIds) ||
+    !gleicheIdMenge(finger.supportVersionIds, versionsIds)
   ) {
     return blockiert('support_mismatch')
   }
-  const supports = [...paket.supports].sort((links, rechts) => idVergleich(links.versionId, rechts.versionId))
+  const supports = [...belegt.supports].sort((links, rechts) => idVergleich(links.versionId, rechts.versionId))
+  const evidenceVersions = [...belegt.evidenceVersions].sort((links, rechts) =>
+    idVergleich(links.versionId, rechts.versionId),
+  )
   return Object.freeze({
-    status: 'server_held_review_reproof',
+    status: 'server_held_same_request_material',
+    registry: katalog.registry,
+    evidenceVersions: Object.freeze(evidenceVersions),
+    kandidat: belegt.kandidat,
     reviewPacketKey: finger.reviewPacketKey,
     ruleScopeKey: finger.ruleScopeKey,
-    factKind: paket.kandidat.factKind,
-    evidenceQuality: paket.kandidat.evidenceQuality,
+    factKind: belegt.kandidat.factKind,
+    evidenceQuality: belegt.kandidat.evidenceQuality,
     supportVersionIds: Object.freeze([...finger.supportVersionIds].sort(idVergleich)),
-    supports: Object.freeze(supports.map(reproofStuetze)),
+    supports: Object.freeze(supports),
+  })
+}
+
+/**
+ * Belegt Paket und v2-Fingerabdruck aus einer Kataloglesung.
+ * Die servergehaltene Registry wird in jede Stütze eingesetzt. Die Prüfuhr
+ * ist der übergebene servereigene Instant, nicht `bund.uhr`. Beide Prüfungen
+ * sehen danach dasselbe rekonstruierte Objekt. Zelle und Stütz-IDs müssen
+ * übereinstimmen. Die Identität ist reihenfolgeunabhängig, wie der
+ * v2-Fingerabdruck. Die Registry, die EvidenceVersions, der Kandidat und
+ * der Schnappschuss verlassen diese Funktion nicht. Das ist kein Zeuge
+ * und keine Annahme.
+ */
+export async function officialTruthServerHeldReviewReproof(
+  eingabe: unknown,
+  abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
+  serverUhr?: () => Date,
+): Promise<OfficialTruthServerHeldReviewReproofErgebnis> {
+  const material = await officialTruthServerHeldSameRequestMaterial(eingabe, abhaengigkeiten, serverUhr)
+  if (material.status !== 'server_held_same_request_material') return material
+  return Object.freeze({
+    status: 'server_held_review_reproof',
+    reviewPacketKey: material.reviewPacketKey,
+    ruleScopeKey: material.ruleScopeKey,
+    factKind: material.factKind,
+    evidenceQuality: material.evidenceQuality,
+    supportVersionIds: material.supportVersionIds,
+    supports: Object.freeze(material.supports.map(reproofStuetze)),
   })
 }
 
