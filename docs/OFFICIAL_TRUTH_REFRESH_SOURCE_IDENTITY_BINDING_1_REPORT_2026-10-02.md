@@ -51,11 +51,19 @@ One call remains one regulatory cell and one selected official source. The cell 
 - No call to `evidenceKandidatAkzeptieren`, `evidenceKandidatAusModell`, `regelKandidatErstellen`, or `regelKandidatAkzeptieren`.
 - `requirementsProviderAus()` stays `null`.
 - F2 and F4 through F9 are untouched. #741 is not implemented. #626 is untouched.
-- `docs/ACTIVE_WORK_STATUS.md` and `DECISIONS.md` were not edited. They are outside this lane. This report and the handoff are the continuity for the slice.
+- `docs/ACTIVE_WORK_STATUS.md` and `DECISIONS.md` were not edited by this slice. The merge took main's #754 status text unchanged. This report and the handoff are the continuity for the slice.
 
 ## Validation
 
-Local gates below were run on `aaa297bfa83caeb1ef07057b0d73ccdf358ff219` before this docs commit. `git fetch origin main` in this session resolved `origin/main` to `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`, which is the task baseline. Merge-base is that SHA. The runtime head was 0 behind and 2 ahead. Re-fetch before treating any later SHA as current.
+The first local gates were run on `aaa297bfa83caeb1ef07057b0d73ccdf358ff219` before the first docs commit. At that time `origin/main` was `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`, the task baseline. That runtime head was 0 behind and 2 ahead of that SHA. Those sentences were true then. They are not the review head after #754 merged.
+
+## Final integration re-gate
+
+`git fetch origin main` resolved `origin/main` to `7df2c9dc7c6679db74bb1476bc07366737f2c2b3` (`Merge #754: harden Guardian intelligence current-state lifecycle`). This branch merged that SHA. The integration commit is `0cb661586700e332313e7de6be4167276c9a985e`. It was 0 behind and 4 ahead of that `main`. Re-fetch before treating a later SHA as current.
+
+`lib/readiness/official-truth-refresh-diff.ts` and `lib/readiness/official-truth-refresh-diff.test.ts` are unchanged from `aaa297bf`. The Guardian current-state files and the other #754 paths match `origin/main` with an empty diff. This slice did not edit them.
+
+The gates below were rerun on `0cb66158` before the integration docs commit.
 
 | Check | Result |
 | --- | --- |

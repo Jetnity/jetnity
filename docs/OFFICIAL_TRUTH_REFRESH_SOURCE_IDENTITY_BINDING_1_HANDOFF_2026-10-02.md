@@ -21,15 +21,16 @@ Read first:
 3. `docs/OFFICIAL_TRUTH_REFRESH_SOURCE_IDENTITY_BINDING_1_SELF_REVIEW_2026-10-02.md`
 4. `lib/readiness/official-truth-refresh-diff.ts`
 
-`docs/ACTIVE_WORK_STATUS.md` was not updated. It is outside the task allowlist. This handoff is the continuity pointer for the slice. The status file on this branch still describes an older writer. Do not treat that older section as this slice.
+`docs/ACTIVE_WORK_STATUS.md` is outside the task allowlist. The merge took the #754 text from `main` unchanged. This slice did not edit it. Do not treat that status file as this writer. This handoff is the continuity pointer for the slice.
 
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` in this session resolved `origin/main` to `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`. That SHA is Merge #755 and the task baseline.
-- The runtime head `aaa297bfa83caeb1ef07057b0d73ccdf358ff219` was 0 behind and 2 ahead of that SHA. Re-fetch before treating any later SHA as current. The docs commit does not change runtime behaviour.
-- Local gates in the report were run on `aaa297bf` before the docs commit.
-- `lib/readiness/provider.ts`, `lib/readiness/source-registry.ts`, and `lib/readiness/official-truth-server-held-source-registry.ts` have no diff against that `main`.
+- Task baseline remains `main@ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (Merge #755). The accepted refresh runtime is `aaa297bfa83caeb1ef07057b0d73ccdf358ff219`.
+- Final integration: `git fetch origin main` resolved `origin/main` to `7df2c9dc7c6679db74bb1476bc07366737f2c2b3` (Merge #754). Integration commit `0cb661586700e332313e7de6be4167276c9a985e` was 0 behind and 4 ahead. Re-fetch before treating a later SHA as current.
+- The two refresh files have an empty diff against `aaa297bf`. The #754 Guardian current-state files have an empty diff against `origin/main`.
+- The final gates in the report were rerun on `0cb66158` before this integration note. The docs commit does not change runtime behaviour.
+- `lib/readiness/provider.ts`, `lib/readiness/source-registry.ts`, and `lib/readiness/official-truth-server-held-source-registry.ts` have no diff against `origin/main`.
 
 ## Trust rule for the next reader
 

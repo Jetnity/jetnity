@@ -18,7 +18,9 @@ Changed paths:
 - `docs/OFFICIAL_TRUTH_REFRESH_SOURCE_IDENTITY_BINDING_1_HANDOFF_2026-10-02.md`
 - `docs/OFFICIAL_TRUTH_REFRESH_SOURCE_IDENTITY_BINDING_1_SELF_REVIEW_2026-10-02.md`
 
-`lib/readiness/source-registry.ts` is unchanged. `lib/readiness/official-truth-server-held-source-registry.ts` is unchanged. `lib/readiness/provider.ts` has no diff against `origin/main`. No file under `app/`, `supabase/`, or `.jetnity/` changed. `docs/ACTIVE_WORK_STATUS.md` was not edited. No migration was added.
+`lib/readiness/source-registry.ts` is unchanged. `lib/readiness/official-truth-server-held-source-registry.ts` is unchanged. `lib/readiness/provider.ts` has no diff against `origin/main`. No file under `app/`, `supabase/`, or `.jetnity/` changed. `docs/ACTIVE_WORK_STATUS.md` and the #754 Guardian current-state files match `origin/main` and were not edited by this slice. No migration was added.
+
+The refresh runtime and tests are byte-identical to `aaa297bfa83caeb1ef07057b0d73ccdf358ff219`. The integration commit is `0cb661586700e332313e7de6be4167276c9a985e`, which merges `main@7df2c9dc7c6679db74bb1476bc07366737f2c2b3`.
 
 ## Contract
 
@@ -35,7 +37,7 @@ Changed paths:
 
 ## Gates
 
-Re-run on `aaa297bfa83caeb1ef07057b0d73ccdf358ff219` before the documentation commit:
+First run on `aaa297bfa83caeb1ef07057b0d73ccdf358ff219`, then the same commands again on the integrated tree `0cb661586700e332313e7de6be4167276c9a985e` before this note:
 
 - focused refresh tests 16/16
 - `npm test` 4429 / 4429, 760 suites
