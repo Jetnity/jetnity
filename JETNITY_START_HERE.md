@@ -1,5 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
+> **Current chat-transition checkpoint — 2 October 2026, 14:00 Europe/Zurich.** The canonical resume aid is `docs/JETNITY_CHAT_TRANSITION_CHECKPOINT_2026-10-02_1400.md`. At checkpoint creation current `main` is `b6574611ac1bf1935b90d4acf07076dfee93b000` (Merge #731) and exact Vercel Production `dpl_BS4WWKT2hAXBFzMdmbmrwribmRdx` is READY with `aliasError=null`. #730 and #731 are merged. No current writer is intentionally started by this checkpoint. Reconstruct live before acting; live evidence wins. The next known ungated candidate is a fresh-prechecked pure Rule Review Decision Intent contract. Reserved Auth/AAL/role/RLS, DB/Production, provider/secret/cost, payment and launch gates remain binding.
+
 > **Tooling continuity — OpenAI Developers plugin, 2 October 2026.** The Product Owner's ChatGPT environment has the official **OpenAI Developers** plugin installed and enabled. Future Jetnity Technical-Lead chats may use it when relevant for current OpenAI API / Agents SDK guidance, OpenAI development best practices, API troubleshooting, DevDay guidance, and API-key setup guidance. This installation is **not** authorization to create/rotate or expose API keys, store secrets, activate paid/live OpenAI calls, change provider selection, or create material recurring cost; all existing provider/secret/cost/Production gates remain binding. Jetnity's own Official-Truth / Source-Registry / Evidence / Rule-Claim contracts remain canonical; plugin or model output cannot mint Official Truth.
 
 Stand: 2. Oktober 2026
