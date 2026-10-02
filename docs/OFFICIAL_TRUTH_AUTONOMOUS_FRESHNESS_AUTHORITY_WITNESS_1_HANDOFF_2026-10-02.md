@@ -14,9 +14,9 @@ Read `docs/OFFICIAL_TRUTH_AUTONOMOUS_FRESHNESS_AUTHORITY_WITNESS_1_REPORT_2026-1
 
 ## Current state
 
-The review head is the branch tip after the R1 documentation commit. Re-fetch before review. The R1 implementation commit is `d43711afd6cbd0ff02c9ed9bfebe63b45c81b136`. Intermediate head `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea` is not the review head. Its positional support-id comparison is corrected on this tip.
+The review head is the branch tip after the R2 documentation commit. Re-fetch before review. The R2 implementation commit is `13ebcb20b04b6f677ca4e5e459f8343a565f46c9`. Intermediate head `c0a9e707ed12fba0a946f54b1cb587bdcf2912ea` is not the review head. `d43711af` and `02526f26` are not the review head. Positional support-id comparison and caller-clock forwarding are both corrected on this tip.
 
-At the R1 fetch, `origin/main` was `c04964e715c0ea6810dae18d7c3d573707672392` and the merge-base was that SHA. Do not treat a later SHA as current without fetching.
+At the R2 fetch, `origin/main` was `c04964e715c0ea6810dae18d7c3d573707672392` and the merge-base was that SHA. The implementation commit was 6 ahead and 0 behind. Do not treat a later SHA as current without fetching.
 
 Machine mode is `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`. `docs/ACTIVE_WORK_STATUS.md` was left untouched because the task allowlist does not include it. This handoff is the continuity record for the next reader.
 
@@ -24,9 +24,9 @@ Machine mode is `NORMAL`. This slice does not edit `.jetnity/operating-mode.json
 
 `loadOfficialTruthAutonomousPreacceptanceWitness(eingabe)` is the only live witness entry.
 
-The caller supplies registry-free review material. The function calls `loadOfficialTruthFactEntryAuthority()` and continues only for the exact authorized role grant. It then takes a server clock reading and calls `officialTruthServerHeldReviewReproof` with no caller catalog override.
+The caller supplies registry-free review material. The function calls `loadOfficialTruthFactEntryAuthority()` and continues only for the exact authorized role grant. It then takes a server clock reading and calls `officialTruthServerHeldReviewReproof` with that instant and no caller catalog override.
 
-The reproof loads the catalog once and recomputes the review packet and the `review-packet:v2:` fingerprint from that same reconstructed input. Support identity is a canonical multiset, so caller order is not part of the key. Every support must be `current` under existing `officialFrische`. The result is ephemeral proof metadata. A later request must call the live entry again. Do not store the witness and do not treat the key as a capability.
+The reproof loads the catalog once and recomputes the review packet and the `review-packet:v2:` fingerprint from that same reconstructed input. Its validation clock is the snapshotted server instant. Caller `uhr` is not executed. Support identity is a canonical multiset, so caller order is not part of the key. Every support must be `current` under existing `officialFrische` at that same instant. The result is ephemeral proof metadata. A later request must call the live entry again. Do not store the witness and do not treat the key as a capability. The historical packet entry and the pure #723 function still accept their own clocks. Do not route the autonomous witness through those clocks.
 
 `decideOfficialTruthAutonomousPreacceptanceWitness` is the test seam. A route that calls the seam, `requireAdminPage`, or the pure packet functions with a caller registry reopens this precondition.
 
@@ -36,7 +36,7 @@ No Ready. No merge. No follow-up slice. Do not start F8. Do not call `regelKandi
 
 ## Validation already recorded
 
-On `d43711afd6cbd0ff02c9ed9bfebe63b45c81b136`, before the R1 documentation commit: witness tests 13/13; registry tests 10/10; `npm test` 4474 pass / 0 fail / 763 suites; typecheck pass; lint 0 errors and 148 pre-existing warnings; production build pass on Next.js 16.3.8 with 25 static pages; hygiene checks pass; operating-mode guard PASS. Local PostgreSQL 16.15 ran the existing throwaway proofs. No remote database was contacted. Exact-head CI and Vercel belong to the pushed tip, not to this text. The `c0a9e707` gates are historical.
+On `13ebcb20b04b6f677ca4e5e459f8343a565f46c9`, before the R2 documentation commit: witness tests 15/15; registry tests 11/11; `npm test` 4477 pass / 0 fail / 763 suites; typecheck pass; lint 0 errors and 148 pre-existing warnings; production build pass on Next.js 16.3.8 with 25 static pages; hygiene checks pass; operating-mode guard PASS. Local PostgreSQL 16.15 ran the existing throwaway proofs. No remote database was contacted. Exact-head CI and Vercel belong to the pushed tip, not to this text. The `c0a9e707` and `d43711af` gates are historical.
 
 ## Exact next step
 
