@@ -378,7 +378,7 @@ describe('Official Truth rule review packet fingerprint', () => {
     assert.equal(luecke.ruleScopeKey, basis.ruleScopeKey)
     assert.notEqual(andereZelle.reviewPacketKey, basis.reviewPacketKey)
     assert.notEqual(andereZelle.ruleScopeKey, basis.ruleScopeKey)
-    assert.deepEqual(andereZelle.supportVersionIds, basis.supportVersionIds)
+    assert.notDeepEqual(andereZelle.supportVersionIds, basis.supportVersionIds)
     ohneStoff(andererVorschlag, ['visa_on_arrival', 'electronic_visa'])
     ohneStoff(andereArt, ['stay_limit', 'perVisit'])
     ohneStoff(luecke, ['research_gap', 'electronic_visa'])

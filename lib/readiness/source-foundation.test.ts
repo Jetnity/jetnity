@@ -438,6 +438,24 @@ describe('Official Truth source/evidence foundation', () => {
       laterAnalysisShortCircuit: true,
     })
 
+    const serbien = angenommen(basis, 'official page line\nunchanged', atom({
+      credentialOption: { mode: 'option', ...option('RS', 'RS') },
+    }))
+    assert.equal(erste.sourceContentHash, serbien.sourceContentHash)
+    assert.equal(erste.canonicalUrl, serbien.canonicalUrl)
+    assert.equal(erste.retrievedAt, serbien.retrievedAt)
+    assert.notEqual(erste.lookupKey, serbien.lookupKey)
+    assert.notEqual(erste.versionId, serbien.versionId)
+    assert.match(erste.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(serbien.versionId, /^ev1_[a-f0-9]{32}$/)
+
+    const pass = angenommen(basis, 'official page line\nunchanged', atom({ requirementType: 'passport_validity' }))
+    assert.equal(erste.sourceContentHash, pass.sourceContentHash)
+    assert.notEqual(erste.lookupKey, pass.lookupKey)
+    assert.notEqual(erste.versionId, pass.versionId)
+    assert.notEqual(serbien.versionId, pass.versionId)
+    assert.match(pass.versionId, /^ev1_[a-f0-9]{32}$/)
+
     const geaendert = angenommen(basis, 'official page line\nchanged', undefined, 'model wording alpha')
     assert.notEqual(erste.sourceContentHash, geaendert.sourceContentHash)
     assert.notEqual(erste.versionId, geaendert.versionId)

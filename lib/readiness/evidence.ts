@@ -601,8 +601,14 @@ function gueltigkeitsfenster(satz: Record<string, unknown>): { ok: true; validFr
   return { ok: true, validFrom, validUntil }
 }
 
-function versionIdFuer(sourceId: string, canonicalUrl: string, sourceContentHash: string, retrievedAt: string): string {
-  return `${VERSION_PREFIX}${sha256Hex([sourceId, canonicalUrl, sourceContentHash, retrievedAt].join('|')).slice(0, 32)}`
+function versionIdFuer(
+  sourceId: string,
+  canonicalUrl: string,
+  sourceContentHash: string,
+  retrievedAt: string,
+  lookupKey: string,
+): string {
+  return `${VERSION_PREFIX}${sha256Hex([sourceId, canonicalUrl, sourceContentHash, retrievedAt, lookupKey].join('|')).slice(0, 32)}`
 }
 
 function quellePasst(quelle: RegistrierteQuelle, evidence: Pick<EvidenceVersion, 'sourceId' | 'sourceClass' | 'authorityName' | 'publisherName'>): boolean {
@@ -656,7 +662,7 @@ export function evidenceKandidatAusModell(
     return { ok: false, reason: 'authority_required' }
   }
   const evidence: EvidenceVersion = {
-    versionId: versionIdFuer(url.source.sourceId, url.canonicalUrl, sourceContentHash, retrievedAt),
+    versionId: versionIdFuer(url.source.sourceId, url.canonicalUrl, sourceContentHash, retrievedAt, schluessel.key),
     previousVersionId: null,
     lifecycle: 'candidate',
     validationState: 'pending',
