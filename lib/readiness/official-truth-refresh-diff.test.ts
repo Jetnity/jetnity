@@ -198,6 +198,20 @@ function standardRegistry(): QuellenRegistry {
   return registry([amt(QUELLE, 'gov.example'), amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')])
 }
 
+function paket(basis: QuellenRegistry, material?: Record<string, unknown>): Record<string, unknown> {
+  return huelle({
+    registry: basis,
+    descriptors: basis.sources.map((source) =>
+      deskriptor(
+        basis,
+        source.sourceId,
+        source.sourceId === ANDERE ? abdeckung({ destinationCountryCodes: ['TH'] }) : abdeckung(),
+      ),
+    ),
+    material,
+  })
+}
+
 function huelle(teil?: {
   request?: unknown
   registry?: unknown
@@ -292,6 +306,11 @@ describe('Official Truth accepted Evidence refresh diff', () => {
       text,
       /evidenceVersionenVergleichen\(angenommen\.evidence, \{ sourceContentHash: neuBeleg\.sourceContentHash \}\)/,
     )
+    const seite = text.indexOf("sperre('different_official_page')")
+    const registryVergleich = text.indexOf("sperre('different_source_registry')")
+    const inhalt = text.lastIndexOf('evidenceVersionenVergleichen(angenommen.evidence, { sourceContentHash: neuBeleg.sourceContentHash })')
+    assert.ok(seite > 0 && registryVergleich > seite && inhalt > registryVergleich)
+    assert.doesNotMatch(text, /quellenRegistryErstellen|quellenUrlAufloesen|source-registry|source-router|official-truth-server-held|official-truth-source-catalog/)
     assert.doesNotMatch(text, /evidenceKandidatAkzeptieren|evidenceKandidatAusModell|regelKandidatAkzeptieren|regelKandidatErstellen/)
     assert.doesNotMatch(text, /lifecycle\s*:|validationState\s*:|versionId\s*:|lookupKey\s*:/)
     assert.doesNotMatch(text, /not_required|requirementsProviderAus|official_truth_store_accepted_v1|official_truth_source_catalog_v1/)
@@ -628,5 +647,270 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     const text = JSON.stringify(ergebnis)
     for (const wort of WIRKUNG) assert.equal(text.includes(wort), false, wort)
     assert.equal(text.includes('keep me'), false)
+  })
+
+  test('dieselbe Quelle und dieselbe Zelle auf einer anderen kanonischen Seite bleiben gesperrt', () => {
+    const basis = huelle()
+    const basisBeleg = officialTruthAbgerufenMaterialPruefen(basis, uhr())
+    assert.equal(basisBeleg.status, 'retrieved_material')
+    if (basisBeleg.status !== 'retrieved_material') throw new Error('basis')
+    const seiten = [
+      'https://other.gov.example/other-page',
+      'https://gov.example/rules',
+      'https://www.gov.example/rules/',
+      'https://www.gov.example/other',
+    ]
+    for (const canonicalUrl of seiten) {
+      for (const sourceSnapshot of [SNAPSHOT, ANDERS]) {
+        const neu = huelle({ material: { canonicalUrl, sourceSnapshot } })
+        const neuBeleg = officialTruthAbgerufenMaterialPruefen(neu, uhr())
+        assert.equal(neuBeleg.status, 'retrieved_material', canonicalUrl)
+        if (neuBeleg.status !== 'retrieved_material') throw new Error('neu')
+        assert.equal(neuBeleg.sourceId, basisBeleg.sourceId)
+        assert.equal(neuBeleg.ruleScopeKey, basisBeleg.ruleScopeKey)
+        assert.equal(neuBeleg.sourceContentHash === basisBeleg.sourceContentHash, sourceSnapshot === SNAPSHOT)
+        assert.notEqual(neuBeleg.canonicalUrl, basisBeleg.canonicalUrl)
+        const ergebnis = vergleichen(basis, null, neu)
+        assert.deepEqual(ergebnis, { status: 'blocked', reason: 'different_official_page' }, canonicalUrl)
+        ohneLeak(ergebnis, [canonicalUrl, 'other.gov.example', 'gov.example'])
+      }
+    }
+  })
+
+  test('gleichwertige URL-Normalisierung bleibt dieselbe amtliche Seite', () => {
+    const basis = huelle()
+    for (const canonicalUrl of ['https://WWW.GOV.EXAMPLE/rules', 'https://www.gov.example:443/rules', '  https://www.gov.example/rules  ']) {
+      const neu = huelle({ material: { canonicalUrl, sourceSnapshot: 'official page line\r\nunchanged' } })
+      const basisBeleg = officialTruthAbgerufenMaterialPruefen(basis, uhr())
+      const neuBeleg = officialTruthAbgerufenMaterialPruefen(neu, uhr())
+      assert.equal(basisBeleg.status, 'retrieved_material', canonicalUrl)
+      assert.equal(neuBeleg.status, 'retrieved_material', canonicalUrl)
+      if (basisBeleg.status !== 'retrieved_material' || neuBeleg.status !== 'retrieved_material') throw new Error('beleg')
+      assert.equal(neuBeleg.canonicalUrl, basisBeleg.canonicalUrl)
+      assert.equal(neuBeleg.canonicalUrl, URL)
+      const entscheidung = erfolg(vergleichen(basis, null, neu))
+      assert.equal(entscheidung.status, 'unchanged_source_content')
+      assert.equal(entscheidung.contentChanged, false)
+      assert.equal(entscheidung.ruleChange, 'not_asserted')
+      ohneLeak(entscheidung)
+    }
+
+    const mitSlash = huelle({ material: { canonicalUrl: 'https://www.gov.example/rules/' } })
+    const punkt = huelle({ material: { canonicalUrl: 'https://www.gov.example/rules/.' } })
+    const slashBeleg = officialTruthAbgerufenMaterialPruefen(mitSlash, uhr())
+    const punktBeleg = officialTruthAbgerufenMaterialPruefen(punkt, uhr())
+    assert.equal(slashBeleg.status, 'retrieved_material')
+    assert.equal(punktBeleg.status, 'retrieved_material')
+    if (slashBeleg.status !== 'retrieved_material' || punktBeleg.status !== 'retrieved_material') throw new Error('slash')
+    assert.equal(punktBeleg.canonicalUrl, slashBeleg.canonicalUrl)
+    assert.equal(punktBeleg.canonicalUrl, 'https://www.gov.example/rules/')
+    const gleich = erfolg(vergleichen(mitSlash, null, punkt))
+    assert.equal(gleich.status, 'unchanged_source_content')
+    assert.equal(gleich.ruleChange, 'not_asserted')
+    ohneLeak(gleich)
+  })
+
+  test('unabhängig gebaute gleiche Registries bleiben dieselbe Identität', () => {
+    const grenzeZuerst: QuellenEingabe = {
+      sourceId: QUELLE,
+      sourceClass: 'official_authority',
+      publisherName: 'Example Border Authority',
+      authorityName: 'Example Border Authority',
+      domains: ['border.example', 'gov.example'],
+    }
+    const grenzeDanach: QuellenEingabe = { ...grenzeZuerst, domains: ['gov.example', 'border.example'] }
+    const innen = amt(ANDERE, 'interior.example')
+    const lizenz = anbieter(ANBIETER, 'provider.example')
+    const links = registry([grenzeZuerst, innen, lizenz], ['z.example', 'a.example'])
+    const rechts = registry([lizenz, innen, grenzeDanach], ['a.example', 'z.example'])
+    assert.notEqual(links, rechts)
+    assert.notEqual(links.sources, rechts.sources)
+    assert.notEqual(links.blockedDomains, rechts.blockedDomains)
+    const basis = paket(links)
+    const gleich = erfolg(vergleichen(basis, null, paket(rechts, { sourceSnapshot: 'official page line\r\nunchanged' })))
+    assert.equal(gleich.status, 'unchanged_source_content')
+    assert.equal(gleich.contentChanged, false)
+    assert.equal(gleich.ruleChange, 'not_asserted')
+    const geaendert = erfolg(vergleichen(basis, null, paket(rechts, { sourceSnapshot: ANDERS })))
+    assert.equal(geaendert.status, 'changed_source_content')
+    assert.equal(geaendert.contentChanged, true)
+    assert.equal(geaendert.laterAnalysisShortCircuit, false)
+    assert.equal(geaendert.ruleChange, 'not_asserted')
+    ohneLeak(gleich)
+    ohneLeak(geaendert, ['border.example'])
+  })
+
+  test('eine andere Registry-Identität bleibt gesperrt, auch bei gleichem Quellentext', () => {
+    const basisRegistry = standardRegistry()
+    const basis = paket(basisRegistry)
+    const basisBeleg = officialTruthAbgerufenMaterialPruefen(basis, uhr())
+    assert.equal(basisBeleg.status, 'retrieved_material')
+    if (basisBeleg.status !== 'retrieved_material') throw new Error('basis')
+    const amtlich = [amt(QUELLE, 'gov.example'), amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')] as const
+    const faelle: { name: string; registry: QuellenRegistry; grund: 'different_source_registry' | 'source_not_official_authority' | 'unregistered_domain' | 'blocked_domain' | 'invalid_source_plan' }[] = [
+      {
+        name: 'publisher',
+        registry: registry([{ ...amt(QUELLE, 'gov.example'), publisherName: 'Other Border Publisher' }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')]),
+        grund: 'different_source_registry',
+      },
+      {
+        name: 'authority',
+        registry: registry([{ ...amt(QUELLE, 'gov.example'), authorityName: 'Other Border Office' }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')]),
+        grund: 'different_source_registry',
+      },
+      {
+        name: 'klasse-andere',
+        registry: registry([
+          amt(QUELLE, 'gov.example'),
+          { sourceId: ANDERE, sourceClass: 'licensed_evidence_provider', publisherName: 'Example Interior Publisher', domains: ['interior.example'] },
+          anbieter(ANBIETER, 'provider.example'),
+        ]),
+        grund: 'different_source_registry',
+      },
+      {
+        name: 'klasse-quelle',
+        registry: registry([
+          { sourceId: QUELLE, sourceClass: 'licensed_evidence_provider', publisherName: 'Example Border Authority', domains: ['gov.example'] },
+          amt(ANDERE, 'interior.example'),
+          anbieter(ANBIETER, 'provider.example'),
+        ]),
+        grund: 'source_not_official_authority',
+      },
+      {
+        name: 'domain',
+        registry: registry([{ ...amt(QUELLE, 'gov.example'), domains: ['gov.example', 'border.example'] }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')]),
+        grund: 'different_source_registry',
+      },
+      {
+        name: 'domain-weg',
+        registry: registry([amt(QUELLE, 'other.example'), amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')]),
+        grund: 'unregistered_domain',
+      },
+      {
+        name: 'blocked',
+        registry: registry(amtlich, ['blocked.example']),
+        grund: 'different_source_registry',
+      },
+      {
+        name: 'blocked-seite',
+        registry: registry(amtlich, ['gov.example']),
+        grund: 'blocked_domain',
+      },
+      {
+        name: 'neue-quelle',
+        registry: registry([amt(QUELLE, 'gov.example'), amt(ANDERE, 'interior.example'), amt('example-extra-authority', 'extra.example'), anbieter(ANBIETER, 'provider.example')]),
+        grund: 'different_source_registry',
+      },
+    ]
+    for (const fall of faelle) {
+      for (const sourceSnapshot of [SNAPSHOT, ANDERS]) {
+        const neu = paket(fall.registry, { sourceSnapshot })
+        const ergebnis = vergleichen(basis, null, neu)
+        if (fall.grund === 'different_source_registry') {
+          const beleg = officialTruthAbgerufenMaterialPruefen(neu, uhr())
+          assert.equal(beleg.status, 'retrieved_material', fall.name)
+          if (beleg.status !== 'retrieved_material') throw new Error(fall.name)
+          assert.equal(beleg.sourceId, basisBeleg.sourceId, fall.name)
+          assert.equal(beleg.ruleScopeKey, basisBeleg.ruleScopeKey, fall.name)
+          assert.equal(beleg.canonicalUrl, basisBeleg.canonicalUrl, fall.name)
+          assert.deepEqual(ergebnis, { status: 'blocked', reason: 'different_source_registry' }, `${fall.name}:${sourceSnapshot}`)
+        } else {
+          assert.deepEqual(ergebnis, officialTruthAbgerufenMaterialPruefen(neu, uhr()), fall.name)
+          assert.deepEqual(ergebnis, { status: 'blocked', reason: fall.grund }, `${fall.name}:${sourceSnapshot}`)
+        }
+        assert.notEqual(ergebnis.status, 'unchanged_source_content', fall.name)
+        assert.notEqual(ergebnis.status, 'changed_source_content', fall.name)
+        ohneLeak(ergebnis, ['Other Border', 'blocked.example', 'extra.example', 'other.example', 'border.example'])
+      }
+    }
+
+    const veraendert = registry([{ ...amt(QUELLE, 'gov.example'), authorityName: 'Other Border Office' }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')])
+    const alt = huelle({
+      registry: veraendert,
+      descriptors: [
+        deskriptor(basisRegistry, QUELLE),
+        deskriptor(basisRegistry, ANDERE, abdeckung({ destinationCountryCodes: ['TH'] })),
+        deskriptor(basisRegistry, ANBIETER),
+      ],
+    })
+    const plan = vergleichen(basis, null, alt)
+    assert.deepEqual(plan, officialTruthAbgerufenMaterialPruefen(alt, uhr()))
+    assert.deepEqual(plan, { status: 'blocked', reason: 'invalid_source_plan' })
+    ohneLeak(plan, ['Other Border'])
+
+    const kopie: QuellenRegistry = {
+      blockedDomains: basisRegistry.blockedDomains.map((domain) => domain),
+      sources: basisRegistry.sources.map((quelle) => ({
+        authorityName: quelle.authorityName,
+        domains: quelle.domains.map((domain) => domain),
+        publisherName: quelle.publisherName,
+        sourceClass: quelle.sourceClass,
+        sourceId: quelle.sourceId,
+      })),
+    }
+    assert.notEqual(kopie, basisRegistry)
+    assert.notEqual(kopie.sources[0], basisRegistry.sources[0])
+    const gleich = erfolg(vergleichen(basis, null, paket(kopie, { sourceSnapshot: SNAPSHOT.replace('\n', '\r\n') })))
+    assert.equal(gleich.status, 'unchanged_source_content')
+    assert.equal(gleich.ruleChange, 'not_asserted')
+    ohneLeak(gleich)
+
+    const gedreht: QuellenRegistry = {
+      sources: [...basisRegistry.sources].reverse().map((quelle) => ({
+        sourceId: quelle.sourceId,
+        sourceClass: quelle.sourceClass,
+        publisherName: quelle.publisherName,
+        authorityName: quelle.authorityName,
+        domains: [...quelle.domains],
+      })),
+      blockedDomains: [...basisRegistry.blockedDomains],
+    }
+    assert.notEqual(gedreht.sources[0]?.sourceId, basisRegistry.sources[0]?.sourceId)
+    const reihenfolge = vergleichen(basis, null, paket(gedreht))
+    assert.equal(officialTruthAbgerufenMaterialPruefen(paket(gedreht), uhr()).status, 'retrieved_material')
+    assert.deepEqual(reihenfolge, { status: 'blocked', reason: 'different_source_registry' })
+    ohneLeak(reihenfolge)
+
+    const mitDomaenen = registry(
+      [{ ...amt(QUELLE, 'gov.example'), domains: ['gov.example', 'border.example'] }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')],
+      ['a.example', 'z.example'],
+    )
+    const domaenenGedreht: QuellenRegistry = {
+      sources: mitDomaenen.sources.map((quelle) => ({
+        sourceId: quelle.sourceId,
+        sourceClass: quelle.sourceClass,
+        publisherName: quelle.publisherName,
+        authorityName: quelle.authorityName,
+        domains: [...quelle.domains].reverse(),
+      })),
+      blockedDomains: [...mitDomaenen.blockedDomains].reverse(),
+    }
+    const domaenen = vergleichen(paket(mitDomaenen), null, paket(domaenenGedreht, { sourceSnapshot: SNAPSHOT }))
+    assert.equal(officialTruthAbgerufenMaterialPruefen(paket(domaenenGedreht), uhr()).status, 'retrieved_material')
+    assert.deepEqual(domaenen, { status: 'blocked', reason: 'different_source_registry' })
+    ohneLeak(domaenen, ['border.example'])
+
+    const erweitert = {
+      sources: basisRegistry.sources,
+      blockedDomains: basisRegistry.blockedDomains,
+      trust: true,
+    }
+    const fremd = huelle({
+      registry: erweitert,
+      descriptors: [
+        deskriptor(basisRegistry, QUELLE),
+        deskriptor(basisRegistry, ANDERE, abdeckung({ destinationCountryCodes: ['TH'] })),
+        deskriptor(basisRegistry, ANBIETER),
+      ],
+    })
+    assert.equal(officialTruthAbgerufenMaterialPruefen(fremd, uhr()).status, 'retrieved_material')
+    const extra = vergleichen(basis, null, fremd)
+    assert.deepEqual(extra, { status: 'blocked', reason: 'different_source_registry' })
+    ohneLeak(extra, ['trust'])
+
+    const andereSeite = registry([{ ...amt(QUELLE, 'gov.example'), publisherName: 'Other Border Publisher' }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')])
+    const beides = vergleichen(basis, null, paket(andereSeite, { canonicalUrl: 'https://other.gov.example/other-page', sourceSnapshot: SNAPSHOT }))
+    assert.deepEqual(beides, { status: 'blocked', reason: 'different_official_page' })
+    ohneLeak(beides, ['other.gov.example'])
   })
 })
