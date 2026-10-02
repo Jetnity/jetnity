@@ -5,6 +5,16 @@ Reviewer: the same Cursor writer, Generation 1. This is not an independent Techn
 Draft PR: #754
 `originalModelName=grok-4.7-high-fast`. Not Auto.
 
+## R1 correction
+
+Technical-Lead R1 `5395542078` reviewed `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` and required CHANGES REQUIRED.
+
+R1-F1: the three top pointers said Draft #754 was open and named this branch as the current writer. That sentence would be stale immediately after merge. The correction replaces line 3 in each startup file with a durable pointer. #751 is the live current-writer index. The paragraph says not to infer the current writer, an open pull request, or live `main` from it. PR #754 is the delivery slice and is not asserted to stay open. The event-driven cadence and the #741 blocker remain. Deeper historical blocks are unchanged.
+
+R1-F2: the external setup prompt's sanitization section now forbids all personal data and matches the Current State contract. The handoff, report, and this self-review no longer describe that prompt as a remaining mismatch. The prompt is still unsent.
+
+That reviewed head is not the review head. Its CI does not gate this tip.
+
 ## Clarification on the same Draft
 
 The Technical Lead clarified read cadence on the same logical agent and the same Draft #754. The review head is the branch tip after the clarification commit. Head `262343cb34f55208baceded145ba6aad2fd941f4` is the prior delivery. Its CI does not gate the clarification tip.
@@ -35,7 +45,9 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | Resolved, STALE and SUPERSEDED reports stay out of the default read | Contract §2. |
 | No monthly or quarterly rotation | Contract §1. |
 | No personal data on the public repository | Contract §3, Bridge contract §4, operating standard §4a. |
-| Narrower sensitive-payload sentence is not a remaining allowance | Bridge §4 and §4a now state the full forbidden set. |
+| Narrower sensitive-payload sentence is not a remaining allowance | Bridge §4, §4a, and the external prompt sanitization section state the full forbidden set. |
+| Top pointer does not assert Draft #754 stays open | Line 3 of the three startup files. #751 is the live writer index. |
+| External prompt matches the public-repo privacy rule | R1 `5395542078` allowlist. Sanitization section only. |
 | Live mode is NORMAL; HOLD stays historical | Top pointer, contract §4, §4a. No new sentence states HOLD as the live mode. |
 | Chief of Staff posting proven for `COS-20261002-2010-001` | Comment `5958412971` re-read. Receipt `5958628250` is `PARTIAL`. |
 | Guardian direct posting not upgraded | The same #748 read returned no Guardian report. Archive names inside the Chief of Staff comment are not treated as proof. |
@@ -45,6 +57,16 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | Top pointer only in the three global files | `git diff -U0` hunks are `@@ -3 +3 @@` for each file. |
 | Cursor does not mutate issue bodies | No issue-body write in this slice. |
 | Stay Draft; no Ready, merge, or follow-up | This review does not do those. |
+
+## Local gates on this R1 tree
+
+Run before the R1 commit, against `0d797f964d0f19832bee37c0ce27e9e2c13d47b5`:
+
+- `git diff --check`: pass.
+- `npm run check:operating-mode`: PASS.
+- `git fetch origin main`: `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`. 0 behind.
+- Startup-file diff: `@@ -3 +3 @@` only in each of the three files.
+- External prompt diff: the sanitization block only.
 
 ## Local gates on this clarification tree
 
@@ -72,7 +94,7 @@ Run before the first delivery commit:
 - Exact-head GitHub CI, Auth, or Vercel on this tip. Those exist only after push.
 - Typecheck, lint, unit tests, or a production build. Not run. The binding task's validation list is the local gate.
 - That the #748 and #751 issue bodies already match this contract. Alignment stays with the Technical Lead after merge.
-- That the unsent external prompt matches the new privacy rule. It does not, and this allowlist excluded that file.
+- That sending the external prompt proves Guardian direct posting. The sanitization section matches the privacy rule. Posting proof is still a real independently read Guardian report.
 
 ## Residual
 

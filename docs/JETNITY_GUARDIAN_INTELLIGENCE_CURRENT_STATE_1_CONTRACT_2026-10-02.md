@@ -146,7 +146,7 @@ In force:
 
 - docs and governance only;
 - machine mode stays `NORMAL` in `.jetnity/operating-mode.json`, and this slice does not edit that file;
-- Draft #754 stays Draft;
+- Draft #754 stays Draft until independent review of this slice. That sentence is the stop rule. After merge, do not infer from this contract that #754 is still open or is the current writer. #751 is the live current-writer index;
 - Cursor does not Ready, merge, or start a follow-up slice;
 - no product runtime, Auth, database, Supabase, provider, model, Production, ruleset, secret, token, PAT, webhook, or paid-service change;
 - no deletion of #748 history;

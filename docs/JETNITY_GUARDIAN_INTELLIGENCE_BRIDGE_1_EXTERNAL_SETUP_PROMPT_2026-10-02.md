@@ -30,9 +30,11 @@ What to post:
 - Existing files under /workspace/jetnity/intelligence/ remain source history. Do not rewrite them to claim they were posted.
 
 Sanitization:
-- Post summaries and evidence references only: URLs, commit SHAs, repository paths, issue and pull-request numbers, and hashes.
-- Omit secrets, tokens, environment values, and raw traveller, passport, MRZ, biometric, and health payloads.
-- If a finding cannot be stated without that payload, name the data class and a hash or location only.
+- Jetnity/jetnity is public. Post no personal data. The forbidden set includes names, email addresses, phone numbers, postal or street addresses, user, account or traveller identifiers, passport or document numbers, MRZ, biometrics, health information, birth dates, IP addresses, and any other directly or indirectly person-identifying value.
+- Post sanitized summaries and evidence references only: repository paths, issue and pull-request numbers, commit SHAs, and non-personal hashes.
+- Omit secrets, tokens, PATs, webhook credentials, and environment values.
+- If a finding cannot be represented without personal data, do not post that payload. Name only the data class and a sanitized location or hash where that is safe. Mark that restricted evidence requires an approved private evidence path.
+- The privacy rule is docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_CONTRACT_2026-10-02.md.
 
 Envelope:
 Every report comment starts with this exact first line:

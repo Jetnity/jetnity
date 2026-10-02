@@ -13,7 +13,7 @@ Session: https://cursor.com/agents/bc-d557a675-e0fc-4955-93cd-e68acd9bb418
 
 ## Status
 
-Delivered on Draft #754. Stopped for independent Technical-Lead exact-head review.
+R1 correction on the same Draft. Technical-Lead R1 `5395542078` on `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` is corrected on this tip. That reviewed head is not the review head. Stopped for independent exact-head re-review.
 
 ## Umgesetzt
 
@@ -23,7 +23,9 @@ Same-session Technical-Lead clarification, still Generation 1: contract §2a and
 
 The public-repository privacy rule now forbids personal data by default, including names, email addresses, phone numbers, postal addresses, user or account or traveller identifiers, passport or document numbers, MRZ, biometrics, health information, birth dates, IP addresses, and any other person-identifying value.
 
-The top pointer in `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md` and `docs/ACTIVE_WORK_STATUS.md` is refreshed. Deeper blocks in those files are unchanged. #750 is recorded as merged. Live mode is `NORMAL`. `AI_OS_BUILD_HOLD` remains historical evidence.
+Technical-Lead R1 `5395542078` required a durable top pointer. The three startup files now say #751 is the live Current State and current-writer index, and they say not to infer the current writer, an open pull request, or live `main` from that paragraph. PR #754 is recorded as the delivery slice. The paragraph does not assert that #754 stays open after merge. The event-driven cadence and the #741 blocker statement remain. Deeper blocks in those files are unchanged.
+
+The same review authorized the external setup prompt. Its sanitization section now forbids all personal data on the public repository and matches the Current State contract. The earlier mismatch residual is closed. The prompt is still unsent.
 
 Chief of Staff -> #748 is proven for `COS-20261002-2010-001`, comment `5958412971`. Receipt `5958628250` is `PARTIAL`. Guardian direct posting is not proven. The delivery re-read of #748 returned those two comments and no Guardian report.
 
@@ -48,6 +50,7 @@ Recorded on this delivery tree before the delivery commit:
 - Typecheck, lint, `npm test`, hygiene checks other than `check:operating-mode`, and the production build were not run. The binding task's validation list is the local gate, and the diff is docs and governance only. Exact-head GitHub CI and Vercel on this tip exist only after the push and are not claimed in this report.
 - Clarification tree, before the clarification commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `262343cb34f55208baceded145ba6aad2fd941f4` only at line 3.
 - Before this clarification commit, PR #754 head `262343cb34f55208baceded145ba6aad2fd941f4` had Auth job `110974184791` **success** and Vercel Preview Comments **success**. Typecheck, Lint & Build job `110974185125` was still in progress. Those runs do not gate the clarification tip.
+- R1 tree, before the R1 commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` only at line 3. The external prompt diff is the sanitization block only. CI on that prior head does not gate this tip.
 
 ## Build
 
@@ -57,7 +60,7 @@ No production build in this session.
 
 No secret, token, PAT, webhook, or credential was created or stored. No ruleset change. No product runtime, Auth, database, Supabase, provider, or model change. The privacy rule is broader than the Bridge 1 sensitive-payload exclusion. A scan of the new contract, handoff, and edited Bridge and Guardian-standard sections found no email address, phone number, or person name added by this slice. Historical text below the startup pointer was not rewritten and was not re-audited as a new disclosure.
 
-The unsent Bridge 1 external prompt still uses the narrower exclusion. It is outside this task's allowlist and was not edited. It is not the privacy rule. See the handoff residual.
+Technical-Lead R1 `5395542078` authorized the external prompt. Its sanitization section now matches the Current State privacy rule. The earlier sentence that the prompt still used the narrower exclusion was true before this correction. It is not the current privacy rule.
 
 ## Datenbank
 
@@ -75,6 +78,7 @@ Intended diff against current `main`, plus the task seed already on the branch:
 - top pointer only: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`
 - lifecycle and privacy amendment: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`
 - inbox bind: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` header, §4a, the capability bullet, and the repository-mutation paragraph
+- R1 privacy alignment: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md` sanitization section only
 
 `JETNITY_VISION.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`, and `DESIGN_SYSTEM.md` were not changed. No product path was changed.
 
@@ -84,10 +88,9 @@ No new recurring cost. No paid call.
 
 ## Offene Punkte
 
-- Independent Technical-Lead exact-head review. This report is not that review.
-- Exact-head CI and Vercel for the pushed tip are not yet observed here.
+- Independent Technical-Lead exact-head re-review of the tip after R1 `5395542078`. This report is not that review. CI on `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` does not gate this tip.
+- Exact-head CI and Vercel for the R1 tip exist only after the push and are not claimed here.
 - #748 and #751 issue-body alignment remains with the Technical Lead after merge.
-- The external setup prompt's narrower privacy sentence remains until a later task names that file.
 - Guardian direct posting remains unproven.
 - #741 and the #749 P1 findings remain unresolved. This slice does not start that remediation.
 
@@ -95,7 +98,7 @@ No new recurring cost. No paid call.
 
 A new chat that ignores #751 and reads all of #748 still works as audit, and it is no longer the default startup path. If #751 is left stale after a new MATERIAL report, the default read still includes newer unread reports after the last processed comment marker.
 
-The external prompt, if sent unchanged, would understate the privacy rule. The handoff says not to send it as that rule.
+The external prompt's sanitization section now states the full public-repo privacy rule. Sending it does not by itself prove Guardian direct posting.
 
 ## Empfehlung
 
