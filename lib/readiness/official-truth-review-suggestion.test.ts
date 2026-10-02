@@ -322,32 +322,29 @@ describe('Official Truth review suggestion contract', () => {
     assert.deepEqual(ohneFeld.citedSupportVersionIds, [])
     assert.equal(ohneFeld.assessment, 'insufficient_evidence')
     assert.equal(ohneFeld.reviewPacketKey, identitaet.reviewPacketKey)
-    const ohneGrund = offen(
-      hinweis([stuetze], {
-        assessment: 'needs_human_review',
-        citedSupportVersionIds: [],
-        reasonCodes: [],
-      }),
-    )
-    assert.deepEqual(ohneGrund.reasonCodes, [])
-    assert.equal(ohneGrund.reviewPacketKey, identitaet.reviewPacketKey)
-    ohneStoff(ohneGrund, [SNAPSHOT])
+    const ohneGrund = hinweis([stuetze], {
+      assessment: 'needs_human_review',
+      citedSupportVersionIds: [],
+      reasonCodes: [],
+    })
+    assert.deepEqual(ohneGrund, { status: 'blocked', reason: 'inconsistent_suggestion' })
+    assert.equal(JSON.stringify(ohneGrund).includes(identitaet.reviewPacketKey), false)
+    assert.equal(JSON.stringify(ohneGrund).includes('review_suggestion'), false)
 
     const bewertet = [
-      ['contradicts_candidate', 'support_text_conflicts_candidate'],
-      ['needs_human_review', 'proposal_requires_human_judgment'],
-      ['supports_candidate', 'support_scope_ambiguous'],
+      ['contradicts_candidate', ['support_text_conflicts_candidate']],
+      ['needs_human_review', ['proposal_requires_human_judgment', 'support_stale_or_time_unclear']],
     ] as const
-    for (const [assessment, code] of bewertet) {
+    for (const [assessment, codes] of bewertet) {
       const fall = offen(
         hinweis([stuetze], {
           assessment,
           citedSupportVersionIds: [...identitaet.supportVersionIds],
-          reasonCodes: [code, 'support_stale_or_time_unclear'],
+          reasonCodes: [...codes],
         }),
       )
       assert.equal(fall.assessment, assessment)
-      assert.deepEqual(fall.reasonCodes, [code, 'support_stale_or_time_unclear'].sort())
+      assert.deepEqual(fall.reasonCodes, [...codes].sort())
       assert.equal(fall.reviewPacketKey, identitaet.reviewPacketKey)
       ohneStoff(fall, [SNAPSHOT])
     }
@@ -376,7 +373,7 @@ describe('Official Truth review suggestion contract', () => {
     assert.equal(identitaet.supportVersionIds.length, 2)
     const rueckwaerts = [...identitaet.supportVersionIds].reverse()
     assert.notDeepEqual(rueckwaerts, [...identitaet.supportVersionIds])
-    const gruende = ['support_sources_conflict', 'support_text_matches_candidate']
+    const gruende = ['support_sources_conflict', 'proposal_requires_human_judgment']
     const ergebnis = offen(
       hinweis(
         [rechte, linke],
@@ -661,10 +658,212 @@ describe('Official Truth review suggestion contract', () => {
       'lib/readiness/official-truth-rule-candidate.ts',
       'lib/readiness/official-truth-rule-review-packet.ts',
       'lib/readiness/official-truth-rule-review-fingerprint.ts',
+      'lib/readiness/official-truth-rule-review-decision-intent.ts',
       'lib/readiness/provider.ts',
     ]) {
       assert.doesNotMatch(datei(relativ), /official-truth-review-suggestion/, relativ)
     }
     assert.equal(requirementsProviderAus(), null)
+    assert.match(text, /inconsistent_suggestion/)
+    assert.doesNotMatch(text, /regelKandidatAkzeptieren|official_truth_store_accepted_v1/)
+  })
+
+  test('Bewertung und Grundcodes folgen der engen Matrix', () => {
+    const stuetze = buendel()
+    const identitaet = finger([stuetze])
+    const id = identitaet.supportVersionIds[0]!
+    const stuetzenVerboten = [
+      'support_text_conflicts_candidate',
+      'support_scope_ambiguous',
+      'support_stale_or_time_unclear',
+      'support_sources_conflict',
+      'support_insufficient_for_claim',
+      'proposal_requires_human_judgment',
+    ] as const
+    const widerspruchErlaubt = ['support_text_conflicts_candidate', 'support_sources_conflict'] as const
+    const widerspruchVerboten = [
+      'support_text_matches_candidate',
+      'support_scope_ambiguous',
+      'support_stale_or_time_unclear',
+      'support_insufficient_for_claim',
+      'proposal_requires_human_judgment',
+    ] as const
+    const unzureichendErlaubt = [
+      'support_scope_ambiguous',
+      'support_stale_or_time_unclear',
+      'support_sources_conflict',
+      'support_insufficient_for_claim',
+    ] as const
+    const menschErlaubt = [
+      'support_scope_ambiguous',
+      'support_stale_or_time_unclear',
+      'support_sources_conflict',
+      'proposal_requires_human_judgment',
+    ] as const
+
+    function geschlossen(suggestion: Record<string, unknown>, verboten: readonly string[]) {
+      const ergebnis = hinweis([stuetze], suggestion)
+      assert.deepEqual(ergebnis, { status: 'blocked', reason: 'inconsistent_suggestion' })
+      const text = JSON.stringify(ergebnis)
+      assert.equal(text.includes('review_suggestion'), false)
+      assert.equal(text.includes(identitaet.reviewPacketKey), false)
+      assert.equal(text.includes(id), false)
+      assert.equal(text.includes('accepted'), false)
+      assert.equal(text.includes('trustedRuleFact'), false)
+      assert.equal(text.includes('lifecycle'), false)
+      assert.equal(text.includes('"decision"'), false)
+      for (const code of verboten) assert.equal(text.includes(code), false, code)
+      return ergebnis
+    }
+
+    const stuetzt = offen(hinweis([stuetze], vorschlag({}, [id])))
+    assert.equal(stuetzt.reviewPacketKey, identitaet.reviewPacketKey)
+    assert.match(stuetzt.reviewPacketKey, SCHLUESSEL)
+    assert.equal(stuetzt.assessment, 'supports_candidate')
+    assert.deepEqual(stuetzt.reasonCodes, ['support_text_matches_candidate'])
+    assert.deepEqual(stuetzt.citedSupportVersionIds, [id])
+    ohneStoff(stuetzt, [SNAPSHOT])
+    assert.equal(JSON.stringify(stuetzt).includes('accepted'), false)
+    assert.equal(JSON.stringify(stuetzt).includes('"decision"'), false)
+
+    geschlossen(vorschlag({ citedSupportVersionIds: [] }), [])
+    geschlossen(vorschlag({ reasonCodes: [] }, [id]), [])
+    for (const code of stuetzenVerboten) {
+      geschlossen(vorschlag({ reasonCodes: [code] }, [id]), [code])
+      geschlossen(vorschlag({ reasonCodes: ['support_text_matches_candidate', code] }, [id]), [code])
+    }
+
+    const widerspricht = offen(
+      hinweis([stuetze], vorschlag({ assessment: 'contradicts_candidate', reasonCodes: ['support_text_conflicts_candidate'] }, [id])),
+    )
+    assert.equal(widerspricht.reviewPacketKey, identitaet.reviewPacketKey)
+    assert.equal(widerspricht.assessment, 'contradicts_candidate')
+    const beideKonflikte = offen(
+      hinweis(
+        [stuetze],
+        vorschlag(
+          {
+            assessment: 'contradicts_candidate',
+            reasonCodes: [...widerspruchErlaubt].reverse(),
+          },
+          [id],
+        ),
+      ),
+    )
+    assert.deepEqual(beideKonflikte.reasonCodes, [...widerspruchErlaubt].sort())
+    assert.equal(beideKonflikte.reviewPacketKey, identitaet.reviewPacketKey)
+    geschlossen(
+      vorschlag({ assessment: 'contradicts_candidate', citedSupportVersionIds: [], reasonCodes: ['support_text_conflicts_candidate'] }),
+      ['support_text_conflicts_candidate'],
+    )
+    geschlossen(vorschlag({ assessment: 'contradicts_candidate', reasonCodes: [] }, [id]), [])
+    for (const code of widerspruchVerboten) {
+      geschlossen(vorschlag({ assessment: 'contradicts_candidate', reasonCodes: [code] }, [id]), [code])
+    }
+
+    for (const code of unzureichendErlaubt) {
+      const fall = offen(
+        hinweis([stuetze], {
+          assessment: 'insufficient_evidence',
+          citedSupportVersionIds: [],
+          reasonCodes: [code],
+        }),
+      )
+      assert.equal(fall.assessment, 'insufficient_evidence')
+      assert.deepEqual(fall.citedSupportVersionIds, [])
+      assert.deepEqual(fall.reasonCodes, [code])
+      assert.equal(fall.reviewPacketKey, identitaet.reviewPacketKey)
+      ohneStoff(fall, [SNAPSHOT])
+    }
+    const unzureichendMitZitat = offen(
+      hinweis([stuetze], {
+        assessment: 'insufficient_evidence',
+        citedSupportVersionIds: [id],
+        reasonCodes: [...unzureichendErlaubt],
+      }),
+    )
+    assert.deepEqual(unzureichendMitZitat.citedSupportVersionIds, [id])
+    assert.deepEqual(unzureichendMitZitat.reasonCodes, [...unzureichendErlaubt].sort())
+    geschlossen(
+      {
+        assessment: 'insufficient_evidence',
+        citedSupportVersionIds: [],
+        reasonCodes: [],
+      },
+      [],
+    )
+    for (const code of ['support_text_matches_candidate', 'support_text_conflicts_candidate', 'proposal_requires_human_judgment'] as const) {
+      geschlossen(
+        {
+          assessment: 'insufficient_evidence',
+          citedSupportVersionIds: [],
+          reasonCodes: [code],
+        },
+        [code],
+      )
+    }
+
+    for (const code of menschErlaubt) {
+      const fall = offen(
+        hinweis([stuetze], {
+          assessment: 'needs_human_review',
+          citedSupportVersionIds: [],
+          reasonCodes: [code],
+        }),
+      )
+      assert.equal(fall.assessment, 'needs_human_review')
+      assert.deepEqual(fall.citedSupportVersionIds, [])
+      assert.deepEqual(fall.reasonCodes, [code])
+      assert.equal(fall.reviewPacketKey, identitaet.reviewPacketKey)
+      ohneStoff(fall, [SNAPSHOT])
+    }
+    geschlossen(
+      {
+        assessment: 'needs_human_review',
+        citedSupportVersionIds: [],
+        reasonCodes: [],
+      },
+      [],
+    )
+    for (const code of ['support_text_matches_candidate', 'support_text_conflicts_candidate', 'support_insufficient_for_claim'] as const) {
+      geschlossen(
+        {
+          assessment: 'needs_human_review',
+          citedSupportVersionIds: [id],
+          reasonCodes: [code],
+        },
+        [code],
+      )
+    }
+
+    const fremdVorMatrix = hinweis([stuetze], vorschlag({ reasonCodes: ['support_text_conflicts_candidate'], citedSupportVersionIds: [FREMDE_ID] }))
+    const leerUndFremd = hinweis([stuetze], vorschlag({ reasonCodes: [], citedSupportVersionIds: [FREMDE_ID] }))
+    const doppeltZitatVorMatrix = hinweis(
+      [stuetze],
+      vorschlag({ reasonCodes: ['support_scope_ambiguous'], citedSupportVersionIds: [id, id] }),
+    )
+    const duplikatVorMatrix = hinweis(
+      [stuetze],
+      vorschlag({ reasonCodes: ['support_text_conflicts_candidate', 'support_text_conflicts_candidate'] }, [id]),
+    )
+    const enumVorMatrix = hinweis([stuetze], vorschlag({ citedSupportVersionIds: [], reasonCodes: ['free_form_fact'] }))
+    const bewertungVorMatrix = hinweis([stuetze], vorschlag({ assessment: 'accepted', reasonCodes: [] }, [id]))
+    assert.deepEqual(fremdVorMatrix, { status: 'blocked', reason: 'citation_not_in_packet' })
+    assert.deepEqual(leerUndFremd, { status: 'blocked', reason: 'citation_not_in_packet' })
+    assert.deepEqual(doppeltZitatVorMatrix, { status: 'blocked', reason: 'duplicate_citation' })
+    assert.deepEqual(duplikatVorMatrix, { status: 'blocked', reason: 'duplicate_reason_code' })
+    assert.deepEqual(enumVorMatrix, { status: 'blocked', reason: 'invalid_reason_code' })
+    assert.deepEqual(bewertungVorMatrix, { status: 'blocked', reason: 'invalid_assessment' })
+    for (const ergebnis of [fremdVorMatrix, leerUndFremd, doppeltZitatVorMatrix, duplikatVorMatrix, enumVorMatrix, bewertungVorMatrix]) {
+      const text = JSON.stringify(ergebnis)
+      assert.equal(text.includes('inconsistent_suggestion'), false)
+      assert.equal(text.includes('free_form_fact'), false)
+      assert.equal(text.includes('support_text_conflicts_candidate'), false)
+      assert.equal(text.includes(FREMDE_ID), false)
+      assert.equal(text.includes(id), false)
+      assert.equal(text.includes('review_suggestion'), false)
+    }
+    assert.equal(requirementsProviderAus(), null)
+    assert.equal(JSON.stringify(stuetzt).includes('lifecycle'), false)
   })
 })
