@@ -1,0 +1,63 @@
+# Official Truth Rule Acceptance Trust Boundary Architecture 1 — Handoff
+
+Date: 2 October 2026
+Issue: #729
+Draft PR: #731
+Branch: `docs/official-truth-rule-acceptance-trust-boundary-1`
+Baseline: `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`
+
+Logical agent: **Jetnity Official Truth Rule acceptance trust boundary architecture 1**, Generation 1
+Session: https://cursor.com/agents/bc-3c2a0ed3-71de-4424-a8a5-f0570830c839
+`originalModelName`: `grok-4.7-high-fast`. Not Auto.
+
+## Current state
+
+The branch defines the authority boundary before `regelKandidatAkzeptieren`. It is docs only. It is a Draft. It is not Ready and not merged.
+
+Read first:
+
+1. `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_TASK_2026-10-02.md`
+2. `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_ARCHITECTURE_2026-10-02.md`
+3. `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_REPORT_2026-10-02.md`
+4. `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_SELF_REVIEW_2026-10-02.md`
+
+`docs/ACTIVE_WORK_STATUS.md` was not edited. The task forbids global continuity edits. This handoff is the continuity pointer for the slice. The status file still describes an older writer. Do not treat that older section as this slice.
+
+## Session facts
+
+- Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
+- The task baseline remains `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`.
+- `git fetch origin main` at the start of this session resolved `origin/main` to that same SHA. The branch was 0 behind and 1 ahead, which was the task seed `b0e8f21bd0412ef14a9339b27fe0351e3bb45b3b`. Re-fetch before treating any later SHA as current.
+- Local gate results belong to the report's validation section after they are run. Do not treat this handoff as a gate pass before that section names the SHA.
+
+## Trust rule for the next reader
+
+Model or plugin output may suggest, extract, compare or flag. It does not become `trustedRuleFact`.
+
+A future decision binds to one exact #726 `reviewPacketKey`. The server recomputes that key from the original `{ supports, metadata }` input by re-running the #723 packet and the #726 fingerprint. A stale or different packet invalidates the decision.
+
+The reviewer comes from `auth.getUser()`, the role row, the server capability check and `currentLevel === 'aal2'`. A request-body reviewer, role or AAL is not authority. Break-glass cannot open fact entry. No shared operator token belongs in browser storage.
+
+Decision states are only `needs_more_evidence`, `reject_candidate` and `proceed_to_trusted_fact_entry`. The trusted fact is a separate explicit human entry. `regelKandidatAkzeptieren` stays the only Rule acceptance function. The dormant store writer is a later separate step. Audit retention is not chosen. #626 stays blocked and is not this audit.
+
+`research_gap`, `stale_primary_evidence` and `unresolved_conflict` cannot become accepted truth. One packet is one regulatory cell. A second credential option is a second decision.
+
+No capability was selected. Adding one, or remapping `CAPABILITY_MINIMUM`, is a later special gate.
+
+## What this slice did not do
+
+- No runtime, API route, Auth, RLS, migration or database apply.
+- No acceptance call and no trusted-fact generator.
+- No model, provider, secret, Production or indexing change.
+- No edit to global continuity files.
+- No follow-up implementation slice.
+
+## Exact-head gate
+
+The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview are not copied into this file in advance.
+
+## Stop
+
+No Ready. No merge. No Supabase apply. No acceptance endpoint. No model call. No implementation of the sequence in architecture section 10.
+
+**STOP for final Technical-Lead review of the exact branch tip.**
