@@ -64,6 +64,6 @@ PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 1
 
 ## Stop line
 
-The docs commit after `1a1eca49` is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse run ids from `954aa554`. This remains a Draft. No Ready, no merge, and no model-review slice from this writer.
+The R1 behavior is `1a1eca49`. Exact-head CI `36997512207` on `48339be1cf8d775d4187cf46321820e6af687409` is **SUCCESS**. Auth job `110807512028` **SUCCESS**. Typecheck, Lint & Build job `110807511683` **SUCCESS**. Vercel Preview deployment `6806732650` is **success**. Do not reuse run ids from `954aa554`. This remains a Draft. No Ready, no merge, and no model-review slice from this writer.
 
 **STOP for Technical-Lead R2 of the exact pushed tip.**

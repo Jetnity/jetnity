@@ -105,7 +105,17 @@ This VM did not have PostgreSQL 16 when the session started. PostgreSQL 16.15 wa
 
 ## Exact-head gates
 
-GitHub CI, the Auth job and Vercel Preview for the pushed R1 tip are not properties of this prose. They are read after the push. Do not copy a run id from `5e291ed7`, `c5480cd0`, `f3132973`, or `954aa554`.
+Read after the push, on `48339be1cf8d775d4187cf46321820e6af687409`. That SHA was still the branch tip. `origin/main` was still `5e291ed7c4814f034224eda46c3bd62cc9815ea3`. The branch was 0 behind.
+
+| Gate | Result |
+| --- | --- |
+| GitHub CI `36997512207` | **SUCCESS**. Event `pull_request`. Head SHA `48339be1cf8d775d4187cf46321820e6af687409`. |
+| Auth-Konfiguration gegen config.toml, job `110807512028` | **SUCCESS** |
+| Typecheck, Lint & Build, job `110807511683` | **SUCCESS** |
+| Vercel commit status | **success**. Deployment has completed. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2bQY1eJUexSLy4JQdHxj34Zfh51q`. |
+| GitHub deployment `6806732650` | Environment **Preview**, state **success**, same SHA. This is not a Production deployment and not a launch PASS. |
+
+Do not copy a run id from `5e291ed7`, `c5480cd0`, `f3132973`, or `954aa554`. Those heads are not this tip.
 
 ## Stop
 

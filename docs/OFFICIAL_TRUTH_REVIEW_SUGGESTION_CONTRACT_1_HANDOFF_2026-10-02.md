@@ -68,7 +68,7 @@ One call is one canonical cell and one registry image. Another credential option
 
 ## Exact-head gate
 
-The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview are not copied into this file in advance.
+Review head `48339be1cf8d775d4187cf46321820e6af687409`. CI `36997512207` is **SUCCESS** on that SHA. Auth job `110807512028` **SUCCESS**. Typecheck, Lint & Build job `110807511683` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2bQY1eJUexSLy4JQdHxj34Zfh51q`. GitHub deployment `6806732650` is Preview **success** on that SHA. It is not a Production deployment and not a launch PASS. Re-fetch before treating a later SHA as the review head.
 
 ## Stop
 
