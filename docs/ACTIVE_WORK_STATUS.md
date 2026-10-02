@@ -1,5 +1,7 @@
 # Jetnity – Active Work Status
 
+> **Tooling continuity — OpenAI Developers plugin, 2 October 2026.** The Product Owner's ChatGPT environment has the official **OpenAI Developers** plugin installed and enabled. Future Jetnity Technical-Lead chats may use it when relevant for current OpenAI API / Agents SDK guidance, OpenAI development best practices, API troubleshooting, DevDay guidance, and API-key setup guidance. This installation is **not** authorization to create/rotate or expose API keys, store secrets, activate paid/live OpenAI calls, change provider selection, or create material recurring cost; all existing provider/secret/cost/Production gates remain binding. Jetnity's own Official-Truth / Source-Registry / Evidence / Rule-Claim contracts remain canonical; plugin or model output cannot mint Official Truth.
+
 Stand: 1. Oktober 2026
 Status: **NORMAL / DRAFT #683 IS THE CURRENT WRITER / OFFICIAL TRUTH TRUSTED ACCEPTED-STORE WRITER 1 / BASELINE main@7c3dc2835622355d3dd8f5fb9efa4b3e63899b9e / DEVELOPMENT HISTORY 20261001180549 APPLIED ONCE / PRODUCTION NOT TOUCHED / NOT A LAUNCH PASS / LIVE-EVIDENCE WINS**
 
