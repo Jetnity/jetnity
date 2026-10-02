@@ -34,7 +34,6 @@ import {
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
   type OfficialTruthRegelReviewPacketSperrgrund,
-  type OfficialTruthRegelReviewSupport,
 } from '@/lib/readiness/official-truth-rule-review-packet'
 import {
   REGEL_SUPPORT_MAX,
@@ -119,10 +118,25 @@ export type OfficialTruthServerHeldReviewReproofErgebnis =
     }
 
 /**
+ * Provenienz einer Stütze für denselben Request. Kein Seitenrohtext.
+ * Der Hash benennt die eingereichten Bytes. Er beweist keine HTTP-Antwort.
+ */
+export type OfficialTruthServerHeldSameRequestSupport = {
+  readonly versionId: string
+  readonly sourceId: string
+  readonly canonicalUrl: string
+  readonly retrievedAt: string
+  readonly sourceContentHash: string
+  readonly validFrom: string | null
+  readonly validUntil: string | null
+}
+
+/**
  * Internes Material einer Kataloglesung. Die öffentliche Neubewertung
  * projiziert daraus die enge Frischestütze. Registry, angenommene
- * EvidenceVersions, Kandidat und Quellenschnappschuss bleiben hier für
- * denselben Serveraufruf. Das ist keine Antwort und keine Annahme.
+ * EvidenceVersions, Kandidat und Provenienz bleiben hier als eingefrorene
+ * Kopien. Seitenrohtext bleibt im menschlichen Prüfpaket und wird hier
+ * nicht behalten. Das ist keine Antwort und keine Annahme.
  */
 export type OfficialTruthServerHeldSameRequestMaterialErgebnis =
   | {
@@ -135,7 +149,7 @@ export type OfficialTruthServerHeldSameRequestMaterialErgebnis =
       readonly factKind: RegelFaktArt
       readonly evidenceQuality: RegelEvidenceQualitaet
       readonly supportVersionIds: readonly string[]
-      readonly supports: readonly OfficialTruthRegelReviewSupport[]
+      readonly supports: readonly OfficialTruthServerHeldSameRequestSupport[]
     }
   | Extract<OfficialTruthServerHeldReviewReproofErgebnis, { status: 'blocked' }>
 
@@ -327,9 +341,21 @@ function gleicheIdMenge(links: readonly string[], rechts: readonly string[]): bo
   return a.length === b.length && a.every((id, index) => id === b[index])
 }
 
-function reproofStuetze(
+function materialStuetze(
   support: Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>['supports'][number],
-): OfficialTruthServerHeldReviewReproofSupport {
+): OfficialTruthServerHeldSameRequestSupport {
+  return {
+    versionId: support.versionId,
+    sourceId: support.sourceId,
+    canonicalUrl: support.canonicalUrl,
+    retrievedAt: support.retrievedAt,
+    sourceContentHash: support.sourceContentHash,
+    validFrom: support.validFrom,
+    validUntil: support.validUntil,
+  }
+}
+
+function reproofStuetze(support: OfficialTruthServerHeldSameRequestSupport): OfficialTruthServerHeldReviewReproofSupport {
   return Object.freeze({
     versionId: support.versionId,
     retrievedAt: support.retrievedAt,
@@ -337,6 +363,21 @@ function reproofStuetze(
     validFrom: support.validFrom,
     validUntil: support.validUntil,
   })
+}
+
+/** Eigene Kopie. Danach ist auch jede verschachtelte Struktur eingefroren. */
+function beweisKopie<T>(wert: T): T {
+  return tiefEinfrieren(structuredClone(wert))
+}
+
+function tiefEinfrieren<T>(wert: T): T {
+  if (!wert || typeof wert !== 'object') return wert
+  if (Array.isArray(wert)) {
+    for (const eintrag of wert) tiefEinfrieren(eintrag)
+    return Object.freeze(wert) as T
+  }
+  for (const eintrag of Object.values(wert)) tiefEinfrieren(eintrag)
+  return Object.freeze(wert) as T
 }
 
 /**
@@ -363,6 +404,7 @@ function serverPruefuhr(uhr: unknown): (() => Date) | null {
  * derselben rekonstruierten Eingabe. Die Prüfuhr ist der übergebene
  * servereigene Instant, nicht `bund.uhr`. Die Registry verlässt die
  * öffentliche Neubewertung nicht. Dieses Material bleibt auf dem Server.
+ * Der Seitenrohtext des Prüfpakets wird nicht übernommen.
  */
 export async function officialTruthServerHeldSameRequestMaterial(
   eingabe: unknown,
@@ -398,21 +440,23 @@ export async function officialTruthServerHeldSameRequestMaterial(
   ) {
     return blockiert('support_mismatch')
   }
-  const supports = [...belegt.supports].sort((links, rechts) => idVergleich(links.versionId, rechts.versionId))
+  const supports = [...belegt.supports]
+    .sort((links, rechts) => idVergleich(links.versionId, rechts.versionId))
+    .map(materialStuetze)
   const evidenceVersions = [...belegt.evidenceVersions].sort((links, rechts) =>
     idVergleich(links.versionId, rechts.versionId),
   )
-  return Object.freeze({
+  return beweisKopie({
     status: 'server_held_same_request_material',
     registry: katalog.registry,
-    evidenceVersions: Object.freeze(evidenceVersions),
+    evidenceVersions,
     kandidat: belegt.kandidat,
     reviewPacketKey: finger.reviewPacketKey,
     ruleScopeKey: finger.ruleScopeKey,
     factKind: belegt.kandidat.factKind,
     evidenceQuality: belegt.kandidat.evidenceQuality,
-    supportVersionIds: Object.freeze([...finger.supportVersionIds].sort(idVergleich)),
-    supports: Object.freeze(supports),
+    supportVersionIds: [...finger.supportVersionIds].sort(idVergleich),
+    supports,
   })
 }
 
@@ -422,9 +466,8 @@ export async function officialTruthServerHeldSameRequestMaterial(
  * ist der übergebene servereigene Instant, nicht `bund.uhr`. Beide Prüfungen
  * sehen danach dasselbe rekonstruierte Objekt. Zelle und Stütz-IDs müssen
  * übereinstimmen. Die Identität ist reihenfolgeunabhängig, wie der
- * v2-Fingerabdruck. Die Registry, die EvidenceVersions, der Kandidat und
- * der Schnappschuss verlassen diese Funktion nicht. Das ist kein Zeuge
- * und keine Annahme.
+ * v2-Fingerabdruck. Die Registry, die EvidenceVersions und der Kandidat
+ * verlassen diese Funktion nicht. Das ist kein Zeuge und keine Annahme.
  */
 export async function officialTruthServerHeldReviewReproof(
   eingabe: unknown,

@@ -9,6 +9,7 @@ import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
+import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import { OFFICIAL_CHECKED_AT_MAX_AGE_MS } from '@/lib/readiness/official'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import { regelScopeAusEvidenceScope, type RegelFaktArt, type RegelScope } from '@/lib/readiness/rule-claims'
@@ -27,7 +28,10 @@ import {
   loadOfficialTruthSameRequestProof,
   type OfficialTruthSameRequestProofErgebnis,
 } from '@/lib/readiness/official-truth-same-request-proof-server'
-import { officialTruthServerHeldReviewReproof } from '@/lib/readiness/official-truth-server-held-source-registry'
+import {
+  officialTruthServerHeldReviewReproof,
+  officialTruthServerHeldSameRequestMaterial,
+} from '@/lib/readiness/official-truth-server-held-source-registry'
 import type { OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   quellenRegistryErstellen,
@@ -41,6 +45,7 @@ const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
 const DATEI = 'lib/readiness/official-truth-same-request-proof-server.ts'
 const ZEUGEN_DATEI = 'lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts'
+const SERVER = 'lib/readiness/official-truth-server-held-source-registry.ts'
 const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
 
 const JETZT = '2026-10-01T12:00:00.000Z'
@@ -350,6 +355,20 @@ function alsErfolg(ergebnis: OfficialTruthSameRequestProofErgebnis): Erfolg {
   return ergebnis
 }
 
+function zuweisen(ziel: object, schluessel: string, wert: unknown): void {
+  ;(ziel as Record<string, unknown>)[schluessel] = wert
+}
+
+function anhaengen(ziel: readonly unknown[], wert: unknown): void {
+  ;(ziel as unknown[]).push(wert)
+}
+
+function laendercodes(citizenship: { mode: string; countryCodes?: readonly string[] }): readonly string[] {
+  assert.equal(citizenship.mode, 'required')
+  if (citizenship.mode !== 'required' || !citizenship.countryCodes) throw new Error('citizenship')
+  return citizenship.countryCodes
+}
+
 describe('Official Truth same-request proof graph', () => {
   test('der Live-Einstieg liest Autorität selbst und gibt den Graphen nicht an eine Route', () => {
     const text = datei(DATEI)
@@ -362,6 +381,8 @@ describe('Official Truth same-request proof graph', () => {
     assert.equal(text.includes('officialFrische('), true)
     assert.equal(text.includes('maxAgeMs:'), false)
     assert.equal(text.includes('JSON.stringify'), false)
+    assert.equal(text.includes('sourceSnapshot'), false)
+    assert.equal(text.includes('fetch('), false)
     assert.equal(text.includes('regelKandidatAkzeptieren'), false)
     assert.equal(text.includes('akzeptierteRegelClaimSpeichern'), false)
     assert.equal(text.includes('akzeptierteEvidenceSpeichern'), false)
@@ -369,6 +390,18 @@ describe('Official Truth same-request proof graph', () => {
     assert.equal(text.includes('official-truth-autonomous-preacceptance-witness'), false)
     assert.equal(text.includes('official-truth-review-suggestion'), false)
     assert.equal(zeuge.includes('official-truth-same-request-proof-server'), true)
+    const server = datei(SERVER)
+    const materialTyp = server.slice(
+      server.indexOf('export type OfficialTruthServerHeldSameRequestSupport'),
+      server.indexOf('export type OfficialTruthServerHeldRegelErgebnis'),
+    )
+    const graphTyp = text.slice(
+      text.indexOf('export type OfficialTruthSameRequestProofErgebnis'),
+      text.indexOf('export type OfficialTruthSameRequestProofAbhaengigkeiten'),
+    )
+    assert.equal(materialTyp.includes('sourceSnapshot'), false)
+    assert.equal(graphTyp.includes('sourceSnapshot'), false)
+    assert.equal(server.includes('fetch('), false)
     assert.equal(requirementsProviderAus(), null)
     const oberflaeche = appTexte()
     assert.equal(oberflaeche.includes('official-truth-same-request-proof-server'), false)
@@ -530,7 +563,17 @@ describe('Official Truth same-request proof graph', () => {
       graph.supports.map((support) => support.versionId),
       [...graph.supportVersionIds],
     )
-    assert.equal(graph.supports[0]?.sourceSnapshot, SNAPSHOT)
+    assert.deepEqual(Object.keys(graph.supports[0] ?? {}).sort(), [
+      'canonicalUrl',
+      'retrievedAt',
+      'sourceContentHash',
+      'sourceId',
+      'validFrom',
+      'validUntil',
+      'versionId',
+    ])
+    assert.equal(JSON.stringify(graph).includes('proof-sentinel'), false)
+    assert.equal(JSON.stringify(graph).includes('sourceSnapshot'), false)
     assert.equal(graph.kandidat.lifecycle, 'candidate')
     assert.equal(graph.kandidat.validationState, 'pending')
     assert.equal(graph.kandidat.key, graph.ruleScopeKey)
@@ -567,6 +610,7 @@ describe('Official Truth same-request proof graph', () => {
     assert.deepEqual([...erneut.kandidat.supportVersionIds], [...graph.kandidat.supportVersionIds])
     assert.equal(erneut.kandidat.factKind, graph.factKind)
     assert.equal(erneut.kandidat.evidenceQuality, graph.evidenceQuality)
+    assert.equal(paket.supports[0]?.sourceSnapshot, SNAPSHOT)
     assert.equal(personenSchluessel(graph).length, 0)
 
     const zeuge = await decideOfficialTruthAutonomousPreacceptanceWitness(wert, {
@@ -690,5 +734,172 @@ describe('Official Truth same-request proof graph', () => {
     if (person.ergebnis.status !== 'blocked') return
     assert.equal(person.ergebnis.reason, 'personal_identifier_forbidden')
     assert.equal(JSON.stringify(person.ergebnis).includes('X1234567'), false)
+  })
+
+  test('erfundener Seitenrohtext bleibt strukturell belegbar und ist kein Extraktoreingang', async () => {
+    const fabrik = 'fabricated-extractor-bait-not-a-government-page'
+    const basis = registry(realeEingaben())
+    const gebiet = coverage()
+    const wert = eingabe({
+      umschlag: aufrufer({
+        descriptors: [deskriptor(basis, REAL, gebiet)],
+        material: { sourceSnapshot: fabrik },
+      }),
+    })
+    const { ergebnis, katalog } = await beweisen(wert)
+    const graph = alsErfolg(ergebnis)
+    const hash = evidenceQuellenFingerprint(fabrik)
+    assert.equal(katalog, 1)
+    assert.equal(typeof hash, 'string')
+    assert.equal(graph.evidenceVersions[0]?.sourceContentHash, hash)
+    assert.equal(graph.supports[0]?.sourceContentHash, hash)
+    assert.equal(graph.supports[0]?.canonicalUrl, REAL_URL)
+    assert.equal(JSON.stringify(graph).includes(fabrik), false)
+    assert.equal(JSON.stringify(graph).includes('sourceSnapshot'), false)
+    assert.equal(Object.hasOwn(graph.supports[0] ?? {}, 'sourceSnapshot'), false)
+
+    const transport = transportFuer(realeEingaben())
+    const material = await officialTruthServerHeldSameRequestMaterial(
+      wert,
+      { transport: transport.transport },
+      () => new Date(JETZT),
+    )
+    assert.equal(material.status, 'server_held_same_request_material')
+    if (material.status !== 'server_held_same_request_material') return
+    assert.equal(JSON.stringify(material).includes(fabrik), false)
+    assert.equal(JSON.stringify(material).includes('sourceSnapshot'), false)
+    assert.equal(Object.hasOwn(material.supports[0] ?? {}, 'sourceSnapshot'), false)
+    assert.deepEqual(transport.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
+
+    const rekonstruiert = {
+      supports: wert.supports.map((bund) => ({
+        ...bund,
+        umschlag: { ...bund.umschlag, registry: graph.registry },
+        uhr: () => new Date(JETZT),
+      })),
+      metadata: wert.metadata,
+    }
+    const paket = officialTruthRegelReviewPacket(rekonstruiert)
+    assert.equal(paket.status, 'rule_review_packet')
+    if (paket.status !== 'rule_review_packet') return
+    assert.equal(paket.supports[0]?.sourceSnapshot, fabrik)
+    assert.equal(Object.hasOwn(paket, 'reviewPacketKey'), false)
+    assert.equal(graph.reviewPacketKey.startsWith('review-packet:v2:'), true)
+
+    const zeuge = await decideOfficialTruthAutonomousPreacceptanceWitness(wert, {
+      loadAuthority: async () => freigabe(),
+      now: () => JETZT,
+      catalog: { transport: transportFuer(realeEingaben()).transport },
+    })
+    assert.equal(zeuge.status, 'authorized_preacceptance_witness')
+    if (zeuge.status !== 'authorized_preacceptance_witness') return
+    assert.deepEqual(Object.keys(zeuge).sort(), ZEUGEN_SCHLUESSEL)
+    assert.equal(JSON.stringify(zeuge).includes(fabrik), false)
+    assert.equal(JSON.stringify(zeuge).includes('sourceSnapshot'), false)
+  })
+
+  test('Registry, Evidence, Kandidat und Stützen sind nach dem Beweis unveränderlich', async () => {
+    const basis = registry(realeEingaben())
+    const gebiet = coverage()
+    const huelle = aufrufer({ descriptors: [deskriptor(basis, REAL, gebiet)] })
+    const eigenerVorschlag = { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' }
+    const wert = eingabe({ umschlag: huelle, metadata: meta({ proposal: eigenerVorschlag }) })
+    const vorschlag = wert.metadata.proposal as { effect: string }
+    const { ergebnis } = await beweisen(wert)
+    const graph = alsErfolg(ergebnis)
+    const quelle = graph.registry.sources.find((source) => source.sourceId === REAL)
+    const version = graph.evidenceVersions[0]
+    const stuetze = graph.supports[0]
+    const fakt = graph.kandidat.proposal as { effect: string }
+    assert.ok(quelle)
+    assert.ok(version)
+    assert.ok(stuetze)
+    assert.equal(fakt.effect, 'required')
+    assert.equal(Object.isFrozen(graph), true)
+    assert.equal(Object.isFrozen(graph.registry), true)
+    assert.equal(Object.isFrozen(graph.registry.sources), true)
+    assert.equal(Object.isFrozen(quelle), true)
+    assert.equal(Object.isFrozen(quelle.domains), true)
+    assert.equal(Object.isFrozen(version), true)
+    assert.equal(Object.isFrozen(version.scope), true)
+    const codes = laendercodes(version.scope.citizenship)
+    assert.equal(Object.isFrozen(version.scope.citizenship), true)
+    assert.equal(Object.isFrozen(codes), true)
+    assert.equal(Object.isFrozen(graph.kandidat), true)
+    assert.equal(Object.isFrozen(graph.kandidat.scope), true)
+    assert.equal(Object.isFrozen(graph.kandidat.proposal), true)
+    assert.equal(Object.isFrozen(graph.supports), true)
+    assert.equal(Object.isFrozen(stuetze), true)
+    assert.equal(Object.isFrozen(graph.supportVersionIds), true)
+    assert.throws(() => {
+      zuweisen(quelle, 'authorityName', 'Changed Authority')
+    }, TypeError)
+    assert.throws(() => {
+      anhaengen(quelle.domains, 'evil.example')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(version, 'canonicalUrl', 'https://evil.example/rules')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(version.scope, 'destinationCountryCode', 'US')
+    }, TypeError)
+    assert.throws(() => {
+      anhaengen(codes, 'US')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(graph.kandidat.scope, 'destinationCountryCode', 'US')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(fakt, 'effect', 'not_required')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(stuetze, 'retrievedAt', '1999-01-01T00:00:00.000Z')
+    }, TypeError)
+    assert.throws(() => {
+      anhaengen(graph.supportVersionIds, 'extra')
+    }, TypeError)
+    assert.equal(quelle.authorityName, 'Real Government Authority')
+    assert.equal(version.scope.destinationCountryCode, 'JP')
+    assert.equal(fakt.effect, 'required')
+    assert.equal(stuetze.retrievedAt, INNERHALB)
+    vorschlag.effect = 'not_required'
+    assert.equal(fakt.effect, 'required')
+
+    const transport = transportFuer(realeEingaben())
+    const material = await officialTruthServerHeldSameRequestMaterial(
+      eingabe({ umschlag: huelle }),
+      { transport: transport.transport },
+      () => new Date(JETZT),
+    )
+    assert.equal(material.status, 'server_held_same_request_material')
+    if (material.status !== 'server_held_same_request_material') return
+    const amtlich = material.registry.sources[0]
+    const belegt = material.evidenceVersions[0]
+    const kandidatFakt = material.kandidat.proposal as { effect: string }
+    assert.ok(amtlich)
+    assert.ok(belegt)
+    const materialStuetze = material.supports[0]
+    const materialCodes = laendercodes(belegt.scope.citizenship)
+    assert.ok(materialStuetze)
+    assert.equal(Object.isFrozen(material.registry), true)
+    assert.equal(Object.isFrozen(amtlich.domains), true)
+    assert.equal(Object.isFrozen(materialCodes), true)
+    assert.equal(Object.isFrozen(material.kandidat.scope), true)
+    assert.equal(Object.isFrozen(material.kandidat.proposal), true)
+    assert.equal(Object.isFrozen(materialStuetze), true)
+    assert.throws(() => {
+      zuweisen(amtlich, 'authorityName', 'Changed Authority')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(belegt.scope, 'destinationCountryCode', 'US')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(kandidatFakt, 'effect', 'not_required')
+    }, TypeError)
+    assert.throws(() => {
+      zuweisen(materialStuetze, 'canonicalUrl', 'https://evil.example/rules')
+    }, TypeError)
+    assert.equal(kandidatFakt.effect, 'required')
+    assert.equal(belegt.scope.destinationCountryCode, 'JP')
   })
 })

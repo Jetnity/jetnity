@@ -3,8 +3,10 @@
 // Interner gleicher-Request-Beweis für einen späteren F8-Aufbau.
 // Eine erfolgreiche Ausführung ist eine Autoritätslesung, eine Serveruhr
 // und eine Kataloglesung. Registry, angenommene EvidenceVersions, der neu
-// gebaute Regel-Kandidat, #723/#726 und die Schnappschüsse bleiben nur
-// in diesem Objekt. Der öffentliche F7-Zeuge projiziert neun Felder daraus.
+// gebaute Regel-Kandidat, #723/#726 und die Provenienz bleiben nur
+// in diesem Objekt, als eingefrorene Kopien. Seitenrohtext bleibt draussen:
+// er ist eingereichtes Material, keine servereigene HTTP-Antwort.
+// Der öffentliche F7-Zeuge projiziert neun Felder daraus.
 //
 // Das Objekt ist keine Annahme, kein trustedRuleFact, keine Bearer-Fähigkeit
 // und keine API-Antwort. Eine Route darf es nicht zurückgeben. Ein vom
@@ -21,11 +23,11 @@ import {
   type OfficialTruthFactEntryAuthorityResult,
 } from '@/lib/readiness/official-truth-fact-entry-authority-server'
 import { officialTruthRegelKandidatAusEvidence } from '@/lib/readiness/official-truth-rule-candidate'
-import type { OfficialTruthRegelReviewSupport } from '@/lib/readiness/official-truth-rule-review-packet'
 import {
   officialTruthServerHeldSameRequestMaterial,
   type OfficialTruthServerHeldReviewReproofErgebnis,
   type OfficialTruthServerHeldSameRequestMaterialErgebnis,
+  type OfficialTruthServerHeldSameRequestSupport,
 } from '@/lib/readiness/official-truth-server-held-source-registry'
 import type { OfficialTruthSourceCatalogAbhaengigkeiten } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
@@ -117,6 +119,7 @@ export type OfficialTruthSameRequestProofSperrgrund =
  * Er trägt die Registry und die angenommenen EvidenceVersions nur,
  * damit ein späterer Serveraufruf in derselben Ausführung sie lesen kann.
  * Der Vorschlag am Kandidaten bleibt untrusted Prüfstoff.
+ * Die Stützen tragen Provenienz, nicht den eingereichten Seitenrohtext.
  */
 export type OfficialTruthSameRequestProofErgebnis =
   | {
@@ -129,7 +132,7 @@ export type OfficialTruthSameRequestProofErgebnis =
       readonly factKind: RegelFaktArt
       readonly evidenceQuality: RegelEvidenceQualitaet
       readonly supportVersionIds: readonly string[]
-      readonly supports: readonly OfficialTruthRegelReviewSupport[]
+      readonly supports: readonly OfficialTruthServerHeldSameRequestSupport[]
       readonly serverReferenceTime: string
       readonly freshness: 'current'
       readonly grant: 'role'
@@ -224,7 +227,7 @@ function annehbar(qualitaet: string): boolean {
  * amtliche Quelle gilt nur hier als vorhanden, damit die Zeitprüfung
  * läuft. Das wählt keinen Provider.
  */
-function aktuell(support: OfficialTruthRegelReviewSupport, jetzt: string): boolean {
+function aktuell(support: OfficialTruthServerHeldSameRequestSupport, jetzt: string): boolean {
   if (!support.sourceContentHash || !support.retrievedAt) return false
   return (
     officialFrische({
@@ -294,6 +297,21 @@ function serverUhr(): string {
   return new Date().toISOString()
 }
 
+/** Eigene Kopie. Danach ist auch jede verschachtelte Struktur eingefroren. */
+function beweisKopie<T>(wert: T): T {
+  return tiefEinfrieren(structuredClone(wert))
+}
+
+function tiefEinfrieren<T>(wert: T): T {
+  if (!wert || typeof wert !== 'object') return wert
+  if (Array.isArray(wert)) {
+    for (const eintrag of wert) tiefEinfrieren(eintrag)
+    return Object.freeze(wert) as T
+  }
+  for (const eintrag of Object.values(wert)) tiefEinfrieren(eintrag)
+  return Object.freeze(wert) as T
+}
+
 /**
  * Testnaht mit austauschbarer Autorität, Uhr und Katalogtransport.
  * Eine künftige Route darf sie nicht als Autorität aufrufen.
@@ -340,7 +358,7 @@ export async function decideOfficialTruthSameRequestProof(
   const kandidat = kandidatPasst(material, metaAus(eingabe))
   if (!kandidat.ok) return blockiert(kandidat.reason)
 
-  return Object.freeze({
+  return beweisKopie({
     status: 'same_request_proof',
     registry: material.registry,
     evidenceVersions: material.evidenceVersions,
@@ -349,7 +367,7 @@ export async function decideOfficialTruthSameRequestProof(
     ruleScopeKey: material.ruleScopeKey,
     factKind: material.factKind,
     evidenceQuality: material.evidenceQuality,
-    supportVersionIds: Object.freeze([...material.supportVersionIds]),
+    supportVersionIds: [...material.supportVersionIds],
     supports: material.supports,
     serverReferenceTime: zeit,
     freshness: 'current',
