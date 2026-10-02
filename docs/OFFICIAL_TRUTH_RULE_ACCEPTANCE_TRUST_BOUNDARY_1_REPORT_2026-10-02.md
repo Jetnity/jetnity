@@ -115,7 +115,25 @@ No new SQL. No remote database. PostgreSQL 16.15 was already installed from the 
 
 ## R2 re-gate
 
-Local gates for the #730 integration are recorded in this section after they run. Until this section names a SHA and results, the re-gate has not claimed a pass. Exact-head GitHub CI, the Auth job and Vercel Preview belong to the pushed tip and are read after that push.
+Local gates below were run on `52f38f51937fa4c58650d9e30495e955db086755`. That SHA records the #730 integration. This gate-record commit does not change the architecture or the #730 runtime. `git fetch origin main` before the integration resolved `origin/main` to `906fb4a5714f8c1836d1894acc6332084f7f6280`. The branch was 0 behind. Re-fetch before the final push.
+
+No new SQL from this slice. No remote database. PostgreSQL 16.15 stayed local. The package cluster stays unstarted.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `npm test` | 4391 pass / 0 fail, 757 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in these docs or the untouched #730 suggestion files |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass, 12 admin routes use `requireAdminApi()` |
+| `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice added none. |
+
+Exact-head GitHub CI, the Auth job and Vercel Preview belong to the pushed tip. They are read after that push and are not copied from `906fb4a` or from `52f38f51`.
 
 ## Stop
 

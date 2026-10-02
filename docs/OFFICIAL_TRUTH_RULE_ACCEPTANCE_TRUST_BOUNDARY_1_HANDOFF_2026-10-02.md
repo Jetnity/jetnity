@@ -30,7 +30,8 @@ Read first:
 - `git fetch origin main` at the start of this session resolved `origin/main` to that same SHA. The branch was 0 behind and 1 ahead, which was the task seed `b0e8f21bd0412ef14a9339b27fe0351e3bb45b3b`. That pin is historical.
 - R2 integration fetch resolved `origin/main` to `906fb4a5714f8c1836d1894acc6332084f7f6280`. Merge `084d900d98008d14a2bcab704f5c662df2bfe2f1` is 0 behind that SHA. Re-fetch before treating any later SHA as current. The final push must stay 0 behind.
 - Local gates on the first delivery were run on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`. `npm test` was 4381 pass / 0 fail across 756 suites. Those results belong to the pre-R1 tree.
-- R1 gates were run on `db33cfbe6f5a0656e7d2df4df9b3535b6f7b2e9a`. `npm test` was again 4381 pass / 0 fail across 756 suites. Typecheck, lint (0 errors, 148 pre-existing warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs. This handoff records those results. The architecture wording is the R1 commit. PostgreSQL 16.15 stayed local. The package cluster was not started. No remote database was contacted.
+- R1 gates were run on `db33cfbe6f5a0656e7d2df4df9b3535b6f7b2e9a`. `npm test` was again 4381 pass / 0 fail across 756 suites. Those results belong to the pre-#730 tree.
+- R2 local gates were run on `52f38f51937fa4c58650d9e30495e955db086755`. `npm test` was 4391 pass / 0 fail across 757 suites. Typecheck, lint (0 errors, 148 pre-existing warnings), the production build, the operating-mode guard and the hygiene checks passed. Schema reference still lists the three known LOCAL/UNAPPLIED RPCs. The extra tests are the merged #730 suggestion proofs. This slice did not edit them. PostgreSQL 16.15 stayed local. The package cluster was not started. No remote database was contacted.
 
 ## Trust rule for the next reader
 

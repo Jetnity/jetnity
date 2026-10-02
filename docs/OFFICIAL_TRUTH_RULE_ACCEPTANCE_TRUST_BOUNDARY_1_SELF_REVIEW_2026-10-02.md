@@ -66,7 +66,7 @@ No remote Supabase command was run. No migration file was added. `lib/readiness/
 
 ## Tests and gates
 
-Docs-only changes add no test file. The first delivery on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0` was 4381 pass / 0 fail, 756 suites. R1 gates on `db33cfbe6f5a0656e7d2df4df9b3535b6f7b2e9a` were the same 4381 pass / 0 fail, 756 suites. Typecheck, lint, build, diff check, operating-mode guard and the hygiene checks passed. Lint reports 0 errors and 148 pre-existing warnings, none in these docs. Schema reference still lists the three already known unapplied RPCs. This slice added none.
+This integration adds no test file of its own. The merged #730 suite is included unchanged. Local gates on `52f38f51937fa4c58650d9e30495e955db086755`: 4391 pass / 0 fail, 757 suites. Typecheck, lint, build, diff check, operating-mode guard and the hygiene checks passed. Lint reports 0 errors and 148 pre-existing warnings, none in these docs or the untouched suggestion files. Schema reference still lists the three already known unapplied RPCs. This slice added none.
 
 PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 16.15 locally, the suite passed, including the existing throwaway cluster proofs. The package cluster was not started. Those proof clusters are local and temporary. No remote database was contacted. This slice did not apply SQL.
 
