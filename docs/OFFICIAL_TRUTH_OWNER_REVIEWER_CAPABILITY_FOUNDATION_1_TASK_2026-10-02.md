@@ -8,6 +8,22 @@ Logical agent: **Jetnity Official Truth owner reviewer capability foundation 1**
 Generation: **1**
 Required model: **Grok 4.7 High Fast** — not Auto.
 
+## Technical-Lead R1 scope amendment — 2 October 2026
+
+Independent Technical-Lead review `5394162809` found one governance issue on exact head `d3017b169a189baf322a9544bc819a0c4a8d7e23`: the approved capability changes the repository-wide `CAPABILITIES` inventory, and `lib/admin/analyst/system-health-insights.test.ts` contains a frozen expected list of those global capability names.
+
+That test-only dependency is therefore now explicitly added to the allowed test scope:
+
+- `lib/admin/analyst/system-health-insights.test.ts`
+
+The only permitted change in that file is to keep the frozen global capability inventory aligned with the approved new capability and, if necessary, clarify the test name/comment so it still proves the Analyst does not invent its own capability.
+
+No Analyst runtime file is allowed. No other scope expands.
+
+The existing semantic change on R1 head is acceptable under this amendment. The author must update REPORT/HANDOFF/SELF_REVIEW so it is recorded as **R1-authorized**, not as a self-granted "Allowlist exception", then rerun all gates on the new exact head.
+
+All other task requirements below remain binding.
+
 ## 1. Product-Owner authority
 
 Issue #739 is CLOSED / APPROVE A.
@@ -112,6 +128,7 @@ Allowed test files:
 - `lib/auth/admin-access.test.ts`
 - `lib/auth/admin-aal2-alignment.test.ts`
 - `lib/auth/faehigkeiten-datenbank.test.ts` only if a real test change is necessary; prefer its existing generic coverage if sufficient.
+- `lib/admin/analyst/system-health-insights.test.ts` only under the R1 amendment above; no Analyst runtime change.
 
 The final tests must prove:
 1. `minimumRoleFor('official-truth-freigeben') === 'owner'`;
@@ -137,6 +154,7 @@ Allowed runtime/test paths:
 - `lib/auth/admin-access.test.ts`
 - `lib/auth/admin-aal2-alignment.test.ts`
 - `lib/auth/faehigkeiten-datenbank.test.ts` only if necessary
+- `lib/admin/analyst/system-health-insights.test.ts` only under the R1 test-only amendment
 - one new CLI-generated migration for this capability
 
 Allowed lane docs:
@@ -145,7 +163,7 @@ Allowed lane docs:
 - `docs/OFFICIAL_TRUTH_OWNER_REVIEWER_CAPABILITY_FOUNDATION_1_SELF_REVIEW_2026-10-02.md`
 
 Read-only:
-- this task;
+- this task except this Technical-Lead R1 amendment;
 - #731 architecture;
 - #739 decision packet/comment;
 - #741 future Copilot Autopilot issue;
