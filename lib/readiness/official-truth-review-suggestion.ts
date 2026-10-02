@@ -81,6 +81,27 @@ const GRUENDE = [
 const BEWERTUNG_MENGE = new Set<string>(BEWERTUNGEN)
 const GRUND_MENGE = new Set<string>(GRUENDE)
 
+/**
+ * Enge Mengen je Bewertung. Ein Grund ausserhalb der Menge, eine leere
+ * Grundliste oder ein fehlendes Pflichtzitat ist `inconsistent_suggestion`.
+ * Der abgelehnte Grundtext wird nicht ausgegeben.
+ */
+const STUETZT = new Set<string>(['support_text_matches_candidate'])
+const WIDERSPRICHT = new Set<string>(['support_text_conflicts_candidate', 'support_sources_conflict'])
+const UNZUREICHEND = new Set<string>([
+  'support_scope_ambiguous',
+  'support_stale_or_time_unclear',
+  'support_sources_conflict',
+  'support_insufficient_for_claim',
+])
+const MENSCH = new Set<string>([
+  'support_scope_ambiguous',
+  'support_stale_or_time_unclear',
+  'support_sources_conflict',
+  'proposal_requires_human_judgment',
+])
+const ZITAT_PFLICHT = new Set<OfficialTruthRegelReviewBewertung>(['supports_candidate', 'contradicts_candidate'])
+
 export type OfficialTruthRegelReviewBewertung = (typeof BEWERTUNGEN)[number]
 export type OfficialTruthRegelReviewGrund = (typeof GRUENDE)[number]
 
@@ -92,6 +113,7 @@ export type OfficialTruthRegelReviewVorschlagSperrgrund =
   | 'duplicate_citation'
   | 'citation_not_in_packet'
   | 'packet_fingerprint_mismatch'
+  | 'inconsistent_suggestion'
 
 /**
  * `review_suggestion` ist ein Hinweis zu einem neu belegten Prüfpaket.
@@ -185,10 +207,36 @@ function gleicheIds(links: readonly string[], rechts: readonly string[]): boolea
   return links.length === rechts.length && links.every((id, index) => id === rechts[index])
 }
 
+function erlaubteGruende(assessment: OfficialTruthRegelReviewBewertung): ReadonlySet<string> {
+  if (assessment === 'supports_candidate') return STUETZT
+  if (assessment === 'contradicts_candidate') return WIDERSPRICHT
+  if (assessment === 'insufficient_evidence') return UNZUREICHEND
+  return MENSCH
+}
+
+/**
+ * Nach Enum, Duplikat und Zitatmitgliedschaft.
+ * `contradicts_candidate` lässt nur die beiden Konfliktgründe zu, also
+ * enthält eine nichtleere Liste mindestens einen davon.
+ */
+function vorschlagKonsistent(
+  assessment: OfficialTruthRegelReviewBewertung,
+  gruende: readonly string[],
+  zitate: readonly string[],
+): boolean {
+  if (gruende.length === 0) return false
+  const erlaubt = erlaubteGruende(assessment)
+  if (!gruende.every((code) => erlaubt.has(code))) return false
+  if (ZITAT_PFLICHT.has(assessment) && zitate.length === 0) return false
+  return true
+}
+
 /**
  * Prüft einen Hinweisvorschlag gegen ein neu belegtes Prüfpaket.
  * `packetInput` ist die ursprüngliche Eingabe von #723. `suggestion` trägt
  * nur Bewertung, zitierte Stütz-IDs und Grundcodes. Freitext ist kein Feld.
+ * Nach Enum, Duplikat und Zitatmitgliedschaft muss die Bewertung zur
+ * Grundmenge passen. Der Vorschlag bleibt ein Hinweis.
  */
 export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTruthRegelReviewVorschlagErgebnis {
   const satz = datensatz(eingabe)
@@ -235,6 +283,7 @@ export function officialTruthRegelReviewVorschlag(eingabe: unknown): OfficialTru
 
   const erlaubt = new Set(finger.supportVersionIds)
   if (zitate.werte.some((id) => !erlaubt.has(id))) return sperre('citation_not_in_packet')
+  if (!vorschlagKonsistent(assessment, gruende.werte, zitate.werte)) return sperre('inconsistent_suggestion')
 
   return Object.freeze({
     status: 'review_suggestion',
