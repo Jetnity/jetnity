@@ -4,7 +4,7 @@ Stand: 17. September 2026
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
 Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
 Erweitert: 18. September 2026 – Future specialized Grok-app setup pack (documentation only; no bots created)  
-Inbox-Bindung: 2. Oktober 2026 – Issue #748 ist der kanonische GitHub-Evidence-Inbox; automatisches externes Posten ist nicht bewiesen
+Inbox-Bindung: 2. Oktober 2026 – #748 ist der Roh-MATERIAL-Eingang, #751 der kompakte Current State; Chief-of-Staff-Posten für COS-20261002-2010-001 ist bewiesen, direktes Guardian-Posten nicht; öffentliches Repository ohne personenbezogene Daten
 
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
@@ -235,23 +235,29 @@ Standardmodus ohne separat versionierte Freigabe:
 
 Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags. Ein Lauf beginnt erst, wenn der Product Owner den aktuellen Technical-Lead-Prompt in der separaten Jetnity-Guardian-App startet.
 
-## 4a. Kanonischer GitHub-Evidence-Inbox — Issue #748
+## 4a. Kanonischer GitHub-Evidence-Inbox und Current State
 
-Stand: 2. Oktober 2026. Vertrag: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`. Einmal-Prompt, ungesendet: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`.
+Stand: 2. Oktober 2026, Current State 1. Umschlag, Dedupe und Technical-Lead-Beleg bleiben in `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`. Startup, Privacy und Lebenszyklus stehen in `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_CONTRACT_2026-10-02.md`. Einmal-Prompt aus Bridge 1, seinerzeit ungesendet: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`.
 
-[Issue #748](https://github.com/Jetnity/jetnity/issues/748) ist der kanonische GitHub-Evidence-Inbox für materielle Berichte von Jetnity Guardian, Jetnity Chief of Staff und den genehmigten read-only Grok-Intelligence-Rollen.
+[Issue #748](https://github.com/Jetnity/jetnity/issues/748) bleibt der dauerhafte Roh-MATERIAL-Eingang für materielle Berichte von Jetnity Guardian, Jetnity Chief of Staff und den genehmigten read-only Grok-Intelligence-Rollen. Kommentare dort sind append-only. Alte Berichte werden nicht gelöscht und nicht umgeschrieben.
+
+[Issue #751](https://github.com/Jetnity/jetnity/issues/751) ist der kompakte Live-Index. Er wird an Ort und Stelle aktualisiert und enthält nur aktuelle offene oder relevante Berichts-Ids, den Technical-Lead-Belegzustand, aktuelles `main` und den Live-Modus, wartende Technical-Lead- oder Product-Owner-Punkte und die letzte verarbeitete Berichts- und Kommentar-Marke.
 
 Der OS-2-Daily-Vertrag bleibt gültig. Die Daily-Routine schreibt GitHub standardmäßig nicht (`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`, Abschnitt 6, Punkt 6). Ein `NO_MATERIAL`-Brief bleibt im externen Workspace. Ein MATERIAL-Bericht darf als strukturierter Kommentar nach #748, wenn eine bereits verbundene GitHub-Kommentarfähigkeit das kann.
 
-Automatisches externes Posten ist in Bridge 1 nicht beobachtet. Der Kommentarstand von #748 war bei der Repository-Bindung leer. Der erste unabhängig gelesene Berichtskommentar mit der Markierung `jetnity_guardian_inbox: report` ist der früheste Beweis.
+Beweisstand, unabhängig gelesen am 2. Oktober 2026: Chief-of-Staff-Posten nach #748 ist für Bericht `COS-20261002-2010-001`, Kommentar `5958412971`, bewiesen. Technical-Lead-Beleg `5958628250` klassifiziert diesen Bericht als `PARTIAL`. Direktes Jetnity-Guardian-Posten nach #748 ist nicht bewiesen. In diesem Lesevorgang lag kein Guardian-Berichtskommentar vor. Archivdateinamen im Chief-of-Staff-Kommentar sind keine #748-Berichtskommentare und heben diesen Stand nicht an. Der leere Kommentarstand aus Bridge 1 bleibt die Beobachtung jener Session.
 
 Guardian bleibt gegenüber Code, Branches, PRs, Ready und Merge read-only. Ein #748-Kommentar ist Evidence. Er autorisiert keinen Codefix. Cursor verarbeitet ein Finding nur, wenn der aktuelle versionierte Task dieselbe `report_id` ausdrücklich bindet und der letzte Technical-Lead-Beleg auf #748 `CONFIRMED` oder `PARTIAL` ist.
 
-Neue Technical-Lead-Chats lesen beim Startup und bei der Live-Rekonstruktion ungelesene und materielle #748-Kommentare. Ein Guardian-Lauf mit GitHub-Leserechten tut dasselbe, bevor er Continuity als aktuell bezeichnet. Ein Bericht, dessen `observed_main_sha` oder Exact Head nicht mehr aktuell ist, bleibt Historie. Er sperrt oder autorisiert den aktuellen Head erst nach einem Recheck mit neuer `report_id`.
+Neue Technical-Lead-Chats lesen live `main` und den Live-Modus, dann #751, dann nur die dort genannten offenen oder materiellen Berichts-Ids und neuere ungelesene MATERIAL-Berichte auf #748 nach der letzten verarbeiteten Marke. Aufgelöste, `STALE` und `SUPERSEDED` Berichte gehören nicht zur Standard-Startlektüre. Ein Guardian-Lauf mit GitHub-Leserechten tut dasselbe, bevor er Continuity als aktuell bezeichnet. Ein Bericht, dessen `observed_main_sha` oder Exact Head nicht mehr aktuell ist, bleibt Historie. Er sperrt oder autorisiert den aktuellen Head erst nach einem Recheck mit neuer `report_id`.
+
+Live-Modus auf dem Liefer-Baseline ist `NORMAL`. `AI_OS_BUILD_HOLD` bleibt historische Evidence. Eine Routine bezeichnet HOLD nur dann als aktuell, wenn ein frischer Read von `.jetnity/operating-mode.json` diesen Modus zeigt.
 
 Bestehende Artefakte unter `/workspace/jetnity/intelligence/...` bleiben Quellhistorie. Dieser Abschnitt schreibt sie nicht um.
 
-Keine Secrets, Tokens, PATs, Webhooks oder rohen Pass-/MRZ-/Biometrie-/Gesundheitsdaten in #748. Chief of Staff darf synthetisieren und routen. Der Rohbericht bleibt sichtbar. Die Synthese ersetzt ihn nicht.
+Jetnity/jetnity ist öffentlich. #748 und #751 enthalten standardmäßig keine personenbezogenen Daten: keine Namen, E-Mail-Adressen, Telefonnummern, Postanschriften, Nutzer-/Konto-/Reisenden-Kennungen, Pass- oder Dokumentnummern, MRZ, Biometrie, Gesundheitsdaten, Geburtsdaten, IP-Adressen und keinen anderen direkt oder indirekt personenidentifizierenden Wert. Erlaubt sind sanitisierte Zusammenfassungen, Repository-Pfade, PR- und Issue-Nummern, Commit-SHAs und nicht-personenbezogene Hashes. Wenn ein Befund ohne personenbezogene Daten nicht darstellbar ist, gehört die Nutzlast nicht nach #748 oder #751. Genannt werden nur die Datenklasse und, wo das sicher ist, ein sanitisierter Ort oder Hash. Beschränkte Evidence braucht einen genehmigten privaten Evidence-Pfad. Keine Secrets, Tokens, PATs oder Webhooks. Chief of Staff darf synthetisieren und routen. Der Rohbericht bleibt sichtbar. Die Synthese ersetzt ihn nicht.
+
+Keine monatliche oder vierteljährliche Issue-Rotation in diesem Slice. #748 bleibt der stabile Eingang. Cursor ändert hier keine Issue-Bodies. Der Technical Lead darf #748 und #751 nach dem Merge angleichen.
 
 ## 5. Wann der Guardian eingesetzt werden soll
 
@@ -315,7 +321,7 @@ Der Guardian erhält grundsätzlich nur die Rechte, die für den konkreten Evide
 Initial zulässiger Capability-Scope, nachdem der Product Owner den aktuellen Technical-Lead-Prompt in Jetnity Guardian gestartet hat:
 
 - GitHub Repository, Commits, Branches, PRs, Issues und Actions **read-only**;
-- die einzige benannte Ausnahme ist ein sanitisierter MATERIAL-Kommentar auf Issue #748, und nur wenn eine bereits verbundene GitHub-Kommentarfähigkeit das kann. Die Ausnahme steht in §4a und in `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`. Dieses Repository vergibt die Fähigkeit nicht. Automatisches Posten gilt erst als beobachtet, wenn ein echter #748-Berichtskommentar unabhängig gelesen wurde;
+- die einzige benannte Ausnahme ist ein sanitisierter MATERIAL-Kommentar ohne personenbezogene Daten auf Issue #748, und nur wenn eine bereits verbundene GitHub-Kommentarfähigkeit das kann. Die Ausnahme steht in §4a und in den Verträgen `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md` und `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_CONTRACT_2026-10-02.md`. Dieses Repository vergibt die Fähigkeit nicht. Chief-of-Staff-Posten ist für `COS-20261002-2010-001`, Kommentar `5958412971`, unabhängig gelesen und damit für diesen Bericht bewiesen. Direktes Jetnity-Guardian-Posten gilt erst als bewiesen, wenn ein echter Guardian-Bericht auf #748 unabhängig gelesen wurde;
 - CI-/Status-Evidence **read-only**;
 - kanonische Repository-Dokumente **read-only**;
 - Vercel Deployment-/Preview-/Production-Metadaten und Logs **read-only**, erst nach Verbindung/Freigabe;
@@ -359,7 +365,7 @@ Daher gilt verbindlich:
 - keine stillen Fixes aus Findings;
 - keine Repository-Schreibrechte als Bestandteil eines normalen Guardian-Auftrags.
 
-Ein sanitisierter Kommentar auf Issue #748 ist keine Dateiänderung, kein Branch, kein Commit und kein Codefix. Er bleibt an die bereits verbundene Kommentarfähigkeit gebunden. Solange kein echter Berichtskommentar unabhängig gelesen ist, ist diese Ausnahme nicht in Betrieb. Ein #748-Kommentar autorisiert keine Codeänderung.
+Ein sanitisierter Kommentar ohne personenbezogene Daten auf Issue #748 ist keine Dateiänderung, kein Branch, kein Commit und kein Codefix. Er bleibt an die bereits verbundene Kommentarfähigkeit gebunden. Chief-of-Staff-Posten ist für Bericht `COS-20261002-2010-001` bewiesen. Direktes Guardian-Posten ist erst in Betrieb, wenn ein echter Guardian-Bericht auf #748 unabhängig gelesen wurde. Ein #748-Kommentar autorisiert keine Codeänderung.
 
 Wenn ein Guardian Finding eine Änderung erfordert, konsolidiert der Technical Lead das Finding und gibt die Korrektur an denselben zuständigen Cursor-Writer oder einen separat gebundenen Docs-/Implementation-Slice.
 
