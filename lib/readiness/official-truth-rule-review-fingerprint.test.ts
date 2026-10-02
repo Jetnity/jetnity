@@ -41,7 +41,7 @@ const ANDERE = 'example-interior-authority'
 const ANBIETER = 'example-licensed-provider'
 const VORSCHLAG = { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' } as const
 const GEHEIM = 'personal-secret-91f3'
-const SCHLUESSEL = /^review-packet:v1:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'supportVersionIds']
 
 function datei(relativ: string): string {
@@ -423,13 +423,103 @@ describe('Official Truth rule review packet fingerprint', () => {
     const zeilenende = offen(finger([buendel(huelle({ material: { sourceSnapshot: 'official page line\r\nunchanged' } }))]))
     const paketZeile = paketOffen([buendel(huelle({ material: { sourceSnapshot: 'official page line\r\nunchanged' } }))])
     const paketBasis = paketOffen([buendel()])
+    const ohneFenster = offen(finger([buendel()]))
 
     assert.equal(vertauscht.reviewPacketKey, normal.reviewPacketKey)
-    assert.equal(staatsangehoerigkeit.reviewPacketKey, normal.reviewPacketKey)
+    assert.equal(staatsangehoerigkeit.reviewPacketKey, ohneFenster.reviewPacketKey)
     assert.equal(staatsangehoerigkeit.ruleScopeKey, normal.ruleScopeKey)
-    assert.equal(zeilenende.reviewPacketKey, normal.reviewPacketKey)
+    assert.equal(zeilenende.reviewPacketKey, ohneFenster.reviewPacketKey)
+    assert.notEqual(normal.reviewPacketKey, ohneFenster.reviewPacketKey)
     assert.equal(paketZeile.supports[0]!.sourceContentHash, paketBasis.supports[0]!.sourceContentHash)
     assert.equal(paketZeile.supports[0]!.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
+  })
+
+  test('das angenommene Gültigkeitsfenster ändert die Identität und die Notiz nicht', () => {
+    const basis = buendel()
+    const von = { validFrom: '2026-01-01', validUntil: null }
+    const bis = { validFrom: null, validUntil: '2026-12-31' }
+    const beide = { validFrom: '2026-01-01', validUntil: '2026-12-31T00:00:00.000Z' }
+    const leer = { validFrom: null, validUntil: null }
+    const gepolstert = { validFrom: '  2026-01-01  ', validUntil: '  2026-12-31T00:00:00.000Z  ' }
+    const notizA = { ...beide, extractionNote: '  alpha bounded note  ' }
+    const notizB = { validUntil: beide.validUntil, extractionNote: 'beta bounded note', validFrom: beide.validFrom }
+    const ohne = offen(finger([basis]))
+    const mitVon = offen(finger([buendel(huelle(), von)]))
+    const mitBis = offen(finger([buendel(huelle(), bis)]))
+    const mitBeiden = offen(finger([buendel(huelle(), beide)]))
+    const mitLeer = offen(finger([buendel(huelle(), leer)]))
+    const mitPolster = offen(finger([buendel(huelle(), gepolstert)]))
+    const mitNotizA = offen(finger([buendel(huelle(), notizA)]))
+    const mitNotizB = offen(finger([buendel(huelle(), notizB)]))
+    const paketOhne = paketOffen([basis])
+    const paketVon = paketOffen([buendel(huelle(), von)])
+    const paketPolster = paketOffen([buendel(huelle(), gepolstert)])
+
+    assert.equal(paketOhne.supports[0]!.validFrom, null)
+    assert.equal(paketOhne.supports[0]!.validUntil, null)
+    assert.equal(paketVon.supports[0]!.validFrom, '2026-01-01')
+    assert.equal(paketVon.supports[0]!.validUntil, null)
+    assert.equal(paketPolster.supports[0]!.validFrom, '2026-01-01')
+    assert.equal(paketPolster.supports[0]!.validUntil, '2026-12-31T00:00:00.000Z')
+    assert.equal(paketVon.supports[0]!.versionId, paketOhne.supports[0]!.versionId)
+    assert.equal(mitLeer.reviewPacketKey, ohne.reviewPacketKey)
+    assert.notEqual(mitVon.reviewPacketKey, ohne.reviewPacketKey)
+    assert.notEqual(mitBis.reviewPacketKey, ohne.reviewPacketKey)
+    assert.notEqual(mitVon.reviewPacketKey, mitBis.reviewPacketKey)
+    assert.notEqual(mitBeiden.reviewPacketKey, mitVon.reviewPacketKey)
+    assert.notEqual(mitBeiden.reviewPacketKey, mitBis.reviewPacketKey)
+    assert.deepEqual(mitVon.supportVersionIds, ohne.supportVersionIds)
+    assert.deepEqual(mitBis.supportVersionIds, ohne.supportVersionIds)
+    assert.equal(mitPolster.reviewPacketKey, mitBeiden.reviewPacketKey)
+    assert.equal(mitNotizA.reviewPacketKey, mitBeiden.reviewPacketKey)
+    assert.equal(mitNotizB.reviewPacketKey, mitBeiden.reviewPacketKey)
+    assert.equal(mitNotizA.reviewPacketKey, mitNotizB.reviewPacketKey)
+    for (const ergebnis of [ohne, mitVon, mitBis, mitBeiden, mitPolster, mitNotizA, mitNotizB]) {
+      ohneStoff(ergebnis, [
+        'alpha bounded note',
+        'beta bounded note',
+        'extractionNote',
+        '2026-01-01',
+        '2026-12-31',
+        'reviewerId',
+        'aal2',
+        'capability',
+      ])
+      assert.match(ergebnis.reviewPacketKey, /^review-packet:v2:/)
+      assert.doesNotMatch(ergebnis.reviewPacketKey, /^review-packet:v1:/)
+    }
+
+    const linke = buendel(huelle({ material: { sourceSnapshot: 'fenster links' } }), von)
+    const rechte = buendel(
+      huelle({
+        sourceId: ANDERE,
+        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'fenster rechts' },
+      }),
+      bis,
+    )
+    const vorschlag = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
+    const vorwaerts = offen(finger([linke, rechte], vorschlag))
+    const rueckwaerts = offen(finger([rechte, linke], vorschlag))
+    const nurBis = offen(
+      finger(
+        [
+          buendel(huelle({ material: { sourceSnapshot: 'fenster links' } }), { validFrom: '2026-02-02', validUntil: null }),
+          rechte,
+        ],
+        vorschlag,
+      ),
+    )
+    assert.equal(vorwaerts.reviewPacketKey, rueckwaerts.reviewPacketKey)
+    assert.deepEqual(vorwaerts.supportVersionIds, rueckwaerts.supportVersionIds)
+    assert.notEqual(nurBis.reviewPacketKey, vorwaerts.reviewPacketKey)
+    assert.deepEqual(nurBis.supportVersionIds, vorwaerts.supportVersionIds)
+
+    const ungueltig = 'not-a-real-validity-91f3'
+    const gesperrt = finger([buendel(huelle(), { validFrom: ungueltig })])
+    assert.equal(gesperrt.status, 'blocked')
+    assert.equal(JSON.stringify(gesperrt).includes(ungueltig), false)
+    assert.equal(JSON.stringify(gesperrt).includes('rule_review_packet_fingerprint'), false)
+    assert.equal(requirementsProviderAus(), null)
   })
 
   test('ein mitgeliefertes Paket oder ein mitgelieferter Hash wird nicht geglaubt', () => {
@@ -515,7 +605,12 @@ describe('Official Truth rule review packet fingerprint', () => {
     ])
     assert.match(text, /officialTruthRegelReviewPacket\(/)
     assert.match(text, /sha256Hex\(/)
-    assert.match(text, /review-packet:v1:/)
+    assert.match(text, /review-packet:v2:/)
+    assert.match(text, /v: 2/)
+    assert.doesNotMatch(text, /review-packet:v1:/)
+    assert.doesNotMatch(text, /extractionNote/)
+    assert.doesNotMatch(text, /gültigkeitszeitLesen|gueltigkeitsfenster/)
+    assert.doesNotMatch(text, /reviewerId|reviewerKind|aal2|capability|grant/)
     assert.doesNotMatch(text, /evidenceQuellenFingerprint|createHash|randomUUID|sourceSnapshot/)
     assert.doesNotMatch(text, /regelKandidatAkzeptieren|regelKandidatErstellen|trustedRuleFact/)
     assert.doesNotMatch(text, /officialTruthAkzeptierteEvidenceAusAbruf|officialTruthRegelKandidatAusEvidence|officialTruthAbgerufenMaterialPruefen/)

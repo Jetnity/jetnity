@@ -52,7 +52,7 @@ const GEHEIM = 'personal-secret-91f3'
 const MARKER = 'TRUSTED-MARKER-SHOULD-NOT-ECHO'
 const FREITEXT = 'Ada Beispiel passport XC-44821 born 1984-03-17'
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'factKind', 'decision'] as const
-const SCHLUESSEL = /^review-packet:v1:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
 const ZUSTAENDE = ['needs_more_evidence', 'reject_candidate', 'proceed_to_trusted_fact_entry'] as const
 
 const PERSONEN = [
@@ -410,15 +410,21 @@ describe('Official Truth rule review decision intent contract', () => {
     const stuetze = buendel()
     const identitaet = finger([stuetze])
     const falsch = `review-packet:v1:${'ab'.repeat(32)}`
+    const gleicherDigest = `review-packet:v1:${identitaet.reviewPacketKey.slice('review-packet:v2:'.length)}`
+    assert.notEqual(gleicherDigest, identitaet.reviewPacketKey)
+    assert.match(identitaet.reviewPacketKey, /^review-packet:v2:/)
     const leer = ''
     const zusatz = `${identitaet.reviewPacketKey} `
     const klein = identitaet.reviewPacketKey.toUpperCase()
-    for (const reviewPacketKey of [falsch, leer, zusatz, klein, null, 1, true, { secret: GEHEIM }]) {
+    for (const reviewPacketKey of [falsch, gleicherDigest, leer, zusatz, klein, null, 1, true, { secret: GEHEIM }]) {
       const ergebnis = absicht([stuetze], reviewPacketKey, 'needs_more_evidence')
       assert.deepEqual(ergebnis, { status: 'blocked', reason: 'review_packet_key_mismatch' })
       const text = JSON.stringify(ergebnis)
       assert.equal(text.includes(identitaet.reviewPacketKey), false)
       assert.equal(text.includes(falsch), false)
+      assert.equal(text.includes(gleicherDigest), false)
+      assert.equal(text.includes('accepted'), false)
+      assert.equal(text.includes('lifecycle'), false)
       assert.equal(text.includes(GEHEIM), false)
       assert.equal(text.includes('rule_review_decision_intent'), false)
     }
@@ -438,6 +444,10 @@ describe('Official Truth rule review decision intent contract', () => {
     assert.notEqual(neu.reviewPacketKey, identitaet.reviewPacketKey)
     const aktuell = offen(absicht([geaendert], neu.reviewPacketKey, 'reject_candidate'))
     assert.equal(aktuell.reviewPacketKey, neu.reviewPacketKey)
+    assert.match(aktuell.reviewPacketKey, /^review-packet:v2:/)
+    assert.equal(JSON.stringify(aktuell).includes('accepted'), false)
+    assert.equal(JSON.stringify(aktuell).includes('lifecycle'), false)
+    assert.equal(JSON.stringify(aktuell).includes('regelKandidatAkzeptieren'), false)
   })
 
   test('blockierte Paket-Eingaben bleiben blockiert', () => {
@@ -665,6 +675,7 @@ describe('Official Truth rule review decision intent contract', () => {
     assert.doesNotMatch(text, /officialTruthRegelReviewVorschlag|official-truth-review-suggestion/)
     assert.doesNotMatch(text, /official_truth_store_accepted_v1|official_truth_source_catalog_v1/)
     assert.doesNotMatch(text, /requirementsProviderAus|sha256Hex|evidenceQuellenFingerprint/)
+    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v2:/)
     assert.doesNotMatch(text, /\.sourceSnapshot|\.canonicalUrl|\.sourceContentHash|\.proposal/)
     assert.doesNotMatch(text, /supabase|openai|Date\.now|new Date\(|fetch\(|Math\.random|node:fs|node:http|node:net/i)
     for (const relativ of [

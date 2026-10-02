@@ -65,7 +65,16 @@ const PERSONEN = [
   'note',
 ] as const
 
-const SUPPORT_FELDER = ['canonicalUrl', 'retrievedAt', 'sourceContentHash', 'sourceId', 'sourceSnapshot', 'versionId']
+const SUPPORT_FELDER = [
+  'canonicalUrl',
+  'retrievedAt',
+  'sourceContentHash',
+  'sourceId',
+  'sourceSnapshot',
+  'validFrom',
+  'validUntil',
+  'versionId',
+]
 
 function datei(relativ: string): string {
   return readFileSync(join(wurzel, relativ), 'utf8')
@@ -317,6 +326,12 @@ describe('Official Truth rule review packet', () => {
     assert.equal(eintrag.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
     assert.equal(eintrag.sourceSnapshot, direktBeleg.material.sourceSnapshot)
     assert.equal(eintrag.sourceSnapshot, SNAPSHOT)
+    assert.equal(eintrag.validFrom, direktAkzeptiert.evidence.validFrom)
+    assert.equal(eintrag.validFrom, '2026-01-01')
+    assert.equal(eintrag.validUntil, direktAkzeptiert.evidence.validUntil)
+    assert.equal(eintrag.validUntil, '2026-12-31T00:00:00.000Z')
+    assert.equal('extractionNote' in eintrag, false)
+    assert.equal(JSON.stringify(ergebnis).includes('Bounded synthetic extraction note'), false)
     assert.equal(direktBeleg.ruleScopeKey, ergebnis.kandidat.key)
     assert.equal(JSON.stringify(ergebnis).includes('"lifecycle":"accepted"'), false)
     assert.equal(JSON.stringify(ergebnis).includes('trustedRuleFact'), false)
@@ -572,11 +587,58 @@ describe('Official Truth rule review packet', () => {
     assert.equal(JSON.stringify(ergebnis).includes(GEHEIM), false)
   })
 
+  test('angenommene Gültigkeit wird übernommen und eine abgelehnte Rohzeile nicht', () => {
+    const seite = 'gleiche seite'
+    const rohFenster = { validFrom: '  2026-06-15  ', validUntil: '  2026-12-31T00:00:00.000Z  ' }
+    const normalFenster = { validFrom: '2026-06-15', validUntil: '2026-12-31T00:00:00.000Z' }
+    const rohPaket = offen(paket([grenze(seite, rohFenster)]))
+    const normalPaket = offen(paket([grenze(seite, normalFenster)]))
+    const leer = offen(paket([grenze(seite)]))
+    const explizitLeer = offen(paket([grenze(seite, { validFrom: null, validUntil: null })]))
+    assert.equal(rohPaket.supports[0]?.validFrom, '2026-06-15')
+    assert.equal(rohPaket.supports[0]?.validUntil, '2026-12-31T00:00:00.000Z')
+    assert.deepEqual(
+      rohPaket.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil]),
+      normalPaket.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil]),
+    )
+    assert.equal(leer.supports[0]?.validFrom, null)
+    assert.equal(leer.supports[0]?.validUntil, null)
+    assert.deepEqual(
+      leer.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil, eintrag.versionId]),
+      explizitLeer.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil, eintrag.versionId]),
+    )
+    assert.equal(rohPaket.supports[0]?.versionId, leer.supports[0]?.versionId)
+    assert.equal('extractionNote' in (rohPaket.supports[0] ?? {}), false)
+
+    const notiz = 'Bounded synthetic extraction note.'
+    const mitNotiz = offen(paket([grenze('notiz', { validFrom: '2026-06-15', extractionNote: `  ${notiz}  ` })]))
+    assert.equal(mitNotiz.supports[0]?.validFrom, '2026-06-15')
+    assert.equal(mitNotiz.supports[0]?.validUntil, null)
+    assert.equal(JSON.stringify(mitNotiz).includes(notiz), false)
+    assert.equal(JSON.stringify(mitNotiz).includes('extractionNote'), false)
+
+    const ungueltig = 'not-a-real-validity-91f3'
+    const verkehrt = paket([grenze('ungueltig', { validFrom: ungueltig, validUntil: null })])
+    const reihenfolge = paket([grenze('reihenfolge', { validFrom: '2026-12-31', validUntil: '2026-01-01' })])
+    for (const ergebnis of [verkehrt, reihenfolge]) {
+      assert.equal(ergebnis.status, 'blocked')
+      const text = JSON.stringify(ergebnis)
+      assert.equal(text.includes(ungueltig), false)
+      assert.equal(text.includes('2026-12-31'), false)
+      assert.equal(text.includes('2026-01-01'), false)
+      assert.equal(text.includes('rule_review_packet'), false)
+      assert.equal('supports' in ergebnis, false)
+    }
+  })
+
   test('das Paket ruft keine Annahme, keinen Speicher und kein Modell auf', () => {
     const text = datei('lib/readiness/official-truth-rule-review-packet.ts')
     assert.match(text, /officialTruthAkzeptierteEvidenceAusAbruf\(/)
     assert.match(text, /officialTruthAbgerufenMaterialPruefen\(/)
     assert.match(text, /officialTruthRegelKandidatAusEvidence\(/)
+    assert.match(text, /validFrom: belegt\.evidence\.validFrom/)
+    assert.match(text, /validUntil: belegt\.evidence\.validUntil/)
+    assert.doesNotMatch(text, /extractionNote/)
     assert.doesNotMatch(text, /regelKandidatAkzeptieren/)
     assert.doesNotMatch(text, /regelKandidatErstellen/)
     assert.doesNotMatch(text, /evidenceKandidatAkzeptieren|evidenceKandidatAusModell|akzeptierteEvidenceLesen/)

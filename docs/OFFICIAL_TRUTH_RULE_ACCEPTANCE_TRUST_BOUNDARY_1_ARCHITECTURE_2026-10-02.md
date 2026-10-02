@@ -53,7 +53,7 @@ The merged chain on this baseline, in order:
 
 1. Accepted Evidence is re-proved from original retrieval input.
 2. #723 `officialTruthRegelReviewPacket` builds one internal review packet when #717 emits a Rule Candidate. The candidate stays `candidate` / `pending`. The packet is review material. A same-source composition does not reach this step. Section 5 states the rejection.
-3. #726 `officialTruthRegelReviewPacketFingerprint` re-runs that packet and returns `reviewPacketKey`, `ruleScopeKey` and `supportVersionIds`. The key is `review-packet:v1:` plus SHA-256 of the canonical review material. It identifies review material. It does not accept a Rule Claim.
+3. #726 `officialTruthRegelReviewPacketFingerprint` re-runs that packet and returns `reviewPacketKey`, `ruleScopeKey` and `supportVersionIds`. The key is `review-packet:v2:` plus SHA-256 of the canonical review material. The canonical bytes include each support's re-proven accepted `validFrom` and `validUntil`. They do not include `extractionNote`. The prefix `review-packet:v1:` is not this key and is not equivalent to it. The key is a deterministic identity/checksum of that review material. It is not authentication, not authorization, not reviewer identity, not an AAL/capability/grant proof, not a server-stored witness, not acceptance, and not Official Truth. It does not accept a Rule Claim. A future live gate may compare a supplied key to a freshly recomputed key only as an equality check. The key itself grants nothing.
 4. This boundary is the current V1 human/operator authority step in front of acceptance. A later deterministic non-model policy is not part of this chain and is not authorized here.
 5. `regelKandidatAkzeptieren` remains the only function that returns an accepted Rule Claim.
 6. `akzeptierteRegelClaimSpeichern` in `lib/readiness/official-truth-store-server.ts` is the existing dormant writer. It calls `regelKandidatAkzeptieren` and stores only the returned claim. `public.official_truth_store_accepted_v1` remains LOCAL/UNAPPLIED. This document does not call the writer and does not apply the migration.
@@ -81,7 +81,7 @@ At decision time the server re-runs the fingerprint. The human submission names 
 
 A blocked #723 or #726 result has no key. It cannot carry a decision.
 
-The fingerprint already changes when the candidate scope, rule-scope key, fact kind, evidence quality, support version ids, proposal, source id, canonical URL, retrieval time or existing content hash changes. Re-proof at decision time therefore rejects source, scope and version drift that changes those bytes. The page snapshot stays out of the key and stays visible on the review surface described below.
+The fingerprint changes when the candidate scope, rule-scope key, fact kind, evidence quality, support version ids, proposal, source id, canonical URL, retrieval time, existing content hash, or the re-proven accepted `validFrom` / `validUntil` changes. A null validity window and a non-null window are different keys. `extractionNote` does not change the key and does not appear in the fingerprint output. Re-proof at decision time therefore rejects source, scope, version and accepted-validity drift that changes those bytes. The page snapshot stays out of the key and stays visible on the review surface described below. A supplied `review-packet:v1:` key does not match the recomputed `review-packet:v2:` key.
 
 One key is one regulatory cell. A second credential option is a second packet and a second key.
 
@@ -171,7 +171,7 @@ The reviewer sees, on the review surface:
 - the re-proven candidate, including its proposal as untrusted review material;
 - the official support material from the #723 packet, including each support's `sourceSnapshot`, canonical URL, retrieval time, source id and content hash.
 
-The fingerprint output alone is not that surface. The fingerprint omits the snapshot, the URL, the content hash and the proposal on purpose. The human still sees them before fact entry. The decision still binds to the fingerprint.
+The fingerprint output alone is not that surface. The fingerprint omits the snapshot, the URL, the content hash, the proposal and `extractionNote` on purpose. Accepted validity is inside the checksum and is still not authority. The human still sees the review material before fact entry. The decision still binds to the fingerprint only by equality with the recomputed `review-packet:v2:` key.
 
 The typed fact is entered or explicitly confirmed at this human boundary. The server passes that submitted value as `trustedRuleFact`. It does not copy `kandidat.proposal` into `trustedRuleFact` when the field is missing, untouched or merely displayed. A missing fact does not call acceptance.
 
@@ -191,7 +191,7 @@ On the current V1 human path, immediately before any call to `regelKandidatAkzep
 4. Require the recomputed `ruleScopeKey` and `supportVersionIds` to equal the decision's re-proven values.
 5. Require a server-held `proceed_to_trusted_fact_entry` for that key and the same verified user.
 6. Re-prove accepted Evidence through the packet path. The evidence versions passed into acceptance are those re-proven versions, not a client-supplied list.
-7. Require no source, scope or version drift. Drift that changes the canonical fingerprint bytes produces a different key and stops acceptance. The registry is the registry inside the original envelopes, re-read by #723.
+7. Require no source, scope, version or accepted-validity drift. Drift that changes the canonical fingerprint bytes, including `validFrom` or `validUntil`, produces a different `review-packet:v2:` key and stops acceptance. `extractionNote` is not part of that key. The registry is the registry inside the original envelopes, re-read by #723. A matching key remains an equality check. It is not itself acceptance and it is not a capability.
 8. Call only `regelKandidatAkzeptieren` with the re-proven candidate, the human-submitted `trustedRuleFact` for this V1 path, the re-proven evidence versions and the re-proven registry. A later deterministic policy would still have to enter through this same function. This document does not define that policy's fact source.
 
 The function's own checks still apply: acceptable quality, accepted evidence, support match, scope match, `official_authority`, distinct sources for composed quality, and `regelFaktLesen`. This boundary does not weaken them and does not duplicate them as a second acceptance engine.
@@ -206,7 +206,7 @@ Minimal fields:
 
 | Field | Source |
 | --- | --- |
-| `reviewPacketKey` | Recomputed #726 key |
+| `reviewPacketKey` | Recomputed #726 key, prefix `review-packet:v2:`. Equality check only. Not a capability, grant, AAL proof, reviewer identity, server witness, or acceptance. |
 | `ruleScopeKey` | Re-proven candidate key |
 | `factKind` | Re-proven candidate |
 | reviewer auth uid | `user.id` from server `getUser()` |

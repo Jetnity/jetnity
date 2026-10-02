@@ -3,8 +3,12 @@
 // Deterministische Identität eines neu belegten Regel-Prüfpakets.
 // Der Aufrufer liefert nur die ursprüngliche Paket-Eingabe. Das Paket
 // wird neu gebaut. Ein mitgeliefertes Paket oder ein mitgelieferter
-// Hash ist keine Identität. Die Identität bindet Prüfstoff, keine
-// angenommene Regel und keinen Wahrheitsfakt.
+// Hash ist keine Identität. Die Identität bindet Prüfstoff, einschliesslich
+// des schon angenommenen Gültigkeitsfensters. Sie ist nur eine Prüfsumme.
+// Sie ist keine Anmeldung, keine Berechtigung, keine Prüferidentität,
+// kein AAL, keine Fähigkeit, keine Freigabe, kein Serverzeuge, keine
+// Annahme und keine Official Truth. Die freie Extraktionsnotiz bleibt
+// draussen. Eine angenommene Regel bleibt draussen.
 
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
@@ -16,10 +20,18 @@ import {
 
 type RegelReviewPacket = Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>
 
-const PRAEFIX = 'review-packet:v1:'
+const PRAEFIX = 'review-packet:v2:'
 const HEX64 = /^[a-f0-9]{64}$/
 
-const PROVENIENZ_FELDER = ['versionId', 'sourceId', 'canonicalUrl', 'retrievedAt', 'sourceContentHash'] as const
+const PROVENIENZ_FELDER = [
+  'versionId',
+  'sourceId',
+  'canonicalUrl',
+  'retrievedAt',
+  'sourceContentHash',
+  'validFrom',
+  'validUntil',
+] as const
 
 type Provenienz = {
   readonly versionId: string
@@ -27,6 +39,8 @@ type Provenienz = {
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
+  readonly validFrom: string | null
+  readonly validUntil: string | null
 }
 
 type Identitaet =
@@ -34,9 +48,10 @@ type Identitaet =
   | { readonly ok: false; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
 
 /**
- * `rule_review_packet_fingerprint` ist die Identität des Prüfpakets.
- * Sie enthält weder Schnappschuss, URL, Inhaltshash, Vorschlag noch
- * eine angenommene Regel.
+ * `rule_review_packet_fingerprint` ist die Prüfsumme des Prüfpakets.
+ * Sie enthält weder Schnappschuss, URL, Inhaltshash, Vorschlag,
+ * Extraktionsnotiz noch eine angenommene Regel. Der Schlüssel vergibt
+ * nichts.
  */
 export type OfficialTruthRegelReviewFingerprintErgebnis =
   | {
@@ -86,19 +101,35 @@ function kanonisieren(wert: unknown): { ok: true; wert: unknown } | { ok: false 
   return { ok: true, wert: aus }
 }
 
+/** Übernimmt nur den schon normalisierten Wert. Kein zweites Gültigkeitslesen. */
+function fenster(wert: unknown): string | null | undefined {
+  if (wert === null) return null
+  return text(wert) ?? undefined
+}
+
 function provenienz(support: OfficialTruthRegelReviewSupport): Provenienz | null {
   const versionId = text(support.versionId)
   const sourceId = text(support.sourceId)
   const canonicalUrl = text(support.canonicalUrl)
   const retrievedAt = text(support.retrievedAt)
   const sourceContentHash = text(support.sourceContentHash)
+  const validFrom = fenster(support.validFrom)
+  const validUntil = fenster(support.validUntil)
   if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
-  return { versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash }
+  if (validFrom === undefined || validUntil === undefined) return null
+  return { versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
+}
+
+function feldVergleich(links: string | null, rechts: string | null): number {
+  if (links === rechts) return 0
+  if (links === null) return -1
+  if (rechts === null) return 1
+  return vergleich(links, rechts)
 }
 
 function provenienzVergleich(links: Provenienz, rechts: Provenienz): number {
   for (const feld of PROVENIENZ_FELDER) {
-    const unterschied = vergleich(links[feld], rechts[feld])
+    const unterschied = feldVergleich(links[feld], rechts[feld])
     if (unterschied !== 0) return unterschied
   }
   return 0
@@ -127,7 +158,7 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
   }
 
   const form = kanonisieren({
-    v: 1,
+    v: 2,
     candidate: {
       scope: kandidat.scope,
       key: ruleScopeKey,
@@ -156,9 +187,11 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
  * Die Eingabe ist dieselbe Hülle wie bei `officialTruthRegelReviewPacket`:
  * Stützen aus Abrufumschlag, Uhr und Extraktion, plus Faktart,
  * Evidence-Qualität und Vorschlag. Das Paket wird hier neu erzeugt.
- * Die kanonische Form enthält nur die Kandidatenzelle und die
- * Provenienz der Stützen. Der Seitenschnappschuss bleibt draussen.
+ * Die kanonische Form enthält die Kandidatenzelle und die Provenienz
+ * der Stützen, einschliesslich des angenommenen Gültigkeitsfensters.
+ * Der Seitenschnappschuss und die freie Extraktionsnotiz bleiben draussen.
  * `sourceContentHash` ist die schon vorhandene Materialidentität.
+ * Ein älteres Präfix ist kein Alias dieses Schlüssels.
  */
 export function officialTruthRegelReviewPacketFingerprint(eingabe: unknown): OfficialTruthRegelReviewFingerprintErgebnis {
   const ergebnis = officialTruthRegelReviewPacket(eingabe)

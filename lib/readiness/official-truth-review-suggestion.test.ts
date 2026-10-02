@@ -45,7 +45,7 @@ const MARKER = 'TRUSTED-MARKER-SHOULD-NOT-ECHO'
 const FREMDE_ID = 'not-in-packet-91f3'
 const FREITEXT = 'Ada Beispiel passport XC-44821 born 1984-03-17'
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'assessment', 'citedSupportVersionIds', 'reasonCodes']
-const SCHLUESSEL = /^review-packet:v1:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
 
 const PERSONEN = [
   'userId',
@@ -646,6 +646,7 @@ describe('Official Truth review suggestion contract', () => {
     assert.doesNotMatch(text, /officialTruthAkzeptierteEvidenceAusAbruf|officialTruthRegelKandidatAusEvidence|officialTruthAbgerufenMaterialPruefen/)
     assert.doesNotMatch(text, /official_truth_store_accepted_v1|official_truth_source_catalog_v1/)
     assert.doesNotMatch(text, /requirementsProviderAus|sha256Hex|evidenceQuellenFingerprint/)
+    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v2:/)
     assert.doesNotMatch(text, /\.sourceSnapshot|\.canonicalUrl|\.sourceContentHash|\.proposal/)
     assert.doesNotMatch(text, /supabase|openai|Date\.now|new Date\(|fetch\(|node:fs|node:http|node:net/i)
     for (const relativ of [
