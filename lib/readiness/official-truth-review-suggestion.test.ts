@@ -327,6 +327,16 @@ describe('Official Truth review suggestion contract', () => {
     assert.equal(ohneFeld.reviewNote, null)
     assert.equal(ohneFeld.assessment, 'insufficient_evidence')
     assert.equal(ohneFeld.reviewPacketKey, identitaet.reviewPacketKey)
+    const ohneGrund = offen(
+      hinweis([stuetze], {
+        assessment: 'needs_human_review',
+        citedSupportVersionIds: [],
+        reasonCodes: [],
+      }),
+    )
+    assert.deepEqual(ohneGrund.reasonCodes, [])
+    assert.equal(ohneGrund.reviewPacketKey, identitaet.reviewPacketKey)
+    ohneStoff(ohneGrund, [SNAPSHOT])
 
     const bewertet = [
       ['contradicts_candidate', 'support_text_conflicts_candidate'],
