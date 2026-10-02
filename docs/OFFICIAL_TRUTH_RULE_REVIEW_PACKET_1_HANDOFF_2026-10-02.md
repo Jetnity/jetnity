@@ -12,7 +12,7 @@ Session: https://cursor.com/agents/bc-30066140-adb9-4bc2-8d94-b16353b0f5cd
 
 ## Current state
 
-The branch adds a pure internal review packet after re-proven accepted Evidence and a Rule Candidate. It is a Draft. It is not Ready and not merged.
+The branch adds a pure internal review packet after re-proven accepted Evidence and a Rule Candidate. Technical-Lead R1 `5390087098` accepted `2b4e5fd427493b641947b76a2ef48012a07b6e2b` with no behavior change. Main is now integrated at `d7ef81197484a58820197c632938e7a5acc00d09` (#721) through merge `124bfa554589f49490540a8f9061fc55ae7b7a2d`. The six #721 files match `origin/main`. The packet runtime file is unchanged. It is a Draft. It is not Ready and not merged.
 
 Read first:
 
@@ -27,8 +27,10 @@ Read first:
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - The task baseline remains `main@708a77defa5092e43d5dec991aa09a77e34822db`.
-- `git fetch origin main` before the docs commit resolved `origin/main` to that same SHA. The implementation head `d8ae295e6fdfea01e649ca95c95e2694a13e7d24` was 0 behind and 2 ahead. Re-fetch before treating any later SHA as current.
-- Local gates were run on `d8ae295e`. The following docs commit does not change runtime behaviour.
+- Technical-Lead R1 `5390087098` accepted `2b4e5fd427493b641947b76a2ef48012a07b6e2b`. No behavior change was requested.
+- The re-gate fetched `origin/main` at `d7ef81197484a58820197c632938e7a5acc00d09`. Merge `124bfa554589f49490540a8f9061fc55ae7b7a2d` was 0 behind that SHA. Re-fetch before treating any later SHA as current.
+- Local gates for this re-gate were run on `124bfa55`. The following docs commit does not change runtime behaviour or #721.
+- The earlier gates on `d8ae295e` stay in the report. They are not the current head.
 - PostgreSQL 16.15 was installed in this VM for the existing throwaway proofs. No remote database was contacted.
 
 ## Trust rule for the next reader
@@ -66,4 +68,4 @@ The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview ar
 
 No Ready. No merge. No Supabase apply. No import. No browser, fetch or model research adapter. No Rule acceptance slice and no model-review slice.
 
-**STOP for independent Technical-Lead review of the exact branch tip.**
+**STOP for final Technical-Lead review of the exact branch tip.**

@@ -58,8 +58,16 @@ Focused file: 11/11 pass. Full `npm test` on `d8ae295e6fdfea01e649ca95c95e2694a1
 
 PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 16.15 locally, the suite passed, including the two existing throwaway cluster proofs. Those clusters are local and temporary. No remote database was contacted. This slice did not apply SQL.
 
+## Final base re-gate
+
+Technical-Lead R1 `5390087098` accepted `2b4e5fd427493b641947b76a2ef48012a07b6e2b`. No code change was requested, and none was made to this packet or to #721.
+
+`origin/main` at the re-gate was `d7ef81197484a58820197c632938e7a5acc00d09`. Merge `124bfa554589f49490540a8f9061fc55ae7b7a2d` contains that commit. `git diff origin/main` on the six #721 paths is empty. The packet runtime file and its test are unchanged. After the merge the branch was 0 behind and 4 ahead.
+
+On `124bfa55`: focused tests 11/11, `npm test` 4371 pass / 0 fail across 755 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, build pass, diff check pass, operating-mode guard PASS, and the hygiene checks pass. Schema reference still lists the three already known unapplied RPCs.
+
 ## Stop line
 
-The docs commit after `d8ae295e` is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse a run id from `708a77de`. This remains a Draft. No Ready, no merge, and no follow-up acceptance or model-review slice from this writer.
+The docs commit after `124bfa55` is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse run ids from `2b4e5fd4`. This remains a Draft. No Ready, no merge, and no follow-up acceptance or model-review slice from this writer.
 
-**STOP for independent Technical-Lead review of the exact pushed tip.**
+**STOP for final Technical-Lead review of the exact pushed tip.**

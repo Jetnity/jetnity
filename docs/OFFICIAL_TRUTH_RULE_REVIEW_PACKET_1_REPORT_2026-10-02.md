@@ -92,10 +92,45 @@ This VM did not have PostgreSQL 16 when the session started. PostgreSQL 16.15 wa
 
 ## Exact-head gates
 
-GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a run id from the baseline `708a77de`.
+GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a run id from the baseline `708a77de` or from the R1 head `2b4e5fd4`.
+
+## Final base re-gate
+
+Technical-Lead R1 `5390087098` accepted exact head `2b4e5fd427493b641947b76a2ef48012a07b6e2b`. No behavior change was requested.
+
+`git fetch origin main` then resolved `origin/main` to `d7ef81197484a58820197c632938e7a5acc00d09`, the merge of #721. Merge commit `124bfa554589f49490540a8f9061fc55ae7b7a2d` brings that main in. `git diff origin/main` on the six #721 paths is empty:
+
+- `docs/OFFICIAL_TRUTH_ACCEPTED_EVIDENCE_REFRESH_DIFF_2_HANDOFF_2026-10-02.md`
+- `docs/OFFICIAL_TRUTH_ACCEPTED_EVIDENCE_REFRESH_DIFF_2_REPORT_2026-10-02.md`
+- `docs/OFFICIAL_TRUTH_ACCEPTED_EVIDENCE_REFRESH_DIFF_2_SELF_REVIEW_2026-10-02.md`
+- `docs/OFFICIAL_TRUTH_ACCEPTED_EVIDENCE_REFRESH_DIFF_2_TASK_2026-10-02.md`
+- `lib/readiness/official-truth-refresh-diff.test.ts`
+- `lib/readiness/official-truth-refresh-diff.ts`
+
+`lib/readiness/official-truth-rule-review-packet.ts` and its test are unchanged by the merge. After that merge the branch was 0 behind and 4 ahead. Re-fetch before treating any later SHA as current.
+
+Local gates below were run on `124bfa55` before this re-gate docs commit. The docs commit does not change runtime behaviour and does not change #721.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `lib/readiness/official-truth-rule-review-packet.test.ts` | 11/11 pass |
+| `npm test` | 4371 pass / 0 fail, 755 suites |
+| `npm run typecheck` | pass |
+| eslint on the two packet files | pass, no warnings |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the packet files |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass |
+| `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice did not add an RPC. |
+
+GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after this docs commit. Do not reuse run ids from `2b4e5fd4`.
 
 ## Stop
 
 No Ready. No merge. No Rule acceptance. No model review. No store, RPC, DB, provider or network path.
 
-**STOP for independent Technical-Lead review of the exact branch tip.**
+**STOP for final Technical-Lead review of the exact branch tip.**
