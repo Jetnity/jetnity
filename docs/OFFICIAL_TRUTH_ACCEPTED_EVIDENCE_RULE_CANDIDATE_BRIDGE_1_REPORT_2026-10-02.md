@@ -94,3 +94,28 @@ Local gates below were run on `28487fdb` before this re-gate docs commit. The do
 | `check:deps` | pass |
 | `check:api-schutz` | pass |
 | `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice did not add an RPC. |
+
+## Docs-only main re-gate
+
+Technical Lead code and semantics remain accepted. No behavior change was requested, and the merge had no conflict.
+
+`git fetch origin main` resolved `origin/main` to `1e0706f530d34d65d2141b281976cda579f8b5f5`, the docs-only merge of #720. Merge commit `8595291d1c12b23eca3a5010ba2f2de71fa1062c` brings that main in. `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` match `origin/main`. The six #716 files still match `origin/main`. `lib/readiness/official-truth-rule-candidate.ts` is unchanged. After that merge the branch was 0 behind and 6 ahead. Re-fetch before treating any later SHA as current.
+
+Local gates below were run on `8595291d` before this docs commit. The docs commit does not change runtime behaviour, #716, or #720.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `lib/readiness/official-truth-rule-candidate.test.ts` | 10/10 pass |
+| `npm test` | 4348 pass / 0 fail, 753 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the new files |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass |
+| `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice did not add an RPC. |
+
+GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after this docs commit. Do not reuse run ids from `38d1a7cd` or `807fe1e6`.

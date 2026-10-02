@@ -64,8 +64,16 @@ Technical-Lead R1 accepted `807fe1e6668618e9094046f58d341dc089cb5853`. No code c
 
 On `28487fdb`: focused tests 10/10, `npm test` 4348 pass / 0 fail across 753 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, build pass, diff check pass, operating-mode guard PASS, and the hygiene checks pass. Schema reference still lists the three already known unapplied RPCs.
 
+## Docs-only main re-gate
+
+Technical Lead code and semantics remain accepted. No behavior change was requested. The merge of `1e0706f530d34d65d2141b281976cda579f8b5f5` had no conflict.
+
+Merge `8595291d1c12b23eca3a5010ba2f2de71fa1062c` contains that main. `git diff origin/main` is empty for `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, and the six #716 paths. This bridge's runtime file is unchanged. After the merge the branch was 0 behind and 6 ahead.
+
+On `8595291d`: focused tests 10/10, `npm test` 4348 pass / 0 fail across 753 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, build pass, diff check pass, operating-mode guard PASS, and the hygiene checks pass. Schema reference still lists the three already known unapplied RPCs.
+
 ## Stop line
 
-The re-gate docs commit is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse the R1 run ids from `807fe1e6`. This remains a Draft. No Ready, no merge, and no follow-up acceptance or persistence slice from this writer.
+The docs commit after `8595291d` is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse run ids from `38d1a7cd` or `807fe1e6`. This remains a Draft. No Ready, no merge, and no follow-up acceptance or persistence slice from this writer.
 
 **STOP for final Technical-Lead review of the exact pushed tip.**

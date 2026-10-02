@@ -12,7 +12,7 @@ Session: https://cursor.com/agents/bc-2dc2eeae-983e-4e63-a2cc-0125b9b32fe4
 
 ## Current state
 
-The branch adds a pure bridge from already accepted official Evidence to one rule candidate. Technical-Lead R1 accepted `807fe1e6668618e9094046f58d341dc089cb5853` with no behavior change. Main is now integrated at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf` (#716) through merge `28487fdbe5de49041d6260a624173c353f5aa726`. The #716 files match `origin/main`. It is a Draft. It is not Ready and not merged.
+The branch adds a pure bridge from already accepted official Evidence to one rule candidate. Technical-Lead R1 accepted `807fe1e6668618e9094046f58d341dc089cb5853` with no behavior change. Main is now integrated at `1e0706f530d34d65d2141b281976cda579f8b5f5` (#720, docs only) through merge `8595291d1c12b23eca3a5010ba2f2de71fa1062c`. That merge also contains #716 at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`. The #716 files and the two #720 files match `origin/main`. It is a Draft. It is not Ready and not merged.
 
 Read first:
 
@@ -21,15 +21,16 @@ Read first:
 3. `docs/OFFICIAL_TRUTH_ACCEPTED_EVIDENCE_RULE_CANDIDATE_BRIDGE_1_SELF_REVIEW_2026-10-02.md`
 4. `lib/readiness/official-truth-rule-candidate.ts`
 
-`docs/ACTIVE_WORK_STATUS.md` was not updated. It is outside the task allowlist. This handoff is the continuity pointer for the slice. The status file on this branch still describes an older writer. Do not treat that older section as this slice.
+`docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` now match `origin/main` because the #720 merge brought them in. This writer did not edit those files. This handoff is the continuity pointer for the slice. The status file still describes an older writer plus the #720 tooling note. Do not treat that older section as this slice.
 
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - The task baseline remains `main@16f3a8d631bb823c9daafc724df67c000dcb5985`.
-- The final base re-gate fetched `origin/main` at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`. Merge `28487fdbe5de49041d6260a624173c353f5aa726` was 0 behind that SHA. Re-fetch before treating any later SHA as current.
-- Local gates for the re-gate were run on `28487fdb`. The following docs commit does not change runtime behaviour and does not change #716.
-- The earlier R1 gates on `8d09efd1` stay in the report. They are not the current head.
+- The #716 re-gate fetched `origin/main` at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`. Merge `28487fdbe5de49041d6260a624173c353f5aa726` was 0 behind that SHA.
+- The docs-only re-gate fetched `origin/main` at `1e0706f530d34d65d2141b281976cda579f8b5f5`. Merge `8595291d1c12b23eca3a5010ba2f2de71fa1062c` was 0 behind that SHA. Re-fetch before treating any later SHA as current.
+- Local gates for this re-gate were run on `8595291d`. The following docs commit does not change runtime behaviour, #716, or #720.
+- The earlier gates on `8d09efd1` and `28487fdb` stay in the report. They are not the current head.
 
 ## Trust rule for the next reader
 
