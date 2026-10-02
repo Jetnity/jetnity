@@ -12,7 +12,7 @@ Session: https://cursor.com/agents/bc-bb1255f3-36c2-41b1-907b-b23ef08cbf04
 
 ## Current state
 
-The branch adds a pure validation contract for one reviewer suggestion bound to one re-proven #723/#726 review packet. It is a Draft. It is not Ready and not merged.
+The branch adds a pure validation contract for one reviewer suggestion bound to one re-proven #723/#726 review packet. Technical-Lead R1 `5390889237` required R1-F1 only: free-form `reviewNote` is removed. The suggestion is machine-readable. It is a Draft. It is not Ready and not merged.
 
 Read first:
 
@@ -27,8 +27,8 @@ Read first:
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - The task baseline remains `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`.
-- `git fetch origin main` resolved `origin/main` to that same SHA. Before this docs commit the branch was 0 behind and 3 ahead. Re-fetch before treating any later SHA as current.
-- Production files are identical on `c5480cd0e66aae0123a18d45b606e1aa9887b0fc` and `f3132973e6aa5c14d49e726c7b787a9ed0a9779a`. The later commit only adds assertions. Full `npm test` was re-run on `f3132973`: 4390 pass / 0 fail, 757 suites. Typecheck, lint, build and hygiene were run on `c5480cd0`. This docs commit does not change runtime behaviour.
+- `git fetch origin main` before the R1 docs commit is recorded below. Re-fetch before treating any later SHA as current. The branch must stay 0 behind `5e291ed7`.
+- R1 code head: `1a1eca4945f467c7a2a1c1f106d4b5ccc8ba083d`. It removes `reviewNote`. Local gates on that tree: focused tests 10/10, `npm test` 4391 pass / 0 fail across 757 suites, typecheck, lint, build, diff check, operating-mode guard and hygiene pass. Lint is 0 errors and 148 pre-existing warnings, none in the suggestion files. This docs commit does not change runtime behaviour.
 - PostgreSQL 16.15 was installed in this VM for the existing throwaway proofs. The package cluster was not started. No remote database was contacted.
 
 ## Trust rule for the next reader
@@ -36,7 +36,7 @@ Read first:
 Call `officialTruthRegelReviewVorschlag` with:
 
 - `packetInput`: `{ supports, metadata }`, the same original input #723 accepts;
-- `suggestion`: `assessment`, `citedSupportVersionIds`, `reasonCodes`, and optional `reviewNote`.
+- `suggestion`: `assessment`, `citedSupportVersionIds`, and `reasonCodes` only.
 
 Do not pass a packet, a candidate, accepted Evidence, a receipt, a `reviewPacketKey`, a fingerprint, a support-id list beside `citedSupportVersionIds`, or a trusted rule fact.
 
@@ -47,8 +47,9 @@ The function re-runs `officialTruthRegelReviewPacket` and `officialTruthRegelRev
 - `ruleScopeKey` from that fingerprint;
 - the assessment, unchanged;
 - cited support version ids, sorted, each one a member of the re-proven packet;
-- reason codes, sorted, each one from the task allowlist;
-- `reviewNote` trimmed to at most 500 characters, or `null`.
+- reason codes, sorted, each one from the task allowlist.
+
+Any other suggestion field fails closed. That includes `reviewNote`, a null note, and any other free-text name. The text is not returned.
 
 `supports_candidate` is still only a suggestion. It is not an accepted Rule Claim. `contradicts_candidate` does not reject a Rule Claim, because this function does not create one. `insufficient_evidence` and `needs_human_review` are review states only. Citation ids are references. They are not a source ranking. The suggestion cannot add, remove, or rewrite candidate or support content, because that content is not in the output.
 
@@ -73,4 +74,4 @@ The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview ar
 
 No Ready. No merge. No Supabase apply. No import. No browser, fetch or model research adapter. No Rule acceptance slice and no model-review slice from this writer.
 
-**STOP for final Technical-Lead review of the exact branch tip.**
+**STOP for Technical-Lead R2 of the exact branch tip.**
