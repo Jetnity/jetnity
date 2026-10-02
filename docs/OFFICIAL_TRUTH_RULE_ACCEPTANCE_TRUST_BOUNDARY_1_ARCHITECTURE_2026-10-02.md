@@ -1,7 +1,7 @@
 # Official Truth Rule Acceptance Trust Boundary Architecture 1
 
 Date: 2 October 2026
-Status: **docs-only architecture / Draft PR #731 / R1 wording correction / no acceptance runtime / no Auth, RLS, DB, model, provider or Production change**
+Status: **docs-only architecture / Draft PR #731 / R1 wording correction / Issue #737 reconciliation 2 October 2026 corrects section 5 / no acceptance runtime / no Auth, RLS, DB, model, provider or Production change**
 Issue: #729
 Draft PR: #731
 Branch: `docs/official-truth-rule-acceptance-trust-boundary-1`
@@ -10,6 +10,12 @@ Task: `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_TASK_2026-10-02.md`
 Logical agent: **Jetnity Official Truth Rule acceptance trust boundary architecture 1**, Generation 1
 
 This file is the binding architecture for the authority boundary before `regelKandidatAkzeptieren`. It does not implement that boundary. The task file still contains the original dispatch sentence that human review is the only future entry. R1 `5390891105` supersedes that sentence here. The task file is left unchanged. `DECISIONS.md` and `docs/ACTIVE_WORK_STATUS.md` stay unchanged because this task forbids global continuity edits. A later Technical-Lead promotion into `DECISIONS.md` is a separate edit.
+
+## Reconciliation — 2 October 2026
+
+Issue #737 corrects section 5 of this binding architecture. The correction is this note and the section 5 text below. The original #731 task, report and handoff stay the historical author record of that delivery. They are not rewritten to look as if they already contained this correction. No runtime file changes with this reconciliation.
+
+The original #731 section 5 said that a composed packet whose supports share one source can exist as review material, because distinct sources are enforced at acceptance, and that the decision contract must refuse `proceed_to_trusted_fact_entry` for that packet with `same_source_composition`. That statement conflicts with accepted #717 and #723 runtime semantics. It is superseded here.
 
 ## 1. Binding principle
 
@@ -46,7 +52,7 @@ This architecture does not design those predicates, does not name a case where t
 The merged chain on this baseline, in order:
 
 1. Accepted Evidence is re-proved from original retrieval input.
-2. #723 `officialTruthRegelReviewPacket` builds one internal review packet. The candidate stays `candidate` / `pending`. The packet is review material.
+2. #723 `officialTruthRegelReviewPacket` builds one internal review packet when #717 emits a Rule Candidate. The candidate stays `candidate` / `pending`. The packet is review material. A same-source composition does not reach this step. Section 5 states the rejection.
 3. #726 `officialTruthRegelReviewPacketFingerprint` re-runs that packet and returns `reviewPacketKey`, `ruleScopeKey` and `supportVersionIds`. The key is `review-packet:v1:` plus SHA-256 of the canonical review material. It identifies review material. It does not accept a Rule Claim.
 4. This boundary is the current V1 human/operator authority step in front of acceptance. A later deterministic non-model policy is not part of this chain and is not authorized here.
 5. `regelKandidatAkzeptieren` remains the only function that returns an accepted Rule Claim.
@@ -119,7 +125,7 @@ The audit reviewer id, when a later design records one, is `user.id` from that v
 
 ## 5. Decision states
 
-A future decision has exactly one of these states:
+A future decision has exactly one of these states. The three states apply only to an input that successfully became a Rule Review Packet. A blocked #723 result has no packet and no decision intent.
 
 | State | Meaning |
 | --- | --- |
@@ -140,7 +146,15 @@ On the current V1 path there is no decision state named accept. Only the later h
 
 `stale_primary_evidence`, `unresolved_conflict` and `research_gap` cannot take `proceed_to_trusted_fact_entry`. They remain eligible for `needs_more_evidence` or `reject_candidate`. A research gap keeps a null proposal. None of those three qualities can be approved into accepted truth.
 
-A composed packet whose supports share one source can exist as review material, because distinct sources are enforced at acceptance. The decision contract must refuse `proceed_to_trusted_fact_entry` for that packet with the existing `same_source_composition` outcome, so fact entry is not offered for a packet acceptance will reject.
+`composed_from_multiple_primary_sources` means multiple distinct official sources before a Rule Candidate is emitted. #717 `officialTruthRegelKandidatAusEvidence` calls `regelKandidatErstellen`, then rejects that quality when the accepted official Evidence has fewer than two distinct `sourceId` values. The failure is `{ ok: false, reason: 'same_source_composition' }` and carries no candidate. Returning that candidate would present one source as composition from multiple primary sources.
+
+#723 calls #717. A same-source composed input therefore fails before a `rule_review_packet` exists. #726 has no review key for that input. No decision intent exists for it, including `needs_more_evidence` and `reject_candidate`. Those two states apply only to an input that successfully became a Rule Review Packet. They still do not write `not_required` and they still do not close another credential option.
+
+If more evidence is required after `same_source_composition`, the upstream research and evidence path must obtain an eligible distinct official source, or otherwise produce a valid candidate quality. The review layer must not relabel that invalid composition as valid review material.
+
+#734 `officialTruthRegelReviewEntscheidungsabsicht` keeps a local source-count check on the proceed path. That check is defense in depth. It is currently unreachable through a successful #723 packet, because #723 already returned `same_source_composition` and no packet. It is not a new candidate path and it does not create a review packet for the rejected input.
+
+`regelKandidatAkzeptieren` remains the only canonical acceptance function. For a packet that does exist, `proceed_to_trusted_fact_entry` still requires the distinct-source predicate above. This reconciliation changes no runtime behavior.
 
 A #728 suggestion may be shown next to these states. It cannot select the state.
 
@@ -236,7 +250,7 @@ This slice makes no model call and no network call.
 
 The sequence below is the only authorized **current V1** implementation path. It is the human/operator path. It is not the only conceivable permanent authority mechanism. A separately versioned deterministic non-model acceptance policy sits outside this sequence. This slice does not design it, imply it, or start an automated acceptance slice. This slice starts none of the steps below.
 
-1. **Pure decision-intent contract.** Re-prove the #726 key from original packet input. Accept only the three decision states. Refuse `proceed_to_trusted_fact_entry` when acceptance predicates fail. Reject caller authority fields and caller packet identity. Return no trusted fact and no accepted claim.
+1. **Pure decision-intent contract.** Re-prove the #726 key from original packet input. Accept only the three decision states, and only after #723 returns a packet. Same-source composition is already rejected by #717 and never enters this contract as review material. The #734 proceed-path source-count check remains defense in depth. Refuse `proceed_to_trusted_fact_entry` when acceptance predicates fail on a packet that does exist. Reject caller authority fields and caller packet identity. Return no trusted fact and no accepted claim.
 2. **Authenticated server review endpoint.** The verified session is `getUser()`. The endpoint shows the re-proven candidate and the official support snapshots. It records a decision only after the checks in sections 3 and 4.
 3. **Privileged reviewer authorization check.** Role, capability, AAL2 `currentLevel` and `grant: 'role'`, all server-side. This step waits for the capability decision in section 4. Break-glass stops before fact entry.
 4. **Fact-entry validation.** A separate explicit human submission. The server re-proves the key and the server-held proceed binding, then validates the submitted fact with the existing fact reader. It does not copy the proposal.
