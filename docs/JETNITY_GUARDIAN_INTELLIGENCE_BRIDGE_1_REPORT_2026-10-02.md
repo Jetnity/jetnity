@@ -12,31 +12,43 @@ Session: https://cursor.com/agents/bc-f592135c-c472-4031-b2fa-c4f3b5c521bc
 
 ## Status
 
-Repository slice delivered on a Draft. External automatic posting is not proven. Stopped for independent Technical-Lead exact-head review.
+R1 correction delivered on the same Draft. External automatic posting is not proven. Stopped for independent Technical-Lead exact-head re-review.
 
 ## Umgesetzt
 
-Issue #748 is bound as the canonical Guardian / Chief-of-Staff evidence inbox.
+Issue #748 remains the canonical Guardian / Chief-of-Staff evidence inbox.
 
-The contract defines the report envelope, stable `report_id` dedupe, Technical-Lead receipt classes (`CONFIRMED`, `PARTIAL`, `NOT_REPRODUCED`, `STALE`, `SUPERSEDED`), stale-head retention, Cursor consumption only after an explicitly bound receipt, and the startup read. Guardian stays read-only. Raw findings do not authorize a code fix. Chief of Staff may synthesize and must leave the raw report visible.
+The contract defines the report envelope, stable `report_id` dedupe, Technical-Lead receipt classes (`CONFIRMED`, `PARTIAL`, `NOT_REPRODUCED`, `STALE`, `SUPERSEDED`), stale-head retention, and Cursor consumption only after an explicitly bound receipt. Guardian stays read-only. A raw finding does not authorize a code fix. Chief of Staff may synthesize and must leave the raw report visible.
 
-The one-time external prompt is prepared and unsent. It asks the existing Chief of Staff / Guardian environment to post material reports to #748 when an already-connected GitHub comment capability permits that, and to report `GITHUB_ISSUE_COMMENT_CAPABILITY: UNAVAILABLE` once if it does not.
+The one-time external prompt is prepared and unsent.
 
-Startup pointers in `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, and `docs/ACTIVE_WORK_STATUS.md` name this Draft as the current writer. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §4a binds #748. The OS-2 Daily rule that the routine does not write GitHub by default stays in force for `NO_MATERIAL` briefs.
+Technical-Lead R1 `5394779466` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` found that the delivery rewrote deeper historical headings and sentences in the three startup files. That exceeded the binding top-pointer scope. The delivery self-review said those deeper sentences were not rewritten. That sentence was false for `dea9ea54`.
+
+This correction:
+
+- merges current `main@a77146140799a142cb1ea0300991e77cdc0731b5` (`Merge #749`);
+- leaves each of `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, and `docs/ACTIVE_WORK_STATUS.md` different from that `main` only by the new top bridge pointer;
+- keeps the five Bridge docs and the minimal #748 bind in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`;
+- records #749 as merged and records that its P1 findings block #741 autonomous promotion until later remediation, without rewriting the #749 report.
 
 ## Live evidence
 
-- `git fetch origin main` in this session: `3775955f6c4e958b26259d98cb9a0bc35dc2075f`, `Merge #743: add owner-only Official Truth reviewer capability`. Ahead/behind versus that SHA before this delivery commit: 0 behind, 1 ahead (task seed `29775316d548a53c9b806deb4d80028ba1965857`).
-- `.jetnity/operating-mode.json` `mode` is `NORMAL`. This slice did not edit that file. `AI_OS_BUILD_HOLD` is not the live mode.
-- Issue #748 created `2026-10-02T17:09:16Z`. Two comment reads in this session returned an empty list. That empty list is the observation. It is not proof of posting.
-- Issue #746 was read. It remains a separate read-only Official Truth acceptance audit. This diff does not implement it and does not change acceptance runtime.
+- R1 `git fetch origin main`: `a77146140799a142cb1ea0300991e77cdc0731b5`. Ahead/behind after the merge: 0 behind.
+- Dispatch baseline `3775955f6c4e958b26259d98cb9a0bc35dc2075f` remains the #743 pin. It is not current `main`.
+- `.jetnity/operating-mode.json` `mode` is `NORMAL`. This slice does not edit that file. `AI_OS_BUILD_HOLD` is not the live mode.
+- Issue #748 was created `2026-10-02T17:09:16Z`. Delivery reads and the R1 re-read returned an empty comment list. That empty list is the observation. It is not proof of posting.
+- #749 is on `main`. This diff does not modify its four audit files.
 - The external workspace path `/workspace/jetnity` is not present in this Cursor workspace. Those artifacts were not read and were not rewritten.
 
 ## Tests
 
-- `git diff --check`: pass after the new operating-standard header line was given its own paragraph, so the added line has no trailing whitespace.
-- `npm run check:operating-mode`: PASS (`node scripts/operating-mode-guard.mjs`).
-- Typecheck, lint, `npm test`, hygiene checks, and the production build were not run. The diff is docs and continuity only. Exact-head GitHub CI on the pushed tip is not yet observed and is not claimed here.
+Recorded on this R1 tree before the R1 commit:
+
+- `git diff --check`: pass.
+- `npm run check:operating-mode`: PASS.
+- Compared with `origin/main`, each startup file's diff is the inserted top pointer and its separating blank line. No other line in those files changes.
+- `git rev-list --left-right --count origin/main...HEAD`: 0 behind `a77146140799a142cb1ea0300991e77cdc0731b5`.
+- Typecheck, lint, `npm test`, hygiene checks other than `check:operating-mode`, and the production build were not run. The R1 diff is docs and continuity only. Exact-head GitHub CI on this tip is not yet observed and is not claimed here. CI on `dea9ea54` does not gate this tip.
 
 ## Build
 
@@ -52,15 +64,14 @@ No migration. No RLS change. No type change. No Supabase apply.
 
 ## Dokumentation
 
-- `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_CONTRACT_2026-10-02.md`
-- `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`
-- `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_HANDOFF_2026-10-02.md`
-- `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_SELF_REVIEW_2026-10-02.md`
-- `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_REPORT_2026-10-02.md`
-- top pointers: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`
-- minimal bind: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §4a, plus one capability bullet and one repository-mutation paragraph
+Final diff against current `main`:
 
-`JETNITY_VISION.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`, and `DESIGN_SYSTEM.md` were not changed. This slice does not alter the product north star, architecture, or a product decision.
+- added: the five `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_*` docs, including the task seed already on the branch
+- top pointer only: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`
+- minimal bind: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §4a, plus one capability bullet and one repository-mutation paragraph
+- present because `main` contains them: the four #749 audit docs, unchanged by this slice
+
+`JETNITY_VISION.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`, and `DESIGN_SYSTEM.md` were not changed.
 
 ## Kosten
 
@@ -68,17 +79,17 @@ No new recurring cost. No paid call.
 
 ## Offene Punkte
 
-- Independent Technical-Lead review of the exact branch tip.
+- Independent Technical-Lead re-review of the exact branch tip.
 - The external prompt has not been pasted.
 - No #748 report comment has been independently observed.
-- Deeper historical sentences in the startup files still describe older writers. The top block is the current pointer. Those older sentences were not rewritten into a false claim that they are today's writer.
+- #741 autonomous promotion stays blocked by the merged #749 P1 findings until a later remediation. This slice does not open that remediation.
 
 ## Risiken
 
 The bridge is repository-side until the external environment posts, or until it reports once that it cannot. A future chat that treats an empty #748 as a healthy automatic feed would be wrong. A future Cursor task that treats a raw #748 finding as implementation authority would break this contract.
 
-Issue #746's audit targets remain outside this slice. Importing unsanitized external reports into git would also break the contract. This session did not import them.
+The startup files still contain older "current" sentences below the new pointer. Those sentences are `main` bytes. The top pointer says they are earlier snapshots.
 
 ## Empfehlung
 
-Technical Lead reviews the exact head of Draft #750. Cursor does not Ready, merge, or start a follow-up. After that review, the Product Owner may paste the external prompt once. The next proof is an independently read #748 comment, or the single unavailability line. Until then, automatic posting stays unproven.
+Technical Lead re-reviews the exact head of Draft #750. Cursor does not Ready, merge, configure the external bot, or start a follow-up.

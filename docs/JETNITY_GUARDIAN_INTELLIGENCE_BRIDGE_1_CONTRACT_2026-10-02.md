@@ -5,7 +5,8 @@ Issue: #747
 Canonical inbox: [#748](https://github.com/Jetnity/jetnity/issues/748)
 Draft PR: [#750](https://github.com/Jetnity/jetnity/pull/750)
 Branch: `os/guardian-intelligence-bridge-1`
-Baseline re-read: `main@3775955f6c4e958b26259d98cb9a0bc35dc2075f` (`Merge #743: add owner-only Official Truth reviewer capability`)
+Dispatch baseline: `main@3775955f6c4e958b26259d98cb9a0bc35dc2075f` (`Merge #743: add owner-only Official Truth reviewer capability`)
+R1 integrated current `main@a77146140799a142cb1ea0300991e77cdc0731b5` (`Merge #749: audit Official Truth acceptance preconditions`). Technical-Lead R1 `5394779466` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` required that correction. The review head is the branch tip after it.
 Logical agent: **Jetnity Guardian Intelligence Bridge 1**
 Generation: **1**
 Binding task: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_TASK_2026-10-02.md`
@@ -148,9 +149,9 @@ If the external system has no GitHub issue-comment capability, it reports that o
 
 ## 10. Separate from Issue #746
 
-[Issue #746](https://github.com/Jetnity/jetnity/issues/746) is a separate read-only adversarial audit of Official Truth acceptance preconditions. It shares the same baseline SHA and the same calendar day. It is not the inbox, not this writer, and not implemented here.
+[Issue #746](https://github.com/Jetnity/jetnity/issues/746) is a separate read-only adversarial audit of Official Truth acceptance preconditions. It is not the inbox and not this writer. [PR #749](https://github.com/Jetnity/jetnity/pull/749) merged that audit at `a77146140799a142cb1ea0300991e77cdc0731b5`. Its report records P1 findings that block #741 autonomous promotion until later remediation. This contract does not rewrite that report and does not restate the findings.
 
-This contract does not classify #746's targets, does not change acceptance runtime, and does not open a remediation slice. A later material report about those targets belongs on #748 under this envelope. A Cursor fix for any of them waits for a Technical-Lead receipt and a separately versioned task.
+This slice does not change acceptance runtime and does not open a remediation slice. A later material report about those targets belongs on #748 under this envelope. A Cursor fix for any of them waits for a Technical-Lead receipt and a separately versioned task.
 
 ## 11. Boundaries of this slice
 
