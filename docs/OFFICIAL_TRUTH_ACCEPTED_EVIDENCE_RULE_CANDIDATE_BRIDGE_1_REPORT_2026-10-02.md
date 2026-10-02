@@ -70,4 +70,27 @@ The first full `npm test` run failed two existing throwaway PostgreSQL proofs wi
 
 ## Exact-head gates
 
-GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a baseline run id from `16f3a8d6`.
+GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a baseline run id from `16f3a8d6` or from the R1 head `807fe1e6`.
+
+## Final base re-gate
+
+Technical-Lead R1 accepted exact head `807fe1e6668618e9094046f58d341dc089cb5853`. No behavior change was requested.
+
+`git fetch origin main` then resolved `origin/main` to `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`, the merge of #716. Merge commit `28487fdbe5de49041d6260a624173c353f5aa726` brings that main in. The six #716 files match `origin/main` with an empty diff. This bridge's runtime file is unchanged. After that merge the branch was 0 behind and 4 ahead. Re-fetch before treating any later SHA as current.
+
+Local gates below were run on `28487fdb` before this re-gate docs commit. The docs commit does not change runtime behaviour and does not change #716.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| operating-mode guard | PASS |
+| `lib/readiness/official-truth-rule-candidate.test.ts` | 10/10 pass |
+| `npm test` | 4348 pass / 0 fail, 753 suites |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the new files |
+| `npm run build` | pass |
+| `check:dead` | 0 orphans |
+| `check:exports` | 0 unused exports |
+| `check:deps` | pass |
+| `check:api-schutz` | pass |
+| `check:schema-bezug` | pass. The same three LOCAL/UNAPPLIED RPCs remain. This slice did not add an RPC. |

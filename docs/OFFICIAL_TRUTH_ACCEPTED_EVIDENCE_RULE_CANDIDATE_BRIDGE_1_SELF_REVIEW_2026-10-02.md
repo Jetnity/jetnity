@@ -56,6 +56,16 @@ Focused file: 10/10 pass. Full `npm test` on `8d09efd1d054cbd549f2e7339896a4a2ec
 
 The first full test run failed only the two existing throwaway PostgreSQL proofs, because `initdb` for PostgreSQL 16 was not on the machine. After installing PostgreSQL 16.15 locally, the same suite passed. Those clusters are local and temporary. No remote database was contacted.
 
+## Final base re-gate
+
+Technical-Lead R1 accepted `807fe1e6668618e9094046f58d341dc089cb5853`. No code change was requested, and none was made to this bridge or to #716.
+
+`origin/main` at the re-gate was `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`. Merge `28487fdbe5de49041d6260a624173c353f5aa726` contains that commit. `git diff origin/main` on the six #716 paths is empty. After the merge the branch was 0 behind and 4 ahead.
+
+On `28487fdb`: focused tests 10/10, `npm test` 4348 pass / 0 fail across 753 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, build pass, diff check pass, operating-mode guard PASS, and the hygiene checks pass. Schema reference still lists the three already known unapplied RPCs.
+
 ## Stop line
 
-This is not a Technical-Lead PASS. The PR stays Draft. The next action is an independent exact-head review of the pushed tip. No Ready, no merge, and no follow-up acceptance or persistence slice from this writer.
+The re-gate docs commit is not a behavior change. GitHub CI, the Auth job and Vercel Preview belong to the pushed tip after that commit. Do not reuse the R1 run ids from `807fe1e6`. This remains a Draft. No Ready, no merge, and no follow-up acceptance or persistence slice from this writer.
+
+**STOP for final Technical-Lead review of the exact pushed tip.**

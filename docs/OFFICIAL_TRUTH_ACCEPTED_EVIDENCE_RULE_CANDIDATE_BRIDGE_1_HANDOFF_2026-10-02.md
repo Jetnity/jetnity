@@ -12,7 +12,7 @@ Session: https://cursor.com/agents/bc-2dc2eeae-983e-4e63-a2cc-0125b9b32fe4
 
 ## Current state
 
-The branch adds a pure bridge from already accepted official Evidence to one rule candidate. It is a Draft. It is not Ready and not merged.
+The branch adds a pure bridge from already accepted official Evidence to one rule candidate. Technical-Lead R1 accepted `807fe1e6668618e9094046f58d341dc089cb5853` with no behavior change. Main is now integrated at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf` (#716) through merge `28487fdbe5de49041d6260a624173c353f5aa726`. The #716 files match `origin/main`. It is a Draft. It is not Ready and not merged.
 
 Read first:
 
@@ -26,9 +26,10 @@ Read first:
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` in this session resolved `origin/main` to `16f3a8d631bb823c9daafc724df67c000dcb5985`. That SHA is the task baseline.
-- The runtime head `8d09efd1d054cbd549f2e7339896a4a2ec37b5e4` was 0 behind and 2 ahead of that SHA. Re-fetch before treating any later SHA as current. The docs commit does not change runtime behaviour.
-- Local gates in the report were run on `8d09efd1` before the docs commit.
+- The task baseline remains `main@16f3a8d631bb823c9daafc724df67c000dcb5985`.
+- The final base re-gate fetched `origin/main` at `6b7f92be217bdc5b7463c7699fc2ac585a7a27cf`. Merge `28487fdbe5de49041d6260a624173c353f5aa726` was 0 behind that SHA. Re-fetch before treating any later SHA as current.
+- Local gates for the re-gate were run on `28487fdb`. The following docs commit does not change runtime behaviour and does not change #716.
+- The earlier R1 gates on `8d09efd1` stay in the report. They are not the current head.
 
 ## Trust rule for the next reader
 
