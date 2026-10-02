@@ -6,7 +6,7 @@ Canonical inbox: [#748](https://github.com/Jetnity/jetnity/issues/748)
 Draft PR: [#750](https://github.com/Jetnity/jetnity/pull/750)
 Branch: `os/guardian-intelligence-bridge-1`
 Dispatch baseline: `main@3775955f6c4e958b26259d98cb9a0bc35dc2075f` (`Merge #743: add owner-only Official Truth reviewer capability`)
-R1 integrated current `main@a77146140799a142cb1ea0300991e77cdc0731b5` (`Merge #749: audit Official Truth acceptance preconditions`). Technical-Lead R1 `5394779466` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` required that correction. The review head is the branch tip after it.
+R1 integrated current `main@a77146140799a142cb1ea0300991e77cdc0731b5` (`Merge #749: audit Official Truth acceptance preconditions`). Technical-Lead R1 `5394784249` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` required that correction. The review head is the branch tip after it.
 Logical agent: **Jetnity Guardian Intelligence Bridge 1**
 Generation: **1**
 Binding task: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_TASK_2026-10-02.md`
