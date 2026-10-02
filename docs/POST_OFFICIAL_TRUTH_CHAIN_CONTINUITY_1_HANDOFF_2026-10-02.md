@@ -61,10 +61,10 @@ Post-merge CI `36990191420` gates `main`, not this branch. The task-seed Preview
 
 | Item | Value at the pre-push re-read |
 | --- | --- |
-| #727 | OPEN, Draft, head `69b349d35d0240fbf6e2db6fa9404bb78a42eb5e`, not merged. Its green checks are the task seed, not the review head. |
-| #726 | OPEN, Draft, head `fa15a813a72619163d4eb523e9918b0005c8a576`, not merged, no review |
-| #726 checks on that head | Auth **SUCCESS**. Typecheck, Lint & Build **SUCCESS**. Vercel commit status **SUCCESS**, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/HdDYEPFjmaiJ5pppb5DaEUdr9h1U`. Vercel Preview Comments **SUCCESS**. Not a Technical-Lead PASS. |
-| Earlier #726 head | `aaab5e935a50f53506b81690971a54d4593ebc12` had Typecheck **IN_PROGRESS**. That head is not current. |
+| #727 | OPEN, Draft, not merged. Task seed `69b349d35d0240fbf6e2db6fa9404bb78a42eb5e` is not the review head. Delivery `1ff6dedac47f953c6d3e1ce1fbecaadab9077631` is already pushed. The review head is the tip after this #726 re-read commit. Green checks on the task seed are not the tip gate. |
+| #726 | OPEN, Draft, head `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`, not merged, no review |
+| #726 checks on that head | Auth **SUCCESS**. Typecheck, Lint & Build **IN_PROGRESS**. Vercel commit status **SUCCESS**, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/BrJzzFj15H6mZeXHbJTWeKz8LW8o`. Vercel Preview Comments **SUCCESS**. Not a Technical-Lead PASS. |
+| Earlier #726 heads | `aaab5e935a50f53506b81690971a54d4593ebc12` had Typecheck **IN_PROGRESS**. `fa15a813a72619163d4eb523e9918b0005c8a576` later had Auth, Typecheck and Vercel **SUCCESS**. Neither head is the tip. |
 | #724 | OPEN. Fingerprint task. Not this writer. |
 
 ## Stop

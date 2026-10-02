@@ -134,8 +134,8 @@ Re-fetched `origin/main` immediately before the delivery commit. It is still `14
 
 | Item | Then-current state |
 | --- | --- |
-| #727 | OPEN, Draft, head `69b349d35d0240fbf6e2db6fa9404bb78a42eb5e`, not merged. Auth, Typecheck, Lint & Build, and Vercel Preview Comments are SUCCESS on that task seed. Those checks are not the review-head gate after this delivery commit. |
-| #726 | OPEN, Draft, not merged, no review. Head is now `fa15a813a72619163d4eb523e9918b0005c8a576`. The earlier head `aaab5e935a50f53506b81690971a54d4593ebc12` had Typecheck in progress. On `fa15a813`, Auth, Typecheck, Lint & Build, and the Vercel commit status are SUCCESS. Vercel target `https://vercel.com/jetnity-e1b93c82/jetnity-app/HdDYEPFjmaiJ5pppb5DaEUdr9h1U`. Vercel Preview Comments is SUCCESS. This is not a Technical-Lead PASS and not completion of #724. |
+| #727 | OPEN, Draft, not merged. Task seed `69b349d35d0240fbf6e2db6fa9404bb78a42eb5e` had Auth, Typecheck, Lint & Build, and Vercel Preview Comments SUCCESS. Delivery `1ff6dedac47f953c6d3e1ce1fbecaadab9077631` is already pushed. Those seed checks are not the review-head gate. The review head is the tip after this #726 re-read commit. |
+| #726 | OPEN, Draft, not merged, no review. The tip at the last pre-push read is `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`. Auth is SUCCESS. Typecheck, Lint & Build is IN_PROGRESS. Vercel commit status is SUCCESS, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/BrJzzFj15H6mZeXHbJTWeKz8LW8o`. Vercel Preview Comments is SUCCESS. Earlier head `aaab5e935a50f53506b81690971a54d4593ebc12` had Typecheck in progress. Later head `fa15a813a72619163d4eb523e9918b0005c8a576` had Auth, Typecheck and Vercel SUCCESS. Those checks do not gate `b9c5fa63`. This is not a Technical-Lead PASS and not completion of #724. |
 
 ## 8. Residual the Technical Lead should see
 

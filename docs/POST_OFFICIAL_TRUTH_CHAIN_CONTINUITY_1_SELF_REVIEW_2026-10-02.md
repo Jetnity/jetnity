@@ -48,7 +48,7 @@ Old dated paragraphs were not rewritten into post-#723 history. Current status l
 - The OpenAI Developers plugin sentence was already on `main` in the startup banner. This delivery repeats the boundary in the current pointer. It does not authorize a key, a secret, a paid call, or a live call.
 - #294 comment `5937384129` is the latest comment on that issue. It does not select Timatic or Sherpa. It does not close #395. KAYAK comment `5908413693` is still the latest on #395.
 - #626 was not retried. Provider mailboxes were not read. No newer comment exists on #626, #395 or #585. #294 does have comments newer than the previous continuity pointer; those were read.
-- #726's head changed before the final push. The earlier head `aaab5e93` had Typecheck in progress. The pre-push head is `fa15a813a72619163d4eb523e9918b0005c8a576`, still Draft, still unmerged, still without a review. Auth, Typecheck, Lint & Build, and the Vercel commit status are SUCCESS on that head. This review does not call that a Technical-Lead PASS and does not call the fingerprint slice complete.
+- #726's head changed more than once before the final push. `aaab5e93` had Typecheck in progress. `fa15a813a72619163d4eb523e9918b0005c8a576` later had green Auth, Typecheck and Vercel checks. The last pre-push tip is `b9c5fa632f8a7626b44c8f6cc179a7734f3e84e6`, still Draft, still unmerged, still without a review. On that tip, Auth is SUCCESS, Typecheck is IN_PROGRESS, and the Vercel commit status is SUCCESS. The green checks on `fa15a813` are not a gate for `b9c5fa63`. This review does not call the fingerprint slice complete.
 - The task-seed Preview is not acceptance evidence.
 - No Ready. No merge. No follow-up slice. PR stays Draft.
 
