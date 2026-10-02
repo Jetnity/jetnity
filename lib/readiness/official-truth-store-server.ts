@@ -6,7 +6,9 @@
 // Regel-Claims bleiben der bestehende ruhende Weg über regelKandidatAkzeptieren.
 // Diese Datei entscheidet keine Regel neu und fügt keinen neuen Annahmeweg hinzu.
 // Der Requirements-Provider bleibt aus. Kein Import. Der Katalogzugriff bleibt
-// in der Servergrenze. Netz nur als der eine Speicher-RPC, und nur nach Beweis.
+// in der Servergrenze. Dieser Evidence-Weg kann zuerst den servergehaltenen
+// Quellenkatalog-RPC nutzen und danach den Speicher-RPC, den Speicher-RPC nur
+// nach Beweis.
 
 import 'server-only'
 

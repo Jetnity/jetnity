@@ -87,3 +87,15 @@ The disclosed F2 limits about the missing cell in `versionId` and the stale stor
 Gates recorded on `8b29caf16d69ba01e776a389cd44220b597f614f` before this documentation commit: `npm test` 4460/4460 across 762 suites, typecheck, lint 0 errors / 148 warnings, production build, hygiene, operating-mode guard, `git diff --check`. No remote Supabase.
 
 No Ready. No merge. No follow-up. STOP for independent exact-head re-review.
+
+## R2 self-review — 2 October 2026
+
+Author check of Technical-Lead review `5397155774`. This is not an independent PASS.
+
+The F2 sentence that the store RPC is still unapplied, and the R1 sentence that it stays LOCAL/UNAPPLIED, stay in place as historical classifier wording. Hosted state is the R2 record: Development already has migration `20261001180549` and `public.official_truth_store_accepted_v1`, with 0 Evidence rows at the Technical-Lead read on 2 October 2026. Production has neither the store RPC, the Evidence table, nor the source-catalog RPC. This slice applies nothing and does not re-apply Development. Production apply or activation stays a Product-Owner gate.
+
+The handoff no longer says a Development apply is the same future gate as Production. Living store sentences in the trust-boundary architecture, `ARCHITECTURE.md`, and section 14 of the source-evidence architecture distinguish the `check:schema-bezug` label from that hosted state.
+
+`lib/readiness/official-truth-store-server.ts` changes only the header comment. The canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. No function body changed. No migration, route, Auth, RLS, provider, model, #741, #626, or F6 file changed.
+
+No Ready. No merge. No follow-up. STOP for independent exact-head re-review.

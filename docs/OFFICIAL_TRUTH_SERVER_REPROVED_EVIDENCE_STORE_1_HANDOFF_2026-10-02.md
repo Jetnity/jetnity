@@ -42,7 +42,7 @@ Future Evidence persistence is bound in `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRU
 
 No Ready. No merge. No follow-up slice. Do not call this store from #741. Do not apply `official_truth_store_accepted_v1`. Do not add an endpoint. Do not write a trusted Rule. Do not touch #626. Do not select a provider. `requirementsProviderAus()` stays `null`.
 
-A Development or Production apply of the store RPC is a separate Product-Owner gate.
+This slice applies nothing. Do not re-apply Development migration `20261001180549`. Development already has that migration and `public.official_truth_store_accepted_v1`. At the Technical-Lead read on 2 October 2026, `private.official_evidence_versions` had 0 rows. Production has neither the store RPC, the Evidence table, nor the source-catalog RPC. A future Production apply or activation remains a separate Product-Owner gate.
 
 ## Stale sentences left in place
 
@@ -69,5 +69,19 @@ Current contract addition: `versionIdFuer` includes the canonical `lookupKey` fr
 The stale-sentence section above is historical. `ARCHITECTURE.md`, the ADR-0220 nachtrag in `DECISIONS.md`, and section 14 of `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md` now describe the server-reproved store entry. Do not restore a free Evidence argument.
 
 Gates on code head `8b29caf16d69ba01e776a389cd44220b597f614f`, before this R1 documentation commit: focused tests 29/29, fingerprint tests 11/11, `npm test` 4460 pass / 0 fail / 762 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene and operating-mode guard pass. No remote database was contacted.
+
+The review head named in this R1 section was the tip after the R1 documentation commit. The R2 section below is the current pointer.
+
+## R2 current — 2 October 2026
+
+Technical-Lead review `5397155774` on `6d94b87dc6f02ac41c96ebeaf4e8c25b14f2d490`. Same logical agent, Generation 1, session `bc-1ddf584a-01df-47f2-b35e-adf405ae3592`.
+
+`check:schema-bezug` may still print LOCAL/UNAPPLIED for `official_truth_store_accepted_v1`. That is the repository classifier, because generated types omit the function. It is not permission to apply Development again.
+
+Development already has migration `20261001180549` and `public.official_truth_store_accepted_v1`. At the Technical-Lead read on 2 October 2026, `private.official_evidence_versions` had 0 rows. Production has neither the store RPC, the Evidence table, nor the source-catalog RPC.
+
+This slice applies nothing. Do not re-apply Development. A future Production apply or activation remains a separate Product-Owner gate. The earlier sentence that treated a Development apply as that same gate is replaced above.
+
+The store-file comment now says the canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. Behavior is unchanged.
 
 The review head is the branch tip after the commit that adds this section. Re-fetch before review. Stay Draft. STOP for independent exact-head re-review. Cursor does not Ready, merge, or start a follow-up.

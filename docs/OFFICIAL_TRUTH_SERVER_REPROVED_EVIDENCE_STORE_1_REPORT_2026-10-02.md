@@ -95,3 +95,13 @@ Code head for the gates below: `8b29caf16d69ba01e776a389cd44220b597f614f`. The r
 A row already stored under the previous version formula would not match the new id for the same cell. This lane did not query Development or Production. The store RPC stays LOCAL/UNAPPLIED from this slice, and the canonical writer is still unconnected.
 
 No Ready. No merge. No follow-up slice. This section is not an independent Technical-Lead PASS.
+
+## R2 current — 2 October 2026
+
+Technical-Lead review `5397155774` on `6d94b87dc6f02ac41c96ebeaf4e8c25b14f2d490`. The F2 and R1 sections above stay historical. Sentences there that say `public.official_truth_store_accepted_v1` remains LOCAL/UNAPPLIED record the `check:schema-bezug` classifier. They are not the hosted state.
+
+The classifier still labels the RPC LOCAL/UNAPPLIED because `types/supabase.ts` does not list it. Hosted state at the Technical-Lead read on 2 October 2026: Development branch `develop` already contains migration `20261001180549_official_truth_trusted_store_writer_1` and `public.official_truth_store_accepted_v1(jsonb)`. `private.official_evidence_versions` existed there and had 0 rows. Production has neither that store RPC, the Evidence table, nor the source-catalog RPC.
+
+This slice applies nothing. Do not re-apply the Development migration. A future Production apply or activation remains a separate Product-Owner gate. The only runtime-file edit is a comment in `lib/readiness/official-truth-store-server.ts`: the canonical Evidence path can use the server-held source-catalog RPC and then the store RPC. No migration, route, Auth, RLS, provider, model, #741, #626, or F6 file changed.
+
+No Ready. No merge. No follow-up slice. This section is not an independent Technical-Lead PASS.
