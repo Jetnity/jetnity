@@ -1,7 +1,7 @@
 # Official Truth Rule Acceptance Trust Boundary Architecture 1
 
 Date: 2 October 2026
-Status: **docs-only architecture / Draft PR #731 / no acceptance runtime / no Auth, RLS, DB, model, provider or Production change**
+Status: **docs-only architecture / Draft PR #731 / R1 wording correction / no acceptance runtime / no Auth, RLS, DB, model, provider or Production change**
 Issue: #729
 Draft PR: #731
 Branch: `docs/official-truth-rule-acceptance-trust-boundary-1`
@@ -9,19 +9,37 @@ Baseline: `main@5e291ed7c4814f034224eda46c3bd62cc9815ea3`
 Task: `docs/OFFICIAL_TRUTH_RULE_ACCEPTANCE_TRUST_BOUNDARY_1_TASK_2026-10-02.md`
 Logical agent: **Jetnity Official Truth Rule acceptance trust boundary architecture 1**, Generation 1
 
-This file is the binding architecture for the authority boundary before `regelKandidatAkzeptieren`. It does not implement that boundary. `DECISIONS.md` and `docs/ACTIVE_WORK_STATUS.md` stay unchanged because this task forbids global continuity edits. A later Technical-Lead promotion into `DECISIONS.md` is a separate edit.
+This file is the binding architecture for the authority boundary before `regelKandidatAkzeptieren`. It does not implement that boundary. The task file still contains the original dispatch sentence that human review is the only future entry. R1 `5390891105` supersedes that sentence here. The task file is left unchanged. `DECISIONS.md` and `docs/ACTIVE_WORK_STATUS.md` stay unchanged because this task forbids global continuity edits. A later Technical-Lead promotion into `DECISIONS.md` is a separate edit.
 
 ## 1. Binding principle
 
-Jetnity must preserve:
+Technical-Lead R1 `5390891105` corrects the first delivery. Human review is the current V1 path. It is not a permanent ban on every later non-model policy.
 
-> **Model/plugin output may suggest, extract, compare, or flag review material, but it may never directly become `trustedRuleFact`.**
+Permanent invariant:
 
-A future `trustedRuleFact` may enter `regelKandidatAkzeptieren` only through a server-verified, explicitly authorized human/operator review boundary.
+> **Model or plugin output alone may never directly become `trustedRuleFact` or Official Truth.**
 
-A caller field such as `reviewerKind: human` is not authority. Caller assertions are untrusted. The server derives the reviewer from the authenticated session and derives the packet identity by re-running the #723 packet and the #726 fingerprint.
+Model and plugin output may suggest, extract, compare, or flag review material. That output is not a trusted fact and not an accepted Rule Claim.
 
-`regelKandidatAkzeptieren` in `lib/readiness/rule-claims.ts` already ignores the candidate proposal and builds the accepted fact only from the separate `trustedRuleFact` plus evidence versions that pass `akzeptierteEvidenceLesen`. This architecture keeps that function as the only Rule acceptance function. It does not add a second constructor and it does not call the function.
+Current V1 acceptance policy:
+
+Until another trusted policy is separately designed, reviewed and authorized, `trustedRuleFact` may enter `regelKandidatAkzeptieren` only through the server-verified, explicitly authorized human/operator review boundary in this document.
+
+A caller field such as `reviewerKind: human` is not that boundary. Caller assertions are untrusted. On the V1 path the server derives the reviewer from the authenticated session and derives the packet identity by re-running the #723 packet and the #726 fingerprint.
+
+Future-compatible rule, not authorized here:
+
+A separately versioned deterministic, non-model, fail-closed acceptance policy may later be designed for narrowly provable cases. Any such later design must:
+
+- re-prove the exact #726 packet, key and supports;
+- refuse model proposal text as the fact;
+- use explicit acceptance predicates stricter than “model agrees”;
+- stay a separate slice from this document;
+- leave Auth, RLS, database, Production, model-secret and cost gates on their own decisions.
+
+This architecture does not design those predicates, does not name a case where they would pass, and does not authorize that policy. No automated acceptance slice starts here.
+
+`regelKandidatAkzeptieren` in `lib/readiness/rule-claims.ts` already ignores the candidate proposal and builds the accepted fact only from the separate `trustedRuleFact` plus evidence versions that pass `akzeptierteEvidenceLesen`. This architecture keeps that function as the only canonical Rule acceptance function. It does not add a second constructor and it does not call the function.
 
 ## 2. Place in the Official Truth chain
 
@@ -30,7 +48,7 @@ The merged chain on this baseline, in order:
 1. Accepted Evidence is re-proved from original retrieval input.
 2. #723 `officialTruthRegelReviewPacket` builds one internal review packet. The candidate stays `candidate` / `pending`. The packet is review material.
 3. #726 `officialTruthRegelReviewPacketFingerprint` re-runs that packet and returns `reviewPacketKey`, `ruleScopeKey` and `supportVersionIds`. The key is `review-packet:v1:` plus SHA-256 of the canonical review material. It identifies review material. It does not accept a Rule Claim.
-4. This boundary is the human authority step that may later sit in front of acceptance.
+4. This boundary is the current V1 human/operator authority step in front of acceptance. A later deterministic non-model policy is not part of this chain and is not authorized here.
 5. `regelKandidatAkzeptieren` remains the only function that returns an accepted Rule Claim.
 6. `akzeptierteRegelClaimSpeichern` in `lib/readiness/official-truth-store-server.ts` is the existing dormant writer. It calls `regelKandidatAkzeptieren` and stores only the returned claim. `public.official_truth_store_accepted_v1` remains LOCAL/UNAPPLIED. This document does not call the writer and does not apply the migration.
 
@@ -109,7 +127,7 @@ A future decision has exactly one of these states:
 | `reject_candidate` | The candidate is not promoted. No trusted fact is created. Acceptance is not called. Evidence rows stay as they are. |
 | `proceed_to_trusted_fact_entry` | The separate human fact-entry step may open for this exact key. This state is not an accepted Rule Claim. |
 
-There is no decision state named accept. Only the later fact-entry step may supply a `trustedRuleFact` to `regelKandidatAkzeptieren`.
+On the current V1 path there is no decision state named accept. Only the later human fact-entry step may supply a `trustedRuleFact` to `regelKandidatAkzeptieren`. A future deterministic policy is not a fourth state in this contract.
 
 `needs_more_evidence` and `reject_candidate` do not write `not_required`, do not close another credential option, and do not turn a missing rule into a negative official result. The live engine result stays `unknown` while no accepted claim exists.
 
@@ -132,7 +150,7 @@ A client flag `decision: 'proceed_to_trusted_fact_entry'` on a later request is 
 
 ## 6. Trusted fact entry
 
-Trusted fact entry is a second explicit human step. It is separate from the decision.
+On the current V1 path, trusted fact entry is a second explicit human step. It is separate from the decision. This section does not define a fact source for a future deterministic policy.
 
 The reviewer sees, on the review surface:
 
@@ -151,7 +169,7 @@ The same verified user who made the server-held proceed decision is the user who
 
 ## 7. Revalidation before acceptance
 
-Immediately before any future call to `regelKandidatAkzeptieren`, the server re-proves the chain. A failure skips the call.
+On the current V1 human path, immediately before any call to `regelKandidatAkzeptieren`, the server re-proves the chain. A failure skips the call. A later deterministic policy, if a separate slice ever authorizes one, must re-prove the same #723 packet and #726 key before it can reach that function. This section does not specify that policy.
 
 1. Re-run #723 `officialTruthRegelReviewPacket` on the original `{ supports, metadata }`.
 2. Re-run #726 `officialTruthRegelReviewPacketFingerprint` on that same original input.
@@ -160,7 +178,7 @@ Immediately before any future call to `regelKandidatAkzeptieren`, the server re-
 5. Require a server-held `proceed_to_trusted_fact_entry` for that key and the same verified user.
 6. Re-prove accepted Evidence through the packet path. The evidence versions passed into acceptance are those re-proven versions, not a client-supplied list.
 7. Require no source, scope or version drift. Drift that changes the canonical fingerprint bytes produces a different key and stops acceptance. The registry is the registry inside the original envelopes, re-read by #723.
-8. Call only `regelKandidatAkzeptieren` with the re-proven candidate, the human-submitted `trustedRuleFact`, the re-proven evidence versions and the re-proven registry.
+8. Call only `regelKandidatAkzeptieren` with the re-proven candidate, the human-submitted `trustedRuleFact` for this V1 path, the re-proven evidence versions and the re-proven registry. A later deterministic policy would still have to enter through this same function. This document does not define that policy's fact source.
 
 The function's own checks still apply: acceptable quality, accepted evidence, support match, scope match, `official_authority`, distinct sources for composed quality, and `regelFaktLesen`. This boundary does not weaken them and does not duplicate them as a second acceptance engine.
 
@@ -198,7 +216,7 @@ Persistent reviewer audit or retention storage is a special Product-Owner/securi
 
 ## 9. Model boundary
 
-#728-style suggestions are advisory only. A model, tool or plugin may suggest, extract, compare or flag. It may not:
+#728 suggestions, and any #730-style suggestion implementation of that contract, are advisory only. A model, tool or plugin may suggest, extract, compare or flag. It may not:
 
 - assert operator identity;
 - assert `reviewerKind`, role, AAL or grant;
@@ -208,7 +226,7 @@ Persistent reviewer audit or retention storage is a special Product-Owner/securi
 - emit an accepted Rule Claim;
 - pre-fill the trusted fact as if it were already accepted.
 
-A suggestion that says `supports_candidate` still leaves the decision to the verified human. `needs_human_review` is already the suggestion's own ceiling.
+A suggestion that says `supports_candidate` still leaves the current V1 decision to the verified human. It is not acceptance, and it is not a deterministic policy. `needs_human_review` is already the suggestion's own ceiling. A suggestion cannot authorize the future policy in section 1.
 
 The official OpenAI Developers plugin is installed and enabled in the Product Owner's ChatGPT environment, as recorded on current `main` in `docs/ACTIVE_WORK_STATUS.md`. That installation may guide a Technical-Lead chat on current OpenAI API and Agents SDK questions. It does not authorize creating or exposing API keys, storing secrets, activating paid or live OpenAI calls, selecting a provider, or adding material recurring cost. Jetnity Official Truth contracts remain canonical. Plugin output cannot mint Official Truth.
 
@@ -216,13 +234,13 @@ This slice makes no model call and no network call.
 
 ## 10. Smallest future implementation sequence
 
-The sequence below is the later order. This slice starts none of it.
+The sequence below is the only authorized **current V1** implementation path. It is the human/operator path. It is not the only conceivable permanent authority mechanism. A separately versioned deterministic non-model acceptance policy sits outside this sequence. This slice does not design it, imply it, or start an automated acceptance slice. This slice starts none of the steps below.
 
 1. **Pure decision-intent contract.** Re-prove the #726 key from original packet input. Accept only the three decision states. Refuse `proceed_to_trusted_fact_entry` when acceptance predicates fail. Reject caller authority fields and caller packet identity. Return no trusted fact and no accepted claim.
 2. **Authenticated server review endpoint.** The verified session is `getUser()`. The endpoint shows the re-proven candidate and the official support snapshots. It records a decision only after the checks in sections 3 and 4.
 3. **Privileged reviewer authorization check.** Role, capability, AAL2 `currentLevel` and `grant: 'role'`, all server-side. This step waits for the capability decision in section 4. Break-glass stops before fact entry.
 4. **Fact-entry validation.** A separate explicit human submission. The server re-proves the key and the server-held proceed binding, then validates the submitted fact with the existing fact reader. It does not copy the proposal.
-5. **Canonical `regelKandidatAkzeptieren`.** The only acceptance call, with the re-proven inputs from section 7.
+5. **Canonical `regelKandidatAkzeptieren`.** The only acceptance function, called on this V1 path with the re-proven inputs from section 7.
 6. **Separate persistence.** Only the returned claim, through the existing `akzeptierteRegelClaimSpeichern` writer. The writer stays dormant until a later slice is explicitly assigned. Production apply stays gated.
 7. **Audit and retention design.** Separate from steps 1–6. Fields are section 8. Retention and the table are not chosen here.
 
@@ -243,6 +261,7 @@ Special Product-Owner/security gates under the current operating standard are: a
 | Audit/retention design prose | Not a special gate. |
 | Implementing persistent reviewer audit or choosing retention | Special gate. It is not the #626 security-event producer and it does not inherit that 7-day window. |
 | Any model, plugin or live API call with a secret or a cost | Special gate. The OpenAI Developers plugin note does not authorize it. |
+| A later deterministic non-model acceptance policy | Not authorized by this document. A future design slice for that policy is separate. Implementing it still meets the Auth, RLS, database, Production, model-secret and cost gates above whenever those apply. This row does not approve the policy. |
 
 ## 12. Traveller context
 
@@ -254,4 +273,4 @@ This architecture invents no visa, transit, health, carrier, eligibility or docu
 
 ## 13. Out of scope
 
-This slice does not add a runtime module, an API route, an Auth or RLS change, a migration, a call to `regelKandidatAkzeptieren`, a trusted fact, a model call, a provider call, a secret, a Production change or a public-indexing change. It does not start the implementation sequence.
+This slice does not add a runtime module, an API route, an Auth or RLS change, a migration, a call to `regelKandidatAkzeptieren`, a trusted fact, a model call, a provider call, a secret, a Production change or a public-indexing change. It does not start the V1 implementation sequence. It does not authorize or start a deterministic non-model acceptance policy, and it does not select a capability.

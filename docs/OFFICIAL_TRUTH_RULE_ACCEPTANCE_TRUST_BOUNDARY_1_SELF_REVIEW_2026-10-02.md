@@ -33,7 +33,11 @@ No remote Supabase command was run. No migration file was added. `lib/readiness/
 | Reviewer sees candidate and official support material | Architecture §6 |
 | Explicit and composed quality only; gap, stale and conflict stay out | Architecture §5 |
 | Re-prove #723, #726, accepted Evidence and scope before acceptance | Architecture §7 |
-| `regelKandidatAkzeptieren` remains the only acceptance function | Architecture §1 and §7 |
+| `regelKandidatAkzeptieren` remains the only canonical acceptance function | Architecture §1 and §7 |
+| R1-F1 permanent invariant: model/plugin output alone never mints `trustedRuleFact` or Official Truth | Architecture §1 |
+| R1-F1 current V1 path is server-verified human/operator review | Architecture §1, §5, §6 |
+| R1-F1 future deterministic non-model policy is possible and not authorized | Architecture §1, §10, §11, §13 |
+| R1-F2 sequence is the current V1 human path, not the only permanent mechanism | Architecture §10 |
 | Minimal audit fields, no passport/MRZ/biometric/health, no retention choice | Architecture §8 |
 | #728 suggestions advisory; no model identity or approval | Architecture §9 |
 | OpenAI Developers plugin does not authorize secrets or cost | Architecture §9 |
@@ -56,10 +60,11 @@ No remote Supabase command was run. No migration file was added. `lib/readiness/
 11. Persistence stays on `akzeptierteRegelClaimSpeichern`, which already calls `regelKandidatAkzeptieren` and stores the returned claim. Production apply of `official_truth_store_accepted_v1` remains a special gate. The RPC stays LOCAL/UNAPPLIED.
 12. No ADR was added. `DECISIONS.md` is outside this task. The decision lives in the architecture file.
 13. `requirementsProviderAus()` is still `null`. This slice does not turn research on.
+14. R1 `5390891105` is corrected in the architecture. Human review is the current V1 path. The permanent rule is that model or plugin output alone cannot mint Official Truth. The future deterministic policy is named only as a later separate design. This correction does not authorize it, does not select a capability, and does not add runtime.
 
 ## Tests and gates
 
-Docs-only changes add no test file. Full `npm test` on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0`: 4381 pass / 0 fail, 756 suites. Typecheck, lint, build, diff check, operating-mode guard and the hygiene checks passed. Lint reports 0 errors and 148 pre-existing warnings, none in the new docs. Schema reference still lists the three already known unapplied RPCs. This slice added none.
+Docs-only changes add no test file. The first delivery on `22b1f7a63b858e98bc794d9c18ebe6ba1ee61cc0` was 4381 pass / 0 fail, 756 suites. R1 is wording only. Its gates are recorded in the report after they run on the R1 tree. This self-review does not treat the first-delivery SHA as the R1 gate.
 
 PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 16.15 locally, the suite passed, including the existing throwaway cluster proofs. The package cluster was not started. Those proof clusters are local and temporary. No remote database was contacted. This slice did not apply SQL.
 
@@ -67,4 +72,4 @@ PostgreSQL 16 was not on the machine at the start. After installing PostgreSQL 1
 
 This remains a Draft. No Ready, no merge, and no follow-up acceptance, endpoint, Auth, database or model slice from this writer.
 
-**STOP for final Technical-Lead review of the exact pushed tip.**
+**STOP for Technical-Lead R2 of the exact pushed tip.**
