@@ -496,6 +496,13 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     assert.deepEqual(beleg, annahme)
     assert.deepEqual(ergebnis, { status: 'blocked', reason: 'source_not_official_authority' })
     ohneLeak(ergebnis, ['provider.example'])
+
+    const amtlich = huelle()
+    const lizenziert = vergleichen(amtlich, null, eingabe)
+    assert.deepEqual(lizenziert, officialTruthAbgerufenMaterialPruefen(eingabe, uhr()))
+    assert.deepEqual(lizenziert, { status: 'blocked', reason: 'source_not_official_authority' })
+    assert.equal(officialTruthAkzeptierteEvidenceAusAbruf(amtlich, uhr(), null).status, 'accepted_evidence')
+    ohneLeak(lizenziert, ['provider.example'])
   })
 
   test('eine andere amtliche Quelle und eine andere Regelzelle scheitern geschlossen', () => {
