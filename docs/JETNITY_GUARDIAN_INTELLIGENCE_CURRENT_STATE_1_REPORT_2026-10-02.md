@@ -29,7 +29,7 @@ The same review authorized the external setup prompt. Its sanitization section n
 
 Chief of Staff -> #748 is proven for `COS-20261002-2010-001`, comment `5958412971`. Receipt `5958628250` is `PARTIAL`. Guardian direct posting is not proven. The delivery re-read of #748 returned those two comments and no Guardian report.
 
-#741 remains blocked by the merged #749 P1 findings. This slice does not implement #741 and does not remediate those findings. Cursor does not edit the #748 or #751 issue bodies.
+Final integration of `main@ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (`Merge #755`). #749 F1 is resolved for the binding server-held live/autonomous entry. Accepted head `057f91ef28be93e27bf283e6e490aa3d7fb5cc94`. #741 remains blocked by F2, F3, F5, F7, F8 and F9. The Technical Lead already updated the #751 body, read at `updated_at` `2026-10-02T18:57:38Z`, and that body remains the live index. Its last processed comment marker is `5959311398`. This slice does not edit #751, does not remediate the remaining findings, and does not modify the #755 runtime files or lane docs. The #748 issue body is still untouched by Cursor.
 
 ## Live evidence
 
@@ -51,6 +51,7 @@ Recorded on this delivery tree before the delivery commit:
 - Clarification tree, before the clarification commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `262343cb34f55208baceded145ba6aad2fd941f4` only at line 3.
 - Before this clarification commit, PR #754 head `262343cb34f55208baceded145ba6aad2fd941f4` had Auth job `110974184791` **success** and Vercel Preview Comments **success**. Typecheck, Lint & Build job `110974185125` was still in progress. Those runs do not gate the clarification tip.
 - R1 tree, before the R1 commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `origin/main` still `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`; 0 behind; each startup file differs from `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` only at line 3. The external prompt diff is the sanitization block only. CI on that prior head does not gate this tip.
+- Integration tree, after merging `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` and before the integration docs commit: `git diff --check` pass; `npm run check:operating-mode` PASS; `git rev-list --left-right --count origin/main...HEAD` is 0 behind. The #755 runtime files and lane docs match that main commit. Each startup file differs from the merge commit only at line 3. Exact-head CI for the integration tip exists only after the push and is not claimed here.
 
 ## Build
 
@@ -92,7 +93,7 @@ No new recurring cost. No paid call.
 - Exact-head CI and Vercel for the R1 tip exist only after the push and are not claimed here.
 - #748 and #751 issue-body alignment remains with the Technical Lead after merge.
 - Guardian direct posting remains unproven.
-- #741 and the #749 P1 findings remain unresolved. This slice does not start that remediation.
+- #741 remains open. F1 is resolved for the binding server-held live/autonomous entry by merged #755. F2, F3, F5, F7, F8 and F9 remain. This slice does not start that remediation.
 
 ## Risiken
 

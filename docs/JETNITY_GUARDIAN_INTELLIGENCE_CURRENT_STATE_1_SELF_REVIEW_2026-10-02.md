@@ -5,6 +5,12 @@ Reviewer: the same Cursor writer, Generation 1. This is not an independent Techn
 Draft PR: #754
 `originalModelName=grok-4.7-high-fast`. Not Auto.
 
+## Final main integration
+
+`origin/main` `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (`Merge #755`) is merged into this branch. The #755 runtime files and lane docs are unchanged from that main commit. R1 semantics stay: the durable #751 pointer, the event-driven read cadence, the full public-repo privacy rule, and the hardened external prompt.
+
+The integration records that #749 F1 is resolved for the binding server-held live/autonomous entry, that the remaining #741 P1 blockers are F2, F3, F5, F7, F8 and F9, and that the Technical Lead already updated the #751 body. That body, read at `updated_at` `2026-10-02T18:57:38Z`, remains the live index. Last processed comment marker there is `5959311398`. No new Jetnity Guardian report was on #748. Guardian direct posting stays unproven.
+
 ## R1 correction
 
 Technical-Lead R1 `5395542078` reviewed `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` and required CHANGES REQUIRED.
@@ -57,6 +63,16 @@ The task seed `docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_TASK_2026-10-0
 | Top pointer only in the three global files | `git diff -U0` hunks are `@@ -3 +3 @@` for each file. |
 | Cursor does not mutate issue bodies | No issue-body write in this slice. |
 | Stay Draft; no Ready, merge, or follow-up | This review does not do those. |
+
+## Local gates on the integration tree
+
+After merging `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` and before the integration docs commit:
+
+- `git diff --check`: pass.
+- `npm run check:operating-mode`: PASS.
+- `origin/main...HEAD`: 0 behind.
+- #755 runtime files and lane docs match that main commit.
+- Startup-file diff against the merge commit: line 3 only.
 
 ## Local gates on this R1 tree
 

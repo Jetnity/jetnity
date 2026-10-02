@@ -17,15 +17,17 @@ This handoff is the delivery record of PR #754. It is not the live current-write
 
 At the R1 delivery read, machine mode was `NORMAL`. `AI_OS_BUILD_HOLD` remains historical evidence unless a fresh read of `.jetnity/operating-mode.json` shows another mode. This slice does not edit that file.
 
-Delivery fetch of `origin/main`: `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`, `Merge #750: add Guardian Intelligence Bridge contract`. The branch is 0 behind that SHA. Re-fetch before treating a later SHA as current. #750 is merged.
+The earlier R1 fetch of `origin/main` was `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`, `Merge #750`. That pin is not the integration main. The integration fetch is `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`, `Merge #755`. Re-fetch before treating a later SHA as current. #750 and #755 are merged.
 
 #751 is the compact live Current State. #748 is the append-only raw MATERIAL inbox. During an active Technical-Lead workflow the canonical handoff is an event-driven re-read: #751 first, then only reports #751 still lists as open and newer unread MATERIAL #748 reports after the last processed marker. Do not rescan all of #748. The boundaries are a new, resumed, or materially paused chat; a Cursor STOP after a material slice; a new material pull-request head; before FINAL PASS on a Truth, Security, Auth, database, or release slice; after merge and post-merge verification, before the next slice; and before a reserved Product-Owner gate when Guardian or Chief of Staff evidence may be relevant. The hourly ChatGPT watch is a backstop. Guardian and Chief of Staff post on a material event, a material new head, or a material risk. A commit with no material change may produce no #748 report. Contract §2a is the rule.
 
-Last processed markers on the delivery read of #751: report `COS-20261002-2010-001`, comment `5958628250`.
+Last processed markers on the first delivery read of #751: report `COS-20261002-2010-001`, comment `5958628250`. The later #751 body names comment `5959311398`.
 
 Chief of Staff -> #748 direct MATERIAL posting is proven for that report by independently read comment `5958412971`. Technical-Lead receipt `5958628250` classifies it `PARTIAL`. Jetnity Guardian -> #748 direct MATERIAL posting is not yet proven. The same #748 read returned no Guardian report comment. Archive names inside the Chief of Staff comment do not prove Guardian direct posting.
 
-#741 remains blocked by the merged #749 P1 findings. This slice does not implement #741 and does not remediate those findings.
+Merged #755 resolved #749 F1 for the binding server-held live/autonomous entry. Accepted head `057f91ef28be93e27bf283e6e490aa3d7fb5cc94`. Merge `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`. #741 remains blocked by the remaining #749 P1 findings F2, F3, F5, F7, F8 and F9. This slice does not implement #741, does not remediate those remaining findings, and does not modify the #755 runtime files or lane docs.
+
+The Technical Lead updated the #751 body at `2026-10-02T18:57:38Z`. That body is the live index. It names main `ca40e5b2e133c938070a8d13aafcdcb66fa608fd`, last processed comment `5959311398`, F1 resolved, and the remaining blocker set above. This slice does not edit that body. The earlier marker `5958628250` is the prior receipt.
 
 The three startup files differ from the pre-R1 tip by the durable top pointer only. Deeper historical blocks are unchanged. Technical-Lead R1 `5395542078` on `0d797f964d0f19832bee37c0ce27e9e2c13d47b5` is corrected on this tip. That reviewed head is not the review head.
 

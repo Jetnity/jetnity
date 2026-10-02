@@ -51,7 +51,7 @@ A report is outside the default startup read when the latest receipt classifies 
 
 An unread report is evidence waiting for triage. It is not a confirmed defect and not a task assignment. Cursor consumes a finding only when the current versioned task explicitly binds that `report_id` and the latest Technical-Lead receipt for that id is `CONFIRMED` or `PARTIAL`. `PARTIAL` authorizes only the confirmed part named in that task.
 
-At the delivery read of #751 (`updated_at` `2026-10-02T18:22:26Z`), the last processed report marker is `COS-20261002-2010-001` and the last processed comment marker is `5958628250`. Re-read #751 before treating a later marker as current.
+At the first delivery read of #751 (`updated_at` `2026-10-02T18:22:26Z`), the last processed report marker was `COS-20261002-2010-001` and the last processed comment marker was `5958628250`. The Technical Lead later updated that body. The read at `updated_at` `2026-10-02T18:57:38Z` names the same report and comment `5959311398` as the last processed marker. That later body is the live index. Re-read #751 before treating either marker as current.
 
 ## 2a. Event-driven read cadence
 
@@ -128,17 +128,21 @@ The Bridge 1 session recorded an empty #748 comment list. That sentence remains 
 
 ## 6. What #751 already says, and what this slice does not change
 
-The delivery read of the #751 body already names:
+The first delivery read of the #751 body, `updated_at` `2026-10-02T18:22:26Z`, named main `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d` and findings F1, F2, F3, F5, F7, F8 and F9 together as the open #741 blocker set. That read is historical.
 
-- current main `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`;
+The Technical Lead later updated the #751 body in place. The read at `updated_at` `2026-10-02T18:57:38Z` remains the live index and names:
+
+- current main `ca40e5b2e133c938070a8d13aafcdcb66fa608fd` (`Merge #755`);
 - machine mode `NORMAL`;
 - the Chief of Staff proof and the Guardian not-yet-proven state above;
-- merged #749 P1 findings F1, F2, F3, F5, F7, F8 and F9 as the open blocker set for #741;
+- last processed comment marker `5959311398`, a later `PARTIAL` receipt for `COS-20261002-2010-001`;
+- #749 F1 resolved for the binding server-held live/autonomous entry by merged #755, accepted head `057f91ef28be93e27bf283e6e490aa3d7fb5cc94`;
+- remaining #741 P1 blockers F2, F3, F5, F7, F8 and F9;
 - no Production database apply and no provider, secret, paid or public-launch gate opened by the index.
 
-#741 remains blocked by those merged #749 P1 findings. This contract does not restate the #749 report, does not implement #741, and does not remediate those findings.
+This slice does not edit that #751 body. It does not implement #741 and does not remediate the remaining findings. It does not modify the #755 runtime files or the #755 lane docs.
 
-The #748 and #751 issue bodies are not edited by Cursor in this slice. The Technical Lead aligns those bodies after merge if required. Until that alignment, this repository contract is the privacy and startup rule. The #748 issue body still describes a narrower sensitive-payload exclusion. That older issue-body sentence is not permission to post other personal data.
+The #748 issue body is not edited by Cursor in this slice. The Technical Lead may align it after merge. The #748 issue body still describes a narrower sensitive-payload exclusion. That older issue-body sentence is not permission to post other personal data.
 
 ## 7. Boundaries
 
