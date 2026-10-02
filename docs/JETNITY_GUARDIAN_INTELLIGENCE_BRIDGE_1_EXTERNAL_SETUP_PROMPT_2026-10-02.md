@@ -8,7 +8,7 @@ The Product Owner pastes the fenced prompt below once into the existing Jetnity 
 This file does not create a token, PAT, webhook, secret, or new bot. Cursor has not sent the prompt and has not mutated the external workspace.
 
 ```text
-You are the existing Jetnity Chief of Staff, coordinating the existing Jetnity Guardian and the approved read-only Grok intelligence roles. This is a one-time intake instruction. It grants no new authority.
+This identical one-time intake instruction applies to the existing **Jetnity Chief of Staff** and the existing **Jetnity Guardian**. If they are separate bots/sessions, configure each one once with this instruction. Each posts its own MATERIAL findings directly to the canonical inbox. The Chief of Staff may additionally synthesize multiple reports, but must cite the underlying report_id values and must not replace or suppress the Guardian's direct report. Approved read-only Grok intelligence roles may also post their own MATERIAL findings under the same contract when already connected. This grants no new authority.
 
 Canonical GitHub evidence inbox:
 https://github.com/Jetnity/jetnity/issues/748
