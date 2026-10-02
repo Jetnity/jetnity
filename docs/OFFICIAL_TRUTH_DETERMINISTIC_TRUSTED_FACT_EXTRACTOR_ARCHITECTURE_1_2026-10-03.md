@@ -12,7 +12,13 @@ Required model: Grok 4.7 High Fast (`grok-4.7-high-fast`), not Auto
 
 This file is the binding architecture for a future deterministic, non-model `trustedRuleFact` extractor. It does not implement an extractor, does not call `regelKandidatAkzeptieren`, and does not authorize F8. The task file stays unchanged. `DECISIONS.md` and `docs/ACTIVE_WORK_STATUS.md` stay unchanged because the task forbids global continuity edits. A later Technical-Lead promotion into `DECISIONS.md` is a separate edit.
 
-Live evidence for this design is the merged F8 fact-source audit on this baseline, the merged F8 composition audit, the current parsers, and Issue #294 comments `5935531376` and `5935581800`. Where an older note and the code disagree, the code and those merged audits win.
+Live evidence for this design is the merged F8 fact-source audit on this baseline, the merged F8 composition audit, the current parsers, the current retrieval receipt, and Issue #294 comments `5935531376` and `5935581800`. Where an older note and the code disagree, the code and those merged audits win.
+
+## R1 correction — 3 October 2026
+
+Technical-Lead review of `acc0c76c71db059db5964052d8e3a5ab29a90423` is CHANGES REQUIRED, finding R1. The first delivery classified the next step as `EXTRACTOR_FRAMEWORK_FIRST` and allowed a future extractor to read `sourceSnapshot` from the same-request proof graph. That snapshot is caller-supplied. `officialTruthAbgerufenMaterialPruefen` validates the URL and hashes those supplied bytes. It performs no HTTP fetch. Hash equality proves the bytes are unchanged. It does not prove a government page produced them. A deterministic parser over those bytes could mint a false `trustedRuleFact`.
+
+This correction makes **`SERVER_OWNED_OFFICIAL_RETRIEVAL_FIRST`** the hard prerequisite before any extractor consumes content. The numbered sequence in section 8 is the implementation order. The task file is unchanged. This correction still implements no fetch.
 
 ## 1. Binding principle
 
@@ -39,21 +45,49 @@ These substitutes are not an extractor:
 - the evidence validity window used as a stay duration or a temporal anchor;
 - `extractionNote`;
 - the public F7 witness;
-- a page snapshot that no allowlisted extractor has parsed.
+- a page snapshot that no allowlisted extractor has parsed;
+- a caller-supplied `sourceSnapshot`, including one whose local hash matches `sourceContentHash`.
 
 `unknown`, `unavailable`, and `stale` stay distinct from `not_required`. `research_gap`, `unresolved_conflict`, and `stale_primary_evidence` stay review states. They are not facts.
 
 ## 2. Place in the chain
 
-Merged order, with the future extractor inserted only as a design and not as code:
+Merged order, with the future retrieval boundary and extractor inserted only as a design and not as code:
 
-1. Accepted Evidence is re-proved from original retrieval input. `EvidenceVersion` carries provenance and scope. It carries no `RegelFakt` body (`lib/readiness/evidence.ts`).
-2. The review packet keeps each support's `sourceSnapshot` in memory (`lib/readiness/official-truth-rule-review-packet.ts`). The public re-proof drops that snapshot and returns only version id, retrieval time, content hash, and the validity window (`reproofStuetze` in `lib/readiness/official-truth-server-held-source-registry.ts`).
-3. The `review-packet:v2:` fingerprint identifies the review material, including the candidate proposal. It is an equality check. It is not the fact.
-4. The F7 witness proves authority, freshness, scope, fact kind, and support ids. Its success object has no registry, no snapshot, and no fact.
-5. **This contract.** A future pure extractor reads one server-built proof object and returns one complete `RegelFakt` or a fail-closed reason.
-6. A later F8 composition, still unauthorized, would place that fact in `trustedRuleFact` and call `regelKandidatAkzeptieren`. The composition audit's same-request proof graph is the required holder of the snapshot. This architecture does not build that graph.
-7. `akzeptierteRegelClaimSpeichern` stays a dormant store writer. It is not the acceptance boundary and not the extractor.
+1. The current retrieval receipt accepts caller material. It is not content authority. Section 2.1 states that limit.
+2. Accepted Evidence is re-proved from that receipt today. `EvidenceVersion` carries provenance and scope. It carries no `RegelFakt` body (`lib/readiness/evidence.ts`). A hash on that row is the hash of the supplied snapshot.
+3. The review packet keeps each support's `sourceSnapshot` in memory (`lib/readiness/official-truth-rule-review-packet.ts`). That copy follows the receipt. It is visible review material. It is not authenticated page bytes. The public re-proof drops the snapshot and returns only version id, retrieval time, content hash, and the validity window (`reproofStuetze` in `lib/readiness/official-truth-server-held-source-registry.ts`).
+4. The `review-packet:v2:` fingerprint identifies the review material, including the candidate proposal. It is an equality check. It is not the fact and not proof of page origin.
+5. The F7 witness proves authority, freshness, scope, fact kind, and support ids. Its success object has no registry, no snapshot, and no fact.
+6. A later same-request proof graph may retain registry, evidence, candidate, keys, freshness, and authority on one server stack. It must not grant raw-content authority to a caller snapshot. Section 8 step 1 is that graph.
+7. **Future server-owned official retrieval**, section 2.2, is the only producer of bytes an extractor may read.
+8. **This contract.** A future pure extractor reads those server-received bytes and returns one complete `RegelFakt` or a fail-closed reason.
+9. A later F8 composition, still unauthorized, would place that fact in `trustedRuleFact` and call `regelKandidatAkzeptieren`.
+10. `akzeptierteRegelClaimSpeichern` stays a dormant store writer. It is not the acceptance boundary and not the extractor.
+
+### 2.1 Current retrieval receipt
+
+`officialTruthAbgerufenMaterialPruefen` in `lib/readiness/official-truth-retrieved-material.ts` is the live receipt. Its header states that the file retrieves nothing. The material keys are exactly `canonicalUrl`, `retrievedAt`, and `sourceSnapshot` (lines 17 and 257–258). The function resolves the URL through `quellenUrlAufloesen`, checks the source class and the research route, and hashes `material.sourceSnapshot` with `evidenceQuellenFingerprint` (lines 270–288). A caller hash is rejected. The function does not call `fetch` and does not follow a redirect.
+
+`quellenUrlAufloesen` (`lib/readiness/source-registry.ts` lines 200–229) checks the supplied string: HTTPS, no userinfo, no `localhost` or `.local` host via `quelleUrlLesen` (`lib/readiness/official.ts` lines 336–346), and a registered host that is not on the blocked-domain list. That check runs on the caller URL before any network call. It does not retrieve the body. It does not see a redirect target. It does not by itself reject a private or link-local address.
+
+A valid government URL plus a matching local hash therefore proves only that the supplied text was hashed. It does not prove the text was the response body of that URL. The review packet, the evidence row, and a future proof graph that copies this receipt inherit the same limit. Human review may still display the supplied text. An autonomous extractor must not parse it.
+
+### 2.2 Future server-owned official retrieval
+
+This boundary is a later slice. This document does not implement it and does not authorize a live fetch, a secret, or a provider call.
+
+The boundary starts from the server-held source catalog and the research source plan already used to choose an `official_authority` source. The fetch target is that server-selected allowlisted URL. A caller URL is not the authority for the body.
+
+Caller fields that are not authority, and that fail closed if supplied as authority, are: `sourceSnapshot`, `sourceContentHash`, `retrievedAt`, response content type, redirect result, and any retrieval attestation. The server creates those values itself.
+
+The outbound fetch runs in trusted server code. Before the request, and again after every redirect, the server validates HTTPS and the allowlisted official source. A redirect to an unregistered host, a blocked domain, a private address, a loopback address, a link-local address, or a URL with credentials fails closed and returns no body. Response size and duration are bounded. A response over the bound is discarded. The existing `INHALT_MAX` of 65,536 in `evidenceQuellenFingerprint` remains the ceiling for bytes that can become a fingerprint. The fetch must not raise it.
+
+The server records, from its own observation: the final canonical URL, the server clock time of the retrieval, the response content type, and the response bytes. `evidenceQuellenFingerprint` runs on those bytes. The resulting hash, URL, time, content type, source id, and scope are one same-request retrieval attestation.
+
+That attestation is ephemeral proof material on the server stack. It is not a bearer token, not a capability, and not Official Truth. A later request fetches again. Replaying a caller copy of the attestation fails. The object is not returned from a route. The response bytes stay on the stack for the extractor and are not a second public snapshot field.
+
+Licensed-provider and other provider retrieval stay on their own path. This boundary reads `official_authority` sources only. `requirementsProviderAus()` stays `null`. Sherpa and Timatic bytes are not inputs.
 
 The extractor module must not import `regelKandidatAkzeptieren`, either store writer, the review suggestion, or a model client. A route must not import the extractor. `app/` stays untouched by the later framework slice as well, until a separate reviewed entry exists. `requirementsProviderAus()` stays `null`.
 
@@ -73,16 +107,16 @@ The future registry is pure data plus pure functions. It performs no network cal
 | `sourceFamilyId` | Stable family id chosen when that source is registered. It is not a hostname discovered at parse time. |
 | `sourceIds` | The closed set of official `sourceId` values this version may read. Each id must resolve as `official_authority` in the same-request registry. A licensed-provider id is `source_not_allowlisted`. |
 | `urlAllowlist` | Exact canonical URL or an explicit path pattern on an already registered official host. A moved domain or an unlisted path is `domain_or_path_not_allowlisted`. |
-| `contentType` | The retrieval-declared media type this version accepts, for example `application/json` or `text/html`. The extractor does not sniff a type out of prose. A missing or different type is `content_type_not_allowlisted`. |
-| `schemaFamily` | The versioned structure name this parser recognizes. A missing or different family is `schema_family_not_allowlisted`. |
+| `contentType` | The media type this extractor version accepts, compared only with the content type on the server-owned response. A caller-declared type is ignored as authority and is an unexpected field. A missing or different observed type is `content_type_not_allowlisted`. |
+| `schemaFamily` | The structure name pinned by this registry row and checked by its source-specific matcher. It is not a field the retrieval input may declare. A caller `schemaFamily` is an unexpected field. Bytes that do not match the pin fail `schema_mismatch` or `structure_not_recognized`. |
 | `policyId` | Null when this version reads one support and every fact field comes from that support. Otherwise an id matching `^otp_[a-z][a-z0-9_]{0,40}$`. |
 | `policyVersion` | Null with a null policy id. Otherwise a positive integer. The pair is immutable. |
 
-Selection rule: the server matches `factKind`, the support `sourceId` set, the declared content type, and the declared schema family to exactly one **current** registry row. Zero matches yield `extractor_not_registered`. Two matches yield `ambiguous_structure`. Both are fail-closed. The server then pins that row's id and version into the proof object. The pure function re-checks the pin and refuses a different row.
+Selection rule: the server matches `factKind`, the support `sourceId` set, and the content type observed on the server-owned response to exactly one **current** registry row. The row's pinned `schemaFamily` is then checked by that row's matcher. A caller does not select the extractor or the schema family. Zero matches yield `extractor_not_registered`. Two matches yield `ambiguous_structure`. Both are fail-closed. The server then pins that row's id and version into the proof object. The pure function re-checks the pin and refuses a different row.
 
 ### 3.2 Input
 
-The only input is a frozen object built on the server stack from the same-request proof graph. It is not a route payload and not the public re-proof result.
+The only input is a frozen object built on the server stack from the same-request proof graph after the server-owned retrieval in section 2.2. It is not a route payload, not the public re-proof result, and not the current caller receipt.
 
 Exact keys:
 
@@ -100,20 +134,21 @@ Each support's exact keys:
 
 - `versionId`
 - `sourceId`
-- `canonicalUrl`
-- `retrievedAt`
-- `sourceContentHash`
-- `sourceSnapshot` — the string whose newline-normalized SHA-256 is `sourceContentHash`
-- `contentType`
-- `schemaFamily`
+- `canonicalUrl` — the final URL captured by the server-owned fetch
+- `retrievedAt` — the server clock time of that fetch
+- `sourceContentHash` — the fingerprint of the server-received bytes
+- `responseBytes` — those same server-received bytes
+- `contentType` — the media type on that server-owned response
 
-The current `EvidenceVersion` and the public re-proof support do not carry `contentType` or `schemaFamily`. A later retrieval record has to declare both before any extractor can match. Until that declaration exists, selection fails closed with `content_type_not_allowlisted` or `schema_family_not_allowlisted`. This architecture does not add that retrieval field.
+`schemaFamily` is not an input key. The pinned registry row supplies it. A support whose `sourceId`, final canonical URL, content hash, scope, or support identity differs from the attestation is `snapshot_hash_mismatch` or `source_not_allowlisted` and produces no fact.
 
-Forbidden anywhere in the input, including nested values: `proposal`, suggestion output, model or plugin output, a caller `trustedRuleFact`, `extractionNote`, a witness object, and any personal key already rejected by `regelFaktLesen` (`passportNumber`, `mrz`, `biometric`, `healthRecord`, `email`, names, and the rest of that set). Presence is `personal_identifier_forbidden` or `unexpected_fields`. The reason string does not echo the value.
+The current `EvidenceVersion`, the public re-proof support, and `officialTruthAbgerufenMaterialPruefen` do not carry a server-observed content type, and they do not carry server-received bytes. Until section 2.2 exists, there is no legal extractor input. This architecture does not add that field to the current receipt.
+
+Forbidden anywhere in the input, including nested values: `proposal`, suggestion output, model or plugin output, a caller `trustedRuleFact`, a caller `sourceSnapshot`, a caller hash, a caller `retrievedAt`, a caller content type, a caller redirect result, a caller retrieval attestation, a caller `schemaFamily`, `extractionNote`, a witness object, and any personal key already rejected by `regelFaktLesen` (`passportNumber`, `mrz`, `biometric`, `healthRecord`, `email`, names, and the rest of that set). Presence is `personal_identifier_forbidden` or `unexpected_fields`. The reason string does not echo the value.
 
 `validFrom` and `validUntil` stay on the freshness proof. They are omitted from the extractor input so they cannot be read as a duration, a page count, or a temporal anchor.
 
-Before parsing, the extractor recomputes `evidenceQuellenFingerprint(sourceSnapshot)` and requires equality with `sourceContentHash`. The existing helper already returns null for an empty string and for a string longer than `INHALT_MAX` (65,536) in `lib/readiness/evidence.ts`. A mismatch, a null fingerprint, or an over-long snapshot is `snapshot_hash_mismatch` or `snapshot_bound_exceeded`. The extractor does not raise that bound. A node or depth cap, once the runtime names it inside the extractor version, fails as `snapshot_bound_exceeded` before any field is emitted.
+Before parsing, the extractor recomputes `evidenceQuellenFingerprint` on `responseBytes` and requires equality with the attestation `sourceContentHash`. The existing helper already returns null for an empty string and for a string longer than `INHALT_MAX` (65,536) in `lib/readiness/evidence.ts`. A mismatch, a null fingerprint, or an over-long body is `snapshot_hash_mismatch` or `snapshot_bound_exceeded`. The extractor does not raise that bound and does not hash a caller snapshot instead. A node or depth cap, once the runtime names it inside the extractor version, fails as `snapshot_bound_exceeded` before any field is emitted.
 
 `explicit_primary_statement` requires exactly one support and a null policy. Every fact field is read from that support. `composed_from_multiple_primary_sources` requires at least two supports, at least two distinct `sourceId` values, and a policy. The extractor does not relax the acceptance predicates already enforced by `regelKandidatAkzeptieren`.
 
@@ -147,12 +182,12 @@ On success, the in-memory result may carry a provenance map from each fact-field
 
 ## 4. Eligible official material
 
-A representation is eligible only when a registry row names it in advance.
+A representation is eligible only when a registry row names it in advance and the bytes come from the server-owned retrieval in section 2.2. The registry matcher pins the schema family. The retrieval attestation does not declare one.
 
 | Representation | Eligible when |
 | --- | --- |
-| Official JSON or API fields | The source publishes a stable object. The extractor version allowlists each key, its type, and the fact field it fills. Extra keys that the version has not allowlisted fail `schema_mismatch`. |
-| Other official machine-readable structured data | The schema family and version are explicit in the retrieval record and in the registry row. |
+| Official JSON or API fields | The server-owned response is a stable object whose observed content type is allowlisted. The extractor version allowlists each key, its type, and the fact field it fills. Extra keys that the version has not allowlisted fail `schema_mismatch`. |
+| Other official machine-readable structured data | The registry row pins the schema family. The matcher accepts the server-received bytes only when they match that pin. |
 | Source-specific HTML tables or labelled fields | One allowlisted parser for one source family. Selectors or labels are pinned in that extractor version. The heading text that gives a column its meaning is part of the pin. |
 | Another versioned source-specific structure | Same rules: closed shape, pinned version, fail closed on drift. |
 
@@ -172,7 +207,7 @@ Narrow source-specific prose may be registered only when all of the following ho
 
 If those conditions cannot be met, the source stays on the human fact-entry path. Human fact entry remains the V1 path described in the trust-boundary architecture. This document does not convert prose research into that path's fact.
 
-The repository today has no content type, schema family, or official JSON body on `EvidenceVersion`. Merged audit #771 classified all eight fact kinds as `REQUIRES_SEPARATE_DETERMINISTIC_EXTRACTOR`. This architecture agrees. No representation in the repository is eligible yet.
+The repository today has no server-observed content type and no server-received official body on `EvidenceVersion`. Merged audit #771 classified all eight fact kinds as `REQUIRES_SEPARATE_DETERMINISTIC_EXTRACTOR`. This architecture agrees. No representation in the repository is eligible yet. A content type or schema name attached to the current caller receipt would not make one eligible.
 
 ## 5. Source drift
 
@@ -299,22 +334,29 @@ Across all eight kinds the extractor must not supply:
 - a fact copied from `proposal`, a suggestion, a model, a plugin, or a research-chat conclusion;
 - a provider payload presented as `official_authority`.
 
-## 8. First implementation sequence
+## 8. Implementation sequence
 
-Repository evidence does not prove a deterministic source family.
+Repository evidence does not prove a deterministic source family, and it does not prove authenticated page bytes.
 
 - Merged audit #771 found no function that builds a `RegelFakt` from a snapshot or an `EvidenceVersion`.
-- `EvidenceVersion` has no content type and no schema family.
+- The live receipt hashes caller bytes and does not fetch. Section 2.1.
+- `EvidenceVersion` has no server-observed content type and no server-received body.
 - No operational CH batch file exists in the repository. The candidate-batch validator report states that. The batches live as research continuity on Issue #294, classified `RESEARCH_ONLY` and `NOT_APPROVED_FOR_DATABASE_IMPORT`.
 - Issue #294 comment `5889155160` records public diligence about the GOV.UK Content API. That note says the API returns page content, not a multi-nationality compliance engine, and it records a British-citizen scope on one example page. It is not a registered Jetnity source family. This architecture does not select it.
 - `blank_passport_pages` has the smallest schema. Official page counts are not present as a pinned structure in the repository. Smallness is not a source.
 
-Classification of the next runtime step: **`EXTRACTOR_FRAMEWORK_FIRST`**.
+Classification: **`SERVER_OWNED_OFFICIAL_RETRIEVAL_FIRST`**.
 
-1. A later runtime slice may add the pure registry and the input/output contract, with fixture snapshots only. Proposed files, not created here: `lib/readiness/official-truth-trusted-fact-extractor-registry.ts` and `lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts`. That slice must not call `regelKandidatAkzeptieren`, must not add a route, and must not register a real source family.
-2. After that, one source-specific extractor may be written only when a separate review has re-fetched the official material and shown a pinned structure for one fact kind. That extractor is its own slice. The fact kind is chosen from the proved structure, not from schema size.
-3. The same-request proof graph specified by the merged composition audit remains a separate prerequisite for any live call. The public re-proof drops `sourceSnapshot`, so an extractor cannot run on that public object. This architecture does not dispatch that graph.
-4. F8 acceptance composition stays blocked until the framework, one passing source-specific extractor, the same-request graph, and the provenance record in section 9 all exist. This session does not open a follow-up.
+Server-owned official retrieval is a hard prerequisite to any extractor that consumes content. The `EXTRACTOR_FRAMEWORK_FIRST` label from the first delivery is withdrawn. A pure registry built on caller snapshots or on fixtures treated as official bytes would repeat R1.
+
+Required order for later slices. This session starts none of them:
+
+1. Same-request proof graph without raw-content authority. It holds one source-catalog read, the rebuilt candidate, evidence metadata, the `review-packet:v2:` key, freshness, and authority. A caller `sourceSnapshot` on that graph is not content authority. The public re-proof still drops the snapshot, so it is not this graph. The composition audit already named the graph. It did not create `trustedRuleFact`.
+2. Server-owned official retrieval and attestation, section 2.2. This is the first slice that may perform an official fetch, and only after its own review. It is not an extractor and not F8.
+3. Deterministic extractor registry and framework. The pure functions accept only attestation bytes. Proposed files, not created here: `lib/readiness/official-truth-trusted-fact-extractor-registry.ts` and its test. The slice must not call `regelKandidatAkzeptieren`, must not add a route, and must not register a real source family. A fixture in that test is a test double. It is not a retrieval attestation and must not be reachable from acceptance.
+4. One source-specific extractor, only after a separate review has shown a pinned structure in bytes from that retrieval boundary. The fact kind follows the proved structure, not schema size.
+5. The provenance record in section 9, required before any autonomous claim is persisted.
+6. Only then F8 acceptance composition and store integration. Both stay unauthorized until steps 1–5 exist.
 
 No source family is invented here to create a first implementation.
 
@@ -332,7 +374,7 @@ What exists today:
 
 What that is sufficient for:
 
-- Support version ids are necessary and already stored. They bind the claim to accepted official Evidence, and through that row to the content hash, URL, and retrieval time. For the current human path, the trusted fact is the authorized human entry, and the supports are its provenance.
+- Support version ids are necessary and already stored. They bind the claim to accepted official Evidence, and through that row to the content hash, URL, and retrieval time stored with that evidence. Under the current receipt those values describe supplied bytes, not a server fetch. For the current human path, the trusted fact is the authorized human entry, and the supports are its provenance. They are not content-origin proof for an autonomous extractor.
 
 What that is not sufficient for:
 
@@ -344,9 +386,9 @@ Conclusion:
 
 - Existing support ids plus an unstored code version are **not sufficient** for autonomous acceptance.
 - A later audit/provenance record **is required** before any autonomous path persists a claim. The minimum record, beside the accepted claim and not inside the fact body, is `extractorId`, `extractorVersion`, `policyId`, `policyVersion` (both null only when the registry row says the extractor is single-source), the `reviewPacketKey` from that same request, and the support version ids. Content hashes stay on the evidence rows when those rows are retained immutably. The record does not copy `proposal` and does not copy the page snapshot if the evidence row already retains the hash.
-- Adding columns or a private provenance table is a separate schema slice. This document does not add it and does not require a Production schema change. Applying any such migration to Production remains a Product-Owner gate. The pure extractor framework can be tested with fixtures before that schema exists. Autonomous persistence must not start until the record is designed, reviewed, and present in the repository. The dormant store writer is not extended here.
+- Adding columns or a private provenance table is a separate schema slice. This document does not add it and does not require a Production schema change. Applying any such migration to Production remains a Product-Owner gate. That record does not repair unauthenticated bytes. Step 2 of section 8 has to produce the bytes first. Autonomous persistence must not start until the retrieval boundary and the provenance record both exist and have been reviewed. The dormant store writer is not extended here.
 
-Re-running an extractor later is a refresh path. It needs a new or retained snapshot. The provenance record does not become a second copy of the page.
+Re-running an extractor later is a refresh path. It requires a new server-owned retrieval. A retained caller snapshot is not that retrieval. The provenance record does not become a second copy of the page.
 
 ## 10. CH-01..CH-10 reuse
 
@@ -374,7 +416,7 @@ Reuse path:
 1. Keep the batches. Do not re-research the 64 destinations from scratch.
 2. Normalize them with the existing `kandidatenChargeValidieren` contract when a later slice is authorized to touch batch files. `ordinary_passport` stays `ordinary_passport`. It is not rewritten to the trip document type `passport`. A second citizenship or a second document is another batch and another regulatory cell.
 3. Retain official URLs, scopes, `research_gap`, `unresolved_conflict`, and `stale_primary_evidence`. Those flags stay flags.
-4. Re-fetch and re-prove the official URL when a later extractor needs the current snapshot and its structure. A stored research URL is not a `sourceSnapshot` and not a content hash.
+4. Before any deterministic extraction, re-fetch the cited government source through the future server-owned retrieval boundary in section 2.2. Keep the research URL as the citation to re-fetch. A research-chat paste, a caller `sourceSnapshot`, and a successful `officialTruthAbgerufenMaterialPruefen` receipt are not that fetch.
 5. When a source-specific extractor exists for that source family and fact kind, a deterministic structure may pass through it. The extractor still returns a fact or a fail-closed reason. It does not promote the batch.
 6. Prose-only material, and any structure this contract classifies as ineligible, stays on the human fact-entry path.
 7. Only accepted Evidence and accepted Rule Claims become reusable Official Truth, and only through `regelKandidatAkzeptieren` and a later reviewed store path.
@@ -388,10 +430,10 @@ Global Official Truth remains non-personal regulatory knowledge. The extractor i
 
 One credential option is one cell. Swiss ordinary-passport research is not applied to another citizenship or another document.
 
-Provider truth stays separate. Sherpa and IATA Timatic are not `official_authority` under the current contracts. A licensed host cannot satisfy an action extractor. No source-licensing shortcut is created here. No provider call, secret, or spend is authorized.
+Provider truth stays separate. Sherpa and IATA Timatic are not `official_authority` under the current contracts. A licensed host cannot satisfy an action extractor. The future official fetch stays separate from provider retrieval. No source-licensing shortcut is created here. No provider call, secret, or spend is authorized. This document does not open a socket.
 
-The snapshot bound already enforced by `evidenceQuellenFingerprint` is the parse ceiling. The extractor does not pull a larger page.
+The snapshot bound already enforced by `evidenceQuellenFingerprint` is the parse ceiling. The future fetch and the extractor both stop at that ceiling.
 
 ## 12. What this document does not do
 
-No runtime, test, migration, Auth, RLS, route, UI, or store change. No F8 implementation. No #626 implementation. No model call. No CH import. No follow-up slice. No Ready and no merge. Production apply of the existing dormant store remains a separate Product-Owner gate, and this document does not ask for it.
+No runtime, test, migration, Auth, RLS, route, UI, or store change. No fetch implementation. No F8 implementation. No #626 implementation. No model call. No CH import. No provider integration. No follow-up slice. No Ready and no merge. Production apply of the existing dormant store remains a separate Product-Owner gate, and this document does not ask for it.

@@ -21,7 +21,9 @@ No runtime, test, migration, or global current-state file was edited. The task f
 
 ## Finding
 
-Merged audit #771 still holds: none of the eight Rule fact kinds can supply `trustedRuleFact` from repository evidence. This architecture defines the deterministic contract that a later extractor must meet.
+R1 on `acc0c76c71db059db5964052d8e3a5ab29a90423` is corrected in this head. The first delivery let a future extractor read the proof-graph snapshot. That snapshot is the caller receipt in `officialTruthAbgerufenMaterialPruefen`. The function does not fetch. A local hash is not page origin.
+
+Merged audit #771 still holds: none of the eight Rule fact kinds can supply `trustedRuleFact` from repository evidence. This architecture defines the deterministic contract that a later extractor must meet, and it forbids that extractor from running on unauthenticated bytes.
 
 | Fact kind | Contract outcome |
 | --- | --- |
@@ -34,11 +36,11 @@ Merged audit #771 still holds: none of the eight Rule fact kinds can supply `tru
 | `official_actions` | Versioned extractor. Purpose and href must both be explicit. `officialAktionAusQuelle` is forbidden. |
 | `temporal_rule` | Versioned extractor. Anchor, relation, and offset must be explicit. The evidence window is not a relative rule. |
 
-Next runtime classification: **`EXTRACTOR_FRAMEWORK_FIRST`**. No source family in the repository is structurally deterministic. The first later runtime step is a pure registry with fixtures. One source-specific extractor comes only after a separate re-fetch proves a pinned structure. F8 stays blocked until that extractor, the same-request proof graph, and a provenance record exist. This session starts none of those slices.
+Next runtime classification: **`SERVER_OWNED_OFFICIAL_RETRIEVAL_FIRST`**. `EXTRACTOR_FRAMEWORK_FIRST` is withdrawn. Server-owned official retrieval is the hard prerequisite before any extractor consumes content. Later order: same-request proof graph without raw-content authority; server-owned official fetch and ephemeral attestation; extractor registry; one verified source-specific extractor; provenance record; only then F8. No source family in the repository is structurally deterministic. This session starts none of those slices.
 
 Autonomous claim provenance: support version ids are already stored and are not enough. Extractor id/version, policy id/version, and `reviewPacketKey` need a later audit record. That record is a separate schema slice. This architecture does not require a Production migration. Production apply remains a Product-Owner gate.
 
-CH-01..CH-10 remain Candidate Evidence for 64 Swiss ordinary-passport destinations (Issue #294 comments `5935531376` and `5935581800`). Normalize and retain URLs, gaps, conflicts, and stale flags. Re-fetch before any extractor runs. Research-chat conclusions stay untrusted. CH-11 is not planned.
+CH-01..CH-10 remain Candidate Evidence for 64 Swiss ordinary-passport destinations (Issue #294 comments `5935531376` and `5935581800`). Normalize and retain URLs, gaps, conflicts, and stale flags. Re-fetch the cited government source through the future server-owned retrieval boundary before any deterministic extraction. The current receipt is not that fetch. Research-chat conclusions stay untrusted. CH-11 is not planned.
 
 Detail and line citations: `docs/OFFICIAL_TRUTH_DETERMINISTIC_TRUSTED_FACT_EXTRACTOR_ARCHITECTURE_1_REPORT_2026-10-03.md`.
 
