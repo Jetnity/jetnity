@@ -13,6 +13,10 @@ Binding task: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_TASK_2026-10-02.md`
 
 This contract is repository continuity. It does not configure the external Guardian / Chief-of-Staff workspace, and it does not prove that workspace can post to GitHub.
 
+## Amendment — Current State 1, 2 October 2026
+
+`docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_CONTRACT_2026-10-02.md` is the startup, privacy and lifecycle rule after merged #750. Envelope, dedupe and Technical-Lead receipt classes in this contract remain in force. #750 is merged at `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`. The Draft #750 sentence in §11 remains this slice's delivery stop rule.
+
 ## 1. Canonical inbox
 
 [Issue #748](https://github.com/Jetnity/jetnity/issues/748) is the persistent canonical GitHub evidence inbox for material reports from:
@@ -79,7 +83,7 @@ Required fields:
 | `needs_po_decision` | `true` or `false`. |
 | `supersedes_report_id` | Previous `report_id`, or empty. |
 
-The comment body is sanitized summary and references. It contains no secret, token, PAT, webhook credential, environment value, or raw traveller/passport/MRZ/biometric/health payload. When a finding cannot be stated without that payload, name the data class and a hash or location only.
+The comment body is a sanitized summary and references: repository paths, pull-request and issue ids, commit SHAs, and non-personal hashes. It contains no secret, token, PAT, webhook credential, or environment value. Jetnity/jetnity is public, so the body also contains no personal data. The forbidden set includes names, email addresses, phone numbers, postal or street addresses, user, account or traveller identifiers, passport or document numbers, MRZ, biometrics, health information, birth dates, IP addresses, and any other directly or indirectly person-identifying value. When a finding cannot be represented without personal data, do not put that payload in #748 or #751. Name only the data class and a sanitized location or hash where that is safe, and mark that restricted evidence requires an approved private evidence path. The Current State contract is the privacy rule.
 
 ## 5. Dedupe and idempotency
 
@@ -128,10 +132,14 @@ A report whose `observed_main_sha` or bound exact head is not the live head unde
 
 ## 8. Startup read
 
-A new Technical-Lead chat, during startup and live reconstruction, reads unread and material #748 comments after `JETNITY_START_HERE.md` and a fresh `origin/main` read.
+Default startup is the Current State contract. A new Technical-Lead chat reads live `origin/main` and live `.jetnity/operating-mode.json`, then [#751](https://github.com/Jetnity/jetnity/issues/751), then only:
+
+1. open or material `report_id` values referenced by #751;
+2. newer unread MATERIAL #748 reports after the last processed comment marker on #751.
 
 - **Unread:** no later `tl_receipt` on #748 names that `report_id`.
 - **Material:** §3.
+- **Outside the default read:** resolved, `STALE` and `SUPERSEDED` reports. They remain on #748 as audit history.
 
 An unread report is evidence waiting for triage. It is not a confirmed defect and not a task assignment.
 
@@ -141,7 +149,9 @@ Guardian runs that can read GitHub do the same before claiming continuity is cur
 
 Artifacts under the external workspace paths such as `/workspace/jetnity/intelligence/routing/staging/...` remain source history. This bridge does not read them, rewrite them, or copy them into git. Cursor does not mutate that workspace from this slice.
 
-Automatic posting to #748 is **not proven**. In this session, `issue_read` comments for #748 returned an empty list. The issue was created at `2026-10-02T17:09:16Z`. Silence is not success. The earliest proof is a real report comment on #748, independently read after the external system posts it.
+Bridge 1 observation, unchanged: in that session, `issue_read` comments for #748 returned an empty list. The issue was created at `2026-10-02T17:09:16Z`. Silence in that session was not success.
+
+Current State 1 later read, 2 October 2026: #748 comment `5958412971` is report `COS-20261002-2010-001` from Jetnity Chief of Staff. Technical-Lead receipt `5958628250` classifies it `PARTIAL`. Chief of Staff -> #748 direct MATERIAL posting is proven for that report. The same read found no Jetnity Guardian report comment. Guardian direct posting is not yet proven. Archive file names inside the Chief of Staff comment are not #748 report comments.
 
 The one-time setup text is `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`. It has not been sent by this slice.
 
