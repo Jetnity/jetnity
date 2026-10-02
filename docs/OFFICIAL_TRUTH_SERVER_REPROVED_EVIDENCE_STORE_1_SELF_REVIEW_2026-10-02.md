@@ -66,3 +66,24 @@ The pure retrieval functions remain caller-registry seams. F2 closes the canonic
 ## Not claimed
 
 No Ready. No merge. No Development apply. No Production mutation. No provider activation. No follow-up slice. This self-review is not an independent Technical-Lead PASS.
+
+## R1 self-review — 2 October 2026
+
+Author check of Technical-Lead review `5396929023`. This is not an independent PASS.
+
+R1 paths:
+
+- `lib/readiness/evidence.ts` — `versionIdFuer` takes the lookup key already produced by `evidenceSuchschluessel` inside `evidenceKandidatAusModell`.
+- `lib/readiness/source-foundation.test.ts`
+- `lib/readiness/official-truth-retrieved-candidate-evidence.test.ts`
+- `lib/readiness/official-truth-store-server.test.ts` — same snapshot, two credential cells, both inserted, exact replay idempotent.
+- `lib/readiness/official-truth-rule-review-fingerprint.test.ts` — one assertion now expects a different cell to change the support version id. The old equality encoded the collision.
+- `ARCHITECTURE.md`, `DECISIONS.md` ADR-0220 nachtrag, `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md` section 14.
+
+`main@6e1d29e2db0c0b468460e1306ab7d5101607021b` is integrated. F6 runtime `lib/readiness/official-truth-review-suggestion.ts` and its test have an empty diff against that main. No migration. `provider.ts` is unchanged. The store entry still re-proves through `officialTruthServerHeldEvidenceAnnehmen`. Caller authority still never reaches the transport.
+
+The disclosed F2 limits about the missing cell in `versionId` and the stale store sentences are closed by this R1. The SQL gateway can still insert a hand-built payload that bypasses the TypeScript entry. No route does that.
+
+Gates recorded on `8b29caf16d69ba01e776a389cd44220b597f614f` before this documentation commit: `npm test` 4460/4460 across 762 suites, typecheck, lint 0 errors / 148 warnings, production build, hygiene, operating-mode guard, `git diff --check`. No remote Supabase.
+
+No Ready. No merge. No follow-up. STOP for independent exact-head re-review.

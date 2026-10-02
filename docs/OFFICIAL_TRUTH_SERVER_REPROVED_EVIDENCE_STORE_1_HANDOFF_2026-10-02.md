@@ -57,3 +57,17 @@ On `986a00db08f751045eb333405b53b3f6fc172f1c`, before the documentation commit: 
 ## Exact next step
 
 Independent main-chat Technical-Lead review of the exact branch tip. Cursor does not Ready or merge and does not start a follow-up slice.
+
+## R1 current — 2 October 2026
+
+The sections above record the F2 delivery at implementation `986a00db08f751045eb333405b53b3f6fc172f1c` and documentation `5fbf42a6`. Technical-Lead review `5396929023` is applied on this same logical agent, Generation 1, session `bc-1ddf584a-01df-47f2-b35e-adf405ae3592`.
+
+Current contract addition: `versionIdFuer` includes the canonical `lookupKey` from `evidenceSuchschluessel` together with `sourceId`, canonical URL, `sourceContentHash` and `retrievedAt`. Format remains `^ev1_[a-f0-9]{32}$`. No schema change.
+
+`main@6e1d29e2db0c0b468460e1306ab7d5101607021b` is the merge base. This branch is 0 behind it. Do not edit the merged F6 suggestion files.
+
+The stale-sentence section above is historical. `ARCHITECTURE.md`, the ADR-0220 nachtrag in `DECISIONS.md`, and section 14 of `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md` now describe the server-reproved store entry. Do not restore a free Evidence argument.
+
+Gates on code head `8b29caf16d69ba01e776a389cd44220b597f614f`, before this R1 documentation commit: focused tests 29/29, fingerprint tests 11/11, `npm test` 4460 pass / 0 fail / 762 suites, typecheck pass, lint 0 errors and 148 pre-existing warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene and operating-mode guard pass. No remote database was contacted.
+
+The review head is the branch tip after the commit that adds this section. Re-fetch before review. Stay Draft. STOP for independent exact-head re-review. Cursor does not Ready, merge, or start a follow-up.

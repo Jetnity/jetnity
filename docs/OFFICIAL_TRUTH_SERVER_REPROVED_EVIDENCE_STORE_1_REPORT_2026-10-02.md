@@ -67,3 +67,31 @@ Evidence `versionId` is still `sourceId`, canonical URL, content hash and `retri
 ## Not claimed
 
 No Ready. No merge. No follow-up slice. No Development apply. No Production mutation. No provider activation. This report is not an independent Technical-Lead PASS.
+
+## R1 current — 2 October 2026
+
+Technical-Lead review `5396929023` on `5fbf42a684d67f519608edf2835b1df69f6c54d4` required three changes. The sections above stay the historical F2 record. They are not rewritten.
+
+`versionIdFuer` now binds `sourceId`, canonical URL, `sourceContentHash`, `retrievedAt` and the existing `lookupKey` from `evidenceSuchschluessel`. The format stays `ev1_` plus 32 hex characters. There is no second scope serializer, no raw caller scope JSON, and no migration.
+
+The same source, page, content, retrieval and cell still produce the same version id, including a different extraction note. A different credential option on that same snapshot produces a different lookup key and a different version id. A different requirement cell does the same. The throwaway PostgreSQL proof stores both credential cells from one snapshot through `akzeptierteEvidenceSpeichern` without `conflicting official evidence version`. Replaying the exact first cell stays `idempotent` and does not add a row.
+
+Living store sentences now name `officialTruthServerHeldEvidenceAnnehmen` in `ARCHITECTURE.md`, a dated ADR-0220 nachtrag in `DECISIONS.md`, and section 14 of `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md`. Historical task, report and handoff paragraphs above were left as the F2 record.
+
+`main@6e1d29e2db0c0b468460e1306ab7d5101607021b` from merged #765 is integrated. This branch is 0 behind that SHA. F6 suggestion runtime and its delivery docs are unchanged from that main.
+
+Code head for the gates below: `8b29caf16d69ba01e776a389cd44220b597f614f`. The review head is the branch tip after the documentation commit that adds this section.
+
+- Focused Evidence, candidate and store tests: 29/29, including the throwaway PostgreSQL 16.15 same-snapshot proof.
+- Review-packet fingerprint tests: 11/11. A different cell now changes the support version id.
+- `npm test`: 4460 pass / 0 fail / 762 suites.
+- Typecheck: pass. Production build: pass. Next.js 16.3.8. 25 static pages. The build also ran TypeScript on this code head.
+- Lint: 0 errors, 148 pre-existing warnings. None are in the R1 files.
+- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`: pass.
+- `git diff --check`: pass. `lib/readiness/provider.ts` has an empty diff against `origin/main`.
+- Schema reference still lists the same four LOCAL/UNAPPLIED RPCs. This R1 added none.
+- No remote Supabase access.
+
+A row already stored under the previous version formula would not match the new id for the same cell. This lane did not query Development or Production. The store RPC stays LOCAL/UNAPPLIED from this slice, and the canonical writer is still unconnected.
+
+No Ready. No merge. No follow-up slice. This section is not an independent Technical-Lead PASS.
