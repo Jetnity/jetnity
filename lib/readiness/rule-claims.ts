@@ -22,6 +22,7 @@ import {
   regulierungsAnwendbarkeitVisaOptionLesen,
   regulierungsAnwendbarkeitWirkungLesen,
   type AnforderungswirkungFakt,
+  type RegulierungsAusdruck,
   type RegulierungsLesefehler,
   type VisaOptionenFakt,
 } from '@/lib/readiness/regulierungs-anwendbarkeit'
@@ -259,6 +260,7 @@ export type RegelClaimFehler =
   | 'primary_source_required'
   | 'evidence_not_accepted'
   | 'support_mismatch'
+  | 'condition_provenance_ambiguous'
   | 'invalid_fact'
   | 'visa_mode_forbidden'
   | 'visa_contradiction'
@@ -825,6 +827,92 @@ export function regelKandidatErstellen(eingabe: unknown, registry: QuellenRegist
   return { ok: true, kandidat: einfrieren(kandidat) }
 }
 
+type ZweigZitat = {
+  supportVersionIds: readonly string[]
+  when: { kind: 'otherwise' } | { kind: 'expression'; expression: RegulierungsAusdruck }
+}
+
+/**
+ * Schema-1-Zweige dürfen nur die schon neu bewiesenen Claim-Stützen zitieren.
+ * Die Prüfung erfindet keine Evidence-Id und ersetzt keine ausgelassene Atom-Stütze.
+ */
+function atomePruefen(ausdruck: RegulierungsAusdruck, zweigIds: ReadonlySet<string>): 'support_mismatch' | null {
+  switch (ausdruck.op) {
+    case 'atomic': {
+      const ids = ausdruck.supportVersionIds
+      if (!ids) return null
+      if (ids.length === 0) return 'support_mismatch'
+      for (const id of ids) {
+        if (!zweigIds.has(id)) return 'support_mismatch'
+      }
+      return null
+    }
+    case 'not':
+      return atomePruefen(ausdruck.operand, zweigIds)
+    case 'all':
+    case 'any': {
+      for (const operand of ausdruck.operands) {
+        const fehler = atomePruefen(operand, zweigIds)
+        if (fehler) return fehler
+      }
+      return null
+    }
+    default: {
+      const unerreichbar: never = ausdruck
+      return unerreichbar
+    }
+  }
+}
+
+function verzweigteZitate(fact: RegelFakt): readonly ZweigZitat[] | null {
+  if (fact.kind === 'requirement_effect' && 'applicability' in fact && fact.applicability.kind === 'branches') {
+    return fact.applicability.branches
+  }
+  if (fact.kind === 'visa_options' && 'schema' in fact) {
+    const gesammelt: ZweigZitat[] = []
+    for (const option of fact.options) {
+      if (!('applicability' in option) || option.applicability.kind !== 'branches') continue
+      gesammelt.push(...option.applicability.branches)
+    }
+    return gesammelt.length > 0 ? gesammelt : null
+  }
+  return null
+}
+
+function bedingungsHerkunftPruefen(
+  fact: RegelFakt,
+  evidenceQuality: AnnehmbareQualitaet,
+  claimIds: readonly string[],
+): 'support_mismatch' | 'condition_provenance_ambiguous' | null {
+  const zweige = verzweigteZitate(fact)
+  if (!zweige) return null
+  if (evidenceQuality === 'composed_from_multiple_primary_sources') return 'condition_provenance_ambiguous'
+
+  const erlaubt = new Set(claimIds)
+  const vereinigung = new Set<string>()
+  for (const zweig of zweige) {
+    const ids = zweig.supportVersionIds
+    if (ids.length === 0) return 'support_mismatch'
+    for (const id of ids) {
+      if (!erlaubt.has(id)) return 'support_mismatch'
+      vereinigung.add(id)
+    }
+    if (zweig.when.kind === 'expression') {
+      const atom = atomePruefen(zweig.when.expression, new Set(ids))
+      if (atom) return atom
+    }
+  }
+  if (vereinigung.size !== claimIds.length || claimIds.some((id) => !vereinigung.has(id))) {
+    return 'support_mismatch'
+  }
+  if (claimIds.length !== 1) return 'support_mismatch'
+  const einzige = claimIds[0]!
+  for (const zweig of zweige) {
+    if (zweig.supportVersionIds.length !== 1 || zweig.supportVersionIds[0] !== einzige) return 'support_mismatch'
+  }
+  return null
+}
+
 function versionVertrauen(wert: unknown, registry: QuellenRegistry): EvidenceVersion | null {
   if (!datensatz(wert)) return null
   return akzeptierteEvidenceLesen(wert as EvidenceVersion, registry)
@@ -883,6 +971,8 @@ export function regelKandidatAkzeptieren(eingabe: unknown): RegelAnnahmeErgebnis
 
   const fakt = regelFaktLesen(entwurf.factKind, entwurf.scope.requirementType, satz.trustedRuleFact, registry)
   if (!fakt.ok) return fakt
+  const herkunft = bedingungsHerkunftPruefen(fakt.fact, entwurf.evidenceQuality, entwurf.supportVersionIds)
+  if (herkunft) return { ok: false, reason: herkunft }
   const claim: AkzeptierteRegelClaim = {
     lifecycle: 'accepted',
     validationState: 'valid',

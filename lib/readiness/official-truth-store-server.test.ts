@@ -1420,7 +1420,7 @@ describe('server-reproved accepted Evidence store entry', () => {
       id: 'ordinary',
       when: { kind: 'expression', expression: ausdruck },
       outcome: { effect: 'required', visaMode: null },
-      supportVersionIds: [] as string[],
+      supportVersionIds: [visa.versionId],
     }
     const faelle = [
       {
@@ -1457,7 +1457,7 @@ describe('server-reproved accepted Evidence store entry', () => {
                     id: 'ordinary',
                     when: { kind: 'expression', expression: ausdruck },
                     outcome: { eligibility: 'allowed', mandate: 'not_mandatory' },
-                    supportVersionIds: [],
+                    supportVersionIds: [visa.versionId],
                   },
                 ],
               },
