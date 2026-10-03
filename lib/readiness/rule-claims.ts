@@ -15,10 +15,16 @@ import {
 import {
   OFFICIAL_ACTION_PURPOSES,
   OFFICIAL_VISA_MODES,
-  visaResultUndModusWidersprechen,
   type OfficialActionPurpose,
   type OfficialVisaMode,
 } from '@/lib/readiness/official'
+import {
+  regulierungsAnwendbarkeitVisaOptionLesen,
+  regulierungsAnwendbarkeitWirkungLesen,
+  type AnforderungswirkungFakt,
+  type RegulierungsLesefehler,
+  type VisaOptionenFakt,
+} from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { quellenUrlAufloesen, type QuellenRegistry, type QuellenUrlFehler } from '@/lib/readiness/source-registry'
 import { temporalRuleLesen, type OfficialTemporalRule } from '@/lib/readiness/temporal'
 import type { OfficialRequirementType } from '@/types/trips'
@@ -60,7 +66,6 @@ export const AUFENTHALT_WERT_MAX = {
 /** Technische Obergrenze für eine Transitdauer, keine rechtliche Wahrheit. */
 export const REGEL_TRANSIT_MINUTEN_MAX = 14 * 24 * 60
 
-const VISA_OPTIONEN_MAX = 4
 const TRANSIT_PFADE_MAX = 8
 const AMTSHANDLUNGEN_MAX = 4
 const LEERE_SEITEN_MIN = 1
@@ -91,10 +96,6 @@ const TRANSIT_BOOL = [
   'sameFlightRequired',
   'onwardTicketRequired',
 ] as const
-const WIRKUNGEN = ['required', 'not_required', 'conditional'] as const
-const ZULASSUNG = ['allowed', 'not_allowed', 'unknown'] as const
-const MANDAT = ['mandatory', 'not_mandatory', 'unknown'] as const
-
 const PERSONEN_SCHLUESSEL = new Set([
   'userId',
   'user_id',
@@ -146,22 +147,15 @@ export type RegelDauer = {
   unit: (typeof DAUER_EINHEITEN)[number]
 }
 
-export type RegelAnforderungswirkung = {
-  kind: 'requirement_effect'
-  effect: (typeof WIRKUNGEN)[number]
-  visaMode: OfficialVisaMode | null
-}
+export type RegelAnforderungswirkung = AnforderungswirkungFakt
 
 export type RegelVisaOption = {
   visaMode: Exclude<OfficialVisaMode, 'unknown'>
-  eligibility: (typeof ZULASSUNG)[number]
-  mandate: (typeof MANDAT)[number]
+  eligibility: 'allowed' | 'not_allowed' | 'unknown'
+  mandate: 'mandatory' | 'not_mandatory' | 'unknown'
 }
 
-export type RegelVisaOptionen = {
-  kind: 'visa_options'
-  options: readonly RegelVisaOption[]
-}
+export type RegelVisaOptionen = VisaOptionenFakt
 
 export type RegelAufenthalt = {
   kind: 'stay_limit'
@@ -445,49 +439,42 @@ function visaModusKonkret(wert: unknown): Exclude<OfficialVisaMode, 'unknown'> |
   return wert
 }
 
+function faktGrund(reason: RegulierungsLesefehler | 'legacy_conditional_without_payload'): RegelClaimFehler {
+  switch (reason) {
+    case 'invalid_fact':
+    case 'personal_identifier_forbidden':
+    case 'provenance_not_authorized':
+    case 'mixed_outcome':
+    case 'depth_exceeded':
+    case 'node_bound_exceeded':
+    case 'operand_bound_exceeded':
+    case 'branch_bound_exceeded':
+    case 'support_bound_exceeded':
+    case 'invalid_support':
+    case 'visa_contradiction':
+    case 'visa_mode_forbidden':
+    case 'legacy_conditional_without_payload':
+      return reason
+    case 'context_conflict':
+      return 'invalid_fact'
+    default: {
+      const unerreichbar: never = reason
+      return unerreichbar
+    }
+  }
+}
+
 function wirkungLesen(requirementType: OfficialRequirementType, wert: unknown): FaktErgebnis {
-  const satz = datensatz(wert)
-  if (!satz || !hatGenau(satz, ['kind', 'effect', 'visaMode'])) return { ok: false, reason: 'invalid_fact' }
-  if (satz.kind !== 'requirement_effect') return { ok: false, reason: 'invalid_fact_kind' }
-  if (!istText(satz.effect, WIRKUNGEN)) return { ok: false, reason: 'invalid_fact' }
-  if (requirementType !== 'visa') {
-    if (satz.visaMode !== null) return { ok: false, reason: 'visa_mode_forbidden' }
-  } else if (satz.visaMode !== null && !istText(satz.visaMode, OFFICIAL_VISA_MODES)) {
-    return { ok: false, reason: 'invalid_fact' }
-  }
-  if (visaResultUndModusWidersprechen(requirementType, satz.effect, satz.visaMode)) {
-    return { ok: false, reason: 'visa_contradiction' }
-  }
-  const fact: RegelAnforderungswirkung = {
-    kind: 'requirement_effect',
-    effect: satz.effect,
-    visaMode: requirementType === 'visa' ? (satz.visaMode as OfficialVisaMode | null) : null,
-  }
-  return { ok: true, fact }
+  const gelesen = regulierungsAnwendbarkeitWirkungLesen(wert, requirementType)
+  if (!gelesen.ok) return { ok: false, reason: faktGrund(gelesen.reason) }
+  return { ok: true, fact: gelesen.fakt }
 }
 
 function visaOptionenLesen(requirementType: OfficialRequirementType, wert: unknown): FaktErgebnis {
   if (requirementType !== 'visa') return { ok: false, reason: 'requirement_type_mismatch' }
-  const satz = datensatz(wert)
-  if (!satz || !hatGenau(satz, ['kind', 'options'])) return { ok: false, reason: 'invalid_fact' }
-  if (satz.kind !== 'visa_options') return { ok: false, reason: 'invalid_fact_kind' }
-  if (!Array.isArray(satz.options) || satz.options.length === 0 || satz.options.length > VISA_OPTIONEN_MAX) {
-    return { ok: false, reason: 'invalid_fact' }
-  }
-  const options: RegelVisaOption[] = []
-  for (const eintrag of satz.options) {
-    const option = datensatz(eintrag)
-    if (!option || !hatGenau(option, ['visaMode', 'eligibility', 'mandate'])) return { ok: false, reason: 'invalid_fact' }
-    const visaMode = visaModusKonkret(option.visaMode)
-    if (!visaMode) return { ok: false, reason: 'invalid_fact' }
-    if (!istText(option.eligibility, ZULASSUNG) || !istText(option.mandate, MANDAT)) {
-      return { ok: false, reason: 'invalid_fact' }
-    }
-    if (options.some((vorhanden) => vorhanden.visaMode === visaMode)) return { ok: false, reason: 'invalid_fact' }
-    options.push({ visaMode, eligibility: option.eligibility, mandate: option.mandate })
-  }
-  options.sort((links, rechts) => OFFICIAL_VISA_MODES.indexOf(links.visaMode) - OFFICIAL_VISA_MODES.indexOf(rechts.visaMode))
-  return { ok: true, fact: { kind: 'visa_options', options } }
+  const gelesen = regulierungsAnwendbarkeitVisaOptionLesen(wert)
+  if (!gelesen.ok) return { ok: false, reason: faktGrund(gelesen.reason) }
+  return { ok: true, fact: gelesen.wert }
 }
 
 function aufenthaltLesen(wert: unknown): FaktErgebnis {
