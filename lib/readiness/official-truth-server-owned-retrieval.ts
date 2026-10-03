@@ -24,6 +24,7 @@ import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogAbhaengigkeiten,
+  type OfficialTruthSourceCatalogTransport,
 } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   quellenUrlAufloesen,
@@ -907,6 +908,26 @@ export async function loadOfficialTruthServerOwnedRetrieval(
   eingabe: unknown,
 ): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
   return decideOfficialTruthServerOwnedRetrieval(eingabe, {
+    now: serverUhr,
+    resolve: serverDns,
+    http: serverHttp,
+  })
+}
+
+/**
+ * Dieselbe Live-Lesung, mit einem Katalogtransport aus Servercode.
+ * Die öffentliche Live-Funktion oben nimmt keinen Transport.
+ * Eine Aufrufer-Registry bleibt verboten. Uhr, DNS und HTTPS sind die
+ * bestehenden Serverfunktionen und hier nicht austauschbar.
+ * Ausserhalb der Tests dieser Datei darf nur
+ * official-truth-same-request-extraction-server.ts diese Funktion importieren.
+ */
+export async function loadOfficialTruthServerOwnedRetrievalWithCatalogTransport(
+  eingabe: unknown,
+  transport: OfficialTruthSourceCatalogTransport,
+): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
+  return decideOfficialTruthServerOwnedRetrieval(eingabe, {
+    catalog: { transport },
     now: serverUhr,
     resolve: serverDns,
     http: serverHttp,
