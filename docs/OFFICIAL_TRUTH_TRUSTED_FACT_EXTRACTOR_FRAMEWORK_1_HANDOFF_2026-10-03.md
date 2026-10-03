@@ -5,9 +5,11 @@ Issue: #780
 Draft PR: #781
 Branch: `feat/official-truth-trusted-fact-extractor-framework-1`
 Baseline at task dispatch: `main@ed5e249e375fd849895dafcc5c9b72cec4b377e1`
-Integrated main at delivery: `4c373442b2261de270e50e203f87ed06efc303cc` (Merge #778)
-Merge commit on this branch: `d32427359671cd42090e160c3dfae017ced7b321`
+Integrated main at first delivery: `4c373442b2261de270e50e203f87ed06efc303cc` (Merge #778)
+First-delivery merge commit on this branch: `d32427359671cd42090e160c3dfae017ced7b321`
 Implementation commit: `71ad09c63f420a7643a97d1ca9be979a1f7507b1`
+Reviewed head that received CHANGES REQUIRED: `6ffad6aeebfbde95d6624a1b9c5dfb8d1c85fc89`
+Integrated main at this correction: `1e48b59b2950457909cb8ad02bbf7fcfd353ee12` (Merge #779)
 Task: `docs/OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_FRAMEWORK_1_TASK_2026-10-03.md`
 Logical agent: **Jetnity Official Truth deterministic trusted-fact extractor framework 1**
 Generation: **1**
@@ -18,9 +20,9 @@ Read `docs/OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_FRAMEWORK_1_REPORT_2026-10-03.m
 
 ## Current state
 
-The review head is the branch tip after the documentation commit. Re-fetch `origin/feat/official-truth-trusted-fact-extractor-framework-1` before review. Do not review `71ad09c6` as the tip once that documentation commit is pushed.
+`6ffad6ae` is the CHANGES REQUIRED head. It is not the correction review head. Re-fetch `origin/feat/official-truth-trusted-fact-extractor-framework-1` and review the tip that contains the R1/R2 correction.
 
-At the delivery fetch, `origin/main` was `4c373442b2261de270e50e203f87ed06efc303cc`. This branch merges that SHA in `d3242735` and was 0 behind it. `ed5e249e` is the task baseline, not current main after Merge #778. Re-fetch main before review and do not treat a later SHA as already integrated.
+At the correction fetch, `origin/main` was `1e48b59b2950457909cb8ad02bbf7fcfd353ee12`. This branch contains that SHA through `6ffad6ae` and was 0 behind it. `ed5e249e` is the task baseline. `4c373442` is the first-delivery main, not current main after Merge #779. Re-fetch main before review and do not treat a later SHA as already integrated.
 
 Machine mode is `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 
@@ -38,7 +40,9 @@ Success is one complete fact that has already passed `regelFaktKanonischLesen`. 
 
 One call is one `rule-scope:v1:` key. Do not rank citizenships or documents inside the extractor. Do not collect passport numbers, MRZ, biometrics, or health records. A personal key fails closed and the reason does not echo it.
 
-The MIME pattern and the redirect cap of 5 mirror the server-owned retrieval boundary. This file does not import that module, because that module opens sockets. Do not raise either bound here.
+The MIME pattern and the redirect cap of 5 mirror the server-owned retrieval boundary. This file does not import that module, because that module opens sockets. `import 'server-only'` is present and is only the server-stack marker. Do not raise either bound here. Do not treat the marker as permission to call the test seam from a route.
+
+A path allowlist rule is queryless exact host plus exact pathname. `URL.search !== ''` does not match that rule. Do not strip a functional query from the retrieval result. A query-bearing canonical URL is allowed only by an exact URL rule that names that full string. Do not add a general query-policy type in this framework correction.
 
 ## Files
 
@@ -58,10 +62,12 @@ No Ready. No merge. No follow-up slice. Do not start a source-specific extractor
 
 ## Validation already recorded
 
-Gates re-run after merging `4c373442`, before this documentation commit: focused extractor tests 28/28. Rule-claim file 19/19. `npm test` 4546 pass / 0 fail / 766 suites. The three additional tests come from Merge #778. Local PostgreSQL 16.15 supplied `initdb` for the two existing throwaway proofs. No remote database. Nothing was applied. Typecheck pass. Lint 0 errors and 148 pre-existing warnings. Production build pass on Next.js 16.3.8 with 25 static pages. Hygiene checks pass. `git diff --check` pass.
+First delivery, recorded on the CHANGES REQUIRED head `6ffad6ae`: focused extractor tests 28/28, rule-claim file 19/19, `npm test` 4546 pass / 0 fail / 766 suites after merging `4c373442`. Typecheck, lint, build, and hygiene passed there.
+
+Correction gates on the R1/R2 tree, 0 behind `1e48b59b`: focused extractor tests 29/29. `npm test` 4554 pass / 0 fail / 766 suites. Typecheck pass. Lint 0 errors and 148 pre-existing warnings. Production build pass on Next.js 16.3.8 with 25 static pages. `check:operating-mode` PASS. `check:dead` 0 unreached (644 start points, 1296 reachable). `check:exports` 0. `check:deps` pass. `check:api-schutz` pass, 12 admin routes. `check:schema-bezug` pass with the same four LOCAL/UNAPPLIED RPCs. `git diff --check` pass. Local PostgreSQL proofs, when the full suite runs them, use temporary clusters. No remote database. Nothing was applied.
 
 Exact-head CI and Vercel belong to the pushed tip, not to this text.
 
 ## Next step
 
-Independent main-chat Technical-Lead review of the exact branch tip. Cursor does not Ready or merge. Do not start a follow-up slice.
+Independent main-chat Technical-Lead re-review of the exact branch tip after this correction. Cursor does not Ready or merge. Do not start a source-specific follow-up.
