@@ -27,11 +27,11 @@ describe('Admin-Benutzer Erstellzeit', () => {
     assert.match(quelle, /last_seen_at:\s*r\?\.last_seen_at\s*\?\?\s*null/)
   })
 
-  test('die Tabelle zeigt fuer null einen Strich und formatiert echte Zeiten weiter de-CH', () => {
+  test('die Tabelle zeigt fuer null Nicht verfügbar und formatiert echte Zeiten weiter de-CH', () => {
     const quelle = readFileSync(TABLE, 'utf8')
     assert.match(quelle, /created_at:\s*string\s*\|\s*null/)
-    assert.match(quelle, /u\.created_at\s*\?\s*dtf\.format\(new Date\(u\.created_at\)\)\s*:\s*'—'/)
+    assert.match(quelle, /u\.created_at\s*\?\s*dtf\.format\(new Date\(u\.created_at\)\)\s*:\s*'Nicht verfügbar'/)
     assert.match(quelle, /new Intl\.DateTimeFormat\('de-CH', \{ dateStyle: 'medium', timeStyle: 'short' \}\)/)
-    assert.match(quelle, /u\.last_seen_at\s*\?\s*dtf\.format\(new Date\(u\.last_seen_at\)\)\s*:\s*'—'/)
+    assert.match(quelle, /u\.last_seen_at\s*\?\s*dtf\.format\(new Date\(u\.last_seen_at\)\)\s*:\s*'Nicht verfügbar'/)
   })
 })

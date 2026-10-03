@@ -11,7 +11,7 @@ export default async function SecurityPage() {
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
           {ADMIN_EHRLICHE_TEXTE.securityTitel}
         </h2>
-        <p className="text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.securityHinweis}</p>
+        <p className="text-sm text-muted-foreground">Aufgezeichnete Ereignisse und lokale Blocklisteneinträge.</p>
       </header>
 
       <SecurityWidget />

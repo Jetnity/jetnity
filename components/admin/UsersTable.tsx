@@ -199,10 +199,10 @@ export default function UsersTable({
   }
 
   const STATUS_LABELS: Record<AccountStatus, string> = {
-    active: 'aktiv',
-    pending: 'ausstehend',
-    disabled: 'deaktiviert',
-    banned: 'gesperrt',
+    active: 'Aktiv',
+    pending: 'Ausstehend',
+    disabled: 'Deaktiviert',
+    banned: 'Gesperrt',
   }
 
   function StatusBadge({ status }: { status: AccountStatus }) {
@@ -226,20 +226,23 @@ export default function UsersTable({
   )
 
   return (
-    <div className="space-y-4">
+    <div className="overflow-hidden rounded-2xl border bg-card">
       {/* Toolbar */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 border-b p-4">
         <Input
-          placeholder="Suche nach Name oder E-Mail…"
+          containerClassName="w-full sm:w-80 [&>div:last-child]:hidden"
+          aria-label="Nutzer nach Name oder E-Mail suchen"
+          placeholder="Name oder E-Mail suchen…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="w-full"
         />
+        <span className="text-sm text-muted-foreground">{total} {q ? 'Treffer' : 'Nutzer'}</span>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goto(page - 1)} aria-label="Vorherige Seite">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="shrink-0 whitespace-nowrap text-sm tabular-nums">{page} / {maxPage}</span>
+          <span className="shrink-0 whitespace-nowrap text-xs text-muted-foreground tabular-nums">Seite {page} / {maxPage}</span>
           <Button variant="outline" size="sm" disabled={page >= maxPage} onClick={() => goto(page + 1)} aria-label="Nächste Seite">
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -247,33 +250,38 @@ export default function UsersTable({
       </div>
 
       {/* Tabelle */}
-      <div className="overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/60">
+      <div>
+        <table role="table" className="block w-full text-sm lg:table">
+          <thead className="sr-only bg-muted/40 lg:not-sr-only lg:table-header-group">
             <tr className="text-left">
-              <th className="p-3">Name</th>
-              <th className="p-3">E-Mail</th>
-              <th className="p-3">Rolle</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Erstellt</th>
-              <th className="p-3">Letzte Aktivität</th>
-              <th className="p-3 text-right">Aktionen</th>
+              <th scope="col" className="p-4">Konto</th>
+              <th scope="col" className="p-4">Rolle & Status</th>
+              <th scope="col" className="p-4">Erstellt</th>
+              <th scope="col" className="p-4">Letzte Aktivität</th>
+              <th scope="col" className="p-4 text-right">Aktionen</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup" className="block lg:table-row-group">
             {users.map((u) => (
-              <tr key={u.user_id} className="border-t">
-                <td className="p-3">{u.display_name ?? '—'}</td>
-                <td className="p-3">{u.email ? <Link href={`mailto:${u.email}`} className="hover:underline">{u.email}</Link> : '—'}</td>
-                <td className="p-3"><RoleBadge role={u.role} /></td>
-                <td className="p-3"><StatusBadge status={u.status} /></td>
-                <td className="p-3">{u.created_at ? dtf.format(new Date(u.created_at)) : '—'}</td>
-                <td className="p-3">{u.last_seen_at ? dtf.format(new Date(u.last_seen_at)) : '—'}</td>
-                <td className="p-3">
+              <tr role="row" key={u.user_id} className="relative grid grid-cols-2 gap-3 border-t p-4 first:border-t-0 lg:table-row lg:p-0">
+                <td role="cell" className="col-span-2 min-w-0 pr-12 lg:w-[32%] lg:p-4">
+                  <p className="font-medium">{u.display_name || 'Ohne Namen'}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">{u.email ? <Link href={`mailto:${u.email}`} className="hover:underline">{u.email}</Link> : 'Keine E-Mail hinterlegt'}</p>
+                </td>
+                <td role="cell" className="col-span-2 lg:p-4"><div className="flex flex-wrap gap-2"><RoleBadge role={u.role} /><StatusBadge status={u.status} /></div></td>
+                <td role="cell" className="min-w-0 text-xs text-muted-foreground lg:p-4">
+                  <span className="mb-1 block lg:hidden">Erstellt</span>
+                  {u.created_at ? dtf.format(new Date(u.created_at)) : 'Nicht verfügbar'}
+                </td>
+                <td role="cell" className="min-w-0 text-xs text-muted-foreground lg:p-4">
+                  <span className="mb-1 block lg:hidden">Letzte Aktivität</span>
+                  {u.last_seen_at ? dtf.format(new Date(u.last_seen_at)) : 'Nicht verfügbar'}
+                </td>
+                <td role="cell" className="absolute right-2 top-2 lg:static lg:p-4">
                   <div className="flex justify-end">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Aktionen">
+                        <Button variant="ghost" size="icon" aria-label={`Aktionen für ${u.display_name || u.email || 'Konto'}`}>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -311,8 +319,8 @@ export default function UsersTable({
               </tr>
             ))}
             {users.length === 0 && (
-              <tr>
-                <td className="p-6 text-center text-muted-foreground" colSpan={7}>
+              <tr role="row" className="block lg:table-row">
+                <td role="cell" className="block p-6 text-center text-muted-foreground lg:table-cell" colSpan={5}>
                   Keine Nutzer gefunden.
                 </td>
               </tr>

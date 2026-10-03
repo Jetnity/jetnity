@@ -11,6 +11,7 @@ import {
   type ProviderOpsBoardCheck,
   type ProviderOpsBoardItem,
 } from '@/lib/admin/provider-ops-board'
+import OperationsEvidence from '@/components/admin/OperationsEvidence'
 import { cn } from '@/lib/utils'
 
 function statusKlassen(item: {
@@ -27,15 +28,36 @@ function statusKlassen(item: {
   if (item.status === 'unavailable') {
     return 'border-rose-400/30 bg-rose-400/10 text-rose-800 dark:text-rose-200'
   }
-  return 'border-border bg-muted text-foreground'
+  return 'border-border bg-background text-muted-foreground'
+}
+
+function statusLabel(status: ProviderOpsBoardItem['status'], id: string): string {
+  if (status === 'foundation_only') return 'Technisch vorbereitet'
+  if (status === 'available') return id === 'model-usage' ? 'Protokoll lesbar' : 'Belegte Test-Capability'
+  return PROVIDER_OPS_BOARD_STATUS_LABEL[status]
+}
+
+function kurztext(item: ProviderOpsBoardItem): string {
+  if (item.status === 'foundation_only') {
+    if (item.id === 'provider-ops') return 'Technische Grundlage vorhanden. Keine Live-Provider-Freigabe.'
+    if (item.id === 'kill-switch') return 'Globale, dauerhafte Durchsetzung ist nicht belegt.'
+    if (item.id === 'cost-guard') return 'Kein globales, dauerhaftes Budgetlimit.'
+  }
+  if (item.id === 'model-usage') {
+    if (item.status === 'empty') return 'Keine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.'
+    if (item.status === 'available') return 'Aufgezeichnete Modellaufrufe sind lesbar. Kostenabdeckung bleibt unvollständig.'
+    if (item.status === 'unavailable') return 'Das Nutzungsprotokoll konnte nicht gelesen werden.'
+    if (item.status === 'unknown') return 'Es liegt kein belastbarer Nutzungsstand vor.'
+  }
+  return item.summary
 }
 
 function CheckZeile({ check }: { check: ProviderOpsBoardCheck }) {
-  const statusText = PROVIDER_OPS_BOARD_STATUS_LABEL[check.status]
+  const statusText = statusLabel(check.status, check.id)
   const frischeText = FRESHNESS_LABEL[check.freshness.state]
   return (
     <li
-      className="rounded-xl border border-border bg-background px-3 py-2"
+      className="min-w-0 border-b border-border px-1 py-3 last:border-b-0"
       data-ops-check={check.id}
       data-ops-status={check.status}
       data-ops-green={providerOpsKarteIstGruen(check) ? 'true' : 'false'}
@@ -44,28 +66,24 @@ function CheckZeile({ check }: { check: ProviderOpsBoardCheck }) {
         <p className="text-sm font-medium">{check.name}</p>
         <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', statusKlassen(check))}>
           <span>{statusText}</span>
-          <span className="mx-1" aria-hidden>
-            ·
-          </span>
-          <span>{frischeText}</span>
         </p>
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">{check.summary}</p>
+      <p className="mt-1 text-xs text-muted-foreground">Nachweis: {frischeText}</p>
+      {check.status !== 'disabled' ? <p className="mt-1 text-xs text-muted-foreground">{check.summary}</p> : null}
     </li>
   )
 }
 
 function OpsKarte({ item }: { item: ProviderOpsBoardItem }) {
-  const [offen, setOffen] = useState(false)
-  const statusText = PROVIDER_OPS_BOARD_STATUS_LABEL[item.status]
+  const statusText = statusLabel(item.status, item.id)
   const frischeText = FRESHNESS_LABEL[item.freshness.state]
   const claim = sichtbarerKartenClaim(item)
-  const beschriftung = `${claim}, Quelle ${item.source}, ${frischeText}`
+  const beschriftung = `${claim}, ${frischeText}`
   const gruen = providerOpsKarteIstGruen(item)
 
   return (
     <article
-      className="rounded-2xl border border-border bg-card p-4"
+      className="min-w-0 rounded-2xl border border-border bg-card px-4 pt-4 sm:px-5"
       aria-label={beschriftung}
       data-ops-id={item.id}
       data-ops-status={item.status}
@@ -73,66 +91,33 @@ function OpsKarte({ item }: { item: ProviderOpsBoardItem }) {
       data-ops-green={gruen ? 'true' : 'false'}
       data-ops-claim={claim}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3 pb-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold">{item.name}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">{item.summary}</p>
+          {item.id === 'kill-switch' || item.id === 'cost-guard' ? <p className="mb-1 text-xs text-muted-foreground">Technische Grundlage</p> : null}
+          <h3 className="text-base font-semibold">{item.id === 'provider-ops' ? 'Provider-Bereiche' : item.id === 'kill-switch' ? 'Notabschaltung' : item.id === 'cost-guard' ? 'Kostenbegrenzung' : item.name}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{kurztext(item)}</p>
         </div>
         <p className={cn('rounded-md border px-2 py-1 text-xs font-medium', statusKlassen(item))}>
           <span>{statusText}</span>
-          <span className="mx-1" aria-hidden>
-            ·
-          </span>
-          <span>{frischeText}</span>
         </p>
       </div>
+      {item.id === 'model-usage' ? (
+        <p className="mb-3 text-xs text-muted-foreground">
+          Gelesener Ausschnitt: letzte 30 Tage · höchstens 200 Einträge
+          {item.status === 'available' && item.metadata?.zeilen ? <span className="mt-2 block text-sm font-medium text-foreground">{item.metadata.zeilen} aufgezeichnete Einträge</span> : null}
+        </p>
+      ) : null}
       {item.checks?.length ? (
-        <ul className="mt-3 grid gap-2" aria-label={`Teilprüfungen ${item.name}`}>
+        <ul className="mb-3 grid gap-x-6 border-t sm:grid-cols-2" aria-label={`Teilprüfungen ${item.name}`}>
           {item.checks.map((teil) => (
             <CheckZeile key={teil.id} check={teil} />
           ))}
         </ul>
       ) : null}
-      <dl className="mt-3 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
-        <div>
-          <dt className="font-medium text-foreground">Quelle</dt>
-          <dd>{item.source}</dd>
-        </div>
-        <div>
-          <dt className="font-medium text-foreground">Geprüft</dt>
-          <dd>{new Date(item.checkedAt).toLocaleString('de-CH')}</dd>
-        </div>
-      </dl>
-      <button
-        type="button"
-        className="mt-3 inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:no-underline"
-        aria-expanded={offen}
-        onClick={() => setOffen((wert) => !wert)}
-      >
-        {offen ? 'Details schliessen' : 'Details'}
-      </button>
-      {offen ? (
-        <div className="mt-3 space-y-2 text-sm text-muted-foreground" data-ops-detail>
-          <p>
-            <span className="font-medium text-foreground">Beweist: </span>
-            {item.proves}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Beweist nicht: </span>
-            {item.doesNotProve}
-          </p>
-          {item.detail ? <p>{item.detail}</p> : null}
-          {item.metadata ? (
-            <ul className="font-mono text-xs">
-              {Object.entries(item.metadata).map(([schluessel, wert]) => (
-                <li key={schluessel}>
-                  {schluessel}: {wert ?? '—'}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      ) : null}
+      <p className="mb-3 text-xs text-muted-foreground">
+        Geprüft {new Date(item.checkedAt).toLocaleString('de-CH')} · Nachweis {frischeText}
+      </p>
+      <OperationsEvidence item={item} />
     </article>
   )
 }
@@ -172,8 +157,8 @@ export default function ProviderOpsBoard({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Geprüft {new Date(bericht.checkedAt).toLocaleString('de-CH')}. Keine Schreibaktion. Kein
-          Provider-Toggle.
+          <span className="mr-2 rounded-md border bg-card px-2 py-1 text-xs">Read-only</span>
+          Geprüft {new Date(bericht.checkedAt).toLocaleString('de-CH')}
         </p>
         {aktualisierenErlaubt ? (
           <button
@@ -191,13 +176,16 @@ export default function ProviderOpsBoard({
           role="alert"
           className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-800 dark:text-rose-200"
         >
-          {fehler}
+          {fehler} Angezeigt bleibt der vorherige Prüfstand.
         </p>
       ) : null}
-      <div className="grid gap-4">
-        {bericht.items.map((item) => (
-          <OpsKarte key={item.id} item={item} />
-        ))}
+      <p className="text-sm text-muted-foreground">Kostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.</p>
+      <div className="grid items-start gap-4 xl:grid-cols-2">
+        {bericht.items.filter(item => item.id === 'model-usage').map(item => <OpsKarte key={item.id} item={item} />)}
+        <div className="space-y-4 xl:row-span-3">
+          {bericht.items.filter(item => item.id === 'provider-ops').map(item => <OpsKarte key={item.id} item={item} />)}
+        </div>
+        {bericht.items.filter(item => item.id !== 'model-usage' && item.id !== 'provider-ops').map(item => <OpsKarte key={item.id} item={item} />)}
       </div>
     </div>
   )
