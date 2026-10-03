@@ -14,6 +14,14 @@ Session: https://cursor.com/agents/bc-1e56bb1a-bd9c-41d6-9243-ea23429e4ddd
 
 This report is the author record. A Technical-Lead PASS requires an independent exact-head review of the branch tip. This report is not Ready and not a merge. It does not implement a runtime slice and it does not implement F8.
 
+## R1 correction
+
+Technical-Lead review of `3eee6bb8c7476748d1c495de0fedea564d859a5b` is CHANGES REQUIRED. The same logical agent corrected the three findings in the architecture document. The task file is unchanged. No runtime file was added.
+
+- R1. Section 5.1 now defines the decision dependency trace. `false` atoms and the facts that make every exemption `false` are dependencies of an `otherwise` outcome. `binding` is `context_asserted` when any deciding dependency is `user_asserted`, `context_recorded` when every deciding dependency is profile or trip context, and `null` only for an unconditional rule. The mandatory runtime test is the user-asserted `not_valid` / `not_held` case that yields `otherwise` `required` with `binding: 'context_asserted'`.
+- R2. Section 3.1 states the exact legacy, schema-1 unconditional, and schema-1 branched shapes for `requirement_effect` and `visa_options`. The field name is `applicability`. Branched facts have no top-level outcome. `mixed_outcome` rejects a fact that has both. Legacy `conditional` is not upgraded. Branched facts stay unpersistable on today's writer.
+- R3. `reg-eval-ctx:v1` is personal/derived sensitive context metadata. The first runtime slice does not compute or return it. `rule-applicability:v1` remains non-personal global rule metadata.
+
 ## Classification
 
 **`PREDICATE_FOUNDATION_READY_FOR_RUNTIME_SLICE`**
@@ -36,7 +44,7 @@ The expression grammar is `all`, `any`, `not`, and `atomic`, with depth 4, 16 no
 
 The vocabulary covers destination permission, lawful residence distinct from residence country, journey origin including an unpinned `common_travel_area` region, inclusive integer age without a date of birth, a closed travel-purpose enum, document class distinct from `documentType`, issuing country versus citizenship membership versus an explicit credential link, British Overseas Territory Citizen and British National (Overseas) as non-ISO statuses, and school-party authority, size, membership, and confirmation without a school name.
 
-Missing-fact codes are returned only for predicates the matched rule still needs. Empty permission, status, and entitlement lists are `unknown`, not a denial. Context provenance `user_asserted`, `account_profile`, and `trip_context` is defined. Provenance is not authority. Asserted exemptions stay labelled `context_asserted`. Reserved provider and document-verified provenances are rejected.
+Missing-fact codes are returned only for predicates the matched rule still needs. Empty permission, status, and entitlement lists are `unknown`, not a denial. Context provenance `user_asserted`, `account_profile`, and `trip_context` is defined. Provenance is not authority. A decided result records a value-free dependency trace. User-asserted negative facts that let `otherwise` return `required` stay `context_asserted`. Reserved provider and document-verified provenances are rejected.
 
 Multi-citizenship keeps the full set. There is no best-passport selection. Future composition would cite support ids on branches and, when one branch cites two sources, on atoms. Same-request extraction still returns `composition_policy_unavailable`. F8 may later accept only a complete fact that includes applicability, and only through `regelKandidatAkzeptieren`.
 
@@ -53,13 +61,13 @@ The first runtime files are `lib/readiness/regulierungs-anwendbarkeit.ts` and `l
 ## Handoff
 
 - Arbeitsblock: docs-only regulatory eligibility predicate architecture. Issue #792. Draft PR #793. Branch `docs/official-truth-regulatory-eligibility-predicate-architecture-1`.
-- Status: technically specified, waiting for independent Technical-Lead review. Not Ready. Not merged.
-- Implemented: the architecture, this report, and the self-review. No runtime.
+- Status: R1 correction on this Draft, waiting for independent Technical-Lead re-review of the new tip. The reviewed head `3eee6bb8c7476748d1c495de0fedea564d859a5b` is not the review head. Not Ready. Not merged.
+- Implemented: the architecture, this report, and the self-review, including the R1, R2, and R3 corrections. No runtime.
 - Not implemented: the pure module, acceptance wiring, migration, UI, extractor, composition policy, region pin, F8.
 - DB / Production: no migration, no apply, no RLS change, no store write. Branched facts are defined as not persistable on the current effect table.
 - Costs / provider / secrets: none.
 - Product-Owner gates: unchanged. A later persist of personal legal-status context, or a Production migration, remains gated.
-- Exact next step: independent Technical-Lead review of the branch tip that adds these documents. Cursor does not Ready, merge, or start the runtime slice.
+- Exact next step: independent Technical-Lead re-review of the branch tip that contains this R1 correction. Cursor does not Ready, merge, or start the runtime slice.
 - Read first: the task, the architecture, this report, the self-review, then the GOV.UK ETA audit and source-family selection 2.
 
 `docs/ACTIVE_WORK_STATUS.md` and `DECISIONS.md` were not edited. The task's required output is these three documents. This report is the branch handoff.
