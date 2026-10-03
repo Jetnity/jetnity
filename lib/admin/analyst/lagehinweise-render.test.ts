@@ -48,7 +48,7 @@ function htmlAus(bericht: AnalystBericht): string {
 describe('AdminLagehinweise Ansicht (synthetic render)', () => {
   test('T-a11y-structure: Abschnitt, Liste und Links tragen Status plus Frische', () => {
     const html = htmlAus(synthetischUnavailable())
-    assert.match(html, /<h2[^>]*>Aktuelle Hinweise<\/h2>/)
+    assert.match(html, /<h3[^>]*>Gesamtbild · System Health<\/h3>/)
     assert.match(html, /<ul/)
     assert.match(html, /aria-label="System Health öffnen:/)
     assert.match(html, /Nicht erreichbar/)
@@ -145,6 +145,14 @@ describe('AdminLagehinweise Ansicht (synthetic render)', () => {
     assert.match(noSignalHtml, /30 Sekunden/)
     assert.match(noSignalHtml, /UTC/)
     assert.doesNotMatch(noSignalHtml, /12:00:00/)
+    assert.match(noSignalHtml, /Keine Maßnahmen erforderlich/)
+    assert.match(noSignalHtml, /Für die frisch belegten Quellen/)
+    assert.match(noSignalHtml, /Plattformzustand nicht vollständig belegt/)
+    assert.doesNotMatch(html, /Keine Maßnahmen erforderlich/)
+    const staleNoSignal = { ...noSignal, insights: [{ ...noSignalInsight, freshness: { ...noSignalInsight.freshness, state: 'stale' as const } }] }
+    assert.doesNotMatch(htmlAus(staleNoSignal), /Keine Maßnahmen erforderlich/)
+    const breakGlass = { ...noSignal, access: { status: 'allowed' as const, grant: 'break-glass' as const } }
+    assert.doesNotMatch(htmlAus(breakGlass), /Keine Maßnahmen erforderlich/)
 
     const unbekannt = leiteSystemHealthInsights({
       access: { status: 'allowed', grant: 'role' },
@@ -162,6 +170,7 @@ describe('AdminLagehinweise Ansicht (synthetic render)', () => {
       },
     })
     const unknownHtml = htmlAus(unbekannt)
+    assert.doesNotMatch(unknownHtml, /Keine Maßnahmen erforderlich/)
     assert.match(unknownHtml, /Prüfzeitpunkt unbekannt/)
     assert.match(unknownHtml, /Alter unbekannt/)
     assert.doesNotMatch(unknownHtml, /<time dateTime="kein-datum"/)
@@ -174,6 +183,7 @@ describe('AdminLagehinweise Ansicht (synthetic render)', () => {
       nowMs: JETZT,
     })
     const html = htmlAus(bericht)
+    assert.doesNotMatch(html, /Keine Maßnahmen erforderlich/)
     assert.doesNotMatch(html, /data-analyst-coverage/)
     assert.doesNotMatch(html, /System Health öffnen/)
     assert.match(html, /System Health nicht gelesen/)

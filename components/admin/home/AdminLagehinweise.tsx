@@ -8,11 +8,11 @@ import {
 import { beobachtungsstand } from '@/lib/admin/analyst/system-health-insights'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
+import AdminEvidenceDetails from './AdminEvidenceDetails'
 
 function chipKlassen(insight: AnalystInsight): string {
-  if (insight.materiality === 'none' || insight.materiality === 'coverage') {
-    return 'border-border bg-muted text-foreground'
-  }
+  if (insight.materiality === 'none') return 'border-border bg-muted text-foreground'
+  if (insight.materiality === 'coverage') return 'border-border bg-background text-muted-foreground'
   if (
     insight.observed === 'unavailable' ||
     insight.observed === 'source_failed' ||
@@ -20,10 +20,10 @@ function chipKlassen(insight: AnalystInsight): string {
     insight.observed === 'lookup-failed' ||
     insight.observed === 'access_denied'
   ) {
-    return 'border-rose-400/30 bg-rose-400/10 text-rose-800 dark:text-rose-200'
+    return 'border-destructive/30 bg-destructive/10 text-destructive'
   }
   if (insight.freshness.state === 'stale' || insight.observed === 'degraded') {
-    return 'border-amber-400/30 bg-amber-400/10 text-amber-800 dark:text-amber-200'
+    return 'border-border bg-muted text-foreground'
   }
   return 'border-border bg-muted text-foreground'
 }
@@ -44,22 +44,24 @@ function abdeckungText(bericht: AnalystBericht): string {
 }
 
 export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht }) {
-  const titel = ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseTitel
   const hinweis = ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseHinweis
+
+  const attention = bericht.insights.filter((insight) => insight.materiality === 'attention').length
+  const noAction = bericht.access.status === 'allowed' && bericht.access.grant === 'role' &&
+    bericht.insights.length === 1 && bericht.insights[0].materiality === 'none' &&
+    bericht.insights[0].observed === 'healthy' && bericht.insights[0].freshness.state === 'fresh'
 
   return (
     <section aria-labelledby="admin-lagehinweise-titel" className="min-w-0 w-full max-w-full">
-      <h2 id="admin-lagehinweise-titel" className="text-lg font-semibold">
-        {titel}
-      </h2>
-      <p className="mt-2 text-sm text-muted-foreground">{hinweis}</p>
-      {bericht.access.status === 'allowed' ? (
-        <p className="mt-3 text-xs text-muted-foreground" data-analyst-coverage>
-          {abdeckungText(bericht)}
-        </p>
-      ) : null}
-      <ul className="mt-4 grid w-full min-w-0 list-none gap-3 p-0">
-        {bericht.insights.map((insight) => {
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 id="admin-lagehinweise-titel" className="text-sm font-medium">Gesamtbild · System Health</h3>
+        <span className={cn('rounded-full border px-3 py-1 text-xs font-medium', attention ? 'border-destructive/30 bg-destructive/10 text-destructive' : 'border-border bg-background text-muted-foreground')}>
+          {attention ? `${attention} Prüfhinweis${attention === 1 ? '' : 'e'}` : 'Begrenzte Abdeckung'}
+        </span>
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">Letzter Prozessstand · Plattformzustand nicht vollständig belegt</p>
+      <ul className="mt-3 grid w-full min-w-0 list-none gap-3 p-0">
+        {bericht.insights.map((insight, index) => {
           const observedLabel = ANALYST_OBSERVED_LABEL[insight.observed]
           const freshnessLabel = ANALYST_FRESHNESS_LABEL[insight.freshness.state]
           const stand = beobachtungsstand(insight)
@@ -75,7 +77,7 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
               data-analyst-attribution={insight.attribution}
             >
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-                <h3 className="min-w-0 text-sm font-medium">{insight.title}</h3>
+                <h4 className="min-w-0 text-sm font-medium">{noAction ? 'Keine Maßnahmen erforderlich' : insight.title}</h4>
                 <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', chipKlassen(insight))}>
                   <span>{observedLabel}</span>
                   <span className="mx-1" aria-hidden>
@@ -84,30 +86,46 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
                   <span>{freshnessLabel}</span>
                 </p>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{insight.explanation}</p>
+              {noAction ? <p className="mt-2 text-xs text-muted-foreground">Für die frisch belegten Quellen · kein Nachweis für die aktuelle Sitzung.</p> : null}
               <p className="mt-2 text-xs text-muted-foreground" data-analyst-observed-at>
                 <span className="font-medium text-foreground">Beobachtet: </span>
                 {stand.dateTime ? <time dateTime={stand.dateTime}>{stand.zeittext}</time> : stand.zeittext}
                 <span aria-hidden> · </span>
                 <span data-analyst-age>{stand.alterstext}</span>
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Belegt: </span>
-                {insight.proves}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Belegt nicht: </span>
-                {insight.doesNotProve}
-              </p>
-              {insight.next ? (
-                <a
-                  href={insight.next.href}
-                  className="mt-3 inline-block text-sm underline underline-offset-4 hover:no-underline"
-                  aria-label={`${insight.next.label}: ${statusName}`}
-                >
-                  {insight.next.label}
-                </a>
-              ) : null}
+              <div className="mt-2 flex flex-wrap items-start gap-x-4">
+                <div className="min-w-0 flex-1 basis-48">
+                  <AdminEvidenceDetails>
+                    {index === 0 ? (
+                      <>
+                        <p>{hinweis}</p>
+                        <p>{ADMIN_EHRLICHE_TEXTE.steuerzentraleLage}</p>
+                        {bericht.access.status === 'allowed' ? (
+                          <p data-analyst-coverage>{abdeckungText(bericht)}</p>
+                        ) : null}
+                      </>
+                    ) : null}
+                    <p>{insight.explanation}</p>
+                    <p>
+                      <span className="font-medium text-foreground">Belegt: </span>
+                      {insight.proves}
+                    </p>
+                    <p>
+                      <span className="font-medium text-foreground">Belegt nicht: </span>
+                      {insight.doesNotProve}
+                    </p>
+                  </AdminEvidenceDetails>
+                </div>
+                {insight.next ? (
+                  <a
+                    href={insight.next.href}
+                    className="inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    aria-label={`${insight.next.label}: ${statusName}`}
+                  >
+                    {insight.next.label}
+                  </a>
+                ) : null}
+              </div>
             </li>
           )
         })}

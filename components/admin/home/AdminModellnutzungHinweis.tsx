@@ -8,10 +8,11 @@ import { ladeModelUsageBericht } from '@/lib/admin/analyst/model-usage-laden'
 import { modelUsageBeobachtungsstand } from '@/lib/admin/analyst/model-usage-insights'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
+import AdminEvidenceDetails from './AdminEvidenceDetails'
 
 function chipKlassen(insight: ModelUsageInsight): string {
   if (insight.materiality === 'coverage') {
-    return 'border-border bg-muted text-foreground'
+    return 'border-border bg-background text-muted-foreground'
   }
   if (
     insight.observed === 'unavailable' ||
@@ -20,12 +21,12 @@ function chipKlassen(insight: ModelUsageInsight): string {
     insight.observed === 'lookup-failed' ||
     insight.observed === 'access_denied'
   ) {
-    return 'border-rose-400/30 bg-rose-400/10 text-rose-800 dark:text-rose-200'
+    return 'border-destructive/30 bg-destructive/10 text-destructive'
   }
   if (insight.freshness.state === 'stale') {
-    return 'border-amber-400/30 bg-amber-400/10 text-amber-800 dark:text-amber-200'
+    return 'border-border bg-background text-muted-foreground'
   }
-  return 'border-border bg-muted text-foreground'
+  return 'border-border bg-background text-muted-foreground'
 }
 
 function abdeckungText(bericht: ModelUsageBericht): string {
@@ -52,14 +53,10 @@ export function AdminModellnutzungHinweisAnsicht({ bericht }: { bericht: ModelUs
       <h2 id="admin-modellnutzung-titel" className="text-lg font-semibold">
         {titel}
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">{hinweis}</p>
-      {bericht.access.status === 'allowed' && bericht.access.grant === 'role' ? (
-        <p className="mt-3 text-xs text-muted-foreground" data-model-usage-coverage>
-          {abdeckungText(bericht)}
-        </p>
-      ) : null}
-      <ul className="mt-4 grid w-full min-w-0 list-none gap-3 p-0">
-        {bericht.insights.map((insight) => {
+      <p className="mt-1 text-xs text-muted-foreground">Read-only · 30 Tage, bis zu 200 Einträge</p>
+      <p className="mt-2 text-sm text-muted-foreground">Kostenabdeckung unvollständig</p>
+      <ul className="mt-3 grid w-full min-w-0 list-none gap-3 p-0">
+        {bericht.insights.map((insight, index) => {
           const observedLabel = MODEL_USAGE_OBSERVED_LABEL[insight.observed]
           const freshnessLabel = MODEL_USAGE_FRESHNESS_LABEL[insight.freshness.state]
           const stand = modelUsageBeobachtungsstand(insight)
@@ -84,30 +81,44 @@ export function AdminModellnutzungHinweisAnsicht({ bericht }: { bericht: ModelUs
                   <span>{freshnessLabel}</span>
                 </p>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{insight.explanation}</p>
               <p className="mt-2 text-xs text-muted-foreground" data-model-usage-observed-at>
                 <span className="font-medium text-foreground">Beobachtet: </span>
                 {stand.dateTime ? <time dateTime={stand.dateTime}>{stand.zeittext}</time> : stand.zeittext}
                 <span aria-hidden> · </span>
                 <span data-model-usage-age>{stand.alterstext}</span>
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Belegt: </span>
-                {insight.proves}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Belegt nicht: </span>
-                {insight.doesNotProve}
-              </p>
-              {insight.next ? (
-                <a
-                  href={insight.next.href}
-                  className="mt-3 inline-block text-sm underline underline-offset-4 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  aria-label={`${insight.next.label}: ${statusName}`}
-                >
-                  {insight.next.label}
-                </a>
-              ) : null}
+              <div className="mt-2 flex flex-wrap items-start gap-x-4">
+                <div className="min-w-0 flex-1 basis-48">
+                  <AdminEvidenceDetails>
+                    {index === 0 ? (
+                      <>
+                        <p>{hinweis}</p>
+                        {bericht.access.status === 'allowed' && bericht.access.grant === 'role' ? (
+                          <p data-model-usage-coverage>{abdeckungText(bericht)}</p>
+                        ) : null}
+                      </>
+                    ) : null}
+                    <p>{insight.explanation}</p>
+                    <p>
+                      <span className="font-medium text-foreground">Belegt: </span>
+                      {insight.proves}
+                    </p>
+                    <p>
+                      <span className="font-medium text-foreground">Belegt nicht: </span>
+                      {insight.doesNotProve}
+                    </p>
+                  </AdminEvidenceDetails>
+                </div>
+                {insight.next ? (
+                  <a
+                    href={insight.next.href}
+                    className="inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    aria-label={`${insight.next.label}: ${statusName}`}
+                  >
+                    {insight.next.label}
+                  </a>
+                ) : null}
+              </div>
             </li>
           )
         })}
