@@ -4,6 +4,8 @@
 // Der Aufrufer darf nur sourceId und url vorschlagen. Beides ist keine
 // Autorität. Der Katalog bleibt serverseitig. Die TCP-Verbindung benutzt
 // genau die Adresse, die dieselbe Lookup-Prüfung freigegeben hat.
+// Ein Katalog-Hostname erlaubt nur den Standard-HTTPS-Port 443.
+// Fragmente gehören nicht zur HTTP-Anfrage und nicht zur Provenienz.
 //
 // Das Ergebnis ist flüchtiges Material dieses Aufrufs. Es ist kein
 // eingereichtes Abrufmaterial, keine Evidence, kein Regel-Kandidat,
@@ -162,6 +164,7 @@ export type OfficialTruthServerOwnedRetrievalSperrgrund =
   | 'redirect_source_mismatch'
   | 'source_not_official_authority'
   | 'address_not_permitted'
+  | 'non_default_port'
   | 'dns_failed'
   | 'dns_empty'
   | 'redirect_rejected'
@@ -499,14 +502,29 @@ function hostName(wert: string): string | null {
   }
 }
 
-function portZulaessig(wert: string): boolean {
+/** Ein Katalogeintrag nennt Hostnamen, keine Portfreigabe. Nur 443 ist der HTTPS-Default. */
+function fremderHttpsPort(wert: string): boolean {
   try {
-    const port = new URL(wert).port
-    if (port === '') return true
-    const zahl = Number(port)
-    return Number.isInteger(zahl) && zahl >= 1 && zahl <= 65535
+    const gelesen = new URL(wert)
+    if (gelesen.protocol !== 'https:') return false
+    return gelesen.port !== '' && gelesen.port !== '443'
   } catch {
     return false
+  }
+}
+
+/**
+ * Das Fragment wird vor Registry, Tracking, Schleifenidentität und Netz entfernt.
+ * Query-Parameter bleiben. Das Fragment ist die einzige Entfernung.
+ */
+function fragmentEntfernen(wert: string): string {
+  try {
+    const gelesen = new URL(wert)
+    if (!gelesen.hash) return wert.trim()
+    gelesen.hash = ''
+    return gelesen.toString()
+  } catch {
+    return wert
   }
 }
 
@@ -529,20 +547,23 @@ function hatTracking(url: string): boolean {
 }
 
 function zielPruefen(registry: QuellenRegistry, sourceId: string, url: string, hop: 'initial' | 'redirect'): Ziel {
-  const host = hostName(url)
+  const bereinigt = fragmentEntfernen(url)
+  const host = hostName(bereinigt)
   const adresseUnsicher = !!host && net.isIP(host) !== 0 && !officialTruthServerOwnedRetrievalAdresseZulaessig(host)
-  const aufgeloest = quellenUrlAufloesen(registry, url)
+  if (fremderHttpsPort(bereinigt)) return { ok: false, reason: 'non_default_port' }
+  const aufgeloest = quellenUrlAufloesen(registry, bereinigt)
   if (adresseUnsicher && (aufgeloest.ok || aufgeloest.reason === 'unregistered_domain' || aufgeloest.reason === 'blocked_domain')) {
     return { ok: false, reason: 'address_not_permitted' }
   }
   if (!aufgeloest.ok) return { ok: false, reason: aufgeloest.reason }
-  if (!portZulaessig(aufgeloest.canonicalUrl)) return { ok: false, reason: 'invalid_url' }
-  if (hatTracking(url) || hatTracking(aufgeloest.canonicalUrl)) return { ok: false, reason: 'tracking_parameter' }
+  const canonicalUrl = fragmentEntfernen(aufgeloest.canonicalUrl)
+  if (fremderHttpsPort(canonicalUrl)) return { ok: false, reason: 'non_default_port' }
+  if (hatTracking(bereinigt) || hatTracking(canonicalUrl)) return { ok: false, reason: 'tracking_parameter' }
   if (aufgeloest.source.sourceId !== sourceId) {
     return { ok: false, reason: hop === 'redirect' ? 'redirect_source_mismatch' : 'url_source_mismatch' }
   }
   if (aufgeloest.source.sourceClass !== 'official_authority') return { ok: false, reason: 'source_not_official_authority' }
-  return { ok: true, canonicalUrl: aufgeloest.canonicalUrl, sourceId: aufgeloest.source.sourceId }
+  return { ok: true, canonicalUrl, sourceId: aufgeloest.source.sourceId }
 }
 
 function medientyp(wert: string | null): string | null {
@@ -678,6 +699,10 @@ function serverHttp(anfrage: {
       fertig({ ok: false, reason: 'http_failed' })
       return
     }
+    if (gelesen.protocol !== 'https:' || (gelesen.port !== '' && gelesen.port !== '443')) {
+      fertig({ ok: false, reason: 'http_failed' })
+      return
+    }
     const hostname = gelesen.hostname.startsWith('[') ? gelesen.hostname.slice(1, -1) : gelesen.hostname
     const agent = new https.Agent({ keepAlive: false, maxSockets: 1 })
     const req = https.request(
@@ -685,7 +710,7 @@ function serverHttp(anfrage: {
         method: 'GET',
         protocol: 'https:',
         hostname,
-        port: gelesen.port || 443,
+        port: 443,
         path: `${gelesen.pathname}${gelesen.search}`,
         headers: { ...FESTE_HEADER },
         lookup: anfrage.lookup as unknown as NonNullable<https.RequestOptions['lookup']>,
@@ -839,7 +864,9 @@ export async function decideOfficialTruthServerOwnedRetrieval(
         if (!hop.location || !hop.location.trim()) return blockiert('redirect_rejected')
         let naechste: string
         try {
-          naechste = new URL(hop.location.trim(), aktuell).toString()
+          const gelesen = new URL(hop.location.trim(), aktuell)
+          gelesen.hash = ''
+          naechste = gelesen.toString()
         } catch {
           return blockiert('redirect_rejected')
         }

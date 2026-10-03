@@ -778,6 +778,107 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(grund(uhr), 'invalid_retrieval_time')
     assert.equal(JSON.stringify(uhr.ergebnis).includes(TEXT), false)
   })
+
+  test('31 ein Katalog-Hostname erlaubt nur den Standard-HTTPS-Port', async () => {
+    for (const port of [8443, 9443, 1, 65535]) {
+      const lauf = await laufen({ eingabe: { sourceId: AMTLICH, url: `https://www.gov.example:${port}/rules` } })
+      assert.equal(grund(lauf), 'non_default_port', String(port))
+      assert.equal(lauf.dns.length, 0, String(port))
+      assert.equal(lauf.verbindungen.length, 0, String(port))
+      assert.equal(JSON.stringify(lauf.ergebnis).includes(String(port)), false, String(port))
+    }
+    const mitFragment = await laufen({
+      eingabe: { sourceId: AMTLICH, url: 'https://www.gov.example:8443/rules#port-secret-91f3' },
+    })
+    assert.equal(grund(mitFragment), 'non_default_port')
+    assert.equal(mitFragment.dns.length, 0)
+    assert.equal(JSON.stringify(mitFragment.ergebnis).includes('port-secret-91f3'), false)
+    const standard = await laufen({ eingabe: { sourceId: AMTLICH, url: 'https://www.gov.example:443/rules' } })
+    const wert = erfolg(standard)
+    assert.equal(wert.canonicalUrl, AMTLICH_URL)
+    assert.equal(standard.verbindungen[0]?.url, AMTLICH_URL)
+    assert.equal(wert.canonicalUrl.includes(':443'), false)
+    const umleitung = await laufen({
+      antwort: (url) => {
+        if (url === AMTLICH_URL) return { status: 302, location: 'https://www.gov.example:443/rules/next' }
+        return { status: 200, body: TEXT, headers: { 'content-type': 'text/plain' } }
+      },
+    })
+    const nachPort = erfolg(umleitung)
+    assert.equal(nachPort.canonicalUrl, 'https://www.gov.example/rules/next')
+    assert.deepEqual(
+      umleitung.verbindungen.map((eintrag) => eintrag.url),
+      [AMTLICH_URL, 'https://www.gov.example/rules/next'],
+    )
+    for (const port of [8443, 9443]) {
+      const sprung = await laufen({
+        antwort: () => ({ status: 302, location: `https://travel.gov.example:${port}/rules` }),
+      })
+      assert.equal(grund(sprung), 'non_default_port', String(port))
+      assert.deepEqual(
+        sprung.verbindungen.map((eintrag) => eintrag.url),
+        [AMTLICH_URL],
+        String(port),
+      )
+      assert.deepEqual(sprung.dns, ['www.gov.example'], String(port))
+      assert.equal(JSON.stringify(sprung.ergebnis).includes(String(port)), false, String(port))
+    }
+    assert.doesNotMatch(datei(DATEI), /<= 65535/)
+  })
+
+  test('32 Fragmente gehören nicht zur Anfrage, zur Schleife oder zur Provenienz', async () => {
+    const eins = 'fragment-one-secret-91f3'
+    const zwei = 'fragment-two-secret-91f3'
+    const erste = await laufen({ eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}#${eins}` } })
+    const zweite = await laufen({ eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}?lang=en#${zwei}` } })
+    const kanonEins = erfolg(erste)
+    const kanonZwei = erfolg(zweite)
+    assert.equal(kanonEins.canonicalUrl, AMTLICH_URL)
+    assert.equal(erste.verbindungen[0]?.url, AMTLICH_URL)
+    assert.equal(kanonZwei.canonicalUrl, `${AMTLICH_URL}?lang=en`)
+    assert.equal(zweite.verbindungen[0]?.url, `${AMTLICH_URL}?lang=en`)
+    assert.equal(JSON.stringify(erste.ergebnis).includes(eins), false)
+    assert.equal(JSON.stringify(zweite.ergebnis).includes(zwei), false)
+    assert.equal(JSON.stringify(erste.ergebnis).includes('#'), false)
+    const schleife = await laufen({
+      antwort: () => ({ status: 302, location: `#${eins}` }),
+    })
+    assert.equal(grund(schleife), 'redirect_loop')
+    assert.deepEqual(
+      schleife.verbindungen.map((eintrag) => eintrag.url),
+      [AMTLICH_URL],
+    )
+    assert.equal(JSON.stringify(schleife.ergebnis).includes(eins), false)
+    const nurFragment = await laufen({
+      antwort: () => ({ status: 302, location: `${AMTLICH_URL}#${zwei}` }),
+    })
+    assert.equal(grund(nurFragment), 'redirect_loop')
+    assert.equal(nurFragment.verbindungen.length, 1)
+    assert.equal(JSON.stringify(nurFragment.ergebnis).includes(zwei), false)
+    const weiter = await laufen({
+      eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}#${eins}` },
+      antwort: (url) => {
+        if (url === AMTLICH_URL) return { status: 302, location: `https://www.gov.example/rules/next#${zwei}` }
+        return { status: 200, body: TEXT, headers: { 'content-type': 'text/plain' } }
+      },
+    })
+    const ziel = erfolg(weiter)
+    assert.equal(ziel.canonicalUrl, 'https://www.gov.example/rules/next')
+    assert.equal(ziel.redirectCount, 1)
+    assert.deepEqual(
+      weiter.verbindungen.map((eintrag) => eintrag.url),
+      [AMTLICH_URL, 'https://www.gov.example/rules/next'],
+    )
+    assert.equal(JSON.stringify(weiter.ergebnis).includes(eins), false)
+    assert.equal(JSON.stringify(weiter.ergebnis).includes(zwei), false)
+    assert.equal(ziel.canonicalUrl.includes('#'), false)
+    const tracking = await laufen({
+      eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}?utm_source=tracking-secret-91f3#${eins}` },
+    })
+    assert.equal(grund(tracking), 'tracking_parameter')
+    assert.equal(tracking.verbindungen.length, 0)
+    assert.equal(JSON.stringify(tracking.ergebnis).includes('tracking-secret-91f3'), false)
+  })
 })
 
 function dateienUnter(relativ: string): string[] {
