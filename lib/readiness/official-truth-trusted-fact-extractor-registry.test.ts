@@ -587,8 +587,9 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
 
   test('24 kein Netz, keine Uhr, kein Modell und kein Speicher', () => {
     const text = datei(DATEI)
+    assert.match(text, /^import 'server-only'$/m)
     assert.doesNotMatch(text, /from ['"]node:(https|http|dns|net)['"]/)
-    assert.doesNotMatch(text, /import ['"]server-only['"]/)
+    assert.doesNotMatch(text, /from ['"]@\/lib\/supabase|from ['"]pg['"]|from ['"]node:sqlite['"]/)
     assert.doesNotMatch(text, /\bfetch\s*\(/)
     assert.doesNotMatch(text, /\bDate\b/)
     assert.doesNotMatch(text, /regelKandidatAkzeptieren|evidenceKandidatAkzeptieren|akzeptierteRegelClaimSpeichern/)
@@ -621,6 +622,50 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       ;(ergebnis.provenance[0] as { fieldPath: string }).fieldPath = 'effect'
     })
     assert.equal(ergebnis.fact.kind === 'blank_passport_pages' && ergebnis.fact.minimumPages, 2)
+  })
+
+  test('R1 eine Pfadregel gilt nur ohne Query, eine exakte URL darf eine Query nennen', () => {
+    const pfad = { match: 0, extract: 0 }
+    const mitSprache = 'https://www.gov.example/pages?lang=en'
+    const andereQuery = 'https://www.gov.example/pages?type=visa&country=jp'
+    const definitionPfad = seitenDefinition(pfad, {
+      urlAllowlist: [{ kind: 'path', host: 'www.gov.example', path: '/pages' }],
+    })
+    const ohne = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [definitionPfad])
+    assert.equal(ohne.status, 'trusted_fact_extracted')
+    const sprache = stuetze(SEITEN_ID, AMT, mitSprache, SEITEN_TEXT)
+    const mitLang = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ supports: [sprache] }), [definitionPfad])
+    assert.equal(grund(mitLang), 'domain_or_path_not_allowlisted')
+    assert.equal(sprache.retrieval.canonicalUrl, mitSprache)
+    const beliebig = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      eingabe({ supports: [stuetze(SEITEN_ID, AMT, andereQuery, SEITEN_TEXT)] }),
+      [definitionPfad],
+    )
+    assert.equal(grund(beliebig), 'domain_or_path_not_allowlisted')
+    assert.equal(pfad.match, 1)
+    assert.equal(pfad.extract, 1)
+
+    const exaktZaehler = { match: 0, extract: 0 }
+    const exakt = seitenDefinition(exaktZaehler, {
+      urlAllowlist: [{ kind: 'exact', canonicalUrl: mitSprache }],
+    })
+    const erlaubt = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      eingabe({ supports: [stuetze(SEITEN_ID, AMT, mitSprache, SEITEN_TEXT)] }),
+      [exakt],
+    )
+    assert.equal(erlaubt.status, 'trusted_fact_extracted')
+    assert.equal(grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [exakt])), 'domain_or_path_not_allowlisted')
+    assert.equal(
+      grund(
+        officialTruthTrustedFactExtrahierenMitDefinitionen(
+          eingabe({ supports: [stuetze(SEITEN_ID, AMT, andereQuery, SEITEN_TEXT)] }),
+          [exakt],
+        ),
+      ),
+      'domain_or_path_not_allowlisted',
+    )
+    assert.equal(exaktZaehler.match, 1)
+    assert.equal(exaktZaehler.extract, 1)
   })
 
   test('ein nicht gelisteter Pfad scheitert ohne Extraktor', () => {

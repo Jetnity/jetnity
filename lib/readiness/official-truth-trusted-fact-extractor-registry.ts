@@ -5,6 +5,9 @@
 // keine echte Quellenfamilie und liest kein eingereichtes Abrufmaterial.
 // Auswahl, Schema und Politik kommen aus dem Code, nicht vom Aufrufer.
 // Ein Erfolg ist ein kanonisch geprüfter Regel-Fakt, keine Annahme.
+// Der Marker beschränkt das Modul auf den Server-Stapel. Er öffnet kein Netz.
+
+import 'server-only'
 
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import { quelleUrlLesen } from '@/lib/readiness/official'
@@ -419,6 +422,10 @@ function urlErlaubt(canonicalUrl: string, regeln: readonly OfficialTruthExtracto
   }
   return regeln.some((regel) => {
     if (regel.kind === 'exact') return regel.canonicalUrl === canonicalUrl
+    // Eine Pfadregel ist exakt Host und Pfad ohne Query. Eine funktionale
+    // Query ändert die Seite und braucht eine eigene exakte URL-Regel.
+    // Die Query am Abruf bleibt stehen. Sie wird hier nicht entfernt.
+    if (adresse.search !== '') return false
     return adresse.hostname.toLowerCase() === regel.host && adresse.pathname === regel.path
   })
 }
