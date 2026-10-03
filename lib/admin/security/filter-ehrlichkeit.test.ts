@@ -58,7 +58,7 @@ describe('Admin-Security Filter-Ehrlichkeit', () => {
       new RegExp(String(SECURITY_LISTEN_MAX_ZEILEN)),
     )
     assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /können unvollständig sein/)
-    assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /Gesperrte IPs/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /Blocklisteneinträge/)
     assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /gelesenen Zeilen/)
     assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /24h-Kennzahlen/)
     assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /aufgezeichnete Zeilen/)
@@ -71,7 +71,7 @@ describe('Admin-Security Filter-Ehrlichkeit', () => {
     assert.match(widget, /ADMIN_EHRLICHE_TEXTE\.securityBlocklisteBegrenzt/)
     assert.match(widget, /data-security-read-bound="blocklist"/)
     assert.match(widget, /data-security-read-bound="events"/)
-    assert.match(widget, /Blockliste \(nicht enforced\)/)
+    assert.match(widget, /Blockliste · ohne technische Sperrwirkung/)
     assert.match(widget, /'\/api\/admin\/security\/block'/)
     assert.match(widget, /'\/api\/admin\/security\/unblock'/)
     assert.match(widget, /\{ ip, reason \}/)

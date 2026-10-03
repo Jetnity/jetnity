@@ -11,6 +11,7 @@ import {
   type SystemHealthCheck,
   type SystemHealthItem,
 } from '@/lib/admin/system-health'
+import OperationsEvidence from '@/components/admin/OperationsEvidence'
 import { cn } from '@/lib/utils'
 
 function statusKlassen(item: Pick<SystemHealthItem, 'status' | 'freshness'>): string {
@@ -23,7 +24,15 @@ function statusKlassen(item: Pick<SystemHealthItem, 'status' | 'freshness'>): st
   if (item.status === 'unavailable') {
     return 'border-rose-400/30 bg-rose-400/10 text-rose-800 dark:text-rose-200'
   }
-  return 'border-border bg-muted text-foreground'
+  return 'border-border bg-background text-muted-foreground'
+}
+
+function kurztext(item: SystemHealthItem): string {
+  if (item.id === 'app') return 'Prozess-Erreichbarkeit und Deployment werden getrennt bewertet.'
+  if (item.id === 'supabase') return 'App-Datenzugriff und Plattformstatus werden getrennt bewertet.'
+  if (item.status === 'not_configured') return 'Keine angebundene Statusquelle.'
+  if (item.status === 'unknown') return 'Für diesen Dienst liegt kein belastbarer Status vor.'
+  return item.summary
 }
 
 function CheckZeile({ check }: { check: SystemHealthCheck }) {
@@ -31,7 +40,7 @@ function CheckZeile({ check }: { check: SystemHealthCheck }) {
   const frischeText = FRESHNESS_LABEL[check.freshness.state]
   return (
     <li
-      className="rounded-xl border border-border bg-background px-3 py-2"
+      className="min-w-0 border-b border-border px-1 py-3 last:border-b-0"
       data-health-check={check.id}
       data-health-status={check.status}
       data-health-green={healthKarteIstGruen(check) ? 'true' : 'false'}
@@ -40,28 +49,23 @@ function CheckZeile({ check }: { check: SystemHealthCheck }) {
         <p className="text-sm font-medium">{check.name}</p>
         <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', statusKlassen(check))}>
           <span>{statusText}</span>
-          <span className="mx-1" aria-hidden>
-            ·
-          </span>
-          <span>{frischeText}</span>
         </p>
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">{check.summary}</p>
+      <p className="mt-1 text-xs text-muted-foreground">Nachweis: {frischeText}</p>
     </li>
   )
 }
 
 function HealthKarte({ item }: { item: SystemHealthItem }) {
-  const [offen, setOffen] = useState(false)
   const statusText = HEALTH_STATUS_LABEL[item.status]
   const frischeText = FRESHNESS_LABEL[item.freshness.state]
   const claim = sichtbarerKartenClaim(item)
-  const beschriftung = `${claim}, Quelle ${item.source}, ${frischeText}`
+  const beschriftung = `${claim}, ${frischeText}`
   const gruen = healthKarteIstGruen(item)
 
   return (
     <article
-      className="rounded-2xl border border-border bg-card p-4"
+      className="min-w-0 rounded-2xl border border-border bg-card px-4 pt-4 sm:px-5"
       aria-label={beschriftung}
       data-health-id={item.id}
       data-health-status={item.status}
@@ -69,66 +73,26 @@ function HealthKarte({ item }: { item: SystemHealthItem }) {
       data-health-green={gruen ? 'true' : 'false'}
       data-health-claim={claim}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3 pb-3">
         <div className="min-w-0">
           <h3 className="text-base font-semibold">{item.name}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">{item.summary}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{kurztext(item)}</p>
         </div>
         <p className={cn('rounded-md border px-2 py-1 text-xs font-medium', statusKlassen(item))}>
           <span>{statusText}</span>
-          <span className="mx-1" aria-hidden>
-            ·
-          </span>
-          <span>{frischeText}</span>
         </p>
       </div>
       {item.checks?.length ? (
-        <ul className="mt-3 grid gap-2" aria-label={`Teilprüfungen ${item.name}`}>
+        <ul className="mb-3 grid gap-x-6 border-t sm:grid-cols-2" aria-label={`Teilprüfungen ${item.name}`}>
           {item.checks.map((teil) => (
             <CheckZeile key={teil.id} check={teil} />
           ))}
         </ul>
       ) : null}
-      <dl className="mt-3 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
-        <div>
-          <dt className="font-medium text-foreground">Quelle</dt>
-          <dd>{item.source}</dd>
-        </div>
-        <div>
-          <dt className="font-medium text-foreground">Geprüft</dt>
-          <dd>{new Date(item.checkedAt).toLocaleString('de-CH')}</dd>
-        </div>
-      </dl>
-      <button
-        type="button"
-        className="mt-3 inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:no-underline"
-        aria-expanded={offen}
-        onClick={() => setOffen((wert) => !wert)}
-      >
-        {offen ? 'Details schliessen' : 'Details'}
-      </button>
-      {offen ? (
-        <div className="mt-3 space-y-2 text-sm text-muted-foreground" data-health-detail>
-          <p>
-            <span className="font-medium text-foreground">Beweist: </span>
-            {item.proves}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Beweist nicht: </span>
-            {item.doesNotProve}
-          </p>
-          {item.detail ? <p>{item.detail}</p> : null}
-          {item.metadata ? (
-            <ul className="font-mono text-xs">
-              {Object.entries(item.metadata).map(([schluessel, wert]) => (
-                <li key={schluessel}>
-                  {schluessel}: {wert ?? '—'}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      ) : null}
+      <p className="mb-3 text-xs text-muted-foreground">
+        Geprüft {new Date(item.checkedAt).toLocaleString('de-CH')} · Nachweis {frischeText}
+      </p>
+      <OperationsEvidence item={item} />
     </article>
   )
 }
@@ -168,8 +132,8 @@ export default function SystemHealthBoard({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Geprüft {new Date(bericht.checkedAt).toLocaleString('de-CH')}. Keine Schreibaktion. Kein
-          automatisches Sekunden-Polling.
+          <span className="mr-2 rounded-md border bg-card px-2 py-1 text-xs">Read-only</span>
+          Geprüft {new Date(bericht.checkedAt).toLocaleString('de-CH')}
         </p>
         {aktualisierenErlaubt ? (
           <button
@@ -187,13 +151,16 @@ export default function SystemHealthBoard({
           role="alert"
           className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-800 dark:text-rose-200"
         >
-          {fehler}
+          {fehler} Angezeigt bleibt der vorherige Prüfstand.
         </p>
       ) : null}
-      <div className="grid gap-4">
-        {bericht.items.map((item) => (
-          <HealthKarte key={item.id} item={item} />
-        ))}
+      <div className="grid items-start gap-4 xl:grid-cols-2">
+        <div className="space-y-4">
+          {bericht.items.filter(item => item.id === 'app' || item.id === 'supabase').map(item => <HealthKarte key={item.id} item={item} />)}
+        </div>
+        <div className="space-y-4">
+          {bericht.items.filter(item => item.id !== 'app' && item.id !== 'supabase').map(item => <HealthKarte key={item.id} item={item} />)}
+        </div>
       </div>
     </div>
   )

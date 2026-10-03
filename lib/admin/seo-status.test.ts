@@ -360,9 +360,9 @@ describe('IndexingStatus rendert die Projektion ohne Aktivierung', () => {
     assert.match(html, /break-all/)
   })
 
-  test('statischer Abschnitt braucht keine interaktive Details-Tastatur', () => {
+  test('statischer Abschnitt bietet native Nachweis-Details ohne Fokuszwang', () => {
     const html = htmlAus(allowCanonical)
-    assert.doesNotMatch(html, /<details|<summary|autoFocus|autofocus/)
+    assert.match(html, /<details/); assert.match(html, /<summary/); assert.doesNotMatch(html, /autoFocus|autofocus/)
     const komponent = quelle('../../components/admin/system-health/IndexingStatus.tsx')
     assert.doesNotMatch(komponent, /use client/)
     assert.doesNotMatch(komponent, /process\.env/)

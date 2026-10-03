@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import AdminEvidenceDetails from '@/components/admin/home/AdminEvidenceDetails'
 
 import { SEO_STATUS_TEXTE, type SeoStatusStand } from '@/lib/admin/seo-status'
 
@@ -35,9 +36,12 @@ export default function IndexingStatus({ stand }: { stand: SeoStatusStand }) {
         >
           {SEO_STATUS_TEXTE.titel}
         </h2>
-        <p className="text-sm text-muted-foreground">{stand.standHinweis}</p>
+        <p className="text-sm font-medium">{stand.entscheidung === 'deny' ? 'Indexierung durch aktuelle Konfiguration gesperrt' : 'Indexierung durch aktuelle Konfiguration erlaubt'}</p>
+        <p className="text-xs text-muted-foreground">Konfiguration beim Laden der Seite. Kein Nachweis der tatsächlichen Indexierung.</p>
       </header>
 
+      <div className="mt-4"><AdminEvidenceDetails>
+      <p>{stand.standHinweis}</p>
       <dl className="mt-4 grid gap-4 min-w-0 sm:grid-cols-2">
         <Zeile label={SEO_STATUS_TEXTE.technischeOrigin}>
           <span className="block min-w-0 break-all font-mono text-xs sm:text-sm">
@@ -101,6 +105,7 @@ export default function IndexingStatus({ stand }: { stand: SeoStatusStand }) {
       </dl>
 
       <p className="mt-4 text-xs leading-5 text-muted-foreground">{stand.grenze}</p>
+      </AdminEvidenceDetails></div>
     </section>
   )
 }

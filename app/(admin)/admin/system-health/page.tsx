@@ -16,8 +16,7 @@ export default async function SystemHealthPage() {
       <header>
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">System Health</h2>
         <p className="text-sm text-muted-foreground">
-          Read-only. Ein Dienst ist nur gesund, wenn eine reale, frische Quelle das trägt. Fehlt die
-          Quelle, bleibt der Zustand unbekannt oder nicht konfiguriert.
+          Erreichbarkeit und Plattformstatus auf Basis der verfügbaren Nachweise.
         </p>
       </header>
       <SystemHealthBoard anfang={bericht} />

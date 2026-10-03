@@ -1,0 +1,395 @@
+{
+  "kind": "actual-pages-with-synthetic-boundaries",
+  "authenticated": false,
+  "physicalDevice": false,
+  "results": [
+    {
+      "route": "payments",
+      "width": 280,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 320,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 390,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 768,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 1024,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 1440,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 280,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 320,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 390,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 768,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 1024,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 1440,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 280,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 320,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 390,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 768,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 1024,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 1440,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 280,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 320,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 390,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 768,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 1024,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 1440,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 280,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 320,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 390,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 768,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 1024,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 1440,
+      "case": "empty",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 390,
+      "case": "loading",
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 390,
+      "case": "failed",
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 390,
+      "case": "denied",
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 390,
+      "case": "populated",
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 390,
+      "case": "loading",
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 390,
+      "case": "failed",
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 390,
+      "case": "denied",
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 390,
+      "case": "populated",
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 390,
+      "case": "stale",
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 390,
+      "case": "unknown",
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 390,
+      "case": "populated",
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 390,
+      "case": "stale",
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 390,
+      "case": "unknown",
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 390,
+      "case": "populated",
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 390,
+      "case": "users-empty",
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 390,
+      "case": "failed",
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 280,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "payments",
+      "width": 768,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 280,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "security",
+      "width": 768,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 280,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "width": 768,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 280,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "provider-ops",
+      "width": 768,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 280,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "users",
+      "width": 768,
+      "case": "populated",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "route": "system-health",
+      "case": "refresh-failure-retains-prior-report"
+    },
+    {
+      "route": "provider-ops",
+      "case": "refresh-failure-retains-prior-report"
+    },
+    {
+      "route": "security",
+      "case": "bounded-200-keeps-limit-after-filter"
+    }
+  ]
+}

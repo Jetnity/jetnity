@@ -24,6 +24,7 @@ import {
 import { toast } from 'sonner'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { lade, liste, type Fehler } from '@/lib/admin/ladezustand'
+import AdminEvidenceDetails from '@/components/admin/home/AdminEvidenceDetails'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import {
   securityEreignisLeerart,
@@ -186,12 +187,22 @@ export default function SecurityWidget() {
 
   return (
     <div className="space-y-6">
-      <p className="rounded-xl border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-        {ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis}
-      </p>
-      <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
-        {ADMIN_EHRLICHE_TEXTE.ipBlockHinweis}
-      </p>
+      <section className="rounded-2xl border bg-card px-4 py-3 sm:px-5" aria-label="Security-Abdeckung">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">Erfassung unvollständig</p>
+            <p className="mt-1 text-sm text-muted-foreground">Nur aufgezeichnete Ereignisse. Auch bei 0 Einträgen ist keine Entwarnung möglich.</p>
+          </div>
+          <Button variant="outline" onClick={refresh} disabled={loading} leftIcon={<RefreshCcw className={cn('h-4 w-4', loading && 'animate-spin')} />}>
+            Aktualisieren
+          </Button>
+        </div>
+        <div className="mt-3"><AdminEvidenceDetails>
+          <p>{ADMIN_EHRLICHE_TEXTE.securityHinweis}</p>
+          <p>{ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis}</p>
+          <p>{ADMIN_EHRLICHE_TEXTE.ipBlockHinweis}</p>
+        </AdminEvidenceDetails></div>
+      </section>
       {fehler && (
         <Fehlerflaeche
           fehler={fehler}
@@ -202,7 +213,7 @@ export default function SecurityWidget() {
       )}
 
       {/* KPIs */}
-      <section className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-4">
+      <section className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,140px),1fr))] xl:grid-cols-4">
         <KPICard
           icon={<ShieldCheck className="h-5 w-5" />}
           label={ADMIN_EHRLICHE_TEXTE.securityKpiEvents24h}
@@ -220,128 +231,14 @@ export default function SecurityWidget() {
         />
         <KPICard
           icon={<Ban className="h-5 w-5" />}
-          label="Gesperrte IPs"
+          label="Blocklisteneinträge"
           value={blockedCount}
         />
       </section>
 
-      {/* Quick Controls */}
-      <section className="rounded-2xl border bg-card p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-2">
-          <div className="sm:w-56">
-            <label className="text-xs text-muted-foreground">IP blockieren</label>
-            <Input
-              placeholder="z. B. 203.0.113.42"
-              value={banIp}
-              onChange={(e) => setBanIp(e.target.value)}
-            />
-          </div>
-          <div className="sm:flex-1">
-            <label className="text-xs text-muted-foreground">Grund</label>
-            <Input
-              placeholder="Grund..."
-              value={banReason}
-              onChange={(e) => setBanReason(e.target.value)}
-            />
-          </div>
-          <Button
-            className="sm:self-auto"
-            onClick={() => banIp && block(banIp.trim(), banReason.trim())}
-          >
-            <Ban className="h-4 w-4 mr-2" />
-            {ADMIN_EHRLICHE_TEXTE.ipBlockButton}
-          </Button>
-
-          <Button variant="outline" onClick={refresh} disabled={loading}>
-            <RefreshCcw className={cn('h-4 w-4 mr-2', loading && 'animate-spin')} />
-            Aktualisieren
-          </Button>
-
-          <div className="sm:ml-auto w-full sm:w-64">
-            <Input
-              placeholder="Suche in Events/IPs…"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Blocklist */}
-      <section className="rounded-2xl border bg-card">
-        <div className="flex items-center justify-between gap-3 px-4 py-3 border-b">
-          <div className="min-w-0">
-            <h2 className="text-sm font-semibold">Blockliste (nicht enforced)</h2>
-            {blocklistBegrenzt && (
-              <p className="mt-1 text-xs text-muted-foreground" data-security-read-bound="blocklist">
-                {ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt}
-              </p>
-            )}
-          </div>
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {blockedCount === null ? '—' : `${blockedCount} Einträge`}
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr className="text-left">
-                <th className="px-4 py-2">IP</th>
-                <th className="px-4 py-2">Grund</th>
-                <th className="px-4 py-2">Gesperrt seit</th>
-                <th className="px-4 py-2 text-right">Aktion</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(data?.blocklist ?? []).map((b) => (
-                <tr key={b.ip + (b.created_at ?? '')} className="border-t">
-                  <td className="px-4 py-2 font-mono">{b.ip}</td>
-                  <td className="px-4 py-2">{b.reason || '—'}</td>
-                  <td className="px-4 py-2">
-                    {b.created_at ? (
-                      <span className="inline-flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        {new Date(b.created_at).toLocaleString()}
-                      </span>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="flex justify-end">
-                      <Button variant="outline" size="sm" onClick={() => unblock(b.ip)}>
-                        <Undo2 className="h-4 w-4 mr-1" />
-                        Entfernen
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {/* „Keine Einträge" nur, wenn der Server das gesagt hat. Ohne
-                  Antwort ist die Aussage nicht zu treffen; die Fehlerfläche
-                  über der Ansicht sagt dann, warum. */}
-              {data !== null && data.blocklist.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
-                    Keine Einträge.
-                  </td>
-                </tr>
-              )}
-              {data === null && (
-                <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
-                    {fehler ? 'Nicht ermittelbar.' : 'Wird geladen…'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
       {/* Events */}
       <section className="rounded-2xl border bg-card">
-        <div className="flex items-center justify-between gap-3 px-4 py-3 border-b">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b">
           <div className="min-w-0">
             <h2 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.securityTabelleTitel}</h2>
             {eventsBegrenzt && (
@@ -354,7 +251,10 @@ export default function SecurityWidget() {
             {events === null ? '—' : `${events.length} Einträge`}
           </span>
         </div>
-        <div className="overflow-x-auto">
+        <div className="border-b px-4 py-3">
+          <Input containerClassName="[&>div:last-child]:hidden" aria-label="Aufgezeichnete Ereignisse durchsuchen" placeholder="Ereignisse nach IP, Typ oder Detail suchen…" value={filter} onChange={(e) => setFilter(e.target.value)} className="max-w-lg" />
+        </div>
+        <div className="overflow-x-auto" role="region" aria-label="Aufgezeichnete Ereignisse" tabIndex={0}>
           <table className="min-w-full text-sm">
             <thead className="bg-muted/50">
               <tr className="text-left">
@@ -388,12 +288,12 @@ export default function SecurityWidget() {
                       {e.ip ? (
                         <Button
                           size="sm"
-                          variant="destructive"
+                          variant="outline"
+                          leftIcon={<Ban className="h-4 w-4" />}
                           onClick={() => block(e.ip!, `aus Ereignis ${e.type || 'unbekannt'}`)}
-                          title="IP sperren"
+                          title="IP in Blockliste aufnehmen – ohne technische Sperrwirkung"
                         >
-                          <Ban className="h-4 w-4 mr-1" />
-                          Sperren
+                          Eintragen
                         </Button>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
@@ -426,6 +326,98 @@ export default function SecurityWidget() {
           </table>
         </div>
       </section>
+
+      {/* The action stores an entry; it does not enforce an IP block. */}
+      <section className="rounded-2xl border bg-card p-4 sm:p-5" aria-labelledby="blocklist-eintrag-titel">
+        <h2 id="blocklist-eintrag-titel" className="text-sm font-semibold">Blocklisteneintrag hinzufügen</h2>
+        <p className="mb-4 mt-1 text-sm text-amber-800 dark:text-amber-200">Einträge bewirken derzeit keine technische Sperre.</p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_1.5fr_auto] xl:items-end">
+          <div className="min-w-0">
+            <label htmlFor="blocklist-ip" className="mb-1 block text-xs text-muted-foreground">IP-Adresse</label>
+            <Input containerClassName="[&>div:last-child]:hidden" id="blocklist-ip" placeholder="z. B. 203.0.113.42" value={banIp} onChange={(e) => setBanIp(e.target.value)} />
+          </div>
+          <div className="min-w-0">
+            <label htmlFor="blocklist-grund" className="mb-1 block text-xs text-muted-foreground">Grund</label>
+            <Input containerClassName="[&>div:last-child]:hidden" id="blocklist-grund" placeholder="Grund…" value={banReason} onChange={(e) => setBanReason(e.target.value)} />
+          </div>
+          <Button className="w-full sm:col-span-2 xl:col-span-1 xl:w-auto" variant="outline" leftIcon={<Ban className="h-4 w-4" />} onClick={() => banIp && block(banIp.trim(), banReason.trim())}>
+            Eintrag hinzufügen
+          </Button>
+        </div>
+      </section>
+
+      {/* Blocklist */}
+      <section className="rounded-2xl border bg-card">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold">Blockliste · ohne technische Sperrwirkung</h2>
+            {blocklistBegrenzt && (
+              <p className="mt-1 text-xs text-muted-foreground" data-security-read-bound="blocklist">
+                {ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt}
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {blockedCount === null ? '—' : `${blockedCount} Einträge`}
+          </span>
+        </div>
+        <div className="overflow-x-auto" role="region" aria-label="Blocklisteneinträge" tabIndex={0}>
+          <table className="min-w-full text-sm">
+            <thead className="bg-muted/50">
+              <tr className="text-left">
+                <th className="px-4 py-2">IP</th>
+                <th className="px-4 py-2">Grund</th>
+                <th className="px-4 py-2">Eingetragen am</th>
+                <th className="px-4 py-2 text-right">Aktion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(data?.blocklist ?? []).map((b) => (
+                <tr key={b.ip + (b.created_at ?? '')} className="border-t">
+                  <td className="px-4 py-2 font-mono">{b.ip}</td>
+                  <td className="px-4 py-2">{b.reason || '—'}</td>
+                  <td className="px-4 py-2">
+                    {b.created_at ? (
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        {new Date(b.created_at).toLocaleString()}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    <div className="flex justify-end">
+                      <Button variant="outline" size="sm" onClick={() => unblock(b.ip)} leftIcon={<Undo2 className="h-4 w-4" />}>
+                        Entfernen
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {/* „Keine Einträge" nur, wenn der Server das gesagt hat. Ohne
+                  Antwort ist die Aussage nicht zu treffen; die Fehlerfläche
+                  über der Ansicht sagt dann, warum. */}
+              {data !== null && data.blocklist.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                    Keine Einträge.
+                  </td>
+                </tr>
+              )}
+              {data === null && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                    {fehler ? 'Nicht ermittelbar.' : 'Wird geladen…'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
     </div>
   )
 }
@@ -434,9 +426,9 @@ export default function SecurityWidget() {
 function KPICard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | null }) {
   return (
     <div className="rounded-2xl border bg-card p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <span className="text-xs text-muted-foreground">{label}</span>
-        <span className="text-muted-foreground">{icon}</span>
+        <span className="shrink-0 text-muted-foreground" aria-hidden>{icon}</span>
       </div>
       <div
         className={cn(
