@@ -12,7 +12,7 @@ Generation: **1**
 Session: https://cursor.com/agents/bc-d467fc77-c329-4bac-a218-2db64a02999c
 `originalModelName`: `grok-4.7-high-fast`. Not Auto.
 
-This is the author self-review. It is not an independent Technical-Lead PASS. The review head is the branch tip after the documentation commit.
+This is the author self-review. It is not an independent Technical-Lead PASS. The review head is the branch tip after the main integration.
 
 ## Scope check
 
