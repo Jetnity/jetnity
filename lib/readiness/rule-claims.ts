@@ -757,6 +757,20 @@ function regelFaktLesen(
   return zeitregelLesen(wert)
 }
 
+/**
+ * Kanonische Faktprüfung ohne Annahme.
+ * Dieselbe private Lesart wie `regelFaktLesen`. Kein zweiter Parser.
+ * Der Extraktor-Rahmen darf nur diese Funktion benutzen.
+ */
+export function regelFaktKanonischLesen(
+  art: RegelFaktArt,
+  requirementType: OfficialRequirementType,
+  wert: unknown,
+  registry: QuellenRegistry,
+): { ok: true; fact: RegelFakt } | { ok: false; reason: RegelClaimFehler } {
+  return regelFaktLesen(art, requirementType, wert, registry)
+}
+
 function qualitaetLesen(wert: unknown): RegelEvidenceQualitaet | null {
   return istText(wert, REGEL_EVIDENCE_QUALITAETEN) ? wert : null
 }
