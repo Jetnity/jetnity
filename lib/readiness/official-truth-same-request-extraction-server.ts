@@ -533,14 +533,10 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   if (freeze) {
     const phaseB = officialTruthCompositionPhaseB({
       freeze,
-      retrievals: gebunden.map((eintrag) => ({
+      supports: gebunden.map((eintrag) => ({
         versionId: eintrag.versionId,
         sourceId: eintrag.sourceId,
-        canonicalUrl: eintrag.abruf.canonicalUrl,
-        contentType: eintrag.abruf.contentType,
-        sourceContentHash: eintrag.abruf.sourceContentHash,
-        sourceSnapshot: eintrag.abruf.sourceSnapshot,
-        retrievedAt: eintrag.abruf.retrievedAt,
+        retrieval: eintrag.abruf,
       })),
       proofSupports: fest.supports.map((support) => ({
         versionId: support.versionId,

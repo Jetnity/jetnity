@@ -12,10 +12,11 @@ import 'server-only'
 import { OFFICIAL_VISA_MODES, type OfficialVisaMode } from '@/lib/readiness/official'
 import {
   officialTruthExtractorDefinitionenPruefen,
-  officialTruthExtractorMedienTyp,
+  officialTruthExtractorEingefroreneAusfuehrung,
   officialTruthExtractorUrlErlaubt,
+  type OfficialTruthExtractorBeobachtung,
   type OfficialTruthExtractorDefinition,
-  type OfficialTruthExtractorKontext,
+  type OfficialTruthTrustedFactExtractorSperrgrund,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import {
   regulierungsAusdruckStrukturSchluessel,
@@ -24,7 +25,6 @@ import {
 import {
   REGEL_FAKT_ARTEN,
   REGEL_SUPPORT_MAX,
-  regelFaktKanonischLesen,
   type RegelFakt,
   type RegelFaktArt,
   type RegelScope,
@@ -59,65 +59,24 @@ const ZUWEISUNG_SCHLUESSEL = ['target', 'sourceIds', 'relation', 'role'] as cons
 const VISA_MODI = OFFICIAL_VISA_MODES.filter((modus) => modus !== 'unknown')
 type VisaSlot = Exclude<OfficialVisaMode, 'unknown'>
 
-const MATCH_GRUENDE = new Set<string>([
-  'schema_mismatch',
-  'structure_not_recognized',
-  'schema_family_not_allowlisted',
-  'required_key_missing',
-  'selector_missing',
-  'heading_meaning_changed',
-  'representation_not_eligible',
-  'ambiguous_structure',
-  'unknown_unit',
-  'unknown_qualifier',
-  'duplicate_value',
-  'conflicting_value',
-  'source_epoch_unreadable',
-  'snapshot_bound_exceeded',
-  'fact_incomplete',
-])
-
-const EXTRAKT_GRUENDE = new Set<string>([
-  ...MATCH_GRUENDE,
-  'policy_field_unassigned',
-  'fact_kind_mismatch',
-  'requirement_type_mismatch',
-])
-
-const FAKT_VERBOTEN = new Set(['atomKey', 'atomLocator', 'atomId'])
-
+/**
+ * Die Sperrgründe des einen Extraktor-Rahmens gelten hier unverändert
+ * weiter. Diese Schicht ergänzt nur Politik- und Zitatgründe. Sie
+ * übersetzt keinen Rahmen-Grund in einen eigenen.
+ */
 export type OfficialTruthCompositionSperrgrund =
+  | OfficialTruthTrustedFactExtractorSperrgrund
   | 'composition_policy_unavailable'
-  | 'domain_or_path_not_allowlisted'
   | 'ambiguous_policy'
-  | 'policy_version_mismatch'
-  | 'duplicate_extractor_match'
   | 'duplicate_policy_match'
   | 'duplicate_policy_version'
   | 'invalid_policy_definition'
-  | 'invalid_extractor_definition'
-  | 'duplicate_extractor_version'
-  | 'content_type_not_allowlisted'
-  | 'schema_mismatch'
-  | 'fact_kind_mismatch'
-  | 'same_source_composition'
-  | 'ambiguous_structure'
-  | 'support_mismatch'
-  | 'condition_provenance_ambiguous'
-  | 'policy_field_unassigned'
-  | 'conflicting_value'
-  | 'duplicate_value'
-  | 'fact_incomplete'
   | 'atom_locator_missing'
   | 'atom_locator_unassigned'
   | 'atom_locator_duplicate'
-  | 'unexpected_fields'
-  | 'structure_not_recognized'
   | 'source_changed_since_evidence'
   | 'source_url_changed_since_evidence'
   | 'support_binding_mismatch'
-  | 'invalid_fact'
-  | 'policy_required'
 
 export type OfficialTruthCompositionCitationTarget =
   | { readonly kind: 'fact_field'; readonly fieldPath: string }
@@ -213,20 +172,26 @@ export type OfficialTruthCompositionProvenanceIdentity = {
   readonly citations: readonly { readonly citationKey: string; readonly sourceId: string; readonly versionId: string }[]
 }
 
-export type OfficialTruthCompositionBeobachtung = {
-  readonly target: OfficialTruthCompositionCitationTarget
-  readonly sourceId: string
-  readonly canonical: string
-}
-
+/**
+ * Frischer servereigener Abruf. Diese Schicht liest ihn nicht aus.
+ * Sie reicht ihn unverändert an die eine Ausführungsnaht weiter und
+ * vergleicht danach nur die dort gebundenen Werte mit der Evidenz.
+ */
 export type OfficialTruthCompositionRetrieval = {
-  readonly versionId: string
+  readonly status: 'server_owned_official_retrieval'
   readonly sourceId: string
   readonly canonicalUrl: string
-  readonly contentType: string | null
-  readonly sourceContentHash: string
-  readonly sourceSnapshot: string
   readonly retrievedAt: string
+  readonly contentType: string | null
+  readonly sourceSnapshot: string
+  readonly sourceContentHash: string
+  readonly redirectCount: number
+}
+
+export type OfficialTruthCompositionSupport = {
+  readonly versionId: string
+  readonly sourceId: string
+  readonly retrieval: OfficialTruthCompositionRetrieval
 }
 
 export type OfficialTruthCompositionProofSupport = {
@@ -277,33 +242,55 @@ export const OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY: readonly OfficialTruthC
 
 const SEAL_BRAND: unique symbol = Symbol('officialTruthCompositionExecution')
 
+/**
+ * Rekursives Einfrieren ohne Tiefengrenze. Im Strict-Modus wirft jede
+ * spätere Mutation. Der Besuchsspeicher beendet auch einen Zyklus.
+ */
+function tiefEinfrieren<T>(wert: T, gesehen: WeakSet<object> = new WeakSet()): T {
+  if (!wert || typeof wert !== 'object') return wert
+  if (gesehen.has(wert)) return wert
+  gesehen.add(wert)
+  for (const eintrag of Array.isArray(wert) ? wert : Object.values(wert as Record<string, unknown>)) {
+    tiefEinfrieren(eintrag, gesehen)
+  }
+  return Object.freeze(wert) as T
+}
+
+/** Beweis, dass der Fakt vor dem Siegel wirklich tief unveränderlich ist. */
+function tiefGefroren(wert: unknown, gesehen: WeakSet<object> = new WeakSet()): boolean {
+  if (!wert || typeof wert !== 'object') return true
+  if (gesehen.has(wert)) return true
+  gesehen.add(wert)
+  if (!Object.isFrozen(wert)) return false
+  const kinder = Array.isArray(wert) ? wert : Object.values(wert as Record<string, unknown>)
+  return kinder.every((eintrag) => tiefGefroren(eintrag, gesehen))
+}
+
+export type OfficialTruthCompositionSealSicht = {
+  readonly fact: RegelFakt
+  readonly policyId: string
+  readonly policyVersion: number
+  readonly supportVersionIds: readonly string[]
+}
+
 class OfficialTruthCompositionExecutionSeal {
-  readonly #fact: RegelFakt
-  readonly #policyId: string
-  readonly #policyVersion: number
-  readonly #supportVersionIds: readonly string[]
+  readonly #sicht: OfficialTruthCompositionSealSicht
   readonly #brand = SEAL_BRAND
 
   constructor(fact: RegelFakt, policyId: string, policyVersion: number, supportVersionIds: readonly string[]) {
-    this.#fact = fact
-    this.#policyId = policyId
-    this.#policyVersion = policyVersion
-    this.#supportVersionIds = Object.freeze([...supportVersionIds])
+    // Der gebundene Fakt ist bereits tief eingefroren. Das erneute
+    // Einfrieren ändert die Identität nicht und bleibt die letzte Schranke.
+    this.#sicht = Object.freeze({
+      fact: tiefEinfrieren(fact),
+      policyId,
+      policyVersion,
+      supportVersionIds: Object.freeze([...supportVersionIds]),
+    })
     void this.#brand
   }
 
-  view(): {
-    fact: RegelFakt
-    policyId: string
-    policyVersion: number
-    supportVersionIds: readonly string[]
-  } {
-    return {
-      fact: this.#fact,
-      policyId: this.#policyId,
-      policyVersion: this.#policyVersion,
-      supportVersionIds: this.#supportVersionIds,
-    }
+  view(): OfficialTruthCompositionSealSicht {
+    return this.#sicht
   }
 }
 
@@ -311,12 +298,7 @@ export function isOfficialTruthCompositionSeal(wert: unknown): boolean {
   return wert instanceof OfficialTruthCompositionExecutionSeal
 }
 
-export function officialTruthCompositionSealView(wert: unknown): {
-  fact: RegelFakt
-  policyId: string
-  policyVersion: number
-  supportVersionIds: readonly string[]
-} | null {
+export function officialTruthCompositionSealView(wert: unknown): OfficialTruthCompositionSealSicht | null {
   if (!(wert instanceof OfficialTruthCompositionExecutionSeal)) return null
   return wert.view()
 }
@@ -403,6 +385,15 @@ function citationKey(target: OfficialTruthCompositionCitationTarget): string {
       return nie
     }
   }
+}
+
+/**
+ * Der Zielschlüssel ist die Sprache dieser Schicht. Ein codeeigener
+ * Extraktor beschriftet seine quellenbezogenen Beobachtungen damit.
+ * Der Rahmen selbst behandelt ihn als undurchsichtigen Text.
+ */
+export function officialTruthCompositionCitationKey(target: OfficialTruthCompositionCitationTarget): string {
+  return citationKey(target)
 }
 
 function schrittGueltig(schritt: string): boolean {
@@ -898,14 +889,6 @@ function projektion(
   return sortiert(ids)
 }
 
-function faktVerbote(wert: unknown, tiefe = 0): boolean {
-  if (tiefe > 8 || !wert || typeof wert !== 'object') return false
-  if (Array.isArray(wert)) return wert.some((eintrag) => faktVerbote(eintrag, tiefe + 1))
-  return Object.entries(wert as Record<string, unknown>).some(
-    ([name, eintrag]) => FAKT_VERBOTEN.has(name) || faktVerbote(eintrag, tiefe + 1),
-  )
-}
-
 function schemaPin(fact: RegelFakt): 1 | null {
   if (fact.kind === 'requirement_effect' && 'schema' in fact && fact.schema === 1) return 1
   if (fact.kind === 'visa_options' && 'schema' in fact && fact.schema === 1) return 1
@@ -919,7 +902,7 @@ function zitatePruefen(input: {
   fact: RegelFakt
   proofSupports: readonly OfficialTruthCompositionProofSupport[]
   acceptedVersionIds: readonly string[]
-  observedTargetValues?: readonly OfficialTruthCompositionBeobachtung[]
+  observations: readonly OfficialTruthExtractorBeobachtung[]
 }): ZitatErfolg {
   const { freeze, fact } = input
   const quellen = input.proofSupports.map((eintrag) => eintrag.sourceId)
@@ -1062,29 +1045,32 @@ function zitatePruefen(input: {
     }
   }
 
-  if (input.observedTargetValues) {
-    const gruppen = new Map<string, OfficialTruthCompositionBeobachtung[]>()
-    for (const beobachtung of input.observedTargetValues) {
-      const key = citationKey(beobachtung.target)
-      const liste = gruppen.get(key)
-      if (liste) liste.push(beobachtung)
-      else gruppen.set(key, [beobachtung])
+  // Quellenbezogene Beobachtungen sind Pflicht. Sie stammen aus der einen
+  // codeeigenen Ausführung über das frische servereigene Material. Ohne sie
+  // gibt es keinen Erfolgspfad; es wird nichts übersprungen.
+  if (input.observations.length === 0) return { ok: false, reason: 'fact_incomplete' }
+  const gruppen = new Map<string, OfficialTruthExtractorBeobachtung[]>()
+  for (const beobachtung of input.observations) {
+    const liste = gruppen.get(beobachtung.targetKey)
+    if (liste) liste.push(beobachtung)
+    else gruppen.set(beobachtung.targetKey, [beobachtung])
+  }
+  for (const key of gruppen.keys()) {
+    if (!freeze.policy.assignments.some((eintrag) => citationKey(eintrag.target) === key)) {
+      return { ok: false, reason: 'policy_field_unassigned' }
     }
-    for (const [key, werte] of gruppen) {
-      const assignment = freeze.policy.assignments.find((eintrag) => citationKey(eintrag.target) === key)
-      if (!assignment) return { ok: false, reason: 'policy_field_unassigned' }
-      if (assignment.relation === 'single_source') {
-        if (werte.some((eintrag) => !assignment.sourceIds.includes(eintrag.sourceId))) return { ok: false, reason: 'duplicate_value' }
-        const kanon = new Set(werte.map((eintrag) => eintrag.canonical))
-        if (kanon.size > 1) return { ok: false, reason: 'conflicting_value' }
-      } else {
-        if (assignment.sourceIds.some((sourceId) => !werte.some((eintrag) => eintrag.sourceId === sourceId))) {
-          return { ok: false, reason: 'fact_incomplete' }
-        }
-        const kanon = new Set(werte.map((eintrag) => eintrag.canonical))
-        if (kanon.size > 1) return { ok: false, reason: 'conflicting_value' }
-      }
+  }
+  for (const assignment of freeze.policy.assignments) {
+    const werte = gruppen.get(citationKey(assignment.target))
+    if (!werte || werte.length === 0) return { ok: false, reason: 'fact_incomplete' }
+    const gesehen = new Set<string>()
+    for (const eintrag of werte) {
+      if (!assignment.sourceIds.includes(eintrag.sourceId)) return { ok: false, reason: 'duplicate_value' }
+      if (gesehen.has(eintrag.sourceId)) return { ok: false, reason: 'duplicate_value' }
+      gesehen.add(eintrag.sourceId)
     }
+    if (assignment.sourceIds.some((sourceId) => !gesehen.has(sourceId))) return { ok: false, reason: 'fact_incomplete' }
+    if (new Set(werte.map((eintrag) => eintrag.canonical)).size > 1) return { ok: false, reason: 'conflicting_value' }
   }
 
   const provenance: OfficialTruthCompositionHerkunft[] = []
@@ -1114,24 +1100,6 @@ function zitatePruefen(input: {
   return { ok: true, provenance }
 }
 
-function schritt(
-  wert: unknown,
-  erlaubt: ReadonlySet<string>,
-  ersatz: OfficialTruthCompositionSperrgrund,
-  mitFakt: boolean,
-): { ok: true; fact?: unknown } | { ok: false; reason: OfficialTruthCompositionSperrgrund } {
-  const satz = datensatz(wert)
-  if (!satz || typeof satz.ok !== 'boolean') return { ok: false, reason: ersatz }
-  if (satz.ok === true) {
-    if (!genau(satz, mitFakt ? ['ok', 'fact'] : ['ok'])) return { ok: false, reason: ersatz }
-    return mitFakt ? { ok: true, fact: satz.fact } : { ok: true }
-  }
-  if (!genau(satz, ['ok', 'reason']) || typeof satz.reason !== 'string' || !erlaubt.has(satz.reason)) {
-    return { ok: false, reason: ersatz }
-  }
-  return { ok: false, reason: satz.reason as OfficialTruthCompositionSperrgrund }
-}
-
 export function officialTruthCompositionProvenanceIdentity(
   provenance: readonly OfficialTruthCompositionHerkunft[],
   supportVersionIds: readonly string[],
@@ -1151,83 +1119,77 @@ export function officialTruthCompositionProvenanceIdentity(
   return JSON.stringify(identity)
 }
 
+/**
+ * Phase B prüft nur das bereits eingefrorene Paar. Sie sucht keine
+ * Definition, liest kein Register und wählt keinen Medientyp erneut.
+ * Erkennung, Extraktion und kanonische Lesung laufen ausschließlich in
+ * der einen Ausführungsnaht des Extraktor-Rahmens. Diese Schicht prüft
+ * davor und danach nur Herkunft, Komposition und Unveränderlichkeit.
+ */
 export function officialTruthCompositionPhaseB(input: {
   readonly freeze: OfficialTruthCompositionFreeze
-  readonly retrievals: readonly OfficialTruthCompositionRetrieval[]
+  readonly supports: readonly OfficialTruthCompositionSupport[]
   readonly proofSupports: readonly OfficialTruthCompositionProofSupport[]
   readonly acceptedVersionIds: readonly string[]
   readonly requirementType: OfficialRequirementType
   readonly scopeKey: string
   readonly scope: RegelScope
   readonly registry: QuellenRegistry
-  readonly observedTargetValues?: readonly OfficialTruthCompositionBeobachtung[]
 }): OfficialTruthCompositionPhaseBErgebnis {
   const { freeze } = input
-  const medien = input.retrievals.map((eintrag) => officialTruthExtractorMedienTyp(eintrag.contentType))
-  if (medien.some((typ) => typ === null || !freeze.extractor.contentTypes.includes(typ))) {
-    return freezeBlock('content_type_not_allowlisted', freeze)
-  }
-  if (input.retrievals.length !== input.proofSupports.length) return freezeBlock('support_binding_mismatch', freeze)
+  if (input.supports.length !== input.proofSupports.length) return freezeBlock('support_binding_mismatch', freeze)
   for (const proof of input.proofSupports) {
-    const abruf = input.retrievals.find((eintrag) => eintrag.versionId === proof.versionId)
-    if (!abruf) return freezeBlock('support_binding_mismatch', freeze)
-    if (abruf.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
-    if (abruf.canonicalUrl !== proof.canonicalUrl) return freezeBlock('source_url_changed_since_evidence', freeze)
-    if (abruf.sourceContentHash !== proof.sourceContentHash) return freezeBlock('source_changed_since_evidence', freeze)
+    const treffer = input.supports.filter((eintrag) => eintrag.versionId === proof.versionId)
+    const stuetze = treffer.length === 1 ? treffer[0] : undefined
+    if (!stuetze) return freezeBlock('support_binding_mismatch', freeze)
+    if (stuetze.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
+    if (stuetze.retrieval.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
+    if (stuetze.retrieval.canonicalUrl !== proof.canonicalUrl) {
+      return freezeBlock('source_url_changed_since_evidence', freeze)
+    }
+    if (stuetze.retrieval.sourceContentHash !== proof.sourceContentHash) {
+      return freezeBlock('source_changed_since_evidence', freeze)
+    }
   }
-  const quellen = new Set(input.proofSupports.map((eintrag) => eintrag.sourceId))
-  if (quellen.size < 2) return freezeBlock('same_source_composition', freeze)
-  if (input.proofSupports.length !== quellen.size) return freezeBlock('ambiguous_structure', freeze)
-  const kontext: OfficialTruthExtractorKontext = {
+
+  const gelaufen = officialTruthExtractorEingefroreneAusfuehrung({
+    definition: freeze.extractor,
     factKind: freeze.extractor.factKind,
     requirementType: input.requirementType,
     scopeKey: input.scopeKey,
     scope: input.scope,
-    evidenceQuality: 'composed_from_multiple_primary_sources',
-    schemaFamily: freeze.extractor.schemaFamily,
-    supports: input.retrievals.map((eintrag) => ({
-      versionId: eintrag.versionId,
-      sourceId: eintrag.sourceId,
-      canonicalUrl: eintrag.canonicalUrl,
-      retrievedAt: eintrag.retrievedAt,
-      contentType: officialTruthExtractorMedienTyp(eintrag.contentType) ?? '',
-      sourceSnapshot: eintrag.sourceSnapshot,
-      sourceContentHash: eintrag.sourceContentHash,
-    })),
-    policy: null,
+    supports: input.supports,
     registry: input.registry,
+  })
+  if (!gelaufen.ok) return freezeBlock(gelaufen.reason, freeze)
+
+  // Die vom Rahmen gebundenen Stützen sind die maßgebliche Fassung.
+  if (gelaufen.supports.length !== input.proofSupports.length) return freezeBlock('support_binding_mismatch', freeze)
+  for (const proof of input.proofSupports) {
+    const stuetze = gelaufen.supports.find((eintrag) => eintrag.versionId === proof.versionId)
+    if (!stuetze || stuetze.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
+    if (stuetze.canonicalUrl !== proof.canonicalUrl) return freezeBlock('source_url_changed_since_evidence', freeze)
+    if (stuetze.sourceContentHash !== proof.sourceContentHash) {
+      return freezeBlock('source_changed_since_evidence', freeze)
+    }
   }
-  let erkannt: unknown
-  try {
-    erkannt = freeze.extractor.match(kontext)
-  } catch {
-    return freezeBlock('structure_not_recognized', freeze)
-  }
-  const struktur = schritt(erkannt, MATCH_GRUENDE, 'structure_not_recognized', false)
-  if (!struktur.ok) return freezeBlock(struktur.reason, freeze)
-  let roh: unknown
-  try {
-    roh = freeze.extractor.extract(kontext)
-  } catch {
-    return freezeBlock('fact_incomplete', freeze)
-  }
-  const extrakt = schritt(roh, EXTRAKT_GRUENDE, 'fact_incomplete', true)
-  if (!extrakt.ok) return freezeBlock(extrakt.reason, freeze)
-  if (faktVerbote(extrakt.fact)) return freezeBlock('unexpected_fields', freeze)
-  const fakt = regelFaktKanonischLesen(freeze.extractor.factKind, input.requirementType, extrakt.fact, input.registry)
-  if (!fakt.ok) return freezeBlock(fakt.reason === 'invalid_fact' ? 'invalid_fact' : 'fact_incomplete', freeze)
-  if (fakt.fact.kind !== freeze.extractor.factKind) return freezeBlock('fact_kind_mismatch', freeze)
-  if (schemaPin(fakt.fact) !== freeze.policy.applicabilitySchema) return freezeBlock('schema_mismatch', freeze)
+
+  if (schemaPin(gelaufen.fact) !== freeze.policy.applicabilitySchema) return freezeBlock('schema_mismatch', freeze)
   const zitate = zitatePruefen({
     freeze,
-    fact: fakt.fact,
+    fact: gelaufen.fact,
     proofSupports: input.proofSupports,
     acceptedVersionIds: input.acceptedVersionIds,
-    observedTargetValues: input.observedTargetValues,
+    observations: gelaufen.observations,
   })
   if (!zitate.ok) return freezeBlock(zitate.reason, freeze)
+
+  // Der Fakt wird vor dem Siegel tief unveränderlich. Das Siegel bindet
+  // genau dieses Objekt; eine spätere Mutation ist unmöglich.
+  const fact = tiefEinfrieren(gelaufen.fact)
+  if (!tiefGefroren(fact)) return freezeBlock('unexpected_fields', freeze)
   const supportVersionIds = sortiert(input.proofSupports.map((eintrag) => eintrag.versionId))
-  const seal = new OfficialTruthCompositionExecutionSeal(fakt.fact, freeze.policyId, freeze.policyVersion, supportVersionIds)
+  const seal = new OfficialTruthCompositionExecutionSeal(fact, freeze.policyId, freeze.policyVersion, supportVersionIds)
   return {
     ok: true,
     seal,
@@ -1244,7 +1206,7 @@ export function officialTruthCompositionZitatePruefen(input: {
   readonly fact: RegelFakt
   readonly proofSupports: readonly OfficialTruthCompositionProofSupport[]
   readonly acceptedVersionIds: readonly string[]
-  readonly observedTargetValues?: readonly OfficialTruthCompositionBeobachtung[]
+  readonly observations: readonly OfficialTruthExtractorBeobachtung[]
 }): ZitatErfolg {
   return zitatePruefen(input)
 }

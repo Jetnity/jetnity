@@ -8,9 +8,11 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
+import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   isOfficialTruthCompositionSeal,
   OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY,
+  officialTruthCompositionCitationKey,
   officialTruthCompositionPhaseA,
   officialTruthCompositionPhaseB,
   officialTruthCompositionPreHttpKey,
@@ -18,16 +20,18 @@ import {
   officialTruthCompositionRegistriesPruefen,
   officialTruthCompositionSealView,
   officialTruthCompositionZitatePruefen,
-  type OfficialTruthCompositionBeobachtung,
   type OfficialTruthCompositionFreeze,
   type OfficialTruthCompositionPolicy,
-  type OfficialTruthCompositionRetrieval,
+  type OfficialTruthCompositionSupport,
 } from '@/lib/readiness/official-truth-composition-policy-registry'
 import { OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import { regulierungsAusdruckStrukturSchluessel, type RegulierungsAusdruck } from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { regelFaktKanonischLesen, regelScopeAusEvidenceScope, type RegelFakt, type RegelScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/source-registry'
-import type { OfficialTruthExtractorDefinition } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
+import type {
+  OfficialTruthExtractorBeobachtung,
+  OfficialTruthExtractorDefinition,
+} from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 
 const DATEI = 'lib/readiness/official-truth-composition-policy-registry.ts'
 const A = 'example-border-authority'
@@ -38,6 +42,10 @@ const VF = `ev1_${'f'.repeat(32)}`
 const URL_A = 'https://www.gov.example/effect'
 const URL_B = 'https://www.interior.example/effect'
 const ZEIT = '2026-10-03T00:00:00.000Z'
+const SNAP_A = 'EXAMPLE-BORDER-91f3'
+const SNAP_B = 'EXAMPLE-INTERIOR-91f3'
+const HASH_A = evidenceQuellenFingerprint(SNAP_A) ?? ''
+const HASH_B = evidenceQuellenFingerprint(SNAP_B) ?? ''
 
 type Zaehler = { match: number; extract: number }
 
@@ -119,6 +127,24 @@ function politik(teil?: Partial<OfficialTruthCompositionPolicy>): OfficialTruthC
   }
 }
 
+/**
+ * Ein codeeigener Extraktor beschriftet jede Beobachtung mit dem
+ * Zielschlüssel der Kompositionsschicht. Der Aufrufer liefert nichts.
+ */
+function zielSchluessel(fieldPath: string): string {
+  return officialTruthCompositionCitationKey({ kind: 'fact_field', fieldPath })
+}
+
+function beobachtungenFuer(policy: OfficialTruthCompositionPolicy): OfficialTruthExtractorBeobachtung[] {
+  return policy.assignments.flatMap((assignment) =>
+    assignment.sourceIds.map((sourceId) => ({
+      targetKey: officialTruthCompositionCitationKey(assignment.target),
+      sourceId,
+      canonical: `kanonisch:${officialTruthCompositionCitationKey(assignment.target)}`,
+    })),
+  )
+}
+
 function extraktor(zaehler: Zaehler = { match: 0, extract: 0 }, teil?: Partial<OfficialTruthExtractorDefinition>): OfficialTruthExtractorDefinition {
   return {
     extractorId: 'otx_example_effect',
@@ -142,7 +168,11 @@ function extraktor(zaehler: Zaehler = { match: 0, extract: 0 }, teil?: Partial<O
     },
     extract: () => {
       zaehler.extract += 1
-      return { ok: true, fact: { kind: 'requirement_effect', effect: 'required', visaMode: null } }
+      return {
+        ok: true,
+        fact: { kind: 'requirement_effect', effect: 'required', visaMode: null },
+        observations: beobachtungenFuer(politik()),
+      }
     },
     ...teil,
   }
@@ -157,17 +187,32 @@ function stuetzen() {
 
 function beweisStuetzen() {
   return [
-    { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: 'a'.repeat(64) },
-    { versionId: VB, sourceId: B, canonicalUrl: URL_B, sourceContentHash: 'b'.repeat(64) },
+    { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+    { versionId: VB, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
   ]
 }
 
-function abrufe(contentType: string | null = 'text/plain'): OfficialTruthCompositionRetrieval[] {
-  return beweisStuetzen().map((support) => ({
-    ...support,
-    contentType,
-    sourceSnapshot: `snapshot-${support.sourceId}`,
-    retrievedAt: ZEIT,
+function schnappschuss(sourceId: string): string {
+  return sourceId === B ? SNAP_B : SNAP_A
+}
+
+function laufStuetzen(
+  contentType: string | null = 'text/plain',
+  proof = beweisStuetzen(),
+): OfficialTruthCompositionSupport[] {
+  return proof.map((support) => ({
+    versionId: support.versionId,
+    sourceId: support.sourceId,
+    retrieval: {
+      status: 'server_owned_official_retrieval' as const,
+      sourceId: support.sourceId,
+      canonicalUrl: support.canonicalUrl,
+      retrievedAt: ZEIT,
+      contentType,
+      sourceSnapshot: schnappschuss(support.sourceId),
+      sourceContentHash: support.sourceContentHash,
+      redirectCount: 0,
+    },
   }))
 }
 
@@ -190,39 +235,39 @@ function phaseB(
   teil?: {
     fact?: unknown
     contentType?: string | null
-    observed?: OfficialTruthCompositionBeobachtung[]
+    /** Nur Fixture-Steuerung: so tut der codeeigene Extraktor, als hätte er dies beobachtet. */
+    observed?: readonly OfficialTruthExtractorBeobachtung[] | null
     proof?: ReturnType<typeof beweisStuetzen>
     zaehler?: Zaehler
-    retrievals?: OfficialTruthCompositionRetrieval[]
+    supports?: readonly OfficialTruthCompositionSupport[]
   },
 ) {
   const zelle = scope()
   const zaehler = teil?.zaehler ?? { match: 0, extract: 0 }
   const basis = extraktor(zaehler)
+  const beobachtungen = teil?.observed === undefined ? beobachtungenFuer(freeze.policy) : teil.observed
   const definition = {
     ...freeze.extractor,
     match: basis.match,
-    extract:
-      teil?.fact === undefined
-        ? basis.extract
-        : () => {
-            zaehler.extract += 1
-            return { ok: true, fact: teil.fact }
-          },
+    extract: () => {
+      zaehler.extract += 1
+      const fact =
+        teil?.fact === undefined ? { kind: 'requirement_effect', effect: 'required', visaMode: null } : teil.fact
+      return beobachtungen === null ? { ok: true, fact } : { ok: true, fact, observations: beobachtungen }
+    },
   }
   const proof = teil?.proof ?? beweisStuetzen()
   return {
     zaehler,
     ergebnis: officialTruthCompositionPhaseB({
       freeze: { ...freeze, extractor: definition },
-      retrievals: teil?.retrievals ?? abrufe(teil?.contentType ?? 'text/plain'),
+      supports: teil?.supports ?? laufStuetzen(teil?.contentType ?? 'text/plain', proof),
       proofSupports: proof,
       acceptedVersionIds: proof.map((eintrag) => eintrag.versionId),
       requirementType: 'health',
       scopeKey: zelle.key,
       scope: zelle.scope,
       registry: registry(),
-      observedTargetValues: teil?.observed,
     }),
   }
 }
@@ -336,19 +381,10 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!eingefroren.ok) return
     const zaehler = { match: 0, extract: 0 }
     const gleicheQuelle = [
-      { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: 'a'.repeat(64) },
-      { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: 'b'.repeat(64) },
+      { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+      { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
     ]
-    const gleich = phaseB(eingefroren.freeze, {
-      zaehler,
-      proof: gleicheQuelle,
-      retrievals: gleicheQuelle.map((support) => ({
-        ...support,
-        contentType: 'text/plain',
-        sourceSnapshot: `snapshot-${support.versionId}`,
-        retrievedAt: ZEIT,
-      })),
-    })
+    const gleich = phaseB(eingefroren.freeze, { zaehler, proof: gleicheQuelle })
     assert.equal(grund(gleich.ergebnis), 'same_source_composition')
     assert.equal(zaehler.match, 0)
     assert.equal(zaehler.extract, 0)
@@ -364,11 +400,12 @@ describe('Kompositionspolitik-Fundament', () => {
       freeze: eingefroren.freeze,
       fact: fakt.fact,
       proofSupports: [
-        { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: 'a'.repeat(64) },
-        { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: 'b'.repeat(64) },
-        { versionId: VF, sourceId: B, canonicalUrl: URL_B, sourceContentHash: 'c'.repeat(64) },
+        { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+        { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+        { versionId: VF, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
       ],
       acceptedVersionIds: [VA, VB, VF],
+      observations: beobachtungenFuer(eingefroren.freeze.policy),
     })
     assert.equal(grund(wiederholt), 'ambiguous_structure')
     const vorwaerts = phaseA()
@@ -452,22 +489,171 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!konfliktFreeze.ok) return
     const konflikt = phaseB(konfliktFreeze.freeze, {
       observed: [
-        { target: { kind: 'fact_field', fieldPath: 'effect' }, sourceId: A, canonical: 'required' },
-        { target: { kind: 'fact_field', fieldPath: 'effect' }, sourceId: B, canonical: 'not_required' },
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'not_required' },
       ],
     })
     assert.equal(grund(konflikt.ergebnis), 'conflicting_value')
-    const doppelt = phaseB(phaseA().ok ? (phaseA() as { ok: true; freeze: OfficialTruthCompositionFreeze }).freeze : konfliktFreeze.freeze, {
+    const standard = phaseA()
+    assert.equal(standard.ok, true)
+    if (!standard.ok) return
+    const doppelt = phaseB(standard.freeze, {
       observed: [
-        { target: { kind: 'fact_field', fieldPath: 'effect' }, sourceId: A, canonical: 'required' },
-        { target: { kind: 'fact_field', fieldPath: 'effect' }, sourceId: B, canonical: 'required' },
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
       ],
     })
     assert.equal(grund(doppelt.ergebnis), 'duplicate_value')
-    const fremdesZiel = phaseB(phaseA().ok ? (phaseA() as { ok: true; freeze: OfficialTruthCompositionFreeze }).freeze : konfliktFreeze.freeze, {
-      observed: [{ target: { kind: 'branch', branchId: 'unassigned' }, sourceId: A, canonical: 'required' }],
+    const wiederholteQuelle = phaseB(standard.freeze, {
+      observed: [
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+      ],
+    })
+    assert.equal(grund(wiederholteQuelle.ergebnis), 'duplicate_value')
+    const fremdesZiel = phaseB(standard.freeze, {
+      observed: [
+        {
+          targetKey: officialTruthCompositionCitationKey({ kind: 'branch', branchId: 'unassigned' }),
+          sourceId: A,
+          canonical: 'required',
+        },
+      ],
     })
     assert.equal(grund(fremdesZiel.ergebnis), 'policy_field_unassigned')
+  })
+
+  test('CR-2 ohne quellenbezogene Beobachtungen gibt es keinen Erfolgspfad', () => {
+    const eingefroren = phaseA()
+    assert.equal(eingefroren.ok, true)
+    if (!eingefroren.ok) return
+    // Der Extraktor liefert gar kein Beobachtungsfeld.
+    assert.equal(grund(phaseB(eingefroren.freeze, { observed: null }).ergebnis), 'fact_incomplete')
+    // Leere Beobachtungen sind kein Erfolg.
+    assert.equal(grund(phaseB(eingefroren.freeze, { observed: [] }).ergebnis), 'fact_incomplete')
+    // Eine benannte Quelle fehlt.
+    assert.equal(
+      grund(
+        phaseB(eingefroren.freeze, {
+          observed: [{ targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' }],
+        }).ergebnis,
+      ),
+      'fact_incomplete',
+    )
+    // Eine Quelle außerhalb dieser Ausführung wird vom Rahmen abgewiesen.
+    assert.equal(
+      grund(
+        phaseB(eingefroren.freeze, {
+          observed: [
+            { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+            { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+            { targetKey: zielSchluessel('visaMode'), sourceId: 'example-licensed-provider', canonical: 'none' },
+          ],
+        }).ergebnis,
+      ),
+      'source_not_allowlisted',
+    )
+    // Vollständige, übereinstimmende Beobachtungen tragen den Erfolg.
+    const erfolg = phaseB(eingefroren.freeze, {
+      observed: [
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+      ],
+    })
+    assert.equal(erfolg.ergebnis.ok, true, grund(erfolg.ergebnis))
+  })
+
+  test('CR-2 equal_values verlangt Vollständigkeit und Gleichheit', () => {
+    const gleich = politik({
+      assignments: [
+        {
+          target: { kind: 'fact_field', fieldPath: 'effect' },
+          sourceIds: [A, B],
+          relation: 'equal_values',
+          role: 'equal_values',
+        },
+        {
+          target: { kind: 'fact_field', fieldPath: 'visaMode' },
+          sourceIds: [A],
+          relation: 'single_source',
+          role: 'complementary_part',
+        },
+      ],
+    })
+    const eingefroren = phaseA([gleich], [extraktor(undefined, { requiredFieldPaths: ['effect', 'visaMode'] })])
+    assert.equal(eingefroren.ok, true)
+    if (!eingefroren.ok) return
+    const fehlend = phaseB(eingefroren.freeze, {
+      observed: [
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
+      ],
+    })
+    assert.equal(grund(fehlend.ergebnis), 'fact_incomplete')
+    const einig = phaseB(eingefroren.freeze, {
+      observed: [
+        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
+        { targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
+      ],
+    })
+    assert.equal(einig.ergebnis.ok, true, grund(einig.ergebnis))
+  })
+
+  test('CR-3 der gesiegelte Fakt ist tief unveränderlich', () => {
+    const verzweigtesFakt = verzweigt({
+      expression: atom('visitor', VA),
+      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+    })
+    const lauf = schemaLauf(verzweigtesFakt.policy, verzweigtesFakt.fact)
+    assert.equal(lauf.ergebnis.ok, true, grund(lauf.ergebnis))
+    if (!lauf.ergebnis.ok) return
+    const sicht = officialTruthCompositionSealView(lauf.ergebnis.seal)
+    assert.ok(sicht)
+    if (!sicht) return
+    const fact = sicht.fact as unknown as Record<string, unknown>
+    assert.equal(Object.isFrozen(fact), true)
+    // Mutation auf oberster Ebene wirft und ändert den gebundenen Fakt nicht.
+    assert.throws(() => {
+      ;(fact as { kind: string }).kind = 'visa_options'
+    })
+    assert.equal(officialTruthCompositionSealView(lauf.ergebnis.seal)?.fact.kind, 'requirement_effect')
+    // Verschachtelte Objekte und Arrays sind ebenfalls eingefroren.
+    const anwendbarkeit = fact.applicability as { kind: string; branches: { id: string }[] }
+    assert.equal(Object.isFrozen(anwendbarkeit), true)
+    assert.equal(Object.isFrozen(anwendbarkeit.branches), true)
+    assert.equal(Object.isFrozen(anwendbarkeit.branches[0]), true)
+    assert.throws(() => {
+      anwendbarkeit.branches.push({ id: 'injected' })
+    })
+    assert.throws(() => {
+      const zweig = anwendbarkeit.branches[0]
+      if (zweig) zweig.id = 'injected'
+    })
+    assert.equal(anwendbarkeit.branches.length, 2)
+    assert.equal(officialTruthCompositionSealView(lauf.ergebnis.seal)?.fact, sicht.fact)
+    // Die Siegelsicht selbst ist eingefroren und ersetzt nichts.
+    assert.equal(Object.isFrozen(sicht), true)
+    assert.throws(() => {
+      ;(sicht as unknown as { policyId: string }).policyId = 'otp_foreign'
+    })
+    assert.equal(isOfficialTruthCompositionSeal(lauf.ergebnis.seal), true)
+    assert.equal(isOfficialTruthCompositionSeal({ ...sicht }), false)
+    assert.equal(officialTruthCompositionSealView({ ...sicht }), null)
+    assert.equal(officialTruthCompositionSealView(true), null)
+    assert.equal(officialTruthCompositionSealView('ev1_bearer'), null)
+  })
+
+  test('CR-1 die Kompositionsschicht führt keinen zweiten Extraktorstapel', () => {
+    const text = readFileSync(join(process.cwd(), DATEI), 'utf8')
+    assert.equal(text.includes('officialTruthExtractorEingefroreneAusfuehrung'), true)
+    assert.equal(text.includes('regelFaktKanonischLesen'), false)
+    assert.equal(text.includes('.match('), false)
+    assert.equal(text.includes('.extract('), false)
+    assert.equal(text.includes('officialTruthExtractorMedienTyp'), false)
+    assert.equal(text.includes('OfficialTruthExtractorKontext'), false)
+    assert.equal(text.includes('officialTruthExtractorDefinitionenPruefen('), true)
   })
 
   test('Schema-1-Locators, Stützen und das Siegel bleiben support-stabil', () => {

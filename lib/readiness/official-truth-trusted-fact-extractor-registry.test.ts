@@ -12,6 +12,7 @@ import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
   officialTruthExtractorDefinitionenPruefen,
+  officialTruthExtractorEingefroreneAusfuehrung,
   officialTruthTrustedFactExtrahieren,
   officialTruthTrustedFactExtrahierenMitDefinitionen,
   type OfficialTruthExtractorDefinition,
@@ -1105,5 +1106,173 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.match(text, /OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY[\s\S]*?Object\.freeze\(\[\]\)/)
     assert.equal(text.includes('regelKandidatAkzeptieren'), false)
     assert.match(text, /regelFaktKanonischLesen\(/)
+  })
+})
+
+describe('eine eingefrorene Ausführungsnaht', () => {
+  const BEOBACHTUNGEN = [
+    { targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required' },
+    { targetKey: 'ziel:visaMode', sourceId: INNEN, canonical: 'none' },
+  ]
+
+  function naht(ueber?: {
+    definition?: OfficialTruthExtractorDefinition
+    supports?: unknown
+    scope?: unknown
+    scopeKey?: unknown
+    requirementType?: unknown
+    registry?: unknown
+    zaehler?: Zaehler
+    observations?: unknown
+  }) {
+    const zaehler = ueber?.zaehler ?? { match: 0, extract: 0 }
+    const basis =
+      ueber?.definition ??
+      wirkungDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return {
+            ok: true,
+            fact: { kind: 'requirement_effect', effect: 'required', visaMode: null },
+            ...(ueber && Object.hasOwn(ueber, 'observations')
+              ? { observations: ueber.observations }
+              : { observations: BEOBACHTUNGEN }),
+          }
+        },
+      })
+    const scope = ueber && Object.hasOwn(ueber, 'scope') ? ueber.scope : zellenScope('health')
+    return {
+      zaehler,
+      ergebnis: officialTruthExtractorEingefroreneAusfuehrung({
+        definition: basis,
+        factKind: 'requirement_effect',
+        requirementType: ueber?.requirementType ?? 'health',
+        scopeKey: ueber && Object.hasOwn(ueber, 'scopeKey') ? ueber.scopeKey : schluesselFuer(scope),
+        scope,
+        supports:
+          ueber?.supports ?? [
+            stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
+            stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
+          ],
+        registry: ueber?.registry ?? registry(),
+      }),
+    }
+  }
+
+  function sperrgrund(ergebnis: { ok: boolean; reason?: string }): string | undefined {
+    return ergebnis.ok ? undefined : ergebnis.reason
+  }
+
+  test('ein Lauf liefert einen tief eingefrorenen Fakt, Beobachtungen und gebundene Stützen', () => {
+    const lauf = naht()
+    assert.equal(lauf.ergebnis.ok, true, sperrgrund(lauf.ergebnis))
+    if (!lauf.ergebnis.ok) return
+    assert.equal(lauf.zaehler.match, 1)
+    assert.equal(lauf.zaehler.extract, 1)
+    assert.equal(Object.isFrozen(lauf.ergebnis.fact), true)
+    assert.equal(Object.isFrozen(lauf.ergebnis.observations), true)
+    assert.equal(Object.isFrozen(lauf.ergebnis.supports), true)
+    assert.throws(() => {
+      ;(lauf.ergebnis as { ok: boolean }).ok = false
+    })
+    assert.deepEqual([...lauf.ergebnis.observations], BEOBACHTUNGEN)
+    assert.deepEqual(
+      lauf.ergebnis.supports.map((eintrag) => eintrag.sourceId).sort(),
+      [AMT, INNEN].sort(),
+    )
+    // Das Produktionsregister bleibt leer; die Naht sucht dort nichts.
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+  })
+
+  test('die Naht wählt weder Definition noch Medientyp neu', () => {
+    const fremderTyp = naht({
+      supports: [
+        stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT, 'text/html'),
+        stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT, 'text/html'),
+      ],
+    })
+    assert.equal(sperrgrund(fremderTyp.ergebnis), 'content_type_not_allowlisted')
+    assert.equal(fremderTyp.zaehler.match, 0)
+
+    const zaehler = { match: 0, extract: 0 }
+    const fremdeUrl = naht({
+      zaehler,
+      definition: wirkungDefinition(zaehler, {
+        urlAllowlist: [{ kind: 'exact', canonicalUrl: 'https://www.gov.example/other' }],
+      }),
+    })
+    assert.equal(sperrgrund(fremdeUrl.ergebnis), 'domain_or_path_not_allowlisted')
+    assert.equal(zaehler.match, 0)
+
+    const einzeln = naht({
+      supports: [stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT)],
+    })
+    assert.equal(sperrgrund(einzeln.ergebnis), 'same_source_composition')
+
+    const ohnePolitik = naht({
+      definition: wirkungDefinition({ match: 0, extract: 0 }, { policyId: null, policyVersion: null }),
+    })
+    assert.equal(sperrgrund(ohnePolitik.ergebnis), 'invalid_extractor_definition')
+
+    const nichtAktuell = naht({ definition: wirkungDefinition({ match: 0, extract: 0 }, { current: false }) })
+    assert.equal(sperrgrund(nichtAktuell.ergebnis), 'invalid_extractor_definition')
+  })
+
+  test('Beobachtungen entstehen nur im Code und nur über frische Stützen', () => {
+    assert.equal(sperrgrund(naht({ observations: undefined }).ergebnis), 'fact_incomplete')
+    assert.equal(sperrgrund(naht({ observations: [] }).ergebnis), 'fact_incomplete')
+    assert.equal(
+      sperrgrund(naht({ observations: [{ targetKey: 'ziel:effect', sourceId: LIZENZ, canonical: 'required' }] }).ergebnis),
+      'source_not_allowlisted',
+    )
+    assert.equal(
+      sperrgrund(
+        naht({ observations: [{ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required', extra: 1 }] }).ergebnis,
+      ),
+      'unexpected_fields',
+    )
+    assert.equal(
+      sperrgrund(naht({ observations: [{ targetKey: '', sourceId: AMT, canonical: 'required' }] }).ergebnis),
+      'unexpected_fields',
+    )
+    assert.equal(
+      sperrgrund(
+        naht({
+          observations: Array.from({ length: 257 }, () => ({ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'x' })),
+        }).ergebnis,
+      ),
+      'snapshot_bound_exceeded',
+    )
+  })
+
+  test('Atom-Marker im Rohfakt sperren die zusammengesetzte Naht', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const lauf = naht({
+      zaehler,
+      definition: wirkungDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return {
+            ok: true,
+            fact: { kind: 'requirement_effect', effect: 'required', visaMode: null, atomLocator: 'branch:a/atom' },
+            observations: BEOBACHTUNGEN,
+          }
+        },
+      }),
+    })
+    assert.equal(sperrgrund(lauf.ergebnis), 'unexpected_fields')
+  })
+
+  test('der explizite Einzelquellenpfad kennt keine Beobachtungen', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [
+      seitenDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return { ok: true, fact: { kind: 'blank_passport_pages', minimumPages: 2 }, observations: [] }
+        },
+      }),
+    ])
+    assert.deepEqual(ergebnis, { status: 'blocked', reason: 'fact_incomplete' })
   })
 })

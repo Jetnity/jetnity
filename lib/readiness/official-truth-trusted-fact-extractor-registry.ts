@@ -48,6 +48,11 @@ const HASH = /^[a-f0-9]{64}$/
 /** Obergrenze der serverseitigen Lesung. Dieser Rahmen erhöht sie nicht. */
 const REDIRECT_MAX = 5
 const TIEFE_MAX = 8
+/** Obergrenze der quellenbezogenen Beobachtungen einer Ausführung. */
+const BEOBACHTUNG_MAX = 256
+const BEOBACHTUNG_SCHLUESSEL = ['targetKey', 'sourceId', 'canonical'] as const
+/** Ein Atom-Locator ist eine Herkunftsadresse der Kompositionsschicht, kein Faktfeld. */
+const FAKT_MARKER = new Set(['atomKey', 'atomLocator', 'atomId'])
 
 const EINGABE_SCHLUESSEL = [
   'factKind',
@@ -299,6 +304,18 @@ export type OfficialTruthExtractorDefinition = {
   readonly extract: (kontext: OfficialTruthExtractorKontext) => unknown
 }
 
+/**
+ * Quellenbezogene Beobachtung einer Ausführung. Sie entsteht nur im
+ * codeeigenen Extraktor über servereigenes frisches Material. Der
+ * `targetKey` ist für diesen Rahmen undurchsichtig; die aufrufende
+ * Schicht besitzt seine Bedeutung.
+ */
+export type OfficialTruthExtractorBeobachtung = {
+  readonly targetKey: string
+  readonly sourceId: string
+  readonly canonical: string
+}
+
 export type OfficialTruthExtractorHerkunft = {
   readonly fieldPath: string
   readonly extractorId: string
@@ -325,6 +342,19 @@ export type OfficialTruthTrustedFactExtractorErfolg = {
 export type OfficialTruthTrustedFactExtractorErgebnis =
   | OfficialTruthTrustedFactExtractorErfolg
   | { readonly status: 'blocked'; readonly reason: OfficialTruthTrustedFactExtractorSperrgrund }
+
+/**
+ * Ergebnis der einen kanonischen Ausführung einer bereits gewählten
+ * und geprüften Definition. Es ist kein Annahmeergebnis.
+ */
+export type OfficialTruthExtractorEingefroreneErgebnis =
+  | {
+      readonly ok: true
+      readonly fact: RegelFakt
+      readonly observations: readonly OfficialTruthExtractorBeobachtung[]
+      readonly supports: readonly OfficialTruthExtractorStuetze[]
+    }
+  | { readonly ok: false; readonly reason: OfficialTruthTrustedFactExtractorSperrgrund }
 
 export type OfficialTruthExtractorRegistryErgebnis =
   | { readonly ok: true; readonly registry: readonly OfficialTruthExtractorDefinition[] }
@@ -661,13 +691,17 @@ function schrittGrund(
   erlaubt: ReadonlySet<string>,
   ersatz: OfficialTruthTrustedFactExtractorSperrgrund,
   mitFakt: boolean,
-): { ok: true; fact?: unknown } | { ok: false; reason: OfficialTruthTrustedFactExtractorSperrgrund } {
+  mitBeobachtungen = false,
+): { ok: true; fact?: unknown; observations?: unknown } | { ok: false; reason: OfficialTruthTrustedFactExtractorSperrgrund } {
   const satz = datensatz(wert)
   if (!satz || typeof satz.ok !== 'boolean') return { ok: false, reason: ersatz }
   if (satz.ok === true) {
-    const schluessel = mitFakt ? ['ok', 'fact'] : ['ok']
+    const schluessel = mitFakt ? (mitBeobachtungen ? ['ok', 'fact', 'observations'] : ['ok', 'fact']) : ['ok']
     if (!genau(satz, schluessel)) return { ok: false, reason: ersatz }
-    return mitFakt ? { ok: true, fact: satz.fact } : { ok: true }
+    if (!mitFakt) return { ok: true }
+    return mitBeobachtungen
+      ? { ok: true, fact: satz.fact, observations: satz.observations }
+      : { ok: true, fact: satz.fact }
   }
   if (!genau(satz, ['ok', 'reason']) || typeof satz.reason !== 'string' || !erlaubt.has(satz.reason)) {
     return { ok: false, reason: ersatz }
@@ -676,6 +710,107 @@ function schrittGrund(
     ? (satz.reason as OfficialTruthTrustedFactExtractorSperrgrund)
     : ersatz
   return { ok: false, reason }
+}
+
+/**
+ * Beobachtungen stammen ausschließlich aus dem codeeigenen Extraktor.
+ * Sie dürfen nur Quellen nennen, die in dieser Ausführung frisch
+ * servereigen gelesen wurden.
+ */
+function beobachtungenLesen(
+  wert: unknown,
+  quellen: ReadonlySet<string>,
+):
+  | { ok: true; observations: OfficialTruthExtractorBeobachtung[] }
+  | { ok: false; reason: OfficialTruthTrustedFactExtractorSperrgrund } {
+  if (!Array.isArray(wert)) return { ok: false, reason: 'fact_incomplete' }
+  if (wert.length === 0) return { ok: false, reason: 'fact_incomplete' }
+  if (wert.length > BEOBACHTUNG_MAX) return { ok: false, reason: 'snapshot_bound_exceeded' }
+  const observations: OfficialTruthExtractorBeobachtung[] = []
+  for (const eintrag of wert) {
+    const satz = datensatz(eintrag)
+    if (!satz || !genau(satz, BEOBACHTUNG_SCHLUESSEL)) return { ok: false, reason: 'unexpected_fields' }
+    if (typeof satz.targetKey !== 'string' || satz.targetKey.length === 0 || satz.targetKey.length > 512) {
+      return { ok: false, reason: 'unexpected_fields' }
+    }
+    if (typeof satz.canonical !== 'string' || satz.canonical.length > 512) {
+      return { ok: false, reason: 'unexpected_fields' }
+    }
+    if (typeof satz.sourceId !== 'string' || !quellen.has(satz.sourceId)) {
+      return { ok: false, reason: 'source_not_allowlisted' }
+    }
+    observations.push({ targetKey: satz.targetKey, sourceId: satz.sourceId, canonical: satz.canonical })
+  }
+  return { ok: true, observations }
+}
+
+/**
+ * Die eine kanonische Ausführung. Kontext, Matcher, Extraktor und
+ * kanonischer Parser laufen genau hier. Es gibt keinen zweiten
+ * Ausführungsstapel. Diese Funktion wählt keine Definition aus.
+ */
+function definitionAusfuehren(input: {
+  readonly definition: OfficialTruthExtractorDefinition
+  readonly factKind: RegelFaktArt
+  readonly requirementType: OfficialRequirementType
+  readonly scopeKey: string
+  readonly scope: RegelScope
+  readonly evidenceQuality: AnnehmbareQualitaet
+  readonly supports: readonly GesperrteStuetze[]
+  readonly policy: OfficialTruthExtractorPolitik | null
+  readonly registry: QuellenRegistry
+  readonly beobachtungenPflicht: boolean
+  readonly faktMarkerVerboten: boolean
+}):
+  | { ok: true; fact: RegelFakt; observations: readonly OfficialTruthExtractorBeobachtung[] }
+  | { ok: false; reason: OfficialTruthTrustedFactExtractorSperrgrund } {
+  const kontext = einfrieren({
+    factKind: input.factKind,
+    requirementType: input.requirementType,
+    scopeKey: input.scopeKey,
+    scope: input.scope,
+    evidenceQuality: input.evidenceQuality,
+    schemaFamily: input.definition.schemaFamily,
+    supports: input.supports,
+    policy: input.policy,
+    registry: input.registry,
+  })
+
+  let erkannt: unknown
+  try {
+    erkannt = input.definition.match(kontext)
+  } catch {
+    return { ok: false, reason: 'structure_not_recognized' }
+  }
+  const struktur = schrittGrund(erkannt, MATCH_GRUENDE, 'structure_not_recognized', false)
+  if (!struktur.ok) return struktur
+
+  let roh: unknown
+  try {
+    roh = input.definition.extract(kontext)
+  } catch {
+    return { ok: false, reason: 'fact_incomplete' }
+  }
+  const extrakt = schrittGrund(roh, EXTRAKT_GRUENDE, 'fact_incomplete', true, input.beobachtungenPflicht)
+  if (!extrakt.ok) return extrakt
+  if (input.faktMarkerVerboten && baum(extrakt.fact, 0, (_satz, schluessel) => FAKT_MARKER.has(schluessel))) {
+    return { ok: false, reason: 'unexpected_fields' }
+  }
+
+  let observations: readonly OfficialTruthExtractorBeobachtung[] = []
+  if (input.beobachtungenPflicht) {
+    const gelesen = beobachtungenLesen(
+      extrakt.observations,
+      new Set(input.supports.map((eintrag) => eintrag.sourceId)),
+    )
+    if (!gelesen.ok) return gelesen
+    observations = gelesen.observations
+  }
+
+  const fakt = regelFaktKanonischLesen(input.factKind, input.requirementType, extrakt.fact, input.registry)
+  if (!fakt.ok) return { ok: false, reason: fakt.reason }
+  if (fakt.fact.kind !== input.factKind) return { ok: false, reason: 'fact_kind_mismatch' }
+  return { ok: true, fact: fakt.fact, observations }
 }
 
 /**
@@ -828,46 +963,28 @@ function ausfuehren(
     if (policy.assignments.some((eintrag) => !quellen.has(eintrag.sourceId))) return sperre('source_not_allowlisted')
   }
 
-  const kontext = einfrieren({
+  const gelaufen = definitionAusfuehren({
+    definition,
     factKind: satz.factKind,
     requirementType: satz.requirementType,
     scopeKey: satz.scopeKey,
     scope: scope.scope,
     evidenceQuality: satz.evidenceQuality,
-    schemaFamily: definition.schemaFamily,
     supports: stuetzen,
     policy,
     registry,
+    beobachtungenPflicht: false,
+    faktMarkerVerboten: false,
   })
+  if (!gelaufen.ok) return sperre(gelaufen.reason)
 
-  let erkannt: unknown
-  try {
-    erkannt = definition.match(kontext)
-  } catch {
-    return sperre('structure_not_recognized')
-  }
-  const struktur = schrittGrund(erkannt, MATCH_GRUENDE, 'structure_not_recognized', false)
-  if (!struktur.ok) return sperre(struktur.reason)
-
-  let roh: unknown
-  try {
-    roh = definition.extract(kontext)
-  } catch {
-    return sperre('fact_incomplete')
-  }
-  const extrakt = schrittGrund(roh, EXTRAKT_GRUENDE, 'fact_incomplete', true)
-  if (!extrakt.ok) return sperre(extrakt.reason)
-  const fakt = regelFaktKanonischLesen(satz.factKind, satz.requirementType, extrakt.fact, registry)
-  if (!fakt.ok) return sperre(fakt.reason)
-  if (fakt.fact.kind !== satz.factKind) return sperre('fact_kind_mismatch')
-
-  const provenance = herkunftFuer(definition, stuetzen, fakt.fact, policy)
+  const provenance = herkunftFuer(definition, stuetzen, gelaufen.fact, policy)
   if (provenance.length === 0 || provenance.some((eintrag) => eintrag.sourceId === '' || eintrag.versionId === '')) {
     return sperre('fact_incomplete')
   }
   const erfolg: OfficialTruthTrustedFactExtractorErfolg = {
     status: 'trusted_fact_extracted',
-    fact: fakt.fact,
+    fact: gelaufen.fact,
     extractorId: definition.extractorId,
     extractorVersion: definition.extractorVersion,
     schemaFamily: definition.schemaFamily,
@@ -910,4 +1027,90 @@ export function officialTruthTrustedFactExtrahierenMitDefinitionen(
     return sperre(geprueft.reason)
   }
   return ausfuehren(eingabe, geprueft.registry, serverPolitik ?? null)
+}
+
+/**
+ * Die eine servereigene Ausführungsnaht für eine bereits ausgewählte und
+ * eingefrorene Definition. Sie sucht keine Definition, liest kein Register
+ * und benutzt den beobachteten Medientyp nur zur Prüfung gegen die
+ * eingefrorene Definition, niemals zur Auswahl.
+ *
+ * Die Beobachtungen entstehen im codeeigenen Extraktor über das frische
+ * servereigene Material. Der Aufrufer liefert sie nicht.
+ */
+export function officialTruthExtractorEingefroreneAusfuehrung(input: {
+  readonly definition: OfficialTruthExtractorDefinition
+  readonly factKind: unknown
+  readonly requirementType: unknown
+  readonly scopeKey: unknown
+  readonly scope: unknown
+  readonly supports: unknown
+  readonly registry: unknown
+}): OfficialTruthExtractorEingefroreneErgebnis {
+  const definition = definitionLesen(input.definition)
+  if (!definition || !definition.current) return { ok: false, reason: 'invalid_extractor_definition' }
+  if (definition.policyId === null || definition.policyVersion === null) {
+    return { ok: false, reason: 'policy_required' }
+  }
+  if (!textIn(input.factKind, REGEL_FAKT_ARTEN) || input.factKind !== definition.factKind) {
+    return { ok: false, reason: 'fact_kind_mismatch' }
+  }
+  if (!textIn(input.requirementType, OFFICIAL_REQUIREMENT_TYPES)) {
+    return { ok: false, reason: 'requirement_type_mismatch' }
+  }
+  const pflicht = ZELL_PFLICHT[input.factKind]
+  if (pflicht && input.requirementType !== pflicht) return { ok: false, reason: 'requirement_type_mismatch' }
+  if (typeof input.scopeKey !== 'string' || !SCOPE_KEY.test(input.scopeKey)) {
+    return { ok: false, reason: 'unexpected_fields' }
+  }
+  const registry = registryLesen(input.registry)
+  if (!registry) return { ok: false, reason: 'unexpected_fields' }
+  const scope = dekodiertenScopeLesen(input.scope, input.scopeKey, input.requirementType)
+  if (!scope.ok) return { ok: false, reason: scope.reason }
+
+  if (!Array.isArray(input.supports)) return { ok: false, reason: 'invalid_support' }
+  if (input.supports.length > REGEL_SUPPORT_MAX) return { ok: false, reason: 'support_bound_exceeded' }
+  if (input.supports.length === 0) return { ok: false, reason: 'insufficient_support' }
+  const stuetzen: GesperrteStuetze[] = []
+  const versionsIds = new Set<string>()
+  for (const eintrag of input.supports) {
+    const gebunden = stuetzeBinden(eintrag, registry)
+    if (!gebunden.ok) return { ok: false, reason: gebunden.reason }
+    if (versionsIds.has(gebunden.stuetze.versionId)) return { ok: false, reason: 'invalid_support' }
+    versionsIds.add(gebunden.stuetze.versionId)
+    stuetzen.push(gebunden.stuetze)
+  }
+  stuetzen.sort((links, rechts) => (links.versionId < rechts.versionId ? -1 : links.versionId > rechts.versionId ? 1 : 0))
+
+  const quellen = new Set(stuetzen.map((eintrag) => eintrag.sourceId))
+  if (quellen.size < 2) return { ok: false, reason: 'same_source_composition' }
+  if (stuetzen.length !== quellen.size) return { ok: false, reason: 'ambiguous_structure' }
+  if (!gleicheMenge(definition.sourceIds, [...quellen])) return { ok: false, reason: 'source_not_allowlisted' }
+  if (stuetzen.some((eintrag) => !urlErlaubt(eintrag.canonicalUrl, definition.urlAllowlist))) {
+    return { ok: false, reason: 'domain_or_path_not_allowlisted' }
+  }
+  if (stuetzen.some((eintrag) => !definition.contentTypes.includes(eintrag.contentType))) {
+    return { ok: false, reason: 'content_type_not_allowlisted' }
+  }
+
+  const gelaufen = definitionAusfuehren({
+    definition,
+    factKind: input.factKind,
+    requirementType: input.requirementType,
+    scopeKey: input.scopeKey,
+    scope: scope.scope,
+    evidenceQuality: 'composed_from_multiple_primary_sources',
+    supports: stuetzen,
+    policy: null,
+    registry,
+    beobachtungenPflicht: true,
+    faktMarkerVerboten: true,
+  })
+  if (!gelaufen.ok) return { ok: false, reason: gelaufen.reason }
+  return einfrieren({
+    ok: true as const,
+    fact: gelaufen.fact,
+    observations: gelaufen.observations,
+    supports: stuetzen as readonly OfficialTruthExtractorStuetze[],
+  })
 }
