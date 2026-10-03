@@ -7,6 +7,7 @@ Branch: `feat/official-truth-regulatory-applicability-foundation-1`
 Baseline: `main@50c1c799feb20adfafa563a3862b1cda70719cb4`
 Task: `docs/OFFICIAL_TRUTH_REGULATORY_APPLICABILITY_FOUNDATION_1_TASK_2026-10-03.md`
 Task seed: `cea5d57bd36b616bd45ec184d57cf71011f1e75c` is not the review head.
+Previous review head `f0c8ce46abf8474313dd944a11044aa6958d16e1` is not the review head after R1.
 Logical agent: **Jetnity Official Truth regulatory applicability runtime foundation 1**
 Generation: **1**
 Session: https://cursor.com/agents/bc-925f9127-f08a-44ff-84b2-c2d8406633f2
@@ -55,13 +56,16 @@ The task seed was already on the branch and was not edited. `rule-claims.ts` was
 - Fingerprint prefix is only `rule-applicability:v1:`. The source has no `reg-eval-ctx:v1`.
 - `REGULIERUNGS_REGION_PINS.length === 0`.
 - No non-test importer.
+- Citizenship wider than `TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller` is `invalid_fact` after dedupe.
+- A related citizenship outside the canonical set, or any explicit link when `documentType` is null, is `invalid_fact`.
+- Issuer `CH` with citizenship `DE` and a null link does not satisfy citizenship `CH` or either link predicate.
 
 ## Gates
 
-Same delivery run as the report and the self-review, on this working tree before the delivery commit:
+R1 re-review of `f0c8ce46abf8474313dd944a11044aa6958d16e1`, same run as the report and the self-review, on this working tree before the fix commit:
 
-- Focused applicability test: 11 pass / 0 fail.
-- `npm test`: 4591 pass / 0 fail.
+- Focused applicability test: 12 pass / 0 fail.
+- `npm test`: 4592 pass / 0 fail.
 - `npm run typecheck`: exit 0.
 - `npm run lint`: exit 0, 0 errors, 148 pre-existing warnings.
 - `npm run build` (Next.js 16.3.8): exit 0.

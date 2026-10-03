@@ -44,20 +44,26 @@ These are inside the task, and a reviewer should see them explicitly:
 - Non-visa `visaMode` uses the live reason `visa_mode_forbidden`. A contradictory visa pair uses `visa_contradiction`.
 - `account_profile` is rejected on facts the architecture says the profile must not supply.
 
+## R1 on `f0c8ce46`
+
+The Technical Lead required the context parser to stay inside the existing static Evidence cell. After dedupe and sort, more than `citizenshipsJeTraveller` codes is `invalid_fact`. A non-null credential link must name a code in that canonical set. `documentType: null` plus an explicit link is `invalid_fact`. The issuer is not turned into a link. An empty set remains readable only when the link is null.
+
+The focused test covers nine distinct codes rejected, eight accepted including a duplicate that canonicalizes to eight, `CH` plus related `DE` rejected, `CH`/`DE` plus related `DE` accepted, an empty set plus related `CH` rejected, `documentType: null` plus related `CH` rejected, and issuer `CH` with citizenship `DE` and a null link staying unlinked.
+
 ## What I did not do
 
 I did not wire the parser into acceptance. I did not persist branched facts. I did not pin region members. I did not map source prose onto the purpose enum. I did not add a context hash. I did not start F8.
 
 ## Author gate note
 
-The focused test file passed 11/11 before this self-review was written. The full-suite, typecheck, lint, build, and hygiene results below are the delivery run. If a line says a command failed, that failure stands.
+The focused test file passed 12/12 on the R1 tree before this gate block was written. The full-suite, typecheck, lint, build, and hygiene results below are that re-review run. If a line says a command failed, that failure stands.
 
 ## Gates
 
-Delivery run on this working tree, 3 October 2026, before the delivery commit. A commit cannot name its own SHA. The review head is the branch tip that contains this file. Re-fetch it.
+R1 re-review of `f0c8ce46abf8474313dd944a11044aa6958d16e1`, on this working tree, 3 October 2026, before the fix commit. A commit cannot name its own SHA. The review head is the branch tip that contains this file. Re-fetch it. The previous review head is not this tip.
 
-- Focused `lib/readiness/regulierungs-anwendbarkeit.test.ts`: 11 pass / 0 fail.
-- `npm test`: 4591 pass / 0 fail. Exit 0.
+- Focused `lib/readiness/regulierungs-anwendbarkeit.test.ts`: 12 pass / 0 fail.
+- `npm test`: 4592 pass / 0 fail. Exit 0.
 - `npm run typecheck`: exit 0.
 - `npm run lint`: exit 0. 148 problems, 0 errors, 148 warnings. None are in the owned files.
 - `npm run build`: exit 0. Next.js 16.3.8.

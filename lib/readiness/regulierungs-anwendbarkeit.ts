@@ -5,7 +5,7 @@
 // Personen- und Rechtskontext bleibt im Prozess. Der Entscheidungsverlauf
 // nennt Art, Herkunft und Polarität, nie einen Personenwert.
 
-import { landescodeLesen } from '@/lib/readiness/domain'
+import { landescodeLesen, TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
   OFFICIAL_VISA_MODES,
@@ -1419,6 +1419,7 @@ export function regulierungsKontextLesen(roh: unknown): RegulierungsLeseErgebnis
   if (herkunft.wert === 'user_asserted') return nein('invalid_fact')
   const citizenship = laenderListe(satz.citizenshipCountryCodes)
   if (!citizenship.ok) return citizenship
+  if (citizenship.wert.length > TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller) return nein('invalid_fact')
   const credential = datensatz(satz.credential)
   if (!credential || !genau(credential, ['documentType', 'issuingCountryCode', 'relatedCitizenshipCountryCode'])) {
     return nein('invalid_fact')
@@ -1429,6 +1430,9 @@ export function regulierungsKontextLesen(roh: unknown): RegulierungsLeseErgebnis
   if (!issuing.ok) return issuing
   const related = landOderNull(credential.relatedCitizenshipCountryCode)
   if (!related.ok) return related
+  if (related.wert !== null && (documentType.wert === null || !citizenship.wert.includes(related.wert))) {
+    return nein('invalid_fact')
+  }
   const residence = landOderNull(satz.residenceCountryCode)
   if (!residence.ok) return residence
   const origin = faktLesen(satz.journeyOriginCountryCode, herkunftslandWert, REISE_ODER_NUTZER)

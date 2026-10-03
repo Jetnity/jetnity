@@ -83,7 +83,9 @@ Normalization collapses double `not`, flattens nested `all` into `all` and neste
 
 ## Context
 
-Country codes go through `landescodeLesen`. Citizenship codes are uppercased, deduped, and sorted. The full set is tested. Issuer country does not satisfy citizenship. A null credential link is `credential_citizenship_link`, not a copy of the issuer.
+Country codes go through `landescodeLesen`. Citizenship codes are uppercased, deduped, and sorted. After that canonicalization the parser rejects a set wider than `TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller` from `@/lib/readiness/domain`. The full accepted set is tested. Issuer country does not satisfy citizenship and is not copied into the credential link.
+
+A non-null `relatedCitizenshipCountryCode` must be one of the canonical citizenship codes. An explicit link with `documentType: null` is `invalid_fact`, because there is no credential to attach. An empty citizenship set stays valid only when the link is null, and then nationality stays unknown. The reader uses `invalid_fact`. It does not add a new reason.
 
 `documentType: 'passport'` does not satisfy `document_class: 'ordinary'`. `documentType` `null` or `unknown` makes `document_class` and `issuing_country` unknown and asks `document_type`.
 
@@ -115,10 +117,10 @@ Personal and legal traveller context is returned only to the in-process caller. 
 
 ## Gates
 
-Delivery run on this working tree, 3 October 2026, before the delivery commit. Exact-head GitHub CI and Vercel belong to the pushed tip, not to this text.
+R1 re-review of `f0c8ce46abf8474313dd944a11044aa6958d16e1`, on this working tree, 3 October 2026, before the fix commit. Exact-head GitHub CI and Vercel belong to the pushed tip, not to this text. The previous review head is not this tip.
 
-- Focused `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/regulierungs-anwendbarkeit.test.ts`: 11 pass / 0 fail.
-- `npm test`: 4591 pass / 0 fail.
+- Focused `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/regulierungs-anwendbarkeit.test.ts`: 12 pass / 0 fail.
+- `npm test`: 4592 pass / 0 fail.
 - `npm run typecheck` (`next typegen && tsc -p tsconfig.json --noEmit`): exit 0.
 - `npm run lint`: exit 0, 148 problems (0 errors, 148 warnings). Those warnings are pre-existing and outside this slice.
 - `npm run build` (Next.js 16.3.8): exit 0.

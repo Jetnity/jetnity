@@ -8,6 +8,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 
+import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
 import {
   DOKUMENT_KLASSEN,
   INSTITUTIONS_STATUS,
@@ -475,7 +476,10 @@ describe('regulierungs-anwendbarkeit', () => {
     })
     assert.equal(regulierungsAusdruckAuswerten(ausdruck(staatsbuergerschaft('CH')), nurAussteller).wert, 'false')
     assert.equal(regulierungsAusdruckAuswerten(ausdruck(aussteller('CH')), nurAussteller).wert, 'true')
-    const leer = kontext({ citizenshipCountryCodes: [] })
+    const leer = kontext({
+      citizenshipCountryCodes: [],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: null },
+    })
     assert.deepEqual(regulierungsAusdruckAuswerten(ausdruck(staatsbuergerschaft('CH')), leer).fehlendeFakten, ['nationality'])
     const ohneLink = regulierungsAusdruckAuswerten(ausdruck(verknuepfung('CH')), menge)
     assert.equal(ohneLink.wert, 'unknown')
@@ -499,6 +503,70 @@ describe('regulierungs-anwendbarkeit', () => {
     })
     assert.deepEqual(regulierungsAusdruckAuswerten(ausdruck(klasse('ordinary')), ohneTyp).fehlendeFakten, ['document_type'])
     assert.deepEqual(regulierungsAusdruckAuswerten(ausdruck(aussteller('CH')), ohneTyp).fehlendeFakten, ['document_type'])
+  })
+
+  test('kanonische Staatsangehörigkeit und Dokumentbezug', () => {
+    const grenze = TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller
+    const codes = (anzahl: number) => Array.from({ length: anzahl }, (_, index) => `${String.fromCharCode(65 + index)}A`)
+    const ohneBezug = {
+      documentType: 'passport' as const,
+      issuingCountryCode: 'CH',
+      relatedCitizenshipCountryCode: null,
+    }
+    const zuBreit = regulierungsKontextLesen(rohKontext({
+      citizenshipCountryCodes: codes(grenze + 1),
+      credential: ohneBezug,
+    }))
+    assert.equal(zuBreit.ok, false)
+    if (!zuBreit.ok) assert.equal(zuBreit.reason, 'invalid_fact')
+    const acht = kontext({
+      citizenshipCountryCodes: [...codes(grenze).slice(1), 'aa', codes(grenze)[0]],
+      credential: ohneBezug,
+    })
+    assert.equal(acht.citizenshipCountryCodes.length, grenze)
+    assert.deepEqual(acht.citizenshipCountryCodes, codes(grenze))
+
+    const fremd = regulierungsKontextLesen(rohKontext({
+      citizenshipCountryCodes: ['CH'],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'DE' },
+    }))
+    assert.equal(fremd.ok, false)
+    if (!fremd.ok) assert.equal(fremd.reason, 'invalid_fact')
+    const enthalten = kontext({
+      citizenshipCountryCodes: ['CH', 'DE'],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'DE' },
+    })
+    assert.equal(enthalten.credential.relatedCitizenshipCountryCode, 'DE')
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(verknuepfung('DE')), enthalten).wert, 'true')
+
+    const leereVerknuepfung = regulierungsKontextLesen(rohKontext({
+      citizenshipCountryCodes: [],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'CH' },
+    }))
+    assert.equal(leereVerknuepfung.ok, false)
+    if (!leereVerknuepfung.ok) assert.equal(leereVerknuepfung.reason, 'invalid_fact')
+    const leer = kontext({
+      citizenshipCountryCodes: [],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: null },
+    })
+    assert.deepEqual(leer.citizenshipCountryCodes, [])
+
+    const ohneDokument = regulierungsKontextLesen(rohKontext({
+      citizenshipCountryCodes: ['CH'],
+      credential: { documentType: null, issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'CH' },
+    }))
+    assert.equal(ohneDokument.ok, false)
+    if (!ohneDokument.ok) assert.equal(ohneDokument.reason, 'invalid_fact')
+
+    const nurAussteller = kontext({
+      citizenshipCountryCodes: ['DE'],
+      credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: null },
+    })
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(staatsbuergerschaft('CH')), nurAussteller).wert, 'false')
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(staatsbuergerschaft('DE')), nurAussteller).wert, 'true')
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(verknuepfung('CH')), nurAussteller).wert, 'unknown')
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(verknuepfung('DE')), nurAussteller).wert, 'unknown')
+    assert.equal(regulierungsAusdruckAuswerten(ausdruck(aussteller('CH')), nurAussteller).wert, 'true')
   })
 
   test('20–22 Personen, Herkunft und Grenzen', () => {
