@@ -273,19 +273,21 @@ function komposition(teil?: Record<string, unknown>) {
         stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
         stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
       ],
-      policy: {
-        policyId: 'otp_example_effect',
-        policyVersion: 1,
-        assignments: [
-          { fieldPath: 'effect', sourceId: AMT },
-          { fieldPath: 'visaMode', sourceId: INNEN },
-        ],
-      },
+      policy: null,
       registry: registry(),
     },
     teil,
     requirementType,
   )
+}
+
+const SERVER_POLITIK = {
+  policyId: 'otp_example_effect',
+  policyVersion: 1,
+  assignments: [
+    { fieldPath: 'effect', sourceId: AMT },
+    { fieldPath: 'visaMode', sourceId: INNEN },
+  ],
 }
 
 function grund(ergebnis: { status: string; reason?: string }): string | undefined {
@@ -431,14 +433,14 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(zaehler.match, 0)
   })
 
-  test('11 zwei aktuelle Treffer sind mehrdeutig', () => {
+  test('11 zwei aktuelle Extraktoren derselben Faktart und Quellenmenge sind duplicate_extractor_match', () => {
     const erste = { match: 0, extract: 0 }
     const zweite = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [
       seitenDefinition(erste, { extractorId: 'otx_example_pages' }),
       seitenDefinition(zweite, { extractorId: 'otx_example_pages_b', schemaFamily: 'ots_example_pages_b' }),
     ])
-    assert.equal(grund(ergebnis), 'ambiguous_structure')
+    assert.equal(grund(ergebnis), 'duplicate_extractor_match')
     assert.equal(erste.match + zweite.match, 0)
     assert.equal(erste.extract + zweite.extract, 0)
   })
@@ -481,6 +483,18 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const rechts = seitenDefinition({ match: 0, extract: 0 }, { current: false })
     const ergebnis = officialTruthExtractorDefinitionenPruefen([links, rechts])
     assert.deepEqual(ergebnis, { ok: false, reason: 'duplicate_extractor_version' })
+  })
+
+  test('14b zwei aktuelle Extraktoren mit derselben Faktart und Quellenmenge sind duplicate_extractor_match', () => {
+    const links = seitenDefinition({ match: 0, extract: 0 }, { contentTypes: ['text/plain'] })
+    const rechts = seitenDefinition({ match: 0, extract: 0 }, {
+      extractorId: 'otx_example_pages_html',
+      extractorVersion: 2,
+      contentTypes: ['text/html'],
+    })
+    assert.deepEqual(officialTruthExtractorDefinitionenPruefen([links, rechts]), { ok: false, reason: 'duplicate_extractor_match' })
+    const historisch = seitenDefinition({ match: 0, extract: 0 }, { extractorVersion: 3, current: false, contentTypes: ['text/html'] })
+    assert.equal(officialTruthExtractorDefinitionenPruefen([links, historisch]).ok, true)
   })
 
   test('15 eine explizite Primärquelle ergibt genau einen kanonischen Fakt', () => {
@@ -552,10 +566,11 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const vorwaerts = { match: 0, extract: 0 }
     const rueckwaerts = { match: 0, extract: 0 }
     const basis = komposition()
-    const links = officialTruthTrustedFactExtrahierenMitDefinitionen(basis, [wirkungDefinition(vorwaerts)])
+    const links = officialTruthTrustedFactExtrahierenMitDefinitionen(basis, [wirkungDefinition(vorwaerts)], SERVER_POLITIK)
     const rechts = officialTruthTrustedFactExtrahierenMitDefinitionen(
       komposition({ supports: [...(basis.supports as unknown[])].reverse() }),
       [wirkungDefinition(rueckwaerts)],
+      SERVER_POLITIK,
     )
     assert.equal(links.status, 'trusted_fact_extracted')
     assert.deepEqual(links, rechts)
@@ -571,6 +586,12 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(grund(eine), 'insufficient_support')
     const ohnePolitik = officialTruthTrustedFactExtrahierenMitDefinitionen(komposition({ policy: null }), definitionen)
     assert.equal(grund(ohnePolitik), 'policy_required')
+    const aufrufer = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      komposition({ policy: SERVER_POLITIK }),
+      definitionen,
+      SERVER_POLITIK,
+    )
+    assert.equal(grund(aufrufer), 'unexpected_fields')
     assert.equal(zaehler.extract, 0)
   })
 
@@ -592,17 +613,16 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
   test('22 eine andere Politikversion scheitert ohne Teilfakt', () => {
     const zaehler = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
-      komposition({
-        policy: {
-          policyId: 'otp_example_effect',
-          policyVersion: 2,
-          assignments: [
-            { fieldPath: 'effect', sourceId: AMT },
-            { fieldPath: 'visaMode', sourceId: INNEN },
-          ],
-        },
-      }),
+      komposition(),
       [wirkungDefinition(zaehler)],
+      {
+        policyId: 'otp_example_effect',
+        policyVersion: 2,
+        assignments: [
+          { fieldPath: 'effect', sourceId: AMT },
+          { fieldPath: 'visaMode', sourceId: INNEN },
+        ],
+      },
     )
     assert.equal(grund(ergebnis), 'policy_version_mismatch')
     assert.equal(zaehler.extract, 0)
@@ -611,16 +631,11 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
 
   test('23 eine fehlende Feldzuweisung ergibt keinen Teilfakt', () => {
     const zaehler = { match: 0, extract: 0 }
-    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
-      komposition({
-        policy: {
-          policyId: 'otp_example_effect',
-          policyVersion: 1,
-          assignments: [{ fieldPath: 'effect', sourceId: AMT }],
-        },
-      }),
-      [wirkungDefinition(zaehler)],
-    )
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(komposition(), [wirkungDefinition(zaehler)], {
+      policyId: 'otp_example_effect',
+      policyVersion: 1,
+      assignments: [{ fieldPath: 'effect', sourceId: AMT }],
+    })
     assert.equal(grund(ergebnis), 'policy_field_unassigned')
     assert.equal(zaehler.match, 0)
     assert.equal(zaehler.extract, 0)

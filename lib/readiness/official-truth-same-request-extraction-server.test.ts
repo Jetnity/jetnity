@@ -21,6 +21,11 @@ import {
   type OfficialTruthRechercheGrund,
 } from '@/lib/readiness/official-truth-research-request'
 import {
+  isOfficialTruthCompositionSeal,
+  OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY,
+  type OfficialTruthCompositionPolicy,
+} from '@/lib/readiness/official-truth-composition-policy-registry'
+import {
   decideOfficialTruthSameRequestProof,
   type OfficialTruthSameRequestProofErgebnis,
 } from '@/lib/readiness/official-truth-same-request-proof-server'
@@ -426,6 +431,8 @@ async function binden(
     extract?: (eingabe: unknown) => ReturnType<typeof officialTruthTrustedFactExtrahieren>
     antwort?: (url: string) => Schritt
     definitionen?: readonly OfficialTruthExtractorDefinition[]
+    compositionPolicies?: readonly OfficialTruthCompositionPolicy[]
+    compositionExtractors?: readonly OfficialTruthExtractorDefinition[]
   },
 ): Promise<{ ergebnis: OfficialTruthSameRequestExtractionErgebnis; spur: Spur; extern: Aufruf[] }> {
   const extern = optionen?.extern ?? transportFuer(realeEingaben())
@@ -458,6 +465,8 @@ async function binden(
       if (optionen?.definitionen) return officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe, optionen.definitionen)
       return officialTruthTrustedFactExtrahieren(eingabe)
     },
+    compositionPolicies: optionen?.compositionPolicies,
+    compositionExtractors: optionen?.compositionExtractors,
   })
   return { ergebnis, spur, extern: extern.aufrufe }
 }
@@ -1014,4 +1023,144 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.match(live, /extract: officialTruthTrustedFactExtrahieren/)
     assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
   })
+
+  test('zusammengesetzte Produktion bleibt vor dem Abruf geschlossen', async () => {
+    assert.equal(OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY.length, 0)
+    assert.equal(Object.isFrozen(OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY), true)
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+    )
+    assert.equal(grund(ergebnis), 'composition_policy_unavailable')
+    assert.equal(spur.abrufe.length, 0)
+    assert.equal(spur.extrakt.length, 0)
+  })
+
+  test('eine injizierte URL-Sperre scheitert vor HTTP und sucht keine zweite Politik', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const definition = kompositionsExtraktor(aufrufe)
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [
+          {
+            ...definition,
+            urlAllowlist: [{ kind: 'exact', canonicalUrl: 'https://www.other.example/rules' }],
+          },
+        ],
+      },
+    )
+    assert.equal(grund(ergebnis), 'domain_or_path_not_allowlisted')
+    assert.equal(spur.abrufe.length, 0)
+    assert.equal(spur.http.length, 0)
+    assert.equal(aufrufe.match, 0)
+  })
+
+  test('ein abweichender Medientyp wählt den eingefrorenen Extraktor nicht neu', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        antwort: (url) => ({
+          status: 200,
+          body: url === INNEN_URL ? INNEN_TEXT : SNAPSHOT,
+          contentType: 'text/html',
+        }),
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor(aufrufe)],
+      },
+    )
+    assert.equal(grund(ergebnis), 'content_type_not_allowlisted')
+    assert.equal(spur.abrufe.length, 2)
+    assert.equal(spur.extrakt.length, 0)
+    assert.equal(aufrufe.match, 0)
+    assert.equal(aufrufe.extract, 0)
+  })
+
+  test('eine injizierte Politik bindet das Siegel ohne Annahme', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor(aufrufe)],
+      },
+    )
+    assert.equal(ergebnis.status, 'same_request_composition_bound')
+    if (ergebnis.status !== 'same_request_composition_bound') return
+    assert.equal(isOfficialTruthCompositionSeal(ergebnis.seal), true)
+    assert.equal(isOfficialTruthCompositionSeal(JSON.parse(JSON.stringify(ergebnis.seal))), false)
+    assert.equal(aufrufe.match, 1)
+    assert.equal(aufrufe.extract, 1)
+    assert.equal(JSON.stringify(ergebnis).includes(SNAPSHOT), false)
+  })
 })
+
+function kompositionsPolitik(): OfficialTruthCompositionPolicy {
+  return {
+    policyId: 'otp_example_effect',
+    policyVersion: 1,
+    current: true,
+    factKind: 'requirement_effect',
+    requirementType: 'visa',
+    sourceIds: [INTERIOR, REAL],
+    sourceFamilyId: 'otf_example_effect',
+    schemaFamily: 'ots_example_effect',
+    applicabilitySchema: null,
+    completeness: 'joint_complete_fact',
+    assignments: [
+      {
+        target: { kind: 'fact_field', fieldPath: 'effect' },
+        sourceIds: [REAL],
+        relation: 'single_source',
+        role: 'complementary_part',
+      },
+      {
+        target: { kind: 'fact_field', fieldPath: 'visaMode' },
+        sourceIds: [INTERIOR],
+        relation: 'single_source',
+        role: 'complementary_part',
+      },
+    ],
+  }
+}
+
+function kompositionsExtraktor(zaehler: { match: number; extract: number }): OfficialTruthExtractorDefinition {
+  return {
+    extractorId: 'otx_example_effect',
+    extractorVersion: 1,
+    current: true,
+    factKind: 'requirement_effect',
+    sourceFamilyId: 'otf_example_effect',
+    sourceIds: [INTERIOR, REAL],
+    urlAllowlist: [
+      { kind: 'exact', canonicalUrl: REAL_URL },
+      { kind: 'exact', canonicalUrl: INNEN_URL },
+    ],
+    contentTypes: ['text/plain'],
+    schemaFamily: 'ots_example_effect',
+    policyId: 'otp_example_effect',
+    policyVersion: 1,
+    requiredFieldPaths: ['effect', 'visaMode'],
+    match: () => {
+      zaehler.match += 1
+      return { ok: true }
+    },
+    extract: () => {
+      zaehler.extract += 1
+      return { ok: true, fact: { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' } }
+    },
+  }
+}

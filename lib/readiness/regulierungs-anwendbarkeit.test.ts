@@ -33,6 +33,7 @@ import {
   regulierungsAusdruckLesen,
   regulierungsKontextLesen,
   regulierungsVisaOptionAuswerten,
+  regulierungsAusdruckStrukturSchluessel,
   regulierungsWirkungAuswerten,
   type AnforderungswirkungFakt,
   type RegulierungsAusdruck,
@@ -901,13 +902,22 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'regulierungs-anwendbarkeit.ts'),
       join(hier, 'regulierungs-anwendbarkeit.test.ts'),
       join(hier, 'rule-claims.ts'),
+      join(hier, 'official-truth-composition-policy-registry.ts'),
+      join(hier, 'official-truth-composition-policy-registry.test.ts'),
     ])
     const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
     assert.deepEqual(fremd, [])
     const produktion = dateien(wurzel).filter(
       (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx') && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'),
     )
-    assert.deepEqual(produktion.sort(), [join(hier, 'regulierungs-anwendbarkeit.ts'), join(hier, 'rule-claims.ts')].sort())
+    assert.deepEqual(
+      produktion.sort(),
+      [
+        join(hier, 'regulierungs-anwendbarkeit.ts'),
+        join(hier, 'rule-claims.ts'),
+        join(hier, 'official-truth-composition-policy-registry.ts'),
+      ].sort(),
+    )
     const claims = readFileSync(join(hier, 'rule-claims.ts'), 'utf8')
     for (const name of [
       'regulierungsKontextLesen',
@@ -918,6 +928,10 @@ describe('regulierungs-anwendbarkeit', () => {
     ]) {
       assert.equal(claims.includes(name), false, name)
     }
+    const politik = readFileSync(join(hier, 'official-truth-composition-policy-registry.ts'), 'utf8')
+    assert.equal(politik.includes('regulierungsAusdruckStrukturSchluessel'), true)
+    assert.equal(politik.includes('regulierungsAusdruckAuswerten'), false)
+    assert.equal(politik.includes('regulierungsWirkungAuswerten'), false)
     for (const datei of [
       'official-truth-store-server.ts',
       'official-truth-trusted-fact-extractor-registry.ts',
@@ -925,5 +939,36 @@ describe('regulierungs-anwendbarkeit', () => {
     ]) {
       assert.equal(readFileSync(join(hier, datei), 'utf8').includes('regulierungs-anwendbarkeit'), false, datei)
     }
+  })
+
+  test('der support-freie Strukturschlüssel ignoriert Stütz-IDs und Operandenfolge', () => {
+    const atom = (purpose: string, support?: string) => ({
+      op: 'atomic' as const,
+      predicate: { kind: 'travel_purpose' as const, purpose },
+      ...(support ? { supportVersionIds: [support] } : {}),
+    })
+    const links = regulierungsAusdruckLesen({
+      op: 'all',
+      operands: [atom('visitor', ev(1)), atom('business', ev(2))],
+    })
+    const rechts = regulierungsAusdruckLesen({
+      op: 'all',
+      operands: [atom('business', ev(9)), atom('visitor', ev(3))],
+    })
+    assert.equal(links.ok && rechts.ok, true)
+    if (!links.ok || !rechts.ok) return
+    assert.equal(regulierungsAusdruckStrukturSchluessel(links.wert), regulierungsAusdruckStrukturSchluessel(rechts.wert))
+    const verschachtelt = regulierungsAusdruckLesen({ op: 'not', operand: atom('visitor', ev(4)) })
+    const gleich = regulierungsAusdruckLesen({ op: 'not', operand: atom('visitor', ev(5)) })
+    assert.equal(verschachtelt.ok && gleich.ok, true)
+    if (!verschachtelt.ok || !gleich.ok) return
+    assert.equal(
+      regulierungsAusdruckStrukturSchluessel(verschachtelt.wert),
+      regulierungsAusdruckStrukturSchluessel(gleich.wert),
+    )
+    const andere = regulierungsAusdruckLesen({ op: 'all', operands: [atom('study'), atom('business')] })
+    assert.equal(andere.ok, true)
+    if (!andere.ok) return
+    assert.notEqual(regulierungsAusdruckStrukturSchluessel(links.wert), regulierungsAusdruckStrukturSchluessel(andere.wert))
   })
 })

@@ -156,6 +156,9 @@ const VERBOTEN = new Set([
   'extraction_note',
   'schemaFamily',
   'schema_family',
+  'atomKey',
+  'atomLocator',
+  'atomId',
   'extractorId',
   'extractorVersion',
   'extractor_id',
@@ -206,6 +209,7 @@ const RAHMEN_GRUENDE = [
   'representation_not_eligible',
   'invalid_extractor_definition',
   'duplicate_extractor_version',
+  'duplicate_extractor_match',
   'insufficient_support',
   'same_source_composition',
   'support_bound_exceeded',
@@ -324,7 +328,10 @@ export type OfficialTruthTrustedFactExtractorErgebnis =
 
 export type OfficialTruthExtractorRegistryErgebnis =
   | { readonly ok: true; readonly registry: readonly OfficialTruthExtractorDefinition[] }
-  | { readonly ok: false; readonly reason: 'invalid_extractor_definition' | 'duplicate_extractor_version' }
+  | {
+      readonly ok: false
+      readonly reason: 'invalid_extractor_definition' | 'duplicate_extractor_version' | 'duplicate_extractor_match'
+    }
 
 /**
  * Produktionsregister. Absichtlich leer.
@@ -430,6 +437,17 @@ function urlRegelLesen(wert: unknown): OfficialTruthExtractorUrlRegel | null {
   return null
 }
 
+export function officialTruthExtractorUrlErlaubt(
+  canonicalUrl: string,
+  regeln: readonly OfficialTruthExtractorUrlRegel[],
+): boolean {
+  return urlErlaubt(canonicalUrl, regeln)
+}
+
+export function officialTruthExtractorMedienTyp(wert: unknown): string | null {
+  return medientyp(wert)
+}
+
 function urlErlaubt(canonicalUrl: string, regeln: readonly OfficialTruthExtractorUrlRegel[]): boolean {
   let adresse: URL
   try {
@@ -496,7 +514,7 @@ function definitionLesen(wert: unknown): OfficialTruthExtractorDefinition | null
   }
   if (einzelneQuelle) {
     if (sourceIds.length !== 1 || requiredFieldPaths.length !== 0) return null
-  } else if (sourceIds.length < 2 || requiredFieldPaths.length === 0) {
+  } else if (sourceIds.length < 2) {
     return null
   }
   if (typeof satz.match !== 'function' || typeof satz.extract !== 'function') return null
@@ -529,6 +547,13 @@ export function officialTruthExtractorDefinitionenPruefen(wert: unknown): Offici
     if (paare.has(paar)) return { ok: false, reason: 'duplicate_extractor_version' }
     paare.add(paar)
     registry.push(Object.freeze(definition))
+  }
+  const selektoren = new Set<string>()
+  for (const definition of registry) {
+    if (!definition.current) continue
+    const selektor = `${definition.factKind}\u0000${definition.sourceIds.join('\u0000')}`
+    if (selektoren.has(selektor)) return { ok: false, reason: 'duplicate_extractor_match' }
+    selektoren.add(selektor)
   }
   return { ok: true, registry: Object.freeze(registry) }
 }
@@ -712,6 +737,7 @@ function herkunftFuer(
 function ausfuehren(
   eingabe: unknown,
   definitionen: readonly OfficialTruthExtractorDefinition[],
+  serverPolitik: unknown = null,
 ): OfficialTruthTrustedFactExtractorErgebnis {
   if (zuTief(eingabe)) return sperre('unexpected_fields')
   if (baum(eingabe, 0, (_satz, schluessel) => PERSONEN.has(schluessel))) {
@@ -757,11 +783,12 @@ function ausfuehren(
     if (stuetzen.length !== 1) return sperre('ambiguous_structure')
     if (satz.policy !== null) return sperre('unexpected_fields')
   } else {
+    if (satz.policy !== null) return sperre('unexpected_fields')
     if (stuetzen.length < 2) return sperre('insufficient_support')
     if (quellen.size < 2) return sperre('same_source_composition')
     if (stuetzen.length !== quellen.size) return sperre('ambiguous_structure')
-    if (satz.policy === null) return sperre('policy_required')
-    const gelesen = politikForm(satz.policy)
+    if (serverPolitik === null || serverPolitik === undefined) return sperre('policy_required')
+    const gelesen = politikForm(serverPolitik)
     if (!gelesen.ok) return sperre('unexpected_fields')
     policy = gelesen.policy
   }
@@ -867,6 +894,7 @@ export function officialTruthTrustedFactExtrahieren(eingabe: unknown): OfficialT
 export function officialTruthTrustedFactExtrahierenMitDefinitionen(
   eingabe: unknown,
   definitionen: unknown,
+  serverPolitik?: unknown,
 ): OfficialTruthTrustedFactExtractorErgebnis {
   const geprueft = officialTruthExtractorDefinitionenPruefen(definitionen)
   if (!geprueft.ok) {
@@ -881,5 +909,5 @@ export function officialTruthTrustedFactExtrahierenMitDefinitionen(
     }
     return sperre(geprueft.reason)
   }
-  return ausfuehren(eingabe, geprueft.registry)
+  return ausfuehren(eingabe, geprueft.registry, serverPolitik ?? null)
 }

@@ -630,6 +630,31 @@ function ausdruckObjekt(ausdruck: RegulierungsAusdruck): Record<string, unknown>
   }
 }
 
+/**
+ * Support-freier Strukturvergleich. `supportVersionIds` fehlt auf jeder Tiefe.
+ * `all` / `any` sortieren nach diesem Schlüssel, nicht nach der gespeicherten Folge
+ * und nicht nach dem support-haltigen Kanon von `normalisieren`.
+ */
+function strukturObjekt(ausdruck: RegulierungsAusdruck): Record<string, unknown> {
+  if (ausdruck.op === 'atomic') {
+    const objekt = ausdruckObjekt(ausdruck)
+    delete objekt.supportVersionIds
+    return objekt
+  }
+  if (ausdruck.op === 'not') return { op: 'not', operand: strukturObjekt(ausdruck.operand) }
+  const kinder = ausdruck.operands.map((operand) => strukturObjekt(operand))
+  kinder.sort((links, rechts) => {
+    const kanonLinks = json(links)
+    const kanonRechts = json(rechts)
+    return kanonLinks < kanonRechts ? -1 : kanonLinks > kanonRechts ? 1 : 0
+  })
+  return { op: ausdruck.op, operands: kinder }
+}
+
+export function regulierungsAusdruckStrukturSchluessel(ausdruck: RegulierungsAusdruck): string {
+  return json(strukturObjekt(ausdruck))
+}
+
 function ausgangObjekt(ausgang: WirkungsAusgang | VisaOptionsAusgang): Record<string, unknown> {
   if ('effect' in ausgang) return { effect: ausgang.effect, visaMode: ausgang.visaMode }
   return { eligibility: ausgang.eligibility, mandate: ausgang.mandate }
