@@ -4,7 +4,7 @@ Date: 3 October 2026
 Issue: #772
 Draft PR: #774
 Branch: `fix/official-truth-same-request-proof-graph-1`
-Baseline: `main@a7ad77743327c01821cf2532ca253a3220c857e8`
+Baseline: `main@2e38aae0f616f06e661c32e4f1bfa336eb0613ec`
 First implementation commit: `14c9138085e19446d6bfe5e647dd7de47407022d`
 Reviewed head that required changes: `9869062622554b355d6d8e26bd89350608b3090c`
 Remediation implementation commit: `a0466832153ba90d801358746c9b1cd4d4cf1b0d`
@@ -13,7 +13,11 @@ Generation: **1**
 Session: https://cursor.com/agents/bc-d467fc77-c329-4bac-a218-2db64a02999c
 `originalModelName`: `grok-4.7-high-fast`. Not Auto.
 
-This report is the author record. A Technical-Lead PASS requires an independent exact-head review of the branch tip. This report is not Ready and not a merge. The review head is the branch tip after this remediation documentation commit. Re-fetch before review. `98690626` is the head the Technical Lead reviewed. It is not the new tip.
+This report is the author record. A Technical-Lead PASS requires an independent exact-head review of the branch tip. This report is not Ready and not a merge. The review head is the branch tip after the main integration. Re-fetch before review. `98690626` is the head the Technical Lead reviewed. It is not the new tip.
+
+## Main integration
+
+`origin/main` moved to `2e38aae0f616f06e661c32e4f1bfa336eb0613ec` when PR #775 merged. That merge is architecture documentation only. This branch now contains that main and remains 0 behind it. The R1/R2 code and the remediation commits `a0466832` and `afa1d9ff` are unchanged. #775 agrees that a caller `sourceSnapshot` is not content authority and that a server-owned retrieval slice is still future work. This publication recovery does not implement that fetch.
 
 ## Result
 

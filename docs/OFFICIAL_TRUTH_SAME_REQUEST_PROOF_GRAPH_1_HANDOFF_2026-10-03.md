@@ -4,7 +4,7 @@ Date: 3 October 2026
 Issue: #772
 Draft PR: #774
 Branch: `fix/official-truth-same-request-proof-graph-1`
-Baseline: `main@a7ad77743327c01821cf2532ca253a3220c857e8`
+Baseline: `main@2e38aae0f616f06e661c32e4f1bfa336eb0613ec`
 Logical agent: **Jetnity Official Truth same-request proof graph 1**
 Generation: **1**
 Session: https://cursor.com/agents/bc-d467fc77-c329-4bac-a218-2db64a02999c
@@ -14,9 +14,9 @@ Read `docs/OFFICIAL_TRUTH_SAME_REQUEST_PROOF_GRAPH_1_REPORT_2026-10-03.md` and t
 
 ## Current state
 
-The review head is the branch tip after the remediation documentation commit. Re-fetch before review. The first implementation commit is `14c9138085e19446d6bfe5e647dd7de47407022d`. The Technical Lead reviewed `9869062622554b355d6d8e26bd89350608b3090c` and required changes. The remediation implementation commit is `a0466832153ba90d801358746c9b1cd4d4cf1b0d`. None of those SHAs is the new review head.
+The review head is the branch tip after the main integration. Re-fetch before review. The first implementation commit is `14c9138085e19446d6bfe5e647dd7de47407022d`. The Technical Lead reviewed `9869062622554b355d6d8e26bd89350608b3090c` and required changes. The remediation implementation commit is `a0466832153ba90d801358746c9b1cd4d4cf1b0d`. None of those SHAs is the new review head.
 
-At the remediation fetch, `origin/main` was still `a7ad77743327c01821cf2532ca253a3220c857e8` and the merge-base was that SHA. The reviewed head was 3 ahead and 0 behind. Do not treat a later SHA as current without fetching.
+At the remediation fetch, `origin/main` was still `a7ad77743327c01821cf2532ca253a3220c857e8`. Main then advanced to `2e38aae0f616f06e661c32e4f1bfa336eb0613ec` through merged PR #775. This branch merges that main and is 0 behind it. The R1/R2 bytes are unchanged. Do not treat a later SHA as current without fetching.
 
 Machine mode is `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 

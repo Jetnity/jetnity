@@ -6,7 +6,7 @@ Draft PR: #774
 Branch: `fix/official-truth-same-request-proof-graph-1`
 First implementation reviewed by the Technical Lead: `9869062622554b355d6d8e26bd89350608b3090c`
 Remediation implementation: `a0466832153ba90d801358746c9b1cd4d4cf1b0d`
-Remediation review head: the branch tip after this documentation commit
+Remediation review head: the branch tip after the main integration at `2e38aae0f616f06e661c32e4f1bfa336eb0613ec`
 Logical agent: **Jetnity Official Truth same-request proof graph 1**
 Generation: **1**
 Session: https://cursor.com/agents/bc-d467fc77-c329-4bac-a218-2db64a02999c
