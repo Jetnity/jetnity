@@ -50,11 +50,9 @@ Created:
 - `docs/OFFICIAL_TRUTH_APPLICABILITY_CANONICAL_WIRING_AUDIT_1_REPORT_2026-10-03.md`
 - `docs/OFFICIAL_TRUTH_APPLICABILITY_CANONICAL_WIRING_AUDIT_1_SELF_REVIEW_2026-10-03.md`
 
-Updated:
+The task seed is already on the branch and was not edited by the audit commit. R1 restored `docs/ACTIVE_WORK_STATUS.md` byte-for-byte to `main@ac36175d4c64aaab6be7c83f2731a83473feba85`. It is not an audit output.
 
-- `docs/ACTIVE_WORK_STATUS.md` with the current writer pointer only.
-
-Not edited: `lib/**`, `app/**`, `components/**`, `types/**`, `supabase/**`, the task seed, `.jetnity/operating-mode.json`, provider selection, and the requirements engine.
+Not edited: `docs/ACTIVE_WORK_STATUS.md`, `lib/**`, `app/**`, `components/**`, `types/**`, `supabase/**`, the task seed, `.jetnity/operating-mode.json`, provider selection, and the requirements engine.
 
 A dirty `next-env.d.ts` was present at session start and was restored. It is not part of this slice.
 

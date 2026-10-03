@@ -13,7 +13,7 @@ This self-review is the author check. It is not an independent Technical-Lead PA
 
 ## Scope check
 
-The task allows three new docs. This slice also updates `docs/ACTIVE_WORK_STATUS.md` because the progress-persistence policy requires a live handoff before STOP. The status edit is a pointer. It does not change product scope.
+The task allows exactly three new docs. `docs/ACTIVE_WORK_STATUS.md` is not an audit output. R1 restored it byte-for-byte to `main@ac36175d4c64aaab6be7c83f2731a83473feba85`. No continuity pointer was added elsewhere.
 
 No edit to `lib/**`, `app/**`, `components/**`, `types/**`, or `supabase/**`. The task seed was not edited. `.jetnity/operating-mode.json` was not edited. No runtime wiring, migration, extractor registration, source parser, route, UI, provider, model, CH import, or F8.
 
@@ -47,7 +47,7 @@ A dirty `next-env.d.ts` existed before the audit and was restored. It is not sta
 - `applicability_not_persistable` is intentionally not a `RegelClaimFehler`. In-memory acceptance of schema 1 is valid. Persistence is the layer that refuses it.
 - The applicability source file is not a wiring-slice edit. The readers already match section 3.1.
 - The extractor registry source and the same-request source are expected to need no edit. The allowlist says they may receive a key-preserving narrowing only if typecheck forces it.
-- `docs/ACTIVE_WORK_STATUS.md` is updated. The previous applicability foundation left it untouched because that task named an exact file list and a handoff doc. This STOP uses the status file as the handoff pointer and keeps the audit, report, and self-review as the contract.
+- `docs/ACTIVE_WORK_STATUS.md` is unchanged from `main`. The task names exactly three outputs. The audit, report, and self-review are that file list.
 
 ## What I did not verify
 
