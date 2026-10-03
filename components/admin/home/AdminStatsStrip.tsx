@@ -21,6 +21,7 @@ import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { ausProblem, type Fehler } from '@/lib/admin/ladezustand'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { problemAus } from '@/lib/api/datenbank-lesen'
+import AdminEvidenceDetails from './AdminEvidenceDetails'
 
 const KACHEL_LABELS = ['Reisen (30T)', 'Konten mit Reise (30T)'] as const
 
@@ -56,11 +57,7 @@ export default async function AdminStatsStrip() {
   return (
     <div>
       <div className="mb-3">
-        <h2 className="text-lg font-semibold">Übersicht (letzte 30 Tage)</h2>
-        <p className="text-xs text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.kennzahlenHinweis}</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {ADMIN_EHRLICHE_TEXTE.umsatzConversionHinweis}
-        </p>
+        <h3 className="text-sm font-medium">Reiseaktivität · 30 Tage</h3>
       </div>
 
       {/* Ohne `onWiederholen`: Eine Server-Komponente kann keine Funktion an den
@@ -74,13 +71,19 @@ export default async function AdminStatsStrip() {
         </p>
       )}
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {items.map((it) => (
-          <div key={it.label} className="rounded-xl border border-border p-4 bg-background">
+          <div key={it.label} className="min-w-0 rounded-xl border border-border bg-background p-3 sm:p-4">
             <p className="text-sm text-muted-foreground">{it.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{it.value}</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{it.value}</p>
           </div>
         ))}
+      </div>
+      <div className="mt-3">
+        <AdminEvidenceDetails label="Datenqualität & Nachweis · Reisen">
+          <p>{ADMIN_EHRLICHE_TEXTE.kennzahlenHinweis}</p>
+          <p>{ADMIN_EHRLICHE_TEXTE.umsatzConversionHinweis}</p>
+        </AdminEvidenceDetails>
       </div>
     </div>
   )
