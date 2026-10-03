@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Sun, Moon, ChevronDown, LogOut, UserCircle2 } from 'lucide-react'
+import { Menu, Sun, Moon, ChevronDown, LogOut, UserCircle2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
@@ -91,26 +91,25 @@ export default function AdminTopbar({
         'border-border',
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           {showMenuButton && (
             <button
               type="button"
               onClick={onToggleSidebar}
               aria-label="Sidebar umschalten"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
             >
               <Menu className="h-5 w-5" />
             </button>
           )}
 
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <h1 className="truncate text-sm font-semibold leading-6 sm:text-base">{heading}</h1>
-              <span className="hidden text-xs text-muted-foreground sm:block">Steuerzentrale</span>
             </div>
 
-            <nav aria-label="Breadcrumb" className="mt-0.5 hidden text-xs sm:block">
+            {crumbs.length > 1 ? <nav aria-label="Breadcrumb" className="mt-0.5 hidden text-xs sm:block">
               <ol className="flex flex-wrap items-center gap-1 text-muted-foreground">
                 {crumbs.map((c, i) => (
                   <li key={c.href} className="inline-flex items-center gap-1">
@@ -130,24 +129,26 @@ export default function AdminTopbar({
                   </li>
                 ))}
               </ol>
-            </nav>
+            </nav> : <p className="text-xs text-muted-foreground">Interner Betrieb</p>}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <AdminNavigationSearchTrigger surface="desktop" />
 
           <span
-            className="hidden items-center rounded-lg border border-dashed border-border bg-card px-2.5 py-1.5 text-xs text-muted-foreground sm:inline-flex"
+            className="hidden items-center gap-2 px-2 text-xs text-muted-foreground xl:inline-flex"
             title={ADMIN_EHRLICHE_TEXTE.copilotFolgtHinweis}
           >
-            {ADMIN_EHRLICHE_TEXTE.copilotFolgt}
+            <Sparkles aria-hidden className="h-3.5 w-3.5" />
+            Copilot Pro
+            <span className="rounded-full border border-border px-2 py-0.5 text-[10px]">In Planung</span>
           </span>
 
           <button
             type="button"
             aria-label="Theme umschalten"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
             onClick={toggleTheme}
             title={isDark ? 'Helles Theme' : 'Dunkles Theme'}
           >
@@ -161,7 +162,8 @@ export default function AdminTopbar({
               aria-expanded={userOpen}
               aria-controls="admin-user-menu"
               onClick={() => setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_umschalten'))}
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
+              aria-label="Kontomenü"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
             >
               <UserCircle2 className="h-5 w-5" />
               <span className="hidden sm:inline">Konto</span>

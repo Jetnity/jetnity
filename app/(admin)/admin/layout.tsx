@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
+import { Sun, Moon } from 'lucide-react'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopbar from '@/components/layout/AdminTopbar'
@@ -150,7 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [drawerOpen, closeDrawer])
 
   const sidebarW = collapsed ? 'w-[72px]' : 'w-[260px]'
-  const gridCols = collapsed ? 'md:grid-cols-[72px_1fr]' : 'md:grid-cols-[260px_1fr]'
+  const gridCols = collapsed ? 'lg:grid-cols-[72px_minmax(0,1fr)]' : 'lg:grid-cols-[260px_minmax(0,1fr)]'
 
   return (
     <AdminShellContext.Provider
@@ -161,8 +162,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <SkipToContentLink targetId="admin-content" />
 
       <div className="min-h-dvh bg-muted/20 text-foreground">
-        {/* Mobile top strip with menu + area search + collapse toggle */}
-        <div className="md:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-background/75 backdrop-blur px-3 py-2">
+        {/* Mobile/tablet strip with menu, area search and theme toggle */}
+        <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-background/75 backdrop-blur px-3 py-2">
           <button
             type="button"
             onClick={openDrawer}
@@ -177,23 +178,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AdminNavigationSearchTrigger surface="mobile" />
           <button
             type="button"
-            onClick={toggleCollapsed}
-            aria-pressed={collapsed}
-            className="inline-flex h-11 items-center gap-2 rounded-lg border px-3 text-sm hover:bg-accent pointer-fine:h-9"
-            title="Sidebar ein-/ausklappen (Ctrl/Cmd+Shift+B)"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Helles Theme' : 'Dunkles Theme'}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border hover:bg-accent"
           >
-            {collapsed ? '▶︎' : '◀︎'} Sidebar
+            {isDark ? <Sun aria-hidden className="h-5 w-5" /> : <Moon aria-hidden className="h-5 w-5" />}
           </button>
         </div>
 
         {/* App shell */}
-        <div className={`mx-auto grid ${gridCols} md:gap-0`} role="application" aria-label="Jetnity Admin">
+        <div className={`mx-auto grid ${gridCols} lg:gap-0`} role="application" aria-label="Jetnity Admin">
           {/* Desktop sidebar */}
-          {/* Kein aria-expanded: Die implizite Rolle complementary kennt es
-              nicht, Hilfsmittel ignorieren es hier. Den Zustand meldet die
-              Schaltflaeche oben ueber aria-pressed. */}
+          {/* Keep the complementary landmark; collapse only changes its visual density. */}
           <aside
-            className={`hidden md:block ${sidebarW} border-r bg-background`}
+            className={`group/admin-nav hidden lg:block ${sidebarW} border-r bg-background`}
             data-collapsed={collapsed ? 'true' : 'false'}
             aria-label="Admin Navigation"
           >
@@ -205,8 +203,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Main column */}
           <div className="min-w-0">
             {/* Desktop topbar */}
-            <div className="hidden md:block sticky top-0 z-30 border-b bg-background/75 backdrop-blur">
-              <AdminTopbar />
+            <div className="hidden lg:block sticky top-0 z-30 border-b bg-background/75 backdrop-blur">
+              <AdminTopbar onToggleSidebar={toggleCollapsed} />
             </div>
 
             <main
@@ -214,7 +212,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               tabIndex={-1}
               role="main"
               aria-live="polite"
-              className="p-4 md:p-6 outline-none"
+              className="p-4 lg:p-6 outline-none"
             >
               {children}
             </main>
@@ -228,7 +226,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             aria-modal="true"
             aria-label="Admin Navigation"
             data-admin-mobile-drawer="true"
-            className="fixed inset-0 z-50 md:hidden"
+            className="fixed inset-0 z-50 lg:hidden"
           >
             {/* Overlay */}
             <button
@@ -247,7 +245,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   type="button"
                   aria-label="Navigationsmenü schließen"
                   onClick={closeDrawer}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
