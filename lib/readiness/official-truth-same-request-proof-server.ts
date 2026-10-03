@@ -97,6 +97,10 @@ const ZEUGEN_VERBOTEN = new Set([
   'evidenceVersions',
   'kandidat',
   'candidate',
+  'policy',
+  'policyId',
+  'policyVersion',
+  'assignments',
 ])
 
 type ReviewSperre = Extract<OfficialTruthServerHeldReviewReproofErgebnis, { status: 'blocked' }>['reason']

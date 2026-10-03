@@ -12,6 +12,7 @@ import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
   officialTruthExtractorDefinitionenPruefen,
+  officialTruthExtractorEingefroreneAusfuehrung,
   officialTruthTrustedFactExtrahieren,
   officialTruthTrustedFactExtrahierenMitDefinitionen,
   type OfficialTruthExtractorDefinition,
@@ -273,19 +274,21 @@ function komposition(teil?: Record<string, unknown>) {
         stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
         stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
       ],
-      policy: {
-        policyId: 'otp_example_effect',
-        policyVersion: 1,
-        assignments: [
-          { fieldPath: 'effect', sourceId: AMT },
-          { fieldPath: 'visaMode', sourceId: INNEN },
-        ],
-      },
+      policy: null,
       registry: registry(),
     },
     teil,
     requirementType,
   )
+}
+
+const SERVER_POLITIK = {
+  policyId: 'otp_example_effect',
+  policyVersion: 1,
+  assignments: [
+    { fieldPath: 'effect', sourceId: AMT },
+    { fieldPath: 'visaMode', sourceId: INNEN },
+  ],
 }
 
 function grund(ergebnis: { status: string; reason?: string }): string | undefined {
@@ -431,14 +434,14 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(zaehler.match, 0)
   })
 
-  test('11 zwei aktuelle Treffer sind mehrdeutig', () => {
+  test('11 zwei aktuelle Extraktoren derselben Faktart und Quellenmenge sind duplicate_extractor_match', () => {
     const erste = { match: 0, extract: 0 }
     const zweite = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [
       seitenDefinition(erste, { extractorId: 'otx_example_pages' }),
       seitenDefinition(zweite, { extractorId: 'otx_example_pages_b', schemaFamily: 'ots_example_pages_b' }),
     ])
-    assert.equal(grund(ergebnis), 'ambiguous_structure')
+    assert.equal(grund(ergebnis), 'duplicate_extractor_match')
     assert.equal(erste.match + zweite.match, 0)
     assert.equal(erste.extract + zweite.extract, 0)
   })
@@ -481,6 +484,18 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const rechts = seitenDefinition({ match: 0, extract: 0 }, { current: false })
     const ergebnis = officialTruthExtractorDefinitionenPruefen([links, rechts])
     assert.deepEqual(ergebnis, { ok: false, reason: 'duplicate_extractor_version' })
+  })
+
+  test('14b zwei aktuelle Extraktoren mit derselben Faktart und Quellenmenge sind duplicate_extractor_match', () => {
+    const links = seitenDefinition({ match: 0, extract: 0 }, { contentTypes: ['text/plain'] })
+    const rechts = seitenDefinition({ match: 0, extract: 0 }, {
+      extractorId: 'otx_example_pages_html',
+      extractorVersion: 2,
+      contentTypes: ['text/html'],
+    })
+    assert.deepEqual(officialTruthExtractorDefinitionenPruefen([links, rechts]), { ok: false, reason: 'duplicate_extractor_match' })
+    const historisch = seitenDefinition({ match: 0, extract: 0 }, { extractorVersion: 3, current: false, contentTypes: ['text/html'] })
+    assert.equal(officialTruthExtractorDefinitionenPruefen([links, historisch]).ok, true)
   })
 
   test('15 eine explizite Primärquelle ergibt genau einen kanonischen Fakt', () => {
@@ -552,10 +567,11 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const vorwaerts = { match: 0, extract: 0 }
     const rueckwaerts = { match: 0, extract: 0 }
     const basis = komposition()
-    const links = officialTruthTrustedFactExtrahierenMitDefinitionen(basis, [wirkungDefinition(vorwaerts)])
+    const links = officialTruthTrustedFactExtrahierenMitDefinitionen(basis, [wirkungDefinition(vorwaerts)], SERVER_POLITIK)
     const rechts = officialTruthTrustedFactExtrahierenMitDefinitionen(
       komposition({ supports: [...(basis.supports as unknown[])].reverse() }),
       [wirkungDefinition(rueckwaerts)],
+      SERVER_POLITIK,
     )
     assert.equal(links.status, 'trusted_fact_extracted')
     assert.deepEqual(links, rechts)
@@ -571,6 +587,12 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(grund(eine), 'insufficient_support')
     const ohnePolitik = officialTruthTrustedFactExtrahierenMitDefinitionen(komposition({ policy: null }), definitionen)
     assert.equal(grund(ohnePolitik), 'policy_required')
+    const aufrufer = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      komposition({ policy: SERVER_POLITIK }),
+      definitionen,
+      SERVER_POLITIK,
+    )
+    assert.equal(grund(aufrufer), 'unexpected_fields')
     assert.equal(zaehler.extract, 0)
   })
 
@@ -592,17 +614,16 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
   test('22 eine andere Politikversion scheitert ohne Teilfakt', () => {
     const zaehler = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
-      komposition({
-        policy: {
-          policyId: 'otp_example_effect',
-          policyVersion: 2,
-          assignments: [
-            { fieldPath: 'effect', sourceId: AMT },
-            { fieldPath: 'visaMode', sourceId: INNEN },
-          ],
-        },
-      }),
+      komposition(),
       [wirkungDefinition(zaehler)],
+      {
+        policyId: 'otp_example_effect',
+        policyVersion: 2,
+        assignments: [
+          { fieldPath: 'effect', sourceId: AMT },
+          { fieldPath: 'visaMode', sourceId: INNEN },
+        ],
+      },
     )
     assert.equal(grund(ergebnis), 'policy_version_mismatch')
     assert.equal(zaehler.extract, 0)
@@ -611,16 +632,11 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
 
   test('23 eine fehlende Feldzuweisung ergibt keinen Teilfakt', () => {
     const zaehler = { match: 0, extract: 0 }
-    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
-      komposition({
-        policy: {
-          policyId: 'otp_example_effect',
-          policyVersion: 1,
-          assignments: [{ fieldPath: 'effect', sourceId: AMT }],
-        },
-      }),
-      [wirkungDefinition(zaehler)],
-    )
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(komposition(), [wirkungDefinition(zaehler)], {
+      policyId: 'otp_example_effect',
+      policyVersion: 1,
+      assignments: [{ fieldPath: 'effect', sourceId: AMT }],
+    })
     assert.equal(grund(ergebnis), 'policy_field_unassigned')
     assert.equal(zaehler.match, 0)
     assert.equal(zaehler.extract, 0)
@@ -1090,5 +1106,173 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.match(text, /OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY[\s\S]*?Object\.freeze\(\[\]\)/)
     assert.equal(text.includes('regelKandidatAkzeptieren'), false)
     assert.match(text, /regelFaktKanonischLesen\(/)
+  })
+})
+
+describe('eine eingefrorene Ausführungsnaht', () => {
+  const BEOBACHTUNGEN = [
+    { targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required' },
+    { targetKey: 'ziel:visaMode', sourceId: INNEN, canonical: 'none' },
+  ]
+
+  function naht(ueber?: {
+    definition?: OfficialTruthExtractorDefinition
+    supports?: unknown
+    scope?: unknown
+    scopeKey?: unknown
+    requirementType?: unknown
+    registry?: unknown
+    zaehler?: Zaehler
+    observations?: unknown
+  }) {
+    const zaehler = ueber?.zaehler ?? { match: 0, extract: 0 }
+    const basis =
+      ueber?.definition ??
+      wirkungDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return {
+            ok: true,
+            fact: { kind: 'requirement_effect', effect: 'required', visaMode: null },
+            ...(ueber && Object.hasOwn(ueber, 'observations')
+              ? { observations: ueber.observations }
+              : { observations: BEOBACHTUNGEN }),
+          }
+        },
+      })
+    const scope = ueber && Object.hasOwn(ueber, 'scope') ? ueber.scope : zellenScope('health')
+    return {
+      zaehler,
+      ergebnis: officialTruthExtractorEingefroreneAusfuehrung({
+        definition: basis,
+        factKind: 'requirement_effect',
+        requirementType: ueber?.requirementType ?? 'health',
+        scopeKey: ueber && Object.hasOwn(ueber, 'scopeKey') ? ueber.scopeKey : schluesselFuer(scope),
+        scope,
+        supports:
+          ueber?.supports ?? [
+            stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
+            stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
+          ],
+        registry: ueber?.registry ?? registry(),
+      }),
+    }
+  }
+
+  function sperrgrund(ergebnis: { ok: boolean; reason?: string }): string | undefined {
+    return ergebnis.ok ? undefined : ergebnis.reason
+  }
+
+  test('ein Lauf liefert einen tief eingefrorenen Fakt, Beobachtungen und gebundene Stützen', () => {
+    const lauf = naht()
+    assert.equal(lauf.ergebnis.ok, true, sperrgrund(lauf.ergebnis))
+    if (!lauf.ergebnis.ok) return
+    assert.equal(lauf.zaehler.match, 1)
+    assert.equal(lauf.zaehler.extract, 1)
+    assert.equal(Object.isFrozen(lauf.ergebnis.fact), true)
+    assert.equal(Object.isFrozen(lauf.ergebnis.observations), true)
+    assert.equal(Object.isFrozen(lauf.ergebnis.supports), true)
+    assert.throws(() => {
+      ;(lauf.ergebnis as { ok: boolean }).ok = false
+    })
+    assert.deepEqual([...lauf.ergebnis.observations], BEOBACHTUNGEN)
+    assert.deepEqual(
+      lauf.ergebnis.supports.map((eintrag) => eintrag.sourceId).sort(),
+      [AMT, INNEN].sort(),
+    )
+    // Das Produktionsregister bleibt leer; die Naht sucht dort nichts.
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+  })
+
+  test('die Naht wählt weder Definition noch Medientyp neu', () => {
+    const fremderTyp = naht({
+      supports: [
+        stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT, 'text/html'),
+        stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT, 'text/html'),
+      ],
+    })
+    assert.equal(sperrgrund(fremderTyp.ergebnis), 'content_type_not_allowlisted')
+    assert.equal(fremderTyp.zaehler.match, 0)
+
+    const zaehler = { match: 0, extract: 0 }
+    const fremdeUrl = naht({
+      zaehler,
+      definition: wirkungDefinition(zaehler, {
+        urlAllowlist: [{ kind: 'exact', canonicalUrl: 'https://www.gov.example/other' }],
+      }),
+    })
+    assert.equal(sperrgrund(fremdeUrl.ergebnis), 'domain_or_path_not_allowlisted')
+    assert.equal(zaehler.match, 0)
+
+    const einzeln = naht({
+      supports: [stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT)],
+    })
+    assert.equal(sperrgrund(einzeln.ergebnis), 'same_source_composition')
+
+    const ohnePolitik = naht({
+      definition: wirkungDefinition({ match: 0, extract: 0 }, { policyId: null, policyVersion: null }),
+    })
+    assert.equal(sperrgrund(ohnePolitik.ergebnis), 'invalid_extractor_definition')
+
+    const nichtAktuell = naht({ definition: wirkungDefinition({ match: 0, extract: 0 }, { current: false }) })
+    assert.equal(sperrgrund(nichtAktuell.ergebnis), 'invalid_extractor_definition')
+  })
+
+  test('Beobachtungen entstehen nur im Code und nur über frische Stützen', () => {
+    assert.equal(sperrgrund(naht({ observations: undefined }).ergebnis), 'fact_incomplete')
+    assert.equal(sperrgrund(naht({ observations: [] }).ergebnis), 'fact_incomplete')
+    assert.equal(
+      sperrgrund(naht({ observations: [{ targetKey: 'ziel:effect', sourceId: LIZENZ, canonical: 'required' }] }).ergebnis),
+      'source_not_allowlisted',
+    )
+    assert.equal(
+      sperrgrund(
+        naht({ observations: [{ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required', extra: 1 }] }).ergebnis,
+      ),
+      'unexpected_fields',
+    )
+    assert.equal(
+      sperrgrund(naht({ observations: [{ targetKey: '', sourceId: AMT, canonical: 'required' }] }).ergebnis),
+      'unexpected_fields',
+    )
+    assert.equal(
+      sperrgrund(
+        naht({
+          observations: Array.from({ length: 257 }, () => ({ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'x' })),
+        }).ergebnis,
+      ),
+      'snapshot_bound_exceeded',
+    )
+  })
+
+  test('Atom-Marker im Rohfakt sperren die zusammengesetzte Naht', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const lauf = naht({
+      zaehler,
+      definition: wirkungDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return {
+            ok: true,
+            fact: { kind: 'requirement_effect', effect: 'required', visaMode: null, atomLocator: 'branch:a/atom' },
+            observations: BEOBACHTUNGEN,
+          }
+        },
+      }),
+    })
+    assert.equal(sperrgrund(lauf.ergebnis), 'unexpected_fields')
+  })
+
+  test('der explizite Einzelquellenpfad kennt keine Beobachtungen', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [
+      seitenDefinition(zaehler, {
+        extract: () => {
+          zaehler.extract += 1
+          return { ok: true, fact: { kind: 'blank_passport_pages', minimumPages: 2 }, observations: [] }
+        },
+      }),
+    ])
+    assert.deepEqual(ergebnis, { status: 'blocked', reason: 'fact_incomplete' })
   })
 })

@@ -21,6 +21,13 @@ import {
   type OfficialTruthRechercheGrund,
 } from '@/lib/readiness/official-truth-research-request'
 import {
+  isOfficialTruthCompositionSeal,
+  OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY,
+  officialTruthCompositionCitationKey,
+  officialTruthCompositionSealView,
+  type OfficialTruthCompositionPolicy,
+} from '@/lib/readiness/official-truth-composition-policy-registry'
+import {
   decideOfficialTruthSameRequestProof,
   type OfficialTruthSameRequestProofErgebnis,
 } from '@/lib/readiness/official-truth-same-request-proof-server'
@@ -40,6 +47,7 @@ import {
   OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
   officialTruthTrustedFactExtrahieren,
   officialTruthTrustedFactExtrahierenMitDefinitionen,
+  type OfficialTruthExtractorBeobachtung,
   type OfficialTruthExtractorDefinition,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import { quellenRegistryErstellen, type QuellenEingabe, type QuellenRegistry, type RegistrierteQuelle } from '@/lib/readiness/source-registry'
@@ -426,6 +434,8 @@ async function binden(
     extract?: (eingabe: unknown) => ReturnType<typeof officialTruthTrustedFactExtrahieren>
     antwort?: (url: string) => Schritt
     definitionen?: readonly OfficialTruthExtractorDefinition[]
+    compositionPolicies?: readonly OfficialTruthCompositionPolicy[]
+    compositionExtractors?: readonly OfficialTruthExtractorDefinition[]
   },
 ): Promise<{ ergebnis: OfficialTruthSameRequestExtractionErgebnis; spur: Spur; extern: Aufruf[] }> {
   const extern = optionen?.extern ?? transportFuer(realeEingaben())
@@ -458,6 +468,8 @@ async function binden(
       if (optionen?.definitionen) return officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe, optionen.definitionen)
       return officialTruthTrustedFactExtrahieren(eingabe)
     },
+    compositionPolicies: optionen?.compositionPolicies,
+    compositionExtractors: optionen?.compositionExtractors,
   })
   return { ergebnis, spur, extern: extern.aufrufe }
 }
@@ -1014,4 +1026,287 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.match(live, /extract: officialTruthTrustedFactExtrahieren/)
     assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
   })
+
+  test('zusammengesetzte Produktion bleibt vor dem Abruf geschlossen', async () => {
+    assert.equal(OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY.length, 0)
+    assert.equal(Object.isFrozen(OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY), true)
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+    )
+    assert.equal(grund(ergebnis), 'composition_policy_unavailable')
+    assert.equal(spur.abrufe.length, 0)
+    assert.equal(spur.extrakt.length, 0)
+  })
+
+  test('eine injizierte URL-Sperre scheitert vor HTTP und sucht keine zweite Politik', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const definition = kompositionsExtraktor(aufrufe)
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [
+          {
+            ...definition,
+            urlAllowlist: [{ kind: 'exact', canonicalUrl: 'https://www.other.example/rules' }],
+          },
+        ],
+      },
+    )
+    assert.equal(grund(ergebnis), 'domain_or_path_not_allowlisted')
+    assert.equal(spur.abrufe.length, 0)
+    assert.equal(spur.http.length, 0)
+    assert.equal(aufrufe.match, 0)
+  })
+
+  test('ein abweichender Medientyp wählt den eingefrorenen Extraktor nicht neu', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis, spur } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        antwort: (url) => ({
+          status: 200,
+          body: url === INNEN_URL ? INNEN_TEXT : SNAPSHOT,
+          contentType: 'text/html',
+        }),
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor(aufrufe)],
+      },
+    )
+    assert.equal(grund(ergebnis), 'content_type_not_allowlisted')
+    assert.equal(spur.abrufe.length, 2)
+    assert.equal(spur.extrakt.length, 0)
+    assert.equal(aufrufe.match, 0)
+    assert.equal(aufrufe.extract, 0)
+  })
+
+  test('eine injizierte Politik bindet das Siegel ohne Annahme', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(
+      eingabe({
+        supports: [erstesBuendel(), zweitesBuendel()],
+        metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+      }),
+      {
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor(aufrufe)],
+      },
+    )
+    assert.equal(ergebnis.status, 'same_request_composition_bound')
+    if (ergebnis.status !== 'same_request_composition_bound') return
+    assert.equal(isOfficialTruthCompositionSeal(ergebnis.seal), true)
+    assert.equal(isOfficialTruthCompositionSeal(JSON.parse(JSON.stringify(ergebnis.seal))), false)
+    assert.equal(aufrufe.match, 1)
+    assert.equal(aufrufe.extract, 1)
+    assert.equal(JSON.stringify(ergebnis).includes(SNAPSHOT), false)
+  })
+
+  test('CR-2 widersprüchliche Werte je Quelle sperren die Komposition', async () => {
+    const policy = gleichwertigePolitik()
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+      compositionPolicies: [policy],
+      compositionExtractors: [
+        kompositionsExtraktor(aufrufe, [
+          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'not_required' },
+          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+        ]),
+      ],
+    })
+    assert.equal(grund(ergebnis), 'conflicting_value')
+    assert.equal(aufrufe.extract, 1)
+  })
+
+  test('CR-2 ein Wert außerhalb der Zuweisung sperrt die Komposition', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+      compositionPolicies: [kompositionsPolitik()],
+      compositionExtractors: [
+        kompositionsExtraktor(aufrufe, [
+          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'required' },
+          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+        ]),
+      ],
+    })
+    assert.equal(grund(ergebnis), 'duplicate_value')
+  })
+
+  test('CR-2 equal_values ohne eine Quelle sperrt die Komposition', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+      compositionPolicies: [gleichwertigePolitik()],
+      compositionExtractors: [
+        kompositionsExtraktor(aufrufe, [
+          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+        ]),
+      ],
+    })
+    assert.equal(grund(ergebnis), 'fact_incomplete')
+  })
+
+  test('CR-2 equal_values mit Übereinstimmung bindet das Siegel', async () => {
+    const policy = gleichwertigePolitik()
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+      compositionPolicies: [policy],
+      compositionExtractors: [kompositionsExtraktor(aufrufe, kompositionsBeobachtungen(policy))],
+    })
+    assert.equal(ergebnis.status, 'same_request_composition_bound')
+    if (ergebnis.status !== 'same_request_composition_bound') return
+    assert.equal(isOfficialTruthCompositionSeal(ergebnis.seal), true)
+    assert.equal(aufrufe.extract, 1)
+  })
+
+  test('CR-2 fehlende Beobachtungen binden niemals ein Siegel', async () => {
+    for (const beobachtungen of [null, [] as OfficialTruthExtractorBeobachtung[]]) {
+      const aufrufe = { match: 0, extract: 0 }
+      const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor(aufrufe, beobachtungen)],
+      })
+      assert.notEqual(ergebnis.status, 'same_request_composition_bound')
+      assert.equal(grund(ergebnis), 'fact_incomplete')
+      assert.equal(aufrufe.extract, 1)
+    }
+  })
+
+  test('CR-3 der gesiegelte Fakt des gebundenen Laufs ist unveränderlich', async () => {
+    const aufrufe = { match: 0, extract: 0 }
+    const { ergebnis } = await binden(zusammengesetzteEingabe(), {
+      compositionPolicies: [kompositionsPolitik()],
+      compositionExtractors: [kompositionsExtraktor(aufrufe)],
+    })
+    assert.equal(ergebnis.status, 'same_request_composition_bound')
+    if (ergebnis.status !== 'same_request_composition_bound') return
+    const sicht = officialTruthCompositionSealView(ergebnis.seal)
+    assert.ok(sicht)
+    if (!sicht) return
+    assert.equal(Object.isFrozen(sicht.fact), true)
+    assert.throws(() => {
+      ;(sicht.fact as { kind: string }).kind = 'visa_options'
+    })
+    assert.equal(officialTruthCompositionSealView(ergebnis.seal)?.fact.kind, 'requirement_effect')
+    assert.equal(officialTruthCompositionSealView(ergebnis.seal)?.fact, sicht.fact)
+    assert.equal(officialTruthCompositionSealView({ ...sicht }), null)
+    assert.equal(officialTruthCompositionSealView(JSON.parse(JSON.stringify(sicht))), null)
+  })
 })
+
+function zusammengesetzteEingabe(): unknown {
+  return eingabe({
+    supports: [erstesBuendel(), zweitesBuendel()],
+    metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
+  })
+}
+
+function kompositionsPolitik(): OfficialTruthCompositionPolicy {
+  return {
+    policyId: 'otp_example_effect',
+    policyVersion: 1,
+    current: true,
+    factKind: 'requirement_effect',
+    requirementType: 'visa',
+    sourceIds: [INTERIOR, REAL],
+    sourceFamilyId: 'otf_example_effect',
+    schemaFamily: 'ots_example_effect',
+    applicabilitySchema: null,
+    completeness: 'joint_complete_fact',
+    assignments: [
+      {
+        target: { kind: 'fact_field', fieldPath: 'effect' },
+        sourceIds: [REAL],
+        relation: 'single_source',
+        role: 'complementary_part',
+      },
+      {
+        target: { kind: 'fact_field', fieldPath: 'visaMode' },
+        sourceIds: [INTERIOR],
+        relation: 'single_source',
+        role: 'complementary_part',
+      },
+    ],
+  }
+}
+
+/** Ziel eines Faktfelds in der Sprache der Kompositionsschicht. */
+function zielSchluessel(fieldPath: string): string {
+  return officialTruthCompositionCitationKey({ kind: 'fact_field', fieldPath })
+}
+
+/**
+ * So beschriftet ein codeeigener Extraktor seine quellenbezogenen
+ * Beobachtungen über das frische servereigene Material.
+ */
+function kompositionsBeobachtungen(policy: OfficialTruthCompositionPolicy): OfficialTruthExtractorBeobachtung[] {
+  return policy.assignments.flatMap((assignment) =>
+    assignment.sourceIds.map((sourceId) => ({
+      targetKey: officialTruthCompositionCitationKey(assignment.target),
+      sourceId,
+      canonical: `kanonisch:${officialTruthCompositionCitationKey(assignment.target)}`,
+    })),
+  )
+}
+
+function gleichwertigePolitik(): OfficialTruthCompositionPolicy {
+  return {
+    ...kompositionsPolitik(),
+    assignments: [
+      {
+        target: { kind: 'fact_field', fieldPath: 'effect' },
+        sourceIds: [INTERIOR, REAL],
+        relation: 'equal_values',
+        role: 'equal_values',
+      },
+      {
+        target: { kind: 'fact_field', fieldPath: 'visaMode' },
+        sourceIds: [INTERIOR],
+        relation: 'single_source',
+        role: 'complementary_part',
+      },
+    ],
+  }
+}
+
+function kompositionsExtraktor(
+  zaehler: { match: number; extract: number },
+  beobachtungen: readonly OfficialTruthExtractorBeobachtung[] | null = kompositionsBeobachtungen(kompositionsPolitik()),
+): OfficialTruthExtractorDefinition {
+  return {
+    extractorId: 'otx_example_effect',
+    extractorVersion: 1,
+    current: true,
+    factKind: 'requirement_effect',
+    sourceFamilyId: 'otf_example_effect',
+    sourceIds: [INTERIOR, REAL],
+    urlAllowlist: [
+      { kind: 'exact', canonicalUrl: REAL_URL },
+      { kind: 'exact', canonicalUrl: INNEN_URL },
+    ],
+    contentTypes: ['text/plain'],
+    schemaFamily: 'ots_example_effect',
+    policyId: 'otp_example_effect',
+    policyVersion: 1,
+    requiredFieldPaths: ['effect', 'visaMode'],
+    match: () => {
+      zaehler.match += 1
+      return { ok: true }
+    },
+    extract: () => {
+      zaehler.extract += 1
+      const fact = { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' }
+      return beobachtungen === null ? { ok: true, fact } : { ok: true, fact, observations: beobachtungen }
+    },
+  }
+}

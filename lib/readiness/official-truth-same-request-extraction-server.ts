@@ -19,6 +19,14 @@
 import 'server-only'
 
 import { akzeptierteEvidenceLesen, type EvidenceVersion } from '@/lib/readiness/evidence'
+import {
+  OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY,
+  officialTruthCompositionPhaseA,
+  officialTruthCompositionPhaseB,
+  officialTruthCompositionRegistriesPruefen,
+  type OfficialTruthCompositionPolicy,
+  type OfficialTruthCompositionSperrgrund,
+} from '@/lib/readiness/official-truth-composition-policy-registry'
 import type { OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   loadOfficialTruthSameRequestProof,
@@ -32,7 +40,9 @@ import {
   type OfficialTruthServerOwnedRetrievalSperrgrund,
 } from '@/lib/readiness/official-truth-server-owned-retrieval'
 import {
+  OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
   officialTruthTrustedFactExtrahieren,
+  type OfficialTruthExtractorDefinition,
   type OfficialTruthExtractorHerkunft,
   type OfficialTruthTrustedFactExtractorErgebnis,
   type OfficialTruthTrustedFactExtractorSperrgrund,
@@ -84,6 +94,7 @@ export type OfficialTruthSameRequestExtractionSperrgrund =
   | OfficialTruthSameRequestProofSperrgrund
   | OfficialTruthServerOwnedRetrievalSperrgrund
   | OfficialTruthTrustedFactExtractorSperrgrund
+  | OfficialTruthCompositionSperrgrund
   | 'composition_policy_unavailable'
   | 'blocked_domain_not_replayable'
   | 'source_changed_since_evidence'
@@ -129,6 +140,10 @@ export type OfficialTruthSameRequestExtractionErgebnis =
       readonly retrievals: readonly OfficialTruthSameRequestRetrievalProvenienz[]
     }
   | {
+      readonly status: 'same_request_composition_bound'
+      readonly seal: object
+    }
+  | {
       readonly status: 'blocked'
       readonly reason: OfficialTruthSameRequestExtractionSperrgrund
     }
@@ -164,6 +179,8 @@ export type OfficialTruthSameRequestExtractionAbhaengigkeiten = {
     transport: OfficialTruthSourceCatalogTransport,
   ) => Promise<OfficialTruthServerOwnedRetrievalErgebnis>
   readonly extract: (eingabe: unknown) => OfficialTruthTrustedFactExtractorErgebnis
+  readonly compositionPolicies?: readonly OfficialTruthCompositionPolicy[]
+  readonly compositionExtractors?: readonly OfficialTruthExtractorDefinition[]
 }
 
 function blockiert(reason: OfficialTruthSameRequestExtractionSperrgrund): OfficialTruthSameRequestExtractionErgebnis {
@@ -452,8 +469,8 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   }
   if (beweis.grant !== 'role' || beweis.capability !== 'official-truth-freigeben') return blockiert('authority_required')
   if (beweis.freshness !== 'current') return blockiert('freshness_not_current')
-  if (beweis.evidenceQuality === 'composed_from_multiple_primary_sources') return blockiert('composition_policy_unavailable')
-  if (beweis.evidenceQuality !== 'explicit_primary_statement') return blockiert('quality_not_acceptable')
+  const zusammengesetzt = beweis.evidenceQuality === 'composed_from_multiple_primary_sources'
+  if (!zusammengesetzt && beweis.evidenceQuality !== 'explicit_primary_statement') return blockiert('quality_not_acceptable')
   if (typeof beweis.kandidat?.scope?.requirementType !== 'string') return blockiert('support_binding_mismatch')
   if (typeof beweis.factKind !== 'string' || typeof beweis.ruleScopeKey !== 'string' || typeof beweis.reviewPacketKey !== 'string') {
     return blockiert('support_binding_mismatch')
@@ -473,6 +490,23 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     fest = tiefEinfrieren(structuredClone(beweis))
   } catch {
     return blockiert('support_binding_mismatch')
+  }
+
+  const politiken = abhaengigkeiten.compositionPolicies ?? OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY
+  const extraktoren = abhaengigkeiten.compositionExtractors ?? OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY
+  let freeze: Extract<ReturnType<typeof officialTruthCompositionPhaseA>, { ok: true }>['freeze'] | null = null
+  if (zusammengesetzt) {
+    const register = officialTruthCompositionRegistriesPruefen(politiken, extraktoren)
+    if (!register.ok) return blockiert(register.reason)
+    const phaseA = officialTruthCompositionPhaseA({
+      factKind: fest.factKind,
+      requirementType: zelle.scope.requirementType,
+      supports: fest.supports.map((support) => ({ sourceId: support.sourceId, canonicalUrl: support.canonicalUrl })),
+      extractors: register.extractors,
+      policies: register.policies,
+    })
+    if (!phaseA.ok) return blockiert(phaseA.reason)
+    freeze = phaseA.freeze
   }
 
   const replay = wiedergabe(fest.registry)
@@ -496,6 +530,30 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, abruf: gelesen.abruf })
   }
 
+  if (freeze) {
+    const phaseB = officialTruthCompositionPhaseB({
+      freeze,
+      supports: gebunden.map((eintrag) => ({
+        versionId: eintrag.versionId,
+        sourceId: eintrag.sourceId,
+        retrieval: eintrag.abruf,
+      })),
+      proofSupports: fest.supports.map((support) => ({
+        versionId: support.versionId,
+        sourceId: support.sourceId,
+        canonicalUrl: support.canonicalUrl,
+        sourceContentHash: support.sourceContentHash,
+      })),
+      acceptedVersionIds: fest.supportVersionIds,
+      requirementType: zelle.scope.requirementType,
+      scopeKey: zelle.key,
+      scope: zelle.scope,
+      registry: fest.registry,
+    })
+    if (!phaseB.ok) return blockiert(phaseB.reason)
+    return Object.freeze({ status: 'same_request_composition_bound', seal: phaseB.seal })
+  }
+
   let extrakt: OfficialTruthTrustedFactExtractorErgebnis
   try {
     extrakt = abhaengigkeiten.extract({
@@ -503,7 +561,7 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
       requirementType: zelle.scope.requirementType,
       scopeKey: zelle.key,
       scope: zelle.scope,
-      evidenceQuality: fest.evidenceQuality,
+      evidenceQuality: 'explicit_primary_statement',
       supports: gebunden.map((eintrag) => ({
         versionId: eintrag.versionId,
         sourceId: eintrag.sourceId,

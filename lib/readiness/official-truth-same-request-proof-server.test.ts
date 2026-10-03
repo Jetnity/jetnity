@@ -466,6 +466,10 @@ describe('Official Truth same-request proof graph', () => {
       'kandidat',
       'candidate',
       'trustedRuleFact',
+      'policy',
+      'policyId',
+      'policyVersion',
+      'assignments',
     ] as const
     for (const feld of felder) {
       const wert = feld === 'evidenceVersions' ? [] : feld === 'registry' ? { sources: [] } : 'caller-owned'
