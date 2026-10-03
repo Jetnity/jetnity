@@ -434,7 +434,7 @@ describe('official truth server-owned retrieval', () => {
 
     const legacy = await new Promise<{ code?: string; address?: unknown; family?: unknown }>((resolve) => {
       const lookup = officialTruthServerOwnedRetrievalLookup(async () => [{ address: '8.8.8.8', family: 4 }])
-      ;(lookup as (hostname: string, callback: (error: NodeJS.ErrnoException | null, address?: string, family?: number) => void) => void)(
+      ;(lookup as unknown as (hostname: string, callback: (error: NodeJS.ErrnoException | null, address?: string, family?: number) => void) => void)(
         'www.gov.example',
         (error, address, family) => resolve({ code: error?.code, address, family }),
       )
@@ -787,7 +787,7 @@ function dateienUnter(relativ: string): string[] {
   while (stapel.length > 0) {
     const aktuell = stapel.pop()
     if (!aktuell) break
-    let eintraege: ReturnType<typeof readdirSync>
+    let eintraege: { name: string; isDirectory(): boolean }[]
     try {
       eintraege = readdirSync(aktuell, { withFileTypes: true })
     } catch {
