@@ -8,11 +8,17 @@ Baseline: `main@daf87a2abe510c3c93d9a9a975b3114aca9c065f`
 Task: `docs/OFFICIAL_TRUTH_COMPOSITION_POLICY_RUNTIME_FOUNDATION_1_TASK_2026-10-03.md`
 Task-seed head: `7957158bb8cfb64013412541682372597ea6a3f9`
 Runtime commit: `afa673d43d1bdbacf02f7054c3c6796dab604570`
+Correction commit: `0c5ed000` — CR-1, CR-2, CR-3
 Logical agent: **Jetnity Official Truth composition policy runtime foundation 1**, Generation 1
 Session: https://cursor.com/agents/bc-7a7df0ce-96f0-4949-99b6-0674046a2ce6
-`originalModelName`: `grok-4.7-high-fast`. Not Auto.
+`originalModelName` of the first delivery: `grok-4.7-high-fast`. Not Auto.
+`originalModelName` of this correction: `claude-opus-5-thinking-high` — **Claude Opus 5 High**. Not Auto, not Grok. The Product Owner granted an explicit model-continuity exception for this correction because the Grok quota is exhausted. The model was verified before the first material edit.
 
 This report is the author record. A Technical-Lead PASS requires an independent exact-head review of the branch tip after the documentation commit that contains this file. This report is not Ready and not a merge. A commit cannot name its own SHA. Re-fetch the branch tip before review.
+
+## Head `70b0bb37` is superseded
+
+Head `70b0bb37b30f63afd28a50d9cfde95d7ccb3ce54` is **not PASS**. The Technical Lead required three corrections in PR comment `#5973512798`. The section "Technical-Lead corrections" below records how each one was implemented. Every statement in the older sections of this report that describes the phase-B pipeline, observations, or the seal is superseded by that section.
 
 The task file was not rewritten. `.jetnity/operating-mode.json`, `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, and Issue #751 were not edited. The Technical Lead owns those current-state surfaces.
 
@@ -123,6 +129,79 @@ Recorded on the runtime tree before the documentation commit. `npm run typecheck
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS — 0 errors, 149 pre-existing warnings |
 | `npm run build` | PASS — Next.js 16.3.8 production build. Setup check warned that no `.env` file is present in this VM. |
+
+## Technical-Lead corrections on head `70b0bb37`
+
+Correction commit `0c5ed000`. Changed files: `lib/readiness/official-truth-trusted-fact-extractor-registry.ts` and its test, `lib/readiness/official-truth-composition-policy-registry.ts` and its test, `lib/readiness/official-truth-same-request-extraction-server.ts` and its test. The task seed and both production registries are untouched.
+
+### CR-1 — one canonical extractor execution pipeline
+
+The composition-policy module no longer calls `match`, `extract`, or `regelFaktKanonischLesen`. The extractor framework now owns a single private pipeline, `definitionAusfuehren`, which builds the frozen context, runs the matcher, runs the extractor, reads the observations, and runs the canonical parser. Both entries use it:
+
+- `ausfuehren`, the existing explicit-primary and legacy path, calls it with `beobachtungenPflicht: false` and `faktMarkerVerboten: false`. Its behavior and its success shape are unchanged.
+- `officialTruthExtractorEingefroreneAusfuehrung`, the new narrow server-only seam, calls it with both flags true.
+
+The seam takes an already selected and frozen definition. It performs no registry lookup and no content-type reselection: it binds every support through the same `stuetzeBinden` the framework already uses, re-validates the definition with `definitionLesen`, requires the frozen `(policyId, policyVersion)` pin, checks the source set, the URL allowlist, and `definition.contentTypes` against the observed type, and only then executes. A content type outside the frozen allowlist blocks before the matcher runs.
+
+Phase B is now provenance verification around that one call. It compares the fresh supports with the same-request proof before execution (`support_binding_mismatch`, `source_url_changed_since_evidence`, `source_changed_since_evidence`), calls the seam, then repeats the comparison against the framework-bound supports, which are the authoritative values. `OfficialTruthCompositionSperrgrund` now extends `OfficialTruthTrustedFactExtractorSperrgrund`, so no framework reason is translated or lost. The atom-marker guard (`atomKey`, `atomLocator`, `atomId` in the raw extraction) moved into the one pipeline, where it runs on the raw output before canonical parsing, exactly as before — but now in a single place.
+
+A structural test asserts that the composition-policy source contains no `.match(`, no `.extract(`, no `regelFaktKanonischLesen`, no `officialTruthExtractorMedienTyp`, and no `OfficialTruthExtractorKontext`.
+
+### CR-2 — source-attributed parsed observations are mandatory
+
+`observedTargetValues` is gone. There is no caller-facing observation parameter anywhere: not on `officialTruthCompositionPhaseB`, not on the same-request dependency object, not in the request. Observations are produced only by the code-owned extractor's `extract()` return value and are validated by `beobachtungenLesen` inside the framework:
+
+- the key set must be exactly `targetKey`, `sourceId`, `canonical`;
+- `sourceId` must be one of the sources bound fresh in this execution, otherwise `source_not_allowlisted`;
+- an absent, non-array, or empty list is `fact_incomplete`;
+- more than 256 entries is `snapshot_bound_exceeded`.
+
+`schrittGrund` only accepts the `observations` key when observations are required, so the explicit-primary path still rejects an extractor that returns one.
+
+`zitatePruefen` now checks unconditionally, with no branch that can skip it:
+
+| Order | Condition | Reason |
+| --- | --- | --- |
+| 1 | no observations at all | `fact_incomplete` |
+| 2 | an observed target has no assignment | `policy_field_unassigned` |
+| 3 | an assignment has no observation | `fact_incomplete` |
+| 4 | an observed source is not named by that assignment | `duplicate_value` |
+| 5 | the same source is observed twice for one target | `duplicate_value` |
+| 6 | a source named by the assignment is missing | `fact_incomplete` |
+| 7 | the canonical values for one target disagree | `conflicting_value` |
+
+Rules 3 and 6 together give `equal_values` completeness; rule 7 gives `equal_values` equality. `single_source` is the degenerate case of one named source, so rules 4 to 6 still apply.
+
+Required same-request integration tests, all in `official-truth-same-request-extraction-server.test.ts`:
+
+1. conflicting per-source values block — `conflicting_value`;
+2. an out-of-assignment source value blocks — `duplicate_value`;
+3. `equal_values` with one source missing blocks — `fact_incomplete`;
+4. `equal_values` agreement succeeds — `same_request_composition_bound`;
+5. a missing and an empty observation list can never return `same_request_composition_bound` — `fact_incomplete` in both cases, with the extractor proven to have run.
+
+### CR-3 — immutable fact inside the seal
+
+The seam returns a deeply frozen result, so the canonical fact is already immutable when it leaves the one pipeline. Phase B then calls `tiefEinfrieren` on that exact object and asserts `tiefGefroren` before constructing the seal; a fact that is not deeply frozen blocks with `unexpected_fields`. Both helpers recurse without a depth cap and use a visited set, so a deep applicability tree is fully covered and a cycle terminates.
+
+The seal binds that exact object. Its private state is now a single frozen view object, so `view()` returns the same frozen structure every time and exposes nothing else. Adversarial tests prove: top-level mutation of the sealed fact throws and does not change it; nested object and array mutation throws and does not change it (`branches.push` and `branches[0].id = …`); repeated `view()` returns the identical fact object; a structural lookalike and a JSON round-trip are rejected by `isOfficialTruthCompositionSeal` and `officialTruthCompositionSealView`; booleans and strings are rejected. No caller hash, witness, boolean, or bearer can replace the seal.
+
+### Validation of the corrected head
+
+Recorded on the correction tree before the documentation commit.
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | Clean |
+| `npm run check:operating-mode` | PASS |
+| Targeted CR-1 / CR-2 / CR-3 suites | PASS — composition registry 16/16, same-request extraction 30/30, extractor registry 42/42 |
+| `npm test` | PASS — 4630 tests, 770 suites, 0 fail |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS — 0 errors, 149 pre-existing warnings |
+| `npm run build` | PASS — Next.js production build, no working-tree drift afterwards |
+| `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | PASS |
+
+Task seed `docs/OFFICIAL_TRUTH_COMPOSITION_POLICY_RUNTIME_FOUNDATION_1_TASK_2026-10-03.md` is byte-identical to its introducing commit `7957158b`. `OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY` and `OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY` are both still `Object.freeze([])`. The branch diff against `main` touches only `lib/readiness/**` and the four `docs/OFFICIAL_TRUTH_COMPOSITION_POLICY_RUNTIME_FOUNDATION_1_*` files: no migration, no Supabase, no Auth or RLS, no route, no store, no provider, no model, no F8, no CH import, no launch or indexing change.
 
 ## Stop
 
