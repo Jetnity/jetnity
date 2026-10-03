@@ -33,10 +33,12 @@ const QUELLEN_FAMILIE = /^otf_[a-z][a-z0-9_]{0,40}$/
 const QUELLEN_ID = /^[a-z][a-z0-9_-]{1,63}$/
 const VERSION_ID = /^ev1_[a-f0-9]{32}$/
 const SCOPE_KEY = new RegExp(`^${REGEL_SCOPE_PRAEFIX}[a-f0-9]{64}$`)
+/** Dieselbe beobachtete MIME-Form wie die serverseitige Lesung. Kein Import jener Datei, weil sie Netz öffnet. */
 const MEDIENTYP = /^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/
 const FELD_PFAD = /^[a-z][A-Za-z0-9]{0,40}(?:\.[a-z][A-Za-z0-9]{0,40}){0,4}$/
 const ZEIT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
 const HASH = /^[a-f0-9]{64}$/
+/** Obergrenze der serverseitigen Lesung. Dieser Rahmen erhöht sie nicht. */
 const REDIRECT_MAX = 5
 const TIEFE_MAX = 8
 
