@@ -15,7 +15,9 @@ import {
   officialTruthTrustedFactExtrahieren,
   officialTruthTrustedFactExtrahierenMitDefinitionen,
   type OfficialTruthExtractorDefinition,
+  type OfficialTruthExtractorKontext,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
+import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
@@ -126,17 +128,54 @@ function stuetze(
   }
 }
 
-function eingabe(teil?: Record<string, unknown>) {
+function zellenScope(requirementType: string, teil?: Record<string, unknown>): Record<string, unknown> {
   return {
-    factKind: 'blank_passport_pages',
-    requirementType: 'blank_passport_pages',
-    scopeKey: SCOPE,
-    evidenceQuality: 'explicit_primary_statement',
-    supports: [stuetze(SEITEN_ID, AMT, SEITEN_URL, SEITEN_TEXT)],
-    policy: null,
-    registry: registry(),
+    destinationCountryCode: 'JP',
+    transitCountryCode: null,
+    citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
+    credentialOption: {
+      mode: 'option',
+      documentType: 'passport',
+      issuingCountryCode: 'CH',
+      relatedCitizenshipCountryCode: null,
+    },
+    residence: { mode: 'not_applicable' },
+    requirementType,
+    validity: { mode: 'not_applicable' },
     ...teil,
   }
+}
+
+function schluesselFuer(scope: unknown): string {
+  const gelesen = regelScopeAusEvidenceScope(scope)
+  if (!gelesen.ok) return SCOPE
+  return gelesen.key
+}
+
+function mitScope(
+  basis: Record<string, unknown>,
+  teil?: Record<string, unknown>,
+  requirementType = 'blank_passport_pages',
+): Record<string, unknown> {
+  const scope = teil && Object.hasOwn(teil, 'scope') ? teil.scope : zellenScope(requirementType)
+  const scopeKey = teil && Object.hasOwn(teil, 'scopeKey') ? teil.scopeKey : schluesselFuer(scope)
+  return { ...basis, ...teil, requirementType, scope, scopeKey }
+}
+
+function eingabe(teil?: Record<string, unknown>) {
+  const requirementType = typeof teil?.requirementType === 'string' ? teil.requirementType : 'blank_passport_pages'
+  return mitScope(
+    {
+      factKind: 'blank_passport_pages',
+      requirementType,
+      evidenceQuality: 'explicit_primary_statement',
+      supports: [stuetze(SEITEN_ID, AMT, SEITEN_URL, SEITEN_TEXT)],
+      policy: null,
+      registry: registry(),
+    },
+    teil,
+    requirementType,
+  )
 }
 
 function definition(
@@ -224,26 +263,29 @@ function wirkungDefinition(zaehler: Zaehler, ueber: Partial<OfficialTruthExtract
 }
 
 function komposition(teil?: Record<string, unknown>) {
-  return {
-    factKind: 'requirement_effect',
-    requirementType: 'health',
-    scopeKey: SCOPE,
-    evidenceQuality: 'composed_from_multiple_primary_sources',
-    supports: [
-      stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
-      stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
-    ],
-    policy: {
-      policyId: 'otp_example_effect',
-      policyVersion: 1,
-      assignments: [
-        { fieldPath: 'effect', sourceId: AMT },
-        { fieldPath: 'visaMode', sourceId: INNEN },
+  const requirementType = typeof teil?.requirementType === 'string' ? teil.requirementType : 'health'
+  return mitScope(
+    {
+      factKind: 'requirement_effect',
+      requirementType,
+      evidenceQuality: 'composed_from_multiple_primary_sources',
+      supports: [
+        stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT),
+        stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT),
       ],
+      policy: {
+        policyId: 'otp_example_effect',
+        policyVersion: 1,
+        assignments: [
+          { fieldPath: 'effect', sourceId: AMT },
+          { fieldPath: 'visaMode', sourceId: INNEN },
+        ],
+      },
+      registry: registry(),
     },
-    registry: registry(),
-    ...teil,
-  }
+    teil,
+    requirementType,
+  )
 }
 
 function grund(ergebnis: { status: string; reason?: string }): string | undefined {
@@ -685,5 +727,330 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     )
     assert.equal(grund(ergebnis), 'quality_not_acceptable')
     assert.equal('fact' in ergebnis, false)
+  })
+
+  test('der Produktions-Einstieg wird außerhalb von Tests nur von der gleichen-Request-Bindung importiert', () => {
+    const erlaubt = [
+      'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
+      'lib/readiness/official-truth-same-request-extraction-server.ts',
+    ]
+    const produktion: string[] = []
+    const naht: string[] = []
+    for (const start of ['app', 'components', 'hooks', 'lib', 'types', 'scripts']) {
+      for (const pfad of dateienUnter(start)) {
+        const relativ = pfad.slice(process.cwd().length + 1)
+        if (relativ.includes('.test.')) continue
+        const text = readFileSync(pfad, 'utf8')
+        if (/officialTruthTrustedFactExtrahieren(?!MitDefinitionen)/.test(text)) produktion.push(relativ)
+        if (text.includes('officialTruthTrustedFactExtrahierenMitDefinitionen')) naht.push(relativ)
+      }
+    }
+    assert.deepEqual(produktion.sort(), [...erlaubt].sort())
+    assert.deepEqual(naht, ['lib/readiness/official-truth-trusted-fact-extractor-registry.ts'])
+    for (const pfad of dateienUnter('app')) {
+      const text = readFileSync(pfad, 'utf8')
+      assert.equal(text.includes('officialTruthTrustedFactExtrahieren'), false, pfad)
+      assert.equal(text.includes('official-truth-trusted-fact-extractor-registry'), false, pfad)
+    }
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+  })
+
+  test('der kanonische Scope erreicht den Matcher unverändert und ohne Auswahl', () => {
+    const gesehen: RegelScope[] = []
+    const zaehler = { match: 0, extract: 0 }
+    const paare = [
+      zellenScope('blank_passport_pages', { citizenship: { mode: 'required', countryCodes: ['RS', 'CH'] } }),
+      zellenScope('blank_passport_pages'),
+    ]
+    for (const scope of paare) {
+      const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope }), [
+        seitenDefinition(zaehler, {
+          match: (kontext) => {
+            zaehler.match += 1
+            gesehen.push(kontext.scope)
+            return { ok: true }
+          },
+        }),
+      ])
+      assert.equal(ergebnis.status, 'trusted_fact_extracted')
+    }
+    assert.equal(gesehen.length, 2)
+    const links = gesehen[0]
+    const rechts = gesehen[1]
+    if (!links || !rechts) return
+    assert.deepEqual(links, rechts)
+    assert.equal(links.citizenship.mode, 'required')
+    if (links.citizenship.mode !== 'required' || rechts.citizenship.mode !== 'required') return
+    assert.deepEqual(links.citizenship.countryCodes, ['CH', 'RS'])
+    assert.deepEqual(rechts.citizenship.countryCodes, ['CH', 'RS'])
+    assert.equal(links.citizenship.countryCodes.length, 2)
+    assert.equal(schluesselFuer(paare[0]), schluesselFuer(paare[1]))
+    assert.equal('sourceId' in links, false)
+    assert.equal(JSON.stringify(links).includes('preferred'), false)
+  })
+
+  test('Ausstellerland, Bezug, Dokument, Wohnsitz und Reisedatum bleiben getrennte Felder', () => {
+    const fund: { scope: OfficialTruthExtractorKontext['scope'] | null } = { scope: null }
+    const scope = zellenScope('blank_passport_pages', {
+      transitCountryCode: 'SG',
+      credentialOption: {
+        mode: 'option',
+        documentType: 'national_id',
+        issuingCountryCode: 'DE',
+        relatedCitizenshipCountryCode: null,
+      },
+      residence: { mode: 'required', countryCode: 'TH' },
+      validity: { mode: 'travel_date', travelDate: '2026-10-03' },
+    })
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope }), [
+      seitenDefinition(
+        { match: 0, extract: 0 },
+        {
+          match: (kontext) => {
+            fund.scope = kontext.scope
+            assert.equal('travelDate' in kontext, false)
+            return { ok: true }
+          },
+        },
+      ),
+    ])
+    assert.equal(ergebnis.status, 'trusted_fact_extracted')
+    const gesehen = fund.scope
+    assert.ok(gesehen)
+    if (!gesehen || gesehen.citizenship.mode !== 'required' || gesehen.credentialOption.mode !== 'option') return
+    assert.deepEqual(gesehen.citizenship.countryCodes, ['CH', 'RS'])
+    assert.equal(gesehen.credentialOption.documentType, 'national_id')
+    assert.equal(gesehen.credentialOption.issuingCountryCode, 'DE')
+    assert.equal(gesehen.credentialOption.relatedCitizenshipCountryCode, null)
+    assert.equal(gesehen.residence.mode, 'required')
+    if (gesehen.residence.mode !== 'required') return
+    assert.equal(gesehen.residence.countryCode, 'TH')
+    assert.equal(gesehen.destinationCountryCode, 'JP')
+    assert.equal(gesehen.transitCountryCode, 'SG')
+    assert.equal(gesehen.validity.mode, 'travel_date')
+    if (gesehen.validity.mode !== 'travel_date') return
+    assert.equal(gesehen.validity.travelDate, '2026-10-03')
+
+    const bezogen = zellenScope('blank_passport_pages', {
+      credentialOption: {
+        mode: 'option',
+        documentType: 'passport',
+        issuingCountryCode: 'CH',
+        relatedCitizenshipCountryCode: 'RS',
+      },
+    })
+    const bezugsFund: { scope: RegelScope | null } = { scope: null }
+    const mitBezug = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope: bezogen }), [
+      seitenDefinition(
+        { match: 0, extract: 0 },
+        {
+          match: (kontext) => {
+            bezugsFund.scope = kontext.scope
+            return { ok: true }
+          },
+        },
+      ),
+    ])
+    assert.equal(mitBezug.status, 'trusted_fact_extracted')
+    const bezug = bezugsFund.scope
+    assert.equal(bezug?.credentialOption.mode, 'option')
+    if (bezug?.credentialOption.mode !== 'option') return
+    assert.equal(bezug.credentialOption.relatedCitizenshipCountryCode, 'RS')
+    assert.notEqual(schluesselFuer(bezogen), schluesselFuer(zellenScope('blank_passport_pages')))
+
+    const ohneDatum = zellenScope('blank_passport_pages', { validity: { mode: 'not_applicable' } })
+    const ohneFund: { scope: RegelScope | null } = { scope: null }
+    const nichtAnwendbar = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope: ohneDatum }), [
+      seitenDefinition(
+        { match: 0, extract: 0 },
+        {
+          match: (kontext) => {
+            ohneFund.scope = kontext.scope
+            return { ok: true }
+          },
+        },
+      ),
+    ])
+    assert.equal(nichtAnwendbar.status, 'trusted_fact_extracted')
+    const ohne = ohneFund.scope
+    assert.equal(ohne?.validity.mode, 'not_applicable')
+    assert.equal(ohne?.validity.mode === 'not_applicable' && 'travelDate' in ohne.validity, false)
+  })
+
+  test('ein synthetischer datumsgebundener Satz liest nur den kanonischen Scope', () => {
+    const wirksam = '2026-06-01'
+    const text = JSON.stringify({
+      marker: 'EXAMPLE-POSITIVE-RULE',
+      effectiveOn: wirksam,
+      effect: 'required',
+      visaMode: null,
+    })
+    const zaehler = { match: 0, extract: 0 }
+    const definitionDatum: OfficialTruthExtractorDefinition = definition({
+      zaehler,
+      extractorId: 'otx_example_dated_rule',
+      factKind: 'requirement_effect',
+      sourceFamilyId: 'otf_example_dated_rule',
+      schemaFamily: 'ots_example_dated_rule',
+      match: (kontext) => {
+        zaehler.match += 1
+        if (kontext.supports[0]?.sourceSnapshot !== text) return { ok: false, reason: 'structure_not_recognized' }
+        if (kontext.scope.validity.mode !== 'travel_date') return { ok: false, reason: 'source_epoch_unreadable' }
+        assert.equal('travelDate' in kontext, false)
+        return { ok: true }
+      },
+      extract: (kontext) => {
+        zaehler.extract += 1
+        if (kontext.scope.validity.mode !== 'travel_date') return { ok: false, reason: 'source_epoch_unreadable' }
+        const quelle = JSON.parse(kontext.supports[0]?.sourceSnapshot ?? '') as { effectiveOn?: string }
+        if (kontext.scope.validity.travelDate < (quelle.effectiveOn ?? '')) {
+          return { ok: false, reason: 'source_epoch_unreadable' }
+        }
+        return { ok: true, fact: { kind: 'requirement_effect', effect: 'required', visaMode: null } }
+      },
+    })
+    const huelle = (travelDate: string, extra?: Record<string, unknown>) =>
+      eingabe({
+        factKind: 'requirement_effect',
+        requirementType: 'visa',
+        scope: zellenScope('visa', { validity: { mode: 'travel_date', travelDate } }),
+        supports: [stuetze(SEITEN_ID, AMT, SEITEN_URL, text)],
+        ...extra,
+      })
+    const spaet = officialTruthTrustedFactExtrahierenMitDefinitionen(huelle('2026-06-01'), [definitionDatum])
+    assert.equal(spaet.status, 'trusted_fact_extracted')
+    if (spaet.status !== 'trusted_fact_extracted') return
+    assert.deepEqual(spaet.fact, { kind: 'requirement_effect', effect: 'required', visaMode: null })
+    const frueh = officialTruthTrustedFactExtrahierenMitDefinitionen(huelle('2026-05-31'), [definitionDatum])
+    assert.equal(grund(frueh), 'source_epoch_unreadable')
+    assert.equal('fact' in frueh, false)
+    const fremd = { match: 0, extract: 0 }
+    const abgelehnt = officialTruthTrustedFactExtrahierenMitDefinitionen(huelle('2026-06-01', { travelDate: '2026-06-01' }), [
+      definition({ ...definitionDatum, zaehler: fremd }),
+    ])
+    assert.equal(grund(abgelehnt), 'unexpected_fields')
+    assert.equal(fremd.match, 0)
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+    assert.doesNotMatch(datei(DATEI), /gov\.uk|EXAMPLE-POSITIVE-RULE|effectiveOn/i)
+  })
+
+  test('ein abweichender oder verbotener Scope blockiert vor Matcher und Extraktor', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const seiten = () => [seitenDefinition(zaehler)]
+    const falsch = `rule-scope:v1:${'b'.repeat(64)}`
+    assert.equal(grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scopeKey: falsch }), seiten())), 'scope_mismatch')
+    assert.equal(
+      grund(
+        officialTruthTrustedFactExtrahierenMitDefinitionen(
+          eingabe({
+            factKind: 'requirement_effect',
+            requirementType: 'visa',
+            scope: zellenScope('health'),
+          }),
+          [
+            definition({
+              zaehler,
+              extractorId: 'otx_example_effect',
+              factKind: 'requirement_effect',
+              sourceFamilyId: 'otf_example_effect',
+              schemaFamily: 'ots_example_effect',
+            }),
+          ],
+        ),
+      ),
+      'requirement_type_mismatch',
+    )
+    assert.equal(
+      grund(
+        officialTruthTrustedFactExtrahierenMitDefinitionen(
+          eingabe({ scope: { ...zellenScope('blank_passport_pages'), sourceId: AMT } }),
+          seiten(),
+        ),
+      ),
+      'unexpected_fields',
+    )
+    assert.equal(
+      grund(
+        officialTruthTrustedFactExtrahierenMitDefinitionen(
+          eingabe({ scope: { ...zellenScope('blank_passport_pages'), note: 'caller' } }),
+          seiten(),
+        ),
+      ),
+      'unexpected_fields',
+    )
+    assert.equal(
+      grund(
+        officialTruthTrustedFactExtrahierenMitDefinitionen(
+          eingabe({ scope: { ...zellenScope('blank_passport_pages'), passportNumber: 'X123' } }),
+          seiten(),
+        ),
+      ),
+      'personal_identifier_forbidden',
+    )
+    for (const scope of [
+      zellenScope('blank_passport_pages', { destinationCountryCode: 'japan' }),
+      zellenScope('blank_passport_pages', {
+        credentialOption: {
+          mode: 'option',
+          documentType: 'booklet',
+          issuingCountryCode: 'CH',
+          relatedCitizenshipCountryCode: null,
+        },
+      }),
+      zellenScope('blank_passport_pages', { validity: { mode: 'travel_date', travelDate: '2026-02-31' } }),
+      zellenScope('blank_passport_pages', { citizenship: { mode: 'required', countryCodes: ['CHH'] } }),
+    ]) {
+      assert.equal(grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope }), seiten())), 'invalid_scope')
+    }
+    const unvollstaendig = zellenScope('blank_passport_pages')
+    delete unvollstaendig.validity
+    assert.equal(
+      grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope: unvollstaendig }), seiten())),
+      'unexpected_fields',
+    )
+    assert.equal(zaehler.match, 0)
+    assert.equal(zaehler.extract, 0)
+  })
+
+  test('eine Mutation nach der Kanonisierung ändert Kontext und Fakt nicht', () => {
+    const roh = zellenScope('blank_passport_pages', {
+      citizenship: { mode: 'required', countryCodes: ['RS', 'CH'] },
+      validity: { mode: 'travel_date', travelDate: '2026-10-03' },
+    })
+    const input = eingabe({ scope: roh })
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(input, [
+      seitenDefinition(
+        { match: 0, extract: 0 },
+        {
+          match: (kontext) => {
+            const citizenship = roh.citizenship as { countryCodes: string[] }
+            citizenship.countryCodes.push('US')
+            ;(roh.validity as { travelDate: string }).travelDate = '1999-01-01'
+            ;(input.scope as { destinationCountryCode: string }).destinationCountryCode = 'TH'
+            const vorher = kontext.scope.destinationCountryCode
+            try {
+              ;(kontext.scope as { destinationCountryCode: string }).destinationCountryCode = 'TH'
+            } catch {
+              // die Kopie ist eingefroren
+            }
+            assert.equal(kontext.scope.destinationCountryCode, vorher)
+            return { ok: true }
+          },
+          extract: (kontext) => {
+            assert.equal(kontext.scope.destinationCountryCode, 'JP')
+            assert.equal(kontext.scope.citizenship.mode, 'required')
+            if (kontext.scope.citizenship.mode !== 'required') return { ok: false, reason: 'fact_incomplete' }
+            assert.deepEqual(kontext.scope.citizenship.countryCodes, ['CH', 'RS'])
+            assert.equal(kontext.scope.validity.mode, 'travel_date')
+            if (kontext.scope.validity.mode !== 'travel_date') return { ok: false, reason: 'fact_incomplete' }
+            assert.equal(kontext.scope.validity.travelDate, '2026-10-03')
+            return { ok: true, fact: { kind: 'blank_passport_pages', minimumPages: 2 } }
+          },
+        },
+      ),
+    ])
+    assert.equal(ergebnis.status, 'trusted_fact_extracted')
+    if (ergebnis.status !== 'trusted_fact_extracted') return
+    assert.equal(ergebnis.fact.kind === 'blank_passport_pages' && ergebnis.fact.minimumPages, 2)
   })
 })

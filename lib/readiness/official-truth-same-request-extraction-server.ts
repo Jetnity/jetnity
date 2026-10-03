@@ -10,6 +10,9 @@
 // Katalogvertrag nicht wiedergeben kann, scheitern vor dem Netz.
 // Zusammengesetzte Qualität scheitert vor dem Netz, weil keine
 // codeeigene Kompositionspolitik existiert. Diese Datei erfindet keine.
+// Der dekodierte RegelScope kommt nur aus dem kanonischen Beweis,
+// neu geprüft über regelScopeAusEvidenceScope, und erst dann in den
+// Extraktor. Ein Aufrufer-Scope ist keine Autorität.
 // Das Produktions-Extraktorregister bleibt leer. Ein Erfolg ist internes
 // Material, keine Annahme und kein Seitenrohtext.
 
@@ -34,7 +37,13 @@ import {
   type OfficialTruthTrustedFactExtractorErgebnis,
   type OfficialTruthTrustedFactExtractorSperrgrund,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
-import { regelScopeAusEvidenceScope, type RegelFakt, type RegelFaktArt, type RegelKandidat } from '@/lib/readiness/rule-claims'
+import {
+  regelScopeAusEvidenceScope,
+  type RegelFakt,
+  type RegelFaktArt,
+  type RegelKandidat,
+  type RegelScope,
+} from '@/lib/readiness/rule-claims'
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const GRUND = /^[a-z][a-z0-9_]{0,80}$/
@@ -309,6 +318,44 @@ function abrufLesen(
   }
 }
 
+function zelleAus(
+  scope: unknown,
+): { ok: true; scope: RegelScope; key: string } | { ok: false; reason: OfficialTruthSameRequestExtractionSperrgrund } {
+  const gelesen = regelScopeAusEvidenceScope(scope)
+  if (!gelesen.ok) return { ok: false, reason: gelesen.reason }
+  return { ok: true, scope: gelesen.scope, key: gelesen.key }
+}
+
+/**
+ * Dieselbe quellenneutrale Zelle für Kandidat, akzeptierte Evidence und
+ * jede Stütze, deren Version schon im Beweis liegt. Der Schlüssel wird
+ * neu berechnet. Der Forschungsumschlag wird hier nicht erneut gelesen.
+ */
+function regulatorischenScopeBinden(
+  beweis: Beweis,
+): { ok: true; scope: RegelScope; key: string } | { ok: false; reason: OfficialTruthSameRequestExtractionSperrgrund } {
+  if (!beweis.kandidat?.scope) return { ok: false, reason: 'support_binding_mismatch' }
+  const gelesen = regelScopeAusEvidenceScope(beweis.kandidat.scope)
+  if (!gelesen.ok) return { ok: false, reason: gelesen.reason }
+  if (gelesen.key !== beweis.ruleScopeKey) return { ok: false, reason: 'scope_mismatch' }
+  if (beweis.kandidat.scope.requirementType !== gelesen.scope.requirementType) {
+    return { ok: false, reason: 'requirement_type_mismatch' }
+  }
+  for (const version of beweis.evidenceVersions) {
+    const zelle = zelleAus(version?.scope)
+    if (!zelle.ok) return zelle
+    if (zelle.key !== gelesen.key) return { ok: false, reason: 'scope_mismatch' }
+  }
+  for (const support of beweis.supports) {
+    if (!support || typeof support.versionId !== 'string') continue
+    const treffer = beweis.evidenceVersions.filter((version) => version?.versionId === support.versionId)
+    if (treffer.length !== 1) continue
+    const zelle = zelleAus(treffer[0]?.scope)
+    if (!zelle.ok || zelle.key !== gelesen.key) return { ok: false, reason: 'scope_mismatch' }
+  }
+  return { ok: true, scope: tiefEinfrieren(structuredClone(gelesen.scope)), key: gelesen.key }
+}
+
 function evidenceBindet(beweis: Beweis, support: OfficialTruthServerHeldSameRequestSupport): boolean {
   const treffer = beweis.evidenceVersions.filter((version) => version.versionId === support.versionId)
   if (treffer.length !== 1) return false
@@ -418,11 +465,21 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     return blockiert('support_binding_mismatch')
   }
 
-  const replay = wiedergabe(beweis.registry)
+  const zelle = regulatorischenScopeBinden(beweis)
+  if (!zelle.ok) return blockiert(zelle.reason)
+
+  let fest: Beweis
+  try {
+    fest = tiefEinfrieren(structuredClone(beweis))
+  } catch {
+    return blockiert('support_binding_mismatch')
+  }
+
+  const replay = wiedergabe(fest.registry)
   if (!replay.ok) return blockiert(replay.reason)
 
   const gebunden: Gebunden[] = []
-  for (const support of beweis.supports) {
+  for (const support of fest.supports) {
     if (!stuetzeIstAbleitbar(support)) return blockiert('support_binding_mismatch')
     let roh: unknown
     try {
@@ -435,24 +492,25 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     if (gelesen.abruf.sourceId !== support.sourceId) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.canonicalUrl !== support.canonicalUrl) return blockiert('source_url_changed_since_evidence')
     if (gelesen.abruf.sourceContentHash !== support.sourceContentHash) return blockiert('source_changed_since_evidence')
-    if (!evidenceBindet(beweis, support)) return blockiert('support_binding_mismatch')
+    if (!evidenceBindet(fest, support)) return blockiert('support_binding_mismatch')
     gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, abruf: gelesen.abruf })
   }
 
   let extrakt: OfficialTruthTrustedFactExtractorErgebnis
   try {
     extrakt = abhaengigkeiten.extract({
-      factKind: beweis.factKind,
-      requirementType: beweis.kandidat.scope.requirementType,
-      scopeKey: beweis.ruleScopeKey,
-      evidenceQuality: beweis.evidenceQuality,
+      factKind: fest.factKind,
+      requirementType: zelle.scope.requirementType,
+      scopeKey: zelle.key,
+      scope: zelle.scope,
+      evidenceQuality: fest.evidenceQuality,
       supports: gebunden.map((eintrag) => ({
         versionId: eintrag.versionId,
         sourceId: eintrag.sourceId,
         retrieval: eintrag.abruf,
       })),
       policy: null,
-      registry: beweis.registry,
+      registry: fest.registry,
     })
   } catch {
     return blockiert('fact_incomplete')
@@ -460,10 +518,10 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   if (!extrakt || extrakt.status !== 'trusted_fact_extracted') {
     return blockiert(grundOder(extrakt && extrakt.status === 'blocked' ? extrakt.reason : null, 'fact_incomplete'))
   }
-  if (!herkunftPasst(beweis, extrakt)) return blockiert('support_binding_mismatch')
+  if (!herkunftPasst(fest, extrakt)) return blockiert('support_binding_mismatch')
 
   try {
-    const gebaut = material(beweis, extrakt, gebunden)
+    const gebaut = material(fest, extrakt, gebunden)
     if (!gebaut) return blockiert('support_binding_mismatch')
     return gebaut
   } catch {
