@@ -7,8 +7,10 @@ Branch: `feat/official-truth-applicability-canonical-wiring-1`
 Baseline: `main@e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`
 Task: `docs/OFFICIAL_TRUTH_APPLICABILITY_CANONICAL_WIRING_1_TASK_2026-10-03.md`
 Task seed: `44fdc9cd` is not the review head.
+Previous review head `ab4a240c05230d4417c19a45dbba629a1f8e3a89` is not the review head after R1.
 Guard commit: `37be473d`
 Parser commit: `ef0f4d4c`
+Provenance correction: `3e2655f67a40af9c2a7fe59afa57e9e5ec63ab3a`
 Logical agent: **Jetnity Official Truth applicability canonical wiring runtime 1**
 Generation: **1**
 Session: https://cursor.com/agents/bc-2b43f956-a705-4f8a-84c4-38c38645e965
@@ -54,6 +56,16 @@ Delivery:
 
 The task seed was already on the branch and was not edited. These source files were not edited: `regulierungs-anwendbarkeit.ts`, the extractor registry, the same-request server. No route, UI, migration, provider, or model file was edited. `docs/ACTIVE_WORK_STATUS.md` was not edited; this handoff is the continuity record for the exact-file task.
 
+## R1 provenance
+
+`bedingungsHerkunftPruefen` runs after `regelFaktLesen` and before the accepted claim is built.
+
+- Explicit schema-1 branches with the one re-proven support id are accepted in memory, including an atom that omits ids.
+- A foreign `ev1_...` branch id, an empty branch citation, a union that omits a claim support, a foreign atom id, and an atom id outside its branch are `support_mismatch`.
+- A composed schema-1 branched fact is `condition_provenance_ambiguous` and does not return a claim.
+- A legacy composed fact still accepts.
+- The store still returns `applicability_not_persistable` for a valid explicit schema-1 claim, with zero RPC calls.
+
 ## Behaviour a reviewer should re-check
 
 - `regelFaktLesen` is the only semantic parser. Canonical read and acceptance both call it. Their facts deep-equal for the same trusted input.
@@ -68,10 +80,10 @@ The task seed was already on the branch and was not edited. These source files w
 
 ## Gates
 
-Author gates on `ef0f4d4c`, same run as the report and the self-review, before this documentation commit:
+R1 re-review of `3e2655f67a40af9c2a7fe59afa57e9e5ec63ab3a`, same run as the report and the self-review, before this documentation commit. The previous review head `ab4a240c` is not this tip.
 
-- Focused files listed above: 114 pass / 0 fail / 9 suites.
-- `npm test`: 4596 pass / 0 fail / 768 suites.
+- Focused files listed above: 115 pass / 0 fail / 9 suites.
+- `npm test`: 4597 pass / 0 fail / 768 suites.
 - `npm run typecheck`: exit 0.
 - `npm run lint`: exit 0, 0 errors, 148 pre-existing warnings.
 - `npm run build` (Next.js 16.3.8): exit 0. 25 static pages.
@@ -81,7 +93,7 @@ Author gates on `ef0f4d4c`, same run as the report and the self-review, before t
 
 No remote database was contacted. Nothing was applied. Local PostgreSQL 16 binaries on the agent VM let the existing throwaway `initdb` proof run. The system cluster was not started. Exact-head CI and Vercel belong to the pushed tip.
 
-`origin/main` at the pre-documentation fetch: `e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`. The implementation branch was 0 behind that pin.
+`origin/main` at the R1 pre-documentation fetch: `e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`. The provenance correction was 0 behind that pin.
 
 ## Database, cost, provider
 

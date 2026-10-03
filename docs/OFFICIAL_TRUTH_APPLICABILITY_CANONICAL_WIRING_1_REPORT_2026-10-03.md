@@ -7,6 +7,8 @@ Branch: `feat/official-truth-applicability-canonical-wiring-1`
 Baseline: `main@e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`
 Task: `docs/OFFICIAL_TRUTH_APPLICABILITY_CANONICAL_WIRING_1_TASK_2026-10-03.md`
 Task seed: `44fdc9cd` is not the review head.
+Previous review head `ab4a240c05230d4417c19a45dbba629a1f8e3a89` is not the review head after R1.
+Provenance correction: `3e2655f67a40af9c2a7fe59afa57e9e5ec63ab3a`
 Binding plan: `docs/OFFICIAL_TRUTH_APPLICABILITY_CANONICAL_WIRING_AUDIT_1_2026-10-03.md`
 Logical agent: **Jetnity Official Truth applicability canonical wiring runtime 1**
 Generation: **1**
@@ -21,6 +23,29 @@ Implementation order on this branch, both commits required in one PR:
 
 1. `37be473d` — accepted-claim store loss-prevention guard, plus the new `RegelClaimFehler` members, while the old readers still rejected schema 1.
 2. `ef0f4d4c` — `regelFaktLesen` widened through the existing applicability fact-shape readers, with the tests.
+
+## R1 — branch and atom support binding
+
+`regelKandidatAkzeptieren` now checks schema-1 branch and atom citations after `regelFaktLesen` and before it builds `AkzeptierteRegelClaim`.
+
+The claim's re-proven `supportVersionIds` are the only Evidence versions a branch or atom may cite. The check does not invent or substitute an id.
+
+For every schema-1 branched requirement effect and every branched schema-1 visa option:
+
+- every branch `supportVersionIds` is non-empty
+- every branch id is in the claim supports
+- the union of the branch ids equals the claim supports
+- an atomic `supportVersionIds`, when present, is non-empty and a subset of its containing branch
+- nested `all`, `any`, and `not` are walked in operand order
+- `otherwise` has no atom tree; its branch citation is still checked
+
+`explicit_primary_statement` schema-1 branches require exactly one accepted support. Every branch cites that id. An atom may omit ids and inherit that support, or cite exactly that id.
+
+`composed_from_multiple_primary_sources` schema-1 branches return `condition_provenance_ambiguous` before a claim exists. This slice does not invent a composition policy. Legacy composed facts stay on the previous acceptance path. Schema-1 unconditional facts have no embedded citations and keep the existing claim-support binding.
+
+Foreign branch ids, empty branch citations, a branch union that omits a claim support, a foreign atom id, and an atom id that sits in the claim but outside its branch are `support_mismatch`.
+
+A valid explicit schema-1 claim still stops in the store as `applicability_not_persistable` with zero RPC calls.
 
 ## What was implemented
 
@@ -69,10 +94,10 @@ No edit to `lib/readiness/regulierungs-anwendbarkeit.ts`, `lib/readiness/officia
 
 ## Gates
 
-Author gates on the implementation tree `ef0f4d4c`, 3 October 2026, before this documentation commit. Exact-head GitHub CI and Vercel belong to the pushed tip.
+R1 re-review of `3e2655f67a40af9c2a7fe59afa57e9e5ec63ab3a`, 3 October 2026, before this documentation commit. Exact-head GitHub CI and Vercel belong to the pushed tip. The previous review head `ab4a240c` is not this tip.
 
-- Focused parser, store, applicability importer, extractor, same-request, and rule-claim SQL schema tests: 114 pass / 0 fail / 9 suites. Exit 0. Duration about 3.1s. The throwaway PostgreSQL proof inside the store file ran.
-- `npm test`: 4596 pass / 0 fail / 768 suites. Exit 0.
+- Focused parser, store, applicability importer, extractor, same-request, and rule-claim SQL schema tests: 115 pass / 0 fail / 9 suites. Exit 0. The throwaway PostgreSQL proof inside the store file ran.
+- `npm test`: 4597 pass / 0 fail / 768 suites. Exit 0.
 - `npm run typecheck` (`next typegen && tsc -p tsconfig.json --noEmit`): exit 0.
 - `npm run lint`: exit 0, 148 problems (0 errors, 148 warnings). Those warnings are pre-existing and outside this slice.
 - `npm run build`: exit 0. Next.js 16.3.8 (Turbopack). Compiled successfully. 25 static pages.
@@ -86,7 +111,7 @@ Author gates on the implementation tree `ef0f4d4c`, 3 October 2026, before this 
 - No new file under `supabase/migrations`. Diff against baseline has no `supabase/**`, `app/**`, or `components/**` change.
 - Production extractor registry source is still `Object.freeze([])`.
 
-`origin/main` at the pre-documentation fetch: `e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`. This branch was 3 ahead and 0 behind that pin. No remote database was contacted. Nothing was applied. Local PostgreSQL 16 binaries on the agent VM let the existing throwaway `initdb` proof run. The system cluster was not started.
+`origin/main` at the R1 pre-documentation fetch: `e6c2ae309a9d4e419fbbb38719969d5d40abb5ab`. The provenance correction was 0 behind that pin. No remote database was contacted. Nothing was applied. Local PostgreSQL 16 binaries on the agent VM let the existing throwaway `initdb` proof run. The system cluster was not started.
 
 ## Security, database, cost
 
