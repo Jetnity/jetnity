@@ -871,4 +871,121 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(spur.http.length, 0)
     assert.equal(spur.extrakt.length, 0)
   })
+
+  test('ein Aufrufer-Scope ist keine Autorität und erreicht den Extraktor nicht', async () => {
+    const decoy = {
+      destinationCountryCode: 'TH',
+      marker: 'DECOY-SCOPE',
+    }
+    const abgewiesen = await binden({ ...eingabe(), scope: decoy })
+    assert.equal(grund(abgewiesen.ergebnis), 'unexpected_fields')
+    assert.equal(abgewiesen.spur.abrufe.length, 0)
+    assert.equal(abgewiesen.spur.http.length, 0)
+    assert.equal(abgewiesen.spur.extrakt.length, 0)
+    assert.equal(JSON.stringify(abgewiesen.ergebnis).includes('DECOY-SCOPE'), false)
+
+    const sauber = eingabe()
+    const extern = transportFuer(realeEingaben())
+    const { ergebnis, spur } = await binden(
+      { ...sauber, scope: decoy },
+      {
+        extern,
+        loadProof: (wert) => {
+          assert.equal(JSON.stringify(wert).includes('DECOY-SCOPE'), true)
+          return decideOfficialTruthSameRequestProof(sauber, {
+            loadAuthority: async () => freigabe(),
+            now: () => JETZT,
+            catalog: { transport: extern.transport },
+          })
+        },
+        definitionen: [definition()],
+      },
+    )
+    erfolg(ergebnis)
+    const eingang = spur.extrakt[0] as { scope?: RegelScope; scopeKey?: string }
+    assert.equal(eingang.scope?.destinationCountryCode, 'JP')
+    assert.equal(JSON.stringify(eingang).includes('DECOY-SCOPE'), false)
+    assert.equal('sourceId' in (eingang.scope ?? {}), false)
+    const text = datei(DATEI)
+    assert.match(text, /regelScopeAusEvidenceScope\(beweis\.kandidat\.scope\)/)
+    assert.equal(text.includes('officialTruthRechercheEntscheiden'), false)
+    assert.equal(text.includes('eingabe.scope'), false)
+  })
+
+  test('abweichende Beweiszelle und falscher Regel-Schlüssel blockieren vor HTTP', async () => {
+    const extern = transportFuer(realeEingaben())
+    const graph = await decideOfficialTruthSameRequestProof(eingabe(), {
+      loadAuthority: async () => freigabe(),
+      now: () => JETZT,
+      catalog: { transport: extern.transport },
+    })
+    assert.equal(graph.status, 'same_request_proof')
+    if (graph.status !== 'same_request_proof') return
+
+    const andereZelle = structuredClone(graph)
+    const version = andereZelle.evidenceVersions[0]
+    assert.ok(version)
+    version.scope.destinationCountryCode = 'TH'
+    const zelle = await binden(eingabe(), { loadProof: async () => andereZelle })
+    assert.equal(grund(zelle.ergebnis), 'scope_mismatch')
+    assert.equal(zelle.spur.abrufe.length, 0)
+    assert.equal(zelle.spur.http.length, 0)
+    assert.equal(zelle.spur.extrakt.length, 0)
+
+    const andererSchluessel = structuredClone(graph)
+    andererSchluessel.ruleScopeKey = `rule-scope:v1:${'c'.repeat(64)}`
+    const schluessel = await binden(eingabe(), { loadProof: async () => andererSchluessel })
+    assert.equal(grund(schluessel.ergebnis), 'scope_mismatch')
+    assert.equal(schluessel.spur.abrufe.length, 0)
+    assert.equal(schluessel.spur.http.length, 0)
+    assert.equal(schluessel.spur.extrakt.length, 0)
+  })
+
+  test('eine Mutation des Beweises ändert den übergebenen Scope nicht', async () => {
+    const extern = transportFuer(realeEingaben())
+    const graph = await decideOfficialTruthSameRequestProof(eingabe(), {
+      loadAuthority: async () => freigabe(),
+      now: () => JETZT,
+      catalog: { transport: extern.transport },
+    })
+    assert.equal(graph.status, 'same_request_proof')
+    if (graph.status !== 'same_request_proof') return
+    const offen = structuredClone(graph)
+    const original = regelScopeAusEvidenceScope(graph.kandidat.scope)
+    assert.equal(original.ok, true)
+    if (!original.ok) return
+    const basis = definition()
+    const { ergebnis, spur } = await binden(eingabe(), {
+      extern,
+      loadProof: async () => offen,
+      definitionen: [
+        {
+          ...basis,
+          match: (kontext) => {
+            offen.kandidat.scope.destinationCountryCode = 'TH'
+            offen.ruleScopeKey = `rule-scope:v1:${'d'.repeat(64)}`
+            const vorher = kontext.scope.destinationCountryCode
+            try {
+              ;(kontext.scope as { destinationCountryCode: string }).destinationCountryCode = 'TH'
+            } catch {
+              // eingefrorene Kopie
+            }
+            assert.equal(kontext.scope.destinationCountryCode, vorher)
+            assert.deepEqual(kontext.scope, original.scope)
+            return basis.match(kontext)
+          },
+        },
+      ],
+    })
+    const wert = erfolg(ergebnis)
+    const eingang = spur.extrakt[0] as { scope: RegelScope; scopeKey: string; requirementType: string }
+    assert.equal(Object.isFrozen(eingang.scope), true)
+    assert.equal(eingang.scope.destinationCountryCode, 'JP')
+    assert.equal(eingang.scopeKey, original.key)
+    assert.equal(eingang.requirementType, original.scope.requirementType)
+    assert.equal('sourceId' in eingang.scope, false)
+    assert.equal(wert.ruleScopeKey, original.key)
+    assert.equal(wert.kandidat.scope.destinationCountryCode, 'JP')
+    assert.equal(JSON.stringify(eingang.scope).includes('TH'), false)
+  })
 })

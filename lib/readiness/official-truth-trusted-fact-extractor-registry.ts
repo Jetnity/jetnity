@@ -4,6 +4,8 @@
 // Das Produktionsregister ist absichtlich leer. Diese Datei registriert
 // keine echte Quellenfamilie und liest kein eingereichtes Abrufmaterial.
 // Auswahl, Schema und Politik kommen aus dem Code, nicht vom Aufrufer.
+// Der Rahmen reicht den kanonischen quellenneutralen RegelScope weiter.
+// Er wählt keine Staatsbürgerschaft, kein Dokument und keinen Wohnsitz.
 // Ein Erfolg ist ein kanonisch geprüfter Regel-Fakt, keine Annahme.
 // Der Marker beschränkt das Modul auf den Server-Stapel. Er öffnet kein Netz.
 
@@ -17,9 +19,11 @@ import {
   REGEL_SCOPE_PRAEFIX,
   REGEL_SUPPORT_MAX,
   regelFaktKanonischLesen,
+  regelScopeAusEvidenceScope,
   type RegelClaimFehler,
   type RegelFakt,
   type RegelFaktArt,
+  type RegelScope,
 } from '@/lib/readiness/rule-claims'
 import {
   QUELLEN_KLASSEN,
@@ -49,10 +53,22 @@ const EINGABE_SCHLUESSEL = [
   'factKind',
   'requirementType',
   'scopeKey',
+  'scope',
   'evidenceQuality',
   'supports',
   'policy',
   'registry',
+] as const
+
+/** Quellenneutrale Zelle. `sourceId` gehört nicht in den dekodierten Scope. */
+const SCOPE_SCHLUESSEL = [
+  'destinationCountryCode',
+  'transitCountryCode',
+  'citizenship',
+  'credentialOption',
+  'residence',
+  'requirementType',
+  'validity',
 ] as const
 
 const STUETZE_SCHLUESSEL = ['versionId', 'sourceId', 'retrieval'] as const
@@ -254,6 +270,7 @@ export type OfficialTruthExtractorKontext = {
   readonly factKind: RegelFaktArt
   readonly requirementType: OfficialRequirementType
   readonly scopeKey: string
+  readonly scope: RegelScope
   readonly evidenceQuality: AnnehmbareQualitaet
   readonly schemaFamily: string
   readonly supports: readonly OfficialTruthExtractorStuetze[]
@@ -636,6 +653,28 @@ function schrittGrund(
   return { ok: false, reason }
 }
 
+/**
+ * Der dekodierte Scope ist nur die kanonische quellenneutrale Zelle.
+ * `regelScopeAusEvidenceScope` bleibt der einzige Parser und die einzige
+ * Schlüsselableitung. Der Matcher sieht die Kopie, nicht das Eingabeobjekt.
+ * Der Rahmen wählt daraus keinen Fakt.
+ */
+function dekodiertenScopeLesen(
+  roh: unknown,
+  scopeKey: string,
+  requirementType: string,
+): { ok: true; scope: RegelScope } | { ok: false; reason: OfficialTruthTrustedFactExtractorSperrgrund } {
+  const satz = datensatz(roh)
+  if (!satz) return { ok: false, reason: 'invalid_scope' }
+  if ('sourceId' in satz) return { ok: false, reason: 'unexpected_fields' }
+  if (!genau(satz, SCOPE_SCHLUESSEL)) return { ok: false, reason: 'unexpected_fields' }
+  const gelesen = regelScopeAusEvidenceScope(satz)
+  if (!gelesen.ok) return { ok: false, reason: gelesen.reason }
+  if (gelesen.key !== scopeKey) return { ok: false, reason: 'scope_mismatch' }
+  if (gelesen.scope.requirementType !== requirementType) return { ok: false, reason: 'requirement_type_mismatch' }
+  return { ok: true, scope: structuredClone(gelesen.scope) }
+}
+
 function herkunftFuer(
   definition: OfficialTruthExtractorDefinition,
   stuetzen: readonly GesperrteStuetze[],
@@ -688,6 +727,8 @@ function ausfuehren(
   if (!textIn(satz.factKind, REGEL_FAKT_ARTEN)) return sperre('fact_kind_mismatch')
   if (!textIn(satz.requirementType, OFFICIAL_REQUIREMENT_TYPES)) return sperre('requirement_type_mismatch')
   if (typeof satz.scopeKey !== 'string' || !SCOPE_KEY.test(satz.scopeKey)) return sperre('unexpected_fields')
+  const scope = dekodiertenScopeLesen(satz.scope, satz.scopeKey, satz.requirementType)
+  if (!scope.ok) return sperre(scope.reason)
   if (!textIn(satz.evidenceQuality, REGEL_EVIDENCE_QUALITAETEN)) return sperre('unexpected_fields')
   if (!textIn(satz.evidenceQuality, ANNEHMBAR)) return sperre('quality_not_acceptable')
   const pflicht = ZELL_PFLICHT[satz.factKind]
@@ -764,6 +805,7 @@ function ausfuehren(
     factKind: satz.factKind,
     requirementType: satz.requirementType,
     scopeKey: satz.scopeKey,
+    scope: scope.scope,
     evidenceQuality: satz.evidenceQuality,
     schemaFamily: definition.schemaFamily,
     supports: stuetzen,
