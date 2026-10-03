@@ -11,7 +11,17 @@ Generation: **1**
 Session: https://cursor.com/agents/bc-54a267e6-4407-4557-83d9-6fbcb8814f25
 `originalModelName`: `grok-4.7-high-fast`. Not Auto.
 
-This report is the author record. It is not a Technical-Lead PASS, not Ready, and not a merge. Review the branch tip after the commit that adds this file. The task file was not rewritten. `docs/ACTIVE_WORK_STATUS.md`, `DECISIONS.md`, and `ROADMAP.md` were not edited. The task names exactly three output files, and those files are the continuity record for this slice.
+This report is the author record. It is not a Technical-Lead PASS, not Ready, and not a merge. Review the branch tip after the R1/R2 correction commit. Do not review `42c74252cb0fe21f25fca0e5800b98db9bea6fb7` as the correction head. That SHA is the CHANGES REQUIRED head. The task file was not rewritten. `docs/ACTIVE_WORK_STATUS.md`, `DECISIONS.md`, and `ROADMAP.md` were not edited. The task names exactly three output files, and those files are the continuity record for this slice.
+
+## Technical-Lead correction on `42c74252`
+
+Independent review accepted `NO_SOURCE_FAMILY_PROVEN_YET`. Two current-contract points were missing.
+
+R1. `BODY_MAX` in `lib/readiness/official-truth-server-owned-retrieval.ts` is `65_536`. A larger `Content-Length`, or a stream that crosses that size, fails as `response_too_large`. The INZ visa-waiver body measured in this audit is 681,132 bytes. The NZeTA body is 881,465 bytes. Both are over the ceiling, so neither page can reach an extractor on the current trusted retrieval path. This slice does not raise the ceiling. A later INZ selection would need a separately reviewed smaller official representation or endpoint, or a separate reviewed retrieval-policy change. The session's direct research fetch is not that production boundary.
+
+R2. The merged extractor context receives `scopeKey` and does not receive the decoded regulatory scope or a `travelDate`. `scopeKey` is an opaque `rule-scope:v1:` digest and must not be reversed into a date. The GOV.UK ETA list places Switzerland in the group for travel on or after 2 April 2025. An extractor cannot prove that the caller's travel date meets that boundary. Dropping the date, assuming later trips qualify, or parsing the research envelope in the extractor would be a second authority path. A later date-qualified family needs a separately reviewed binding of the decoded server-held scope, or a different complete fact representation. This slice does not add that binding.
+
+The result still means no family is proven compatible with the current fact and retrieval contract. It does not mean the government sources are unreliable.
 
 ## Result
 
@@ -64,14 +74,9 @@ Not implemented, and not claimed as done:
 
 Docs-only slice. `npm test`, typecheck, lint, and the production build were not run. The runtime bytes are the baseline. I do not claim those gates.
 
-Before the documentation commit, on this tree:
+First delivery, before `42c74252cb0fe21f25fca0e5800b98db9bea6fb7`: `origin/main` was `d91be5af020c41b935ea0eb0c90e5ec19b57babe`, the branch was `0 1` against it, `git diff --check` passed, and the operating-mode guard passed. That record belongs to the CHANGES REQUIRED head.
 
-- `git fetch origin main` → `d91be5af020c41b935ea0eb0c90e5ec19b57babe`
-- `git rev-list --left-right --count origin/main...HEAD` → `0 1` (zero behind; the 1 is the task seed)
-- `git diff --check` on the three documents → pass
-- `node scripts/operating-mode-guard.mjs` → `operating-mode guard: PASS`
-
-Machine mode is `NORMAL`. `.jetnity/operating-mode.json` was not edited. The review head is the branch tip after this documentation commit. Re-fetch that tip. The pre-commit count above does not include this commit.
+R1/R2 correction, on this docs tree before the correction commit: fetch current main again, confirm 0 behind, `git diff --check` on the three documents, and `node scripts/operating-mode-guard.mjs`. The self-review states those command results. Machine mode is `NORMAL`. `.jetnity/operating-mode.json` was not edited. The review head is the branch tip after the correction commit. Re-fetch that tip.
 
 ## Recommendation
 

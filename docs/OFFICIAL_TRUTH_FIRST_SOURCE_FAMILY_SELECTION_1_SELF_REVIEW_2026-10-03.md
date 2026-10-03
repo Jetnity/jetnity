@@ -23,14 +23,24 @@ No `lib/`, `app/`, `components/`, `types/`, `hooks/`, `supabase/`, test, migrati
 
 The task seed is the only other difference from `origin/main`, and it was not modified in this session.
 
+## R1 and R2
+
+Technical-Lead review of `42c74252cb0fe21f25fca0e5800b98db9bea6fb7` required this correction. I agreed with both findings.
+
+R1. I had recorded the INZ body sizes and had not applied `BODY_MAX`. The live retrieval file sets that constant to `65_536` and fails a larger stream as `response_too_large`. 681,132 and 881,465 are over that ceiling. The research curl is not the production retrieval path. I did not propose a larger ceiling.
+
+R2. I had said `requirement_effect` cannot store the ETA date. The sharper block is the extractor input. It receives `scopeKey` only. That key is `rule-scope:v1:` plus a 64-hex digest. The binding does not pass `travelDate`. An extractor cannot prove the 2 April 2025 boundary from that digest, and it must not reverse the digest. I did not add a decoded scope to the extractor context.
+
+`NO_SOURCE_FAMILY_PROVEN_YET` now means no family is proven compatible with the current fact and retrieval contract. The government pages are not called unreliable.
+
 ## What I decided
 
 | Area | Decision |
 | --- | --- |
-| Selection | `NO_SOURCE_FAMILY_PROVEN_YET`. No family id, extractor id, version, source id, allowlist, schema family, or fact shape. |
-| New Zealand visa fact | Switzerland is positively listed. The same current page also grants a visitor visa on arrival and requires an NZeTA. That does not prove `{ effect: 'not_required', visaMode: 'visa_exempt' }`. |
+| Selection | `NO_SOURCE_FAMILY_PROVEN_YET`. No family is compatible with the current fact and retrieval contract. No family id, extractor id, version, source id, allowlist, schema family, or fact shape. |
+| New Zealand visa fact | Switzerland is positively listed. The same current page also grants a visitor visa on arrival and requires an NZeTA. That does not prove `{ effect: 'not_required', visaMode: 'visa_exempt' }`. The waiver page is 681,132 bytes and the NZeTA page is 881,465 bytes. Both are over `BODY_MAX`. |
 | NZeTA | Left as `electronic_travel_authorization`. Not stored as a visa mode. |
-| GOV.UK | ETA membership is positive. Content API JSON carries HTML, not nationality fields. The date group is not a separate node. Visit prose was not converted into a visa exemption. |
+| GOV.UK | ETA membership is positive. Content API JSON carries HTML, not nationality fields. The date group is not a separate node. The extractor `scopeKey` is not a travel date, so the 2 April 2025 boundary cannot be proved. Visit prose was not converted into a visa exemption. |
 | Singapore | The visa-required list is a positive rule for listed issuers. Switzerland is absent. Absence was not read as `not_required`. |
 | CH-01..CH-10 | Remain `RESEARCH_ONLY` and `NOT_APPROVED_FOR_DATABASE_IMPORT`. No CH-11. No import. |
 | Registry | Live production registry stays `Object.freeze([])`. This audit does not register a row. |
@@ -53,14 +63,21 @@ The task seed is the only other difference from `origin/main`, and it was not mo
 
 ## Validation
 
-Checked on this docs tree before the documentation commit:
+First delivery, before `42c74252cb0fe21f25fca0e5800b98db9bea6fb7`:
 
 - `git fetch origin main` → `d91be5af020c41b935ea0eb0c90e5ec19b57babe`
-- `git rev-list --left-right --count origin/main...HEAD` → `0 1` (zero behind; the 1 is the task seed `43cad09ae4c09eb4204670875c1cbd12ee68d5cd`)
+- `git rev-list --left-right --count origin/main...HEAD` → `0 1` (the task seed)
+- `git diff --check` on the three documents → pass
+- `node scripts/operating-mode-guard.mjs` → `operating-mode guard: PASS`
+
+R1/R2 correction, on this docs tree before the correction commit:
+
+- `git fetch origin main` → `d91be5af020c41b935ea0eb0c90e5ec19b57babe`
+- `git rev-list --left-right --count origin/main...HEAD` → `0 2` (zero behind; the 2 are the task seed and the CHANGES REQUIRED head `42c74252cb0fe21f25fca0e5800b98db9bea6fb7`)
 - `git diff --check` on the three documents → pass, no whitespace errors
 - `node scripts/operating-mode-guard.mjs` → `operating-mode guard: PASS`
 
-After the documentation commit the branch should be 0 behind and 2 ahead of that same main. The report records the post-commit count. `npm test`, typecheck, lint, and the production build were not run. Runtime bytes are the baseline. I do not claim those gates.
+`npm test`, typecheck, lint, and the production build were not run. Runtime bytes are the baseline. I do not claim those gates.
 
 ## Stop
 
