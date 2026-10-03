@@ -23,6 +23,7 @@ import {
   REGEL_SCOPE_PRAEFIX,
   REGEL_SUPPORT_MAX,
   REGEL_TRANSIT_MINUTEN_MAX,
+  regelFaktKanonischLesen,
   regelKandidatAkzeptieren,
   regelKandidatErstellen,
   regelScopeAusEvidenceScope,
@@ -916,5 +917,29 @@ describe('Official Truth rule claims', () => {
       note: 'model payload',
     })
     assert.deepEqual(extra, { ok: false, reason: 'invalid_fact' })
+  })
+
+  test('regelFaktKanonischLesen prüft den Fakt und nimmt ihn nicht an', () => {
+    const basis = registry()
+    const gut = regelFaktKanonischLesen(
+      'blank_passport_pages',
+      'blank_passport_pages',
+      { kind: 'blank_passport_pages', minimumPages: 2 },
+      basis,
+    )
+    assert.deepEqual(gut, { ok: true, fact: { kind: 'blank_passport_pages', minimumPages: 2 } })
+    const schlecht = regelFaktKanonischLesen(
+      'blank_passport_pages',
+      'blank_passport_pages',
+      { kind: 'blank_passport_pages', minimumPages: 2, note: 'x' },
+      basis,
+    )
+    assert.deepEqual(schlecht, { ok: false, reason: 'invalid_fact' })
+    const text = quelle('lib/readiness/rule-claims.ts')
+    const start = text.indexOf('export function regelFaktKanonischLesen')
+    const ende = text.indexOf('function qualitaetLesen', start)
+    const koerper = text.slice(start, ende)
+    assert.match(koerper, /return regelFaktLesen\(/)
+    assert.doesNotMatch(koerper, /regelKandidatAkzeptieren/)
   })
 })
