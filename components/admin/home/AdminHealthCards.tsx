@@ -2,7 +2,9 @@
 import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import AdminEvidenceDetails from './AdminEvidenceDetails'
 
 type Row = Database['public']['Functions']['admin_security_overview']['Returns'][number]
 
@@ -27,7 +29,7 @@ export default async function AdminHealthCards() {
           ok: false,
         },
         {
-          label: 'Policy-Abdeckung',
+          label: 'RLS-Regeln',
           value: '–',
           hint: 'Keine Auskunft erhalten',
           ok: false,
@@ -37,31 +39,39 @@ export default async function AdminHealthCards() {
         {
           label: 'RLS aktiv',
           value: `${rows.length - ohneRls}/${rows.length}`,
-          hint: ohneRls ? `${ohneRls} Tabellen ohne RLS` : 'Alle Tabellen geschützt',
+          hint: ohneRls ? `${ohneRls} Tabellen ohne RLS` : 'Im gelesenen Katalog aktiv',
           ok: ohneRls === 0,
         },
         {
-          label: 'Policy-Abdeckung',
+          label: 'RLS-Regeln',
           value: String(policies),
-          hint: 'Summe aller Policies',
-          ok: policies > 0,
+          hint: 'Anzahl hinterlegter Regeln',
+          ok: false,
         },
       ]
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-1">{ADMIN_EHRLICHE_TEXTE.rlsKatalogTitel}</h2>
-      <p className="mb-3 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.rlsKatalogHinweis}</p>
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-sm font-medium">Security · Datenzugriff</h3>
+        <Link href="/admin/security" className="text-xs underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Security öffnen</Link>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
         {karten.map((karte) => (
-          <div key={karte.label} className="rounded-xl border border-border p-4 bg-background">
+          <div key={karte.label} className="min-w-0 rounded-xl border border-border bg-background p-3 sm:p-4">
             <p className="text-sm text-muted-foreground">{karte.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{karte.value}</p>
-            <p className={cn('text-xs mt-1', karte.ok ? 'text-emerald-600' : 'text-amber-600')}>
+            <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{karte.value}</p>
+            <p className={cn('text-xs mt-1', karte.ok ? 'text-foreground' : 'text-muted-foreground')}>
               {karte.hint}
             </p>
           </div>
         ))}
+      </div>
+      <div className="mt-3">
+        <AdminEvidenceDetails label="Datenqualität & Nachweis · Security">
+          <p>{ADMIN_EHRLICHE_TEXTE.rlsKatalogHinweis}</p>
+          <p>Aktiviertes RLS und die Anzahl der Regeln belegen nicht deren Wirksamkeit. Security-Ereignisse werden nicht vollständig erfasst; die IP-Blockliste wird derzeit nicht durchgesetzt.</p>
+        </AdminEvidenceDetails>
       </div>
     </div>
   )

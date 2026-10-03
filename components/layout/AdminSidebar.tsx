@@ -49,10 +49,11 @@ function NavListe({ items, pathname }: { items: AdminNavItem[]; pathname: string
           <li key={item.href}>
             <Link
               href={item.href}
+              aria-label={item.kind === 'later' ? `${item.label} · In Planung` : item.label}
               aria-current={active ? 'page' : undefined}
-              title={item.kind === 'later' ? `${item.label} folgt` : item.label}
+              title={item.kind === 'later' ? `${item.label} · In Planung` : item.label}
               className={cn(
-                'group relative flex items-center gap-2 rounded-xl border px-3 py-2 transition outline-none',
+                'group relative flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 transition outline-none',
                 'focus-visible:ring-2 focus-visible:ring-primary/40',
                 active
                   ? 'border-primary/30 bg-primary/10 text-foreground'
@@ -67,12 +68,7 @@ function NavListe({ items, pathname }: { items: AdminNavItem[]; pathname: string
                 )}
               />
               <Icon className={cn('h-4 w-4 shrink-0', active ? 'opacity-100' : 'opacity-80 group-hover:opacity-100')} />
-              <span className="min-w-0 truncate">{item.label}</span>
-              {item.kind === 'later' ? (
-                <span className="ml-auto shrink-0 rounded-md border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                  folgt
-                </span>
-              ) : null}
+              <span className="min-w-0 truncate group-data-[collapsed=true]/admin-nav:hidden">{item.label}</span>
             </Link>
           </li>
         )
@@ -97,27 +93,28 @@ export default function AdminSidebar({ className }: { className?: string }) {
     >
       <div className="flex h-14 items-center border-b border-border px-4">
         <Link href="/admin" className="text-base font-extrabold tracking-tight" aria-label="Steuerzentrale">
-          Jetnity Steuerzentrale
+          <span className="group-data-[collapsed=true]/admin-nav:hidden">Jetnity Steuerzentrale</span>
+          <span aria-hidden className="hidden group-data-[collapsed=true]/admin-nav:inline">J</span>
         </Link>
       </div>
 
       <nav className="h-[calc(100dvh-56px)] overflow-y-auto px-3 py-4 text-sm" aria-label="Hauptnavigation">
         <div className="space-y-4">
           <div>
-            <p className="mb-1 px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Betrieb
             </p>
             <NavListe items={ready} pathname={pathname} />
           </div>
           <div>
-            <p className="mb-1 px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Später
+            <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              In Planung
             </p>
             <NavListe items={later} pathname={pathname} />
           </div>
         </div>
 
-        <div className="mt-6 border-t border-border pt-3 text-[11px] text-muted-foreground">
+        <div className="mt-6 group-data-[collapsed=true]/admin-nav:hidden border-t border-border pt-3 text-[11px] text-muted-foreground">
           <div>Interner Betrieb</div>
           <div className="opacity-80">© {new Date().getFullYear()} Jetnity</div>
         </div>

@@ -8,49 +8,44 @@ import AdminModellnutzungHinweis from '@/components/admin/home/AdminModellnutzun
 import AdminNaechsteSchritte from '@/components/admin/home/AdminNaechsteSchritte'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
 import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
-import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
 export default async function AdminHomePage() {
   const accountCountsLocal = isAdminAccountCountsRuntimeEnabled()
 
   return (
-    <div className="grid gap-6">
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Steuerzentrale
-        </p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight">Operative Lage</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.steuerzentraleLage}</p>
+    <div className="grid min-w-0 gap-5">
+      <section aria-labelledby="admin-operative-lage" className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium text-muted-foreground">Jetnity · Betrieb im Überblick</p>
+            <h2 id="admin-operative-lage" className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Operative Lage</h2>
+          </div>
+          <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">Read-only · Momentaufnahme</span>
+        </div>
+        <AdminLagehinweise />
+        <div className="mt-5 grid min-w-0 gap-5 md:grid-cols-2">
+          <AdminStatsStrip />
+          <AdminHealthCards />
+        </div>
       </section>
 
       {accountCountsLocal ? (
-        <section className="bg-card rounded-2xl border border-border p-5">
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
           <AdminAccountCounts />
         </section>
       ) : null}
 
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <AdminStatsStrip />
-      </section>
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <AdminTimeSeries />
+        </section>
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <AdminModellnutzungHinweis />
+        </section>
+      </div>
 
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <AdminTimeSeries />
-      </section>
-
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <AdminLagehinweise />
-      </section>
-
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <AdminModellnutzungHinweis />
-      </section>
-
-      <section className="bg-card rounded-2xl border border-border p-5">
+      <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
         <AdminNaechsteSchritte />
-      </section>
-
-      <section className="bg-card rounded-2xl border border-border p-5">
-        <AdminHealthCards />
       </section>
     </div>
   )
