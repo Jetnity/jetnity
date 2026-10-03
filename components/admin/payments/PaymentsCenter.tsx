@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Fehlerflaeche, Fehlerzeile } from '@/components/admin/Ladezustand'
 import { fortsetzung, lade, liste, type Fehler } from '@/lib/admin/ladezustand'
+import AdminEvidenceDetails from '@/components/admin/home/AdminEvidenceDetails'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import {
   beginTransactionRead,
@@ -29,7 +30,7 @@ import {
 import { cn } from '@/lib/utils'
 import { CreditCard, RefreshCw, Search, RotateCcw, Activity, Webhook } from 'lucide-react'
 import {
-  AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
+  BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts'
 
 type BreakdownDay = { date: string; revenue_chf: number; orders: number }
@@ -40,13 +41,20 @@ export default function PaymentsCenter() {
   const [tab, setTab] = React.useState<'overview'|'transactions'|'refunds'|'webhooks'>('overview')
   return (
     <div className="space-y-6">
-      <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
-        {ADMIN_EHRLICHE_TEXTE.zahlungenHinweis}
-      </p>
+      <section className="rounded-2xl border bg-card px-4 py-3 sm:px-5" aria-label="Zahlungsanbindung">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">Zahlungsanbieter nicht verbunden</p>
+            <p className="mt-1 text-sm text-muted-foreground">Verifizierter Umsatz ist nicht verfügbar. Diese Ansicht zeigt lokale Datensätze.</p>
+          </div>
+          <Badge variant="outline">Lokale Ansicht</Badge>
+        </div>
+        <div className="mt-3"><AdminEvidenceDetails><p>{ADMIN_EHRLICHE_TEXTE.zahlungenHinweis}</p></AdminEvidenceDetails></div>
+      </section>
       <div className="flex flex-wrap items-center gap-2">
-        <TabBtn active={tab==='overview'} onClick={()=>setTab('overview')}>Overview</TabBtn>
+        <TabBtn active={tab==='overview'} onClick={()=>setTab('overview')}>Übersicht</TabBtn>
         <TabBtn active={tab==='transactions'} onClick={()=>setTab('transactions')}>Transaktionen</TabBtn>
-        <TabBtn active={tab==='refunds'} onClick={()=>setTab('refunds')}>Refunds</TabBtn>
+        <TabBtn active={tab==='refunds'} onClick={()=>setTab('refunds')}>Erstattungsnotizen</TabBtn>
         <TabBtn active={tab==='webhooks'} onClick={()=>setTab('webhooks')}>Webhooks</TabBtn>
       </div>
 
@@ -60,7 +68,7 @@ export default function PaymentsCenter() {
 
 function TabBtn({ active, children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (
-    <button {...rest} className={cn('rounded-xl border px-3 py-1.5 text-sm', active ? 'bg-primary/10 border-primary/40' : 'hover:bg-muted')}>
+    <button {...rest} type="button" aria-pressed={Boolean(active)} className={cn('min-h-11 rounded-xl border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', active ? 'bg-primary/10 border-primary/40' : 'hover:bg-muted')}>
       {children}
     </button>
   )
@@ -95,13 +103,13 @@ function OverviewCard() {
 
   return (
     <section className="rounded-2xl border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <CreditCard className="h-4 w-4" />
-          <h3 className="text-sm font-semibold">Umsatz (30 Tage)</h3>
+          <h3 className="text-sm font-semibold">Lokale Zahlungsdaten · 30 Tage</h3>
         </div>
-        <Button size="sm" variant="outline" onClick={load} disabled={loading} className="gap-1">
-          <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} /> Aktualisieren
+        <Button size="sm" variant="outline" onClick={load} disabled={loading} leftIcon={<RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />}>
+          Aktualisieren
         </Button>
       </div>
 
@@ -123,40 +131,39 @@ function OverviewCard() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Metric label="Umsatz" value={`CHF ${totals.revenue.toLocaleString('de-CH')}`} />
-            <Metric label="Bestellungen" value={totals.orders.toLocaleString('de-CH')} />
-            <Metric label="Ø Ticket" value={`CHF ${(totals.orders? (totals.revenue/totals.orders) : 0).toFixed(2)}`} />
+            <Metric label="Lokal als bezahlt erfasst" value={`CHF ${totals.revenue.toLocaleString('de-CH')}`} />
+            <Metric label="Lokale Einträge · Status bezahlt" value={totals.orders.toLocaleString('de-CH')} />
+            <Metric label="Ø Betrag je lokalem Eintrag" value={totals.orders ? `CHF ${(totals.revenue / totals.orders).toFixed(2)}` : 'Nicht verfügbar'} />
           </div>
-
-          <div className="mt-4 h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={days}>
-                <defs>
-                  <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopOpacity={0.6}/>
-                    <stop offset="95%" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="ord" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopOpacity={0.6}/>
-                    <stop offset="95%" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeOpacity={0.2} vertical={false}/>
-                <XAxis dataKey="date" tickMargin={8}/>
-                <YAxis yAxisId="left" allowDecimals={false}/>
-                <YAxis yAxisId="right" orientation="right" allowDecimals={false}/>
-                <Tooltip/>
-                <Legend/>
-                <Area type="monotone" dataKey="revenue_chf" name="Umsatz" yAxisId="left" strokeOpacity={0.9} fill="url(#rev)"/>
-                <Area type="monotone" dataKey="orders" name="Bestellungen" yAxisId="right" strokeOpacity={0.9} fill="url(#ord)"/>
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Nur wenn der Server geantwortet hat. Vorher stand dieser Satz auch
-              neben der Fehlermeldung – „Keine Daten“ heisst aber: kein Umsatz. */}
-          {days.length === 0 && (
-            <p className="mt-2 text-sm text-muted-foreground">Keine Daten in den letzten 30 Tagen.</p>
+          {totals.orders === 0 && totals.revenue === 0 ? (
+            <div className="mt-4 rounded-xl bg-muted/40 px-4 py-8 text-center">
+              <CreditCard aria-hidden className="mx-auto mb-3 h-5 w-5 text-muted-foreground" />
+              <p className="text-sm font-medium">Keine lokal als bezahlt erfassten Einträge</p>
+              <p className="mt-1 text-sm text-muted-foreground">In den letzten 30 Tagen. Daraus lässt sich kein tatsächlicher Umsatz ableiten.</p>
+            </div>
+          ) : (
+            <div className="mt-5">
+              <p className="text-xs text-muted-foreground">Lokal erfasste Beträge pro Tag · CHF</p>
+              <div className="mt-3 h-52 w-full" role="img" aria-label="Tägliche lokale Zahlungsbeträge in CHF; genaue Werte unter Tageswerte">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={days} margin={{ left: 0, right: 8, top: 8, bottom: 4 }} accessibilityLayer>
+                    <CartesianGrid stroke="rgb(var(--border))" vertical={false} />
+                    <XAxis dataKey="date" tickFormatter={(date: string) => `${date.slice(8,10)}.${date.slice(5,7)}.`} minTickGap={28} tick={{fontSize: 11, fill: 'rgb(var(--muted-foreground))'}} axisLine={false} tickLine={false} />
+                    <YAxis width={44} tick={{fontSize: 11, fill: 'rgb(var(--muted-foreground))'}} axisLine={false} tickLine={false} />
+                    <Tooltip labelFormatter={(date) => String(date)} contentStyle={{background: 'rgb(var(--card))', borderColor: 'rgb(var(--border))', borderRadius: 12, color: 'rgb(var(--foreground))'}} />
+                    <Bar isAnimationActive={false} dataKey="revenue_chf" name="Lokaler Betrag (CHF)" fill="rgb(var(--primary))" radius={[3,3,0,0]} maxBarSize={24} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <AdminEvidenceDetails label="Tageswerte anzeigen">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left tabular-nums">
+                    <thead><tr><th className="py-2">Tag</th><th>Betrag · CHF</th><th>Lokale Einträge</th></tr></thead>
+                    <tbody>{days.map(day => <tr key={day.date} className="border-t"><td className="py-2">{day.date}</td><td>{day.revenue_chf.toLocaleString('de-CH')}</td><td>{day.orders}</td></tr>)}</tbody>
+                  </table>
+                </div>
+              </AdminEvidenceDetails>
+            </div>
           )}
         </>
       )}
@@ -168,7 +175,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 text-lg font-semibold tabular-nums">{value}</div>
+      <div className="mt-1 text-xl font-semibold tabular-nums">{value}</div>
     </div>
   )
 }
@@ -263,17 +270,19 @@ function TransactionsCard() {
 
   return (
     <section className="rounded-2xl border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Activity className="h-4 w-4" />
           <h3 className="text-sm font-semibold">Transaktionen</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto">
+          <div className="relative min-w-0 flex-1">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              containerClassName="[&>div:last-child]:hidden"
               placeholder="Suche: ID oder E-Mail…"
-              className="pl-8 w-64"
+              aria-label="Transaktionen nach ID oder E-Mail suchen"
+              className="w-full pl-8 lg:w-64"
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => {
@@ -283,6 +292,7 @@ function TransactionsCard() {
             />
           </div>
           <select
+            aria-label="Transaktionsstatus"
             className="rounded-md border bg-background px-2 py-2 text-sm"
             value={status}
             onChange={(e) => {
@@ -293,10 +303,10 @@ function TransactionsCard() {
             }}
           >
             <option value="all">Alle</option>
-            <option value="paid">paid</option>
-            <option value="pending">pending</option>
-            <option value="failed">failed</option>
-            <option value="refunded">refunded</option>
+            <option value="paid">Bezahlt (lokal)</option>
+            <option value="pending">Ausstehend</option>
+            <option value="failed">Fehlgeschlagen</option>
+            <option value="refunded">Erstattet (lokal)</option>
           </select>
           <Button variant="outline" size="sm" onClick={() => commitVisible(q, status)}>
             Filtern
@@ -323,7 +333,7 @@ function TransactionsCard() {
                 <td className="px-3 py-2">{r.customer_email ?? '—'}</td>
                 <td className="px-3 py-2">{typeof r.amount_chf==='number' ? `CHF ${r.amount_chf.toFixed(2)}` : '—'}</td>
                 <td className="px-3 py-2">
-                  <Badge className={statusClass(r.status)}>{r.status}</Badge>
+                  <Badge className={statusClass(r.status)}>{{paid: 'Bezahlt (lokal)', pending: 'Ausstehend', failed: 'Fehlgeschlagen', refunded: 'Erstattet (lokal)'}[r.status] ?? r.status}</Badge>
                 </td>
               </tr>
             ))}
@@ -390,7 +400,7 @@ function RefundCard() {
       // die Begründung der Datenbank – der einzige Hinweis, warum eine
       // Rückerstattung nicht gebucht wurde – kam damit nie an.
       if (!res.ok || data?.ok === false) throw new Error(data?.message || data?.error || 'Lokale Refund-Notiz fehlgeschlagen.')
-      setMsg(ADMIN_EHRLICHE_TEXTE.refundErfolg)
+      setMsg('Erstattungsnotiz gespeichert. Es wurde kein Geld erstattet.')
     } catch (e: any) {
       setMsg(e?.message ?? 'Unbekannter Fehler')
     } finally { setBusy(false) }
@@ -400,13 +410,13 @@ function RefundCard() {
     <section className="rounded-2xl border bg-card p-4">
       <div className="mb-3 flex items-center gap-2">
         <RotateCcw className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.refundTitel}</h3>
+        <h3 className="text-sm font-semibold">Erstattung lokal vermerken</h3>
       </div>
-      <p className="mb-3 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.refundHinweis}</p>
+      <p className="mb-3 text-sm text-muted-foreground">Dieser Eintrag ist eine lokale Notiz. Es wird kein Geld erstattet.</p>
       <div className="grid gap-3 sm:grid-cols-3">
-        <Input placeholder="Payment ID" value={paymentId} onChange={(e)=>setPaymentId(e.target.value)} />
-        <Input placeholder="Betrag (CHF)" value={amount} onChange={(e)=>setAmount(e.target.value)} />
-        <Input placeholder="Grund (optional)" value={reason} onChange={(e)=>setReason(e.target.value)} />
+        <Input containerClassName="[&>div:last-child]:hidden" aria-label="Zahlungs-ID" placeholder="Zahlungs-ID" value={paymentId} onChange={(e)=>setPaymentId(e.target.value)} />
+        <Input containerClassName="[&>div:last-child]:hidden" aria-label="Betrag in CHF" placeholder="Betrag (CHF)" value={amount} onChange={(e)=>setAmount(e.target.value)} />
+        <Input containerClassName="[&>div:last-child]:hidden" aria-label="Grund (optional)" placeholder="Grund (optional)" value={reason} onChange={(e)=>setReason(e.target.value)} />
       </div>
       <div className="mt-3">
         <Button onClick={submit} disabled={!paymentId || !amount || busy}>
@@ -414,11 +424,12 @@ function RefundCard() {
         </Button>
         {msg && <span className="ml-3 text-sm text-muted-foreground">{msg}</span>}
       </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Die Notiz landet in <code>refunds</code>. Deckt sie den vollen lokalen Betrag, wechselt die
+      <div className="mt-4"><AdminEvidenceDetails>
+        <p>{ADMIN_EHRLICHE_TEXTE.refundHinweis}</p>
+        <p>Die Notiz landet in <code>refunds</code>. Deckt sie den vollen lokalen Betrag, wechselt die
         Zahlung auf <code>refunded</code>. Das ist keine Provider-Erstattung. Scheitert ein Schritt,
-        meldet die Route den Grund und nichts wird als erledigt angezeigt.
-      </p>
+        meldet die Route den Grund und nichts wird als erledigt angezeigt.</p>
+      </AdminEvidenceDetails></div>
     </section>
   )
 }
@@ -461,7 +472,7 @@ function WebhooksCard() {
     <section className="rounded-2xl border bg-card p-4">
       <div className="mb-3 flex items-center gap-2">
         <Webhook className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">Stripe Webhooks</h3>
+        <h3 className="text-sm font-semibold">Aufgezeichnete Webhooks</h3>
       </div>
       <div className="overflow-x-auto rounded-xl border">
         <table className="min-w-full text-sm">

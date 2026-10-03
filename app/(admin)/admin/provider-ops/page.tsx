@@ -13,8 +13,7 @@ export default async function ProviderOpsPage() {
       <header>
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">Provider & Kosten</h2>
         <p className="text-sm text-muted-foreground">
-          Read-only. Nur der gemergte S1-Vertrag und belegte Protokollwerte. Kein Aktivieren, kein
-          Budget-Write, keine erfundenen Kosten.
+          Nutzungsprotokoll, Provider-Status und technische Grundlagen im Überblick.
         </p>
       </header>
       <ProviderOpsBoard anfang={bericht} />

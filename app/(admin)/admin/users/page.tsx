@@ -74,12 +74,12 @@ export default async function UsersPage({
     console.error('[admin/users] list error:', error)
 
     return (
-      <main className="p-6 space-y-6">
+      <section className="mx-auto max-w-7xl space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Benutzerverwaltung</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Benutzerverwaltung</h1>
         </div>
         <Fehlerflaeche fehler={ausProblem(problemAus({ data: null, error, status }, error))} />
-      </main>
+      </section>
     )
   }
 
@@ -94,11 +94,11 @@ export default async function UsersPage({
   }))
 
   return (
-    <main className="p-6 space-y-6">
+    <section className="mx-auto max-w-7xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Benutzerverwaltung</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Benutzerverwaltung</h1>
         <p className="text-sm text-muted-foreground">
-          Admin · {count} Nutzer gesamt
+          Konten, Rollen und Zugriffsstatus verwalten.
         </p>
       </div>
 
@@ -112,6 +112,6 @@ export default async function UsersPage({
         actorRole={role}
         assignable={assignableRoles(role)}
       />
-    </main>
+    </section>
   )
 }
