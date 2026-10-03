@@ -900,8 +900,30 @@ describe('regulierungs-anwendbarkeit', () => {
     const eigene = new Set([
       join(hier, 'regulierungs-anwendbarkeit.ts'),
       join(hier, 'regulierungs-anwendbarkeit.test.ts'),
+      join(hier, 'rule-claims.ts'),
     ])
     const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
     assert.deepEqual(fremd, [])
+    const produktion = dateien(wurzel).filter(
+      (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx') && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'),
+    )
+    assert.deepEqual(produktion.sort(), [join(hier, 'regulierungs-anwendbarkeit.ts'), join(hier, 'rule-claims.ts')].sort())
+    const claims = readFileSync(join(hier, 'rule-claims.ts'), 'utf8')
+    for (const name of [
+      'regulierungsKontextLesen',
+      'regulierungsWirkungAuswerten',
+      'regulierungsVisaOptionAuswerten',
+      'regulierungsAusdruckAuswerten',
+      'regelAnwendbarkeitFingerprint',
+    ]) {
+      assert.equal(claims.includes(name), false, name)
+    }
+    for (const datei of [
+      'official-truth-store-server.ts',
+      'official-truth-trusted-fact-extractor-registry.ts',
+      'official-truth-same-request-extraction-server.ts',
+    ]) {
+      assert.equal(readFileSync(join(hier, datei), 'utf8').includes('regulierungs-anwendbarkeit'), false, datei)
+    }
   })
 })

@@ -942,4 +942,416 @@ describe('Official Truth rule claims', () => {
     assert.match(koerper, /return regelFaktLesen\(/)
     assert.doesNotMatch(koerper, /regelKandidatAkzeptieren/)
   })
+
+  test('Schema 1 läuft durch denselben Parser und bleibt ohne Traveller-Auswertung', () => {
+    const basis = registry()
+    const belegt = version(basis, 'example-border-authority', 'gov.example', 'schema-1')
+    const legacyPflicht = regelFaktKanonischLesen(
+      'requirement_effect',
+      'visa',
+      { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' },
+      basis,
+    )
+    const legacyFrei = regelFaktKanonischLesen(
+      'requirement_effect',
+      'visa',
+      { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' },
+      basis,
+    )
+    assert.deepEqual(legacyPflicht, {
+      ok: true,
+      fact: { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' },
+    })
+    assert.deepEqual(legacyFrei, {
+      ok: true,
+      fact: { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' },
+    })
+
+    const flach = { kind: 'requirement_effect', effect: 'conditional', visaMode: null }
+    assert.deepEqual(regelFaktKanonischLesen('requirement_effect', 'visa', flach, basis), {
+      ok: false,
+      reason: 'legacy_conditional_without_payload',
+    })
+    const flachAngenommen = annehmen(basis, belegt.scope, 'requirement_effect', 'explicit_primary_statement', [belegt], flach)
+    assert.deepEqual(flachAngenommen, { ok: false, reason: 'legacy_conditional_without_payload' })
+    assert.equal(JSON.stringify(flachAngenommen).includes('auswertung'), false)
+
+    const unbedingt = {
+      kind: 'requirement_effect',
+      schema: 1,
+      applicability: { schema: 1, kind: 'unconditional' },
+      effect: 'not_required',
+      visaMode: 'visa_exempt',
+    }
+    const unbedingtGelesen = regelFaktKanonischLesen('requirement_effect', 'visa', unbedingt, basis)
+    assert.deepEqual(unbedingtGelesen, { ok: true, fact: unbedingt })
+
+    const zweig = {
+      id: 'ordinary',
+      when: {
+        kind: 'expression',
+        expression: { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } },
+      },
+      outcome: { effect: 'required', visaMode: null },
+      supportVersionIds: [] as string[],
+    }
+    const verzweigt = {
+      kind: 'requirement_effect',
+      schema: 1,
+      applicability: { schema: 1, kind: 'branches', branches: [zweig] },
+    }
+    const verzweigtGelesen = regelFaktKanonischLesen('requirement_effect', 'visa', verzweigt, basis)
+    assert.equal(verzweigtGelesen.ok, true)
+    if (verzweigtGelesen.ok && verzweigtGelesen.fact.kind === 'requirement_effect' && 'applicability' in verzweigtGelesen.fact) {
+      assert.equal(verzweigtGelesen.fact.schema, 1)
+      assert.equal(verzweigtGelesen.fact.applicability.kind, 'branches')
+      assert.equal('effect' in verzweigtGelesen.fact, false)
+    }
+
+    const gemischt = regelFaktKanonischLesen(
+      'requirement_effect',
+      'visa',
+      { ...verzweigt, effect: 'required', visaMode: null },
+      basis,
+    )
+    assert.deepEqual(gemischt, { ok: false, reason: 'mixed_outcome' })
+
+    const visaUnbedingt = {
+      kind: 'visa_options',
+      schema: 1,
+      options: [
+        {
+          visaMode: 'visa_exempt',
+          eligibility: 'unknown',
+          mandate: 'not_mandatory',
+          applicability: { schema: 1, kind: 'unconditional' },
+        },
+      ],
+    }
+    assert.deepEqual(regelFaktKanonischLesen('visa_options', 'visa', visaUnbedingt, basis), {
+      ok: true,
+      fact: visaUnbedingt,
+    })
+
+    const visaZweig = {
+      kind: 'visa_options',
+      schema: 1,
+      options: [
+        {
+          visaMode: 'electronic_visa',
+          applicability: {
+            schema: 1,
+            kind: 'branches',
+            branches: [
+              {
+                id: 'ordinary',
+                when: zweig.when,
+                outcome: { eligibility: 'allowed', mandate: 'not_mandatory' },
+                supportVersionIds: [],
+              },
+            ],
+          },
+        },
+      ],
+    }
+    const visaZweigGelesen = regelFaktKanonischLesen('visa_options', 'visa', visaZweig, basis)
+    assert.equal(visaZweigGelesen.ok, true)
+    if (visaZweigGelesen.ok && visaZweigGelesen.fact.kind === 'visa_options' && 'schema' in visaZweigGelesen.fact) {
+      assert.equal(visaZweigGelesen.fact.schema, 1)
+      assert.equal('eligibility' in visaZweigGelesen.fact.options[0]!, false)
+    }
+
+    const gleich = annehmen(basis, belegt.scope, 'requirement_effect', 'explicit_primary_statement', [belegt], unbedingt)
+    assert.equal(gleich.ok && unbedingtGelesen.ok, true)
+    if (gleich.ok && unbedingtGelesen.ok) assert.deepEqual(unbedingtGelesen.fact, gleich.claim.fact)
+    assert.equal(JSON.stringify(gleich).includes('rule-applicability:v1'), false)
+    assert.equal(JSON.stringify(gleich).includes('reg-eval-ctx:v1'), false)
+
+    const herkunft = regelFaktKanonischLesen(
+      'requirement_effect',
+      'visa',
+      { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa', licensed_provider_confirmed: true },
+      basis,
+    )
+    assert.deepEqual(herkunft, { ok: false, reason: 'provenance_not_authorized' })
+
+    let verschachtelt: unknown = { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } }
+    for (let tiefe = 0; tiefe < 5; tiefe += 1) verschachtelt = { op: 'not', operand: verschachtelt }
+    const zuTief = regelFaktKanonischLesen(
+      'requirement_effect',
+      'health',
+      {
+        kind: 'requirement_effect',
+        schema: 1,
+        applicability: {
+          schema: 1,
+          kind: 'branches',
+          branches: [
+            {
+              id: 'deep',
+              when: { kind: 'expression', expression: verschachtelt },
+              outcome: { effect: 'required', visaMode: null },
+              supportVersionIds: [],
+            },
+          ],
+        },
+      },
+      basis,
+    )
+    assert.deepEqual(zuTief, { ok: false, reason: 'depth_exceeded' })
+
+    const zuVieleZweige = regelFaktKanonischLesen(
+      'requirement_effect',
+      'health',
+      {
+        kind: 'requirement_effect',
+        schema: 1,
+        applicability: {
+          schema: 1,
+          kind: 'branches',
+          branches: Array.from({ length: 9 }, (_, index) => ({
+            id: `zweig${index}`,
+            when: { kind: 'expression', expression: { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } } },
+            outcome: { effect: 'required', visaMode: null },
+            supportVersionIds: [],
+          })),
+        },
+      },
+      basis,
+    )
+    assert.deepEqual(zuVieleZweige, { ok: false, reason: 'branch_bound_exceeded' })
+    const zuVieleOperanden = regelFaktKanonischLesen(
+      'requirement_effect',
+      'health',
+      {
+        kind: 'requirement_effect',
+        schema: 1,
+        applicability: {
+          schema: 1,
+          kind: 'branches',
+          branches: [
+            {
+              id: 'wide',
+              when: {
+                kind: 'expression',
+                expression: {
+                  op: 'all',
+                  operands: Array.from({ length: 9 }, () => ({
+                    op: 'atomic',
+                    predicate: { kind: 'document_class', documentClass: 'ordinary' },
+                  })),
+                },
+              },
+              outcome: { effect: 'required', visaMode: null },
+              supportVersionIds: [],
+            },
+          ],
+        },
+      },
+      basis,
+    )
+    assert.deepEqual(zuVieleOperanden, { ok: false, reason: 'operand_bound_exceeded' })
+
+    const text = quelle('lib/readiness/rule-claims.ts')
+    assert.equal((text.match(/regulierungsAnwendbarkeitWirkungLesen\(/g) ?? []).length, 1)
+    assert.equal((text.match(/regulierungsAnwendbarkeitVisaOptionLesen\(/g) ?? []).length, 1)
+    assert.equal((text.match(/function regelFaktLesen\(/g) ?? []).length, 1)
+    assert.equal((text.match(/export function regelKandidatAkzeptieren\(/g) ?? []).length, 1)
+    const annahme = text.slice(text.indexOf('export function regelKandidatAkzeptieren'))
+    assert.match(annahme, /regelFaktLesen\(/)
+    assert.equal(annahme.includes('regulierungsAnwendbarkeitWirkungLesen'), false)
+    assert.equal(annahme.includes('regulierungsAnwendbarkeitVisaOptionLesen'), false)
+    for (const name of [
+      'regulierungsKontextLesen',
+      'regulierungsWirkungAuswerten',
+      'regulierungsVisaOptionAuswerten',
+      'regulierungsAusdruckAuswerten',
+      'regelAnwendbarkeitFingerprint',
+    ]) {
+      assert.equal(text.includes(name), false, name)
+    }
+    assert.equal(text.includes('rule-applicability:v1'), false)
+    assert.equal(text.includes('reg-eval-ctx:v1'), false)
+    assert.equal(text.includes("reason: 'applicability_not_persistable'"), false)
+  })
+
+  test('Schema-1-Zweige binden nur die neu bewiesenen Stützen', () => {
+    const fremd = `ev1_${'ab'.repeat(16)}`
+    const basis = registry()
+    const belegt = version(basis, 'example-border-authority', 'gov.example', 'zweig-stuetze')
+    const zweite = version(basis, 'example-border-authority', 'gov.example', 'zweig-stuetze-zwei')
+    const innen = version(
+      basis,
+      'example-interior-authority',
+      'interior.example',
+      'zweig-komposition',
+      atom({ sourceId: 'example-interior-authority' }),
+    )
+    assert.notEqual(fremd, belegt.versionId)
+    assert.notEqual(belegt.versionId, zweite.versionId)
+
+    const atomar = (support?: string) => ({
+      op: 'atomic' as const,
+      predicate: { kind: 'document_class' as const, documentClass: 'ordinary' as const },
+      ...(support ? { supportVersionIds: [support] } : {}),
+    })
+    const wirkung = (branches: readonly Record<string, unknown>[]) => ({
+      kind: 'requirement_effect',
+      schema: 1,
+      applicability: { schema: 1, kind: 'branches', branches },
+    })
+    const zweig = (id: string, when: unknown, support: readonly string[]) => ({
+      id,
+      when,
+      outcome: { effect: 'required', visaMode: null },
+      supportVersionIds: support,
+    })
+    const ausdrucksZweig = (id: string, expression: unknown, support: readonly string[]) =>
+      zweig(id, { kind: 'expression', expression }, support)
+    const sonst = (id: string, support: readonly string[]) => zweig(id, { kind: 'otherwise' }, support)
+    const annehmenWirkung = (
+      versionen: readonly EvidenceVersion[],
+      branches: readonly Record<string, unknown>[],
+      qualitaet = 'explicit_primary_statement',
+    ) => annehmen(basis, belegt.scope, 'requirement_effect', qualitaet, versionen, wirkung(branches))
+
+    const verschachtelt = {
+      op: 'all',
+      operands: [
+        { op: 'not', operand: atomar(belegt.versionId) },
+        { op: 'atomic', predicate: { kind: 'citizenship_includes', countryCode: 'CH' } },
+      ],
+    }
+    const gueltig = [
+      ausdrucksZweig('ordinary', verschachtelt, [belegt.versionId]),
+      sonst('fallback', [belegt.versionId]),
+    ]
+    const angenommen = annehmenWirkung([belegt], gueltig)
+    assert.equal(angenommen.ok, true)
+    if (!angenommen.ok) return
+    assert.equal(JSON.stringify(angenommen.claim).includes('rule-applicability:v1'), false)
+    assert.equal(JSON.stringify(angenommen.claim).includes('reg-eval-ctx:v1'), false)
+    const gelesen = regelFaktKanonischLesen('requirement_effect', 'visa', wirkung(gueltig), basis)
+    assert.equal(gelesen.ok, true)
+    if (gelesen.ok) assert.deepEqual(angenommen.claim.fact, gelesen.fact)
+
+    const visaAnnahme = annehmen(basis, belegt.scope, 'visa_options', 'explicit_primary_statement', [belegt], {
+      kind: 'visa_options',
+      schema: 1,
+      options: [
+        {
+          visaMode: 'electronic_visa',
+          applicability: {
+            schema: 1,
+            kind: 'branches',
+            branches: [
+              {
+                id: 'ordinary',
+                when: { kind: 'expression', expression: atomar() },
+                outcome: { eligibility: 'allowed', mandate: 'not_mandatory' },
+                supportVersionIds: [belegt.versionId],
+              },
+            ],
+          },
+        },
+      ],
+    })
+    assert.equal(visaAnnahme.ok, true)
+
+    assert.deepEqual(
+      annehmenWirkung([belegt], [ausdrucksZweig('ordinary', atomar(), [fremd])]),
+      { ok: false, reason: 'support_mismatch' },
+    )
+    assert.deepEqual(
+      annehmenWirkung([belegt], [ausdrucksZweig('ordinary', atomar(), [])]),
+      { ok: false, reason: 'support_mismatch' },
+    )
+    assert.deepEqual(
+      annehmenWirkung(
+        [belegt, zweite],
+        [ausdrucksZweig('ordinary', atomar(), [belegt.versionId]), sonst('fallback', [belegt.versionId])],
+      ),
+      { ok: false, reason: 'support_mismatch' },
+    )
+    assert.deepEqual(
+      annehmenWirkung(
+        [belegt],
+        [
+          ausdrucksZweig(
+            'ordinary',
+            {
+              op: 'all',
+              operands: [
+                { op: 'not', operand: atomar(fremd) },
+                { op: 'atomic', predicate: { kind: 'citizenship_includes', countryCode: 'CH' } },
+              ],
+            },
+            [belegt.versionId],
+          ),
+        ],
+      ),
+      { ok: false, reason: 'support_mismatch' },
+    )
+    assert.deepEqual(
+      annehmenWirkung(
+        [belegt, zweite],
+        [
+          ausdrucksZweig('ordinary', atomar(zweite.versionId), [belegt.versionId]),
+          sonst('fallback', [zweite.versionId]),
+        ],
+      ),
+      { ok: false, reason: 'support_mismatch' },
+    )
+    assert.equal(
+      annehmenWirkung([belegt], [ausdrucksZweig('ordinary', atomar(), [belegt.versionId])]).ok,
+      true,
+    )
+    assert.deepEqual(
+      annehmenWirkung(
+        [belegt, zweite],
+        [ausdrucksZweig('ordinary', atomar(belegt.versionId), [belegt.versionId]), sonst('fallback', [zweite.versionId])],
+      ),
+      { ok: false, reason: 'support_mismatch' },
+    )
+
+    const komposition = annehmenWirkung(
+      [belegt, innen],
+      [
+        ausdrucksZweig('ordinary', atomar(belegt.versionId), [belegt.versionId]),
+        sonst('fallback', [innen.versionId]),
+      ],
+      'composed_from_multiple_primary_sources',
+    )
+    assert.deepEqual(komposition, { ok: false, reason: 'condition_provenance_ambiguous' })
+    assert.equal('claim' in komposition, false)
+
+    const legacy = { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' }
+    const legacyKomposition = annehmen(
+      basis,
+      belegt.scope,
+      'requirement_effect',
+      'composed_from_multiple_primary_sources',
+      [innen, belegt],
+      legacy,
+    )
+    assert.equal(legacyKomposition.ok, true)
+    if (legacyKomposition.ok) assert.deepEqual(legacyKomposition.claim.fact, legacy)
+
+    const unbedingt = annehmen(basis, belegt.scope, 'requirement_effect', 'explicit_primary_statement', [belegt], {
+      kind: 'requirement_effect',
+      schema: 1,
+      applicability: { schema: 1, kind: 'unconditional' },
+      effect: 'not_required',
+      visaMode: 'visa_exempt',
+    })
+    assert.equal(unbedingt.ok, true)
+
+    const annahme = quelle('lib/readiness/rule-claims.ts').slice(
+      quelle('lib/readiness/rule-claims.ts').indexOf('export function regelKandidatAkzeptieren'),
+    )
+    const fakt = annahme.indexOf('regelFaktLesen(')
+    const bindung = annahme.indexOf('bedingungsHerkunftPruefen(')
+    const claim = annahme.indexOf('const claim: AkzeptierteRegelClaim')
+    assert.ok(fakt >= 0 && bindung > fakt && claim > bindung)
+  })
 })

@@ -988,4 +988,30 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(wert.kandidat.scope.destinationCountryCode, 'JP')
     assert.equal(JSON.stringify(eingang.scope).includes('TH'), false)
   })
+
+  test('eine synthetische Schema-1-Wirkung bleibt Material ohne Kontext und ohne Annahme', async () => {
+    const fakt = {
+      kind: 'requirement_effect' as const,
+      schema: 1 as const,
+      applicability: { schema: 1 as const, kind: 'unconditional' as const },
+      effect: 'required' as const,
+      visaMode: 'electronic_visa' as const,
+    }
+    const basis = definition()
+    const { ergebnis } = await binden(eingabe(), {
+      definitionen: [{ ...basis, extract: () => ({ ok: true, fact: fakt }) }],
+    })
+    const wert = erfolg(ergebnis)
+    assert.deepEqual(wert.trustedRuleFact, fakt)
+    const roh = JSON.stringify(wert)
+    assert.equal(roh.includes('reg-eval-ctx:v1'), false)
+    assert.equal(roh.includes('rule-applicability:v1'), false)
+    assert.equal(roh.includes('RegulierungsKontext'), false)
+    assert.equal(Object.hasOwn(wert, 'context'), false)
+    const text = datei(DATEI)
+    assert.equal(text.includes('regelKandidatAkzeptieren'), false)
+    const live = text.slice(text.indexOf('export async function loadOfficialTruthSameRequestTrustedFactExtraction'))
+    assert.match(live, /extract: officialTruthTrustedFactExtrahieren/)
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+  })
 })

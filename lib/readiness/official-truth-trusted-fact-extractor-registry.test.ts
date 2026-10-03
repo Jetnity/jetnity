@@ -1053,4 +1053,42 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     if (ergebnis.status !== 'trusted_fact_extracted') return
     assert.equal(ergebnis.fact.kind === 'blank_passport_pages' && ergebnis.fact.minimumPages, 2)
   })
+
+  test('eine synthetische Schema-1-Wirkung läuft durch den kanonischen Parser', () => {
+    const fakt = {
+      kind: 'requirement_effect' as const,
+      schema: 1 as const,
+      applicability: { schema: 1 as const, kind: 'unconditional' as const },
+      effect: 'required' as const,
+      visaMode: null,
+    }
+    const zaehler = { match: 0, extract: 0 }
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      eingabe({ factKind: 'requirement_effect', requirementType: 'health' }),
+      [
+        seitenDefinition(zaehler, {
+          factKind: 'requirement_effect',
+          extract: () => {
+            zaehler.extract += 1
+            return { ok: true, fact: fakt }
+          },
+        }),
+      ],
+    )
+    assert.equal(ergebnis.status, 'trusted_fact_extracted')
+    if (ergebnis.status !== 'trusted_fact_extracted') return
+    assert.deepEqual(ergebnis.fact, fakt)
+    assert.equal(zaehler.extract, 1)
+    assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+    assert.equal(Object.isFrozen(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY), true)
+    assert.equal(officialTruthTrustedFactExtrahieren.length, 1)
+    assert.deepEqual(officialTruthTrustedFactExtrahieren(eingabe()), {
+      status: 'blocked',
+      reason: 'extractor_not_registered',
+    })
+    const text = datei(DATEI)
+    assert.match(text, /OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY[\s\S]*?Object\.freeze\(\[\]\)/)
+    assert.equal(text.includes('regelKandidatAkzeptieren'), false)
+    assert.match(text, /regelFaktKanonischLesen\(/)
+  })
 })

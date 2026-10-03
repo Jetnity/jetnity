@@ -15,10 +15,17 @@ import {
 import {
   OFFICIAL_ACTION_PURPOSES,
   OFFICIAL_VISA_MODES,
-  visaResultUndModusWidersprechen,
   type OfficialActionPurpose,
   type OfficialVisaMode,
 } from '@/lib/readiness/official'
+import {
+  regulierungsAnwendbarkeitVisaOptionLesen,
+  regulierungsAnwendbarkeitWirkungLesen,
+  type AnforderungswirkungFakt,
+  type RegulierungsAusdruck,
+  type RegulierungsLesefehler,
+  type VisaOptionenFakt,
+} from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { quellenUrlAufloesen, type QuellenRegistry, type QuellenUrlFehler } from '@/lib/readiness/source-registry'
 import { temporalRuleLesen, type OfficialTemporalRule } from '@/lib/readiness/temporal'
 import type { OfficialRequirementType } from '@/types/trips'
@@ -60,7 +67,6 @@ export const AUFENTHALT_WERT_MAX = {
 /** Technische Obergrenze für eine Transitdauer, keine rechtliche Wahrheit. */
 export const REGEL_TRANSIT_MINUTEN_MAX = 14 * 24 * 60
 
-const VISA_OPTIONEN_MAX = 4
 const TRANSIT_PFADE_MAX = 8
 const AMTSHANDLUNGEN_MAX = 4
 const LEERE_SEITEN_MIN = 1
@@ -91,10 +97,6 @@ const TRANSIT_BOOL = [
   'sameFlightRequired',
   'onwardTicketRequired',
 ] as const
-const WIRKUNGEN = ['required', 'not_required', 'conditional'] as const
-const ZULASSUNG = ['allowed', 'not_allowed', 'unknown'] as const
-const MANDAT = ['mandatory', 'not_mandatory', 'unknown'] as const
-
 const PERSONEN_SCHLUESSEL = new Set([
   'userId',
   'user_id',
@@ -146,22 +148,15 @@ export type RegelDauer = {
   unit: (typeof DAUER_EINHEITEN)[number]
 }
 
-export type RegelAnforderungswirkung = {
-  kind: 'requirement_effect'
-  effect: (typeof WIRKUNGEN)[number]
-  visaMode: OfficialVisaMode | null
-}
+export type RegelAnforderungswirkung = AnforderungswirkungFakt
 
 export type RegelVisaOption = {
   visaMode: Exclude<OfficialVisaMode, 'unknown'>
-  eligibility: (typeof ZULASSUNG)[number]
-  mandate: (typeof MANDAT)[number]
+  eligibility: 'allowed' | 'not_allowed' | 'unknown'
+  mandate: 'mandatory' | 'not_mandatory' | 'unknown'
 }
 
-export type RegelVisaOptionen = {
-  kind: 'visa_options'
-  options: readonly RegelVisaOption[]
-}
+export type RegelVisaOptionen = VisaOptionenFakt
 
 export type RegelAufenthalt = {
   kind: 'stay_limit'
@@ -265,9 +260,17 @@ export type RegelClaimFehler =
   | 'primary_source_required'
   | 'evidence_not_accepted'
   | 'support_mismatch'
+  | 'condition_provenance_ambiguous'
   | 'invalid_fact'
   | 'visa_mode_forbidden'
   | 'visa_contradiction'
+  | 'legacy_conditional_without_payload'
+  | 'mixed_outcome'
+  | 'provenance_not_authorized'
+  | 'depth_exceeded'
+  | 'node_bound_exceeded'
+  | 'operand_bound_exceeded'
+  | 'branch_bound_exceeded'
   | 'requirement_type_mismatch'
   | 'action_source_mismatch'
   | 'provider_action_forbidden'
@@ -438,49 +441,42 @@ function visaModusKonkret(wert: unknown): Exclude<OfficialVisaMode, 'unknown'> |
   return wert
 }
 
+function faktGrund(reason: RegulierungsLesefehler | 'legacy_conditional_without_payload'): RegelClaimFehler {
+  switch (reason) {
+    case 'invalid_fact':
+    case 'personal_identifier_forbidden':
+    case 'provenance_not_authorized':
+    case 'mixed_outcome':
+    case 'depth_exceeded':
+    case 'node_bound_exceeded':
+    case 'operand_bound_exceeded':
+    case 'branch_bound_exceeded':
+    case 'support_bound_exceeded':
+    case 'invalid_support':
+    case 'visa_contradiction':
+    case 'visa_mode_forbidden':
+    case 'legacy_conditional_without_payload':
+      return reason
+    case 'context_conflict':
+      return 'invalid_fact'
+    default: {
+      const unerreichbar: never = reason
+      return unerreichbar
+    }
+  }
+}
+
 function wirkungLesen(requirementType: OfficialRequirementType, wert: unknown): FaktErgebnis {
-  const satz = datensatz(wert)
-  if (!satz || !hatGenau(satz, ['kind', 'effect', 'visaMode'])) return { ok: false, reason: 'invalid_fact' }
-  if (satz.kind !== 'requirement_effect') return { ok: false, reason: 'invalid_fact_kind' }
-  if (!istText(satz.effect, WIRKUNGEN)) return { ok: false, reason: 'invalid_fact' }
-  if (requirementType !== 'visa') {
-    if (satz.visaMode !== null) return { ok: false, reason: 'visa_mode_forbidden' }
-  } else if (satz.visaMode !== null && !istText(satz.visaMode, OFFICIAL_VISA_MODES)) {
-    return { ok: false, reason: 'invalid_fact' }
-  }
-  if (visaResultUndModusWidersprechen(requirementType, satz.effect, satz.visaMode)) {
-    return { ok: false, reason: 'visa_contradiction' }
-  }
-  const fact: RegelAnforderungswirkung = {
-    kind: 'requirement_effect',
-    effect: satz.effect,
-    visaMode: requirementType === 'visa' ? (satz.visaMode as OfficialVisaMode | null) : null,
-  }
-  return { ok: true, fact }
+  const gelesen = regulierungsAnwendbarkeitWirkungLesen(wert, requirementType)
+  if (!gelesen.ok) return { ok: false, reason: faktGrund(gelesen.reason) }
+  return { ok: true, fact: gelesen.fakt }
 }
 
 function visaOptionenLesen(requirementType: OfficialRequirementType, wert: unknown): FaktErgebnis {
   if (requirementType !== 'visa') return { ok: false, reason: 'requirement_type_mismatch' }
-  const satz = datensatz(wert)
-  if (!satz || !hatGenau(satz, ['kind', 'options'])) return { ok: false, reason: 'invalid_fact' }
-  if (satz.kind !== 'visa_options') return { ok: false, reason: 'invalid_fact_kind' }
-  if (!Array.isArray(satz.options) || satz.options.length === 0 || satz.options.length > VISA_OPTIONEN_MAX) {
-    return { ok: false, reason: 'invalid_fact' }
-  }
-  const options: RegelVisaOption[] = []
-  for (const eintrag of satz.options) {
-    const option = datensatz(eintrag)
-    if (!option || !hatGenau(option, ['visaMode', 'eligibility', 'mandate'])) return { ok: false, reason: 'invalid_fact' }
-    const visaMode = visaModusKonkret(option.visaMode)
-    if (!visaMode) return { ok: false, reason: 'invalid_fact' }
-    if (!istText(option.eligibility, ZULASSUNG) || !istText(option.mandate, MANDAT)) {
-      return { ok: false, reason: 'invalid_fact' }
-    }
-    if (options.some((vorhanden) => vorhanden.visaMode === visaMode)) return { ok: false, reason: 'invalid_fact' }
-    options.push({ visaMode, eligibility: option.eligibility, mandate: option.mandate })
-  }
-  options.sort((links, rechts) => OFFICIAL_VISA_MODES.indexOf(links.visaMode) - OFFICIAL_VISA_MODES.indexOf(rechts.visaMode))
-  return { ok: true, fact: { kind: 'visa_options', options } }
+  const gelesen = regulierungsAnwendbarkeitVisaOptionLesen(wert)
+  if (!gelesen.ok) return { ok: false, reason: faktGrund(gelesen.reason) }
+  return { ok: true, fact: gelesen.wert }
 }
 
 function aufenthaltLesen(wert: unknown): FaktErgebnis {
@@ -831,6 +827,92 @@ export function regelKandidatErstellen(eingabe: unknown, registry: QuellenRegist
   return { ok: true, kandidat: einfrieren(kandidat) }
 }
 
+type ZweigZitat = {
+  supportVersionIds: readonly string[]
+  when: { kind: 'otherwise' } | { kind: 'expression'; expression: RegulierungsAusdruck }
+}
+
+/**
+ * Schema-1-Zweige dürfen nur die schon neu bewiesenen Claim-Stützen zitieren.
+ * Die Prüfung erfindet keine Evidence-Id und ersetzt keine ausgelassene Atom-Stütze.
+ */
+function atomePruefen(ausdruck: RegulierungsAusdruck, zweigIds: ReadonlySet<string>): 'support_mismatch' | null {
+  switch (ausdruck.op) {
+    case 'atomic': {
+      const ids = ausdruck.supportVersionIds
+      if (!ids) return null
+      if (ids.length === 0) return 'support_mismatch'
+      for (const id of ids) {
+        if (!zweigIds.has(id)) return 'support_mismatch'
+      }
+      return null
+    }
+    case 'not':
+      return atomePruefen(ausdruck.operand, zweigIds)
+    case 'all':
+    case 'any': {
+      for (const operand of ausdruck.operands) {
+        const fehler = atomePruefen(operand, zweigIds)
+        if (fehler) return fehler
+      }
+      return null
+    }
+    default: {
+      const unerreichbar: never = ausdruck
+      return unerreichbar
+    }
+  }
+}
+
+function verzweigteZitate(fact: RegelFakt): readonly ZweigZitat[] | null {
+  if (fact.kind === 'requirement_effect' && 'applicability' in fact && fact.applicability.kind === 'branches') {
+    return fact.applicability.branches
+  }
+  if (fact.kind === 'visa_options' && 'schema' in fact) {
+    const gesammelt: ZweigZitat[] = []
+    for (const option of fact.options) {
+      if (!('applicability' in option) || option.applicability.kind !== 'branches') continue
+      gesammelt.push(...option.applicability.branches)
+    }
+    return gesammelt.length > 0 ? gesammelt : null
+  }
+  return null
+}
+
+function bedingungsHerkunftPruefen(
+  fact: RegelFakt,
+  evidenceQuality: AnnehmbareQualitaet,
+  claimIds: readonly string[],
+): 'support_mismatch' | 'condition_provenance_ambiguous' | null {
+  const zweige = verzweigteZitate(fact)
+  if (!zweige) return null
+  if (evidenceQuality === 'composed_from_multiple_primary_sources') return 'condition_provenance_ambiguous'
+
+  const erlaubt = new Set(claimIds)
+  const vereinigung = new Set<string>()
+  for (const zweig of zweige) {
+    const ids = zweig.supportVersionIds
+    if (ids.length === 0) return 'support_mismatch'
+    for (const id of ids) {
+      if (!erlaubt.has(id)) return 'support_mismatch'
+      vereinigung.add(id)
+    }
+    if (zweig.when.kind === 'expression') {
+      const atom = atomePruefen(zweig.when.expression, new Set(ids))
+      if (atom) return atom
+    }
+  }
+  if (vereinigung.size !== claimIds.length || claimIds.some((id) => !vereinigung.has(id))) {
+    return 'support_mismatch'
+  }
+  if (claimIds.length !== 1) return 'support_mismatch'
+  const einzige = claimIds[0]!
+  for (const zweig of zweige) {
+    if (zweig.supportVersionIds.length !== 1 || zweig.supportVersionIds[0] !== einzige) return 'support_mismatch'
+  }
+  return null
+}
+
 function versionVertrauen(wert: unknown, registry: QuellenRegistry): EvidenceVersion | null {
   if (!datensatz(wert)) return null
   return akzeptierteEvidenceLesen(wert as EvidenceVersion, registry)
@@ -889,6 +971,8 @@ export function regelKandidatAkzeptieren(eingabe: unknown): RegelAnnahmeErgebnis
 
   const fakt = regelFaktLesen(entwurf.factKind, entwurf.scope.requirementType, satz.trustedRuleFact, registry)
   if (!fakt.ok) return fakt
+  const herkunft = bedingungsHerkunftPruefen(fakt.fact, entwurf.evidenceQuality, entwurf.supportVersionIds)
+  if (herkunft) return { ok: false, reason: herkunft }
   const claim: AkzeptierteRegelClaim = {
     lifecycle: 'accepted',
     validationState: 'valid',

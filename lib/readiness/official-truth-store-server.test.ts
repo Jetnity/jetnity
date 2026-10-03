@@ -23,6 +23,7 @@ import {
 } from '@/lib/readiness/official-truth-source-catalog-server'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
+  regelKandidatAkzeptieren,
   regelKandidatErstellen,
   regelScopeAusEvidenceScope,
 } from '@/lib/readiness/rule-claims'
@@ -564,8 +565,8 @@ describe('trusted Official Truth accepted-store writer', () => {
         factKind: 'requirement_effect',
         fact: { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' },
         pruefen: (fact) => {
-          assert.equal(fact.effect, 'not_required')
-          assert.equal(fact.visa_mode, 'visa_exempt')
+          assert.deepEqual(fact, { effect: 'not_required', visa_mode: 'visa_exempt' })
+          assert.equal(JSON.stringify(fact), '{"effect":"not_required","visa_mode":"visa_exempt"}')
         },
       },
       {
@@ -580,9 +581,16 @@ describe('trusted Official Truth accepted-store writer', () => {
           ],
         },
         pruefen: (fact) => {
-          const options = fact.options as Array<Record<string, unknown>>
-          assert.deepEqual(options.map((option) => option.visa_mode), ['visa_exempt', 'electronic_visa'])
-          assert.deepEqual(options.map((option) => option.ordinal), [1, 2])
+          assert.deepEqual(fact, {
+            options: [
+              { ordinal: 1, visa_mode: 'visa_exempt', eligibility: 'allowed', mandate: 'not_mandatory' },
+              { ordinal: 2, visa_mode: 'electronic_visa', eligibility: 'allowed', mandate: 'not_mandatory' },
+            ],
+          })
+          assert.equal(
+            JSON.stringify(fact),
+            '{"options":[{"ordinal":1,"visa_mode":"visa_exempt","eligibility":"allowed","mandate":"not_mandatory"},{"ordinal":2,"visa_mode":"electronic_visa","eligibility":"allowed","mandate":"not_mandatory"}]}',
+          )
         },
       },
       {
@@ -1404,6 +1412,120 @@ describe('server-reproved accepted Evidence store entry', () => {
     assert.notEqual(passPayload.version_id, links.version_id)
   })
 
+  test('Schema 1 wird im Speicher abgelehnt, bevor ein Client oder RPC entsteht', async () => {
+    const basis = registry()
+    const visa = akzeptiert(basis, 'example-border-authority', 'gov.example', 'schema-speicher')
+    const ausdruck = { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } }
+    const wirkungsZweig = {
+      id: 'ordinary',
+      when: { kind: 'expression', expression: ausdruck },
+      outcome: { effect: 'required', visaMode: null },
+      supportVersionIds: [visa.versionId],
+    }
+    const faelle = [
+      {
+        name: 'verzweigte Wirkung',
+        fact: {
+          kind: 'requirement_effect',
+          schema: 1,
+          applicability: { schema: 1, kind: 'branches', branches: [wirkungsZweig] },
+        },
+      },
+      {
+        name: 'unbedingte Wirkung',
+        fact: {
+          kind: 'requirement_effect',
+          schema: 1,
+          applicability: { schema: 1, kind: 'unconditional' },
+          effect: 'not_required',
+          visaMode: 'visa_exempt',
+        },
+      },
+      {
+        name: 'verzweigte Visaoption',
+        fact: {
+          kind: 'visa_options',
+          schema: 1,
+          options: [
+            {
+              visaMode: 'electronic_visa',
+              applicability: {
+                schema: 1,
+                kind: 'branches',
+                branches: [
+                  {
+                    id: 'ordinary',
+                    when: { kind: 'expression', expression: ausdruck },
+                    outcome: { eligibility: 'allowed', mandate: 'not_mandatory' },
+                    supportVersionIds: [visa.versionId],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        name: 'unbedingte Visaoptionen',
+        fact: {
+          kind: 'visa_options',
+          schema: 1,
+          options: [
+            {
+              visaMode: 'visa_exempt',
+              eligibility: 'unknown',
+              mandate: 'not_mandatory',
+              applicability: { schema: 1, kind: 'unconditional' },
+            },
+          ],
+        },
+      },
+    ]
+
+    for (const fall of faelle) {
+      const eingabe = claimEingabe(basis, visa.scope, fall.fact.kind, 'explicit_primary_statement', [visa], fall.fact)
+      const angenommen = regelKandidatAkzeptieren(eingabe)
+      assert.equal(angenommen.ok, true, fall.name)
+      if (!angenommen.ok) continue
+      assert.equal(JSON.stringify(angenommen.claim).includes('rule-applicability:v1'), false, fall.name)
+      assert.equal(JSON.stringify(angenommen.claim).includes('reg-eval-ctx:v1'), false, fall.name)
+      const { transport, aufrufe } = transportAufzeichnen()
+      const gespeichert = await akzeptierteRegelClaimSpeichern(eingabe, { transport, jetzt: () => AUDIT })
+      assert.deepEqual(gespeichert, { ok: false, reason: 'applicability_not_persistable' }, fall.name)
+      assert.equal(aufrufe.length, 0, fall.name)
+      const ohneKonfiguration = await akzeptierteRegelClaimSpeichern(eingabe, { env: {} })
+      assert.deepEqual(ohneKonfiguration, { ok: false, reason: 'applicability_not_persistable' }, fall.name)
+    }
+
+    const legacy = claimEingabe(basis, visa.scope, 'requirement_effect', 'explicit_primary_statement', [visa], {
+      kind: 'requirement_effect',
+      effect: 'not_required',
+      visaMode: 'visa_exempt',
+    })
+    const ohneSpeicher = await akzeptierteRegelClaimSpeichern(legacy, { env: {} })
+    assert.deepEqual(ohneSpeicher, { ok: false, reason: 'store_not_configured' })
+
+    const text = quelle('lib/readiness/official-truth-store-server.ts')
+    const start = text.indexOf('export async function akzeptierteRegelClaimSpeichern')
+    const body = text.slice(start)
+    const guard = body.indexOf("reason: 'applicability_not_persistable'")
+    const transport = body.indexOf('transportAus(')
+    const payload = body.indexOf('claimPayload(')
+    const rpc = body.indexOf('transport.aufrufen(')
+    const versuch = body.indexOf('try {')
+    assert.ok(guard > 0)
+    assert.ok(guard < transport)
+    assert.ok(guard < payload)
+    assert.ok(guard < rpc)
+    assert.ok(guard < versuch)
+    assert.ok(transport < versuch)
+    assert.match(text, /function faktSpalten\(fact: PersistierbarerRegelFakt\)/)
+    assert.equal(text.includes('function faktSpalten(fact: RegelFakt)'), false)
+    assert.equal((text.match(/transport\.aufrufen\(/g) ?? []).length, 2)
+    assert.equal((text.match(/regelKandidatAkzeptieren\(/g) ?? []).length, 1)
+    assert.equal(text.includes('throw '), false)
+  })
+
   test('keine Route und kein neuer Regel-Annahmeweg ruft den Evidence-Schreiber', () => {
     const text = quelle('lib/readiness/official-truth-store-server.ts')
     const evidenceStart = text.indexOf('export async function akzeptierteEvidenceSpeichern')
@@ -1796,22 +1918,19 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       )).ok, true)
       const nzVisa = akzeptiert(basis, 'example-border-authority', 'gov.example', 'nz border', nz)
       const nzInnen = akzeptiert(basis, 'example-interior-authority', 'interior.example', 'nz interior', nzInnenAtom)
+      const vorBedingt = zaehlstand()
+      const bedingtAufrufe: Aufruf[] = []
       const zusammengesetzt = await akzeptierteRegelClaimSpeichern(
         claimEingabe(basis, nzVisa.scope, 'requirement_effect', 'composed_from_multiple_primary_sources', [nzVisa, nzInnen], {
           kind: 'requirement_effect',
           effect: 'conditional',
           visaMode: null,
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        { transport: claimTransport(bedingtAufrufe), jetzt: () => AUDIT },
       )
-      assert.equal(zusammengesetzt.ok, true)
-      if (!zusammengesetzt.ok || zusammengesetzt.operation !== 'accepted_rule_claim') return
-      assert.match(zusammengesetzt.claimId, /^\d+$/)
-      assert.equal(cluster.aufruf(`
-        select count(distinct source_id) || ':' || string_agg(distinct source_class, ',')
-        from private.official_rule_claim_support
-        where claim_id = ${zusammengesetzt.claimId}
-      `), '2:official_authority')
+      assert.deepEqual(zusammengesetzt, { ok: false, reason: 'legacy_conditional_without_payload' })
+      assert.equal(bedingtAufrufe.length, 0)
+      assert.deepEqual(zaehlstand(), vorBedingt)
 
       const th = atom({ destinationCountryCode: 'TH' })
       const thGespeichert = await evidenceAusAbrufSpeichern(

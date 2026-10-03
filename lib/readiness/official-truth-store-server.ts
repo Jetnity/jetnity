@@ -98,7 +98,44 @@ function scopeSpalten(scope: EvidenceAtom): Record<string, unknown> {
   }
 }
 
-function faktSpalten(fact: RegelFakt): Record<string, unknown> {
+/**
+ * Legacy-kompatible Fakten. Schema 1 ist ausgeschlossen, auch ohne Zweige,
+ * weil die bestehenden Spalten `schema` und `applicability` nicht tragen.
+ */
+type PersistierbarerRegelFakt =
+  | Exclude<Extract<RegelFakt, { kind: 'requirement_effect' }>, { schema: 1 } | { applicability: unknown }>
+  | Exclude<Extract<RegelFakt, { kind: 'visa_options' }>, { schema: 1 }>
+  | Exclude<RegelFakt, { kind: 'requirement_effect' | 'visa_options' }>
+
+type PersistierbarerRegelClaim = Omit<AkzeptierteRegelClaim, 'fact'> & {
+  fact: PersistierbarerRegelFakt
+}
+
+function istPersistierbarerRegelFakt(fact: RegelFakt): fact is PersistierbarerRegelFakt {
+  if (fact.kind === 'requirement_effect') {
+    return !('schema' in fact) && !('applicability' in fact) && 'effect' in fact
+  }
+  if (fact.kind === 'visa_options') {
+    return !('schema' in fact) && fact.options.every((option) => !('applicability' in option))
+  }
+  return true
+}
+
+function persistierbarenClaim(claim: AkzeptierteRegelClaim): PersistierbarerRegelClaim | null {
+  if (!istPersistierbarerRegelFakt(claim.fact)) return null
+  return {
+    lifecycle: claim.lifecycle,
+    validationState: claim.validationState,
+    scope: claim.scope,
+    key: claim.key,
+    factKind: claim.factKind,
+    evidenceQuality: claim.evidenceQuality,
+    supportVersionIds: claim.supportVersionIds,
+    fact: claim.fact,
+  }
+}
+
+function faktSpalten(fact: PersistierbarerRegelFakt): Record<string, unknown> {
   if (fact.kind === 'requirement_effect') {
     return { effect: fact.effect, visa_mode: fact.visaMode }
   }
@@ -212,7 +249,7 @@ function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Recor
   }
 }
 
-function claimPayload(claim: AkzeptierteRegelClaim, acceptedAt: string): Record<string, unknown> {
+function claimPayload(claim: PersistierbarerRegelClaim, acceptedAt: string): Record<string, unknown> {
   return {
     operation: 'accepted_rule_claim',
     accepted_at: acceptedAt,
@@ -335,8 +372,10 @@ export async function akzeptierteEvidenceSpeichern(
 
 /**
  * Nimmt einen Regel-Kandidaten über regelKandidatAkzeptieren an und speichert
- * nur den zurückgegebenen Claim. Stützen sind dessen versionIds. Die Quellenklasse
- * löst das Gateway aus der schon gespeicherten Evidence auf.
+ * nur den zurückgegebenen Claim, wenn der Fakt in die bestehenden Spalten passt.
+ * Jeder Schema-1-Fakt, auch ein unbedingter, endet vor Transport, Client und RPC.
+ * Stützen sind die versionIds des Claims. Die Quellenklasse löst das Gateway
+ * aus der schon gespeicherten Evidence auf.
  */
 export async function akzeptierteRegelClaimSpeichern(
   eingabe: unknown,
@@ -344,15 +383,17 @@ export async function akzeptierteRegelClaimSpeichern(
 ): Promise<OfficialTruthStoreErgebnis> {
   const angenommen = regelKandidatAkzeptieren(eingabe)
   if (!angenommen.ok) return { ok: false, reason: angenommen.reason }
+  const claim = persistierbarenClaim(angenommen.claim)
+  if (!claim) return { ok: false, reason: 'applicability_not_persistable' }
   const transport = transportAus(abhaengigkeiten)
   if (!transport) return { ok: false, reason: 'store_not_configured' }
   const jetzt = abhaengigkeiten?.jetzt ?? (() => new Date().toISOString())
   let antwort: { ok: true; antwort: unknown } | { ok: false }
   try {
-    antwort = await transport.aufrufen(claimPayload(angenommen.claim, jetzt()))
+    antwort = await transport.aufrufen(claimPayload(claim, jetzt()))
   } catch {
     return { ok: false, reason: 'store_failed' }
   }
   if (!antwort.ok) return { ok: false, reason: 'store_failed' }
-  return ausgang('accepted_rule_claim', antwort.antwort, angenommen.claim.key, null)
+  return ausgang('accepted_rule_claim', antwort.antwort, claim.key, null)
 }
