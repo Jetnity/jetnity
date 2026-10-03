@@ -14,6 +14,7 @@ import type { OfficialTruthSourceCatalogTransport } from '@/lib/readiness/offici
 import {
   decideOfficialTruthServerOwnedRetrieval,
   loadOfficialTruthServerOwnedRetrieval,
+  loadOfficialTruthServerOwnedRetrievalWithCatalogTransport,
   officialTruthServerOwnedRetrievalAdresseZulaessig,
   officialTruthServerOwnedRetrievalLookup,
   type OfficialTruthServerOwnedRetrievalAdresse,
@@ -768,8 +769,9 @@ describe('official truth server-owned retrieval', () => {
     const live = await loadOfficialTruthServerOwnedRetrieval({ sourceId: AMTLICH, url: AMTLICH_URL, registry: { sources: [] } })
     assert.deepEqual(live, { status: 'blocked', reason: 'caller_authority_forbidden' })
     const text = datei(DATEI)
-    const liveStart = text.indexOf('export async function loadOfficialTruthServerOwnedRetrieval')
-    const liveText = text.slice(liveStart)
+    const liveStart = text.indexOf('export async function loadOfficialTruthServerOwnedRetrieval(')
+    const helferStart = text.indexOf('export async function loadOfficialTruthServerOwnedRetrievalWithCatalogTransport')
+    const liveText = text.slice(liveStart, helferStart)
     assert.match(liveText, /now: serverUhr/)
     assert.match(liveText, /resolve: serverDns/)
     assert.match(liveText, /http: serverHttp/)
@@ -878,6 +880,32 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(grund(tracking), 'tracking_parameter')
     assert.equal(tracking.verbindungen.length, 0)
     assert.equal(JSON.stringify(tracking.ergebnis).includes('tracking-secret-91f3'), false)
+  })
+
+  test('Katalogtransport-Helfer bleibt die Live-Lesung und nimmt keine Aufrufer-Registry', async () => {
+    const text = datei(DATEI)
+    const helferStart = text.indexOf('export async function loadOfficialTruthServerOwnedRetrievalWithCatalogTransport')
+    const helfer = text.slice(helferStart)
+    assert.ok(helferStart > text.indexOf('export async function loadOfficialTruthServerOwnedRetrieval('))
+    assert.match(helfer, /catalog: \{ transport \}/)
+    assert.match(helfer, /now: serverUhr/)
+    assert.match(helfer, /resolve: serverDns/)
+    assert.match(helfer, /http: serverHttp/)
+    assert.doesNotMatch(helfer, /process\.env/)
+    assert.equal(loadOfficialTruthServerOwnedRetrievalWithCatalogTransport.length, 2)
+    const zaehler: unknown[] = []
+    const transport: OfficialTruthSourceCatalogTransport = {
+      async aufrufen(payload) {
+        zaehler.push(payload)
+        return { ok: false }
+      },
+    }
+    const mitRegistry = await loadOfficialTruthServerOwnedRetrievalWithCatalogTransport(
+      { sourceId: AMTLICH, url: AMTLICH_URL, registry: { sources: [] } },
+      transport,
+    )
+    assert.deepEqual(mitRegistry, { status: 'blocked', reason: 'caller_authority_forbidden' })
+    assert.equal(zaehler.length, 0)
   })
 })
 
