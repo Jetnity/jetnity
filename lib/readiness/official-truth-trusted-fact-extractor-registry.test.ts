@@ -152,7 +152,11 @@ function schluesselFuer(scope: unknown): string {
   return gelesen.key
 }
 
-function mitScope(basis: Record<string, unknown>, teil?: Record<string, unknown>, requirementType = 'blank_passport_pages') {
+function mitScope(
+  basis: Record<string, unknown>,
+  teil?: Record<string, unknown>,
+  requirementType = 'blank_passport_pages',
+): Record<string, unknown> {
   const scope = teil && Object.hasOwn(teil, 'scope') ? teil.scope : zellenScope(requirementType)
   const scopeKey = teil && Object.hasOwn(teil, 'scopeKey') ? teil.scopeKey : schluesselFuer(scope)
   return { ...basis, ...teil, requirementType, scope, scopeKey }
@@ -786,7 +790,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
   })
 
   test('Ausstellerland, Bezug, Dokument, Wohnsitz und Reisedatum bleiben getrennte Felder', () => {
-    let gesehen: OfficialTruthExtractorKontext['scope'] | null = null
+    const fund: { scope: OfficialTruthExtractorKontext['scope'] | null } = { scope: null }
     const scope = zellenScope('blank_passport_pages', {
       transitCountryCode: 'SG',
       credentialOption: {
@@ -803,7 +807,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
         { match: 0, extract: 0 },
         {
           match: (kontext) => {
-            gesehen = kontext.scope
+            fund.scope = kontext.scope
             assert.equal('travelDate' in kontext, false)
             return { ok: true }
           },
@@ -811,6 +815,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       ),
     ])
     assert.equal(ergebnis.status, 'trusted_fact_extracted')
+    const gesehen = fund.scope
     assert.ok(gesehen)
     if (!gesehen || gesehen.citizenship.mode !== 'required' || gesehen.credentialOption.mode !== 'option') return
     assert.deepEqual(gesehen.citizenship.countryCodes, ['CH', 'RS'])
@@ -834,38 +839,40 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
         relatedCitizenshipCountryCode: 'RS',
       },
     })
-    let bezug: RegelScope | null = null
+    const bezugsFund: { scope: RegelScope | null } = { scope: null }
     const mitBezug = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope: bezogen }), [
       seitenDefinition(
         { match: 0, extract: 0 },
         {
           match: (kontext) => {
-            bezug = kontext.scope
+            bezugsFund.scope = kontext.scope
             return { ok: true }
           },
         },
       ),
     ])
     assert.equal(mitBezug.status, 'trusted_fact_extracted')
+    const bezug = bezugsFund.scope
     assert.equal(bezug?.credentialOption.mode, 'option')
     if (bezug?.credentialOption.mode !== 'option') return
     assert.equal(bezug.credentialOption.relatedCitizenshipCountryCode, 'RS')
     assert.notEqual(schluesselFuer(bezogen), schluesselFuer(zellenScope('blank_passport_pages')))
 
     const ohneDatum = zellenScope('blank_passport_pages', { validity: { mode: 'not_applicable' } })
-    let ohne: RegelScope | null = null
+    const ohneFund: { scope: RegelScope | null } = { scope: null }
     const nichtAnwendbar = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe({ scope: ohneDatum }), [
       seitenDefinition(
         { match: 0, extract: 0 },
         {
           match: (kontext) => {
-            ohne = kontext.scope
+            ohneFund.scope = kontext.scope
             return { ok: true }
           },
         },
       ),
     ])
     assert.equal(nichtAnwendbar.status, 'trusted_fact_extracted')
+    const ohne = ohneFund.scope
     assert.equal(ohne?.validity.mode, 'not_applicable')
     assert.equal(ohne?.validity.mode === 'not_applicable' && 'travelDate' in ohne.validity, false)
   })

@@ -933,7 +933,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(zelle.spur.extrakt.length, 0)
 
     const andererSchluessel = structuredClone(graph)
-    andererSchluessel.ruleScopeKey = `rule-scope:v1:${'c'.repeat(64)}`
+    ;(andererSchluessel as { ruleScopeKey: string }).ruleScopeKey = `rule-scope:v1:${'c'.repeat(64)}`
     const schluessel = await binden(eingabe(), { loadProof: async () => andererSchluessel })
     assert.equal(grund(schluessel.ergebnis), 'scope_mismatch')
     assert.equal(schluessel.spur.abrufe.length, 0)
@@ -963,7 +963,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
           ...basis,
           match: (kontext) => {
             offen.kandidat.scope.destinationCountryCode = 'TH'
-            offen.ruleScopeKey = `rule-scope:v1:${'d'.repeat(64)}`
+            ;(offen as { ruleScopeKey: string }).ruleScopeKey = `rule-scope:v1:${'d'.repeat(64)}`
             const vorher = kontext.scope.destinationCountryCode
             try {
               ;(kontext.scope as { destinationCountryCode: string }).destinationCountryCode = 'TH'
