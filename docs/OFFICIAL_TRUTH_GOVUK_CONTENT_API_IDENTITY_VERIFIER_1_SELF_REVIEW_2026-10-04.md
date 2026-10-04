@@ -7,12 +7,14 @@ Session: `01a1071c-786d-79c0-8ff7-b17597e477c1`.
 Baseline: `f0430bb62b12d5f7e523db88cb5d2dcc92754bd3`.
 Dispatch: `2c5cce9a596e85cdb72965a92127312cd421263f`.
 
-Classification: **GOVUK_CONTENT_API_IDENTITY_VERIFIER_BLOCKED**.
+Classification: **GOVUK_CONTENT_API_IDENTITY_VERIFIER_READY_FOR_REGISTRATION_AUDIT**.
 Author self-review only. Exact final head is in the completion delivery and PR readback, not replaced by the baseline or dispatch. This tracked document cannot contain its own commit hash.
 
-## Open finding
+## Resolved delivery finding
 
-**P1 delivery gate — unchanged R1 importer allowlist blocks a green full suite.** `official-truth-content-identity.test.ts` pins a closed set of contract importers, including type-only imports. The new module's required contract reuse produces exactly one additional path. New tests pass, but that existing assertion fails in both targeted and full runs. Minimal correction is one explicit allowlist entry in a seventh file. It is outside the six-file task and is not performed. No runtime contract change is needed. No import obfuscation, copied contract, ignored failing test, or scanner bypass is acceptable. Technical Lead must decide scope and independently review before any correction/acceptance.
+The previous R1 importer-list blocker was correctly reported at `ee48c674d7f531e6ed25706bc0a0d9887daa6728`. Technical Lead independently reproduced it and committed Scope Amendment 1 at `96346b7bf2c0eb1f887bdad1f4750ce5276de2b0`. Both binding documents were read completely before this same-session correction.
+
+The correction adds exactly one sorted expected path in `official-truth-content-identity.test.ts`: the new verifier module. Byte comparison against main proves this is the only change in the existing test. The repository scan, type-only import treatment, exact list assertion and all other R1 expectations remain intact. No existing production file changed. The verifier and new focused test are byte-identical to the blocked head. There is no further author-known blocker; independent exact-head review remains outstanding.
 
 ## Adversarial review
 
@@ -37,15 +39,15 @@ Author self-review only. Exact final head is in the completion delivery and PR r
 | Profile reimplements trusted retrieval. | Rechecks exact supplied finalUrl and normalized mediaType only. No HTTP/DNS/status/redirect acquisition; existing server retrieval owns those boundaries. HTML never passes. |
 | A pure function is treated as a live attestation. | Inputs are the existing trusted-descriptor seam, not an untrusted registration API. R1 owns generic descriptor validity; R2 owns origin and final tuple rebind. The parser helper alone proves syntax only. |
 | Importing the new module activates production. | Only tests import it. Registry remains byte-unchanged Object.freeze([]), length zero and frozen at runtime after module import. New repository scan asserts zero non-test importers. |
-| Broad suite failure is concealed by focused green tests. | Explicit BLOCKED classification; 331 new passes, 124/125 targeted, 5,082/5,083 full. The single genuine failure is reproduced and reported. No seventh-file edit without scope authority. |
+| The scope correction weakens the importer guard or hides another failure. | Exact one-line diff under the TL amendment. The scan still includes type-only imports and asserts all 22 exact paths. 331/331 focused, 45/45 R1, 125/125 affected and 5,083/5,083 full tests pass, with no skips/cancellations. |
 | Validation contacted live databases or government. | Full suite/build used --network none containers. Existing tests create disposable synthetic PostgreSQL over local sockets. No hosted DB client, credential or GOV.UK call used. Prior saved capture was shape-inspected, not stored as a fixture. |
 
 ## Scope and evidence review
 
-Exactly the immutable task, two new code/test files and three assigned delivery docs differ from baseline. No existing tracked runtime, test, configuration, migration or dependency file changes. Seed Git blob `d0cadaf7be709cca8d2ec1cd55191be3b3547121`, SHA-256 `07b97fe02ae5a51061f33294f48f8b61a2338121b44f46b48bcae54b2b14460d`.
+Exactly eight authorized paths differ from baseline: immutable task, unchanged TL amendment, two new code/test files, the one-line existing R1 test correction, and three assigned delivery docs. No other existing runtime/test/configuration/schema/migration/dependency file changes. Amendment SHA-256 `0fc1f09e909bfe8e522d807412247a92c0b3fcdd33542f4e1a3ea01a67a92222` matches its TL commit. Seed Git blob `d0cadaf7be709cca8d2ec1cd55191be3b3547121`, SHA-256 `07b97fe02ae5a51061f33294f48f8b61a2338121b44f46b48bcae54b2b14460d`.
 
 Startup and final pre-delivery reads match the expected main and NORMAL mode. #751 names this sole active slice; open PR/local-writer reads show no collision; only earlier TL receipt `5978881653` follows the inbox marker. No misleading reuse of earlier CI results. The completion receipt pins final-head checks. The first snapshot's two missing-Git failures and the build's IPC/symlink environment failures were corrected without repository edits, then the actual commands were rerun. Canonical build, typecheck, lint, operating-mode and five hygiene checks pass.
 
 No source/content/representation/profile registration, real DB query/mutation, Development/Production mutation, migration, source/catalog/store/retrieval edit, extractor, composition policy, region pin, Rule fact, schema-1 persistence, F8, UI/provider/traveller change, dependency, full legal body fixture, #626 or launch/indexing action. No new recurring costs. Remote CI/Vercel and live database state are not claimed as independently verified by this writer.
 
-Residual risks: strict reviewed envelope intentionally rejects future GOV.UK structural/authority/schema changes; identity success alone does not establish current legal sufficiency or accepted Evidence; the existing test allowlist needs an independently authorized scope resolution. First next actor is the Technical Lead, reviewing this exact head and that dependency. Remain Draft; no Ready, merge, registration audit or F8. STOP.
+Residual risks: strict reviewed envelope intentionally rejects future GOV.UK structural/authority/schema changes; identity success alone does not establish current legal sufficiency or accepted Evidence; future profile registration needs its own authorization and audit. First next actor is the Technical Lead, reviewing this exact head. Remain Draft; no Ready, merge, registration audit or F8. STOP.

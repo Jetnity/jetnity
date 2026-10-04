@@ -439,6 +439,7 @@ describe('dormancy and architectural boundaries', () => {
       'lib/readiness/official-truth-composition-policy-registry.ts',
       'lib/readiness/official-truth-coverage.ts',
       'lib/readiness/official-truth-discovered-url-candidates.ts',
+      'lib/readiness/official-truth-govuk-content-api-identity-profile.ts',
       'lib/readiness/official-truth-refresh-diff.ts',
       'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
       'lib/readiness/official-truth-retrieved-material.ts',

@@ -8,24 +8,24 @@ Immutable dispatch: `2c5cce9a596e85cdb72965a92127312cd421263f`.
 Codex Desktop session: `01a1071c-786d-79c0-8ff7-b17597e477c1`.
 Exact model: **GPT-6 Astra — Sehr hoch**, `gpt-6-astra`, reasoning `xhigh`, verified from this session's turn_context. One writer; no subagents.
 
-Classification: **GOVUK_CONTENT_API_IDENTITY_VERIFIER_BLOCKED**.
-Status: implemented dormant profile/parser and adversarial tests; one existing test blocks the required green validation matrix. Remain Draft. No independent PASS is claimed.
+Classification: **GOVUK_CONTENT_API_IDENTITY_VERIFIER_READY_FOR_REGISTRATION_AUDIT**.
+Status: Scope Amendment 1 applied in the same session; the complete validation matrix passes. The verifier remains dormant. Remain Draft. No independent PASS is claimed and no registration audit is started.
 
 The exact final published head is reported in the completion delivery and checked against PR #819. A tracked document cannot contain its own containing commit's hash. Resolve the delivered checkout with `git rev-parse HEAD`; baseline/dispatch are not the final review head. The final delivery also provides an external exact-head validation receipt. No post-validation runtime change is intended.
 
-## Result and exact blocker
+## Result and authorized correction
 
-The new pure module implements the narrow English National List identity profile under the existing `ContentIdentityProfileDefinition`. Its 331 focused tests pass. The affected R1/R2 run has 124 passes and one failure; the full suite has 5,082 passes and one failure (5,083 tests, zero skipped/cancelled).
+The previous STOP at `ee48c674d7f531e6ed25706bc0a0d9887daa6728` was correct. Technical Lead independently reproduced the R1 importer-list blocker and committed Scope Amendment 1 at `96346b7bf2c0eb1f887bdad1f4750ce5276de2b0`. The original task remains byte-identical to its seed. Both complete binding documents were read before editing, and the same writer/session/model continues.
 
-The single failure is **`lib/readiness/official-truth-content-identity.test.ts`**, test **`repository search pins the finite R2 production importers`**. Its repository scan includes type-only imports and asserts a closed list of 21 files. The new profile must use the existing type, so its ordinary type import adds exactly:
+The only existing file changed is `lib/readiness/official-truth-content-identity.test.ts`. In `repository search pins the finite R2 production importers`, exactly one line was inserted between the discovered-URL and refresh-diff entries:
 
 ```text
 lib/readiness/official-truth-govuk-content-api-identity-profile.ts
 ```
 
-The existing assertion requires that path to be added between the discovered-URL and refresh-diff entries. That would modify a seventh file, outside this immutable six-file task. The test is unchanged. The implementation does not obscure the import, copy the contract, or bypass the scanner. There is **no missing runtime interface or pure verifier seam**; this is a test-allowlist/scope dependency. A narrow scope clarification was surfaced during work; no authorization to edit the seventh file was received before this delivery.
+The repository scan, inclusion of type-only imports, exact path assertion, and every other R1 expectation remain unchanged. The exact expected set now contains 22 paths. No runtime seam or production file needed modification. The new verifier and its focused tests are byte-identical to the previously blocked implementation.
 
-Technical Lead must independently review the exact head and decide this dependency before a same-session correction. No registration audit begins here.
+Validation now passes: **331/331** focused tests, **45/45** R1 tests, **125/125** affected R1/R2/retrieval tests, and **5,083/5,083** full tests, with no skipped or cancelled tests. The independent Technical Lead must review the final exact head before deciding any next slice. No registration audit begins here.
 
 ## Implementation and exported API
 
@@ -62,10 +62,11 @@ Executed on the delivered runtime/test bytes, followed by final exact-head verif
 
 | Check | Result |
 | --- | --- |
-| Offline `npm ci --ignore-scripts --no-audit --no-fund` | PASS; 530 existing locked packages, no dependency change |
+| Locked dependency setup, reused from blocked delivery | Earlier offline `npm ci --ignore-scripts --no-audit --no-fund` passed; 530 packages, no dependency change; container lock bytes rechecked |
 | New profile/parser test | **331/331 PASS**, four suites |
-| R1 identity, R2 wiring, server-owned retrieval, same-request extraction | **124/125 PASS**; only importer allowlist fails |
-| Full `npm test`, Node 22 + PostgreSQL 16 isolated image | **5,082/5,083 PASS**; only same allowlist fails; no skips |
+| R1 content identity alone | **45/45 PASS**, including the unchanged scan with its exact amended list |
+| R1 identity, R2 wiring, server-owned retrieval, same-request extraction | **125/125 PASS** |
+| Full `npm test`, Node 22 + PostgreSQL 16 isolated image | **5,083/5,083 PASS**, 779 suites; no failures/skips/cancellations |
 | Existing S1 synthetic PostgreSQL proof within full suite | **51/51 PASS** |
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS |
@@ -77,25 +78,28 @@ Executed on the delivered runtime/test bytes, followed by final exact-head verif
 | `git diff --check`, immutable seed, exact scope | PASS; final committed range rechecked at delivery |
 | Production registry / importer proof | Empty and frozen / zero non-test importers of new module |
 
-Validation environment corrections are disclosed: the first full-suite archive omitted `.git`, causing two unrelated Git-based assertions to fail in addition to the allowlist. Repeating with the same source plus its Git metadata resolved those two failures. The first local build hit the sandbox's TSX IPC restriction; the first container build hit Turbopack's external node_modules symlink restriction. A disposable container with dependencies copied inside its tree ran the unmodified canonical build successfully. No repository configuration or command substitute was used. Build warnings were absent local `.env`, uncached build and stale Browserslist data; no environment secrets or providers were supplied.
+Earlier blocked-delivery environment corrections are retained for reproducibility: the first full-suite archive omitted `.git`, causing two unrelated Git-based assertions to fail in addition to the allowlist. Repeating with the same source plus its Git metadata resolved those two failures. The first local build hit the sandbox's TSX IPC restriction; the first container build hit Turbopack's external node_modules symlink restriction. A disposable container with dependencies copied inside its tree ran the unmodified canonical build successfully. No repository configuration or command substitute was used. Build warnings were absent local `.env`, uncached build and stale Browserslist data; no environment secrets or providers were supplied.
 
 Full-suite and build containers use the existing local `jetnity-r2-validation:local` image, matching package-lock bytes, `--network none`, read-only root, a disposable `/tmp`, and no credentials. PostgreSQL tests create isolated synthetic local databases over Unix sockets; they do not contact Development, Production or hosted Supabase. No DB/network action outside those required local test fixtures is implied by the test pass.
 
 ## Scope, immutable seed and dormant production proof
 
-Exactly six paths versus baseline:
+Exactly eight paths versus baseline:
 
 1. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_TASK_2026-10-04.md` — immutable seed.
-2. `lib/readiness/official-truth-govuk-content-api-identity-profile.ts`.
-3. `lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts`.
-4. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_REPORT_2026-10-04.md`.
-5. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_HANDOFF_2026-10-04.md`.
-6. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_SELF_REVIEW_2026-10-04.md`.
+2. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_SCOPE_AMENDMENT_1_2026-10-04.md` — unchanged TL amendment.
+3. `lib/readiness/official-truth-govuk-content-api-identity-profile.ts`.
+4. `lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts`.
+5. `lib/readiness/official-truth-content-identity.test.ts` — exactly one expected-path insertion.
+6. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_REPORT_2026-10-04.md`.
+7. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_HANDOFF_2026-10-04.md`.
+8. `docs/OFFICIAL_TRUTH_GOVUK_CONTENT_API_IDENTITY_VERIFIER_1_SELF_REVIEW_2026-10-04.md`.
 
 Task-seed blob: `d0cadaf7be709cca8d2ec1cd55191be3b3547121`.
 Task-seed SHA-256: `07b97fe02ae5a51061f33294f48f8b61a2338121b44f46b48bcae54b2b14460d`.
+Amendment SHA-256: `0fc1f09e909bfe8e522d807412247a92c0b3fcdd33542f4e1a3ea01a67a92222`; exact byte equality to amendment head is checked.
 
-`official-truth-content-identity.ts` is byte-unchanged and still declares `OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY` as `Object.freeze([])`. Existing and new tests both assert empty/frozen after loading the profile. A repository-wide source scan in the new test proves zero non-test importers of the new module. A type dependency **from** this module on the existing contract is distinct from a runtime importer **of** this module; the old R1 guard is intentionally left failing rather than hidden.
+`official-truth-content-identity.ts` is byte-unchanged and still declares `OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY` as `Object.freeze([])`. Existing and new tests both assert empty/frozen after loading the profile. A repository-wide source scan in the new test proves zero non-test importers of the new module. A type dependency **from** this module on the existing contract is distinct from a runtime importer **of** this module; the amended R1 guard explicitly counts the type dependency while the new module remains dormant.
 
 Fixtures are inline synthetic envelopes with short opaque body strings. The saved #816 capture was read only for machine-envelope shape, with its recorded SHA-256 verified; no fresh GOV.UK request or full body copy into the repository occurred. No fixture file is added.
 
@@ -103,8 +107,8 @@ Fixtures are inline synthetic envelopes with short opaque body strings. The save
 
 Fetched main, required branch and exact dispatch; verified NORMAL; read #751, #818, #819, #748 after marker `5978621253`, the complete 533-line task, and the complete merged #816 audit/report/handoff/self-review. Existing contract importers were inspected before editing. The only newer inbox entry was prior-slice TL receipt `5978881653`. Open PRs were #819 and historical #28/#39/#40/#50/#52. Earlier local writers were idle/not loaded. Re-fetch/rereads before delivery showed unchanged baseline/dispatch and no overlap. Historical lower #801 wording in #751 is superseded by its live active-writer section and the actual open-PR list.
 
-The implementation plan is confined to the two new code/test files and three delivery documents. No API endpoint, database, trip graph, shared runtime or product-flow change is needed. Risks are ambiguous JSON, sibling substitution and future structural drift; tests exercise those boundaries. No new recurring cost is introduced.
+At resumption, fetched the exact amendment head, re-read both complete binding documents, verified live main/NORMAL/#751/#748 and no overlapping writer, and verified this session still uses `gpt-6-astra` / `xhigh`. The correction is confined to the single authorized existing test plus updates to the three delivery documents. Neither the original seed, TL amendment, nor the new implementation/test bytes were changed during the correction. No API endpoint, database, trip graph, shared runtime or product-flow change is needed. Risks are ambiguous JSON, sibling substitution and future structural drift; tests exercise those boundaries. No new recurring cost is introduced.
 
 No source/content-item/representation/profile registration; no hosted DB query or mutation; no Development/Production mutation; no migration; no source/catalog/store/retrieval runtime edit; no extractor, composition policy, region pin, Rule fact, schema-1 persistence, F8, route/app/component/provider/traveller change, new dependency, #626 or launch/indexing action. The only external network is requested GitHub coordination/Git delivery. Tests and build are offline; the module performs no HTTP. Development-empty and Production-v2-absent remain TL-supplied state, not a new database readback by this writer.
 
-**Next actor: independent Technical Lead exact-head review, including the single test-allowlist scope dependency. Remain Draft. No Ready, merge, registration audit or F8. STOP.**
+**Next actor: independent Technical Lead exact-head review, after the authorized scope correction and complete green validation. Remain Draft. No Ready, merge, registration audit or F8. STOP.**
