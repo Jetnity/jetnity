@@ -10,6 +10,7 @@
 // Annahme und keine Official Truth. Die freie Extraktionsnotiz bleibt
 // draussen. Eine angenommene Regel bleibt draussen.
 
+import { contentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
   officialTruthRegelReviewPacket,
@@ -20,7 +21,7 @@ import {
 
 type RegelReviewPacket = Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>
 
-const PRAEFIX = 'review-packet:v2:'
+const PRAEFIX = 'review-packet:v3:'
 const HEX64 = /^[a-f0-9]{64}$/
 
 const PROVENIENZ_FELDER = [
@@ -33,7 +34,9 @@ const PROVENIENZ_FELDER = [
   'validUntil',
 ] as const
 
-type Provenienz = {
+type Provenienz = ContentIdentityBinding & {
+  readonly identitySchema: 2
+  readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -117,7 +120,8 @@ function provenienz(support: OfficialTruthRegelReviewSupport): Provenienz | null
   const validUntil = fenster(support.validUntil)
   if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
   if (validFrom === undefined || validUntil === undefined) return null
-  return { versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
+  return { ...contentIdentityBinding(support), identitySchema: 2, contentType: support.contentType,
+    versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
 }
 
 function feldVergleich(links: string | null, rechts: string | null): number {
@@ -158,7 +162,7 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
   }
 
   const form = kanonisieren({
-    v: 2,
+    v: 3,
     candidate: {
       scope: kandidat.scope,
       key: ruleScopeKey,

@@ -1,3 +1,4 @@
+import { r2Registry, r2Binding } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-composition-policy-registry.test.ts
 //
 // Synthetische Politik- und Extraktorfixtures. Keine Behördenquelle,
@@ -36,9 +37,9 @@ import type {
 const DATEI = 'lib/readiness/official-truth-composition-policy-registry.ts'
 const A = 'example-border-authority'
 const B = 'example-interior-authority'
-const VA = `ev1_${'a'.repeat(32)}`
-const VB = `ev1_${'b'.repeat(32)}`
-const VF = `ev1_${'f'.repeat(32)}`
+const VA = `ev2_${'a'.repeat(32)}`
+const VB = `ev2_${'b'.repeat(32)}`
+const VF = `ev2_${'f'.repeat(32)}`
 const URL_A = 'https://www.gov.example/effect'
 const URL_B = 'https://www.interior.example/effect'
 const ZEIT = '2026-10-03T00:00:00.000Z'
@@ -68,7 +69,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(erzeugt.ok, true)
   if (!erzeugt.ok) throw new Error('registry')
-  return erzeugt.registry
+  return r2Registry(erzeugt.registry, R2_PUBLICATIONS)
 }
 
 function scope(): { scope: RegelScope; key: string } {
@@ -104,7 +105,7 @@ function politik(teil?: Partial<OfficialTruthCompositionPolicy>): OfficialTruthC
     current: true,
     factKind: 'requirement_effect',
     requirementType: 'health',
-    sourceIds: [A, B],
+    contentItemRefs: [A, B].map(fixtureRef),
     sourceFamilyId: 'otf_example_effect',
     schemaFamily: 'ots_example_effect',
     applicabilitySchema: null,
@@ -112,14 +113,14 @@ function politik(teil?: Partial<OfficialTruthCompositionPolicy>): OfficialTruthC
     assignments: [
       {
         target: { kind: 'fact_field', fieldPath: 'effect' },
-        sourceIds: [A],
-        relation: 'single_source',
+        contentItemRefs: [A].map(fixtureRef),
+        relation: 'single_content_item',
         role: 'complementary_part',
       },
       {
         target: { kind: 'fact_field', fieldPath: 'visaMode' },
-        sourceIds: [B],
-        relation: 'single_source',
+        contentItemRefs: [B].map(fixtureRef),
+        relation: 'single_content_item',
         role: 'complementary_part',
       },
     ],
@@ -137,22 +138,22 @@ function zielSchluessel(fieldPath: string): string {
 
 function beobachtungenFuer(policy: OfficialTruthCompositionPolicy): OfficialTruthExtractorBeobachtung[] {
   return policy.assignments.flatMap((assignment) =>
-    assignment.sourceIds.map((sourceId) => ({
+    assignment.contentItemRefs.map((ref) => ({
       targetKey: officialTruthCompositionCitationKey(assignment.target),
-      sourceId,
+      ...ref,
       canonical: `kanonisch:${officialTruthCompositionCitationKey(assignment.target)}`,
     })),
   )
 }
 
 function extraktor(zaehler: Zaehler = { match: 0, extract: 0 }, teil?: Partial<OfficialTruthExtractorDefinition>): OfficialTruthExtractorDefinition {
-  return {
+  return { representations: [A, B].map(fixtureRef).map((ref) => fixturePin(ref.sourceId)),
     extractorId: 'otx_example_effect',
     extractorVersion: 1,
     current: true,
     factKind: 'requirement_effect',
     sourceFamilyId: 'otf_example_effect',
-    sourceIds: [A, B],
+    contentItemRefs: [A, B].map(fixtureRef),
     urlAllowlist: [
       { kind: 'exact', canonicalUrl: URL_A },
       { kind: 'exact', canonicalUrl: URL_B },
@@ -180,15 +181,15 @@ function extraktor(zaehler: Zaehler = { match: 0, extract: 0 }, teil?: Partial<O
 
 function stuetzen() {
   return [
-    { sourceId: A, canonicalUrl: URL_A },
-    { sourceId: B, canonicalUrl: URL_B },
+    { ...fixturePin(A), contentType: 'text/plain', sourceId: A, canonicalUrl: URL_A },
+    { ...fixturePin(B), contentType: 'text/plain', sourceId: B, canonicalUrl: URL_B },
   ]
 }
 
 function beweisStuetzen() {
   return [
-    { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
-    { versionId: VB, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
+    { ...fixturePin(A), contentType: 'text/plain', versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+    { ...fixturePin(B), contentType: 'text/plain', versionId: VB, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
   ]
 }
 
@@ -197,13 +198,13 @@ function schnappschuss(sourceId: string): string {
 }
 
 function laufStuetzen(
-  contentType: string | null = 'text/plain',
+  contentType: string = 'text/plain',
   proof = beweisStuetzen(),
 ): OfficialTruthCompositionSupport[] {
   return proof.map((support) => ({
     versionId: support.versionId,
     sourceId: support.sourceId,
-    retrieval: {
+    retrieval: { ...r2Binding(registry(), support.canonicalUrl), identitySchema: 2 as const,
       status: 'server_owned_official_retrieval' as const,
       sourceId: support.sourceId,
       canonicalUrl: support.canonicalUrl,
@@ -317,14 +318,14 @@ describe('Kompositionspolitik-Fundament', () => {
       assignments: [
         {
           target: { kind: 'fact_field', fieldPath: 'effect' },
-          sourceIds: [A],
-          relation: 'single_source',
+          contentItemRefs: [A].map(fixtureRef),
+          relation: 'single_content_item',
           role: 'complementary_part',
         },
         {
           target: { kind: 'fact_field', fieldPath: 'visaMode' },
-          sourceIds: [B],
-          relation: 'single_source',
+          contentItemRefs: [B].map(fixtureRef),
+          relation: 'single_content_item',
           role: 'complementary_part',
         },
       ],
@@ -341,8 +342,8 @@ describe('Kompositionspolitik-Fundament', () => {
 
   test('eine URL außerhalb der einzigen Allowlist scheitert vor HTTP', () => {
     const ergebnis = phaseA([politik()], [extraktor()], [
-      { sourceId: A, canonicalUrl: 'https://www.gov.example/other' },
-      { sourceId: B, canonicalUrl: URL_B },
+      { ...fixturePin(A), contentType: 'text/plain', sourceId: A, canonicalUrl: 'https://www.gov.example/other' },
+      { ...fixturePin(B), contentType: 'text/plain', sourceId: B, canonicalUrl: URL_B },
     ])
     assert.equal(grund(ergebnis), 'domain_or_path_not_allowlisted')
   })
@@ -353,7 +354,7 @@ describe('Kompositionspolitik-Fundament', () => {
     assert.equal(eingefroren.ok, true)
     if (!eingefroren.ok) return
     const medien = phaseB(eingefroren.freeze, { contentType: 'text/html', zaehler })
-    assert.equal(grund(medien.ergebnis), 'content_type_not_allowlisted')
+    assert.equal(grund(medien.ergebnis), 'support_binding_mismatch')
     assert.equal(medien.ergebnis.ok, false)
     if (medien.ergebnis.ok) return
     assert.equal(medien.ergebnis.policyId, 'otp_example_effect')
@@ -381,11 +382,11 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!eingefroren.ok) return
     const zaehler = { match: 0, extract: 0 }
     const gleicheQuelle = [
-      { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
-      { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+      { ...fixturePin(A), contentType: 'text/plain', versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+      { ...fixturePin(A), contentType: 'text/plain', versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
     ]
     const gleich = phaseB(eingefroren.freeze, { zaehler, proof: gleicheQuelle })
-    assert.equal(grund(gleich.ergebnis), 'same_source_composition')
+    assert.equal(grund(gleich.ergebnis), 'same_content_item_composition')
     assert.equal(zaehler.match, 0)
     assert.equal(zaehler.extract, 0)
     const fakt = regelFaktKanonischLesen(
@@ -400,9 +401,9 @@ describe('Kompositionspolitik-Fundament', () => {
       freeze: eingefroren.freeze,
       fact: fakt.fact,
       proofSupports: [
-        { versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
-        { versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
-        { versionId: VF, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
+        { ...fixturePin(A), contentType: 'text/plain', versionId: VA, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+        { ...fixturePin(A), contentType: 'text/plain', versionId: VB, sourceId: A, canonicalUrl: URL_A, sourceContentHash: HASH_A },
+        { ...fixturePin(B), contentType: 'text/plain', versionId: VF, sourceId: B, canonicalUrl: URL_B, sourceContentHash: HASH_B },
       ],
       acceptedVersionIds: [VA, VB, VF],
       observations: beobachtungenFuer(eingefroren.freeze.policy),
@@ -453,8 +454,8 @@ describe('Kompositionspolitik-Fundament', () => {
       assignments: [
         {
           target: { kind: 'fact_field', fieldPath: 'effect' },
-          sourceIds: [A],
-          relation: 'single_source',
+          contentItemRefs: [A].map(fixtureRef),
+          relation: 'single_content_item',
           role: 'complementary_part',
         },
       ],
@@ -472,14 +473,14 @@ describe('Kompositionspolitik-Fundament', () => {
       assignments: [
         {
           target: { kind: 'fact_field', fieldPath: 'effect' },
-          sourceIds: [A, B],
+          contentItemRefs: [A, B].map(fixtureRef),
           relation: 'equal_values',
           role: 'equal_values',
         },
         {
           target: { kind: 'fact_field', fieldPath: 'visaMode' },
-          sourceIds: [A],
-          relation: 'single_source',
+          contentItemRefs: [A].map(fixtureRef),
+          relation: 'single_content_item',
           role: 'complementary_part',
         },
       ],
@@ -489,8 +490,8 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!konfliktFreeze.ok) return
     const konflikt = phaseB(konfliktFreeze.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'not_required' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'not_required' },
       ],
     })
     assert.equal(grund(konflikt.ergebnis), 'conflicting_value')
@@ -499,22 +500,22 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!standard.ok) return
     const doppelt = phaseB(standard.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
       ],
     })
     assert.equal(grund(doppelt.ergebnis), 'duplicate_value')
     const wiederholteQuelle = phaseB(standard.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
       ],
     })
     assert.equal(grund(wiederholteQuelle.ergebnis), 'duplicate_value')
     const fremdesZiel = phaseB(standard.freeze, {
       observed: [
-        {
+        { contentItemId: fixtureRef(A).contentItemId,
           targetKey: officialTruthCompositionCitationKey({ kind: 'branch', branchId: 'unassigned' }),
           sourceId: A,
           canonical: 'required',
@@ -536,7 +537,7 @@ describe('Kompositionspolitik-Fundament', () => {
     assert.equal(
       grund(
         phaseB(eingefroren.freeze, {
-          observed: [{ targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' }],
+          observed: [{ contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' }],
         }).ergebnis,
       ),
       'fact_incomplete',
@@ -546,9 +547,9 @@ describe('Kompositionspolitik-Fundament', () => {
       grund(
         phaseB(eingefroren.freeze, {
           observed: [
-            { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-            { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
-            { targetKey: zielSchluessel('visaMode'), sourceId: 'example-licensed-provider', canonical: 'none' },
+            { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+            { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+            { contentItemId: fixtureRef('example-licensed-provider').contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: 'example-licensed-provider', canonical: 'none' },
           ],
         }).ergebnis,
       ),
@@ -557,8 +558,8 @@ describe('Kompositionspolitik-Fundament', () => {
     // Vollständige, übereinstimmende Beobachtungen tragen den Erfolg.
     const erfolg = phaseB(eingefroren.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: B, canonical: 'none' },
       ],
     })
     assert.equal(erfolg.ergebnis.ok, true, grund(erfolg.ergebnis))
@@ -569,14 +570,14 @@ describe('Kompositionspolitik-Fundament', () => {
       assignments: [
         {
           target: { kind: 'fact_field', fieldPath: 'effect' },
-          sourceIds: [A, B],
+          contentItemRefs: [A, B].map(fixtureRef),
           relation: 'equal_values',
           role: 'equal_values',
         },
         {
           target: { kind: 'fact_field', fieldPath: 'visaMode' },
-          sourceIds: [A],
-          relation: 'single_source',
+          contentItemRefs: [A].map(fixtureRef),
+          relation: 'single_content_item',
           role: 'complementary_part',
         },
       ],
@@ -586,16 +587,16 @@ describe('Kompositionspolitik-Fundament', () => {
     if (!eingefroren.ok) return
     const fehlend = phaseB(eingefroren.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
       ],
     })
     assert.equal(grund(fehlend.ergebnis), 'fact_incomplete')
     const einig = phaseB(eingefroren.freeze, {
       observed: [
-        { targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
-        { targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
-        { targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('effect'), sourceId: A, canonical: 'required' },
+        { contentItemId: fixtureRef(B).contentItemId, targetKey: zielSchluessel('effect'), sourceId: B, canonical: 'required' },
+        { contentItemId: fixtureRef(A).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: A, canonical: 'none' },
       ],
     })
     assert.equal(einig.ergebnis.ok, true, grund(einig.ergebnis))
@@ -604,7 +605,7 @@ describe('Kompositionspolitik-Fundament', () => {
   test('CR-3 der gesiegelte Fakt ist tief unveränderlich', () => {
     const verzweigtesFakt = verzweigt({
       expression: atom('visitor', VA),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
     })
     const lauf = schemaLauf(verzweigtesFakt.policy, verzweigtesFakt.fact)
     assert.equal(lauf.ergebnis.ok, true, grund(lauf.ergebnis))
@@ -642,7 +643,7 @@ describe('Kompositionspolitik-Fundament', () => {
     assert.equal(isOfficialTruthCompositionSeal({ ...sicht }), false)
     assert.equal(officialTruthCompositionSealView({ ...sicht }), null)
     assert.equal(officialTruthCompositionSealView(true), null)
-    assert.equal(officialTruthCompositionSealView('ev1_bearer'), null)
+    assert.equal(officialTruthCompositionSealView('ev2_bearer'), null)
   })
 
   test('CR-1 die Kompositionsschicht führt keinen zweiten Extraktorstapel', () => {
@@ -667,8 +668,8 @@ describe('Kompositionspolitik-Fundament', () => {
     const fakt = verzweigt({
       expression: { op: 'all', operands: [atom('visitor', VB), atom('business', VA)] },
       atoms: [
-        { locator: locator('business'), sourceIds: [A] },
-        { locator: locator('visitor'), sourceIds: [B] },
+        { locator: locator('business'), contentItemRefs: [A].map(fixtureRef) },
+        { locator: locator('visitor'), contentItemRefs: [B].map(fixtureRef) },
       ],
       branchSupports: [VA, VB],
     })
@@ -677,8 +678,8 @@ describe('Kompositionspolitik-Fundament', () => {
     const getauscht = verzweigt({
       expression: { op: 'all', operands: [atom('visitor', VA), atom('business', VB)] },
       atoms: [
-        { locator: locator('business'), sourceIds: [B] },
-        { locator: locator('visitor'), sourceIds: [A] },
+        { locator: locator('business'), contentItemRefs: [B].map(fixtureRef) },
+        { locator: locator('visitor'), contentItemRefs: [A].map(fixtureRef) },
       ],
       branchSupports: [VA, VB],
     })
@@ -703,11 +704,11 @@ describe('Kompositionspolitik-Fundament', () => {
       atoms: [
         {
           locator: `branch:exemption/all:${nestedErster === 'business' ? 0 : 1}/not:0/atom`,
-          sourceIds: [A],
+          contentItemRefs: [A].map(fixtureRef),
         },
         {
           locator: `branch:exemption/all:${nestedErster === 'visitor' ? 0 : 1}/not:0/atom`,
-          sourceIds: [B],
+          contentItemRefs: [B].map(fixtureRef),
         },
       ],
       branchSupports: [VA, VB],
@@ -723,8 +724,8 @@ describe('Kompositionspolitik-Fundament', () => {
     const tie = verzweigt({
       expression: { op: 'all', operands: [atom('visitor', VA), atom('visitor', VB)] },
       atoms: [
-        { locator: 'branch:exemption/all:tie:0:0/atom', sourceIds: [A] },
-        { locator: 'branch:exemption/all:tie:0:1/atom', sourceIds: [B] },
+        { locator: 'branch:exemption/all:tie:0:0/atom', contentItemRefs: [A].map(fixtureRef) },
+        { locator: 'branch:exemption/all:tie:0:1/atom', contentItemRefs: [B].map(fixtureRef) },
       ],
       branchSupports: [VA, VB],
     })
@@ -733,8 +734,8 @@ describe('Kompositionspolitik-Fundament', () => {
     const ausgelassen = verzweigt({
       expression: { op: 'all', operands: [atom('visitor'), atom('visitor', VB)] },
       atoms: [
-        { locator: 'branch:exemption/all:tie:0:0/atom', sourceIds: [A] },
-        { locator: 'branch:exemption/all:tie:0:1/atom', sourceIds: [B] },
+        { locator: 'branch:exemption/all:tie:0:0/atom', contentItemRefs: [A].map(fixtureRef) },
+        { locator: 'branch:exemption/all:tie:0:1/atom', contentItemRefs: [B].map(fixtureRef) },
       ],
       branchSupports: [VA, VB],
     })
@@ -748,7 +749,7 @@ describe('Kompositionspolitik-Fundament', () => {
           { op: 'not', operand: atom('visitor', VB) },
         ],
       },
-      atoms: [{ locator: 'branch:exemption/all:0/not:0/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/all:0/not:0/atom', contentItemRefs: [A].map(fixtureRef) }],
     })
     assert.equal(grund(schemaLauf(behaelter.policy, behaelter.fact).ergebnis), 'atom_locator_duplicate')
   })
@@ -756,7 +757,7 @@ describe('Kompositionspolitik-Fundament', () => {
   test('Zitatfehler bleiben geschlossen', () => {
     const leer = verzweigt({
       expression: atom('visitor', VA),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
       branchSupports: [],
       otherwiseSupports: [VA, VB],
     })
@@ -764,7 +765,7 @@ describe('Kompositionspolitik-Fundament', () => {
 
     const unvollstaendig = verzweigt({
       expression: atom('visitor', VA),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
       branchSupports: [VA],
       otherwiseSupports: [VA],
     })
@@ -772,7 +773,7 @@ describe('Kompositionspolitik-Fundament', () => {
 
     const ausserhalb = verzweigt({
       expression: atom('visitor', VB),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [B] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [B].map(fixtureRef) }],
       branchSupports: [VA],
       otherwiseSupports: [VB],
     })
@@ -780,7 +781,7 @@ describe('Kompositionspolitik-Fundament', () => {
 
     const fremd = verzweigt({
       expression: atom('visitor', VF),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
       branchSupports: [VF],
       otherwiseSupports: [VB],
     })
@@ -788,7 +789,7 @@ describe('Kompositionspolitik-Fundament', () => {
 
     const mehrfach = verzweigt({
       expression: atom('visitor'),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
       branchSupports: [VA, VB],
       otherwiseSupports: [VB],
     })
@@ -804,8 +805,8 @@ describe('Kompositionspolitik-Fundament', () => {
     const alt = verzweigt({
       expression: atom('visitor', VA),
       atoms: [
-        { locator: 'branch:exemption/atom', sourceIds: [A] },
-        { locator: 'branch:exemption/not:0/atom', sourceIds: [A] },
+        { locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) },
+        { locator: 'branch:exemption/not:0/atom', contentItemRefs: [A].map(fixtureRef) },
       ],
       branchSupports: [VA],
     })
@@ -813,7 +814,7 @@ describe('Kompositionspolitik-Fundament', () => {
 
     const marker = verzweigt({
       expression: atom('visitor', VA),
-      atoms: [{ locator: 'branch:exemption/atom', sourceIds: [A] }],
+      atoms: [{ locator: 'branch:exemption/atom', contentItemRefs: [A].map(fixtureRef) }],
     })
     const mitSchluessel = schemaLauf(marker.policy, { ...marker.fact, atomLocator: 'branch:exemption/atom' })
     assert.equal(grund(mitSchluessel.ergebnis), 'unexpected_fields')
@@ -840,21 +841,21 @@ describe('Kompositionspolitik-Fundament', () => {
 })
 
 function bezug(
-  sourceIds: readonly string[],
+  contentItemRefs: readonly ReturnType<typeof fixtureRef>[],
   einzelneRolle: OfficialTruthCompositionPolicy['assignments'][number]['role'],
-): Pick<OfficialTruthCompositionPolicy['assignments'][number], 'sourceIds' | 'relation' | 'role'> {
-  const ids = [...new Set(sourceIds)].sort()
-  if (ids.length >= 2) return { sourceIds: ids, relation: 'equal_values', role: 'equal_values' }
-  return { sourceIds: ids.length === 0 ? [A] : ids, relation: 'single_source', role: einzelneRolle }
+): Pick<OfficialTruthCompositionPolicy['assignments'][number], 'contentItemRefs' | 'relation' | 'role'> {
+  const ids = [...new Map(contentItemRefs.map((ref) => [JSON.stringify(ref), ref])).values()].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+  if (ids.length >= 2) return { contentItemRefs: ids, relation: 'equal_values', role: 'equal_values' }
+  return { contentItemRefs: ids.length === 0 ? [fixtureRef(A)] : ids, relation: 'single_content_item', role: einzelneRolle }
 }
 
-function quelleFuer(id: string): string {
-  return id === VB ? B : A
+function quelleFuer(id: string): ReturnType<typeof fixtureRef> {
+  return fixtureRef(id === VB ? B : A)
 }
 
 function verzweigt(input: {
   expression: RegulierungsAusdruck
-  atoms: { locator: string; sourceIds: string[] }[]
+  atoms: { locator: string; contentItemRefs: ReturnType<typeof fixtureRef>[] }[]
   branchSupports?: string[]
   otherwiseSupports?: string[]
 }): { policy: OfficialTruthCompositionPolicy; fact: Record<string, unknown> } {
@@ -869,15 +870,15 @@ function verzweigt(input: {
     },
     {
       target: { kind: 'branch_outcome', branchId: 'exemption', field: 'effect' },
-      ...bezug([zweigQuellen[0] ?? A], 'exception'),
+      ...bezug([zweigQuellen[0] ?? fixtureRef(A)], 'exception'),
     },
     {
       target: { kind: 'branch_outcome', branchId: 'exemption', field: 'visaMode' },
-      ...bezug([zweigQuellen[0] ?? A], 'exception'),
+      ...bezug([zweigQuellen[0] ?? fixtureRef(A)], 'exception'),
     },
     ...input.atoms.map((eintrag) => ({
       target: { kind: 'atom' as const, branchId: 'exemption', atomLocator: eintrag.locator },
-      ...bezug(eintrag.sourceIds, 'exception'),
+      ...bezug(eintrag.contentItemRefs, 'exception'),
     })),
     {
       target: { kind: 'otherwise', branchId: 'residual' },
@@ -886,7 +887,7 @@ function verzweigt(input: {
   ]
   const policy = politik({
     applicabilitySchema: 1,
-    sourceIds: [A, B],
+    contentItemRefs: [A, B].map(fixtureRef),
     assignments,
   })
   const fact = {
@@ -927,4 +928,28 @@ function schemaLauf(policy: OfficialTruthCompositionPolicy, fact: Record<string,
   })
   if (!vorab.ok) assert.fail(vorab.reason)
   return phaseB(vorab.freeze, { fact })
+}
+
+// Explicit synthetic v2 publications.
+const R2_PUBLICATIONS = [
+  {
+    "url": "https://www.gov.example/effect",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example/other",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.interior.example/effect",
+    "mediaType": "text/plain"
+  }
+] as const
+
+function fixturePin(sourceId: string) {
+  return { ...r2Binding(registry(), sourceId === B ? URL_B : URL_A), sourceId }
+}
+function fixtureRef(sourceId: string) {
+  const { contentItemId } = fixturePin(sourceId)
+  return { sourceId, contentItemId }
 }

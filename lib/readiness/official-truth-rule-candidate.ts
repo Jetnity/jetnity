@@ -5,6 +5,7 @@
 // Der Aufruf darf nur Faktart, Evidence-Qualität und Forschungsvorschlag nennen.
 // Diese Datei nimmt keine Regel an, speichert nichts und ruft kein Modell.
 
+import { readDistinctContentItemRefs } from '@/lib/readiness/official-truth-content-identity'
 import { akzeptierteEvidenceLesen, type EvidenceVersion } from '@/lib/readiness/evidence'
 import {
   regelKandidatErstellen,
@@ -194,10 +195,10 @@ export function officialTruthRegelKandidatAusEvidence(
   )
   if (!erzeugt.ok) return erzeugt
 
-  if (erzeugt.kandidat.evidenceQuality === 'composed_from_multiple_primary_sources') {
-    const quellen = new Set(gelesen.versions.map((version) => version.sourceId))
-    if (quellen.size < 2) return { ok: false, reason: 'same_source_composition' }
-  }
+  const items = readDistinctContentItemRefs(gelesen.versions.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
+  if (!items.ok) return { ok: false, reason: gelesen.versions.length === 2 ? 'same_content_item_composition' : 'support_mismatch' }
+  if (erzeugt.kandidat.evidenceQuality === 'explicit_primary_statement' && items.value.length !== 1) return { ok: false, reason: 'support_mismatch' }
+  if (erzeugt.kandidat.evidenceQuality === 'composed_from_multiple_primary_sources' && items.value.length < 2) return { ok: false, reason: 'insufficient_support' }
 
   return kandidatPasst(erzeugt, gelesen, vorschlag.factKind, vorschlag.evidenceQuality)
 }

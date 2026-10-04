@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-retrieved-material.test.ts
 //
 // Beleg für bereits abgerufenes amtliches Material.
@@ -126,7 +127,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string): QuellenEingabe {
@@ -181,7 +182,7 @@ function huelle(teil?: {
   const basis = registry([amt(QUELLE, 'gov.example'), amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')])
   const material = teil?.material === null
     ? null
-    : {
+    : { contentType: 'text/plain',
         canonicalUrl: 'https://www.gov.example/rules',
         retrievedAt: ABGERUFEN,
         sourceSnapshot: SNAPSHOT,
@@ -246,7 +247,7 @@ describe('Official Truth retrieved material receipt', () => {
     assert.equal(ergebnis.canonicalUrl, aufgeloest.canonicalUrl)
     assert.equal(ergebnis.retrievedAt, ABGERUFEN)
     assert.equal(ergebnis.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
-    assert.deepEqual(ergebnis.material, {
+    assert.deepEqual(ergebnis.material, { contentType: 'text/plain',
       canonicalUrl: aufgeloest.canonicalUrl,
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -442,3 +443,14 @@ describe('Official Truth retrieved material receipt', () => {
     assert.equal(ergebnis.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://evil.example/rules",
+  "https://www.blocked.example/rules",
+  "https://www.gov.example/rules",
+  "https://www.gov.example/rules?gclid=tracking-secret-91f3",
+  "https://www.gov.example/rules?lang=en&ref=portal",
+  "https://www.interior.example/rules",
+  "https://www.provider.example/rules"
+] as const

@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-rule-review-packet.test.ts
 //
 // Internes Prüfpaket nur über neu belegte Stützen und den Regel-Kandidaten.
@@ -66,6 +67,7 @@ const PERSONEN = [
 ] as const
 
 const SUPPORT_FELDER = [
+  'contentItemId', 'contentItemVersion', 'contentType', 'identityProfileId', 'identityProfileVersion', 'identitySchema', 'representationId', 'representationVersion',
   'canonicalUrl',
   'retrievedAt',
   'sourceContentHash',
@@ -128,7 +130,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -214,7 +216,7 @@ function huelle(teil?: {
     registry: basis,
     descriptors: teil?.descriptors ?? beideDeskriptoren(basis),
     sourceId: teil?.sourceId ?? QUELLE,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: 'https://www.gov.example/rules',
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -263,7 +265,7 @@ function inneres(snapshot: string, request: OfficialTruthRechercheAnfrage = anfr
       registry: basis,
       descriptors: beideDeskriptoren(basis, coverage),
       sourceId: ANDERE,
-      material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
+      material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
     }),
   )
 }
@@ -313,7 +315,7 @@ describe('Official Truth rule review packet', () => {
     assert.equal(ergebnis.supports.length, 1)
     const eintrag = ergebnis.supports[0]
     assert.ok(eintrag)
-    assert.deepEqual(Object.keys(eintrag).sort(), SUPPORT_FELDER)
+    assert.deepEqual(Object.keys(eintrag).sort(), [...SUPPORT_FELDER].sort())
     assert.deepEqual(ergebnis.kandidat.supportVersionIds, [eintrag.versionId])
     assert.equal(eintrag.versionId, direktAkzeptiert.evidence.versionId)
     assert.equal(eintrag.sourceId, direktBeleg.sourceId)
@@ -414,7 +416,7 @@ describe('Official Truth rule review packet', () => {
       { name: 'kandidat', umschlag: offenEvidence.evidence, extraktion: null, clock: uhr() },
       {
         name: 'beleg',
-        umschlag: {
+        umschlag: { contentType: 'text/plain',
           status: 'retrieved_material',
           sourceId: QUELLE,
           canonicalUrl: 'https://www.gov.example/rules',
@@ -477,7 +479,7 @@ describe('Official Truth rule review packet', () => {
         registry: basis,
         descriptors: beideDeskriptoren(basis, coverage),
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
       }),
     )
     assert.equal(offen(paket([schweiz])).kandidat.scope.credentialOption.mode, 'option')
@@ -552,7 +554,7 @@ describe('Official Truth rule review packet', () => {
         registry: basis,
         descriptors: beideDeskriptoren(basis),
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'registry rechts' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'registry rechts' },
       }),
     )
     const registries = paket([linke, rechte], meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }))
@@ -563,7 +565,7 @@ describe('Official Truth rule review packet', () => {
       [grenze('seite grenze'), gleicheQuelle],
       meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
     )
-    assert.deepEqual(zusammengesetzt, { status: 'blocked', reason: 'same_source_composition' })
+    assert.deepEqual(zusammengesetzt, { status: 'blocked', reason: 'same_content_item_composition' })
     assert.equal('kandidat' in zusammengesetzt, false)
   })
 
@@ -607,7 +609,7 @@ describe('Official Truth rule review packet', () => {
       leer.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil, eintrag.versionId]),
       explizitLeer.supports.map((eintrag) => [eintrag.validFrom, eintrag.validUntil, eintrag.versionId]),
     )
-    assert.equal(rohPaket.supports[0]?.versionId, leer.supports[0]?.versionId)
+    assert.notEqual(rohPaket.supports[0]?.versionId, leer.supports[0]?.versionId)
     assert.equal('extractionNote' in (rohPaket.supports[0] ?? {}), false)
 
     const notiz = 'Bounded synthetic extraction note.'
@@ -667,3 +669,10 @@ describe('Official Truth rule review packet', () => {
     assert.equal(requirementsProviderAus(), null)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules",
+  "https://www.interior.example/rules",
+  "https://www.provider.example/rules"
+] as const

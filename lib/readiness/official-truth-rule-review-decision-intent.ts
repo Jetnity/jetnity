@@ -7,6 +7,7 @@
 // ein Server die Absicht gespeichert oder genehmigt hat, und es ist keine
 // spätere Berechtigung.
 
+import { readDistinctContentItemRefs } from '@/lib/readiness/official-truth-content-identity'
 import {
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
@@ -163,15 +164,11 @@ function faktenEintrittSperre(paket: RegelReviewPacket): OfficialTruthRegelRevie
   const qualitaet = paket.kandidat.evidenceQuality
   if (!annehmbar(qualitaet)) return 'quality_not_acceptable'
   if (qualitaet === 'explicit_primary_statement') {
-    return paket.supports.length < 1 ? 'insufficient_support' : null
+    return paket.supports.length !== 1 ? 'insufficient_support' : null
   }
   if (paket.supports.length < 2) return 'insufficient_support'
-  const quellen = new Set<string>()
-  for (const eintrag of paket.supports) {
-    if (eintrag.sourceId.length === 0) return 'same_source_composition'
-    quellen.add(eintrag.sourceId)
-  }
-  return quellen.size < 2 ? 'same_source_composition' : null
+  const items = readDistinctContentItemRefs(paket.supports.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
+  return items.ok ? null : 'same_content_item_composition'
 }
 
 /**

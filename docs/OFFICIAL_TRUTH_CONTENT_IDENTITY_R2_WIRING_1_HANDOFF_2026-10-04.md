@@ -1,39 +1,41 @@
 # Official Truth content identity R2 wiring 1 — Handoff
 
 Date: 4 October 2026. Issue #814 / Draft PR #815 / Generation 1.
-Writer: **Jetnity Official Truth coordinated content identity wiring R2**.
+Logical writer: **Jetnity Official Truth coordinated content identity wiring R2**.
 Branch: `feat/official-truth-content-identity-r2-wiring-1`.
-Baseline `30aa083dc752bf499dfc5a09448d06bd36d3ba64`; immutable dispatch `7185c60dd78604a5105b207a855fc74620195fc0`.
-Codex Desktop session `01a1064d-7e3c-72a0-b257-387193918f67`, `gpt-6-astra` / `xhigh` (GPT-6 Astra — Sehr hoch).
+Baseline main: `30aa083dc752bf499dfc5a09448d06bd36d3ba64`.
+Immutable dispatch: `7185c60dd78604a5105b207a855fc74620195fc0`.
+Resume parent (Scope Amendment 2): `dc5d96d44984cb340569bcd98f74f1ab4acafcc7`.
+Model: **GPT-6 Astra — Sehr hoch**, `gpt-6-astra` / `xhigh`.
+Same Codex session: `01a1064d-7e3c-72a0-b257-387193918f67`. One writer, no subagents.
 
-Classification: **CONTENT_IDENTITY_R2_BLOCKED**.
+Classification: **CONTENT_IDENTITY_R2_READY_FOR_REAL_IDENTITY_PROFILE_AUDIT**.
+This classification requests independent Technical-Lead review; it does not start the audit or grant registration/F8/DB authority. PR remains Draft.
 
-## Current second STOP after amendment
+The exact final published commit SHA is recorded in the PR #815 delivery receipt and the accompanying final-head validation manifest. This document belongs to that commit; it does not attempt to embed its own Git hash. Resolve it with `git rev-parse HEAD` at that delivered checkout. All gates are rerun after publication, with no subsequent repository edit.
 
-Same writer resumed at amendment head `012f6f0cff4c89e4d1d235425913a31a8696d816`; full task and amendment read. The original scanner ownership blocker is resolved by Scope Amendment 1. The renewed audit discovered three further test consumers requiring exact ownership clarification/amendment:
+## Review target
 
-- `lib/readiness/official-truth-review-suggestion.test.ts`: requires old `review-packet:v2:` format and source-only successful packet fixtures. Read-only format-change probe: 6 pass / 5 fail among 11 tests, zero skips.
-- `lib/readiness/evidence-store-schema.test.ts`: ties historical migration to current runtime `ev1_` / `evidence-key:v2:` constants.
-- `lib/readiness/rule-claim-store-schema.test.ts`: transit positive fixture creates and accepts source-only Evidence, then expects Rule acceptance.
+Review only the final exact SHA in PR #815's delivery receipt. The original task plus both amendments are binding. The prior documentation-only STOPs are superseded by this completed bounded implementation. The report contains the exact 26 production/scanner, 29 test and 3 delivery-document paths and all gate results.
 
-The report gives exact lines, reproduction and the minimal reconciliation for all three together. No production importer edit outside the closure is established. The user's resumed instruction requires STOP on another outside-closure test dependency; no recursive expansion is inferred from Amendment 1.
+Priority independent checks:
 
-First unfinished next step is TL review of these test dependencies and an explicit versioned ownership decision. No production/test edit, partial scanner-only cutover, legacy compatibility bypass or test skip has been introduced. Both task and amendment are immutable. Runtime remains v1/ev1; R2 is unimplemented. This resumption updates only the three assigned docs. Production registries remain 0/0/0/0, frozen. No live database call or mutation.
+1. Catalog v2's strict single-response graph, request ordinals, reservations, empty/missing distinction and blocked-domain replay.
+2. Authority versus ContentItemRef versus representation identity; exact tuple/profile reproof across every bridge.
+3. One-authority/two-item positive composition and HTML/API duplicate rejection, including larger sets.
+4. Exact request/final URL selection, response profile verification before extractor selection, and replay drift rejection.
+5. R1 canonical ev2/v3 serialization, old identity rejection, review v3 invalidation and unchanged schema-1 persistence block.
+6. Empty production registries, no import-time IO, no route activation, v2-only RPC literals and exact scanner amendment.
+7. All synthetic PostgreSQL 16 proofs and the 4,752-test full suite on the published head.
 
-Live precheck again matched exact main, NORMAL, `gpt-6-astra`/`xhigh` and a single writer. TL receipt `5978881653` was read; earlier apply-governance material is processed. Final exact-head validation is reported in the delivery/PR; earlier counts below are historical first-STOP evidence.
+No further writer action is authorized by this handoff. PR remains Draft. Independent TL review is still outstanding; self-review is not TL PASS.
 
-## Historical first STOP (scanner ownership now resolved)
+## Live state and boundaries
 
-R2 runtime has not been edited. The first delivery added only the report, handoff and self-review. The task remained byte-identical. Catalog/store still call v1; Evidence still uses ev1/lookup v2. Profile/extractor/composition/region-pin registries remain empty and frozen. No database action occurred.
+Main was re-fetched at the exact baseline; machine mode remains NORMAL. #751 still names this same Generation 1 writer. #748 has 32 comments; newest external MATERIAL is `5978621253`, already processed by TL receipt `5978881653`; no later external MATERIAL was found. Open PRs are #815 and the five historical drafts #28/#39/#40/#50/#52. Other local Jetnity writers are idle/not loaded. No overlapping writer was found.
 
-First unfinished step: independently reproduce the schema-reference conflict described in the [report](OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_REPORT_2026-10-04.md), then explicitly decide a versioned scope amendment before resuming this same writer. The required v2 literals yield two unknown-RPC findings in `scripts/db/verwendung.mjs`. That forbidden path holds the reviewed RPC allowlist. Its exact-list regression test, `lib/admin/account-counts-delivery/schema-reference.test.ts`, is also outside the assigned test closure. Keeping the v2 calls invisible to the scanner is not a valid fix. No runtime importer outside the closure was demonstrated to require change; this is a distinct hygiene dependency.
+**No live DB call or mutation occurred.** No Development or Production operation, Supabase apply/push/reset, migration edit/create, generated-type edit, real source/content/profile registration, government network request, GOV.UK/CTA registration, real extractor/policy, region pin, schema-1 persistence, F8, route/app/component/provider/traveller change, #626, launch/indexing change, Ready or merge occurred.
 
-Proposed narrowly bounded amendment: allow reconciliation of the two Official Truth RPC entries and their S1 migration references in the existing scanner, plus its exact-list test. Do not edit SQL, generated types, packages, routes, Auth/RLS or live databases. This writer has not made that amendment or repair.
+Development S1 applied/empty and Production v2 absent remain the supplied/TL-recorded baseline; this writer did not contact either database to re-audit them. Production absence is covered with injected unavailable transports and import/build dormancy tests. A future real profile still requires its separately authorized audit and deterministic response identity rules.
 
-Before any resumption, fetch main and require the task baseline or obtain an explicit updated dispatch; re-read NORMAL mode, #751, #748 after marker `5977264413`, and all open writers. New #748 MATERIAL `5978621253` needs TL triage. It is not resolved by this report. No concurrent replacement writer.
-
-Checks on the unchanged runtime: targeted 422/425 and full 4,674/4,677 pass; the three failures are missing Linux PostgreSQL 16 binaries on macOS. Typecheck, lint (149 warnings/0 errors), Production build, operating-mode and all five hygiene checks pass. These are baseline checks, not evidence that R2 exists. Final-head reruns and exact final SHA are reported in PR/delivery metadata; no independent TL PASS is asserted.
-
-After an authorized amendment, the entire coordinated R2 implementation, synthetic fixture upgrade and full acceptance matrix remain unfinished. Preserve one authority/two items/two renderings semantics, one coherent catalog read, ev2/v3 identities, v2-only transports, exact profiles/representation reproof, review invalidation, schema-1 store block and F8 closure. Do not infer Production DB availability from the web build.
-
-Remain Draft. No Ready, merge, real identity audit/registration, F8, #626 or another slice. STOP for independent Technical Lead exact-head review.
+STOP for independent Technical-Lead exact-head review. Do not start the real profile audit, registration or F8.

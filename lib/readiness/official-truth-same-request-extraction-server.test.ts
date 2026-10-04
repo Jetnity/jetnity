@@ -1,3 +1,4 @@
+import { r2Registry, r2Binding, r2Profiles, r2CatalogRows } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-same-request-extraction-server.test.ts
 //
 // Gleiche-Request-Bindung von Beweis, Wiedergabe und Extraktor.
@@ -93,6 +94,7 @@ const ERFOLG_SCHLUESSEL = [
   'trustedRuleFact',
 ]
 const PROVENIENZ_SCHLUESSEL = [
+  'contentItemId', 'contentItemVersion', 'identityProfileId', 'identityProfileVersion', 'identitySchema', 'representationId', 'representationVersion',
   'canonicalUrl',
   'contentType',
   'retrievedAt',
@@ -182,7 +184,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -244,7 +246,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') return { ok: false }
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
         }
       },
     },
@@ -265,7 +267,7 @@ function driftTransport(): { transport: OfficialTruthSourceCatalogTransport; auf
             : realeEingaben().map((eintrag) => ({ ...eintrag, domains: ['drift.example'] }))
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
         }
       },
     },
@@ -283,7 +285,7 @@ function aufrufer(teil?: {
     request: teil?.request ?? anfrage(),
     descriptors: teil?.descriptors ?? [deskriptor(basis, REAL), deskriptor(basis, INTERIOR, coverage({ destinationCountryCodes: ['TH'] }))],
     sourceId: teil && 'sourceId' in teil ? teil.sourceId : REAL,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: REAL_URL,
       retrievedAt: INNERHALB,
       sourceSnapshot: SNAPSHOT,
@@ -319,7 +321,7 @@ function zweitesBuendel() {
     aufrufer({
       descriptors: [deskriptor(basis, REAL, gebiet), deskriptor(basis, INTERIOR, gebiet)],
       sourceId: INTERIOR,
-      material: { canonicalUrl: INNEN_URL, retrievedAt: INNERHALB, sourceSnapshot: INNEN_TEXT },
+      material: { contentType: 'text/plain', canonicalUrl: INNEN_URL, retrievedAt: INNERHALB, sourceSnapshot: INNEN_TEXT },
     }),
   )
 }
@@ -390,7 +392,7 @@ async function echtAbrufen(
   antwort: (url: string) => Schritt,
 ) {
   return decideOfficialTruthServerOwnedRetrieval(anfrage, {
-    catalog: { transport },
+    catalog: { identityProfiles: r2Profiles, transport },
     now: () => new Date(ABRUF_ZEIT),
     resolve: async () => [{ address: '8.8.8.8', family: 4 as const }],
     http: httpClient(spur, antwort),
@@ -398,13 +400,13 @@ async function echtAbrufen(
 }
 
 function definition(): OfficialTruthExtractorDefinition {
-  return {
+  return { representations: [REAL].map(fixtureRef).map((ref) => fixturePin(ref.sourceId)),
     extractorId: 'otx_example_effect',
     extractorVersion: 1,
     current: true,
     factKind: 'requirement_effect',
     sourceFamilyId: 'otf_example_effect',
-    sourceIds: [REAL],
+    contentItemRefs: [REAL].map(fixtureRef),
     urlAllowlist: [{ kind: 'exact', canonicalUrl: REAL_URL }],
     contentTypes: ['text/plain'],
     schemaFamily: 'ots_example_effect',
@@ -448,7 +450,7 @@ async function binden(
         decideOfficialTruthSameRequestProof(eingabe, {
           loadAuthority: async () => freigabe(),
           now: () => JETZT,
-          catalog: { transport: extern.transport },
+          catalog: { identityProfiles: r2Profiles, transport: extern.transport },
         })),
     retrieve: async (anfrage, transport) => {
       spur.abrufe.push(anfrage)
@@ -495,7 +497,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
         decideOfficialTruthSameRequestProof(wert, {
           loadAuthority: async () => ({ status: 'access_forbidden' }),
           now: () => JETZT,
-          catalog: { transport: extern.transport },
+          catalog: { identityProfiles: r2Profiles, transport: extern.transport },
         }),
     })
     assert.equal(grund(ergebnis), 'access_forbidden')
@@ -513,7 +515,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
   test('2 Aufrufer-Beweis, Registry, Evidence, Abruf, Fakt, Extraktor und Politik scheitern an den Beweisgrenzen', async () => {
     const felder: Record<string, unknown> = {
       registry: { sources: [], blockedDomains: [] },
-      evidence: { versionId: 'ev1_' + 'a'.repeat(32) },
+      evidence: { versionId: 'ev2_' + 'a'.repeat(32) },
       evidenceVersions: [],
       retrieval: { status: 'retrieved_material', sourceSnapshot: 'old submitted page' },
       sourceSnapshot: 'old submitted page',
@@ -536,7 +538,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
       const allein = await decideOfficialTruthSameRequestProof(huelle, {
         loadAuthority: async () => freigabe(),
         now: () => JETZT,
-        catalog: { transport: transportFuer(realeEingaben()).transport },
+        catalog: { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport },
       })
       const { ergebnis, spur } = await binden(huelle)
       assert.equal(ergebnis.status, 'blocked', feld)
@@ -550,7 +552,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     const graph = await decideOfficialTruthSameRequestProof(eingabe(), {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: { transport: transportFuer(realeEingaben()).transport },
+      catalog: { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport },
     })
     assert.equal(graph.status, 'same_request_proof')
     const replay = await binden(graph)
@@ -563,10 +565,10 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     const extern = driftTransport()
     const wert = eingabe({
       supports: [erstesBuendel(), zweitesBuendel()],
-      metadata: meta(),
+      metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
     })
-    const { ergebnis, spur, extern: aufrufe } = await binden(wert, { extern })
-    assert.equal(ergebnis.status, 'blocked')
+    const { ergebnis, spur, extern: aufrufe } = await binden(wert, { extern, compositionPolicies: [kompositionsPolitik()], compositionExtractors: [kompositionsExtraktor({ match: 0, extract: 0 })] })
+    assert.equal(ergebnis.status, 'same_request_composition_bound')
     assert.equal(aufrufe.length, 1)
     assert.deepEqual(aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
     assert.equal(spur.abrufe.length, 2)
@@ -611,9 +613,9 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
         return { status: 404, body: '' }
       },
     })
-    assert.equal(grund(ergebnis), 'source_url_changed_since_evidence')
+    assert.equal(grund(ergebnis), 'representation_url_mismatch')
     assert.equal(spur.extrakt.length, 0)
-    assert.deepEqual(spur.http, [REAL_URL, 'https://www.real-government.example/rules/moved'])
+    assert.deepEqual(spur.http, [REAL_URL])
   })
 
   test('8 ein geänderter Seiteninhalt bleibt die alte Evidence und wird nicht angenommen', async () => {
@@ -634,20 +636,20 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
         const graph = await decideOfficialTruthSameRequestProof(wert, {
           loadAuthority: async () => freigabe(),
           now: () => JETZT,
-          catalog: { transport: extern.transport },
+          catalog: { identityProfiles: r2Profiles, transport: extern.transport },
         })
         if (graph.status !== 'same_request_proof') return graph
         return {
           ...graph,
           evidenceVersions: graph.evidenceVersions.map((version) => ({
             ...version,
-            versionId: `ev1_${'0'.repeat(32)}`,
+            versionId: `ev2_${'0'.repeat(32)}`,
           })),
         }
       },
     })
     assert.equal(grund(ergebnis), 'support_binding_mismatch')
-    assert.equal(spur.abrufe.length, 1)
+    assert.equal(spur.abrufe.length, 0)
     assert.equal(spur.extrakt.length, 0)
   })
 
@@ -724,7 +726,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(wert.trustedRuleFact.kind, 'requirement_effect')
     assert.equal(JSON.stringify(wert).includes(SNAPSHOT), false)
     assert.equal(JSON.stringify(wert).includes('sourceSnapshot'), false)
-    assert.deepEqual(Object.keys(wert.retrievals[0] ?? {}).sort(), PROVENIENZ_SCHLUESSEL)
+    assert.deepEqual(Object.keys(wert.retrievals[0] ?? {}).sort(), [...PROVENIENZ_SCHLUESSEL].sort())
     assert.equal(wert.retrievals[0]?.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
     assert.equal(wert.retrievals[0]?.sourceContentHash, wert.evidenceVersions[0]?.sourceContentHash)
     assert.equal(wert.retrievals[0]?.canonicalUrl, REAL_URL)
@@ -760,10 +762,12 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(JSON.stringify(wert).includes('mutated after return'), false)
 
     const vorwaerts = await binden(
-      eingabe({ supports: [erstesBuendel(), zweitesBuendel()], metadata: meta() }),
+      eingabe({ supports: [erstesBuendel(), zweitesBuendel()], metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }) }),
+      { compositionPolicies: [kompositionsPolitik()], compositionExtractors: [kompositionsExtraktor({ match: 0, extract: 0 })] },
     )
     const rueckwaerts = await binden(
-      eingabe({ supports: [zweitesBuendel(), erstesBuendel()], metadata: meta() }),
+      eingabe({ supports: [zweitesBuendel(), erstesBuendel()], metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }) }),
+      { compositionPolicies: [kompositionsPolitik()], compositionExtractors: [kompositionsExtraktor({ match: 0, extract: 0 })] },
     )
     assert.deepEqual(
       vorwaerts.spur.abrufe.map((anfrage) => (anfrage as { url: string }).url),
@@ -861,7 +865,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
         const graph = await decideOfficialTruthSameRequestProof(wert, {
           loadAuthority: async () => freigabe(),
           now: () => JETZT,
-          catalog: { transport: extern.transport },
+          catalog: { identityProfiles: r2Profiles, transport: extern.transport },
         })
         if (graph.status !== 'same_request_proof') return graph
         const erzeugt = quellenRegistryErstellen(
@@ -875,13 +879,16 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
           { blockedDomains: ['blocked.example'] },
         )
         if (!erzeugt.ok) throw new Error(erzeugt.reason)
-        return { ...graph, registry: erzeugt.registry }
+        return { ...graph, registry: r2Registry(erzeugt.registry, R2_PUBLICATIONS) }
       },
     })
-    assert.equal(grund(ergebnis), 'blocked_domain_not_replayable')
-    assert.equal(spur.abrufe.length, 0)
-    assert.equal(spur.http.length, 0)
-    assert.equal(spur.extrakt.length, 0)
+    assert.equal(grund(ergebnis), 'extractor_not_registered')
+    assert.equal(spur.abrufe.length, 1)
+    assert.equal(spur.http.length, 1)
+    assert.equal(spur.extrakt.length, 1)
+    const replay = await spur.transporte[0]!.aufrufen({ operation: 'read_registry' })
+    assert.ok(replay.ok)
+    assert.deepEqual((replay.antwort as Record<string, unknown>).blocked_domains, ['blocked.example'])
   })
 
   test('ein Aufrufer-Scope ist keine Autorität und erreicht den Extraktor nicht', async () => {
@@ -907,7 +914,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
           return decideOfficialTruthSameRequestProof(sauber, {
             loadAuthority: async () => freigabe(),
             now: () => JETZT,
-            catalog: { transport: extern.transport },
+            catalog: { identityProfiles: r2Profiles, transport: extern.transport },
           })
         },
         definitionen: [definition()],
@@ -929,7 +936,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     const graph = await decideOfficialTruthSameRequestProof(eingabe(), {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: { transport: extern.transport },
+      catalog: { identityProfiles: r2Profiles, transport: extern.transport },
     })
     assert.equal(graph.status, 'same_request_proof')
     if (graph.status !== 'same_request_proof') return
@@ -958,7 +965,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     const graph = await decideOfficialTruthSameRequestProof(eingabe(), {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: { transport: extern.transport },
+      catalog: { identityProfiles: r2Profiles, transport: extern.transport },
     })
     assert.equal(graph.status, 'same_request_proof')
     if (graph.status !== 'same_request_proof') return
@@ -1082,8 +1089,8 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
         compositionExtractors: [kompositionsExtraktor(aufrufe)],
       },
     )
-    assert.equal(grund(ergebnis), 'content_type_not_allowlisted')
-    assert.equal(spur.abrufe.length, 2)
+    assert.equal(grund(ergebnis), 'content_type_mismatch')
+    assert.equal(spur.abrufe.length, 1)
     assert.equal(spur.extrakt.length, 0)
     assert.equal(aufrufe.match, 0)
     assert.equal(aufrufe.extract, 0)
@@ -1117,9 +1124,9 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
       compositionPolicies: [policy],
       compositionExtractors: [
         kompositionsExtraktor(aufrufe, [
-          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
-          { targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'not_required' },
-          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+          { contentItemId: fixtureRef(REAL).contentItemId, targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { contentItemId: fixtureRef(INTERIOR).contentItemId, targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'not_required' },
+          { contentItemId: fixtureRef(INTERIOR).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
         ]),
       ],
     })
@@ -1133,9 +1140,9 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
       compositionPolicies: [kompositionsPolitik()],
       compositionExtractors: [
         kompositionsExtraktor(aufrufe, [
-          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
-          { targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'required' },
-          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+          { contentItemId: fixtureRef(REAL).contentItemId, targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { contentItemId: fixtureRef(INTERIOR).contentItemId, targetKey: zielSchluessel('effect'), sourceId: INTERIOR, canonical: 'required' },
+          { contentItemId: fixtureRef(INTERIOR).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
         ]),
       ],
     })
@@ -1148,8 +1155,8 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
       compositionPolicies: [gleichwertigePolitik()],
       compositionExtractors: [
         kompositionsExtraktor(aufrufe, [
-          { targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
-          { targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
+          { contentItemId: fixtureRef(REAL).contentItemId, targetKey: zielSchluessel('effect'), sourceId: REAL, canonical: 'required' },
+          { contentItemId: fixtureRef(INTERIOR).contentItemId, targetKey: zielSchluessel('visaMode'), sourceId: INTERIOR, canonical: 'electronic_visa' },
         ]),
       ],
     })
@@ -1218,7 +1225,7 @@ function kompositionsPolitik(): OfficialTruthCompositionPolicy {
     current: true,
     factKind: 'requirement_effect',
     requirementType: 'visa',
-    sourceIds: [INTERIOR, REAL],
+    contentItemRefs: [INTERIOR, REAL].map(fixtureRef),
     sourceFamilyId: 'otf_example_effect',
     schemaFamily: 'ots_example_effect',
     applicabilitySchema: null,
@@ -1226,14 +1233,14 @@ function kompositionsPolitik(): OfficialTruthCompositionPolicy {
     assignments: [
       {
         target: { kind: 'fact_field', fieldPath: 'effect' },
-        sourceIds: [REAL],
-        relation: 'single_source',
+        contentItemRefs: [REAL].map(fixtureRef),
+        relation: 'single_content_item',
         role: 'complementary_part',
       },
       {
         target: { kind: 'fact_field', fieldPath: 'visaMode' },
-        sourceIds: [INTERIOR],
-        relation: 'single_source',
+        contentItemRefs: [INTERIOR].map(fixtureRef),
+        relation: 'single_content_item',
         role: 'complementary_part',
       },
     ],
@@ -1251,9 +1258,9 @@ function zielSchluessel(fieldPath: string): string {
  */
 function kompositionsBeobachtungen(policy: OfficialTruthCompositionPolicy): OfficialTruthExtractorBeobachtung[] {
   return policy.assignments.flatMap((assignment) =>
-    assignment.sourceIds.map((sourceId) => ({
+    assignment.contentItemRefs.map((ref) => ({
       targetKey: officialTruthCompositionCitationKey(assignment.target),
-      sourceId,
+      ...ref,
       canonical: `kanonisch:${officialTruthCompositionCitationKey(assignment.target)}`,
     })),
   )
@@ -1265,14 +1272,14 @@ function gleichwertigePolitik(): OfficialTruthCompositionPolicy {
     assignments: [
       {
         target: { kind: 'fact_field', fieldPath: 'effect' },
-        sourceIds: [INTERIOR, REAL],
+        contentItemRefs: [INTERIOR, REAL].map(fixtureRef),
         relation: 'equal_values',
         role: 'equal_values',
       },
       {
         target: { kind: 'fact_field', fieldPath: 'visaMode' },
-        sourceIds: [INTERIOR],
-        relation: 'single_source',
+        contentItemRefs: [INTERIOR].map(fixtureRef),
+        relation: 'single_content_item',
         role: 'complementary_part',
       },
     ],
@@ -1283,13 +1290,13 @@ function kompositionsExtraktor(
   zaehler: { match: number; extract: number },
   beobachtungen: readonly OfficialTruthExtractorBeobachtung[] | null = kompositionsBeobachtungen(kompositionsPolitik()),
 ): OfficialTruthExtractorDefinition {
-  return {
+  return { representations: [INTERIOR, REAL].map(fixtureRef).map((ref) => fixturePin(ref.sourceId)),
     extractorId: 'otx_example_effect',
     extractorVersion: 1,
     current: true,
     factKind: 'requirement_effect',
     sourceFamilyId: 'otf_example_effect',
-    sourceIds: [INTERIOR, REAL],
+    contentItemRefs: [INTERIOR, REAL].map(fixtureRef),
     urlAllowlist: [
       { kind: 'exact', canonicalUrl: REAL_URL },
       { kind: 'exact', canonicalUrl: INNEN_URL },
@@ -1309,4 +1316,32 @@ function kompositionsExtraktor(
       return beobachtungen === null ? { ok: true, fact } : { ok: true, fact, observations: beobachtungen }
     },
   }
+}
+
+// Explicit synthetic v2 publications.
+const R2_PUBLICATIONS = [
+  {
+    "url": "https://www.other.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.real-government.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.real-government.example/rules/moved",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.real-interior.example/rules",
+    "mediaType": "text/plain"
+  }
+] as const
+
+function fixturePin(sourceId: string) {
+  return { ...r2Binding(registry(realeEingaben()), sourceId === INTERIOR ? INNEN_URL : REAL_URL), sourceId }
+}
+function fixtureRef(sourceId: string) {
+  const { contentItemId } = fixturePin(sourceId)
+  return { sourceId, contentItemId }
 }

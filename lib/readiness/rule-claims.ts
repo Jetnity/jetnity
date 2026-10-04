@@ -5,10 +5,11 @@
 // Ein Forschungsvorschlag ist keine akzeptierte Regel.
 // Keine Datenbank, kein Netz, keine zweite Engine, keine neue Anforderungstaxonomie.
 
+import { readDistinctContentItemRefs } from '@/lib/readiness/official-truth-content-identity'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
   akzeptierteEvidenceLesen,
-  evidenceSuchschluessel,
+  evidenceScopeLesen,
   type EvidenceAtom,
   type EvidenceVersion,
 } from '@/lib/readiness/evidence'
@@ -71,7 +72,7 @@ const TRANSIT_PFADE_MAX = 8
 const AMTSHANDLUNGEN_MAX = 4
 const LEERE_SEITEN_MIN = 1
 const LEERE_SEITEN_MAX = 10
-const VERSION_ID = /^ev1_[a-f0-9]{32}$/
+const VERSION_ID = /^ev2_[a-f0-9]{32}$/
 const QUELLEN_ID = /^[a-z][a-z0-9_-]{1,63}$/
 const IATA_FORM = /^[A-Z]{3}$/
 
@@ -256,7 +257,7 @@ export type RegelClaimFehler =
   | 'quality_not_acceptable'
   | 'research_gap_proposal_forbidden'
   | 'insufficient_support'
-  | 'same_source_composition'
+  | 'same_content_item_composition'
   | 'primary_source_required'
   | 'evidence_not_accepted'
   | 'support_mismatch'
@@ -382,7 +383,7 @@ function schluesselFuer(atom: EvidenceAtom): string {
 
 /**
  * Quellenneutraler Scope: dieselbe regulatorische Zelle wie die Evidence,
- * ohne `sourceId`. Der bestehende `evidence-key:v2:` bleibt unverändert.
+ * ohne Quellen- oder Publikationsidentität.
  * Die Eingabereihenfolge der Staatsbürgerschaften ändert den Schlüssel nicht.
  */
 export function regelScopeAusEvidenceScope(scope: unknown): RegelScopeErgebnis {
@@ -395,7 +396,7 @@ export function regelScopeAusEvidenceScope(scope: unknown): RegelScopeErgebnis {
   // Die quellenneutrale Form hat kein sourceId. Der Evidence-Parser verlangt
   // eines nur zur Strukturprüfung. Die Probe steht nicht im Regel-Schlüssel.
   const mitQuelle = 'sourceId' in satz ? satz : { ...satz, sourceId: 'rule-scope-probe' }
-  const gelesen = evidenceSuchschluessel(mitQuelle)
+  const gelesen = evidenceScopeLesen(mitQuelle)
   if (!gelesen.ok) {
     if (gelesen.reason === 'personal_identifier_forbidden') return { ok: false, reason: 'personal_identifier_forbidden' }
     return { ok: false, reason: 'invalid_scope' }
@@ -952,21 +953,20 @@ export function regelKandidatAkzeptieren(eingabe: unknown): RegelAnnahmeErgebnis
     return { ok: false, reason: 'support_mismatch' }
   }
 
-  const quellen = new Set<string>()
   for (const version of vertraut) {
     const scope = regelScopeAusEvidenceScope(version.scope)
     if (!scope.ok || scope.key !== entwurf.key) return { ok: false, reason: 'scope_mismatch' }
-    quellen.add(version.sourceId)
   }
   if (vertraut.some((version) => version.sourceClass !== 'official_authority')) {
     return { ok: false, reason: 'primary_source_required' }
   }
-  if (entwurf.evidenceQuality === 'explicit_primary_statement' && vertraut.length < 1) {
+  const items = readDistinctContentItemRefs(vertraut.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
+  if (!items.ok) return { ok: false, reason: vertraut.length === 2 ? 'same_content_item_composition' : 'support_mismatch' }
+  if (entwurf.evidenceQuality === 'explicit_primary_statement' && vertraut.length !== 1) {
     return { ok: false, reason: 'insufficient_support' }
   }
   if (entwurf.evidenceQuality === 'composed_from_multiple_primary_sources') {
     if (vertraut.length < 2) return { ok: false, reason: 'insufficient_support' }
-    if (quellen.size < 2) return { ok: false, reason: 'same_source_composition' }
   }
 
   const fakt = regelFaktLesen(entwurf.factKind, entwurf.scope.requirementType, satz.trustedRuleFact, registry)

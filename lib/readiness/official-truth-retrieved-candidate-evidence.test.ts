@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-retrieved-candidate-evidence.test.ts
 //
 // Kandidat aus bereits belegtem amtlichem Material.
@@ -142,7 +143,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string): QuellenEingabe {
@@ -198,7 +199,7 @@ function huelle(teil?: {
   const material =
     teil?.material === null
       ? null
-      : {
+      : { contentType: 'text/plain',
           canonicalUrl: 'https://www.gov.example/rules',
           retrievedAt: ABGERUFEN,
           sourceSnapshot: SNAPSHOT,
@@ -281,7 +282,7 @@ describe('Official Truth retrieved material candidate evidence', () => {
     const zelleGelesen = regelScopeAusEvidenceScope(request.scope)
     assert.equal(zelleGelesen.ok, true)
     if (!zelleGelesen.ok) throw new Error('zelle')
-    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE })
+    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE }, { sourceId: evidence.sourceId, contentItemId: evidence.contentItemId, representationId: evidence.representationId })
     assert.equal(schluessel.ok, true)
     if (!schluessel.ok) throw new Error('schluessel')
 
@@ -331,7 +332,7 @@ describe('Official Truth retrieved material candidate evidence', () => {
     assert.equal(evidence.extractionNote, 'Bounded synthetic extraction note.')
     assert.equal(evidence.lifecycle, 'candidate')
     assert.equal(evidence.validationState, 'pending')
-    assert.equal(evidence.versionId, leer.versionId)
+    assert.notEqual(evidence.versionId, leer.versionId)
     assert.equal(evidence.sourceContentHash, leer.sourceContentHash)
     assert.equal(leer.validFrom, null)
     assert.equal(leer.validUntil, null)
@@ -370,7 +371,7 @@ describe('Official Truth retrieved material candidate evidence', () => {
     const zelleGelesen = regelScopeAusEvidenceScope(request.scope)
     assert.equal(zelleGelesen.ok, true)
     if (!zelleGelesen.ok) throw new Error('zelle')
-    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE })
+    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE }, { sourceId: evidence.sourceId, contentItemId: evidence.contentItemId, representationId: evidence.representationId })
     assert.equal(schluessel.ok, true)
     if (!schluessel.ok) throw new Error('schluessel')
     assert.equal(evidence.lookupKey, schluessel.key)
@@ -415,8 +416,8 @@ describe('Official Truth retrieved material candidate evidence', () => {
     assert.equal(serbischeEvidence.canonicalUrl, schweizerEvidence.canonicalUrl)
     assert.equal(serbischeEvidence.retrievedAt, schweizerEvidence.retrievedAt)
     assert.notEqual(serbischeEvidence.versionId, schweizerEvidence.versionId)
-    assert.match(serbischeEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
-    assert.match(schweizerEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(serbischeEvidence.versionId, /^ev2_[a-f0-9]{32}$/)
+    assert.match(schweizerEvidence.versionId, /^ev2_[a-f0-9]{32}$/)
 
     const passAbdeckung = abdeckung({
       citizenship: { mode: 'exact', countryCodes: ['CH', 'RS'] },
@@ -439,7 +440,7 @@ describe('Official Truth retrieved material candidate evidence', () => {
     assert.equal(passEvidence.sourceContentHash, schweizerEvidence.sourceContentHash)
     assert.notEqual(passEvidence.lookupKey, schweizerEvidence.lookupKey)
     assert.notEqual(passEvidence.versionId, schweizerEvidence.versionId)
-    assert.match(passEvidence.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(passEvidence.versionId, /^ev2_[a-f0-9]{32}$/)
 
     const wohnsitz = anfrage({
       transitCountryCode: 'TH',
@@ -499,7 +500,7 @@ describe('Official Truth retrieved material candidate evidence', () => {
       canonicalUrl: 'https://www.gov.example/rules',
       retrievedAt: ABGERUFEN,
       sourceContentHash: hash,
-      material: {
+      material: { contentType: 'text/plain',
         canonicalUrl: 'https://www.gov.example/rules',
         retrievedAt: ABGERUFEN,
         sourceSnapshot: SNAPSHOT,
@@ -546,3 +547,8 @@ describe('Official Truth retrieved material candidate evidence', () => {
     assert.equal(JSON.stringify(ergebnis).includes('caller-source-secret'), false)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules"
+] as const

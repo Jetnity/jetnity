@@ -6,8 +6,8 @@
 // Der Aufrufer liefert denselben Forschungsumschlag wie der Beweis.
 // Er liefert keinen Graphen, keine Registry, keine Evidence, keinen Abruf,
 // keinen Fakt, keinen Extraktor und keine Politik.
-// Eine zweite Katalog-RPC gibt es nicht. Gesperrte Domains, die der
-// Katalogvertrag nicht wiedergeben kann, scheitern vor dem Netz.
+// Eine zweite Katalog-RPC gibt es nicht. Die vollständige v2-Wiedergabe
+// bewahrt auch gesperrte Domains und die exakten Inhaltsbindungen.
 // Zusammengesetzte Qualität scheitert vor dem Netz, weil keine
 // codeeigene Kompositionspolitik existiert. Diese Datei erfindet keine.
 // Der dekodierte RegelScope kommt nur aus dem kanonischen Beweis,
@@ -18,6 +18,7 @@
 
 import 'server-only'
 
+import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { akzeptierteEvidenceLesen, type EvidenceVersion } from '@/lib/readiness/evidence'
 import {
   OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY,
@@ -27,7 +28,7 @@ import {
   type OfficialTruthCompositionPolicy,
   type OfficialTruthCompositionSperrgrund,
 } from '@/lib/readiness/official-truth-composition-policy-registry'
-import type { OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
+import { quellenKatalogSnapshotAntwort, type OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   loadOfficialTruthSameRequestProof,
   type OfficialTruthSameRequestProofErgebnis,
@@ -58,6 +59,8 @@ import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const GRUND = /^[a-z][a-z0-9_]{0,80}$/
 const ABRUF_GRUENDE = new Set<string>([
+  'content_not_eligible', 'identity_profile_unavailable', 'content_identity_mismatch',
+  'representation_url_mismatch', 'content_type_mismatch',
   'invalid_url',
   'insecure_scheme',
   'credentials',
@@ -102,12 +105,13 @@ export type OfficialTruthSameRequestExtractionSperrgrund =
   | 'support_binding_mismatch'
   | 'representation_not_eligible'
 
-export type OfficialTruthSameRequestRetrievalProvenienz = {
+export type OfficialTruthSameRequestRetrievalProvenienz = ContentIdentityBinding & {
+  readonly identitySchema: 2
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
   readonly retrievedAt: string
-  readonly contentType: string | null
+  readonly contentType: string
   readonly sourceContentHash: string
 }
 
@@ -150,12 +154,13 @@ export type OfficialTruthSameRequestExtractionErgebnis =
 
 type Beweis = Extract<OfficialTruthSameRequestProofErgebnis, { status: 'same_request_proof' }>
 
-type SaubererAbruf = {
+type SaubererAbruf = ContentIdentityBinding & {
+  readonly identitySchema: 2
   readonly status: 'server_owned_official_retrieval'
   readonly sourceId: string
   readonly canonicalUrl: string
   readonly retrievedAt: string
-  readonly contentType: string | null
+  readonly contentType: string
   readonly sourceSnapshot: string
   readonly sourceContentHash: string
   readonly redirectCount: number
@@ -228,45 +233,8 @@ function wiedergabe(
   if (!registry || typeof registry !== 'object' || !Array.isArray(registry.sources) || !Array.isArray(registry.blockedDomains)) {
     return { ok: false, reason: 'support_binding_mismatch' }
   }
-  if (registry.blockedDomains.length > 0) return { ok: false, reason: 'blocked_domain_not_replayable' }
-
-  const sources: Record<string, unknown>[] = []
-  for (const quelle of registry.sources) {
-    const satz = datensatz(quelle)
-    if (!satz) return { ok: false, reason: 'support_binding_mismatch' }
-    if (typeof satz.sourceId !== 'string' || typeof satz.publisherName !== 'string') {
-      return { ok: false, reason: 'support_binding_mismatch' }
-    }
-    if (satz.sourceClass !== 'official_authority' && satz.sourceClass !== 'licensed_evidence_provider') {
-      return { ok: false, reason: 'support_binding_mismatch' }
-    }
-    if (satz.authorityName !== null && typeof satz.authorityName !== 'string') {
-      return { ok: false, reason: 'support_binding_mismatch' }
-    }
-    if (!Array.isArray(satz.domains) || satz.domains.some((domain) => typeof domain !== 'string')) {
-      return { ok: false, reason: 'support_binding_mismatch' }
-    }
-    sources.push({
-      source_id: satz.sourceId,
-      source_class: satz.sourceClass,
-      publisher_name: satz.publisherName,
-      authority_name: satz.authorityName,
-      domains: [...satz.domains],
-    })
-  }
-
-  const antwort = Object.freeze({
-    ok: true as const,
-    operation: 'read_registry' as const,
-    sources: Object.freeze(
-      sources.map((zeile) =>
-        Object.freeze({
-          ...zeile,
-          domains: Object.freeze([...(zeile.domains as string[])]),
-        }),
-      ),
-    ),
-  })
+  const antwort = quellenKatalogSnapshotAntwort(registry)
+  if (!antwort) return { ok: false, reason: 'support_binding_mismatch' }
 
   return {
     ok: true,
@@ -309,7 +277,7 @@ function abrufLesen(
   }
   if (typeof satz.sourceSnapshot !== 'string') return { ok: false, reason: 'invalid_source_snapshot' }
   if (typeof satz.retrievedAt !== 'string') return { ok: false, reason: 'invalid_retrieval_time' }
-  if (satz.contentType !== null && typeof satz.contentType !== 'string') return { ok: false, reason: 'http_failed' }
+  if (satz.identitySchema !== 2 || typeof satz.contentType !== 'string') return { ok: false, reason: 'http_failed' }
   if (
     typeof satz.redirectCount !== 'number' ||
     !Number.isSafeInteger(satz.redirectCount) ||
@@ -318,11 +286,13 @@ function abrufLesen(
   ) {
     return { ok: false, reason: 'redirect_limit' }
   }
-  const contentType = satz.contentType as string | null
+  const contentType = satz.contentType as string
   const redirectCount = satz.redirectCount
   return {
     ok: true,
     abruf: {
+      ...contentIdentityBinding(satz as unknown as ContentIdentityBinding),
+      identitySchema: 2,
       status: 'server_owned_official_retrieval',
       sourceId: satz.sourceId,
       canonicalUrl: satz.canonicalUrl,
@@ -380,6 +350,7 @@ function evidenceBindet(beweis: Beweis, support: OfficialTruthServerHeldSameRequ
   if (!version) return false
   const gelesen = akzeptierteEvidenceLesen(version, beweis.registry)
   if (!gelesen) return false
+  if (!contentIdentityMatches(gelesen, support) || gelesen.contentType !== support.contentType) return false
   if (gelesen.versionId !== support.versionId || gelesen.sourceId !== support.sourceId) return false
   if (gelesen.canonicalUrl !== support.canonicalUrl || gelesen.sourceContentHash !== support.sourceContentHash) return false
   if (gelesen.scope.sourceId !== support.sourceId) return false
@@ -391,15 +362,12 @@ function evidenceBindet(beweis: Beweis, support: OfficialTruthServerHeldSameRequ
 function herkunftPasst(beweis: Beweis, erfolg: Extract<OfficialTruthTrustedFactExtractorErgebnis, { status: 'trusted_fact_extracted' }>): boolean {
   if (erfolg.policyId !== null || erfolg.policyVersion !== null) return false
   if (!gleicheIds(erfolg.supportVersionIds, beweis.supportVersionIds)) return false
-  const versionen = new Set(beweis.supports.map((support) => support.versionId))
-  const quellen = new Set(beweis.supports.map((support) => support.sourceId))
   if (erfolg.provenance.length === 0) return false
   return erfolg.provenance.every(
     (eintrag) =>
       eintrag.policyId === null &&
       eintrag.policyVersion === null &&
-      versionen.has(eintrag.versionId) &&
-      quellen.has(eintrag.sourceId) &&
+      beweis.supports.some((support) => support.versionId === eintrag.versionId && contentIdentityMatches(support, eintrag)) &&
       eintrag.extractorId === erfolg.extractorId &&
       eintrag.extractorVersion === erfolg.extractorVersion,
   )
@@ -415,6 +383,8 @@ function material(
     const fund = gebunden.find((eintrag) => eintrag.versionId === support.versionId)
     if (!fund) return null
     retrievals.push({
+      ...contentIdentityBinding(support),
+      identitySchema: 2,
       versionId: support.versionId,
       sourceId: support.sourceId,
       canonicalUrl: fund.abruf.canonicalUrl,
@@ -501,7 +471,7 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     const phaseA = officialTruthCompositionPhaseA({
       factKind: fest.factKind,
       requirementType: zelle.scope.requirementType,
-      supports: fest.supports.map((support) => ({ sourceId: support.sourceId, canonicalUrl: support.canonicalUrl })),
+      supports: fest.supports.map((support) => ({ ...contentIdentityBinding(support), canonicalUrl: support.canonicalUrl })),
       extractors: register.extractors,
       policies: register.policies,
     })
@@ -515,14 +485,23 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   const gebunden: Gebunden[] = []
   for (const support of fest.supports) {
     if (!stuetzeIstAbleitbar(support)) return blockiert('support_binding_mismatch')
+    if (!evidenceBindet(fest, support)) return blockiert('support_binding_mismatch')
+    const representation = contentRepresentationFromRegistry(fest.registry, support.canonicalUrl)
+    if (!representation.ok || !contentIdentityMatches(representation.value, support)) return blockiert('support_binding_mismatch')
+    // A final-only URL is observation identity, not initial-request permission.
+    // Choose within this exact representation's already validated request set.
+    const requestUrl = representation.value.requestUrls.includes(support.canonicalUrl)
+      ? support.canonicalUrl : representation.value.requestUrls[0]
+    if (!requestUrl) return blockiert('support_binding_mismatch')
     let roh: unknown
     try {
-      roh = await abhaengigkeiten.retrieve({ sourceId: support.sourceId, url: support.canonicalUrl }, replay.transport)
+      roh = await abhaengigkeiten.retrieve({ sourceId: support.sourceId, url: requestUrl }, replay.transport)
     } catch {
       return blockiert('http_failed')
     }
     const gelesen = abrufLesen(roh)
     if (!gelesen.ok) return blockiert(gelesen.reason)
+    if (!contentIdentityMatches(gelesen.abruf, support) || gelesen.abruf.contentType !== support.contentType) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.sourceId !== support.sourceId) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.canonicalUrl !== support.canonicalUrl) return blockiert('source_url_changed_since_evidence')
     if (gelesen.abruf.sourceContentHash !== support.sourceContentHash) return blockiert('source_changed_since_evidence')
@@ -539,6 +518,8 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
         retrieval: eintrag.abruf,
       })),
       proofSupports: fest.supports.map((support) => ({
+        ...contentIdentityBinding(support),
+        contentType: support.contentType,
         versionId: support.versionId,
         sourceId: support.sourceId,
         canonicalUrl: support.canonicalUrl,

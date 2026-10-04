@@ -46,7 +46,7 @@ const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
 
 function ev(n: number): string {
-  return `ev1_${n.toString(16).padStart(32, '0')}`
+  return `ev2_${n.toString(16).padStart(32, '0')}`
 }
 
 function atom(praedikat: Record<string, unknown>, support?: string[]): Record<string, unknown> {
@@ -887,6 +887,7 @@ describe('regulierungs-anwendbarkeit', () => {
     assert.equal(quelle.includes('reg-eval-ctx:v1'), false)
     const importe = [...quelle.matchAll(/from\s+['"]([^'"]+)['"]/g)].map((treffer) => treffer[1])
     assert.deepEqual(importe, [
+      '@/lib/readiness/official-truth-content-identity',
       '@/lib/readiness/domain',
       '@/lib/readiness/digest',
       '@/lib/readiness/official',
@@ -901,6 +902,9 @@ describe('regulierungs-anwendbarkeit', () => {
     const eigene = new Set([
       join(hier, 'regulierungs-anwendbarkeit.ts'),
       join(hier, 'regulierungs-anwendbarkeit.test.ts'),
+      // R1's exact importer inventory mentions the module without importing it.
+      join(hier, 'official-truth-content-identity.test.ts'),
+      join(hier, 'official-truth-content-identity-r2.test.ts'),
       join(hier, 'rule-claims.ts'),
       join(hier, 'official-truth-composition-policy-registry.ts'),
       join(hier, 'official-truth-composition-policy-registry.test.ts'),

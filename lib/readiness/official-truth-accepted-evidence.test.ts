@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-accepted-evidence.test.ts
 //
 // Annahme nur über den neu gebauten Kandidaten und die bestehende Funktion.
@@ -154,7 +155,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string): QuellenEingabe {
@@ -210,7 +211,7 @@ function huelle(teil?: {
   const material =
     teil?.material === null
       ? null
-      : {
+      : { contentType: 'text/plain',
           canonicalUrl: 'https://www.gov.example/rules',
           retrievedAt: ABGERUFEN,
           sourceSnapshot: SNAPSHOT,
@@ -312,7 +313,7 @@ describe('Official Truth candidate evidence acceptance', () => {
     const zelleGelesen = regelScopeAusEvidenceScope(request.scope)
     assert.equal(zelleGelesen.ok, true)
     if (!zelleGelesen.ok) throw new Error('zelle')
-    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE })
+    const schluessel = evidenceSuchschluessel({ ...zelleGelesen.scope, sourceId: QUELLE }, { sourceId: evidence.sourceId, contentItemId: evidence.contentItemId, representationId: evidence.representationId })
     assert.equal(schluessel.ok, true)
     if (!schluessel.ok) throw new Error('schluessel')
 
@@ -379,7 +380,7 @@ describe('Official Truth candidate evidence acceptance', () => {
     assert.deepEqual(evidence.scope, kandidatErgebnis.evidence.scope)
     assert.equal(evidence.lifecycle, 'accepted')
     assert.equal(evidence.validationState, 'valid')
-    assert.equal(evidence.versionId, leer.versionId)
+    assert.notEqual(evidence.versionId, leer.versionId)
     assert.equal(evidence.sourceContentHash, leer.sourceContentHash)
     assert.equal(JSON.stringify(extraktion), vorher)
     assert.equal(akzeptiert(annehmen(eingabe, { extractionNote: '   ' })).extractionNote, null)
@@ -423,7 +424,7 @@ describe('Official Truth candidate evidence acceptance', () => {
           canonicalUrl: 'https://www.gov.example/rules',
           retrievedAt: ABGERUFEN,
           sourceContentHash: hash,
-          material: { canonicalUrl: 'https://www.gov.example/rules', retrievedAt: ABGERUFEN, sourceSnapshot: SNAPSHOT },
+          material: { contentType: 'text/plain', canonicalUrl: 'https://www.gov.example/rules', retrievedAt: ABGERUFEN, sourceSnapshot: SNAPSHOT },
         },
         extraktion: null,
         uhrzeit: uhr(),
@@ -554,3 +555,8 @@ describe('Official Truth candidate evidence acceptance', () => {
     assert.equal(JSON.stringify(ergebnis).includes('caller-source-secret'), false)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules"
+] as const

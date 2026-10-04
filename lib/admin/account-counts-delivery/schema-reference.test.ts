@@ -23,11 +23,11 @@ const READER = 'lib/admin/account-counts-delivery/reader.ts'
 const SQL = 'scripts/db/admin-account-counts-delivery-1-rpc.sql'
 const WRAPPER_NAME = ['admin', 'account', 'counts', 'v1'].join('_')
 const STORE_SOURCE = 'lib/readiness/official-truth-store-server.ts'
-const STORE_SQL = 'supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql'
-const STORE_RPC = ['official', 'truth', 'store', 'accepted', 'v1'].join('_')
+const STORE_SQL = 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql'
+const STORE_RPC = ['official', 'truth', 'store', 'accepted', 'v2'].join('_')
 const CATALOG_SOURCE = 'lib/readiness/official-truth-source-catalog-server.ts'
-const CATALOG_SQL = 'supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql'
-const CATALOG_RPC = ['official', 'truth', 'source', 'catalog', 'v1'].join('_')
+const CATALOG_SQL = 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql'
+const CATALOG_RPC = ['official', 'truth', 'source', 'catalog', 'v2'].join('_')
 const FACT_ENTRY_SOURCE = 'lib/readiness/official-truth-fact-entry-authority-server.ts'
 const FACT_ENTRY_SQL = 'supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql'
 const FACT_ENTRY_RPC = ['darf', 'official', 'truth', 'freigeben'].join('_')
@@ -96,8 +96,7 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
       },
       {
         [SQL]: `create function public.${WRAPPER_NAME}()`,
-        [STORE_SQL]: `create function public.${STORE_RPC}(payload jsonb)`,
-        [CATALOG_SQL]: `create function public.${CATALOG_RPC}(payload jsonb)`,
+        [STORE_SQL]: `create function public.${STORE_RPC}(payload jsonb); create function public.${CATALOG_RPC}(payload jsonb)`,
         [FACT_ENTRY_SQL]: `create function public.${FACT_ENTRY_RPC}()`,
       },
     )

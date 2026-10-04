@@ -13,6 +13,8 @@ import {
   type OfficialTruthRechercheAusfuehrungsplanSperrgrund,
   type OfficialTruthRechercheQuellenplan,
 } from '@/lib/readiness/official-truth-research-execution-plan'
+import { contentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { quellenUrlAufloesen, type QuellenRegistry, type QuellenUrlFehler } from '@/lib/readiness/source-registry'
 
 const UMSCHLAG_FELDER = ['request', 'registry', 'descriptors', 'candidates'] as const
@@ -75,6 +77,7 @@ const TRACKING_NAMEN = new Set(['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid',
 
 export type OfficialTruthUrlKandidatenSperrgrund =
   | OfficialTruthRechercheAusfuehrungsplanSperrgrund
+  | 'content_not_eligible'
   | 'no_eligible_official_source'
   | 'invalid_envelope'
   | 'sensitive_personal_field'
@@ -94,7 +97,7 @@ export type OfficialTruthUrlKandidatenSperrgrund =
  * Eine URL, die zur Quellenkennung und zu ihrer registrierten Hostliste passt.
  * Keine Punktzahl, keine Rangfolge und kein Quellenname.
  */
-export type OfficialTruthUrlKandidat = {
+export type OfficialTruthUrlKandidat = ContentIdentityBinding & {
   readonly sourceId: string
   readonly canonicalUrl: string
 }
@@ -232,7 +235,9 @@ function kandidatPruefen(
   const schluessel = `${roh.sourceId}\n${url.canonicalUrl}`
   if (gesehen.has(schluessel)) return 'duplicate_canonical_url'
   gesehen.add(schluessel)
-  return Object.freeze({ sourceId: url.source.sourceId, canonicalUrl: url.canonicalUrl })
+  const content = quellenInhaltRouten(registry as QuellenRegistry, roh.sourceId, url.canonicalUrl)
+  if (!content.ok) return content.reason
+  return Object.freeze({ ...contentIdentityBinding(content.representation), canonicalUrl: url.canonicalUrl })
 }
 
 /**

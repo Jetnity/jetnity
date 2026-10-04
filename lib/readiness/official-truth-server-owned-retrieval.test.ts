@@ -1,3 +1,4 @@
+import { r2Profiles, r2CatalogRows } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-server-owned-retrieval.test.ts
 //
 // Servereigene amtliche HTTPS-Lesung. Synthetische *.example-Quellen.
@@ -32,6 +33,7 @@ const AMTLICH_URL = 'https://www.gov.example/rules'
 const JETZT = '2026-10-03T00:25:00.000Z'
 const TEXT = 'official page line\nserver-owned'
 const ERFOLG_SCHLUESSEL = [
+  'contentItemId', 'contentItemVersion', 'identityProfileId', 'identityProfileVersion', 'identitySchema', 'representationId', 'representationVersion',
   'canonicalUrl',
   'contentType',
   'redirectCount',
@@ -136,6 +138,7 @@ function lookupWarten(
 
 async function laufen(teil?: {
   eingabe?: unknown
+  publications?: readonly { url: string; requestUrls?: readonly string[]; mediaType?: string }[]
   quellen?: readonly QuellenEingabe[]
   katalog?: 'ok' | 'missing' | 'fail' | 'throw'
   adressen?: (hostname: string) => readonly OfficialTruthServerOwnedRetrievalAdresse[] | 'throw'
@@ -156,12 +159,12 @@ async function laufen(teil?: {
       if (modus === 'fail' || payload.operation !== 'read_registry') return { ok: false }
       return {
         ok: true,
-        antwort: { ok: true, operation: 'read_registry', sources: liste.map(katalogZeile) },
+        antwort: { ...r2CatalogRows(liste.map(katalogZeile), teil?.publications ?? R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: liste.map(katalogZeile) },
       }
     },
   }
   const ergebnis = await decideOfficialTruthServerOwnedRetrieval(teil?.eingabe ?? { sourceId: AMTLICH, url: AMTLICH_URL }, {
-    catalog: modus === 'missing' ? { env: {} } : { transport },
+    catalog: modus === 'missing' ? { env: {} } : { identityProfiles: r2Profiles, transport },
     now: () => {
       uhr += 1
       return teil?.now ? teil.now() : new Date(JETZT)
@@ -259,11 +262,11 @@ describe('official truth server-owned retrieval', () => {
       address: '8.8.8.8',
       receipt: { ok: true },
       attestation: { ok: true },
-      evidenceVersion: { versionId: 'ev1_x' },
+      evidenceVersion: { versionId: 'ev2_x' },
       candidate: { proposal: {} },
       trustedRuleFact: { kind: 'requirement_effect' },
       witness: { status: 'authorized_preacceptance_witness' },
-      reviewPacketKey: 'review-packet:v2:aa',
+      reviewPacketKey: 'review-packet:v3:aa',
       model: 'gpt',
       suggestion: { effect: 'required' },
       decision: { effect: 'required' },
@@ -519,6 +522,7 @@ describe('official truth server-owned retrieval', () => {
     const eingabe = { sourceId: AMTLICH, url: `${AMTLICH_URL}?lang=en` }
     const lauf = await laufen({
       eingabe,
+      publications: [{ url: `${AMTLICH_URL}?lang=en`, mediaType: 'text/html' }],
       antwort: () => ({
         status: 200,
         headers: { 'Content-Type': 'Text/HTML; charset=UTF-8' },
@@ -526,7 +530,7 @@ describe('official truth server-owned retrieval', () => {
       }),
     })
     const wert = erfolg(lauf)
-    assert.deepEqual(Object.keys(wert).sort(), ERFOLG_SCHLUESSEL)
+    assert.deepEqual(Object.keys(wert).sort(), [...ERFOLG_SCHLUESSEL].sort())
     assert.equal(wert.sourceId, AMTLICH)
     assert.equal(wert.canonicalUrl, `https://www.gov.example/rules?lang=en`)
     assert.equal(wert.retrievedAt, JETZT)
@@ -547,7 +551,7 @@ describe('official truth server-owned retrieval', () => {
     }, TypeError)
     assert.equal(wert.sourceSnapshot, `official\r\n${TEXT}`)
     const ohneTyp = await laufen({ antwort: () => ({ body: TEXT, headers: {} }) })
-    assert.equal(erfolg(ohneTyp).contentType, null)
+    assert.equal(grund(ohneTyp), 'content_type_mismatch')
   })
 
   test('eine Mutation der Eingabe während der Antwort ändert das Ergebnis nicht', async () => {
@@ -628,6 +632,7 @@ describe('official truth server-owned retrieval', () => {
 
   test('23 und 24 eine begrenzte Weiterleitung derselben Quelle, auch relativ, gelingt', async () => {
     const relativ = await laufen({
+      publications: [{ url: `${AMTLICH_URL}/next`, requestUrls: [AMTLICH_URL, `${AMTLICH_URL}/next`] }],
       antwort: (url) => {
         if (url === AMTLICH_URL) return { status: 302, location: '/rules/next' }
         return { status: 200, headers: { 'content-type': 'text/plain' }, body: TEXT }
@@ -676,6 +681,7 @@ describe('official truth server-owned retrieval', () => {
       assert.equal(JSON.stringify(lauf.ergebnis).includes('s3cret'), false, fall.location)
     }
     const privat = await laufen({
+      publications: [{ url: 'https://travel.gov.example/rules', requestUrls: [AMTLICH_URL, 'https://travel.gov.example/rules'] }],
       antwort: (url) => {
         if (url === AMTLICH_URL) return { status: 302, location: 'https://travel.gov.example/rules' }
         return { body: TEXT }
@@ -691,12 +697,14 @@ describe('official truth server-owned retrieval', () => {
 
   test('27 Schleifen und zu viele Sprünge scheitern', async () => {
     const schleife = await laufen({
+      publications: [{ url: AMTLICH_URL, requestUrls: [AMTLICH_URL, `${AMTLICH_URL}/again`] }],
       antwort: (url) => ({ status: 302, location: url.endsWith('/rules') ? '/rules/again' : '/rules' }),
     })
     assert.equal(grund(schleife), 'redirect_loop')
     assert.equal(schleife.verbindungen.length, 2)
     const ziele = Array.from({ length: 7 }, (_, index) => `https://www.gov.example/step-${index}`)
     const kette = await laufen({
+      publications: [{ url: ziele[6]!, requestUrls: ziele }],
       eingabe: { sourceId: AMTLICH, url: ziele[0] },
       antwort: (url) => {
         const index = ziele.indexOf(url)
@@ -709,6 +717,7 @@ describe('official truth server-owned retrieval', () => {
       ziele.slice(0, 6),
     )
     const knapp = await laufen({
+      publications: [{ url: ziele[5]!, requestUrls: ziele.slice(0, 6) }],
       eingabe: { sourceId: AMTLICH, url: ziele[0] },
       antwort: (url) => {
         const index = ziele.indexOf(url)
@@ -801,6 +810,7 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(standard.verbindungen[0]?.url, AMTLICH_URL)
     assert.equal(wert.canonicalUrl.includes(':443'), false)
     const umleitung = await laufen({
+      publications: [{ url: `${AMTLICH_URL}/next`, requestUrls: [AMTLICH_URL, `${AMTLICH_URL}/next`] }],
       antwort: (url) => {
         if (url === AMTLICH_URL) return { status: 302, location: 'https://www.gov.example:443/rules/next' }
         return { status: 200, body: TEXT, headers: { 'content-type': 'text/plain' } }
@@ -843,6 +853,7 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(JSON.stringify(zweite.ergebnis).includes(zwei), false)
     assert.equal(JSON.stringify(erste.ergebnis).includes('#'), false)
     const schleife = await laufen({
+      publications: [{ url: AMTLICH_URL, requestUrls: [AMTLICH_URL, `${AMTLICH_URL}/again`] }],
       antwort: () => ({ status: 302, location: `#${eins}` }),
     })
     assert.equal(grund(schleife), 'redirect_loop')
@@ -858,6 +869,7 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(nurFragment.verbindungen.length, 1)
     assert.equal(JSON.stringify(nurFragment.ergebnis).includes(zwei), false)
     const weiter = await laufen({
+      publications: [{ url: `${AMTLICH_URL}/next`, requestUrls: [AMTLICH_URL, `${AMTLICH_URL}/next`] }],
       eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}#${eins}` },
       antwort: (url) => {
         if (url === AMTLICH_URL) return { status: 302, location: `https://www.gov.example/rules/next#${zwei}` }
@@ -931,3 +943,67 @@ function dateienUnter(relativ: string): string[] {
   }
   return fund
 }
+
+// Explicit synthetic v2 publications.
+const R2_PUBLICATIONS = [
+  {
+    "url": "https://evil.example/mutated",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://evil.example/next",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://evil.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://provider.example/feed",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://travel.gov.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://user:s3cret@www.gov.example/next",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://user:s3cret@www.gov.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.blocked.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example/rules/next",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example/rules?lang=en",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example:443/rules",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example:443/rules/next",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.gov.example:8443/rules#port-secret-91f3",
+    "mediaType": "text/plain"
+  },
+  {
+    "url": "https://www.interior.example/rules",
+    "mediaType": "text/plain"
+  }
+] as const

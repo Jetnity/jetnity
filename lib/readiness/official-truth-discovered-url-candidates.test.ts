@@ -1,3 +1,4 @@
+import { r2Registry, r2Binding } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-discovered-url-candidates.test.ts
 //
 // URL-Kandidatinnen gegen synthetische *.example-Behörden.
@@ -70,7 +71,7 @@ type WirkungUnmoeglich = Extract<
 > extends never
   ? true
   : never
-type NurPaar = keyof OfficialTruthUrlKandidat extends 'sourceId' | 'canonicalUrl' ? true : never
+type NurPaar = keyof OfficialTruthUrlKandidat extends 'sourceId' | 'canonicalUrl' | 'contentItemId' | 'contentItemVersion' | 'representationId' | 'representationVersion' | 'identityProfileId' | 'identityProfileVersion' ? true : never
 
 const kandidatSauber: KandidatSauber = true
 const wirkungUnmoeglich: WirkungUnmoeglich = true
@@ -124,7 +125,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, [...R2_PUBLICATIONS, ...Array.from({ length: 17 }, (_, index) => `https://www.gov.example/p/${index}`)])
 }
 
 function amt(sourceId: string, domains: readonly string[]): QuellenEingabe {
@@ -257,14 +258,14 @@ describe('Official Truth discovered URL candidate validator', () => {
     const vorher = JSON.stringify(eingabe)
     const kandidaten = bestanden(pruefen(eingabe))
     assert.deepEqual(kandidaten, [
-      { sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://portal.gov.example/guide') },
-      { sourceId: QUELLE, canonicalUrl: kanonisch(basis, ADRESSE) },
+      { ...r2Binding(basis, kanonisch(basis, 'https://portal.gov.example/guide')), sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://portal.gov.example/guide') },
+      { ...r2Binding(basis, kanonisch(basis, ADRESSE)), sourceId: QUELLE, canonicalUrl: kanonisch(basis, ADRESSE) },
     ])
     assert.equal(JSON.stringify(eingabe), vorher)
     const ergebnis = pruefen(eingabe)
     if (ergebnis.status !== 'validated_url_candidates') throw new Error('status')
     assert.deepEqual(Object.keys(ergebnis).sort(), ['candidates', 'status'])
-    assert.deepEqual(Object.keys(ergebnis.candidates[0]).sort(), ['canonicalUrl', 'sourceId'])
+    assert.deepEqual(Object.keys(ergebnis.candidates[0]).sort(), ['canonicalUrl', 'contentItemId', 'contentItemVersion', 'identityProfileId', 'identityProfileVersion', 'representationId', 'representationVersion', 'sourceId'])
     const text = JSON.stringify(ergebnis)
     assert.equal(text.includes('publisherName'), false)
     assert.equal(text.includes('authorityName'), false)
@@ -294,10 +295,10 @@ describe('Official Truth discovered URL candidate validator', () => {
     ]
     const vorwaerts = [...rueckwaerts].reverse()
     const erwartet = [
-      { sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://gov.example/a') },
-      { sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://www.gov.example/b') },
-      { sourceId: DRITTE, canonicalUrl: kanonisch(basis, 'https://zeta.example/a') },
-      { sourceId: DRITTE, canonicalUrl: kanonisch(basis, 'https://zeta.example/b') },
+      { ...r2Binding(basis, kanonisch(basis, 'https://gov.example/a')), sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://gov.example/a') },
+      { ...r2Binding(basis, kanonisch(basis, 'https://www.gov.example/b')), sourceId: QUELLE, canonicalUrl: kanonisch(basis, 'https://www.gov.example/b') },
+      { ...r2Binding(basis, kanonisch(basis, 'https://zeta.example/a')), sourceId: DRITTE, canonicalUrl: kanonisch(basis, 'https://zeta.example/a') },
+      { ...r2Binding(basis, kanonisch(basis, 'https://zeta.example/b')), sourceId: DRITTE, canonicalUrl: kanonisch(basis, 'https://zeta.example/b') },
     ]
     assert.deepEqual(bestanden(pruefen(huelle({ registry: basis, descriptors: deskriptoren, candidates: rueckwaerts }))), erwartet)
     assert.deepEqual(bestanden(pruefen(huelle({ registry: basis, descriptors: deskriptoren, candidates: vorwaerts }))), erwartet)
@@ -555,3 +556,21 @@ describe('Official Truth discovered URL candidate validator', () => {
     assert.equal(JSON.stringify(ergebnis).includes('tracking-secret-91f3'), false)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://evil.example/rules",
+  "https://gov.example/a",
+  "https://portal.gov.example/guide",
+  "https://www.blocked.example/rules",
+  "https://www.gov.example/a",
+  "https://www.gov.example/b",
+  "https://www.gov.example/rules",
+  "https://www.gov.example/rules?gclid=tracking-secret-91f3",
+  "https://www.gov.example/rules?lang=en&ref=portal",
+  "https://www.interior.example/rules",
+  "https://www.provider.example/rules",
+  "https://zeta.example/a",
+  "https://zeta.example/b",
+  "https://zeta.example/rules"
+] as const

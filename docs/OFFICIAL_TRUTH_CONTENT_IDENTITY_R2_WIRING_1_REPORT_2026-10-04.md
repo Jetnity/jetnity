@@ -1,146 +1,171 @@
 # Official Truth content identity R2 wiring 1 — Report
 
-Date: 4 October 2026 (Europe/Zurich). Issue #814 / Draft PR #815 / Generation 1.
+Date: 4 October 2026. Issue #814 / Draft PR #815 / Generation 1.
 Logical writer: **Jetnity Official Truth coordinated content identity wiring R2**.
 Branch: `feat/official-truth-content-identity-r2-wiring-1`.
-Baseline: `30aa083dc752bf499dfc5a09448d06bd36d3ba64`.
+Baseline main: `30aa083dc752bf499dfc5a09448d06bd36d3ba64`.
 Immutable dispatch: `7185c60dd78604a5105b207a855fc74620195fc0`.
-Model: **GPT-6 Astra — Sehr hoch**, session evidence `model=gpt-6-astra`, `effort=xhigh`.
-Session: `01a1064d-7e3c-72a0-b257-387193918f67`. Single writer; no subagents.
+Resume parent (Scope Amendment 2): `dc5d96d44984cb340569bcd98f74f1ab4acafcc7`.
+Model: **GPT-6 Astra — Sehr hoch**, `gpt-6-astra` / `xhigh`.
+Same Codex session: `01a1064d-7e3c-72a0-b257-387193918f67`. One writer, no subagents.
 
-Classification: **CONTENT_IDENTITY_R2_BLOCKED**.
+Classification: **CONTENT_IDENTITY_R2_READY_FOR_REAL_IDENTITY_PROFILE_AUDIT**.
+This classification requests independent Technical-Lead review; it does not start the audit or grant registration/F8/DB authority. PR remains Draft.
 
-## Resumption after Scope Amendment 1 — second STOP
+The exact final published commit SHA is recorded in the PR #815 delivery receipt and the accompanying final-head validation manifest. This document belongs to that commit; it does not attempt to embed its own Git hash. Resolve it with `git rev-parse HEAD` at that delivered checkout. All gates are rerun after publication, with no subsequent repository edit.
 
-The same writer/session resumed from exact amendment head `012f6f0cff4c89e4d1d235425913a31a8696d816`. Both the entire original 489-line task and the entire 121-line amendment were read. Original seed remains immutable. Main is still the exact baseline, mode is NORMAL, model remains `gpt-6-astra` / `xhigh`, and #815 is the only overlapping writer. TL receipt `5978881653` was read: the earlier apply-governance MATERIAL is now processed; it grants no database authority here.
+## Result
 
-**The first scanner ownership blocker is resolved by the amendment. It is no longer the reason for STOP.** Its approved code repair has not been applied because the semantic pre-edit audit found a second required outside-closure test dependency before v2 gateway literals were introduced. The amendment requires the scanner changes to accompany those literals; no partial scanner-only cutover was made.
+The live trusted runtime now uses catalog v2 / store v2, `evidence-key:v3:` and `ev2_`. Authority identity remains `sourceId`; composition support identity is exactly `(sourceId, contentItemId)`. Item and representation versions and the profile id/version remain separate pinned provenance.
 
-The following existing tests require reconciliation with the mandatory R2 identity transition and are outside the expressly enumerated module-test ownership plus the two amendment paths:
+One catalog RPC parses all ten response fields, including identity schema 2 and every S1 collection. Duplicate sources/versions, orphan rows, mismatched reservations/URLs, invalid request ordinals and incompatible code profiles fail closed. The authority registry and R1 graph are deeply frozen together. Explicit empty v2 is valid. Missing or malformed v2 is unavailable, never empty success. Replay serializes this complete snapshot, including blocked domains, without another external catalog read.
 
-| Exact file | Concrete incompatible assertion/fixture | Required bounded reconciliation |
-| --- | --- | --- |
-| `lib/readiness/official-truth-review-suggestion.test.ts` | Line 48 fixes `/^review-packet:v2:[a-f0-9]{64}$/`; lines 276–279 and 721 require that old format on successful suggestions. Lines 145–211 construct authority-only registries/material with no item graph, representation or identity profile. The positive helper at lines 249–253 requires successful packet fingerprint rebuilding. | Upgrade synthetic fixtures and the expected new review format while preserving advisory-only, privacy, citation, immutability and negative assertions. No production suggestion change is currently demonstrated as necessary. |
-| `lib/readiness/evidence-store-schema.test.ts` | Lines 212–218 read current `evidence.ts` and require its lookup marker to equal `evidence-key:v2:` and version prefix to equal `ev1_`. The test ties a historical migration to the current runtime serializer. | Preserve immutable historical migration assertions, but separate them from the new ev2/v3 runtime contract. Do not retain misleading live prefix constants merely to satisfy the source-text assertion. No migration edit. |
-| `lib/readiness/rule-claim-store-schema.test.ts` | Lines 613–628 create and accept Evidence from source-only scope/material/authority registry; lines 646–672 require canonical Rule acceptance to succeed from it. No registered content identity exists in this fixture. | Upgrade only the runtime transit-acceptance fixture to synthetic registered ev2 identity; retain historical SQL checks and all 17-airport sorting/duplicate/malformed-code assertions. No migration edit. |
+Authority routing and research planning remain discovery. Exact registered request URL routing gates retrieval; same-host siblings and caller-invented item/profile fields do not acquire authority. Fresh retrieval retains DNS/SSRF/redirect/body defenses, pins the request set and final URL/media type, and verifies response identity with a code-owned profile before any legal extractor runs. Final-only redirect targets remain observation identity: replay starts from an explicitly registered request URL in the same exact representation.
 
-These paths are **test consumers**, not newly discovered production importers. No amendment of them is inferred. The user's resumed instruction explicitly says to STOP again if another outside-closure production/test/schema file becomes necessary.
+The canonical R1 serializers are reused. The only pure extensions are a source-neutral regulatory parser seam, a strict versioned binding reader/projection/equality, and coherent registry/graph resolution. Evidence, accepted Evidence, store payloads, frozen proof, replay, extraction provenance, composition citations, refresh and review all carry/reprove the exact tuple. Old ev1/lookup-v2 identities fail acceptance/reproof. Review keys use `review-packet:v3:` and bind the new provenance; old keys/intents cannot authorize a v2 packet.
 
-### Reproduction without repository edits
+Extractor definitions pin ContentItemRefs and exact representation/profile versions. Composition policies and item-attributed observations count publications. Two renderings/versions of one item reject explicitly; duplicate items hidden in larger sets reject. Two items under one authority pass through proof, fresh retrieval, policy-bound extraction and the private composition seal. Rule acceptance still uses only `regelKandidatAkzeptieren`; supports remain ev2 Evidence version ids. Schema-1 persistence still blocks before client/transport/RPC. The autonomous witness projection remains unchanged and cannot authorize F8.
 
-All three unmodified test files pass their baseline run: **31/31 tests**, zero skips. A separate disposable CommonJS preload intercepts only the compiled `official-truth-rule-review-fingerprint.ts` module and replaces `review-packet:v2:` with `review-packet:v3:` in memory. Running the **unchanged** review-suggestion test then produces **11 tests: 6 pass / 5 fail / 0 skipped**. Each failing case requires the old regex while receiving the new versioned key. This is a dependency proof for the required format change, not an implementation of R2 or a claim that the mandatory graph/identity cutover is complete.
+Refresh remains within one exact item/representation stream; item, representation, profile, descriptor version, final URL and media drift cannot silently become a predecessor. Equal content hashes do not merge identities.
 
-The probe hook is:
+## Runtime constants and empty registries
 
-```js
-const Module = require('node:module')
-const original = Module.prototype._compile
-Module.prototype._compile = function (content, filename) {
-  if (filename.endsWith('/lib/readiness/official-truth-rule-review-fingerprint.ts')) {
-    if (!content.includes('review-packet:v2:')) throw new Error('Missing baseline marker')
-    content = content.replaceAll('review-packet:v2:', 'review-packet:v3:')
-  }
-  return original.call(this, content, filename)
-}
+- `OFFICIAL_TRUTH_SOURCE_CATALOG_V2 = 'official_truth_source_catalog_v2'`.
+- `OFFICIAL_TRUTH_STORE_ACCEPTED_V2 = 'official_truth_store_accepted_v2'`.
+- Each runtime `.rpc()` keeps its one literal v2 name; no fallback.
+- Identity profiles: **0**, frozen.
+- Trusted extractors: **0**, frozen.
+- Composition policies: **0**, frozen.
+- Region pins: **0**, frozen.
+
+The scanner amendment changes only the two exact gateway entries to those v2 names, retains the exact runtime source paths and points both to `supabase/migrations/20261004010705_official_truth_content_identity_2.sql`. The schema-reference test retains exact-list expectations. No generic unknown-RPC exception or scanner weakening.
+
+Historical v1 migration assertions stay historical. Current runtime tests assert ev2/v3. Positive runtime fixtures use canonical synthetic R1/R2 identities; licensed/source-only fixtures are rejection cases. Review suggestion remains advisory and its production module is unchanged.
+
+## Validation
+
+The complete suite ran with **Node 22 and PostgreSQL 16** in a disposable local Docker container, `--network none`, with a read-only repository mount and a copied test checkout. It has no Supabase credentials or live database connection. The existing SQL proofs create/drop only their synthetic temporary clusters. Repository migrations were read as fixture inputs, never edited or applied to Development/Production. The previously reported macOS `initdb ENOENT` limitation is resolved by this isolated test environment; no test was skipped.
+
+| Gate | Result |
+| --- | --- |
+| Targeted identity/catalog/routing/retrieval/Evidence/store/proof/replay/extractor/composition/refresh/review matrix, including S1 PostgreSQL | **566/566 PASS**, 0 fail, 0 skip |
+| New coordination suite (one `.example` authority, two items, HTML/API for one item) | **24/24 PASS** |
+| Full `npm test` | **4,752/4,752 PASS**, 0 fail, 0 skip |
+| Explicit amended schema-reference/review-suggestion/Evidence-schema/Rule-schema tests | **35/35 PASS**, schema-reference **4/4** |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 errors / 149 existing warnings |
+| Canonical Production `npm run build` (including prebuild) | PASS; local build only |
+| Operating-mode guard | PASS / NORMAL |
+| API protection | PASS, 12 admin routes |
+| Schema references | PASS, exact v2 gateway allowlist only |
+| Dead modules / exports / dependencies | PASS, 0 unjustified orphan modules, 0 unused exports, 0 unused checked dependencies |
+| `git diff --check` | PASS |
+| Immutable seed / amendments | Byte-identical |
+| Production v1 RPC / ev1 / lookup-v2 / review-v2 search in coordinated runtime | 0 matches |
+| New real source/GOV.UK/CTA/profile/extractor/policy/pin registration search | 0 additions |
+| Forbidden path / outside-closure change search | 0 unauthorized paths |
+
+Import-time regression installs throwing network hooks in a fresh Node process with synthetic configured service credentials and imports all server entries: **0 network/DB calls**. Missing-v2 invocation transport tests fail closed after one attempt, without v1 fallback. Production build completes with empty registries and no new route activation.
+
+The full command is `npm test`. The targeted command is:
+
+```sh
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/readiness/official-truth-*.test.ts \
+  lib/readiness/source-foundation.test.ts lib/readiness/rule-claims.test.ts \
+  lib/readiness/regulierungs-anwendbarkeit.test.ts \
+  lib/readiness/evidence-store-schema.test.ts lib/readiness/rule-claim-store-schema.test.ts \
+  lib/admin/account-counts-delivery/schema-reference.test.ts
 ```
 
-With the hook saved outside the repository, invoke `node --require <hook> --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-review-suggestion.test.ts`. No production/test file is changed by this experiment. A second in-memory source-text probe reproduces both historical Evidence prefix assertion mismatches. The Rule fixture incompatibility is established by the exact constructor/acceptance calls and missing mandatory content identity, not by claiming a completed v2 execution.
+Initial validation found and corrected exact fixture/expectation issues exposed by the cutover, unused test exports/imports, and final-only replay selection. Earlier incomplete runs are superseded by the full passing matrix. Linux Git and the tracked `.env.example` are included so unrelated existing full-suite tests run unchanged.
 
-The renewed tracked-source import/reference inventory still contains 272 references, 93 non-test references and the same two external production importers (candidate-batch and review-suggestion). The remaining external test consumers were also inspected: candidate-batch uses the unchanged quality enum; S1 schema-v2 uses the existing R1 v3/ev2 helpers. No additional required edit is established for either. The complete internal R2 implementation audit remains unfinished at this STOP; this is not a promise that no further implementation finding can emerge.
+## Importer and scope audit
 
-Final-head checks are re-run for this documentation delivery. The targeted set adds the three identified test consumers to the original 28-file baseline set. The final exact SHA and actual gate counts are in PR #815 and the delivery report; the earlier run below remains historical evidence, not mislabeled final-head evidence.
+The finite original closure has **28 production modules**. Current repository search finds **314 import references**, **116 non-test references across 30 production importer files**. Every production importer was inspected before material edits and rechecked at delivery. The only outside-closure production importers are:
 
-Changed production files/tests: **none**. This resumption updates only this report and the existing handoff/self-review. Both immutable task and amendment are unchanged. V2 runtime constants/calls and ev2/v3 trusted wiring remain unimplemented. Registry lengths remain 0/0/0/0, frozen. No live DB call/mutation, registration, route change or other prohibited work occurred.
+- `lib/readiness/official-truth-candidate-batch.ts`: uses the unchanged quality enum; research-only, no accepted identity construction.
+- `lib/readiness/official-truth-review-suggestion.ts`: delegates packet/fingerprint reconstruction; no hard-coded old identity. Its authorized test is upgraded while all advisory/privacy/citation assertions remain.
 
-First unfinished next step: independent TL review of these three exact test dependencies and, if accepted, a new explicit versioned amendment for the narrow fixture/expectation reconciliation. This writer grants no scope itself and will not preserve a source-only acceptance path, obsolete live review format, or skip assertions to manufacture green tests. Remain Draft; STOP, no F8 or follow-up.
+Neither requires a production edit. No route/app/component/provider/traveller importer or change was introduced. Research source routing/execution-plan and autonomous witness production files remain unchanged because discovery and the narrow delegated witness projection are already compatible.
 
-## Historical first STOP — superseded ownership blocker
+The five outside-original-closure changes are exactly those granted by Amendments 1 and 2. No sixth path is used. Task seed and both amendments remain byte-identical. The PR also contains the TL-authored task/amendment documents already present at the resume parent; those are not writer edits.
 
-Implementation stopped at a reproduced scope conflict before any production or test edit. R2 is **not implemented**. Existing catalog/store v1, lookup-v2 and ev1 runtime assumptions remain. Passing baseline checks do not establish R2 readiness.
+## Exact writer-changed files
 
-The task prohibits editing `scripts/db`, generated DB types and unrelated tests, while requiring v2-only catalog/store calls and a passing schema-reference gate. The existing gate cannot recognize either v2 RPC:
+Production/runtime plus the authorized scanner (26):
 
-| Required correction outside ownership | Exact evidence |
-| --- | --- |
-| `scripts/db/verwendung.mjs:55` (`LOCAL_UNAPPLIED_RPCS`) | Entries at lines 62 and 67 recognize only `official_truth_store_accepted_v1` and `official_truth_source_catalog_v1`, mapped to their v1 migration files. Neither v2 RPC exists in `types/supabase.ts`. Unknown RPCs produce findings at lines 170–200. |
-| `lib/admin/account-counts-delivery/schema-reference.test.ts:59` | The test asserts the exact entire allowlist, including both v1 names and migration paths. It must be reconciled with a narrowly approved v2 allowlist correction. This test is outside the assigned readiness tests. |
+- `lib/readiness/evidence.ts`
+- `lib/readiness/official-truth-accepted-evidence.ts`
+- `lib/readiness/official-truth-composition-policy-registry.ts`
+- `lib/readiness/official-truth-content-identity.ts`
+- `lib/readiness/official-truth-coverage.ts`
+- `lib/readiness/official-truth-discovered-url-candidates.ts`
+- `lib/readiness/official-truth-refresh-diff.ts`
+- `lib/readiness/official-truth-research-request.ts`
+- `lib/readiness/official-truth-retrieved-candidate-evidence.ts`
+- `lib/readiness/official-truth-retrieved-material.ts`
+- `lib/readiness/official-truth-rule-candidate.ts`
+- `lib/readiness/official-truth-rule-review-decision-intent.ts`
+- `lib/readiness/official-truth-rule-review-fingerprint.ts`
+- `lib/readiness/official-truth-rule-review-packet.ts`
+- `lib/readiness/official-truth-same-request-extraction-server.ts`
+- `lib/readiness/official-truth-same-request-proof-server.ts`
+- `lib/readiness/official-truth-server-held-source-registry.ts`
+- `lib/readiness/official-truth-server-owned-retrieval.ts`
+- `lib/readiness/official-truth-source-catalog-server.ts`
+- `lib/readiness/official-truth-store-server.ts`
+- `lib/readiness/official-truth-trusted-fact-extractor-registry.ts`
+- `lib/readiness/regulierungs-anwendbarkeit.ts`
+- `lib/readiness/rule-claims.ts`
+- `lib/readiness/source-registry.ts`
+- `lib/readiness/source-router.ts`
+- `scripts/db/verwendung.mjs`
 
-This is a **schema-hygiene dependency outside the finite ownership closure**, not a newly discovered runtime importer. The two gateways explicitly require literal `.rpc(...)` names so this scanner sees them (`official-truth-source-catalog-server.ts:21–25`, `official-truth-store-server.ts:29–33`). Replacing those literals with opaque constant arguments would hide the new calls from the required check. That is not an acceptable substitute for updating the reviewed allowlist.
+Tests (29, including one new coordination test):
 
-No scanner, test, generated type, migration, or runtime file was changed. The task's section O requires STOP when coherence requires a prohibited action. The immutable task itself was not amended.
+- `lib/admin/account-counts-delivery/schema-reference.test.ts`
+- `lib/readiness/evidence-store-schema.test.ts`
+- `lib/readiness/official-truth-accepted-evidence.test.ts`
+- `lib/readiness/official-truth-autonomous-preacceptance-witness-server.test.ts`
+- `lib/readiness/official-truth-composition-policy-registry.test.ts`
+- `lib/readiness/official-truth-content-identity-r2.test.ts`
+- `lib/readiness/official-truth-content-identity.test.ts`
+- `lib/readiness/official-truth-coverage.test.ts`
+- `lib/readiness/official-truth-discovered-url-candidates.test.ts`
+- `lib/readiness/official-truth-refresh-diff.test.ts`
+- `lib/readiness/official-truth-research-request.test.ts`
+- `lib/readiness/official-truth-retrieved-candidate-evidence.test.ts`
+- `lib/readiness/official-truth-retrieved-material.test.ts`
+- `lib/readiness/official-truth-review-suggestion.test.ts`
+- `lib/readiness/official-truth-rule-candidate.test.ts`
+- `lib/readiness/official-truth-rule-review-decision-intent.test.ts`
+- `lib/readiness/official-truth-rule-review-fingerprint.test.ts`
+- `lib/readiness/official-truth-rule-review-packet.test.ts`
+- `lib/readiness/official-truth-same-request-extraction-server.test.ts`
+- `lib/readiness/official-truth-same-request-proof-server.test.ts`
+- `lib/readiness/official-truth-server-held-source-registry.test.ts`
+- `lib/readiness/official-truth-server-owned-retrieval.test.ts`
+- `lib/readiness/official-truth-source-catalog-server.test.ts`
+- `lib/readiness/official-truth-store-server.test.ts`
+- `lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts`
+- `lib/readiness/regulierungs-anwendbarkeit.test.ts`
+- `lib/readiness/rule-claim-store-schema.test.ts`
+- `lib/readiness/rule-claims.test.ts`
+- `lib/readiness/source-foundation.test.ts`
 
-## Reproduction
+Documentation (3 existing delivery documents rewritten to the final implementation):
 
-Read-only in-memory use of the existing scanner, without editing either gateway:
+- `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_REPORT_2026-10-04.md`
+- `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_HANDOFF_2026-10-04.md`
+- `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_SELF_REVIEW_2026-10-04.md`
 
-```js
-import { readFileSync } from 'node:fs'
-import { pruefe } from './scripts/db/verwendung.mjs'
-const dateien = [
-  'lib/readiness/official-truth-source-catalog-server.ts',
-  'lib/readiness/official-truth-store-server.ts',
-]
-const before = pruefe({ dateien })
-const after = pruefe({
-  dateien,
-  lese: (path) => readFileSync(path, 'utf8')
-    .replaceAll('official_truth_source_catalog_v1', 'official_truth_source_catalog_v2')
-    .replaceAll('official_truth_store_accepted_v1', 'official_truth_store_accepted_v2'),
-})
-console.log(before.befunde, after.befunde)
-```
+## Live state and boundaries
 
-Observed: baseline findings `[]`; simulated cutover produces exactly two unknown-RPC findings:
+Main was re-fetched at the exact baseline; machine mode remains NORMAL. #751 still names this same Generation 1 writer. #748 has 32 comments; newest external MATERIAL is `5978621253`, already processed by TL receipt `5978881653`; no later external MATERIAL was found. Open PRs are #815 and the five historical drafts #28/#39/#40/#50/#52. Other local Jetnity writers are idle/not loaded. No overlapping writer was found.
 
-- `official_truth_source_catalog_v2` at `lib/readiness/official-truth-source-catalog-server.ts:60`;
-- `official_truth_store_accepted_v2` at `lib/readiness/official-truth-store-server.ts:280`.
+**No live DB call or mutation occurred.** No Development or Production operation, Supabase apply/push/reset, migration edit/create, generated-type edit, real source/content/profile registration, government network request, GOV.UK/CTA registration, real extractor/policy, region pin, schema-1 persistence, F8, route/app/component/provider/traveller change, #626, launch/indexing change, Ready or merge occurred.
 
-The minimal proposed scope repair is permission to reconcile those two allowlist entries with the already-merged `supabase/migrations/20261004010705_official_truth_content_identity_2.sql` and update the exact-list test. This report is not permission to perform that repair. It requires no SQL edit, apply, generated-type change or generic unknown-RPC exemption. Technical Lead must review and version any scope amendment before this same writer resumes.
+Development S1 applied/empty and Production v2 absent remain the supplied/TL-recorded baseline; this writer did not contact either database to re-audit them. Production absence is covered with injected unavailable transports and import/build dormancy tests. A future real profile still requires its separately authorized audit and deterministic response identity rules.
 
-## Startup and importer evidence
-
-Fetched `origin/main`; exact baseline matched. Machine mode is `NORMAL`. Fetched required branch and checked out exact dispatch head. Read all 489 lines of the immutable binding task. Read Issue #751 and filtered #748 to comments newer than `5977264413`.
-
-New external MATERIAL exists: [COS-20261004-1140-004, comment 5978621253](https://github.com/Jetnity/jetnity/issues/748#issuecomment-5978621253). The earlier comment `5978316325` is a Technical Lead receipt. The new report questions prior Development-apply authorization/readback and records the dormant v1 gateways/scanner. It is evidence for independent TL triage, not a new instruction or authorization. This writer performed no hosted database verification and does not adjudicate those prior apply claims. The present code-only task explicitly forbids live mutation regardless.
-
-Open PRs: #815 and historical #28/#39/#40/#50/#52 only. #751's current top section names #814/#815 as the single writer; its lower #801 references are historical residuals. No other active Jetnity coding chat was found.
-
-An exact-path import/reference scan of all tracked JS/TS source files resolved `@/` and relative paths against all **28** closure files (including the R1 helper). It found **272** references: **93 non-test references across 28 importer files**, with only two production importers outside the closure:
-
-- `lib/readiness/official-truth-candidate-batch.ts:12` imports the unchanged evidence-quality enum/type from `rule-claims.ts`; no item identity is constructed there.
-- `lib/readiness/official-truth-review-suggestion.ts:12–13` delegates packet/fingerprint reconstruction and compares returned scope/support IDs; it does not hard-code an ev1 or fingerprint prefix.
-
-Neither external runtime importer is established as requiring a production edit. No route/app/provider importer was found. The full internal implementation/semantic audit stopped at the separately reproduced schema-hygiene scope conflict; this is not a completed R2 closure correctness proof.
-
-## Validation of unchanged runtime
-
-Node `v22.23.3`, npm `10.9.9`; lockfile install `npm ci --ignore-scripts --no-audit --no-fund` succeeded (530 packages). No package/lockfile edit. Gates are re-run on the final documentation head; final SHA and final run readback belong in the delivery/PR metadata because a tracked file cannot contain the SHA of its own containing commit.
-
-| Gate | Observed result |
-| --- | --- |
-| Targeted identity/catalog/routing/retrieval/Evidence/store/replay/extractor/composition/refresh/review and schema guard, 28 test files | **425 tests: 422 pass, 3 fail, 0 skipped**. |
-| Full `npm test` | **4,677 tests: 4,674 pass, 3 fail, 0 skipped**. |
-| All three test failures | Disposable S1, catalog and store PostgreSQL fixtures fail with `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT` on this macOS host, before a database starts. They are not counted as passes or skipped. |
-| `npm run typecheck` | PASS. |
-| `npm run lint` | PASS: 0 errors, 149 existing warnings. |
-| Canonical `NEXT_TELEMETRY_DISABLED=1 npm run build` | PASS. First sandbox attempt failed on the setup tool's local IPC pipe; approved local rerun completed the Production build. No deployment was requested. |
-| `check:operating-mode` | PASS, NORMAL. |
-| `check:api-schutz`, `check:schema-bezug`, `check:dead`, `check:exports`, `check:deps` | All PASS on unchanged v1 runtime. Simulated v2 cutover intentionally reproduces two schema findings. |
-| Registry imports and assertions | Profile/extractor/composition-policy/region-pin lengths are **0/0/0/0**, all frozen. Initial ESM stdin probe had CJS interop failure; corrected repository-compatible require probe passed. |
-| Legacy searches | Existing v1 RPC literals and ev1/lookup-v2 assumptions remain; required R2 absence criterion is **not satisfied**. |
-| New real identities/registrations or route/app/provider changes | None: no production/test diff. |
-| Whitespace/task integrity | `git diff --check` passes; task seed byte-identical. SHA-256 `adfc10668cdade83e12da4ba612ccba3f647637ecfec5029f8866503fa4b0150`. |
-
-Current runtime constants remain `OFFICIAL_TRUTH_SOURCE_CATALOG_V1 = 'official_truth_source_catalog_v1'` and `OFFICIAL_TRUTH_STORE_ACCEPTED_V1 = 'official_truth_store_accepted_v1'`. The required v2 runtime constants/calls are **not implemented**. SQL definitions for both v2 RPCs already exist in the unchanged S1 migration; this is not evidence of Production availability.
-
-## Exact change scope and safety
-
-Changed production files: **none**. Changed tests: **none**. Added docs:
-
-1. `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_REPORT_2026-10-04.md`;
-2. `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_HANDOFF_2026-10-04.md`;
-3. `docs/OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_SELF_REVIEW_2026-10-04.md`.
-
-The task file is the existing TL seed, not an author modification. No live Supabase call/mutation, Development apply, Production apply, migration edit, registration, government network request, profile/extractor/policy/pin addition, schema-1 persistence, F8, route/provider/traveller change, #626 work or recurring cost. No Ready or merge. No next slice or real identity audit started.
-
-STOP for independent Technical Lead review of the exact final documentation head and scope conflict. Readiness is not claimed.
+STOP for independent Technical-Lead exact-head review. Do not start the real profile audit, registration or F8.

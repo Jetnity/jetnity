@@ -5,6 +5,7 @@
 // nur in der bestehenden Brücke. Dieses Paket ist Prüfstoff. Es nimmt
 // keine Regel an, speichert nichts und zieht keine Wahrheit.
 
+import { contentIdentityBinding, contentIdentityMatches, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import {
   officialTruthAkzeptierteEvidenceAusAbruf,
   type OfficialTruthAkzeptierteEvidenceErgebnis,
@@ -82,7 +83,9 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
  * angenommenen Evidence. Die freie Extraktionsnotiz wird nicht übernommen.
  * Nichts davon ist eine Entscheidung.
  */
-export type OfficialTruthRegelReviewSupport = {
+export type OfficialTruthRegelReviewSupport = ContentIdentityBinding & {
+  readonly identitySchema: 2
+  readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -177,6 +180,9 @@ function registryText(wert: unknown): string | null {
 
 function stuetzEintrag(belegt: Belegt): OfficialTruthRegelReviewSupport {
   return Object.freeze({
+    ...contentIdentityBinding(belegt.evidence),
+    identitySchema: 2,
+    contentType: belegt.evidence.contentType,
     versionId: belegt.evidence.versionId,
     sourceId: belegt.evidence.sourceId,
     canonicalUrl: belegt.evidence.canonicalUrl,
@@ -205,6 +211,7 @@ function buendelLesen(wert: unknown): { ok: true; belegt: Belegt; registry: stri
   const zelle = regelScopeAusEvidenceScope(evidence.scope)
   if (!zelle.ok) return { ok: false, reason: zelle.reason }
   if (
+    !contentIdentityMatches(beleg, evidence) || beleg.contentType !== evidence.contentType ||
     beleg.sourceId !== evidence.sourceId ||
     beleg.ruleScopeKey !== zelle.key ||
     beleg.canonicalUrl !== evidence.canonicalUrl ||

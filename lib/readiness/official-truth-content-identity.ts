@@ -1,6 +1,6 @@
 // Dormant identity contracts. A validated graph is data, never origin proof.
 import { sha256Hex } from '@/lib/readiness/digest'
-import { evidenceSuchschluessel } from '@/lib/readiness/evidence'
+import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { checkedAtLesen, gültigkeitszeitLesen, quelleUrlLesen } from '@/lib/readiness/official'
 import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
@@ -181,6 +181,17 @@ export function readRepresentationRef(value: unknown): Result<RepresentationRef>
   const row = record(value, REPRESENTATION_FIELDS)
   const ref = row && representationFrom(row)
   return ref ? success(ref) : fail('invalid_ref')
+}
+/** Exact versioned identity pin for code-owned consumers. */
+export function readContentIdentityBinding(value: unknown): Result<ContentIdentityBinding> {
+  const row = record(value, [...REPRESENTATION_FIELDS, 'contentItemVersion', 'representationVersion',
+    'identityProfileId', 'identityProfileVersion'])
+  const ref = row && representationFrom(row)
+  if (!row || !ref || !version(row.contentItemVersion) || !version(row.representationVersion) ||
+      !id(row.identityProfileId) || !version(row.identityProfileVersion)) return fail('invalid_ref')
+  return success({ ...ref, contentItemVersion: row.contentItemVersion,
+    representationVersion: row.representationVersion, identityProfileId: row.identityProfileId,
+    identityProfileVersion: row.identityProfileVersion })
 }
 export function representationRefKey(value: unknown): Result<string> {
   const ref = readRepresentationRef(value)
@@ -363,7 +374,7 @@ export function resolveCurrentContentRepresentation(graph: ContentIdentityGraph,
 }
 
 export type ContentEvidenceLookup = Readonly<{ key: string; canonical: string; scope: Frozen<RegelScope> }>
-/** Future serialization only. Both existing semantic projection and v2 serializer are reused. */
+/** Canonical live lookup. Reuses the existing regulatory parser and field projection. */
 export function contentEvidenceLookupV3(scope: unknown, representation: unknown): Result<ContentEvidenceLookup> {
   const ref = readRepresentationRef(representation)
   if (!ref.ok) return ref
@@ -372,7 +383,7 @@ export function contentEvidenceLookupV3(scope: unknown, representation: unknown)
   // Source-bearing Evidence scope must not silently become another authority.
   const source = (scope as Record<string, unknown>).sourceId
   if (source !== undefined && (typeof source !== 'string' || source.trim() !== ref.value.sourceId)) return fail('source_mismatch')
-  const legacy = evidenceSuchschluessel({ ...cell.scope, sourceId: ref.value.sourceId })
+  const legacy = evidenceScopeLesen({ ...cell.scope, sourceId: ref.value.sourceId })
   if (!legacy.ok) return fail('invalid_scope')
   const fields: Record<string, unknown> = JSON.parse(legacy.canonical)
   const regulatoryCell = Object.fromEntries(Object.entries(fields).filter(([key]) => key !== 'v' && key !== 'sourceId'))
@@ -429,4 +440,27 @@ export function contentEvidenceVersionV2(value: unknown): Result<Readonly<{
   }
   const canonical = JSON.stringify(identity)
   return success({ identity, canonical, versionId: `ev2_${sha256Hex(canonical).slice(0, 32)}` })
+}
+
+/** Exact tuple projection, shared by every live identity boundary. */
+export function contentIdentityBinding(rep: ContentIdentityBinding): ContentIdentityBinding {
+  return Object.freeze({ sourceId: rep.sourceId, contentItemId: rep.contentItemId,
+    contentItemVersion: rep.contentItemVersion, representationId: rep.representationId,
+    representationVersion: rep.representationVersion, identityProfileId: rep.identityProfileId,
+    identityProfileVersion: rep.identityProfileVersion })
+}
+
+export function contentIdentityMatches(a: ContentIdentityBinding, b: ContentIdentityBinding): boolean {
+  return JSON.stringify(contentIdentityBinding(a)) === JSON.stringify(contentIdentityBinding(b))
+}
+
+/** The graph and authority must belong to the same complete snapshot. */
+export function contentRepresentationFromRegistry(registry: QuellenRegistry, url: unknown): Result<RepresentationDescriptor> {
+  const graph = registry.contentIdentity
+  if (!graph) return fail('invalid_registry')
+  const authority = quellenRegistryErstellen(registry.sources, { blockedDomains: registry.blockedDomains })
+  const snapshotAuthority = quellenRegistryErstellen(graph.authorityRegistry.sources, { blockedDomains: graph.authorityRegistry.blockedDomains })
+  if (!authority.ok || !snapshotAuthority.ok
+    || JSON.stringify(authority.registry) !== JSON.stringify(snapshotAuthority.registry)) return fail('invalid_registry')
+  return resolveCurrentContentRepresentation(graph, url)
 }

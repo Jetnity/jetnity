@@ -11,7 +11,7 @@ import {
   type ContentItemRef, type RepresentationRef, type ContentItemDescriptor, type RepresentationDescriptor,
   type ContentIdentityProfileDefinition, type ContentEvidenceIdentity,
 } from '@/lib/readiness/official-truth-content-identity'
-import { evidenceSuchschluessel } from '@/lib/readiness/evidence'
+import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
@@ -330,7 +330,7 @@ describe('future v3 lookup and ev2 identity serialization only', () => {
     const canonicalScope = regelScopeAusEvidenceScope(input)
     assert.ok(canonicalScope.ok)
     assert.deepEqual(result.scope, canonicalScope.scope)
-    const legacy = evidenceSuchschluessel({ ...input, sourceId: ref.sourceId })
+    const legacy = evidenceScopeLesen({ ...input, sourceId: ref.sourceId })
     assert.ok(legacy.ok)
     const old = JSON.parse(legacy.canonical)
     const expected = { v: 3, ...ref, ...Object.fromEntries(Object.entries(old).filter(([key]) => !['v', 'sourceId'].includes(key))) }
@@ -417,10 +417,10 @@ describe('dormancy and architectural boundaries', () => {
     assert.deepEqual(imports, ['@/lib/readiness/digest', '@/lib/readiness/evidence', '@/lib/readiness/official',
       '@/lib/readiness/rule-claims', '@/lib/readiness/source-registry'])
     assert.match(source, /import \{ regelScopeAusEvidenceScope, type RegelScope \} from/)
-    assert.match(source, /import \{ evidenceSuchschluessel \} from/)
+    assert.match(source, /import \{ evidenceScopeLesen \} from/)
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)
   })
-  test('repository search finds no non-test production importer of the module', () => {
+  test('repository search pins the finite R2 production importers', () => {
     const root = process.cwd(), importers: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -434,6 +434,26 @@ describe('dormancy and architectural boundaries', () => {
       }
     }
     walk(root)
-    assert.deepEqual(importers, [])
+    assert.deepEqual(importers.sort(), ['lib/readiness/evidence.ts',
+      'lib/readiness/official-truth-accepted-evidence.ts',
+      'lib/readiness/official-truth-composition-policy-registry.ts',
+      'lib/readiness/official-truth-coverage.ts',
+      'lib/readiness/official-truth-discovered-url-candidates.ts',
+      'lib/readiness/official-truth-refresh-diff.ts',
+      'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
+      'lib/readiness/official-truth-retrieved-material.ts',
+      'lib/readiness/official-truth-rule-candidate.ts',
+      'lib/readiness/official-truth-rule-review-decision-intent.ts',
+      'lib/readiness/official-truth-rule-review-fingerprint.ts',
+      'lib/readiness/official-truth-rule-review-packet.ts',
+      'lib/readiness/official-truth-same-request-extraction-server.ts',
+      'lib/readiness/official-truth-server-held-source-registry.ts',
+      'lib/readiness/official-truth-server-owned-retrieval.ts',
+      'lib/readiness/official-truth-source-catalog-server.ts',
+      'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
+      'lib/readiness/regulierungs-anwendbarkeit.ts',
+      'lib/readiness/rule-claims.ts',
+      'lib/readiness/source-registry.ts',
+      'lib/readiness/source-router.ts'])
   })
 })

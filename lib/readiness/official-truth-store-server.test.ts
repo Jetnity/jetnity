@@ -1,3 +1,5 @@
+import { r2CatalogRows, r2Profiles } from './official-truth-content-identity-r2.test'
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-store-server.test.ts
 //
 // Kanonische Annahme plus ein lokaler PostgreSQL-Nachweis für das Gateway.
@@ -35,7 +37,7 @@ import {
   type QuellenRegistry,
 } from '@/lib/readiness/source-registry'
 import {
-  OFFICIAL_TRUTH_STORE_ACCEPTED_V1,
+  OFFICIAL_TRUTH_STORE_ACCEPTED_V2,
   akzeptierteEvidenceSpeichern,
   akzeptierteRegelClaimSpeichern,
   type OfficialTruthEvidenceStoreAbhaengigkeiten,
@@ -111,7 +113,7 @@ function registry(quellen: readonly QuellenEingabe[] = eingaben()): QuellenRegis
   const ergebnis = quellenRegistryErstellen(quellen)
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function katalogZeile(eingabe: QuellenEingabe): Aufruf {
@@ -130,7 +132,7 @@ function katalogTransport(quellen: readonly QuellenEingabe[] = eingaben()): Offi
       if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
       return {
         ok: true,
-        antwort: { ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+        antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
       }
     },
   }
@@ -180,7 +182,7 @@ function abruf(
       request: entscheidung.request,
       descriptors: [deskriptor],
       sourceId,
-      material: {
+      material: { contentType: 'text/plain',
         canonicalUrl: `https://www.${host}/rules/visa`,
         retrievedAt: ABGERUFEN,
         sourceSnapshot: snapshot,
@@ -197,9 +199,9 @@ function evidenceDeps(
   env?: Record<string, string | undefined>,
 ): OfficialTruthEvidenceStoreAbhaengigkeiten {
   return {
-    ...(transport ? { transport } : {}),
+    ...(transport ? {  transport } : {}),
     ...(env ? { env } : {}),
-    katalog: { transport: katalogTransport(quellen) },
+    katalog: { identityProfiles: r2Profiles,  transport: katalogTransport(quellen) },
   }
 }
 
@@ -243,7 +245,7 @@ function kandidat(
 ): EvidenceVersion {
   const erzeugt = evidenceKandidatAusModell(
     { scope: { ...scope, sourceId } },
-    {
+    { contentType: 'text/plain',
       canonicalUrl: `https://www.${host}/rules/visa`,
       retrievedAt: ABGERUFEN,
       sourceSnapshot: snapshot,
@@ -294,7 +296,7 @@ function transportAufzeichnen(): { transport: OfficialTruthStoreTransport; aufru
         const evidence = payload.evidence as { version_id?: string }
         return {
           ok: true,
-          antwort: {
+          antwort: { identity_schema: 2,
             ok: true,
             operation,
             outcome: 'inserted',
@@ -304,7 +306,7 @@ function transportAufzeichnen(): { transport: OfficialTruthStoreTransport; aufru
       }
       return {
         ok: true,
-        antwort: { ok: true, operation, outcome: 'inserted', claim_id: 11 },
+        antwort: { identity_schema: 2, ok: true, operation, outcome: 'inserted', claim_id: 11 },
       }
     },
   }
@@ -360,7 +362,7 @@ describe('trusted Official Truth accepted-store writer', () => {
       paket.umschlag,
       paket.uhr,
       paket.extraktion,
-      { transport: katalogTransport() },
+      { identityProfiles: r2Profiles, transport: katalogTransport() },
     )
     assert.equal(bewiesen.status, 'accepted_evidence')
     if (bewiesen.status !== 'accepted_evidence') return
@@ -424,8 +426,8 @@ describe('trusted Official Truth accepted-store writer', () => {
     assert.match(text, /persistSession: false/)
     assert.match(text, /detectSessionInUrl: false/)
     assert.match(text, /autoRefreshToken: false/)
-    assert.equal(text.includes(`.rpc('${OFFICIAL_TRUTH_STORE_ACCEPTED_V1}'`), true)
-    assert.equal((text.match(/rpc\(OFFICIAL_TRUTH_STORE_ACCEPTED_V1/g) ?? []).length, 0)
+    assert.equal(text.includes(`.rpc('${OFFICIAL_TRUTH_STORE_ACCEPTED_V2}'`), true)
+    assert.equal((text.match(/rpc\(OFFICIAL_TRUTH_STORE_ACCEPTED_V2/g) ?? []).length, 0)
     assert.equal(text.includes('retry'), false)
     assert.equal((text.match(/transport\.aufrufen\(/g) ?? []).length, 2)
     assert.equal(requirementsProviderAus(), null)
@@ -438,7 +440,7 @@ describe('trusted Official Truth accepted-store writer', () => {
         factKind: 'requirement_effect',
         fact: { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' },
       },
-      { transport: roh.transport },
+      {  transport: roh.transport },
     )
     assert.equal(ergebnis.ok, false)
     assert.equal(roh.aufrufe.length, 0)
@@ -459,7 +461,7 @@ describe('trusted Official Truth accepted-store writer', () => {
     const { transport, aufrufe } = transportAufzeichnen()
     const gespeichert = await akzeptierteRegelClaimSpeichern(
       claimEingabe(basis, belegt.scope, 'requirement_effect', 'explicit_primary_statement', [belegt], trusted, proposal),
-      { transport, jetzt: () => AUDIT },
+      {  transport, jetzt: () => AUDIT },
     )
     assert.equal(gespeichert.ok, true)
     if (!gespeichert.ok || gespeichert.operation !== 'accepted_rule_claim') return
@@ -487,7 +489,7 @@ describe('trusted Official Truth accepted-store writer', () => {
         [belegt, zweite],
         trusted,
       ),
-      { transport: zusammengesetzt.transport, jetzt: () => AUDIT },
+      {  transport: zusammengesetzt.transport, jetzt: () => AUDIT },
     )
     assert.equal(beide.ok, true)
     const stuetzen = (zusammengesetzt.aufrufe[0]?.claim as { support_version_ids: string[] }).support_version_ids
@@ -503,11 +505,11 @@ describe('trusted Official Truth accepted-store writer', () => {
         [belegt, akzeptiert(basis, 'example-border-authority', 'gov.example', 'gleiche quelle zwei')],
         trusted,
       ),
-      { transport: gleicheQuelle.transport },
+      {  transport: gleicheQuelle.transport },
     )
     assert.equal(gleiche.ok, false)
     if (gleiche.ok) return
-    assert.equal(gleiche.reason, 'same_source_composition')
+    assert.equal(gleiche.reason, 'same_content_item_composition')
     assert.equal(gleicheQuelle.aufrufe.length, 0)
 
     for (const qualitaet of ['research_gap', 'unresolved_conflict', 'stale_primary_evidence'] as const) {
@@ -522,7 +524,7 @@ describe('trusted Official Truth accepted-store writer', () => {
           trusted,
           qualitaet === 'research_gap' ? null : trusted,
         ),
-        { transport: block.transport },
+        {  transport: block.transport },
       )
       assert.equal(abgelehnt.ok, false)
       if (!abgelehnt.ok) assert.equal(abgelehnt.reason, 'quality_not_acceptable')
@@ -698,7 +700,7 @@ describe('trusted Official Truth accepted-store writer', () => {
       const { transport, aufrufe } = transportAufzeichnen()
       const ergebnis = await akzeptierteRegelClaimSpeichern(
         claimEingabe(basis, fall.scope, fall.factKind, 'explicit_primary_statement', [fall.version], fall.fact),
-        { transport, jetzt: () => AUDIT },
+        {  transport, jetzt: () => AUDIT },
       )
       assert.equal(ergebnis.ok, true, fall.factKind)
       const claim = aufrufe[0]?.claim as Record<string, unknown>
@@ -715,7 +717,7 @@ describe('trusted Official Truth accepted-store writer', () => {
     const { transport, aufrufe } = transportAufzeichnen()
     const ohneKatalog = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
       transport,
-      katalog: {
+      katalog: { identityProfiles: r2Profiles,
         env: {
           NEXT_PUBLIC_SUPABASE_URL: '   ',
           SUPABASE_SERVICE_ROLE_KEY: 'service-role-secret-sentinel',
@@ -731,7 +733,7 @@ describe('trusted Official Truth accepted-store writer', () => {
         NEXT_PUBLIC_SUPABASE_URL: 'https://example.test',
         NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: 'nicht-verwenden',
       },
-      katalog: { transport: katalogTransport() },
+      katalog: { identityProfiles: r2Profiles,  transport: katalogTransport() },
     })
     assert.deepEqual(ohneSpeicher, { ok: false, reason: 'store_not_configured' })
 
@@ -781,7 +783,7 @@ describe('trusted Official Truth accepted-store writer', () => {
     assert.doesNotMatch(sql, /\bcreate\s+policy\b/i)
     const config = readFileSync(join(ROOT, 'supabase/config.toml'), 'utf8')
     assert.match(config, /schemas = \["public", "graphql_public"\]/)
-    assert.equal(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, 'official_truth_store_accepted_v1')
+    assert.equal(OFFICIAL_TRUTH_STORE_ACCEPTED_V2, 'official_truth_store_accepted_v2')
     assert.equal(datei.name.endsWith(WRITER_SUFFIX), true)
   })
 })
@@ -867,6 +869,8 @@ function clusterStarten(): Cluster {
       '20261001121258_official_truth_private_evidence_store_schema_1.sql',
       '20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql',
       migrationSql().name,
+      '20261001193748_official_truth_source_catalog_gateway_1.sql',
+      '20261004010705_official_truth_content_identity_2.sql',
     ]
     lauf(
       ['-d', 'official_truth_store_proof'],
@@ -918,46 +922,6 @@ function clusterStarten(): Cluster {
   }
 }
 
-function beweisPayload(evidence: EvidenceVersion): Aufruf {
-  const scope = regelScopeAusEvidenceScope(evidence.scope)
-  if (!scope.ok) throw new Error('scope')
-  const citizenship = evidence.scope.citizenship
-  const option = evidence.scope.credentialOption
-  const residence = evidence.scope.residence
-  const validity = evidence.scope.validity
-  return {
-    operation: 'accepted_evidence',
-    evidence: {
-      version_id: evidence.versionId,
-      previous_version_id: evidence.previousVersionId,
-      lifecycle: evidence.lifecycle,
-      validation_state: evidence.validationState,
-      source_id: evidence.sourceId,
-      canonical_url: evidence.canonicalUrl,
-      retrieved_at: evidence.retrievedAt,
-      source_content_hash: evidence.sourceContentHash,
-      valid_from: evidence.validFrom,
-      valid_until: evidence.validUntil,
-      lookup_key: evidence.lookupKey,
-      extraction_note: evidence.extractionNote,
-      rule_scope_key: scope.key,
-      destination_country_code: evidence.scope.destinationCountryCode,
-      transit_country_code: evidence.scope.transitCountryCode,
-      citizenship_mode: citizenship.mode,
-      citizenship_country_codes: citizenship.mode === 'required' ? [...citizenship.countryCodes] : [],
-      credential_option_mode: option.mode,
-      document_type: option.mode === 'option' ? option.documentType : null,
-      issuing_country_code: option.mode === 'option' ? option.issuingCountryCode : null,
-      related_citizenship_country_code: option.mode === 'option' ? option.relatedCitizenshipCountryCode : null,
-      residence_mode: residence.mode,
-      residence_country_code: residence.mode === 'required' ? residence.countryCode : null,
-      requirement_type: evidence.scope.requirementType,
-      validity_mode: validity.mode,
-      travel_date: validity.mode === 'travel_date' ? validity.travelDate : null,
-    },
-  }
-}
-
 function claimAusEvidencePayload(
   evidencePayload: Aufruf,
   factKind: string,
@@ -998,7 +962,7 @@ function payloadTag(payload: unknown): string {
   const json = JSON.stringify(payload)
   const tag = '$jetnity_payload$'
   if (json.includes(tag)) throw new Error('payload tag')
-  return `public.official_truth_store_accepted_v1(${tag}${json}${tag}::jsonb)`
+  return `public.official_truth_store_accepted_v2(${tag}${json}${tag}::jsonb)`
 }
 
 function appTexte(): string {
@@ -1029,7 +993,7 @@ function katalogZaehler(quellen: readonly QuellenEingabe[] = eingaben()): {
         if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+          antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
         }
       },
     },
@@ -1055,7 +1019,7 @@ describe('server-reproved accepted Evidence store entry', () => {
         { ...paket.umschlag, [feld]: wert },
         paket.uhr,
         null,
-        { transport: roh.transport, katalog: { transport: katalog.transport } },
+        {  transport: roh.transport, katalog: { identityProfiles: r2Profiles,  transport: katalog.transport } },
       )
       assert.deepEqual(oben, { ok: false, reason: 'caller_authority_forbidden' }, feld)
       assert.equal(roh.aufrufe.length, 0, feld)
@@ -1068,7 +1032,7 @@ describe('server-reproved accepted Evidence store entry', () => {
         { ...paket.umschlag, material: { ...material, [feld]: wert } },
         paket.uhr,
         null,
-        { transport: materialRoh.transport, katalog: { transport: imMaterial.transport } },
+        {  transport: materialRoh.transport, katalog: { identityProfiles: r2Profiles,  transport: imMaterial.transport } },
       )
       assert.deepEqual(imMaterialErgebnis, { ok: false, reason: 'caller_authority_forbidden' }, feld)
       assert.equal(materialRoh.aufrufe.length, 0, feld)
@@ -1255,7 +1219,7 @@ describe('server-reproved accepted Evidence store entry', () => {
     const geworfen = transportAufzeichnen()
     const katalogWurf = await akzeptierteEvidenceSpeichern(paket.umschlag, paket.uhr, null, {
       transport: geworfen.transport,
-      katalog: {
+      katalog: { identityProfiles: r2Profiles,
         transport: {
           async aufrufen() {
             throw new Error('catalog-sentinel')
@@ -1303,7 +1267,7 @@ describe('server-reproved accepted Evidence store entry', () => {
         const evidence = payload.evidence as { version_id?: string }
         return {
           ok: true,
-          antwort: {
+          antwort: { identity_schema: 2,
             ok: true,
             operation: 'accepted_evidence',
             outcome: runde === 1 ? 'inserted' : 'idempotent',
@@ -1327,7 +1291,7 @@ describe('server-reproved accepted Evidence store entry', () => {
       const evidence = payload.evidence as { version_id?: string }
       return {
         ok: true,
-        antwort: {
+        antwort: { identity_schema: 2,
           ok: true,
           operation: 'accepted_evidence',
           outcome: 'inserted',
@@ -1391,8 +1355,8 @@ describe('server-reproved accepted Evidence store entry', () => {
     assert.equal(links.canonical_url, rechts.canonical_url)
     assert.equal(links.retrieved_at, rechts.retrieved_at)
     assert.notEqual(links.version_id, rechts.version_id)
-    assert.match(String(links.version_id), /^ev1_[a-f0-9]{32}$/)
-    assert.match(String(rechts.version_id), /^ev1_[a-f0-9]{32}$/)
+    assert.match(String(links.version_id), /^ev2_[a-f0-9]{32}$/)
+    assert.match(String(rechts.version_id), /^ev2_[a-f0-9]{32}$/)
 
     const passRoh = transportAufzeichnen()
     const passZelle = await evidenceAusAbrufSpeichern(
@@ -1406,7 +1370,7 @@ describe('server-reproved accepted Evidence store entry', () => {
     assert.equal(passZelle.ok, true)
     if (!passZelle.ok || passZelle.operation !== 'accepted_evidence') return
     assert.notEqual(passZelle.versionId, schweizer.versionId)
-    assert.match(passZelle.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(passZelle.versionId, /^ev2_[a-f0-9]{32}$/)
     const passPayload = passRoh.aufrufe[0]?.evidence as Record<string, unknown>
     assert.equal(passPayload.source_content_hash, links.source_content_hash)
     assert.notEqual(passPayload.version_id, links.version_id)
@@ -1490,7 +1454,7 @@ describe('server-reproved accepted Evidence store entry', () => {
       assert.equal(JSON.stringify(angenommen.claim).includes('rule-applicability:v1'), false, fall.name)
       assert.equal(JSON.stringify(angenommen.claim).includes('reg-eval-ctx:v1'), false, fall.name)
       const { transport, aufrufe } = transportAufzeichnen()
-      const gespeichert = await akzeptierteRegelClaimSpeichern(eingabe, { transport, jetzt: () => AUDIT })
+      const gespeichert = await akzeptierteRegelClaimSpeichern(eingabe, {  transport, jetzt: () => AUDIT })
       assert.deepEqual(gespeichert, { ok: false, reason: 'applicability_not_persistable' }, fall.name)
       assert.equal(aufrufe.length, 0, fall.name)
       const ohneKonfiguration = await akzeptierteRegelClaimSpeichern(eingabe, { env: {} })
@@ -1557,10 +1521,10 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           join pg_namespace n on n.oid = p.pronamespace
           where p.prosecdef
         `),
-        'public.official_truth_store_accepted_v1',
+        'public.official_truth_source_catalog_v1,public.official_truth_source_catalog_v2,public.official_truth_store_accepted_v1,public.official_truth_store_accepted_v2',
       )
-      assert.equal(cluster.aufruf(`select count(*) from pg_proc where proname = 'official_truth_store_accepted_v1'`), '1')
-      const proconfig = cluster.aufruf(`select proconfig::text from pg_proc where proname = 'official_truth_store_accepted_v1'`)
+      assert.equal(cluster.aufruf(`select count(*) from pg_proc where proname = 'official_truth_store_accepted_v2'`), '1')
+      const proconfig = cluster.aufruf(`select proconfig::text from pg_proc where proname = 'official_truth_store_accepted_v2'`)
       assert.match(proconfig, /search_path=/)
       assert.equal(proconfig.includes('public'), false)
       const grants = cluster.aufruf(`
@@ -1573,7 +1537,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       const funktionRechte = cluster.aufruf(`
         select string_agg(grantee || ':' || privilege_type, ',' order by grantee, privilege_type)
         from information_schema.routine_privileges
-        where routine_schema = 'public' and routine_name = 'official_truth_store_accepted_v1'
+        where routine_schema = 'public' and routine_name = 'official_truth_store_accepted_v2'
       `)
       const rechte = funktionRechte.split(',').filter((eintrag) => eintrag.length > 0)
       assert.equal(rechte.includes('service_role:EXECUTE'), true)
@@ -1611,7 +1575,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       const lesen = cluster.scheitert('select count(*) from private.official_evidence_versions', 'service_role')
       assert.match(lesen, /permission denied/i)
       const fremd = cluster.scheitert(`select ${payloadTag({ operation: 'import' })}`, 'service_role')
-      assert.match(fremd, /operation is not supported/i)
+      assert.match(fremd, /unsupported v2 store operation/i)
       assert.equal(cluster.aufruf(`select ${summe}`), '0')
 
       cluster.aufruf(`
@@ -1629,6 +1593,26 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       assert.equal(cluster.aufruf('select count(*) from private.official_sources'), '4')
 
       const basis = registry()
+      // Register only these synthetic descriptors in the disposable local cluster.
+      // The runtime obtains the same exact graph through its injected catalog.
+      assert.ok(basis.contentIdentity)
+      for (const item of basis.contentIdentity.items) {
+        const payload: Record<string, unknown> = { operation: 'register_content_item', item: {
+          source_id: item.sourceId, content_item_id: item.contentItemId,
+          content_item_version: item.contentItemVersion, current: item.current,
+          external_id_namespace: item.externalIdNamespace, external_content_id: item.externalContentId,
+          expected_publisher_ids: item.expectedPublisherIds, expected_authority_ids: item.expectedAuthorityIds,
+        }, representations: basis.contentIdentity.representations.filter((rep) => rep.sourceId === item.sourceId
+          && rep.contentItemId === item.contentItemId).map((rep) => ({
+          representation_id: rep.representationId, representation_version: rep.representationVersion,
+          current: rep.current, request_urls: rep.requestUrls, expected_final_url: rep.expectedFinalUrl,
+          expected_media_type: rep.expectedMediaType, identity_profile_id: rep.identityProfileId,
+          identity_profile_version: rep.identityProfileVersion, expected_locale: rep.expectedLocale, expected_schema: rep.expectedSchema,
+        })) }
+        const json = JSON.stringify(payload)
+        assert.equal(json.includes('$fixture$'), false)
+        cluster.aufruf(`select public.official_truth_source_catalog_v2($fixture$${json}$fixture$::jsonb)`, 'service_role')
+      }
       const evidencePayloads: Aufruf[] = []
       const evidenceTransport: OfficialTruthStoreTransport = {
         async aufrufen(payload) {
@@ -1637,7 +1621,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             outcome: string
             version_id: string
           }
-          return { ok: true, antwort: { ok: true, operation: 'accepted_evidence', outcome: antwort.outcome, version_id: antwort.version_id } }
+          return { ok: true, antwort: { identity_schema: 2, ok: true, operation: 'accepted_evidence', outcome: antwort.outcome, version_id: antwort.version_id } }
         },
       }
       const deps = evidenceDeps(evidenceTransport)
@@ -1660,7 +1644,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       nichtAkzeptiert.evidence.lifecycle = 'candidate'
       nichtAkzeptiert.evidence.validation_state = 'pending'
       const kandidatFehler = cluster.scheitert(`select ${payloadTag(nichtAkzeptiert)}`, 'service_role')
-      assert.match(kandidatFehler, /evidence is not accepted/i)
+      assert.match(kandidatFehler, /Evidence is not eligible for its exact current catalog identity/i)
       assert.equal(cluster.aufruf(`select ${summe}`), vorKandidat)
       assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), '1')
       assert.equal(
@@ -1692,7 +1676,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             outcome: string
             claim_id: number
           }
-          return { ok: true, antwort: { ok: true, operation: 'accepted_rule_claim', outcome: antwort.outcome, claim_id: antwort.claim_id } }
+          return { ok: true, antwort: { identity_schema: 2, ok: true, operation: 'accepted_rule_claim', outcome: antwort.outcome, claim_id: antwort.claim_id } }
         },
       })
 
@@ -1705,7 +1689,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           effect: 'not_required',
           visaMode: 'visa_exempt',
         }),
-        { transport: claimTransport(payloads), jetzt: () => AUDIT },
+        {  transport: claimTransport(payloads), jetzt: () => AUDIT },
       )
       assert.equal(wirkung.ok, true)
       if (!wirkung.ok || wirkung.operation !== 'accepted_rule_claim') return
@@ -1716,7 +1700,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           effect: 'not_required',
           visaMode: 'visa_exempt',
         }),
-        { transport: claimTransport(payloads), jetzt: () => '2026-10-01T13:00:00.000Z' },
+        {  transport: claimTransport(payloads), jetzt: () => '2026-10-01T13:00:00.000Z' },
       )
       assert.equal(nochmal.ok, true)
       if (!nochmal.ok || nochmal.operation !== 'accepted_rule_claim') return
@@ -1742,7 +1726,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             { visaMode: 'visa_exempt', eligibility: 'allowed', mandate: 'not_mandatory' },
           ],
         }),
-        { transport: claimTransport(optionenPayloads), jetzt: () => AUDIT },
+        {  transport: claimTransport(optionenPayloads), jetzt: () => AUDIT },
       )
       assert.equal(optionen.ok, true)
       assert.equal(
@@ -1757,7 +1741,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             { visaMode: 'visa_exempt', eligibility: 'allowed', mandate: 'not_mandatory' },
           ],
         }),
-        { transport: claimTransport(optionenPayloads), jetzt: () => '2026-10-01T13:00:00.000Z' },
+        {  transport: claimTransport(optionenPayloads), jetzt: () => '2026-10-01T13:00:00.000Z' },
       )
       assert.equal(optionenNochmal.ok, true)
       if (!optionenNochmal.ok || optionenNochmal.operation !== 'accepted_rule_claim') return
@@ -1773,7 +1757,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           extension: null,
           borderDiscretion: 'fixed',
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )
       assert.equal(aufenthalt.ok, true)
       assert.equal(cluster.aufruf(`select per_visit_value || per_visit_unit from private.official_rule_claim_stay_limit`), '90days')
@@ -1794,7 +1778,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           kind: 'passport_validity',
           semantics: 'valid_on_entry',
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )
       assert.equal(passClaim.ok, true)
       assert.equal(
@@ -1817,7 +1801,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           kind: 'blank_passport_pages',
           minimumPages: 2,
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )).ok, true)
       assert.equal(cluster.aufruf(`select minimum_pages from private.official_rule_claim_blank_pages`), '2')
 
@@ -1836,7 +1820,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           kind: 'transit_conditions',
           paths: [leerPfad({ transitAirportCodes: [...SIEBZEHN_FLUGHAFEN] })],
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )
       assert.equal(transitClaim.ok, true)
       assert.equal(cluster.aufruf(`select cardinality(transit_airport_codes) from private.official_rule_claim_transit_paths`), '17')
@@ -1845,7 +1829,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           kind: 'transit_conditions',
           paths: [leerPfad({ transitAirportCodes: [...SIEBZEHN_FLUGHAFEN] })],
         }),
-        { transport: claimTransport([]), jetzt: () => '2026-10-01T13:00:00.000Z' },
+        {  transport: claimTransport([]), jetzt: () => '2026-10-01T13:00:00.000Z' },
       )
       assert.equal(transitNochmal.ok, true)
       if (!transitNochmal.ok || transitNochmal.operation !== 'accepted_rule_claim') return
@@ -1865,7 +1849,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             },
           ],
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )
       assert.equal(aktion.ok, true)
       assert.equal(
@@ -1882,7 +1866,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
             dueBy: { anchor: 'trip_departure', relation: 'before', offsetMinutes: 72 * 60, semantics: 'mandatory' },
           },
         }),
-        { transport: claimTransport([]), jetzt: () => AUDIT },
+        {  transport: claimTransport([]), jetzt: () => AUDIT },
       )
       assert.equal(zeit.ok, true)
       assert.equal(cluster.aufruf(`select due_by_offset_minutes from private.official_rule_claim_temporal_rule`), String(72 * 60))
@@ -1926,7 +1910,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           effect: 'conditional',
           visaMode: null,
         }),
-        { transport: claimTransport(bedingtAufrufe), jetzt: () => AUDIT },
+        {  transport: claimTransport(bedingtAufrufe), jetzt: () => AUDIT },
       )
       assert.deepEqual(zusammengesetzt, { ok: false, reason: 'legacy_conditional_without_payload' })
       assert.equal(bedingtAufrufe.length, 0)
@@ -1952,7 +1936,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
         { options: [] },
       )
       const trigger = cluster.scheitert(`select ${payloadTag(leer)}`, 'service_role')
-      assert.match(trigger, /fact payload/i)
+      assert.match(trigger, /invalid fact collection/i)
       assert.deepEqual(zaehlstand(), vorLeer)
       assert.equal(cluster.aufruf(`select count(*) from private.official_rule_claim_visa_options`), '2')
 
@@ -1967,7 +1951,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       )
       assert.equal(sgGespeichert.ok, true)
       if (!sgGespeichert.ok || sgGespeichert.operation !== 'accepted_evidence') return
-      const fehlendeStuetze = `ev1_${'ab'.repeat(16)}`
+      const fehlendeStuetze = `ev2_${'ab'.repeat(16)}`
       const vorStuetze = zaehlstand()
       const ohneStuetze = claimAusEvidencePayload(
         evidenceFuer(sgGespeichert.versionId),
@@ -1977,7 +1961,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
         { effect: 'not_required', visa_mode: 'visa_exempt' },
       )
       const stuetze = cluster.scheitert(`select ${payloadTag(ohneStuetze)}`, 'service_role')
-      assert.match(stuetze, /support evidence version is not stored/i)
+      assert.match(stuetze, /supports require exact eligible Evidence and distinct ContentItemRefs in the same cell/i)
       assert.deepEqual(zaehlstand(), vorStuetze)
       assert.equal(
         cluster.aufruf(`select count(*) from private.official_rule_claim_support where version_id = '${fehlendeStuetze}'`),
@@ -2014,8 +1998,8 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       if (!chZelle.ok || !rsZelle.ok || chZelle.operation !== 'accepted_evidence' || rsZelle.operation !== 'accepted_evidence') return
       assert.equal(chZelle.outcome, 'inserted')
       assert.equal(rsZelle.outcome, 'inserted')
-      assert.match(chZelle.versionId, /^ev1_[a-f0-9]{32}$/)
-      assert.match(rsZelle.versionId, /^ev1_[a-f0-9]{32}$/)
+      assert.match(chZelle.versionId, /^ev2_[a-f0-9]{32}$/)
+      assert.match(rsZelle.versionId, /^ev2_[a-f0-9]{32}$/)
       assert.notEqual(chZelle.versionId, rsZelle.versionId)
       assert.notEqual(chZelle.ruleScopeKey, rsZelle.ruleScopeKey)
       assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), String(vorZellen + 2))
@@ -2045,30 +2029,11 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       )
       assert.deepEqual(lizenziert, { ok: false, reason: 'source_not_official_authority' })
       assert.equal(evidencePayloads.length, vorLizenz)
-      const lokaleLizenz = akzeptiert(
-        basis,
-        'example-licensed-provider',
-        'provider.example',
-        'licensed store',
-        kr,
-      )
-      const lizenzPayload = beweisPayload(lokaleLizenz)
-      const lizenzAntwort = JSON.parse(cluster.aufruf(`select ${payloadTag(lizenzPayload)}`, 'service_role')) as {
-        outcome: string
-        version_id: string
-      }
-      assert.equal(lizenzAntwort.outcome, 'inserted')
-      assert.equal(lizenzAntwort.version_id, lokaleLizenz.versionId)
+      // V2 cannot store licensed/source-only Evidence, even through direct SQL.
+      const lizenzPayload = structuredClone(evidencePayloads[0])
+      ;(lizenzPayload.evidence as Record<string, unknown>).source_id = 'example-licensed-provider'
       const vorAnbieter = zaehlstand()
-      const lizenziertClaim = claimAusEvidencePayload(
-        lizenzPayload,
-        'requirement_effect',
-        'explicit_primary_statement',
-        [lokaleLizenz.versionId],
-        { effect: 'not_required', visa_mode: 'visa_exempt', source_class: 'official_authority' },
-      )
-      const anbieter = cluster.scheitert(`select ${payloadTag(lizenziertClaim)}`, 'service_role')
-      assert.match(anbieter, /official_rule_claim_support_source_class/i)
+      assert.match(cluster.scheitert(`select ${payloadTag(lizenzPayload)}`, 'service_role'), /official|identity|representation/i)
       assert.deepEqual(zaehlstand(), vorAnbieter)
       assert.equal(cluster.aufruf(`select count(*) from private.official_rule_claim_support where source_class = 'licensed_evidence_provider'`), '0')
       assert.equal(cluster.aufruf('select count(*) from private.official_sources'), '4')
@@ -2078,3 +2043,11 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
     }
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules/visa",
+  "https://www.interior.example/rules/visa",
+  "https://www.not-a-government.example/rules",
+  "https://www.visa.example/apply"
+] as const

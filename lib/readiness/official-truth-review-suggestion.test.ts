@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-review-suggestion.test.ts
 //
 // Hinweisvorschlag nur über ein neu belegtes Prüfpaket und dessen Identität.
@@ -45,7 +46,7 @@ const MARKER = 'TRUSTED-MARKER-SHOULD-NOT-ECHO'
 const FREMDE_ID = 'not-in-packet-91f3'
 const FREITEXT = 'Ada Beispiel passport XC-44821 born 1984-03-17'
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'assessment', 'citedSupportVersionIds', 'reasonCodes']
-const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v3:[a-f0-9]{64}$/
 
 const PERSONEN = [
   'userId',
@@ -120,7 +121,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -203,7 +204,7 @@ function huelle(teil?: {
     registry: basis,
     descriptors: teil?.descriptors ?? beideDeskriptoren(basis),
     sourceId: teil?.sourceId ?? QUELLE,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: 'https://www.gov.example/rules',
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -237,7 +238,7 @@ function zweiteStuetze(snapshot: string) {
       registry: basis,
       descriptors: beideDeskriptoren(basis),
       sourceId: ANDERE,
-      material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
+      material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
     }),
   )
 }
@@ -583,7 +584,7 @@ describe('Official Truth review suggestion contract', () => {
         registry: basis,
         descriptors: beideDeskriptoren(basis, coverage),
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
       }),
     )
     const schweizerIdentitaet = finger([schweiz])
@@ -643,7 +644,7 @@ describe('Official Truth review suggestion contract', () => {
     assert.doesNotMatch(text, /officialTruthAkzeptierteEvidenceAusAbruf|officialTruthRegelKandidatAusEvidence|officialTruthAbgerufenMaterialPruefen/)
     assert.doesNotMatch(text, /official_truth_store_accepted_v1|official_truth_source_catalog_v1/)
     assert.doesNotMatch(text, /requirementsProviderAus|sha256Hex|evidenceQuellenFingerprint/)
-    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v2:/)
+    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v3:/)
     assert.doesNotMatch(text, /\.sourceSnapshot|\.canonicalUrl|\.sourceContentHash|\.proposal/)
     assert.doesNotMatch(text, /supabase|openai|Date\.now|new Date\(|fetch\(|node:fs|node:http|node:net/i)
     for (const relativ of [
@@ -867,3 +868,9 @@ describe('Official Truth review suggestion contract', () => {
     assert.equal(JSON.stringify(stuetzt).includes('lifecycle'), false)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules",
+  "https://www.interior.example/rules"
+] as const

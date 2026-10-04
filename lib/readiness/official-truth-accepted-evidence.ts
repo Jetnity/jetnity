@@ -5,6 +5,7 @@
 // Evidence-Objekt ist kein Argument. Die Annahme bleibt die bestehende
 // Funktion. Diese Datei speichert nichts und zieht keine Regel heraus.
 
+import { contentIdentityMatches } from '@/lib/readiness/official-truth-content-identity'
 import {
   evidenceKandidatAkzeptieren,
   type EvidenceAnnahmeErgebnis,
@@ -17,6 +18,8 @@ import {
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const EVIDENCE_FELDER = [
+  'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
+  'identityProfileId', 'identityProfileVersion', 'contentType',
   'versionId',
   'previousVersionId',
   'lifecycle',
@@ -99,7 +102,8 @@ function pendingOfficial(evidence: EvidenceVersion): boolean {
  */
 function annahmePasst(akzeptiert: EvidenceVersion, kandidat: EvidenceVersion): boolean {
   return (
-    pendingOfficial(kandidat) &&
+    pendingOfficial(kandidat) && contentIdentityMatches(akzeptiert, kandidat) &&
+    akzeptiert.identitySchema === 2 && akzeptiert.contentType === kandidat.contentType &&
     akzeptiert.lifecycle === 'accepted' &&
     akzeptiert.validationState === 'valid' &&
     akzeptiert.sourceClass === 'official_authority' &&

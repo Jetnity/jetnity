@@ -12,6 +12,7 @@
 import 'server-only'
 
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, readContentIdentityBinding, readContentItemRef, readDistinctContentItemRefs, type ContentItemRef, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { quelleUrlLesen } from '@/lib/readiness/official'
 import {
   REGEL_EVIDENCE_QUALITAETEN,
@@ -38,7 +39,7 @@ const POLICY_ID = /^otp_[a-z][a-z0-9_]{0,40}$/
 const SCHEMA_FAMILIE = /^ots_[a-z][a-z0-9_]{0,40}$/
 const QUELLEN_FAMILIE = /^otf_[a-z][a-z0-9_]{0,40}$/
 const QUELLEN_ID = /^[a-z][a-z0-9_-]{1,63}$/
-const VERSION_ID = /^ev1_[a-f0-9]{32}$/
+const VERSION_ID = /^ev2_[a-f0-9]{32}$/
 const SCOPE_KEY = new RegExp(`^${REGEL_SCOPE_PRAEFIX}[a-f0-9]{64}$`)
 /** Dieselbe beobachtete MIME-Form wie die serverseitige Lesung. Kein Import jener Datei, weil sie Netz öffnet. */
 const MEDIENTYP = /^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/
@@ -50,7 +51,7 @@ const REDIRECT_MAX = 5
 const TIEFE_MAX = 8
 /** Obergrenze der quellenbezogenen Beobachtungen einer Ausführung. */
 const BEOBACHTUNG_MAX = 256
-const BEOBACHTUNG_SCHLUESSEL = ['targetKey', 'sourceId', 'canonical'] as const
+const BEOBACHTUNG_SCHLUESSEL = ['targetKey', 'sourceId', 'contentItemId', 'canonical'] as const
 /** Ein Atom-Locator ist eine Herkunftsadresse der Kompositionsschicht, kein Faktfeld. */
 const FAKT_MARKER = new Set(['atomKey', 'atomLocator', 'atomId'])
 
@@ -81,6 +82,7 @@ const STUETZE_SCHLUESSEL = ['versionId', 'sourceId', 'retrieval'] as const
 const ABRUF_SCHLUESSEL = [
   'status',
   'sourceId',
+  'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion', 'identityProfileId', 'identityProfileVersion',
   'canonicalUrl',
   'retrievedAt',
   'contentType',
@@ -90,8 +92,8 @@ const ABRUF_SCHLUESSEL = [
 ] as const
 
 const POLITIK_SCHLUESSEL = ['policyId', 'policyVersion', 'assignments'] as const
-const ZUWEISUNG_SCHLUESSEL = ['fieldPath', 'sourceId'] as const
-const REGISTRY_SCHLUESSEL = ['sources', 'blockedDomains'] as const
+const ZUWEISUNG_SCHLUESSEL = ['fieldPath', 'sourceId', 'contentItemId'] as const
+const REGISTRY_SCHLUESSEL = ['sources', 'blockedDomains', 'contentIdentity'] as const
 const QUELLE_SCHLUESSEL = ['sourceId', 'sourceClass', 'publisherName', 'authorityName', 'domains'] as const
 
 const DEFINITION_SCHLUESSEL = [
@@ -100,7 +102,8 @@ const DEFINITION_SCHLUESSEL = [
   'current',
   'factKind',
   'sourceFamilyId',
-  'sourceIds',
+  'contentItemRefs',
+  'representations',
   'urlAllowlist',
   'contentTypes',
   'schemaFamily',
@@ -216,7 +219,7 @@ const RAHMEN_GRUENDE = [
   'duplicate_extractor_version',
   'duplicate_extractor_match',
   'insufficient_support',
-  'same_source_composition',
+  'same_content_item_composition',
   'support_bound_exceeded',
   'invalid_support',
   'quality_not_acceptable',
@@ -254,7 +257,7 @@ export type OfficialTruthExtractorUrlRegel =
   | { readonly kind: 'exact'; readonly canonicalUrl: string }
   | { readonly kind: 'path'; readonly host: string; readonly path: string }
 
-export type OfficialTruthExtractorZuweisung = {
+export type OfficialTruthExtractorZuweisung = ContentItemRef & {
   readonly fieldPath: string
   readonly sourceId: string
 }
@@ -265,7 +268,7 @@ export type OfficialTruthExtractorPolitik = {
   readonly assignments: readonly OfficialTruthExtractorZuweisung[]
 }
 
-export type OfficialTruthExtractorStuetze = {
+export type OfficialTruthExtractorStuetze = ContentIdentityBinding & {
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -293,7 +296,8 @@ export type OfficialTruthExtractorDefinition = {
   readonly current: boolean
   readonly factKind: RegelFaktArt
   readonly sourceFamilyId: string
-  readonly sourceIds: readonly string[]
+  readonly contentItemRefs: readonly ContentItemRef[]
+  readonly representations: readonly ContentIdentityBinding[]
   readonly urlAllowlist: readonly OfficialTruthExtractorUrlRegel[]
   readonly contentTypes: readonly string[]
   readonly schemaFamily: string
@@ -310,13 +314,13 @@ export type OfficialTruthExtractorDefinition = {
  * `targetKey` ist für diesen Rahmen undurchsichtig; die aufrufende
  * Schicht besitzt seine Bedeutung.
  */
-export type OfficialTruthExtractorBeobachtung = {
+export type OfficialTruthExtractorBeobachtung = ContentItemRef & {
   readonly targetKey: string
   readonly sourceId: string
   readonly canonical: string
 }
 
-export type OfficialTruthExtractorHerkunft = {
+export type OfficialTruthExtractorHerkunft = ContentIdentityBinding & {
   readonly fieldPath: string
   readonly extractorId: string
   readonly extractorVersion: number
@@ -335,6 +339,7 @@ export type OfficialTruthTrustedFactExtractorErfolg = {
   readonly policyId: string | null
   readonly policyVersion: number | null
   readonly sourceIds: readonly string[]
+  readonly contentItemRefs: readonly ContentItemRef[]
   readonly supportVersionIds: readonly string[]
   readonly provenance: readonly OfficialTruthExtractorHerkunft[]
 }
@@ -370,7 +375,7 @@ export type OfficialTruthExtractorRegistryErgebnis =
 export const OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY: readonly OfficialTruthExtractorDefinition[] =
   Object.freeze([])
 
-type GesperrteStuetze = {
+type GesperrteStuetze = ContentIdentityBinding & {
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -428,6 +433,8 @@ function zuTief(wert: unknown, tiefe = 0): boolean {
   if (Array.isArray(wert)) return wert.some((eintrag) => zuTief(eintrag, tiefe + 1))
   return Object.values(wert as Record<string, unknown>).some((eintrag) => zuTief(eintrag, tiefe + 1))
 }
+
+function itemKey(ref: ContentItemRef): string { return JSON.stringify([ref.sourceId, ref.contentItemId]) }
 
 function sortiert(werte: readonly string[]): string[] {
   return [...werte].sort((links, rechts) => (links < rechts ? -1 : links > rechts ? 1 : 0))
@@ -503,14 +510,18 @@ function definitionLesen(wert: unknown): OfficialTruthExtractorDefinition | null
   if (!extractorVersion || typeof satz.current !== 'boolean') return null
   if (!textIn(satz.factKind, REGEL_FAKT_ARTEN)) return null
   if (typeof satz.sourceFamilyId !== 'string' || !QUELLEN_FAMILIE.test(satz.sourceFamilyId)) return null
-  if (!Array.isArray(satz.sourceIds) || satz.sourceIds.length === 0 || satz.sourceIds.length > REGEL_SUPPORT_MAX) {
-    return null
+  const refs = readDistinctContentItemRefs(satz.contentItemRefs)
+  if (!refs.ok) return null
+  const contentItemRefs = refs.value
+  if (!Array.isArray(satz.representations) || !satz.representations.length || satz.representations.length > 16) return null
+  const representations: ContentIdentityBinding[] = []
+  for (const raw of satz.representations) {
+    const pin = readContentIdentityBinding(raw)
+    if (!pin.ok || !contentItemRefs.some((ref) => itemKey(ref) === itemKey(pin.value))) return null
+    if (representations.some((other) => contentIdentityMatches(other, pin.value))) return null
+    representations.push(pin.value)
   }
-  const sourceIds: string[] = []
-  for (const eintrag of satz.sourceIds) {
-    if (typeof eintrag !== 'string' || !QUELLEN_ID.test(eintrag) || sourceIds.includes(eintrag)) return null
-    sourceIds.push(eintrag)
-  }
+  if (contentItemRefs.some((ref) => !representations.some((pin) => itemKey(ref) === itemKey(pin)))) return null
   if (!Array.isArray(satz.urlAllowlist) || satz.urlAllowlist.length === 0 || satz.urlAllowlist.length > 8) return null
   const urlAllowlist: OfficialTruthExtractorUrlRegel[] = []
   const geseheneUrls = new Set<string>()
@@ -543,8 +554,8 @@ function definitionLesen(wert: unknown): OfficialTruthExtractorDefinition | null
     requiredFieldPaths.push(eintrag)
   }
   if (einzelneQuelle) {
-    if (sourceIds.length !== 1 || requiredFieldPaths.length !== 0) return null
-  } else if (sourceIds.length < 2) {
+    if (contentItemRefs.length !== 1 || requiredFieldPaths.length !== 0) return null
+  } else if (contentItemRefs.length < 2) {
     return null
   }
   if (typeof satz.match !== 'function' || typeof satz.extract !== 'function') return null
@@ -554,7 +565,8 @@ function definitionLesen(wert: unknown): OfficialTruthExtractorDefinition | null
     current: satz.current,
     factKind: satz.factKind,
     sourceFamilyId: satz.sourceFamilyId,
-    sourceIds: Object.freeze(sortiert(sourceIds)),
+    contentItemRefs,
+    representations: Object.freeze(representations),
     urlAllowlist: Object.freeze(urlAllowlist.map((regel) => Object.freeze(regel))),
     contentTypes: Object.freeze(sortiert(contentTypes)),
     schemaFamily: satz.schemaFamily,
@@ -581,7 +593,7 @@ export function officialTruthExtractorDefinitionenPruefen(wert: unknown): Offici
   const selektoren = new Set<string>()
   for (const definition of registry) {
     if (!definition.current) continue
-    const selektor = `${definition.factKind}\u0000${definition.sourceIds.join('\u0000')}`
+    const selektor = `${definition.factKind}\u0000${definition.contentItemRefs.map(itemKey).join('\u0000')}`
     if (selektoren.has(selektor)) return { ok: false, reason: 'duplicate_extractor_match' }
     selektoren.add(selektor)
   }
@@ -620,7 +632,9 @@ function politikForm(wert: unknown): { ok: true; policy: OfficialTruthExtractorP
     if (!zuweisung || !genau(zuweisung, ZUWEISUNG_SCHLUESSEL)) return { ok: false }
     if (typeof zuweisung.fieldPath !== 'string' || !FELD_PFAD.test(zuweisung.fieldPath)) return { ok: false }
     if (typeof zuweisung.sourceId !== 'string' || !QUELLEN_ID.test(zuweisung.sourceId)) return { ok: false }
-    assignments.push({ fieldPath: zuweisung.fieldPath, sourceId: zuweisung.sourceId })
+    const ref = readContentItemRef({ sourceId: zuweisung.sourceId, contentItemId: zuweisung.contentItemId })
+    if (!ref.ok) return { ok: false }
+    assignments.push({ fieldPath: zuweisung.fieldPath, ...ref.value })
   }
   return {
     ok: true,
@@ -672,9 +686,13 @@ function stuetzeBinden(
   }
   const contentType = medientyp(retrieval.contentType)
   if (!contentType || retrieval.contentType !== contentType) return { ok: false, reason: 'content_type_not_allowlisted' }
+  const rep = contentRepresentationFromRegistry(registry, retrieval.canonicalUrl)
+  const identity = readContentIdentityBinding({ sourceId: retrieval.sourceId, contentItemId: retrieval.contentItemId, contentItemVersion: retrieval.contentItemVersion, representationId: retrieval.representationId, representationVersion: retrieval.representationVersion, identityProfileId: retrieval.identityProfileId, identityProfileVersion: retrieval.identityProfileVersion })
+  if (retrieval.identitySchema !== 2 || !identity.ok || !rep.ok || !contentIdentityMatches(rep.value, identity.value) || rep.value.expectedFinalUrl !== retrieval.canonicalUrl || rep.value.expectedMediaType !== contentType) return { ok: false, reason: 'representation_not_eligible' }
   return {
     ok: true,
     stuetze: {
+      ...identity.value,
       versionId: satz.versionId,
       sourceId: satz.sourceId,
       canonicalUrl: retrieval.canonicalUrl,
@@ -736,10 +754,11 @@ function beobachtungenLesen(
     if (typeof satz.canonical !== 'string' || satz.canonical.length > 512) {
       return { ok: false, reason: 'unexpected_fields' }
     }
-    if (typeof satz.sourceId !== 'string' || !quellen.has(satz.sourceId)) {
+    const ref = readContentItemRef({ sourceId: satz.sourceId, contentItemId: satz.contentItemId })
+    if (!ref.ok || !quellen.has(itemKey(ref.value))) {
       return { ok: false, reason: 'source_not_allowlisted' }
     }
-    observations.push({ targetKey: satz.targetKey, sourceId: satz.sourceId, canonical: satz.canonical })
+    observations.push({ targetKey: satz.targetKey, ...ref.value, canonical: satz.canonical })
   }
   return { ok: true, observations }
 }
@@ -801,7 +820,7 @@ function definitionAusfuehren(input: {
   if (input.beobachtungenPflicht) {
     const gelesen = beobachtungenLesen(
       extrakt.observations,
-      new Set(input.supports.map((eintrag) => eintrag.sourceId)),
+      new Set(input.supports.map(itemKey)),
     )
     if (!gelesen.ok) return gelesen
     observations = gelesen.observations
@@ -848,21 +867,22 @@ function herkunftFuer(
       fieldPath,
       extractorId: definition.extractorId,
       extractorVersion: definition.extractorVersion,
-      sourceId: stuetze.sourceId,
+      ...contentIdentityBinding(stuetze),
       versionId: stuetze.versionId,
       policyId: null,
       policyVersion: null,
     }))
   }
-  return sortiert(policy.assignments.map((eintrag) => eintrag.fieldPath)).map((fieldPath) => {
+  return sortiert(policy.assignments.map((eintrag) => eintrag.fieldPath)).flatMap((fieldPath) => {
     const zuweisung = policy.assignments.find((eintrag) => eintrag.fieldPath === fieldPath)
-    const stuetze = stuetzen.find((eintrag) => eintrag.sourceId === zuweisung?.sourceId)
+    const stuetze = zuweisung && stuetzen.find((eintrag) => itemKey(eintrag) === itemKey(zuweisung))
+    if (!stuetze) return []
     return {
       fieldPath,
       extractorId: definition.extractorId,
       extractorVersion: definition.extractorVersion,
-      sourceId: stuetze?.sourceId ?? '',
-      versionId: stuetze?.versionId ?? '',
+      ...contentIdentityBinding(stuetze),
+      versionId: stuetze.versionId,
       policyId: definition.policyId,
       policyVersion: definition.policyVersion,
     }
@@ -912,7 +932,7 @@ function ausfuehren(
   }
   stuetzen.sort((links, rechts) => (links.versionId < rechts.versionId ? -1 : links.versionId > rechts.versionId ? 1 : 0))
 
-  const quellen = new Set(stuetzen.map((eintrag) => eintrag.sourceId))
+  const quellen = new Set(stuetzen.map(itemKey))
   let policy: OfficialTruthExtractorPolitik | null = null
   if (satz.evidenceQuality === 'explicit_primary_statement') {
     if (stuetzen.length !== 1) return sperre('ambiguous_structure')
@@ -920,7 +940,7 @@ function ausfuehren(
   } else {
     if (satz.policy !== null) return sperre('unexpected_fields')
     if (stuetzen.length < 2) return sperre('insufficient_support')
-    if (quellen.size < 2) return sperre('same_source_composition')
+    if (quellen.size < 2) return sperre('same_content_item_composition')
     if (stuetzen.length !== quellen.size) return sperre('ambiguous_structure')
     if (serverPolitik === null || serverPolitik === undefined) return sperre('policy_required')
     const gelesen = politikForm(serverPolitik)
@@ -931,14 +951,14 @@ function ausfuehren(
   const beobachtet = new Set(stuetzen.map((eintrag) => eintrag.contentType))
   const passend = definitionen.filter((definition) => {
     if (!definition.current || definition.factKind !== satz.factKind) return false
-    if (!gleicheMenge(definition.sourceIds, [...quellen])) return false
+    if (!gleicheMenge(definition.contentItemRefs.map(itemKey), [...quellen])) return false
     const einzelne = definition.policyId === null
     if (satz.evidenceQuality === 'explicit_primary_statement' ? !einzelne : einzelne) return false
     return [...beobachtet].every((typ) => definition.contentTypes.includes(typ))
   })
   const gleicheFamilie = definitionen.filter((definition) => {
     if (!definition.current || definition.factKind !== satz.factKind) return false
-    if (!gleicheMenge(definition.sourceIds, [...quellen])) return false
+    if (!gleicheMenge(definition.contentItemRefs.map(itemKey), [...quellen])) return false
     const einzelne = definition.policyId === null
     return satz.evidenceQuality === 'explicit_primary_statement' ? einzelne : !einzelne
   })
@@ -948,6 +968,9 @@ function ausfuehren(
   const definition = passend[0]
   if (!definition) return sperre('extractor_not_registered')
 
+  if (stuetzen.some((support) => !definition.representations.some((pin) => contentIdentityMatches(pin, support)))) {
+    return sperre('representation_not_eligible')
+  }
   if (stuetzen.some((eintrag) => !urlErlaubt(eintrag.canonicalUrl, definition.urlAllowlist))) {
     return sperre('domain_or_path_not_allowlisted')
   }
@@ -960,7 +983,7 @@ function ausfuehren(
     if (new Set(pfade).size !== pfade.length) return sperre('conflicting_value')
     if (pfade.some((pfad) => !definition.requiredFieldPaths.includes(pfad))) return sperre('unexpected_fields')
     if (definition.requiredFieldPaths.some((pfad) => !pfade.includes(pfad))) return sperre('policy_field_unassigned')
-    if (policy.assignments.some((eintrag) => !quellen.has(eintrag.sourceId))) return sperre('source_not_allowlisted')
+    if (policy.assignments.some((eintrag) => !quellen.has(itemKey(eintrag)))) return sperre('source_not_allowlisted')
   }
 
   const gelaufen = definitionAusfuehren({
@@ -990,7 +1013,8 @@ function ausfuehren(
     schemaFamily: definition.schemaFamily,
     policyId: definition.policyId,
     policyVersion: definition.policyVersion,
-    sourceIds: Object.freeze(sortiert([...quellen])),
+    sourceIds: Object.freeze(sortiert([...new Set(stuetzen.map((support) => support.sourceId))])),
+    contentItemRefs: Object.freeze(stuetzen.map(({ sourceId, contentItemId }) => Object.freeze({ sourceId, contentItemId }))),
     supportVersionIds: Object.freeze(sortiert(stuetzen.map((eintrag) => eintrag.versionId))),
     provenance,
   }
@@ -1082,10 +1106,13 @@ export function officialTruthExtractorEingefroreneAusfuehrung(input: {
   }
   stuetzen.sort((links, rechts) => (links.versionId < rechts.versionId ? -1 : links.versionId > rechts.versionId ? 1 : 0))
 
-  const quellen = new Set(stuetzen.map((eintrag) => eintrag.sourceId))
-  if (quellen.size < 2) return { ok: false, reason: 'same_source_composition' }
+  const quellen = new Set(stuetzen.map(itemKey))
+  if (quellen.size < 2) return { ok: false, reason: 'same_content_item_composition' }
   if (stuetzen.length !== quellen.size) return { ok: false, reason: 'ambiguous_structure' }
-  if (!gleicheMenge(definition.sourceIds, [...quellen])) return { ok: false, reason: 'source_not_allowlisted' }
+  if (!gleicheMenge(definition.contentItemRefs.map(itemKey), [...quellen])) return { ok: false, reason: 'source_not_allowlisted' }
+  if (stuetzen.some((support) => !definition.representations.some((pin) => contentIdentityMatches(pin, support)))) {
+    return { ok: false, reason: 'representation_not_eligible' }
+  }
   if (stuetzen.some((eintrag) => !urlErlaubt(eintrag.canonicalUrl, definition.urlAllowlist))) {
     return { ok: false, reason: 'domain_or_path_not_allowlisted' }
   }

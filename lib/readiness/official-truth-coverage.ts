@@ -4,6 +4,7 @@
 // Kein Netz, keine Datenbank, kein Provider, kein Modell, keine Laufzeitaktivierung.
 // Eine Lücke bleibt eine Lücke. Dieses Modul erzeugt keine Anforderungswirkung.
 
+import { readContentIdentityBinding, readDistinctContentItemRefs, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import type { EvidenceLifecycle, EvidenceValidationState } from '@/lib/readiness/evidence'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -51,7 +52,7 @@ const PERSONEN_SCHLUESSEL = new Set([
 ])
 
 /** Dieselbe Form wie `VERSION_ID` in `rule-claims.ts`. */
-const VERSION_ID = /^ev1_[a-f0-9]{32}$/
+const VERSION_ID = /^ev2_[a-f0-9]{32}$/
 
 /** Dieselbe Form wie `sourceIdLesen` in `source-registry.ts`. Kein Katalogabruf. */
 const QUELLEN_ID = /^[a-z][a-z0-9_-]{1,63}$/
@@ -69,7 +70,7 @@ const STUETZE_SCHLUESSEL = [
   'retrievedAt',
   'validFrom',
   'validUntil',
-  'sourceId',
+  'sourceId', 'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion', 'identityProfileId', 'identityProfileVersion',
 ] as const
 
 const STRUKTUR_RANG = {
@@ -86,7 +87,8 @@ const FRISCHE_RANG = {
   max_age_exceeded: 2,
 } as const
 
-export type OfficialTruthAbdeckungStuetze = {
+export type OfficialTruthAbdeckungStuetze = ContentIdentityBinding & {
+  identitySchema: 2
   versionId: string
   ruleScopeKey: string
   lifecycle: EvidenceLifecycle
@@ -244,6 +246,8 @@ function stuetzeLesen(wert: unknown): { ok: true; stuetze: OfficialTruthAbdeckun
   if (!satz) return { ok: false, reason: 'invalid_support' }
   if (!schluesselErlaubt(satz, STUETZE_SCHLUESSEL, STUETZE_SCHLUESSEL)) return { ok: false, reason: 'unexpected_fields' }
   if (typeof satz.versionId !== 'string' || !VERSION_ID.test(satz.versionId)) return { ok: false, reason: 'invalid_support' }
+  const identity = readContentIdentityBinding({ sourceId: satz.sourceId, contentItemId: satz.contentItemId, contentItemVersion: satz.contentItemVersion, representationId: satz.representationId, representationVersion: satz.representationVersion, identityProfileId: satz.identityProfileId, identityProfileVersion: satz.identityProfileVersion })
+  if (satz.identitySchema !== 2 || !identity.ok) return { ok: false, reason: 'invalid_support' }
   return { ok: true, stuetze: satz as OfficialTruthAbdeckungStuetze }
 }
 
@@ -366,6 +370,8 @@ export function officialTruthAbdeckungBewerten(anfrage: OfficialTruthAbdeckungAn
   if (nachId.size !== ids.length) return ungueltig(ruleScopeKey, factKind, 'support_mismatch')
 
   const gewaehlt = ids.map((id) => nachId.get(id) as OfficialTruthAbdeckungStuetze)
+  const refs = readDistinctContentItemRefs(gewaehlt.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
+  if (!refs.ok) return ungueltig(ruleScopeKey, factKind, 'duplicate_support')
   const struktur = hoechsterRang(
     gewaehlt.flatMap((stuetze) => {
       const grund = strukturVon(stuetze, ruleScopeKey, referenzMs)

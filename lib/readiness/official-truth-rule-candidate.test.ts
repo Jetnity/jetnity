@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-rule-candidate.test.ts
 //
 // Regel-Kandidat nur aus bereits angenommener amtlicher Evidence.
@@ -93,7 +94,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function atom(teil?: Record<string, unknown>) {
@@ -124,7 +125,7 @@ function rohversion(
 ): EvidenceVersion {
   const erzeugt = evidenceKandidatAusModell(
     { scope: { ...scope, sourceId } },
-    {
+    { contentType: 'text/plain',
       canonicalUrl: `https://www.${host}/rules/visa`,
       retrievedAt: ABGERUFEN,
       sourceSnapshot: snapshot,
@@ -143,6 +144,13 @@ function version(
   snapshot: string,
   scope: Record<string, unknown> = atom(),
 ): EvidenceVersion {
+  const source = basis.sources.find((entry) => entry.sourceId === sourceId)
+  if (source?.sourceClass === 'licensed_evidence_provider') {
+    const official = version(basis, 'example-border-authority', 'gov.example', snapshot, atom())
+    // Deliberately forged provider identity: the R2 reader must reject it.
+    return { ...official, ...source, canonicalUrl: `https://www.${host}/rules/visa`, scope: { ...official.scope, sourceId } }
+  }
+
   const evidence = rohversion(basis, sourceId, host, snapshot, scope)
   const akzeptiert = evidenceKandidatAkzeptieren(evidence, basis)
   assert.equal(akzeptiert.ok, true, akzeptiert.ok ? '' : akzeptiert.reason)
@@ -270,7 +278,7 @@ describe('Official Truth accepted Evidence rule candidate', () => {
       basis,
       meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
     )
-    assert.deepEqual(gleiche, { ok: false, reason: 'same_source_composition' })
+    assert.deepEqual(gleiche, { ok: false, reason: 'same_content_item_composition' })
     assert.equal('kandidat' in gleiche, false)
   })
 
@@ -293,9 +301,9 @@ describe('Official Truth accepted Evidence rule candidate', () => {
       atom({ sourceId: 'example-licensed-provider' }),
     )
     assert.equal(anbieter.sourceClass, 'licensed_evidence_provider')
-    assert.notEqual(akzeptierteEvidenceLesen(anbieter, basis), null)
+    assert.equal(akzeptierteEvidenceLesen(anbieter, basis), null)
     const ergebnis = officialTruthRegelKandidatAusEvidence([anbieter], basis, meta())
-    assert.deepEqual(ergebnis, { ok: false, reason: 'primary_source_required' })
+    assert.deepEqual(ergebnis, { ok: false, reason: 'evidence_not_accepted' })
   })
 
   test('eine andere Credential-Option bleibt eine andere Zelle', () => {
@@ -448,3 +456,8 @@ describe('Official Truth accepted Evidence rule candidate', () => {
     assert.equal(requirementsProviderAus(), null)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules/visa",
+  "https://www.interior.example/rules/visa",] as const
