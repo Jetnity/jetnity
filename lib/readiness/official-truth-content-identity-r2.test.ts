@@ -99,6 +99,55 @@ export function r2CatalogRows(sources: unknown, publications: readonly (string |
     blocked_domains: [], content_items: [], item_versions: [], representations: [], representation_urls: [], url_reservations: [] }
 }
 
+/** Offline identity-only fixture. No live GOV.UK body, catalog or legal fact. */
+export function govukNationalListFixture() {
+  const nationalId = '2b25b3d4-4eaa-4859-a34e-c7869c114c15'
+  const homeOfficeId = '06056197-bc69-4147-aa28-070bca132178'
+  const nationalPath = '/guidance/immigration-rules/immigration-rules-appendix-eta-national-list'
+  const manualPath = '/guidance/immigration-rules'
+  const url = `https://www.gov.uk/api/content${nationalPath}`
+  const authority = quellenRegistryErstellen([{ sourceId: 'govuk', sourceClass: 'official_authority',
+    publisherName: 'GOV.UK', authorityName: 'UK Government', domains: ['www.gov.uk'] }])
+  assert.ok(authority.ok)
+  const item = { sourceId: 'govuk', contentItemId: 'eta-national-list', contentItemVersion: 1 as const, current: true as const,
+    externalIdNamespace: 'govuk-content-id', externalContentId: nationalId,
+    expectedPublisherIds: [homeOfficeId], expectedAuthorityIds: [homeOfficeId] }
+  const representation = { sourceId: item.sourceId, contentItemId: item.contentItemId, contentItemVersion: item.contentItemVersion,
+    representationId: 'content-api-en', representationVersion: 1 as const, current: true as const,
+    requestUrls: [url], expectedFinalUrl: url, expectedMediaType: 'application/json',
+    identityProfileId: 'govuk-eta-national-list-content-api-en', identityProfileVersion: 1,
+    expectedLocale: 'en', expectedSchema: 'manual_section' }
+  const linked = (contentId: string, path: string, schema: string) => ({
+    content_id: contentId, base_path: path, locale: 'en', schema_name: schema, document_type: schema,
+    withdrawn: false, links: {}, api_path: `/api/content${path}`, api_url: `https://www.gov.uk/api/content${path}`,
+    web_url: `https://www.gov.uk${path}`,
+  })
+  const organisation = () => ({ ...linked(homeOfficeId, '/government/organisations/home-office', 'organisation'),
+    details: { organisation_govuk_status: { status: 'live' } } })
+  const body = { analytics_identifier: null, base_path: nationalPath, content_id: nationalId,
+    description: 'Synthetic identity test', details: { attachments: [], body: '<p>Opaque synthetic text.</p>',
+      change_history: [], manual: { base_path: manualPath }, organisations: [], visually_expanded: false },
+    document_type: 'manual_section', first_published_at: '2026-10-04T12:00:00Z',
+    links: { available_translations: [linked(nationalId, nationalPath, 'manual_section')],
+      manual: [linked('87e2748f-2e9b-4681-8baa-778b6d326a8a', manualPath, 'manual')],
+      organisations: [organisation()], primary_publishing_organisation: [organisation()] },
+    locale: 'en', phase: 'live', public_updated_at: '2026-10-04T12:00:00Z', publishing_app: 'manuals-publisher',
+    publishing_request_id: 'synthetic-request', publishing_scheduled_at: null, rendering_app: 'frontend',
+    scheduled_publishing_delay_seconds: null, schema_name: 'manual_section', title: 'Synthetic fixture',
+    updated_at: '2026-10-04T12:00:00Z', withdrawn_notice: {} }
+  const graph = createContentIdentityGraph(authority.registry, [item], [representation])
+  const emptyGraph = createContentIdentityGraph(authority.registry, [], [])
+  assert.ok(graph.ok); assert.ok(emptyGraph.ok)
+  const snapshot = (value: typeof graph.value) => r2Catalog({ ...value.authorityRegistry, contentIdentity: value })
+  const registration = { ...item, representations: [{ representationId: representation.representationId,
+    representationVersion: representation.representationVersion, current: representation.current,
+    requestUrls: representation.requestUrls, expectedFinalUrl: url, expectedMediaType: representation.expectedMediaType,
+    identityProfileId: representation.identityProfileId, identityProfileVersion: representation.identityProfileVersion,
+    expectedLocale: representation.expectedLocale, expectedSchema: representation.expectedSchema }] }
+  return { authority: authority.registry, item, representation, registration, body, url,
+    responseText: JSON.stringify(body), catalog: snapshot(graph.value), sourceOnlyCatalog: snapshot(emptyGraph.value) }
+}
+
 // Canonical identities for structural coverage/grammar fixtures, with a fixed
 // regulatory cell and clock. Callers deliberately vary only their tested projection.
 export function r2IdentityFixture(token: string) {
@@ -257,7 +306,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) describe('R2 coordinated
     return { result, counts, catalogCalls: external.calls }
   }
 
-  test('R2 runtime imports perform no DB or network call with production registries empty', async () => {
+  test('R2 runtime imports perform no DB or network call with the single identity profile available', async () => {
     const { execFileSync } = await import('node:child_process')
     const script = `
       const assert = require('node:assert/strict');
@@ -286,8 +335,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) describe('R2 coordinated
       assert.equal(result.status, 'blocked'); assert.equal(cat.calls.length, 0)
     }
   })
-  test('R2 production registries remain frozen and exactly empty', () => {
-    for (const list of [OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
+  test('R2 activates only one identity profile; extractor, composition and region pins remain empty', () => {
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.length, 1)
+    assert.ok(Object.isFrozen(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY))
+    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.map(({ identityProfileId, identityProfileVersion, current }) =>
+      ({ identityProfileId, identityProfileVersion, current })),
+    [{ identityProfileId: 'govuk-eta-national-list-content-api-en', identityProfileVersion: 1, current: true }])
+    for (const list of [OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
       OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY, REGULIERUNGS_REGION_PINS]) {
       assert.deepEqual(list, []); assert.ok(Object.isFrozen(list))
     }

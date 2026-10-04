@@ -2,6 +2,7 @@
 import { sha256Hex } from '@/lib/readiness/digest'
 import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { checkedAtLesen, gültigkeitszeitLesen, quelleUrlLesen } from '@/lib/readiness/official'
+import { GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE } from '@/lib/readiness/official-truth-govuk-content-api-identity-profile'
 import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
@@ -76,7 +77,9 @@ export type ContentIdentityProfileDefinition = Readonly<{
     | Readonly<{ ok: false; reason: 'identity_mismatch' | 'invalid_response' }>
 }>
 
-export const OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY: readonly ContentIdentityProfileDefinition[] = Object.freeze([])
+export const OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY: readonly ContentIdentityProfileDefinition[] = Object.freeze([
+  GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE,
+])
 
 type ProfilePin = Omit<ContentIdentityProfileDefinition, 'verify'>
 export type ContentIdentityGraph = Readonly<{
