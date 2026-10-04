@@ -2,15 +2,21 @@
 //
 // Ruhendes, serverseitiges Gateway für den privaten Quellenkatalog.
 // lib/readiness/source-registry.ts bleibt die kanonische Vertrauensregel.
-// Diese Datei baut jede Registry mit quellenRegistryErstellen und speichert
-// nur eine Quelle, die dadurch gültig ist. Kein zweites Modell, kein echter
+// Diese Datei validiert Quellen mit quellenRegistryErstellen und Content-Items
+// mit dem kanonischen R1-Graph. Kein zweites Modell, kein echter
 // Katalog, kein Provider und kein Netz ausser dem einen Supabase-RPC,
 // und der nur beim ausdrücklichen Aufruf.
 
 import 'server-only'
 
 import { createClient } from '@supabase/supabase-js'
-import { createContentIdentityGraph, type ContentIdentityProfileDefinition } from '@/lib/readiness/official-truth-content-identity'
+import {
+  createContentIdentityGraph,
+  type ContentIdentityFailure,
+  type ContentIdentityProfileDefinition,
+  type ContentItemDescriptor,
+  type RepresentationDescriptor,
+} from '@/lib/readiness/official-truth-content-identity'
 
 import {
   quellenRegistryErstellen,
@@ -48,6 +54,21 @@ export type QuellenKatalogErgebnis =
 export type QuelleRegistrierenErgebnis =
   | { ok: true; outcome: 'inserted' | 'idempotent'; sourceId: string }
   | { ok: false; reason: string }
+
+/** Initial registration only. Representations inherit the enclosing item tuple. */
+export type ContentItemRegistrierenEingabe = Omit<ContentItemDescriptor, 'contentItemVersion' | 'current'> & Readonly<{
+  contentItemVersion: 1
+  current: true
+  representations: readonly (Omit<RepresentationDescriptor,
+    'sourceId' | 'contentItemId' | 'contentItemVersion' | 'representationVersion' | 'current'> & Readonly<{
+      representationVersion: 1
+      current: true
+    }>)[]
+}>
+
+export type ContentItemRegistrierenErgebnis =
+  | { ok: true; outcome: 'inserted' | 'idempotent'; sourceId: string; contentItemId: string }
+  | { ok: false; reason: ContentIdentityFailure | 'conflicting_duplicate' | 'catalog_not_configured' | 'catalog_failed' }
 
 function dienstTransport(env: Record<string, string | undefined>): OfficialTruthSourceCatalogTransport | null {
   const url = env[DIENST_URL]?.trim()
@@ -303,6 +324,104 @@ export async function quelleRegistrieren(
   })
   if (!antwort.ok) return antwort
   return registrierAntwort(antwort.antwort, vorgeschlagen.sourceId)
+}
+
+/**
+ * Dormant, trusted server entry; dependencies are the existing test seam, never
+ * request-supplied authority. R1 owns descriptor/source/profile/URL validation.
+ * No verifier is executed: registration is not publication-origin or Rule proof.
+ */
+export async function contentItemRegistrieren(
+  eingabe: ContentItemRegistrierenEingabe,
+  abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
+): Promise<ContentItemRegistrierenErgebnis> {
+  try {
+    const transport = transportAus(abhaengigkeiten)
+    if (!transport) return { ok: false, reason: 'catalog_not_configured' }
+    const antwort = await katalogAufrufen(transport, { operation: 'read_registry' })
+    if (!antwort.ok) return antwort
+    const registry = registryAusAntwort(antwort.antwort, abhaengigkeiten?.identityProfiles)
+    const bestand = registry?.contentIdentity
+    if (!bestand) return { ok: false, reason: 'catalog_failed' }
+
+    // Only the helper envelope and initial-operation restrictions are checked
+    // here. Do not copy R1's private descriptor parsers or normalize raw input.
+    const input = row(eingabe, ['sourceId', 'contentItemId', 'externalIdNamespace', 'externalContentId',
+      'contentItemVersion', 'current', 'expectedPublisherIds', 'expectedAuthorityIds', 'representations'])
+    if (!input || input.contentItemVersion !== 1 || input.current !== true
+      || !Array.isArray(input.representations) || Object.getPrototypeOf(input.representations) !== Array.prototype) {
+      return { ok: false, reason: 'invalid_descriptor' }
+    }
+    const reps = rows(input.representations, ['representationId', 'representationVersion', 'current',
+      'requestUrls', 'expectedFinalUrl', 'expectedMediaType', 'identityProfileId', 'identityProfileVersion',
+      'expectedLocale', 'expectedSchema'], 16)
+    if (!reps?.length || reps.some((rep, index) => rep.representationVersion !== 1 || rep.current !== true
+      || !Object.getOwnPropertyDescriptor(input.representations, String(index))?.enumerable)) {
+      return { ok: false, reason: 'invalid_descriptor' }
+    }
+    const itemInput = { ...input }
+    delete itemInput.representations
+    const vorgeschlagen = createContentIdentityGraph(bestand.authorityRegistry, [itemInput], reps.map((rep) => ({
+      ...rep, sourceId: input.sourceId, contentItemId: input.contentItemId, contentItemVersion: input.contentItemVersion,
+    })), abhaengigkeiten?.identityProfiles)
+    if (!vorgeschlagen.ok) return vorgeschlagen
+    const item = vorgeschlagen.value.items[0]!
+    const representations = vorgeschlagen.value.representations
+    const gleicherArtikel = (value: ContentItemDescriptor | RepresentationDescriptor) =>
+      value.sourceId === item.sourceId && value.contentItemId === item.contentItemId
+    const vorhandeneItems = bestand.items.filter(gleicherArtikel)
+    if (vorhandeneItems.length) {
+      // Both sides are canonical copied/frozen R1 output, including sorted pins,
+      // URLs and streams. Compare ALL versions and the COMPLETE representation
+      // set; never append an exact replay as a duplicate graph node.
+      if (JSON.stringify(vorhandeneItems) !== JSON.stringify(vorgeschlagen.value.items)
+        || JSON.stringify(bestand.representations.filter(gleicherArtikel)) !== JSON.stringify(representations)) {
+        return { ok: false, reason: 'conflicting_duplicate' }
+      }
+    } else {
+      const kombiniert = createContentIdentityGraph(bestand.authorityRegistry,
+        [...bestand.items, item], [...bestand.representations, ...representations], abhaengigkeiten?.identityProfiles)
+      if (!kombiniert.ok) return kombiniert
+    }
+
+    // No await between canonical validation and serialization; caller-owned
+    // objects are never read again. SQL retains final race/uniqueness authority.
+    const geschrieben = await katalogAufrufen(transport, {
+      operation: 'register_content_item',
+      item: {
+        source_id: item.sourceId,
+        content_item_id: item.contentItemId,
+        external_id_namespace: item.externalIdNamespace,
+        external_content_id: item.externalContentId,
+        content_item_version: item.contentItemVersion,
+        current: item.current,
+        expected_publisher_ids: [...item.expectedPublisherIds],
+        expected_authority_ids: [...item.expectedAuthorityIds],
+      },
+      representations: representations.map((rep) => ({
+        representation_id: rep.representationId,
+        representation_version: rep.representationVersion,
+        current: rep.current,
+        request_urls: [...rep.requestUrls],
+        expected_final_url: rep.expectedFinalUrl,
+        expected_media_type: rep.expectedMediaType,
+        identity_profile_id: rep.identityProfileId,
+        identity_profile_version: rep.identityProfileVersion,
+        expected_locale: rep.expectedLocale,
+        expected_schema: rep.expectedSchema,
+      })),
+    })
+    if (!geschrieben.ok) return geschrieben
+    const result = row(geschrieben.antwort, ['ok', 'identity_schema', 'operation', 'outcome', 'source_id', 'content_item_id'])
+    if (!result || result.ok !== true || result.identity_schema !== 2 || result.operation !== 'register_content_item'
+      || (result.outcome !== 'inserted' && result.outcome !== 'idempotent')
+      || result.source_id !== item.sourceId || result.content_item_id !== item.contentItemId) {
+      return { ok: false, reason: 'catalog_failed' }
+    }
+    return { ok: true, outcome: result.outcome, sourceId: item.sourceId, contentItemId: item.contentItemId }
+  } catch {
+    return { ok: false, reason: 'catalog_failed' }
+  }
 }
 
 /** In-memory replay of the one validated snapshot. No environment, client or second DB read. */
