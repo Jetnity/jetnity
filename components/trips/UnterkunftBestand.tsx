@@ -8,16 +8,22 @@ import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
+import { ersteMeldung, unterkunftZeitraumSchema } from '@/lib/trips/schema'
+import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 import type { Trip, TripItem } from '@/types/trips'
+
+type ZeitraumSpeichern = (itemId: string, startsOn: string, endsOn: string) => Promise<string | null>
 
 export default function UnterkunftBestand({
   reise,
   ohneTag = [],
   onBuchungsstatus,
+  onUnterkunftZeitraum,
 }: {
   reise: Trip
   ohneTag?: readonly TripItem[]
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onUnterkunftZeitraum?: ZeitraumSpeichern
 }) {
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState<string | null>(null)
@@ -65,29 +71,34 @@ export default function UnterkunftBestand({
           {abdeckung.aufenthalte.map((aufenthalt) => (
             <li
               key={aufenthalt.item.id}
-              className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="grid min-w-0 gap-3 rounded-2xl border border-line-200 px-3 py-3"
             >
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-brand-800 break-words">{aufenthalt.item.title}</p>
-                <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                  {zeitraumKurz(aufenthalt.start, aufenthalt.end)}
-                  {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
-                  {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
-                </p>
+              <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-brand-800 break-words">{aufenthalt.item.title}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-ink-800">
+                    {zeitraumKurz(aufenthalt.start, aufenthalt.end)}
+                    {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+                    {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
+                  </p>
+                </div>
+                <div className="flex min-h-11 flex-wrap items-center gap-2">
+                  <BuchungsSiegel status={aufenthalt.status} />
+                  {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
+                    <button
+                      type="button"
+                      disabled={laeuft === aufenthalt.item.id}
+                      onClick={() => void setzen(aufenthalt.item.id, aufenthalt.status !== 'booked')}
+                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                    >
+                      {aufenthalt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                    </button>
+                  ) : null}
+                </div>
               </div>
-              <div className="flex min-h-11 flex-wrap items-center gap-2">
-                <BuchungsSiegel status={aufenthalt.status} />
-                {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
-                  <button
-                    type="button"
-                    disabled={laeuft === aufenthalt.item.id}
-                    onClick={() => void setzen(aufenthalt.item.id, aufenthalt.status !== 'booked')}
-                    className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
-                  >
-                    {aufenthalt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
-                  </button>
-                ) : null}
-              </div>
+              {onUnterkunftZeitraum && istManuelleUnterkunft(aufenthalt.item) ? (
+                <UnterkunftZeitraum item={aufenthalt.item} onSpeichern={onUnterkunftZeitraum} />
+              ) : null}
             </li>
           ))}
           {abdeckung.luecken.map((luecke) => (
@@ -116,5 +127,113 @@ export default function UnterkunftBestand({
         </p>
       ) : null}
     </section>
+  )
+}
+
+function UnterkunftZeitraum({ item, onSpeichern }: { item: TripItem; onSpeichern: ZeitraumSpeichern }) {
+  const id = React.useId()
+  const knopf = React.useRef<HTMLButtonElement>(null)
+  const schreibt = React.useRef(false)
+  const [offen, setOffen] = React.useState(false)
+  const [startsOn, setStartsOn] = React.useState('')
+  const [endsOn, setEndsOn] = React.useState('')
+  const [fehler, setFehler] = React.useState('')
+  const [feldfehler, setFeldfehler] = React.useState(false)
+  const [laeuft, setLaeuft] = React.useState(false)
+  const [gespeichert, setGespeichert] = React.useState(false)
+  const vollstaendig = unterkunftZeitraumSchema.safeParse(item).success
+
+  const schliessen = () => {
+    setOffen(false)
+    setFehler('')
+    knopf.current?.focus()
+  }
+
+  const speichern = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (schreibt.current) return
+    const zeitraum = unterkunftZeitraumSchema.safeParse({ startsOn, endsOn })
+    setFeldfehler(!zeitraum.success)
+    if (!zeitraum.success) {
+      setFehler(ersteMeldung(zeitraum.error))
+      return
+    }
+    schreibt.current = true
+    setLaeuft(true)
+    setFehler('')
+    try {
+      const meldung = await onSpeichern(item.id, zeitraum.data.startsOn, zeitraum.data.endsOn)
+      if (meldung) setFehler(meldung)
+      else {
+        schliessen()
+        setGespeichert(true)
+      }
+    } catch {
+      setFehler('Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.')
+    } finally {
+      schreibt.current = false
+      setLaeuft(false)
+    }
+  }
+
+  return (
+    <div className="min-w-0 border-t border-line-100 pt-3">
+      <p className="text-xs leading-5 text-ink-800 break-words">
+        Check-in: {item.startsOn ?? 'offen'} · Check-out: {item.endsOn ?? 'offen'}
+      </p>
+      {!vollstaendig ? <p className="text-xs leading-5 text-ink-800">Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.</p> : null}
+      <button
+        ref={knopf}
+        type="button"
+        aria-expanded={offen}
+        aria-controls={offen ? `${id}-formular` : undefined}
+        aria-disabled={laeuft}
+        onClick={() => {
+          if (schreibt.current) return
+          if (offen) schliessen()
+          else {
+            setStartsOn(item.startsOn ?? '')
+            setEndsOn(item.endsOn ?? '')
+            setFehler('')
+            setFeldfehler(false)
+            setGespeichert(false)
+            setOffen(true)
+          }
+        }}
+        className="mt-2 inline-flex min-h-11 max-w-full items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+      >
+        {vollstaendig ? 'Zeitraum ändern' : 'Zeitraum ergänzen'}
+      </button>
+      {offen ? (
+        <form id={`${id}-formular`} aria-label={`Zeitraum für ${item.title}`} noValidate onSubmit={speichern} className="mt-3 grid min-w-0 gap-3" aria-busy={laeuft}>
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-in`}>
+              Check-in
+              <input id={`${id}-check-in`} type="date" required value={startsOn} disabled={laeuft}
+                onChange={(event) => setStartsOn(event.target.value)}
+                aria-invalid={feldfehler || undefined} aria-describedby={fehler ? `${id}-fehler` : undefined}
+                className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-out`}>
+              Check-out
+              <input id={`${id}-check-out`} type="date" required value={endsOn} disabled={laeuft}
+                onChange={(event) => setEndsOn(event.target.value)}
+                aria-invalid={feldfehler || undefined} aria-describedby={fehler ? `${id}-fehler` : undefined}
+                className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
+            </label>
+          </div>
+          {fehler ? <p id={`${id}-fehler`} role="alert" className="break-words text-sm text-danger-600">{fehler}</p> : null}
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" disabled={laeuft} className="min-h-11 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-50">
+              {laeuft ? 'Wird gespeichert …' : 'Zeitraum speichern'}
+            </button>
+            <button type="button" disabled={laeuft} onClick={schliessen} className="min-h-11 rounded-full border border-line-300 px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50">
+              Abbrechen
+            </button>
+          </div>
+        </form>
+      ) : null}
+      {gespeichert ? <p role="status" className="mt-2 text-sm text-brand-700">Zeitraum gespeichert.</p> : null}
+    </div>
   )
 }
