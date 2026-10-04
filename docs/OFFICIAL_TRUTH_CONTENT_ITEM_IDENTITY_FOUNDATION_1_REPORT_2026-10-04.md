@@ -76,18 +76,22 @@ Node v22.23.3 / npm 10.9.9; clean lockfile installation (`npm ci`) succeeded, 53
 | Operating-mode guard | PASS, NORMAL. |
 | Hygiene | `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` all PASS. Schema-reference check is a local source/type scan, not a database connection. |
 | Import/dependency/action searches | Only the new test imports the new module. Module imports exactly digest, Evidence serializer, official URL/time helpers, Rule-scope parser/type and source-registry helpers/type. No forbidden effects or real-source identifiers. |
-| Full PR CI | Pending publication/run; no CI success claimed yet. |
+| Full PR CI on implementation head `8875c03d054d7763a1814f85583e598996204893` | **SUCCESS**, run [37164635562](https://github.com/Jetnity/jetnity/actions/runs/37164635562), verification job `111324943384`, Auth job `111324943491`. Full `npm test`: **4,675/4,675 pass**, 774 suites, zero failures/cancelled/skipped. Setup, mode, typecheck, lint, all hygiene and canonical Production build also succeed. |
 
-The full-suite failure is environmental: both unchanged tests hard-code a Linux PostgreSQL 16 path absent on this macOS host. No test is skipped or altered, no database is provisioned, and no system path is replaced to manufacture green. The existing PR CI's Linux runner must supply the missing full-suite evidence; until that is verified, readiness is blocked.
+The local full-suite failure is environmental: both unchanged tests hard-code a Linux PostgreSQL 16 path absent on this macOS host. No test is skipped or altered, no local database is provisioned, and no system path is replaced to manufacture green. The existing PR CI's Linux runner supplies the complete successful run, including its two pre-existing disposable PostgreSQL fixtures. The log shows the PR merge of exact implementation head `8875c03d054d7763a1814f85583e598996204893` into exact baseline `6f3215860c5f84f77d3139128a90663be7e257d8`. It records 4,675 pass and zero fail/skip, followed by successful Production build. This closes the validation gap without claiming the failed macOS run passed.
+
+The final report-only commit preserves both implementation/test blobs (`d2e708d7c2e53a1d010958dde8fe68ec65312172` / `6d5ae1f680844d437fb403d37616265872dad5b1`). Final-head CI is re-read in the completion delivery; the run linked above is explicitly bound to the implementation head, not silently relabeled as the later documentation head.
 
 ## Seed, final head and boundaries
 
 Immutable task Git blob: `47d6383075d14e4cc70018a52a04691c93e3acbd`.
 Exact-byte SHA-256: `be21ddcb5c771f5ecf85395cb24cd3e8583f53062b1f0dc158fb6191e4143dcb`.
-The final completion report records the exact final commit and remote PR readback. A tracked report cannot embed its own containing commit's SHA; the dispatch SHA above is not presented as the final review head. Final scope/seed/whitespace/live checks remain mandatory before STOP.
+The final completion report records the exact final commit and remote PR readback. A tracked report cannot embed its own containing commit's SHA; neither the dispatch nor the implementation SHA above is presented as the final review head. Published implementation tree `878ff5da18de3835207004834e2b2ef783328d06` was verified equal to the locally tested tree. Terminal push had no credentials; publication used the connected GitHub blob/tree/commit API with byte-for-byte blob checks and a non-forced branch update. No Ready/merge action was performed.
 
-No source/catalog/RPC/retrieval/extractor/composition/acceptance/store/F8 wiring, S1, R2, real identity, SQL/migration, Supabase connection, Development/Production mutation, registration, UI or traveller-data change. The new module/tests perform no live network calls. Repository fetch/push, dependency installation and existing CI are tooling, not an Official Truth runtime capability. No production deployment is initiated by this writer. Profile registry is exactly empty/frozen; there is no non-test production importer. Existing ev1, v2 lookup and Rule-scope behavior remain unchanged.
+Final scope/seed/whitespace/live checks remain mandatory before STOP. At the implementation publication, all six paths matched the task allowlist, seed bytes matched dispatch, working tree was clean, `git diff --check` passed, and the explicit PR-base/head operating-mode guard passed. Main had zero commits ahead of the branch merge-base.
 
-Classification: **CONTENT_ITEM_IDENTITY_FOUNDATION_BLOCKED**
+No source/catalog/RPC/retrieval/extractor/composition/acceptance/store/F8 wiring, S1, R2, real identity, new SQL/migration, direct Supabase connection, Development/Production mutation, registration, UI or traveller-data change. The new module/tests perform no live network calls. Repository fetch/publication, dependency installation and existing CI are tooling, not an Official Truth runtime capability. The existing workflow also ran its unchanged Auth configuration check; this writer made no direct Auth/DB call or configuration change. No production deployment is initiated by this writer. Profile registry is exactly empty/frozen; there is no non-test production importer. Existing ev1, v2 lookup and Rule-scope behavior remain unchanged.
 
-Remain Draft. No Ready, merge or follow-up. Independent Technical-Lead review and the unresolved full-suite gate remain required.
+Classification: **CONTENT_ITEM_IDENTITY_FOUNDATION_READY_FOR_SCHEMA_SLICE**
+
+Remain Draft. No Ready, merge or follow-up. The classification is foundation readiness only; independent Technical-Lead exact-final-head review remains required before any next slice.
