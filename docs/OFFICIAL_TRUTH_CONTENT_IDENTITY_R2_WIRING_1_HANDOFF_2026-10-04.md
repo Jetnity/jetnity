@@ -8,7 +8,23 @@ Codex Desktop session `01a1064d-7e3c-72a0-b257-387193918f67`, `gpt-6-astra` / `x
 
 Classification: **CONTENT_IDENTITY_R2_BLOCKED**.
 
-R2 runtime has not been edited. This delivery adds only the report, handoff and self-review. The task remains byte-identical. Catalog/store still call v1; Evidence still uses ev1/lookup v2. Profile/extractor/composition/region-pin registries remain empty and frozen. No database action occurred.
+## Current second STOP after amendment
+
+Same writer resumed at amendment head `012f6f0cff4c89e4d1d235425913a31a8696d816`; full task and amendment read. The original scanner ownership blocker is resolved by Scope Amendment 1. The renewed audit discovered three further test consumers requiring exact ownership clarification/amendment:
+
+- `lib/readiness/official-truth-review-suggestion.test.ts`: requires old `review-packet:v2:` format and source-only successful packet fixtures. Read-only format-change probe: 6 pass / 5 fail among 11 tests, zero skips.
+- `lib/readiness/evidence-store-schema.test.ts`: ties historical migration to current runtime `ev1_` / `evidence-key:v2:` constants.
+- `lib/readiness/rule-claim-store-schema.test.ts`: transit positive fixture creates and accepts source-only Evidence, then expects Rule acceptance.
+
+The report gives exact lines, reproduction and the minimal reconciliation for all three together. No production importer edit outside the closure is established. The user's resumed instruction requires STOP on another outside-closure test dependency; no recursive expansion is inferred from Amendment 1.
+
+First unfinished next step is TL review of these test dependencies and an explicit versioned ownership decision. No production/test edit, partial scanner-only cutover, legacy compatibility bypass or test skip has been introduced. Both task and amendment are immutable. Runtime remains v1/ev1; R2 is unimplemented. This resumption updates only the three assigned docs. Production registries remain 0/0/0/0, frozen. No live database call or mutation.
+
+Live precheck again matched exact main, NORMAL, `gpt-6-astra`/`xhigh` and a single writer. TL receipt `5978881653` was read; earlier apply-governance material is processed. Final exact-head validation is reported in the delivery/PR; earlier counts below are historical first-STOP evidence.
+
+## Historical first STOP (scanner ownership now resolved)
+
+R2 runtime has not been edited. The first delivery added only the report, handoff and self-review. The task remained byte-identical. Catalog/store still call v1; Evidence still uses ev1/lookup v2. Profile/extractor/composition/region-pin registries remain empty and frozen. No database action occurred.
 
 First unfinished step: independently reproduce the schema-reference conflict described in the [report](OFFICIAL_TRUTH_CONTENT_IDENTITY_R2_WIRING_1_REPORT_2026-10-04.md), then explicitly decide a versioned scope amendment before resuming this same writer. The required v2 literals yield two unknown-RPC findings in `scripts/db/verwendung.mjs`. That forbidden path holds the reviewed RPC allowlist. Its exact-list regression test, `lib/admin/account-counts-delivery/schema-reference.test.ts`, is also outside the assigned test closure. Keeping the v2 calls invisible to the scanner is not a valid fix. No runtime importer outside the closure was demonstrated to require change; this is a distinct hygiene dependency.
 

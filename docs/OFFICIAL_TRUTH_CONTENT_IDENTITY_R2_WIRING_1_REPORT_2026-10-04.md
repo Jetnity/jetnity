@@ -10,7 +10,51 @@ Session: `01a1064d-7e3c-72a0-b257-387193918f67`. Single writer; no subagents.
 
 Classification: **CONTENT_IDENTITY_R2_BLOCKED**.
 
-## Result
+## Resumption after Scope Amendment 1 — second STOP
+
+The same writer/session resumed from exact amendment head `012f6f0cff4c89e4d1d235425913a31a8696d816`. Both the entire original 489-line task and the entire 121-line amendment were read. Original seed remains immutable. Main is still the exact baseline, mode is NORMAL, model remains `gpt-6-astra` / `xhigh`, and #815 is the only overlapping writer. TL receipt `5978881653` was read: the earlier apply-governance MATERIAL is now processed; it grants no database authority here.
+
+**The first scanner ownership blocker is resolved by the amendment. It is no longer the reason for STOP.** Its approved code repair has not been applied because the semantic pre-edit audit found a second required outside-closure test dependency before v2 gateway literals were introduced. The amendment requires the scanner changes to accompany those literals; no partial scanner-only cutover was made.
+
+The following existing tests require reconciliation with the mandatory R2 identity transition and are outside the expressly enumerated module-test ownership plus the two amendment paths:
+
+| Exact file | Concrete incompatible assertion/fixture | Required bounded reconciliation |
+| --- | --- | --- |
+| `lib/readiness/official-truth-review-suggestion.test.ts` | Line 48 fixes `/^review-packet:v2:[a-f0-9]{64}$/`; lines 276–279 and 721 require that old format on successful suggestions. Lines 145–211 construct authority-only registries/material with no item graph, representation or identity profile. The positive helper at lines 249–253 requires successful packet fingerprint rebuilding. | Upgrade synthetic fixtures and the expected new review format while preserving advisory-only, privacy, citation, immutability and negative assertions. No production suggestion change is currently demonstrated as necessary. |
+| `lib/readiness/evidence-store-schema.test.ts` | Lines 212–218 read current `evidence.ts` and require its lookup marker to equal `evidence-key:v2:` and version prefix to equal `ev1_`. The test ties a historical migration to the current runtime serializer. | Preserve immutable historical migration assertions, but separate them from the new ev2/v3 runtime contract. Do not retain misleading live prefix constants merely to satisfy the source-text assertion. No migration edit. |
+| `lib/readiness/rule-claim-store-schema.test.ts` | Lines 613–628 create and accept Evidence from source-only scope/material/authority registry; lines 646–672 require canonical Rule acceptance to succeed from it. No registered content identity exists in this fixture. | Upgrade only the runtime transit-acceptance fixture to synthetic registered ev2 identity; retain historical SQL checks and all 17-airport sorting/duplicate/malformed-code assertions. No migration edit. |
+
+These paths are **test consumers**, not newly discovered production importers. No amendment of them is inferred. The user's resumed instruction explicitly says to STOP again if another outside-closure production/test/schema file becomes necessary.
+
+### Reproduction without repository edits
+
+All three unmodified test files pass their baseline run: **31/31 tests**, zero skips. A separate disposable CommonJS preload intercepts only the compiled `official-truth-rule-review-fingerprint.ts` module and replaces `review-packet:v2:` with `review-packet:v3:` in memory. Running the **unchanged** review-suggestion test then produces **11 tests: 6 pass / 5 fail / 0 skipped**. Each failing case requires the old regex while receiving the new versioned key. This is a dependency proof for the required format change, not an implementation of R2 or a claim that the mandatory graph/identity cutover is complete.
+
+The probe hook is:
+
+```js
+const Module = require('node:module')
+const original = Module.prototype._compile
+Module.prototype._compile = function (content, filename) {
+  if (filename.endsWith('/lib/readiness/official-truth-rule-review-fingerprint.ts')) {
+    if (!content.includes('review-packet:v2:')) throw new Error('Missing baseline marker')
+    content = content.replaceAll('review-packet:v2:', 'review-packet:v3:')
+  }
+  return original.call(this, content, filename)
+}
+```
+
+With the hook saved outside the repository, invoke `node --require <hook> --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-review-suggestion.test.ts`. No production/test file is changed by this experiment. A second in-memory source-text probe reproduces both historical Evidence prefix assertion mismatches. The Rule fixture incompatibility is established by the exact constructor/acceptance calls and missing mandatory content identity, not by claiming a completed v2 execution.
+
+The renewed tracked-source import/reference inventory still contains 272 references, 93 non-test references and the same two external production importers (candidate-batch and review-suggestion). The remaining external test consumers were also inspected: candidate-batch uses the unchanged quality enum; S1 schema-v2 uses the existing R1 v3/ev2 helpers. No additional required edit is established for either. The complete internal R2 implementation audit remains unfinished at this STOP; this is not a promise that no further implementation finding can emerge.
+
+Final-head checks are re-run for this documentation delivery. The targeted set adds the three identified test consumers to the original 28-file baseline set. The final exact SHA and actual gate counts are in PR #815 and the delivery report; the earlier run below remains historical evidence, not mislabeled final-head evidence.
+
+Changed production files/tests: **none**. This resumption updates only this report and the existing handoff/self-review. Both immutable task and amendment are unchanged. V2 runtime constants/calls and ev2/v3 trusted wiring remain unimplemented. Registry lengths remain 0/0/0/0, frozen. No live DB call/mutation, registration, route change or other prohibited work occurred.
+
+First unfinished next step: independent TL review of these three exact test dependencies and, if accepted, a new explicit versioned amendment for the narrow fixture/expectation reconciliation. This writer grants no scope itself and will not preserve a source-only acceptance path, obsolete live review format, or skip assertions to manufacture green tests. Remain Draft; STOP, no F8 or follow-up.
+
+## Historical first STOP — superseded ownership blocker
 
 Implementation stopped at a reproduced scope conflict before any production or test edit. R2 is **not implemented**. Existing catalog/store v1, lookup-v2 and ev1 runtime assumptions remain. Passing baseline checks do not establish R2 readiness.
 
