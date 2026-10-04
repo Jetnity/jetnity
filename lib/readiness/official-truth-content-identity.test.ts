@@ -13,7 +13,7 @@ import {
 } from '@/lib/readiness/official-truth-content-identity'
 import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
-import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
+import { quellenRegistryErstellen, quellenUrlAufloesen, quellenUrlExaktAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 import { GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE as govukProfile } from './official-truth-govuk-content-api-identity-profile'
 import { govukNationalListFixture } from './official-truth-content-identity-r2.test'
 
@@ -72,6 +72,42 @@ function itemRef(value: ContentItemRef): ContentItemRef {
 function repRef(value: RepresentationRef = representation()): RepresentationRef {
   return { ...itemRef(value), representationId: value.representationId }
 }
+
+describe('Content Identity exact registered-host boundary', () => {
+  test('general source resolution still accepts descendants; content identity requires explicit hosts', () => {
+    const fixture = govukNationalListFixture()
+    assert.ok(quellenUrlAufloesen(fixture.authority, fixture.url.replace('www.gov.uk', 'x.www.gov.uk')).ok)
+    assert.ok(quellenUrlExaktAufloesen(fixture.authority, fixture.url).ok)
+    assert.ok(createContentIdentityGraph(fixture.authority, [fixture.item], [fixture.representation]).ok)
+    for (const host of ['x.www.gov.uk', 'www.gov.uk.evil.example']) {
+      const url = fixture.url.replace('www.gov.uk', host)
+      assert.deepEqual(quellenUrlExaktAufloesen(fixture.authority, url), { ok: false, reason: 'unregistered_domain' })
+      for (const change of [{ requestUrls: [url] }, { expectedFinalUrl: url }]) {
+        rejected(createContentIdentityGraph(fixture.authority, [fixture.item], [{ ...fixture.representation, ...change }]), 'url_not_authorized')
+      }
+      // A forged graph cannot bypass the resolver's independent host check.
+      const forged = { ...unwrap(createContentIdentityGraph(fixture.authority, [fixture.item], [fixture.representation])),
+        representations: [{ ...fixture.representation, requestUrls: [url], expectedFinalUrl: url }] }
+      rejected(resolveCurrentContentRepresentation(forged, url), 'url_not_authorized')
+    }
+  })
+
+  test('explicit host remains usable alongside a parent domain; parent/child blocking remains fail-closed', () => {
+    const fixture = govukNationalListFixture()
+    const sources = [{ ...fixture.authority.sources[0]!, domains: ['gov.uk', 'www.gov.uk'] }]
+    const authority = quellenRegistryErstellen(sources)
+    assert.ok(authority.ok)
+    const result = quellenUrlExaktAufloesen(authority.registry, fixture.url)
+    assert.ok(result.ok); assert.equal(result.domain, 'www.gov.uk')
+    for (const blockedDomains of [['gov.uk'], ['www.gov.uk']]) {
+      const blocked = quellenRegistryErstellen(sources, { blockedDomains })
+      assert.ok(blocked.ok)
+      assert.deepEqual(quellenUrlExaktAufloesen(blocked.registry, fixture.url), { ok: false, reason: 'blocked_domain' })
+      assert.deepEqual(quellenUrlExaktAufloesen(blocked.registry, fixture.url.replace('www.gov.uk', 'x.www.gov.uk')),
+        { ok: false, reason: 'blocked_domain' })
+    }
+  })
+})
 function scope(overrides: Record<string, unknown> = {}) {
   return { destinationCountryCode: 'JP', transitCountryCode: null,
     citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },

@@ -1112,6 +1112,17 @@ describe('GOV.UK registration with the normal default registry', () => {
   const answer = (outcome = 'inserted') => ({ ok: true, identity_schema: 2, operation: 'register_content_item', outcome,
     source_id: 'govuk', content_item_id: 'eta-national-list' })
 
+  test('descendant and lookalike request/final hosts fail before any content write', async () => {
+    const fixture = govukNationalListFixture(), input = fixture.registration
+    for (const host of ['x.www.gov.uk', 'www.gov.uk.evil.example']) {
+      const url = fixture.url.replace('www.gov.uk', host)
+      for (const change of [{ requestUrls: [url] }, { expectedFinalUrl: url }]) {
+        await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], ...change }] },
+          'url_not_authorized', fixture.sourceOnlyCatalog, {})
+      }
+    }
+  })
+
   for (const replay of [false, true]) test(`${replay ? 'exact replay' : 'initial item'} needs only injected catalog transport`, async () => {
     const fixture = govukNationalListFixture(), outcome = replay ? 'idempotent' : 'inserted'
     const recorder = contentTransport(replay ? fixture.catalog : fixture.sourceOnlyCatalog, answer(outcome))
@@ -1168,7 +1179,11 @@ describe('GOV.UK registration with the normal default registry', () => {
     const script = `
       const assert = require('node:assert/strict');
       const { Session } = require('node:inspector/promises');
-      globalThis.fetch = () => { throw new Error('network forbidden'); };
+      const forbidden = () => { throw new Error('network forbidden'); };
+      globalThis.fetch = forbidden;
+      require('node:dns').lookup = require('node:dns').resolve = forbidden;
+      require('node:net').connect = require('node:net').createConnection = forbidden;
+      require('node:http').request = require('node:https').request = forbidden;
       (async () => {
         const session = new Session(); session.connect();
         await session.post('Profiler.enable');

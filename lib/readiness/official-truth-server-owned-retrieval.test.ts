@@ -161,7 +161,7 @@ async function laufen(teil?: {
       if (modus === 'fail' || payload.operation !== 'read_registry') return { ok: false }
       return {
         ok: true,
-        antwort: { ...r2CatalogRows(liste.map(katalogZeile), teil?.publications ?? R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: liste.map(katalogZeile) },
+        antwort: { ...r2CatalogRows(liste.map(katalogZeile), teil?.publications ?? R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
       }
     },
   }

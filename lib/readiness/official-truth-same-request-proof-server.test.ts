@@ -228,7 +228,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
         return {
           ok: true,
-          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
         }
       },
     },
@@ -664,7 +664,6 @@ describe('Official Truth same-request proof graph', () => {
           antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS),
             ok: true,
             operation: 'read_registry',
-            sources: eingaben.map(katalogZeile),
           },
         }
       },
