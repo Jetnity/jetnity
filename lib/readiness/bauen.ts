@@ -9,7 +9,8 @@ import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder, trav
 import { enthaltSensitiveDaten, type ReadinessEingabe } from '@/lib/readiness/schema'
 import type { Trip, TripReadinessItem } from '@/types/trips'
 
-function clientRefErzeugen(prefix: string): string {
+/** Neue Nutzerpunkte erhalten ihre Identität einmal pro Create-Payload, nie aus Inhalt. */
+export function readinessClientRefErzeugen(prefix: TripReadinessItem['kind'] | 'rdy'): string {
   const zufall =
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
@@ -46,10 +47,10 @@ export function readinessItemBauen(
   const punkt = punktFuerReadiness(reise, eingabe.tripItemId ?? null)
   const countryCode = eingabe.countryCode ?? null
   const title = eingabe.kind === 'preparation' ? eingabe.title : null
-  const clientRef = bestehend?.clientRef ?? eingabe.clientRef ?? clientRefErzeugen(eingabe.kind)
+  const clientRef = bestehend?.clientRef ?? eingabe.clientRef ?? readinessClientRefErzeugen(eingabe.kind)
 
   const item: TripReadinessItem = {
-    id: bestehend?.id ?? clientRefErzeugen('rdy'),
+    id: bestehend?.id ?? readinessClientRefErzeugen('rdy'),
     clientRef,
     kind: eingabe.kind,
     userStatus: eingabe.userStatus,
