@@ -1,4 +1,4 @@
-import { r2CatalogRows, r2Profiles, r2Registry } from './official-truth-content-identity-r2.test'
+import { govukNationalListFixture, r2CatalogRows, r2Profiles, r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-source-catalog-server.test.ts
 //
 // Kanonische Registry plus ein lokaler PostgreSQL-Nachweis für das Katalog-Gateway.
@@ -1044,7 +1044,7 @@ describe('dormant typed content registration gateway', () => {
       assert.deepEqual(calls, phase === 'read_registry' ? ['read_registry'] : ['read_registry', 'register_content_item'])
     })
   }
-  test('missing/invalid configuration is sanitized without HTTP and default profiles remain dormant', async () => {
+  test('missing/invalid configuration is sanitized and synthetic profiles remain unavailable by default', async () => {
     for (const env of [{}, { NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.example' }, { SUPABASE_SERVICE_ROLE_KEY: 'sentinel' },
       { NEXT_PUBLIC_SUPABASE_URL: ' ', SUPABASE_SERVICE_ROLE_KEY: 'sentinel' }]) {
       assert.deepEqual(await contentItemRegistrieren(contentEingabe(), { env }), { ok: false, reason: 'catalog_not_configured' })
@@ -1052,11 +1052,11 @@ describe('dormant typed content registration gateway', () => {
     assert.deepEqual(await contentItemRegistrieren(contentEingabe(), {
       env: { NEXT_PUBLIC_SUPABASE_URL: 'invalid-url', SUPABASE_SERVICE_ROLE_KEY: 'sentinel' },
     }), { ok: false, reason: 'catalog_failed' })
-    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.length, 1)
     assert.equal(Object.isFrozen(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY), true)
     await ohneContentWrite(contentEingabe(), 'profile_unavailable', contentSnapshot(), {})
     await ohneContentWrite(contentEingabe(), 'catalog_failed', contentSnapshot([contentEingabe()]), {})
-    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.length, 1)
   })
 
   test('fresh module import has no network/DB access even with service configuration', () => {
@@ -1105,5 +1105,137 @@ describe('dormant typed content registration gateway', () => {
       { ok: true, outcome: 'inserted', sourceId: expected.sourceId, contentItemId: expected.contentItemId })
     assert.deepEqual((recorder.aufrufe[1].item as Aufruf).expected_publisher_ids, [...expected.expectedPublisherIds].sort())
     assert.deepEqual((recorder.aufrufe[1].representations as Aufruf[])[0].request_urls, [...expected.representations[0].requestUrls].sort())
+  })
+})
+
+describe('GOV.UK registration with the normal default registry', () => {
+  const answer = (outcome = 'inserted') => ({ ok: true, identity_schema: 2, operation: 'register_content_item', outcome,
+    source_id: 'govuk', content_item_id: 'eta-national-list' })
+
+  for (const replay of [false, true]) test(`${replay ? 'exact replay' : 'initial item'} needs only injected catalog transport`, async () => {
+    const fixture = govukNationalListFixture(), outcome = replay ? 'idempotent' : 'inserted'
+    const recorder = contentTransport(replay ? fixture.catalog : fixture.sourceOnlyCatalog, answer(outcome))
+    assert.deepEqual(await contentItemRegistrieren(fixture.registration, { transport: recorder.transport }),
+      { ok: true, outcome, sourceId: 'govuk', contentItemId: 'eta-national-list' })
+    assert.deepEqual(recorder.aufrufe, [{ operation: 'read_registry' }, {
+      operation: 'register_content_item', item: { source_id: 'govuk', content_item_id: 'eta-national-list',
+        external_id_namespace: 'govuk-content-id', external_content_id: '2b25b3d4-4eaa-4859-a34e-c7869c114c15',
+        content_item_version: 1, current: true,
+        expected_publisher_ids: ['06056197-bc69-4147-aa28-070bca132178'],
+        expected_authority_ids: ['06056197-bc69-4147-aa28-070bca132178'] },
+      representations: [{ representation_id: 'content-api-en', representation_version: 1, current: true,
+        request_urls: [fixture.url], expected_final_url: fixture.url, expected_media_type: 'application/json',
+        identity_profile_id: 'govuk-eta-national-list-content-api-en', identity_profile_version: 1,
+        expected_locale: 'en', expected_schema: 'manual_section' }],
+    }])
+    const read = await quellenKatalogLesen({ transport: contentTransport(fixture.catalog).transport })
+    assert.ok(read.ok)
+    assert.deepEqual(read.registry.contentIdentity?.profiles,
+      [{ identityProfileId: 'govuk-eta-national-list-content-api-en', identityProfileVersion: 1, current: true }])
+  })
+
+  test('wrong profile/id/version, source authority, URL conflicts and changed replay fail before write', async () => {
+    const fixture = govukNationalListFixture(), input = fixture.registration
+    for (const change of [{ identityProfileId: 'unknown-profile' }, { identityProfileId: 'govuk-appendix-eta' }, { identityProfileVersion: 2 }]) {
+      await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], ...change }] },
+        'profile_unavailable', fixture.sourceOnlyCatalog, {})
+    }
+    await ohneContentWrite({ ...input, sourceId: 'unknown-source' }, 'unknown_source', fixture.sourceOnlyCatalog, {})
+    const provider = structuredClone(fixture.sourceOnlyCatalog)
+    Object.assign((provider.sources as Aufruf[])[0], { source_class: 'licensed_evidence_provider', authority_name: null })
+    await ohneContentWrite(input, 'source_not_official', provider, {})
+    await ohneContentWrite({ ...input, contentItemId: 'other-item', externalContentId: 'other-external-id' }, 'url_conflict', fixture.catalog, {})
+    await ohneContentWrite({ ...input, expectedAuthorityIds: ['other-authority'] }, 'conflicting_duplicate', fixture.catalog, {})
+    await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], expectedLocale: 'cy' }] },
+      'conflicting_duplicate', fixture.catalog, {})
+    await ohneContentWrite({ ...input, identityProfiles: [{ verify: () => true }] }, 'invalid_descriptor', fixture.sourceOnlyCatalog, {})
+  })
+
+  test('default registry retains exact response keys and tuple validation', async () => {
+    const fixture = govukNationalListFixture()
+    const missing = Object.keys(answer()).map(key => { const value: Aufruf = answer(); delete value[key]; return value })
+    for (const response of [...missing, { ...answer(), extra: 'secret-sentinel' }, { ...answer(), identity_schema: 1 },
+      { ...answer(), source_id: 'other-source' }, { ...answer(), content_item_id: 'other-item' },
+      { ...answer(), operation: 'register_source' }, { ...answer(), outcome: 'updated' }]) {
+      const recorder = contentTransport(fixture.sourceOnlyCatalog, response)
+      assert.deepEqual(await contentItemRegistrieren(fixture.registration, { transport: recorder.transport }),
+        { ok: false, reason: 'catalog_failed' })
+      assert.deepEqual(recorder.aufrufe.map(call => call.operation), ['read_registry', 'register_content_item'])
+    }
+  })
+
+  test('real default verifier has zero calls during structural registration (V8 coverage)', () => {
+    const script = `
+      const assert = require('node:assert/strict');
+      const { Session } = require('node:inspector/promises');
+      globalThis.fetch = () => { throw new Error('network forbidden'); };
+      (async () => {
+        const session = new Session(); session.connect();
+        await session.post('Profiler.enable');
+        await session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
+        const { govukNationalListFixture } = require('./lib/readiness/official-truth-content-identity-r2.test.ts');
+        const { contentItemRegistrieren } = require('./lib/readiness/official-truth-source-catalog-server.ts');
+        const fixture = govukNationalListFixture(), calls = [];
+        const result = await contentItemRegistrieren(fixture.registration, { transport: { async aufrufen(payload) {
+          calls.push(payload.operation);
+          return { ok: true, antwort: payload.operation === 'read_registry' ? fixture.sourceOnlyCatalog : ${JSON.stringify(answer())} };
+        } } });
+        assert.equal(result.ok, true);
+        assert.deepEqual(calls, ['read_registry', 'register_content_item']);
+        const coverage = await session.post('Profiler.takePreciseCoverage');
+        const verifier = coverage.result.find(entry => entry.url.endsWith('/official-truth-govuk-content-api-identity-profile.ts'))
+          ?.functions.find(entry => entry.functionName === 'verify');
+        assert.ok(verifier); assert.equal(verifier.ranges[0].count, 0);
+        // Positive control: prove this counter sees the same immutable verifier.
+        const profile = require('./lib/readiness/official-truth-content-identity.ts').OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0];
+        assert.equal(profile.verify({ item: fixture.item, representation: fixture.representation,
+          responseText: fixture.responseText, finalUrl: fixture.url, mediaType: 'application/json' }).ok, true);
+        const after = await session.post('Profiler.takePreciseCoverage');
+        const executed = after.result.find(entry => entry.url.endsWith('/official-truth-govuk-content-api-identity-profile.ts'))
+          ?.functions.find(entry => entry.functionName === 'verify');
+        assert.ok(executed); assert.equal(executed.ranges[0].count, 1);
+        await session.post('Profiler.stopPreciseCoverage'); session.disconnect();
+      })().catch(error => { console.error(error); process.exitCode = 1; });
+    `
+    execFileSync(process.execPath, ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '-e', script],
+      { cwd: ROOT, stdio: 'pipe', timeout: 15_000 })
+  })
+
+  test('missing v2 uses only the literal v2 RPC and never registers, falls back, applies or leaks', () => {
+    const script = `
+      const assert = require('node:assert/strict');
+      const forbidden = () => { throw new Error('real network forbidden'); };
+      for (const name of ['node:http', 'node:https']) require(name).request = require(name).get = forbidden;
+      require('node:net').Socket.prototype.connect = forbidden;
+      require('node:dns').lookup = forbidden;
+      const calls = [], sentinel = 'synthetic-service-role-secret';
+      let throws = false;
+      globalThis.fetch = async (url, options) => {
+        calls.push({ url: String(url), method: options.method, body: JSON.parse(options.body) });
+        if (throws) throw new Error(sentinel);
+        return new Response(JSON.stringify({ code: 'PGRST202', message: sentinel, details: 'missing v2 RPC' }),
+          { status: 404, headers: { 'content-type': 'application/json' } });
+      };
+      (async () => {
+        const { govukNationalListFixture } = require('./lib/readiness/official-truth-content-identity-r2.test.ts');
+        const { contentItemRegistrieren, quellenKatalogLesen } = require('./lib/readiness/official-truth-source-catalog-server.ts');
+        const fixture = govukNationalListFixture();
+        const deps = { env: { NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.example', SUPABASE_SERVICE_ROLE_KEY: sentinel } };
+        assert.equal(calls.length, 0);
+        for (const failure of [false, true]) {
+          throws = failure;
+          for (const run of [() => quellenKatalogLesen(deps), () => contentItemRegistrieren(fixture.registration, deps)]) {
+            calls.length = 0;
+            const result = await run();
+            assert.deepEqual(result, { ok: false, reason: 'catalog_failed' });
+            assert.equal(JSON.stringify(result).includes(sentinel), false);
+            assert.deepEqual(calls, [{ url: 'https://supabase.example/rest/v1/rpc/official_truth_source_catalog_v2',
+              method: 'POST', body: { payload: { operation: 'read_registry' } } }]);
+          }
+        }
+      })().catch(error => { console.error(error); process.exitCode = 1; });
+    `
+    execFileSync(process.execPath, ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '-e', script],
+      { cwd: ROOT, stdio: 'pipe', timeout: 15_000 })
   })
 })

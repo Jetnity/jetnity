@@ -1,4 +1,4 @@
-import { r2Profiles, r2CatalogRows } from './official-truth-content-identity-r2.test'
+import { govukNationalListFixture, r2Profiles, r2CatalogRows } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-server-owned-retrieval.test.ts
 //
 // Servereigene amtliche HTTPS-Lesung. Synthetische *.example-Quellen.
@@ -11,6 +11,8 @@ import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { contentIdentityBinding, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+  type ContentIdentityBinding, type ContentIdentityProfileDefinition } from './official-truth-content-identity'
 import type { OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
 import {
   decideOfficialTruthServerOwnedRetrieval,
@@ -1007,3 +1009,134 @@ const R2_PUBLICATIONS = [
     "mediaType": "text/plain"
   }
 ] as const
+
+describe('GOV.UK server-owned retrieval with the normal default registry', () => {
+  async function retrieve(options: {
+    input?: unknown; catalog?: unknown; text?: string; location?: string
+    profiles?: readonly ContentIdentityProfileDefinition[]; catalogFailure?: 'fail' | 'throw'
+  } = {}) {
+    const fixture = govukNationalListFixture()
+    const calls = { catalog: [] as unknown[], http: [] as string[], dns: [] as string[], clock: 0 }
+    const result = await decideOfficialTruthServerOwnedRetrieval(options.input ?? { sourceId: 'govuk', url: fixture.url }, {
+      catalog: { ...(options.profiles === undefined ? {} : { identityProfiles: options.profiles }),
+        transport: { async aufrufen(payload) {
+          calls.catalog.push(payload)
+          if (options.catalogFailure === 'fail') return { ok: false }
+          if (options.catalogFailure === 'throw') throw new Error('synthetic-secret-sentinel')
+          return { ok: true, antwort: options.catalog ?? fixture.catalog }
+        } } },
+      now: () => { calls.clock++; return new Date(JETZT) },
+      resolve: async hostname => { calls.dns.push(hostname); return [{ address: '8.8.8.8', family: 4 }] },
+      http: async request => {
+        calls.http.push(request.url)
+        const address = await lookupWarten(request.lookup, hostAus(request.url), false)
+        assert.equal(address.address, '8.8.8.8')
+        assert.deepEqual(request.headers, { 'accept-encoding': 'identity', 'cache-control': 'no-cache' })
+        const data = bytes(options.text ?? fixture.responseText)
+        return { ok: true, status: options.location ? 302 : 200,
+          headers: kopf(options.location ? { location: options.location } : { 'content-type': 'application/json; charset=utf-8' }),
+          body: (async function* () { yield data.slice(0, 19); yield data.slice(19) })() }
+      },
+    })
+    return { result, calls, fixture }
+  }
+
+  test('default registry selects exactly one profile and verifies server-received bytes with the exact final tuple', async () => {
+    const { result, calls, fixture } = await retrieve()
+    assert.equal(result.status, 'server_owned_official_retrieval')
+    if (result.status !== 'server_owned_official_retrieval') return
+    assert.deepEqual(contentIdentityBinding(result), { sourceId: 'govuk', contentItemId: 'eta-national-list', contentItemVersion: 1,
+      representationId: 'content-api-en', representationVersion: 1, identityProfileId: 'govuk-eta-national-list-content-api-en', identityProfileVersion: 1 })
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.filter(profile => profile.current
+      && profile.identityProfileId === result.identityProfileId && profile.identityProfileVersion === result.identityProfileVersion).length, 1)
+    assert.equal(result.sourceSnapshot, fixture.responseText)
+    assert.equal(result.sourceContentHash, evidenceQuellenFingerprint(fixture.responseText))
+    assert.equal(result.canonicalUrl, fixture.url); assert.equal(result.contentType, 'application/json')
+    assert.equal(result.retrievedAt, JETZT); assert.equal(result.identitySchema, 2)
+    assert.ok(Object.isFrozen(result))
+    assert.deepEqual(calls, { catalog: [{ operation: 'read_registry' }], http: [fixture.url], dns: ['www.gov.uk'], clock: 1 })
+  })
+
+  test('default profile rejects sibling response identity, publisher changes and malformed server bytes', async () => {
+    const fixture = govukNationalListFixture()
+    for (const text of ['{}', 'not JSON', fixture.responseText.replaceAll('2b25b3d4-4eaa-4859-a34e-c7869c114c15',
+      '2620750b-5453-44f1-98af-414037c833be'),
+    fixture.responseText.replaceAll('06056197-bc69-4147-aa28-070bca132178', '87e2748f-2e9b-4681-8baa-778b6d326a8a')]) {
+      const { result, calls } = await retrieve({ text })
+      assert.deepEqual(result, { status: 'blocked', reason: 'content_identity_mismatch' })
+      assert.deepEqual(calls.http, [fixture.url]); assert.equal(calls.clock, 0)
+    }
+    const redirect = await retrieve({ location: fixture.url.replace('appendix-eta-national-list', 'appendix-electronic-travel-authorisation') })
+    assert.deepEqual(redirect.result, { status: 'blocked', reason: 'representation_url_mismatch' })
+    assert.deepEqual(redirect.calls.http, [fixture.url])
+  })
+
+  test('unknown/wrong default profile pins and retired or duplicate test definitions fail before HTTP', async () => {
+    const fixture = govukNationalListFixture()
+    for (const change of [{ identity_profile_id: 'unknown-profile' }, { identity_profile_id: 'govuk-appendix-eta' },
+      { identity_profile_version: 2 }]) {
+      const catalog = structuredClone(fixture.catalog)
+      Object.assign((catalog.representations as Record<string, unknown>[])[0], change)
+      const { result, calls } = await retrieve({ catalog })
+      assert.deepEqual(result, { status: 'blocked', reason: 'catalog_failed' })
+      assert.deepEqual(calls.http, []); assert.deepEqual(calls.dns, []); assert.equal(calls.clock, 0)
+    }
+    const profile = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0]!
+    for (const profiles of [[], [{ ...profile, current: false }], [profile, profile],
+      [profile, { ...profile, identityProfileVersion: 2 }]]) {
+      const { result, calls } = await retrieve({ profiles })
+      assert.deepEqual(result, { status: 'blocked', reason: 'catalog_failed' })
+      assert.deepEqual(calls.http, []); assert.deepEqual(calls.dns, [])
+    }
+  })
+
+  test('test observer sees only frozen server-owned verifier input; every forged return field is rebound', async () => {
+    const profile = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0]!
+    const seen: Parameters<ContentIdentityProfileDefinition['verify']>[0][] = []
+    const observer: ContentIdentityProfileDefinition = { ...profile, verify: input => { seen.push(input); return profile.verify(input) } }
+    const { result, fixture } = await retrieve({ profiles: [observer] })
+    assert.equal(result.status, 'server_owned_official_retrieval')
+    assert.equal(seen.length, 1)
+    assert.deepEqual(seen[0], { item: fixture.item, representation: fixture.representation,
+      responseText: fixture.responseText, finalUrl: fixture.url, mediaType: 'application/json' })
+    for (const value of [seen[0], seen[0]!.item, seen[0]!.representation, seen[0]!.item.expectedAuthorityIds,
+      seen[0]!.representation.requestUrls]) assert.ok(Object.isFrozen(value))
+    const changes: Partial<ContentIdentityBinding>[] = [{ sourceId: 'other-source' }, { contentItemId: 'other-item' },
+      { contentItemVersion: 2 }, { representationId: 'other-stream' }, { representationVersion: 2 },
+      { identityProfileId: 'other-profile' }, { identityProfileVersion: 2 }]
+    for (const change of [...changes, { extra: 'forged' }]) {
+      const forged: ContentIdentityProfileDefinition = { ...profile,
+        verify: input => ({ ok: true, identity: { ...contentIdentityBinding(input.representation), ...change } }) }
+      const attempt = await retrieve({ profiles: [forged] })
+      assert.deepEqual(attempt.result, { status: 'blocked', reason: 'content_identity_mismatch' })
+      assert.equal(attempt.calls.clock, 0)
+    }
+  })
+
+  test('caller verifier/profile/material injection is rejected before catalog, DNS and HTTP, including the live entry', async () => {
+    const fixture = govukNationalListFixture()
+    let executions = 0
+    const evil = { ...OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0]!, verify: () => { executions++; throw new Error('caller verifier') } }
+    for (const extra of [{ identityProfiles: [evil] }, { identityProfileId: evil.identityProfileId },
+      { sourceSnapshot: fixture.responseText }, { body: fixture.responseText }, { contentType: 'application/json' },
+      { registry: fixture.catalog }]) {
+      const input = { sourceId: 'govuk', url: fixture.url, ...extra }
+      const { result, calls } = await retrieve({ input })
+      assert.deepEqual(result, { status: 'blocked', reason: 'caller_authority_forbidden' })
+      assert.deepEqual(calls, { catalog: [], http: [], dns: [], clock: 0 })
+      assert.deepEqual(await loadOfficialTruthServerOwnedRetrieval(input), result)
+    }
+    assert.equal(executions, 0)
+  })
+
+  test('absent/unavailable/v1 catalog still blocks default-profile retrieval before HTTP', async () => {
+    for (const catalogFailure of ['fail', 'throw'] as const) {
+      const { result, calls } = await retrieve({ catalogFailure })
+      assert.deepEqual(result, { status: 'blocked', reason: 'catalog_failed' })
+      assert.deepEqual(calls, { catalog: [{ operation: 'read_registry' }], http: [], dns: [], clock: 0 })
+    }
+    const { result, calls } = await retrieve({ catalog: { ...govukNationalListFixture().catalog, identity_schema: 1 } })
+    assert.deepEqual(result, { status: 'blocked', reason: 'catalog_failed' })
+    assert.deepEqual(calls, { catalog: [{ operation: 'read_registry' }], http: [], dns: [], clock: 0 })
+  })
+})

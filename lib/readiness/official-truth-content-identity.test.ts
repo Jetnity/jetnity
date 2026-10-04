@@ -14,6 +14,8 @@ import {
 import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
+import { GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE as govukProfile } from './official-truth-govuk-content-api-identity-profile'
+import { govukNationalListFixture } from './official-truth-content-identity-r2.test'
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; reason: string }): T {
   if (!result.ok) assert.fail(result.reason)
@@ -137,7 +139,7 @@ describe('complete fail-closed content identity graph', () => {
   })
   test('empty catalog is valid and makes no publication eligible', () => {
     const built = unwrap(createContentIdentityGraph(registry(), [], []))
-    assert.deepEqual(built.profiles, [])
+    assert.deepEqual(built.profiles, [{ identityProfileId: 'govuk-eta-national-list-content-api-en', identityProfileVersion: 1, current: true }])
     rejected(resolveCurrentContentRepresentation(built, 'https://gov.example/publication-a'), 'not_registered')
   })
   test('external identity cannot inflate supports, including historical rows and reversed order', () => {
@@ -229,12 +231,27 @@ describe('complete fail-closed content identity graph', () => {
     }
     unwrap(graph([item()], [representation({ expectedMediaType: 'application/example+json' })]))
   })
-  test('profiles must exist at exact current version; no production default profile', () => {
+  test('profiles must exist at exact current version; synthetic profiles are not production defaults', () => {
     rejected(createContentIdentityGraph(registry(), [item()], [representation()]), 'profile_unavailable')
     rejected(graph([item()], [representation()], [profile({ current: false })]), 'profile_unavailable')
     rejected(graph([item()], [representation()], [profile({ identityProfileVersion: 2 })]), 'profile_unavailable')
     rejected(graph([item()], [representation()], [profile({ identityProfileId: 'different-profile' })]), 'profile_unavailable')
     rejected(graph([item()], [representation({ current: false })], [profile({ current: false })]), 'profile_unavailable')
+  })
+  test('default registry admits the exact GOV.UK profile and rejects wrong ids or versions', () => {
+    const { authority, item, representation } = govukNationalListFixture()
+    const built = unwrap(createContentIdentityGraph(authority, [item], [representation]))
+    assert.deepEqual(unwrap(resolveCurrentContentRepresentation(built, representation.expectedFinalUrl)), representation)
+    assert.deepEqual(built.profiles, [{ identityProfileId: govukProfile.identityProfileId, identityProfileVersion: 1, current: true }])
+    assert.equal('verify' in built.profiles[0]!, false)
+    for (const change of [{ identityProfileId: 'unknown-profile' }, { identityProfileId: 'govuk-appendix-eta' },
+      { identityProfileVersion: 2 }]) {
+      rejected(createContentIdentityGraph(authority, [item], [{ ...representation, ...change }]), 'profile_unavailable')
+    }
+    rejected(createContentIdentityGraph(authority, [item], [representation], [{ ...govukProfile, current: false }]), 'profile_unavailable')
+    rejected(createContentIdentityGraph(authority, [], [], [govukProfile, govukProfile]), 'duplicate_profile_version')
+    rejected(createContentIdentityGraph(authority, [], [], [govukProfile, { ...govukProfile, identityProfileVersion: 2 }]), 'duplicate_current_profile')
+    rejected(createContentIdentityGraph(authority, [], [], [{ ...govukProfile, verify: 'caller-code' } as unknown as ContentIdentityProfileDefinition]), 'invalid_profile')
   })
   test('profile duplicates, executable definitions in data, and malformed definitions fail', () => {
     rejected(graph([], [], [profile(), profile()]), 'duplicate_profile_version')
@@ -403,19 +420,28 @@ describe('future v3 lookup and ev2 identity serialization only', () => {
 })
 
 describe('dormancy and architectural boundaries', () => {
-  test('production profiles are exactly empty and frozen', () => {
-    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+  test('production registry is exactly the existing frozen GOV.UK profile object', () => {
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.length, 1)
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0], govukProfile)
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0]!.verify, govukProfile.verify)
+    assert.equal(govukProfile.identityProfileId, 'govuk-eta-national-list-content-api-en')
+    assert.equal(govukProfile.identityProfileVersion, 1)
+    assert.equal(govukProfile.current, true)
+    assert.ok(Object.isFrozen(govukProfile))
     assert.ok(Object.isFrozen(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY))
     assert.throws(() => (OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY as ContentIdentityProfileDefinition[]).push(profile()), TypeError)
     assert.ok(Object.isFrozen(CONTENT_IDENTITY_LIMITS))
   })
-  test('module has only reviewed pure imports, no real-source identifiers or effect authority', () => {
+  test('module has only reviewed pure imports and no dynamic registration or effect authority', () => {
     const source = readFileSync(join(process.cwd(), 'lib/readiness/official-truth-content-identity.ts'), 'utf8')
     assert.doesNotMatch(source, /gov\.uk|\bCTA\b|home[-_ ]office|cabinet[-_ ]office/i)
     assert.doesNotMatch(source, /\bfetch\s*\(|\bprocess\s*\.|\bDate\s*\.\s*now\s*\(|\bnew\s+Date\s*\(|\beval\s*\(|\bnew\s+Function\b/)
     const imports = [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].map((match) => match[1])
     assert.deepEqual(imports, ['@/lib/readiness/digest', '@/lib/readiness/evidence', '@/lib/readiness/official',
+      '@/lib/readiness/official-truth-govuk-content-api-identity-profile',
       '@/lib/readiness/rule-claims', '@/lib/readiness/source-registry'])
+    assert.match(source, /OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[^=]*= Object\.freeze\(\[\s*GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE,?\s*\]\)/)
+    assert.doesNotMatch(source, /export\s+(?:async\s+)?function\s+\w*(?:register|registrier|addProfile|setProfile)/i)
     assert.match(source, /import \{ regelScopeAusEvidenceScope, type RegelScope \} from/)
     assert.match(source, /import \{ evidenceScopeLesen \} from/)
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)

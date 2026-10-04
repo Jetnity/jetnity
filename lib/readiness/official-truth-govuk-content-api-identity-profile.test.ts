@@ -1,6 +1,8 @@
 // Inline synthetic/audited-envelope fixtures; opaque text, no live legal body or network.
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
+import { execFileSync } from 'node:child_process'
+import ts from 'typescript'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
@@ -347,11 +349,12 @@ describe('inclusive parser resource boundaries', () => {
 })
 
 describe('registry and production dormancy', () => {
-  test('production registry remains exactly empty and frozen after importing profile', () => {
-    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+  test('production registry contains exactly this existing profile after import', () => {
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.length, 1)
+    assert.equal(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY[0], profile)
     assert.ok(Object.isFrozen(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY))
   })
-  test('repository has zero non-test production importers of this module', () => {
+  test('the registry is the sole allowed non-test production importer of this module', () => {
     const root = process.cwd(), importers: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -364,12 +367,60 @@ describe('registry and production dormancy', () => {
       }
     }
     walk(root)
-    assert.deepEqual(importers, [])
+    assert.deepEqual(importers, ['lib/readiness/official-truth-content-identity.ts'])
   })
   test('profile has one type-only dependency and no network, database, clock or registration authority', () => {
     const source = readFileSync(join(process.cwd(), 'lib/readiness/official-truth-govuk-content-api-identity-profile.ts'), 'utf8')
     assert.deepEqual([...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].map(m => m[1]), ['./official-truth-content-identity'])
     assert.match(source, /import type \{ ContentIdentityProfileDefinition \}/)
+    const emitted = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022, verbatimModuleSyntax: true } }).outputText
+    assert.doesNotMatch(emitted, /\bimport\b|\brequire\s*\(|official-truth-content-identity/)
     assert.doesNotMatch(source, /\bfetch\s*\(|\bprocess\s*\.|\bDate\s*\.|\bnew\s+Date\s*\(|\beval\s*\(|\bnew\s+Function\b|supabase|node:|store-server|source-catalog|PROFILE_REGISTRY/)
   })
+  for (const first of ['official-truth-content-identity', 'official-truth-govuk-content-api-identity-profile']) {
+    test(`fresh ${first} import has no runtime cycle, network or verifier execution`, () => {
+      const script = `
+        const assert = require('node:assert/strict');
+        const { Session } = require('node:inspector/promises');
+        const forbidden = () => { throw new Error('import must remain dormant'); };
+        globalThis.fetch = forbidden;
+        for (const name of ['node:http', 'node:https']) {
+          require(name).request = require(name).get = forbidden;
+        }
+        const net = require('node:net');
+        net.connect = net.createConnection = net.Socket.prototype.connect = forbidden;
+        require('node:dns').lookup = require('node:dns').resolve = forbidden;
+        (async () => {
+          const session = new Session(); session.connect();
+          await session.post('Profiler.enable');
+          await session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
+          require('./lib/readiness/${first}.ts');
+          const registry = require('./lib/readiness/official-truth-content-identity.ts').OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY;
+          const profile = require('./lib/readiness/official-truth-govuk-content-api-identity-profile.ts').GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE;
+          assert.equal(registry.length, 1); assert.equal(registry[0], profile);
+          assert.ok(Object.isFrozen(registry)); assert.equal(typeof profile.verify, 'function');
+          const coverage = await session.post('Profiler.takePreciseCoverage');
+          const file = coverage.result.find(entry => entry.url.endsWith('/official-truth-govuk-content-api-identity-profile.ts'));
+          assert.ok(file);
+          const verifier = file.functions.find(entry => entry.functionName === 'verify');
+          assert.ok(verifier); assert.equal(verifier.ranges[0].count, 0);
+          for (const name of ['createContentIdentityGraph', 'evidenceKandidatAkzeptieren', 'regelKandidatAkzeptieren']) {
+            const functions = coverage.result.flatMap(entry => entry.functions).filter(entry => entry.functionName === name);
+            assert.ok(functions.length > 0, name);
+            assert.ok(functions.every(entry => entry.ranges[0].count === 0), name);
+          }
+          for (const path of Object.keys(require.cache)) {
+            assert.doesNotMatch(path, /supabase|source-catalog-server|store-server|trusted-fact-extractor/);
+          }
+          await session.post('Profiler.stopPreciseCoverage'); session.disconnect();
+          await new Promise(resolve => setImmediate(resolve));
+          process.stdout.write('dormant_singleton');
+        })().catch(error => { console.error(error); process.exitCode = 1; });
+      `
+      assert.equal(execFileSync(process.execPath, ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '-e', script],
+        { encoding: 'utf8', timeout: 15_000, env: { ...process.env,
+          NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.example', SUPABASE_SERVICE_ROLE_KEY: 'synthetic-test-key' } }), 'dormant_singleton')
+    })
+  }
 })
