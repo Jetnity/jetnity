@@ -1,7 +1,7 @@
 # Official Truth Content Registration Gateway 1 — Task
 
 Date: 4 October 2026
-Issue: #undefined
+Issue: #822
 Status: **BINDING / IMPLEMENTATION / DORMANT SERVER-ONLY / NO LIVE REGISTRATION / NO DB MUTATION / NO PROFILE ACTIVATION / NO F8**
 
 ## 1. Authority and live baseline
