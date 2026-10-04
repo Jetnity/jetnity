@@ -20,6 +20,8 @@ import type { IncomingMessage } from 'node:http'
 import https from 'node:https'
 import net from 'node:net'
 
+import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   quellenKatalogLesen,
@@ -47,6 +49,8 @@ const FESTE_HEADER = Object.freeze({
 const TRACKING_NAMEN = new Set(['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid', 'wbraid', 'mc_cid', 'mc_eid'])
 
 const AUTORITAET = new Set([
+  'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
+  'identityProfileId', 'identityProfileVersion', 'contentIdentity', 'identityProfiles',
   'registry',
   'sourceClass',
   'source_class',
@@ -153,6 +157,11 @@ const IPV4_GESPERRT: readonly (readonly [number, number])[] = [
 ]
 
 export type OfficialTruthServerOwnedRetrievalSperrgrund =
+  | 'content_not_eligible'
+  | 'identity_profile_unavailable'
+  | 'content_identity_mismatch'
+  | 'representation_url_mismatch'
+  | 'content_type_mismatch'
   | QuellenUrlFehler
   | 'caller_authority_forbidden'
   | 'sensitive_personal_field'
@@ -181,16 +190,17 @@ export type OfficialTruthServerOwnedRetrievalSperrgrund =
   | 'invalid_source_snapshot'
 
 export type OfficialTruthServerOwnedRetrievalErgebnis =
-  | {
+  | (ContentIdentityBinding & {
+      readonly identitySchema: 2
       readonly status: 'server_owned_official_retrieval'
       readonly sourceId: string
       readonly canonicalUrl: string
       readonly retrievedAt: string
-      readonly contentType: string | null
+      readonly contentType: string
       readonly sourceSnapshot: string
       readonly sourceContentHash: string
       readonly redirectCount: number
-    }
+    })
   | {
       readonly status: 'blocked'
       readonly reason: OfficialTruthServerOwnedRetrievalSperrgrund
@@ -845,6 +855,19 @@ export async function decideOfficialTruthServerOwnedRetrieval(
   const erstesZiel = zielPruefen(katalog.registry, sourceId, url, 'initial')
   if (!erstesZiel.ok) return blockiert(erstesZiel.reason)
 
+  const content = quellenInhaltRouten(katalog.registry, sourceId, erstesZiel.canonicalUrl)
+  if (!content.ok) return blockiert(content.reason)
+  const representation = content.representation
+  const identity = contentIdentityBinding(representation)
+  const item = katalog.registry.contentIdentity?.items.find((candidate) => candidate.current
+    && candidate.sourceId === identity.sourceId && candidate.contentItemId === identity.contentItemId
+    && candidate.contentItemVersion === identity.contentItemVersion)
+  const profiles = abhaengigkeiten.catalog?.identityProfiles ?? OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY
+  const matches = profiles.filter((profile) => profile.current && profile.identityProfileId === identity.identityProfileId
+    && profile.identityProfileVersion === identity.identityProfileVersion)
+  if (!item || matches.length !== 1) return blockiert('identity_profile_unavailable')
+  const profile = matches[0]!
+  const allowedUrls = new Set([...representation.requestUrls, representation.expectedFinalUrl])
   const lookup = officialTruthServerOwnedRetrievalLookup(abhaengigkeiten.resolve)
   const frist = fristMs(abhaengigkeiten.timeoutMs)
   const controller = new AbortController()
@@ -873,17 +896,28 @@ export async function decideOfficialTruthServerOwnedRetrieval(
         }
         const ziel = zielPruefen(katalog.registry, sourceId, naechste, 'redirect')
         if (!ziel.ok) return blockiert(ziel.reason)
+        if (!allowedUrls.has(ziel.canonicalUrl)) return blockiert('representation_url_mismatch')
         redirects += 1
         aktuell = ziel.canonicalUrl
         continue
       }
+      if (aktuell !== representation.expectedFinalUrl) return blockiert('representation_url_mismatch')
+      if (hop.contentType !== representation.expectedMediaType) return blockiert('content_type_mismatch')
       const text = textAus(hop.bytes)
       if (!text.ok) return blockiert(text.reason)
+      try {
+        const verified = profile.verify(Object.freeze({ item, representation, responseText: text.text,
+          finalUrl: aktuell, mediaType: hop.contentType }))
+        if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
+          || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
+      } catch { return blockiert('content_identity_mismatch') }
       const hash = evidenceQuellenFingerprint(text.text)
       if (!hash) return blockiert('invalid_source_snapshot')
       const retrievedAt = uhrLesen(abhaengigkeiten.now)
       if (!retrievedAt) return blockiert('invalid_retrieval_time')
       return einfrieren({
+        ...identity,
+        identitySchema: 2,
         status: 'server_owned_official_retrieval',
         sourceId: erstesZiel.sourceId,
         canonicalUrl: aktuell,

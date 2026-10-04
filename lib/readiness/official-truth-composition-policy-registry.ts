@@ -9,6 +9,7 @@
 
 import 'server-only'
 
+import { contentIdentityBinding, contentIdentityMatches, readDistinctContentItemRefs, type ContentIdentityBinding, type ContentItemRef } from '@/lib/readiness/official-truth-content-identity'
 import { OFFICIAL_VISA_MODES, type OfficialVisaMode } from '@/lib/readiness/official'
 import {
   officialTruthExtractorDefinitionenPruefen,
@@ -35,9 +36,8 @@ import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType } from '@/type
 const POLICY_ID = /^otp_[a-z][a-z0-9_]{0,40}$/
 const QUELLEN_FAMILIE = /^otf_[a-z][a-z0-9_]{0,40}$/
 const SCHEMA_FAMILIE = /^ots_[a-z][a-z0-9_]{0,40}$/
-const QUELLEN_ID = /^[a-z][a-z0-9_-]{1,63}$/
 const ZWEIG_ID = /^[a-z][a-z0-9_]{0,40}$/
-const VERSION_ID = /^ev1_[a-f0-9]{32}$/
+const VERSION_ID = /^ev2_[a-f0-9]{32}$/
 const INDEX = /^(0|[1-9]\d*)$/
 const FELD_PFAD = /^[a-z][A-Za-z0-9]{0,40}(?:\.[a-z][A-Za-z0-9]{0,40}){0,4}$/
 
@@ -47,7 +47,7 @@ const POLICY_SCHLUESSEL = [
   'current',
   'factKind',
   'requirementType',
-  'sourceIds',
+  'contentItemRefs',
   'sourceFamilyId',
   'schemaFamily',
   'applicabilitySchema',
@@ -55,7 +55,7 @@ const POLICY_SCHLUESSEL = [
   'assignments',
 ] as const
 
-const ZUWEISUNG_SCHLUESSEL = ['target', 'sourceIds', 'relation', 'role'] as const
+const ZUWEISUNG_SCHLUESSEL = ['target', 'contentItemRefs', 'relation', 'role'] as const
 const VISA_MODI = OFFICIAL_VISA_MODES.filter((modus) => modus !== 'unknown')
 type VisaSlot = Exclude<OfficialVisaMode, 'unknown'>
 
@@ -110,8 +110,8 @@ export type OfficialTruthCompositionCitationTarget =
 
 export type OfficialTruthCompositionAssignment = {
   readonly target: OfficialTruthCompositionCitationTarget
-  readonly sourceIds: readonly string[]
-  readonly relation: 'single_source' | 'equal_values'
+  readonly contentItemRefs: readonly ContentItemRef[]
+  readonly relation: 'single_content_item' | 'equal_values'
   readonly role:
     | 'complementary_part'
     | 'equal_values'
@@ -127,7 +127,7 @@ export type OfficialTruthCompositionPolicy = {
   readonly current: boolean
   readonly factKind: RegelFaktArt
   readonly requirementType: OfficialRequirementType
-  readonly sourceIds: readonly string[]
+  readonly contentItemRefs: readonly ContentItemRef[]
   readonly sourceFamilyId: string
   readonly schemaFamily: string
   readonly applicabilitySchema: 1 | null
@@ -138,7 +138,7 @@ export type OfficialTruthCompositionPolicy = {
 export type OfficialTruthCompositionPreHttpKey = {
   readonly factKind: RegelFaktArt
   readonly requirementType: OfficialRequirementType
-  readonly sourceIds: readonly string[]
+  readonly contentItemRefs: readonly ContentItemRef[]
   readonly sourceFamilyId: string
   readonly schemaFamily: string
 }
@@ -152,7 +152,7 @@ export type OfficialTruthCompositionFreeze = {
   readonly policy: OfficialTruthCompositionPolicy
 }
 
-export type OfficialTruthCompositionHerkunft = {
+export type OfficialTruthCompositionHerkunft = ContentIdentityBinding & {
   readonly citationKey: string
   readonly target: OfficialTruthCompositionCitationTarget
   readonly extractorId: string
@@ -169,7 +169,7 @@ export type OfficialTruthCompositionProvenanceIdentity = {
   readonly policyId: string
   readonly policyVersion: number
   readonly supportVersionIds: readonly string[]
-  readonly citations: readonly { readonly citationKey: string; readonly sourceId: string; readonly versionId: string }[]
+  readonly citations: readonly (ContentIdentityBinding & { readonly citationKey: string; readonly versionId: string })[]
 }
 
 /**
@@ -177,12 +177,13 @@ export type OfficialTruthCompositionProvenanceIdentity = {
  * Sie reicht ihn unverändert an die eine Ausführungsnaht weiter und
  * vergleicht danach nur die dort gebundenen Werte mit der Evidenz.
  */
-export type OfficialTruthCompositionRetrieval = {
+export type OfficialTruthCompositionRetrieval = ContentIdentityBinding & {
   readonly status: 'server_owned_official_retrieval'
+  readonly identitySchema: 2
   readonly sourceId: string
   readonly canonicalUrl: string
   readonly retrievedAt: string
-  readonly contentType: string | null
+  readonly contentType: string
   readonly sourceSnapshot: string
   readonly sourceContentHash: string
   readonly redirectCount: number
@@ -194,7 +195,8 @@ export type OfficialTruthCompositionSupport = {
   readonly retrieval: OfficialTruthCompositionRetrieval
 }
 
-export type OfficialTruthCompositionProofSupport = {
+export type OfficialTruthCompositionProofSupport = ContentIdentityBinding & {
+  readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -312,6 +314,9 @@ function genau(satz: Record<string, unknown>, schluessel: readonly string[]): bo
   const namen = Object.keys(satz)
   return namen.length === schluessel.length && schluessel.every((name) => namen.includes(name))
 }
+
+function itemKey(ref: ContentItemRef): string { return JSON.stringify([ref.sourceId, ref.contentItemId]) }
+function itemKeys(refs: readonly ContentItemRef[]): string[] { return sortiert(refs.map(itemKey)) }
 
 function sortiert(werte: readonly string[]): string[] {
   return [...werte].sort((links, rechts) => (links < rechts ? -1 : links > rechts ? 1 : 0))
@@ -503,7 +508,7 @@ function rollePasst(assignment: OfficialTruthCompositionAssignment): boolean {
   const { relation, role, target } = assignment
   if (relation === 'equal_values') return role === 'equal_values'
   if (role === 'equal_values') return false
-  if (relation !== 'single_source') return false
+  if (relation !== 'single_content_item') return false
   if (role === 'complementary_part') return true
   if (role === 'general_rule') {
     return target.kind === 'otherwise' || target.kind === 'visa_option_otherwise' || target.kind === 'fact_field'
@@ -527,15 +532,10 @@ function rollePasst(assignment: OfficialTruthCompositionAssignment): boolean {
   return false
 }
 
-function quellenLesen(wert: unknown, erlaubt: ReadonlySet<string>, mindestens: number): string[] | null {
-  if (!Array.isArray(wert) || wert.length < mindestens || wert.length > REGEL_SUPPORT_MAX) return null
-  const ids: string[] = []
-  for (const eintrag of wert) {
-    if (typeof eintrag !== 'string' || !QUELLEN_ID.test(eintrag) || ids.includes(eintrag)) return null
-    if (!erlaubt.has(eintrag)) return null
-    ids.push(eintrag)
-  }
-  return sortiert(ids)
+function quellenLesen(wert: unknown, erlaubt: ReadonlySet<string>, mindestens: number): readonly ContentItemRef[] | null {
+  const refs = readDistinctContentItemRefs(wert)
+  if (!refs.ok || refs.value.length < mindestens || refs.value.some((ref) => !erlaubt.has(itemKey(ref)))) return null
+  return refs.value
 }
 
 function policyLesen(wert: unknown): OfficialTruthCompositionPolicy | null {
@@ -552,14 +552,10 @@ function policyLesen(wert: unknown): OfficialTruthCompositionPolicy | null {
   if (typeof satz.schemaFamily !== 'string' || !SCHEMA_FAMILIE.test(satz.schemaFamily)) return null
   if (satz.applicabilitySchema !== 1 && satz.applicabilitySchema !== null) return null
   if (satz.completeness !== 'joint_complete_fact') return null
-  if (!Array.isArray(satz.sourceIds) || satz.sourceIds.length < 2 || satz.sourceIds.length > REGEL_SUPPORT_MAX) return null
-  const sourceIds: string[] = []
-  for (const eintrag of satz.sourceIds) {
-    if (typeof eintrag !== 'string' || !QUELLEN_ID.test(eintrag) || sourceIds.includes(eintrag)) return null
-    sourceIds.push(eintrag)
-  }
-  const kanonQuellen = sortiert(sourceIds)
-  const erlaubt = new Set(kanonQuellen)
+  const refs = readDistinctContentItemRefs(satz.contentItemRefs)
+  if (!refs.ok || refs.value.length < 2) return null
+  const kanonQuellen = refs.value
+  const erlaubt = new Set(itemKeys(kanonQuellen))
   if (!Array.isArray(satz.assignments) || satz.assignments.length === 0 || satz.assignments.length > 64) return null
   const assignments: OfficialTruthCompositionAssignment[] = []
   const gesehen = new Set<string>()
@@ -568,7 +564,7 @@ function policyLesen(wert: unknown): OfficialTruthCompositionPolicy | null {
     if (!zuweisung || !genau(zuweisung, ZUWEISUNG_SCHLUESSEL)) return null
     const target = zielLesen(zuweisung.target)
     if (!target) return null
-    if (zuweisung.relation !== 'single_source' && zuweisung.relation !== 'equal_values') return null
+    if (zuweisung.relation !== 'single_content_item' && zuweisung.relation !== 'equal_values') return null
     if (
       zuweisung.role !== 'complementary_part' &&
       zuweisung.role !== 'equal_values' &&
@@ -579,13 +575,13 @@ function policyLesen(wert: unknown): OfficialTruthCompositionPolicy | null {
     ) {
       return null
     }
-    const minimum = zuweisung.relation === 'single_source' ? 1 : 2
-    const maximum = zuweisung.relation === 'single_source' ? 1 : REGEL_SUPPORT_MAX
-    const ids = quellenLesen(zuweisung.sourceIds, erlaubt, minimum)
+    const minimum = zuweisung.relation === 'single_content_item' ? 1 : 2
+    const maximum = zuweisung.relation === 'single_content_item' ? 1 : REGEL_SUPPORT_MAX
+    const ids = quellenLesen(zuweisung.contentItemRefs, erlaubt, minimum)
     if (!ids || ids.length > maximum) return null
     const assignment: OfficialTruthCompositionAssignment = {
       target,
-      sourceIds: Object.freeze(ids),
+      contentItemRefs: Object.freeze(ids),
       relation: zuweisung.relation,
       role: zuweisung.role,
     }
@@ -601,7 +597,7 @@ function policyLesen(wert: unknown): OfficialTruthCompositionPolicy | null {
     current: satz.current,
     factKind: satz.factKind as RegelFaktArt,
     requirementType: satz.requirementType as OfficialRequirementType,
-    sourceIds: Object.freeze(kanonQuellen),
+    contentItemRefs: Object.freeze(kanonQuellen),
     sourceFamilyId: satz.sourceFamilyId,
     schemaFamily: satz.schemaFamily,
     applicabilitySchema: satz.applicabilitySchema,
@@ -614,7 +610,7 @@ function preHttpKey(policy: OfficialTruthCompositionPolicy): string {
   return [
     policy.factKind,
     policy.requirementType,
-    policy.sourceIds.join(','),
+    JSON.stringify(policy.contentItemRefs),
     policy.sourceFamilyId,
     policy.schemaFamily,
   ].join('|')
@@ -622,7 +618,7 @@ function preHttpKey(policy: OfficialTruthCompositionPolicy): string {
 
 function pinPasst(policy: OfficialTruthCompositionPolicy, extractor: OfficialTruthExtractorDefinition): boolean {
   if (policy.factKind !== extractor.factKind) return false
-  if (!gleicheListe(policy.sourceIds, extractor.sourceIds)) return false
+  if (!gleicheListe(itemKeys(policy.contentItemRefs), itemKeys(extractor.contentItemRefs))) return false
   if (policy.sourceFamilyId !== extractor.sourceFamilyId) return false
   if (policy.schemaFamily !== extractor.schemaFamily) return false
   if (extractor.requiredFieldPaths.length === 0) return true
@@ -670,7 +666,7 @@ export function officialTruthCompositionPreHttpKey(policy: OfficialTruthComposit
   return {
     factKind: policy.factKind,
     requirementType: policy.requirementType,
-    sourceIds: policy.sourceIds,
+    contentItemRefs: policy.contentItemRefs,
     sourceFamilyId: policy.sourceFamilyId,
     schemaFamily: policy.schemaFamily,
   }
@@ -679,13 +675,16 @@ export function officialTruthCompositionPreHttpKey(policy: OfficialTruthComposit
 export function officialTruthCompositionPhaseA(input: {
   readonly factKind: RegelFaktArt
   readonly requirementType: OfficialRequirementType
-  readonly supports: readonly { readonly sourceId: string; readonly canonicalUrl: string }[]
+  readonly supports: readonly (ContentIdentityBinding & { readonly canonicalUrl: string })[]
   readonly extractors: readonly OfficialTruthExtractorDefinition[]
   readonly policies: readonly OfficialTruthCompositionPolicy[]
 }): OfficialTruthCompositionPhaseAErgebnis {
-  const proofIds = sortiert([...new Set(input.supports.map((eintrag) => eintrag.sourceId))])
+  const refs = readDistinctContentItemRefs(input.supports.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
+  if (!refs.ok) return leerBlock(input.supports.length === 2 ? 'same_content_item_composition' : 'ambiguous_structure')
+  if (refs.value.length < 2) return leerBlock('insufficient_support')
+  const proofIds = itemKeys(refs.value)
   const candidates = input.extractors.filter(
-    (extractor) => extractor.current && extractor.factKind === input.factKind && gleicheListe(extractor.sourceIds, proofIds),
+    (extractor) => extractor.current && extractor.factKind === input.factKind && gleicheListe(itemKeys(extractor.contentItemRefs), proofIds),
   )
   if (candidates.length === 0) return leerBlock('composition_policy_unavailable')
   const urlOk = candidates.filter((extractor) =>
@@ -697,6 +696,7 @@ export function officialTruthCompositionPhaseA(input: {
   if (!extractor || extractor.policyId === null || extractor.policyVersion === null) {
     return leerBlock('composition_policy_unavailable')
   }
+  if (input.supports.some((support) => !extractor.representations.some((pin) => contentIdentityMatches(pin, support)))) return leerBlock('representation_not_eligible')
   const vorhanden = input.policies.find(
     (policy) => policy.policyId === extractor.policyId && policy.policyVersion === extractor.policyVersion,
   )
@@ -710,8 +710,8 @@ export function officialTruthCompositionPhaseA(input: {
     vorhanden.factKind === input.factKind &&
     vorhanden.factKind === extractor.factKind &&
     vorhanden.requirementType === input.requirementType &&
-    gleicheListe(vorhanden.sourceIds, proofIds) &&
-    gleicheListe(vorhanden.sourceIds, extractor.sourceIds) &&
+    gleicheListe(itemKeys(vorhanden.contentItemRefs), proofIds) &&
+    gleicheListe(itemKeys(vorhanden.contentItemRefs), itemKeys(extractor.contentItemRefs)) &&
     vorhanden.sourceFamilyId === extractor.sourceFamilyId &&
     vorhanden.schemaFamily === extractor.schemaFamily
   if (!stimmt) {
@@ -877,12 +877,12 @@ function zuweisungFuer(
 }
 
 function projektion(
-  sourceIds: readonly string[],
+  contentItemRefs: readonly ContentItemRef[],
   versionJeQuelle: ReadonlyMap<string, string>,
 ): string[] | null {
   const ids: string[] = []
-  for (const sourceId of sourceIds) {
-    const version = versionJeQuelle.get(sourceId)
+  for (const sourceId of contentItemRefs) {
+    const version = versionJeQuelle.get(itemKey(sourceId))
     if (!version) return null
     ids.push(version)
   }
@@ -905,17 +905,17 @@ function zitatePruefen(input: {
   observations: readonly OfficialTruthExtractorBeobachtung[]
 }): ZitatErfolg {
   const { freeze, fact } = input
-  const quellen = input.proofSupports.map((eintrag) => eintrag.sourceId)
+  const quellen = input.proofSupports.map(itemKey)
   const distinct = new Set(quellen)
-  if (distinct.size < 2) return { ok: false, reason: 'same_source_composition' }
+  if (distinct.size < 2) return { ok: false, reason: 'same_content_item_composition' }
   if (quellen.length !== distinct.size) return { ok: false, reason: 'ambiguous_structure' }
   const versionJeQuelle = new Map<string, string>()
   for (const support of input.proofSupports) {
-    if (versionJeQuelle.has(support.sourceId)) return { ok: false, reason: 'ambiguous_structure' }
-    versionJeQuelle.set(support.sourceId, support.versionId)
+    if (versionJeQuelle.has(itemKey(support))) return { ok: false, reason: 'ambiguous_structure' }
+    versionJeQuelle.set(itemKey(support), support.versionId)
   }
-  for (const sourceId of freeze.policy.sourceIds) {
-    if (!versionJeQuelle.has(sourceId)) return { ok: false, reason: 'support_mismatch' }
+  for (const sourceId of freeze.policy.contentItemRefs) {
+    if (!versionJeQuelle.has(itemKey(sourceId))) return { ok: false, reason: 'support_mismatch' }
   }
   const akzeptiert = new Set(input.acceptedVersionIds)
   const anspruch = sortiert(input.proofSupports.map((eintrag) => eintrag.versionId))
@@ -961,7 +961,7 @@ function zitatePruefen(input: {
       erwartet.set(citationKey(target), target)
       const assignment = zuweisungFuer(freeze.policy, target)
       if (!assignment) return { ok: false, reason: 'atom_locator_unassigned' }
-      const projected = projektion(assignment.sourceIds, versionJeQuelle)
+      const projected = projektion(assignment.contentItemRefs, versionJeQuelle)
       if (!projected) return { ok: false, reason: 'support_mismatch' }
       const cited = eintrag.atom.supportVersionIds ? sortiert([...eintrag.atom.supportVersionIds]) : []
       if (cited.length === 0) {
@@ -983,7 +983,7 @@ function zitatePruefen(input: {
         if (cited.some((id) => !zweig.supportVersionIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
         const treffer = assignments.filter((eintrag): eintrag is OfficialTruthCompositionAssignment => {
           if (!eintrag) return false
-          const projected = projektion(eintrag.sourceIds, versionJeQuelle)
+          const projected = projektion(eintrag.contentItemRefs, versionJeQuelle)
           return projected !== null && gleicheListe(projected, cited)
         })
         if (treffer.length === 0) return { ok: false, reason: 'support_mismatch' }
@@ -1012,7 +1012,7 @@ function zitatePruefen(input: {
   }
   for (const assignment of freeze.policy.assignments) {
     if (!erwartet.has(citationKey(assignment.target))) return { ok: false, reason: 'policy_field_unassigned' }
-    const projected = projektion(assignment.sourceIds, versionJeQuelle)
+    const projected = projektion(assignment.contentItemRefs, versionJeQuelle)
     if (!projected || projected.some((id) => !akzeptiert.has(id))) return { ok: false, reason: 'support_mismatch' }
   }
 
@@ -1020,15 +1020,15 @@ function zitatePruefen(input: {
     const zweigZielwert = zweig.otherwise ? zweigZiel(zweig, 'otherwise') : zweigZiel(zweig, 'branch')
     const zweigZuweisung = zuweisungFuer(freeze.policy, zweigZielwert)
     if (!zweigZuweisung) return { ok: false, reason: 'policy_field_unassigned' }
-    const projected = projektion(zweigZuweisung.sourceIds, versionJeQuelle)
+    const projected = projektion(zweigZuweisung.contentItemRefs, versionJeQuelle)
     if (!projected || !gleicheListe(projected, sortiert([...zweig.supportVersionIds]))) return { ok: false, reason: 'support_mismatch' }
     if (!zweig.otherwise) {
       const kinder = new Set<string>()
       for (const field of zweig.outcomeFields) {
         const outcome = zuweisungFuer(freeze.policy, zweigZiel(zweig, 'outcome', field))
         if (!outcome) return { ok: false, reason: 'policy_field_unassigned' }
-        if (outcome.sourceIds.some((id) => !zweigZuweisung.sourceIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
-        for (const id of outcome.sourceIds) kinder.add(id)
+        if (outcome.contentItemRefs.some((id) => !itemKeys(zweigZuweisung.contentItemRefs).includes(itemKey(id)))) return { ok: false, reason: 'support_mismatch' }
+        for (const id of outcome.contentItemRefs) kinder.add(itemKey(id))
       }
       for (const assignment of freeze.policy.assignments) {
         const target = assignment.target
@@ -1036,10 +1036,10 @@ function zitatePruefen(input: {
           (target.kind === 'atom' && target.branchId === zweig.branchId && zweig.visaMode === null) ||
           (target.kind === 'visa_option_atom' && target.branchId === zweig.branchId && target.visaMode === zweig.visaMode)
         if (!passt) continue
-        if (assignment.sourceIds.some((id) => !zweigZuweisung.sourceIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
-        for (const id of assignment.sourceIds) kinder.add(id)
+        if (assignment.contentItemRefs.some((id) => !itemKeys(zweigZuweisung.contentItemRefs).includes(itemKey(id)))) return { ok: false, reason: 'support_mismatch' }
+        for (const id of assignment.contentItemRefs) kinder.add(itemKey(id))
       }
-      if (!gleicheListe(sortiert([...kinder]), sortiert([...zweigZuweisung.sourceIds]))) {
+      if (!gleicheListe(sortiert([...kinder]), itemKeys(zweigZuweisung.contentItemRefs))) {
         return { ok: false, reason: 'policy_field_unassigned' }
       }
     }
@@ -1065,25 +1065,26 @@ function zitatePruefen(input: {
     if (!werte || werte.length === 0) return { ok: false, reason: 'fact_incomplete' }
     const gesehen = new Set<string>()
     for (const eintrag of werte) {
-      if (!assignment.sourceIds.includes(eintrag.sourceId)) return { ok: false, reason: 'duplicate_value' }
-      if (gesehen.has(eintrag.sourceId)) return { ok: false, reason: 'duplicate_value' }
-      gesehen.add(eintrag.sourceId)
+      if (!itemKeys(assignment.contentItemRefs).includes(itemKey(eintrag))) return { ok: false, reason: 'duplicate_value' }
+      if (gesehen.has(itemKey(eintrag))) return { ok: false, reason: 'duplicate_value' }
+      gesehen.add(itemKey(eintrag))
     }
-    if (assignment.sourceIds.some((sourceId) => !gesehen.has(sourceId))) return { ok: false, reason: 'fact_incomplete' }
+    if (assignment.contentItemRefs.some((sourceId) => !gesehen.has(itemKey(sourceId)))) return { ok: false, reason: 'fact_incomplete' }
     if (new Set(werte.map((eintrag) => eintrag.canonical)).size > 1) return { ok: false, reason: 'conflicting_value' }
   }
 
   const provenance: OfficialTruthCompositionHerkunft[] = []
   for (const assignment of freeze.policy.assignments) {
-    for (const sourceId of assignment.sourceIds) {
-      const versionId = versionJeQuelle.get(sourceId)
-      if (!versionId) return { ok: false, reason: 'support_mismatch' }
+    for (const sourceId of assignment.contentItemRefs) {
+      const versionId = versionJeQuelle.get(itemKey(sourceId))
+      const support = input.proofSupports.find((entry) => itemKey(entry) === itemKey(sourceId) && entry.versionId === versionId)
+      if (!versionId || !support) return { ok: false, reason: 'support_mismatch' }
       provenance.push({
         citationKey: citationKey(assignment.target),
         target: assignment.target,
         extractorId: freeze.extractorId,
         extractorVersion: freeze.extractorVersion,
-        sourceId,
+        ...contentIdentityBinding(support),
         versionId,
         policyId: freeze.policyId,
         policyVersion: freeze.policyVersion,
@@ -1112,7 +1113,7 @@ export function officialTruthCompositionProvenanceIdentity(
     supportVersionIds: sortiert([...supportVersionIds]),
     citations: provenance.map((eintrag) => ({
       citationKey: eintrag.citationKey,
-      sourceId: eintrag.sourceId,
+      ...contentIdentityBinding(eintrag),
       versionId: eintrag.versionId,
     })),
   }
@@ -1143,7 +1144,7 @@ export function officialTruthCompositionPhaseB(input: {
     const stuetze = treffer.length === 1 ? treffer[0] : undefined
     if (!stuetze) return freezeBlock('support_binding_mismatch', freeze)
     if (stuetze.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
-    if (stuetze.retrieval.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
+    if (!contentIdentityMatches(stuetze.retrieval, proof) || stuetze.retrieval.contentType !== proof.contentType) return freezeBlock('support_binding_mismatch', freeze)
     if (stuetze.retrieval.canonicalUrl !== proof.canonicalUrl) {
       return freezeBlock('source_url_changed_since_evidence', freeze)
     }
@@ -1167,7 +1168,7 @@ export function officialTruthCompositionPhaseB(input: {
   if (gelaufen.supports.length !== input.proofSupports.length) return freezeBlock('support_binding_mismatch', freeze)
   for (const proof of input.proofSupports) {
     const stuetze = gelaufen.supports.find((eintrag) => eintrag.versionId === proof.versionId)
-    if (!stuetze || stuetze.sourceId !== proof.sourceId) return freezeBlock('support_binding_mismatch', freeze)
+    if (!stuetze || !contentIdentityMatches(stuetze, proof) || stuetze.contentType !== proof.contentType) return freezeBlock('support_binding_mismatch', freeze)
     if (stuetze.canonicalUrl !== proof.canonicalUrl) return freezeBlock('source_url_changed_since_evidence', freeze)
     if (stuetze.sourceContentHash !== proof.sourceContentHash) {
       return freezeBlock('source_changed_since_evidence', freeze)

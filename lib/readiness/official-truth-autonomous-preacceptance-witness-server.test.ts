@@ -1,3 +1,5 @@
+import { r2CatalogRows, r2Profiles } from './official-truth-content-identity-r2.test'
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-autonomous-preacceptance-witness-server.test.ts
 //
 // Gleicher-Request-Zeuge. Synthetische *.example-Quellen.
@@ -41,7 +43,7 @@ const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
 const DATEI = 'lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts'
 const GRAPH = 'lib/readiness/official-truth-same-request-proof-server.ts'
-const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v3:[a-f0-9]{64}$/
 
 const JETZT = '2026-10-01T12:00:00.000Z'
 const JETZT_MS = Date.parse(JETZT)
@@ -119,7 +121,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -197,7 +199,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
         }
       },
     },
@@ -219,7 +221,7 @@ function aufrufer(teil?: {
       deskriptor(basis, INTERIOR, coverage({ destinationCountryCodes: ['TH'] })),
     ],
     sourceId: teil && 'sourceId' in teil ? teil.sourceId : REAL,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: REAL_URL,
       retrievedAt: INNERHALB,
       sourceSnapshot: SNAPSHOT,
@@ -293,7 +295,7 @@ async function entscheiden(
       return optionen?.authority ?? freigabe()
     },
     now: optionen?.now ?? (() => JETZT),
-    catalog: optionen?.catalog ?? { transport: eigener.transport },
+    catalog: optionen?.catalog ?? { identityProfiles: r2Profiles, transport: eigener.transport },
   })
   return { ergebnis, autoritaet, katalog: optionen?.catalog ? 0 : eigener.aufrufe.length }
 }
@@ -404,7 +406,7 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     const gescheitert = await decideOfficialTruthAutonomousPreacceptanceWitness(eingabe(), {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: {
+      catalog: { identityProfiles: r2Profiles,
         transport: {
           async aufrufen() {
             throw new Error(sentinel)
@@ -486,7 +488,7 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     assert.equal(ergebnis.capability, 'official-truth-freigeben')
     assert.deepEqual(Object.keys(ergebnis).sort(), ERFOLG_SCHLUESSEL)
 
-    const gelesen = await quellenKatalogLesen({ transport: transportFuer(realeEingaben()).transport })
+    const gelesen = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport })
     assert.equal(gelesen.ok, true)
     if (!gelesen.ok) return
     const rekonstruiert = {
@@ -552,7 +554,7 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
       aufrufer({
         descriptors: [deskriptor(basis, REAL, gebiet), deskriptor(basis, INTERIOR, gebiet)],
         sourceId: INTERIOR,
-        material: {
+        material: { contentType: 'text/plain',
           canonicalUrl: 'https://www.real-interior.example/rules',
           retrievedAt: INNERHALB,
           sourceSnapshot: 'interior witness page',
@@ -609,7 +611,7 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     })
     assert.equal(gleicheQuelle.ergebnis.status, 'blocked')
     if (gleicheQuelle.ergebnis.status !== 'blocked') return
-    assert.equal(gleicheQuelle.ergebnis.reason, 'same_source_composition')
+    assert.equal(gleicheQuelle.ergebnis.reason, 'same_content_item_composition')
   })
 
   test('zwei Credential-Optionen bleiben zwei Zellen und werden kein Zeuge', async () => {
@@ -644,7 +646,7 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
       aufrufer({
         descriptors: [deskriptor(basis, REAL, gebiet), deskriptor(basis, INTERIOR, gebiet)],
         sourceId: INTERIOR,
-        material: {
+        material: { contentType: 'text/plain',
           canonicalUrl: 'https://www.real-interior.example/rules',
           retrievedAt: INNERHALB,
           sourceSnapshot: 'interior reversed page',
@@ -666,12 +668,12 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     const serverUhr = () => new Date(JETZT)
     const vorwaerts = await officialTruthServerHeldReviewReproof(
       { supports: [erste, zweite], metadata },
-      { transport: katalogVorwaerts.transport },
+      { identityProfiles: r2Profiles, transport: katalogVorwaerts.transport },
       serverUhr,
     )
     const rueckwaerts = await officialTruthServerHeldReviewReproof(
       { supports: [zweite, erste], metadata },
-      { transport: katalogRueckwaerts.transport },
+      { identityProfiles: r2Profiles, transport: katalogRueckwaerts.transport },
       serverUhr,
     )
     assert.equal(vorwaerts.status, 'server_held_review_reproof')
@@ -754,3 +756,9 @@ describe('Official Truth autonomous pre-acceptance witness', () => {
     assert.equal(JSON.stringify(ergebnis).includes('caller clock'), false)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.real-government.example/rules",
+  "https://www.real-interior.example/rules"
+] as const

@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-rule-review-decision-intent.test.ts
 //
 // Entscheidungsabsicht nur über ein neu belegtes Prüfpaket und dessen Identität.
@@ -52,7 +53,7 @@ const GEHEIM = 'personal-secret-91f3'
 const MARKER = 'TRUSTED-MARKER-SHOULD-NOT-ECHO'
 const FREITEXT = 'Ada Beispiel passport XC-44821 born 1984-03-17'
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'factKind', 'decision'] as const
-const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v3:[a-f0-9]{64}$/
 const ZUSTAENDE = ['needs_more_evidence', 'reject_candidate', 'proceed_to_trusted_fact_entry'] as const
 
 const PERSONEN = [
@@ -153,7 +154,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -236,7 +237,7 @@ function huelle(teil?: {
     registry: basis,
     descriptors: teil?.descriptors ?? beideDeskriptoren(basis),
     sourceId: teil?.sourceId ?? QUELLE,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: 'https://www.gov.example/rules',
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -270,7 +271,7 @@ function zweiteStuetze(snapshot: string) {
       registry: basis,
       descriptors: beideDeskriptoren(basis),
       sourceId: ANDERE,
-      material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
+      material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
     }),
   )
 }
@@ -410,9 +411,9 @@ describe('Official Truth rule review decision intent contract', () => {
     const stuetze = buendel()
     const identitaet = finger([stuetze])
     const falsch = `review-packet:v1:${'ab'.repeat(32)}`
-    const gleicherDigest = `review-packet:v1:${identitaet.reviewPacketKey.slice('review-packet:v2:'.length)}`
+    const gleicherDigest = `review-packet:v1:${identitaet.reviewPacketKey.slice('review-packet:v3:'.length)}`
     assert.notEqual(gleicherDigest, identitaet.reviewPacketKey)
-    assert.match(identitaet.reviewPacketKey, /^review-packet:v2:/)
+    assert.match(identitaet.reviewPacketKey, /^review-packet:v3:/)
     const leer = ''
     const zusatz = `${identitaet.reviewPacketKey} `
     const klein = identitaet.reviewPacketKey.toUpperCase()
@@ -444,7 +445,7 @@ describe('Official Truth rule review decision intent contract', () => {
     assert.notEqual(neu.reviewPacketKey, identitaet.reviewPacketKey)
     const aktuell = offen(absicht([geaendert], neu.reviewPacketKey, 'reject_candidate'))
     assert.equal(aktuell.reviewPacketKey, neu.reviewPacketKey)
-    assert.match(aktuell.reviewPacketKey, /^review-packet:v2:/)
+    assert.match(aktuell.reviewPacketKey, /^review-packet:v3:/)
     assert.equal(JSON.stringify(aktuell).includes('accepted'), false)
     assert.equal(JSON.stringify(aktuell).includes('lifecycle'), false)
     assert.equal(JSON.stringify(aktuell).includes('regelKandidatAkzeptieren'), false)
@@ -597,7 +598,7 @@ describe('Official Truth rule review decision intent contract', () => {
         registry: basis,
         descriptors: beideDeskriptoren(basis, coverage),
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
       }),
     )
     const schweizerId = finger([schweiz])
@@ -628,7 +629,7 @@ describe('Official Truth rule review decision intent contract', () => {
     const metadata = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
     for (const decision of ZUSTAENDE) {
       const ergebnis = absicht([links, rechts], MARKER, decision, metadata)
-      assert.deepEqual(ergebnis, { status: 'blocked', reason: 'same_source_composition' })
+      assert.deepEqual(ergebnis, { status: 'blocked', reason: 'same_content_item_composition' })
       const text = JSON.stringify(ergebnis)
       assert.equal(text.includes(MARKER), false)
       assert.equal(text.includes('seite grenze'), false)
@@ -657,6 +658,7 @@ describe('Official Truth rule review decision intent contract', () => {
     const text = datei('lib/readiness/official-truth-rule-review-decision-intent.ts')
     const importe = [...text.matchAll(/from '([^']+)'/g)].map((treffer) => treffer[1]).sort()
     assert.deepEqual(importe, [
+      '@/lib/readiness/official-truth-content-identity',
       '@/lib/readiness/official-truth-rule-review-fingerprint',
       '@/lib/readiness/official-truth-rule-review-packet',
       '@/lib/readiness/rule-claims',
@@ -669,13 +671,13 @@ describe('Official Truth rule review decision intent contract', () => {
     assert.match(text, /review_packet_key_mismatch/)
     assert.match(text, /invalid_decision/)
     assert.match(text, /quality_not_acceptable/)
-    assert.match(text, /same_source_composition/)
+    assert.match(text, /same_content_item_composition/)
     assert.doesNotMatch(text, /regelKandidatAkzeptieren|regelKandidatErstellen|trustedRuleFact/)
     assert.doesNotMatch(text, /officialTruthAkzeptierteEvidenceAusAbruf|officialTruthRegelKandidatAusEvidence|officialTruthAbgerufenMaterialPruefen/)
     assert.doesNotMatch(text, /officialTruthRegelReviewVorschlag|official-truth-review-suggestion/)
     assert.doesNotMatch(text, /official_truth_store_accepted_v1|official_truth_source_catalog_v1/)
     assert.doesNotMatch(text, /requirementsProviderAus|sha256Hex|evidenceQuellenFingerprint/)
-    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v2:/)
+    assert.doesNotMatch(text, /review-packet:v1:|review-packet:v3:/)
     assert.doesNotMatch(text, /\.sourceSnapshot|\.canonicalUrl|\.sourceContentHash|\.proposal/)
     assert.doesNotMatch(text, /supabase|openai|Date\.now|new Date\(|fetch\(|Math\.random|node:fs|node:http|node:net/i)
     for (const relativ of [
@@ -698,3 +700,9 @@ describe('Official Truth rule review decision intent contract', () => {
     assert.equal(requirementsProviderAus(), null)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules",
+  "https://www.interior.example/rules"
+] as const

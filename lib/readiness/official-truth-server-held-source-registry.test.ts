@@ -1,3 +1,5 @@
+import { r2CatalogRows, r2Profiles } from './official-truth-content-identity-r2.test'
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-server-held-source-registry.test.ts
 //
 // Servergrenze: die amtliche Registry kommt nur aus dem injizierten Katalog.
@@ -108,7 +110,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -208,7 +210,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         }
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
         }
       },
     },
@@ -227,7 +229,7 @@ function aufrufer(teil?: {
     request: teil?.request ?? anfrage(),
     descriptors: teil?.descriptors ?? [deskriptor(basis, REAL), deskriptor(basis, INTERIOR, abdeckung({ destinationCountryCodes: ['TH'] }))],
     sourceId: teil && 'sourceId' in teil ? teil.sourceId : REAL,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: REAL_URL,
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -309,7 +311,7 @@ describe('Official Truth server-held source registry', () => {
         registry: fake,
         descriptors: [{ source: fake.sources[0], coverage: abdeckung() }],
         sourceId: 'example-fake-government',
-        material: { canonicalUrl: FAKE_URL, retrievedAt: ABGERUFEN, sourceSnapshot: SNAPSHOT },
+        material: { contentType: 'text/plain', canonicalUrl: FAKE_URL, retrievedAt: ABGERUFEN, sourceSnapshot: SNAPSHOT },
       },
       uhr(),
     )
@@ -324,7 +326,7 @@ describe('Official Truth server-held source registry', () => {
         extra: { registry: fake },
       }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(mitRegistry, { status: 'blocked', reason: 'caller_authority_forbidden' })
     assert.deepEqual(katalog.aufrufe, [])
@@ -333,7 +335,7 @@ describe('Official Truth server-held source registry', () => {
     const urlAllein = await officialTruthServerHeldMaterialPruefen(
       aufrufer({ material: { canonicalUrl: FAKE_URL } }),
       uhr(),
-      { transport: ohneFeld.transport },
+      { identityProfiles: r2Profiles, transport: ohneFeld.transport },
     )
     assert.deepEqual(urlAllein, { status: 'blocked', reason: 'unregistered_domain' })
     assert.deepEqual(ohneFeld.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
@@ -346,7 +348,7 @@ describe('Official Truth server-held source registry', () => {
         material: { canonicalUrl: FAKE_URL },
       }),
       uhr(),
-      { transport: falscherDeskriptor.transport },
+      { identityProfiles: r2Profiles, transport: falscherDeskriptor.transport },
     )
     assert.deepEqual(deskriptorAngriff, { status: 'blocked', reason: 'invalid_source_plan' })
     assert.equal(JSON.stringify(deskriptorAngriff).includes('not-a-government.example'), false)
@@ -360,19 +362,19 @@ describe('Official Truth server-held source registry', () => {
       const ergebnis = await officialTruthServerHeldMaterialPruefen(
         aufrufer({ extra: { [feld]: wert } }),
         uhr(),
-        { transport: katalog.transport },
+        { identityProfiles: r2Profiles, transport: katalog.transport },
       )
       assert.deepEqual(ergebnis, { status: 'blocked', reason: 'caller_authority_forbidden' }, feld)
       const imMaterial = await officialTruthServerHeldMaterialPruefen(
         aufrufer({ material: { [feld]: wert } }),
         uhr(),
-        { transport: katalog.transport },
+        { identityProfiles: r2Profiles, transport: katalog.transport },
       )
       assert.deepEqual(imMaterial, { status: 'blocked', reason: 'caller_authority_forbidden' }, feld)
     }
     const imReview = await officialTruthServerHeldReviewPacket(
       { supports: [buendel()], metadata: meta(), registry: { sources: [] } },
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(imReview, { status: 'blocked', reason: 'caller_authority_forbidden' })
     assert.deepEqual(katalog.aufrufe, [])
@@ -382,8 +384,8 @@ describe('Official Truth server-held source registry', () => {
     const katalog = transportFuer(realeEingaben())
     const eingabe = aufrufer()
     const vorher = JSON.stringify(eingabe)
-    const live = await officialTruthServerHeldMaterialPruefen(eingabe, uhr(), { transport: katalog.transport })
-    const gelesen = await quellenKatalogLesen({ transport: transportFuer(realeEingaben()).transport })
+    const live = await officialTruthServerHeldMaterialPruefen(eingabe, uhr(), { identityProfiles: r2Profiles, transport: katalog.transport })
+    const gelesen = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport })
     assert.equal(gelesen.ok, true)
     if (!gelesen.ok) return
     const direkt = officialTruthAbgerufenMaterialPruefen(
@@ -406,7 +408,7 @@ describe('Official Truth server-held source registry', () => {
     const ergebnis = await officialTruthServerHeldMaterialPruefen(
       aufrufer({ sourceId: 'example-unknown-authority' }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(ergebnis, { status: 'blocked', reason: 'source_not_eligible' })
   })
@@ -422,7 +424,7 @@ describe('Official Truth server-held source registry', () => {
     assert.deepEqual(ohneZugang, { status: 'blocked', reason: 'catalog_not_configured' })
     assert.equal(JSON.stringify(ohneZugang).includes(sentinel), false)
 
-    const geworfen = await officialTruthServerHeldEvidenceAnnehmen(aufrufer(), uhr(), null, {
+    const geworfen = await officialTruthServerHeldEvidenceAnnehmen(aufrufer(), uhr(), null, { identityProfiles: r2Profiles,
       transport: {
         async aufrufen() {
           throw new Error(sentinel)
@@ -434,13 +436,16 @@ describe('Official Truth server-held source registry', () => {
 
     const ueberlappend = await officialTruthServerHeldReviewPacket(
       { supports: [buendel()], metadata: meta() },
-      {
+      { identityProfiles: r2Profiles,
         transport: {
           async aufrufen(payload) {
             assert.equal(payload.operation, 'read_registry')
             return {
               ok: true,
-              antwort: {
+              antwort: { ...r2CatalogRows([
+                  katalogZeile(amt(REAL, 'real-government.example', 'Real Government Authority')),
+                  katalogZeile(amt(INTERIOR, 'child.real-government.example', 'Real Interior Authority')),
+                ], R2_PUBLICATIONS),
                 ok: true,
                 operation: 'read_registry',
                 sources: [
@@ -455,7 +460,7 @@ describe('Official Truth server-held source registry', () => {
     )
     assert.deepEqual(ueberlappend, { status: 'blocked', reason: 'catalog_failed' })
 
-    const transportAus = await officialTruthServerHeldRegelKandidat([], meta(), {
+    const transportAus = await officialTruthServerHeldRegelKandidat([], meta(), { identityProfiles: r2Profiles,
       transport: {
         async aufrufen() {
           return { ok: false }
@@ -476,7 +481,7 @@ describe('Official Truth server-held source registry', () => {
         material: { canonicalUrl: 'https://www.provider.example/rules' },
       }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(passend, { status: 'blocked', reason: 'source_not_official_authority' })
 
@@ -496,7 +501,7 @@ describe('Official Truth server-held source registry', () => {
         material: { canonicalUrl: 'https://www.provider.example/rules' },
       }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(umetikettiert, { status: 'blocked', reason: 'invalid_source_plan' })
     assert.equal(JSON.stringify(umetikettiert).includes('official_authority'), false)
@@ -505,7 +510,7 @@ describe('Official Truth server-held source registry', () => {
       aufrufer({ extra: { sourceClass: 'official_authority' } }),
       uhr(),
       null,
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(klassenFeld, { status: 'blocked', reason: 'caller_authority_forbidden' })
     assert.equal(katalog.aufrufe.some((aufruf) => aufruf.operation === 'register_source'), false)
@@ -520,14 +525,14 @@ describe('Official Truth server-held source registry', () => {
       aufrufer({
         descriptors: [deskriptor(basis, REAL, coverage), deskriptor(basis, INTERIOR, coverage)],
         sourceId: INTERIOR,
-        material: { canonicalUrl: 'https://www.real-interior.example/rules', sourceSnapshot: 'interior page' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.real-interior.example/rules', sourceSnapshot: 'interior page' },
       }),
     )
     const vorschlag = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
     const eingabe = { supports: [erste, zweite], metadata: vorschlag }
     const vorher = JSON.stringify(eingabe)
-    const live = await officialTruthServerHeldReviewPacket(eingabe, { transport: katalog.transport })
-    const gelesen = await quellenKatalogLesen({ transport: transportFuer(realeEingaben()).transport })
+    const live = await officialTruthServerHeldReviewPacket(eingabe, { identityProfiles: r2Profiles, transport: katalog.transport })
+    const gelesen = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport })
     assert.equal(gelesen.ok, true)
     if (!gelesen.ok) return
     const direkt = officialTruthRegelReviewPacket({
@@ -548,14 +553,14 @@ describe('Official Truth server-held source registry', () => {
     assert.equal(JSON.stringify(eingabe), vorher)
     assert.deepEqual(katalog.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
 
-    const evidence = await officialTruthServerHeldEvidenceAnnehmen(erste.umschlag, erste.uhr, null, {
+    const evidence = await officialTruthServerHeldEvidenceAnnehmen(erste.umschlag, erste.uhr, null, { identityProfiles: r2Profiles,
       transport: transportFuer(realeEingaben()).transport,
     })
     assert.equal(evidence.status, 'accepted_evidence')
     if (evidence.status !== 'accepted_evidence') return
     assert.equal(evidence.evidence.sourceClass, 'official_authority')
     assert.equal(evidence.evidence.authorityName, 'Real Government Authority')
-    const kandidat = await officialTruthServerHeldRegelKandidat([evidence.evidence], meta(), {
+    const kandidat = await officialTruthServerHeldRegelKandidat([evidence.evidence], meta(), { identityProfiles: r2Profiles,
       transport: transportFuer(realeEingaben()).transport,
     })
     assert.equal(kandidat.ok, true)
@@ -568,7 +573,7 @@ describe('Official Truth server-held source registry', () => {
     const fremdeRegistry = await officialTruthServerHeldRegelKandidat(
       { registry: basis, evidenceVersions: [evidence.evidence] },
       meta(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(fremdeRegistry, { ok: false, reason: 'caller_authority_forbidden' })
 
@@ -592,12 +597,12 @@ describe('Official Truth server-held source registry', () => {
     const schweizerisch = await officialTruthServerHeldMaterialPruefen(
       aufrufer({ request: schweizer, descriptors: [deskriptor(basis, REAL, coverage)] }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     const serbischBeleg = await officialTruthServerHeldMaterialPruefen(
       aufrufer({ request: serbischeAnfrage, descriptors: [deskriptor(basis, REAL, coverage)] }),
       uhr(),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.equal(schweizerisch.status, 'retrieved_material')
     assert.equal(serbischBeleg.status, 'retrieved_material')
@@ -614,7 +619,7 @@ describe('Official Truth server-held source registry', () => {
         ],
         metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }),
       },
-      { transport: transportFuer(realeEingaben()).transport },
+      { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport },
     )
     assert.equal(gemischt.status, 'blocked')
     if (gemischt.status !== 'blocked') return
@@ -630,18 +635,18 @@ describe('Official Truth server-held source registry', () => {
       aufrufer({
         descriptors: [deskriptor(basis, REAL, coverage), deskriptor(basis, INTERIOR, coverage)],
         sourceId: INTERIOR,
-        material: { canonicalUrl: 'https://www.real-interior.example/rules', sourceSnapshot: 'interior page' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.real-interior.example/rules', sourceSnapshot: 'interior page' },
       }),
     )
     const vorschlag = meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })
     const eingabe = { supports: [erste, zweite], metadata: vorschlag }
-    const live = await officialTruthServerHeldReviewReproof(eingabe, { transport: katalog.transport }, () => new Date(UHR))
+    const live = await officialTruthServerHeldReviewReproof(eingabe, { identityProfiles: r2Profiles, transport: katalog.transport }, () => new Date(UHR))
     assert.equal(live.status, 'server_held_review_reproof')
     if (live.status !== 'server_held_review_reproof') return
-    assert.match(live.reviewPacketKey, /^review-packet:v2:[a-f0-9]{64}$/)
+    assert.match(live.reviewPacketKey, /^review-packet:v3:[a-f0-9]{64}$/)
     assert.deepEqual(katalog.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
 
-    const gelesen = await quellenKatalogLesen({ transport: transportFuer(realeEingaben()).transport })
+    const gelesen = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport })
     assert.equal(gelesen.ok, true)
     if (!gelesen.ok) return
     const rekonstruiert = {
@@ -689,7 +694,7 @@ describe('Official Truth server-held source registry', () => {
     const katalog = transportFuer(realeEingaben())
     const ohneServeruhr = await officialTruthServerHeldReviewReproof(
       { supports: [buendelMitUhr], metadata: meta() },
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(ohneServeruhr, { status: 'blocked', reason: 'invalid_reference_time' })
     assert.equal(aufrufe, 0)
@@ -710,7 +715,7 @@ describe('Official Truth server-held source registry', () => {
         ],
         metadata: meta(),
       },
-      { transport: zukunft.transport },
+      { identityProfiles: r2Profiles, transport: zukunft.transport },
       () => new Date(UHR),
     )
     assert.deepEqual(kuenftigerAbruf, { status: 'blocked', reason: 'retrieved_at_in_future' })
@@ -720,7 +725,7 @@ describe('Official Truth server-held source registry', () => {
     const unabhaengig = transportFuer(realeEingaben())
     const trotzFrueherUhr = await officialTruthServerHeldReviewReproof(
       { supports: [buendelMitUhr], metadata: meta() },
-      { transport: unabhaengig.transport },
+      { identityProfiles: r2Profiles, transport: unabhaengig.transport },
       () => new Date(UHR),
     )
     assert.equal(trotzFrueherUhr.status, 'server_held_review_reproof')
@@ -728,3 +733,11 @@ describe('Official Truth server-held source registry', () => {
     assert.deepEqual(unabhaengig.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.not-a-government.example/rules",
+  "https://www.provider.example/rules",
+  "https://www.real-government.example/rules",
+  "https://www.real-interior.example/rules"
+] as const

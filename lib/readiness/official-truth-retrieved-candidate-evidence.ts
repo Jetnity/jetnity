@@ -8,6 +8,7 @@
 // Scope und sourceId kommen aus der Forschungsanfrage und aus diesem Beleg.
 // Die Extraktion darf nur das Gültigkeitsfenster und eine kurze Notiz tragen.
 
+import { contentIdentityMatches } from '@/lib/readiness/official-truth-content-identity'
 import {
   evidenceKandidatAusModell,
   type EvidenceKandidatErgebnis,
@@ -171,6 +172,7 @@ function extraktionLesen(wert: unknown): Extraktion {
 
 function kandidatPasst(evidence: EvidenceVersion, beleg: OfficialTruthAbgerufenBeleg): boolean {
   return (
+    contentIdentityMatches(evidence, beleg) && evidence.contentType === beleg.contentType &&
     evidence.lifecycle === 'candidate' &&
     evidence.validationState === 'pending' &&
     evidence.previousVersionId === null &&

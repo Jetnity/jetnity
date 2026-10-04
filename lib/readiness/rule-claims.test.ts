@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/rule-claims.test.ts
 //
 // Quellenneutrale Rule Claims. Ein Forschungsvorschlag ist keine akzeptierte Regel.
@@ -89,7 +90,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function atom(teil?: Record<string, unknown>) {
@@ -118,9 +119,16 @@ function version(
   snapshot: string,
   scope: Record<string, unknown> = atom(),
 ): EvidenceVersion {
+  const source = basis.sources.find((entry) => entry.sourceId === sourceId)
+  if (source?.sourceClass === 'licensed_evidence_provider') {
+    const official = version(basis, 'example-border-authority', 'gov.example', snapshot, atom())
+    // Deliberately forged provider identity: the R2 reader must reject it.
+    return { ...official, ...source, canonicalUrl: `https://www.${host}/rules/visa`, scope: { ...official.scope, sourceId } }
+  }
+
   const erzeugt = evidenceKandidatAusModell(
     { scope: { ...scope, sourceId } },
-    {
+    { contentType: 'text/plain',
       canonicalUrl: `https://www.${host}/rules/visa`,
       retrievedAt: ABGERUFEN,
       sourceSnapshot: snapshot,
@@ -197,7 +205,7 @@ describe('Official Truth rule claims', () => {
     const links = version(basis, 'example-border-authority', 'gov.example', 'seite alpha')
     const rechts = version(basis, 'example-interior-authority', 'interior.example', 'seite beta', atom({ sourceId: 'example-interior-authority' }))
     assert.notEqual(links.lookupKey, rechts.lookupKey)
-    assert.match(links.lookupKey, /^evidence-key:v2:/)
+    assert.match(links.lookupKey, /^evidence-key:v3:/)
     const a = regelScopeAusEvidenceScope(links.scope)
     const b = regelScopeAusEvidenceScope(rechts.scope)
     assert.equal(a.ok, true)
@@ -318,7 +326,7 @@ describe('Official Truth rule claims', () => {
       [erste, gleich],
       fakt,
     )
-    assert.deepEqual(gleichQuelle, { ok: false, reason: 'same_source_composition' })
+    assert.deepEqual(gleichQuelle, { ok: false, reason: 'same_content_item_composition' })
   })
 
   test('primäre Qualität ist nur Behörden-Evidence', () => {
@@ -349,7 +357,7 @@ describe('Official Truth rule claims', () => {
     const explizit = annehmen(basis, behoerde.scope, 'requirement_effect', 'explicit_primary_statement', [behoerde], fakt)
     assert.equal(explizit.ok, true)
     const einAnbieter = annehmen(basis, anbieter.scope, 'requirement_effect', 'explicit_primary_statement', [anbieter], fakt)
-    assert.deepEqual(einAnbieter, { ok: false, reason: 'primary_source_required' })
+    assert.deepEqual(einAnbieter, { ok: false, reason: 'evidence_not_accepted' })
     const zweiBehoerden = annehmen(
       basis,
       behoerde.scope,
@@ -367,7 +375,7 @@ describe('Official Truth rule claims', () => {
       [anbieter, anderer],
       fakt,
     )
-    assert.deepEqual(zweiAnbieter, { ok: false, reason: 'primary_source_required' })
+    assert.deepEqual(zweiAnbieter, { ok: false, reason: 'evidence_not_accepted' })
     const gemischt = annehmen(
       basis,
       behoerde.scope,
@@ -376,7 +384,7 @@ describe('Official Truth rule claims', () => {
       [behoerde, anbieter],
       fakt,
     )
-    assert.deepEqual(gemischt, { ok: false, reason: 'primary_source_required' })
+    assert.deepEqual(gemischt, { ok: false, reason: 'evidence_not_accepted' })
   })
 
   test('stale, Konflikt und Forschungslücke werden nicht angenommen', () => {
@@ -850,7 +858,7 @@ describe('Official Truth rule claims', () => {
 
     const kandidat = evidenceKandidatAusModell(
       { scope: atom() },
-      {
+      { contentType: 'text/plain',
         canonicalUrl: 'https://www.gov.example/rules/visa',
         retrievedAt: ABGERUFEN,
         sourceSnapshot: 'noch kandidat',
@@ -1176,7 +1184,7 @@ describe('Official Truth rule claims', () => {
   })
 
   test('Schema-1-Zweige binden nur die neu bewiesenen Stützen', () => {
-    const fremd = `ev1_${'ab'.repeat(16)}`
+    const fremd = `ev2_${'ab'.repeat(16)}`
     const basis = registry()
     const belegt = version(basis, 'example-border-authority', 'gov.example', 'zweig-stuetze')
     const zweite = version(basis, 'example-border-authority', 'gov.example', 'zweig-stuetze-zwei')
@@ -1271,7 +1279,7 @@ describe('Official Truth rule claims', () => {
         [belegt, zweite],
         [ausdrucksZweig('ordinary', atomar(), [belegt.versionId]), sonst('fallback', [belegt.versionId])],
       ),
-      { ok: false, reason: 'support_mismatch' },
+      { ok: false, reason: 'same_content_item_composition' },
     )
     assert.deepEqual(
       annehmenWirkung(
@@ -1300,7 +1308,7 @@ describe('Official Truth rule claims', () => {
           sonst('fallback', [zweite.versionId]),
         ],
       ),
-      { ok: false, reason: 'support_mismatch' },
+      { ok: false, reason: 'same_content_item_composition' },
     )
     assert.equal(
       annehmenWirkung([belegt], [ausdrucksZweig('ordinary', atomar(), [belegt.versionId])]).ok,
@@ -1311,7 +1319,7 @@ describe('Official Truth rule claims', () => {
         [belegt, zweite],
         [ausdrucksZweig('ordinary', atomar(belegt.versionId), [belegt.versionId]), sonst('fallback', [zweite.versionId])],
       ),
-      { ok: false, reason: 'support_mismatch' },
+      { ok: false, reason: 'same_content_item_composition' },
     )
 
     const komposition = annehmenWirkung(
@@ -1355,3 +1363,13 @@ describe('Official Truth rule claims', () => {
     assert.ok(fakt >= 0 && bindung > fakt && claim > bindung)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules/visa",
+  "https://www.interior.example/rules/visa",
+  "https://user:secret@www.visa.example/apply",
+  "https://www.gov.example/rules/visa",
+  "https://www.provider.example/apply",
+  "https://www.visa.example/apply"
+] as const

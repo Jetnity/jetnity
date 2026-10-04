@@ -7,6 +7,7 @@
 // Der Inhaltsvergleich bleibt die bestehende Funktion. Diese Datei speichert
 // nichts, ruft nichts ab und zieht keine Regel heraus.
 
+import { contentIdentityBinding, contentIdentityMatches, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { evidenceVersionenVergleichen, type EvidenceVersion } from '@/lib/readiness/evidence'
 import {
   officialTruthAkzeptierteEvidenceAusAbruf,
@@ -20,6 +21,7 @@ import { regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 
 export type OfficialTruthAuffrischungSperrgrund =
   | OfficialTruthAkzeptierteEvidenceSperrgrund
+  | 'different_content_identity'
   | 'different_official_source'
   | 'different_rule_scope'
   | 'different_official_page'
@@ -31,7 +33,7 @@ export type OfficialTruthAuffrischungSperrgrund =
  * keine Einreisewirkung. `unchanged_source_content` ist nur die Hülle.
  */
 export type OfficialTruthAuffrischungErgebnis =
-  | {
+  | (ContentIdentityBinding & {
       readonly status: 'unchanged_source_content' | 'changed_source_content'
       readonly baselineVersionId: string
       readonly baselineRequestKey: string
@@ -41,10 +43,10 @@ export type OfficialTruthAuffrischungErgebnis =
       readonly contentChanged: boolean
       readonly laterAnalysisShortCircuit: boolean
       readonly ruleChange: 'not_asserted'
-    }
+    })
   | { readonly status: 'blocked'; readonly reason: OfficialTruthAuffrischungSperrgrund }
 
-const REGISTRY_SCHLUESSEL = ['blockedDomains', 'sources'] as const
+const REGISTRY_SCHLUESSEL = ['blockedDomains', 'sources', 'contentIdentity'] as const
 const QUELLE_SCHLUESSEL = ['authorityName', 'domains', 'publisherName', 'sourceClass', 'sourceId'] as const
 
 function sperre(reason: OfficialTruthAuffrischungSperrgrund): OfficialTruthAuffrischungErgebnis {
@@ -110,7 +112,7 @@ function registryIdentitaet(umschlag: unknown): string | null {
       domains,
     })
   }
-  return JSON.stringify({ sources, blockedDomains })
+  return JSON.stringify({ sources, blockedDomains, contentIdentity: registry.contentIdentity })
 }
 
 /**
@@ -120,7 +122,7 @@ function registryIdentitaet(umschlag: unknown): string | null {
  */
 function belegBindet(evidence: EvidenceVersion, beleg: OfficialTruthAbgerufenBeleg): boolean {
   if (evidence.sourceClass !== 'official_authority' || evidence.sourceId !== beleg.sourceId) return false
-  if (evidence.canonicalUrl !== beleg.canonicalUrl) return false
+  if (evidence.canonicalUrl !== beleg.canonicalUrl || !contentIdentityMatches(evidence, beleg) || evidence.contentType !== beleg.contentType) return false
   const zelle = regelScopeAusEvidenceScope(evidence.scope)
   if (!zelle.ok || zelle.key !== beleg.ruleScopeKey) return false
   const vergleich = evidenceVersionenVergleichen(evidence, { sourceContentHash: beleg.sourceContentHash })
@@ -152,6 +154,7 @@ export function officialTruthAkzeptierteEvidenceAuffrischungVergleichen(
   const neuBeleg = officialTruthAbgerufenMaterialPruefen(neuUmschlag, neuUhr)
   if (neuBeleg.status !== 'retrieved_material') return sperre(neuBeleg.reason)
   if (neuBeleg.sourceId !== angenommen.evidence.sourceId) return sperre('different_official_source')
+  if (!contentIdentityMatches(neuBeleg, basisBeleg) || neuBeleg.contentType !== basisBeleg.contentType) return sperre('different_content_identity')
   if (neuBeleg.ruleScopeKey !== basisBeleg.ruleScopeKey) return sperre('different_rule_scope')
   if (neuBeleg.canonicalUrl !== basisBeleg.canonicalUrl) return sperre('different_official_page')
   const basisIdentitaet = registryIdentitaet(basisUmschlag)
@@ -166,6 +169,7 @@ export function officialTruthAkzeptierteEvidenceAuffrischungVergleichen(
 
   return Object.freeze({
     status: vergleich.contentChanged ? 'changed_source_content' : 'unchanged_source_content',
+    ...contentIdentityBinding(angenommen.evidence),
     baselineVersionId: angenommen.evidence.versionId,
     baselineRequestKey: basisBeleg.requestKey,
     refreshedRequestKey: neuBeleg.requestKey,

@@ -209,13 +209,14 @@ describe('private Official Evidence store schema', () => {
     assert.equal(requirementsProviderAus(), null)
   })
 
-  test('taxonomy, version, hash and lookup formats follow the TypeScript contract', () => {
+  test('historical v1 SQL formats coexist with current ev2/v3 runtime and unchanged taxonomy', () => {
     const evidence = readFileSync(join(ROOT, 'lib/readiness/evidence.ts'), 'utf8')
     const registry = readFileSync(join(ROOT, 'lib/readiness/source-registry.ts'), 'utf8')
+    // Current live runtime: R2 deliberately supersedes the historical SQL identity.
     const keyPrefix = evidence.match(/const SUCHSCHLUESSEL_VERSION = '([^']+)'/)?.[1]
     const versionPrefix = evidence.match(/const VERSION_PREFIX = '([^']+)'/)?.[1]
-    assert.equal(keyPrefix, 'evidence-key:v2:')
-    assert.equal(versionPrefix, 'ev1_')
+    assert.equal(keyPrefix, 'evidence-key:v3:')
+    assert.equal(versionPrefix, 'ev2_')
     assert.match(registry, /\/\^\[a-z\]\[a-z0-9_-\]\{1,63\}\$\//)
 
     const requirement = extractParen(sql, 'constraint official_evidence_versions_requirement_type check')
@@ -229,6 +230,7 @@ describe('private Official Evidence store schema', () => {
     assert.deepEqual(quotedIn(sourceClass, 'source_class'), [...QUELLEN_KLASSEN])
     assert.deepEqual(quotedIn(credential, 'document_type'), [...TRAVELLER_DOCUMENT_TYPES])
 
+    // Immutable historical v1 migration contract; these formats are not live authority.
     const version = extractParen(sql, 'constraint official_evidence_versions_version_id_format check')
     const lookup = extractParen(sql, 'constraint official_evidence_versions_lookup_key check')
     const hash = extractParen(sql, 'constraint official_evidence_versions_hash check')

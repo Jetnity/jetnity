@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-rule-review-fingerprint.test.ts
 //
 // Identität nur über ein neu gebautes Prüfpaket.
@@ -41,7 +42,7 @@ const ANDERE = 'example-interior-authority'
 const ANBIETER = 'example-licensed-provider'
 const VORSCHLAG = { kind: 'requirement_effect', effect: 'required', visaMode: 'electronic_visa' } as const
 const GEHEIM = 'personal-secret-91f3'
-const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v3:[a-f0-9]{64}$/
 const AUSGABE = ['status', 'reviewPacketKey', 'ruleScopeKey', 'supportVersionIds']
 
 function datei(relativ: string): string {
@@ -96,7 +97,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -178,7 +179,7 @@ function huelle(teil?: {
     registry: basis,
     descriptors: teil?.descriptors ?? beideDeskriptoren(basis),
     sourceId: teil?.sourceId ?? QUELLE,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: 'https://www.gov.example/rules',
       retrievedAt: ABGERUFEN,
       sourceSnapshot: SNAPSHOT,
@@ -211,7 +212,7 @@ function zweiteStuetze(snapshot: string) {
       registry: basis,
       descriptors: beideDeskriptoren(basis),
       sourceId: ANDERE,
-      material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
+      material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: snapshot },
     }),
   )
 }
@@ -352,7 +353,8 @@ describe('Official Truth rule review packet fingerprint', () => {
         }),
       ),
     )
-    const explizit = offen(finger([linke, rechte], meta()))
+    const explizit = finger([linke, rechte], meta())
+    assert.deepEqual(explizit, { status: 'blocked', reason: 'support_mismatch' })
     const zusammengesetzt = offen(
       finger([linke, rechte], meta({ evidenceQuality: 'composed_from_multiple_primary_sources' })),
     )
@@ -371,9 +373,9 @@ describe('Official Truth rule review packet fingerprint', () => {
     assert.notEqual(andererVorschlag.reviewPacketKey, basis.reviewPacketKey)
     assert.equal(andereArt.ruleScopeKey, basis.ruleScopeKey)
     assert.notEqual(andereArt.reviewPacketKey, basis.reviewPacketKey)
-    assert.equal(zusammengesetzt.ruleScopeKey, explizit.ruleScopeKey)
-    assert.deepEqual(zusammengesetzt.supportVersionIds, explizit.supportVersionIds)
-    assert.notEqual(zusammengesetzt.reviewPacketKey, explizit.reviewPacketKey)
+    assert.equal(zusammengesetzt.ruleScopeKey, basis.ruleScopeKey)
+    assert.equal(zusammengesetzt.supportVersionIds.length, 2)
+    assert.notEqual(zusammengesetzt.reviewPacketKey, basis.reviewPacketKey)
     assert.notEqual(luecke.reviewPacketKey, basis.reviewPacketKey)
     assert.equal(luecke.ruleScopeKey, basis.ruleScopeKey)
     assert.notEqual(andereZelle.reviewPacketKey, basis.reviewPacketKey)
@@ -461,15 +463,15 @@ describe('Official Truth rule review packet fingerprint', () => {
     assert.equal(paketVon.supports[0]!.validUntil, null)
     assert.equal(paketPolster.supports[0]!.validFrom, '2026-01-01')
     assert.equal(paketPolster.supports[0]!.validUntil, '2026-12-31T00:00:00.000Z')
-    assert.equal(paketVon.supports[0]!.versionId, paketOhne.supports[0]!.versionId)
+    assert.notEqual(paketVon.supports[0]!.versionId, paketOhne.supports[0]!.versionId)
     assert.equal(mitLeer.reviewPacketKey, ohne.reviewPacketKey)
     assert.notEqual(mitVon.reviewPacketKey, ohne.reviewPacketKey)
     assert.notEqual(mitBis.reviewPacketKey, ohne.reviewPacketKey)
     assert.notEqual(mitVon.reviewPacketKey, mitBis.reviewPacketKey)
     assert.notEqual(mitBeiden.reviewPacketKey, mitVon.reviewPacketKey)
     assert.notEqual(mitBeiden.reviewPacketKey, mitBis.reviewPacketKey)
-    assert.deepEqual(mitVon.supportVersionIds, ohne.supportVersionIds)
-    assert.deepEqual(mitBis.supportVersionIds, ohne.supportVersionIds)
+    assert.notDeepEqual(mitVon.supportVersionIds, ohne.supportVersionIds)
+    assert.notDeepEqual(mitBis.supportVersionIds, ohne.supportVersionIds)
     assert.equal(mitPolster.reviewPacketKey, mitBeiden.reviewPacketKey)
     assert.equal(mitNotizA.reviewPacketKey, mitBeiden.reviewPacketKey)
     assert.equal(mitNotizB.reviewPacketKey, mitBeiden.reviewPacketKey)
@@ -485,7 +487,7 @@ describe('Official Truth rule review packet fingerprint', () => {
         'aal2',
         'capability',
       ])
-      assert.match(ergebnis.reviewPacketKey, /^review-packet:v2:/)
+      assert.match(ergebnis.reviewPacketKey, /^review-packet:v3:/)
       assert.doesNotMatch(ergebnis.reviewPacketKey, /^review-packet:v1:/)
     }
 
@@ -493,7 +495,7 @@ describe('Official Truth rule review packet fingerprint', () => {
     const rechte = buendel(
       huelle({
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'fenster rechts' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'fenster rechts' },
       }),
       bis,
     )
@@ -512,7 +514,7 @@ describe('Official Truth rule review packet fingerprint', () => {
     assert.equal(vorwaerts.reviewPacketKey, rueckwaerts.reviewPacketKey)
     assert.deepEqual(vorwaerts.supportVersionIds, rueckwaerts.supportVersionIds)
     assert.notEqual(nurBis.reviewPacketKey, vorwaerts.reviewPacketKey)
-    assert.deepEqual(nurBis.supportVersionIds, vorwaerts.supportVersionIds)
+    assert.notDeepEqual(nurBis.supportVersionIds, vorwaerts.supportVersionIds)
 
     const ungueltig = 'not-a-real-validity-91f3'
     const gesperrt = finger([buendel(huelle(), { validFrom: ungueltig })])
@@ -567,7 +569,7 @@ describe('Official Truth rule review packet fingerprint', () => {
         registry: basis,
         descriptors: beideDeskriptoren(basis, coverage),
         sourceId: ANDERE,
-        material: { canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
+        material: { contentType: 'text/plain', canonicalUrl: 'https://www.interior.example/rules', sourceSnapshot: 'pass rs' },
       }),
     )
     const schweizer = offen(finger([schweiz]))
@@ -601,12 +603,13 @@ describe('Official Truth rule review packet fingerprint', () => {
     const importe = [...text.matchAll(/from '([^']+)'/g)].map((treffer) => treffer[1]).sort()
     assert.deepEqual(importe, [
       '@/lib/readiness/digest',
+      '@/lib/readiness/official-truth-content-identity',
       '@/lib/readiness/official-truth-rule-review-packet',
     ])
     assert.match(text, /officialTruthRegelReviewPacket\(/)
     assert.match(text, /sha256Hex\(/)
-    assert.match(text, /review-packet:v2:/)
-    assert.match(text, /v: 2/)
+    assert.match(text, /review-packet:v3:/)
+    assert.match(text, /v: 3/)
     assert.doesNotMatch(text, /review-packet:v1:/)
     assert.doesNotMatch(text, /extractionNote/)
     assert.doesNotMatch(text, /gültigkeitszeitLesen|gueltigkeitsfenster/)
@@ -634,3 +637,10 @@ describe('Official Truth rule review packet fingerprint', () => {
     assert.equal(requirementsProviderAus(), null)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/other",
+  "https://www.gov.example/rules",
+  "https://www.interior.example/rules"
+] as const

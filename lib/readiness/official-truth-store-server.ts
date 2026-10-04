@@ -30,7 +30,7 @@ import {
  * Derselbe Name wie das String-Literal im rpc()-Aufruf. Der Aufruf selbst bleibt
  * literal, damit check:schema-bezug ihn sieht. Die Konstante ist kein zweiter Weg.
  */
-export const OFFICIAL_TRUTH_STORE_ACCEPTED_V1 = 'official_truth_store_accepted_v1'
+export const OFFICIAL_TRUTH_STORE_ACCEPTED_V2 = 'official_truth_store_accepted_v2'
 
 const DIENST_URL = 'NEXT_PUBLIC_SUPABASE_URL'
 const DIENST_GEHEIM = 'SUPABASE_SERVICE_ROLE_KEY'
@@ -231,6 +231,14 @@ function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Recor
   return {
     operation: 'accepted_evidence',
     evidence: {
+      identity_schema: evidence.identitySchema,
+      content_item_id: evidence.contentItemId,
+      content_item_version: evidence.contentItemVersion,
+      representation_id: evidence.representationId,
+      representation_version: evidence.representationVersion,
+      identity_profile_id: evidence.identityProfileId,
+      identity_profile_version: evidence.identityProfileVersion,
+      content_type: evidence.contentType,
       version_id: evidence.versionId,
       previous_version_id: evidence.previousVersionId,
       lifecycle: evidence.lifecycle,
@@ -277,7 +285,7 @@ function dienstTransport(env: Record<string, string | undefined>): OfficialTruth
 
   return {
     async aufrufen(payload) {
-      const { data, error } = await erzeugt.rpc('official_truth_store_accepted_v1', {
+      const { data, error } = await erzeugt.rpc('official_truth_store_accepted_v2', {
         payload: { ...payload },
       })
       if (error) return { ok: false }
@@ -301,6 +309,7 @@ function katalogAbhaengigkeit(
     const transport = deps.katalog.transport
     const env = deps.katalog.env
     return {
+      ...(deps.katalog.identityProfiles ? { identityProfiles: deps.katalog.identityProfiles } : {}),
       ...(transport ? { transport } : {}),
       ...(env ? { env } : {}),
     }
@@ -312,7 +321,7 @@ function katalogAbhaengigkeit(
 function ausgang(operation: string, antwort: unknown, ruleScopeKey: string, versionId: string | null): OfficialTruthStoreErgebnis {
   if (!antwort || typeof antwort !== 'object' || Array.isArray(antwort)) return { ok: false, reason: 'store_failed' }
   const satz = antwort as Record<string, unknown>
-  if (satz.ok !== true || satz.operation !== operation) return { ok: false, reason: 'store_failed' }
+  if (satz.ok !== true || satz.identity_schema !== 2 || satz.operation !== operation) return { ok: false, reason: 'store_failed' }
   if (satz.outcome !== 'inserted' && satz.outcome !== 'idempotent') return { ok: false, reason: 'store_failed' }
   if (operation === 'accepted_evidence') {
     if (satz.version_id !== versionId || typeof versionId !== 'string') return { ok: false, reason: 'store_failed' }

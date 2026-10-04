@@ -1,3 +1,4 @@
+import { r2CatalogRows, r2Profiles, r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-source-catalog-server.test.ts
 //
 // Kanonische Registry plus ein lokaler PostgreSQL-Nachweis für das Katalog-Gateway.
@@ -19,7 +20,7 @@ import {
 } from '@/lib/readiness/source-registry'
 import { LOCAL_UNAPPLIED_RPCS } from '../../scripts/db/verwendung.mjs'
 import {
-  OFFICIAL_TRUTH_SOURCE_CATALOG_V1,
+  OFFICIAL_TRUTH_SOURCE_CATALOG_V2,
   quelleRegistrieren,
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogTransport,
@@ -61,7 +62,7 @@ function behoerde(teil?: Partial<QuellenEingabe>): QuellenEingabe {
 }
 
 function gelesen(sources: Aufruf[]): Aufruf {
-  return { ok: true, operation: 'read_registry', sources }
+  return { ...r2CatalogRows(sources, R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources }
 }
 
 function quelleAntwort(sourceId: string, domains: string[]): Aufruf {
@@ -95,11 +96,11 @@ describe('official truth source catalog gateway', () => {
     const text = datei(SERVER)
     assert.equal(text.includes("import 'server-only'"), true)
     assert.equal((text.match(/quellenRegistryErstellen\(/g) ?? []).length, 3)
-    assert.equal((text.match(/\.rpc\(\s*'official_truth_source_catalog_v1'/g) ?? []).length, 1)
+    assert.equal((text.match(/\.rpc\(\s*'official_truth_source_catalog_v2'/g) ?? []).length, 1)
     assert.equal(text.includes('.from('), false)
     assert.equal(text.includes('requirementsProviderAus'), false)
     assert.equal(text.includes('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY'), false)
-    assert.equal(OFFICIAL_TRUTH_SOURCE_CATALOG_V1, 'official_truth_source_catalog_v1')
+    assert.equal(OFFICIAL_TRUTH_SOURCE_CATALOG_V2, 'official_truth_source_catalog_v2')
     assert.equal(requirementsProviderAus(), null)
 
     const verboten = transportAufzeichnen(() => {
@@ -107,14 +108,14 @@ describe('official truth source catalog gateway', () => {
     })
     const ungueltig = await quelleRegistrieren(
       behoerde({ sourceId: 'A' }),
-      { transport: verboten.transport },
+      { identityProfiles: r2Profiles, transport: verboten.transport },
     )
     assert.deepEqual(ungueltig, { ok: false, reason: 'invalid_source_id' })
     assert.equal(verboten.aufrufe.length, 0)
 
     const ohneAuthority = await quelleRegistrieren(
       behoerde({ authorityName: '   ' }),
-      { transport: verboten.transport },
+      { identityProfiles: r2Profiles, transport: verboten.transport },
     )
     assert.deepEqual(ohneAuthority, { ok: false, reason: 'authority_required' })
 
@@ -126,7 +127,7 @@ describe('official truth source catalog gateway', () => {
         authorityName: 'Example State',
         domains: ['provider.example'],
       },
-      { transport: verboten.transport },
+      { identityProfiles: r2Profiles, transport: verboten.transport },
     )
     assert.deepEqual(provider, { ok: false, reason: 'provider_is_not_authority' })
     assert.equal(verboten.aufrufe.length, 0)
@@ -142,7 +143,7 @@ describe('official truth source catalog gateway', () => {
     assert.deepEqual(ohneZugang, { ok: false, reason: 'catalog_not_configured' })
     assert.equal(JSON.stringify(ohneZugang).includes(sentinel), false)
 
-    const geworfen = await quellenKatalogLesen({
+    const geworfen = await quellenKatalogLesen({ identityProfiles: r2Profiles,
       transport: {
         async aufrufen() {
           throw new Error(sentinel)
@@ -161,6 +162,7 @@ describe('official truth source catalog gateway', () => {
       return {
         ok: true,
         operation: 'register_source',
+        identity_schema: 2,
         outcome: 'idempotent',
         source_id: 'example-border-authority',
       }
@@ -168,32 +170,32 @@ describe('official truth source catalog gateway', () => {
 
     const kind = await quelleRegistrieren(
       behoerde({ sourceId: 'example-child-authority', publisherName: 'Example Child Authority', authorityName: 'Example Child Authority', domains: ['child.leaf.gov.example'] }),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(kind, { ok: false, reason: 'overlapping_domains' })
     assert.deepEqual(katalog.aufrufe.map((aufruf) => aufruf.operation), ['read_registry'])
 
     const eltern = await quelleRegistrieren(
       behoerde({ sourceId: 'example-parent-authority', publisherName: 'Example Parent Authority', authorityName: 'Example Parent Authority', domains: ['gov.example'] }),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(eltern, { ok: false, reason: 'overlapping_domains' })
     const einzelLabel = await quelleRegistrieren(
       behoerde({ sourceId: 'example-label-authority', publisherName: 'Example Label Authority', authorityName: 'Example Label Authority', domains: ['example'] }),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(einzelLabel, { ok: false, reason: 'invalid_domain' })
 
     const konflikt = await quelleRegistrieren(
       behoerde({ publisherName: 'Example Other Publisher' }),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(konflikt, { ok: false, reason: 'conflicting_duplicate' })
     assert.equal(katalog.aufrufe.every((aufruf) => aufruf.operation === 'read_registry'), true)
 
     const gleich = await quelleRegistrieren(
       behoerde({ domains: ['Leaf.Gov.Example'] }),
-      { transport: katalog.transport },
+      { identityProfiles: r2Profiles, transport: katalog.transport },
     )
     assert.deepEqual(gleich, { ok: true, outcome: 'idempotent', sourceId: 'example-border-authority' })
     const register = katalog.aufrufe[katalog.aufrufe.length - 1]
@@ -210,6 +212,7 @@ describe('official truth source catalog gateway', () => {
       return {
         ok: true,
         operation: 'register_source',
+        identity_schema: 2,
         outcome: 'inserted',
         source_id: body.source_id,
       }
@@ -222,7 +225,7 @@ describe('official truth source catalog gateway', () => {
         authorityName: '   ',
         domains: ['Provider.Example'],
       },
-      { transport: lizenziert.transport },
+      { identityProfiles: r2Profiles, transport: lizenziert.transport },
     )
     assert.deepEqual(anbieter, {
       ok: true,
@@ -246,7 +249,7 @@ describe('official truth source catalog gateway', () => {
         domains: ['gov.example', 'border.gov.example'],
       },
     ]))
-    const registry = await quellenKatalogLesen({ transport: sortiert.transport })
+    const registry = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: sortiert.transport })
     assert.equal(registry.ok, true)
     if (!registry.ok) return
     const kanonisch = quellenRegistryErstellen([
@@ -266,10 +269,10 @@ describe('official truth source catalog gateway', () => {
     ])
     assert.equal(kanonisch.ok, true)
     if (!kanonisch.ok) return
-    assert.deepEqual(registry.registry, kanonisch.registry)
+    assert.deepEqual(registry.registry, r2Registry(kanonisch.registry, []))
     assert.deepEqual(registry.registry.blockedDomains, [])
     assert.equal(registry.registry.sources[1]?.authorityName, null)
-    const nochmal = await quellenKatalogLesen({ transport: sortiert.transport })
+    const nochmal = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport: sortiert.transport })
     assert.deepEqual(nochmal, registry)
     assert.deepEqual(leereQuellenRegistry().blockedDomains, registry.registry.blockedDomains)
   })
@@ -302,11 +305,11 @@ describe('official truth source catalog gateway', () => {
     }
     const config = datei('supabase/config.toml')
     assert.match(config, /schemas = \["public", "graphql_public"\]/)
-    const regel = LOCAL_UNAPPLIED_RPCS.find((eintrag) => eintrag.name === OFFICIAL_TRUTH_SOURCE_CATALOG_V1)
+    const regel = LOCAL_UNAPPLIED_RPCS.find((eintrag) => eintrag.name === OFFICIAL_TRUTH_SOURCE_CATALOG_V2)
     assert.deepEqual(regel, {
-      name: 'official_truth_source_catalog_v1',
+      name: 'official_truth_source_catalog_v2',
       sourcePath: SERVER,
-      sqlPath: `supabase/migrations/${dateiMigration.name}`,
+      sqlPath: 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql',
     })
   })
 })
@@ -397,7 +400,10 @@ function clusterStarten(): Cluster {
         grant usage on schema public to anon, authenticated, service_role;
       `,
     )
-    for (const name of [SCHEMA_MIGRATION, migrationSql().name]) {
+    for (const name of [SCHEMA_MIGRATION,
+      '20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql',
+      '20261001180549_official_truth_trusted_store_writer_1.sql', migrationSql().name,
+      '20261004010705_official_truth_content_identity_2.sql']) {
       lauf(['-d', 'official_truth_catalog_proof', '-f', join(MIGRATION_DIR, name)])
     }
   } catch (error) {
@@ -436,7 +442,7 @@ function payloadTag(payload: unknown): string {
   const json = JSON.stringify(payload)
   const tag = '$jetnity_payload$'
   if (json.includes(tag)) throw new Error('payload tag')
-  return `public.official_truth_source_catalog_v1(${tag}${json}${tag}::jsonb)`
+  return `public.official_truth_source_catalog_v2(${tag}${json}${tag}::jsonb)`
 }
 
 function clusterTransport(cluster: Cluster): OfficialTruthSourceCatalogTransport {
@@ -465,9 +471,9 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           join pg_namespace n on n.oid = p.pronamespace
           where p.prosecdef
         `),
-        'public.official_truth_source_catalog_v1',
+        'public.official_truth_source_catalog_v1,public.official_truth_source_catalog_v2,public.official_truth_store_accepted_v1,public.official_truth_store_accepted_v2',
       )
-      const proconfig = cluster.aufruf(`select proconfig::text from pg_proc where proname = 'official_truth_source_catalog_v1'`)
+      const proconfig = cluster.aufruf(`select proconfig::text from pg_proc where proname = 'official_truth_source_catalog_v2'`)
       assert.match(proconfig, /search_path=/)
       assert.equal(proconfig.includes('public'), false)
       assert.equal(
@@ -482,7 +488,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
       const funktionRechte = cluster.aufruf(`
         select string_agg(grantee || ':' || privilege_type, ',' order by grantee, privilege_type)
         from information_schema.routine_privileges
-        where routine_schema = 'public' and routine_name = 'official_truth_source_catalog_v1'
+        where routine_schema = 'public' and routine_name = 'official_truth_source_catalog_v2'
       `)
       const rechte = funktionRechte.split(',').filter((eintrag) => eintrag.length > 0)
       assert.equal(rechte.includes('service_role:EXECUTE'), true)
@@ -537,13 +543,13 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
       assert.equal(cluster.aufruf(`select ${summe}`), '0')
 
       const transport = clusterTransport(cluster)
-      const leer = await quellenKatalogLesen({ transport })
-      assert.deepEqual(leer, { ok: true, registry: leereQuellenRegistry() })
+      const leer = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport })
+      assert.deepEqual(leer, { ok: true, registry: r2Registry(leereQuellenRegistry(), []) })
 
-      const erste = await quelleRegistrieren(behoerde({ domains: ['Gov.Example'] }), { transport })
+      const erste = await quelleRegistrieren(behoerde({ domains: ['Gov.Example'] }), { identityProfiles: r2Profiles, transport })
       assert.deepEqual(erste, { ok: true, outcome: 'inserted', sourceId: 'example-border-authority' })
       const stempel = cluster.aufruf(`select registered_at::text from private.official_sources where source_id = 'example-border-authority'`)
-      const nochmal = await quelleRegistrieren(behoerde({ domains: ['gov.example'] }), { transport })
+      const nochmal = await quelleRegistrieren(behoerde({ domains: ['gov.example'] }), { identityProfiles: r2Profiles, transport })
       assert.deepEqual(nochmal, { ok: true, outcome: 'idempotent', sourceId: 'example-border-authority' })
       assert.equal(cluster.aufruf('select count(*) from private.official_sources'), '1')
       assert.equal(cluster.aufruf('select count(*) from private.official_source_domains'), '1')
@@ -552,7 +558,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
         stempel,
       )
 
-      const konflikt = await quelleRegistrieren(behoerde({ publisherName: 'Example Replacement Publisher' }), { transport })
+      const konflikt = await quelleRegistrieren(behoerde({ publisherName: 'Example Replacement Publisher' }), { identityProfiles: r2Profiles, transport })
       assert.deepEqual(konflikt, { ok: false, reason: 'conflicting_duplicate' })
       const direktKonflikt = cluster.scheitert(
         `select ${payloadTag({
@@ -580,7 +586,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: 'Example Portal Authority',
           domains: ['border.portal.example', 'portal.example'],
         }),
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(portal, { ok: true, outcome: 'inserted', sourceId: 'example-portal-authority' })
       assert.equal(
@@ -595,7 +601,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: 'Example Leaf Authority',
           domains: ['leaf.wide.example'],
         }),
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(blatt, { ok: true, outcome: 'inserted', sourceId: 'example-leaf-authority' })
       const vorOverlap = cluster.aufruf(`select ${summe}`)
@@ -606,7 +612,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: 'Example Child Authority',
           domains: ['child.portal.example'],
         }),
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(kind, { ok: false, reason: 'overlapping_domains' })
       const eltern = cluster.scheitert(
@@ -664,7 +670,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: 'Example Sibling Authority',
           domains: ['other.example'],
         }),
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(geschwister, { ok: true, outcome: 'inserted', sourceId: 'example-sibling-authority' })
       const anbieter = await quelleRegistrieren(
@@ -675,7 +681,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: null,
           domains: ['provider.example'],
         },
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(anbieter, { ok: true, outcome: 'inserted', sourceId: 'example-licensed-provider' })
       assert.equal(
@@ -683,10 +689,10 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
         't',
       )
 
-      const registry = await quellenKatalogLesen({ transport })
+      const registry = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport })
       assert.equal(registry.ok, true)
       if (!registry.ok) return
-      const nochmalGelesen = await quellenKatalogLesen({ transport })
+      const nochmalGelesen = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport })
       assert.deepEqual(nochmalGelesen, registry)
       assert.deepEqual(
         registry.registry.sources.map((quelle) => quelle.sourceId),
@@ -706,7 +712,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
         insert into private.official_source_domains (source_id, domain)
         values ('example-corrupt-authority', 'border.gov.example');
       `)
-      const kaputt = await quellenKatalogLesen({ transport })
+      const kaputt = await quellenKatalogLesen({ identityProfiles: r2Profiles, transport })
       assert.deepEqual(kaputt, { ok: false, reason: 'catalog_failed' })
       const davor = cluster.aufruf(`select ${summe}`)
       const abgelehnt = await quelleRegistrieren(
@@ -716,7 +722,7 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
           authorityName: 'Example Later Authority',
           domains: ['later.example'],
         }),
-        { transport },
+        { identityProfiles: r2Profiles, transport },
       )
       assert.deepEqual(abgelehnt, { ok: false, reason: 'catalog_failed' })
       assert.equal(cluster.aufruf(`select ${summe}`), davor)
@@ -726,3 +732,5 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
     }
   })
 })
+
+const R2_PUBLICATIONS = [] as const

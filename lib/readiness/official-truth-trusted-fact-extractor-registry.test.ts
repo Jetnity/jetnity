@@ -1,3 +1,4 @@
+import { r2Registry, r2Binding, r2Ref } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts
 //
 // Synthetische Extraktor-Definitionen prüfen nur den Rahmen.
@@ -24,9 +25,9 @@ import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 const ZEIT = '2026-10-03T00:00:00.000Z'
 const SCOPE = `rule-scope:v1:${'a'.repeat(64)}`
-const SEITEN_ID = 'ev1_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-const GRENZE_ID = 'ev1_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
-const INNEN_ID = 'ev1_cccccccccccccccccccccccccccccccc'
+const SEITEN_ID = 'ev2_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+const GRENZE_ID = 'ev2_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+const INNEN_ID = 'ev2_cccccccccccccccccccccccccccccccc'
 const AMT = 'example-border-authority'
 const INNEN = 'example-interior-authority'
 const LIZENZ = 'example-licensed-provider'
@@ -92,7 +93,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function abruf(
@@ -102,7 +103,7 @@ function abruf(
   contentType: string | null = 'application/json',
   sourceContentHash = evidenceQuellenFingerprint(sourceSnapshot),
 ) {
-  return {
+  return { ...r2Binding(registry(), sourceId === LIZENZ ? SEITEN_URL : canonicalUrl), identitySchema: 2 as const,
     status: 'server_owned_official_retrieval' as const,
     sourceId,
     canonicalUrl,
@@ -184,13 +185,13 @@ function definition(
 ): OfficialTruthExtractorDefinition {
   const { zaehler: zaehlerRoh, ...rest } = ueber
   const zaehler = zaehlerRoh ?? { match: 0, extract: 0 }
-  const basis: OfficialTruthExtractorDefinition = {
+  const basis: OfficialTruthExtractorDefinition = { representations: [AMT].map(fixtureRef).map((ref) => fixturePin(ref.sourceId)),
     extractorId: 'otx_example_pages',
     extractorVersion: 1,
     current: true,
     factKind: 'blank_passport_pages',
     sourceFamilyId: 'otf_example_pages',
-    sourceIds: [AMT],
+    contentItemRefs: [AMT].map(fixtureRef),
     urlAllowlist: [{ kind: 'exact', canonicalUrl: SEITEN_URL }],
     contentTypes: ['application/json'],
     schemaFamily: 'ots_example_pages',
@@ -232,12 +233,12 @@ function seitenDefinition(zaehler: Zaehler, ueber: Partial<OfficialTruthExtracto
 }
 
 function wirkungDefinition(zaehler: Zaehler, ueber: Partial<OfficialTruthExtractorDefinition> = {}) {
-  return definition({
+  return definition({ representations: [r2Binding(registry(), GRENZE_URL), r2Binding(registry(), INNEN_URL)],
     extractorId: 'otx_example_effect',
     extractorVersion: 1,
     factKind: 'requirement_effect',
     sourceFamilyId: 'otf_example_effect',
-    sourceIds: [AMT, INNEN],
+    contentItemRefs: [r2Ref(registry(), GRENZE_URL), r2Ref(registry(), INNEN_URL)],
     urlAllowlist: [
       { kind: 'exact', canonicalUrl: GRENZE_URL },
       { kind: 'path', host: 'www.interior.example', path: '/effect' },
@@ -286,14 +287,61 @@ const SERVER_POLITIK = {
   policyId: 'otp_example_effect',
   policyVersion: 1,
   assignments: [
-    { fieldPath: 'effect', sourceId: AMT },
-    { fieldPath: 'visaMode', sourceId: INNEN },
+    { fieldPath: 'effect', sourceId: AMT, contentItemId: 'synthetic_effect' },
+    { fieldPath: 'visaMode', sourceId: INNEN, contentItemId: 'synthetic_effect' },
   ],
 }
 
 function grund(ergebnis: { status: string; reason?: string }): string | undefined {
   return ergebnis.status === 'blocked' ? ergebnis.reason : undefined
 }
+
+// Explicit synthetic v2 publications.
+const R2_PUBLICATIONS = [
+  {
+    "url": "https://provider.example/rules",
+    "mediaType": "application/json",
+    "itemId": "synthetic_effect",
+    "representationId": "synthetic_rep_0"
+  },
+  {
+    "url": "https://www.gov.example/effect",
+    "mediaType": "application/json",
+    "itemId": "synthetic_effect",
+    "representationId": "synthetic_rep_1"
+  },
+  {
+    "url": "https://www.gov.example/other",
+    "mediaType": "application/json",
+    "itemId": "synthetic_effect",
+    "representationId": "synthetic_rep_2"
+  },
+  {
+    "url": "https://www.gov.example/pages",
+    "mediaType": "application/json",
+    "itemId": "synthetic_pages",
+    "representationId": "synthetic_rep_3"
+  },
+  {
+    "url": "https://www.gov.example/pages?lang=en",
+    "mediaType": "application/json",
+    "itemId": "synthetic_pages",
+    "representationId": "synthetic_rep_4"
+  },
+  {
+    "url": "https://www.gov.example/pages?type=visa&country=jp",
+    "mediaType": "application/json",
+    "itemId": "synthetic_pages",
+    "representationId": "synthetic_rep_5"
+  },
+  {
+    "url": "https://www.interior.example/effect",
+    "mediaType": "application/json",
+    "itemId": "synthetic_effect",
+    "representationId": "synthetic_rep_6"
+  }
+] as const
+
 
 describe('deterministischer Vertrauensfakt-Extraktor', () => {
   test('1 Produktionsregister hat null Definitionen', () => {
@@ -346,7 +394,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
               canonicalUrl: SEITEN_URL,
               retrievedAt: ZEIT,
               sourceContentHash: hash,
-              material: { canonicalUrl: SEITEN_URL, retrievedAt: ZEIT, sourceSnapshot: SEITEN_TEXT },
+              material: { contentType: 'text/plain', canonicalUrl: SEITEN_URL, retrievedAt: ZEIT, sourceSnapshot: SEITEN_TEXT },
             },
           },
         ],
@@ -392,7 +440,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       eingabe({ supports: [stuetze(SEITEN_ID, AMT, SEITEN_URL, SEITEN_TEXT, 'text/html')] }),
       [seitenDefinition(zaehler)],
     )
-    assert.equal(grund(ergebnis), 'content_type_not_allowlisted')
+    assert.equal(grund(ergebnis), 'representation_not_eligible')
     assert.equal(zaehler.match, 0)
   })
 
@@ -418,7 +466,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const zaehler = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
       eingabe({ supports: [stuetze(SEITEN_ID, LIZENZ, LIZENZ_URL, SEITEN_TEXT)] }),
-      [seitenDefinition(zaehler, { sourceIds: [LIZENZ], urlAllowlist: [{ kind: 'exact', canonicalUrl: LIZENZ_URL }] })],
+      [seitenDefinition(zaehler, { contentItemRefs: [LIZENZ].map(fixtureRef), representations: [fixturePin(LIZENZ)], urlAllowlist: [{ kind: 'exact', canonicalUrl: LIZENZ_URL }] })],
     )
     assert.equal(grund(ergebnis), 'source_not_allowlisted')
     assert.equal(zaehler.match, 0)
@@ -508,7 +556,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(ergebnis.extractorVersion, 1)
     assert.equal(ergebnis.policyId, null)
     assert.equal(ergebnis.policyVersion, null)
-    assert.deepEqual(ergebnis.sourceIds, [AMT])
+    assert.deepEqual(ergebnis.contentItemRefs, [fixtureRef(AMT)])
     assert.deepEqual(ergebnis.supportVersionIds, [SEITEN_ID])
     assert.equal(zaehler.match, 1)
     assert.equal(zaehler.extract, 1)
@@ -607,7 +655,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       }),
       [wirkungDefinition(zaehler)],
     )
-    assert.equal(grund(ergebnis), 'same_source_composition')
+    assert.equal(grund(ergebnis), 'same_content_item_composition')
     assert.equal(zaehler.match, 0)
   })
 
@@ -620,8 +668,8 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
         policyId: 'otp_example_effect',
         policyVersion: 2,
         assignments: [
-          { fieldPath: 'effect', sourceId: AMT },
-          { fieldPath: 'visaMode', sourceId: INNEN },
+          { fieldPath: 'effect', sourceId: AMT, contentItemId: 'synthetic_effect' },
+          { fieldPath: 'visaMode', sourceId: INNEN, contentItemId: 'synthetic_effect' },
         ],
       },
     )
@@ -635,7 +683,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(komposition(), [wirkungDefinition(zaehler)], {
       policyId: 'otp_example_effect',
       policyVersion: 1,
-      assignments: [{ fieldPath: 'effect', sourceId: AMT }],
+      assignments: [{ fieldPath: 'effect', sourceId: AMT, contentItemId: 'synthetic_effect' }],
     })
     assert.equal(grund(ergebnis), 'policy_field_unassigned')
     assert.equal(zaehler.match, 0)
@@ -670,7 +718,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(Object.isFrozen(ergebnis), true)
     assert.equal(Object.isFrozen(ergebnis.fact), true)
     assert.equal(Object.isFrozen(ergebnis.provenance), true)
-    assert.equal(Object.isFrozen(ergebnis.sourceIds), true)
+    assert.equal(Object.isFrozen(ergebnis.contentItemRefs), true)
     assert.equal(Object.isFrozen(ergebnis.supportVersionIds), true)
     assert.equal(Object.isFrozen(ergebnis.provenance[0]), true)
     assert.throws(() => {
@@ -688,6 +736,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const andereQuery = 'https://www.gov.example/pages?type=visa&country=jp'
     const definitionPfad = seitenDefinition(pfad, {
       urlAllowlist: [{ kind: 'path', host: 'www.gov.example', path: '/pages' }],
+      representations: R2_PUBLICATIONS.filter((row) => row.itemId === 'synthetic_pages').map((row) => r2Binding(registry(), row.url)),
     })
     const ohne = officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [definitionPfad])
     assert.equal(ohne.status, 'trusted_fact_extracted')
@@ -706,13 +755,14 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     const exaktZaehler = { match: 0, extract: 0 }
     const exakt = seitenDefinition(exaktZaehler, {
       urlAllowlist: [{ kind: 'exact', canonicalUrl: mitSprache }],
+      representations: [r2Binding(registry(), mitSprache)],
     })
     const erlaubt = officialTruthTrustedFactExtrahierenMitDefinitionen(
       eingabe({ supports: [stuetze(SEITEN_ID, AMT, mitSprache, SEITEN_TEXT)] }),
       [exakt],
     )
     assert.equal(erlaubt.status, 'trusted_fact_extracted')
-    assert.equal(grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [exakt])), 'domain_or_path_not_allowlisted')
+    assert.equal(grund(officialTruthTrustedFactExtrahierenMitDefinitionen(eingabe(), [exakt])), 'representation_not_eligible')
     assert.equal(
       grund(
         officialTruthTrustedFactExtrahierenMitDefinitionen(
@@ -720,7 +770,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
           [exakt],
         ),
       ),
-      'domain_or_path_not_allowlisted',
+      'representation_not_eligible',
     )
     assert.equal(exaktZaehler.match, 1)
     assert.equal(exaktZaehler.extract, 1)
@@ -732,7 +782,7 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       eingabe({ supports: [stuetze(SEITEN_ID, AMT, 'https://www.gov.example/other', SEITEN_TEXT)] }),
       [seitenDefinition(zaehler)],
     )
-    assert.equal(grund(ergebnis), 'domain_or_path_not_allowlisted')
+    assert.equal(grund(ergebnis), 'extractor_not_registered')
     assert.equal(zaehler.match, 0)
   })
 
@@ -1111,8 +1161,8 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
 
 describe('eine eingefrorene Ausführungsnaht', () => {
   const BEOBACHTUNGEN = [
-    { targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required' },
-    { targetKey: 'ziel:visaMode', sourceId: INNEN, canonical: 'none' },
+    { contentItemId: r2Ref(registry(), GRENZE_URL).contentItemId, targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required' },
+    { contentItemId: fixtureRef(INNEN).contentItemId, targetKey: 'ziel:visaMode', sourceId: INNEN, canonical: 'none' },
   ]
 
   function naht(ueber?: {
@@ -1191,7 +1241,7 @@ describe('eine eingefrorene Ausführungsnaht', () => {
         stuetze(INNEN_ID, INNEN, INNEN_URL, INNEN_TEXT, 'text/html'),
       ],
     })
-    assert.equal(sperrgrund(fremderTyp.ergebnis), 'content_type_not_allowlisted')
+    assert.equal(sperrgrund(fremderTyp.ergebnis), 'representation_not_eligible')
     assert.equal(fremderTyp.zaehler.match, 0)
 
     const zaehler = { match: 0, extract: 0 }
@@ -1207,7 +1257,7 @@ describe('eine eingefrorene Ausführungsnaht', () => {
     const einzeln = naht({
       supports: [stuetze(GRENZE_ID, AMT, GRENZE_URL, GRENZE_TEXT)],
     })
-    assert.equal(sperrgrund(einzeln.ergebnis), 'same_source_composition')
+    assert.equal(sperrgrund(einzeln.ergebnis), 'same_content_item_composition')
 
     const ohnePolitik = naht({
       definition: wirkungDefinition({ match: 0, extract: 0 }, { policyId: null, policyVersion: null }),
@@ -1222,23 +1272,23 @@ describe('eine eingefrorene Ausführungsnaht', () => {
     assert.equal(sperrgrund(naht({ observations: undefined }).ergebnis), 'fact_incomplete')
     assert.equal(sperrgrund(naht({ observations: [] }).ergebnis), 'fact_incomplete')
     assert.equal(
-      sperrgrund(naht({ observations: [{ targetKey: 'ziel:effect', sourceId: LIZENZ, canonical: 'required' }] }).ergebnis),
+      sperrgrund(naht({ observations: [{ contentItemId: fixtureRef(LIZENZ).contentItemId, targetKey: 'ziel:effect', sourceId: LIZENZ, canonical: 'required' }] }).ergebnis),
       'source_not_allowlisted',
     )
     assert.equal(
       sperrgrund(
-        naht({ observations: [{ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required', extra: 1 }] }).ergebnis,
+        naht({ observations: [{ contentItemId: r2Ref(registry(), GRENZE_URL).contentItemId, targetKey: 'ziel:effect', sourceId: AMT, canonical: 'required', extra: 1 }] }).ergebnis,
       ),
       'unexpected_fields',
     )
     assert.equal(
-      sperrgrund(naht({ observations: [{ targetKey: '', sourceId: AMT, canonical: 'required' }] }).ergebnis),
+      sperrgrund(naht({ observations: [{ contentItemId: r2Ref(registry(), GRENZE_URL).contentItemId, targetKey: '', sourceId: AMT, canonical: 'required' }] }).ergebnis),
       'unexpected_fields',
     )
     assert.equal(
       sperrgrund(
         naht({
-          observations: Array.from({ length: 257 }, () => ({ targetKey: 'ziel:effect', sourceId: AMT, canonical: 'x' })),
+          observations: Array.from({ length: 257 }, () => ({ contentItemId: r2Ref(registry(), GRENZE_URL).contentItemId, targetKey: 'ziel:effect', sourceId: AMT, canonical: 'x' })),
         }).ergebnis,
       ),
       'snapshot_bound_exceeded',
@@ -1276,3 +1326,12 @@ describe('eine eingefrorene Ausführungsnaht', () => {
     assert.deepEqual(ergebnis, { status: 'blocked', reason: 'fact_incomplete' })
   })
 })
+
+
+function fixturePin(sourceId: string) {
+  return { ...r2Binding(registry(), sourceId === INNEN ? INNEN_URL : SEITEN_URL), sourceId }
+}
+function fixtureRef(sourceId: string) {
+  const { contentItemId } = fixturePin(sourceId)
+  return { sourceId, contentItemId }
+}

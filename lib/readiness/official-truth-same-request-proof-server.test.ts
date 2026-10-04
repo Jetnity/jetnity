@@ -1,3 +1,5 @@
+import { r2CatalogRows, r2Profiles } from './official-truth-content-identity-r2.test'
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-same-request-proof-server.test.ts
 //
 // Interner gleicher-Request-Beweis. Synthetische *.example-Quellen.
@@ -46,7 +48,7 @@ const wurzel = join(hier, '../..')
 const DATEI = 'lib/readiness/official-truth-same-request-proof-server.ts'
 const ZEUGEN_DATEI = 'lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts'
 const SERVER = 'lib/readiness/official-truth-server-held-source-registry.ts'
-const SCHLUESSEL = /^review-packet:v2:[a-f0-9]{64}$/
+const SCHLUESSEL = /^review-packet:v3:[a-f0-9]{64}$/
 
 const JETZT = '2026-10-01T12:00:00.000Z'
 const JETZT_MS = Date.parse(JETZT)
@@ -161,7 +163,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string, name: string): QuellenEingabe {
@@ -226,7 +228,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
         return {
           ok: true,
-          antwort: { ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
         }
       },
     },
@@ -248,7 +250,7 @@ function aufrufer(teil?: {
       deskriptor(basis, INTERIOR, coverage({ destinationCountryCodes: ['TH'] })),
     ],
     sourceId: teil && 'sourceId' in teil ? teil.sourceId : REAL,
-    material: {
+    material: { contentType: 'text/plain',
       canonicalUrl: REAL_URL,
       retrievedAt: INNERHALB,
       sourceSnapshot: SNAPSHOT,
@@ -322,7 +324,7 @@ async function beweisen(
   optionen?: {
     authority?: OfficialTruthFactEntryAuthorityResult | Error
     now?: () => string
-    catalog?: { transport: OfficialTruthSourceCatalogTransport } | { env: Record<string, string | undefined> }
+    catalog?: { identityProfiles?: typeof r2Profiles; transport: OfficialTruthSourceCatalogTransport } | { env: Record<string, string | undefined> }
   },
 ): Promise<{
   ergebnis: OfficialTruthSameRequestProofErgebnis
@@ -344,7 +346,7 @@ async function beweisen(
       if (optionen?.now) return optionen.now()
       return JETZT
     },
-    catalog: optionen?.catalog ?? { transport: eigener.transport },
+    catalog: optionen?.catalog ?? { identityProfiles: r2Profiles, transport: eigener.transport },
   })
   return { ergebnis, autoritaet, katalog: optionen?.catalog ? 0 : eigener.aufrufe.length, uhr: uhrAufrufe }
 }
@@ -569,6 +571,7 @@ describe('Official Truth same-request proof graph', () => {
     )
     assert.deepEqual(Object.keys(graph.supports[0] ?? {}).sort(), [
       'canonicalUrl',
+      'contentItemId', 'contentItemVersion', 'contentType', 'identityProfileId', 'identityProfileVersion', 'identitySchema', 'representationId', 'representationVersion',
       'retrievedAt',
       'sourceContentHash',
       'sourceId',
@@ -620,7 +623,7 @@ describe('Official Truth same-request proof graph', () => {
     const zeuge = await decideOfficialTruthAutonomousPreacceptanceWitness(wert, {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: { transport: transportFuer(realeEingaben()).transport },
+      catalog: { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport },
     })
     assert.equal(zeuge.status, 'authorized_preacceptance_witness')
     if (zeuge.status !== 'authorized_preacceptance_witness') return
@@ -638,7 +641,7 @@ describe('Official Truth same-request proof graph', () => {
     assert.equal(zeugenText.includes('trustedRuleFact'), false)
     assert.equal(Object.keys(zeuge).includes('supports'), false)
 
-    const reproof = await officialTruthServerHeldReviewReproof(wert, { transport: transportFuer(realeEingaben()).transport }, () => new Date(JETZT))
+    const reproof = await officialTruthServerHeldReviewReproof(wert, { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport }, () => new Date(JETZT))
     assert.equal(reproof.status, 'server_held_review_reproof')
     if (reproof.status !== 'server_held_review_reproof') return
     assert.equal(JSON.stringify(reproof).includes('sourceSnapshot'), false)
@@ -658,7 +661,7 @@ describe('Official Truth same-request proof graph', () => {
             : realeEingaben().map((eintrag) => ({ ...eintrag, authorityName: 'Drifted Authority' }))
         return {
           ok: true,
-          antwort: {
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS),
             ok: true,
             operation: 'read_registry',
             sources: eingaben.map(katalogZeile),
@@ -666,7 +669,7 @@ describe('Official Truth same-request proof graph', () => {
         }
       },
     }
-    const { ergebnis } = await beweisen(eingabe(), { catalog: { transport } })
+    const { ergebnis } = await beweisen(eingabe(), { catalog: { identityProfiles: r2Profiles, transport } })
     const graph = alsErfolg(ergebnis)
     assert.equal(lesungen, 1)
     assert.equal(
@@ -684,7 +687,7 @@ describe('Official Truth same-request proof graph', () => {
       aufrufer({
         descriptors: [deskriptor(basis, REAL, gebiet), deskriptor(basis, INTERIOR, gebiet)],
         sourceId: INTERIOR,
-        material: {
+        material: { contentType: 'text/plain',
           canonicalUrl: 'https://www.real-interior.example/rules',
           retrievedAt: INNERHALB,
           sourceSnapshot: 'interior proof page',
@@ -765,7 +768,7 @@ describe('Official Truth same-request proof graph', () => {
     const transport = transportFuer(realeEingaben())
     const material = await officialTruthServerHeldSameRequestMaterial(
       wert,
-      { transport: transport.transport },
+      { identityProfiles: r2Profiles, transport: transport.transport },
       () => new Date(JETZT),
     )
     assert.equal(material.status, 'server_held_same_request_material')
@@ -788,12 +791,12 @@ describe('Official Truth same-request proof graph', () => {
     if (paket.status !== 'rule_review_packet') return
     assert.equal(paket.supports[0]?.sourceSnapshot, fabrik)
     assert.equal(Object.hasOwn(paket, 'reviewPacketKey'), false)
-    assert.equal(graph.reviewPacketKey.startsWith('review-packet:v2:'), true)
+    assert.equal(graph.reviewPacketKey.startsWith('review-packet:v3:'), true)
 
     const zeuge = await decideOfficialTruthAutonomousPreacceptanceWitness(wert, {
       loadAuthority: async () => freigabe(),
       now: () => JETZT,
-      catalog: { transport: transportFuer(realeEingaben()).transport },
+      catalog: { identityProfiles: r2Profiles, transport: transportFuer(realeEingaben()).transport },
     })
     assert.equal(zeuge.status, 'authorized_preacceptance_witness')
     if (zeuge.status !== 'authorized_preacceptance_witness') return
@@ -872,7 +875,7 @@ describe('Official Truth same-request proof graph', () => {
     const transport = transportFuer(realeEingaben())
     const material = await officialTruthServerHeldSameRequestMaterial(
       eingabe({ umschlag: huelle }),
-      { transport: transport.transport },
+      { identityProfiles: r2Profiles, transport: transport.transport },
       () => new Date(JETZT),
     )
     assert.equal(material.status, 'server_held_same_request_material')
@@ -907,3 +910,10 @@ describe('Official Truth same-request proof graph', () => {
     assert.equal(belegt.scope.destinationCountryCode, 'JP')
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://evil.example/rules",
+  "https://www.real-government.example/rules",
+  "https://www.real-interior.example/rules"
+] as const

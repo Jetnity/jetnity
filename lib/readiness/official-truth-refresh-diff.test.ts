@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-refresh-diff.test.ts
 //
 // Auffrischung nur über die erneut bewiesene Annahme und den neuen Beleg.
@@ -65,6 +66,7 @@ const PERSONEN = [
 ] as const
 
 const ERFOLG_FELDER = [
+  'contentItemId', 'contentItemVersion', 'identityProfileId', 'identityProfileVersion', 'representationId', 'representationVersion',
   'baselineRequestKey',
   'baselineVersionId',
   'contentChanged',
@@ -137,7 +139,7 @@ function anfrage(
 function registry(eingaben: readonly QuellenEingabe[], blockedDomains?: readonly string[]): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen(eingaben, blockedDomains ? { blockedDomains } : undefined)
   if (!ergebnis.ok) throw new Error(ergebnis.reason)
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function amt(sourceId: string, domain: string): QuellenEingabe {
@@ -224,7 +226,7 @@ function huelle(teil?: {
   const material =
     teil?.material === null
       ? null
-      : {
+      : { contentType: 'text/plain',
           canonicalUrl: URL,
           retrievedAt: ABGERUFEN,
           sourceSnapshot: SNAPSHOT,
@@ -259,7 +261,7 @@ function vergleichen(
 function erfolg(ergebnis: OfficialTruthAuffrischungErgebnis) {
   assert.notEqual(ergebnis.status, 'blocked')
   if (ergebnis.status === 'blocked') throw new Error('blockiert')
-  assert.deepEqual(Object.keys(ergebnis).sort(), [...ERFOLG_FELDER])
+  assert.deepEqual(Object.keys(ergebnis).sort(), [...ERFOLG_FELDER].sort())
   assert.equal(ergebnis.ruleChange, 'not_asserted')
   assert.equal(ergebnis.laterAnalysisShortCircuit, !ergebnis.contentChanged)
   assert.equal(ergebnis.sourceId, QUELLE)
@@ -662,7 +664,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     ]
     for (const canonicalUrl of seiten) {
       for (const sourceSnapshot of [SNAPSHOT, ANDERS]) {
-        const neu = huelle({ material: { canonicalUrl, sourceSnapshot } })
+        const neu = huelle({ material: { contentType: 'text/plain', canonicalUrl, sourceSnapshot } })
         const neuBeleg = officialTruthAbgerufenMaterialPruefen(neu, uhr())
         assert.equal(neuBeleg.status, 'retrieved_material', canonicalUrl)
         if (neuBeleg.status !== 'retrieved_material') throw new Error('neu')
@@ -671,7 +673,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
         assert.equal(neuBeleg.sourceContentHash === basisBeleg.sourceContentHash, sourceSnapshot === SNAPSHOT)
         assert.notEqual(neuBeleg.canonicalUrl, basisBeleg.canonicalUrl)
         const ergebnis = vergleichen(basis, null, neu)
-        assert.deepEqual(ergebnis, { status: 'blocked', reason: 'different_official_page' }, canonicalUrl)
+        assert.deepEqual(ergebnis, { status: 'blocked', reason: 'different_content_identity' }, canonicalUrl)
         ohneLeak(ergebnis, [canonicalUrl, 'other.gov.example', 'gov.example'])
       }
     }
@@ -680,7 +682,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
   test('gleichwertige URL-Normalisierung bleibt dieselbe amtliche Seite', () => {
     const basis = huelle()
     for (const canonicalUrl of ['https://WWW.GOV.EXAMPLE/rules', 'https://www.gov.example:443/rules', '  https://www.gov.example/rules  ']) {
-      const neu = huelle({ material: { canonicalUrl, sourceSnapshot: 'official page line\r\nunchanged' } })
+      const neu = huelle({ material: { contentType: 'text/plain', canonicalUrl, sourceSnapshot: 'official page line\r\nunchanged' } })
       const basisBeleg = officialTruthAbgerufenMaterialPruefen(basis, uhr())
       const neuBeleg = officialTruthAbgerufenMaterialPruefen(neu, uhr())
       assert.equal(basisBeleg.status, 'retrieved_material', canonicalUrl)
@@ -839,6 +841,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     ohneLeak(plan, ['Other Border'])
 
     const kopie: QuellenRegistry = {
+      contentIdentity: structuredClone(basisRegistry.contentIdentity),
       blockedDomains: basisRegistry.blockedDomains.map((domain) => domain),
       sources: basisRegistry.sources.map((quelle) => ({
         authorityName: quelle.authorityName,
@@ -856,6 +859,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     ohneLeak(gleich)
 
     const gedreht: QuellenRegistry = {
+      contentIdentity: { ...basisRegistry.contentIdentity!, authorityRegistry: { sources: [...basisRegistry.sources].reverse(), blockedDomains: [...basisRegistry.blockedDomains] } },
       sources: [...basisRegistry.sources].reverse().map((quelle) => ({
         sourceId: quelle.sourceId,
         sourceClass: quelle.sourceClass,
@@ -876,6 +880,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
       ['a.example', 'z.example'],
     )
     const domaenenGedreht: QuellenRegistry = {
+      contentIdentity: mitDomaenen.contentIdentity,
       sources: mitDomaenen.sources.map((quelle) => ({
         sourceId: quelle.sourceId,
         sourceClass: quelle.sourceClass,
@@ -891,6 +896,7 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     ohneLeak(domaenen, ['border.example'])
 
     const erweitert = {
+      contentIdentity: basisRegistry.contentIdentity,
       sources: basisRegistry.sources,
       blockedDomains: basisRegistry.blockedDomains,
       trust: true,
@@ -909,8 +915,21 @@ describe('Official Truth accepted Evidence refresh diff', () => {
     ohneLeak(extra, ['trust'])
 
     const andereSeite = registry([{ ...amt(QUELLE, 'gov.example'), publisherName: 'Other Border Publisher' }, amt(ANDERE, 'interior.example'), anbieter(ANBIETER, 'provider.example')])
-    const beides = vergleichen(basis, null, paket(andereSeite, { canonicalUrl: 'https://other.gov.example/other-page', sourceSnapshot: SNAPSHOT }))
-    assert.deepEqual(beides, { status: 'blocked', reason: 'different_official_page' })
+    const beides = vergleichen(basis, null, paket(andereSeite, { contentType: 'text/plain', canonicalUrl: 'https://other.gov.example/other-page', sourceSnapshot: SNAPSHOT }))
+    assert.deepEqual(beides, { status: 'blocked', reason: 'different_content_identity' })
     ohneLeak(beides, ['other.gov.example'])
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://gov.example/rules",
+  "https://other.gov.example/other-page",
+  "https://www.gov.example/other",
+  "https://www.gov.example/rules",
+  "https://www.gov.example/rules/",
+  "https://www.gov.example/rules/.",
+  "https://www.gov.example:443/rules",
+  "https://www.interior.example/rules",
+  "https://www.provider.example/rules"
+] as const

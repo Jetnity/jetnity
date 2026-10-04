@@ -6,6 +6,7 @@
 // kein Wildcard. Fehlende Abdeckung bleibt unbekannt und wird nie zu
 // `not_required`. Die Engine bleibt die einzige Auswertung.
 
+import { contentRepresentationFromRegistry, type RepresentationDescriptor } from '@/lib/readiness/official-truth-content-identity'
 import { landescodeLesen } from '@/lib/readiness/domain'
 import { evidenceKombinationen, type EvidenceAtom, type EvidenceRahmenFehler } from '@/lib/readiness/evidence'
 import type { QuellenRegistry, RegistrierteQuelle } from '@/lib/readiness/source-registry'
@@ -211,4 +212,15 @@ export function quellenRouten(
     sources,
     cells,
   }
+}
+
+/** Authority routing is discovery only. Retrieval additionally needs this exact binding. */
+export function quellenInhaltRouten(registry: QuellenRegistry, sourceId: string, url: string):
+  | { ok: true; representation: RepresentationDescriptor }
+  | { ok: false; reason: 'content_not_eligible' } {
+  const bound = contentRepresentationFromRegistry(registry, url)
+  if (!bound.ok || bound.value.sourceId !== sourceId || !bound.value.requestUrls.includes(url)) {
+    return { ok: false, reason: 'content_not_eligible' }
+  }
+  return { ok: true, representation: bound.value }
 }

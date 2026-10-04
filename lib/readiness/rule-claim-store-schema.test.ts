@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/rule-claim-store-schema.test.ts
 //
 // Static contract for the accepted Rule Claim persistence migration.
@@ -283,8 +284,9 @@ describe('accepted rule claim persistence schema', () => {
     assert.doesNotMatch(sql, /evidence-key/i)
     assert.doesNotMatch(sql, /lookup_key/i)
     assert.doesNotMatch(sql, /\bdrop\s+constraint\b/i)
+    // Current R2 runtime and immutable historical SQL intentionally use different lookup versions.
     const evidenceSource = readFileSync(join(ROOT, 'lib/readiness/evidence.ts'), 'utf8')
-    assert.match(evidenceSource, /const SUCHSCHLUESSEL_VERSION = 'evidence-key:v2:'/)
+    assert.match(evidenceSource, /const SUCHSCHLUESSEL_VERSION = 'evidence-key:v3:'/)
     const evidenceMigration = readdirSync(MIGRATION_DIR).filter((name) =>
       name.endsWith('_official_truth_private_evidence_store_schema_1.sql'),
     )
@@ -588,7 +590,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function atom(teil?: Record<string, unknown>) {
@@ -613,7 +615,7 @@ function atom(teil?: Record<string, unknown>) {
 function version(basis: QuellenRegistry): EvidenceVersion {
   const erzeugt = evidenceKandidatAusModell(
     { scope: atom() },
-    {
+    { contentType: 'text/plain',
       canonicalUrl: 'https://www.gov.example/rules/transit',
       retrievedAt: ABGERUFEN,
       sourceSnapshot: 'siebzehn flughaefen',
@@ -710,3 +712,9 @@ describe('canonical transit airport acceptance', () => {
     assert.deepEqual(fehlerhaft, { ok: false, reason: 'invalid_fact' })
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://www.gov.example/rules/visa",
+  "https://www.gov.example/rules/transit"
+] as const

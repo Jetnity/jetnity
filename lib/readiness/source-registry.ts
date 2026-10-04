@@ -5,6 +5,7 @@
 // Die Requirements-/Official-Truth-Engine bleibt die einzige Auswertung.
 // Ein lizenzierter Anbieter ist kein Staat und trägt keinen Authority-Namen.
 
+import type { ContentIdentityGraph } from '@/lib/readiness/official-truth-content-identity'
 import { quelleUrlLesen } from '@/lib/readiness/official'
 
 export const QUELLEN_KLASSEN = ['official_authority', 'licensed_evidence_provider'] as const
@@ -23,6 +24,8 @@ export type RegistrierteQuelle = {
 export type QuellenRegistry = {
   readonly sources: readonly RegistrierteQuelle[]
   readonly blockedDomains: readonly string[]
+  /** Present only on a complete v2 snapshot; domain permission alone is insufficient. */
+  readonly contentIdentity?: ContentIdentityGraph
 }
 
 export type QuellenEingabe = {

@@ -70,7 +70,7 @@ const NOTIZ_SCHLUESSEL = new Set([
 
 const ANFRAGE_PRAEFIX = 'research-request:v1:'
 const REGEL_SCHLUESSEL = new RegExp(`^${REGEL_SCOPE_PRAEFIX}[a-f0-9]{64}$`)
-const VERSION_ID = /^ev1_[a-f0-9]{32}$/
+const VERSION_ID = /^ev2_[a-f0-9]{32}$/
 const EVIDENZ_KLASSE = 'official_authority' as const
 
 const ABDECKUNG_FEHLER = {

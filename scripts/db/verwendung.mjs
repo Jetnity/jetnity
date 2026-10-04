@@ -59,14 +59,14 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sqlPath: 'scripts/db/admin-account-counts-delivery-1-rpc.sql',
   }),
   Object.freeze({
-    name: 'official_truth_store_accepted_v1',
+    name: 'official_truth_store_accepted_v2',
     sourcePath: 'lib/readiness/official-truth-store-server.ts',
-    sqlPath: 'supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql',
+    sqlPath: 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql',
   }),
   Object.freeze({
-    name: 'official_truth_source_catalog_v1',
+    name: 'official_truth_source_catalog_v2',
     sourcePath: 'lib/readiness/official-truth-source-catalog-server.ts',
-    sqlPath: 'supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql',
+    sqlPath: 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql',
   }),
   Object.freeze({
     name: 'darf_official_truth_freigeben',

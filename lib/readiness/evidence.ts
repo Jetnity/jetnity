@@ -6,6 +6,7 @@
 // Die Requirements-/Official-Truth-Engine bleibt die einzige Auswertung.
 
 import { sha256Hex } from '@/lib/readiness/digest'
+import { contentEvidenceLookupV3, contentEvidenceVersionV2, contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentEvidenceIdentity, type RepresentationRef } from '@/lib/readiness/official-truth-content-identity'
 import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -23,8 +24,8 @@ export type EvidenceLifecycle = (typeof EVIDENCE_LIFECYCLES)[number]
 export const EVIDENCE_VALIDATION_STATES = ['pending', 'valid', 'rejected'] as const
 export type EvidenceValidationState = (typeof EVIDENCE_VALIDATION_STATES)[number]
 
-const SUCHSCHLUESSEL_VERSION = 'evidence-key:v2:'
-const VERSION_PREFIX = 'ev1_'
+const SUCHSCHLUESSEL_VERSION = 'evidence-key:v3:'
+const VERSION_PREFIX = 'ev2_'
 const INHALT_MAX = 65_536
 const NOTIZ_MAX = 240
 
@@ -68,13 +69,14 @@ const ENTSCHEIDUNGS_FELDER = [
 ] as const
 
 const FINGERPRINT_OVERRIDE = ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash'] as const
-const PROVENIENZ_OVERRIDE = ['canonicalUrl', 'retrievedAt'] as const
+const PROVENIENZ_OVERRIDE = ['canonicalUrl', 'retrievedAt', 'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion', 'identityProfileId', 'identityProfileVersion', 'contentType'] as const
 
 /**
  * Retrieval-Hülle. Sie wird nicht vom Modell gebaut.
  * URL, Abrufzeit und Quellentext kommen nur von hier.
  */
 export type EvidenceQuellenmaterial = {
+  contentType: string
   canonicalUrl: string
   retrievedAt: string
   sourceSnapshot: string
@@ -131,7 +133,7 @@ export type EvidenceScope = EvidenceAtom & {
   sourceId: string
 }
 
-export type EvidenceVersion = {
+export type EvidenceVersion = ContentEvidenceIdentity & {
   versionId: string
   previousVersionId: string | null
   lifecycle: EvidenceLifecycle
@@ -160,6 +162,7 @@ export type EvidenceSuchschluesselListe =
   | { ok: false; reason: EvidenceRahmenFehler; fields?: readonly string[] }
 
 export type EvidenceAnnahmeFehler =
+  | 'content_identity_mismatch'
   | 'not_candidate'
   | 'source_mismatch'
   | 'invalid_retrieval_time'
@@ -386,7 +389,6 @@ function kanonisch(scope: EvidenceScope): string {
   const residenceCountryCode = scope.residence.mode === 'required' ? scope.residence.countryCode : null
   const travelDate = scope.validity.mode === 'travel_date' ? scope.validity.travelDate : null
   return JSON.stringify({
-    v: 2,
     sourceId: scope.sourceId,
     destinationCountryCode: scope.destinationCountryCode,
     transitCountryCode: scope.transitCountryCode,
@@ -405,10 +407,6 @@ function kanonisch(scope: EvidenceScope): string {
   })
 }
 
-function schluesselAusScope(scope: EvidenceScope): { key: string; canonical: string } {
-  const canonical = kanonisch(scope)
-  return { canonical, key: `${SUCHSCHLUESSEL_VERSION}${sha256Hex(canonical)}` }
-}
 
 function sourceIdLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
@@ -520,7 +518,9 @@ function rahmenFelder(satz: Record<string, unknown>):
   }
 }
 
-export function evidenceSuchschluessel(eingabe: unknown): EvidenceSuchschluessel {
+export function evidenceScopeLesen(eingabe: unknown):
+  | { ok: true; scope: EvidenceScope; canonical: string }
+  | RahmenFehler {
   if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
   const felder = entscheidungsfelder(eingabe)
   if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
@@ -531,7 +531,16 @@ export function evidenceSuchschluessel(eingabe: unknown): EvidenceSuchschluessel
   const atom = atomeAus(satz)
   if (!atom.ok) return atom
   const scope: EvidenceScope = { ...atom.atom, sourceId }
-  return { ok: true, scope, ...schluesselAusScope(scope) }
+  return { ok: true, scope, canonical: kanonisch(scope) }
+}
+
+/** A live lookup always names one exact representation; a source-only key is invalid. */
+export function evidenceSuchschluessel(eingabe: unknown, representation?: RepresentationRef): EvidenceSuchschluessel {
+  const scope = evidenceScopeLesen(eingabe)
+  if (!scope.ok) return scope
+  const lookup = contentEvidenceLookupV3(scope.scope, representation)
+  if (!lookup.ok || !lookup.value.key.startsWith(SUCHSCHLUESSEL_VERSION)) return { ok: false, reason: 'invalid_context' }
+  return { ok: true, scope: scope.scope, key: lookup.value.key, canonical: lookup.value.canonical }
 }
 
 /**
@@ -539,7 +548,7 @@ export function evidenceSuchschluessel(eingabe: unknown): EvidenceSuchschluessel
  * Jede Zelle trägt die volle Staatsbürgerschaftsmenge.
  * Die Eingabereihenfolge ist bedeutungslos. Es gibt kein Kreuzprodukt.
  */
-export function evidenceSuchschluesselListe(eingabe: unknown): EvidenceSuchschluesselListe {
+export function evidenceSuchschluesselListe(eingabe: unknown, representation?: RepresentationRef): EvidenceSuchschluesselListe {
   if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
   const felder = entscheidungsfelder(eingabe)
   if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
@@ -549,10 +558,13 @@ export function evidenceSuchschluesselListe(eingabe: unknown): EvidenceSuchschlu
   if (!sourceId) return { ok: false, reason: 'invalid_context' }
   const kombinationen = evidenceKombinationen(satz)
   if (!kombinationen.ok) return kombinationen
-  const entries = kombinationen.atoms.map((atom) => {
+  const entries: { key: string; canonical: string; scope: EvidenceScope }[] = []
+  for (const atom of kombinationen.atoms) {
     const scope: EvidenceScope = { ...atom, sourceId }
-    return { scope, ...schluesselAusScope(scope) }
-  })
+    const lookup = evidenceSuchschluessel(scope, representation)
+    if (!lookup.ok) return lookup
+    entries.push({ scope, key: lookup.key, canonical: lookup.canonical })
+  }
   entries.sort((links, rechts) => (links.canonical < rechts.canonical ? -1 : links.canonical > rechts.canonical ? 1 : 0))
   return { ok: true, entries }
 }
@@ -601,14 +613,20 @@ function gueltigkeitsfenster(satz: Record<string, unknown>): { ok: true; validFr
   return { ok: true, validFrom, validUntil }
 }
 
-function versionIdFuer(
-  sourceId: string,
-  canonicalUrl: string,
-  sourceContentHash: string,
-  retrievedAt: string,
-  lookupKey: string,
-): string {
-  return `${VERSION_PREFIX}${sha256Hex([sourceId, canonicalUrl, sourceContentHash, retrievedAt, lookupKey].join('|')).slice(0, 32)}`
+/** Rebuild ev2 without trusting any supplied version id or extra fields. */
+function versionIdFuer(value: ContentEvidenceIdentity): string | null {
+  const built = contentEvidenceVersionV2({ ...contentIdentityBinding(value), identitySchema: value.identitySchema,
+    lookupKey: value.lookupKey, canonicalUrl: value.canonicalUrl, contentType: value.contentType,
+    sourceContentHash: value.sourceContentHash, retrievedAt: value.retrievedAt,
+    validFrom: value.validFrom, validUntil: value.validUntil })
+  return built.ok && built.value.versionId.startsWith(VERSION_PREFIX) ? built.value.versionId : null
+}
+
+function identitaetPasst(value: EvidenceVersion, registry: QuellenRegistry): boolean {
+  const rep = contentRepresentationFromRegistry(registry, value.canonicalUrl)
+  return rep.ok && value.identitySchema === 2 && contentIdentityMatches(value, rep.value)
+    && value.canonicalUrl === rep.value.expectedFinalUrl && value.contentType === rep.value.expectedMediaType
+    && versionIdFuer(value) === value.versionId
 }
 
 function quellePasst(quelle: RegistrierteQuelle, evidence: Pick<EvidenceVersion, 'sourceId' | 'sourceClass' | 'authorityName' | 'publisherName'>): boolean {
@@ -644,10 +662,15 @@ export function evidenceKandidatAusModell(
   if (!sourceContentHash || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
   const satz = datensatz(modell)
   if (!satz) return { ok: false, reason: 'invalid_context' }
-  const schluessel = evidenceSuchschluessel(satz.scope ?? satz)
-  if (!schluessel.ok) return schluessel
   const url = quellenUrlAufloesen(registry, hülle.canonicalUrl)
   if (!url.ok) return url
+  const representation = contentRepresentationFromRegistry(registry, hülle.canonicalUrl)
+  if (!representation.ok || hülle.canonicalUrl !== representation.value.expectedFinalUrl
+    || hülle.contentType !== representation.value.expectedMediaType) return { ok: false, reason: 'content_identity_mismatch' }
+  const identity = contentIdentityBinding(representation.value)
+  const schluessel = evidenceSuchschluessel(satz.scope ?? satz, { sourceId: identity.sourceId,
+    contentItemId: identity.contentItemId, representationId: identity.representationId })
+  if (!schluessel.ok) return schluessel
   if (url.source.sourceId !== schluessel.scope.sourceId) return { ok: false, reason: 'source_mismatch' }
   const retrievedAt = checkedAtLesen(hülle.retrievedAt)
   if (!retrievedAt) return { ok: false, reason: 'invalid_retrieval_time' }
@@ -661,8 +684,14 @@ export function evidenceKandidatAusModell(
   if (url.source.sourceClass === 'official_authority' && !url.source.authorityName) {
     return { ok: false, reason: 'authority_required' }
   }
+  const observation: ContentEvidenceIdentity = { ...identity, identitySchema: 2, lookupKey: schluessel.key,
+    canonicalUrl: url.canonicalUrl, contentType: hülle.contentType, sourceContentHash, retrievedAt,
+    validFrom: fenster.validFrom, validUntil: fenster.validUntil }
+  const versionId = versionIdFuer(observation)
+  if (!versionId) return { ok: false, reason: 'content_identity_mismatch' }
   const evidence: EvidenceVersion = {
-    versionId: versionIdFuer(url.source.sourceId, url.canonicalUrl, sourceContentHash, retrievedAt, schluessel.key),
+    ...observation,
+    versionId,
     previousVersionId: null,
     lifecycle: 'candidate',
     validationState: 'pending',
@@ -704,7 +733,8 @@ export function evidenceKandidatAkzeptieren(
   if (!hashLesen(kandidat.sourceContentHash)) return { ok: false, reason: 'invalid_hash' }
   const fenster = gueltigkeitsfenster({ validFrom: kandidat.validFrom, validUntil: kandidat.validUntil })
   if (!fenster.ok) return fenster
-  const erneut = evidenceSuchschluessel(kandidat.scope)
+  if (!identitaetPasst(kandidat, registry)) return { ok: false, reason: 'content_identity_mismatch' }
+  const erneut = evidenceSuchschluessel(kandidat.scope, { sourceId: kandidat.sourceId, contentItemId: kandidat.contentItemId, representationId: kandidat.representationId })
   if (!erneut.ok) return erneut
   if (erneut.key !== kandidat.lookupKey) return { ok: false, reason: 'lookup_key_mismatch' }
   return {
@@ -729,7 +759,8 @@ export function akzeptierteEvidenceLesen(version: EvidenceVersion, registry: Que
   const url = quellenUrlAufloesen(registry, version.canonicalUrl)
   if (!url.ok || !quellePasst(url.source, version)) return null
   if (!checkedAtLesen(version.retrievedAt) || !hashLesen(version.sourceContentHash)) return null
-  const erneut = evidenceSuchschluessel(version.scope)
+  if (!identitaetPasst(version, registry)) return null
+  const erneut = evidenceSuchschluessel(version.scope, { sourceId: version.sourceId, contentItemId: version.contentItemId, representationId: version.representationId })
   if (!erneut.ok || erneut.key !== version.lookupKey) return null
   if (version.sourceClass === 'licensed_evidence_provider' && version.authorityName !== null) return null
   if (version.sourceClass === 'official_authority' && !version.authorityName) return null
@@ -758,8 +789,8 @@ export function evidenceVersionenVergleichen(
  * und kein stilles Überschreiben.
  */
 export function evidenceKonfliktHalten(bestehend: EvidenceVersion, eingehend: EvidenceVersion): EvidenceKonflikt {
-  const basis = evidenceSuchschluessel(bestehend.scope)
-  const neu = evidenceSuchschluessel(eingehend.scope)
+  const basis = evidenceSuchschluessel(bestehend.scope, { sourceId: bestehend.sourceId, contentItemId: bestehend.contentItemId, representationId: bestehend.representationId })
+  const neu = evidenceSuchschluessel(eingehend.scope, { sourceId: eingehend.sourceId, contentItemId: eingehend.contentItemId, representationId: eingehend.representationId })
   if (!basis.ok || !neu.ok || basis.key !== bestehend.lookupKey || neu.key !== eingehend.lookupKey) {
     return { ok: false, reason: 'lookup_key_mismatch' }
   }

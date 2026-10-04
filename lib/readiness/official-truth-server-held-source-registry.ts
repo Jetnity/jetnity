@@ -11,6 +11,7 @@
 
 import 'server-only'
 
+import { contentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import {
   officialTruthAkzeptierteEvidenceAusAbruf,
   type OfficialTruthAkzeptierteEvidenceErgebnis,
@@ -54,7 +55,7 @@ import type { QuellenRegistry } from '@/lib/readiness/source-registry'
  */
 export const OFFICIAL_TRUTH_LIVE_AUTONOMOUS_ENTRY = 'server_held_source_registry' as const
 
-const AUTORITAET = ['registry', 'sourceClass', 'domains', 'blockedDomains'] as const
+const AUTORITAET = ['identitySchema', 'contentItemVersion', 'representationVersion', 'identityProfileVersion', 'contentIdentity', 'identityProfiles', 'contentItemId', 'representationId', 'identityProfileId', 'registry', 'sourceClass', 'domains', 'blockedDomains'] as const
 const ABRUF_FELDER = ['request', 'descriptors', 'sourceId', 'material'] as const
 const REVIEW_FELDER = ['supports', 'metadata'] as const
 const BUENDEL_FELDER = ['umschlag', 'uhr', 'extraktion'] as const
@@ -121,7 +122,9 @@ export type OfficialTruthServerHeldReviewReproofErgebnis =
  * Provenienz einer Stütze für denselben Request. Kein Seitenrohtext.
  * Der Hash benennt die eingereichten Bytes. Er beweist keine HTTP-Antwort.
  */
-export type OfficialTruthServerHeldSameRequestSupport = {
+export type OfficialTruthServerHeldSameRequestSupport = ContentIdentityBinding & {
+  readonly identitySchema: 2
+  readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -198,7 +201,9 @@ async function registryLaden(
   | { ok: true; registry: QuellenRegistry }
   | { ok: false; reason: 'caller_authority_forbidden' | 'catalog_not_configured' | 'catalog_failed' }
 > {
-  if (hatAutoritaet(datensatz(abhaengigkeiten))) return { ok: false, reason: 'caller_authority_forbidden' }
+  // The profile seam is a server dependency, never an envelope authority field.
+  const deps = datensatz(abhaengigkeiten)
+  if (deps && AUTORITAET.some((name) => name !== 'identityProfiles' && Object.hasOwn(deps, name))) return { ok: false, reason: 'caller_authority_forbidden' }
   const gelesen = await quellenKatalogLesen(abhaengigkeiten)
   if (!gelesen.ok) {
     return {
@@ -345,6 +350,9 @@ function materialStuetze(
   support: Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>['supports'][number],
 ): OfficialTruthServerHeldSameRequestSupport {
   return {
+    ...contentIdentityBinding(support),
+    identitySchema: 2,
+    contentType: support.contentType,
     versionId: support.versionId,
     sourceId: support.sourceId,
     canonicalUrl: support.canonicalUrl,
@@ -429,7 +437,7 @@ export async function officialTruthServerHeldSameRequestMaterial(
   if (belegt.status !== 'rule_review_packet') return belegt
   const finger = officialTruthRegelReviewPacketFingerprint(rekonstruiert)
   if (finger.status !== 'rule_review_packet_fingerprint') return blockiert(finger.reason)
-  if (!finger.reviewPacketKey.startsWith('review-packet:v2:')) return blockiert('invalid_fact')
+  if (!finger.reviewPacketKey.startsWith('review-packet:v3:')) return blockiert('invalid_fact')
   if (finger.ruleScopeKey !== belegt.kandidat.key) return blockiert('scope_mismatch')
   const versionsIds = belegt.evidenceVersions.map((version) => version.versionId)
   const stuetzIds = belegt.supports.map((support) => support.versionId)

@@ -1,3 +1,4 @@
+import { r2Registry } from './official-truth-content-identity-r2.test'
 // lib/readiness/source-foundation.test.ts
 //
 // Official Truth source/evidence foundation.
@@ -55,7 +56,7 @@ function registry(): QuellenRegistry {
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
-  return ergebnis.registry
+  return r2Registry(ergebnis.registry, R2_PUBLICATIONS)
 }
 
 function quelle(basis: QuellenRegistry, sourceId: string): RegistrierteQuelle {
@@ -126,7 +127,7 @@ function modellEingabe(scope: Record<string, unknown> = atom(), extractionNote?:
 }
 
 function material(teil?: Partial<{ canonicalUrl: string; retrievedAt: string; sourceSnapshot: string }>) {
-  return {
+  return { contentType: 'text/plain',
     canonicalUrl: QUELLE,
     retrievedAt: ABGERUFEN,
     sourceSnapshot: SNAPSHOT,
@@ -297,7 +298,7 @@ describe('Official Truth source/evidence foundation', () => {
   })
 
   test('Credential-Optionen bleiben relationsscharf und reihenfolgenstabil', () => {
-    const hin = evidenceSuchschluesselListe({ ...rahmen(), sourceId: 'example-border-authority' })
+    const hin = evidenceSuchschluesselListe({ ...rahmen(), sourceId: 'example-border-authority' }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     const her = evidenceSuchschluesselListe({
       ...rahmen({
         citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
@@ -307,7 +308,7 @@ describe('Official Truth source/evidence foundation', () => {
         },
       }),
       sourceId: 'example-border-authority',
-    })
+    }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(hin.ok, true)
     assert.equal(her.ok, true)
     if (!hin.ok || !her.ok) return
@@ -328,9 +329,9 @@ describe('Official Truth source/evidence foundation', () => {
     const unlinked = evidenceSuchschluessel(
       atom({
         credentialOption: { mode: 'option', ...option('CH', null) },
-      }),
+      }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' },
     )
-    const linked = evidenceSuchschluessel(atom())
+    const linked = evidenceSuchschluessel(atom(), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(unlinked.ok && linked.ok, true)
     if (!unlinked.ok || !linked.ok) return
     assert.notEqual(unlinked.key, linked.key)
@@ -346,7 +347,7 @@ describe('Official Truth source/evidence foundation', () => {
     const ohneRelation = evidenceSuchschluessel(
       atom({
         credentialOption: { mode: 'option', documentType: 'passport', issuingCountryCode: 'CH' },
-      }),
+      }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' },
     )
     assert.equal(ohneRelation.ok, false)
     if (ohneRelation.ok) return
@@ -357,7 +358,7 @@ describe('Official Truth source/evidence foundation', () => {
         credentialOptions: { mode: 'required', options: [option('CH', null)] },
       }),
       sourceId: 'example-border-authority',
-    })
+    }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(ausstellerAlsStaatsbuergerschaft.ok, true)
     if (!ausstellerAlsStaatsbuergerschaft.ok) return
     assert.deepEqual(paare(ausstellerAlsStaatsbuergerschaft.entries), [
@@ -367,7 +368,7 @@ describe('Official Truth source/evidence foundation', () => {
     const zuVieleStaaten = evidenceSuchschluesselListe({
       ...rahmen({ citizenship: { mode: 'required', countryCodes: ['CH', 'RS', 'DE', 'AT', 'IT', 'FR', 'ES', 'NL', 'BE'] } }),
       sourceId: 'example-border-authority',
-    })
+    }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(zuVieleStaaten.ok, false)
     if (zuVieleStaaten.ok) return
     assert.equal(zuVieleStaaten.reason, 'scope_too_wide')
@@ -377,7 +378,7 @@ describe('Official Truth source/evidence foundation', () => {
         credentialOptions: { mode: 'required', options: [option('CH', 'CH'), option('CH', 'CH')] },
       }),
       sourceId: 'example-border-authority',
-    })
+    }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(doppelt.ok, true)
     if (!doppelt.ok) return
     assert.equal(doppelt.entries.length, 1)
@@ -385,7 +386,7 @@ describe('Official Truth source/evidence foundation', () => {
     const fremdeRelation = evidenceSuchschluessel(
       atom({
         credentialOption: { mode: 'option', ...option('CH', 'DE') },
-      }),
+      }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' },
     )
     assert.equal(fremdeRelation.ok, false)
     if (fremdeRelation.ok) return
@@ -398,13 +399,13 @@ describe('Official Truth source/evidence foundation', () => {
       tripId: 'trip-1',
       travellerClientRef: 'traveller:1',
       passportNumber: 'X123',
-    })
+    }, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.deepEqual(verboten, { ok: false, reason: 'personal_identifier_forbidden' })
     assert.equal(hin.entries.some((eintrag) => /user-1|trip-1|traveller:1|X123/.test(eintrag.canonical)), false)
 
-    const ziel = evidenceSuchschluessel(atom({ destinationCountryCode: 'JP', transitCountryCode: null }))
-    const transit = evidenceSuchschluessel(atom({ destinationCountryCode: null, transitCountryCode: 'JP' }))
-    const kreuz = evidenceSuchschluessel(atom({ destinationCountryCode: 'SG', transitCountryCode: 'JP' }))
+    const ziel = evidenceSuchschluessel(atom({ destinationCountryCode: 'JP', transitCountryCode: null }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
+    const transit = evidenceSuchschluessel(atom({ destinationCountryCode: null, transitCountryCode: 'JP' }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
+    const kreuz = evidenceSuchschluessel(atom({ destinationCountryCode: 'SG', transitCountryCode: 'JP' }), { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(ziel.ok && transit.ok && kreuz.ok, true)
     if (!ziel.ok || !transit.ok || !kreuz.ok) return
     assert.notEqual(ziel.key, transit.key)
@@ -416,7 +417,7 @@ describe('Official Truth source/evidence foundation', () => {
 
     const { residence: _wohn, ...ohneWohnsitz } = atom()
     void _wohn
-    const wohnsitzFehlt = evidenceSuchschluessel(ohneWohnsitz)
+    const wohnsitzFehlt = evidenceSuchschluessel(ohneWohnsitz, { sourceId: 'example-border-authority', contentItemId: 'fixture_lookup_item', representationId: 'fixture_representation' })
     assert.equal(wohnsitzFehlt.ok, false)
     if (wohnsitzFehlt.ok) return
     assert.equal(wohnsitzFehlt.reason, 'missing_relevant_context')
@@ -446,15 +447,15 @@ describe('Official Truth source/evidence foundation', () => {
     assert.equal(erste.retrievedAt, serbien.retrievedAt)
     assert.notEqual(erste.lookupKey, serbien.lookupKey)
     assert.notEqual(erste.versionId, serbien.versionId)
-    assert.match(erste.versionId, /^ev1_[a-f0-9]{32}$/)
-    assert.match(serbien.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(erste.versionId, /^ev2_[a-f0-9]{32}$/)
+    assert.match(serbien.versionId, /^ev2_[a-f0-9]{32}$/)
 
     const pass = angenommen(basis, 'official page line\nunchanged', atom({ requirementType: 'passport_validity' }))
     assert.equal(erste.sourceContentHash, pass.sourceContentHash)
     assert.notEqual(erste.lookupKey, pass.lookupKey)
     assert.notEqual(erste.versionId, pass.versionId)
     assert.notEqual(serbien.versionId, pass.versionId)
-    assert.match(pass.versionId, /^ev1_[a-f0-9]{32}$/)
+    assert.match(pass.versionId, /^ev2_[a-f0-9]{32}$/)
 
     const geaendert = angenommen(basis, 'official page line\nchanged', undefined, 'model wording alpha')
     assert.notEqual(erste.sourceContentHash, geaendert.sourceContentHash)
@@ -514,7 +515,7 @@ describe('Official Truth source/evidence foundation', () => {
       material({ canonicalUrl: 'https://provider.example/rules' }),
       basis,
     )
-    assert.deepEqual(fremdeQuelle, { ok: false, reason: 'source_mismatch' })
+    assert.deepEqual(fremdeQuelle, { ok: false, reason: 'content_identity_mismatch' })
 
     const leer = evidenceKandidatAusModell(modellEingabe(), material({ sourceSnapshot: '' }), basis)
     assert.deepEqual(leer, { ok: false, reason: 'invalid_source_snapshot' })
@@ -699,3 +700,16 @@ describe('Official Truth source/evidence foundation', () => {
     assert.doesNotMatch(text, /\.gov\b|gov\.uk|gc\.ca/i)
   })
 })
+
+// Explicit synthetic v2 publications; no production registration.
+const R2_PUBLICATIONS = [
+  "https://evil.example/rules",
+  "https://gov.example/path",
+  "https://notgov.example/rules",
+  "https://provider.example/other",
+  "https://provider.example/rules",
+  "https://user:pass@gov.example/rules",
+  "https://www.blocked.example/rules",
+  "https://www.gov.example/rules",
+  "https://www.gov.example/rules/visa"
+] as const

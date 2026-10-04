@@ -57,6 +57,8 @@ const AUTORITAET_SPERRE = new Set([
  * positionsgenau abgelehnt.
  */
 const ZEUGEN_VERBOTEN = new Set([
+  'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
+  'identityProfileId', 'identityProfileVersion', 'contentIdentity', 'identityProfiles',
   'role',
   'grant',
   'capability',

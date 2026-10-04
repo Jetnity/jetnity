@@ -1,3 +1,5 @@
+import { r2IdentityFixture } from './official-truth-content-identity-r2.test'
+import { contentIdentityBinding } from './official-truth-content-identity'
 // lib/readiness/official-truth-research-request.test.ts
 //
 // Forschungsanfrage aus Abdeckung und bestehendem Scope.
@@ -68,7 +70,7 @@ function quelle(relativ: string): string {
 }
 
 function version(zeichen: string): string {
-  return `ev1_${zeichen.repeat(32)}`
+  return r2IdentityFixture(zeichen).versionId
 }
 
 function roh(teil?: Record<string, unknown>): Record<string, unknown> {
@@ -148,8 +150,8 @@ describe('Official Truth research request contract', () => {
     for (const name of ['extractionNote', 'travellerNote', 'note', 'documentScan', 'scan']) {
       assert.equal(modul.includes(`'${name}'`), true, name)
     }
-    assert.equal(modul.includes('const VERSION_ID = /^ev1_[a-f0-9]{32}$/'), true)
-    assert.equal(quelle('lib/readiness/official-truth-coverage.ts').includes('const VERSION_ID = /^ev1_[a-f0-9]{32}$/'), true)
+    assert.equal(modul.includes('const VERSION_ID = /^ev2_[a-f0-9]{32}$/'), true)
+    assert.equal(quelle('lib/readiness/official-truth-coverage.ts').includes('const VERSION_ID = /^ev2_[a-f0-9]{32}$/'), true)
     assert.equal(REGEL_FAKT_ARTEN.includes('stay_limit'), true)
   })
 
@@ -474,6 +476,8 @@ describe('Official Truth research request contract', () => {
       },
       support: [
         {
+          ...contentIdentityBinding(r2IdentityFixture('c')),
+          identitySchema: 2,
           versionId: id,
           ruleScopeKey: basis.key,
           lifecycle: 'accepted',
@@ -501,6 +505,8 @@ describe('Official Truth research request contract', () => {
       },
       support: [
         {
+          ...contentIdentityBinding(r2IdentityFixture('c')),
+          identitySchema: 2,
           versionId: id,
           ruleScopeKey: basis.key,
           lifecycle: 'accepted',

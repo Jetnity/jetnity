@@ -5,6 +5,7 @@
 // Personen- und Rechtskontext bleibt im Prozess. Der Entscheidungsverlauf
 // nennt Art, Herkunft und Polarität, nie einen Personenwert.
 
+import type { ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { landescodeLesen, TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
@@ -25,7 +26,7 @@ export const REGULIERUNGS_GRUPPE_KONTEXT_MAX = 500
 
 const SUPPORT_MAX = 8
 const VISA_OPTIONEN_MAX = 4
-const SUPPORT_ID = /^ev1_[a-f0-9]{32}$/
+const SUPPORT_ID = /^ev2_[a-f0-9]{32}$/
 const ZWEIG_ID = /^[a-z][a-z0-9_]{0,31}$/
 const FINGERPRINT_PRAEFIX = 'rule-applicability:v1:'
 
@@ -93,7 +94,7 @@ export type RegulierungsFehlenderFakt =
   | 'document_type'
   | 'document_issuing_country'
 
-export type RegulierungsRegionPin = {
+export type RegulierungsRegionPin = ContentIdentityBinding & {
   regionCode: 'common_travel_area'
   version: number
   memberCountryCodes: readonly string[]

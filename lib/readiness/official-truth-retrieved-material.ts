@@ -9,12 +9,13 @@
 // Der Inhaltsfingerprint kommt nur aus dem bestehenden Quellenfingerprint.
 
 import { evidenceQuellenFingerprint, type EvidenceQuellenmaterial } from '@/lib/readiness/evidence'
+import { contentIdentityBinding, contentRepresentationFromRegistry, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { officialTruthRechercheQuellenRouten } from '@/lib/readiness/official-truth-research-source-routing'
 import { quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const UMSCHLAG_FELDER = ['request', 'registry', 'descriptors', 'sourceId', 'material'] as const
-const MATERIAL_FELDER = ['canonicalUrl', 'retrievedAt', 'sourceSnapshot'] as const
+const MATERIAL_FELDER = ['canonicalUrl', 'retrievedAt', 'sourceSnapshot', 'contentType'] as const
 const TIEFE_MAX = 8
 
 /**
@@ -75,6 +76,7 @@ const PROVENIENZ_OVERRIDE = new Set(['canonicalUrl', 'retrievedAt'])
 const TRACKING_NAMEN = new Set(['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid', 'wbraid', 'mc_cid', 'mc_eid'])
 
 export type OfficialTruthAbrufSperrgrund =
+  | 'content_identity_mismatch'
   | 'invalid_envelope'
   | 'sensitive_personal_field'
   | 'source_fingerprint_override_forbidden'
@@ -101,7 +103,9 @@ export type OfficialTruthAbrufSperrgrund =
  * und genau eine ausgewählte amtliche Quelle.
  * Kein Regelresultat und keine angenommene Evidence.
  */
-export type OfficialTruthAbgerufenBeleg = {
+export type OfficialTruthAbgerufenBeleg = ContentIdentityBinding & {
+  readonly identitySchema: 2
+  readonly contentType: string
   readonly status: 'retrieved_material'
   readonly requestKey: string
   readonly ruleScopeKey: string
@@ -287,12 +291,20 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
   const sourceContentHash = evidenceQuellenFingerprint(material.sourceSnapshot)
   if (!sourceContentHash) return sperre('invalid_source_snapshot')
 
+  const representation = contentRepresentationFromRegistry(registry, url.canonicalUrl)
+  if (!representation.ok || url.canonicalUrl !== representation.value.expectedFinalUrl
+    || material.contentType !== representation.value.expectedMediaType) return sperre('content_identity_mismatch')
+  const identity = contentIdentityBinding(representation.value)
   const belegMaterial: EvidenceQuellenmaterial = Object.freeze({
+    contentType: representation.value.expectedMediaType,
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
     sourceSnapshot: material.sourceSnapshot,
   })
   return Object.freeze({
+    ...identity,
+    identitySchema: 2,
+    contentType: representation.value.expectedMediaType,
     status: 'retrieved_material',
     requestKey: entscheidung.requestKey,
     ruleScopeKey: entscheidung.ruleScopeKey,
