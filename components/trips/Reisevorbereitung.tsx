@@ -5,6 +5,7 @@ import { AlertCircle, Check, ChevronDown, RotateCcw } from 'lucide-react'
 
 import LandFeld from '@/components/country/LandFeld'
 import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
+import { readinessClientRefErzeugen } from '@/lib/readiness/bauen'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
@@ -151,7 +152,7 @@ export default function Reisevorbereitung({
     if (!onSetzen) return
     setMeldung('')
     const fehler = await onSetzen({
-      clientRef: `preparation:${titel.trim().toLowerCase().slice(0, 40)}`,
+      clientRef: readinessClientRefErzeugen('preparation'),
       kind: 'preparation',
       userStatus: 'open',
       countryCode: null,

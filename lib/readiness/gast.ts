@@ -16,9 +16,12 @@ export function gastReadinessSetzen(reise: Trip, roh: unknown): Trip {
 
   const bestand = readinessItemsVon(reise)
   const eingabe: ReadinessEingabe = geprueft.data
+  // Eigene Punkte ohne Ref sind immer neu. Nur Systempunkte behalten den Legacy-Fallback.
   const bestehend = eingabe.clientRef
     ? bestand.find((item) => item.clientRef === eingabe.clientRef) ?? null
-    : bestand.find((item) => item.kind === eingabe.kind && item.countryCode === (eingabe.countryCode ?? null) && item.tripItemId === (eingabe.tripItemId ?? null)) ?? null
+    : eingabe.kind === 'preparation'
+      ? null
+      : bestand.find((item) => item.kind === eingabe.kind && item.countryCode === (eingabe.countryCode ?? null) && item.tripItemId === (eingabe.tripItemId ?? null)) ?? null
 
   const gebaut = readinessItemBauen(reise, { ...eingabe, clientRef: bestehend?.clientRef ?? eingabe.clientRef }, bestehend)
   if (!gebaut.ok) throw new Error(gebaut.meldung)

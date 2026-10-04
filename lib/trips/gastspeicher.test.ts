@@ -52,6 +52,9 @@ import { alsNutzlast } from '@/lib/trips/abbildung'
 import type { Ort } from '@/lib/places/domain'
 import { GRENZEN } from '@/lib/trips/schema'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
+import { READINESS_GRENZEN } from '@/lib/readiness/domain'
+import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
+import { readinessAlsUebernahme, readinessNachUebernahmeBauen } from '@/lib/readiness/uebernahme'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
 import type { CreateTripInput } from '@/types/trips'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
@@ -1413,6 +1416,91 @@ describe('Die Übernahme aus der alten Fassung löscht nichts auf Verdacht', () 
 })
 
 describe('Gastreise trägt dieselbe Readiness-Form', () => {
+  for (const [name, titelA, titelB] of [
+    ['B02', 'Versicherung für den Urlaub rechtzeitig prüfen: Person A', 'Versicherung für den Urlaub rechtzeitig prüfen: Person B'],
+    ['identischer Titel', 'Reiseadapter einpacken', 'Reiseadapter einpacken'],
+    ['lange Titel', `${'a'.repeat(79)}A`, `${'a'.repeat(79)}B`],
+    ['Case/Whitespace', ' Reiseadapter einpacken ', 'reiseadapter EINPACKEN'],
+    ['Whitespace', ' Reiseadapter einpacken ', 'Reiseadapter einpacken'],
+  ]) {
+    test(`${name}: neue eigene Punkte ohne Ref überschreiben keinen Bestand`, () => {
+      const angelegt = gastreiseAnlegen(eingabe())
+      const a = gastReadinessSetzen(angelegt, { kind: 'preparation', userStatus: 'done', title: titelA })
+      const itemA = a.readinessItems![0]!
+      const vorherA = JSON.stringify(itemA)
+      const b = gastReadinessSetzen(a, { kind: 'preparation', userStatus: 'open', title: titelB })
+      assert.equal(b.readinessItems?.length, 2)
+      const itemB = b.readinessItems!.find(item => item.clientRef !== itemA.clientRef)!
+      assert.ok(itemB)
+      assert.notEqual(itemB.clientRef, itemA.clientRef)
+      assert.ok(itemB.clientRef.length <= READINESS_GRENZEN.clientRef)
+      assert.equal(itemB.title, titelB!.trim())
+      assert.equal(JSON.stringify(b.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+
+      const aktualisiert = gastReadinessSetzen(b, { ...itemB, title: titelA, userStatus: 'skipped' })
+      assert.equal(aktualisiert.readinessItems?.length, 2)
+      assert.equal(JSON.stringify(aktualisiert.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+      assert.equal(aktualisiert.readinessItems!.find(item => item.clientRef === itemB.clientRef)?.userStatus, 'skipped')
+      const geladen = gastreiseLadenNach(aktualisiert.id)!
+      assert.equal(geladen.readinessItems?.length, 2)
+      assert.equal(JSON.stringify(geladen.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+
+      const payload = readinessAlsUebernahme(geladen)
+      const uebernommen = readinessNachUebernahmeBauen(angelegt, [...payload, ...payload])
+      assert.equal(uebernommen.length, 2)
+      assert.deepEqual(uebernommen.map(item => [item.clientRef, item.title, item.userStatus]),
+        geladen.readinessItems!.map(item => [item.clientRef, item.title, item.userStatus]))
+    })
+  }
+
+  test('explizite Payload bleibt retry-sicher; Legacy-Ref wird nur exakt bearbeitet', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const legacyRef = 'preparation:reiseadapter einpacken'
+    const a = gastReadinessSetzen(angelegt, {
+      clientRef: legacyRef, kind: 'preparation', title: 'Reiseadapter einpacken', userStatus: 'done',
+    })
+    const vorherA = JSON.stringify(a.readinessItems![0])
+    const payloadB = { clientRef: 'preparation-new-id', kind: 'preparation', title: 'Reiseadapter einpacken', userStatus: 'open' }
+    const b = gastReadinessSetzen(a, payloadB)
+    const idB = b.readinessItems!.find(item => item.clientRef === payloadB.clientRef)!.id
+    const retry = gastReadinessSetzen(b, payloadB)
+    assert.equal(retry.readinessItems?.length, 2)
+    assert.equal(retry.readinessItems!.find(item => item.clientRef === payloadB.clientRef)?.id, idB)
+    assert.equal(JSON.stringify(retry.readinessItems!.find(item => item.clientRef === legacyRef)), vorherA)
+    const vorherB = JSON.stringify(retry.readinessItems!.find(item => item.clientRef === payloadB.clientRef))
+    const updated = gastReadinessSetzen(retry, {
+      clientRef: legacyRef, kind: 'preparation', title: 'Zweiten Adapter einpacken', userStatus: 'done',
+    })
+    assert.equal(updated.readinessItems!.find(item => item.clientRef === legacyRef)?.title, 'Zweiten Adapter einpacken')
+    assert.equal(JSON.stringify(updated.readinessItems!.find(item => item.clientRef === payloadB.clientRef)), vorherB)
+  })
+
+  test('abgeleitete IDs und Legacy-Fallback für Systempunkte bleiben erhalten', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const check = readinessChecksAbleiten(angelegt).find(item => item.kind === 'insurance_check')!
+    assert.equal(check.clientRef, 'insurance_check:trip')
+    const gespeichert = gastReadinessSetzen(angelegt, { ...check, userStatus: 'done' })
+    const erneut = gastReadinessSetzen(gespeichert, { kind: 'insurance_check', userStatus: 'skipped' })
+    assert.equal(erneut.readinessItems?.length, 1)
+    assert.equal(erneut.readinessItems![0]?.clientRef, check.clientRef)
+    assert.equal(erneut.readinessItems![0]?.userStatus, 'skipped')
+    assert.deepEqual(readinessChecksAbleiten(erneut), readinessChecksAbleiten(angelegt))
+  })
+
+  test('50 eigene Punkte bleiben Grenze; nur exaktes Update ist am Limit erlaubt', () => {
+    let reise = gastreiseAnlegen(eingabe())
+    for (let i = 0; i < READINESS_GRENZEN.itemsJeReise; i++) {
+      reise = gastReadinessSetzen(reise, { kind: 'preparation', userStatus: 'open', title: 'Reiseadapter einpacken' })
+    }
+    assert.equal(reise.readinessItems?.length, 50)
+    assert.throws(() => gastReadinessSetzen(reise, {
+      kind: 'preparation', userStatus: 'open', title: 'Reiseadapter einpacken',
+    }), /höchstens 50/)
+    const aktualisiert = gastReadinessSetzen(reise, { ...reise.readinessItems![0], userStatus: 'done', evidence: 'official' })
+    assert.equal(aktualisiert.readinessItems?.length, 50)
+    assert.equal(aktualisiert.readinessItems!.find(item => item.userStatus === 'done')?.evidence, 'user')
+  })
+
   test('create/update/delete und Reload bleiben idempotent', () => {
     const angelegt = gastreiseAnlegen(eingabe())
     const danach = gastReadinessSetzen(angelegt, {
