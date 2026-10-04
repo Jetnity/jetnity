@@ -4,6 +4,8 @@ Date: 4 October 2026
 Issue: #822
 Status: **BINDING / IMPLEMENTATION / DORMANT SERVER-ONLY / NO LIVE REGISTRATION / NO DB MUTATION / NO PROFILE ACTIVATION / NO F8**
 
+> **Technical-Lead amendment before material implementation — 4 October 2026.** Codex correctly stopped because the first binding seed's §9 omitted the required top-level `representations` key while simultaneously requiring exact S1 serialization. Live migration `20261004010705_official_truth_content_identity_2.sql` and accepted #821 audit both require exactly `operation`, `item`, and `representations` at RPC top level. This amendment resolves only that contradiction. No implementation file had been changed before the STOP. This amended task supersedes earlier task-seed heads for implementation authority.
+
 ## 1. Authority and live baseline
 
 Technical Lead selected this slice after a fresh live reconstruction.
@@ -79,7 +81,9 @@ Do not invent a second source registry, content-identity parser, URL-authority m
 
 ## 6. Required typed input contract
 
-The helper accepts one initial content item plus 1..16 representations using canonical TypeScript-side fields equivalent to the existing R1 descriptor contract:
+The helper accepts one initial content item plus 1..16 representations using canonical TypeScript-side fields equivalent to the existing R1 descriptor contract.
+
+The TypeScript helper may expose `representations` as a property of its single typed input object. That is **not** the RPC JSON shape. During RPC serialization, `representations` must be emitted as the separate required top-level array described in §9.
 
 Item:
 - `sourceId`
@@ -146,15 +150,18 @@ Use the existing `official_truth_source_catalog_v2` transport. Do not create a s
 
 Serialize the current S1 RPC contract exactly.
 
-Top-level payload:
+Top-level payload has **exactly these three keys**:
 - `operation: "register_content_item"`
 - `item: { ... }`
+- `representations: [ ... ]`
+
+This exact three-key contract is required by `20261004010705_official_truth_content_identity_2.sql` and is also the accepted #821 registration-audit payload contract.
 
 Item RPC fields must match the S1 migration exactly.
 
 Each representation RPC entry **inherits** `source_id`, `content_item_id` and `content_item_version` from the item. Do **not** serialize those inherited tuple fields again inside representation entries.
 
-No extra keys. No browser-selected environment. No target/project selector.
+No top-level keys beyond `operation`, `item`, and `representations`. No browser-selected environment. No target/project selector.
 
 ## 10. Exact success-response parser
 
