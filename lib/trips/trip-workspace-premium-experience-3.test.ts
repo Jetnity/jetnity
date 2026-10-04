@@ -96,7 +96,7 @@ test('Kopf, Warteschlange und Bereiche erfinden keinen Status', () => {
   assert.match(kopf, /data-workspace-identity/)
   assert.match(wichtig, /Jetzt wichtig/)
   assert.match(wichtig, /Was jetzt Aufmerksamkeit braucht/)
-  assert.match(wichtig, /weitere Hinweise/)
+  assert.match(wichtig, /weitere Hinweisgruppen/)
   assert.equal(wichtig.includes('text-red'), false)
   assert.equal(wichtig.includes('bg-red'), false)
   assert.match(bereiche, /data-workspace-trip-parts/)
