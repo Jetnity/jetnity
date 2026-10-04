@@ -15,6 +15,7 @@ import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import { itineraryEinTransit } from '@/lib/route/fixtures'
 import { attentionAbleiten } from '@/lib/trips/attention'
+import { attentionGruppieren } from '@/lib/trips/attention-presentation'
 import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType, type Trip, type TripItem, type TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-21T00:00:00.000Z'
@@ -391,6 +392,82 @@ function reiseOhneLuecken(): Trip {
     ],
   })
 }
+
+describe('Attention-Flood: kanonische Punkte bleiben vollständig', () => {
+  function floodEingabe() {
+    const party = Array.from({ length: 4 }, (_, index) => reisender({
+      id: `flood-person-${index}`,
+      clientRef: `flood-ref-${index}`,
+      citizenships: [{
+        id: `flood-cit-${index}`,
+        clientRef: `flood-cit-ref-${index}`,
+        countryCode: 'CH',
+        createdAt: JETZT,
+        updatedAt: JETZT,
+      }],
+    }))
+    return {
+      reise: reise({ ...reiseOhneLuecken(), travellers: party.length, party }),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendigFuer(party).map((eintrag): OfficialEvaluation => ({
+        ...eintrag,
+        status: 'unavailable',
+        freshness: 'provider_unavailable',
+        result: 'unknown',
+      })),
+    }
+  }
+
+  test('64 Official-Einzelpunkte bleiben unverändert als Mitglieder einer Präsentationsgruppe', () => {
+    const eingabe = floodEingabe()
+    const eingabeVorher = structuredClone(eingabe)
+    const attention = attentionAbleiten(eingabe)
+    const vorher = structuredClone(attention)
+    for (const punkt of attention.punkte) {
+      if (punkt.aktion) Object.freeze(punkt.aktion)
+      Object.freeze(punkt)
+    }
+    Object.freeze(attention.punkte)
+    Object.freeze(attention.sichtbar)
+    Object.freeze(attention.weitere)
+    Object.freeze(attention)
+
+    const gruppen = attentionGruppieren(attention.punkte)
+    assert.equal(attention.punkte.length, 64)
+    assert.equal(attention.sichtbar.length, 3)
+    assert.equal(attention.weitere.length, 61)
+    assert.equal(attention.punkte.every((punkt) => punkt.signal === 'official.unavailable'), true)
+    assert.equal(gruppen.length, 1)
+    assert.equal(gruppen[0]!.anzahl, 64)
+    assert.equal(new Set(gruppen[0]!.mitglieder.map((punkt) => punkt.id)).size, 64)
+    assert.deepEqual(gruppen[0]!.mitglieder.map((punkt) => punkt.id), vorher.punkte.map((punkt) => punkt.id))
+    assert.equal(gruppen[0]!.punkt, attention.punkte[0])
+    for (const [index, mitglied] of gruppen[0]!.mitglieder.entries()) {
+      assert.equal(mitglied, attention.punkte[index])
+    }
+    assert.deepEqual(attention, vorher)
+    assert.deepEqual(eingabe, eingabeVorher)
+  })
+
+  test('Blocker und konkrete Flug-/Unterkunftslücken bleiben vor 64 allgemeinen Hinweisen', () => {
+    const eingabe = floodEingabe()
+    const attention = attentionAbleiten({
+      ...eingabe,
+      reise: reise({ travellers: eingabe.reise.travellers, party: eingabe.reise.party }),
+      safetyEvaluations: [safetyWarnung('critical_warning', 'flood-blocker')],
+    })
+    const gruppen = attentionGruppieren(attention.punkte)
+    const signale = gruppen.map((gruppe) => gruppe.punkt.signal)
+    assert.equal(signale[0], 'safety.critical_warning')
+    for (const signal of ['coverage.fluege', 'coverage.unterkunft']) {
+      assert.ok(signale.indexOf(signal) > 0)
+      assert.ok(signale.indexOf(signal) < signale.indexOf('official.unavailable'))
+    }
+    assert.equal(gruppen.find((gruppe) => gruppe.punkt.signal === 'official.unavailable')!.anzahl, 64)
+    assert.deepEqual(gruppen.map((gruppe) => attention.punkte.indexOf(gruppe.punkt)), [0, 1, 2, 3])
+  })
+})
 
 describe('Attention-Leerstände', () => {
   test('fehlende Safety-/Seasonal-Orchestrierung ist noch_nicht_geprueft, nicht clean und nicht unavailable', () => {

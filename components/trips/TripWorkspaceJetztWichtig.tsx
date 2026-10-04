@@ -11,6 +11,7 @@ import type {
   AttentionPunkt,
   AttentionSchwere,
 } from '@/lib/trips/attention'
+import { attentionGruppieren } from '@/lib/trips/attention-presentation'
 import { cn } from '@/lib/utils'
 
 const LEERSTAND_TEXT: Record<AttentionLeerstand, string> = {
@@ -42,7 +43,11 @@ export default function TripWorkspaceJetztWichtig({
   onAktion: (aktion: AttentionAktion) => void
 }) {
   const [weitereOffen, setWeitereOffen] = useState(false)
-  const sichtbare = weitereOffen ? attention.punkte : attention.sichtbar
+  const gruppen = attentionGruppieren(attention.punkte)
+  // Das bestehende Limit gilt hier für Gruppen; die kanonischen Listen bleiben unverändert.
+  const limit = attention.sichtbar.length
+  const sichtbare = weitereOffen ? gruppen : gruppen.slice(0, limit)
+  const weitereAnzahl = Math.max(0, gruppen.length - limit)
 
   return (
     <section
@@ -71,8 +76,9 @@ export default function TripWorkspaceJetztWichtig({
             <ul className={cn('grid gap-px overflow-hidden rounded-2xl bg-line-100', attention.leerstand ? 'mt-3' : undefined)}>
               {sichtbare.map((eintrag, index) => (
                 <AttentionZeile
-                  key={eintrag.id}
-                  punkt={eintrag}
+                  key={eintrag.punkt.id}
+                  punkt={eintrag.punkt}
+                  anzahl={eintrag.anzahl}
                   zuerst={index === 0}
                   onAktion={onAktion}
                 />
@@ -80,7 +86,7 @@ export default function TripWorkspaceJetztWichtig({
             </ul>
           )}
 
-          {attention.weitere.length > 0 && (
+          {weitereAnzahl > 0 && (
             <button
               type="button"
               aria-expanded={weitereOffen}
@@ -89,7 +95,7 @@ export default function TripWorkspaceJetztWichtig({
             >
               {weitereOffen
                 ? 'Weniger anzeigen'
-                : `${attention.weitere.length === 1 ? '1 weiteren Hinweis' : `${attention.weitere.length} weitere Hinweise`} anzeigen`}
+                : `${weitereAnzahl === 1 ? '1 weitere Hinweisgruppe' : `${weitereAnzahl} weitere Hinweisgruppen`} anzeigen`}
             </button>
           )}
         </div>
@@ -100,10 +106,12 @@ export default function TripWorkspaceJetztWichtig({
 
 function AttentionZeile({
   punkt,
+  anzahl,
   zuerst,
   onAktion,
 }: {
   punkt: AttentionPunkt
+  anzahl: number
   zuerst: boolean
   onAktion: (aktion: AttentionAktion) => void
 }) {
@@ -130,6 +138,11 @@ function AttentionZeile({
         >
           {punkt.titel}
         </strong>
+        {anzahl > 1 && (
+          <span className="mt-1 block hyphens-auto break-words text-sm text-ink-700">
+            {anzahl} Einzelprüfungen betroffen
+          </span>
+        )}
         <span className="sr-only">{punkt.lage}</span>
       </span>
       {punkt.aktion ? <ChevronRight className="h-4 w-4 shrink-0 text-brand-800" aria-hidden="true" /> : null}
