@@ -8,7 +8,7 @@ Execution: Codex Desktop, **gpt-6-astra**, reasoning effort **xhigh** (GPT-6 Ast
 
 ## Status and boundary
 
-Classification while exact-head Linux database validation is pending: **CONTENT_IDENTITY_SCHEMA_RPC_V2_BLOCKED**.
+Classification: **CONTENT_IDENTITY_SCHEMA_RPC_V2_READY_FOR_DEVELOPMENT_APPLY**. This is a bounded schema-readiness recommendation, not apply authorization or independent review approval.
 The final delivery SHA and exact-head CI result are recorded in PR #811's body and the writer's delivery message. A file cannot contain the SHA of the commit containing its own final bytes.
 
 This is S1 schema/RPC definition only. No Development or Production apply, Supabase db push, linked reset, live mutation, real source/item/profile/blocked-domain registration, GOV.UK/CTA registration, runtime v2 caller, generated type change, R2 or F8 occurred. The PR remains Draft. Ready, merge and later apply require separate Technical Lead decisions.
@@ -56,7 +56,7 @@ Writes require READ COMMITTED and serialize catalog/store locks in a consistent 
 
 ## Validation
 
-Local macOS database limitation: **`spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`**. The Linux PostgreSQL 16 binaries are absent. No database test is skipped or presented as locally green. Exact-head Linux CI is required to close this gate.
+Local macOS database limitation: **`spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`**. The Linux PostgreSQL 16 binaries are absent. No database test is skipped or presented as locally green. Linux CI closes the database-test gate for the tested head; the final documentation head is separately rechecked before delivery.
 
 - Full local `npm test`: **4,677 tests; 4,674 pass; 3 fail; 0 skipped**. All three failures are missing PostgreSQL 16: the new S1 fixture and the existing source-catalog/store disposable fixtures.
 - New focused static test: PASS; new disposable test: FAIL with the exact ENOENT above.
@@ -66,6 +66,8 @@ Local macOS database limitation: **`spawnSync /usr/lib/postgresql/16/bin/initdb 
 - `check:operating-mode`, `check:api-schutz`, `check:schema-bezug`, `check:dead`, `check:exports`, `check:deps`: PASS; no generated-type/script exception required.
 - Live pre-publication fetch: exact baseline retained, mode NORMAL, #751 names #810/#811 sole overlapping writer, no #748 MATERIAL after marker 5971622750, other open PRs are historical.
 - `git diff --check`, scope, package and immutable-task checks: PASS at checkpoint; repeated before final STOP.
-- Exact-head Linux CI: pending. This checkpoint does not claim database green.
+- Linux [CI run 37169184611](https://github.com/Jetnity/jetnity/actions/runs/37169184611), exact implementation head `245ab698383012d733c89562d2a65404eea20468`: **SUCCESS** on Ubuntu 24.04.5. Verification job `111338461615` and Auth configuration job `111338461503` both SUCCESS. Full suite **4,728/4,728 pass, 0 failures, 0 skipped**; all 51 S1 disposable subtests pass, including six two-session race transactions. Existing disposable catalog/store and schema suites pass in the same full run. Typecheck, lint (149 existing warnings / 0 errors), setup, operating mode, every hygiene gate and canonical Production build pass.
+- Final documentation commit preserves the exact tested migration/test blobs. Final-head CI is separately read back in PR #811 and the completion delivery; the implementation-head run is not substituted for a newer head.
+- Final immutable bytes: task SHA-256 `d8ef97b901b900a444dc4744b0bdd3a47ccce066defb463105159c496b69f26c`; package.json `f2bf5fd5b2e9fe41bc2c3e1ba482440e27c2d9614eccfc424406040e19bbf3ea`; package-lock.json `8dead8237adef171588abd088e25f9be2472a7458121e4198cacd8ece224a7da`.
 
 The disposable fixture uses synthetic `.example` identities only, an environment whitelist without inherited database credentials, an ephemeral Unix-socket-only PostgreSQL cluster and no TCP listener. It applies the four v1 prerequisites plus S1 to disposable databases. Coverage includes empty/nonempty cutover rollback, every security surface, deterministic R1 graph reconstruction, external/URL/current constraints, strict registration/store parsing, lineage, eight fact families, support cardinality, late rollback, multi-call transactions and genuine concurrent duplicate/external/URL/domain/store races.

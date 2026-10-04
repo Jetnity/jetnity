@@ -26,7 +26,7 @@ Both write RPCs require READ COMMITTED; read_registry remains usable in read tra
 
 ## Validation and stop boundary
 
-Local macOS cannot run the three disposable PostgreSQL fixtures: `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. Local full suite is 4,674 pass / 3 fail / 0 skipped; exact-head Linux CI must close the database gate. Validation checkpoint remains **CONTENT_IDENTITY_SCHEMA_RPC_V2_BLOCKED** until that result is available. See REPORT for later final gate evidence.
+Local macOS cannot run the three disposable PostgreSQL fixtures: `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. Local full suite is 4,674 pass / 3 fail / 0 skipped; Linux [CI run 37169184611](https://github.com/Jetnity/jetnity/actions/runs/37169184611) on exact implementation head `245ab698383012d733c89562d2a65404eea20468` closes the database gate: 4,728/4,728 tests pass, 0 failures/skips, including all 51 S1 disposable subtests. Both verification/build and Auth jobs succeed. Final docs retain the same migration/test blobs; final-head CI is separately checked and reported in the delivery. Classification: **CONTENT_IDENTITY_SCHEMA_RPC_V2_READY_FOR_DEVELOPMENT_APPLY**. The local macOS limitation is unchanged and is not represented as local green.
 
 Independent Technical Lead review must bind to the exact final head, compare all six files, confirm task/package immutability, inspect catalog/storage concurrency and security, and verify exact-head Linux checks. A classification of ready for Development apply is a recommendation for a later separately authorized action; it is not permission to apply during this slice.
 
