@@ -14,6 +14,12 @@ import assert from 'node:assert/strict'
 
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
+  createContentIdentityGraph,
+  OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+  type ContentItemDescriptor,
+  type RepresentationDescriptor,
+} from '@/lib/readiness/official-truth-content-identity'
+import {
   leereQuellenRegistry,
   quellenRegistryErstellen,
   type QuellenEingabe,
@@ -21,8 +27,12 @@ import {
 import { LOCAL_UNAPPLIED_RPCS } from '../../scripts/db/verwendung.mjs'
 import {
   OFFICIAL_TRUTH_SOURCE_CATALOG_V2,
+  contentItemRegistrieren,
   quelleRegistrieren,
   quellenKatalogLesen,
+  quellenKatalogSnapshotAntwort,
+  type ContentItemRegistrierenEingabe,
+  type OfficialTruthSourceCatalogAbhaengigkeiten,
   type OfficialTruthSourceCatalogTransport,
 } from '@/lib/readiness/official-truth-source-catalog-server'
 
@@ -734,3 +744,366 @@ describe('throwaway PostgreSQL proof for the source catalog gateway', () => {
 })
 
 const R2_PUBLICATIONS = [] as const
+
+function contentEingabe(): ContentItemRegistrierenEingabe {
+  return {
+    sourceId: 'example-border-authority', contentItemId: 'publication-a',
+    externalIdNamespace: 'synthetic_namespace', externalContentId: 'external-a',
+    contentItemVersion: 1, current: true,
+    expectedPublisherIds: ['publisher-b', 'publisher-a'], expectedAuthorityIds: ['authority-b', 'authority-a'],
+    representations: [{
+      representationId: 'api-en', representationVersion: 1, current: true,
+      requestUrls: ['https://gov.example/api-a?version=1', 'https://gov.example/api-a'],
+      expectedFinalUrl: 'https://gov.example/api-a', expectedMediaType: 'application/json',
+      identityProfileId: 'synthetic_identity', identityProfileVersion: 1, expectedLocale: 'en', expectedSchema: 'publication',
+    }, {
+      representationId: 'html-en', representationVersion: 1, current: true,
+      requestUrls: ['https://gov.example/a'], expectedFinalUrl: 'https://gov.example/a/final', expectedMediaType: 'text/html',
+      identityProfileId: 'synthetic_identity', identityProfileVersion: 1, expectedLocale: null, expectedSchema: null,
+    }],
+  }
+}
+
+function contentSnapshot(inputs: readonly ContentItemRegistrierenEingabe[] = []): Aufruf {
+  const authority = quellenRegistryErstellen([behoerde(), behoerde({ sourceId: 'other-authority', domains: ['other.example'] })])
+  assert.ok(authority.ok)
+  const items: ContentItemDescriptor[] = [], reps: RepresentationDescriptor[] = []
+  for (const { representations, ...item } of inputs) {
+    items.push(item)
+    reps.push(...representations.map((rep) => ({ ...rep, sourceId: item.sourceId,
+      contentItemId: item.contentItemId, contentItemVersion: item.contentItemVersion })))
+  }
+  const graph = createContentIdentityGraph(authority.registry, items, reps, r2Profiles)
+  assert.ok(graph.ok)
+  const snapshot = quellenKatalogSnapshotAntwort({ ...graph.value.authorityRegistry, contentIdentity: graph.value })
+  assert.ok(snapshot)
+  return structuredClone(snapshot)
+}
+
+function contentAntwort(outcome: 'inserted' | 'idempotent' = 'inserted'): Aufruf {
+  return { ok: true, identity_schema: 2, operation: 'register_content_item', outcome,
+    source_id: 'example-border-authority', content_item_id: 'publication-a' }
+}
+
+function contentTransport(snapshot: unknown = contentSnapshot(), response: unknown = contentAntwort()) {
+  return transportAufzeichnen((payload) => payload.operation === 'read_registry' ? snapshot : response)
+}
+
+async function ohneContentWrite(input: unknown, reason: string, snapshot: unknown = contentSnapshot(),
+  deps: Omit<OfficialTruthSourceCatalogAbhaengigkeiten, 'transport'> = { identityProfiles: r2Profiles }) {
+  const recorder = contentTransport(snapshot)
+  assert.deepEqual(await contentItemRegistrieren(input as ContentItemRegistrierenEingabe, { ...deps, transport: recorder.transport }),
+    { ok: false, reason })
+  assert.deepEqual(recorder.aufrufe, [{ operation: 'read_registry' }])
+}
+
+describe('dormant typed content registration gateway', () => {
+  for (const outcome of ['inserted', 'idempotent'] as const) test(`canonical S1 payload and exact ${outcome} response`, async () => {
+    const input = contentEingabe(), before = structuredClone(input)
+    const recorder = contentTransport(contentSnapshot(), contentAntwort(outcome))
+    assert.deepEqual(await contentItemRegistrieren(input, { transport: recorder.transport, identityProfiles: r2Profiles }),
+      { ok: true, outcome, sourceId: input.sourceId, contentItemId: input.contentItemId })
+    assert.deepEqual(input, before)
+    assert.equal(Object.isFrozen(input), false)
+    assert.deepEqual(recorder.aufrufe, [{ operation: 'read_registry' }, {
+      operation: 'register_content_item',
+      item: { source_id: input.sourceId, content_item_id: input.contentItemId,
+        external_id_namespace: 'synthetic_namespace', external_content_id: 'external-a', content_item_version: 1, current: true,
+        expected_publisher_ids: ['publisher-a', 'publisher-b'], expected_authority_ids: ['authority-a', 'authority-b'] },
+      representations: [{ representation_id: 'api-en', representation_version: 1, current: true,
+        request_urls: ['https://gov.example/api-a', 'https://gov.example/api-a?version=1'],
+        expected_final_url: 'https://gov.example/api-a', expected_media_type: 'application/json',
+        identity_profile_id: 'synthetic_identity', identity_profile_version: 1, expected_locale: 'en', expected_schema: 'publication' },
+      { representation_id: 'html-en', representation_version: 1, current: true,
+        request_urls: ['https://gov.example/a'], expected_final_url: 'https://gov.example/a/final', expected_media_type: 'text/html',
+        identity_profile_id: 'synthetic_identity', identity_profile_version: 1, expected_locale: null, expected_schema: null }],
+    }])
+    for (const rep of recorder.aufrufe[1].representations as Aufruf[]) {
+      for (const inherited of ['source_id', 'content_item_id', 'content_item_version']) assert.equal(Object.hasOwn(rep, inherited), false)
+    }
+  })
+
+  for (const field of ['contentItemVersion', 'current'] as const) {
+    for (const value of [0, 2, -1, 1.5, '1', null, false, undefined]) {
+      test(`reject initial item ${field}=${String(value)} before write`, async () => {
+        await ohneContentWrite({ ...contentEingabe(), [field]: value }, 'invalid_descriptor')
+      })
+    }
+  }
+  for (const field of ['representationVersion', 'current'] as const) {
+    for (const value of [0, 2, -1, 1.5, '1', null, false, undefined]) {
+      test(`reject initial representation ${field}=${String(value)} before write`, async () => {
+        const input = contentEingabe()
+        await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], [field]: value }] }, 'invalid_descriptor')
+      })
+    }
+  }
+  for (const field of ['expectedPublisherIds', 'expectedAuthorityIds'] as const) {
+    for (const value of [[], ['duplicate', 'duplicate'], [' bad'], [''], [1], null, Array(2), Array(9).fill('too-many')]) {
+      test(`reject malformed ${field}: ${JSON.stringify(value)}`, async () => {
+        await ohneContentWrite({ ...contentEingabe(), [field]: value }, 'invalid_descriptor')
+      })
+    }
+  }
+  test('exact helper envelopes reject missing/extra keys, accessors, symbols, prototypes and malformed arrays', async () => {
+    const input = contentEingabe()
+    for (const field of Object.keys(input)) {
+      const malformed: Aufruf = { ...input }; delete malformed[field]
+      await ohneContentWrite(malformed, 'invalid_descriptor')
+    }
+    for (const field of Object.keys(input.representations[0])) {
+      const malformed: Aufruf = { ...input.representations[0] }; delete malformed[field]
+      await ohneContentWrite({ ...input, representations: [malformed] }, 'invalid_descriptor')
+    }
+    const forbiddenGetter = () => { throw new Error('input getter must not execute') }
+    for (const malformed of [null, [], {}, { ...input, operation: 'register_content_item' },
+      { ...input, identityProfiles: r2Profiles }, { ...input, [Symbol('extra')]: true },
+      Object.assign(Object.create(null), input), Object.assign(Object.create({ inherited: true }), input),
+      Object.defineProperty({ ...input }, 'sourceId', { get: forbiddenGetter }),
+      Object.defineProperty({ ...input }, 'sourceId', { enumerable: false }),
+      ...[null, [], Array(2), [...input.representations, ...Array(15).fill(input.representations[0])],
+        Object.assign([...input.representations], { extra: true }), Object.setPrototypeOf([...input.representations], {})]
+        .map((representations) => ({ ...input, representations }))]) {
+      await ohneContentWrite(malformed, 'invalid_descriptor')
+    }
+    for (const extra of ['sourceId', 'contentItemId', 'contentItemVersion', 'source_id', 'content_item_id', 'content_item_version', 'unknown']) {
+      await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], [extra]: 'forged' }] }, 'invalid_descriptor')
+    }
+    for (const rep of [null, [], Object.assign(Object.create(null), input.representations[0]),
+      { ...input.representations[0], [Symbol('extra')]: true },
+      Object.defineProperty({ ...input.representations[0] }, 'requestUrls', { get: forbiddenGetter })]) {
+      await ohneContentWrite({ ...input, representations: [rep] }, 'invalid_descriptor')
+    }
+    for (const descriptor of [{ get: forbiddenGetter }, { value: input.representations[0], enumerable: false }]) {
+      await ohneContentWrite({ ...input, representations: Object.defineProperty([input.representations[0]], '0', descriptor) }, 'invalid_descriptor')
+    }
+  })
+
+  for (const url of ['http://gov.example/a', 'https://user:pass@gov.example/a', 'https://gov.example:444/a',
+    'https://gov.example/a#fragment', 'https://gov.example/*', ' https://gov.example/a', 'https://localhost/a',
+    'https://127.0.0.1/a', 'not-a-url']) {
+    for (const field of ['requestUrls', 'expectedFinalUrl']) test(`reject ${field} ${url}`, async () => {
+      const input = contentEingabe()
+      await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], [field]: field === 'requestUrls' ? [url] : url }] },
+        url === 'https://127.0.0.1/a' ? 'url_not_authorized' : 'invalid_url')
+    })
+  }
+  test('canonical R1 handles URL lists, descriptor grammar, profile pins and duplicate streams', async () => {
+    const input = contentEingabe(), rep = input.representations[0]
+    for (const requestUrls of [[], null, Array(2), ['https://gov.example/a', 'https://gov.example/a'],
+      Array.from({ length: 17 }, (_, i) => `https://gov.example/${i}`)]) {
+      await ohneContentWrite({ ...input, representations: [{ ...rep, requestUrls }] },
+        Array.isArray(requestUrls) && requestUrls[0] === requestUrls[1] && requestUrls[0] !== undefined ? 'url_conflict' : 'invalid_url')
+    }
+    for (const change of [{ contentItemId: 'x' }, { sourceId: 'UPPER' }, { externalIdNamespace: 'bad namespace' }, { externalContentId: '' }]) {
+      await ohneContentWrite({ ...input, ...change }, 'invalid_descriptor')
+    }
+    for (const change of [{ representationId: 'x' }, { identityProfileId: 'x' }, { identityProfileVersion: 0 },
+      { expectedLocale: 'invalid_locale' }, { expectedSchema: 'UPPER' }]) {
+      await ohneContentWrite({ ...input, representations: [{ ...rep, ...change }] }, 'invalid_descriptor')
+    }
+    await ohneContentWrite({ ...input, representations: [{ ...rep, expectedMediaType: 'application/json; charset=utf-8' }] }, 'invalid_media_type')
+    await ohneContentWrite({ ...input, representations: [rep, rep] }, 'duplicate_representation_version')
+    for (const change of [{ identityProfileId: 'unavailable' }, { identityProfileVersion: 2 }]) {
+      await ohneContentWrite({ ...input, representations: [{ ...rep, ...change }] }, 'profile_unavailable')
+    }
+  })
+
+  test('unknown/nonofficial source, unavailable profiles and source-domain mismatch never write', async () => {
+    const input = contentEingabe(), rep = input.representations[0]
+    await ohneContentWrite({ ...input, sourceId: 'unknown-source' }, 'unknown_source')
+    const provider = contentSnapshot()
+    Object.assign((provider.sources as Aufruf[])[0], { source_class: 'licensed_evidence_provider', authority_name: null })
+    await ohneContentWrite(input, 'source_not_official', provider)
+    for (const change of [{ requestUrls: ['https://unregistered.example/a'] }, { expectedFinalUrl: 'https://unregistered.example/a' }]) {
+      await ohneContentWrite({ ...input, representations: [{ ...rep, ...change }] }, 'url_not_authorized')
+    }
+    for (const change of [{ requestUrls: ['https://other.example/a'] }, { expectedFinalUrl: 'https://other.example/a' }]) {
+      await ohneContentWrite({ ...input, representations: [{ ...rep, ...change }] }, 'source_mismatch')
+    }
+    await ohneContentWrite(input, 'profile_unavailable', contentSnapshot(), { identityProfiles: [] })
+    await ohneContentWrite(input, 'profile_unavailable', contentSnapshot(), { identityProfiles: [{ ...r2Profiles[0], current: false }] })
+    const blocked = contentSnapshot(); blocked.blocked_domains = ['gov.example']
+    await ohneContentWrite(input, 'url_not_authorized', blocked)
+  })
+
+  test('external identity and all-version URL ownership conflicts never write', async () => {
+    const input = contentEingabe(), stored = contentSnapshot([input])
+    await ohneContentWrite({ ...input, contentItemId: 'publication-b' }, 'external_identity_conflict', stored)
+    const other = { ...input, contentItemId: 'publication-b', externalContentId: 'external-b' }
+    await ohneContentWrite(other, 'url_conflict', stored)
+    const historical = structuredClone(stored)
+    for (const collection of ['item_versions', 'representations']) {
+      for (const row of historical[collection] as Aufruf[]) row.current = false
+    }
+    await ohneContentWrite(other, 'url_conflict', historical)
+    await ohneContentWrite({ ...other, externalContentId: input.externalContentId }, 'external_identity_conflict', historical)
+    await ohneContentWrite(input, 'conflicting_duplicate', historical)
+    await ohneContentWrite({ ...input, representations: [input.representations[0], { ...input.representations[0], representationId: 'copy-en' }] }, 'url_conflict')
+  })
+
+  test('exact replay compares canonical complete sets without adding a duplicate node', async () => {
+    const input = contentEingabe(), stored = contentSnapshot([input])
+    const reordered = { ...input, expectedPublisherIds: [...input.expectedPublisherIds].reverse(),
+      expectedAuthorityIds: [...input.expectedAuthorityIds].reverse(),
+      representations: [...input.representations].reverse().map((rep) => ({ ...rep, requestUrls: [...rep.requestUrls].reverse() })) }
+    for (const outcome of ['idempotent', 'inserted'] as const) {
+      const recorder = contentTransport(stored, contentAntwort(outcome))
+      assert.deepEqual(await contentItemRegistrieren(reordered, { transport: recorder.transport, identityProfiles: r2Profiles }),
+        { ok: true, outcome, sourceId: input.sourceId, contentItemId: input.contentItemId })
+      assert.deepEqual(recorder.aufrufe.map((call) => call.operation), ['read_registry', 'register_content_item'])
+    }
+  })
+
+  test('changed identity/pins and every representation field or set drift fail before replay write', async () => {
+    const input = contentEingabe(), stored = contentSnapshot([input])
+    for (const change of [{ externalIdNamespace: 'other-namespace' }, { externalContentId: 'other-id' },
+      { expectedPublisherIds: ['publisher-c'] }, { expectedAuthorityIds: ['authority-c'] },
+      { representations: [input.representations[0]] },
+      { representations: [...input.representations, { ...input.representations[1], representationId: 'extra-en',
+        requestUrls: ['https://gov.example/extra'], expectedFinalUrl: 'https://gov.example/extra' }] }]) {
+      await ohneContentWrite({ ...input, ...change }, 'conflicting_duplicate', stored)
+    }
+    const changes = [{ representationId: 'renamed-en' }, { requestUrls: ['https://gov.example/changed'] },
+      { requestUrls: [...input.representations[0].requestUrls, 'https://gov.example/additional'] },
+      { expectedFinalUrl: 'https://gov.example/changed' }, { expectedMediaType: 'text/plain' },
+      { expectedLocale: 'de' }, { expectedSchema: 'changed-schema' }, { identityProfileId: 'other-profile' }, { identityProfileVersion: 2 }]
+    for (const change of changes) {
+      const identityProfiles = change.identityProfileVersion === 2
+        ? [{ ...r2Profiles[0], current: false }, { ...r2Profiles[0], identityProfileVersion: 2 }]
+        : [...r2Profiles, { ...r2Profiles[0], identityProfileId: 'other-profile' }]
+      // Every catalog descriptor needs a CURRENT profile too. A retired profile
+      // invalidates the read itself; a different available id reaches equality.
+      await ohneContentWrite({ ...input, representations: [{ ...input.representations[0], ...change }, input.representations[1]] },
+        change.identityProfileVersion === 2 ? 'catalog_failed' : 'conflicting_duplicate', stored, { identityProfiles })
+    }
+    const extraHistory = structuredClone(stored)
+    ;(extraHistory.item_versions as Aufruf[]).push({ ...(extraHistory.item_versions as Aufruf[])[0], content_item_version: 2, current: false })
+    await ohneContentWrite(input, 'conflicting_duplicate', extraHistory)
+    const extraReps = contentSnapshot([{ ...input, representations: [...input.representations,
+      { ...input.representations[1], representationId: 'another-en', requestUrls: ['https://gov.example/another'], expectedFinalUrl: 'https://gov.example/another' }] }])
+    await ohneContentWrite(input, 'conflicting_duplicate', extraReps)
+  })
+
+  test('malformed catalogs, unauthorized stored URLs and unavailable stored profiles never write', async () => {
+    for (const response of [null, [], {}, { ...contentSnapshot(), identity_schema: 1 },
+      { ...contentSnapshot(), extra: true }, { ...contentSnapshot(), operation: 'register_content_item' }]) {
+      await ohneContentWrite(contentEingabe(), 'catalog_failed', response)
+    }
+    const duplicate = contentSnapshot([contentEingabe()])
+    ;(duplicate.item_versions as Aufruf[]).push((duplicate.item_versions as Aufruf[])[0])
+    await ohneContentWrite(contentEingabe(), 'catalog_failed', duplicate)
+    const profile = contentSnapshot([contentEingabe()])
+    ;(profile.representations as Aufruf[])[0].identity_profile_id = 'unavailable'
+    await ohneContentWrite(contentEingabe(), 'catalog_failed', profile)
+    const domain = contentSnapshot([contentEingabe()])
+    ;(domain.sources as Aufruf[])[0].domains = ['changed.example']
+    await ohneContentWrite(contentEingabe(), 'catalog_failed', domain)
+    const reservations = contentSnapshot([contentEingabe()])
+    ;(reservations.url_reservations as Aufruf[])[0].representation_id = 'forged'
+    await ohneContentWrite(contentEingabe(), 'catalog_failed', reservations)
+  })
+
+  const responseChanges: Aufruf[] = [{ ok: false }, { ok: 'true' }, { identity_schema: 1 }, { identity_schema: '2' },
+    { operation: 'register_source' }, { source_id: 'other-authority' }, { content_item_id: 'other-item' },
+    { outcome: 'updated' }, { outcome: null }, { extra: 'secret-sentinel' }]
+  for (const change of responseChanges) test(`reject response ${JSON.stringify(change)}`, async () => {
+    const recorder = contentTransport(contentSnapshot(), { ...contentAntwort(), ...change })
+    assert.deepEqual(await contentItemRegistrieren(contentEingabe(), { transport: recorder.transport, identityProfiles: r2Profiles }),
+      { ok: false, reason: 'catalog_failed' })
+    assert.deepEqual(recorder.aufrufe.map((call) => call.operation), ['read_registry', 'register_content_item'])
+  })
+  test('reject each missing response key, accessors, symbols, hidden keys and non-plain objects', async () => {
+    const response = contentAntwort()
+    const missing = Object.keys(response).map((field) => { const copy = { ...response }; delete copy[field]; return copy })
+    const malformed = [...missing, null, [], new Date(), Object.assign(Object.create(null), response),
+      Object.assign(Object.create({ extra: true }), response), { ...response, [Symbol('extra')]: true },
+      Object.defineProperty({ ...response }, 'extra', { value: true }),
+      Object.defineProperty({ ...response }, 'ok', { enumerable: false }),
+      Object.defineProperty({ ...response }, 'ok', { get: () => { throw new Error('getter must not execute') } })]
+    for (const value of malformed) {
+      const recorder = contentTransport(contentSnapshot(), value)
+      assert.deepEqual(await contentItemRegistrieren(contentEingabe(), { transport: recorder.transport, identityProfiles: r2Profiles }),
+        { ok: false, reason: 'catalog_failed' })
+    }
+  })
+
+  for (const phase of ['read_registry', 'register_content_item']) {
+    for (const throws of [false, true]) test(`sanitize ${phase} transport ${throws ? 'exception' : 'failure'}`, async () => {
+      const calls: string[] = []
+      const transport: OfficialTruthSourceCatalogTransport = { async aufrufen(payload) {
+        calls.push(payload.operation as string)
+        if (payload.operation === phase) {
+          if (throws) throw new Error('database-service-role-secret-sentinel')
+          return { ok: false }
+        }
+        return { ok: true, antwort: contentSnapshot() }
+      } }
+      assert.deepEqual(await contentItemRegistrieren(contentEingabe(), { transport, identityProfiles: r2Profiles }),
+        { ok: false, reason: 'catalog_failed' })
+      assert.deepEqual(calls, phase === 'read_registry' ? ['read_registry'] : ['read_registry', 'register_content_item'])
+    })
+  }
+  test('missing/invalid configuration is sanitized without HTTP and default profiles remain dormant', async () => {
+    for (const env of [{}, { NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.example' }, { SUPABASE_SERVICE_ROLE_KEY: 'sentinel' },
+      { NEXT_PUBLIC_SUPABASE_URL: ' ', SUPABASE_SERVICE_ROLE_KEY: 'sentinel' }]) {
+      assert.deepEqual(await contentItemRegistrieren(contentEingabe(), { env }), { ok: false, reason: 'catalog_not_configured' })
+    }
+    assert.deepEqual(await contentItemRegistrieren(contentEingabe(), {
+      env: { NEXT_PUBLIC_SUPABASE_URL: 'invalid-url', SUPABASE_SERVICE_ROLE_KEY: 'sentinel' },
+    }), { ok: false, reason: 'catalog_failed' })
+    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+    assert.equal(Object.isFrozen(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY), true)
+    await ohneContentWrite(contentEingabe(), 'profile_unavailable', contentSnapshot(), {})
+    await ohneContentWrite(contentEingabe(), 'catalog_failed', contentSnapshot([contentEingabe()]), {})
+    assert.deepEqual(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, [])
+  })
+
+  test('fresh module import has no network/DB access even with service configuration', () => {
+    const script = `
+      import assert from 'node:assert/strict';
+      import http from 'node:http'; import https from 'node:https';
+      import net from 'node:net'; import dns from 'node:dns';
+      let calls = 0;
+      const forbidden = () => { calls++; throw new Error('network forbidden during import'); };
+      globalThis.fetch = forbidden;
+      http.request = https.request = http.get = https.get = forbidden;
+      net.connect = net.createConnection = net.Socket.prototype.connect = forbidden;
+      dns.lookup = dns.resolve = forbidden;
+      const mod = await import('./lib/readiness/official-truth-source-catalog-server.ts');
+      assert.equal(typeof (mod.default ?? mod).contentItemRegistrieren, 'function');
+      assert.equal(calls, 0);
+    `
+    execFileSync(process.execPath, ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--input-type=module', '-e', script], {
+      cwd: ROOT, env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.example', SUPABASE_SERVICE_ROLE_KEY: 'synthetic-test-key' },
+      stdio: 'pipe', timeout: 15_000,
+    })
+  })
+
+  test('one through sixteen representations are supported and profile code is never executed', async () => {
+    const input = contentEingabe()
+    const identityProfiles = [{ ...r2Profiles[0], verify: () => { throw new Error('identity verification is not registration') } }]
+    for (const count of [1, 16]) {
+      const representations = Array.from({ length: count }, (_, i) => ({ ...input.representations[0],
+        representationId: `representation-${i}`, requestUrls: [`https://gov.example/${i}`], expectedFinalUrl: `https://gov.example/${i}` }))
+      const recorder = contentTransport()
+      assert.equal((await contentItemRegistrieren({ ...input, representations }, { transport: recorder.transport, identityProfiles })).ok, true)
+      assert.equal((recorder.aufrufe[1].representations as unknown[]).length, count)
+    }
+  })
+
+  test('serialization and response binding retain the validated copy during the write await', async () => {
+    const input = contentEingabe(), expected = structuredClone(input)
+    const recorder = transportAufzeichnen((payload) => {
+      if (payload.operation === 'read_registry') return contentSnapshot()
+      Object.assign(input, { sourceId: 'mutated-source', contentItemId: 'mutated-item' })
+      ;(input.expectedPublisherIds as string[]).push('mutated')
+      ;(input.representations[0].requestUrls as string[]).push('https://unregistered.example/mutated')
+      return contentAntwort()
+    })
+    assert.deepEqual(await contentItemRegistrieren(input, { transport: recorder.transport, identityProfiles: r2Profiles }),
+      { ok: true, outcome: 'inserted', sourceId: expected.sourceId, contentItemId: expected.contentItemId })
+    assert.deepEqual((recorder.aufrufe[1].item as Aufruf).expected_publisher_ids, [...expected.expectedPublisherIds].sort())
+    assert.deepEqual((recorder.aufrufe[1].representations as Aufruf[])[0].request_urls, [...expected.representations[0].requestUrls].sort())
+  })
+})
