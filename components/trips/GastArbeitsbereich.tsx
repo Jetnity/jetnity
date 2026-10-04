@@ -29,6 +29,7 @@ import {
   gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
+  gastUnterkunftZeitraumSetzen,
   gastreiseEntfernen,
   gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
@@ -152,6 +153,14 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       quelle="guest"
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
+        try {
+          setReise(gastUnterkunftZeitraumSetzen(reise, itemId, startsOn, endsOn))
+          return null
+        } catch (fehler) {
+          return fehler instanceof Error ? fehler.message : 'Der Zeitraum konnte nicht gespeichert werden.'
+        }
+      }}
       onReadinessSetzen={async (eingabe) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
         try {

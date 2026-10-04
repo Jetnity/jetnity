@@ -36,6 +36,7 @@ import {
   gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
+  gastUnterkunftZeitraumSetzen,
   gastreiseAendern,
   gastreiseAnlegen,
   gastreiseEntfernen,
@@ -50,13 +51,13 @@ import {
 } from '@/lib/trips/gastspeicher'
 import { alsNutzlast } from '@/lib/trips/abbildung'
 import type { Ort } from '@/lib/places/domain'
-import { GRENZEN } from '@/lib/trips/schema'
+import { reiseLesen, GRENZEN } from '@/lib/trips/schema'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import { READINESS_GRENZEN } from '@/lib/readiness/domain'
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { readinessAlsUebernahme, readinessNachUebernahmeBauen } from '@/lib/readiness/uebernahme'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
-import type { CreateTripInput } from '@/types/trips'
+import type { CreateTripInput, TripItem } from '@/types/trips'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
@@ -1731,3 +1732,61 @@ function legacyMini(id: string, title: string, updatedAt: string) {
     updatedAt,
   }
 }
+
+describe('Manuelle Unterkunft: enger Gast-Zeitraum-Schreibweg', () => {
+  function mitStay(ohneTag: boolean, teil: Partial<TripItem> = {}) {
+    let reise = gastreiseAnlegen(eingabe())
+    reise = gastPlanpunktAnlegen(reise, { dayId: reise.days[0]!.id, kind: 'stay', title: 'Mein Hotel', note: 'Unveränderte Notiz', startsAt: '14:30' })
+    reise = gastPlanpunktAnlegen(reise, { dayId: reise.days[0]!.id, kind: 'note', title: 'Geschwisterpunkt', note: null, startsAt: null })
+    const ziel = reise.days[0]!.items[0]!
+    const punkt = { ...ziel, ...teil, dayId: ohneTag ? null : ziel.dayId }
+    return gastreiseSpeichern({ ...reise,
+      days: reise.days.map((tag, index) => index === 0 ? { ...tag, items: ohneTag ? tag.items.slice(1) : [punkt, ...tag.items.slice(1)] } : tag),
+      ohneTag: ohneTag ? [punkt] : [],
+    })
+  }
+  for (const ohneTag of [false, true]) {
+    test(`${ohneTag ? 'ohneTag' : 'day item'}: exakt zwei Felder, Revision und persistierter Schema-Graph`, () => {
+      const reise = mitStay(ohneTag, { startsOn: null, endsOn: null, endsAt: '10:00', priceAmount: 321,
+        priceCurrency: 'CHF', bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: '2026-09-01T10:00:00Z' })
+      const punkt = ohneTag ? reise.ohneTag[0]! : reise.days[0]!.items[0]!
+      const vorher = structuredClone(reise)
+      const gespeichert = gastUnterkunftZeitraumSetzen(reise, punkt.id, '2026-09-12', '2026-09-15')
+      const erwartet = structuredClone(reise)
+      const ziel = ohneTag ? erwartet.ohneTag[0]! : erwartet.days[0]!.items[0]!
+      ziel.startsOn = '2026-09-12'; ziel.endsOn = '2026-09-15'
+      erwartet.revision += 1; erwartet.updatedAt = gespeichert.updatedAt
+      assert.deepEqual(gespeichert, erwartet, 'jedes Geschwister und jedes Nicht-Datumsfeld bleibt erhalten')
+      assert.deepEqual(reise, vorher, 'Eingabe nicht mutiert')
+      const roh = JSON.parse(speicher.roh(SCHLUESSEL.aktiv)!)
+      assert.deepEqual(reiseLesen(roh), gespeichert)
+      assert.deepEqual(gastreiseLadenNach(reise.id), gespeichert)
+    })
+  }
+  test('missing, non-stay, provider/ref/url und mehrdeutige ID schreiben nichts', () => {
+    const reise = mitStay(false)
+    const punkt = reise.days[0]!.items[0]!
+    const vorher = speicher.roh(SCHLUESSEL.aktiv)
+    const varianten = [
+      { ...reise, ohneTag: [{ ...punkt, dayId: null }] },
+      ...([{ kind: 'note' }, { provider: 'test' }, { externalRef: 'ref' }, { bookingUrl: 'https://example.test' }] as Partial<TripItem>[])
+        .map(teil => ({ ...reise, days: reise.days.map((tag, i) => i === 0 ? { ...tag, items: [{ ...punkt, ...teil }, ...tag.items.slice(1)] } : tag) })),
+    ]
+    assert.throws(() => gastUnterkunftZeitraumSetzen(reise, 'fehlend', '2026-09-12', '2026-09-16'))
+    for (const variante of varianten) assert.throws(() => gastUnterkunftZeitraumSetzen(variante, punkt.id, '2026-09-12', '2026-09-16'))
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), vorher)
+  })
+  test('ungültige Eingaben, ungültiger Gesamtgraph und Speicherfehler werden nicht als Erfolg gemeldet', () => {
+    const reise = mitStay(true)
+    const id = reise.ohneTag[0]!.id
+    const vorher = speicher.roh(SCHLUESSEL.aktiv)
+    for (const [start, end] of [['2026-09-12', '2026-09-12'], ['2026-09-13', '2026-09-12'], ['2026-02-29', '2026-03-01'],
+      ['2026-09-12', ''], ['', '2026-09-16'], ['12.09.2026', '2026-09-16']]) {
+      assert.throws(() => gastUnterkunftZeitraumSetzen(reise, id, start!, end!))
+    }
+    assert.throws(() => gastUnterkunftZeitraumSetzen({ ...reise, title: '' }, id, '2026-09-12', '2026-09-16'), /gültige Reise/)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), vorher)
+    speicher.sperren()
+    assert.throws(() => gastUnterkunftZeitraumSetzen(reise, id, '2026-09-12', '2026-09-16'), SpeicherFehler)
+  })
+})

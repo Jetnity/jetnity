@@ -652,6 +652,17 @@ export const planpunktFormularSchema = z.object({
 
 export type PlanpunktFormular = z.infer<typeof planpunktFormularSchema>
 
+/** Derselbe enge Datumsvertrag für Formular, Konto und Gast; keine Ableitung. */
+export const unterkunftZeitraumSchema = z.object({
+  startsOn: z.string({ required_error: 'Bitte gib Check-in und Check-out an.' })
+    .min(1, 'Bitte gib Check-in und Check-out an.').pipe(datum),
+  endsOn: z.string({ required_error: 'Bitte gib Check-in und Check-out an.' })
+    .min(1, 'Bitte gib Check-in und Check-out an.').pipe(datum),
+}).refine((zeitraum) => zeitraum.endsOn > zeitraum.startsOn, {
+  path: ['endsOn'],
+  message: 'Check-out muss nach Check-in liegen.',
+})
+
 /** Dasselbe Formular, an eine Reise und einen Tag im Konto gebunden. */
 export const neuePlanpunktNutzlastSchema = planpunktFormularSchema.extend({
   tripId: z.string().uuid(),

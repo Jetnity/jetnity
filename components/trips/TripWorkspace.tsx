@@ -197,6 +197,7 @@ type TripWorkspaceProps = {
   aktivitaetensuche?: React.ReactNode
   mobilitaetssuche?: React.ReactNode
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onUnterkunftZeitraum?: (itemId: string, startsOn: string, endsOn: string) => Promise<string | null>
   onReadinessSetzen?: (eingabe: {
     clientRef: string
     kind: ReadinessKind
@@ -287,6 +288,7 @@ export default function TripWorkspace({
   aktivitaetensuche,
   mobilitaetssuche,
   onBuchungsstatus,
+  onUnterkunftZeitraum,
   onReadinessSetzen,
   onReadinessEntfernen,
   onTravellerSetzen,
@@ -904,7 +906,7 @@ export default function TripWorkspace({
             verborgen={!detailOffen || aktiveDomain !== 'unterkunft'}
             sichtbarKlasse="grid gap-6"
           >
-            <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
+            <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} onUnterkunftZeitraum={onUnterkunftZeitraum} />
           </FlaecheHuelle>
         )}
         {mobilitaetBereit && mobilitaetssuche && (

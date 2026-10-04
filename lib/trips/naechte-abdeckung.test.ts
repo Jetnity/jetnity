@@ -3,6 +3,9 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { gastUnterkunftZeitraumSetzen } from '@/lib/trips/gastspeicher'
+import { bereichStatus } from '@/lib/trips/arbeitsbereich'
+import { reiseSchema } from '@/lib/trips/schema'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import { naechteHalboffen, unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
@@ -303,4 +306,43 @@ describe('Unterkunftsabdeckung', () => {
     assert.equal(ergebnis.luecken[0]?.stageName, 'Singapur')
     assert.equal(ergebnis.luecken[0]?.naechte, 4)
   })
+})
+
+test('Gespeicherte manuelle Daten: unknown → partial → full nur für tatsächlich passende Nächte', () => {
+  const vorher = Object.getOwnPropertyDescriptor(globalThis, 'window')
+  const speicher = new Map<string, string>()
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: { localStorage: {
+    getItem: (key: string) => speicher.get(key) ?? null,
+    setItem: (key: string, value: string) => speicher.set(key, value),
+    removeItem: (key: string) => speicher.delete(key),
+  } } })
+  try {
+    const lage = (trip: Trip) => bereichStatus(trip).find(bereich => bereich.bereich === 'unterkunft')!.lage
+    let graph: Trip = reiseSchema.parse(reise({ ohneTag: [stay({ id: 'manuell', provider: null, externalRef: null,
+      startsOn: null, endsOn: null, bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: JETZT })] }))
+    assert.equal(unterkunftAbdeckung(graph).aufenthalte[0]!.status, 'unknown')
+    assert.equal(lage(graph), 'unbestimmt')
+    graph = gastUnterkunftZeitraumSetzen(graph, 'manuell', '2026-08-30', '2026-09-05')
+    let abdeckung = unterkunftAbdeckung(graph)
+    assert.equal(lage(graph), 'teilweise')
+    assert.equal(abdeckung.naechteAbgedeckt, 6)
+    assert.equal(abdeckung.naechteGebucht, 6, 'Buchung erfindet die acht fehlenden Nächte nicht')
+    assert.deepEqual(abdeckung.luecken.map(l => [l.start, l.end]), [['2026-09-05', '2026-09-13']])
+    graph = gastUnterkunftZeitraumSetzen(graph, 'manuell', '2026-08-30', '2026-09-13')
+    abdeckung = unterkunftAbdeckung(graph)
+    assert.equal(lage(graph), 'belegt')
+    assert.equal(abdeckung.naechteAbgedeckt, 14)
+    assert.equal(abdeckung.naechteGebucht, 14)
+    assert.deepEqual(abdeckung.luecken, [])
+    graph = gastUnterkunftZeitraumSetzen(graph, 'manuell', '2026-08-01', '2026-08-15')
+    abdeckung = unterkunftAbdeckung(graph)
+    assert.equal(lage(graph), 'offen', 'auch 14 gebuchte Nächte ausserhalb der Reise sind keine Full-Coverage')
+    assert.equal(abdeckung.naechteAbgedeckt, 0)
+    assert.equal(abdeckung.naechteGebucht, 0)
+    assert.equal(abdeckung.aufenthalte[0]!.ausserhalb, true)
+    assert.deepEqual([abdeckung.aufenthalte[0]!.start, abdeckung.aufenthalte[0]!.end], ['2026-08-01', '2026-08-15'])
+  } finally {
+    if (vorher) Object.defineProperty(globalThis, 'window', vorher)
+    else Reflect.deleteProperty(globalThis, 'window')
+  }
 })
