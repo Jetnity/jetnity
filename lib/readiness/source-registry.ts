@@ -231,3 +231,16 @@ export function quellenUrlAufloesen(registry: QuellenRegistry, wert: unknown): Q
   const domain = source.domains.find((eintrag) => hostGehoertZu(host, eintrag)) ?? host
   return { ok: true, source, canonicalUrl, domain }
 }
+
+/**
+ * Enge Grenze für Content Identity: nur ausdrücklich registrierte Hosts.
+ * URL-Validierung und gesperrte Domains (einschließlich Nachkommen) bleiben
+ * beim allgemeinen Resolver. Kein DNS/HTTP und keine neue Source-Autorität.
+ */
+export function quellenUrlExaktAufloesen(registry: QuellenRegistry, wert: unknown): QuellenUrlErgebnis {
+  const resolved = quellenUrlAufloesen(registry, wert)
+  if (!resolved.ok) return resolved
+  const host = new URL(resolved.canonicalUrl).hostname
+  if (!resolved.source.domains.includes(host)) return { ok: false, reason: 'unregistered_domain' }
+  return { ...resolved, domain: host }
+}

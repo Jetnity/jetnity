@@ -246,7 +246,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') return { ok: false }
         return {
           ok: true,
-          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
         }
       },
     },
@@ -267,7 +267,7 @@ function driftTransport(): { transport: OfficialTruthSourceCatalogTransport; auf
             : realeEingaben().map((eintrag) => ({ ...eintrag, domains: ['drift.example'] }))
         return {
           ok: true,
-          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: eingaben.map(katalogZeile) },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
         }
       },
     },

@@ -28,6 +28,10 @@ export type R2FixturePublication = {
 export function r2Registry(authorities: QuellenRegistry, publications: readonly (string | R2FixturePublication)[]): QuellenRegistry {
   const items: ContentItemDescriptor[] = []
   const representations: RepresentationDescriptor[] = []
+  // Synthetic publications explicitly define this fixture's registered content
+  // hosts. Keep the caller's general source registry unchanged; v2 cannot use
+  // its historical descendant permission as an implicit content registration.
+  const sources = authorities.sources.map(source => ({ ...source, domains: [...source.domains] }))
   const urls = new Set<string>()
   for (const [index, raw] of publications.entries()) {
     const fixture = typeof raw === 'string' ? { url: raw } : raw
@@ -40,6 +44,14 @@ export function r2Registry(authorities: QuellenRegistry, publications: readonly 
     const url = address.toString()
     if (urls.has(url)) continue
     urls.add(url)
+    const source = sources.find(source => source.sourceId === resolved.source.sourceId)!
+    if (!source.domains.includes(address.hostname)) source.domains.push(address.hostname)
+    for (const requestUrl of fixture.requestUrls ?? []) {
+      const request = quellenUrlAufloesen(authorities, requestUrl)
+      if (!request.ok || request.source.sourceId !== source.sourceId) continue
+      const target = new URL(request.canonicalUrl)
+      if (!target.port && !source.domains.includes(target.hostname)) source.domains.push(target.hostname)
+    }
     const ref = { sourceId: resolved.source.sourceId, contentItemId: fixture.itemId ?? `fixture_item_${index}` }
     if (!items.some((item) => item.sourceId === ref.sourceId && item.contentItemId === ref.contentItemId)) {
       items.push({ ...ref, contentItemVersion: 1, current: true, externalIdNamespace: 'synthetic_namespace',
@@ -50,7 +62,9 @@ export function r2Registry(authorities: QuellenRegistry, publications: readonly 
       requestUrls: fixture.requestUrls ?? [url], expectedFinalUrl: url, expectedMediaType: fixture.mediaType ?? 'text/plain',
       identityProfileId: 'synthetic_identity', identityProfileVersion: 1, expectedLocale: null, expectedSchema: null })
   }
-  const graph = createContentIdentityGraph(authorities, items, representations, r2Profiles)
+  const explicit = quellenRegistryErstellen(sources, { blockedDomains: authorities.blockedDomains })
+  assert.ok(explicit.ok)
+  const graph = createContentIdentityGraph(explicit.registry, items, representations, r2Profiles)
   assert.equal(graph.ok, true, graph.ok ? undefined : graph.reason)
   if (!graph.ok) throw new Error('invalid synthetic fixture')
   return Object.freeze({ ...graph.value.authorityRegistry, contentIdentity: graph.value })

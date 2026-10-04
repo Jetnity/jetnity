@@ -132,7 +132,7 @@ function katalogTransport(quellen: readonly QuellenEingabe[] = eingaben()): Offi
       if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
       return {
         ok: true,
-        antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+        antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
       }
     },
   }
@@ -993,7 +993,7 @@ function katalogZaehler(quellen: readonly QuellenEingabe[] = eingaben()): {
         if (payload.operation !== 'read_registry') throw new Error('register_source darf nicht aufgerufen werden')
         return {
           ok: true,
-          antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry', sources: quellen.map(katalogZeile) },
+          antwort: { identity_schema: 2, ...r2CatalogRows(quellen.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
         }
       },
     },

@@ -4,7 +4,7 @@ import { evidenceScopeLesen } from '@/lib/readiness/evidence'
 import { checkedAtLesen, gültigkeitszeitLesen, quelleUrlLesen } from '@/lib/readiness/official'
 import { GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE } from '@/lib/readiness/official-truth-govuk-content-api-identity-profile'
 import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rule-claims'
-import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
+import { quellenRegistryErstellen, quellenUrlExaktAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
 type Frozen<T> = T extends readonly (infer U)[] ? readonly Frozen<U>[]
   : T extends object ? { readonly [K in keyof T]: Frozen<T[K]> } : T
@@ -344,7 +344,7 @@ export function createContentIdentityGraph(
       && profile.identityProfileVersion === rep.identityProfileVersion && profile.current)) return fail('profile_unavailable')
     // A final target may also be listed as a request; that is one binding.
     for (const url of new Set([...rep.requestUrls, rep.expectedFinalUrl])) {
-      const authority = quellenUrlAufloesen(registry, url)
+      const authority = quellenUrlExaktAufloesen(registry, url)
       if (!authority.ok) return fail('url_not_authorized')
       if (authority.source.sourceId !== rep.sourceId) return fail('source_mismatch')
       if (urlOwners.has(url) && urlOwners.get(url) !== key) return fail('url_conflict')
@@ -369,7 +369,7 @@ export function resolveCurrentContentRepresentation(graph: ContentIdentityGraph,
   if (!matches.length) return fail('not_registered')
   if (matches.length !== 1) return fail('ambiguous_url')
   const rep = matches[0]!
-  const authority = quellenUrlAufloesen(graph.authorityRegistry, url)
+  const authority = quellenUrlExaktAufloesen(graph.authorityRegistry, url)
   if (!authority.ok) return fail('url_not_authorized')
   if (authority.source.sourceId !== rep.sourceId) return fail('source_mismatch')
   // Copy also for a structurally forged test graph; never freeze caller data.
