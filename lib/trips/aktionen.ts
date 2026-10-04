@@ -49,9 +49,11 @@ import {
   neuePlanpunktNutzlastSchema,
   neueReiseSchema,
   reiseNutzlastSchema,
+  unterkunftZeitraumSchema,
   type ReiseNutzlast,
 } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
+import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 
 /**
  * Legt eine Reise aus dem Formular unter /planen an.
@@ -210,6 +212,49 @@ const kennungenSchema = z.object({
 const buchungsstatusSchema = kennungenSchema.extend({
   gebucht: z.boolean(),
 })
+
+/** Ändert ausschliesslich die Kalendertage einer manuellen Unterkunft. */
+export async function unterkunftZeitraumSetzen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
+  const kennungen = kennungenSchema.safeParse(eingabe)
+  if (!kennungen.success) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
+  const zeitraum = unterkunftZeitraumSchema.safeParse(eingabe)
+  if (!zeitraum.success) return { ok: false, meldung: ersteMeldung(zeitraum.error) }
+
+  const { supabase, benutzerId } = await konto()
+  if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+  const { tripId, itemId } = kennungen.data
+
+  const { data, error: lesefehler, status: lesestatus } = await supabase
+    .from('trip_items')
+    .select('id, kind, provider, external_ref, booking_url')
+    .eq('id', itemId)
+    .eq('trip_id', tripId)
+    .maybeSingle()
+  if (lesefehler) return { ok: false, meldung: meldungAus(lesefehler, lesestatus) }
+  if (!data) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
+  if (!istManuelleUnterkunft({
+    kind: data.kind, provider: data.provider, externalRef: data.external_ref, bookingUrl: data.booking_url,
+  })) return { ok: false, meldung: 'Nur manuelle Unterkünfte können hier einen Zeitraum erhalten.' }
+
+  const { data: geschrieben, error, status } = await supabase
+    .from('trip_items')
+    .update({ starts_on: zeitraum.data.startsOn, ends_on: zeitraum.data.endsOn })
+    .eq('id', itemId)
+    .eq('trip_id', tripId)
+    // Die Vorprüfung darf bei konkurrierender Änderung keine Providerdaten freigeben.
+    .eq('kind', 'stay')
+    .is('provider', null)
+    .is('external_ref', null)
+    .is('booking_url', null)
+    .select('id')
+    .maybeSingle()
+  if (error) return { ok: false, meldung: meldungAus(error, status) }
+  if (!geschrieben) return { ok: false, meldung: 'Die Unterkunft hat sich inzwischen geändert. Bitte lade die Reise neu.' }
+
+  revalidatePath(`/reisen/${tripId}`)
+  revalidatePath('/reisen')
+  return { ok: true, wert: null }
+}
 
 /** Nimmt einen Planpunkt aus einer Reise im Konto. */
 export async function planpunktEntfernen(eingabe: unknown): Promise<Aktionsergebnis<null>> {

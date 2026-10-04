@@ -66,7 +66,8 @@ import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
-import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
+import { ersteMeldung, reiseLesen, unterkunftZeitraumSchema, type PlanpunktFormular } from '@/lib/trips/schema'
+import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPruefen } from '@/lib/mobility/manuell'
 import { rentalCarManuellLesen, rentalCarManuellZuPunkt, rentalZugehoerigkeitPruefen } from '@/lib/rental-cars/manuell'
 import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
@@ -1118,6 +1119,20 @@ export function gastMietwagenAnlegen(reise: Trip, roh: unknown): Trip {
       : reise.days,
     ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
   })
+}
+
+/** Ersetzt nur die zwei Kalendertage des exakt einen manuellen Stay-Items. */
+export function gastUnterkunftZeitraumSetzen(reise: Trip, punktId: string, startsOn: string, endsOn: string): Trip {
+  const zeitraum = unterkunftZeitraumSchema.safeParse({ startsOn, endsOn })
+  if (!zeitraum.success) throw new Error(ersteMeldung(zeitraum.error))
+  const treffer = [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
+    .filter((punkt) => punkt.id === punktId)
+  if (treffer.length !== 1) throw new Error('Dieser Planpunkt ist unbekannt.')
+  const punkt = treffer[0]!
+  if (!istManuelleUnterkunft(punkt)) {
+    throw new Error('Nur manuelle Unterkünfte können hier einen Zeitraum erhalten.')
+  }
+  return gastreiseSpeichern(punktErsetzen(reise, punktId, { ...punkt, ...zeitraum.data }))
 }
 
 /** Setzt oder korrigiert den manuellen Buchungsstatus eines Flug-/Stay-/Transfer-/Mietwagen-Punkts. */
