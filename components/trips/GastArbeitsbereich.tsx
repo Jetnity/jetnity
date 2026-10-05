@@ -24,6 +24,7 @@ import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   gastAktivitaetUebernehmen,
   gastBuchungsstatusSetzen,
+  gastFlugRouteManuellSetzen,
   gastHotelUebernehmen,
   gastMietwagenAnlegen,
   gastMobilitaetAnlegen,
@@ -153,6 +154,14 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       quelle="guest"
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onFlugRouteManuell={async (itemId, segments) => {
+        try {
+          setReise(gastFlugRouteManuellSetzen(reise, itemId, segments))
+          return null
+        } catch (fehler) {
+          return fehler instanceof Error ? fehler.message : 'Die Flugroute konnte nicht gespeichert werden.'
+        }
+      }}
       onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
         try {
           setReise(gastUnterkunftZeitraumSetzen(reise, itemId, startsOn, endsOn))

@@ -652,6 +652,45 @@ export const planpunktFormularSchema = z.object({
 
 export type PlanpunktFormular = z.infer<typeof planpunktFormularSchema>
 
+const manuelleIata = z.string().max(32).trim().transform((wert) => wert.toUpperCase())
+  .pipe(z.string().regex(/^[A-Z]{3}$/, 'Bitte gib einen IATA-Code mit drei Buchstaben an.'))
+const optionaleFlugzeit = z.union([uhrzeit, z.literal(''), z.null()]).optional()
+  .transform((wert) => wert || null)
+const flugSegmentManuellSchema = z.object({
+  origin: manuelleIata,
+  destination: manuelleIata,
+  departureDate: datum,
+  departureTime: optionaleFlugzeit,
+  arrivalDate: datum,
+  arrivalTime: optionaleFlugzeit,
+}).strict('Erlaubt sind nur IATA-Codes, Abflug- und Ankunftsdaten sowie optionale Uhrzeiten.')
+
+export type FlugSegmentManuell = z.infer<typeof flugSegmentManuellSchema>
+
+/** Nur Ankunft und Anschlussabflug am exakt selben Flughafen sind vergleichbar. */
+function anschlusszeitRueckwaerts(vonTag: string, vonZeit: string | null, bisTag: string, bisZeit: string | null): boolean {
+  return bisTag < vonTag || (bisTag === vonTag && vonZeit !== null && bisZeit !== null && bisZeit < vonZeit)
+}
+
+/** Ein manuelles Leg. Keine Client-Country-, Surface- oder Provider-Claims. */
+export const flugRouteManuellSchema = z.object({
+  segments: z.array(flugSegmentManuellSchema).min(1, 'Bitte gib mindestens ein Flugsegment an.')
+    .max(4, 'Höchstens vier Flugsegmente sind möglich.').superRefine((segmente, ctx) => {
+      for (const [index, segment] of segmente.entries()) {
+        const melden = (feld: keyof FlugSegmentManuell, message: string) =>
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: [index, feld], message: `Segment ${index + 1}: ${message}` })
+        if (segment.origin === segment.destination) melden('destination', 'Abflug und Ankunft müssen unterschiedliche Flughäfen sein.')
+        const vorher = segmente[index - 1]
+        if (vorher) {
+          if (segment.origin !== vorher.destination) melden('origin', 'Der Abflug muss am Ankunftsflughafen des vorherigen Segments liegen.')
+          else if (anschlusszeitRueckwaerts(vorher.arrivalDate, vorher.arrivalTime, segment.departureDate, segment.departureTime)) {
+            melden('departureDate', 'Der Anschluss darf nicht vor der vorherigen Ankunft liegen.')
+          }
+        }
+      }
+    }),
+}).strict('Erlaubt sind nur die Flugsegmente.')
+
 /** Derselbe enge Datumsvertrag für Formular, Konto und Gast; keine Ableitung. */
 export const unterkunftZeitraumSchema = z.object({
   startsOn: z.string({ required_error: 'Bitte gib Check-in und Check-out an.' })

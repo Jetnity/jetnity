@@ -66,7 +66,8 @@ import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
-import { ersteMeldung, reiseLesen, unterkunftZeitraumSchema, type PlanpunktFormular } from '@/lib/trips/schema'
+import { ersteMeldung, flugRouteManuellSchema, reiseLesen, unterkunftZeitraumSchema, type PlanpunktFormular } from '@/lib/trips/schema'
+import { istManuellerFlug, manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
 import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPruefen } from '@/lib/mobility/manuell'
 import { rentalCarManuellLesen, rentalCarManuellZuPunkt, rentalZugehoerigkeitPruefen } from '@/lib/rental-cars/manuell'
@@ -1119,6 +1120,20 @@ export function gastMietwagenAnlegen(reise: Trip, roh: unknown): Trip {
       : reise.days,
     ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
   })
+}
+
+/** Guest hält nur IATA und Nutzerzeiten, niemals Airport-Country-Truth. */
+export function gastFlugRouteManuellSetzen(reise: Trip, punktId: string, segments: unknown): Trip {
+  const geprueft = flugRouteManuellSchema.safeParse({ segments })
+  if (!geprueft.success) throw new Error(ersteMeldung(geprueft.error))
+  const treffer = [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
+    .filter((punkt) => punkt.id === punktId)
+  if (treffer.length !== 1) throw new Error('Dieser Planpunkt ist unbekannt.')
+  const punkt = treffer[0]!
+  if (!istManuellerFlug(punkt)) throw new Error('Nur manuelle Flüge können hier eine Flugroute erhalten.')
+  const route = manuelleFlugRouteBauen(geprueft.data.segments)
+  if (!route) throw new Error('Diese Flugroute ist ungültig.')
+  return gastreiseSpeichern(punktErsetzen(reise, punktId, { ...punkt, ...route }))
 }
 
 /** Ersetzt nur die zwei Kalendertage des exakt einen manuellen Stay-Items. */
