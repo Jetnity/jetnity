@@ -23,6 +23,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import { istKontoKennung, reiseLaden } from '@/lib/trips/daten'
 import { registryLaden } from '@/lib/traveller/account-registry-daten'
 import { registryTripAnzeigenAus } from '@/lib/traveller/account-registry-trip'
+import { tripOfficialEvaluationsAuswerten } from '@/lib/readiness/trip-official-evaluations-server'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 
@@ -77,11 +78,13 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
   const reise = zeilen[0]
   if (!reise) notFound()
 
+  const officialEvaluations = await tripOfficialEvaluationsAuswerten(reise)
   const registry = await registryLaden()
 
   return (
     <KontoArbeitsbereich
       reise={reise}
+      officialEvaluations={officialEvaluations}
       ohneTag={reise.ohneTag}
       registry={{
         problem: registry.problem,
