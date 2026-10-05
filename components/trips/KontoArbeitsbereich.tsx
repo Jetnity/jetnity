@@ -35,7 +35,7 @@ import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
 import { registryTripUebernahmeGesperrt } from '@/lib/traveller/account-registry-trip'
 import RegistryReiseUebernahme from '@/components/trips/RegistryReiseUebernahme'
-import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen, unterkunftZeitraumSetzen } from '@/lib/trips/aktionen'
+import { flugRouteManuellSetzen, planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen, unterkunftZeitraumSetzen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
@@ -105,6 +105,12 @@ export default function KontoArbeitsbereich({
       ohneTag={ohneTag}
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onFlugRouteManuell={async (itemId, segments) => {
+        const ergebnis = await flugRouteManuellSetzen({ tripId: reise.id, itemId, segments })
+        if (!ergebnis.ok) return ergebnis.meldung
+        router.refresh()
+        return null
+      }}
       onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
         const ergebnis = await unterkunftZeitraumSetzen({ tripId: reise.id, itemId, startsOn, endsOn })
         if (!ergebnis.ok) return ergebnis.meldung

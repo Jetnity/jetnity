@@ -63,7 +63,7 @@ import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import ReiseSicherheit from '@/components/trips/ReiseSicherheit'
 import ReisezeitHinweise from '@/components/trips/ReisezeitHinweise'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
-import type { PlanpunktFormular } from '@/lib/trips/schema'
+import type { FlugSegmentManuell, PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
@@ -197,6 +197,7 @@ type TripWorkspaceProps = {
   aktivitaetensuche?: React.ReactNode
   mobilitaetssuche?: React.ReactNode
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onFlugRouteManuell?: (itemId: string, segments: FlugSegmentManuell[]) => Promise<string | null>
   onUnterkunftZeitraum?: (itemId: string, startsOn: string, endsOn: string) => Promise<string | null>
   onReadinessSetzen?: (eingabe: {
     clientRef: string
@@ -289,6 +290,7 @@ export default function TripWorkspace({
   mobilitaetssuche,
   onBuchungsstatus,
   onUnterkunftZeitraum,
+  onFlugRouteManuell,
   onReadinessSetzen,
   onReadinessEntfernen,
   onTravellerSetzen,
@@ -897,7 +899,7 @@ export default function TripWorkspace({
             verborgen={!detailOffen || aktiveDomain !== 'fluege'}
             sichtbarKlasse="grid gap-6"
           >
-            <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
+            <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} onFlugRouteManuell={onFlugRouteManuell} />
           </FlaecheHuelle>
         )}
         {hotelBestandBereit && (

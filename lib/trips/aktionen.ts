@@ -36,6 +36,9 @@ import { reiseorteBestaetigen } from '@/lib/places/aktionen'
 import { istOrtId } from '@/lib/places/domain'
 import { ORT_MELDUNG, ortAusBestand } from '@/lib/places/pruefen'
 import { createServerActionClient } from '@/lib/supabase/server'
+import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
+import { istManuellerFlug, manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
+import type { Json } from '@/types/supabase'
 import { createZieleGraph } from '@/lib/trips/create-stages'
 import {
   NICHT_ANGEMELDET,
@@ -46,6 +49,7 @@ import {
 } from '@/lib/trips/anlegen'
 import {
   ersteMeldung,
+  flugRouteManuellSchema,
   neuePlanpunktNutzlastSchema,
   neueReiseSchema,
   reiseNutzlastSchema,
@@ -212,6 +216,66 @@ const kennungenSchema = z.object({
 const buchungsstatusSchema = kennungenSchema.extend({
   gebucht: z.boolean(),
 })
+
+const flugRouteManuellNutzlastSchema = flugRouteManuellSchema.extend(kennungenSchema.shape)
+
+/** Enger Manual-only-Route-Schreibweg; RLS bleibt die Ownership-Grenze. */
+export async function flugRouteManuellSetzen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
+  const geprueft = flugRouteManuellNutzlastSchema.safeParse(eingabe)
+  if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
+  const fehlertext = 'Die Flugroute konnte nicht gespeichert werden. Bitte prüfe deine Angaben oder versuche es erneut.'
+  try {
+    const { supabase, benutzerId } = await konto()
+    if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+    const { tripId, itemId, segments } = geprueft.data
+    const { data, error: lesefehler, status: lesestatus } = await supabase
+      .from('trip_items')
+      .select('id, kind, provider, external_ref, booking_url, metadata')
+      .eq('id', itemId)
+      .eq('trip_id', tripId)
+      .maybeSingle()
+    if (lesefehler) return { ok: false, meldung: meldungAus({ ...lesefehler, message: fehlertext }, lesestatus) }
+    if (!data) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
+    if (!istManuellerFlug({ kind: data.kind, provider: data.provider, externalRef: data.external_ref, bookingUrl: data.booking_url })) {
+      return { ok: false, meldung: 'Nur manuelle Flüge können hier eine Flugroute erhalten.' }
+    }
+    const codes = [...new Set(segments.flatMap((segment) => [segment.origin, segment.destination]))]
+    const refs = await flughafenReferenzLesen(codes, supabase)
+    if (codes.some((code) => !Object.hasOwn(refs, code))) {
+      return { ok: false, meldung: 'Mindestens ein Flughafen konnte nicht bestätigt werden. Bitte prüfe die IATA-Codes oder versuche es später erneut.' }
+    }
+    const route = manuelleFlugRouteBauen(segments, refs)
+    if (!route || !data.metadata || typeof data.metadata !== 'object' || Array.isArray(data.metadata)) {
+      return { ok: false, meldung: fehlertext }
+    }
+    const { data: geschrieben, error, status } = await supabase
+      .from('trip_items')
+      .update({
+        metadata: { ...data.metadata, routeItinerary: route.routeItinerary as unknown as Json },
+        starts_on: route.startsOn,
+        starts_at: route.startsAt,
+        ends_on: route.endsOn,
+        ends_at: route.endsAt,
+      })
+      .eq('id', itemId)
+      .eq('trip_id', tripId)
+      .eq('kind', 'flight')
+      .is('provider', null)
+      .is('external_ref', null)
+      .is('booking_url', null)
+      // Keine zwischenzeitlich ergänzten, fachfremden Metadata überschreiben.
+      .eq('metadata', JSON.stringify(data.metadata))
+      .select('id')
+      .maybeSingle()
+    if (error) return { ok: false, meldung: meldungAus({ ...error, message: fehlertext }, status) }
+    if (!geschrieben) return { ok: false, meldung: 'Der Flug hat sich inzwischen geändert. Bitte lade die Reise neu.' }
+    revalidatePath(`/reisen/${tripId}`)
+    revalidatePath('/reisen')
+    return { ok: true, wert: null }
+  } catch {
+    return { ok: false, meldung: fehlertext }
+  }
+}
 
 /** Ändert ausschliesslich die Kalendertage einer manuellen Unterkunft. */
 export async function unterkunftZeitraumSetzen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
