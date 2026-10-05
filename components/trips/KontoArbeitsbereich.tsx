@@ -30,6 +30,7 @@ import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { rentalCarManuellInReiseAnlegen } from '@/lib/rental-cars/aktionen'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { readinessEntfernen, readinessSetzen } from '@/lib/readiness/aktionen'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { registryTravellerInReiseUebernehmen, travellerEntfernen, travellerSetzen } from '@/lib/readiness/reisende-aktionen'
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
@@ -49,10 +50,12 @@ import type { Trip, TripItem } from '@/types/trips'
 export default function KontoArbeitsbereich({
   reise,
   ohneTag,
+  officialEvaluations,
   registry,
 }: {
   reise: Trip
   ohneTag: TripItem[]
+  officialEvaluations: OfficialEvaluation[]
   registry?: {
     problem: Problem | null
     travellers: RegistryTripAnzeige[] | null
@@ -101,6 +104,7 @@ export default function KontoArbeitsbereich({
   return (
     <TripWorkspace
       reise={reise}
+      officialEvaluations={officialEvaluations}
       quelle="account"
       ohneTag={ohneTag}
       onPunktAnlegen={anlegen}
