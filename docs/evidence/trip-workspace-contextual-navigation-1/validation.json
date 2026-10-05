@@ -1,0 +1,127 @@
+{
+  "checkedAt": "2026-10-05T10:10:23.843874+00:00",
+  "baseline": "3ba69f15907e0652cfe83478dabcf91904ca9a00",
+  "seed": "10e7ac7d7f40e912af56eecce04f8b7cdf03be70",
+  "taskBlob": "c839b3a6d8e0e790e123e9cbf8123b36775977ad",
+  "sourceBlobs": {
+    "components/trips/Reisevorbereitung.tsx": "55453cf901141597dbc7aceab9501f78b68f9b47",
+    "components/trips/TripWorkspace.tsx": "cdb5afd71579f56ddefec9d6b7fb0bdee873cdf0",
+    "components/trips/TripWorkspaceDetail.tsx": "1f2335354f629dcbf71597c3694a486527886f06",
+    "components/trips/TripWorkspaceNavigation.tsx": "50d7793ffbbbd4bd6a0c53c56f4a3a2de4327496",
+    "lib/readiness/preparation-identity.test.ts": "80170ce0407ebb07ea3a8c83bcbedd14093f3340",
+    "lib/readiness/preparation-premium-experience-5.test.ts": "667bdb5502df8f94243614066aef2a827a64ca0c",
+    "lib/readiness/preparation-premium-experience-5.ts": "68c1d5a2d333da944e2987bbfef0ee019b8532af",
+    "lib/trips/attention-presentation.test.ts": "c3aba8dc68092e7e06986cd77bc92725c9fb40c0",
+    "lib/trips/attention-presentation.ts": "ea288d05783403f9d5e1b48e7c1af384472c1ae0",
+    "lib/trips/attention.test.ts": "ddfad38e2a1640a080d3f92e1ed041ffdfbcd83f",
+    "lib/trips/attention.ts": "282d4d96ef45883c473a06be49a7617f01b4ea86",
+    "lib/trips/cross-device-interaction-1.test.ts": "82227b71e0803c61609006d63a62a7fa1e930a55",
+    "lib/trips/detail.test.ts": "6b533a239be25980aae1a2649a50cf3b65453bad",
+    "lib/trips/detail.ts": "fe85b27abc747145dcb955ab7ca3d069ff65adcd",
+    "lib/trips/organize-premium-experience-6.test.ts": "1d10e88555e61301fd2dcb0d7cf6377f226b1276",
+    "lib/trips/workspace-mode-2.test.ts": "9b2d592a2d5eb88eb0e5cff7aefc1ac1807f6c26",
+    "lib/trips/workspace-mode.ts": "ffcddf3821eed98005af9ed1c70202f8a281aa33",
+    "scripts/trip-workspace-contextual-navigation-1-audit.mjs": "e1acab0eab7a2b1b28c7865efa484670f7121ed4"
+  },
+  "validation": [
+    {
+      "check": "test",
+      "exit": 1,
+      "command": "npm test"
+    },
+    {
+      "check": "typecheck",
+      "exit": 0,
+      "command": "npm run typecheck"
+    },
+    {
+      "check": "lint",
+      "exit": 0,
+      "command": "npm run lint"
+    },
+    {
+      "check": "check:operating-mode",
+      "exit": 0,
+      "command": "npm run check:operating-mode"
+    },
+    {
+      "check": "check:api-schutz",
+      "exit": 0,
+      "command": "npm run check:api-schutz"
+    },
+    {
+      "check": "check:schema-bezug",
+      "exit": 0,
+      "command": "npm run check:schema-bezug"
+    },
+    {
+      "check": "check:dead",
+      "exit": 0,
+      "command": "npm run check:dead"
+    },
+    {
+      "check": "check:exports",
+      "exit": 0,
+      "command": "npm run check:exports"
+    },
+    {
+      "check": "check:deps",
+      "exit": 0,
+      "command": "npm run check:deps"
+    },
+    {
+      "check": "build",
+      "exit": 0,
+      "command": "npm run build"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "focused workspace/detail/attention/preparation/premium tests (10 files)",
+      "exit": 0,
+      "tests": 155,
+      "failed": 0
+    }
+  ],
+  "testSummary": {
+    "total": 5285,
+    "passed": 5281,
+    "failed": 4,
+    "reason": "Existing disposable PostgreSQL tests: spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT",
+    "affectedUnmodifiedFiles": [
+      "lib/readiness/official-truth-catalog-hardening-schema.test.ts",
+      "lib/readiness/official-truth-content-identity-schema-v2.test.ts",
+      "lib/readiness/official-truth-source-catalog-server.test.ts",
+      "lib/readiness/official-truth-store-server.test.ts"
+    ]
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 144
+  },
+  "modelEvidence": {
+    "source": "local Codex rollout turn_context metadata; no message content",
+    "session": "01a10b66-1800-79b3-bb45-7068f172009b",
+    "turns": [
+      {
+        "turn_id": "01a10b66-194b-7083-9335-5303f3b83949",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "turn_id": "01a10b6d-b55d-7c30-90ef-edafa0fd14c5",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "turn_id": "01a10b6d-b55d-7c30-90ef-edafa0fd14c5",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      }
+    ]
+  },
+  "hostedDbAccess": false,
+  "productionMutation": false
+}

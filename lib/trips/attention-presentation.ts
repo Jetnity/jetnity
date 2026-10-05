@@ -21,7 +21,14 @@ export function attentionGruppieren(punkte: readonly AttentionPunkt[]): Attentio
       punkt.lage,
       punkt.titel,
       punkt.ebene,
-      punkt.aktion ? [punkt.aktion.art, punkt.aktion.bereich] : null,
+      punkt.aktion ? [
+        punkt.aktion.art,
+        punkt.aktion.bereich,
+        punkt.aktion.preparationZiel ? [
+          punkt.aktion.preparationZiel.bereich,
+          punkt.aktion.preparationZiel.travellerClientRef ?? null,
+        ] : null,
+      ] : null,
     ])
     const gruppe = gruppen.get(schluessel)
     if (gruppe) {

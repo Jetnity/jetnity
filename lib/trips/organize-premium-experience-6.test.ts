@@ -100,7 +100,7 @@ test('kompakte Rückkehr folgt der gemessenen Kopfkante und sonst dem Kopfvertra
   assert.match(navigation, /organisierenRueckkehrAbstand/)
   assert.match(navigation, /ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK/)
   assert.match(navigation, /min-h-11/)
-  assert.match(navigation, /Zurück zur Reise/)
+  assert.match(navigation, /\{rueckkehr.label\}/)
   assert.equal(navigation.includes('72px'), false)
 })
 

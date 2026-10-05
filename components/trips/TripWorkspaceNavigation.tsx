@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type RefObject } from 'react'
 import { ArrowLeft } from 'lucide-react'
+import type { WorkspaceRueckkehr } from '@/lib/trips/detail'
 
 import {
   ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK,
@@ -20,11 +21,11 @@ function kopfUntenLesen(): number | null {
 
 export default function TripWorkspaceNavigation({
   sichtbar,
-  onZurueck,
+  rueckkehr,
   zurueckRef,
 }: {
   sichtbar: boolean
-  onZurueck: () => void
+  rueckkehr: WorkspaceRueckkehr
   zurueckRef: RefObject<HTMLButtonElement | null>
 }) {
   const [abstand, setAbstand] = useState(ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK)
@@ -57,12 +58,12 @@ export default function TripWorkspaceNavigation({
       <button
         ref={zurueckRef}
         type="button"
-        onClick={onZurueck}
+        onClick={rueckkehr.ausfuehren}
         style={{ scrollMarginTop: abstand }}
         className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-200 bg-white px-3.5 text-sm font-semibold text-brand-800 transition hover:border-line-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        Zurück zur Reise
+        {rueckkehr.label}
       </button>
     </nav>
   )
