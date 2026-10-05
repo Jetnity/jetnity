@@ -1,0 +1,58 @@
+{
+  "kind": "helper-and-consumer-proof",
+  "writer": "Jetnity MFA existing factor step-up 1 / Generation 1",
+  "session": "bc-7a6af588-d7cf-4bd4-8707-fb4b3b8127a6",
+  "capturedAt": "2026-09-22T11:36:00Z",
+  "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/auth/mfa.test.ts lib/auth/account-security-faktoren.test.ts",
+  "result": "24 pass / 0 fail after repair",
+  "baselineSameCommand": "8 fail including the current-shape verified fixture",
+  "cases": [
+    {
+      "name": "aktuelle SDK-Form factor_type=totp + verified startet genau eine Challenge",
+      "fixture": "all/totp with id synthetic-factor, factor_type totp, status verified",
+      "before": "throws no-factor, challengeCount 0",
+      "after": "returns factorId synthetic-factor and challengeId synthetic-challenge, listCount 1, challengeCount 1"
+    },
+    {
+      "name": "legacy type=totp ohne factor_type bleibt unterstützter Fallback",
+      "after": "selects legacy-type-factor, challengeCount 1"
+    },
+    {
+      "name": "factor_type schlägt widersprüchliches legacy type; phone wird kein TOTP",
+      "after": "no-factor, challengeCount 0"
+    },
+    {
+      "name": "unverified zuerst, verified danach wählt nur den verified TOTP",
+      "after": "selects verified-second, challengeCount 1"
+    },
+    {
+      "name": "nur unverified / empty / phone-only / missing id",
+      "after": "genuine no-factor, challengeCount 0"
+    },
+    {
+      "name": "missing SDK method / rejected list / thrown list / unreadable response",
+      "after": "error, not no-factor, challengeCount 0"
+    },
+    {
+      "name": "challenge error / missing challengeId",
+      "after": "error, no fake success id"
+    },
+    {
+      "name": "fresh AAL1 opens MFATotpDialog code labels, not enrollment",
+      "after": "dialog markup contains Bestätige deinen TOTP-Code and 6-stelligen Code; no einrichten/otpauth"
+    },
+    {
+      "name": "already AAL2 starts no challenge",
+      "after": "LoginForm condition false; challengeCount 0"
+    },
+    {
+      "name": "true no-factor is setup; lookup failure is not",
+      "after": "istKeinTotpFaktorFehler true only for MFA_TOTP_FEHLT"
+    }
+  ],
+  "notProven": [
+    "real authenticated login on a second device",
+    "real Admin /admin/mfa network challenge",
+    "hydrated Next route with browser events"
+  ]
+}

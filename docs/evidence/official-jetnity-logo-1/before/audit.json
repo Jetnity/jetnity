@@ -1,0 +1,306 @@
+{
+  "stand": "2026-09-30T17:29:54.559Z",
+  "phase": "before",
+  "basis": "http://localhost:3000",
+  "fehler": [],
+  "ergebnis": "PASS",
+  "laeufe": [
+    {
+      "name": "360x800",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "header": {
+          "width": 360,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 360,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": {
+          "width": 44,
+          "height": 44,
+          "top": 14,
+          "left": 296,
+          "right": 340,
+          "bottom": 58,
+          "background": "rgb(255, 255, 255)",
+          "filter": "none",
+          "overflowX": "visible",
+          "expanded": "false",
+          "label": "Menü öffnen"
+        },
+        "htmlFont": "16px"
+      },
+      "menuOffen": {
+        "hidden": false,
+        "width": 360,
+        "height": 298,
+        "right": 360,
+        "scrollWidth": 360,
+        "clientWidth": 360
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "390x844",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "header": {
+          "width": 390,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 390,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": {
+          "width": 44,
+          "height": 44,
+          "top": 14,
+          "left": 326,
+          "right": 370,
+          "bottom": 58,
+          "background": "rgb(255, 255, 255)",
+          "filter": "none",
+          "overflowX": "visible",
+          "expanded": "false",
+          "label": "Menü öffnen"
+        },
+        "htmlFont": "16px"
+      },
+      "menuOffen": {
+        "hidden": false,
+        "width": 390,
+        "height": 298,
+        "right": 390,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "768x1024",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "header": {
+          "width": 768,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 768,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": null,
+        "htmlFont": "16px"
+      },
+      "menuOffen": null,
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "1024x768",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "header": {
+          "width": 1024,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 1024,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": null,
+        "htmlFont": "16px"
+      },
+      "menuOffen": null,
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "1440x900",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "header": {
+          "width": 1440,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 1440,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": null,
+        "htmlFont": "16px"
+      },
+      "menuOffen": null,
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "1920x1080",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "header": {
+          "width": 1920,
+          "height": 73,
+          "top": 0,
+          "left": 0,
+          "right": 1920,
+          "bottom": 73,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": null,
+        "htmlFont": "16px"
+      },
+      "menuOffen": null,
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "text-200-360x800",
+      "text200": true,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "header": {
+          "width": 360,
+          "height": 225,
+          "top": 0,
+          "left": 0,
+          "right": 360,
+          "bottom": 225,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": {
+          "width": 88,
+          "height": 88,
+          "top": 120,
+          "left": 40,
+          "right": 128,
+          "bottom": 208,
+          "background": "rgb(255, 255, 255)",
+          "filter": "none",
+          "overflowX": "visible",
+          "expanded": "false",
+          "label": "Menü öffnen"
+        },
+        "htmlFont": "32px"
+      },
+      "menuOffen": {
+        "hidden": false,
+        "width": 360,
+        "height": 580.0625,
+        "right": 360,
+        "scrollWidth": 360,
+        "clientWidth": 360
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "text-200-1024x768",
+      "text200": true,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "header": {
+          "width": 1024,
+          "height": 217,
+          "top": 0,
+          "left": 0,
+          "right": 1024,
+          "bottom": 217,
+          "background": "rgba(245, 244, 238, 0.95)",
+          "filter": "none",
+          "overflowX": "visible"
+        },
+        "navImg": null,
+        "navLink": null,
+        "footImg": null,
+        "footLink": null,
+        "menu": null,
+        "htmlFont": "32px"
+      },
+      "menuOffen": null,
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    }
+  ]
+}

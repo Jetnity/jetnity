@@ -1,0 +1,83 @@
+{
+  "agent": "Jetnity admin account counts caller status 1",
+  "generation": 1,
+  "localOnly": true,
+  "engine": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu",
+  "systemClusterUsed": false,
+  "hostedUsed": false,
+  "results": {
+    "callerStatusReaderActivationParser": { "passed": 29, "total": 29 },
+    "localDeliveryRolloutNodeSafety": { "passed": 17, "total": 17 },
+    "httpHarness": { "passed": 21, "total": 21, "livePostgrest": false },
+    "producerSql": {
+      "passed": 70,
+      "total": 70,
+      "categories": {
+        "static-source": 4,
+        "psqlrc-node": 4,
+        "auth-sql": 18,
+        "caller-status-sql": 13,
+        "lifecycle-sql": 4,
+        "window-sql": 5,
+        "zero-vs-deny-sql": 2,
+        "rls-sql": 6,
+        "catalog": 13,
+        "cleanup-node": 1
+      }
+    },
+    "wrapperSql": {
+      "passed": 36,
+      "total": 36,
+      "categories": {
+        "static-source": 2,
+        "wrapper-transport-sql": 1,
+        "wrapper-auth-sql": 13,
+        "wrapper-acl-sql": 1,
+        "wrapper-catalog": 6,
+        "caller-status-sql": 12,
+        "cleanup-node": 1
+      }
+    },
+    "rolloutRehearsal": {
+      "passed": 139,
+      "total": 139,
+      "categories": {
+        "source-pin": 8,
+        "unexpected-object": 9,
+        "fault-closed": 2,
+        "install-repeat": 6,
+        "authorization": 14,
+        "owner-acl": 1,
+        "adversarial-drift": 70,
+        "rollback": 3,
+        "reinstall-revoke": 13,
+        "staged-unexposed": 12,
+        "cleanup-node": 1
+      }
+    },
+    "hygiene": {
+      "checkDead": "PASS 0 orphans",
+      "checkExports": "PASS 0 unused",
+      "checkOperatingMode": "PASS"
+    }
+  },
+  "fixtureObservations": {
+    "localDeliveryAuthorizedPresent": "14",
+    "localDeliveryAuthorizedWindow": "10",
+    "rolloutGrantedAuthorizedPresent": "16",
+    "rolloutGrantedAuthorizedWindow": "12",
+    "blockedCallerSqlstate": "42501",
+    "populationUnchangedWhenOnlyCallerStatusChanges": true
+  },
+  "cleanup": {
+    "ownedClustersRemoved": true,
+    "historicalRolloutEvidenceRestored": true
+  },
+  "notes": [
+    "PostgreSQL version is the local disposable engine, not Production 17.6.",
+    "Banned/disabled/pending privileged callers are now denied before counts.",
+    "Banned/internal/unconfirmed profiles remain in the counted population.",
+    "No hosted SQL, live accounts, or secrets were used.",
+    "Historical #555 evidence files were not rewritten."
+  ]
+}

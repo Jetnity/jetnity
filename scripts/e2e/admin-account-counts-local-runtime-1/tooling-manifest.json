@@ -1,0 +1,24 @@
+{
+  "selectedCli": "2.117.0",
+  "tag": "v2.117.0",
+  "releaseId": 384221143,
+  "prerelease": false,
+  "releaseApi": "https://api.github.com/repos/supabase/cli/releases/tags/v2.117.0",
+  "checksumsUrl": "https://github.com/supabase/cli/releases/download/v2.117.0/checksums.txt",
+  "checksumsApiDigest": "sha256:afcec54b3b19d8c73957cafb4956bb10cb7493207c29df60cdcd9afe6317cdb0",
+  "archives": {
+    "linux-x64": {
+      "name": "supabase_2.117.0_linux_amd64.tar.gz",
+      "apiDigest": "sha256:69c05f85b9e47ee706d30f1a6ca8a526b4e337bfd12c7ef1ef522d24e7280d24"
+    },
+    "darwin-arm64": {
+      "name": "supabase_2.117.0_darwin_arm64.tar.gz",
+      "apiDigest": "sha256:c8a298065b374836a42945f5d78ab9348d328bcfd099c14d3e5b0b537791209b"
+    }
+  },
+  "acquisition": "one bounded official hash-checked archive into run-owned tooling, never apt/npx-latest/system install",
+  "pathPresenceIsNotAPin": true,
+  "versionHelpIsNotBinaryProof": true,
+  "executableMustBindOfficialArchive": true,
+  "silentVersionSwitchForbidden": true
+}

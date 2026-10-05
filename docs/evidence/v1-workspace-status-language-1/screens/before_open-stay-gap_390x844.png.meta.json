@@ -1,0 +1,43 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-stay-gap_390x844.png",
+  "phase": "before",
+  "name": "open-stay-gap_390x844",
+  "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+  "productTree": {
+    "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M AGENTS.md",
+      "M next-env.d.ts",
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:01:41.156Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3016/reisen/trip-v1-status-open",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "return-overview",
+    "click-Unterkunft"
+  ],
+  "state": "open-stay-gap",
+  "wording": {
+    "eyebrow": "Lücke",
+    "heading": "Unterkunft",
+    "gapLage": "offen",
+    "gapPflicht": "ja",
+    "attention": [
+      "Flugstrecke noch offenknown_gap",
+      "Flugstrecke noch offenknown_gap",
+      "Unterkunftsnächte fehlen nochknown_gap",
+      "Unterkunftsnächte fehlen nochknown_gap",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ]
+  }
+}

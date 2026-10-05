@@ -1,0 +1,50 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/before_complex-hotel-from-scrolled_390x844.png",
+  "phase": "before",
+  "name": "complex-hotel-from-scrolled_390x844",
+  "sha": "efacfc9e31d23ce4429e9bf5a7c004a3b70ff591",
+  "capturedAt": "2026-09-21T17:38:50.464Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "gap-hotel-from-scrolled",
+  "before": {
+    "scrollY": 1301,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "FlügeNoch kein Flug ausgewählt",
+      "aria": "Flüge"
+    },
+    "zurueck": null,
+    "heading": null
+  },
+  "after": {
+    "scrollY": 1433,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 81,
+      "w": 169.421875,
+      "h": 44,
+      "top": 81,
+      "bottom": 125
+    },
+    "heading": {
+      "text": "Unterkunft",
+      "x": 29,
+      "y": -525.5,
+      "w": 332,
+      "h": 28,
+      "top": -525.5,
+      "bottom": -497.5
+    }
+  }
+}

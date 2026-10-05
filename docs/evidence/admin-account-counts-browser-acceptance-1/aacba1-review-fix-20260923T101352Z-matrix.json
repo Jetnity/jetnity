@@ -1,0 +1,145 @@
+{
+  "verdict": "BLOCKED_ENVIRONMENT",
+  "summary": {
+    "counts": {
+      "PASS": 2,
+      "FAIL": 0,
+      "BLOCKED": 1,
+      "NOT RUN": 0,
+      "PARTIAL": 0,
+      "NOT IMPLEMENTED": 18,
+      "UNKNOWN": 0
+    },
+    "fullLocalExecution": false,
+    "applicationRan": false,
+    "preflightBlocked": true
+  },
+  "matrix": {
+    "G0_preflight": {
+      "id": "G0_preflight",
+      "result": "BLOCKED",
+      "evidence": "aacba1-review-fix-20260923T101352Z-preflight.json",
+      "notes": "container-runtime, supabase-cli. Missing Docker is an execution blocker, not a Production P0 incident. This command still does not implement stack/provision/browser execution."
+    },
+    "G1_source_pins": {
+      "id": "G1_source_pins",
+      "result": "PASS",
+      "evidence": "aacba1-review-fix-20260923T101352Z-source-manifest.json",
+      "notes": "Working-tree hash-object identity for the full applicable Auth/shared/client/UI/config/SQL set. Migration replay remains NOT IMPLEMENTED."
+    },
+    "G2_owned_stack": {
+      "id": "G2_owned_stack",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G3_auth_schema_not_bootstrap": {
+      "id": "G3_auth_schema_not_bootstrap",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G4_fixtures_via_gotrue": {
+      "id": "G4_fixtures_via_gotrue",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G5_app_boot_loopback": {
+      "id": "G5_app_boot_loopback",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G6_login_ui_password": {
+      "id": "G6_login_ui_password",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G7_aal1_denied_step_up": {
+      "id": "G7_aal1_denied_step_up",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G8_totp_enroll_via_ui": {
+      "id": "G8_totp_enroll_via_ui",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G9_aal2_admin_counts_on": {
+      "id": "G9_aal2_admin_counts_on",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G10_existing_factor_fresh_session": {
+      "id": "G10_existing_factor_fresh_session",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G11_default_off_no_section_no_rpc": {
+      "id": "G11_default_off_no_section_no_rpc",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G12_zero_window_and_delta": {
+      "id": "G12_zero_window_and_delta",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G13_ordinary_user_no_disclosure": {
+      "id": "G13_ordinary_user_no_disclosure",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G14_unauthenticated_no_disclosure": {
+      "id": "G14_unauthenticated_no_disclosure",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G15_role_downgrade_no_disclosure": {
+      "id": "G15_role_downgrade_no_disclosure",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G16_restricted_privileged_status": {
+      "id": "G16_restricted_privileged_status",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G17_missing_wrapper_unavailable": {
+      "id": "G17_missing_wrapper_unavailable",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G18_desktop_mobile_ui": {
+      "id": "G18_desktop_mobile_ui",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G19_http_boundary_same_session": {
+      "id": "G19_http_boundary_same_session",
+      "result": "NOT IMPLEMENTED",
+      "evidence": null,
+      "notes": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+    },
+    "G20_owned_cleanup": {
+      "id": "G20_owned_cleanup",
+      "result": "PASS",
+      "evidence": "aacba1-review-fix-20260923T101352Z-cleanup.json",
+      "notes": "No owned stack/app was started. Dry-run refuses delete while a process remains active, after signal failure, or when Docker services are unverified."
+    }
+  }
+}

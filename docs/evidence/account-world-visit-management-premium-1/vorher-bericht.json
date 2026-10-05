@@ -1,0 +1,342 @@
+{
+  "marke": "vorher",
+  "erwartung": "alt",
+  "profil": "hoehe",
+  "befunde": [],
+  "konsole": [],
+  "netz": [],
+  "messungen": [
+    {
+      "breite": "390x844",
+      "zustand": "dichte-ruhe",
+      "seiteHoehe": 11618,
+      "ueberlauf": false,
+      "scrollBreite": 390,
+      "clientBreite": 390,
+      "headingBisFormular": 8176,
+      "karten": 40,
+      "button": null,
+      "klein": [],
+      "schriften": [
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-ort",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-land-suche",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "_R_2h5fiv5tabrb_-land-select",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        }
+      ],
+      "h1UnterNav": false,
+      "fehlerText": false,
+      "leerText": false,
+      "lissabon": 4
+    },
+    {
+      "breite": "390x844",
+      "zustand": "dichte-ruhe-alt",
+      "seiteHoehe": 11618,
+      "karten": 40,
+      "headingBisFormular": 8176,
+      "ueberlauf": false
+    },
+    {
+      "breite": "390x844",
+      "zustand": "welt",
+      "seiteHoehe": 6289,
+      "karten": 7,
+      "headingBisFormular": 1357,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "390x844",
+      "zustand": "leer",
+      "seiteHoehe": 3470,
+      "leerText": true,
+      "fehlerText": false,
+      "headingBisFormular": 378,
+      "ueberlauf": false
+    },
+    {
+      "breite": "390x844",
+      "zustand": "fehler",
+      "seiteHoehe": 2988,
+      "leerText": false,
+      "fehlerText": true,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "dichte-ruhe",
+      "seiteHoehe": 7120,
+      "ueberlauf": false,
+      "scrollBreite": 768,
+      "clientBreite": 768,
+      "headingBisFormular": 4164,
+      "karten": 40,
+      "button": null,
+      "klein": [],
+      "schriften": [
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-ort",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-land-suche",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "_R_2h5fiv5tabrb_-land-select",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        }
+      ],
+      "h1UnterNav": false,
+      "fehlerText": false,
+      "leerText": false,
+      "lissabon": 4
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "dichte-ruhe-alt",
+      "seiteHoehe": 7120,
+      "karten": 40,
+      "headingBisFormular": 4164,
+      "ueberlauf": false
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "welt",
+      "seiteHoehe": 4730,
+      "karten": 7,
+      "headingBisFormular": 836,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "leer",
+      "seiteHoehe": 3128,
+      "leerText": true,
+      "fehlerText": false,
+      "headingBisFormular": 354,
+      "ueberlauf": false
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "fehler",
+      "seiteHoehe": 2826,
+      "leerText": false,
+      "fehlerText": true,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "dichte-ruhe",
+      "seiteHoehe": 6840,
+      "ueberlauf": false,
+      "scrollBreite": 1440,
+      "clientBreite": 1440,
+      "headingBisFormular": 4164,
+      "karten": 40,
+      "button": null,
+      "klein": [],
+      "schriften": [
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-ort",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-land-suche",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "_R_2h5fiv5tabrb_-land-select",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        }
+      ],
+      "h1UnterNav": false,
+      "fehlerText": false,
+      "leerText": false,
+      "lissabon": 4
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "dichte-ruhe-alt",
+      "seiteHoehe": 6840,
+      "karten": 40,
+      "headingBisFormular": 4164,
+      "ueberlauf": false
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "welt",
+      "seiteHoehe": 4124,
+      "karten": 7,
+      "headingBisFormular": 836,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "leer",
+      "seiteHoehe": 2904,
+      "leerText": true,
+      "fehlerText": false,
+      "headingBisFormular": 354,
+      "ueberlauf": false
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "fehler",
+      "seiteHoehe": 2622,
+      "leerText": false,
+      "fehlerText": true,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "dichte-ruhe",
+      "seiteHoehe": 6830,
+      "ueberlauf": false,
+      "scrollBreite": 1920,
+      "clientBreite": 1920,
+      "headingBisFormular": 4164,
+      "karten": 40,
+      "button": null,
+      "klein": [],
+      "schriften": [
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-ort",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "_R_2h5fiv5tabrb_-land-suche",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "_R_2h5fiv5tabrb_-land-select",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "SELECT",
+          "id": "",
+          "px": 14
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "px": 14
+        }
+      ],
+      "h1UnterNav": false,
+      "fehlerText": false,
+      "leerText": false,
+      "lissabon": 4
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "dichte-ruhe-alt",
+      "seiteHoehe": 6830,
+      "karten": 40,
+      "headingBisFormular": 4164,
+      "ueberlauf": false
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "welt",
+      "seiteHoehe": 4150,
+      "karten": 7,
+      "headingBisFormular": 836,
+      "ueberlauf": false,
+      "button": null
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "leer",
+      "seiteHoehe": 2930,
+      "leerText": true,
+      "fehlerText": false,
+      "headingBisFormular": 354,
+      "ueberlauf": false
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "fehler",
+      "seiteHoehe": 2648,
+      "leerText": false,
+      "fehlerText": true,
+      "ueberlauf": false,
+      "button": null
+    }
+  ]
+}

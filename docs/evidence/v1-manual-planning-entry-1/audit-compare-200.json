@@ -1,0 +1,501 @@
+{
+  "phase": "compare-200",
+  "capturedAt": "2026-09-21T19:15:53.548Z",
+  "productTree": {
+    "head": "293416bbe3a4cd182304cb34e474a83f75ddf06e",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M scripts/v1-manual-planning-entry-1-audit.mjs"
+    ]
+  },
+  "baseline": {
+    "sha": "1103407ba2a9e5fa76f4a8e588ab210934b955e3",
+    "basis": "http://localhost:3001",
+    "ok": true,
+    "messung": {
+      "clientWidth": 390,
+      "scrollWidth": 403,
+      "pageOverflow": 13,
+      "htmlOverflow": 13,
+      "bodyOverflow": 13,
+      "offenders": [
+        {
+          "id": null,
+          "tag": "a",
+          "className": "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:z-[10000] focus-visible:top-3 focus-visible:left-3 focus-visible:inline-flex focus-visible:m",
+          "text": "Zum Inhalt",
+          "left": -14,
+          "right": -13,
+          "width": 1,
+          "overflow": 14
+        },
+        {
+          "id": null,
+          "tag": "html",
+          "className": "",
+          "text": "Zum Inhalt\nJetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschre",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "body",
+          "className": "min-h-screen text-foreground antialiased",
+          "text": "Zum Inhalt\nJetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschre",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "div",
+          "className": "relative min-h-screen bg-surface-75",
+          "text": "Jetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so,",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "header",
+          "className": "sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]\n                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-ins",
+          "text": "Jetnity",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "div",
+          "className": "mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8",
+          "text": "Jetnity",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": "public-content",
+          "tag": "div",
+          "className": "min-h-[60dvh] outline-none",
+          "text": "Privater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du ",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "main",
+          "className": "min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14",
+          "text": "Privater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du ",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        }
+      ],
+      "budget": {
+        "left": 60,
+        "right": 389.921875,
+        "width": 329.921875,
+        "top": 426
+      },
+      "budgetLabel": {
+        "left": 60,
+        "right": 389.921875,
+        "width": 329.921875,
+        "top": 330
+      },
+      "planner": {
+        "left": 19,
+        "right": 368.90625,
+        "width": 349.90625,
+        "top": -4036
+      }
+    },
+    "meta": {
+      "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/compare200_baseline_390x844.png",
+      "phase": "compare-200",
+      "name": "baseline",
+      "sha": "1103407ba2a9e5fa76f4a8e588ab210934b955e3",
+      "capturedAt": "2026-09-21T19:15:54.550Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3001/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable + html-font-size-32px",
+      "actionSequence": [
+        "goto /planen",
+        "set html font-size 32px",
+        "scroll #feld-budget into view"
+      ],
+      "messung": {
+        "clientWidth": 390,
+        "scrollWidth": 403,
+        "pageOverflow": 13,
+        "htmlOverflow": 13,
+        "bodyOverflow": 13,
+        "offenders": [
+          {
+            "id": null,
+            "tag": "a",
+            "className": "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:z-[10000] focus-visible:top-3 focus-visible:left-3 focus-visible:inline-flex focus-visible:m",
+            "text": "Zum Inhalt",
+            "left": -14,
+            "right": -13,
+            "width": 1,
+            "overflow": 14
+          },
+          {
+            "id": null,
+            "tag": "html",
+            "className": "",
+            "text": "Zum Inhalt\nJetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschre",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "body",
+            "className": "min-h-screen text-foreground antialiased",
+            "text": "Zum Inhalt\nJetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschre",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "div",
+            "className": "relative min-h-screen bg-surface-75",
+            "text": "Jetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so,",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "header",
+            "className": "sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]\n                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-ins",
+            "text": "Jetnity",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "div",
+            "className": "mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8",
+            "text": "Jetnity",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": "public-content",
+            "tag": "div",
+            "className": "min-h-[60dvh] outline-none",
+            "text": "Privater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du ",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "main",
+            "className": "min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14",
+            "text": "Privater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du ",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          }
+        ],
+        "budget": {
+          "left": 60,
+          "right": 389.921875,
+          "width": 329.921875,
+          "top": 426
+        },
+        "budgetLabel": {
+          "left": 60,
+          "right": 389.921875,
+          "width": 329.921875,
+          "top": 330
+        },
+        "planner": {
+          "left": 19,
+          "right": 368.90625,
+          "width": 349.90625,
+          "top": -4036
+        }
+      }
+    }
+  },
+  "current": {
+    "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+    "basis": "http://localhost:3000",
+    "ok": true,
+    "messung": {
+      "clientWidth": 390,
+      "scrollWidth": 403,
+      "pageOverflow": 13,
+      "htmlOverflow": 13,
+      "bodyOverflow": 13,
+      "offenders": [
+        {
+          "id": null,
+          "tag": "a",
+          "className": "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:z-[10000] focus-visible:top-3 focus-visible:left-3 focus-visible:inline-flex focus-visible:m",
+          "text": "Zum Inhalt",
+          "left": -14,
+          "right": -13,
+          "width": 1,
+          "overflow": 14
+        },
+        {
+          "id": null,
+          "tag": "html",
+          "className": "",
+          "text": "Zum Inhalt\nJetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivate",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "body",
+          "className": "min-h-screen text-foreground antialiased",
+          "text": "Zum Inhalt\nJetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivate",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "div",
+          "className": "relative min-h-screen bg-surface-75",
+          "text": "Jetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentw",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "header",
+          "className": "sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]\n                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-ins",
+          "text": "Jetnity",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "div",
+          "className": "mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8",
+          "text": "Jetnity",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": "public-content",
+          "tag": "div",
+          "className": "min-h-[60dvh] outline-none",
+          "text": "Lieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentwurf\nBegin",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        },
+        {
+          "id": null,
+          "tag": "main",
+          "className": "min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14",
+          "text": "Lieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentwurf\nBegin",
+          "left": -13,
+          "right": 377,
+          "width": 390,
+          "overflow": 13
+        }
+      ],
+      "budget": {
+        "left": 60,
+        "right": 389.921875,
+        "width": 329.921875,
+        "top": 426
+      },
+      "budgetLabel": {
+        "left": 60,
+        "right": 389.921875,
+        "width": 329.921875,
+        "top": 330
+      },
+      "planner": {
+        "left": 19,
+        "right": 368.90625,
+        "width": 349.90625,
+        "top": -4036
+      }
+    },
+    "meta": {
+      "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/compare200_current_390x844.png",
+      "phase": "compare-200",
+      "name": "current",
+      "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+      "capturedAt": "2026-09-21T19:15:55.451Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable + html-font-size-32px",
+      "actionSequence": [
+        "goto /planen",
+        "set html font-size 32px",
+        "scroll #feld-budget into view"
+      ],
+      "messung": {
+        "clientWidth": 390,
+        "scrollWidth": 403,
+        "pageOverflow": 13,
+        "htmlOverflow": 13,
+        "bodyOverflow": 13,
+        "offenders": [
+          {
+            "id": null,
+            "tag": "a",
+            "className": "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:z-[10000] focus-visible:top-3 focus-visible:left-3 focus-visible:inline-flex focus-visible:m",
+            "text": "Zum Inhalt",
+            "left": -14,
+            "right": -13,
+            "width": 1,
+            "overflow": 14
+          },
+          {
+            "id": null,
+            "tag": "html",
+            "className": "",
+            "text": "Zum Inhalt\nJetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivate",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "body",
+            "className": "min-h-screen text-foreground antialiased",
+            "text": "Zum Inhalt\nJetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivate",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "div",
+            "className": "relative min-h-screen bg-surface-75",
+            "text": "Jetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentw",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "header",
+            "className": "sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]\n                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-ins",
+            "text": "Jetnity",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "div",
+            "className": "mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8",
+            "text": "Jetnity",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": "public-content",
+            "tag": "div",
+            "className": "min-h-[60dvh] outline-none",
+            "text": "Lieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentwurf\nBegin",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          },
+          {
+            "id": null,
+            "tag": "main",
+            "className": "min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14",
+            "text": "Lieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivater Reiseentwurf\nBegin",
+            "left": -13,
+            "right": 377,
+            "width": 390,
+            "overflow": 13
+          }
+        ],
+        "budget": {
+          "left": 60,
+          "right": 389.921875,
+          "width": 329.921875,
+          "top": 426
+        },
+        "budgetLabel": {
+          "left": 60,
+          "right": 389.921875,
+          "width": 329.921875,
+          "top": 330
+        },
+        "planner": {
+          "left": 19,
+          "right": 368.90625,
+          "width": 349.90625,
+          "top": -4036
+        }
+      }
+    }
+  },
+  "delta": {
+    "pageOverflow": 0,
+    "budgetRight": 0,
+    "budgetWidth": 0,
+    "budgetLabelRight": 0
+  },
+  "worsened": false,
+  "sameResidual": true,
+  "limits": [
+    "local Chromium/Playwright, not hardware/Safari",
+    "200% text uses html font-size 32px, not OS text-only zoom",
+    "baseline served from worktree 1103407b; current from this checkout",
+    "no general recapture; this is the matched 200% overflow comparison only"
+  ]
+}

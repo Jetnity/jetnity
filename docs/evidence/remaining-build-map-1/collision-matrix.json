@@ -1,0 +1,73 @@
+{
+  "pinnedMain": "35148a4ba065be1315dddf21174d7f272518d34c",
+  "correction": "R1-R3",
+  "rows": [
+    {
+      "pr": 544,
+      "invalidatedPreviousHead": "962b2209a7ab59262dc8ef1a18d360d443742dcb",
+      "mergeBase": "35148a4ba065be1315dddf21174d7f272518d34c",
+      "aheadBehindBeforePersist": "3/0",
+      "class": "current_docs_writer",
+      "ownedPaths": [
+        "docs/JETNITY_REMAINING_BUILD_MAP_1_*",
+        "docs/evidence/remaining-build-map-1/"
+      ]
+    },
+    {
+      "pr": 543,
+      "headAtFirstCapture": "218786742e4bcd73556193b1aba8786e03f2e2f6",
+      "headAtR1R3Correction": "676d64b44db3080744b5ccda1354a7f3dd0590f5",
+      "githubBase": "35148a4ba065be1315dddf21174d7f272518d34c",
+      "draft": true,
+      "commitsAtCorrection": 4,
+      "changedFilesAtCorrection": 28,
+      "localMergeBase": "UNVERIFIED_shallow_fetch",
+      "class": "IN_PROGRESS_NOT_MAIN",
+      "exclusiveOwner": "homepage_confirmed_route",
+      "auditedByThisMap": false
+    },
+    {
+      "pr": 52,
+      "head": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "mergeBase": "52e665acfed88303300870d50855177284588026",
+      "ahead": 67,
+      "behind": 1958,
+      "class": "historical_draft"
+    },
+    {
+      "pr": 50,
+      "head": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "mergeBase": "f92e0c9e2e6ddbe73b1cc2c59d7ba5521a0115c5",
+      "ahead": 3,
+      "behind": 1961,
+      "class": "historical_draft"
+    },
+    {
+      "pr": 40,
+      "head": "a316015733b86e2adbd050abb2f77258a99da366",
+      "mergeBase": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "ahead": 15,
+      "behind": 1967,
+      "class": "historical_draft"
+    },
+    {
+      "pr": 39,
+      "head": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "mergeBase": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "ahead": 11,
+      "behind": 1967,
+      "class": "historical_draft"
+    },
+    {
+      "pr": 28,
+      "head": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "mergeBase": "70c9c899f43ba495965e0171eed0b6bdf3bc208c",
+      "ahead": 1,
+      "behind": 2033,
+      "files": ["docs/CURSOR_TRIP_COLLABORATION_FOUNDATION.md"],
+      "presentOnPinnedMain": false,
+      "class": "historical_draft_read_only",
+      "phaseNote": "Issue 20 / obsolete Phase 3.1 timing claim; canonical collaboration is Phase 3. Do not resume."
+    }
+  ]
+}

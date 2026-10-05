@@ -1,0 +1,22 @@
+{
+  "capturedAt": "2026-09-21T22:20:00.000Z",
+  "scene": "1024x768 html font-size 32px text simulation",
+  "note": "Document overflowX at 1024/200% is pre-existing and outside first-hero ownership. First hero and header boxes remain viewport-bounded. Same offenders and overflowX=148 on baseline lg grid and after xl grid.",
+  "afterXl": {
+    "overflowX": 148,
+    "heroRight": 1024,
+    "headerRight": 1024,
+    "offenders": [
+      "Pro-section decorative glow absolute -right-28 -top-28 (later homepage section)",
+      "Navbar md:flex Anmelden / Reise planen",
+      "Inspiration destination cards (later section)"
+    ]
+  },
+  "baselineLg": {
+    "overflowX": 148,
+    "heroRight": 1024,
+    "headerRight": 1024,
+    "sameOffenders": true
+  },
+  "newlyIntroducedByThisSlice": false
+}

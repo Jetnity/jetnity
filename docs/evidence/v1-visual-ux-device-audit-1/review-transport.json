@@ -1,0 +1,228 @@
+{
+  "package": "v1-visual-ux-device-audit-1-review-transport",
+  "createdAt": "2026-09-21T16:22:46.345850+00:00",
+  "purpose": "UTF-8-safe JPEG review copies for Technical-Lead visual inspection. Not source screenshots. Not a visual PASS.",
+  "productSha": "9f386d10816d7adcdaf2fcd6d3732e64f952fb50",
+  "auditSourceHead": "c8d30e9f165cddcaf17fe330dfe916be002572e6",
+  "originalsUnchanged": true,
+  "originalManifestUntouched": true,
+  "githubUserImageAttachment": "not_produced_no_existing_portable_upload_tool",
+  "conversion": {
+    "tool": "Pillow",
+    "version": "12.3.0",
+    "python": "3.12.3",
+    "resampling": "LANCZOS",
+    "command": "python3 with Pillow 12.3.0: Image.open(src).convert('RGB'); desktop-only optional Image.resize((W,H), Image.Resampling.LANCZOS); Image.save(dst, format='JPEG', quality=Q, optimize=True, progressive=True, exif=b'', icc_profile=None). First pass: highest even Q in [20,42] with file <= 18432 bytes; desktop tried widths 720 then 640; phone kept native 360/390. Exception remake of home_initial_1024 only: 720x540 at Q=32 because 640x480 Q=20 made the VUX-8 mock-card truncation/ellipsis illegible."
+  },
+  "items": [
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/workspace_complex-overview_390.png",
+        "sha256": "a550ab61d11bccd1d2cd09d263e5850954c19fe0a37b3aefc6d334a1f27eeb66",
+        "bytes": 73857,
+        "width": 390,
+        "height": 844
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-overview_390.jpg",
+        "sha256": "d087bcde77ee81b025396e1ff7740d5c6db17b828b3f6c353b19c8a42887872e",
+        "bytes": 18046,
+        "width": 390,
+        "height": 844,
+        "jpeg_quality": 20,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-overview_390.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/workspace_complex-overview_1440.png",
+        "sha256": "7efc0063dbbbf80588afa19e74843cbedc854e13f576a97e1d6f5faf76aa13d2",
+        "bytes": 124280,
+        "width": 1440,
+        "height": 900
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-overview_1440.jpg",
+        "sha256": "7ef68f743eaaaaeb94524587966fd4e060eb56188697448ceb84b12e97eebca3",
+        "bytes": 18290,
+        "width": 720,
+        "height": 450,
+        "jpeg_quality": 36,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-overview_1440.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/workspace_complex-day_390.png",
+        "sha256": "4f3abc5b7779643105337866a12fd471cf838329efa3d6a7aaafddd7e558b6d2",
+        "bytes": 61125,
+        "width": 390,
+        "height": 844
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-day_390.jpg",
+        "sha256": "8e71f5c95a5acc850b8eb21f32bf5738c0b9c04e2502037370e9a5112ebe6027",
+        "bytes": 17920,
+        "width": 390,
+        "height": 844,
+        "jpeg_quality": 34,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-day_390.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/workspace_complex-flights-from-top_390.png",
+        "sha256": "b84b0bf4cb1fdfd38bf374273b911216bfd119e37a70b4f7d1cbd162e65a018b",
+        "bytes": 48676,
+        "width": 390,
+        "height": 844
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-flights-from-top_390.jpg",
+        "sha256": "9bac9b64c59f8359a52343de047cae62e8191835f922b1685063419867725ee2",
+        "bytes": 17246,
+        "width": 390,
+        "height": 844,
+        "jpeg_quality": 42,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-flights-from-top_390.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/home_initial_360.png",
+        "sha256": "7ac1a8a982c6b2f276b1a81fca64946baa500fc993b4e51416a0f3b3a762804a",
+        "bytes": 202390,
+        "width": 360,
+        "height": 800
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/home_initial_360.jpg",
+        "sha256": "de99cb15d35901ea31c297b72a1b8f748b9b3856beef1bcf27ab7e1bcf00c4e4",
+        "bytes": 18056,
+        "width": 360,
+        "height": 800,
+        "jpeg_quality": 28,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/home_initial_360.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/home_initial_1024.png",
+        "sha256": "d33c8538df68e4c6f7f3862cf79ad08d4b93422dc5e6a96afe260fd997756f96",
+        "bytes": 611147,
+        "width": 1024,
+        "height": 768
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/home_initial_1024.jpg",
+        "sha256": "d05cd9dbc164826d40e58041e58269c5697878292c00416963f451143477ffe6",
+        "bytes": 27892,
+        "width": 720,
+        "height": 540,
+        "jpeg_quality": 32,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": true,
+        "size_budget_bytes": 18432,
+        "size_exception_reason": "640x480 at quality 20 made the 1024 mock-trip card truncation/ellipsis (Ubud / Nusa Penida / Uluwatu) too small to judge VUX-8. Kept 720x540 quality 32 (27892 B) so destination chips and 'Bereit zum Verfeinern' remain readable. Review copy only; original PNG unchanged."
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/home_initial_1024.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/planen_initial_390.png",
+        "sha256": "87862b0c735c2695c7d296f23415f409f559841b446cf6ab7e7b9faf1e0932e9",
+        "bytes": 67097,
+        "width": 390,
+        "height": 844
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/planen_initial_390.jpg",
+        "sha256": "a88f77b68e70d4609f6baba4d4f2254a0e632ecfbc86a5906d9a505c72ea04fe",
+        "bytes": 17811,
+        "width": 390,
+        "height": 844,
+        "jpeg_quality": 26,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/planen_initial_390.jpg.base64.txt",
+        "line_length": 76
+      }
+    },
+    {
+      "original": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/screens/workspace_complex-plan-prep_390.png",
+        "sha256": "6bda7525ca3b47eb1d5e40e168c513dff7a0cc29e643651a44aa8d16af59e6e3",
+        "bytes": 58696,
+        "width": 390,
+        "height": 844
+      },
+      "derivative": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-plan-prep_390.jpg",
+        "sha256": "c0c67503aa82623e16736470bbc3bda34ddd4703f5d6855ab7775cdc1cb1d18f",
+        "bytes": 17913,
+        "width": 390,
+        "height": 844,
+        "jpeg_quality": 36,
+        "optimize": true,
+        "progressive": true,
+        "exif_stripped": true,
+        "size_exception": false,
+        "size_budget_bytes": 18432
+      },
+      "base64": {
+        "path": "docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-plan-prep_390.jpg.base64.txt",
+        "line_length": 76
+      }
+    }
+  ]
+}

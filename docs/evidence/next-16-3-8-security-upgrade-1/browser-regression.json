@@ -1,0 +1,43 @@
+{
+  "recordedOn": "2026-09-30",
+  "server": "npx next start --hostname 127.0.0.1 --port 3010",
+  "banner": "Next.js 16.3.8",
+  "note": "Port 3000 was already occupied by an older next-server v16.3.3 process started before this upgrade. Regression used port 3010 only.",
+  "http": {
+    "home": {
+      "status": 200,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "definition": true,
+      "robots": "noindex, nofollow",
+      "canonical": "https://jetnity.com",
+      "jsonLdTypes": ["Organization", "WebSite", "SoftwareApplication"],
+      "absoluteOrigins": ["http://www.w3.org", "https://jetnity.com", "https://schema.org", "https://www.geonames.org"]
+    },
+    "robots.txt": "User-Agent: * Disallow: /",
+    "manifest": 200,
+    "icon.svg": 200,
+    "logoAsset": { "status": 200, "contentType": "image/png", "bytes": 25466 },
+    "login": { "status": 200, "h1": "Willkommen zurück" },
+    "adminLogin": { "status": 200, "h1": "Jetnity Admin – Anmeldung" },
+    "reisen": { "status": 200, "h1": "Meine Reisen" },
+    "accountUnauthenticated": { "status": 200, "h1": "Willkommen zurück" },
+    "optimizerLocalHero": { "status": 200, "contentType": "image/png" },
+    "optimizerInspirationBali": { "status": 200, "contentType": "image/png" },
+    "optimizerDisallowedHost": { "status": 400, "body": "\"url\" parameter is not allowed" },
+    "optimizerMalformed": { "status": 400, "body": "\"url\" parameter is invalid" }
+  },
+  "playwrightChrome": {
+    "viewports": ["360x800", "390x844", "1440x900"],
+    "paths": ["/", "/login", "/reisen", "/admin/login"],
+    "horizontalOverflow": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "abortedRequests": "next/link RSC prefetches only (net::ERR_ABORTED on _rsc). No image or document failures.",
+    "scrolledInspiration": {
+      "hero": { "naturalWidth": 604, "naturalHeight": 403 },
+      "cards": ["Bali, Indonesien", "Lissabon, Portugal", "Zermatt, Schweiz", "Amsterdam, Niederlande"],
+      "failedImageRequests": []
+    }
+  },
+  "desktopWalkthrough": "Chrome on the same production server confirmed homepage, inspiration photographs, login, trip entry, admin login, and a narrow homepage."
+}

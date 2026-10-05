@@ -1,0 +1,672 @@
+{
+  "art": "before",
+  "basis": "http://127.0.0.1:3456",
+  "laeufe": [
+    {
+      "name": "360x800",
+      "width": 360,
+      "height": 800,
+      "first": true,
+      "full": false,
+      "sections": [
+        "system",
+        "produkt"
+      ],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "390x844",
+      "width": 390,
+      "height": 844,
+      "first": true,
+      "full": true,
+      "sections": [
+        "system",
+        "produkt",
+        "ablauf",
+        "inspiration",
+        "vertrauen"
+      ],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "768x1024",
+      "width": 768,
+      "height": 1024,
+      "first": false,
+      "full": false,
+      "sections": [],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1024x768",
+      "width": 1024,
+      "height": 768,
+      "first": false,
+      "full": false,
+      "sections": [],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1280x800",
+      "width": 1280,
+      "height": 800,
+      "first": false,
+      "full": false,
+      "sections": [],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "first": true,
+      "full": true,
+      "sections": [
+        "system",
+        "produkt",
+        "ablauf",
+        "inspiration",
+        "vertrauen",
+        "unterschied"
+      ],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "first": false,
+      "full": false,
+      "sections": [],
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "h1Count": 1,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "produktvorschau": true,
+        "wasHeuteGilt": true,
+        "details": 0,
+        "faehigkeiten": [
+          {
+            "id": "ziel-bestaetigen",
+            "stand": "LIVE",
+            "text": "Ziel bestätigen und Entwurf startenDu bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.Heute nutzbar"
+          },
+          {
+            "id": "mehrere-ziele",
+            "stand": "LIVE",
+            "text": "Mehrere Ziele als eine RouteMehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.Heute nutzbar"
+          },
+          {
+            "id": "reisebereich",
+            "stand": "LIVE",
+            "text": "Vier Bereiche einer ReiseÜbersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.Heute nutzbar"
+          },
+          {
+            "id": "offene-schritte",
+            "stand": "PARTIAL",
+            "text": "Offene Schritte aus bekannten AngabenJetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.Soweit Daten vorliegen"
+          },
+          {
+            "id": "live-angebote",
+            "stand": "PLANNED",
+            "text": "Preise und VerfügbarkeitDie Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.In Vorbereitung"
+          },
+          {
+            "id": "amtliche-auskuenfte",
+            "stand": "PLANNED",
+            "text": "Amtliche Einreise- und SicherheitsauskünfteAmtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.In Vorbereitung"
+          },
+          {
+            "id": "routenfolgen",
+            "stand": "PLANNED",
+            "text": "Folgen einer RoutenänderungDass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.Produktvorschau"
+          },
+          {
+            "id": "gemeinsam-planen",
+            "stand": "PLANNED",
+            "text": "Gemeinsam planenMehrere Personen planen eine Reise hier noch nicht gemeinsam.Kommt später"
+          },
+          {
+            "id": "jetnity-pro",
+            "stand": "PLANNED",
+            "text": "Jetnity ProLive-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.Kommt später"
+          }
+        ],
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "nav": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und beglei",
+        "graphOk": true
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    }
+  ],
+  "fokus": [
+    {
+      "tag": "A",
+      "text": "Zum Inhalt",
+      "outline": "auto",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "A",
+      "text": "Jetnity",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Menü öffnen",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "outline": "solid",
+      "boxShadow": "none",
+      "sichtbar": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Reise planen",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "A",
+      "text": "Eigenes Ziel bestätigen",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "A",
+      "text": "IndonesienBali",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    },
+    {
+      "tag": "A",
+      "text": "PortugalLissabon",
+      "outline": "solid",
+      "boxShadow": "vorhanden",
+      "sichtbar": true
+    }
+  ],
+  "navbar": {
+    "ssr": {
+      "anmelden": false,
+      "abmelden": false,
+      "konto": false,
+      "wasHeuteGilt": true,
+      "lissabon": true,
+      "canonical": true
+    },
+    "hydriert": {
+      "text": "Jetnity",
+      "anmelden": false,
+      "abmelden": false,
+      "konto": false
+    },
+    "mobil": {
+      "text": "Jetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen",
+      "anmelden": true,
+      "abmelden": false,
+      "konto": false
+    }
+  },
+  "text200": {
+    "overflow": false,
+    "scrollWidth": 360,
+    "clientWidth": 360,
+    "h1": "Deine ganze Reise. Intelligent an einem Ort."
+  },
+  "reducedMotion": {
+    "transition": "1e-06s",
+    "transform": "none"
+  }
+}

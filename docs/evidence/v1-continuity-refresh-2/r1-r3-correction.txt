@@ -1,0 +1,6 @@
+review=5279891358
+invalidatedHead=6423644a8a8953f3871dbe7cc9dc0d4b38757ccb
+R1=merge-neutral headers; dated 22 Sep observation; live #546 open->review / merged->do not reactivate
+R2=footer verified from 5778458780 HTML Open in Web / Open in Cursor; TL 5778475747 confirms session
+R3=Sep21 body after banner equals origin/main; #480 original sentences restored with dated-history labels; ROADMAP programme line 378 restored
+C1=task v2; #545 DISPATCHED_START_UNVERIFIED / TASK_ONLY; not IN_PROGRESS_NOT_MAIN; not a P2 launch blocker; not launched from this session

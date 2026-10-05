@@ -1,0 +1,10 @@
+{
+  "notRun": [
+    "real signup/login",
+    "remote Supabase / Production DB",
+    "live adoption against a real account",
+    "provider or model calls",
+    "db:rechte / db:rls / db:sicherheit / auth:pruefen"
+  ],
+  "reason": "Task forbids real-account operation and this slice does not change Auth, RLS, schema or database. Focused proof is mocked localStorage plus a mocked server action. Source/unit proof is not authenticated E2E."
+}

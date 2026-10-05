@@ -1,0 +1,29 @@
+{
+  "agent": "Jetnity admin account counts caller status 1",
+  "generation": 1,
+  "session": "bc-4bf98f13-10aa-4cff-af82-dee79ebc920c",
+  "baseline": "87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b",
+  "c1IntegrationBaseline": "4381d20bfaa7f60f140823cc311d44409934197a",
+  "executableSourceBaseline": "9cf7aedd8dd190b4764d8ac178e23d9f8b42c773",
+  "task": "99fa42dca4c46116498d0cc74ea7cd26e467b591",
+  "localOnly": true,
+  "engine": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "current": {
+    "candidatePath": "scripts/db/admin-account-counts-1-candidate.sql",
+    "candidateSha256": "612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de",
+    "candidateBlob": "b912eecb55cfa519dcd8b5d4a4ca9222aea0a0c1",
+    "producerFunctiondefSha256": "b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b",
+    "wrapperSha256": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
+    "wrapperFunctiondefSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609",
+    "bootstrapSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
+    "contractBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+    "parserBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d"
+  },
+  "historicalRefused": {
+    "source": "merged #555 producer without caller-status",
+    "candidateSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+    "producerFunctiondefSha256": "0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef",
+    "applicability": "historical only; not ALREADY_INSTALLED for this slice",
+    "upgrade": "later controlled upgrade after #556 stops writing; leftover #555 installs classify INCOMPATIBLE and are not rewritten in place"
+  }
+}

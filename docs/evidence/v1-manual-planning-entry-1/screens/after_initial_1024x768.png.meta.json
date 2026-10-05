@@ -1,0 +1,89 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png",
+  "phase": "after",
+  "name": "initial_1024x768",
+  "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+  "productTree": {
+    "head": "764149404b6b234752265b00d301f1db90e8cc22",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/evidence/v1-manual-planning-entry-1/audit-after.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png.meta.json"
+    ]
+  },
+  "capturedAt": "2026-09-21T18:52:03.769Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/planen",
+  "viewport": {
+    "width": 1024,
+    "height": 768
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "scrollY0-desktop",
+  "sicht": {
+    "boxes": {
+      "zeiger": {
+        "x": 181.171875,
+        "y": 129,
+        "width": 173.921875,
+        "height": 44
+      },
+      "idee": {
+        "x": 57,
+        "y": 259,
+        "width": 910,
+        "height": 40
+      },
+      "manuell": {
+        "x": 57,
+        "y": 901,
+        "width": 538,
+        "height": 36
+      },
+      "ziel": {
+        "x": 24,
+        "y": 827,
+        "width": 976,
+        "height": 874
+      },
+      "gate": null
+    },
+    "zeigerVorhanden": true,
+    "zielVorhanden": true,
+    "ideeVorhanden": true,
+    "manuellVorhanden": true,
+    "gateVorhanden": false,
+    "zeigerSichtbar": true,
+    "ideeSichtbar": true,
+    "manuellSichtbar": false,
+    "overflow": {
+      "html": 0,
+      "body": 0,
+      "scrollY": 0,
+      "scrollHeight": 2154
+    },
+    "activeElement": {
+      "tag": "body",
+      "id": null,
+      "name": null,
+      "text": "Zum Inhalt\nJetnity\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen\n\nLie"
+    }
+  }
+}

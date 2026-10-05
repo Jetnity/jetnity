@@ -1,0 +1,4492 @@
+{
+  "slice": "World Map Polish 2",
+  "issue": 436,
+  "pr": 437,
+  "branch": "feat/phase-1-world-map-polish-2",
+  "stand": "2026-09-17",
+  "reviewFix": "Technical-Lead CHANGES REQUIRED auf b622019ef139073635d5d85f1962e0bf23f462b9",
+  "gegateterCodeHead": "f5052963774c8cf6dfb6b0893690fadbef6f44db",
+  "aufnahme": {
+    "server": "npm run build + next start -p 3470 (Production-Build, kein next dev)",
+    "umgebung": "JETNITY_UI_AUDIT=1 VERCEL_ENV=preview, Supabase-Platzhalter",
+    "pfad": "/ui-audit/account?zustand=welt|reise|leer|fehler",
+    "hinweis": "Fixtures nur im Harness, nie im Produktspeicher. Bilder in docs/evidence/world-map-polish-2/."
+  },
+  "probe": {
+    "ok": true,
+    "gepruefte": 108,
+    "fehlgeschlagen": 0,
+    "laeufe": [
+      "chromium / prefers-reduced-motion: no-preference",
+      "chromium / prefers-reduced-motion: reduce",
+      "webkit / prefers-reduced-motion: no-preference"
+    ],
+    "breiten": [
+      "280",
+      "320",
+      "360",
+      "390",
+      "430",
+      "768",
+      "844x390",
+      "1280",
+      "1536"
+    ],
+    "zustaende": [
+      "welt",
+      "reise",
+      "leer",
+      "fehler"
+    ],
+    "summen": {
+      "konsolenUndSeitenfehler": 0,
+      "echteAnfragefehler": 0,
+      "fremdeAnfragen": 0,
+      "abgebrocheneRscVorabrufe": 730,
+      "landpfadeUeberVolleBreite": 0
+    },
+    "abgebrocheneVorabrufeErklaerung": "next/link bricht RSC-Vorabrufe im Harness ab (net::ERR_ABORTED), weil die Ziele ohne Sitzung auf /login umleiten. Sie treten auch in den Zustaenden leer und fehler auf, in denen die Weltkarte keinen einzigen Reiselink rendert. Kein Laufzeitfehler dieser Oberflaeche, Vorbestand der Account-Navigation.",
+    "ergebnisse": [
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 7,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 7,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 13,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 15,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": [
+          "docs/evidence/world-map-polish-2/390-welt.png",
+          "docs/evidence/world-map-polish-2/390-welt-auswahl-offen.png",
+          "docs/evidence/world-map-polish-2/390-welt-ausgewaehlt.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/390-reise.png",
+          "docs/evidence/world-map-polish-2/390-reise-ausgewaehlt.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/390-leer.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/390-fehler.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 7,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 14,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 15,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": [
+          "docs/evidence/world-map-polish-2/1280-welt.png",
+          "docs/evidence/world-map-polish-2/1280-welt-auswahl-offen.png",
+          "docs/evidence/world-map-polish-2/1280-welt-ausgewaehlt.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/1280-reise.png",
+          "docs/evidence/world-map-polish-2/1280-reise-ausgewaehlt.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/1280-leer.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": [
+          "docs/evidence/world-map-polish-2/1280-fehler.png"
+        ]
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "reiseLinks": [
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          },
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/33333333-3333-4333-8333-333333333333",
+            "ariaLabel": "Reise öffnen: Lissabon, Entwurf · 2.–9. Apr. 2027 (33333333-3333-4333-8333-333333333333)"
+          },
+          {
+            "href": "/reisen/44444444-4444-4444-8444-444444444444",
+            "ariaLabel": "Reise öffnen: Japan im Frühling, Geplant · 28. März – 11. Apr. 2027 (44444444-4444-4444-8444-444444444444)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": {
+          "gewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 36,
+                "hoehe": 36,
+                "hintergrund": "rgba(223, 244, 122, 0.55)",
+                "rahmen": "ring/shadow",
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(15, 48, 42)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": "true"
+          },
+          "ungewaehlt": {
+            "punkte": [
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgba(0, 0, 0, 0)",
+                "rahmen": null,
+                "text": "2"
+              },
+              {
+                "breite": 24,
+                "hoehe": 24,
+                "hintergrund": "rgba(21, 58, 51, 0)",
+                "rahmen": null,
+                "text": null
+              },
+              {
+                "breite": 18,
+                "hoehe": 18,
+                "hintergrund": "rgb(21, 58, 51)",
+                "rahmen": "ring/shadow",
+                "text": "2"
+              }
+            ],
+            "ariaCurrent": null
+          },
+          "beschriftungSichtbar": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "reiseLinks": [
+          {
+            "href": "/reisen/11111111-1111-4111-8111-111111111111",
+            "ariaLabel": "Reise öffnen: Lissabon, Geplant · 12.–16. Sept. 2026 (11111111-1111-4111-8111-111111111111)"
+          }
+        ],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 13,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "reiseLinks": [],
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "markerStil": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 4,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "320",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "320",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "320",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "320",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 7,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "360",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "360",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "360",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "360",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "430",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "430",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "430",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "430",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "768",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 16,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "768",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "768",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "768",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "844x390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "844x390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "844x390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "844x390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 9,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 8,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1536",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 12,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1536",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1536",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 10,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "chromium",
+        "reducedMotion": "reduce",
+        "viewport": "1536",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 11,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 188,
+        "kartenHoehe": 74,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 228,
+        "kartenHoehe": 90,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "320",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 268,
+        "kartenHoehe": 106,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "360",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 298,
+        "kartenHoehe": 118,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 338,
+        "kartenHoehe": 133,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "430",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 636,
+        "kartenHoehe": 251,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "768",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 712,
+        "kartenHoehe": 281,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "844x390",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1280",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "welt",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 35,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 3,
+        "markerOrte": [
+          2,
+          2,
+          1
+        ],
+        "ortKarten": 6,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": {
+          "oeffnetMitEnter": true,
+          "keinOverflowGeoeffnet": true,
+          "schliesstMitEscape": true,
+          "gewaehlterEintrag": "Tokio\n",
+          "genauEineKarteMarkiert": true,
+          "genauEinMarkerMarkiert": true
+        },
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "reise",
+        "ok": true,
+        "lage": "geplant",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 14,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 1,
+        "markerOrte": [
+          1
+        ],
+        "ortKarten": 1,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": {
+          "genauEinMarkerMarkiert": true,
+          "genauEineKarteMarkiert": true
+        },
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "leer",
+        "ok": true,
+        "lage": "leer",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": 1068,
+        "kartenHoehe": 421,
+        "viewBox": "0 6 360 142",
+        "gitterlinien": 15,
+        "landPfade": 11,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      },
+      {
+        "browser": "webkit",
+        "reducedMotion": "no-preference",
+        "viewport": "1536",
+        "zustand": "fehler",
+        "ok": true,
+        "lage": "fehler",
+        "visited": "nicht_erfasst",
+        "search": "nein",
+        "besuchtLabelSichtbar": true,
+        "kartenBreite": null,
+        "kartenHoehe": null,
+        "viewBox": null,
+        "gitterlinien": 0,
+        "landPfade": 0,
+        "landpfadeUeberVolleBreite": 0,
+        "marker": 0,
+        "markerOrte": [],
+        "ortKarten": 0,
+        "fehlerRuhend": [],
+        "fehlerNachAuswahl": [],
+        "konsole": [],
+        "echteAnfragefehler": [],
+        "abgebrocheneVorabrufe": 0,
+        "auswahl": null,
+        "einzel": null,
+        "bilder": []
+      }
+    ],
+    "hinweisDetailtiefe": "Volle Detailtiefe (reiseLinks, markerStil) im Lauf chromium / no-preference. Die Laeufe chromium / reduce und webkit tragen dieselben Pruefungen, aber ohne die identischen Detailfelder."
+  },
+  "audit_account": {
+    "head": {
+      "ok": true,
+      "gepruefte": 48,
+      "fehlgeschlagen": 0
+    },
+    "basis_abcb09a0": {
+      "ok": false,
+      "gepruefte": 48,
+      "fehlgeschlagen": 48,
+      "fehlerarten": [
+        "Besucht-Unterscheidung fehlt"
+      ]
+    },
+    "befund": "npm run audit:account war auf dem Task-Basis-Head in allen 48 Kombinationen rot, weil die V1-Statuskarte \"Besucht bestätigt\" mit uppercase rendert und innerText die transformierte Schreibweise liefert. Auf diesem Head 48/48 gruen."
+  }
+}

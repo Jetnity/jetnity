@@ -1,0 +1,39 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/r2_complex-r2-rapid-close_390x844.png",
+  "phase": "r2",
+  "name": "complex-r2-rapid-close_390x844",
+  "sha": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+  "productTree": {
+    "head": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T18:05:02.883Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "rapid-close-return",
+  "note": "Escape after detail mount and back-control focus. This does not measure whether rAF/timeout were still pending.",
+  "after": {
+    "scrollY": 565,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "FlügeNoch kein Flug ausgewählt",
+      "aria": "Flüge"
+    },
+    "zurueck": null,
+    "heading": null,
+    "scrollHeight": 4736,
+    "clientHeight": 844
+  },
+  "uebersicht": {
+    "x": 12,
+    "y": 1.5,
+    "width": 366,
+    "height": 28
+  }
+}

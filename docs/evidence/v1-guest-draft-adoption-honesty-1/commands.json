@@ -1,0 +1,26 @@
+{
+  "ranAt": "2026-09-21T17:40:08Z",
+  "head": "00c65337ed8a90af58d386c96b63b9ae7ddf4382",
+  "evidenceClass": "local_mocked_repository_gates",
+  "authenticatedE2E": false,
+  "results": [
+    {
+      "name": "focused-gastspeicher-uebernahme",
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/gastspeicher.test.ts lib/trips/uebernahme.test.ts",
+      "exitCode": 0,
+      "seconds": 1,
+      "tests": 129,
+      "pass": 129,
+      "fail": 0
+    },
+    { "name": "typecheck", "command": "npm run typecheck", "exitCode": 0, "seconds": 10 },
+    { "name": "lint", "command": "npm run lint", "exitCode": 0, "seconds": 15, "errors": 0, "warnings": 138, "note": "pre-existing warnings; 0 errors" },
+    { "name": "test", "command": "npm test", "exitCode": 0, "seconds": 30, "tests": 3552, "pass": 3552, "fail": 0 },
+    { "name": "build", "command": "npm run build", "exitCode": 0, "seconds": 22 },
+    { "name": "check:dead", "command": "npm run check:dead", "exitCode": 0, "orphans": 0 },
+    { "name": "check:exports", "command": "npm run check:exports", "exitCode": 0, "unusedExports": 0 },
+    { "name": "check:deps", "command": "npm run check:deps", "exitCode": 0 },
+    { "name": "check:api-schutz", "command": "npm run check:api-schutz", "exitCode": 0 },
+    { "name": "check:schema-bezug", "command": "npm run check:schema-bezug", "exitCode": 0 }
+  ]
+}

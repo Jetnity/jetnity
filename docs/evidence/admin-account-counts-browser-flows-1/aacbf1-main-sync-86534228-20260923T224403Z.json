@@ -1,0 +1,71 @@
+{
+  "receiptId": "aacbf1-main-sync-86534228-20260923T224403Z",
+  "kind": "author-self-evidence",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "agent": "Jetnity admin account counts browser flows 1",
+  "generation": 1,
+  "session": "bc-9495c303-3b54-4a76-a467-665b3f1a8eb9",
+  "modelRequired": "cursor-grok-4.6-high-fast",
+  "modelActual": "cursor-grok-4.6-high-fast",
+  "uiRename": "not performed",
+  "branch": "test/admin-account-counts-browser-flows-1",
+  "pr": 559,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_BROWSER_FLOWS_1_TASK_2026-09-23.md",
+  "taskSeed": "58afaa15d15dce87c180f4f0eb73b8dc248e896e",
+  "authorizedMain": "86534228bad59d2951e5586400a93b524aac9cd1",
+  "mergeParents": [
+    "3e5e5039120f0a3ce618cf7c1726a8132ac18925",
+    "86534228bad59d2951e5586400a93b524aac9cd1"
+  ],
+  "mergeCommit": "eced386af126dd50f73ff5605102ff7c14d86b5a",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "mergeBaseAfterSync": "86534228bad59d2951e5586400a93b524aac9cd1",
+  "aheadBehindVsOriginMainAfterMerge": "11 ahead / 0 behind before this persist",
+  "rebaseForceResetCherryPick": "not used",
+  "mergeConflicts": "none",
+  "runtimeFilesRewritten": false,
+  "implementationMetadata": {
+    "scenarioCode": "delivered",
+    "defaultRealExecutionClaim": "NOT RUN until TL authorizes the integrated run",
+    "runtimeIntegration": "pending"
+  },
+  "thisInvocation": {
+    "kind": "controlled-context-unit",
+    "realBrowserOrMfaExecution": "NOT RUN",
+    "command": "node --test scripts/e2e/admin-account-counts-browser-flows-1/test.mjs",
+    "node": "v22.14.0",
+    "tests": 30,
+    "pass": 30,
+    "fail": 0,
+    "tapSha256": "0de4791eb3780033e4546fb1a4f8e725d087cf038acd5831335d035b2ce8b68e",
+    "notFullLocalExecution": true
+  },
+  "acceptedParserEquivalence": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/e2e/admin-account-counts-browser-flows-1/parser-equivalence.ts",
+    "input": "JSON array of payloads on stdin",
+    "observed": "accepted and JS port agreed on a valid one-row fixture and a multirow reject",
+    "separateFromMockSuite": true
+  },
+  "producerCompatibility": {
+    "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+    "gateIds": "FLOW_GATE_IDS === now-main BROWSER_GATES G6–G19",
+    "artifactNames": [
+      "${runId}-counts-desktop.png",
+      "${runId}-counts-mobile.png",
+      "${runId}-browser-flows-gates.json"
+    ],
+    "runIdentity": "receipt.runId matches context.runId; createRunIdentity aliases cover projectId",
+    "receiptAllowlist": "no sourcePins or extra keys; now-main assertConsumerGatesJson accepts controlled receipts",
+    "pngProfile": "count-section screenshots stripped to IHDR/IDAT/IEND before write"
+  },
+  "historicalReceiptsPreserved": [
+    "aacbf1-20260923T123800Z",
+    "aacbf1-review-fix-b1-b4-20260923T133051Z",
+    "aacbf1-review-fix-remaining-b1-b3-20260923T152543Z",
+    "aacbf1-review-fix-nav-response-20260923T161207Z"
+  ],
+  "docker": "not attempted",
+  "hostedFallback": "not attempted",
+  "closed556Fallback": "not invoked as a full application run",
+  "notes": "Author self-evidence only. Helper/double PASS is not a browser PASS. #558 is on exact main 86534228. Runtime still owns stack/observer/cleanup and the whole-run verdict. Real integrated execution remains NOT RUN."
+}

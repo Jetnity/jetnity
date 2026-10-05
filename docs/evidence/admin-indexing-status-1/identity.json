@@ -1,0 +1,14 @@
+{
+  "agent": "Jetnity admin indexing status 1",
+  "generation": 1,
+  "session": "bc-80776dce-2c41-423e-9ab6-c46b8747ff43",
+  "sessionUrl": "https://cursor.com/agents/bc-80776dce-2c41-423e-9ab6-c46b8747ff43",
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModel": "cursor-grok-4.6-high-fast",
+  "displayName": "Admin indexing status",
+  "uiRename": "not_performed",
+  "branch": "feat/admin-indexing-status-1",
+  "pr": 547,
+  "taskSeed": "162fefd5b0c26236b8ec1c5ce6550881105375e9",
+  "baselineMain": "9dc8926ef859bcde2dc31dc8b96f2e61e1948f74"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "VUX-4",
+  "phase": "before",
+  "productShaAtCapture": "efacfc9e31d23ce4429e9bf5a7c004a3b70ff591",
+  "capturedAt": "2026-09-21T17:38:50.030Z",
+  "browser": "chromium/playwright",
+  "viewport": { "width": 390, "height": 844 },
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "reproduced": true,
+  "driver": "compact path hides overview and focuses Zurück with preventScroll; leftover scrollY from the coverage control stays. Sticky back can remain in view while the detail heading is above the viewport and the first painted frame is mid-panel or footer.",
+  "fromTop": {
+    "action": "Playwright click on Flüge (control is below the first viewport, so click scrolls to it), then open",
+    "scrollYBefore": 0,
+    "scrollYAfter": 1701,
+    "focusAfter": "BUTTON Zurück zur Reise",
+    "zurueckInView": true,
+    "headingInView": false,
+    "headingTopPx": -793.5,
+    "screenshot": "screens/before_complex-flights-from-top_390x844.png"
+  },
+  "fromScrolled": {
+    "action": "scroll Flüge into view, click Unterkunft",
+    "scrollYBefore": 1301,
+    "scrollYAfter": 1433,
+    "zurueckInView": true,
+    "headingInView": false,
+    "headingTopPx": -525.5,
+    "screenshot": "screens/before_complex-hotel-from-scrolled_390x844.png"
+  },
+  "notSpeculativeRewrite": "Repair is only scrollIntoView on the existing open-transition, same focus({preventScroll:true}) and overview-hide path."
+}

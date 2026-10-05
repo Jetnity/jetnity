@@ -1,0 +1,35 @@
+{
+  "file": "before_1024x768_text-200_gast_header.png",
+  "capturedAt": "2026-09-22T00:07:19.970Z",
+  "productTree": {
+    "head": "76ae4abd1a2adcf15c21757252de1afbcf8a3680",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_DECISION_2026-09-22.md",
+      "?? docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_STATUS_2026-09-22.md",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/"
+    ],
+    "sourceNote": "baseline PublicNavbar at seed 76ae4abd plus unmodified components/layout/PublicNavbar.tsx from d89ed0b0"
+  },
+  "browser": "chromium/140.0.7339.16",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "hasTouch": false
+  },
+  "route": "/",
+  "state": {
+    "sitzung": "gast",
+    "mock": {
+      "ok": true,
+      "kind": "real-empty-cookie-getSession",
+      "next": "gast"
+    }
+  },
+  "simulationClass": "html-font-size-32px + gast",
+  "actions": [
+    "goto",
+    "compiled-css"
+  ],
+  "clip": "header-only"
+}

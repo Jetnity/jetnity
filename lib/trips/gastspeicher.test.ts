@@ -1,0 +1,1792 @@
+// lib/trips/gastspeicher.test.ts
+//
+// Der Gastspeicher trägt zwei Produktregeln, und beide sind teuer, wenn sie
+// brechen:
+//
+//   · Ohne Konto gibt es genau eine aktive Gastreise.
+//   · Was auf diesem Gerät liegt, geht bei einer Anmeldung vollständig ins
+//     Konto – und wird erst gelöscht, wenn es dort bestätigt angekommen ist.
+//
+// Bis Phase 1.5 lagen bis zu zwanzig Entwürfe unter einem Schlüssel: Die erste
+// Regel existierte, nur nicht im Code. Die Entwürfe zu verwerfen wäre der
+// bequeme Weg gewesen und eine stille Datenlöschung – deshalb prüft dieser Test
+// die Übernahme aus der alten Fassung Zeile für Zeile.
+//
+// Der `localStorage` wird gestellt. Das Modul liest ihn erst beim Aufruf
+// (`verfuegbar()`), ein globaler Ersatz genügt also und braucht keinen Browser.
+
+import { test, describe, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
+import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
+import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import {
+  GastreiseBestehtFehler,
+  GastreiseUnbrauchbarFehler,
+  SCHLUESSEL,
+  SpeicherFehler,
+  gastAktivitaetUebernehmen,
+  gastBuchungsstatusSetzen,
+  gastFlugUebernehmen,
+  gastHotelUebernehmen,
+  gastMietwagenAnlegen,
+  gastMobilitaetAnlegen,
+  gastPlanpunktAnlegen,
+  gastPlanpunktEntfernen,
+  gastUnterkunftZeitraumSetzen,
+  gastreiseAendern,
+  gastreiseAnlegen,
+  gastreiseEntfernen,
+  gastreiseLadenNach,
+  gastreiseSpeichern,
+  gastspeicherLaden,
+  kennungErzeugen,
+  uebernommenStreichen,
+  VeralteteFassungFehler,
+  zurUebernahme,
+  aktiveGastreiseVorpruefen,
+} from '@/lib/trips/gastspeicher'
+import { alsNutzlast } from '@/lib/trips/abbildung'
+import type { Ort } from '@/lib/places/domain'
+import { reiseLesen, GRENZEN } from '@/lib/trips/schema'
+import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
+import { READINESS_GRENZEN } from '@/lib/readiness/domain'
+import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
+import { readinessAlsUebernahme, readinessNachUebernahmeBauen } from '@/lib/readiness/uebernahme'
+import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
+import type { CreateTripInput, TripItem } from '@/types/trips'
+import type { Modelloperation } from '@/lib/reiseaenderung/schema'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
+
+/**
+ * Ein `localStorage`, der sich wie einer verhält – inklusive der drei Arten,
+ * auf die ein echter versagt:
+ *
+ *   · `sperren()`      – voller Speicher, `setItem` wirft (Quota).
+ *   · `sperrenFuer()`  – nur ein Schlüssel scheitert. Genau so bricht eine
+ *                        Übernahme zwischen zwei Schlüsseln ab.
+ *   · `stummschalten()`– `setItem` wirft nicht und behält trotzdem nichts. So
+ *                        verhält sich der private Modus mancher Browser, und
+ *                        nur das Zurücklesen bemerkt es.
+ */
+function speicherStellen() {
+  const ablage = new Map<string, string>()
+  let gesperrt = false
+  let stumm = false
+  let loeschenGesperrt = false
+  let lesenWirft = false
+  const gesperrteSchluessel = new Set<string>()
+  const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
+
+  const localStorage = {
+    getItem: (schluessel: string) => {
+      if (lesenWirft) throw new Error('SecurityError')
+      return ablage.get(schluessel) ?? null
+    },
+    setItem: (schluessel: string, wert: string) => {
+      schreibvorgaenge.push({ art: 'set', schluessel })
+      if (gesperrt || gesperrteSchluessel.has(schluessel)) throw new Error('QuotaExceededError')
+      if (stumm) return
+      ablage.set(schluessel, wert)
+    },
+    removeItem: (schluessel: string) => {
+      schreibvorgaenge.push({ art: 'remove', schluessel })
+      if (loeschenGesperrt) throw new Error('SecurityError')
+      ablage.delete(schluessel)
+    },
+  }
+
+  // `globalThis.window` existiert im Test nicht. Das Modul prüft genau darauf.
+  Object.assign(globalThis, { window: { localStorage } })
+
+  return {
+    ablage,
+    schreibvorgaenge,
+    sperren: () => {
+      gesperrt = true
+    },
+    entsperren: () => {
+      gesperrt = false
+      stumm = false
+      loeschenGesperrt = false
+      lesenWirft = false
+      gesperrteSchluessel.clear()
+    },
+    sperrenFuer: (schluessel: string) => gesperrteSchluessel.add(schluessel),
+    stummschalten: () => {
+      stumm = true
+    },
+    loeschenSperren: () => {
+      loeschenGesperrt = true
+    },
+    lesenWerfen: () => {
+      lesenWirft = true
+    },
+    roh: (schluessel: string) => ablage.get(schluessel) ?? null,
+    setzen: (schluessel: string, wert: unknown) =>
+      ablage.set(schluessel, typeof wert === 'string' ? wert : JSON.stringify(wert)),
+  }
+}
+
+let speicher: ReturnType<typeof speicherStellen>
+
+beforeEach(() => {
+  speicher = speicherStellen()
+})
+
+function eingabe(abweichung: Partial<CreateTripInput> = {}): CreateTripInput {
+  return {
+    clientRef: kennungErzeugen('trip'),
+    title: 'Japan im Herbst',
+    destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2026-09-12',
+    endDate: '2026-09-16',
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: 4200,
+    pace: 'balanced',
+    interests: ['culture'],
+    travelWish: null,
+    ...abweichung,
+  }
+}
+
+function leerOp(teil: Partial<Modelloperation> & Pick<Modelloperation, 'art'>): Modelloperation {
+  return {
+    etappeId: null,
+    tagId: null,
+    punktId: null,
+    nachEtappeId: null,
+    nachTagId: null,
+    name: null,
+    laendercode: null,
+    titel: null,
+    notiz: null,
+    beginn: null,
+    punktArt: null,
+    tageDelta: null,
+    tage: null,
+    reisende: null,
+    budgetziel: null,
+    tempo: null,
+    interessen: null,
+    reisewunsch: null,
+    abreiseort: null,
+    startdatum: null,
+    ...teil,
+  }
+}
+
+describe('Ein Gast ohne Reise', () => {
+  test('der Speicher ist leer und kein Fehler', () => {
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv, null)
+    assert.deepEqual(stand.warteschlange, [])
+  })
+
+  test('es gibt nichts zu übernehmen', () => {
+    assert.deepEqual(zurUebernahme(), [])
+  })
+
+  test('ein unlesbarer Eintrag bricht das Laden nicht ab', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+
+  test('ein Eintrag, der keine gültige Reise ist, wird verworfen statt halb geladen', () => {
+    // Eine Reise mit einem Tag ohne Nummer wäre in der Oberfläche ein Rätsel
+    // und in der Übernahme eine Ablehnung.
+    speicher.setzen(SCHLUESSEL.aktiv, { id: 'trip-1', title: 'Halb' })
+
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+})
+
+describe('Genau eine aktive Gastreise', () => {
+  test('die erste Reise entsteht', () => {
+    const reise = gastreiseAnlegen(eingabe())
+
+    assert.equal(reise.title, 'Japan im Herbst')
+    assert.equal(reise.days.length, 5, 'die Tage entstehen aus dem Zeitraum')
+    assert.equal(reise.stages[0].name, 'Japan', 'das Ziel wird die erste Etappe')
+    assert.equal(reise.stages[0].placeId, 'geonames:1861060')
+    assert.equal(reise.originPlaceId, 'geonames:2657896')
+    assert.equal(gastspeicherLaden().aktiv?.id, reise.id)
+  })
+
+  test('die Kennung des Formulars wird die Kennung des Entwurfs', () => {
+    // Sie trägt die Idempotenz weiter: Bei der Übernahme prüft dieselbe Kennung
+    // in der Datenbank `unique (user_id, client_ref)`.
+    const angaben = eingabe({ clientRef: 'trip-fest' })
+    const reise = gastreiseAnlegen(angaben)
+
+    assert.equal(reise.id, 'trip-fest')
+    assert.equal(reise.clientRef, 'trip-fest')
+  })
+
+  test('ohne bestätigtes Ziel entsteht keine Gastreise', () => {
+    assert.throws(
+      () => gastreiseAnlegen(eingabe({ destination: '', destinationPlaceId: '' })),
+      (fehler: unknown) => {
+        assert.ok(fehler instanceof Error)
+        assert.match(fehler.message, /keine gültige Reise/)
+        return true
+      },
+    )
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
+  test('eine zweite Reise wird abgelehnt und nennt die bestehende', () => {
+    const erste = gastreiseAnlegen(eingabe())
+
+    assert.throws(
+      () => gastreiseAnlegen(eingabe()),
+      (fehler: unknown) => {
+        assert.ok(fehler instanceof GastreiseBestehtFehler)
+        assert.equal(fehler.bestehendeId, erste.id)
+        assert.match(fehler.message, /Konto/)
+        return true
+      },
+    )
+  })
+
+  test('die abgelehnte zweite Reise überschreibt die erste nicht', () => {
+    const erste = gastreiseAnlegen(eingabe({ title: 'Erste Reise' }))
+
+    try {
+      gastreiseAnlegen(eingabe({ title: 'Zweite Reise' }))
+    } catch {
+      // erwartet
+    }
+
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Erste Reise')
+    assert.equal(gastspeicherLaden().aktiv?.id, erste.id)
+  })
+
+  test('nach dem Verwerfen ist wieder Platz', () => {
+    gastreiseAnlegen(eingabe())
+    gastreiseEntfernen()
+
+    assert.equal(gastspeicherLaden().aktiv, null)
+    assert.doesNotThrow(() => gastreiseAnlegen(eingabe()))
+  })
+})
+
+function bestaetigterOrt(teil: Partial<Ort> & Pick<Ort, 'id' | 'name'>): Ort {
+  return {
+    source: 'geonames',
+    sourceId: teil.id.replace(/^geonames:/, ''),
+    typ: 'city',
+    country: teil.country ?? 'France',
+    countryCode: teil.countryCode ?? 'FR',
+    region: null,
+    lat: teil.lat ?? 48.85,
+    lon: teil.lon ?? 2.35,
+    iata: null,
+    keywords: null,
+    ...teil,
+  }
+}
+
+const PARIS = bestaetigterOrt({
+  id: 'geonames:2988507',
+  name: 'Paris',
+  country: 'France',
+  countryCode: 'FR',
+  lat: 48.85341,
+  lon: 2.3488,
+})
+const ROM = bestaetigterOrt({
+  id: 'geonames:3169070',
+  name: 'Rom',
+  country: 'Italy',
+  countryCode: 'IT',
+  lat: 41.89193,
+  lon: 12.51133,
+})
+const ZUERICH = bestaetigterOrt({
+  id: 'geonames:2657896',
+  name: 'Zürich',
+  country: 'Switzerland',
+  countryCode: 'CH',
+  lat: 47.36667,
+  lon: 8.55,
+})
+
+describe('TW6-B progressive Ziele im Gastspeicher', () => {
+  test('ein bestätigtes Ziel bleibt genau eine Stage mit Reisezeitraum', () => {
+    const reise = gastreiseAnlegen(eingabe({ title: 'Paris', destination: 'Paris', destinationPlaceId: PARIS.id }), {
+      ziel: PARIS,
+      abreise: ZUERICH,
+    })
+
+    assert.equal(reise.stages.length, 1)
+    assert.equal(reise.stages[0]?.placeId, PARIS.id)
+    assert.equal(reise.stages[0]?.arrivalDate, reise.startDate)
+    assert.equal(reise.stages[0]?.departureDate, reise.endDate)
+    assert.equal(reise.days.every((tag) => tag.stageId === reise.stages[0]?.id), true)
+    assert.equal(reise.title, 'Paris')
+  })
+
+  test('Paris → Rom → Paris bleibt drei Stages in Eingabereihenfolge', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        destination: 'Paris',
+        destinationPlaceId: PARIS.id,
+        weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+        endDate: '2026-09-17',
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
+    )
+
+    assert.deepEqual(
+      reise.stages.map((etappe) => ({ position: etappe.position, placeId: etappe.placeId, name: etappe.name })),
+      [
+        { position: 1, placeId: PARIS.id, name: 'Paris' },
+        { position: 2, placeId: ROM.id, name: 'Rom' },
+        { position: 3, placeId: PARIS.id, name: 'Paris' },
+      ],
+    )
+    assert.equal(reise.stages.every((etappe) => etappe.arrivalDate === null && etappe.departureDate === null), true)
+    assert.equal(reise.days.every((tag) => tag.stageId === null), true)
+    assert.equal(reise.title, 'Paris')
+
+    const geladen = gastspeicherLaden().aktiv
+    assert.deepEqual(
+      geladen?.stages.map((etappe) => etappe.placeId),
+      [PARIS.id, ROM.id, PARIS.id],
+    )
+    assert.equal(geladen?.stages.length, 3)
+    assert.equal(geladen?.dayStageAssignmentMode, 'unassigned')
+    assert.equal(geladen?.days.length, 6)
+    assert.equal(geladen?.days.every((tag) => tag.stageId === null), true)
+  })
+
+  test('weitere IDs ohne bestätigte Ortsreferenz werden nicht persistiert', () => {
+    assert.throws(
+      () =>
+        gastreiseAnlegen(
+          eingabe({
+            weitereDestinationPlaceIds: [ROM.id],
+          }),
+        ),
+      /bestätigte Ortsreferenz/,
+    )
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+
+  test('Guest→Account-Nutzlast behält mehrere Stages verlustfrei', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        destinationPlaceId: PARIS.id,
+        weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+        endDate: '2026-09-17',
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
+    )
+    const nutzlast = alsNutzlast(reise)
+
+    assert.deepEqual(
+      nutzlast.stages.map((etappe) => etappe.place_id),
+      [PARIS.id, ROM.id, PARIS.id],
+    )
+    assert.equal(nutzlast.stages.every((etappe) => etappe.arrival_date === null), true)
+    assert.equal(nutzlast.days.every((tag) => tag.stage_position == null), true)
+    assert.equal(nutzlast.day_stage_assignment_mode, 'unassigned')
+  })
+
+  test('clientRef bleibt die Idempotenz-Kennung auch bei mehreren Stages', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        clientRef: 'trip-paris-rom-paris',
+        weitereDestinationPlaceIds: [ROM.id],
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM] },
+    )
+
+    assert.equal(reise.id, 'trip-paris-rom-paris')
+    assert.equal(reise.clientRef, 'trip-paris-rom-paris')
+    assert.equal(reise.stages.length, 2)
+  })
+
+  test('die bestehende Guest-One-Trip-Grenze gilt weiter', () => {
+    gastreiseAnlegen(eingabe(), { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM] })
+    assert.throws(
+      () => gastreiseAnlegen(eingabe({ weitereDestinationPlaceIds: [ROM.id] }), {
+        ziel: ROM,
+        abreise: ZUERICH,
+      }),
+      GastreiseBestehtFehler,
+    )
+  })
+
+  test('Maximum+1 Ziele wird nicht angelegt', () => {
+    const extra = Array.from({ length: GRENZEN.etappenJeReise }, (_, index) =>
+      bestaetigterOrt({
+        id: `geonames:${3000000 + index}`,
+        name: `Ort ${index + 1}`,
+        countryCode: 'CH',
+      }),
+    )
+
+    assert.throws(
+      () =>
+        gastreiseAnlegen(eingabe({ weitereDestinationPlaceIds: extra.map((ziel) => ziel.id) }), {
+          ziel: PARIS,
+          abreise: ZUERICH,
+          weitereZiele: extra,
+        }),
+      /höchstens 50 Reiseziele/i,
+    )
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+})
+
+describe('Bearbeiten einer Gastreise', () => {
+  test('ein Planpunkt landet am gewählten Tag', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[1]
+
+    const danach = gastPlanpunktAnlegen(reise, {
+      dayId: tag.id,
+      kind: 'activity',
+      title: 'Tsukiji Outer Market',
+      note: null,
+      startsAt: '09:30',
+    })
+
+    assert.equal(danach.days[1].items.length, 1)
+    assert.equal(danach.days[1].items[0].title, 'Tsukiji Outer Market')
+    assert.equal(danach.days[1].items[0].dayId, tag.id)
+    assert.equal(danach.days[0].items.length, 0)
+    assert.equal(gastspeicherLaden().aktiv?.days[1].items.length, 1, 'und ist gespeichert')
+  })
+
+  test('eine übernommene Aktivität bleibt kommerziell am Tag gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsActivityMomentaufnahme(
+      {
+        id: 'act-1',
+        provider: 'test-activity',
+        externalRef: 'ref-act',
+        title: 'Tsukiji-Rundgang',
+        description: 'Marktbesuch',
+        locationName: 'Tsukiji',
+        punkt: { lat: 35.665, lon: 139.77 },
+        dauerMinuten: 180,
+        timeslot: {
+          startsOn: '2026-09-12',
+          startsAt: '09:00',
+          endsOn: '2026-09-12',
+          endsAt: '12:00',
+        },
+        preis: 45,
+        preisWaehrung: 'CHF',
+        bewertung: 8.6,
+        bewertungenAnzahl: 80,
+        stornierbar: true,
+        kategorien: ['food'],
+        tags: ['markt'],
+      },
+      '2026-09-12',
+    )
+    assert.ok(aufnahme)
+    const etappe = reise.stages[0]
+    assert.ok(etappe)
+    const danach = gastAktivitaetUebernehmen(reise, aufnahme, etappe.id, reise.days[0]!.id)
+    const punkt = danach.days[0]?.items.find((eintrag) => eintrag.kind === 'activity')
+    assert.ok(punkt)
+    assert.equal(istKommerziell(punkt), true)
+    assert.equal(punkt.provider, 'test-activity')
+    assert.equal(punkt.bookingUrl, null)
+    assert.equal(punkt.startsOn, '2026-09-12')
+    assert.equal(punkt.startsAt, '09:00')
+    assert.equal(punkt.stageId, etappe.id)
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.title, 'Tsukiji-Rundgang')
+  })
+
+  test('ein übernommenes Hotel bleibt kommerziell an der Etappe gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsHotelMomentaufnahme(
+      {
+        id: 'hotel-1',
+        provider: 'test-hotel',
+        externalRef: 'ref-hotel',
+        name: 'Hotel Test',
+        punkt: { lat: 35.68, lon: 139.76 },
+        quartierName: 'Ginza',
+        adresse: null,
+        sterne: 4,
+        bewertung: 8.6,
+        bewertungenAnzahl: 400,
+        preisGesamt: 880,
+        preisProNacht: 220,
+        preisWaehrung: 'CHF',
+        steuernEnthalten: true,
+        stornierbar: true,
+        stornierungBis: null,
+        fruehstueckEnthalten: null,
+        zimmerName: null,
+      },
+      { checkIn: '2026-09-12', checkOut: '2026-09-16' },
+    )
+    assert.ok(aufnahme)
+    const etappe = reise.stages[0]
+    assert.ok(etappe)
+    const danach = gastHotelUebernehmen(reise, aufnahme, etappe.id, reise.days[0]!.id)
+    const hotel = danach.days[0]?.items.find((punkt) => punkt.kind === 'stay')
+    assert.ok(hotel)
+    assert.equal(istKommerziell(hotel), true)
+    assert.equal(hotel.provider, 'test-hotel')
+    assert.equal(hotel.bookingUrl, null)
+    assert.equal(hotel.stageId, etappe.id)
+    assert.equal(hotel.startsOn, '2026-09-12')
+    assert.equal(hotel.endsOn, '2026-09-16')
+  })
+
+  test('eine Browser-Flugoption darf nicht als kommerzielle Wahrheit persistiert werden', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
+    assert.ok(aufnahme)
+    assert.throws(
+      () => gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id),
+      /noch nicht verbindlich/,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items.some((punkt) => punkt.kind === 'flight'), false)
+  })
+
+  test('ein Flug kann manuell als gebucht markiert und korrigiert werden', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const mitFlug = gastPlanpunktAnlegen(angelegt, {
+      dayId: angelegt.days[0]!.id,
+      kind: 'flight',
+      title: 'ZRH → BKK',
+      note: null,
+      startsAt: '09:15',
+    })
+    const flug = mitFlug.days[0]?.items.find((punkt) => punkt.kind === 'flight')
+    assert.ok(flug)
+    const gebucht = gastBuchungsstatusSetzen(mitFlug, flug.id, true, '2026-08-21T10:00:00.000Z')
+    const danach = gebucht.days[0]?.items.find((punkt) => punkt.id === flug.id)
+    assert.equal(danach?.bookingStatus, 'booked')
+    assert.equal(danach?.bookingSource, 'user')
+    assert.equal(danach?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
+    const korrigiert = gastBuchungsstatusSetzen(gebucht, flug.id, false)
+    assert.equal(
+      korrigiert.days[0]?.items.find((punkt) => punkt.id === flug.id)?.bookingStatus,
+      'unconfirmed',
+    )
+  })
+
+  test('eine Notiz kann nicht als gebucht markiert werden', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const reise = gastPlanpunktAnlegen(angelegt, {
+      dayId: angelegt.days[0]!.id,
+      kind: 'note',
+      title: 'Notiz',
+      note: null,
+      startsAt: null,
+    })
+    const punkt = reise.days[0]?.items[0]
+    assert.ok(punkt)
+    assert.throws(
+      () => gastBuchungsstatusSetzen(reise, punkt.id, true),
+      /Nur Flüge, Unterkünfte, Verbindungen und Mietwagen/,
+    )
+  })
+
+  test('eine manuelle Bahnverbindung bleibt nach Reload eine Nutzerangabe', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[0]
+    assert.ok(tag)
+    const danach = gastMobilitaetAnlegen(reise, {
+      mode: 'rail',
+      originName: 'Zürich',
+      destinationName: 'Lugano',
+      originPlaceId: 'geonames:2657896',
+      destinationPlaceId: 'geonames:2659836',
+      startsOn: tag.dayDate,
+      startsAt: '08:10',
+      endsOn: tag.dayDate,
+      endsAt: '10:40',
+      connectionRef: 'IC 890',
+      mobilityChanges: 0,
+      dayId: tag.id,
+      stageId: tag.stageId,
+    })
+    const zug = danach.days[0]?.items.find((punkt) => punkt.kind === 'transfer')
+    assert.ok(zug)
+    assert.equal(zug.mobilityMode, 'rail')
+    assert.equal(zug.originName, 'Zürich')
+    assert.equal(zug.destinationName, 'Lugano')
+    assert.equal(zug.mobilityEvidence, 'user')
+    assert.equal(zug.provider, null)
+    assert.equal(zug.bookingUrl, null)
+    assert.equal(zug.bookingStatus, 'unconfirmed')
+
+    const gebucht = gastBuchungsstatusSetzen(danach, zug.id, true, '2026-08-21T10:00:00.000Z')
+    assert.equal(gebucht.days[0]?.items.find((punkt) => punkt.id === zug.id)?.bookingStatus, 'booked')
+    const erneut = gastreiseLadenNach(reise.id)
+    const gespeichert = erneut?.days[0]?.items.find((punkt) => punkt.id === zug.id)
+    assert.equal(gespeichert?.mobilityMode, 'rail')
+    assert.equal(gespeichert?.connectionRef, 'IC 890')
+    assert.equal(gespeichert?.bookingSource, 'user')
+  })
+
+  test('ein manueller Mietwagen bleibt nach Reload eine Nutzerangabe', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const danach = gastMietwagenAnlegen(reise, {
+      pickupName: 'Zürich Flughafen',
+      dropoffName: 'Lugano',
+      pickupPlaceId: 'geonames:2657896',
+      dropoffPlaceId: 'geonames:2659836',
+      pickupOn: '2026-09-12',
+      pickupAt: '09:00',
+      dropoffOn: '2026-09-16',
+      dropoffAt: '18:00',
+      rentalSupplier: 'Europcar',
+      vehicleClass: 'compact',
+      transmission: 'automatic',
+      dayId: null,
+      stageId: reise.stages[0]?.id ?? null,
+    })
+    const auto = danach.ohneTag.find((punkt) => punkt.kind === 'rental_car')
+    assert.ok(auto)
+    assert.equal(auto.originName, 'Zürich Flughafen')
+    assert.equal(auto.destinationName, 'Lugano')
+    assert.equal(auto.rentalSupplier, 'Europcar')
+    assert.equal(auto.vehicleClass, 'compact')
+    assert.equal(auto.transmission, 'automatic')
+    assert.equal(auto.rentalEvidence, 'user')
+    assert.equal(auto.provider, null)
+    assert.equal(auto.bookingUrl, null)
+    assert.equal(auto.bookingStatus, 'unconfirmed')
+    assert.equal(auto.mobilityMode, null)
+
+    const gebucht = gastBuchungsstatusSetzen(danach, auto.id, true, '2026-08-21T10:00:00.000Z')
+    assert.equal(gebucht.ohneTag.find((punkt) => punkt.id === auto.id)?.bookingStatus, 'booked')
+    const erneut = gastreiseLadenNach(reise.id)
+    const gespeichert = erneut?.ohneTag.find((punkt) => punkt.id === auto.id)
+    assert.equal(gespeichert?.rentalEvidence, 'user')
+    assert.equal(gespeichert?.bookingSource, 'user')
+    assert.equal(gespeichert?.bookingStatus, 'booked')
+  })
+
+  test('ein Punkt an einem fremden Tag wird abgelehnt', () => {
+    const reise = gastreiseAnlegen(eingabe())
+
+    assert.throws(() =>
+      gastPlanpunktAnlegen(reise, {
+        dayId: 'day-gibt-es-nicht',
+        kind: 'note',
+        title: 'Irgendwas',
+        note: null,
+        startsAt: null,
+      }),
+    )
+  })
+
+  test('nach dem Entfernen sind die Reihenfolgen wieder lückenlos', () => {
+    // Eine Lücke in `position` wäre in der Datenbank erlaubt und in der Anzeige
+    // eine Reihenfolge, die niemand erklären kann.
+    let reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[0].id
+
+    for (const titel of ['Erster', 'Zweiter', 'Dritter']) {
+      reise = gastPlanpunktAnlegen(reise, {
+        dayId: tag,
+        kind: 'note',
+        title: titel,
+        note: null,
+        startsAt: null,
+      })
+    }
+
+    const zweiter = reise.days[0].items[1].id
+    reise = gastPlanpunktEntfernen(reise, zweiter)
+
+    assert.deepEqual(
+      reise.days[0].items.map((punkt) => [punkt.title, punkt.position]),
+      [
+        ['Erster', 1],
+        ['Dritter', 2],
+      ],
+    )
+  })
+
+  test('updatedAt zieht bei jedem Schreiben nach', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const danach = gastreiseSpeichern({ ...reise, title: 'Neuer Titel' })
+
+    assert.equal(danach.title, 'Neuer Titel')
+    assert.ok(danach.updatedAt >= reise.updatedAt)
+  })
+
+  test('eine Änderung, die keine gültige Reise ergibt, wird nicht gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+
+    assert.throws(() => gastreiseSpeichern({ ...reise, title: '   ' }))
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Japan im Herbst')
+  })
+
+  test('die Reise wird nur unter ihrer eigenen Kennung geliefert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+
+    assert.equal(gastreiseLadenNach(reise.id)?.id, reise.id)
+    assert.equal(gastreiseLadenNach('trip-fremd'), null)
+  })
+})
+
+describe('Sprachänderung im Gastspeicher', () => {
+  test('Reisende werden übernommen und die Revision steigt', () => {
+    gastreiseAnlegen(eingabe())
+    const danach = gastreiseAendern({
+      mutationId: 'mut-1',
+      basisRevision: 1,
+      operationen: [
+        {
+          art: 'stammdaten',
+          etappeId: null,
+          tagId: null,
+          punktId: null,
+          nachEtappeId: null,
+          nachTagId: null,
+          name: null,
+          laendercode: null,
+          titel: null,
+          notiz: null,
+          beginn: null,
+          punktArt: null,
+          tageDelta: null,
+          tage: null,
+          reisende: 3,
+          budgetziel: null,
+          tempo: null,
+          interessen: null,
+          reisewunsch: null,
+          abreiseort: null,
+          startdatum: null,
+        },
+      ],
+    })
+
+    assert.equal(danach.travellers, 3)
+    assert.equal(danach.revision, 2)
+    assert.equal(danach.lastMutationId, 'mut-1')
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 3)
+  })
+
+  test('derselbe Retry ändert nichts zweimal', () => {
+    gastreiseAnlegen(eingabe())
+    const op = {
+      art: 'dauer_aendern' as const,
+      etappeId: null,
+      tagId: null,
+      punktId: null,
+      nachEtappeId: null,
+      nachTagId: null,
+      name: null,
+      laendercode: null,
+      titel: null,
+      notiz: null,
+      beginn: null,
+      punktArt: null,
+      tageDelta: 2,
+      tage: null,
+      reisende: null,
+      budgetziel: null,
+      tempo: null,
+      interessen: null,
+      reisewunsch: null,
+      abreiseort: null,
+      startdatum: null,
+    }
+    const einmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+    const nochmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+
+    assert.equal(einmal.days.length, 7)
+    assert.equal(nochmal.days.length, 7)
+    assert.equal(nochmal.revision, einmal.revision)
+  })
+
+  test('eine veraltete Fassung wird abgelehnt', () => {
+    gastreiseAnlegen(eingabe())
+    gastreiseAendern({
+      mutationId: 'mut-a',
+      basisRevision: 1,
+      operationen: [
+        {
+          art: 'stammdaten',
+          etappeId: null,
+          tagId: null,
+          punktId: null,
+          nachEtappeId: null,
+          nachTagId: null,
+          name: null,
+          laendercode: null,
+          titel: null,
+          notiz: null,
+          beginn: null,
+          punktArt: null,
+          tageDelta: null,
+          tage: null,
+          reisende: 3,
+          budgetziel: null,
+          tempo: null,
+          interessen: null,
+          reisewunsch: null,
+          abreiseort: null,
+          startdatum: null,
+        },
+      ],
+    })
+
+    assert.throws(
+      () =>
+        gastreiseAendern({
+          mutationId: 'mut-b',
+          basisRevision: 1,
+          operationen: [
+            {
+              art: 'stammdaten',
+              etappeId: null,
+              tagId: null,
+              punktId: null,
+              nachEtappeId: null,
+              nachTagId: null,
+              name: null,
+              laendercode: null,
+              titel: null,
+              notiz: null,
+              beginn: null,
+              punktArt: null,
+              tageDelta: null,
+              tage: null,
+              reisende: 4,
+              budgetziel: null,
+              tempo: null,
+              interessen: null,
+              reisewunsch: null,
+              abreiseort: null,
+              startdatum: null,
+            },
+          ],
+        }),
+      VeralteteFassungFehler,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 3)
+  })
+})
+
+describe('Ungeplante Planpunkte im Gastspeicher', () => {
+  test('ein ungeplanter Punkt bleibt nach Reload ungeplant', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    gastreiseSpeichern({
+      ...reise,
+      ohneTag: [
+        {
+          id: 'item-offen',
+          dayId: null,
+          stageId: null,
+          kind: 'note',
+          title: 'Noch offen',
+          note: null,
+          position: 1,
+          startsOn: null,
+          startsAt: null,
+          endsOn: null,
+          endsAt: null,
+          priceAmount: null,
+          priceCurrency: null,
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
+          ...leereMobilitaet(),
+        },
+      ],
+    })
+
+    const erneut = gastreiseLadenNach(reise.id)
+    assert.equal(erneut?.ohneTag[0]?.title, 'Noch offen')
+    assert.equal(erneut?.days.every((tag) => tag.items.length === 0), true)
+  })
+
+  test('eine Sprachänderung hängt ungeplante Punkte nicht an den letzten Tag', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    gastreiseSpeichern({
+      ...reise,
+      ohneTag: [
+        {
+          id: 'item-offen',
+          dayId: null,
+          stageId: null,
+          kind: 'note',
+          title: 'Noch offen',
+          note: null,
+          position: 1,
+          startsOn: null,
+          startsAt: null,
+          endsOn: null,
+          endsAt: null,
+          priceAmount: null,
+          priceCurrency: null,
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
+          ...leereMobilitaet(),
+        },
+      ],
+    })
+
+    const danach = gastreiseAendern({
+      mutationId: 'mut-ohne-tag',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
+    })
+
+    assert.equal(danach.travellers, 3)
+    assert.equal(danach.ohneTag[0]?.title, 'Noch offen')
+    assert.equal(danach.days.every((tag) => tag.items.length === 0), true)
+  })
+
+  test('ein gekürzter Zeitraum bewahrt den kommerziellen Punkt ungeplant', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const letzter = reise.days[reise.days.length - 1]
+    if (!letzter) throw new Error('Die Vorlage braucht mindestens einen Tag.')
+    gastreiseSpeichern({
+      ...reise,
+      days: reise.days.map((tag) =>
+        tag.id === letzter.id
+          ? {
+              ...tag,
+              items: [
+                {
+                  id: 'item-dom',
+                  dayId: letzter.id,
+                  stageId: letzter.stageId,
+                  kind: 'activity',
+                  title: 'Dom',
+                  note: null,
+                  position: 1,
+                  startsOn: letzter.dayDate,
+                  startsAt: null,
+                  endsOn: null,
+                  endsAt: null,
+                  priceAmount: 18,
+                  priceCurrency: 'EUR',
+                  provider: 'getyourguide',
+                  externalRef: 'gyg-1',
+                  bookingUrl: 'https://example.com/dom',
+                  bookingStatus: 'unconfirmed',
+                  bookingSource: null,
+                  bookingConfirmedAt: null,
+                  ...leereMobilitaet(),
+                },
+              ],
+            }
+          : tag,
+      ),
+    })
+
+    const danach = gastreiseAendern({
+      mutationId: 'mut-kuerzen',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'dauer_aendern', tageDelta: -2 })],
+    })
+
+    const dom = danach.ohneTag.find((punkt) => punkt.id === 'item-dom')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.startsOn, letzter.dayDate)
+    assert.equal(dom?.dayId, null)
+    assert.equal(dom?.stageId, null)
+    assert.equal(danach.days.some((tag) => tag.items.some((punkt) => punkt.id === 'item-dom')), false)
+  })
+
+  test('ein manueller Planpunkt macht einen älteren Änderungsvorschlag ungültig', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[0]
+    if (!tag) throw new Error('Die Vorlage braucht mindestens einen Tag.')
+
+    const danach = gastPlanpunktAnlegen(reise, {
+      dayId: tag.id,
+      kind: 'note',
+      title: 'Zwischenstopp',
+      note: null,
+      startsAt: null,
+    })
+
+    assert.equal(danach.revision, 2)
+    assert.throws(
+      () =>
+        gastreiseAendern({
+          mutationId: 'mut-stale',
+          basisRevision: 1,
+          operationen: [leerOp({ art: 'stammdaten', reisende: 4 })],
+        }),
+      VeralteteFassungFehler,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 2)
+  })
+
+  test('derselbe Retry nach Reload ändert nichts zweimal', () => {
+    gastreiseAnlegen(eingabe())
+    const einmal = gastreiseAendern({
+      mutationId: 'mut-reload',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
+    })
+    const nachReload = gastreiseLadenNach(einmal.id)
+    assert.equal(nachReload?.revision, 2)
+
+    const nochmal = gastreiseAendern({
+      mutationId: 'mut-reload',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 5 })],
+    })
+    assert.equal(nochmal.travellers, 3)
+    assert.equal(nochmal.revision, 2)
+  })
+})
+
+describe('Übernahme der Entwürfe aus der Fassung vor Phase 1.5', () => {
+  /** Ein Entwurf, wie ihn `jetnity:guest-trips:v2` enthielt. */
+  function legacyEntwurf(abweichung: Record<string, unknown> = {}) {
+    return {
+      id: 'trip-alt-1',
+      title: 'Barcelona',
+      destination: 'Barcelona',
+      origin: 'Zürich',
+      startDate: '2026-09-12',
+      endDate: '2026-09-14',
+      travelers: 2,
+      pace: 'ruhig',
+      interests: ['Kultur', 'Kulinarik'],
+      budget: 1800,
+      travelWish: 'Zwei ruhige Tage.',
+      days: [
+        {
+          id: 'day-2026-09-12',
+          date: '2026-09-12',
+          items: [{ id: 'item-1', title: 'Sagrada Família', time: '10:00', createdAt: '2026-08-01' }],
+        },
+        { id: 'day-2026-09-13', date: '2026-09-13', items: [] },
+        { id: 'day-2026-09-14', date: '2026-09-14', items: [] },
+      ],
+      createdAt: '2026-08-01T10:00:00.000Z',
+      updatedAt: '2026-08-01T10:00:00.000Z',
+      ...abweichung,
+    }
+  }
+
+  test('ein einzelner Entwurf wird die aktive Gastreise', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv?.title, 'Barcelona')
+    assert.deepEqual(stand.warteschlange, [])
+  })
+
+  test('alle Angaben bleiben erhalten – auch die deutschen Werte', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    const reise = gastspeicherLaden().aktiv
+
+    assert.equal(reise?.pace, 'calm', 'ruhig wird calm')
+    assert.deepEqual(reise?.interests, ['culture', 'food'])
+    assert.equal(reise?.travellers, 2)
+    assert.equal(reise?.budgetAmount, 1800)
+    assert.equal(reise?.currency, 'CHF')
+    assert.equal(reise?.travelWish, 'Zwei ruhige Tage.')
+    assert.equal(reise?.origin, 'Zürich')
+  })
+
+  test('das Ziel wird eine Etappe', () => {
+    // `destination` war ein einzelnes Feld. Im neuen Modell ist ein Ziel eine
+    // Etappe – so bleibt die Angabe erhalten und ist gleichzeitig erweiterbar.
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    assert.equal(gastspeicherLaden().aktiv?.stages[0].name, 'Barcelona')
+  })
+
+  test('Tage und Planpunkte kommen vollständig mit', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    const reise = gastspeicherLaden().aktiv
+
+    assert.equal(reise?.days.length, 3)
+    assert.deepEqual(
+      reise?.days.map((tag) => [tag.dayIndex, tag.dayDate]),
+      [
+        [1, '2026-09-12'],
+        [2, '2026-09-13'],
+        [3, '2026-09-14'],
+      ],
+    )
+    assert.equal(reise?.days[0].items[0].title, 'Sagrada Família')
+    assert.equal(reise?.days[0].items[0].startsAt, '10:00')
+    assert.equal(reise?.days[0].items[0].kind, 'note', 'die alte Fassung kannte keine Arten')
+  })
+
+  test('mehrere Entwürfe: der neueste wird aktiv, die übrigen warten', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyEntwurf({ id: 'trip-alt', title: 'Alt', updatedAt: '2026-08-01T10:00:00.000Z' }),
+      legacyEntwurf({ id: 'trip-neu', title: 'Neu', updatedAt: '2026-08-10T10:00:00.000Z' }),
+    ])
+
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv?.title, 'Neu')
+    assert.deepEqual(
+      stand.warteschlange.map((reise) => reise.title),
+      ['Alt'],
+    )
+  })
+
+  test('nichts wird verworfen: alle Entwürfe stehen zur Übernahme bereit', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyEntwurf({ id: 'trip-a', title: 'A', updatedAt: '2026-08-01T10:00:00.000Z' }),
+      legacyEntwurf({ id: 'trip-b', title: 'B', updatedAt: '2026-08-02T10:00:00.000Z' }),
+      legacyEntwurf({ id: 'trip-c', title: 'C', updatedAt: '2026-08-03T10:00:00.000Z' }),
+    ])
+
+    gastspeicherLaden()
+
+    assert.deepEqual(
+      zurUebernahme().map((reise) => reise.title),
+      ['C', 'B', 'A'],
+      'die aktive Reise steht vorn, damit sie zuerst im Konto liegt',
+    )
+  })
+
+  test('die Übernahme läuft genau einmal', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    gastspeicherLaden()
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), null, 'der alte Schlüssel fällt weg')
+
+    // Der zweite Aufruf darf die Warteschlange nicht erneut füllen.
+    const zweiterStand = gastspeicherLaden()
+    assert.equal(zweiterStand.aktiv?.title, 'Barcelona')
+    assert.deepEqual(zweiterStand.warteschlange, [])
+  })
+
+  test('eine Reise dieser Fassung gewinnt gegen einen alten Entwurf', () => {
+    // Sie wird gerade bearbeitet. Der alte Entwurf wandert in die
+    // Warteschlange, statt sie zu überschreiben.
+    const aktuell = gastreiseAnlegen(eingabe({ title: 'Diese Fassung' }))
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv?.id, aktuell.id)
+    assert.deepEqual(
+      stand.warteschlange.map((reise) => reise.title),
+      ['Barcelona'],
+    )
+  })
+
+  test('ein unbrauchbarer alter Eintrag fällt heraus, die übrigen bleiben', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [{ id: 'kaputt' }, legacyEntwurf()])
+
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Barcelona')
+  })
+
+  test('ein alter Schlüssel ohne Liste bleibt liegen, statt gelöscht zu werden', () => {
+    // Zu löschen gäbe es nichts, wohin geschrieben wurde. Das Laden bleibt
+    // trotzdem ruhig: kein Fehler, keine halbe Reise.
+    speicher.setzen(SCHLUESSEL.legacy, { nicht: 'eine Liste' })
+
+    assert.equal(gastspeicherLaden().aktiv, null)
+    assert.ok(speicher.roh(SCHLUESSEL.legacy), 'nichts geschrieben, also nichts gelöscht')
+  })
+})
+
+describe('Aufräumen erst nach bestätigter Übernahme', () => {
+  test('eine bestätigte Reise wird gestrichen', () => {
+    const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-bestaetigt' }))
+
+    uebernommenStreichen(reise.clientRef ?? reise.id)
+
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+
+  test('eine fremde Kennung streicht nichts', () => {
+    // Der Aufrufer räumt je Reise einzeln auf, nachdem der Server ihre Kennung
+    // gemeldet hat. Eine unbekannte Kennung darf nichts löschen – sonst wäre
+    // ein Tippfehler ein Datenverlust.
+    const reise = gastreiseAnlegen(eingabe())
+
+    uebernommenStreichen('trip-eine-andere')
+
+    assert.equal(gastspeicherLaden().aktiv?.id, reise.id)
+  })
+
+  test('aus der Warteschlange wird genau ein Eintrag gestrichen', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, null)
+    const entwuerfe = ['A', 'B', 'C'].map((titel, nr) => ({
+      id: `trip-${titel}`,
+      clientRef: `trip-${titel}`,
+      title: titel,
+      origin: null,
+      startDate: null,
+      endDate: null,
+      travellers: 1,
+      currency: 'CHF',
+      budgetAmount: null,
+      status: 'draft',
+      pace: 'balanced',
+      interests: [],
+      travelWish: null,
+      stages: [],
+      days: [{ id: `day-${nr}`, dayIndex: 1, dayDate: null, title: null, items: [] }],
+      createdAt: '2026-08-01T10:00:00.000Z',
+      updatedAt: '2026-08-01T10:00:00.000Z',
+    }))
+
+    speicher.setzen(SCHLUESSEL.warteschlange, entwuerfe)
+
+    uebernommenStreichen('trip-B')
+
+    assert.deepEqual(
+      gastspeicherLaden().warteschlange.map((reise) => reise.title),
+      ['A', 'C'],
+    )
+  })
+
+  test('ein Abbruch mitten in der Übernahme lässt den Rest liegen', () => {
+    // Der Fall, für den die einzelne Streichung existiert: Reise 1 ist im
+    // Konto, Reise 2 scheiterte. Nur Reise 1 verschwindet.
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+
+    gastspeicherLaden()
+    uebernommenStreichen('trip-1')
+
+    assert.deepEqual(
+      zurUebernahme().map((reise) => reise.title),
+      ['Zweite'],
+      'der Rest bleibt für den nächsten Versuch liegen',
+    )
+  })
+})
+
+describe('Ein Schreibfehler gilt nie als Erfolg', () => {
+  // Bis zum Nachtrag dieser Phase erwartete der Test an dieser Stelle „kein
+  // Throw": Das Anlegen meldete Erfolg, die Oberfläche wechselte in den
+  // Arbeitsbereich, und im Browser lag nichts. Für eine Reise, die es nur hier
+  // gibt, ist das die falsche Semantik – der Fehler ist die Auskunft.
+
+  test('ein gesperrter Speicher lässt keine Reise entstehen', () => {
+    speicher.sperren()
+
+    assert.throws(() => gastreiseAnlegen(eingabe()), SpeicherFehler)
+    assert.equal(gastspeicherLaden().aktiv, null, 'und es liegt auch nichts halb da')
+  })
+
+  test('ein stummer Speicher fällt trotz fehlender Ausnahme auf', () => {
+    // `setItem` wirft nicht und behält nichts. Ohne das Zurücklesen wäre das
+    // der Fall, der als Erfolg durchgeht.
+    speicher.stummschalten()
+
+    assert.throws(() => gastreiseAnlegen(eingabe()), SpeicherFehler)
+  })
+
+  test('nach einem gescheiterten Anlegen bleibt der Weg frei', () => {
+    speicher.sperren()
+    assert.throws(() => gastreiseAnlegen(eingabe()))
+
+    // Kein Phantom: Der zweite Versuch scheitert nicht an einer „bestehenden"
+    // Gastreise, die niemand sehen kann.
+    speicher.entsperren()
+    assert.equal(gastreiseAnlegen(eingabe({ title: 'Zweiter Versuch' })).title, 'Zweiter Versuch')
+  })
+
+  test('eine Bearbeitung ohne Ablage wirft und lässt den alten Stand stehen', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.sperren()
+
+    assert.throws(() => gastreiseSpeichern({ ...reise, title: 'Nur im Speicher des Fensters' }), SpeicherFehler)
+
+    speicher.entsperren()
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Japan im Herbst', 'der letzte gute Stand bleibt')
+  })
+
+  test('ein Planpunkt, der nicht abgelegt werden kann, gilt nicht als angelegt', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.sperren()
+
+    assert.throws(
+      () =>
+        gastPlanpunktAnlegen(reise, {
+          dayId: reise.days[0].id,
+          kind: 'activity',
+          title: 'Fischmarkt',
+          note: null,
+          startsAt: null,
+        }),
+      SpeicherFehler,
+    )
+
+    speicher.entsperren()
+    assert.equal(gastspeicherLaden().aktiv?.days[0].items.length, 0)
+  })
+
+  test('ein Entwurf gilt nur als verworfen, wenn er wirklich weg ist', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.loeschenSperren()
+
+    assert.throws(() => gastreiseEntfernen(), SpeicherFehler)
+
+    speicher.entsperren()
+    assert.equal(
+      gastspeicherLaden().aktiv?.id,
+      reise.id,
+      'der Entwurf ist noch da – und die Oberfläche leitet nicht weiter',
+    )
+  })
+})
+
+describe('Die Übernahme aus der alten Fassung löscht nichts auf Verdacht', () => {
+  test('scheitert das Schreiben, bleibt der alte Schlüssel vollständig liegen', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+    const vorher = speicher.roh(SCHLUESSEL.legacy)
+
+    speicher.sperren()
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv?.title, 'Erste', 'die Entwürfe sind in dieser Sitzung sichtbar')
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), vorher, 'und im Speicher unverändert vorhanden')
+  })
+
+  test('scheitert nur die Warteschlange, bleibt der alte Schlüssel liegen', () => {
+    // Der teure Fall: Der erste Schlüssel ist geschrieben, der zweite nicht.
+    // Ein `removeItem` an dieser Stelle hätte alle wartenden Entwürfe gekostet.
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+
+    speicher.sperrenFuer(SCHLUESSEL.warteschlange)
+    gastspeicherLaden()
+
+    assert.ok(speicher.roh(SCHLUESSEL.legacy), 'der alte Schlüssel ist noch da')
+    assert.ok(speicher.roh(SCHLUESSEL.aktiv), 'die aktive Reise ist geschrieben')
+  })
+
+  test('der nächste Lauf holt alles nach, ohne etwas zu verdoppeln', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+
+    speicher.sperrenFuer(SCHLUESSEL.warteschlange)
+    gastspeicherLaden()
+
+    speicher.entsperren()
+    const stand = gastspeicherLaden()
+
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), null, 'jetzt darf der alte Schlüssel weg')
+    assert.deepEqual(
+      zurUebernahme().map((reise) => reise.title),
+      ['Erste', 'Zweite'],
+      'jede Reise genau einmal – die aktive steht nicht zusätzlich in der Warteschlange',
+    )
+    assert.equal(stand.aktiv?.title, 'Erste')
+  })
+})
+
+describe('Gastreise trägt dieselbe Readiness-Form', () => {
+  for (const [name, titelA, titelB] of [
+    ['B02', 'Versicherung für den Urlaub rechtzeitig prüfen: Person A', 'Versicherung für den Urlaub rechtzeitig prüfen: Person B'],
+    ['identischer Titel', 'Reiseadapter einpacken', 'Reiseadapter einpacken'],
+    ['lange Titel', `${'a'.repeat(79)}A`, `${'a'.repeat(79)}B`],
+    ['Case/Whitespace', ' Reiseadapter einpacken ', 'reiseadapter EINPACKEN'],
+    ['Whitespace', ' Reiseadapter einpacken ', 'Reiseadapter einpacken'],
+  ]) {
+    test(`${name}: neue eigene Punkte ohne Ref überschreiben keinen Bestand`, () => {
+      const angelegt = gastreiseAnlegen(eingabe())
+      const a = gastReadinessSetzen(angelegt, { kind: 'preparation', userStatus: 'done', title: titelA })
+      const itemA = a.readinessItems![0]!
+      const vorherA = JSON.stringify(itemA)
+      const b = gastReadinessSetzen(a, { kind: 'preparation', userStatus: 'open', title: titelB })
+      assert.equal(b.readinessItems?.length, 2)
+      const itemB = b.readinessItems!.find(item => item.clientRef !== itemA.clientRef)!
+      assert.ok(itemB)
+      assert.notEqual(itemB.clientRef, itemA.clientRef)
+      assert.ok(itemB.clientRef.length <= READINESS_GRENZEN.clientRef)
+      assert.equal(itemB.title, titelB!.trim())
+      assert.equal(JSON.stringify(b.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+
+      const aktualisiert = gastReadinessSetzen(b, { ...itemB, title: titelA, userStatus: 'skipped' })
+      assert.equal(aktualisiert.readinessItems?.length, 2)
+      assert.equal(JSON.stringify(aktualisiert.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+      assert.equal(aktualisiert.readinessItems!.find(item => item.clientRef === itemB.clientRef)?.userStatus, 'skipped')
+      const geladen = gastreiseLadenNach(aktualisiert.id)!
+      assert.equal(geladen.readinessItems?.length, 2)
+      assert.equal(JSON.stringify(geladen.readinessItems!.find(item => item.clientRef === itemA.clientRef)), vorherA)
+
+      const payload = readinessAlsUebernahme(geladen)
+      const uebernommen = readinessNachUebernahmeBauen(angelegt, [...payload, ...payload])
+      assert.equal(uebernommen.length, 2)
+      assert.deepEqual(uebernommen.map(item => [item.clientRef, item.title, item.userStatus]),
+        geladen.readinessItems!.map(item => [item.clientRef, item.title, item.userStatus]))
+    })
+  }
+
+  test('explizite Payload bleibt retry-sicher; Legacy-Ref wird nur exakt bearbeitet', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const legacyRef = 'preparation:reiseadapter einpacken'
+    const a = gastReadinessSetzen(angelegt, {
+      clientRef: legacyRef, kind: 'preparation', title: 'Reiseadapter einpacken', userStatus: 'done',
+    })
+    const vorherA = JSON.stringify(a.readinessItems![0])
+    const payloadB = { clientRef: 'preparation-new-id', kind: 'preparation', title: 'Reiseadapter einpacken', userStatus: 'open' }
+    const b = gastReadinessSetzen(a, payloadB)
+    const idB = b.readinessItems!.find(item => item.clientRef === payloadB.clientRef)!.id
+    const retry = gastReadinessSetzen(b, payloadB)
+    assert.equal(retry.readinessItems?.length, 2)
+    assert.equal(retry.readinessItems!.find(item => item.clientRef === payloadB.clientRef)?.id, idB)
+    assert.equal(JSON.stringify(retry.readinessItems!.find(item => item.clientRef === legacyRef)), vorherA)
+    const vorherB = JSON.stringify(retry.readinessItems!.find(item => item.clientRef === payloadB.clientRef))
+    const updated = gastReadinessSetzen(retry, {
+      clientRef: legacyRef, kind: 'preparation', title: 'Zweiten Adapter einpacken', userStatus: 'done',
+    })
+    assert.equal(updated.readinessItems!.find(item => item.clientRef === legacyRef)?.title, 'Zweiten Adapter einpacken')
+    assert.equal(JSON.stringify(updated.readinessItems!.find(item => item.clientRef === payloadB.clientRef)), vorherB)
+  })
+
+  test('abgeleitete IDs und Legacy-Fallback für Systempunkte bleiben erhalten', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const check = readinessChecksAbleiten(angelegt).find(item => item.kind === 'insurance_check')!
+    assert.equal(check.clientRef, 'insurance_check:trip')
+    const gespeichert = gastReadinessSetzen(angelegt, { ...check, userStatus: 'done' })
+    const erneut = gastReadinessSetzen(gespeichert, { kind: 'insurance_check', userStatus: 'skipped' })
+    assert.equal(erneut.readinessItems?.length, 1)
+    assert.equal(erneut.readinessItems![0]?.clientRef, check.clientRef)
+    assert.equal(erneut.readinessItems![0]?.userStatus, 'skipped')
+    assert.deepEqual(readinessChecksAbleiten(erneut), readinessChecksAbleiten(angelegt))
+  })
+
+  test('50 eigene Punkte bleiben Grenze; nur exaktes Update ist am Limit erlaubt', () => {
+    let reise = gastreiseAnlegen(eingabe())
+    for (let i = 0; i < READINESS_GRENZEN.itemsJeReise; i++) {
+      reise = gastReadinessSetzen(reise, { kind: 'preparation', userStatus: 'open', title: 'Reiseadapter einpacken' })
+    }
+    assert.equal(reise.readinessItems?.length, 50)
+    assert.throws(() => gastReadinessSetzen(reise, {
+      kind: 'preparation', userStatus: 'open', title: 'Reiseadapter einpacken',
+    }), /höchstens 50/)
+    const aktualisiert = gastReadinessSetzen(reise, { ...reise.readinessItems![0], userStatus: 'done', evidence: 'official' })
+    assert.equal(aktualisiert.readinessItems?.length, 50)
+    assert.equal(aktualisiert.readinessItems!.find(item => item.userStatus === 'done')?.evidence, 'user')
+  })
+
+  test('create/update/delete und Reload bleiben idempotent', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const danach = gastReadinessSetzen(angelegt, {
+      clientRef: 'entry_check:TH',
+      kind: 'entry_check',
+      userStatus: 'done',
+      countryCode: angelegt.stages[0]?.countryCode ?? null,
+    })
+    assert.equal(danach.readinessItems?.length, 1)
+    assert.equal(danach.readinessItems?.[0]?.userStatus, 'done')
+    assert.equal(danach.readinessItems?.[0]?.evidence, 'user')
+
+    const erneut = gastReadinessSetzen(danach, {
+      clientRef: 'entry_check:TH',
+      kind: 'entry_check',
+      userStatus: 'done',
+      countryCode: danach.stages[0]?.countryCode ?? null,
+    })
+    assert.equal(erneut.readinessItems?.length, 1)
+
+    const geladen = gastreiseLadenNach(erneut.id)
+    assert.equal(geladen?.readinessItems?.length, 1)
+
+    const ohne = gastReadinessEntfernen(erneut, 'entry_check:TH')
+    assert.equal(ohne.readinessItems?.length, 0)
+  })
+
+  test('Reisendenkontext bleibt nach Reload erhalten', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const danach = gastTravellerSetzen(angelegt, {
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      documentType: 'passport',
+      citizenships: undefined,
+      documents: undefined,
+    })
+    assert.equal(danach.party?.[0]?.citizenships[0]?.countryCode, 'CH')
+    assert.equal(danach.party?.[0]?.documents[0]?.documentType, 'passport')
+    const geladen = gastreiseLadenNach(danach.id)
+    assert.equal(geladen?.party?.[0]?.citizenships[0]?.countryCode, 'CH')
+    assert.equal(geladen?.party?.[0]?.documents[0]?.documentType, 'passport')
+    const ohne = gastTravellerEntfernen(danach, 'traveller:1')
+    assert.equal(ohne.party?.length, 0)
+  })
+
+  test('sensible Titel werden nicht gespeichert', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    assert.throws(
+      () =>
+        gastReadinessSetzen(angelegt, {
+          kind: 'preparation',
+          userStatus: 'open',
+          title: 'Passnummer 1234567',
+        }),
+      /sensible Daten/,
+    )
+  })
+})
+
+describe('Read-only Vorprüfung des aktiven Gastschlüssels', () => {
+  test('ein fehlender Schlüssel ist fehlend, nicht ungültig', () => {
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('eine gültige aktive Reise bleibt gültig', () => {
+    gastreiseAnlegen(eingabe())
+    speicher.schreibvorgaenge.length = 0
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('unlesbares JSON bleibt byte-genau liegen und gilt als ungültig', () => {
+    const roh = '{kein JSON'
+    speicher.setzen(SCHLUESSEL.aktiv, roh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein schema-ungültiges Objekt bleibt liegen und gilt als ungültig', () => {
+    const roh = JSON.stringify({ id: 'trip-1', title: 'Halb' })
+    speicher.setzen(SCHLUESSEL.aktiv, roh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein leerer String ist vorhanden und ungültig, nicht fehlend', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '')
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), '')
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('primitive und JSON-null Werte sind ungültig', () => {
+    for (const roh of ['null', '42', 'true', '"nur-text"']) {
+      speicher.setzen(SCHLUESSEL.aktiv, roh)
+      assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+      assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    }
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ungültig aktiv plus gültiges Legacy bleibt unverändert', () => {
+    const aktivRoh = '{kein JSON'
+    const legacyRoh = JSON.stringify([legacyMini('trip-alt', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+    speicher.setzen(SCHLUESSEL.aktiv, aktivRoh)
+    speicher.setzen(SCHLUESSEL.legacy, legacyRoh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), legacyRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ungültig aktiv plus gültige Warteschlange bleibt unverändert', () => {
+    const aktivRoh = JSON.stringify({ id: 'trip-1', title: 'Halb' })
+    const warteschlange = [
+      {
+        id: 'trip-warte',
+        clientRef: 'trip-warte',
+        title: 'Wartend',
+        origin: null,
+        startDate: '2026-09-12',
+        endDate: '2026-09-12',
+        travellers: 1,
+        currency: 'CHF',
+        budgetAmount: null,
+        status: 'draft',
+        pace: 'balanced',
+        interests: [],
+        travelWish: null,
+        stages: [{ id: 'stage-1', position: 1, name: 'Paris', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null }],
+        days: [{ id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', title: null, items: [], stageId: null }],
+        ohneTag: [],
+        createdAt: '2026-08-01T10:00:00.000Z',
+        updatedAt: '2026-08-01T10:00:00.000Z',
+      },
+    ]
+    speicher.setzen(SCHLUESSEL.aktiv, aktivRoh)
+    speicher.setzen(SCHLUESSEL.warteschlange, warteschlange)
+    const warteschlangeRoh = speicher.roh(SCHLUESSEL.warteschlange)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.warteschlange), warteschlangeRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('getItem-Wurf ist speicher_unlesbar, nicht ungültig oder fehlend', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.lesenWerfen()
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'speicher_unlesbar' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein werfender localStorage-Getter ist speicher_unlesbar', () => {
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: {},
+    })
+    Object.defineProperty(globalThis.window, 'localStorage', {
+      configurable: true,
+      get() {
+        throw new Error('SecurityError')
+      },
+    })
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'speicher_unlesbar' })
+  })
+
+  test('ohne window bleibt die Prüfung still, kein Speicherfehler', () => {
+    const vorher = Object.getOwnPropertyDescriptor(globalThis, 'window')
+    Reflect.deleteProperty(globalThis, 'window')
+
+    try {
+      assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'nicht_im_browser' })
+    } finally {
+      if (vorher) Object.defineProperty(globalThis, 'window', vorher)
+    }
+  })
+
+  test('fehlend aktiv plus gültiges Legacy bleibt für den Lader übernehmbar', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Barcelona')
+  })
+
+  test('nach Korrektur liest die Vorprüfung frisch, ohne Cache', () => {
+    const defekt = '{kein JSON'
+    speicher.setzen(SCHLUESSEL.aktiv, defekt)
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.throws(() => gastreiseAnlegen(eingabe({ title: 'Unerlaubt' })), GastreiseUnbrauchbarFehler)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), defekt)
+
+    // Fixture simulates an external correction. Create must not overwrite the
+    // invalid raw bytes to "repair" them.
+    speicher.ablage.delete(SCHLUESSEL.aktiv)
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+
+    gastreiseAnlegen(eingabe({ title: 'Korrigiert' }))
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Korrigiert')
+  })
+})
+
+/** Ein minimaler Entwurf der alten Fassung, nur mit dem, was der Test braucht. */
+function legacyMini(id: string, title: string, updatedAt: string) {
+  return {
+    id,
+    title,
+    destination: title,
+    origin: 'Zürich',
+    startDate: '2026-09-12',
+    endDate: '2026-09-12',
+    travelers: 1,
+    pace: 'ausgewogen',
+    interests: [],
+    days: [{ id: 'day-1', date: '2026-09-12', items: [] }],
+    createdAt: updatedAt,
+    updatedAt,
+  }
+}
+
+describe('Manuelle Unterkunft: enger Gast-Zeitraum-Schreibweg', () => {
+  function mitStay(ohneTag: boolean, teil: Partial<TripItem> = {}) {
+    let reise = gastreiseAnlegen(eingabe())
+    reise = gastPlanpunktAnlegen(reise, { dayId: reise.days[0]!.id, kind: 'stay', title: 'Mein Hotel', note: 'Unveränderte Notiz', startsAt: '14:30' })
+    reise = gastPlanpunktAnlegen(reise, { dayId: reise.days[0]!.id, kind: 'note', title: 'Geschwisterpunkt', note: null, startsAt: null })
+    const ziel = reise.days[0]!.items[0]!
+    const punkt = { ...ziel, ...teil, dayId: ohneTag ? null : ziel.dayId }
+    return gastreiseSpeichern({ ...reise,
+      days: reise.days.map((tag, index) => index === 0 ? { ...tag, items: ohneTag ? tag.items.slice(1) : [punkt, ...tag.items.slice(1)] } : tag),
+      ohneTag: ohneTag ? [punkt] : [],
+    })
+  }
+  for (const ohneTag of [false, true]) {
+    test(`${ohneTag ? 'ohneTag' : 'day item'}: exakt zwei Felder, Revision und persistierter Schema-Graph`, () => {
+      const reise = mitStay(ohneTag, { startsOn: null, endsOn: null, endsAt: '10:00', priceAmount: 321,
+        priceCurrency: 'CHF', bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: '2026-09-01T10:00:00Z' })
+      const punkt = ohneTag ? reise.ohneTag[0]! : reise.days[0]!.items[0]!
+      const vorher = structuredClone(reise)
+      const gespeichert = gastUnterkunftZeitraumSetzen(reise, punkt.id, '2026-09-12', '2026-09-15')
+      const erwartet = structuredClone(reise)
+      const ziel = ohneTag ? erwartet.ohneTag[0]! : erwartet.days[0]!.items[0]!
+      ziel.startsOn = '2026-09-12'; ziel.endsOn = '2026-09-15'
+      erwartet.revision += 1; erwartet.updatedAt = gespeichert.updatedAt
+      assert.deepEqual(gespeichert, erwartet, 'jedes Geschwister und jedes Nicht-Datumsfeld bleibt erhalten')
+      assert.deepEqual(reise, vorher, 'Eingabe nicht mutiert')
+      const roh = JSON.parse(speicher.roh(SCHLUESSEL.aktiv)!)
+      assert.deepEqual(reiseLesen(roh), gespeichert)
+      assert.deepEqual(gastreiseLadenNach(reise.id), gespeichert)
+    })
+  }
+  test('missing, non-stay, provider/ref/url und mehrdeutige ID schreiben nichts', () => {
+    const reise = mitStay(false)
+    const punkt = reise.days[0]!.items[0]!
+    const vorher = speicher.roh(SCHLUESSEL.aktiv)
+    const varianten = [
+      { ...reise, ohneTag: [{ ...punkt, dayId: null }] },
+      ...([{ kind: 'note' }, { provider: 'test' }, { externalRef: 'ref' }, { bookingUrl: 'https://example.test' }] as Partial<TripItem>[])
+        .map(teil => ({ ...reise, days: reise.days.map((tag, i) => i === 0 ? { ...tag, items: [{ ...punkt, ...teil }, ...tag.items.slice(1)] } : tag) })),
+    ]
+    assert.throws(() => gastUnterkunftZeitraumSetzen(reise, 'fehlend', '2026-09-12', '2026-09-16'))
+    for (const variante of varianten) assert.throws(() => gastUnterkunftZeitraumSetzen(variante, punkt.id, '2026-09-12', '2026-09-16'))
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), vorher)
+  })
+  test('ungültige Eingaben, ungültiger Gesamtgraph und Speicherfehler werden nicht als Erfolg gemeldet', () => {
+    const reise = mitStay(true)
+    const id = reise.ohneTag[0]!.id
+    const vorher = speicher.roh(SCHLUESSEL.aktiv)
+    for (const [start, end] of [['2026-09-12', '2026-09-12'], ['2026-09-13', '2026-09-12'], ['2026-02-29', '2026-03-01'],
+      ['2026-09-12', ''], ['', '2026-09-16'], ['12.09.2026', '2026-09-16']]) {
+      assert.throws(() => gastUnterkunftZeitraumSetzen(reise, id, start!, end!))
+    }
+    assert.throws(() => gastUnterkunftZeitraumSetzen({ ...reise, title: '' }, id, '2026-09-12', '2026-09-16'), /gültige Reise/)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), vorher)
+    speicher.sperren()
+    assert.throws(() => gastUnterkunftZeitraumSetzen(reise, id, '2026-09-12', '2026-09-16'), SpeicherFehler)
+  })
+})

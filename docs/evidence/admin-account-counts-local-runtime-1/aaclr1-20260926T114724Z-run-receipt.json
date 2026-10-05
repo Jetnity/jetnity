@@ -1,0 +1,75 @@
+{
+  "agent": "Jetnity admin account counts local runtime 1",
+  "generation": 1,
+  "macosDockerFix1": {
+    "agent": "Jetnity admin account counts macOS Docker runtime fix 1",
+    "generation": 1,
+    "task": "docs/ADMIN_ACCOUNT_COUNTS_MACOS_DOCKER_RUNTIME_FIX_1_TASK_2026-09-26.md",
+    "branch": "fix/admin-account-counts-macos-docker-runtime-1",
+    "productBaseline": "b440a6759c7c479d1b7509ecbefcac7b95c4ea35"
+  },
+  "dockerPublishShim1": {
+    "agent": "Jetnity admin account counts docker publish shim 1",
+    "generation": 1,
+    "task": "docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_1_TASK_2026-09-26.md",
+    "branch": "fix/admin-account-counts-docker-publish-shim-1",
+    "productBaseline": "8bb9dd31d5b1a585262c3e773bddab0693d0d3ba"
+  },
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.md",
+  "taskSeed": "0aa33e88a021756a5cee64a130d544122977880a",
+  "branch": "test/admin-account-counts-local-runtime-1",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "runId": "aaclr1-20260926T114724Z",
+  "mode": "preflight",
+  "verdict": "BLOCKED_ENVIRONMENT",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "implementation": {
+    "preflight": "IMPLEMENTED",
+    "sourcePins": "IMPLEMENTED",
+    "ownedLifecycle": "REVIEW_FIX_F3_F4",
+    "envGuard": "REUSED_AND_EXTENDED",
+    "cliIdentity": "REVIEW_FIX_C2",
+    "dockerCapability": "MACOS_ENDPOINT_FIX_1",
+    "dockerPublishShim": "IMPLEMENTED",
+    "stackStart": "IMPLEMENTED",
+    "migrationReplay": "IMPLEMENTED",
+    "catalogVerification": "IMPLEMENTED",
+    "fixtureProvision": "IMPLEMENTED",
+    "appLaunch": "IMPLEMENTED",
+    "serverRpcObservation": "IMPLEMENTED",
+    "browserSessionFactory": "REVIEW_FIX_F3",
+    "frozenContext": "IMPLEMENTED",
+    "orchestration": "REVIEW_FIX_O2",
+    "browserFlows": "SIBLING_OWNED",
+    "realStackExecution": "NOT_RUN",
+    "codeCompleteClaim": false,
+    "note": "Docker publish shim 1: official CLI 2.117.0 archive/binary stays byte-identical. The official CLI child receives a private run-owned PATH shim named docker that rewrites create -p/--publish to explicit 127.0.0.1 before container start. Harness Docker operations keep the exact verified real binary. #564 NetworkSettings inspection remains authoritative. Official binaries, Docker and the real stack were not executed in this correction."
+  },
+  "summary": {
+    "counts": {
+      "PASS": 2,
+      "FAIL": 0,
+      "BLOCKED": 1,
+      "NOT RUN": 18,
+      "PARTIAL": 0,
+      "NOT IMPLEMENTED": 0,
+      "UNKNOWN": 0
+    },
+    "fullLocalExecution": false,
+    "applicationRan": false,
+    "preflightBlocked": true
+  },
+  "plannedSql": [
+    "scripts/db/admin-account-counts-1-candidate.sql",
+    "scripts/db/admin-account-counts-delivery-1-rpc.sql"
+  ],
+  "browserPresent": false,
+  "fullLocalExecution": false,
+  "notDone": [
+    "No hosted Production or Development access.",
+    "No Ready/merge.",
+    "No sibling-code import.",
+    "No #550 bootstrap overlay.",
+    "Integrated full-browser PASS remains a later TL gate."
+  ]
+}

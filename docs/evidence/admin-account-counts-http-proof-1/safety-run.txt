@@ -1,0 +1,143 @@
+TAP version 13
+# Subtest: admin-account-counts-http-proof-1 harness safety
+    # Subtest: rejects inherited PG and PostgREST/Supabase connection defaults before any process starts
+    ok 1 - rejects inherited PG and PostgREST/Supabase connection defaults before any process starts
+      ---
+      duration_ms: 1.42825
+      ...
+    # Subtest: rejects public bind arguments and remote allow-flag
+    ok 2 - rejects public bind arguments and remote allow-flag
+      ---
+      duration_ms: 0.316296
+      ...
+    # Subtest: spawned runner fails closed on PGHOST and does not print the override
+    ok 3 - spawned runner fails closed on PGHOST and does not print the override
+      ---
+      duration_ms: 154.017223
+      ...
+    # Subtest: cleanProofEnv strips PSQLRC, PG* and PGRST_* keys
+    ok 4 - cleanProofEnv strips PSQLRC, PG* and PGRST_* keys
+      ---
+      duration_ms: 0.314419
+      ...
+    # Subtest: PostgREST config builder refuses non-loopback hosts and wildcard binds
+    ok 5 - PostgREST config builder refuses non-loopback hosts and wildcard binds
+      ---
+      duration_ms: 0.261192
+      ...
+    # Subtest: source hash helper stays fail-closed on mismatch
+    ok 6 - source hash helper stays fail-closed on mismatch
+      ---
+      duration_ms: 0.168632
+      ...
+    # Subtest: local JWT helper signs HS256 without logging the token in this assertion
+    ok 7 - local JWT helper signs HS256 without logging the token in this assertion
+      ---
+      duration_ms: 1.398363
+      ...
+    # Subtest: runner, fixture and accepted SQL stay local-only in source
+    ok 8 - runner, fixture and accepted SQL stay local-only in source
+      ---
+      duration_ms: 0.761429
+      ...
+    1..8
+ok 1 - admin-account-counts-http-proof-1 harness safety
+  ---
+  duration_ms: 159.553815
+  type: 'suite'
+  ...
+# Subtest: admin-account-counts-http-proof-1 H1 process lifecycle
+    # Subtest: never-started child is a confirmed stop, not a cleanup PASS hole
+    ok 1 - never-started child is a confirmed stop, not a cleanup PASS hole
+      ---
+      duration_ms: 0.496222
+      ...
+    # Subtest: normal-run owned sleep child is reaped before removal is allowed
+    ok 2 - normal-run owned sleep child is reaped before removal is allowed
+      ---
+      duration_ms: 7.640017
+      ...
+    # Subtest: lingering child / timeout refuses removal and cannot be cleanup PASS
+    ok 3 - lingering child / timeout refuses removal and cannot be cleanup PASS
+      ---
+      duration_ms: 80.81402
+      ...
+    # Subtest: early start failure is a spawn failure, not a silent running child
+    ok 4 - early start failure is a spawn failure, not a silent running child
+      ---
+      duration_ms: 1.960739
+      ...
+    # Subtest: stop-failure keeps the data tree and rejects httpStopped:false PASS
+    ok 5 - stop-failure keeps the data tree and rejects httpStopped:false PASS
+      ---
+      duration_ms: 0.109308
+      ...
+    # Subtest: listener evidence is pid-bound LISTEN loopback and rejects wrong pid/public/non-listen
+    ok 6 - listener evidence is pid-bound LISTEN loopback and rejects wrong pid/public/non-listen
+      ---
+      duration_ms: 1.274507
+      ...
+    # Subtest: exported waiter resolves a real already-exited child without timer TDZ
+    ok 7 - exported waiter resolves a real already-exited child without timer TDZ
+      ---
+      duration_ms: 16.848218
+      ...
+    # Subtest: exported waiter resolves a real already-signaled child
+    ok 8 - exported waiter resolves a real already-signaled child
+      ---
+      duration_ms: 1.862917
+      ...
+    # Subtest: post-spawn kill EPERM error is not exit and retains the living child
+    ok 9 - post-spawn kill EPERM error is not exit and retains the living child
+      ---
+      duration_ms: 322.40636
+      ...
+    1..9
+ok 2 - admin-account-counts-http-proof-1 H1 process lifecycle
+  ---
+  duration_ms: 433.865731
+  type: 'suite'
+  ...
+# Subtest: admin-account-counts-http-proof-1 H2 structured denials
+    # Subtest: evaluateDeniedResponse accepts the pinned PostgREST v16 pairs and rejects 500/503/HTML/success
+    ok 1 - evaluateDeniedResponse accepts the pinned PostgREST v16 pairs and rejects 500/503/HTML/success
+      ---
+      duration_ms: 0.600328
+      ...
+    # Subtest: JWT tamper deterministically changes signed bytes
+    ok 2 - JWT tamper deterministically changes signed bytes
+      ---
+      duration_ms: 0.287583
+      ...
+    1..2
+ok 3 - admin-account-counts-http-proof-1 H2 structured denials
+  ---
+  duration_ms: 0.966678
+  type: 'suite'
+  ...
+# Subtest: admin-account-counts-http-proof-1 H3 schema profile and catalog identity
+    # Subtest: schema selection uses Accept-Profile for GET and Content-Profile for POST
+    ok 1 - schema selection uses Accept-Profile for GET and Content-Profile for POST
+      ---
+      duration_ms: 0.110089
+      ...
+    # Subtest: catalog identity compare is definition/owner/ACL, not existence-only
+    ok 2 - catalog identity compare is definition/owner/ACL, not existence-only
+      ---
+      duration_ms: 0.132658
+      ...
+    1..2
+ok 4 - admin-account-counts-http-proof-1 H3 schema profile and catalog identity
+  ---
+  duration_ms: 0.300061
+  type: 'suite'
+  ...
+1..4
+# tests 21
+# suites 4
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 754.436476

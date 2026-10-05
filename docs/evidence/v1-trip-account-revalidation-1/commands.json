@@ -1,0 +1,23 @@
+{
+  "safeLocalTests": [
+    {
+      "id": "focused-sequential-seams",
+      "cwd": "/workspace",
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/uebernahme.test.ts lib/trips/create-stages.test.ts lib/trips/create-entry.test.ts lib/mobility/kanten.test.ts lib/trips/timeline.test.ts lib/trips/day-stage-assignment.test.ts lib/trips/day-stage-truth-contract.test.ts lib/account/reise-archiv.test.ts lib/account/reise-lage.test.ts lib/account/reise-gruppen-grenzen.test.ts lib/trips/archiv-aktionen.test.ts lib/traveller/account-registry-trip.test.ts lib/traveller/account-registry-trip-orchestrierung.test.ts lib/traveller/account-registry.test.ts lib/readiness/fingerprint.test.ts lib/readiness/status.test.ts lib/reiseaenderung/anwenden.test.ts lib/auth/proxy-auth-lookup-failure.test.ts lib/admin/security-event-taxonomy.test.ts lib/account/datenexport.test.ts lib/trips/foundation-e-select.test.ts lib/readiness/bezeichnungen.test.ts",
+      "result": { "tests": 292, "pass": 292, "fail": 0, "durationMs": 1690 }
+    },
+    {
+      "id": "secondary-account-guest-attention",
+      "cwd": "/workspace",
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/gastspeicher.test.ts lib/trips/zuordnung.test.ts lib/trips/attention.test.ts lib/readiness/kontext.test.ts lib/account/buchungen.test.ts lib/auth/account-logout-scopes.test.ts lib/auth/account-password-aenderung.test.ts lib/auth/account-mfa-step-up.test.ts lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts",
+      "result": { "tests": 187, "pass": 187, "fail": 0, "durationMs": 757 }
+    }
+  ],
+  "totals": { "tests": 479, "pass": 479, "fail": 0 },
+  "temporaryProbe": {
+    "path": "/tmp/v1-trip-account-revalidation-probe.mts",
+    "committed": false,
+    "result": "import_failed_from_tmp_alias_isolation",
+    "note": "Named @/ imports from /tmp did not instantiate. Sequential facts were taken from the executed unit tests above, not from a new QA framework."
+  }
+}

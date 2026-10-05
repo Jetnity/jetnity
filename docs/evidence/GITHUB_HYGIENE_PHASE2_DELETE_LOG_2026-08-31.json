@@ -1,0 +1,1659 @@
+{
+  "schema": "jetnity.github_hygiene_phase2_delete_log.v1",
+  "kind": "delete_safe_exact_manifest",
+  "issue": 266,
+  "task": "docs/GITHUB_HYGIENE_PHASE2_DELETE_SAFE_TASK_2026-08-31.md",
+  "agent": "Jetnity github hygiene delete safe 1",
+  "generation": 1,
+  "cursor_session": "bc-59e32b76-6b49-41e6-8631-de29904ea404",
+  "repository": "Jetnity/jetnity",
+  "work_branch": "ops/github-hygiene-phase2-delete-safe-2026-08-31",
+  "work_branch_start_head": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+  "canonical_phase1_manifest": "docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_MANIFEST_2026-08-31.json",
+  "started_at_utc": "2026-08-31T07:48:08Z",
+  "candidates_in_scope": [
+    {
+      "name": "audit/core-repository-hygiene-2026-08-30",
+      "expected_sha": "a759764eefa568784bfa08029b386b978e1d2138"
+    },
+    {
+      "name": "audit/github-branch-hygiene-2026-08-30",
+      "expected_sha": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88"
+    },
+    {
+      "name": "audit/requirements-provider-groundwork-g0-2026-08-30",
+      "expected_sha": "74e214606c9f881ce0cd19aef3ed7865eb304d3b"
+    },
+    {
+      "name": "audit/tw8-tw9-readiness-2026-08-31",
+      "expected_sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03"
+    },
+    {
+      "name": "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+      "expected_sha": "204511f552d58e246cd08fd8b724eb98edd4dc49"
+    },
+    {
+      "name": "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+      "expected_sha": "471bc93d19c2fa243182f6560e415b952b17364a"
+    },
+    {
+      "name": "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+      "expected_sha": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a"
+    },
+    {
+      "name": "docs/requirements-gate0-closed-2026-08-31",
+      "expected_sha": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba"
+    },
+    {
+      "name": "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+      "expected_sha": "2aac34ddea0c88327986fc459826892d8895f3d0"
+    },
+    {
+      "name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "expected_sha": "56e018d36a176c0061a57978b8a6b5044369409d"
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-2026-08-31",
+      "expected_sha": "595b4ad2a827beff7bec597433b3316d21da0747"
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+      "expected_sha": "595b4ad2a827beff7bec597433b3316d21da0747"
+    },
+    {
+      "name": "ops/creator-media-c2-recovery-2026-08-30",
+      "expected_sha": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15"
+    },
+    {
+      "name": "ops/creator-media-c3-decommission-2026-08-30",
+      "expected_sha": "e8069799774433c905663b00867085bab4dbd461"
+    },
+    {
+      "name": "recovery/core-repository-hygiene-2026-08-30",
+      "expected_sha": "a759764eefa568784bfa08029b386b978e1d2138"
+    }
+  ],
+  "hard_non_scope_never_deleted": [
+    "audit/github-hygiene-phase1-2026-08-31",
+    "main",
+    "ops/github-hygiene-phase2-delete-safe-2026-08-31"
+  ],
+  "candidate_list_widened": false,
+  "start_main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+  "start_remote_head_count": 81,
+  "start_remote_heads": {
+    "audit/account-platform": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+    "audit/admin-platform": "a316015733b86e2adbd050abb2f77258a99da366",
+    "audit/admin-platform-sync-temp": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+    "audit/admin-platform-sync-temp2": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+    "audit/ap7-account-traveller-registry-gate0-2026-08-28": "85ce5399368621e916de6c1a506abbae5316a0b3",
+    "audit/core-repository-hygiene-2026-08-30": "a759764eefa568784bfa08029b386b978e1d2138",
+    "audit/github-branch-hygiene-2026-08-30": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+    "audit/github-hygiene-phase1-2026-08-31": "7e79c915c31ccede90077eea70f592f1afa22d21",
+    "audit/project-sanitation-inventory-2026-08-26": "a5fbaa6df79fc0515d06a1cfafb88fcd6316b0e8",
+    "audit/provider-readiness": "ca8522400110a95ee0e51889417106992961f1c4",
+    "audit/requirements-provider-groundwork-g0-2026-08-30": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+    "audit/security-privacy-current-state-2026-08-29": "5489196117e219d511f0a98bab3f31193775c8eb",
+    "audit/traveller-account-multicitizenship-gap-2026-08-29": "3bda0496e1eab7675beab3ed3f0e1634fd552dda",
+    "audit/tw8-tw9-readiness-2026-08-31": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+    "chore/account-admin-team-prep": "67074279d290c651746049f9901c999156873729",
+    "cleanup/final-mechanical-repository-leftovers-2026-08-30": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+    "cleanup/legacy-storage-batch-b-2026-08-30": "f65af8bd3057320f6f28508fb56fa77004f3b836",
+    "cursor/align-handoff-after-pr38-010d": "e30fb07fb25354b7a547acf15a83b420fc67ff02",
+    "cursor/ap5-s4-post-merge-continuity-2026-08-29-5132": "9b34cf29b17e5ababb635f9373e961ffb6c5a844",
+    "cursor/foundation-c-merged-status-f35b": "cbd59645da9f77ecaa241c7d327fa769328ee54a",
+    "cursor/legacy-datenbank-entfernen-f38c": "4015340679380ebf05e5f342f1adb6e11a0148bf",
+    "cursor/phase-1-3-auth-rollen-cbcd": "777d12e5b894a7517745ccade4490bf0393707f2",
+    "cursor/phase-1-4-datenbank-baseline-0c7c": "79679c3562f854b21fe27cccaae3487fd741c42a",
+    "cursor/phase-1-4c-auth-konfiguration-8050": "59d6a9d2402d1ecceecd3e314334e2a19c614613",
+    "cursor/phase-1-5-reiseschema-c9d2": "9fcd2cc39933ad9abf9220d249a38938b0103288",
+    "cursor/phase-2-1-natuerliche-sprache-zu-reise-e985": "5014d164574051513af8dd5582c77adf3733c9c0",
+    "cursor/phase-22-reise-aendern-e90a": "d2fad49ec9bc5ce685c3cf20ae16fbd64844995f",
+    "cursor/phase-3-flights-foundation-c8a6": "ca5d50b5873788c1b5ca78c0db5dd68e4f2b4da5",
+    "cursor/record-foundation-e-merge-be45": "05ebbb9d4bbb3c1063d0a0b856e7985f1c5ebbdf",
+    "cursor/s1-merged-status-f23f": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+    "cursor/seasonal-merged-status-010d": "fddd0f444ad2435b3c456f72783de800f7d1db4a",
+    "cursor/supabase-mcp-dev-1f02": "7102d0dae89162e98d3dde2a6091916f0a47d2e9",
+    "cursor/tw7a-hub-card-identity-b13d": "1ce6e02b2993eff1b747ab42da4c9ea8927e0885",
+    "do-not-use": "9cc9b0526683f161f500326a7b72c74abac9c296",
+    "docs-continuity-standard": "1bed5e8020994c70c4786aea0aa8a9b761663b12",
+    "docs-phase-3-3-status-sync": "f19493576a2ddbfe6e0efdb0ebd8c62bf847f6b9",
+    "docs/chatgpt-technical-lead-handoff-2026-08-24": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+    "docs/chatgpt-technical-lead-handoff-2026-08-24-shadow": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/chatgpt-technical-lead-transition-2026-08-30-final": "471bc93d19c2fa243182f6560e415b952b17364a",
+    "docs/domain-program-completion-policy": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/domain-program-completion-policy-2": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/entry-requirements-target-architecture-2026-08-31": "dafa3e01002156c2ff5c0c0526c5ce6d85f55b4e",
+    "docs/jetnity-handoff-after-phase-2-1": "d248719bb418012bf13fc1286fe6d8514f8fb0b5",
+    "docs/phase-3-1-final-handoff": "e823a11cb6cb29d9b287ca97273b9025a75fce48",
+    "docs/post-cleanup-final-handoff-2026-08-30": "74aa58e93ffcd431e8fab83f3b35ac85a8c42a3f",
+    "docs/post-cleanup-technical-lead-checkpoint-2026-08-30": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+    "docs/post-pr97-canonical-continuity-2026-08-27": "47c1db0675c644db2c0e3833aa9630d1fcdf5c06",
+    "docs/post-pr98-continuity-2026-08-27": "fb6aae99909f37a40518803ccea26b74677f6e7a",
+    "docs/pr137-post-merge-continuity-2026-08-28": "822a5a4726e10520c4c8ad0ec6d7753e6f999f7b",
+    "docs/product-quality-standard": "523410108814022dc051bab949009ee21e198761",
+    "docs/requirements-gate0-closed-2026-08-31": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+    "docs/requirements-s4-r1-closed-entry-target-2026-08-31": "2aac34ddea0c88327986fc459826892d8895f3d0",
+    "feat/account-ap1": "3be37b852f0aa6ebf8f1191aaf75c548f6bf878c",
+    "feat/account-ap2": "a6db9589b32a93ccefb301aed3d40a8dbdbc7c2b",
+    "feat/account-nav-rail-consistency-2026-08-30": "08a626c466631cc2e0d1d434d58d28241c625faa",
+    "feat/admin-control-center-ia": "81de9b3db11e7f58ff59132e22bf9f35fef68b57",
+    "feat/admin-system-health": "2ca916e91dbf53f9c5cad9a980cc141938fbebe6",
+    "feat/entry-requirements-detail-contract-e1-2026-08-31": "56e018d36a176c0061a57978b8a6b5044369409d",
+    "feat/entry-requirements-official-actions-e2-2026-08-31": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+    "feat/mobility-transfers-foundation": "9d3fcef38ffebac91d5f9f3806659236a10c694b",
+    "feat/provider-flight-evidence-s2": "6865c8a1cde9b44dd0ce8c690fca12139e763b7c",
+    "feat/provider-ops-s1": "ba10cb206d1f1d40f6e2dc14b917f18c65601c44",
+    "feat/rental-car-foundation": "073dc505f65c5ed026a88981a578cd02f98c8b04",
+    "feat/requirements-truth-ops-s4-r1-2026-08-31": "595b4ad2a827beff7bec597433b3316d21da0747",
+    "feat/requirements-truth-ops-s4-r1-ready-2026-08-31": "595b4ad2a827beff7bec597433b3316d21da0747",
+    "feat/route-transit-intelligence": "11bfc958aba54486148fa756f5f8d4616ff86c8a",
+    "feat/travel-readiness-foundation": "a5099b98c9456ce07c9b12443d5540843ef8f669",
+    "feat/travel-safety-disruption-intelligence": "11976ed734b62ec906abd65581f309b1a38362f1",
+    "feat/travel-timing-seasonal-intelligence": "1a61d21fe853c77faa1109ae0828e39f3629098a",
+    "feat/traveller-context-intelligence": "725aee462c93e5dba7da7a1a7fd8c51bf16a39bb",
+    "feat/trip-collaboration-foundation": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+    "feat/trip-coverage-booking-status": "1f6f4ba0acfe5287d292742f6992f2a3dd38e077",
+    "main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+    "ops/creator-media-c2-recovery-2026-08-30": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+    "ops/creator-media-c3-decommission-2026-08-30": "e8069799774433c905663b00867085bab4dbd461",
+    "ops/github-hygiene-phase2-delete-safe-2026-08-31": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+    "phase-3-2-hotel-foundation": "fb26270d84c3dc661ffe71969556edad236628b0",
+    "phase-3-3-activities-foundation": "d0fcae38738b7f3763a90215e033bfb3128587e6",
+    "recovery/core-repository-hygiene-2026-08-30": "a759764eefa568784bfa08029b386b978e1d2138",
+    "tmp-noop": "9cc9b0526683f161f500326a7b72c74abac9c296",
+    "ux-trip-workspace-mobile-iteration-1": "d2ec70d79982ea28f685d8715cd2d145af53e53a"
+  },
+  "start_tags": [
+    "3d2642aa6d0bed6414397cf0c29ce7ed9958d0cd\trefs/tags/archive/jetnity-v1-main",
+    "e6fd8db9f6e9b1b10f75d4cab175ca45128b87ce\trefs/tags/archive/jetnity-v1-main^{}",
+    "a9b613ddb91524562299b49c2368fa720a5182d8\trefs/tags/archive/pre-1-1b-alt-ui",
+    "c14726828bbaa49753412f550b20af946c447f95\trefs/tags/archive/pre-1-1b-alt-ui^{}",
+    "74a6559128c343b3c0018e5881509cbc4a080954\trefs/tags/archive/pre-1-4b-legacy-datenbank",
+    "c058e845e2c0f3349dcfbbf7ee9e023bd6d7ba2c\trefs/tags/archive/pre-1-4b-legacy-datenbank^{}"
+  ],
+  "start_open_pull_requests": [
+    {
+      "headRefName": "ops/github-hygiene-phase2-delete-safe-2026-08-31",
+      "headRefOid": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+      "isDraft": true,
+      "number": 308,
+      "state": "OPEN",
+      "title": "Ops: GitHub Hygiene Phase 2 delete-safe cleanup",
+      "url": "https://github.com/Jetnity/jetnity/pull/308"
+    },
+    {
+      "headRefName": "feat/entry-requirements-official-actions-e2-2026-08-31",
+      "headRefOid": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+      "isDraft": true,
+      "number": 307,
+      "state": "OPEN",
+      "title": "Entry Requirements E2: verified official actions",
+      "url": "https://github.com/Jetnity/jetnity/pull/307"
+    },
+    {
+      "headRefName": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+      "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "isDraft": true,
+      "number": 52,
+      "state": "OPEN",
+      "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24",
+      "url": "https://github.com/Jetnity/jetnity/pull/52"
+    },
+    {
+      "headRefName": "cursor/s1-merged-status-f23f",
+      "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "isDraft": true,
+      "number": 50,
+      "state": "OPEN",
+      "title": "docs: record Provider Ops S1 merge onto main",
+      "url": "https://github.com/Jetnity/jetnity/pull/50"
+    },
+    {
+      "headRefName": "audit/admin-platform",
+      "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+      "isDraft": true,
+      "number": 40,
+      "state": "OPEN",
+      "title": "docs: Admin Platform / Control Center Audit",
+      "url": "https://github.com/Jetnity/jetnity/pull/40"
+    },
+    {
+      "headRefName": "audit/account-platform",
+      "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "isDraft": true,
+      "number": 39,
+      "state": "OPEN",
+      "title": "Account Platform Audit & Vorbereitung",
+      "url": "https://github.com/Jetnity/jetnity/pull/39"
+    },
+    {
+      "headRefName": "feat/trip-collaboration-foundation",
+      "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "isDraft": true,
+      "number": 28,
+      "state": "OPEN",
+      "title": "Trip Collaboration Foundation \u2013 Issue #20",
+      "url": "https://github.com/Jetnity/jetnity/pull/28"
+    }
+  ],
+  "start_rulesets": {
+    "repo_ruleset_ids": [
+      21875372
+    ],
+    "ruleset_include": [
+      "refs/heads/main"
+    ],
+    "org_rulesets_unread": true,
+    "org_rulesets_http_status": 404
+  },
+  "candidates": [
+    {
+      "index": 1,
+      "name": "audit/core-repository-hygiene-2026-08-30",
+      "expected_sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "started_at_utc": "2026-08-31T07:48:10Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "a759764eefa568784bfa08029b386b978e1d2138",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "audit/core-repository-hygiene-2026-08-30",
+        "api_sha": "a759764eefa568784bfa08029b386b978e1d2138",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:13Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/audit/core-repository-hygiene-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           audit/core-repository-hygiene-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:15Z",
+      "restore_command": "git push origin a759764eefa568784bfa08029b386b978e1d2138:refs/heads/audit/core-repository-hygiene-2026-08-30"
+    },
+    {
+      "index": 2,
+      "name": "audit/github-branch-hygiene-2026-08-30",
+      "expected_sha": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+      "started_at_utc": "2026-08-31T07:48:15Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "audit/github-branch-hygiene-2026-08-30",
+        "api_sha": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:18Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/audit/github-branch-hygiene-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           audit/github-branch-hygiene-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:20Z",
+      "restore_command": "git push origin a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88:refs/heads/audit/github-branch-hygiene-2026-08-30"
+    },
+    {
+      "index": 3,
+      "name": "audit/requirements-provider-groundwork-g0-2026-08-30",
+      "expected_sha": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+      "started_at_utc": "2026-08-31T07:48:20Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "audit/requirements-provider-groundwork-g0-2026-08-30",
+        "api_sha": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:22Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/audit/requirements-provider-groundwork-g0-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           audit/requirements-provider-groundwork-g0-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:23Z",
+      "restore_command": "git push origin 74e214606c9f881ce0cd19aef3ed7865eb304d3b:refs/heads/audit/requirements-provider-groundwork-g0-2026-08-30"
+    },
+    {
+      "index": 4,
+      "name": "audit/tw8-tw9-readiness-2026-08-31",
+      "expected_sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "started_at_utc": "2026-08-31T07:48:23Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "audit/tw8-tw9-readiness-2026-08-31",
+        "api_sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:25Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/audit/tw8-tw9-readiness-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           audit/tw8-tw9-readiness-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:27Z",
+      "restore_command": "git push origin 93fb21efab6c22c3fd2b14a3a23d18f46110fd03:refs/heads/audit/tw8-tw9-readiness-2026-08-31"
+    },
+    {
+      "index": 5,
+      "name": "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+      "expected_sha": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+      "started_at_utc": "2026-08-31T07:48:27Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+        "api_sha": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:29Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/cleanup/final-mechanical-repository-leftovers-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           cleanup/final-mechanical-repository-leftovers-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:30Z",
+      "restore_command": "git push origin 204511f552d58e246cd08fd8b724eb98edd4dc49:refs/heads/cleanup/final-mechanical-repository-leftovers-2026-08-30"
+    },
+    {
+      "index": 6,
+      "name": "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+      "expected_sha": "471bc93d19c2fa243182f6560e415b952b17364a",
+      "started_at_utc": "2026-08-31T07:48:30Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "471bc93d19c2fa243182f6560e415b952b17364a",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+        "api_sha": "471bc93d19c2fa243182f6560e415b952b17364a",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:32Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/docs/chatgpt-technical-lead-transition-2026-08-30-final"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           docs/chatgpt-technical-lead-transition-2026-08-30-final\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:33Z",
+      "restore_command": "git push origin 471bc93d19c2fa243182f6560e415b952b17364a:refs/heads/docs/chatgpt-technical-lead-transition-2026-08-30-final"
+    },
+    {
+      "index": 7,
+      "name": "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+      "expected_sha": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+      "started_at_utc": "2026-08-31T07:48:33Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+        "api_sha": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:35Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/docs/post-cleanup-technical-lead-checkpoint-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           docs/post-cleanup-technical-lead-checkpoint-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:37Z",
+      "restore_command": "git push origin 5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a:refs/heads/docs/post-cleanup-technical-lead-checkpoint-2026-08-30"
+    },
+    {
+      "index": 8,
+      "name": "docs/requirements-gate0-closed-2026-08-31",
+      "expected_sha": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+      "started_at_utc": "2026-08-31T07:48:37Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "docs/requirements-gate0-closed-2026-08-31",
+        "api_sha": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:38Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/docs/requirements-gate0-closed-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           docs/requirements-gate0-closed-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:40Z",
+      "restore_command": "git push origin 4a86ea753bf3f7c5cfd667661f6a01557280b8ba:refs/heads/docs/requirements-gate0-closed-2026-08-31"
+    },
+    {
+      "index": 9,
+      "name": "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+      "expected_sha": "2aac34ddea0c88327986fc459826892d8895f3d0",
+      "started_at_utc": "2026-08-31T07:48:40Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "2aac34ddea0c88327986fc459826892d8895f3d0",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+        "api_sha": "2aac34ddea0c88327986fc459826892d8895f3d0",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:42Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/docs/requirements-s4-r1-closed-entry-target-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           docs/requirements-s4-r1-closed-entry-target-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:45Z",
+      "restore_command": "git push origin 2aac34ddea0c88327986fc459826892d8895f3d0:refs/heads/docs/requirements-s4-r1-closed-entry-target-2026-08-31"
+    },
+    {
+      "index": 10,
+      "name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "expected_sha": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "started_at_utc": "2026-08-31T07:48:45Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+        "api_sha": "56e018d36a176c0061a57978b8a6b5044369409d",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:47Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/feat/entry-requirements-detail-contract-e1-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           feat/entry-requirements-detail-contract-e1-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:49Z",
+      "restore_command": "git push origin 56e018d36a176c0061a57978b8a6b5044369409d:refs/heads/feat/entry-requirements-detail-contract-e1-2026-08-31"
+    },
+    {
+      "index": 11,
+      "name": "feat/requirements-truth-ops-s4-r1-2026-08-31",
+      "expected_sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "started_at_utc": "2026-08-31T07:48:49Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "feat/requirements-truth-ops-s4-r1-2026-08-31",
+        "api_sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:51Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/feat/requirements-truth-ops-s4-r1-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           feat/requirements-truth-ops-s4-r1-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:54Z",
+      "restore_command": "git push origin 595b4ad2a827beff7bec597433b3316d21da0747:refs/heads/feat/requirements-truth-ops-s4-r1-2026-08-31"
+    },
+    {
+      "index": 12,
+      "name": "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+      "expected_sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "started_at_utc": "2026-08-31T07:48:54Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+        "api_sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:48:56Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/feat/requirements-truth-ops-s4-r1-ready-2026-08-31"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           feat/requirements-truth-ops-s4-r1-ready-2026-08-31\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:48:59Z",
+      "restore_command": "git push origin 595b4ad2a827beff7bec597433b3316d21da0747:refs/heads/feat/requirements-truth-ops-s4-r1-ready-2026-08-31"
+    },
+    {
+      "index": 13,
+      "name": "ops/creator-media-c2-recovery-2026-08-30",
+      "expected_sha": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+      "started_at_utc": "2026-08-31T07:48:59Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "ops/creator-media-c2-recovery-2026-08-30",
+        "api_sha": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:49:01Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/ops/creator-media-c2-recovery-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           ops/creator-media-c2-recovery-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:49:03Z",
+      "restore_command": "git push origin cf2bbd5b71392f17c8f31e2a13e450ae9de72e15:refs/heads/ops/creator-media-c2-recovery-2026-08-30"
+    },
+    {
+      "index": 14,
+      "name": "ops/creator-media-c3-decommission-2026-08-30",
+      "expected_sha": "e8069799774433c905663b00867085bab4dbd461",
+      "started_at_utc": "2026-08-31T07:49:03Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "e8069799774433c905663b00867085bab4dbd461",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "ops/creator-media-c3-decommission-2026-08-30",
+        "api_sha": "e8069799774433c905663b00867085bab4dbd461",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:49:05Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/ops/creator-media-c3-decommission-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           ops/creator-media-c3-decommission-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:49:08Z",
+      "restore_command": "git push origin e8069799774433c905663b00867085bab4dbd461:refs/heads/ops/creator-media-c3-decommission-2026-08-30"
+    },
+    {
+      "index": 15,
+      "name": "recovery/core-repository-hygiene-2026-08-30",
+      "expected_sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "started_at_utc": "2026-08-31T07:49:08Z",
+      "result": "DELETED",
+      "origin_main_before": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "observed_sha_ls_remote": "a759764eefa568784bfa08029b386b978e1d2138",
+      "exists_before": true,
+      "open_pr_count_at_revalidation": 7,
+      "open_prs_for_branch": [],
+      "is_open_pr_head": false,
+      "protection": {
+        "api_name": "recovery/core-repository-hygiene-2026-08-30",
+        "api_sha": "a759764eefa568784bfa08029b386b978e1d2138",
+        "api_protected": false,
+        "rules": [],
+        "classic_protection_http_status": "403",
+        "classic_protection_unread": false,
+        "classic_protection_body": {
+          "message": "Resource not accessible by integration",
+          "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+          "status": "403"
+        }
+      },
+      "rulesets": {
+        "ruleset_include": [
+          "refs/heads/main"
+        ],
+        "org_rulesets_unread": true,
+        "org_rulesets_http_status": 404,
+        "repo_ruleset_ids": [
+          21875372
+        ]
+      },
+      "is_ancestor_of_origin_main": true,
+      "rev_list_count_main_dotdot_tip": 0,
+      "equals_current_main": false,
+      "revalidation_pass": true,
+      "delete_started_at_utc": "2026-08-31T07:49:09Z",
+      "delete_command": [
+        "git",
+        "push",
+        "origin",
+        "--delete",
+        "refs/heads/recovery/core-repository-hygiene-2026-08-30"
+      ],
+      "delete_exit_code": 0,
+      "delete_stdout": "",
+      "delete_stderr": "To https://github.com/Jetnity/jetnity\n - [deleted]           recovery/core-repository-hygiene-2026-08-30\n",
+      "exists_after": false,
+      "observed_sha_after": null,
+      "origin_main_after": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+      "main_moved_by_this_delete": false,
+      "restore_sha_still_in_main": true,
+      "tags_unchanged_after_this_delete": true,
+      "open_pr_numbers_after": [
+        308,
+        307,
+        52,
+        50,
+        40,
+        39,
+        28
+      ],
+      "any_open_pr_closed_by_this_delete": false,
+      "deleted": true,
+      "finished_at_utc": "2026-08-31T07:49:12Z",
+      "restore_command": "git push origin a759764eefa568784bfa08029b386b978e1d2138:refs/heads/recovery/core-repository-hygiene-2026-08-30"
+    }
+  ],
+  "finished_at_utc": "2026-08-31T07:49:13Z",
+  "end_main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+  "end_remote_head_count": 66,
+  "end_remote_heads": {
+    "audit/account-platform": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+    "audit/admin-platform": "a316015733b86e2adbd050abb2f77258a99da366",
+    "audit/admin-platform-sync-temp": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+    "audit/admin-platform-sync-temp2": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+    "audit/ap7-account-traveller-registry-gate0-2026-08-28": "85ce5399368621e916de6c1a506abbae5316a0b3",
+    "audit/github-hygiene-phase1-2026-08-31": "7e79c915c31ccede90077eea70f592f1afa22d21",
+    "audit/project-sanitation-inventory-2026-08-26": "a5fbaa6df79fc0515d06a1cfafb88fcd6316b0e8",
+    "audit/provider-readiness": "ca8522400110a95ee0e51889417106992961f1c4",
+    "audit/security-privacy-current-state-2026-08-29": "5489196117e219d511f0a98bab3f31193775c8eb",
+    "audit/traveller-account-multicitizenship-gap-2026-08-29": "3bda0496e1eab7675beab3ed3f0e1634fd552dda",
+    "chore/account-admin-team-prep": "67074279d290c651746049f9901c999156873729",
+    "cleanup/legacy-storage-batch-b-2026-08-30": "f65af8bd3057320f6f28508fb56fa77004f3b836",
+    "cursor/align-handoff-after-pr38-010d": "e30fb07fb25354b7a547acf15a83b420fc67ff02",
+    "cursor/ap5-s4-post-merge-continuity-2026-08-29-5132": "9b34cf29b17e5ababb635f9373e961ffb6c5a844",
+    "cursor/foundation-c-merged-status-f35b": "cbd59645da9f77ecaa241c7d327fa769328ee54a",
+    "cursor/legacy-datenbank-entfernen-f38c": "4015340679380ebf05e5f342f1adb6e11a0148bf",
+    "cursor/phase-1-3-auth-rollen-cbcd": "777d12e5b894a7517745ccade4490bf0393707f2",
+    "cursor/phase-1-4-datenbank-baseline-0c7c": "79679c3562f854b21fe27cccaae3487fd741c42a",
+    "cursor/phase-1-4c-auth-konfiguration-8050": "59d6a9d2402d1ecceecd3e314334e2a19c614613",
+    "cursor/phase-1-5-reiseschema-c9d2": "9fcd2cc39933ad9abf9220d249a38938b0103288",
+    "cursor/phase-2-1-natuerliche-sprache-zu-reise-e985": "5014d164574051513af8dd5582c77adf3733c9c0",
+    "cursor/phase-22-reise-aendern-e90a": "d2fad49ec9bc5ce685c3cf20ae16fbd64844995f",
+    "cursor/phase-3-flights-foundation-c8a6": "ca5d50b5873788c1b5ca78c0db5dd68e4f2b4da5",
+    "cursor/record-foundation-e-merge-be45": "05ebbb9d4bbb3c1063d0a0b856e7985f1c5ebbdf",
+    "cursor/s1-merged-status-f23f": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+    "cursor/seasonal-merged-status-010d": "fddd0f444ad2435b3c456f72783de800f7d1db4a",
+    "cursor/supabase-mcp-dev-1f02": "7102d0dae89162e98d3dde2a6091916f0a47d2e9",
+    "cursor/tw7a-hub-card-identity-b13d": "1ce6e02b2993eff1b747ab42da4c9ea8927e0885",
+    "do-not-use": "9cc9b0526683f161f500326a7b72c74abac9c296",
+    "docs-continuity-standard": "1bed5e8020994c70c4786aea0aa8a9b761663b12",
+    "docs-phase-3-3-status-sync": "f19493576a2ddbfe6e0efdb0ebd8c62bf847f6b9",
+    "docs/chatgpt-technical-lead-handoff-2026-08-24": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+    "docs/chatgpt-technical-lead-handoff-2026-08-24-shadow": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/domain-program-completion-policy": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/domain-program-completion-policy-2": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+    "docs/entry-requirements-target-architecture-2026-08-31": "dafa3e01002156c2ff5c0c0526c5ce6d85f55b4e",
+    "docs/jetnity-handoff-after-phase-2-1": "d248719bb418012bf13fc1286fe6d8514f8fb0b5",
+    "docs/phase-3-1-final-handoff": "e823a11cb6cb29d9b287ca97273b9025a75fce48",
+    "docs/post-cleanup-final-handoff-2026-08-30": "74aa58e93ffcd431e8fab83f3b35ac85a8c42a3f",
+    "docs/post-pr97-canonical-continuity-2026-08-27": "47c1db0675c644db2c0e3833aa9630d1fcdf5c06",
+    "docs/post-pr98-continuity-2026-08-27": "fb6aae99909f37a40518803ccea26b74677f6e7a",
+    "docs/pr137-post-merge-continuity-2026-08-28": "822a5a4726e10520c4c8ad0ec6d7753e6f999f7b",
+    "docs/product-quality-standard": "523410108814022dc051bab949009ee21e198761",
+    "feat/account-ap1": "3be37b852f0aa6ebf8f1191aaf75c548f6bf878c",
+    "feat/account-ap2": "a6db9589b32a93ccefb301aed3d40a8dbdbc7c2b",
+    "feat/account-nav-rail-consistency-2026-08-30": "08a626c466631cc2e0d1d434d58d28241c625faa",
+    "feat/admin-control-center-ia": "81de9b3db11e7f58ff59132e22bf9f35fef68b57",
+    "feat/admin-system-health": "2ca916e91dbf53f9c5cad9a980cc141938fbebe6",
+    "feat/entry-requirements-official-actions-e2-2026-08-31": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+    "feat/mobility-transfers-foundation": "9d3fcef38ffebac91d5f9f3806659236a10c694b",
+    "feat/provider-flight-evidence-s2": "6865c8a1cde9b44dd0ce8c690fca12139e763b7c",
+    "feat/provider-ops-s1": "ba10cb206d1f1d40f6e2dc14b917f18c65601c44",
+    "feat/rental-car-foundation": "073dc505f65c5ed026a88981a578cd02f98c8b04",
+    "feat/route-transit-intelligence": "11bfc958aba54486148fa756f5f8d4616ff86c8a",
+    "feat/travel-readiness-foundation": "a5099b98c9456ce07c9b12443d5540843ef8f669",
+    "feat/travel-safety-disruption-intelligence": "11976ed734b62ec906abd65581f309b1a38362f1",
+    "feat/travel-timing-seasonal-intelligence": "1a61d21fe853c77faa1109ae0828e39f3629098a",
+    "feat/traveller-context-intelligence": "725aee462c93e5dba7da7a1a7fd8c51bf16a39bb",
+    "feat/trip-collaboration-foundation": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+    "feat/trip-coverage-booking-status": "1f6f4ba0acfe5287d292742f6992f2a3dd38e077",
+    "main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+    "ops/github-hygiene-phase2-delete-safe-2026-08-31": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+    "phase-3-2-hotel-foundation": "fb26270d84c3dc661ffe71969556edad236628b0",
+    "phase-3-3-activities-foundation": "d0fcae38738b7f3763a90215e033bfb3128587e6",
+    "tmp-noop": "9cc9b0526683f161f500326a7b72c74abac9c296",
+    "ux-trip-workspace-mobile-iteration-1": "d2ec70d79982ea28f685d8715cd2d145af53e53a"
+  },
+  "end_tags": [
+    "3d2642aa6d0bed6414397cf0c29ce7ed9958d0cd\trefs/tags/archive/jetnity-v1-main",
+    "e6fd8db9f6e9b1b10f75d4cab175ca45128b87ce\trefs/tags/archive/jetnity-v1-main^{}",
+    "a9b613ddb91524562299b49c2368fa720a5182d8\trefs/tags/archive/pre-1-1b-alt-ui",
+    "c14726828bbaa49753412f550b20af946c447f95\trefs/tags/archive/pre-1-1b-alt-ui^{}",
+    "74a6559128c343b3c0018e5881509cbc4a080954\trefs/tags/archive/pre-1-4b-legacy-datenbank",
+    "c058e845e2c0f3349dcfbbf7ee9e023bd6d7ba2c\trefs/tags/archive/pre-1-4b-legacy-datenbank^{}"
+  ],
+  "end_open_pull_requests": [
+    {
+      "headRefName": "ops/github-hygiene-phase2-delete-safe-2026-08-31",
+      "headRefOid": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+      "isDraft": true,
+      "number": 308,
+      "state": "OPEN",
+      "title": "Ops: GitHub Hygiene Phase 2 delete-safe cleanup",
+      "url": "https://github.com/Jetnity/jetnity/pull/308"
+    },
+    {
+      "headRefName": "feat/entry-requirements-official-actions-e2-2026-08-31",
+      "headRefOid": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+      "isDraft": true,
+      "number": 307,
+      "state": "OPEN",
+      "title": "Entry Requirements E2: verified official actions",
+      "url": "https://github.com/Jetnity/jetnity/pull/307"
+    },
+    {
+      "headRefName": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+      "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "isDraft": true,
+      "number": 52,
+      "state": "OPEN",
+      "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24",
+      "url": "https://github.com/Jetnity/jetnity/pull/52"
+    },
+    {
+      "headRefName": "cursor/s1-merged-status-f23f",
+      "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "isDraft": true,
+      "number": 50,
+      "state": "OPEN",
+      "title": "docs: record Provider Ops S1 merge onto main",
+      "url": "https://github.com/Jetnity/jetnity/pull/50"
+    },
+    {
+      "headRefName": "audit/admin-platform",
+      "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+      "isDraft": true,
+      "number": 40,
+      "state": "OPEN",
+      "title": "docs: Admin Platform / Control Center Audit",
+      "url": "https://github.com/Jetnity/jetnity/pull/40"
+    },
+    {
+      "headRefName": "audit/account-platform",
+      "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "isDraft": true,
+      "number": 39,
+      "state": "OPEN",
+      "title": "Account Platform Audit & Vorbereitung",
+      "url": "https://github.com/Jetnity/jetnity/pull/39"
+    },
+    {
+      "headRefName": "feat/trip-collaboration-foundation",
+      "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "isDraft": true,
+      "number": 28,
+      "state": "OPEN",
+      "title": "Trip Collaboration Foundation \u2013 Issue #20",
+      "url": "https://github.com/Jetnity/jetnity/pull/28"
+    }
+  ],
+  "counts": {
+    "candidates": 15,
+    "DELETED": 15,
+    "SKIPPED_DRIFT": 0,
+    "STOPPED_SYSTEMIC": 0
+  },
+  "deleted_names": [
+    "audit/core-repository-hygiene-2026-08-30",
+    "audit/github-branch-hygiene-2026-08-30",
+    "audit/requirements-provider-groundwork-g0-2026-08-30",
+    "audit/tw8-tw9-readiness-2026-08-31",
+    "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+    "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+    "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+    "docs/requirements-gate0-closed-2026-08-31",
+    "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+    "feat/entry-requirements-detail-contract-e1-2026-08-31",
+    "feat/requirements-truth-ops-s4-r1-2026-08-31",
+    "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+    "ops/creator-media-c2-recovery-2026-08-30",
+    "ops/creator-media-c3-decommission-2026-08-30",
+    "recovery/core-repository-hygiene-2026-08-30"
+  ],
+  "skipped_drift_names": [],
+  "stopped_systemic_names": [],
+  "heads_vanished": [
+    "audit/core-repository-hygiene-2026-08-30",
+    "audit/github-branch-hygiene-2026-08-30",
+    "audit/requirements-provider-groundwork-g0-2026-08-30",
+    "audit/tw8-tw9-readiness-2026-08-31",
+    "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+    "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+    "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+    "docs/requirements-gate0-closed-2026-08-31",
+    "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+    "feat/entry-requirements-detail-contract-e1-2026-08-31",
+    "feat/requirements-truth-ops-s4-r1-2026-08-31",
+    "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+    "ops/creator-media-c2-recovery-2026-08-30",
+    "ops/creator-media-c3-decommission-2026-08-30",
+    "recovery/core-repository-hygiene-2026-08-30"
+  ],
+  "heads_appeared": [],
+  "confirmations": {
+    "main_not_deleted": true,
+    "main_not_moved_by_this_slice": true,
+    "start_main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+    "end_main": "a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9",
+    "tags_not_deleted_or_changed": true,
+    "no_non_manifest_branch_deleted": true,
+    "extra_deletes": [],
+    "phase1_audit_branch_still_present": true,
+    "phase2_work_branch_still_present": true,
+    "candidate_list_not_widened": true,
+    "no_open_pr_closed_by_this_slice": true,
+    "historical_drafts_still_open": true,
+    "rulesets_not_mutated": true,
+    "deleted_refs_absent": true,
+    "restore_shas_still_in_main": true
+  },
+  "remaining_open_pr_heads": [
+    {
+      "number": 308,
+      "title": "Ops: GitHub Hygiene Phase 2 delete-safe cleanup",
+      "headRefName": "ops/github-hygiene-phase2-delete-safe-2026-08-31",
+      "headRefOid": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/308"
+    },
+    {
+      "number": 307,
+      "title": "Entry Requirements E2: verified official actions",
+      "headRefName": "feat/entry-requirements-official-actions-e2-2026-08-31",
+      "headRefOid": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/307"
+    },
+    {
+      "number": 52,
+      "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24",
+      "headRefName": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+      "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/52"
+    },
+    {
+      "number": 50,
+      "title": "docs: record Provider Ops S1 merge onto main",
+      "headRefName": "cursor/s1-merged-status-f23f",
+      "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/50"
+    },
+    {
+      "number": 40,
+      "title": "docs: Admin Platform / Control Center Audit",
+      "headRefName": "audit/admin-platform",
+      "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/40"
+    },
+    {
+      "number": 39,
+      "title": "Account Platform Audit & Vorbereitung",
+      "headRefName": "audit/account-platform",
+      "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/39"
+    },
+    {
+      "number": 28,
+      "title": "Trip Collaboration Foundation \u2013 Issue #20",
+      "headRefName": "feat/trip-collaboration-foundation",
+      "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/28"
+    }
+  ],
+  "restore_instructions": [
+    {
+      "name": "audit/core-repository-hygiene-2026-08-30",
+      "sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "command": "git push origin a759764eefa568784bfa08029b386b978e1d2138:refs/heads/audit/core-repository-hygiene-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "audit/github-branch-hygiene-2026-08-30",
+      "sha": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+      "command": "git push origin a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88:refs/heads/audit/github-branch-hygiene-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "audit/requirements-provider-groundwork-g0-2026-08-30",
+      "sha": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+      "command": "git push origin 74e214606c9f881ce0cd19aef3ed7865eb304d3b:refs/heads/audit/requirements-provider-groundwork-g0-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "audit/tw8-tw9-readiness-2026-08-31",
+      "sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "command": "git push origin 93fb21efab6c22c3fd2b14a3a23d18f46110fd03:refs/heads/audit/tw8-tw9-readiness-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+      "sha": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+      "command": "git push origin 204511f552d58e246cd08fd8b724eb98edd4dc49:refs/heads/cleanup/final-mechanical-repository-leftovers-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+      "sha": "471bc93d19c2fa243182f6560e415b952b17364a",
+      "command": "git push origin 471bc93d19c2fa243182f6560e415b952b17364a:refs/heads/docs/chatgpt-technical-lead-transition-2026-08-30-final",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+      "sha": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+      "command": "git push origin 5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a:refs/heads/docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "docs/requirements-gate0-closed-2026-08-31",
+      "sha": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+      "command": "git push origin 4a86ea753bf3f7c5cfd667661f6a01557280b8ba:refs/heads/docs/requirements-gate0-closed-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+      "sha": "2aac34ddea0c88327986fc459826892d8895f3d0",
+      "command": "git push origin 2aac34ddea0c88327986fc459826892d8895f3d0:refs/heads/docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "sha": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "command": "git push origin 56e018d36a176c0061a57978b8a6b5044369409d:refs/heads/feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-2026-08-31",
+      "sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "command": "git push origin 595b4ad2a827beff7bec597433b3316d21da0747:refs/heads/feat/requirements-truth-ops-s4-r1-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+      "sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "command": "git push origin 595b4ad2a827beff7bec597433b3316d21da0747:refs/heads/feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "ops/creator-media-c2-recovery-2026-08-30",
+      "sha": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+      "command": "git push origin cf2bbd5b71392f17c8f31e2a13e450ae9de72e15:refs/heads/ops/creator-media-c2-recovery-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "ops/creator-media-c3-decommission-2026-08-30",
+      "sha": "e8069799774433c905663b00867085bab4dbd461",
+      "command": "git push origin e8069799774433c905663b00867085bab4dbd461:refs/heads/ops/creator-media-c3-decommission-2026-08-30",
+      "deleted_in_this_slice": true
+    },
+    {
+      "name": "recovery/core-repository-hygiene-2026-08-30",
+      "sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "command": "git push origin a759764eefa568784bfa08029b386b978e1d2138:refs/heads/recovery/core-repository-hygiene-2026-08-30",
+      "deleted_in_this_slice": true
+    }
+  ],
+  "slice_stopped": false,
+  "stop_reason": null,
+  "status": "COMPLETE_ALL_DELETED"
+}

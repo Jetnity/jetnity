@@ -1,0 +1,12 @@
+{
+  "omitted": [
+    "authenticated Preview or Production trip workspace click-through",
+    "real account, Auth, RLS or remote database probe",
+    "live provider, model or paid call",
+    "real-device lab or general visual audit",
+    "TW-8 / commercial date rewrite / automatic fix",
+    "shared AttentionAktion or navigation contract change"
+  ],
+  "synthetic": true,
+  "sourceProvenance": "render-harness captured TripWorkspaceJetztWichtig with compiled styles/globals.css on clean 948ad2fcffd7cc170feebd19fe0a94baed54fc72"
+}

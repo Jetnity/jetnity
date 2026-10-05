@@ -1,0 +1,20 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-day_1024x768.png",
+  "phase": "after",
+  "name": "complex-day_1024x768",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:14.156Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 1024,
+    "height": 768
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "tagesplan-scrolled",
+  "stageDates": [
+    "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n12. Okt. – 16. Okt.\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+    "Seminyak\n16. Okt. – 19. Okt.\nTag 3\n16. Okt.",
+    "Singapur\n19. Okt. – 22. Okt.\nTag 4\n19. Okt."
+  ]
+}

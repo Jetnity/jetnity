@@ -1,0 +1,75 @@
+{
+  "alreadyAssigned": [
+    {
+      "id": "C0",
+      "name": "Jetnity homepage confirmed route entry 1",
+      "pr": 543,
+      "branch": "feat/homepage-confirmed-route-entry-1",
+      "observedHeadAtFirstCapture": "218786742e4bcd73556193b1aba8786e03f2e2f6",
+      "observedHeadAtR1R3Correction": "676d64b44db3080744b5ccda1354a7f3dd0590f5",
+      "githubBase": "35148a4ba065be1315dddf21174d7f272518d34c",
+      "draft": true,
+      "commitsAtCorrection": 4,
+      "changedFilesAtCorrection": 28,
+      "class": "IN_PROGRESS_NOT_MAIN",
+      "auditedByThisMap": false,
+      "newWorkFromThisMap": false
+    }
+  ],
+  "additionalV1CriticalUngatedSlices": [],
+  "additionalV1CriticalCount": 0,
+  "boundedNoneMeans": "No additional V1-critical provider-independent implementation slice proven for current dispatch. Does not mean all non-provider implementation is complete.",
+  "namedLaterUngatedOrGatedOptionsDeferredNotDispatched": [
+    {
+      "id": "Admin-F",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false,
+      "whyDeferred": "Does not unblock legal/SMTP/official/commercial launch cluster or #543."
+    },
+    {
+      "id": "Billing-P1",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false,
+      "whyDeferred": "Real residual before Finance/Payment-Live; own Billing contract; do not implement from this map."
+    },
+    {
+      "id": "AP-8",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false
+    },
+    {
+      "id": "AP-9",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false
+    },
+    {
+      "id": "AP-11",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false
+    },
+    {
+      "id": "AP-12",
+      "class": "REMAINING_IMPLEMENTATION",
+      "v1Critical": false,
+      "dispatched": false
+    },
+    {
+      "id": "TW-9-full-closure",
+      "class": "RELEASE_PROOF_MISSING",
+      "v1Critical": false,
+      "dispatched": false
+    },
+    {
+      "id": "Guardian-What-if",
+      "class": "BINDING_LONG_TERM",
+      "v1Critical": false,
+      "dispatched": false
+    }
+  ],
+  "reason": "R3 correction. Provider-later and V1 build order unchanged. No automatic dispatch."
+}

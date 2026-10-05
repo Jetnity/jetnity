@@ -1,0 +1,582 @@
+# Jetnity – Architektur
+
+Stand: 28. August 2026
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2, die fail-closed Public-Metadata-Grenze (PR #86 / ADR-0170) sowie den zentralen Admin-AAL2-Application-Guard auf `main`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development. Admin-AAL2-Data-Plane: Development-History `20260826052735_admin_aal2_data_plane`; historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql`. Die forward-only Alignment-Datei `20260827170000_admin_aal2_data_plane_alignment.sql` liegt über PR #98 auf `main` und ist nicht Production-applied (ADR-0175). Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
+Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
+
+---
+
+## 1. Technischer Stack
+
+| Bereich | Technologie |
+| --- | --- |
+| Framework | Next.js 16.3.3, App Router, React 19.2.8 (**Ist auf Draft-PR #151 / ADR-0191**; Production/`main` bleibt bis Merge auf Next 14.2.32 + S1 / ADR-0190). Gate 0 / ADR-0189 bleibt die Zielentscheidung 16.x Active LTS. Cache Components, PPR und React Compiler sind nicht aktiviert. |
+| Sprache | TypeScript (strict) |
+| Styling | Tailwind CSS, CSS Custom Properties |
+| UI-Bausteine | Radix UI / shadcn-Muster |
+| Hosting | Vercel |
+| Datenbank | Supabase PostgreSQL |
+| Auth | Supabase Auth (Cookie-basiert, SSR) |
+| Storage | Supabase Storage |
+| Modell | OpenAI Responses API, serverseitig; Preview aktivierbar, Production aus (Abschnitt 5a) |
+| Node | 22.x (siehe `package.json` → `engines`; ADR-0188) |
+
+Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
+
+---
+
+## 2. Schichten und Verantwortlichkeiten
+
+```
+app/                Routing, Server Components, Route Handler, Server Actions
+components/         Präsentation und Interaktion
+lib/                Business-Logik, Datenzugriff, Integrationen
+lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
+lib/server/providers/core/ provider-neutraler Outbound-HTTP-Transport (Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability). Kein UniversalProvider, kein Commercial-Provenance-Mint, keine Provideraktivierung (ADR-0199 / Draft-PR #187).
+lib/providers/      provider-nahe Domain-/Fixture-Verträge. Skyscanner Flights Foundation bleibt fixture-only und nicht promotable.
+lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance (ADR-0168). S5-B Zielarchitektur Option C (ADR-0197); Persistenz ADR-0198 / `trip_item_commercial_provenance`. Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. SQL-Write nur über validierte `jetnity.commercial_persistence.v1`-Nutzlast; NULL-Principal fail-closed; Production-Write-Pfad / Runtime-Principal nicht allokiert. Kein realer Provider-Snapshot. Keine Provideraktivierung. TW-8 bleibt geschlossen.
+lib/seo/            D0-Indexgrenze und öffentliche Metadata (ADR-0170). HTML-robots folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias. Kein D1/G1.
+lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
+types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
+supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
+proxy.ts            Next-16-Proxy (Node.js); ehemals middleware.ts / Edge. Nur Anmeldung, kein Matcher, keine Rolle/AAL.
+scripts/            Prüfungen, die in der CI laufen
+scripts/db/         Inventur, Migrationslauf und Nachweise gegen Development
+scripts/airports/   OurAirports-Import nach Development, nie in der CI
+styles/globals.css  Design-Tokens
+tailwind.config.js  Token-Mapping
+```
+
+Tests liegen als `*.test.ts` neben dem Code, den sie prüfen, und laufen über `npm test` ([DECISIONS.md](DECISIONS.md) ADR-0029).
+
+**Regel:** Business-Logik gehört nach `lib/`, nicht in UI-Komponenten. Sensible Logik läuft ausschließlich serverseitig.
+
+`lib/server/providers/core` ist der provider-neutrale Outbound-HTTP-Kern (ADR-0199). Er akzeptiert nur einen injizierten HTTP-Client, bricht per AbortSignal ab, begrenzt Retries und redaktiert Secrets. Response-Bodies werden bounded gestreamt; `retry_exhausted` entsteht nur nach einem wirklich benutzten Retry. Observer- und Preflight-Fehler verlassen die Grenze nicht als Raw-Throw. Jedes Runtime-Modul trägt `import 'server-only'`; node:test lädt nur über einen lokalen Stub. `retry_exhausted` gilt nur für den aktuellen retrybaren Fehler nach einem wirklich benutzten Retry. Er erzeugt keine Commercial Provenance und kein Live-Trust. `lib/provider-ops` bleibt die Inbound-Hülle. Der bestehende Duffel-Pfad und die Skyscanner-Fixture-Foundation sind unverändert; ein späterer Skyscanner-Server-Adapter soll diesen Kern nutzen, ist aber nicht Teil dieses Slice.
+
+---
+
+## 3. Supabase-Clients
+
+Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht optional:
+
+| Funktion in `lib/supabase/` | Kontext | Rechte |
+| --- | --- | --- |
+| `server.ts` → `createServerComponentClient()` **async** | Server Components / RSC | Nutzerrechte, RLS aktiv, Cookies nur lesend (`await cookies()`) |
+| `server.ts` → `createRouteHandlerClient()` **async** | Route Handler | Nutzerrechte, RLS aktiv, darf Cookies schreiben (`await cookies()`) |
+| `server.ts` → `createServerActionClient()` **async** | Server Actions | Nutzerrechte, RLS aktiv, darf Cookies schreiben (`await cookies()`) |
+| `client.ts` → `createBrowserClient()` | Client Components | Anon Key, RLS aktiv |
+
+**Einen allgemeinen Admin-Client gibt es weiterhin nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an.
+
+Der eine verbliebene Service-Role-Zugang sitzt in `lib/modell/kontingent.ts`: cookie-los, nicht exportiert, ausschliesslich die zwei Kontingent-RPCs. Ohne ihn könnte ein Gast die Schranke nicht erreichen, ohne `anon` wieder `EXECUTE` zu geben – und genau das öffnete den direkten PostgREST-Weg (ADR-0052, Nachtrag). Alle übrigen erhöhten Rechte liegen in `SECURITY DEFINER`-Funktionen, die die Rolle selbst prüfen: `admin_payments_summary_30d()`, `admin_security_overview()`, `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` ([AGENTS.md](AGENTS.md) Regel 14).
+
+`public.reise_anlegen(jsonb)` ist ausdrücklich **nicht** so gebaut: Sie ist `SECURITY INVOKER` und schreibt ausschliesslich in die Reisen des aufrufenden Kontos, was die Policies ohnehin erlauben. Erhöhte Rechte bekommt eine Funktion nur, wenn sie sie braucht.
+
+Sie ist deshalb aber auch nicht der einzige Weg, auf dem eine Reise entstehen kann: `authenticated` hat `INSERT` auf `public.trips`, und PostgREST macht dieses Recht erreichbar. Die Regeln des Anlegens – Kennung, Anfangsstatus, Zeitstempel und die Schranke von 60 neuen Reisen je Stunde – liegen darum nicht in der Funktion, sondern in einer Bedingung und im Auslöser `trips_erzeugung_pruefen` der Tabelle. Er ist `SECURITY DEFINER`, damit seine Zählung nicht von einer Lesepolicy abhängt, und für niemanden aufrufbar ([DECISIONS.md](DECISIONS.md) ADR-0045).
+
+Die Schranke zählt Neuanlagen und keine Schreibversuche: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, die Schranke gilt nicht, und der Schreibvorgang endet am eindeutigen Index – in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505`. Ohne diese Frage wäre ein Retry an der Grenze abgelehnt worden, obwohl die Reise bereits im Konto liegt; ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index (ADR-0048).
+
+Zählung und Einfügung sind ein Lesen mit anschliessendem Schreiben und laufen deshalb je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` auf Transaktionsdauer. Ohne diese Sperre sahen gleichzeitige Anfragen bei 59 vorhandenen Reisen alle denselben Stand und kamen alle durch – über PostgREST war die Schranke damit parallel überschreitbar. `npm run db:parallelitaet` weist das mit echten gleichzeitigen Verbindungen nach; `npm run db:sicherheit` kann es nicht, weil sein Lauf vollständig in einer Transaktion liegt (ADR-0049).
+
+Die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API.
+
+---
+
+## 3a. Cursor MCP – nur Development
+
+Für Phase 1.4 (Datenbank-Baseline) ist der offizielle Supabase Remote MCP Server projektspezifisch unter `.cursor/mcp.json` konfiguriert. Begründung in [DECISIONS.md](DECISIONS.md), ADR-0030.
+
+| Vorgabe | Umsetzung |
+| --- | --- |
+| Server | `https://mcp.supabase.com/mcp` (offiziell, remote) |
+| Authentifizierung | `Authorization: Bearer` über Environment-Secret `SUPABASE_ACCESS_TOKEN` |
+| Scope | ausschließlich `SUPABASE_PROJECT_REF` (Development-Branch) |
+| Feature-Gruppen | `database`, `debugging`, `development` |
+| Production | keine zweite Verbindung, kein Production-`project_ref` |
+
+Cursor interpoliert die Werte zur Laufzeit über `${env:SUPABASE_PROJECT_REF}` und `${env:SUPABASE_ACCESS_TOKEN}`. Im Repository stehen nur die Platzhalter, niemals Token oder Projekt-Refs.
+
+Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients aus Abschnitt 3 noch Service-Role-Zugriff in der Anwendung.
+
+Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4b sind es 8 und nach Phase 1.5 elf.
+
+Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2. Ein späterer Production-Import geht nicht über MCP, sondern nur über den manuellen Mehrfachschutz in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
+
+---
+
+## 4. Auth und Zugriffsschutz
+
+Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität immer mit `auth.getUser()` ermittelt, nie mit `auth.getSession()`: Letzteres liest nur die mitgeschickten Cookies und prüft die Signatur nicht nach.
+
+**Drei Schichten, jede mit einer Aufgabe.** Die Trennung ist bewusst; Begründung in [DECISIONS.md](DECISIONS.md) ADR-0028.
+
+| Schicht | Datei | Aufgabe | Antwort bei Ablehnung |
+| --- | --- | --- | --- |
+| Anmeldung | `proxy.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
+| Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollen-/Capability-Prüfung **und** `currentLevel === 'aal2'` für die gesamte Routengruppe | Weiterleitung auf `/admin/login`, `/admin/mfa` oder `/unauthorized?grund=…` |
+| Berechtigung API | `requireAdminApi()` je Route | dieselbe Entscheidung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
+| Datenzugriff | `lese()` in `lib/api/datenbank-lesen.ts` | trennt eine erfolgreiche leere Abfrage von einem Fehler der Datenbank | 500 bei Ablehnung, 503 bei Ausfall, jeweils als JSON |
+
+`/admin/login` und `/admin/mfa` liegen in der Gruppe `(public)` und sind von `requireAdminPage` ausgenommen – andernfalls entstünde eine Endlosschleife. `/admin/mfa` bleibt über den Proxy an eine verifizierte Sitzung gebunden.
+
+**Das Rollenmodell steht an einer Stelle.** `lib/auth/roles.ts` enthält die sechs Rollen, ihre Rangfolge, den Bereichszugang und die Regeln der Rollenvergabe – ohne Next- und Supabase-Importe, damit die Regeln ohne Laufzeit prüfbar sind. `lib/auth/admin-access.ts` trifft die Zugangsentscheidung als reine Funktion, `lib/auth/admin-guard.ts` führt sie aus und protokolliert sie.
+
+Seit Phase 1.4 gilt dasselbe Modell auch in der Datenbank: `public.rollenrang()`, `public.aktuelle_rolle()` und `public.hat_rolle_mindestens()` sind die Grundlage jeder Policy. Bis dahin entschieden vier Stellen unabhängig voneinander über Administrationsrechte – ein Konto konnte in der Anwendung `user` sein und in den Policies trotzdem Administrator. `lib/auth/roles-datenbank.test.ts` vergleicht bei jedem `npm test` die Rangfolge in TypeScript mit der im Migrations-SQL, ohne Datenbank. Einzelheiten in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 6.
+
+**Zwischen Rolle und Zugriff steht eine Fähigkeit.** Eine Route verlangt nicht „mindestens `operator`", sondern die Fähigkeit `betrieb-eingreifen`; eine Policy ruft nicht `hat_rolle_mindestens('operator')` auf, sondern `public.darf_betrieb_eingreifen()`. Die Mindestrolle steht damit an genau einer Stelle: in `CAPABILITY_MINIMUM` in `lib/auth/roles.ts`. Der Umweg ist die Antwort auf einen realen Bruch – der erste Durchgang von Phase 1.4 stellte alle Policies pauschal auf `admin`, während die Anwendung ab `moderator` hereinliess, sodass eine Moderation durch den Gate kam und danach von RLS leer ausging. `lib/auth/faehigkeiten-datenbank.test.ts` vergleicht beide Seiten ohne Datenbank, `npm run db:rechte` lehnt jede Policy ab, die eine Rolle direkt nennt ([DECISIONS.md](DECISIONS.md) ADR-0035).
+
+Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
+
+Zusätzlich gilt seit P1-QS2-01: Admin-Zugang verlangt `currentLevel === 'aal2'`. `nextLevel`, ein vorhandener TOTP-Faktor oder Break-Glass ersetzen das nicht. Die Regel sitzt in `lib/auth/admin-aal.ts` und wird zentral in `evaluateAdminAccess()` angewandt – für Passwortlogin, Magic Link, OAuth, bestehende Sitzungen, Seiten, Server-Actions und APIs. Ein AAL-Ausfall ist fail closed. Der Step-up auf `/admin/mfa` belegt AAL2 nach der Challenge erneut serverseitig; Return-Ziele sind auf interne Admin-Pfade begrenzt ([DECISIONS.md](DECISIONS.md) ADR-0169).
+
+Dieselbe Assurance gilt für die administrativen DB-Fähigkeiten: `public.darf_*()` bleibt unveränderte Mindestrolle **und** `public.aktuelles_admin_aal2()`, gelesen ausschließlich aus `auth.jwt() ->> 'aal'`. Development besitzt diese Semantik bereits über die historische Version `20260826052735` / Repo-Datei `20260826090000`. Production besitzt sie live nicht. Die forward-only Datei `20260827170000_admin_aal2_data_plane_alignment.sql` setzt denselben Vertrag idempotent, ohne Policies, Tabellen oder Ownership zu ändern. Sie ist vorbereitet, nicht angewendet ([DECISIONS.md](DECISIONS.md) ADR-0175; Playbook `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`).
+
+Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036). Persistente Admin-Writes prüfen denselben Vertrag zusätzlich in `lib/auth/admin-write-gate.ts` und antworten bei Break-Glass mit 403, bevor die Datenbank erreicht wird (ADR-0158).
+
+Die Admin-Sidebar filtert Einträge nach Rolle nur als UX (`lib/admin/navigation.ts`). Ausblenden ist keine Autorisierung. Stub-Flächen (Analytics, Content, Marketing, Einstellungen, Lokalisierung) sind als `folgt` gekennzeichnet und enthalten keine operative Steuerung.
+
+**Die Einstellungen des Auth-Servers stehen im Repository.** Die Anmeldung ist der Weg *in* die Anwendung, ihre Konfiguration liegt aber nicht in der Datenbank, sondern beim Auth-Server – ein Klick im Dashboard ändert sie ohne Migration und ohne Commit. Seit Phase 1.4c beschreibt der Abschnitt `[auth]` in `supabase/config.toml` deshalb den Development-Branch, nicht die CLI-Vorlage. Was die Datei nicht ausdrücken kann – voran der Schutz vor kompromittierten Passwörtern –, steht mit Begründung in `lib/supabase/auth-erwartung.ts`.
+
+`npm run auth:pruefen` vergleicht beides mit dem laufenden Branch und verlangt für **jeden** der 242 Schlüssel der Management API eine Aussage des Repositories; zwei Musterregeln fangen jeden neuen Anmeldedienst und jeden Auth-Hook. Die Rechnung selbst liegt in `lib/supabase/auth-bericht.ts` und ist ohne Supabase-Zugang prüfbar; sie nennt bei einem unbekannten Schlüssel nur den Namen, weil dessen Inhalt niemand begutachtet hat. `npm run auth:fluesse` prüft die Wirkung statt der Werte, an den echten Endpunkten. Beides zielt ausschliesslich auf den Branch aus `SUPABASE_PROJECT_REF`: `scripts/auth/ziel.ts` fragt bei Supabase, ob der Ref ein Branch ist, und bricht bei einem eigenständigen Projekt ab. Einzelheiten in [docs/AUTH.md](docs/AUTH.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0039.
+
+Die Passwortregel, die beide Formulare zeigen und prüfen, steht in `lib/auth/passwort-richtlinie.ts` und wird bei jedem `npm test` mit `config.toml` verglichen – ohne Datenbank und ohne Netz.
+
+Weitere Punkte:
+
+- Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
+- `/auth/callback` tauscht einen PKCE-Code genau einmal. Der Browser-Client erkennt die URL weiter selbst; ein zweiter `exchangeCodeForSession` würde den schon verbrauchten Verifier leer nachschicken. Eine Wiederherstellung hängt an der Sitzung dieses Versuchs, auch wenn der Client den Tausch erst selbst ausführt, und endet mit Abmelden oder einer anderen Sitzung. Ein expliziter Fehler in der Adresse übernimmt keinen laufenden Erfolg. Zwei verschiedene Links teilen sich keinen laufenden Versuch. Abgeschlossene Ergebnisse bleiben nicht im Speicher. Die Entscheidung sitzt in `lib/auth/callback-abschluss.ts` ([DECISIONS.md](DECISIONS.md), ADR-0214).
+- Fehlen die Supabase-Umgebungsvariablen, sperrt die Middleware die geschützten Bereiche und protokolliert das. Bis Phase 1.3 liess sie in diesem Fall durch – ein Bereich, der bei fehlender Konfiguration aufgeht, ist das Gegenteil von Schutz.
+- Server-Actions sind eigene Eintrittspunkte und werden von keinem Layout geschützt; sie prüfen selbst.
+- Abmelden ist eine Server-Action, kein Pfad ([DECISIONS.md](DECISIONS.md), ADR-0023) – und seit dem Nachtrag der Phase 1.5 auch im öffentlichen Bereich erreichbar. `components/layout/PublicNavbar.tsx` liest die Sitzung clientseitig aus den Cookies, die der Server gesetzt hat; die Entscheidung, was die Leiste zeigt, liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar. Das öffentliche Layout bleibt dadurch statisch (ADR-0047). Gelesen wird nach dem ersten Aufbau, nach jedem Wechsel des Pfads und nach jedem abgeschlossenen Abmeldevorgang: Die Leiste liegt im Layout und wird von der Weiterleitung der Server Action nicht neu aufgebaut, `onAuthStateChange` schweigt bei einem Abmelden über den Server.
+
+**Die Rolle liegt seit Phase 1.5 in `public.profiles`.** Die Tabelle hiess bis dahin `creator_profiles` – ein Name aus der alten Produktidee. Weil er nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` stand, war die Umstellung eine einzelne Änderung im Anwendungscode. Mit der Umbenennung sind die neun Spalten der öffentlichen Creator-Identität entfallen; was bleibt, ist das, was ein Reisekonto braucht: Kennung, E-Mail, Anzeigename, Avatar, Rolle, Status, Zeitstempel. Persönliche Reisepräferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind – nicht die freigewordenen ([DECISIONS.md](DECISIONS.md) ADR-0044).
+
+**Nach Anmeldung und Registrierung führt der Weg über eine Übernahme.** Liegt im Browser eine Gastreise, überträgt `lib/trips/uebernahme.ts` sie in das Konto, bevor „Meine Reisen" etwas anzeigt; der lokale Entwurf verschwindet erst, wenn der Server die Kennung der gespeicherten Reise gemeldet hat. Einzelheiten in Abschnitt 5 und in [docs/REISEN.md](docs/REISEN.md).
+
+---
+
+## 4a. Account-Shell (AP-1, auf `main`)
+
+AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152, ADR-0153.
+
+| Fläche | Datei | Aufgabe |
+| --- | --- | --- |
+| Shell | `app/account/layout.tsx` | PublicNavbar, kompakte Konto-Nav, Skip-Link, Footer |
+| Übersicht | `app/account/page.tsx` + `AccountUebersichtLive` | Begrüssung und nächste Reise nur aus `reisenLaden()`; aktiv/kommend am Geräte-Kalendertag |
+| Weltkarte | `lib/account/world-map.ts` + `AccountWeltKarte` | Geplante Account-Orte aus gespeicherten `trip_stages`-Feldern; keine Besuchshistorie |
+| Einstellungen | `app/account/settings/page.tsx` | macht vorhandenes `/account/security` auffindbar |
+| Navigation | `lib/account/navigation.ts` | Übersicht, Reisen, Einstellungen; Security zählt zu Einstellungen |
+| Nächste Reise | `lib/account/naechste-reise.ts` | mit Geräte-Kalendertag: aktiv → kommend → Fortsetzen; ohne Kalendertag nur Fortsetzen |
+| Navbar-Ziel | `sitzungseintraege('konto')` | Link **Konto** nur bei bestehender Sitzung |
+
+Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.
+
+World Map 1 (Draft, ADR-0210) erweitert `TripSummaryStage` um bereits persistierte `country_code`, `place_id`, `latitude` und `longitude`. Die Ableitung bleibt presentation-only: gültige gespeicherte Koordinaten werden geplottet, fehlende bleiben in der Liste, `visited` wird nicht abgeleitet. Die lokale Landsilhouette wird gebündelt und holt zur Laufzeit keine Karten, Tiles oder Geocoder.
+
+## 4b. Account Archive Lifecycle (AP-4)
+
+AP-4 ergänzt den gespeicherten Lifecycle `trips.status = archived` um einen einzigen Server-Action-Schreibweg. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0177.
+
+| Fläche | Datei | Aufgabe |
+| --- | --- | --- |
+| Domain | `lib/account/reise-archiv.ts` | Archivfilter getrennt von AP-3-Datumsgruppen; Restore-Provenienz fail-closed |
+| Schreibweg | `lib/trips/archiv-aktionen.ts` | `reiseArchivLebenszyklus`; `konto()` / `auth.getUser()`; Anon-Key; Owner-RLS; Optimistic Guard gegen Status plus gelesenes `updated_at` |
+| `/reisen` | `KontoReisenGruppen` + `KontoReiseEintrag` | Aktiv/Kommend/Vergangen/Ohne Datum ohne archivierte Reisen; eigener Abschnitt **Archiv** |
+| Übersicht | `lib/account/naechste-reise.ts` | archivierte Reise bleibt kein Fortsetzen |
+| Provenienz | `trips.metadata.account_archive.previous_status` | namespaced Begleitinformation; keine Migration |
+
+Kein Service Role. Kein Guest-Archiv. TW7-A-Kartenidentität bleibt unverändert.
+
+## 4c. Account Platform Folgeplan (AP-5–AP-12)
+
+Kanonischer Steuerungsvertrag: [`docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`](docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md) (P2-TA-03 / ADR-0179).
+
+AP-1–AP-4 sind integriert und werden nicht neu geplant. AP-5 Gate 0 rekonstruiert den bestehenden Auth-/Session-/MFA-Vertrag (ADR-0182) und ist integriert. AP-5-S1 macht `/account/security` ehrlich (`empty` ≠ `unsupported` ≠ `unavailable` ≠ `error`; Passkeys folgen Server-Config; keine Roh-GoTrue-Copy; ADR-0183). AP-5-S2 ist integriert (PR #137). AP-5-S3 macht vorhandene Logout-Scopes `local`/`others`/`global` in `/account/security` nutzbar (PR #157 / ADR-0192); das allgemeine `signOutAction` bleibt unscoped/`global`. AP-5-S4 ist integriert (PR #160 / ADR-0193). AP-5-S5 zeigt die aktuelle Sitzung ehrlich und lässt andere Sitzungen `unsupported` (PR #164 / ADR-0194 integriert); keine Fake-Geräteliste. AP-6a Gate 0 (PR #166 / ADR-0195) ist integrierte historische Architecture-Evidence ohne Runtime-Seiten. AP-6a-Runtime, AP-6b und AP-8–AP-12 bleiben ungebaut/gated wie im kanonischen Plan. Current Traveller Truth einer konkreten Reise bleibt trip-scoped Foundation E. Dual-Authority ist product-owner-freigegeben: Account Registry = wiederverwendbare Identität/Fakten, Trip Snapshot = einzige Trip-Current-Truth. AP-7 Gate 0 ist integrierte Architecture-Evidence (PR #144 / ADR-0186). AP-7-S1 (Draft-PR #145 / ADR-0187, self-expiring) ist der shared Domain-Contract ohne Schema/Persistenz/UI: solange #145 offen → Transport/Review; nach Merge → integrierter Contract. Production-Migration, RLS/Identity und AP-7-S2 bleiben separat gegated und starten nicht automatisch. Die historische Datei auf Draft-PR #39 ist keine Current Truth.
+
+Die Kopfzeile dieser Architekturdatei kann hinter neueren Production-AAL2-/Continuity-Ständen liegen. Live-Evidence und `JETNITY_HANDOFF.md` gewinnen.
+
+---
+
+## 5. Datenfluss der V2-Reiseschicht
+
+Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
+
+| Pfad | Aufgabe |
+| --- | --- |
+| `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
+| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
+| `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
+| `/reisen/[tripId]` | Trip Workspace: dieselbe Produktlogik auf allen Geräten (ADR-0163 / TW-1). Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2). `Jetzt wichtig` priorisiert vorhandene Coverage-/Readiness-/Safety-/Seasonal-Signale (ADR-0165 / TW-4) ohne persistierten Status. Navigation erreicht Flüge, Unterkunft, Aktivitäten und Mobilität. Nur der aktive Bereich ist sichtbar. Domain-Suchen werden erst beim ersten Besuch eingehängt. Production-Suchen bleiben aus. |
+
+**Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
+
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Domänenmodell | `types/trips.ts` | eine Reise, wie die Anwendung sie kennt – gleich für Gast und Konto |
+| Validierung | `lib/trips/schema.ts` | Zod-Schemas für jede Eingabe und für die Nutzlast an die Datenbank |
+| Abbildung | `lib/trips/abbildung.ts` | zwischen Datenbankzeile (`snake_case`) und Domänenmodell (`camelCase`) |
+| Gastspeicher | `lib/trips/gastspeicher.ts` | die eine Gastreise im `localStorage`, Schlüssel `jetnity:reise:v3`; jeder Schreibvorgang wird zurückgelesen, ein Fehlschlag wirft (ADR-0046) |
+| Lesen im Konto | `lib/trips/daten.ts` | `server-only`, Anon-Key, kein `eq('user_id', …)` – RLS filtert |
+| Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
+| Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
+| Workspace-IA | `lib/trips/arbeitsbereich.ts` | sichtbare Hauptbereiche, Planstatus der Übersicht, gemeinsame Tagesauswahl, geräteunabhängige Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
+| Reiseübersicht | `lib/trips/uebersicht.ts` | Presentation-Derivation aus Coverage, Planstatus, `party[]` und AP-3-`reiseGruppe`; kein persistierter Gesamtstatus |
+| Aufmerksamkeit | `lib/trips/attention.ts` | TW-4 `Jetzt wichtig`: deterministische Priorisierung vorhandener Gaps/Readiness/Safety/Seasonal; lokale provider-neutrale Evaluation, keine Persistenz |
+| Destination Essentials | `lib/trips/destination-essentials.ts` | Presentation-only Zielzusammenfassung in der Trip-Workspace-Übersicht: Etappen aus `Trip.stages[]`, Official nur über `destinationCountryCode` ohne Transit, Safety/Seasonal nur über explizite Stage-Refs. Keine zweite Engine, kein visited-Schluss, keine Commercial-Suche (ADR-0209) |
+| Assistant Truth Context | `lib/reisebegleiter/kontext.ts` | Deterministische, privacy-minimierte Projektion vorhandener Trip-/Traveller-/Official-/Safety-/Seasonal-Wahrheit für den In-Trip-Assistant. Kein Modellcall, keine UI, keine Persistenz, keine Commercial-/Secret-Felder (ADR-0211) |
+| Assistant-Nutzlast | `lib/reisebegleiter/nutzlast.ts` | Was das Modell tatsächlich sieht: ausschliesslich aus der Projektion, und nur **enger** – ohne `placeId`, Koordinaten und linkverdächtigen Freitext. Legt genau `ref` dazu. Leitet den angezeigten Jetnity-Zustand je Bezug ab; eine Reissleine über Feldnamen und Wertmuster schliesst den Weg, wenn die Projektion später erweitert wird (ADR-0212) |
+| Assistant-Ausgabevertrag | `lib/reisebegleiter/schema.ts`, `lib/reisebegleiter/befunde.ts`, `lib/reisebegleiter/aussagen.ts`, `lib/reisebegleiter/pruefung.ts` | **Kein Freitextfeld.** Drei Felder – `befunde`, `bezuege`, `amtlicheHinweise` –, alle nur Schlüssel und Bezugskennungen. Das Modell wählt aus zwei geschlossenen Jetnity-Katalogen; jeden angezeigten Satz schreibt Jetnity. Anforderung, Preis, Anbieter, Buchung, Quelle und behauptete Änderung sind damit **nicht darstellbar** statt abgelehnt. Zweite Schranke: Bezug muss existieren, jedes gewählte Paar aus Schlüssel und Bezug muss im serverseitig berechneten Angebot stehen, jede amtliche Aussage muss zum geprüften Zustand ihres Official-Bezugs passen (ADR-0212) |
+| Assistant-Laufzeit | `lib/reisebegleiter/erzeugen.ts`, `lib/reisebegleiter/regeln.ts` | Ein Versuch, kein Fallback, kein eigener Router. Kostenreservierung vor dem Aufruf über die dritte Modellfunktion `reisebegleiter`; Ausgabebudget unter dem reservierten Fall; Eingabegrenze statt gekürzter Wahrheit (ADR-0212) |
+| Assistant-Naht | `lib/reisebegleiter/aktionen.ts`, `components/trips/Reisebegleiter.tsx` | Eine Server Action, nur Konto-Reisen, Reise aus der Datenbank statt vom Client, provider-freie lokale Auswertungen, keine Persistenz. Eine eingeklappte Fläche in der Reiseübersicht, kein schwebender Chat, kein Aufruf beim Mounten. Die Fläche zeigt ausschliesslich Jetnity-eigene Sätze und benennt das auch (ADR-0212) |
+| Buchungsstatus | `lib/trips/buchung.ts` | `unconfirmed` vs. `booked`; Quelle nur `user`; keine Provider-Behauptung aus dem Browser |
+| Flugabdeckung | `lib/trips/flug-abdeckung.ts` | benötigte Abschnitte aus Origin und Etappen; Match nur bei eindeutigem Datum; sonst unbestimmt |
+| Nachtabdeckung | `lib/trips/naechte-abdeckung.ts` | halboffenes `[checkIn, checkOut)`; Überlappungen als Vereinigung; unbekannte Daten nicht als `0/14` |
+
+Die serverseitigen Module benutzen ausschliesslich die Clients aus Abschnitt 3 und damit die Rechte des angemeldeten Kontos. Ein Filter auf `user_id` steht bewusst nirgends: Wer die Zugehörigkeit im Code filtert, hat sie in dem Moment nicht mehr durchgesetzt, in dem er den Filter vergisst.
+
+**Der Gast bleibt ohne serverseitige Identität.** Er hat genau eine aktive Gastreise im Browser; `anon` hat auf keiner Reisetabelle ein Recht und auf `public.reise_anlegen()` kein EXECUTE. Bei Anmeldung oder Registrierung wandert die Gastreise genau einmal ins Konto – die Idempotenz trägt `unique (user_id, client_ref)` in der Datenbank, nicht ein Vermerk im Browser ([DECISIONS.md](DECISIONS.md) ADR-0042).
+
+Damit ist die frühere Ist-Ziel-Abweichung aufgelöst: Reisen eines Kontos liegen in der Datenbank, `localStorage` trägt nur noch den Gastentwurf – und für den ist er nach [AGENTS.md](AGENTS.md) Regel 13 zulässig, weil der Weg ins Konto existiert und geprüft ist. Was bleibt, ist die Eigenschaft einer Gastreise: Sie ist an einen Browser gebunden und mit dessen Speicher weg.
+
+Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Reisetabellen werden Passnummern, Ausweiskopien, Visa-Dokumente, Zahlungs- oder Gesundheitsdaten verarbeitet. Für sie wäre ein getrennter Sicherheitsbereich nötig; er ist in [ROADMAP.md](ROADMAP.md) bewusst verschoben.
+
+---
+
+## 5a. Der Reisevorschlag aus natürlicher Sprache
+
+Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Hier steht, wie die Schicht in die Architektur greift.
+
+Seit Phase 2.1 gibt es unter `/planen` neben dem Formular einen zweiten Einstieg: eine freie Reisebeschreibung. Aus ihr entsteht ein strukturierter Entwurf mit Etappen, Tagen und Planpunkten.
+
+```
+Freitext → Eingabeprüfung → Modellzustand → Routing (Terra/Sol)
+  → Kontingent buchen → Modellaufruf → Nutzung abschliessen → Antwortprüfung
+  → Vorgaben (eine Korrektur) → Vorschau → Freigabe → Persistenz
+```
+
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Konfiguration | `lib/modell/konfiguration.ts` | Kill Switch, Modellwahl, alle Grenzen, neun Ergebnisklassen |
+| Preise | `lib/modell/preise.ts` | Preise in Mikrodollar, Kostenrechnung, Reservierung |
+| Anfrage und Antwort | `lib/modell/anfrage.ts`, `antwort.ts` | Anfragekörper; HTTP-Status und Antwortobjekt → Ergebnisklasse |
+| Aufruf | `lib/modell/aufruf.ts` | der eine `fetch`, `server-only`, Terra/Luna 90 s, Sol 120 s |
+| Kontingent | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Dienstclient nur für die zwei Kontingent-RPCs |
+| Vorschlagsschema | `lib/reisevorschlag/schema.ts` | Zod- und JSON-Schema, fachliche Stimmigkeit, Fassung |
+| Systemregeln | `lib/reisevorschlag/regeln.ts` | der einzige Prompt, den Jetnity schreibt |
+| Routing | `lib/reisevorschlag/routing.ts` | Terra Standard, Sol bei Komplexität, Luna nie automatisch |
+| Vorgaben | `lib/reisevorschlag/vorgaben.ts` | harte Constraints, höchstens eine Korrektur |
+| Fortschritt | `lib/reisevorschlag/fortschritt.ts` | zeitgesteuerte Phasen ohne erfundene Prozente |
+| Normalisierung | `lib/reisevorschlag/normalisierung.ts` | Steuerzeichen und Preisangaben aus Modelltext |
+| Ablauf | `lib/reisevorschlag/erzeugen.ts` | die Kette oben, mit Ports statt Verbindungen |
+| Abbildung | `lib/reisevorschlag/abbildung.ts` | Vorschlag → `Trip` (Gast) bzw. `ReiseNutzlast` (Konto) |
+| Server Actions | `lib/reisevorschlag/aktionen.ts` | `vorschlagErzeugen()`, `vorschlagUebernehmen()` |
+
+Seit Phase 2.2 hängt am bestehenden Unterbau ein zweiter Weg, **ohne** zweiten Stack:
+
+```
+Bestehende Reise → Änderungswunsch → Kontingent (gemeinsam mit reisevorschlag)
+  → Operationen → deterministisch anwenden → Vorschau → Bestätigung
+  → public.reise_aendern()  bzw.  gastreiseAendern()
+```
+
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Operationsschema | `lib/reiseaenderung/schema.ts` | Zod- und JSON-Schema, ohne Handelsfelder |
+| Anwenden | `lib/reiseaenderung/anwenden.ts` | Operationen auf den vertrauenswürdigen Graphen |
+| Diff | `lib/reiseaenderung/diff.ts` | Vorher/Nachher in Sätzen |
+| Ablauf | `lib/reiseaenderung/erzeugen.ts` | wie 2.1, mit Ports |
+| Server Actions | `lib/reiseaenderung/aktionen.ts` | Erzeugen speichert nichts; Übernehmen wendet erneut an |
+
+Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURITY INVOKER` und atomisch (ADR-0060). `trip_days.stage_id` bindet Tage an Etappen, auch ohne Kalenderdaten (ADR-0057). `trips.day_stage_assignment_mode` ist Assignment Mode, nicht Provenance (ADR-0172 Nachtrag): `legacy_fallback` nur für bereits persistierten historischen DB-Bestand; neue Requests werden `unassigned`, `single_destination` oder `explicit`. TypeScript und `public.reise_anlegen()` teilen dieselbe Ableitung; ein Client kann `legacy_fallback` nicht mehr minten. Accepted Reisevorschlag und Guest-JSON mit konkreten Positionen sind `explicit`. Production hat die Spalte noch nicht; fehlendes Feld wird beim Lesen als `legacy_fallback` behandelt. `trips.revision` steigt bei jeder fachlichen Graphänderung und bei direkten Stammdaten-Updates, nicht nur in `reise_aendern()` (ADR-0058). Gast und Konto speichern ungeplante Planpunkte gleich (ADR-0061). Kommerzielle Planpunkte – einschliesslich übernommener Flüge – sind bei Modelloperationen vollständig gesperrt (ADR-0059 Nachtrag, ADR-0060). `reise_aendern()` schiebt die Eindeutigkeit von Tagesnummer und -datum bis zum fertigen Graphen auf (ADR-0060 Nachtrag).
+
+**Es entsteht keine zweite Persistenz.** Ein Vorschlag aus 2.1 lebt bis zur Freigabe im React-Zustand; danach schreiben Gastweg (`gastreiseAblegen()`) und Kontoweg (`public.reise_anlegen()`) wie das Formular. Eine Änderung aus 2.2 lebt ebenso nur in der Vorschau; danach schreiben `gastreiseAendern()` bzw. `public.reise_aendern()`.
+
+**Modelloutput ist untrusted input.** Die Antwort wird zweimal geprüft: von der Plattform gegen ein JSON-Schema mit `strict: true`, danach von Jetnity gegen ein Zod-Schema mit den fachlichen Grenzen des Reiseschemas. Beim Übernehmen läuft dieselbe Prüfung noch einmal, weil der Vorschlag durch den Browser gelaufen ist (ADR-0053).
+
+**Der Vorschlag kann keine Preise, Anbieter oder Verfügbarkeiten enthalten.** Das Schema hat diese Felder nicht, `additionalProperties: false` macht sie unaussprechbar, und die Normalisierung entfernt Beträge aus Freitexten. Nach der Abbildung sind `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` `null`; ein genanntes Budget ist ein Ziel in `trips.budget_amount` (ADR-0054).
+
+**Production bleibt aus.** Preview hat Kill Switch und Schlüssel. `modellZustand()` verlangt `JETNITY_MODELL_AKTIV`, einen `OPENAI_API_KEY` und ein Modell mit bekanntem Preis. Fehlt eines, entsteht kein Aufruf, und die Oberfläche sagt es – das Formular unter `/planen` bleibt vollständig benutzbar. Was zur Aktivierung nötig ist, steht in [docs/MODELL.md](docs/MODELL.md), Abschnitt 8.
+
+---
+
+## 6. Datenbank
+
+Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
+
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – die Production-Reisetabellen plus `public.model_usage`. Foundation C hat `trip_readiness_items` und `trip_travellers` nach ausdrücklicher Freigabe auf Production gebracht (Acceptance `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`). Foundation D liegt auf `main` und Production (Acceptance `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`). Foundation E ergänzt auf Development `trip_traveller_citizenships`, `trip_traveller_documents`, optionales `trip_readiness_items.traveller_id` und `public.party_schreiben()` (ADR-0117, ADR-0118). Production bleibt ohne Foundation-E-Schema, bis eine separate Freigabe folgt.
+
+Vier der Production-Reisetabellen sind `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Foundation A ergänzt optionale Mobilitätsspalten auf derselben Tabelle, ohne neue `kind`-Werte (ADR-0090). Foundation B ergänzt `kind = rental_car` (ADR-0092). Foundation C legt Readiness **nicht** als neuen `kind` an, sondern als eigene Tabelle `trip_readiness_items` plus trip-spezifischen Reisendenkontext `trip_travellers` (ADR-0096, ADR-0102). Die Requirements-Engine ist provider-neutral und ohne Adapter (ADR-0103). Official Evidence wird vor regulatorischen Resultaten streng validiert (ADR-0107). Origin- und Transit-Ländercodes kommen nur über `routeFactsAusReise()` aus validierten Flight-Itineraries in `trip_items.metadata` (ADR-0108, ADR-0112). Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+
+Die zwölfte Tabelle ist `public.model_usage` aus Phase 2.1 – ein Kostenprotokoll, keine Nutzdaten. Sie ist die Stelle, an der die Kostenkontrolle für Modellaufrufe wirklich stattfindet: Ein Zähler in einem Serverprozess kennt nur seine eigene Instanz, und Vercel startet beliebig viele. Zwei `SECURITY DEFINER`-Funktionen buchen ein Kontingent, bevor ein Aufruf geschieht, und schliessen es danach ab; `pg_advisory_xact_lock` serialisiert Prüfung und Einfügung – dieselbe Bauweise wie die Missbrauchsschranke aus ADR-0049. Einzelheiten in [docs/MODELL.md](docs/MODELL.md), Begründung in ADR-0052.
+
+Auf dieser Tabelle hat `anon` **kein** Recht, und auf den beiden Funktionen hat weder `anon` noch `authenticated` ein `EXECUTE`. Die Server Action ruft sie über den cookie-losen Dienstclient auf (ADR-0052, Nachtrag). Lesen darf die Tabelle nur, wer `betrieb-lesen` hat; ändern und löschen darf sie niemand – ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
+
+Drei Regeln halten das zusammen:
+
+| Regel | Durchsetzung |
+| --- | --- |
+| Schemaänderungen entstehen als Migration, nicht in der Supabase-Oberfläche | `npm run db:reproduzierbarkeit` baut das Schema aus den Migrationen neu auf und vergleicht Abschnitt für Abschnitt mit dem laufenden |
+| `types/supabase.ts` wird erzeugt, nicht gepflegt | `npm run db:typen -- --pruefen` |
+| Der Code spricht nur an, was es gibt | `npm run check:schema-bezug`, in der CI |
+
+Die ersten beiden brauchen den Development-Zugang und laufen vor einer Zusammenführung von Hand. Die dritte liest nur die erzeugte Typdatei und läuft in der CI mit.
+
+**Zugriffsschutz.** RLS ist auf allen 12 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
+
+Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte öffnen private Reiseinhalte nicht, und das gilt bis zur Rolle `owner`. Die Kennzahlen des Administrationsbereichs kommen deshalb aus zwei `SECURITY DEFINER`-Funktionen, die ausschliesslich Anzahlen liefern und die Fähigkeit `betrieb-lesen` selbst prüfen ([DECISIONS.md](DECISIONS.md) ADR-0041).
+
+Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
+
+`npm run db:sicherheit` führt benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass `public.reise_aendern()` eine veraltete Fassung ablehnt, denselben Retry nicht zweimal anwendet, kommerzielle Felder nicht überschreibt, bei Fehler die Revision zurückrollt, Tagesumnummerierungen ohne UNIQUE-Konflikt durchführt und dass ein direkter Planpunkt die Fassung erhöht.
+
+**Die Reisedaten liegen seit Phase 1.5 in der Datenbank.** Phase 1.4b hatte die 29 Tabellen der alten Produktidee entfernt und damit ein Schema hinterlassen, das nur noch beschrieb, was verwendet wird – aber keine Reise speichern konnte. Die vier Reisetabellen füllen diese Lücke; `creator_sessions`, die letzte Alt-Tabelle, ist mit derselben Phase entfallen. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
+
+---
+
+## 7. API-Schicht
+
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B, Draft-Foundation C, Admin Slice B und Admin Slice C existieren **20** Route Handler. Zuvor waren es 77.
+
+| Endpunkt | Zweck | Status |
+| --- | --- | --- |
+| `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
+| `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
+| `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
+| `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2c, Production aus, noch kein Hotelprovider |
+| `api/activities/search` | geschlossene Aktivitätensuche | Phase 3.3, Production aus, noch kein Activity-Provider |
+| `api/mobility/search` | geschlossene Mobilitätssuche | Foundation A, Production aus, noch kein Mobility-Provider |
+| `api/rental-cars/search` | geschlossene Mietwagensuche | Foundation B, Production aus, noch kein Mietwagenprovider |
+| `api/readiness/requirements` | geschlossene Requirement-Naht | Foundation C Draft-PR #32, kein Provider, Production-Schema unverändert |
+| `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
+| `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
+| `api/admin/system-health` | read-only System Health | Slice B, ADR-0159; nur vorhandene Evidence, kein Fake-Green |
+| `api/admin/provider-ops` | read-only Provider- und Kostenboard | Slice C, ADR-0162; S1-Vertrag plus belegte model_usage, kein Fake-Cost |
+
+Alle zwölf Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0158). System Health ist GET-only und schreibt nicht (ADR-0159). Provider & Kosten ist GET-only und schreibt nicht (ADR-0162).
+
+Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
+
+Die Oberfläche gibt das seit Phase 1.4d weiter, statt es in eine leere Tabelle zu verwandeln. Die Deutung einer Antwort steht einmal in `lib/admin/ladezustand.ts` – bewusst frei von React, Next und `fetch`, damit beide Fälle ohne Laufzeit prüfbar sind –, die Darstellung einmal in `components/admin/Ladezustand.tsx`. Ansichten, die serverseitig lesen (Startseite der Administration, Benutzerverwaltung), holen die Einordnung 500/503 über `problemAus()` aus derselben Stelle wie die Routen und zeigen dieselbe Fläche, nur ohne Wiederholen-Schaltfläche. Einzelheiten in [DECISIONS.md](DECISIONS.md) ADR-0040.
+
+Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-ip` waren Doppelungen von `security/block` und `security/unblock` ohne Aufrufer, `security/overview` rief eine Funktion auf, die es nicht gab, und hatte ebenfalls keinen Aufrufer.
+
+`app/auth/refresh` ist mit Phase 1.3 entfallen. Der Endpunkt sollte Sessions erneuern, konnte es aber nie: Sein Cookie-Adapter gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben.
+
+Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte, die Infomaniak-DNS- und Mail-Automatisierung sowie mit Phase 1.1b die Alt-Suche `api/search`. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014 und ADR-0018.
+
+**Grundsatz für neue Endpunkte:** Kein Endpunkt ist standardmäßig offen. Die Prüfliste steht in [AGENTS.md](AGENTS.md) Regel 15.
+
+### Flugsuche (Phase 3.1)
+
+`POST /api/flights/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. 429 setzt `Retry-After`. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel. Die HTTP-Hülle teilt `lib/provider-ops` mit den übrigen Provider-Nähten (ADR-0154, Draft-PR #47).
+
+Duffel ist der erste konstruierbare Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Die Runtime-Suche orchestriert 0..N unabhängige `FlugProvider` und kombiniert nur normalisierte `FlugOption[]` für ein globales Ranking (ADR-0208). Es gibt keinen Composite-Treffer und keinen erfundenen gemeinsamen `retrievedAt`. Ein späterer Adapter implementiert dasselbe Runtime-`FlugProvider`-Interface (`suchen(FlugSuchanfrage)`). Die Route verdrahtet `aktuelleFlugProviderSammlung()`, nicht genau einen Pflicht-Provider. Heute ist nur der Duffel-Testadapter konstruierbar; das ist keine Providerwahl. Die spätere Offline-Adapter-Foundation in `lib/providers/flights/domain.ts` ist keine dritte Suche, sondern eine provider-neutrale Projektion derselben geordneten 1–6-Bein-Wahrheit; `returnDate` ist dort keine zweite Route-Wahrheit (ADR-0207). Amadeus Self-Service ist eingestellt und nicht angebunden.
+
+Production bleibt hart aus. Der globale Flight-Zustand braucht nur `JETNITY_FLIGHT_AKTIV`; Duffel-Test-Tokens bleiben in der Duffel-Fabrik. Ohne konstruierbaren Provider ist die Suche unavailable, kein Buildfehler.
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `FlugNachweis` gegen Legs, Passagiere, Kabine und Währung. Heute sind Nachweis und Suchkontext-Speicher `null` – fail closed. Guest-LocalStorage und Guest → Account stufen unbewiesene Flugoptionen nicht zu belegter kommerzieller Wahrheit hoch. Dieselbe Anwendungsschicht gilt für Stay und Activity (ADR-0166). Route Truth bleibt Foundation D. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065 und ADR-0155.
+
+### Flughafenbasis (Phase 3.1)
+
+`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Die Workspace-Felder Von/Nach nutzen dieselbe Route als Combobox: natürliche Namen und IATA sind Eingabe, auswählbar ist nur ein verifizierter IATA-Code. Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066, ADR-0174.
+
+### Hotelsuche (Phase 3.2 / 3.2c)
+
+`POST /api/hotels/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Quartierkontext, Quartierbewertung, optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `HotelOption` und ein sichtbares Quartier, nicht einen Anbieter.
+
+Phase 3.2c hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden. Ein Etappenort wird nicht als Viertel verkauft.
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis` gegen Ziel, Zeitraum, Belegung und Währung. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Guest → Account nullt unbewiesene Stay-Handelsfelder (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`) analog zum Flug-Strip (ADR-0166). Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0077.
+
+### Aktivitätensuche (Phase 3.3)
+
+`POST /api/activities/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Tageskontext, optional Provider, Konfliktprüfung, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `ActivityOption`, nicht einen Anbieter.
+
+Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei. Die interne Audit-Seite `/ui-audit/activities` ist in Production unabhängig von `JETNITY_UI_AUDIT` fail closed (ADR-0086).
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Guest → Account nullt unbewiesene Activity-Handelsfelder (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`) analog zum Flug-Strip (ADR-0166). Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
+
+### Mobilitätssuche (Foundation A)
+
+`POST /api/mobility/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `MobilityOption`, nicht einen Anbieter.
+
+Foundation A hat bewusst keinen Mobility-Adapter. `mobilityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_MOBILITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Abdeckung entsteht nur aus vorhandenen Reisedaten. Fahrpläne, Wegezeiten und Anschlussgarantien werden nicht erfunden. Fehlende Graphdaten bleiben unbestimmt.
+
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis` gegen Orte, Datum, Modus, Reisende und Währung (`nachweisen({ optionId, kontext })`). Heute ist der Nachweis `null` – fail closed. Der Browser darf nur identifiers senden. Die Workspace-Suche startet nicht automatisch; nur eine ausdrückliche Nutzeraktion darf die geschlossene Suche anfassen. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090, ADR-0091 und ADR-0161.
+
+### Mietwagensuche (Foundation B)
+
+`POST /api/rental-cars/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht eine clientseitige Mietwagenoption, nicht einen Anbieter. Das Öffnen von Mobilität → Mietwagen löst keine Suche aus; ohne ausdrückliche Nutzeraktion bleibt der Bereich `unavailable`/`vorbereitet`.
+
+Foundation B hat bewusst keinen Mietwagen-Adapter. `rentalCarProviderAus()` gibt `null` zurück. Production bleibt hart aus, auch wenn `JETNITY_RENTAL_CAR_AKTIV` gesetzt wäre. Development/Preview brauchen den Kill Switch **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Ein Mietwagen im Zeitraum ist kein Nachweis, dass eine konkrete Strecke damit gefahren wird. Unbekannte Klasse, Getriebe, Kaution oder Kilometerregel bleiben unbekannt.
+
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis` gegen Stationen, Zeitraum, Klasse, Getriebe und Währung (`nachweisen({ optionId, kontext })`). Heute ist der Nachweis `null` – fail closed. Der Browser darf nur identifiers senden. Das Öffnen von Mobilität → Mietwagen löst keine Suche aus; eine Rental-Such-UI gibt es bewusst nicht. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Das manuelle Formular startet leer; Reiseorte sind höchstens unverbindliche Platzhalter. `one_way` braucht zwei verschiedene Place-IDs. Ranking vergleicht Gesamtpreise nur in derselben Währung. `Best Value` braucht mindestens zwei vergleichbare Gesamtpreise; `Jetnity empfiehlt` nur einen eindeutigen Top-Score. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092, ADR-0093, ADR-0094, ADR-0095 und ADR-0161.
+
+### Travel Readiness (Foundation C)
+
+`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Credential-Option × Destination × Transit × Requirement Type). Seit E1 gehören `blank_passport_pages` und `financial_means` zur First-Class-Taxonomie; Visa-Ausprägungen (`visa_exempt`, `visa_on_arrival`, `electronic_visa`, `visa_before_travel`, `unknown`) sind strukturierter `visaMode` nur am Typ `visa`. eTA bleibt `electronic_travel_authorization` und wird nicht als Visa-Modus umetikettiert. `required + visa_exempt` sowie `not_required` plus Pflichtmodus sind widersprüchlich und werden fail-closed auf `unknown`/`unknown` degradiert, nicht `current` (ADR-0201). Official Action ist seit E2 `open_official_action` mit strukturiertem `purpose` (`application` | `form` | `appointment` | `information`). `sourceUrl` bleibt Evidence-Quelle und darf höchstens `information` werden; application/form/appointment brauchen explizite Action-Metadaten plus validierte HTTPS-URL. Ungültige Action-Metadaten ändern keine Requirements-Hard-Truth. Fail-closed Evaluations tragen keine riskante Action (ADR-0202). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung: fail-closed und permutationsstabil, niemals `evaluations[0]` (ADR-0167). Item-Presentation (`officialFuerItem`) verwendet nur den exakt passenden Scope; ohne Treffer kein Fallback auf fremde Evaluations. Die Besucher-Checkliste in der Reisevorbereitung (E3 / ADR-0203) zeigt konkrete `OfficialEvaluation`-Zeilen lossless als `Traveller × Credential-Option × Destination/Transit × Requirement Type`. Seit Workspace-Integration R1 (ADR-0205) dürfen nur echte leere fail-closed Placeholder derselben Scope-Basis `Traveller × Credential-Option × Destination/Transit` kompakt als `Einreiseanforderungen noch nicht prüfbar` zusammengefasst werden. Current, stale, recheck und evidence-bearing Rows bleiben einzeln. Gruppierung, Visa-/eTA-Labels und Action-Texte sind reine Presentation; sie ändern `result`, `status`, `freshness`, `visaMode` oder Eligibility nicht. Harte Ergebnis-Copy (`Erforderlich` / `Nicht erforderlich` / `Bedingt`) nur bei `status === 'current'` und `freshness === 'current'`. Credential-Labels kommen nur aus exakt aufgelösten Trip-/Traveller-Dokumentdaten, nie aus `documents[0]`, Residence oder einer internen ID. Grobe User-Readiness-Karten `entry_check` / `visa_check` / `travel_document_check` / `insurance_check` werden in der primären Workspace-UI nicht zusätzlich zu Official Requirements gerendert; Domain- und Persistenzobjekte bleiben unverändert. Seit E4 (ADR-0204) darf eine Evaluation eine normalisierte `temporalRule` (`relative_duration`, geschlossene Anchors, `before|at|after`, `availableFrom`/`dueBy` mit `mandatory|recommended`) tragen. Default ist `null`. Timing entsteht nur aus expliziten strukturierten Provider-Metadaten und nur auf trusted/current `required|conditional`. Duplicate-Timing-Konflikte setzen Timing fail-closed auf `null`, ohne die Requirement-Hard-Truth zu zerstören. Die Checkliste zeigt nur relative Copy, keine konkreten Kalender-Timestamps. Seit E5-A (ADR-0206) kann dieselbe E4-Regel auf explizit gebundene absolute Event-Instants (`Z` oder numerischer Offset) projiziert werden. Der Core sucht keine Trip-/Route-Occurrence, mappt kein Land und rät keine Zeitzone; zonenlose lokale Wanduhr- oder Date-only-Werte bleiben fail-closed. Ein unmögliches projiziertes Fenster (`availableFrom > dueBy`) ist kein gültiges Action Window.
+
+`requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für eine reine Informations-Action ausreichend (ADR-0107, ADR-0110, ADR-0202). Explizite Antrag-/Formular-/Termin-Actions brauchen zusätzlich validierte `actionUrl` + strukturierten `actionPurpose`. Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
+
+`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht. Foundation D füllt sie aus `trip_items.metadata.routeItinerary`; ohne Itinerary bleibt `quelle: 'none'`. Ortsnamen, Place-IDs und Browser-Country-Felder werden nicht in Ländercodes geraten (ADR-0108, ADR-0112, ADR-0114). Fachlich: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md), [docs/ROUTE_TRANSIT_INTELLIGENCE.md](docs/ROUTE_TRANSIT_INTELLIGENCE.md), [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md), ADR-0096 bis ADR-0120.
+
+### Official Truth Source/Evidence Foundation
+
+Hinter derselben Provider-Grenze liegt seit ADR-0216 ein erster Source-Registry-, Source-Router- und Evidence-Vertrag (`lib/readiness/source-registry.ts`, `source-router.ts`, `evidence.ts`). Das ist keine zweite Official-Truth-Engine und kein Sherpa-Ersatz. `requirementsProviderAus()` bleibt `null`. Die historische Laufzeitaussage bleibt für die Auswertung wahr: eine traveller-spezifische `OfficialEvaluation` ist compute-on-read. Es gibt keine Official-Evaluation-Tabelle und keinen Laufzeit-Store. Der Product Owner hat am 1. Oktober 2026 freigegeben, dass globale, nicht personenbezogene Quell- und Evidence-Versionen persistiert werden dürfen. Der Vertrag selbst speichert nichts, ruft kein Modell und kein Netz auf und enthält keinen echten Behördenkatalog. Eine Zelle entspricht einer expliziten Credential-Option und trägt die volle Staatsbürgerschaftsmenge; eine Document↔Citizenship-Beziehung entsteht nur, wenn sie geliefert wurde. Das Ausstellerland ist keine Staatsbürgerschaft. Abdeckung für Staatsbürgerschaft, Wohnsitz und Dokument ist `independent`, `exact` oder `not_applicable`; eine leere Liste ist kein Wildcard. `sourceContentHash` ist der Fingerabdruck des normalisierten Quellentexts aus der getrennten Retrieval-Hülle. Dieselbe Hülle trägt die abgerufene URL und die Abrufzeit. Das Modellobjekt kann diese Retrieval-Fakten nicht liefern. Ein Quellenwechsel ist kein automatischer Regelwechsel. Fehlende Quellenabdeckung bleibt unbekannt und wird nie `not_required`. Fachlich: [docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md](docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md).
+
+### Official Truth Private Evidence Store
+
+ADR-0217 legt die erste typisierte Persistenz für diese globale Evidence als Repository-Migration an: `private.official_sources`, `private.official_source_domains` und `private.official_evidence_versions`. Das Schema `private` ist nicht in den Data-API-Schemas. `anon`, `authenticated` und `service_role` haben keine Tabellenrechte. RLS ist erzwungen und hat keine Policy, weil die Zeilen niemandem im Browser gehören. `service_role` umgeht RLS, deshalb entzieht die Migration auch dieses Recht. Diese Schema-Migration hat keine Public-RPC und keine `SECURITY DEFINER`-Funktion. Die eine spätere Gateway-Funktion steht im Abschnitt Official Truth Trusted Accepted-Store Writer. Eine Credential-Option verlangt Dokumenttyp und Ausstellerland, ein erforderlicher Wohnsitz das Land und `travel_date` das Datum; jedes dieser Kinder wird mit `IS NOT NULL` geprüft, weil ein `CHECK` bei `NULL` sonst durchlässt. `related_citizenship_country_code` null bleibt unverbunden. `valid_from` und `valid_until` bleiben Text, damit ein reines Datum nicht als Zeitstempel gespeichert wird. Die Repository-Datei heißt `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql`. Diese Version stammt aus der Development-History des Technical-Lead-Apply und ist nicht von Hand erfunden. Die SQL-Bytes sind gegenüber `20261001111642` unverändert. #675 ist als `main@140fdfb9fb066ca9d23c295719cb2e770ae63fd7` gemergt. Development hat diese History-Version und drei leere private Tabellen. Production hat die Migration nicht. Diese Schema-Migration selbst hat keinen Store-Adapter. Der spätere Schreiber steht im Abschnitt Official Truth Trusted Accepted-Store Writer. `requirementsProviderAus()` bleibt `null`.
+
+### Official Truth Rule Claims
+
+ADR-0218 legt den quellenneutralen Vertrag zwischen akzeptierter `EvidenceVersion` und der bestehenden Engine an: `lib/readiness/rule-claims.ts`. Der Schlüssel ist `rule-scope:v1:` plus SHA-256 desselben regulatorischen Raums ohne `sourceId`. `evidence-key:v2:` bleibt der quellenspezifische Schlüssel. Eine Zelle trägt weiter die volle Staatsbürgerschaftsmenge und genau eine Credential-Option. Das Ausstellerland wird nicht zur Staatsbürgerschaft. Es gibt keinen bevorzugten Pass.
+
+Ein Forschungsvorschlag ist keine akzeptierte Regel. `regelKandidatAkzeptieren` liest den Vorschlag nicht. Der akzeptierte Fakt kommt nur aus einem getrennten `trustedRuleFact` und aus EvidenceVersions, die `akzeptierteEvidenceLesen` bestehen. `explicit_primary_statement` und `composed_from_multiple_primary_sources` verlangen zusätzlich, dass jede Stütze `official_authority` ist. Ein lizenzierter Anbieter oder eine Mischung ist keine primäre Official Truth und wird in diesem Slice nicht zu einer eigenen Qualität. `stale_primary_evidence`, `unresolved_conflict` und `research_gap` werden nicht angenommen. Eine Forschungslücke hat keinen Vorschlag und wird nie `not_required`. `OFFICIAL_REQUIREMENT_TYPES` bleibt unverändert. Visa-Ausprägungen, Aufenthalt, Passgültigkeit, leere Seiten, Transitbedingungen, Amtshandlungen und Zeitregeln sind strukturierte Faktarten. Zeitregeln gehen durch `temporalRuleLesen`. Eine Amtshandlung löst nur auf eine registrierte `official_authority` auf. Dieser Slice speichert nichts, ruft kein Modell und kein Netz auf und ändert die Engine nicht. Eine spätere Persistenz wäre ein eigener Development-Slice. Diese Persistenz ist ADR-0219.
+
+### Official Truth Accepted Rule Claim Persistence
+
+ADR-0219 legt die Repository-Migration für bereits akzeptierte Rule Claims an: `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. Diese Version ist die Development-History des einmaligen Technical-Lead-Apply. Sie ist nicht von Hand erfunden. Die ursprüngliche lokale CLI-Datei hieß `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. `git mv` hat nur diesen Dateinamen geändert. Die SQL-Bytes sind unverändert, SHA-256 `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. Cursor hat die Migration in der Identitäts-Reconciliation nicht erneut angewendet und Production nicht angefasst. Eine zweite Remote-Anwendung ist nicht erlaubt. `private.official_evidence_versions` erhält `rule_scope_key`. SQL berechnet den Schlüssel nicht und prüft nicht, ob er zu den typisierten Scope-Spalten passt. `lookup_key` mit `evidence-key:v2:` bleibt unverändert. `private.official_rule_claims` speichert nur einen akzeptierten Claim. `claim_id` ist eine von der Datenbank erzeugte Identität, nicht Product Truth und nicht der Regel-Schlüssel. Pro `rule_scope_key` und Faktart gibt es eine Zeile. Kandidat, Modellvorschlag und die drei nicht annehmbaren Qualitäten werden nicht gespeichert. Acht typisierte Fakt-Tabellen ersetzen ein freies JSONB. `private.official_rule_claim_support` beweist über zusammengesetzte Fremdschlüssel dieselbe `rule_scope_key`, den Evidence-Lebenszyklus `accepted`, den Validierungszustand `valid`, dieselbe `source_id` und die Quellenklasse `official_authority`. Ein lizenzierter Anbieter kann weder Stütze noch Amtshandlung sein. Wie viele Stützen nötig sind und ob eine zusammengesetzte Qualität verschiedene Quellen hat, bleibt beim späteren vertrauenswürdigen Schreiber. Dafür gibt es keinen Trigger. Beim Commit muss jeder Claim mindestens eine Zeile in der Fakt-Tabelle seiner `fact_kind` haben. Das prüft ein aufgeschobener Constraint-Trigger. Er zählt keine Stützen. Eine vorhandene Flughafenliste hat keine endliche Obergrenze. Sie muss nicht leer, IATA-förmig, sortiert und eindeutig sein. `regelKandidatAkzeptieren` bleibt die einzige Annahme. `requirementsProviderAus()` bleibt `null`. Der Schema-Slice selbst hat keinen Store-Adapter, keine Engine-Änderung, keinen Import und keinen Seed. Der Schreiber ist der folgende Abschnitt. RLS ist auf allen neuen Tabellen erzwungen und hat keine Policy. `PUBLIC`, `anon`, `authenticated` und `service_role` sind entzogen. Production bleibt ein Product-Owner-Gate.
+
+### Official Truth Trusted Accepted-Store Writer
+
+ADR-0220 legt den ruhenden serverseitigen Schreiber an. `lib/readiness/official-truth-store-server.ts` ist `server-only`. Akzeptierte Evidence erreicht den Store nur aus registryfreiem Abruf, der durch `officialTruthServerHeldEvidenceAnnehmen` neu bewiesen wird. Die Speicher-Payload kommt nur aus der zurückgegebenen akzeptierten Evidence. `regelScopeAusEvidenceScope` liest diesen bewiesenen Scope. Ein Rule Claim geht nur durch `regelKandidatAkzeptieren`. `requirementsProviderAus()` bleibt `null`. Die Evidence-`versionId` bindet `sourceId`, kanonische URL, `sourceContentHash`, `retrievedAt` und den bestehenden `lookupKey` aus `evidenceSuchschluessel`. Das Format bleibt `ev1_` plus 32 Hex-Zeichen. Es gibt keine zweite Scope-Serialisierung und keine Schemaänderung.
+
+Der einzige Datenbankweg ist `public.official_truth_store_accepted_v1(jsonb)`. Eine Funktion, `security definer`, leerer `search_path`. Sie akzeptiert nur `accepted_evidence` und `accepted_rule_claim`. `accepted_evidence` schreibt nur bei `lifecycle` `accepted` und `validation_state` `valid` und lehnt jede andere Kombination mit `22023` ab, bevor ein Duplikat geprüft oder eine Zeile eingefügt wird. Der Server ruft den Namen als String-Literal. `check:schema-bezug` klassifiziert die noch nicht in `types/supabase.ts` erzeugte Funktion als LOCAL/UNAPPLIED. Das ist die Repository-Klassifikation. Am Technical-Lead-Lesen vom 2. Oktober 2026 hat Development die Migration `20261001180549` und `public.official_truth_store_accepted_v1` bereits, und `private.official_evidence_versions` hatte 0 Zeilen. Production hat weder diesen Store-RPC noch die Evidence-Tabelle noch den Quellenkatalog-RPC. Diese Beschreibung wendet nichts an und wendet Development nicht erneut an. Ein späterer Production-Apply oder eine Aktivierung bleibt ein Product-Owner-Gate. Ein exaktes Duplikat schreibt nicht noch einmal. Ein Konflikt schreibt nicht um. `accepted_at` bleibt der erste Audit-Zeitpunkt. Stütze und Amtshandlung lesen die Quellenklasse aus der schon gespeicherten Zeile. Die neun vorhandenen Fakt-Trigger werden innerhalb der Funktion auf `immediate` gesetzt. Der alte Trigger bleibt `security invoker`. Es gibt kein zweites `security definer`. Die kanonische Repository-Datei ist `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`. Das ist die Development-History des einmaligen Technical-Lead-Apply. Die ursprüngliche lokale CLI-Datei hieß `20261001171111_official_truth_trusted_store_writer_1.sql`. `git mv` hat nur den Dateinamen geändert. SHA-256 vorher und nachher: `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4`. Sie fügt keine Zeile ein und vergibt keine Tabellenrechte. `EXECUTE` hat unter den Data-API-Rollen nur `service_role`.
+
+Der Schreiber ist nicht an Auswertung, Router, Copilot oder einen Laufzeitplan angeschlossen. Es gibt keinen Import, keinen echten Quellenkatalog und keinen OpenAI-, Web- oder Provider-Aufruf. Der Technical Lead hat diese SQL einmal auf Development angewendet. Diese Identitätskorrektur wendet sie nicht erneut an. Production bleibt unberührt und ein Product-Owner-Gate. Der aktuelle Schreiber ist Draft PR #683, Issue #682. Cursor setzt kein Ready und mergt nicht.
+
+### Route & Transit Intelligence (Foundation D)
+
+PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus validierten Flight-Itineraries ab. `airportContacts`, `connections`, `transitCountryCodes` und `destinationCountryCodes` entstehen nur innerhalb eines belegten Legs; getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden. Ein Hinflugziel wird nicht durch ein späteres Rück-Leg zum Transit. Ein späterer Leg-Origin, der nicht das bewiesene Reise-Origin ist, bleibt ein belegter Besuch. Fingerprint und Anzeige behalten jede Leg-Grenze. Persistenz nutzt vorhandenes `trip_items.metadata` als `{ routeItinerary }` (max. 8192 Zeichen). `reiseAusNutzlastAnlegen()` kanonisiert jede clientseitige Itinerary vor RPC und Recovery (ADR-0114). `flug_route_itinerary_metadata()` baut Punkte aus `public.airports` neu (ADR-0115) und verwirft Client-`surfaceFromAirportCode` (ADR-0151, Development). `itineraryAusFlugOption()` erfindet diese Evidence nicht aus untrusted Segmentnachbarschaft (ADR-0150). `flugRouteItineraryLesen()` und Guest-`reiseLesen()` akzeptieren das Feld nicht. Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Kanonisierung auf jeden INSERT/UPDATE von `metadata` oder `kind` an (ADR-0116). `reise_anlegen()` schreibt die validierte Itinerary atomar in derselben Transaktion (ADR-0113); der TypeScript-Nachlauf ist fail-closed Recovery. Für `kind='flight'` übernimmt derselbe RPC keine kommerziellen Felder aus Browser-JSON (ADR-0156, Development). Direkte `authenticated`-Writes auf `trip_items` können dieselben Flug-Handelsfelder ebenfalls nicht setzen oder ändern (ADR-0157, Development). Die Flugsuche löst IATA-Länder in einem Batch gegen `public.airports` auf; die direkte Account-Flugübernahme bleibt referenzbasiert. Guest und Account teilen dasselbe `TripItem.routeItinerary`. Production-Suche und Timatic bleiben aus.
+
+### Traveller Context (Foundation E)
+
+PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Account-Deletes gehen über `party_loeschen()` (P2-TA-04 C1 / ADR-0181; Production live als `20260828015304`; Draft-PR bis unabhängiger Re-Review/Merge). Die Datenbank begrenzt 20 Reisende je `(user_id, trip_id)` und die Child-Limits 8/12 auch bei UPDATE/Reparenting. Guest Local Storage trägt dieselbe `TripTraveller`-Form. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
+
+### Travel Safety & Disruption (provider-neutrale Foundation)
+
+PR #37 ist auf `main` gemergt. `lib/safety/` ist eine eigene Truth-Domäne. `safetyProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und Präsentationsklasse bleiben getrennt (ADR-0127, ADR-0128, ADR-0129, ADR-0130, ADR-0131, ADR-0132).
+
+`POST /api/safety/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Ein Transit-Ereignis markiert nicht pauschal das Reiseziel. `seasonal_pattern` erzeugt keine Safety-Warnung. Evidence-Freshness ist vom Event-Zeitfenster getrennt. Zeitliche Relevanz gilt für konkrete Kontaktfenster, nicht für ein Min/Max über wiederholte Airports. Date-only-Kalendertage und Foundation-D-Ortszeiten bleiben zonenlos; gegen UTC-Instanten gilt eine weltweite Offset-Hülle statt erfundener UTC-Tagesgrenzen. Country-Scope behält Stage und alle Land-Routekontakte. Feinere Geo-Scopes ohne belegbare Membership bleiben `insufficient_context`, auch wenn eine Stage im selben Land liegt oder später zeitlich herausfällt. Teilweise malformed Providerantworten setzen `summary.complete=false` und dürfen nicht `checked_clean` oder generisches API-`ok` erzeugen. Ein erfolgreicher Provider mit 0 akuten Facts ist geprüft, nicht unavailable. Timeout, Unknown und Konflikt erzeugen keine Entwarnungs-Copy. Travellerabhängige Facts bewerten alle anwendbaren Slots fail-closed. Der Provider-Aufruf hat ein Timeout. Keine Safety-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
+
+Fachlich: [docs/TRAVEL_SAFETY_DISRUPTION.md](docs/TRAVEL_SAFETY_DISRUPTION.md).
+
+### Travel Timing & Seasonal Intelligence (provider-neutrale Foundation)
+
+Draft-PR #38 auf `feat/travel-timing-seasonal-intelligence`. `lib/seasonal/` ist eine eigene Truth-Domäne neben Safety. `seasonalProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. Kategorie, Evidence-Klasse, Outcome, Freshness, Reference Period, Travel Window, räumliche Relevanz, Impact und Präsentationsklasse bleiben getrennt (ADR-0133, ADR-0134, ADR-0135, ADR-0136, ADR-0137, ADR-0138, ADR-0139, ADR-0140).
+
+`POST /api/seasonal/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Der provider-neutrale Request trägt neben der groben Top-Level-Hülle kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte aus derselben Foundation-D-Projektion; flache Country-/Airport-/Place-Mengen bleiben nur Hülle. Getrennte Airport-Besuche bleiben getrennte Kontakte. Recurring Windows sind inklusiv und jahressensitiv, inklusive Jahreswechsel und Leap-Day. Ohne explizites `freshUntil` gibt es kein `current`. `active_warning` / `acute` / `acute_event` erscheinen nicht als Seasonal-Hinweis und werden als `rejected_acute` materialisiert, niemals als `seasonal_pattern`, auch nicht kombiniert mit `temporarily_unavailable`. `seasonal_pattern` erzeugt weiterhin keine Safety-Warnung. Rückwärts laufende Trip- oder Stage-Datumsbereiche sind an der untrusted Seasonal-API ungültig; ein unerwartet umgekehrtes Intervall wird zeitlich `insufficient`, nicht `not_applies`. Eine widersprüchliche Top-Level-Hülle überstimmt konkrete Stage-/Route-Kontakte nicht. Items ohne eigene `stageId` erben eine belegte `day.stageId`. Date-only und Foundation-D-Ortszeiten bleiben zonenlos. Feinere Geo-Scopes ohne Membership bleiben `insufficient_context`. Teilweise malformed Antworten setzen `summary.complete=false`. Ein erfolgreicher Provider mit `[]` ist geprüftes Leergebnis, nicht unavailable, und keine optimale Reisezeit. Keine Seasonal-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
+
+Fachlich: [docs/TRAVEL_TIMING_SEASONAL.md](docs/TRAVEL_TIMING_SEASONAL.md).
+
+### Ortsbasis (Phase 3.1)
+
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Rang und Combobox-UX stehen in `lib/places/suche.ts` bzw. `OrtSuche`; persistiert wird nur die kanonische Place-ID. Für Rolle `ziel` ist ein exaktes Länder-Alias/Keyword ordinale Namenswahrheit vor gleichnamigen Städten, auch wenn deren Import-Keywords denselben Token tragen, und wird gezielt nachgezogen, wenn die Namensmenge noch kein solches Land enthält; Abreise bleibt stadt-/IATA-geführt (ADR-0196). Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schema und Inhalt für Production nur über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md) (ADR-0069). Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067, ADR-0174, ADR-0196.
+
+### Kostenkontrolle bei Modellaufrufen
+
+Es existiert **kein** Codepfad, der ohne Nutzerinteraktion einen kostenpflichtigen Modellaufruf auslöst. Beseitigt wurden in Phase 1.1:
+
+1. der Cron `/api/copilot/auto`, der täglich bis zu 24 DALL·E-3-Bilder erzeugte und dessen Secret-Prüfung fail-open war,
+2. ein Generator-Aufruf im Server-Rendering von `app/search/page.tsx`, der bei jedem öffentlichen Aufruf mit `region`- oder `city`-Parameter eine DALL·E-3-Generierung auslöste – ohne Authentifizierung, Secret oder Rate Limit,
+3. die gesamte Generierungskette (`copilot-upload-checker`, `copilot-upload-generator`, `copilot-image`) sowie der Block `maybeGenerateCopilotUpload`.
+
+Mit Phase 1.1b wurde zusätzlich `lib/openai/*` entfernt und das Paket `openai` deinstalliert.
+
+**Seit Phase 2.1 gibt es wieder einen Weg zu einem kostenpflichtigen Modell – abgeschaltet, und nur über eine Nutzerhandlung.** Er unterscheidet sich in jedem Punkt von den entfernten:
+
+| Eigenschaft | Alt-Endpunkte (entfernt) | `vorschlagErzeugen()` |
+| --- | --- | --- |
+| Auslöser | Cron und Server-Rendering | ein Klick auf „Entwurf erstellen" |
+| Standardzustand | eingeschaltet | aus; drei Variablen müssen zusammenkommen |
+| Grenze je Aufrufer | keine | 4 je Stunde, 8 je Tag |
+| Globale Grenze | keine | 38 Aufrufe und $3.00 je Tag |
+| Durchsetzung | – | Datenbank, serialisiert, vor dem Aufruf gebucht |
+| Ausgabegrenze | keine | `max_output_tokens: 6000` |
+| Zeitgrenze | keine | Terra/Luna 90 s, Sol 120 s, eigener `AbortController` |
+| Protokoll | keins | `public.model_usage`, eine Zeile je Aufruf |
+
+Der Setup-Check verlangt `OPENAI_API_KEY` weiterhin **nicht** – eine fehlende Variable ist der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Vollständige Beschreibung in [docs/MODELL.md](docs/MODELL.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0052.
+
+---
+
+## 8. Design-Architektur
+
+Die V2-Markenfarben sind zentralisiert:
+
+- `styles/globals.css` definiert die Markenpalette in sieben Familien (`brand`, `citrus`, `surface`, `line`, `ink`, `night`, `danger`) als RGB-Kanäle.
+- Die semantischen shadcn-Namen (`--primary`, `--muted`, `--border` usw.) definieren keine eigenen Farben, sondern **verweisen** auf diese Palette. Damit gibt es je Farbe genau eine Quelle.
+- `tailwind.config.js` mappt beide Gruppen über `rgb(var(--token) / <alpha-value>)`, damit Opacity-Modifier wie `bg-brand-600/10` und `bg-primary/10` funktionieren.
+- Die UI-Dateien verwenden ausschließlich Tokens, keine Hex-Literale und keine Farben aus der Tailwind-Standardpalette.
+
+Zuordnung und Begründung der semantischen Tokens: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), Abschnitt 3.
+
+---
+
+## 9. Build, CI und Deployment
+
+- `npm run typecheck` – `tsc --noEmit`
+- `npm run lint` – ESLint
+- `npm run build` – Setup-Check und danach `next build`
+- `npm run check:setup:ci` – Setup-Check mit Fail-Closed-Verhalten für CI
+- `npm run check:schema-bezug` – jedes `.from()` und `.rpc()` gegen `types/supabase.ts`
+- `.github/workflows/ci.yml` führt bei jedem Push auf `main` und bei jedem Pull Request aus: `npm ci`, Setup-Check, Typecheck, Lint, Tests, Schutz der Admin-API, Bezug auf das Schema, die drei Hygiene-Prüfungen und den Production-Build
+- ein zweiter Job gleicht die Auth-Konfiguration des Branches gegen `supabase/config.toml` ab (`npm run auth:pruefen`). Er ist fail-closed: Ohne die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` schlägt er fehl, statt sich stillschweigend zu überspringen. Nur ein Pull Request aus einem Fork überspringt sich, weil GitHub ihm keine Secrets gibt
+
+Die datenbanknahen Prüfungen aus `scripts/db/` laufen nicht in der CI. Sie brauchen den Development-Zugang, und mehrere Läufe gegen denselben Branch würden dieselben Testkonten anlegen. Sie werden vor einer Zusammenführung von Hand ausgeführt; die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 9. Seit Phase 2.1 gehört `npm run db:kontingent` dazu.
+
+`npm run modell:probe` löst einen echten, bezahlten Modellaufruf aus und läuft deshalb **nie** in der CI, sondern nur ausdrücklich von Hand ([docs/MODELL.md](docs/MODELL.md), Abschnitt 8).
+
+Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrationsbranch; größere Umbauten laufen über Feature-Branch und Preview. Ein Push auf `main` löst automatisch einen Production-Deploy aus.
+
+**Erreichbarkeit (jetnity.com aktualisiert und verifiziert am 27. September 2026):**
+
+| Adresse | Zustand |
+| --- | --- |
+| `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias. Nach PR #86: HTML `noindex, nofollow`; Canonical/OG auf `https://jetnity.com`. Niemals kanonische Produktdomain. |
+| Deployment-URLs (`jetnity-<hash>-…vercel.app`) | durch Vercel Deployment Protection geschützt, liefern die Vercel-Login-Seite |
+| `jetnity.com` | **Kanonische Produktdomain, Infomaniak-DNS mit Vercel verbunden. HTTPS 200, HTTP→HTTPS; Domain Gate A bestanden. Kein Public Indexing.** |
+| `jetnity.ch` | Entry-/Redirect-Zieldomain, nicht zweite indexierte Plattform. Aktueller Anschluss in diesem Abschluss nicht neu geprüft oder verändert. |
+
+`jetnity.com` ist mit dem Vercel-Projekt verbunden und kann für Production-Prüfungen verwendet werden. Domain Gate A und technische PrivacyBee-Publikation sind kein Public-Indexing-/Launch-Gate. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/terms` bleibt ohne Page (D0-P1-03).
+
+**PrivacyBee integration 1 (PR #579 gemergt, Production live geprüft):** `/privacy` und `/impressum` binden die offiziellen Widgets von `app.privacybee.io` nur, wenn der Request-Host exakt `jetnity.com` ist und die geprüfte Aktivierung gilt. Ein Server-Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus` entfernt die Scripts. Localhost und Preview bekommen keinen Vendor-Script. Der Inhalt bleibt bei PrivacyBee. Kein Cookie-Banner, keine Indexierung, keine behauptete Rechtskonformität. Siehe ADR-0213. Production-Beweis für beide Widgets und Rücknavigation auf Runtime-Baseline `39eeaa1de87fc396b080b293c6c97b4a5e397640` siehe `docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md`.
+
+`vercel.json` enthält seit Phase 1.1 **keine** Cron-Jobs mehr. Die vier vorherigen Jobs zeigten ausschließlich auf Alt-Endpunkte und sind entfernt.
+
+---
+
+## 10. Observability
+
+Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturierte Log-Konvention. Ein Anbieter würde laufende Kosten verursachen und ist deshalb nicht ohne Freigabe eingeführt. Für die Launch-Reife ist eine kostengünstige Lösung vorgesehen (Backlog in [ROADMAP.md](ROADMAP.md)).
+
+---
+
+## 11. Bekannte technische Schulden
+
+| Thema | Ausmaß | Einordnung |
+| --- | --- | --- |
+| ~~Fehlende Baseline-Migration~~ | ~~37 Tabellen ohne Versionierung~~ | in Phase 1.4 hergestellt, Wiederaufbau gemessen |
+| ~~Zwei Supabase-Typdateien~~ | ~~37 vs. 3 Tabellen~~ | in Phase 1.2b zusammengeführt, seit 1.4 erzeugt statt gepflegt |
+| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit inzwischen 135 Nachweisen belegt |
+| ~~Alt-Tabellen in der Datenbank~~ | ~~29 von 37 ohne Verwendung im Code~~ | in Phase 1.4b entfernt, mit Archiv-Tag und Nachweis in `docs/LEGACY_ENTFERNUNG.md`; `creator_sessions` als letzte in Phase 1.5 |
+| ~~Rolle liegt in `creator_profiles`~~ | ~~Tabelle der alten Produktidee~~ | in Phase 1.5 auf `public.profiles` umgestellt, samt Entfernung der neun Creator-Spalten (ADR-0044) |
+| ~~Fünf Funktionen ohne Aufrufer~~ | ~~auf `creator_profiles` und `creator_sessions`~~ | in Phase 1.5 entfernt, dazu ein doppelter Auslöser auf dem Profil |
+| Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
+| ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
+| Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
+| Modellweg ohne echten Aufruf belegt | Fixture-Tests, 0 Aufrufe gegen OpenAI | Routing Terra/Sol, Sol 120 s, eine Korrektur (ADR-0056). Frühe Luna-Vorgabe durch die Fünf-Fälle-Messung ersetzt. |
+| `model_usage` ohne Aufbewahrungsfrist | höchstens 38 Zeilen am Tag, keine Reiseinhalte | eine Frist gehört zu der Entscheidung, die Funktion einzuschalten. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0052 |
+| Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
+| ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |
+| Zahl der Kindzeilen je Reise ungebremst | Etappen, Tage und Planpunkte nur über `reise_anlegen()` begrenzt | ein direkter `INSERT` kann die eigene Reise beliebig weit füllen. Ein Auslöser je Zeile wäre quadratisch; der Weg ist ein Auslöser je Anweisung. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0045 |
+| Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |
+| `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
+| ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |
+| ~~`admin_domains` im Schema~~ | ~~unbenutzt, widerspricht ADR-0027~~ | in Phase 1.4 entfernt, zusammen mit `app_admins` und `is_admin` |
+| ~~Alt-Endpunkte ohne Kostenkontrolle~~ | ~~mehrere OpenAI-Endpunkte~~ | in Phase 1.1 durch Abschaltung gelöst |
+| ~~Alt-Oberflächen ohne funktionierende Endpunkte~~ | ~~Media Studio, Creator Hub, Admin Copilot, Feed, Blog~~ | in Phase 1.1b entfernt (209 Dateien) |
+
+Bewusste Entscheidung: `any`-Vorkommen und Sicherheitslücken in Alt-Code werden **nicht** aufwendig refactored, wenn der betroffene Code kurzfristig entfernt wird ([DECISIONS.md](DECISIONS.md), ADR-0006).

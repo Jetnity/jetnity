@@ -1,0 +1,53 @@
+{
+  "receiptId": "aacbf1-review-fix-t1-20260923T225644Z",
+  "kind": "author-self-evidence",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "agent": "Jetnity admin account counts browser flows 1",
+  "generation": 1,
+  "session": "bc-9495c303-3b54-4a76-a467-665b3f1a8eb9",
+  "modelRequired": "cursor-grok-4.6-high-fast",
+  "modelActual": "cursor-grok-4.6-high-fast",
+  "uiRename": "not performed",
+  "branch": "test/admin-account-counts-browser-flows-1",
+  "pr": 559,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_BROWSER_FLOWS_1_TASK_2026-09-23.md",
+  "taskSeed": "58afaa15d15dce87c180f4f0eb73b8dc248e896e",
+  "reviewedHead": "d0e5af34ac442011adf3a9b5eb094aae9d85396c",
+  "tlReview": "5297736357",
+  "tlVerdict": "CHANGES REQUIRED",
+  "correction": "omit optional execution-provenance fields from run-scoped consumer receipts",
+  "authorizedMain": "86534228bad59d2951e5586400a93b524aac9cd1",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "implementationMetadata": {
+    "scenarioCode": "delivered"
+  },
+  "thisInvocation": {
+    "kind": "controlled-context-unit",
+    "command": "node --test scripts/e2e/admin-account-counts-browser-flows-1/test.mjs",
+    "node": "v22.14.0",
+    "tests": 31,
+    "pass": 31,
+    "fail": 0,
+    "tapSha256": "864482dc6c1fd6ad1fba1ee0ca6a56e4821cbc18f4e281c17836d0e6187a766f",
+    "notFullLocalExecution": true
+  },
+  "authorDelivery": {
+    "realPlaywrightOrMfa": "NOT RUN",
+    "note": "Historical author-delivery fact for this persist. Not written into future run-scoped browser-flows-gates receipts."
+  },
+  "acceptedParserEquivalence": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/e2e/admin-account-counts-browser-flows-1/parser-equivalence.ts",
+    "observed": "accepted and JS port agreed on a valid one-row fixture and a multirow reject",
+    "separateFromMockSuite": true
+  },
+  "historicalReceiptsPreserved": [
+    "aacbf1-20260923T123800Z",
+    "aacbf1-review-fix-b1-b4-20260923T133051Z",
+    "aacbf1-review-fix-remaining-b1-b3-20260923T152543Z",
+    "aacbf1-review-fix-nav-response-20260923T161207Z",
+    "aacbf1-main-sync-86534228-20260923T224403Z"
+  ],
+  "docker": "not attempted",
+  "hostedFallback": "not attempted",
+  "notes": "Author self-evidence only. Helper/double PASS is not a browser PASS. Runtime owns fullLocalExecution."
+}

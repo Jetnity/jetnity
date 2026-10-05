@@ -1,0 +1,178 @@
+# Guardian Intelligence Bridge 1 — Contract
+
+Date: 2 October 2026
+Issue: #747
+Canonical inbox: [#748](https://github.com/Jetnity/jetnity/issues/748)
+Draft PR: [#750](https://github.com/Jetnity/jetnity/pull/750)
+Branch: `os/guardian-intelligence-bridge-1`
+Dispatch baseline: `main@3775955f6c4e958b26259d98cb9a0bc35dc2075f` (`Merge #743: add owner-only Official Truth reviewer capability`)
+R1 integrated current `main@a77146140799a142cb1ea0300991e77cdc0731b5` (`Merge #749: audit Official Truth acceptance preconditions`). Technical-Lead R1 `5394784249` on `dea9ea549550f9e5d381603b42ed65f1c4dd563c` required that correction. The review head is the branch tip after it.
+Logical agent: **Jetnity Guardian Intelligence Bridge 1**
+Generation: **1**
+Binding task: `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_TASK_2026-10-02.md`
+
+This contract is repository continuity. It does not configure the external Guardian / Chief-of-Staff workspace, and it does not prove that workspace can post to GitHub.
+
+## Amendment — Current State 1, 2 October 2026
+
+`docs/JETNITY_GUARDIAN_INTELLIGENCE_CURRENT_STATE_1_CONTRACT_2026-10-02.md` is the startup, privacy and lifecycle rule after merged #750. Envelope, dedupe and Technical-Lead receipt classes in this contract remain in force. #750 is merged at `ee1d2d32ab50c978f75e6a45f99de5ac551a2b9d`. The Draft #750 sentence in §11 remains this slice's delivery stop rule.
+
+## 1. Canonical inbox
+
+[Issue #748](https://github.com/Jetnity/jetnity/issues/748) is the persistent canonical GitHub evidence inbox for material reports from:
+
+- Jetnity Guardian;
+- Jetnity Chief of Staff;
+- approved read-only Grok intelligence roles named in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
+
+#748 stays open across reports. Handling one report does not close the inbox.
+
+Ordinary Daily automation remains bound by `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md` §6 point 6: the Daily routine does not write GitHub by default. A `NO_MATERIAL` brief stays in the external workspace. This contract adds one later path for a **material** report, as a structured #748 comment, when an already-connected GitHub capability permits it.
+
+## 2. Authority
+
+Guardian remains read-only toward the repository. It may report. It does not fix code, open a branch, open a PR, set Ready, or merge.
+
+Chief of Staff may synthesize and route. A synthesis comment stays evidence. It cites the underlying raw `report_id` values in `evidence_refs`. It does not replace, hide, or delete the raw report.
+
+A #748 report is challenge input. It does not:
+
+- authorize a code change;
+- authorize Cursor to fix anything;
+- constitute Technical-Lead PASS, CHANGES REQUIRED, BLOCKED, or NO-GO;
+- authorize Ready or merge;
+- authorize Production, database, Auth, provider, payment, indexing, or launch action;
+- replace a Product-Owner gate.
+
+Cursor may consume a finding only when the current versioned task explicitly binds that `report_id` and the latest Technical-Lead receipt on #748 for that id is `CONFIRMED` or `PARTIAL`. `PARTIAL` authorizes only the confirmed part named in that task. `NOT_REPRODUCED`, `STALE`, `SUPERSEDED`, and a report with no Technical-Lead receipt authorize nothing.
+
+## 3. Material threshold
+
+Post a report to #748 only when it is material. A report is material when any of these is true:
+
+- severity is `P0` or `P1`;
+- `needs_tl_review` is `true`;
+- `needs_po_decision` is `true`;
+- a finding of class `RISK` bears on current `main`, an exact head under review, a release gate, or a reserved Product-Owner gate.
+
+`NO_MATERIAL` daily output stays off #748.
+
+## 4. Report envelope
+
+Each report comment starts with this marker line:
+
+```text
+jetnity_guardian_inbox: report
+```
+
+Required fields:
+
+| Field | Rule |
+| --- | --- |
+| `report_id` | Stable id from §5. |
+| `source_agent` | Canonical role name. |
+| `generated_at` | ISO-8601 timestamp with timezone. Metadata only. Not part of `report_id`. |
+| `observed_main_sha` | Full `origin/main` SHA observed at generation. |
+| `observed_heads` | Relevant PR, issue, and exact-head SHAs. Empty array when none. |
+| `scope` | What was examined. |
+| `findings` | Each item has `class` = `FACT` \| `INFERENCE` \| `RISK` \| `OPPORTUNITY` \| `RECOMMENDATION`, `severity` = `P0` \| `P1` \| `P2` \| `P3` or `none`, and a sanitized `summary`. |
+| `evidence_refs` | URLs, SHAs, repository paths, issue/PR numbers, or hashes. |
+| `systems_checked` | Systems actually read. |
+| `systems_not_checked` | Systems explicitly not read. |
+| `needs_tl_review` | `true` or `false`. |
+| `needs_po_decision` | `true` or `false`. |
+| `supersedes_report_id` | Previous `report_id`, or empty. |
+
+The comment body is a sanitized summary and references: repository paths, pull-request and issue ids, commit SHAs, and non-personal hashes. It contains no secret, token, PAT, webhook credential, or environment value. Jetnity/jetnity is public, so the body also contains no personal data. The forbidden set includes names, email addresses, phone numbers, postal or street addresses, user, account or traveller identifiers, passport or document numbers, MRZ, biometrics, health information, birth dates, IP addresses, and any other directly or indirectly person-identifying value. When a finding cannot be represented without personal data, do not put that payload in #748 or #751. Name only the data class and a sanitized location or hash where that is safe, and mark that restricted evidence requires an approved private evidence path. The Current State contract is the privacy rule.
+
+## 5. Dedupe and idempotency
+
+`report_id` is `gib1:` plus the lowercase hex SHA-256 of the canonical JSON object below. Canonical JSON uses UTF-8, sorted object keys, no insignificant whitespace, and arrays sorted and de-duplicated.
+
+```json
+{
+  "evidence_refs": [],
+  "finding_fingerprint": "",
+  "observed_heads": [],
+  "observed_main_sha": "",
+  "scope": "",
+  "source_agent": ""
+}
+```
+
+`finding_fingerprint` is the lowercase hex SHA-256 of the canonical JSON array of `{ "class", "severity", "summary" }` objects, sorted by `class`, then `severity`, then whitespace-normalized `summary`.
+
+Before posting, read #748 comments. If a comment whose marker is `jetnity_guardian_inbox: report` already contains that `report_id`, do not post again. A Technical-Lead receipt that merely cites the id is not a report and does not satisfy this match.
+
+A changed finding set, a changed evidence set, or a recheck on a new `observed_main_sha` or head is a new `report_id`. Set `supersedes_report_id` to the prior id. Reusing an id for different content is a contract break. Creating a second id for identical canonical content is a duplicate and must not be posted.
+
+## 6. Technical-Lead receipt
+
+The Technical Lead may acknowledge a report with a later #748 comment. The comment starts with:
+
+```text
+jetnity_guardian_inbox: tl_receipt
+```
+
+Required fields: `report_id`, `classification`, and `linked_work` when a remediation issue or PR exists.
+
+`classification` is exactly one of:
+
+- `CONFIRMED`
+- `PARTIAL`
+- `NOT_REPRODUCED`
+- `STALE`
+- `SUPERSEDED`
+
+The latest receipt for a `report_id` is the current triage state. Receipts are not reports and are not deduped by `report_id`. A receipt does not edit or delete the original report.
+
+## 7. Stale heads
+
+A report whose `observed_main_sha` or bound exact head is not the live head under review stays in #748 as history. It cannot gate, block, or authorize the current head until a recheck posts a new `report_id` that names the current SHA and sets `supersedes_report_id`. The Technical Lead marks the old report `STALE` when that is the triage result. Cursor does not apply a stale report to a newer head.
+
+## 8. Startup read
+
+Default startup is the Current State contract. A new Technical-Lead chat reads live `origin/main` and live `.jetnity/operating-mode.json`, then [#751](https://github.com/Jetnity/jetnity/issues/751), then only:
+
+1. open or material `report_id` values referenced by #751;
+2. newer unread MATERIAL #748 reports after the last processed comment marker on #751.
+
+- **Unread:** no later `tl_receipt` on #748 names that `report_id`.
+- **Material:** §3.
+- **Outside the default read:** resolved, `STALE` and `SUPERSEDED` reports. They remain on #748 as audit history.
+
+An unread report is evidence waiting for triage. It is not a confirmed defect and not a task assignment.
+
+Guardian runs that can read GitHub do the same before claiming continuity is current. This slice does not start those runs.
+
+## 9. External history
+
+Artifacts under the external workspace paths such as `/workspace/jetnity/intelligence/routing/staging/...` remain source history. This bridge does not read them, rewrite them, or copy them into git. Cursor does not mutate that workspace from this slice.
+
+Bridge 1 observation, unchanged: in that session, `issue_read` comments for #748 returned an empty list. The issue was created at `2026-10-02T17:09:16Z`. Silence in that session was not success.
+
+Current State 1 later read, 2 October 2026: #748 comment `5958412971` is report `COS-20261002-2010-001` from Jetnity Chief of Staff. Technical-Lead receipt `5958628250` classifies it `PARTIAL`. Chief of Staff -> #748 direct MATERIAL posting is proven for that report. The same read found no Jetnity Guardian report comment. Guardian direct posting is not yet proven. Archive file names inside the Chief of Staff comment are not #748 report comments.
+
+The one-time setup text is `docs/JETNITY_GUARDIAN_INTELLIGENCE_BRIDGE_1_EXTERNAL_SETUP_PROMPT_2026-10-02.md`. It has not been sent by this slice.
+
+If the external system has no GitHub issue-comment capability, it reports that once and stops. It does not recruit the Product Owner as a permanent copy path, and it does not request a new token, PAT, webhook, or credential.
+
+## 10. Separate from Issue #746
+
+[Issue #746](https://github.com/Jetnity/jetnity/issues/746) is a separate read-only adversarial audit of Official Truth acceptance preconditions. It is not the inbox and not this writer. [PR #749](https://github.com/Jetnity/jetnity/pull/749) merged that audit at `a77146140799a142cb1ea0300991e77cdc0731b5`. Its report records P1 findings that block #741 autonomous promotion until later remediation. This contract does not rewrite that report and does not restate the findings.
+
+This slice does not change acceptance runtime and does not open a remediation slice. A later material report about those targets belongs on #748 under this envelope. A Cursor fix for any of them waits for a Technical-Lead receipt and a separately versioned task.
+
+## 11. Boundaries of this slice
+
+In force:
+
+- machine mode `NORMAL` in `.jetnity/operating-mode.json`;
+- `AI_OS_BUILD_HOLD` is historical metadata inside that file, not the live mode;
+- Draft #750 stays Draft;
+- Cursor does not Ready, merge, or start a follow-up slice;
+- no product runtime, Auth, database, Supabase, provider, or model change;
+- no ruleset mutation;
+- no new secret, token, PAT, webhook, or paid service.
+
+Exact next step: independent Technical-Lead review of the exact branch tip. After that review, the Product Owner may paste the external setup prompt once. This contract does not perform that paste.

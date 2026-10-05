@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-09-21T15:40:30Z",
+  "agent": "Jetnity V1 trip account revalidation 1",
+  "generation": 1,
+  "requiredModel": "Cursor Grok 4.6 High Fast",
+  "confirmedModel": "cursor-grok-4.6-high-fast",
+  "session": "bc-18cfea6b-09d5-4bb8-ac73-10332a6079eb",
+  "issue": 507,
+  "pr": 509,
+  "branch": "audit/v1-trip-account-revalidation-1",
+  "dispatchHead": "ef8df8a502b37d43a1b34666ca3caf9b356eeb6b",
+  "taskBaselineMain": "c7fb9f0f693ba9f020add7b26a041263aa7e3b07",
+  "originMainAtWrite": "c7fb9f0f693ba9f020add7b26a041263aa7e3b07",
+  "originMainSubject": "Close V1 Security Event Mutation-Derived Producer Contract 1 (#494)",
+  "mergeBase": "c7fb9f0f693ba9f020add7b26a041263aa7e3b07",
+  "aheadOfOriginMain": 1,
+  "behindOriginMain": 0,
+  "mainDriftFromTaskBaseline": "none",
+  "localMainStaleAt": "9f386d10816d7adcdaf2fcd6d3732e64f952fb50",
+  "operatingModeFile": "NORMAL",
+  "staleGlobalContinuity": {
+    "filesNotEdited": [
+      "docs/ACTIVE_WORK_STATUS.md",
+      "JETNITY_START_HERE.md"
+    ],
+    "note": "Those files still describe HOLD / parked #487. Live operating-mode.json and GitHub main contradict them. TL-owned continuity follow-up; this slice must not edit them."
+  },
+  "parallelOwnership": {
+    "pr506": "visual UX/device evidence only; not read as accepted product truth; not re-owned",
+    "pr509": "this functional revalidation",
+    "pr510": "Intelligent Admin specification only; not written here",
+    "pr494": "merged at task baseline; not restarted"
+  },
+  "reviewThreadsAtWrite": 0
+}

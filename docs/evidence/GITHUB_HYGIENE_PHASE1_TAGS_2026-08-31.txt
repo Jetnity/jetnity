@@ -1,0 +1,6 @@
+3d2642aa6d0bed6414397cf0c29ce7ed9958d0cd	refs/tags/archive/jetnity-v1-main
+e6fd8db9f6e9b1b10f75d4cab175ca45128b87ce	refs/tags/archive/jetnity-v1-main^{}
+a9b613ddb91524562299b49c2368fa720a5182d8	refs/tags/archive/pre-1-1b-alt-ui
+c14726828bbaa49753412f550b20af946c447f95	refs/tags/archive/pre-1-1b-alt-ui^{}
+74a6559128c343b3c0018e5881509cbc4a080954	refs/tags/archive/pre-1-4b-legacy-datenbank
+c058e845e2c0f3349dcfbbf7ee9e023bd6d7ba2c	refs/tags/archive/pre-1-4b-legacy-datenbank^{}

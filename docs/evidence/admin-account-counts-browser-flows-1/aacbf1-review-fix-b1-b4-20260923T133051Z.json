@@ -1,0 +1,43 @@
+{
+  "receiptId": "aacbf1-review-fix-b1-b4-20260923T133051Z",
+  "kind": "author-self-evidence",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "agent": "Jetnity admin account counts browser flows 1",
+  "generation": 1,
+  "session": "bc-9495c303-3b54-4a76-a467-665b3f1a8eb9",
+  "modelRequired": "cursor-grok-4.6-high-fast",
+  "modelActual": "cursor-grok-4.6-high-fast",
+  "uiRename": "not performed",
+  "branch": "test/admin-account-counts-browser-flows-1",
+  "pr": 559,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_BROWSER_FLOWS_1_TASK_2026-09-23.md",
+  "taskSeed": "58afaa15d15dce87c180f4f0eb73b8dc248e896e",
+  "reviewedHead": "d12ec6e9637ff3cd66113c2540f1ae2418520f9d",
+  "tlReview": "5291538166",
+  "tlVerdict": "CHANGES REQUIRED",
+  "correction": "B1-B4 same-session package",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "mergeBase": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "implementationMetadata": {
+    "scenarioCode": "delivered",
+    "defaultRealExecutionClaim": "NOT RUN until reviewed runtime integration",
+    "runtimeIntegration": "pending"
+  },
+  "thisInvocation": {
+    "kind": "controlled-context-unit",
+    "realBrowserOrMfaExecution": "NOT RUN",
+    "command": "node --test scripts/e2e/admin-account-counts-browser-flows-1/test.mjs",
+    "node": "v22.14.0",
+    "tests": 22,
+    "pass": 22,
+    "fail": 0,
+    "tapSha256": "fe8957c3039eaf544ccfb88fd7ffb0a90f13078c1b72a97b63904edcaf099889",
+    "notFullLocalExecution": true
+  },
+  "historicalReceiptPreserved": "aacbf1-20260923T123800Z",
+  "docker": "not attempted",
+  "hostedFallback": "not attempted",
+  "closed556Fallback": "not invoked as a full application run",
+  "sibling558": "not imported; evidenceDir remains required with no unsafe default",
+  "notes": "Author self-evidence only. Helper/double PASS is not a browser PASS. Runtime #558 owns stack/observer/cleanup and the whole-run verdict."
+}

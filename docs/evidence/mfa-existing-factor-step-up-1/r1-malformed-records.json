@@ -1,0 +1,32 @@
+{
+  "kind": "mfa-r1-review-correction",
+  "reviewedHead": "9b93efe468dadd2156202f404dbd50a2013643bf",
+  "tlReview": "5277515232",
+  "writer": "Jetnity MFA existing factor step-up 1 / Generation 1",
+  "session": "bc-7a6af588-d7cf-4bd4-8707-fb4b3b8127a6",
+  "beforeOnReviewedHead": {
+    "reader": "alsFaktorliste accepted any array-of-objects and cast to MfaFaktor[]",
+    "cases": [
+      { "data": { "all": [{}] }, "result": "MFA_TOTP_FEHLT / setup" },
+      { "data": { "all": [{ "factor_type": "totp", "status": "verified" }] }, "result": "MFA_TOTP_FEHLT / setup" },
+      { "data": { "all": [{ "id": "", "factor_type": "totp", "status": "verified" }] }, "result": "MFA_TOTP_FEHLT / setup" },
+      { "data": { "all": [{ "id": "synthetic", "factor_type": "totp", "status": {} }] }, "result": "MFA_TOTP_FEHLT / setup" }
+    ],
+    "wrongTest": "verified TOTP ohne gültige ID ist no-factor ohne Challenge"
+  },
+  "after": {
+    "reader": "faktorDatensatzLesen requires nonempty string id, classifiable string type, nonempty string status; any malformed record makes the list unlesbar",
+    "cases": [
+      { "data": { "all": [{}] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler" },
+      { "data": { "all": [{ "factor_type": "totp", "status": "verified" }] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler" },
+      { "data": { "all": [{ "id": "", "factor_type": "totp", "status": "verified" }] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler" },
+      { "data": { "all": [{ "id": 12, "factor_type": "totp", "status": "verified" }] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler" },
+      { "data": { "all": [{ "id": "synthetic", "factor_type": "totp", "status": {} }] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler" },
+      { "data": { "all": [{}, { "id": "synthetic-factor", "factor_type": "totp", "status": "verified" }] }, "result": "MFA_FAKTOREN_UNLESBAR / fehler, no discard-to-select" },
+      { "data": { "all": [] }, "result": "MFA_TOTP_FEHLT / setup" },
+      { "data": { "totp": [{ "id": "synthetic-factor", "factor_type": "totp", "status": "verified" }] }, "result": "dialog, challengeCount 1" }
+    ]
+  },
+  "displayNormalizerUnchanged": true,
+  "note": "Synthetic fixtures only. No live factor IDs, secrets or Production calls."
+}

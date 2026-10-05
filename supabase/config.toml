@@ -1,0 +1,376 @@
+# For detailed configuration reference documentation, visit:
+# https://supabase.com/docs/guides/local-development/cli/config
+# A string used to distinguish different Supabase projects on the same host. Defaults to the
+# working directory name when running `supabase init`.
+project_id = "jetnity"
+
+[api]
+enabled = true
+# Port to use for the API URL.
+port = 54321
+# Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
+# endpoints. `public` and `graphql_public` schemas are included by default.
+schemas = ["public", "graphql_public"]
+# Extra schemas to add to the search_path of every request.
+extra_search_path = ["public", "extensions"]
+# The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
+# for accidental or malicious requests.
+max_rows = 1000
+
+[api.tls]
+# Enable HTTPS endpoints locally using a self-signed certificate.
+enabled = false
+
+[db]
+# Port to use for the local database URL.
+port = 54322
+# Port used by db diff command to initialize the shadow database.
+shadow_port = 54320
+# The database major version to use. This has to be the same as your remote database's. Run `SHOW
+# server_version;` on the remote database to check.
+major_version = 17
+
+[db.pooler]
+enabled = false
+# Port to use for the local connection pooler.
+port = 54329
+# Specifies when a server connection can be reused by other clients.
+# Configure one of the supported pooler modes: `transaction`, `session`.
+pool_mode = "transaction"
+# How many server connections to allow per user/database pair.
+default_pool_size = 20
+# Maximum number of client connections allowed.
+max_client_conn = 100
+
+# [db.vault]
+# secret_key = "env(SECRET_VALUE)"
+
+[db.migrations]
+# If disabled, migrations will be skipped during a db push or reset.
+enabled = true
+# Specifies an ordered list of schema files that describe your database.
+# Supports glob patterns relative to supabase directory: "./schemas/*.sql"
+schema_paths = []
+
+[db.seed]
+# If enabled, seeds the database after migrations during a db reset.
+enabled = true
+# Specifies an ordered list of seed files to load during db reset.
+# Supports glob patterns relative to supabase directory: "./seeds/*.sql"
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+# Bind realtime via either IPv4 or IPv6. (default: IPv4)
+# ip_version = "IPv6"
+# The maximum length in bytes of HTTP request headers. (default: 4096)
+# max_header_length = 4096
+
+[studio]
+enabled = true
+# Port to use for Supabase Studio.
+port = 54323
+# External URL of the API server that frontend connects to.
+api_url = "http://127.0.0.1"
+# OpenAI API Key to use for Supabase AI in the Supabase Studio.
+openai_api_key = "env(OPENAI_API_KEY)"
+
+# Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
+# are monitored, and you can view the emails that would have been sent from the web interface.
+# Vormals [inbucket]; die CLI führt den Abschnitt seit 2.x unter diesem Namen.
+[local_smtp]
+enabled = true
+# Port to use for the email testing server web interface.
+port = 54324
+# Uncomment to expose additional ports for testing user applications that send emails.
+# smtp_port = 54325
+# pop3_port = 54326
+# admin_email = "admin@email.com"
+# sender_name = "Admin"
+
+[storage]
+enabled = true
+# The maximum file size allowed (e.g. "5MB", "500KB").
+file_size_limit = "50MiB"
+
+# Image transformation API is available to Supabase Pro plan.
+# [storage.image_transformation]
+# enabled = true
+
+# Uncomment to configure local storage buckets
+# [storage.buckets.images]
+# public = false
+# file_size_limit = "50MiB"
+# allowed_mime_types = ["image/png", "image/jpeg"]
+# objects_path = "./images"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Auth
+#
+# Dieser Abschnitt ist keine Vorlage mehr, sondern der gemessene Stand des
+# Supabase-Development-Branches, Schlüssel für Schlüssel gegen
+# `GET /v1/projects/{ref}/config/auth` abgeglichen. Bis Phase 1.4c stand hier
+# der unveränderte Vorlagenstand der CLI; er beschrieb weder Development noch
+# Production und widersprach dem laufenden Branch an neun Stellen – unter
+# anderem bei der Passwortlänge (6 statt 12) und der E-Mail-Bestätigung
+# (aus statt an).
+#
+# Angewendet wird die Datei mit `npm run auth:anwenden`, verglichen mit
+# `npm run auth:pruefen`. Beides zielt ausschliesslich auf den Branch aus
+# `SUPABASE_PROJECT_REF` und bricht ab, wenn dahinter kein Branch, sondern ein
+# eigenständiges Projekt steht – Production wird von hier aus nicht verwaltet.
+#
+# Kein `[remotes.*]`-Block: Er verlangt den Projekt-Ref im Klartext, und ohne
+# ihn überspringt die Supabase-GitHub-Integration das Anwenden von
+# Konfiguration auf persistente Ziele. Begründung in DECISIONS.md ADR-0039,
+# Grenzen und offene Schlüssel in docs/AUTH.md.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[auth]
+enabled = true
+# Ziel jeder Bestätigungs- und Rücksetz-E-Mail, wenn die Anwendung kein
+# `redirectTo` mitgibt. site_url bleibt der lokale Entwicklungsserver.
+site_url = "http://localhost:3000"
+# Genau ein zusätzliches Ziel. Es ist der bereits freigegebene und gespeicherte
+# Development-Preview-Callback aus #626: Freigabe 5893108838, Readback 5893640399.
+# `\\` in dieser Zeichenkette ist ein literaler Backslash vor `?`, das persistierte
+# Glob. Der Browser-Callback enthält keinen Backslash. Kein zweites Ziel, kein
+# Wildcard und keine Production-URL. Die frühere leere Liste bleibt historische
+# Beobachtung in docs/AUTH.md.
+additional_redirect_urls = ["https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen"]
+# Gültigkeitsdauer des Access-Tokens in Sekunden.
+jwt_expiry = 3600
+# Ein benutztes Refresh-Token wird ersetzt; ein zweiter Gebrauch entwertet die
+# ganze Kette. Der Wiederverwendungsspielraum fängt parallele Anfragen des
+# gleichen Browsers ab, ohne den Diebstahlschutz aufzugeben.
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+# Registrierung offen: Jetnity braucht sie für neue Reisende.
+enable_signup = true
+# Anonyme Anmeldungen sind kein Weg, den Jetnity vorsieht. Gastreisen laufen
+# ohne Konto im Browser (DECISIONS.md ADR-0013), nicht über ein Schattenkonto.
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+# Zwölf Zeichen aus vier Gruppen. Dieselbe Regel zeigen und prüfen die
+# Formulare; die einzige Quelle dafür ist lib/auth/passwort-richtlinie.ts, und
+# lib/supabase/auth-erwartung.test.ts vergleicht beide Seiten bei jedem Test.
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits_symbols"
+
+[auth.rate_limit]
+# Ohne eigenen SMTP-Server versendet Supabase selbst und begrenzt hart auf
+# zwei E-Mails pro Stunde. Der Wert wird von `config push` nur übertragen,
+# wenn [auth.email.smtp] eingeschaltet ist – festgehalten ist er trotzdem,
+# damit die Prüfung ihn sieht.
+email_sent = 2
+sms_sent = 30
+anonymous_users = 30
+# Aktualisierungen der Sitzung je IP in fünf Minuten.
+token_refresh = 150
+# An- und Registrierungsversuche je IP in fünf Minuten.
+sign_in_sign_ups = 30
+# Einlösungen von OTP und Magic Link je IP in fünf Minuten.
+token_verifications = 30
+web3 = 30
+
+# Kein Captcha. Es verlangt einen Anbieter samt Secret und würde jede
+# Anmeldung von einem Dritten abhängig machen; die Ratenbegrenzung oben deckt
+# den Missbrauchsfall, den Jetnity heute hat.
+[auth.captcha]
+enabled = false
+
+[auth.email]
+# E-Mail und Passwort sind der Hauptweg in Jetnity hinein.
+enable_signup = true
+# Eine Adressänderung muss von der alten *und* der neuen Adresse bestätigt
+# werden. Sonst genügt ein übernommener Browser, um das Konto zu entwenden.
+double_confirm_changes = true
+# Ohne Bestätigung könnte jeder ein Konto auf eine fremde Adresse anlegen.
+# Der Branch führt die Bestätigung; die Vorlage hatte sie aus.
+enable_confirmations = true
+# Vor einer Passwortänderung wird eine kürzlich bestätigte Anmeldung
+# verlangt. Setzt `security_update_password_require_reauthentication`, nicht
+# „aktuelles Passwort mitsenden" – das bliebe aus, weil der Weg über den
+# Rücksetzlink führt (docs/AUTH.md).
+secure_password_change = true
+# Mindestabstand zwischen zwei E-Mails an dieselbe Adresse.
+max_frequency = "1m"
+otp_length = 6
+otp_expiry = 3600
+
+# Use a production-ready SMTP server
+# [auth.email.smtp]
+# enabled = true
+# host = "smtp.sendgrid.net"
+# port = 587
+# user = "apikey"
+# pass = "env(SENDGRID_API_KEY)"
+# admin_email = "admin@email.com"
+# sender_name = "Admin"
+
+# Uncomment to customize email template
+# [auth.email.template.invite]
+# subject = "You have been invited"
+# content_path = "./supabase/templates/invite.html"
+
+# Keine Anmeldung per Telefonnummer. Sie verlangt einen SMS-Anbieter mit
+# laufenden Kosten je Nachricht und bringt Jetnity keinen Weg, den E-Mail und
+# Passwort nicht schon abdecken.
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+template = "Your code is {{ .Code }}"
+max_frequency = "5s"
+
+# Use pre-defined map of phone number to OTP for testing.
+# [auth.sms.test_otp]
+# 4152127777 = "123456"
+
+# Keine Zwangsabmeldung nach Zeit. `0s` heisst: aus – der Stand des Branches.
+# Eine Sitzung endet über die Token-Rotation und das Abmelden, nicht über eine
+# Uhr. Die Werte stehen hier, damit die Prüfung sie sieht.
+[auth.sessions]
+timebox = "0s"
+inactivity_timeout = "0s"
+
+# This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
+# [auth.hook.before_user_created]
+# enabled = true
+# uri = "pg-functions://postgres/auth/before-user-created-hook"
+
+# This hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
+# [auth.hook.custom_access_token]
+# enabled = true
+# uri = "pg-functions://<database>/<schema>/<hook_name>"
+
+# Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+[auth.sms.twilio]
+enabled = false
+account_sid = ""
+message_service_sid = ""
+# DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
+auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+
+# Zweiter Faktor. TOTP ist auf dem Branch eingeschaltet, und die Anwendung
+# führt den Weg zu Ende: `components/auth/MFATotpDialog.tsx` fordert den Code
+# nach der Anmeldung an, wenn Supabase AAL2 verlangt. Die Vorlage hatte TOTP
+# aus – ein Widerspruch, der bis hierher unbemerkt blieb.
+[auth.mfa]
+max_enrolled_factors = 5
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# Zweiter Faktor per SMS: derselbe Grund wie bei [auth.sms] – Kosten je
+# Nachricht ohne zusätzlichen Nutzen gegenüber TOTP.
+[auth.mfa.phone]
+enroll_enabled = false
+verify_enabled = false
+otp_length = 6
+template = "Your code is {{ .Code }}"
+max_frequency = "5s"
+
+[auth.mfa.web_authn]
+enroll_enabled = false
+verify_enabled = false
+
+# Kein Anmeldedienst ohne eigenen Beschluss: Was hier nicht steht, gilt als
+# aus, und `npm run auth:pruefen` meldet jeden `external_*_enabled`, der auf
+# dem Branch trotzdem eingeschaltet ist.
+#
+# Google und Apple stehen als Schaltfläche in `components/auth/LoginForm.tsx`
+# und `RegisterForm.tsx`, sind auf dem Branch aber aus – ein Klick endet in
+# einer Fehlermeldung von Supabase. Das ist festgehalten, nicht behoben:
+# Einschalten braucht Client-ID und Secret beider Anbieter, also eine
+# Handlung ausserhalb dieses Repositories. Offener Punkt in ROADMAP.md.
+#
+# Secrets gehören nicht in diese Datei. `env(...)` verweist auf eine
+# Umgebungsvariable; solange der Anbieter aus ist, überträgt die CLI weder
+# Client-ID noch Secret.
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = false
+
+[auth.external.apple]
+enabled = false
+client_id = ""
+secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+
+# Kein Passkey. Er verlangt eine gesetzte Relying-Party-Domain, und Jetnity hat
+# noch keine (ARCHITECTURE.md: jetnity.com löst nicht auf).
+[auth.passkey]
+enabled = false
+
+# Keine Anmeldung mit einer Krypto-Wallet. Sie gehört zu keinem Weg, den
+# Jetnity vorsieht.
+[auth.web3.solana]
+enabled = false
+
+[auth.web3.ethereum]
+enabled = false
+
+# Use Firebase Auth as a third-party provider alongside Supabase Auth.
+[auth.third_party.firebase]
+enabled = false
+# project_id = "my-firebase-project"
+
+# Use Auth0 as a third-party provider alongside Supabase Auth.
+[auth.third_party.auth0]
+enabled = false
+# tenant = "my-auth0-tenant"
+# tenant_region = "us"
+
+# Use AWS Cognito (Amplify) as a third-party provider alongside Supabase Auth.
+[auth.third_party.aws_cognito]
+enabled = false
+# user_pool_id = "my-user-pool-id"
+# user_pool_region = "us-east-1"
+
+# Use Clerk as a third-party provider alongside Supabase Auth.
+[auth.third_party.clerk]
+enabled = false
+# Obtain from https://clerk.com/setup/supabase
+# domain = "example.clerk.accounts.dev"
+
+# V1 Kontolöschung. Das Gateway verlangt ein JWT. Die Funktion leitet die
+# Person daraus ab und akzeptiert keine fremde user_id.
+[functions.account-delete-v1]
+verify_jwt = true
+
+[edge_runtime]
+enabled = true
+# Configure one of the supported request policies: `oneshot`, `per_worker`.
+# Use `oneshot` for hot reload, or `per_worker` for load testing.
+policy = "oneshot"
+# Port to attach the Chrome inspector for debugging edge functions.
+inspector_port = 8083
+# The Deno major version to use.
+deno_version = 1
+
+# [edge_runtime.secrets]
+# secret_key = "env(SECRET_VALUE)"
+
+[analytics]
+enabled = true
+port = 54327
+# Configure one of the supported backends: `postgres`, `bigquery`.
+backend = "postgres"
+
+# Experimental features may be deprecated any time
+[experimental]
+# Configures Postgres storage engine to use OrioleDB (S3)
+orioledb_version = ""
+# Configures S3 bucket URL, eg. <bucket_name>.s3-<region>.amazonaws.com
+s3_host = "env(S3_HOST)"
+# Configures S3 bucket region, eg. us-east-1
+s3_region = "env(S3_REGION)"
+# Configures AWS_ACCESS_KEY_ID for S3 bucket
+s3_access_key = "env(S3_ACCESS_KEY)"
+# Configures AWS_SECRET_ACCESS_KEY for S3 bucket
+s3_secret_key = "env(S3_SECRET_KEY)"

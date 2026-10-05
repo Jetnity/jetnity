@@ -1,0 +1,18 @@
+{
+  "logicalAgent": "Jetnity admin security refresh ordering 1",
+  "generation": 1,
+  "requiredModel": "Grok 4.7 High Fast",
+  "originalModelName": "grok-4.7-high-fast",
+  "notAuto": true,
+  "session": "https://cursor.com/agents/bc-793ea096-8fef-4cc6-967e-79aca80c981f",
+  "sessionUiTitle": "Admin security refresh ordering",
+  "uiTitleIsExactLogicalName": false,
+  "issue": 619,
+  "pullRequest": 620,
+  "branch": "fix/admin-security-refresh-ordering-1",
+  "baselineMain": "6b267186bd8f8261b76583cc3a20af4ddc4fbf89",
+  "parallelPullRequest": 616,
+  "signedInAdmin": false,
+  "productionRead": false,
+  "productionMutation": false
+}

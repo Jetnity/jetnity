@@ -1,0 +1,33 @@
+{
+  "id": "VUX-4",
+  "phase": "after",
+  "productWorkingTree": "VUX-4 overflow-anchor + non-sticky detail snap on compact open",
+  "capturedAt": "2026-09-21T17:48:00Z",
+  "browser": "chromium/playwright",
+  "viewport": { "width": 390, "height": 844 },
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "reproducedCause": "compact hide-overview left leftover scrollY; CSS scroll-anchoring then kept footer/bestand in view. Sticky back could remain visible while the detail heading was above the viewport.",
+  "repair": "workspace main overflow-anchor:none; open-transition scroll of the non-sticky detail surface; existing focus({preventScroll:true}) and lazy search preserved",
+  "fromTop": {
+    "scrollYAfter": 477,
+    "zurueckTopPx": 107.5,
+    "headingTopPx": 269.5,
+    "heading": "Flüge",
+    "backInView": true,
+    "headingInView": true
+  },
+  "fromScrolled": {
+    "scrollYBefore": 1469,
+    "scrollYAfter": 477,
+    "heading": "Unterkunft",
+    "backInView": true,
+    "headingInView": true
+  },
+  "keyboard": {
+    "heading": "Flüge",
+    "backInView": true,
+    "headingInView": true
+  },
+  "searchStillExplicit": true
+}

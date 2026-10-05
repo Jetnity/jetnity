@@ -1,0 +1,45 @@
+new execution after residual R1 effective-target correction; SQL sources unchanged
+previous transcript dated after authorized main ff054f76 / merge 1d45dec7
+engine postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+candidate sha256 dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
+wrapper sha256 13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb
+  ok   [static-source] Wrapper bleibt LOCAL/UNAPPLIED ohne DEFINER/auth.users/Migration  wrapper source
+  ok   [static-source] Runner importiert sql.mjs nicht und bleibt lokal  runner source
+  ok   [wrapper-transport-sql] Wrapper-TEXT entspricht inneren Counts/Zeitstempeln/Version  present=14 window=10
+  ok   [wrapper-auth-sql] owner AAL2 erhält den Wrapper  present=14
+  ok   [wrapper-auth-sql] admin AAL2 erhält den Wrapper  present=14
+  ok   [wrapper-auth-sql] operator AAL2 erhält den Wrapper  present=14
+  ok   [wrapper-auth-sql] moderator AAL2 erhält den Wrapper  present=14
+  ok   [wrapper-auth-sql] Moderator AAL1 erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] User AAL2 erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] Creator AAL2 erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] Fehlendes AAL erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] Gelöschter Moderator erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] Anonymer privilegierter Caller erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] Fehlendes Subjekt erhält keinen Wrapper  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [wrapper-auth-sql] anon erhält keinen Wrapper  42501 permission denied for function admin_account_counts_v1
+  ok   [wrapper-auth-sql] service_role erhält keinen Wrapper  42501 permission denied for function admin_account_counts_v1
+  ok   [wrapper-acl-sql] authenticated darf auth.users nicht direkt lesen  42501 permission denied for table users
+  ok   [wrapper-catalog] Wrapper akzeptiert keine Argumente  42883 function public.admin_account_counts_v1(integer) does not exist
+  ok   [wrapper-catalog] Wrapper ist SECURITY INVOKER, nullstellig, nicht postgres-owner  {"owner":"jetnity_proof","definer":false,"args":""}
+  ok   [wrapper-catalog] Zählfelder sind kanonischer TEXT-Transport  [{"typ":"text","name":"present_registered_accounts"},{"typ":"text","name":"created_in_prior_30_days"}]
+  ok   [wrapper-catalog] PRIVATE ACLs unverändert nach Wrapper-Apply  {"before":["authenticated=X/postgres","postgres=X/postgres"],"after":["authenticated=X/postgres","postgres=X/postgres"]}
+  ok   [wrapper-catalog] EXECUTE nur authenticated; kein auth.users SELECT  {"anon_exec":false,"auth_exec":true,"service_exec":false,"auth_users_sel":false}
+  ok   [wrapper-catalog] Nur-Wrapper-Drop lässt inneren Katalog identisch  inner intact
+  ok   [cleanup-node] Nur eigenes Cluster gestoppt und entfernt  {"cleaned":true,"running":false,"stopped":true}
+{
+  "ok": true,
+  "passed": 24,
+  "failed": 0,
+  "groups": {
+    "static-source": 2,
+    "wrapper-transport-sql": 1,
+    "wrapper-auth-sql": 13,
+    "wrapper-acl-sql": 1,
+    "wrapper-catalog": 6,
+    "cleanup-node": 1
+  },
+  "engine": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "candidateSha": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+  "wrapperSha": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb"
+}

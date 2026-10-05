@@ -1,0 +1,40 @@
+{
+  "readAt": "2026-09-22T14:40:00Z",
+  "comments": [
+    {
+      "id": 5778439718,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5778439718",
+      "use": "Authoritative #543 post-merge CI 35740738689 SUCCESS and Production READY plus Admin+refresh2 selection"
+    },
+    {
+      "id": 5778428892,
+      "url": "https://github.com/Jetnity/jetnity/pull/543#issuecomment-5778428892",
+      "use": "Production smoke limits: HTTP/RSC only; no interactive Production/device PASS"
+    },
+    {
+      "id": 5778033622,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5778033622",
+      "use": "Historical #544 post-merge success on then-main 0b0c7bcc"
+    },
+    {
+      "id": 5776334794,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5776334794",
+      "use": "Consolidated closures; TL automation disabled"
+    },
+    {
+      "id": 5776595910,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5776595910",
+      "use": "Provider-later sequencing"
+    },
+    {
+      "id": 5776595577,
+      "url": "https://github.com/Jetnity/jetnity/issues/395#issuecomment-5776595577",
+      "use": "Provider decision remains deferred"
+    },
+    {
+      "id": 5778475747,
+      "url": "https://github.com/Jetnity/jetnity/pull/546#issuecomment-5778475747",
+      "use": "Refresh2 session confirmed; Admin footer not yet visible"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "pr": 545,
+  "branch": "feat/admin-navigation-search-1",
+  "observedHead": "c0539a1940c4df4809c743bf7fd2c63b80c5294f",
+  "state": "open",
+  "draft": true,
+  "merged": false,
+  "classification": "DISPATCHED_START_UNVERIFIED / TASK_ONLY",
+  "implementationClaimedComplete": false,
+  "verifiedRunningWriter": false,
+  "launchBlocker": false,
+  "sessionId": null,
+  "sessionFooter": "unverified",
+  "dispatchComments": [5778449555, 5778475465],
+  "tlStartStatusComment": 5778868340,
+  "firstAdminAction": "establish existing-session/start evidence without creating a duplicate",
+  "doNotLaunchFromThisDocsSession": true,
+  "doNotInventSession": true,
+  "doNotInferMerged": true
+}

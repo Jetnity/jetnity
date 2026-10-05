@@ -1,0 +1,10 @@
+{
+  "kind": "synthetic-tab-sequence",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "note": "Real Tab key presses until the investigate link is document.activeElement. Distinct from historical programmatic link.focus() shot unavailable_1280_focus.png.",
+  "tabs": 1,
+  "focusedHref": "/admin/provider-ops",
+  "outline": "solid 2px rgb(16, 16, 16)",
+  "screenshot": "unavailable_1280_tab_focus.png",
+  "cssBytes": 105145
+}

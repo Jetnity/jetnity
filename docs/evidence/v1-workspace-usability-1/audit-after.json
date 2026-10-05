@@ -1,0 +1,1252 @@
+{
+  "phase": "after",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:10.848Z",
+  "browser": "chromium/playwright",
+  "origin": "http://localhost:3000",
+  "server": "reused-existing-dev",
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "realDevice": false,
+  "captures": [
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_360x800.png",
+      "phase": "after",
+      "name": "complex-overview_360x800",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:11.780Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 28,
+            "y": 305.5,
+            "width": 304,
+            "height": 96
+          },
+          "gast": {
+            "x": 49,
+            "y": 158,
+            "width": 286,
+            "height": 80
+          },
+          "verwerfen": {
+            "x": 169.765625,
+            "y": 506.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 12,
+            "y": 602.5,
+            "width": 336,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 25,
+            "y": 735.5,
+            "width": 310,
+            "height": 24
+          },
+          "attention": {
+            "x": 25,
+            "y": 771.5,
+            "width": 310,
+            "height": 66
+          },
+          "fluege": {
+            "x": 12,
+            "y": 2137,
+            "width": 336,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": false,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 5040
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_390x844.png",
+      "phase": "after",
+      "name": "complex-overview_390x844",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:12.548Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 28,
+            "y": 305.5,
+            "width": 334,
+            "height": 96
+          },
+          "gast": {
+            "x": 49,
+            "y": 158,
+            "width": 316,
+            "height": 80
+          },
+          "verwerfen": {
+            "x": 199.765625,
+            "y": 506.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 12,
+            "y": 602.5,
+            "width": 366,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 25,
+            "y": 735.5,
+            "width": 340,
+            "height": 24
+          },
+          "attention": {
+            "x": 25,
+            "y": 771.5,
+            "width": 340,
+            "height": 66
+          },
+          "fluege": {
+            "x": 12,
+            "y": 1901,
+            "width": 366,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4736
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-day_390x844.png",
+      "phase": "after",
+      "name": "complex-day_390x844",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:12.646Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "state": "tagesplan-scrolled",
+      "stageDates": [
+        "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n12. Okt. – 16. Okt.\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+        "Seminyak\n16. Okt. – 19. Okt.\nTag 3\n16. Okt.",
+        "Singapur\n19. Okt. – 22. Okt.\nTag 4\n19. Okt."
+      ]
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_768x1024.png",
+      "phase": "after",
+      "name": "complex-overview_768x1024",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:13.359Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 44,
+            "y": 285.5,
+            "width": 680,
+            "height": 64
+          },
+          "gast": {
+            "x": 61,
+            "y": 178,
+            "width": 670,
+            "height": 40
+          },
+          "verwerfen": {
+            "x": 561.765625,
+            "y": 434.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 24,
+            "y": 530.5,
+            "width": 720,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 41,
+            "y": 663.5,
+            "width": 686,
+            "height": 24
+          },
+          "attention": {
+            "x": 41,
+            "y": 699.5,
+            "width": 686,
+            "height": 66
+          },
+          "fluege": {
+            "x": 24,
+            "y": 1809,
+            "width": 720,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4382
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_1024x768.png",
+      "phase": "after",
+      "name": "complex-overview_1024x768",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:14.074Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 48,
+            "y": 305,
+            "width": 928,
+            "height": 36
+          },
+          "gast": {
+            "x": 61,
+            "y": 178,
+            "width": 926,
+            "height": 40
+          },
+          "verwerfen": {
+            "x": 813.765625,
+            "y": 516,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 24,
+            "y": 612,
+            "width": 976,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 41,
+            "y": 745,
+            "width": 942,
+            "height": 24
+          },
+          "attention": {
+            "x": 41,
+            "y": 781,
+            "width": 942,
+            "height": 66
+          },
+          "fluege": {
+            "x": 24,
+            "y": 1890.5,
+            "width": 976,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": false,
+        "attentionSichtbar": false,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 3995
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-day_1024x768.png",
+      "phase": "after",
+      "name": "complex-day_1024x768",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:14.156Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "state": "tagesplan-scrolled",
+      "stageDates": [
+        "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n12. Okt. – 16. Okt.\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+        "Seminyak\n16. Okt. – 19. Okt.\nTag 3\n16. Okt.",
+        "Singapur\n19. Okt. – 22. Okt.\nTag 4\n19. Okt."
+      ]
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_1440x900.png",
+      "phase": "after",
+      "name": "complex-overview_1440x900",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:14.939Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 136,
+            "y": 305,
+            "width": 457.78125,
+            "height": 192
+          },
+          "gast": {
+            "x": 141,
+            "y": 178,
+            "width": 1100.40625,
+            "height": 20
+          },
+          "verwerfen": {
+            "x": 1141.765625,
+            "y": 594,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 104,
+            "y": 694,
+            "width": 1232,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 121,
+            "y": 827,
+            "width": 1198,
+            "height": 24
+          },
+          "attention": {
+            "x": 121,
+            "y": 863,
+            "width": 1198,
+            "height": 66
+          },
+          "fluege": {
+            "x": 104,
+            "y": 1972.5,
+            "width": 1232,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": false,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4057
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-overview_1920x1080.png",
+      "phase": "after",
+      "name": "complex-overview_1920x1080",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:15.684Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 376,
+            "y": 305,
+            "width": 457.78125,
+            "height": 192
+          },
+          "gast": {
+            "x": 381,
+            "y": 178,
+            "width": 1100.40625,
+            "height": 20
+          },
+          "verwerfen": {
+            "x": 1381.765625,
+            "y": 594,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 344,
+            "y": 694,
+            "width": 1232,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 361,
+            "y": 827,
+            "width": 1198,
+            "height": 24
+          },
+          "attention": {
+            "x": 361,
+            "y": 863,
+            "width": 1198,
+            "height": 66
+          },
+          "fluege": {
+            "x": 344,
+            "y": 1972.5,
+            "width": 1232,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4057
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_360x800.png",
+      "phase": "after",
+      "name": "short-overview_360x800",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:16.396Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 28,
+            "y": 305.5,
+            "width": 304,
+            "height": 32
+          },
+          "gast": {
+            "x": 49,
+            "y": 158,
+            "width": 286,
+            "height": 80
+          },
+          "verwerfen": {
+            "x": 169.765625,
+            "y": 442.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 12,
+            "y": 538.5,
+            "width": 336,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 25,
+            "y": 671.5,
+            "width": 310,
+            "height": 24
+          },
+          "attention": {
+            "x": 25,
+            "y": 707.5,
+            "width": 310,
+            "height": 66
+          },
+          "fluege": {
+            "x": 12,
+            "y": 2073,
+            "width": 336,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4976
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_390x844.png",
+      "phase": "after",
+      "name": "short-overview_390x844",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:17.083Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 28,
+            "y": 305.5,
+            "width": 334,
+            "height": 32
+          },
+          "gast": {
+            "x": 49,
+            "y": 158,
+            "width": 316,
+            "height": 80
+          },
+          "verwerfen": {
+            "x": 199.765625,
+            "y": 442.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 12,
+            "y": 538.5,
+            "width": 366,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 25,
+            "y": 671.5,
+            "width": 340,
+            "height": 24
+          },
+          "attention": {
+            "x": 25,
+            "y": 707.5,
+            "width": 340,
+            "height": 66
+          },
+          "fluege": {
+            "x": 12,
+            "y": 1837,
+            "width": 366,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4672
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-day_390x844.png",
+      "phase": "after",
+      "name": "short-day_390x844",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:17.179Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "state": "tagesplan-scrolled",
+      "stageDates": [
+        "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n12. Okt. – 16. Okt.\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+        "Seminyak\n16. Okt. – 19. Okt.\nTag 3\n16. Okt.",
+        "Singapur\n19. Okt. – 22. Okt.\nTag 4\n19. Okt."
+      ]
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_768x1024.png",
+      "phase": "after",
+      "name": "short-overview_768x1024",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:17.912Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 44,
+            "y": 285.5,
+            "width": 680,
+            "height": 32
+          },
+          "gast": {
+            "x": 61,
+            "y": 178,
+            "width": 670,
+            "height": 40
+          },
+          "verwerfen": {
+            "x": 561.765625,
+            "y": 402.5,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 24,
+            "y": 498.5,
+            "width": 720,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 41,
+            "y": 631.5,
+            "width": 686,
+            "height": 24
+          },
+          "attention": {
+            "x": 41,
+            "y": 667.5,
+            "width": 686,
+            "height": 66
+          },
+          "fluege": {
+            "x": 24,
+            "y": 1777,
+            "width": 720,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 4350
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_1024x768.png",
+      "phase": "after",
+      "name": "short-overview_1024x768",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:18.658Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 48,
+            "y": 305,
+            "width": 928,
+            "height": 36
+          },
+          "gast": {
+            "x": 61,
+            "y": 178,
+            "width": 926,
+            "height": 40
+          },
+          "verwerfen": {
+            "x": 813.765625,
+            "y": 516,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 24,
+            "y": 612,
+            "width": 976,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 41,
+            "y": 745,
+            "width": 942,
+            "height": 24
+          },
+          "attention": {
+            "x": 41,
+            "y": 781,
+            "width": 942,
+            "height": 66
+          },
+          "fluege": {
+            "x": 24,
+            "y": 1890.5,
+            "width": 976,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": false,
+        "attentionSichtbar": false,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 3995
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-day_1024x768.png",
+      "phase": "after",
+      "name": "short-day_1024x768",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:18.753Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "state": "tagesplan-scrolled",
+      "stageDates": [
+        "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n12. Okt. – 16. Okt.\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+        "Seminyak\n16. Okt. – 19. Okt.\nTag 3\n16. Okt.",
+        "Singapur\n19. Okt. – 22. Okt.\nTag 4\n19. Okt."
+      ]
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_1440x900.png",
+      "phase": "after",
+      "name": "short-overview_1440x900",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:19.470Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 136,
+            "y": 305,
+            "width": 457.78125,
+            "height": 48
+          },
+          "gast": {
+            "x": 141,
+            "y": 178,
+            "width": 1100.40625,
+            "height": 20
+          },
+          "verwerfen": {
+            "x": 1141.765625,
+            "y": 450,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 104,
+            "y": 550,
+            "width": 1232,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 121,
+            "y": 683,
+            "width": 1198,
+            "height": 24
+          },
+          "attention": {
+            "x": 121,
+            "y": 719,
+            "width": 1198,
+            "height": 66
+          },
+          "fluege": {
+            "x": 104,
+            "y": 1828.5,
+            "width": 1232,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 3913
+        }
+      },
+      "state": "overview-top"
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_1920x1080.png",
+      "phase": "after",
+      "name": "short-overview_1920x1080",
+      "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+      "capturedAt": "2026-09-21T17:46:20.185Z",
+      "browser": "chromium/playwright",
+      "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "sicht": {
+        "boxes": {
+          "titel": {
+            "x": 376,
+            "y": 305,
+            "width": 457.78125,
+            "height": 48
+          },
+          "gast": {
+            "x": 381,
+            "y": 178,
+            "width": 1100.40625,
+            "height": 20
+          },
+          "verwerfen": {
+            "x": 1381.765625,
+            "y": 450,
+            "width": 162.234375,
+            "height": 44
+          },
+          "uebersicht": {
+            "x": 344,
+            "y": 550,
+            "width": 1232,
+            "height": 28
+          },
+          "jetzt": {
+            "x": 361,
+            "y": 683,
+            "width": 1198,
+            "height": 24
+          },
+          "attention": {
+            "x": 361,
+            "y": 719,
+            "width": 1198,
+            "height": 66
+          },
+          "fluege": {
+            "x": 344,
+            "y": 1828.5,
+            "width": 1232,
+            "height": 68
+          }
+        },
+        "titelSichtbar": true,
+        "gastSichtbar": true,
+        "verwerfenSichtbar": true,
+        "uebersichtSichtbar": true,
+        "jetztSichtbar": true,
+        "attentionSichtbar": true,
+        "fluegeSichtbar": false,
+        "overflow": {
+          "html": 0,
+          "body": 0,
+          "scrollY": 0,
+          "scrollHeight": 3913
+        }
+      },
+      "state": "overview-top"
+    }
+  ],
+  "firstViewport": {
+    "complex390": {
+      "boxes": {
+        "titel": {
+          "x": 28,
+          "y": 305.5,
+          "width": 334,
+          "height": 96
+        },
+        "gast": {
+          "x": 49,
+          "y": 158,
+          "width": 316,
+          "height": 80
+        },
+        "verwerfen": {
+          "x": 199.765625,
+          "y": 506.5,
+          "width": 162.234375,
+          "height": 44
+        },
+        "uebersicht": {
+          "x": 12,
+          "y": 602.5,
+          "width": 366,
+          "height": 28
+        },
+        "jetzt": {
+          "x": 25,
+          "y": 735.5,
+          "width": 340,
+          "height": 24
+        },
+        "attention": {
+          "x": 25,
+          "y": 771.5,
+          "width": 340,
+          "height": 66
+        },
+        "fluege": {
+          "x": 12,
+          "y": 1901,
+          "width": 366,
+          "height": 68
+        }
+      },
+      "titelSichtbar": true,
+      "gastSichtbar": true,
+      "verwerfenSichtbar": true,
+      "uebersichtSichtbar": true,
+      "jetztSichtbar": true,
+      "attentionSichtbar": true,
+      "fluegeSichtbar": false,
+      "overflow": {
+        "html": 0,
+        "body": 0,
+        "scrollY": 0,
+        "scrollHeight": 4736
+      }
+    },
+    "complex1024": {
+      "boxes": {
+        "titel": {
+          "x": 48,
+          "y": 305,
+          "width": 928,
+          "height": 36
+        },
+        "gast": {
+          "x": 61,
+          "y": 178,
+          "width": 926,
+          "height": 40
+        },
+        "verwerfen": {
+          "x": 813.765625,
+          "y": 516,
+          "width": 162.234375,
+          "height": 44
+        },
+        "uebersicht": {
+          "x": 24,
+          "y": 612,
+          "width": 976,
+          "height": 28
+        },
+        "jetzt": {
+          "x": 41,
+          "y": 745,
+          "width": 942,
+          "height": 24
+        },
+        "attention": {
+          "x": 41,
+          "y": 781,
+          "width": 942,
+          "height": 66
+        },
+        "fluege": {
+          "x": 24,
+          "y": 1890.5,
+          "width": 976,
+          "height": 68
+        }
+      },
+      "titelSichtbar": true,
+      "gastSichtbar": true,
+      "verwerfenSichtbar": true,
+      "uebersichtSichtbar": true,
+      "jetztSichtbar": false,
+      "attentionSichtbar": false,
+      "fluegeSichtbar": false,
+      "overflow": {
+        "html": 0,
+        "body": 0,
+        "scrollY": 0,
+        "scrollHeight": 3995
+      }
+    }
+  },
+  "vux4": {
+    "fromTopBackInView": true,
+    "fromTopHeadingInView": true,
+    "fromScrolledBackInView": true,
+    "fromScrolledHeadingInView": true,
+    "detail": {
+      "fromTop": {
+        "before": {
+          "scrollY": 0,
+          "focus": {
+            "tag": "BODY",
+            "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProReise fortsetzenEntdeckenMeine ",
+            "aria": null
+          },
+          "zurueck": null,
+          "heading": null
+        },
+        "after": {
+          "scrollY": 477,
+          "focus": {
+            "tag": "BUTTON",
+            "text": "Zurück zur Reise",
+            "aria": null
+          },
+          "zurueck": {
+            "x": 12,
+            "y": 107.5,
+            "w": 169.421875,
+            "h": 44,
+            "top": 107.5,
+            "bottom": 151.5
+          },
+          "heading": {
+            "text": "Flüge",
+            "x": 29,
+            "y": 269.5,
+            "w": 332,
+            "h": 28,
+            "top": 269.5,
+            "bottom": 297.5
+          }
+        },
+        "returned": {
+          "scrollY": 491,
+          "focus": {
+            "tag": "BODY",
+            "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeck",
+            "aria": null
+          },
+          "zurueck": null,
+          "heading": null
+        }
+      },
+      "fromScrolled": {
+        "before": {
+          "scrollY": 1469,
+          "focus": {
+            "tag": "BODY",
+            "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeck",
+            "aria": null
+          },
+          "zurueck": null,
+          "heading": null
+        },
+        "after": {
+          "scrollY": 477,
+          "focus": {
+            "tag": "BUTTON",
+            "text": "Zurück zur Reise",
+            "aria": null
+          },
+          "zurueck": {
+            "x": 12,
+            "y": 107.5,
+            "w": 169.421875,
+            "h": 44,
+            "top": 107.5,
+            "bottom": 151.5
+          },
+          "heading": {
+            "text": "Unterkunft",
+            "x": 29,
+            "y": 269.5,
+            "w": 332,
+            "h": 28,
+            "top": 269.5,
+            "bottom": 297.5
+          }
+        },
+        "returned": {
+          "scrollY": 491,
+          "focus": {
+            "tag": "BODY",
+            "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeck",
+            "aria": null
+          },
+          "zurueck": null,
+          "heading": null
+        }
+      },
+      "keyboard": {
+        "scrollY": 486,
+        "focus": {
+          "tag": "BUTTON",
+          "text": "Zurück zur Reise",
+          "aria": null
+        },
+        "zurueck": {
+          "x": 12,
+          "y": 98.5,
+          "w": 169.421875,
+          "h": 44,
+          "top": 98.5,
+          "bottom": 142.5
+        },
+        "heading": {
+          "text": "Flüge",
+          "x": 29,
+          "y": 260.5,
+          "w": 332,
+          "h": 28,
+          "top": 260.5,
+          "bottom": 288.5
+        }
+      },
+      "repeat": {
+        "scrollY": 477,
+        "focus": {
+          "tag": "BUTTON",
+          "text": "Zurück zur Reise",
+          "aria": null
+        },
+        "zurueck": {
+          "x": 12,
+          "y": 107.5,
+          "w": 169.421875,
+          "h": 44,
+          "top": 107.5,
+          "bottom": 151.5
+        },
+        "heading": {
+          "text": "Unterkunft",
+          "x": 29,
+          "y": 269.5,
+          "w": 332,
+          "h": 28,
+          "top": 269.5,
+          "bottom": 297.5
+        }
+      }
+    }
+  }
+}

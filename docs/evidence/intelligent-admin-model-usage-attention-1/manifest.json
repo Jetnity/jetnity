@@ -1,0 +1,1073 @@
+{
+  "kind": "synthetic-component-render",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "css": {
+    "source": "styles/globals.css",
+    "config": "tailwind.config.js",
+    "plugins": [
+      "tailwindcss/nesting",
+      "tailwindcss",
+      "autoprefixer"
+    ],
+    "bytes": 105145
+  },
+  "note": "Dependency-injected fixtures rendered with compiled styles/globals.css. Not a real /admin session.",
+  "cases": {
+    "available": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:available:fresh",
+          "observed": "available",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "checkedAt": "2026-09-22T12:00:00.000Z",
+          "ageMs": 0,
+          "next": {
+            "href": "/admin/provider-ops",
+            "label": "Provider & Kosten öffnen",
+            "kind": "investigate"
+          }
+        }
+      ],
+      "sourceCheckedAt": "2026-09-22T12:00:00.000Z",
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [
+          "model-usage"
+        ],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "available_320.png",
+        "available_390.png",
+        "available_1280.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        }
+      }
+    },
+    "empty": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:empty:fresh",
+          "observed": "empty",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "checkedAt": "2026-09-22T12:00:00.000Z",
+          "ageMs": 0,
+          "next": {
+            "href": "/admin/provider-ops",
+            "label": "Provider & Kosten öffnen",
+            "kind": "investigate"
+          }
+        }
+      ],
+      "sourceCheckedAt": "2026-09-22T12:00:00.000Z",
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "empty_320.png",
+        "empty_390.png",
+        "empty_1280.png",
+        "empty_390-200.png",
+        "empty_1280-200.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "empty",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "empty",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "empty",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 308,
+              "clientWidth": 308,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "empty",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1198,
+              "clientWidth": 1198,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "empty",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        }
+      }
+    },
+    "unavailable": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:unavailable:fresh",
+          "observed": "unavailable",
+          "freshness": "fresh",
+          "materiality": "attention",
+          "attribution": "process-recent",
+          "checkedAt": "2026-09-22T12:00:00.000Z",
+          "ageMs": 0,
+          "next": {
+            "href": "/admin/provider-ops",
+            "label": "Provider & Kosten öffnen",
+            "kind": "investigate"
+          }
+        }
+      ],
+      "sourceCheckedAt": "2026-09-22T12:00:00.000Z",
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [
+          "model-usage"
+        ],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "unavailable_320.png",
+        "unavailable_390.png",
+        "unavailable_1280.png",
+        "unavailable_1280_focus.png",
+        "unavailable_390-200.png",
+        "unavailable_1280-200.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unavailable",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unavailable",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unavailable",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 308,
+              "clientWidth": 308,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unavailable",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1198,
+              "clientWidth": 1198,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unavailable",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        }
+      }
+    },
+    "unknown": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:unknown:fresh",
+          "observed": "unknown",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "checkedAt": "2026-09-22T12:00:00.000Z",
+          "ageMs": 0,
+          "next": {
+            "href": "/admin/provider-ops",
+            "label": "Provider & Kosten öffnen",
+            "kind": "investigate"
+          }
+        }
+      ],
+      "sourceCheckedAt": "2026-09-22T12:00:00.000Z",
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [
+          "model-usage"
+        ],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "unknown_320.png",
+        "unknown_390.png",
+        "unknown_1280.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "fresh",
+            "observedAt": "Beobachtet: 22.09.26, 12:00:00 UTC · vor 0 Sekunden"
+          }
+        }
+      }
+    },
+    "stale": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:available:stale",
+          "observed": "available",
+          "freshness": "stale",
+          "materiality": "attention",
+          "attribution": "process-recent",
+          "checkedAt": "2026-09-22T11:57:00.000Z",
+          "ageMs": 180000,
+          "next": {
+            "href": "/admin/provider-ops",
+            "label": "Provider & Kosten öffnen",
+            "kind": "investigate"
+          }
+        }
+      ],
+      "sourceCheckedAt": "2026-09-22T11:57:00.000Z",
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "stale_320.png",
+        "stale_390.png",
+        "stale_1280.png",
+        "stale_390-200.png",
+        "stale_1280-200.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "stale",
+            "observedAt": "Beobachtet: 22.09.26, 11:57:00 UTC · vor 3 Minuten"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "stale",
+            "observedAt": "Beobachtet: 22.09.26, 11:57:00 UTC · vor 3 Minuten"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "stale",
+            "observedAt": "Beobachtet: 22.09.26, 11:57:00 UTC · vor 3 Minuten"
+          }
+        },
+        "390-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 308,
+              "clientWidth": 308,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "stale",
+            "observedAt": "Beobachtet: 22.09.26, 11:57:00 UTC · vor 3 Minuten"
+          }
+        },
+        "1280-200": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1198,
+              "clientWidth": 1198,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/provider-ops"
+          },
+          "visible": {
+            "observed": "available",
+            "freshness": "stale",
+            "observedAt": "Beobachtet: 22.09.26, 11:57:00 UTC · vor 3 Minuten"
+          }
+        }
+      }
+    },
+    "denied": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:item:access_denied:unknown",
+          "observed": "access_denied",
+          "freshness": "unknown",
+          "materiality": "attention",
+          "attribution": "none",
+          "checkedAt": null,
+          "ageMs": null,
+          "next": null
+        }
+      ],
+      "sourceCheckedAt": null,
+      "observationScope": "none",
+      "access": {
+        "status": "denied",
+        "denial": "forbidden"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "denied_320.png",
+        "denied_390.png",
+        "denied_1280.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "access_denied",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "access_denied",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "access_denied",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        }
+      }
+    },
+    "break-glass": {
+      "insights": [
+        {
+          "id": "model-usage:model-usage:not-attributed:unknown:unknown",
+          "observed": "unknown",
+          "freshness": "unknown",
+          "materiality": "coverage",
+          "attribution": "not_attributed",
+          "checkedAt": null,
+          "ageMs": null,
+          "next": null
+        }
+      ],
+      "sourceCheckedAt": null,
+      "observationScope": "none",
+      "access": {
+        "status": "allowed",
+        "grant": "break-glass"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": [
+          "model-usage"
+        ]
+      },
+      "screenshots": [
+        "break-glass_320.png",
+        "break-glass_390.png",
+        "break-glass_1280.png"
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          },
+          "visible": {
+            "observed": "unknown",
+            "freshness": "unknown",
+            "observedAt": "Beobachtet: Prüfzeitpunkt unbekannt · Alter unbekannt"
+          }
+        }
+      }
+    }
+  }
+}

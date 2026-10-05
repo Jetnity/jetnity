@@ -1,0 +1,62 @@
+{
+  "addendum": "C1",
+  "agent": "Jetnity admin account counts caller status 1",
+  "generation": 1,
+  "session": "bc-4bf98f13-10aa-4cff-af82-dee79ebc920c",
+  "model": "cursor-grok-4.6-high-fast",
+  "fetchedMain": "4381d20bfaa7f60f140823cc311d44409934197a",
+  "fetchedMainMatchesRequired": true,
+  "merge": {
+    "kind": "one_normal_merge",
+    "into": "fix/admin-account-counts-caller-status-1",
+    "of": "4381d20bfaa7f60f140823cc311d44409934197a",
+    "result": "90c943d48e58fd48b308b7b27b147647c33795ef",
+    "rebase": false,
+    "force": false,
+    "reset": false,
+    "cherryPick": false,
+    "laterMainDriftConsumed": false
+  },
+  "historicalProductSnapshot": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
+  "executableSourceBaseline": "9cf7aedd8dd190b4764d8ac178e23d9f8b42c773",
+  "integrationBaseline": "4381d20bfaa7f60f140823cc311d44409934197a",
+  "productBytesUnchangedFromExecutableBaseline": true,
+  "candidateLabeledFinalTlAccepted": false,
+  "historical556ReceiptsAreTestsOfNewSource": false,
+  "writtenAfterMerge": [
+    "scripts/e2e/admin-account-counts-browser-acceptance-1/constants.mjs",
+    "scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs"
+  ],
+  "other556Files": "read-only",
+  "originalTaskUnchanged": true,
+  "pins": {
+    "producerSha256": {
+      "old": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+      "new": "612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de"
+    },
+    "producerBlob": {
+      "old": "63974e6509bf42963d2028d99567c4b4062c36d8",
+      "new": "b912eecb55cfa519dcd8b5d4a4ca9222aea0a0c1"
+    },
+    "readerBlob": {
+      "old": "02dcafd80502067935eee78f3d8a7b21e417d720",
+      "new": "eb5b1b0d54bd649bd511ce3ed17b0a63b8adae92"
+    },
+    "callerStatus": {
+      "old": null,
+      "newBlob": "b820c799046585dff743553fb6231e60a6a42cff",
+      "path": "lib/admin/account-counts-delivery/caller-status.ts",
+      "inSourcePaths": true,
+      "inBlobPins": true
+    },
+    "wrapperAuthActivationParser": "unchanged"
+  },
+  "dualAcceptOldProducer": false,
+  "localTests": {
+    "helperUnitSourcePins": { "passed": 34, "total": 34, "browserEvidence": false },
+    "featureEffectiveTargetActivation": { "passed": 28, "total": 28 },
+    "existingIdentityIsolation": { "passed": 17, "total": 17 },
+    "disposableSql70_36_139": "not re-executed; candidate bytes unchanged from 9cf7aedd"
+  },
+  "newExactHeadGatesClaimed": false
+}

@@ -1,0 +1,354 @@
+'use client'
+
+// components/trips/FlugSuche.tsx
+//
+// Flugsuche im Reise-Arbeitsbereich. Kein isoliertes Demo-Tool.
+
+import * as React from 'react'
+import { AlertCircle, Loader2, Plane, Search } from 'lucide-react'
+
+import FlughafenSuche from '@/components/airports/FlughafenSuche'
+import type { FlugOptionSichtbar, FlugSucheAntwort } from '@/lib/flights/client-sicht'
+import type { FlughafenReferenzKarte } from '@/lib/route/domain'
+import { FLUG_ABDECKUNGSHINWEIS } from '@/lib/flights/domain'
+import type { FlugKabine, FlugStoppPraeferenz } from '@/lib/flights/domain'
+import {
+  flughafenAusReiseort,
+  flugSucheBeine,
+  type FlughafenAuswahl,
+} from '@/lib/airports/auswahl'
+import FlugKarte from '@/components/trips/FlugKarte'
+import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
+import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
+import {
+  ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_FLAECHE_KLASSE,
+  ORGANISIEREN_PRIMAR_KLASSE,
+} from '@/lib/trips/organize-premium-experience-6'
+import { cn } from '@/lib/utils'
+import type { Trip } from '@/types/trips'
+
+type Filter = 'all' | 'jetnity' | 'cheapest' | 'fastest'
+
+const KABINE_TEXT: Record<FlugKabine, string> = {
+  economy: 'Economy',
+  premium_economy: 'Premium Economy',
+  business: 'Business',
+  first: 'First',
+}
+
+export default function FlugSuche({
+  reise,
+  tagId,
+  onUebernehmen,
+}: {
+  reise: Trip
+  tagId: string | null
+  onUebernehmen: (
+    tagId: string | null,
+    option: FlugOptionSichtbar,
+    refs?: FlughafenReferenzKarte,
+  ) => Promise<string | null>
+}) {
+  const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? reise.days[0]
+  const [herkunft, setHerkunft] = React.useState<FlughafenAuswahl | null>(() =>
+    flughafenAusReiseort({ placeId: reise.originPlaceId, name: reise.origin }),
+  )
+  const [herkunftText, setHerkunftText] = React.useState(herkunft?.name ?? '')
+  const [ziel, setZiel] = React.useState<FlughafenAuswahl | null>(() =>
+    flughafenAusReiseort({
+      placeId: reise.stages[0]?.placeId,
+      name: reise.stages[0]?.name,
+    }),
+  )
+  const [zielText, setZielText] = React.useState(ziel?.name ?? '')
+  const [hin, setHin] = React.useState(tag?.dayDate ?? reise.startDate ?? '')
+  const [rueck, setRueck] = React.useState(reise.endDate ?? '')
+  const [mitRueck, setMitRueck] = React.useState(Boolean(reise.endDate))
+  const [kabine, setKabine] = React.useState<FlugKabine>('economy')
+  const [stopps, setStopps] = React.useState<FlugStoppPraeferenz>('any')
+  const [laeuft, setLaeuft] = React.useState(false)
+  const [uebernimmt, setUebernimmt] = React.useState(false)
+  const [antwort, setAntwort] = React.useState<FlugSucheAntwort | null>(null)
+  const [filter, setFilter] = React.useState<Filter>('all')
+  const [meldung, setMeldung] = React.useState('')
+
+  const suchen = async (ereignis: React.FormEvent) => {
+    ereignis.preventDefault()
+    if (laeuft) return
+
+    const beine = flugSucheBeine({
+      herkunft,
+      ziel,
+      herkunftText,
+      zielText,
+      hin,
+      rueck,
+      mitRueck,
+    })
+    if ('fehler' in beine) {
+      setMeldung(beine.fehler.allgemein ?? beine.fehler.herkunft ?? beine.fehler.ziel ?? '')
+      return
+    }
+
+    setMeldung('')
+    setLaeuft(true)
+    setAntwort(null)
+
+    try {
+      const res = await fetch('/api/flights/search', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          legs: beine.legs,
+          passengers: { adults: Math.min(9, Math.max(1, reise.travellers)), children: 0, infants: 0 },
+          cabin: kabine,
+          stopPreference: stopps,
+          currency: reise.currency,
+          context: {
+            tripStartDate: reise.startDate,
+            tripEndDate: reise.endDate,
+            selectedDate: tag?.dayDate ?? hin,
+          },
+        }),
+      })
+      const json = (await res.json()) as FlugSucheAntwort
+      setAntwort(json)
+      if (!res.ok && !json.message) setMeldung('Die Flugsuche ist fehlgeschlagen.')
+    } catch {
+      setAntwort({
+        status: 'error',
+        message: 'Die Flugsuche ist gerade nicht erreichbar.',
+        coverageNote: FLUG_ABDECKUNGSHINWEIS,
+        options: [],
+      })
+    } finally {
+      setLaeuft(false)
+    }
+  }
+
+  const uebernehmen = async (option: FlugOptionSichtbar) => {
+    if (uebernimmt) return
+    if (!antwort?.options.some((sichtbar) => sichtbar.id === option.id)) {
+      setMeldung('Diese Flugoption stammt nicht aus der aktuellen Suche.')
+      return
+    }
+    setUebernimmt(true)
+    setMeldung('')
+    const fehler = await onUebernehmen(tag?.id ?? null, option, antwort?.airportRefs)
+    setUebernimmt(false)
+    if (fehler) setMeldung(fehler)
+  }
+
+  const sichtbar = (antwort?.options ?? []).filter((option) => {
+    if (filter === 'all') return true
+    return option.labels.includes(filter)
+  })
+
+  return (
+    <section
+      aria-label="Flugoptionen"
+      data-organisieren-flaeche="suche"
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+    >
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Flüge</p>
+          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+            Verbindungen für diese Reise
+          </h2>
+        </div>
+        <Plane className="h-5 w-5 text-brand-600" aria-hidden="true" />
+      </div>
+
+      <form onSubmit={suchen} className="mt-5 grid gap-3">
+        <OrganisierenFeldgruppe titel="Route">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Von
+              <FlughafenSuche
+                value={herkunft}
+                onChange={(wert, roh) => {
+                  setHerkunft(wert)
+                  setHerkunftText(roh)
+                  if (wert) setMeldung('')
+                }}
+                placeholder="Stadt oder Flughafen"
+                ungueltig={Boolean(meldung) && !herkunft}
+                inputClassName={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Nach
+              <FlughafenSuche
+                value={ziel}
+                onChange={(wert, roh) => {
+                  setZiel(wert)
+                  setZielText(roh)
+                  if (wert) setMeldung('')
+                }}
+                placeholder="Stadt oder Flughafen"
+                ungueltig={Boolean(meldung) && !ziel}
+                inputClassName={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Zeitraum">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Hinflug
+              <input
+                type="date"
+                value={hin}
+                onChange={(e) => setHin(e.target.value)}
+                required
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Rückflug, optional
+              <input
+                type="date"
+                value={rueck}
+                onChange={(e) => {
+                  setRueck(e.target.value)
+                  setMitRueck(Boolean(e.target.value))
+                }}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Optionen">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Kabine
+              <select
+                value={kabine}
+                onChange={(e) => setKabine(e.target.value as FlugKabine)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                {(Object.keys(KABINE_TEXT) as FlugKabine[]).map((wert) => (
+                  <option key={wert} value={wert}>
+                    {KABINE_TEXT[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Zwischenlandungen
+              <select
+                value={stopps}
+                onChange={(e) => setStopps(e.target.value as FlugStoppPraeferenz)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="any">Alle Verbindungen</option>
+                <option value="nonstop">Nur Direktflüge</option>
+                <option value="at_most_one">Höchstens ein Stopp</option>
+              </select>
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs leading-5 text-ink-700">
+            {reise.travellers} {reise.travellers === 1 ? 'Person' : 'Personen'} · {reise.currency}
+          </p>
+          <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
+            {laeuft ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Search className="h-4 w-4" />}
+            {laeuft ? 'Suche läuft …' : 'Flüge suchen'}
+          </button>
+        </div>
+      </form>
+
+      {laeuft && (
+        <p aria-busy="true" className="mt-5 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
+          Wir suchen passende Verbindungen. Das kann einen Moment dauern.
+        </p>
+      )}
+
+      {antwort && (
+        <div className="mt-6">
+          {antwort.status === 'partial' && (
+            <p className="mb-3 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+              {antwort.message}
+            </p>
+          )}
+
+          {(antwort.status === 'unavailable' ||
+            antwort.status === 'timeout' ||
+            antwort.status === 'error' ||
+            antwort.status === 'invalid' ||
+            antwort.status === 'rate_limited') && (
+            <p
+              role="status"
+              className="flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+              {antwort.message}
+            </p>
+          )}
+
+          {antwort.status === 'empty' && (
+            <p className="rounded-2xl bg-surface-25 px-4 py-6 text-center text-sm leading-6 text-ink-800">
+              {antwort.message} Passe Datum, Flughafen oder Stopps an und suche erneut.
+            </p>
+          )}
+
+          {sichtbar.length > 0 && (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    ['all', 'Alle'],
+                    ['jetnity', 'Jetnity empfiehlt'],
+                    ['cheapest', 'Günstigste'],
+                    ['fastest', 'Schnellste'],
+                  ] as const
+                ).map(([wert, label]) => (
+                  <button
+                    key={wert}
+                    type="button"
+                    onClick={() => setFilter(wert)}
+                    className={cn(
+                      'inline-flex min-h-11 items-center rounded-full border px-3.5 text-sm font-medium',
+                      filter === wert
+                        ? 'border-brand-800 bg-brand-800 text-white'
+                        : 'border-line-200 bg-white text-ink-900',
+                    )}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <ol className="mt-4 grid gap-3">
+                {sichtbar.map((option) => (
+                  <li key={option.id}>
+                    <FlugKarte
+                      option={option}
+                      refs={antwort.airportRefs}
+                      laeuft={uebernimmt}
+                      onUebernehmen={() => uebernehmen(option)}
+                    />
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+
+          <p className="mt-4 text-xs leading-5 text-ink-700">{antwort.coverageNote || FLUG_ABDECKUNGSHINWEIS}</p>
+        </div>
+      )}
+
+      {meldung && (
+        <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          {meldung}
+        </p>
+      )}
+    </section>
+  )
+}

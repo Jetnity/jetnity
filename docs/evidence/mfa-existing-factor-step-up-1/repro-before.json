@@ -1,0 +1,23 @@
+{
+  "kind": "independent-helper-repro",
+  "writer": "Jetnity MFA existing factor step-up 1 / Generation 1",
+  "session": "bc-7a6af588-d7cf-4bd4-8707-fb4b3b8127a6",
+  "model": "cursor-grok-4.6-high-fast",
+  "capturedAt": "2026-09-22T11:32:00Z",
+  "head": "fde86ba3b4fb7439e7386f8e4efbbd3ef132804d",
+  "baselineMain": "a3eb83b86d5aec604fb77d5d2b75d58c6a653ef1",
+  "helper": "lib/auth/mfa.ts#startTotpChallenge",
+  "fixture": {
+    "all": [{ "id": "synthetic-factor", "factor_type": "totp", "status": "verified" }],
+    "totp": [{ "id": "synthetic-factor", "factor_type": "totp", "status": "verified" }],
+    "phone": []
+  },
+  "result": {
+    "threw": "Kein TOTP-Faktor gefunden. Bitte zuerst TOTP in den Sicherheitseinstellungen einrichten.",
+    "listCount": 1,
+    "challengeCount": 0,
+    "selectedFactorId": null
+  },
+  "cause": "helper searched f.type === 'totp'; current SDK Factor uses factor_type and does not populate type",
+  "note": "Synthetic fixture only. No live factor IDs, secrets, tokens or account identity. Not a Production network trace."
+}

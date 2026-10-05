@@ -1,0 +1,10 @@
+# Run-owned private state must never enter Git.
+private/
+tooling/bin/
+tooling/downloads/
+*.secret
+*.otpauth
+*.jwt
+*.cookie
+*.har
+*.storageState

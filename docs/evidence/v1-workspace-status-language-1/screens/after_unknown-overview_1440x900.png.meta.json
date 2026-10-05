@@ -1,0 +1,47 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/after_unknown-overview_1440x900.png",
+  "phase": "after",
+  "name": "unknown-overview_1440x900",
+  "sha": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+  "productTree": {
+    "head": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:04:38.103Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3018/reisen/trip-v1-status-unknown",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "inject-guest",
+    "open-workspace",
+    "scroll-top"
+  ],
+  "state": "unknown-overview",
+  "wording": {
+    "eyebrow": null,
+    "heading": null,
+    "gapLage": null,
+    "gapPflicht": null,
+    "attention": [
+      "Flugstand noch unklarunknown",
+      "Flugstand noch unklarunknown",
+      "Unterkunftsstand noch unklarunknown",
+      "Unterkunftsstand noch unklarunknown",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ],
+    "fortschritt": [
+      "1 noch offen · 3 noch unklar",
+      "0 Punkte geplant",
+      "0 Punkte geplant"
+    ]
+  }
+}

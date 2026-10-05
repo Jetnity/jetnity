@@ -1,0 +1,59 @@
+runtime_spot_checks_on_pinned_main=35148a4ba065be1315dddf21174d7f272518d34c
+correction=R1-R3
+
+homepage_single_confirmed_place=yes
+  file=components/places/StartzielForm.tsx
+  note=zielHref of one OrtAuswahl; planner separately accepts ziel/zielId
+  sibling_pr_543=IN_PROGRESS_NOT_MAIN head=676d64b44db3080744b5ccda1354a7f3dd0590f5 not_audited
+
+legal_route_directories=absent
+  app/(public)/privacy=absent
+  app/(public)/terms=absent
+  app/**/impressum=absent
+
+security_events_application_insert=none_found
+  search= .from('security_events').(insert|upsert) in ts/tsx/mjs
+
+guest_invalid_draft_art=ungueltig
+  file=lib/trips/uebernahme.test.ts
+
+protected_item_date_mismatch_signal=item.date_mismatch
+  file=lib/trips/attention.ts
+
+foundation_e_header=legacy_is_not_proof_production_lacks_children
+  file=lib/trips/foundation-e-select.ts
+
+account_visits_migration=supabase/migrations/20260917120000_account_visits.sql
+account_visits_runtime=lib/account/besuche-daten.ts
+production_table_named_in_tl_catalogue=UNVERIFIED
+tl_catalogue_listed_migration_20260917120000=yes_tl_observed_2026-09-22
+
+consent_persistence_contract=AP6A_RUNTIME_VERTRAG.keineConsentPersistenz=true
+
+ap7_plan_absence_stale=yes
+  stale_plan_sentence=AP-7 S1 Nachtrag claims no schema/UI/persistence
+  current=docs/AP7_S4_ACCOUNT_PLAN_RECONCILIATION_2026-08-30.md
+
+ap10_s1_bookings_page=yes
+  file=app/account/bookings/page.tsx
+  note=read-only user-confirmed booked items; plan absence sentence stale
+  checkpoint=docs/CHATGPT_TL_AP10_S1_POST_MERGE_CHECKPOINT_2026-08-30.md
+
+admin_f_disabled_search=yes
+  file=components/layout/AdminTopbar.tsx
+  lines=137-146
+  control=disabled Befehlssuche folgt
+  class=later_ungated_scoped_option_not_dispatched
+
+billing_p1_refund_route=yes
+  file=app/api/admin/payments/refund/route.ts
+  sequence=insert refunds then select payments then optional update status
+  transaction=none
+  idempotency=none
+  live_schema=UNVERIFIED
+  implement_from_this_map=no
+
+guardian_what_if_named=yes
+  sources=docs/JETNITY_BINDING_BUILD_ORDER.md §10; docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md
+  class=BINDING_LONG_TERM
+  folded_into_advanced_companion=no

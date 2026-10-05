@@ -1,0 +1,62 @@
+{
+  "productSha": "c7fb9f0f693ba9f020add7b26a041263aa7e3b07",
+  "statuses": [
+    "IMPLEMENTED_VERIFIED_LOCALLY",
+    "IMPLEMENTED_SOURCE_ONLY",
+    "PARTIAL",
+    "BLOCKED_ACCESS",
+    "PO_GATED",
+    "PHASE_2_3",
+    "NOT_IMPLEMENTED"
+  ],
+  "capabilities": [
+    {
+      "id": "C1",
+      "area": "Trip create / guest / adoption",
+      "status": "IMPLEMENTED_VERIFIED_LOCALLY",
+      "residual": "Invalid guest draft is schema-filtered to art=nichts and hidden (RH-2.1). Account create RPC is SOURCE_ONLY."
+    },
+    {
+      "id": "C2",
+      "area": "Ordered stages / repeats / day-stage / timeline / mobility",
+      "status": "IMPLEMENTED_VERIFIED_LOCALLY",
+      "residual": "Multi-destination create is unassigned; no first-class post-create day-to-stage editor (accepted TW6 mode, later provenance). #502 mobility position sort verified."
+    },
+    {
+      "id": "C3",
+      "area": "Registry vs trip snapshot / peer credentials",
+      "status": "IMPLEMENTED_VERIFIED_LOCALLY",
+      "residual": "No refresh-in-place of an existing snapshot. Legacy Foundation-E fallback can singularize (RH-4.1). Production SQL not re-read."
+    },
+    {
+      "id": "C4",
+      "area": "Change -> readiness / transit / selected / stale",
+      "status": "PARTIAL",
+      "residual": "Readiness fingerprint/stale verified. Official provider null. Protected commercial dates do not move and attention does not flag the mismatch. TW-8 commercial join remains later/gated."
+    },
+    {
+      "id": "C5",
+      "area": "Account home / groups / archive-restore",
+      "status": "IMPLEMENTED_VERIFIED_LOCALLY",
+      "residual": "Live concurrency against Supabase is BLOCKED_ACCESS."
+    },
+    {
+      "id": "C6",
+      "area": "Security / session / password / export",
+      "status": "IMPLEMENTED_VERIFIED_LOCALLY",
+      "residual": "Device list unsupported (honest). Backup codes PO_GATED. #500 lookup-failure verified."
+    },
+    {
+      "id": "C7",
+      "area": "Prefs / favourites / bookings / notifications / entitlements",
+      "status": "PARTIAL",
+      "residual": "AP-10-S1 bookings exist (source). AP-8/9/11/12 not implemented. Visit history and world map exist. Bookings omitted from nav by contract."
+    },
+    {
+      "id": "C8",
+      "area": "Legal / consent / deletion / retention / SMTP / providers",
+      "status": "PO_GATED",
+      "residual": "#497 classifications unchanged. 5.2 ingestion still PARTIAL after merged #494 local proof."
+    }
+  ]
+}

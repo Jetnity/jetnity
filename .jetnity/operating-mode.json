@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "mode": "NORMAL",
+  "updatedAt": "2026-09-21",
+  "enforcementRole": "metadata_not_competing_governance",
+  "canonicalGovernance": [
+    "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md",
+    "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md"
+  ],
+  "normalProductSlices": "allowed",
+  "allowedWorkClasses": [
+    "governance",
+    "continuity",
+    "evidence",
+    "enforcement",
+    "product"
+  ],
+  "productOwnerOverride": {
+    "date": "2026-09-18",
+    "issue": 440,
+    "title": "TEMPORARY PRODUCT-OWNER PRIORITY OVERRIDE — 18 September 2026",
+    "url": "https://github.com/Jetnity/jetnity/issues/440"
+  },
+  "activeMetaScope": {
+    "issue": 511,
+    "pr": 512,
+    "branch": "docs/v1-continuity-refresh-1",
+    "task": "docs/V1_CONTINUITY_REFRESH_1_TASK_2026-09-21.md",
+    "title": "V1 Continuity Refresh 1",
+    "proposalStatus": "continuity_repair_until_tl_merge",
+    "liveMainRemainsHoldUntilMerge": false,
+    "historicalCompletedHoldClosure": {
+      "issue": 490,
+      "pr": 492,
+      "branch": "governance/full-potential-ai-operating-system-2-hold-closure",
+      "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md",
+      "title": "OS-2 dedicated HOLD closure",
+      "proposalStatus": "merged_normal_on_main",
+      "merged": true,
+      "liveMainRemainsHoldUntilMerge": false
+    }
+  },
+  "parkedProductSlice": {
+    "pr": 487,
+    "issue": 486,
+    "branch": "docs/v1-security-event-ingestion-architecture-1",
+    "head": "12d070a79c35fbb9f03d1302833eee8561ec17bd",
+    "status": "parked_safe_draft_stop",
+    "resumeAfterHold": "independent_tl_review_of_exact_current_head_then_decide_integration",
+    "schemaNote": "Guard/schema still requires these exact parked identity/status fields. They are historical HOLD-era enforcement metadata, not a live parked writer. Changing pr/issue/head/status would require a guard/schema change, which this continuity refresh must not do.",
+    "laterObservedState": "merged_architecture_only",
+    "laterMerged": true,
+    "laterMergedAt": "2026-09-21T12:38:27Z",
+    "finding52AndGateGRemainOpen": true,
+    "persistentActivationNotAuthorized": true
+  },
+  "exitCondition": {
+    "requiresIntegratedAndIndependentlyVerified": true,
+    "requiresTenRoleExternalSetupAndVerification": true,
+    "requiresGithubHardEnforcementBaseline": true,
+    "requiresDedicatedHoldExitEvidenceChecklist": true,
+    "ciCannotProveExternalPrerequisites": true,
+    "dedicatedHoldExitChecklist": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
+    "samePrCannotMixModeChangeAndProductRuntime": true,
+    "description": "OS-2 dedicated HOLD closure PR #492 is merged. Live main machine mode is NORMAL. NORMAL means later ordinary bounded work may be selected by the Technical Lead. It grants no Production migration, provider activation, real payment, sensitive-data storage, public launch or reserved-gate authority. Historical parkedProductSlice identity for PR #487 remains in this object because the guard schema still requires those exact fields; #487 later merged as architecture-only and is not a live parked writer. Finding 5.2 / release-gate G / persistent ingestion remain OPEN. CI cannot prove the external prerequisites. Special Product-Owner gates remain in force. native_scheduled_pass and native_material_archive_proof remain false.",
+    "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence",
+    "transitionContract": "dedicated_hold_closure_only",
+    "githubHardEnforcementBaselineStatus": "live_verified",
+    "githubHardEnforcementBaselineEvidence": {
+      "rulesetId": 21875372,
+      "name": "Jetnity main protection",
+      "target": "refs/heads/main",
+      "enforcement": "active",
+      "htmlUrl": "https://github.com/Jetnity/jetnity/rules/21875372",
+      "apiUrl": "https://api.github.com/repos/Jetnity/jetnity/rulesets/21875372",
+      "verifiedAt": "2026-09-18T17:55:00Z",
+      "verifiedBy": "Jetnity full-potential AI operating system 2",
+      "reReadAt": "2026-09-21",
+      "reReadBy": "Technical Lead (5756999582 / HOLD-closure task) plus Cursor API confirm enforcement=active, bypass_actors=null",
+      "matchesDocumentedNonLockoutBaseline": true,
+      "note": "Read-only GitHub API readback matches the documented non-lockout baseline. This records verification only. Cursor did not mutate the ruleset."
+    }
+  },
+  "specialProductOwnerGatesRemainInForce": true,
+  "authorizedBranchClasses": [
+    "governance/full-potential-ai-operating-system-"
+  ],
+  "authorizedExactBranches": [
+    "governance/full-potential-ai-operating-system-1",
+    "governance/full-potential-ai-operating-system-2",
+    "governance/full-potential-ai-operating-system-2-hold-closure"
+  ],
+  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after the HOLD-closure foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. HOLD-era branch-class constraints remain historical metadata; live mode is NORMAL. Special Product-Owner gates remain. Later external main protection is already live-verified as Ruleset 21875372 and is not mutated here.",
+  "allowedPathPatterns": [
+    ".jetnity/**",
+    ".cursor/rules/**",
+    ".github/workflows/ci.yml",
+    "package.json",
+    "AGENTS.md",
+    "JETNITY_START_HERE.md",
+    "docs/ACTIVE_WORK_STATUS.md",
+    "docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md",
+    "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md",
+    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md",
+    "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_*",
+    "scripts/operating-mode-guard.mjs",
+    "scripts/operating-mode-guard.test.mjs"
+  ],
+  "forbiddenPathPrefixesDuringHold": [
+    "app/",
+    "components/",
+    "lib/",
+    "hooks/",
+    "supabase/",
+    "types/",
+    "public/"
+  ]
+}

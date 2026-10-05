@@ -1,0 +1,65 @@
+[
+  {
+    "headRefName": "ops/github-hygiene-phase2-delete-safe-2026-08-31",
+    "headRefOid": "7459132b462f87a1fb19ad8c0dd7718721fefafc",
+    "isDraft": true,
+    "number": 308,
+    "state": "OPEN",
+    "title": "Ops: GitHub Hygiene Phase 2 delete-safe cleanup",
+    "url": "https://github.com/Jetnity/jetnity/pull/308"
+  },
+  {
+    "headRefName": "feat/entry-requirements-official-actions-e2-2026-08-31",
+    "headRefOid": "666756a5a8a8f55e1eb39e7128ef9c526f44e26e",
+    "isDraft": true,
+    "number": 307,
+    "state": "OPEN",
+    "title": "Entry Requirements E2: verified official actions",
+    "url": "https://github.com/Jetnity/jetnity/pull/307"
+  },
+  {
+    "headRefName": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+    "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+    "isDraft": true,
+    "number": 52,
+    "state": "OPEN",
+    "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24",
+    "url": "https://github.com/Jetnity/jetnity/pull/52"
+  },
+  {
+    "headRefName": "cursor/s1-merged-status-f23f",
+    "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+    "isDraft": true,
+    "number": 50,
+    "state": "OPEN",
+    "title": "docs: record Provider Ops S1 merge onto main",
+    "url": "https://github.com/Jetnity/jetnity/pull/50"
+  },
+  {
+    "headRefName": "audit/admin-platform",
+    "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+    "isDraft": true,
+    "number": 40,
+    "state": "OPEN",
+    "title": "docs: Admin Platform / Control Center Audit",
+    "url": "https://github.com/Jetnity/jetnity/pull/40"
+  },
+  {
+    "headRefName": "audit/account-platform",
+    "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+    "isDraft": true,
+    "number": 39,
+    "state": "OPEN",
+    "title": "Account Platform Audit & Vorbereitung",
+    "url": "https://github.com/Jetnity/jetnity/pull/39"
+  },
+  {
+    "headRefName": "feat/trip-collaboration-foundation",
+    "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+    "isDraft": true,
+    "number": 28,
+    "state": "OPEN",
+    "title": "Trip Collaboration Foundation \u2013 Issue #20",
+    "url": "https://github.com/Jetnity/jetnity/pull/28"
+  }
+]

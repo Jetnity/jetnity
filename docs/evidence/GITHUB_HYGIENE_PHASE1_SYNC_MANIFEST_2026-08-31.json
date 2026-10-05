@@ -1,0 +1,1898 @@
+{
+  "schema": "jetnity.github_hygiene_phase1_manifest.v1",
+  "kind": "sync_revalidation",
+  "issue": 266,
+  "task": "docs/GITHUB_HYGIENE_PHASE1_AUDIT_TASK_2026-08-31.md",
+  "agent": "Jetnity github hygiene audit 1",
+  "generation": 1,
+  "cursor_session": "bc-8293337d-f32b-41fd-a36d-edb90dc99d95",
+  "repository": "Jetnity/jetnity",
+  "previous_collection_main": "7f057e6ee8caddf87a3b5365731eaf43d037a114",
+  "previous_pass_head": "ef0c50a9c14d00774db0936831b1cfc445cef60b",
+  "baseline_main": "26b44e8f93ebf378d9d367c5e7cb2f9701efd12e",
+  "live_origin_main_at_collection": "26b44e8f93ebf378d9d367c5e7cb2f9701efd12e",
+  "audit_branch": "audit/github-hygiene-phase1-2026-08-31",
+  "collected_at_utc": "2026-08-31T01:08:53Z",
+  "classification_contract": {
+    "DELETE-SAFE_MERGED": "not main; not protected; not an open PR head; exact tip SHA is an ancestor of baseline main; git rev-list baseline..tip == 0; tip != baseline main SHA",
+    "KEEP_OPEN_PR": "branch is the head of at least one open pull request",
+    "REVIEW_UNMERGED": "tip not fully contained in baseline main, or any uncertainty / extra-conservative hold",
+    "KEEP_MAIN": "the default branch main"
+  },
+  "mechanical_reclassifications": [
+    {
+      "name": "audit/tw8-tw9-readiness-2026-08-31",
+      "from": "KEEP_OPEN_PR",
+      "to": "DELETE-SAFE_MERGED",
+      "previous_sha": "d051003023331578d90cf295a12de8767e0b33b7",
+      "current_sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "why": "PR #302 is no longer open (GitHub state CLOSED). Tip is ancestor of main@26b44e8f after merge commit a5c8124b. Not protected."
+    },
+    {
+      "name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "from": "KEEP_OPEN_PR",
+      "to": "DELETE-SAFE_MERGED",
+      "previous_sha": "2bec7c2d3ae7967175d1a9828c6715a577376df0",
+      "current_sha": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "why": "PR #300 is no longer open (GitHub state CLOSED). Tip is ancestor of main@26b44e8f after merge commit 26b44e8f. Not protected."
+    },
+    {
+      "name": "main",
+      "from": "KEEP_MAIN",
+      "to": "KEEP_MAIN",
+      "previous_sha": "7f057e6ee8caddf87a3b5365731eaf43d037a114",
+      "current_sha": "26b44e8f93ebf378d9d367c5e7cb2f9701efd12e",
+      "why": "Default branch tip advanced through TW and E1 merges. Classification unchanged."
+    },
+    {
+      "name": "audit/github-hygiene-phase1-2026-08-31",
+      "from": "KEEP_OPEN_PR",
+      "to": "KEEP_OPEN_PR",
+      "previous_sha": "9cc05da98064e551837088dc4d7c4a379110411c",
+      "current_sha": "ef0c50a9c14d00774db0936831b1cfc445cef60b",
+      "why": "Still open PR #301. Remote tip at sync collection is the previous PASS head; delivery push will move it."
+    }
+  ],
+  "safety_notes": [
+    "This is a sync revalidation of the Phase 1 restore map after main moved. No branch or tag was deleted.",
+    "Phase 2 must use this sync manifest's exact name\u2192SHA pairs and re-validate immediately before any delete.",
+    "Historical first collection remains docs/evidence/GITHUB_HYGIENE_PHASE1_MANIFEST_2026-08-31.json.",
+    "PR #300 and #302 report CLOSED without mergedAt; classification uses live open-PR list + ancestry, not mergedAt.",
+    "main is never delete-safe. Open PR heads are never delete-safe. Uncertainty is REVIEW_UNMERGED."
+  ],
+  "counts": {
+    "KEEP_OPEN_PR": 6,
+    "REVIEW_UNMERGED": 57,
+    "DELETE-SAFE_MERGED": 15,
+    "KEEP_MAIN": 1
+  },
+  "total_remote_branches": 79,
+  "protected_branches": [
+    "main"
+  ],
+  "ruleset": {
+    "id": 21875372,
+    "name": "Jetnity main protection",
+    "enforcement": "active",
+    "include": [
+      "refs/heads/main"
+    ],
+    "sample_non_main_rules": "[]"
+  },
+  "open_pull_requests": [
+    {
+      "number": 301,
+      "title": "Audit: GitHub Hygiene Phase 1 branch inventory",
+      "headRefName": "audit/github-hygiene-phase1-2026-08-31",
+      "headRefOid": "ef0c50a9c14d00774db0936831b1cfc445cef60b",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/301"
+    },
+    {
+      "number": 52,
+      "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24",
+      "headRefName": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+      "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/52"
+    },
+    {
+      "number": 50,
+      "title": "docs: record Provider Ops S1 merge onto main",
+      "headRefName": "cursor/s1-merged-status-f23f",
+      "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/50"
+    },
+    {
+      "number": 40,
+      "title": "docs: Admin Platform / Control Center Audit",
+      "headRefName": "audit/admin-platform",
+      "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/40"
+    },
+    {
+      "number": 39,
+      "title": "Account Platform Audit & Vorbereitung",
+      "headRefName": "audit/account-platform",
+      "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/39"
+    },
+    {
+      "number": 28,
+      "title": "Trip Collaboration Foundation \u2013 Issue #20",
+      "headRefName": "feat/trip-collaboration-foundation",
+      "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "isDraft": true,
+      "url": "https://github.com/Jetnity/jetnity/pull/28"
+    }
+  ],
+  "branches": [
+    {
+      "name": "audit/account-platform",
+      "sha": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        39
+      ],
+      "open_pr_details": [
+        {
+          "number": 39,
+          "isDraft": true,
+          "headRefOid": "65b08f4718ad74f3157c55a3efb960a4c843408a",
+          "url": "https://github.com/Jetnity/jetnity/pull/39",
+          "title": "Account Platform Audit & Vorbereitung"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 11,
+      "behind_main": 1095,
+      "ahead_of_main": 11,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "audit/admin-platform",
+      "sha": "a316015733b86e2adbd050abb2f77258a99da366",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        40
+      ],
+      "open_pr_details": [
+        {
+          "number": 40,
+          "isDraft": true,
+          "headRefOid": "a316015733b86e2adbd050abb2f77258a99da366",
+          "url": "https://github.com/Jetnity/jetnity/pull/40",
+          "title": "docs: Admin Platform / Control Center Audit"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 15,
+      "behind_main": 1095,
+      "ahead_of_main": 15,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "audit/admin-platform-sync-temp",
+      "sha": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 4,
+      "behind_main": 1095,
+      "ahead_of_main": 4,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/admin-platform-sync-temp2",
+      "sha": "e6b3e62c7f412dc0f024a8077fc8409154ae586a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 4,
+      "behind_main": 1095,
+      "ahead_of_main": 4,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/ap7-account-traveller-registry-gate0-2026-08-28",
+      "sha": "85ce5399368621e916de6c1a506abbae5316a0b3",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 5,
+      "behind_main": 472,
+      "ahead_of_main": 5,
+      "merge_base": "bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/core-repository-hygiene-2026-08-30",
+      "sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 62,
+      "ahead_of_main": 0,
+      "merge_base": "a759764eefa568784bfa08029b386b978e1d2138",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "audit/github-branch-hygiene-2026-08-30",
+      "sha": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 84,
+      "ahead_of_main": 0,
+      "merge_base": "a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "audit/github-hygiene-phase1-2026-08-31",
+      "sha": "ef0c50a9c14d00774db0936831b1cfc445cef60b",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        301
+      ],
+      "open_pr_details": [
+        {
+          "number": 301,
+          "isDraft": true,
+          "headRefOid": "ef0c50a9c14d00774db0936831b1cfc445cef60b",
+          "url": "https://github.com/Jetnity/jetnity/pull/301",
+          "title": "Audit: GitHub Hygiene Phase 1 branch inventory"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 3,
+      "behind_main": 9,
+      "ahead_of_main": 3,
+      "merge_base": "7f057e6ee8caddf87a3b5365731eaf43d037a114",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "audit/project-sanitation-inventory-2026-08-26",
+      "sha": "a5fbaa6df79fc0515d06a1cfafb88fcd6316b0e8",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 737,
+      "ahead_of_main": 2,
+      "merge_base": "1d558ef56cc275d429f4076c7a8877c3791947a7",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/provider-readiness",
+      "sha": "ca8522400110a95ee0e51889417106992961f1c4",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 11,
+      "behind_main": 1090,
+      "ahead_of_main": 11,
+      "merge_base": "01761eb9ba80828e87ca2da201901e0e211e1719",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/requirements-provider-groundwork-g0-2026-08-30",
+      "sha": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 26,
+      "ahead_of_main": 0,
+      "merge_base": "74e214606c9f881ce0cd19aef3ed7865eb304d3b",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "audit/security-privacy-current-state-2026-08-29",
+      "sha": "5489196117e219d511f0a98bab3f31193775c8eb",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 320,
+      "ahead_of_main": 2,
+      "merge_base": "69ef27b169780e41ba506a69acb15caafa645517",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/traveller-account-multicitizenship-gap-2026-08-29",
+      "sha": "3bda0496e1eab7675beab3ed3f0e1634fd552dda",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 3,
+      "behind_main": 320,
+      "ahead_of_main": 3,
+      "merge_base": "69ef27b169780e41ba506a69acb15caafa645517",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "audit/tw8-tw9-readiness-2026-08-31",
+      "sha": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 7,
+      "ahead_of_main": 0,
+      "merge_base": "93fb21efab6c22c3fd2b14a3a23d18f46110fd03",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "chore/account-admin-team-prep",
+      "sha": "67074279d290c651746049f9901c999156873729",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 23,
+      "behind_main": 1095,
+      "ahead_of_main": 23,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cleanup/final-mechanical-repository-leftovers-2026-08-30",
+      "sha": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 47,
+      "ahead_of_main": 0,
+      "merge_base": "204511f552d58e246cd08fd8b724eb98edd4dc49",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "cleanup/legacy-storage-batch-b-2026-08-30",
+      "sha": "f65af8bd3057320f6f28508fb56fa77004f3b836",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 6,
+      "behind_main": 108,
+      "ahead_of_main": 6,
+      "merge_base": "25de0a9f374e1bf8470333281a7bc77c7aa8f905",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/align-handoff-after-pr38-010d",
+      "sha": "e30fb07fb25354b7a547acf15a83b420fc67ff02",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 4,
+      "behind_main": 1091,
+      "ahead_of_main": 4,
+      "merge_base": "e4f4cca75e55028fab231c1827abf6236ae30eec",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/ap5-s4-post-merge-continuity-2026-08-29-5132",
+      "sha": "9b34cf29b17e5ababb635f9373e961ffb6c5a844",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 406,
+      "ahead_of_main": 2,
+      "merge_base": "934d43dae65235486f1a06a50b592468e3546b1c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/foundation-c-merged-status-f35b",
+      "sha": "cbd59645da9f77ecaa241c7d327fa769328ee54a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1156,
+      "ahead_of_main": 1,
+      "merge_base": "b50d2ce9ebc4e50da858f67258f94f887b183f79",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/legacy-datenbank-entfernen-f38c",
+      "sha": "4015340679380ebf05e5f342f1adb6e11a0148bf",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 5,
+      "behind_main": 1174,
+      "ahead_of_main": 5,
+      "merge_base": "c058e845e2c0f3349dcfbbf7ee9e023bd6d7ba2c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-1-3-auth-rollen-cbcd",
+      "sha": "777d12e5b894a7517745ccade4490bf0393707f2",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 7,
+      "behind_main": 1184,
+      "ahead_of_main": 7,
+      "merge_base": "4c98163510b9486eff22ca6a1af2f3fa5aea17a4",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-1-4-datenbank-baseline-0c7c",
+      "sha": "79679c3562f854b21fe27cccaae3487fd741c42a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 12,
+      "behind_main": 1175,
+      "ahead_of_main": 12,
+      "merge_base": "1ff7e858fe0087e4b0ae4d82d704dff2650256f4",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-1-4c-auth-konfiguration-8050",
+      "sha": "59d6a9d2402d1ecceecd3e314334e2a19c614613",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 9,
+      "behind_main": 1173,
+      "ahead_of_main": 9,
+      "merge_base": "a233a562a82913f0eabe98d4d64e198cdc269407",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-1-5-reiseschema-c9d2",
+      "sha": "9fcd2cc39933ad9abf9220d249a38938b0103288",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 17,
+      "behind_main": 1172,
+      "ahead_of_main": 17,
+      "merge_base": "66aa01f21369c8a96baf382d0b50b3a730708e8a",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-2-1-natuerliche-sprache-zu-reise-e985",
+      "sha": "5014d164574051513af8dd5582c77adf3733c9c0",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 13,
+      "behind_main": 1171,
+      "ahead_of_main": 13,
+      "merge_base": "8cb71dae79ac8951acdbd36dd5a1551e087a6c0d",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-22-reise-aendern-e90a",
+      "sha": "d2fad49ec9bc5ce685c3cf20ae16fbd64844995f",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 17,
+      "behind_main": 1169,
+      "ahead_of_main": 17,
+      "merge_base": "938f28eb9f2e5379d366a4338548e7f65e9f08c0",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/phase-3-flights-foundation-c8a6",
+      "sha": "ca5d50b5873788c1b5ca78c0db5dd68e4f2b4da5",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 33,
+      "behind_main": 1168,
+      "ahead_of_main": 33,
+      "merge_base": "76f21929a1e152c823ae1db9281f4b27261d2b58",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/record-foundation-e-merge-be45",
+      "sha": "05ebbb9d4bbb3c1063d0a0b856e7985f1c5ebbdf",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1114,
+      "ahead_of_main": 1,
+      "merge_base": "3bf1eaaa78ef6ac33bb3baff84650a143720e91d",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/s1-merged-status-f23f",
+      "sha": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        50
+      ],
+      "open_pr_details": [
+        {
+          "number": 50,
+          "isDraft": true,
+          "headRefOid": "f5a25c949f8bbfb889f87653ba1a08a02f75f6ea",
+          "url": "https://github.com/Jetnity/jetnity/pull/50",
+          "title": "docs: record Provider Ops S1 merge onto main"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 3,
+      "behind_main": 1089,
+      "ahead_of_main": 3,
+      "merge_base": "f92e0c9e2e6ddbe73b1cc2c59d7ba5521a0115c5",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "cursor/seasonal-merged-status-010d",
+      "sha": "fddd0f444ad2435b3c456f72783de800f7d1db4a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 1094,
+      "ahead_of_main": 2,
+      "merge_base": "ee988bbe46a8dd63d4001c42825fc0159453f811",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/supabase-mcp-dev-1f02",
+      "sha": "7102d0dae89162e98d3dde2a6091916f0a47d2e9",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 1177,
+      "ahead_of_main": 2,
+      "merge_base": "aa512a47971908e1b987556d4d9c912b08d40511",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "cursor/tw7a-hub-card-identity-b13d",
+      "sha": "1ce6e02b2993eff1b747ab42da4c9ea8927e0885",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 634,
+      "ahead_of_main": 2,
+      "merge_base": "963186f4ec75501efd253a287131f464a5fd0fdb",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "do-not-use",
+      "sha": "9cc9b0526683f161f500326a7b72c74abac9c296",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 10,
+      "behind_main": 1091,
+      "ahead_of_main": 10,
+      "merge_base": "e4f4cca75e55028fab231c1827abf6236ae30eec",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs-continuity-standard",
+      "sha": "1bed5e8020994c70c4786aea0aa8a9b761663b12",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1163,
+      "ahead_of_main": 1,
+      "merge_base": "2fa0f16a43ebb41c9e453013c38a6eb4979b00ce",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs-phase-3-3-status-sync",
+      "sha": "f19493576a2ddbfe6e0efdb0ebd8c62bf847f6b9",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 1162,
+      "ahead_of_main": 2,
+      "merge_base": "29c0caabd49a563c051a7d8c9bdd3a3c3f016752",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/chatgpt-technical-lead-handoff-2026-08-24",
+      "sha": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        52
+      ],
+      "open_pr_details": [
+        {
+          "number": 52,
+          "isDraft": true,
+          "headRefOid": "f1e13db332ce087297dae60d4f1b3c21f321f9ec",
+          "url": "https://github.com/Jetnity/jetnity/pull/52",
+          "title": "docs: ChatGPT Technical Lead handoff \u2013 2026-08-24"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 67,
+      "behind_main": 1086,
+      "ahead_of_main": 67,
+      "merge_base": "52e665acfed88303300870d50855177284588026",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "docs/chatgpt-technical-lead-handoff-2026-08-24-shadow",
+      "sha": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 7,
+      "behind_main": 1086,
+      "ahead_of_main": 7,
+      "merge_base": "52e665acfed88303300870d50855177284588026",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/chatgpt-technical-lead-transition-2026-08-30-final",
+      "sha": "471bc93d19c2fa243182f6560e415b952b17364a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 56,
+      "ahead_of_main": 0,
+      "merge_base": "471bc93d19c2fa243182f6560e415b952b17364a",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "docs/domain-program-completion-policy",
+      "sha": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 7,
+      "behind_main": 1086,
+      "ahead_of_main": 7,
+      "merge_base": "52e665acfed88303300870d50855177284588026",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/domain-program-completion-policy-2",
+      "sha": "216b44d95d137c6c9f1a258b6e9f2dff4782c9f6",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 7,
+      "behind_main": 1086,
+      "ahead_of_main": 7,
+      "merge_base": "52e665acfed88303300870d50855177284588026",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/entry-requirements-target-architecture-2026-08-31",
+      "sha": "dafa3e01002156c2ff5c0c0526c5ce6d85f55b4e",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 3,
+      "behind_main": 20,
+      "ahead_of_main": 3,
+      "merge_base": "67f54135957cf09e39585a8cff662ecc3645b39a",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/jetnity-handoff-after-phase-2-1",
+      "sha": "d248719bb418012bf13fc1286fe6d8514f8fb0b5",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1170,
+      "ahead_of_main": 1,
+      "merge_base": "d9fc8d6ece7d7cce0d5409a784f7e09527dff011",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/phase-3-1-final-handoff",
+      "sha": "e823a11cb6cb29d9b287ca97273b9025a75fce48",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1167,
+      "ahead_of_main": 1,
+      "merge_base": "1ce99839d725d9e97597580909f068dd8af77b57",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/post-cleanup-final-handoff-2026-08-30",
+      "sha": "74aa58e93ffcd431e8fab83f3b35ac85a8c42a3f",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 4,
+      "behind_main": 46,
+      "ahead_of_main": 4,
+      "merge_base": "0f7d80fa48d958a8708af982806b99966289b2bd",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/post-cleanup-technical-lead-checkpoint-2026-08-30",
+      "sha": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 42,
+      "ahead_of_main": 0,
+      "merge_base": "5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "docs/post-pr97-canonical-continuity-2026-08-27",
+      "sha": "47c1db0675c644db2c0e3833aa9630d1fcdf5c06",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 662,
+      "ahead_of_main": 1,
+      "merge_base": "4362502bf23c1c54f721af48c0f7bdd6fcbdee3b",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/post-pr98-continuity-2026-08-27",
+      "sha": "fb6aae99909f37a40518803ccea26b74677f6e7a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 2,
+      "behind_main": 651,
+      "ahead_of_main": 2,
+      "merge_base": "beaef64a151adceb8f5bc759f58ae9ad13cecc51",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/pr137-post-merge-continuity-2026-08-28",
+      "sha": "822a5a4726e10520c4c8ad0ec6d7753e6f999f7b",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 512,
+      "ahead_of_main": 1,
+      "merge_base": "f11a17533c56f5746ca9ef56e08c3e4a21a5a3c5",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/product-quality-standard",
+      "sha": "523410108814022dc051bab949009ee21e198761",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1165,
+      "ahead_of_main": 1,
+      "merge_base": "a5f39a29b2469aab24756bb59c248362d31e173c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "docs/requirements-gate0-closed-2026-08-31",
+      "sha": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 21,
+      "ahead_of_main": 0,
+      "merge_base": "4a86ea753bf3f7c5cfd667661f6a01557280b8ba",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "docs/requirements-s4-r1-closed-entry-target-2026-08-31",
+      "sha": "2aac34ddea0c88327986fc459826892d8895f3d0",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 10,
+      "ahead_of_main": 0,
+      "merge_base": "2aac34ddea0c88327986fc459826892d8895f3d0",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "feat/account-ap1",
+      "sha": "3be37b852f0aa6ebf8f1191aaf75c548f6bf878c",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 14,
+      "behind_main": 1089,
+      "ahead_of_main": 14,
+      "merge_base": "f92e0c9e2e6ddbe73b1cc2c59d7ba5521a0115c5",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/account-ap2",
+      "sha": "a6db9589b32a93ccefb301aed3d40a8dbdbc7c2b",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 18,
+      "behind_main": 1088,
+      "ahead_of_main": 18,
+      "merge_base": "084f7c87f36f9929f3e4a9deb9d3fedef6e96982",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/account-nav-rail-consistency-2026-08-30",
+      "sha": "08a626c466631cc2e0d1d434d58d28241c625faa",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 183,
+      "ahead_of_main": 1,
+      "merge_base": "23e3885f89d0f1f71cd99cf9aef454a78f41ca66",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/admin-control-center-ia",
+      "sha": "81de9b3db11e7f58ff59132e22bf9f35fef68b57",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 11,
+      "behind_main": 1078,
+      "ahead_of_main": 11,
+      "merge_base": "52e665acfed88303300870d50855177284588026",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/admin-system-health",
+      "sha": "2ca916e91dbf53f9c5cad9a980cc141938fbebe6",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 5,
+      "behind_main": 1067,
+      "ahead_of_main": 5,
+      "merge_base": "1ec93cc9f6d70bd57ea054463e4ba8e3822a2267",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/entry-requirements-detail-contract-e1-2026-08-31",
+      "sha": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 1,
+      "ahead_of_main": 0,
+      "merge_base": "56e018d36a176c0061a57978b8a6b5044369409d",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "feat/mobility-transfers-foundation",
+      "sha": "9d3fcef38ffebac91d5f9f3806659236a10c694b",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 13,
+      "behind_main": 1159,
+      "ahead_of_main": 13,
+      "merge_base": "211872c1aad0e002d81f5ea1fb2d7eef4490d4b7",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/provider-flight-evidence-s2",
+      "sha": "6865c8a1cde9b44dd0ce8c690fca12139e763b7c",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 24,
+      "behind_main": 1087,
+      "ahead_of_main": 24,
+      "merge_base": "2827d1cbb674498f504ba1810c73c8dc5d43ca24",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/provider-ops-s1",
+      "sha": "ba10cb206d1f1d40f6e2dc14b917f18c65601c44",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 5,
+      "behind_main": 1091,
+      "ahead_of_main": 5,
+      "merge_base": "e4f4cca75e55028fab231c1827abf6236ae30eec",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/rental-car-foundation",
+      "sha": "073dc505f65c5ed026a88981a578cd02f98c8b04",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 19,
+      "behind_main": 1158,
+      "ahead_of_main": 19,
+      "merge_base": "463360e64dae068e3d8eb9f3012890b94df4a75a",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-2026-08-31",
+      "sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 15,
+      "ahead_of_main": 0,
+      "merge_base": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "feat/requirements-truth-ops-s4-r1-ready-2026-08-31",
+      "sha": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 15,
+      "ahead_of_main": 0,
+      "merge_base": "595b4ad2a827beff7bec597433b3316d21da0747",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "feat/route-transit-intelligence",
+      "sha": "11bfc958aba54486148fa756f5f8d4616ff86c8a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 81,
+      "behind_main": 1122,
+      "ahead_of_main": 81,
+      "merge_base": "5f362939e6162f52f01285e65becb98e712be2aa",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/travel-readiness-foundation",
+      "sha": "a5099b98c9456ce07c9b12443d5540843ef8f669",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 32,
+      "behind_main": 1157,
+      "ahead_of_main": 32,
+      "merge_base": "315d9b31e69fcd5fd40227f65aa97587efc3bec4",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/travel-safety-disruption-intelligence",
+      "sha": "11976ed734b62ec906abd65581f309b1a38362f1",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 29,
+      "behind_main": 1106,
+      "ahead_of_main": 29,
+      "merge_base": "91e644b279c802c5a5d7a88135ed8ab9c4229a34",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/travel-timing-seasonal-intelligence",
+      "sha": "1a61d21fe853c77faa1109ae0828e39f3629098a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 89,
+      "behind_main": 1095,
+      "ahead_of_main": 89,
+      "merge_base": "cd220beb44d90ae376feeb8de9db8a3afb808d60",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/traveller-context-intelligence",
+      "sha": "725aee462c93e5dba7da7a1a7fd8c51bf16a39bb",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 50,
+      "behind_main": 1115,
+      "ahead_of_main": 50,
+      "merge_base": "c8dbe904faac49745bd149e3d2e85ca30ebd384c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "feat/trip-collaboration-foundation",
+      "sha": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [
+        28
+      ],
+      "open_pr_details": [
+        {
+          "number": 28,
+          "isDraft": true,
+          "headRefOid": "e0132cb576e8231296dc5b290e0afcef88ceb9f4",
+          "url": "https://github.com/Jetnity/jetnity/pull/28",
+          "title": "Trip Collaboration Foundation \u2013 Issue #20"
+        }
+      ],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 1,
+      "behind_main": 1161,
+      "ahead_of_main": 1,
+      "merge_base": "70c9c899f43ba495965e0171eed0b6bdf3bc208c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "KEEP_OPEN_PR",
+      "reasons": [
+        "open_pr_head"
+      ]
+    },
+    {
+      "name": "feat/trip-coverage-booking-status",
+      "sha": "1f6f4ba0acfe5287d292742f6992f2a3dd38e077",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 21,
+      "behind_main": 1160,
+      "ahead_of_main": 21,
+      "merge_base": "70e471b00c7505356fe13f8185b204200c4bb781",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "main",
+      "sha": "26b44e8f93ebf378d9d367c5e7cb2f9701efd12e",
+      "protected": true,
+      "api_protected": true,
+      "ruleset_protected": true,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 0,
+      "ahead_of_main": 0,
+      "merge_base": "26b44e8f93ebf378d9d367c5e7cb2f9701efd12e",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": true,
+      "disposition": "KEEP_MAIN",
+      "reasons": [
+        "default_branch_main"
+      ]
+    },
+    {
+      "name": "ops/creator-media-c2-recovery-2026-08-30",
+      "sha": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 78,
+      "ahead_of_main": 0,
+      "merge_base": "cf2bbd5b71392f17c8f31e2a13e450ae9de72e15",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "ops/creator-media-c3-decommission-2026-08-30",
+      "sha": "e8069799774433c905663b00867085bab4dbd461",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 69,
+      "ahead_of_main": 0,
+      "merge_base": "e8069799774433c905663b00867085bab4dbd461",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "phase-3-2-hotel-foundation",
+      "sha": "fb26270d84c3dc661ffe71969556edad236628b0",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 13,
+      "behind_main": 1166,
+      "ahead_of_main": 13,
+      "merge_base": "3a7f7482a5b2401f9d316be31829d5002d3df640",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "phase-3-3-activities-foundation",
+      "sha": "d0fcae38738b7f3763a90215e033bfb3128587e6",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 10,
+      "behind_main": 1164,
+      "ahead_of_main": 10,
+      "merge_base": "b8254783789bce0707ce2d35e8525ef5cdfb9743",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "recovery/core-repository-hygiene-2026-08-30",
+      "sha": "a759764eefa568784bfa08029b386b978e1d2138",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": true,
+      "commits_not_in_main": 0,
+      "behind_main": 62,
+      "ahead_of_main": 0,
+      "merge_base": "a759764eefa568784bfa08029b386b978e1d2138",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "DELETE-SAFE_MERGED",
+      "reasons": [
+        "tip_ancestor_of_main",
+        "no_open_pr_head",
+        "not_protected",
+        "commits_not_in_main_0"
+      ]
+    },
+    {
+      "name": "tmp-noop",
+      "sha": "9cc9b0526683f161f500326a7b72c74abac9c296",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 10,
+      "behind_main": 1091,
+      "ahead_of_main": 10,
+      "merge_base": "e4f4cca75e55028fab231c1827abf6236ae30eec",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    },
+    {
+      "name": "ux-trip-workspace-mobile-iteration-1",
+      "sha": "d2ec70d79982ea28f685d8715cd2d145af53e53a",
+      "protected": false,
+      "api_protected": false,
+      "ruleset_protected": false,
+      "open_prs": [],
+      "open_pr_details": [],
+      "tip_is_ancestor_of_main": false,
+      "commits_not_in_main": 13,
+      "behind_main": 1161,
+      "ahead_of_main": 13,
+      "merge_base": "70c9c899f43ba495965e0171eed0b6bdf3bc208c",
+      "sha_sources_agree": true,
+      "pr_head_sha_mismatch": [],
+      "equals_current_main": false,
+      "disposition": "REVIEW_UNMERGED",
+      "reasons": [
+        "tip_not_ancestor_of_main"
+      ]
+    }
+  ]
+}

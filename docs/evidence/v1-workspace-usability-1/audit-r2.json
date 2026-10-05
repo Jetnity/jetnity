@@ -1,0 +1,47 @@
+{
+  "phase": "r2",
+  "sha": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+  "productTree": {
+    "head": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T18:04:59.568Z",
+  "browser": "chromium/playwright",
+  "origin": "http://localhost:3000",
+  "server": "reused-existing-dev",
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "realDevice": false,
+  "captures": [],
+  "firstViewport": {
+    "complex390": null,
+    "complex1024": null
+  },
+  "vux4": null,
+  "vuxR2": {
+    "afterOpenScrollY": 433,
+    "afterManualScrollY": 1038,
+    "afterBenignUpdateScrollY": 1038,
+    "afterSearchScrollY": 1038,
+    "scrollHeightAfterOpen": 2731,
+    "scrollTarget": {
+      "top": 1038,
+      "max": 1887,
+      "scrollHeight": 2731
+    },
+    "parentUpdate": "booking-toggle",
+    "jumpAfterUpdate": 0,
+    "jumpAfterSearch": 0,
+    "resetToOpenAfterUpdate": false,
+    "resetToOpenAfterSearch": false,
+    "explicitSearchMounted": true,
+    "headingStillFluege": true,
+    "rapidClose": {
+      "kind": "return-after-escape",
+      "overviewHeadingWaitVisible": true,
+      "overviewHeadingTopPx": 1.5,
+      "scrollY": 565,
+      "note": "Waits for detail mount and focuses the in-detail back control before Escape. Not a measurement that deferred rAF/timeout were still queued."
+    }
+  }
+}

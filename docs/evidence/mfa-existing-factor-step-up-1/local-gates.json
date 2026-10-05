@@ -1,0 +1,61 @@
+{
+  "kind": "local-gates",
+  "writer": "Jetnity MFA existing factor step-up 1 / Generation 1",
+  "session": "bc-7a6af588-d7cf-4bd4-8707-fb4b3b8127a6",
+  "model": "cursor-grok-4.6-high-fast",
+  "capturedAt": "2026-09-22T11:36:00Z",
+  "workingTreeAtCapture": "includes typecheck and export-use fixes not yet committed",
+  "commands": {
+    "unit": {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test \"lib/**/*.test.ts\" \"scripts/operating-mode-guard.test.mjs\"",
+      "result": "3771 pass / 0 fail",
+      "durationMs": 30226
+    },
+    "ownedMfa": {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/auth/mfa.test.ts lib/auth/account-security-faktoren.test.ts lib/auth/admin-aal.test.ts lib/auth/admin-aal-wiring.test.ts lib/auth/admin-access.test.ts lib/auth/admin-aal2-alignment.test.ts lib/auth/account-mfa-step-up.test.ts lib/auth/ap5-s1-security-ui.test.ts lib/auth/ap5-s4-mfa-step-up.test.ts lib/auth/mfa-dialog-a11y.test.ts lib/auth/account-security-lage.test.ts lib/auth/account-security-fehler.test.ts",
+      "result": "142 pass / 0 fail"
+    },
+    "typecheck": {
+      "command": "npx tsc -p tsconfig.json --noEmit",
+      "result": "pass after TS2367 fix in lib/auth/mfa.test.ts"
+    },
+    "lint": {
+      "command": "npx eslint .",
+      "result": "0 errors, 136 pre-existing warnings; owned files 0 errors / 0 warnings"
+    },
+    "hygiene": {
+      "check:dead": "pass, 0 orphan modules",
+      "check:exports": "pass after MFA_FAKTOREN_UNLESBAR used by mfa.test.ts",
+      "check:deps": "pass",
+      "check:api-schutz": "pass, 12 admin routes",
+      "check:schema-bezug": "pass"
+    },
+    "build": {
+      "command": "npm run build",
+      "result": "pass",
+      "next": "16.3.3"
+    },
+    "auth:pruefen": {
+      "command": "npm run auth:pruefen",
+      "result": "UNAVAILABLE",
+      "detail": "SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401). Not a skipped-secret PASS."
+    }
+  },
+  "ciOnE3c1c3d1": {
+    "run": "35722111562",
+    "authJob": { "id": "106727158523", "conclusion": "success" },
+    "typecheckJob": {
+      "id": "106727158882",
+      "conclusion": "failure",
+      "error": "lib/auth/mfa.test.ts(329,18): error TS2367"
+    },
+    "note": "TS2367 is fixed in the later head. Auth success on e3c1c3d1 is not a gate for the later head."
+  },
+  "limitations": [
+    "No real authenticated device-switch retest",
+    "No Production factor/challenge/verify/account writes",
+    "Synthetic SDK fixtures only",
+    "Consumer dialog proof is MFATotpDialog markup plus helper/AAL contracts, not a hydrated Next /login or /admin/mfa route",
+    "Local auth:pruefen UNAVAILABLE (401)"
+  ]
+}

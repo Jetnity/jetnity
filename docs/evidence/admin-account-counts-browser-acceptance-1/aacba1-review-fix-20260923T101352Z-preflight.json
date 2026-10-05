@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-23T10:13:53.159Z",
+  "selectedRoute": "official-supabase-cli-local-development + docker-api-runtime + playwright-chrome",
+  "implementation": "preflight-and-source-only",
+  "canRunFullStack": false,
+  "toolingReadyForLaterImplementation": false,
+  "blockers": [
+    {
+      "id": "container-runtime",
+      "exact": "No Docker-compatible runtime or local Docker API socket.",
+      "command": "command -v docker; docker info; ls /var/run/docker.sock",
+      "error": "command not found / socket absent",
+      "policy": "Official Supabase local-development requires a usable container manager. Privileged container/daemon setup, remote Docker context, and hosted Supabase fallback are forbidden.",
+      "severity": "execution-blocker",
+      "notAProductionIncident": true
+    },
+    {
+      "id": "supabase-cli",
+      "exact": "Pinned local supabase binary is not available. Unpinned npx --yes latest is forbidden.",
+      "severity": "execution-blocker",
+      "notAProductionIncident": true
+    }
+  ],
+  "container": {
+    "present": false,
+    "usable": false,
+    "commands": [],
+    "sockets": [],
+    "note": "No docker/podman/nerdctl binary and no local Docker/Podman socket.",
+    "severity": "execution-blocker",
+    "notAProductionIncident": true
+  },
+  "supabase": {
+    "available": false,
+    "via": null,
+    "pinned": false,
+    "version": null,
+    "helpVerified": false,
+    "startRequiresContainerRuntime": true,
+    "officialRoute": "https://supabase.com/docs/guides/local-development",
+    "totpDocs": "https://supabase.com/docs/guides/auth/auth-mfa/totp",
+    "note": "Pinned supabase binary absent. Unpinned npx --yes / remote latest resolution is forbidden. Treat as a NOT RUN tooling prerequisite, not a silent install."
+  },
+  "browser": {
+    "available": true,
+    "chromeVersion": "Google Chrome 148.0.7778.96",
+    "playwrightIsolated": true,
+    "closeProved": true,
+    "note": "Use Playwright launchPersistentContext with a run-owned user-data-dir and an explicit child env. Close is required on every path before profile removal. A shared Chrome user-data-dir screenshot hung in this environment and is not the acceptance path."
+  },
+  "node": {
+    "available": true,
+    "version": "v22.14.0"
+  },
+  "environment": {
+    "hostedMarkersPresent": [],
+    "parentHasHostedSupabaseNames": true,
+    "childHasHostedSupabaseNames": false,
+    "childForbiddenKeyCount": 0,
+    "forbiddenConnectionKeyCount": 4,
+    "outboundProviderKeyCount": 0,
+    "usedAllowlistedChildEnv": true,
+    "privateHome": true,
+    "note": "Parent process may contain hosted connector names. Classification uses names only. Actual subprocesses receive a rebuilt allowlisted environment with a private HOME and no inherited connector/database/provider credentials."
+  },
+  "limitations": [
+    "This command does not start a stack, provision GoTrue, or drive the application even if tooling is present.",
+    "Exact self-hosted gateway/image versions are NOT RUN until an owned `supabase start` is implemented and succeeds.",
+    "Do not assume historical Compose or Kong defaults.",
+    "Hosted Production/Development and the parent connector credentials are unused.",
+    "Missing Docker is an execution blocker, not a Production P0 incident."
+  ]
+}

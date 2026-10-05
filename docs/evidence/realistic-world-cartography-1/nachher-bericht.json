@@ -1,0 +1,44 @@
+{
+  "marke": "nachher",
+  "pfad": "/ui-audit/account?zustand=welt",
+  "herkuenfte": [
+    "http://127.0.0.1:3499"
+  ],
+  "fremdeHerkuenfte": [],
+  "befunde": [
+    {
+      "breite": "390",
+      "overflow": 0,
+      "marker": 3,
+      "kleinsteTrefferflaeche": 44,
+      "pfadElemente": 3,
+      "svgKnoten": 22,
+      "titel": "Deine Welt",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. 5 Orte auf der Karte · 1 ohne gespeicherte Koordinaten 2 Länder aus gespeicherten Ländercodes.",
+      "konsole": []
+    },
+    {
+      "breite": "1280",
+      "overflow": 0,
+      "marker": 3,
+      "kleinsteTrefferflaeche": 44,
+      "pfadElemente": 3,
+      "svgKnoten": 22,
+      "titel": "Deine Welt",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. 5 Orte auf der Karte · 1 ohne gespeicherte Koordinaten 2 Länder aus gespeicherten Ländercodes.",
+      "konsole": []
+    },
+    {
+      "breite": "1440",
+      "overflow": 0,
+      "marker": 3,
+      "kleinsteTrefferflaeche": 44,
+      "pfadElemente": 3,
+      "svgKnoten": 22,
+      "titel": "Deine Welt",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. 5 Orte auf der Karte · 1 ohne gespeicherte Koordinaten 2 Länder aus gespeicherten Ländercodes.",
+      "konsole": []
+    }
+  ],
+  "ok": true
+}

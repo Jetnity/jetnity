@@ -1,0 +1,201 @@
+'use client'
+
+import * as React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Menu, Sun, Moon, ChevronDown, LogOut, UserCircle2, Sparkles } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import { globalesAbmeldenMenueOffen } from '@/lib/auth/globales-sign-out'
+import { useAdminShell } from '@/app/(admin)/admin/layout'
+import { AdminNavigationSearchTrigger } from '@/components/admin/AdminNavigationSearch'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
+
+type Props = {
+  title?: string
+  onToggleSidebar?: () => void
+  showMenuButton?: boolean
+  rightSlot?: React.ReactNode
+}
+
+const PFAD_LABEL: Record<string, string> = {
+  admin: 'Steuerzentrale',
+  users: 'Nutzer',
+  payments: 'Zahlungen',
+  security: 'Security',
+  'system-health': 'System Health',
+  'provider-ops': 'Provider & Kosten',
+  analytics: 'Analytics',
+  content: 'Content',
+  marketing: 'Marketing',
+  settings: 'Einstellungen',
+  localization: 'Lokalisierung',
+}
+
+function buildCrumbs(pathname: string) {
+  const parts = (pathname || '/').split('/').filter(Boolean)
+  const adminIdx = parts.indexOf('admin')
+  const segs = adminIdx >= 0 ? parts.slice(adminIdx) : parts
+  const items = segs.map((s, i) => {
+    const href = '/' + segs.slice(0, i + 1).join('/')
+    const pretty =
+      PFAD_LABEL[s] ??
+      decodeURIComponent(s)
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, (m) => m.toUpperCase())
+    return { href, label: pretty || 'Steuerzentrale' }
+  })
+  if (items.length === 0 || items[0]?.href !== '/admin') {
+    items.unshift({ href: '/admin', label: 'Steuerzentrale' })
+  }
+  return items
+}
+
+export default function AdminTopbar({
+  title,
+  onToggleSidebar,
+  showMenuButton = true,
+  rightSlot,
+}: Props) {
+  const pathname = usePathname()
+  const crumbs = React.useMemo(() => buildCrumbs(pathname || '/'), [pathname])
+  const heading = title ?? crumbs.at(-1)?.label ?? 'Steuerzentrale'
+  const { isDark, toggleTheme } = useAdminShell()
+
+  const [userOpen, setUserOpen] = React.useState(false)
+  const userRef = React.useRef<HTMLDivElement | null>(null)
+  React.useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node
+      if (userOpen && userRef.current && !userRef.current.contains(t)) {
+        setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_schliessen'))
+      }
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_schliessen'))
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onEsc)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onEsc)
+    }
+  }, [userOpen])
+
+  return (
+    <header
+      role="banner"
+      className={cn(
+        'sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md',
+        'border-border',
+      )}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          {showMenuButton && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              aria-label="Sidebar umschalten"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          )}
+
+          <div className="min-w-0">
+            <div className="flex shrink-0 items-center gap-2">
+              <h1 className="truncate text-sm font-semibold leading-6 sm:text-base">{heading}</h1>
+            </div>
+
+            {crumbs.length > 1 ? <nav aria-label="Breadcrumb" className="mt-0.5 hidden text-xs sm:block">
+              <ol className="flex flex-wrap items-center gap-1 text-muted-foreground">
+                {crumbs.map((c, i) => (
+                  <li key={c.href} className="inline-flex items-center gap-1">
+                    {i > 0 && <span aria-hidden>/</span>}
+                    {i < crumbs.length - 1 ? (
+                      <Link
+                        href={c.href}
+                        className="hover:text-foreground hover:underline underline-offset-4"
+                      >
+                        {c.label}
+                      </Link>
+                    ) : (
+                      <span aria-current="page" className="text-foreground">
+                        {c.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav> : <p className="text-xs text-muted-foreground">Interner Betrieb</p>}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <AdminNavigationSearchTrigger surface="desktop" />
+
+          <span
+            className="hidden items-center gap-2 px-2 text-xs text-muted-foreground xl:inline-flex"
+            title={ADMIN_EHRLICHE_TEXTE.copilotFolgtHinweis}
+          >
+            <Sparkles aria-hidden className="h-3.5 w-3.5" />
+            Copilot Pro
+            <span className="rounded-full border border-border px-2 py-0.5 text-[10px]">In Planung</span>
+          </span>
+
+          <button
+            type="button"
+            aria-label="Theme umschalten"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
+            onClick={toggleTheme}
+            title={isDark ? 'Helles Theme' : 'Dunkles Theme'}
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+
+          <div className="relative" ref={userRef}>
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={userOpen}
+              aria-controls="admin-user-menu"
+              onClick={() => setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_umschalten'))}
+              aria-label="Kontomenü"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
+            >
+              <UserCircle2 className="h-5 w-5" />
+              <span className="hidden sm:inline">Konto</span>
+              <ChevronDown className="h-4 w-4 opacity-70" />
+            </button>
+
+            <GlobalesAbmeldenForm
+              action={signOutToAdminLoginAction}
+              fehlerClassName="mt-2 max-w-[14rem] text-xs"
+            >
+              {userOpen ? (
+                <div
+                  id="admin-user-menu"
+                  role="menu"
+                  aria-label="Kontomenü"
+                  className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-md"
+                >
+                  <button
+                    role="menuitem"
+                    type="submit"
+                    className="flex min-h-11 w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-muted/60"
+                  >
+                    <LogOut className="h-4 w-4" /> Abmelden
+                  </button>
+                </div>
+              ) : null}
+            </GlobalesAbmeldenForm>
+          </div>
+
+          {rightSlot}
+        </div>
+      </div>
+    </header>
+  )
+}

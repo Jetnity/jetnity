@@ -1,0 +1,29 @@
+Static import / runtime-boundary check (this slice)
+
+1) No production import of the new fixture module
+   rg -n "lib/providers/hotelbeds|hbxHotelsFixtureNormalisieren"
+     --glob '!lib/providers/hotelbeds/**' --glob '!docs/**'
+   Result: no matches.
+
+2) Pre-existing string "hotelbeds" as an example providerId in
+   lib/commercial-provenance/commercial-provenance.test.ts is unchanged and
+   does not import this module.
+
+3) lib/hotels/factory.ts still returns null and does not mention hotelbeds/hbx.
+
+4) adapter.ts / contracts.ts contain no process.env, fetch(, http client,
+   createHmac, X-Signature, mTLS, apiKey or secret factory.
+
+5) createHash('sha256') is used only to mint an opaque Jetnity ID from rateKey.
+   It is not a signature factory. Tests assert createHmac and X-Signature
+   are absent.
+
+6) Fixture tests are not an HBX API compatibility claim, not live prices,
+   and not a commercial contract/access claim.
+
+Currency rule reused read-only (implemented locally, not imported from
+commercial-provenance):
+- trim, uppercase, /^[A-Z]{3}$/
+- same as lib/hotels/schema.ts `waehrung` and commercialWaehrungLesen
+- hotelOptionLesen is the final HotelOption gate
+- requestedCurrency != offer currency => reject, no FX

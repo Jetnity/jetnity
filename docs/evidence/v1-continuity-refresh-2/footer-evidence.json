@@ -1,0 +1,17 @@
+{
+  "commentId": 5778458780,
+  "url": "https://github.com/Jetnity/jetnity/pull/546#issuecomment-5778458780",
+  "user": "cursor[bot]",
+  "createdAt": "2026-09-22T14:37:03Z",
+  "textPrefix": "Taking a look!",
+  "htmlContainsOpenInWeb": true,
+  "htmlContainsOpenInCursor": true,
+  "sessionId": "bc-a65f0017-f2c2-4617-a825-7197c4409c44",
+  "openInWeb": "https://cursor.com/agents/bc-a65f0017-f2c2-4617-a825-7197c4409c44?cursor_ref=pr_footer&cursor_cta=open_in_web",
+  "openInCursor": "https://cursor.com/background-agent?bcId=bc-a65f0017-f2c2-4617-a825-7197c4409c44&cursor_ref=pr_footer&cursor_cta=open_in_cursor",
+  "tlConfirmationComment": 5778475747,
+  "uiRenamePerformed": false,
+  "observedDisplayName": "Current startup handoff pointers",
+  "modelEvidenceClass": "cursor-cloud run-info originalModelName=cursor-grok-4.6-high-fast",
+  "notTlUiOrModelVerification": true
+}

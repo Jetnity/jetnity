@@ -1,0 +1,62 @@
+# Sanitized commands actually run by this session. No hosted URLs, DSNs or secrets.
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/caller-status.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/activation.test.ts \
+  lib/admin/account-counts-delivery/parser.test.ts
+# 29/29 PASS
+
+node --test \
+  scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mjs \
+  scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs \
+  scripts/db/admin-account-counts-1-local-proof.test.mjs
+# 17/17 PASS
+
+node --test scripts/db/admin-account-counts-http-proof-1.test.mjs
+# 21/21 PASS; live PostgREST transport not run
+
+node scripts/db/admin-account-counts-1-local-proof.mjs
+# 70/70 PASS; private socket; system 16/main unused
+
+node scripts/db/admin-account-counts-delivery-1-local-proof.mjs
+# 36/36 PASS
+
+node scripts/db/admin-account-counts-rollout-preparation-1/runner.mjs
+# 139/139 PASS; historical docs/evidence/admin-account-counts-rollout-preparation-1/local-rehearsal.json restored afterwards
+
+npm run check:dead
+npm run check:exports
+npm run check:operating-mode
+# all PASS
+
+# After invalidated freeze 0e7cebe6 CI 35852662043 Typecheck/Lint/Build FAILED:
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/effective-target.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/caller-status.test.ts
+# 22/22 PASS
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/activation.test.ts \
+  lib/admin/account-counts-delivery/parser.test.ts \
+  lib/admin/account-counts-delivery/schema-reference.test.ts \
+  lib/admin/account-counts-delivery/render.test.ts
+# 20/20 PASS
+
+# Addendum C1 — after exact merge of main 4381d20
+node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs
+# 34/34 PASS; controlled substitutes; not browser evidence
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/effective-target.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/caller-status.test.ts \
+  lib/admin/account-counts-delivery/activation.test.ts
+# 28/28 PASS
+
+node --test \
+  scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mjs \
+  scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs \
+  scripts/db/admin-account-counts-1-local-proof.test.mjs
+# 17/17 PASS

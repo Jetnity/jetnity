@@ -1,0 +1,62 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/before_initial_360x800.png",
+  "phase": "before",
+  "name": "initial_360x800",
+  "sha": "60249211f4153d7d93e8db5394447d6ee3205283",
+  "productTree": {
+    "head": "60249211f4153d7d93e8db5394447d6ee3205283",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? scripts/v1-manual-planning-entry-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T18:47:08.935Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/planen",
+  "viewport": {
+    "width": 360,
+    "height": 800
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "scrollY0-no-active-trip",
+  "sicht": {
+    "boxes": {
+      "zeiger": null,
+      "idee": {
+        "x": 37,
+        "y": 175,
+        "width": 286,
+        "height": 72
+      },
+      "manuell": {
+        "x": 37,
+        "y": 953,
+        "width": 286,
+        "height": 64
+      },
+      "ziel": null,
+      "gate": null
+    },
+    "zeigerVorhanden": false,
+    "zielVorhanden": false,
+    "ideeVorhanden": true,
+    "manuellVorhanden": true,
+    "gateVorhanden": false,
+    "zeigerSichtbar": false,
+    "ideeSichtbar": true,
+    "manuellSichtbar": false,
+    "overflow": {
+      "html": 0,
+      "body": 0,
+      "scrollY": 0,
+      "scrollHeight": 3552
+    },
+    "activeElement": {
+      "tag": "body",
+      "id": null,
+      "name": null,
+      "text": "Zum Inhalt\nJetnity\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschre"
+    }
+  },
+  "ok": true
+}

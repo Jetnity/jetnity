@@ -1,0 +1,275 @@
+{
+  "stand": "2026-09-30T15:09:23.108Z",
+  "dateien": [
+    "app/(public)/page.tsx",
+    "lib/seo/final-homepage.ts",
+    "components/home/HomeHero.tsx",
+    "components/home/HomeWerkzeuge.tsx",
+    "components/home/HomeProduktfenster.tsx",
+    "components/home/HomeBegleitung.tsx",
+    "components/home/HomeUnterschied.tsx",
+    "components/home/HomeInspiration.tsx",
+    "components/home/HomeVertrauen.tsx"
+  ],
+  "fehler": [],
+  "ergebnis": "PASS",
+  "browser": [
+    {
+      "name": "360x800",
+      "width": 360,
+      "height": 800,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 536,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "390x844",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 537,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "768x1024",
+      "width": 768,
+      "height": 1024,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 439,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1024x768",
+      "width": 1024,
+      "height": 768,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 547,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1280x800",
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 519,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 463,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": true,
+        "formBottom": 463,
+        "eingabePx": 16,
+        "knopfPx": 48,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "text-200-360x800",
+      "width": 360,
+      "height": 800,
+      "text200": true,
+      "status": 200,
+      "dom": {
+        "overflow": false,
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "title": "Deine ganze Reise. Intelligent an einem Ort. – Jetnity",
+        "canonical": "https://jetnity.com",
+        "robots": "noindex, nofollow",
+        "definition": true,
+        "modi": true,
+        "produktvorschau": true,
+        "formSichtbar": false,
+        "formBottom": 1529,
+        "eingabePx": 32,
+        "knopfPx": 96,
+        "gebrochenH1": [],
+        "gebrochenAugenbraue": [],
+        "gebrochenDefinition": [],
+        "cta": true,
+        "graph": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://jetnity.com/#organization\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"email\":\"info@jetnity.ch\"},{\"@type\":\"WebSite\",\"@id\":\"https://jetnity.com/#website\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"inLanguage\":\"de\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}},{\"@type\":\"SoftwareApplication\",\"@id\":\"https://jetnity.com/#application\",\"name\":\"Jetnity\",\"url\":\"https://jetnity.com/\",\"applicationCategory\":\"TravelApplication\",\"operatingSystem\":\"Web\",\"description\":\"Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.\",\"publisher\":{\"@id\":\"https://jetnity.com/#organization\"}}]}"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    }
+  ]
+}

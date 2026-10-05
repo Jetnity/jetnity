@@ -1,0 +1,1787 @@
+{
+  "kind": "registration-consent-interaction-1",
+  "phase": "before",
+  "expectPass": false,
+  "productTree": {
+    "head": "824286f69e8eae560999a9f4d0e0869390c280cc",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M next-env.d.ts",
+      "?? docs/evidence/registration-consent-interaction-1/"
+    ]
+  },
+  "capturedAt": "2026-09-22T10:06:47.624Z",
+  "browserNote": {
+    "chromium": "hydrated Playwright Chromium — emulated 390/320 touch, not a physical iPhone",
+    "webkit": "Playwright WebKit unavailable: Error: browserType.launch: . Not real iPhone/Safari evidence."
+  },
+  "reports": [
+    {
+      "engine": "chromium-desktop",
+      "available": true,
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "hasTouch": false,
+      "blockedRequests": [],
+      "cases": [
+        {
+          "name": "controlled-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "controlled-checked-mouse",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-false",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-true",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "indeterminate",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": true,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "mixed",
+            "visualState": "indeterminate",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "disabled",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-box-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-external-label",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "legal-links",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "privacy": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms",
+              "/privacy"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "keyboard-space",
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "layout",
+          "metrics": {
+            "overflow": false,
+            "input": {
+              "width": 1,
+              "height": 1
+            },
+            "label": {
+              "width": 384,
+              "height": 48
+            },
+            "submit": {
+              "width": 416,
+              "height": 44
+            },
+            "inputMeets44": false,
+            "roleCheckboxOnPage": 8,
+            "nativeCheckboxOnPage": 8
+          }
+        }
+      ],
+      "failures": [
+        "controlled mouse: native checked after one click",
+        "controlled mouse: visual checked after one click",
+        "controlled mouse: one true callback",
+        "controlled mouse: second callback false",
+        "controlled-checked unchecks once",
+        "controlled-checked one callback",
+        "uncontrolled default false becomes checked",
+        "uncontrolled visual follows native",
+        "uncontrolled one callback",
+        "uncontrolled default true unchecks",
+        "uncontrolled visual unchecks",
+        "indeterminate click becomes checked",
+        "indeterminate one true callback",
+        "register box click checks once",
+        "submit enables after accept",
+        "register box one callback",
+        "native input hit area is at least 44px"
+      ]
+    },
+    {
+      "engine": "chromium-iphone-390",
+      "available": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "hasTouch": true,
+      "blockedRequests": [],
+      "cases": [
+        {
+          "name": "controlled-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "controlled-checked-mouse",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-false",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-true",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "indeterminate",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": true,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "mixed",
+            "visualState": "indeterminate",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "disabled",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-box-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-external-label",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "legal-links",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "privacy": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms",
+              "/privacy"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "keyboard-space",
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-touch",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "layout",
+          "metrics": {
+            "overflow": false,
+            "input": {
+              "width": 1,
+              "height": 1
+            },
+            "label": {
+              "width": 326,
+              "height": 48
+            },
+            "submit": {
+              "width": 358,
+              "height": 44
+            },
+            "inputMeets44": false,
+            "roleCheckboxOnPage": 8,
+            "nativeCheckboxOnPage": 8
+          }
+        }
+      ],
+      "failures": [
+        "controlled mouse: native checked after one click",
+        "controlled mouse: visual checked after one click",
+        "controlled mouse: one true callback",
+        "controlled mouse: second callback false",
+        "controlled-checked unchecks once",
+        "controlled-checked one callback",
+        "uncontrolled default false becomes checked",
+        "uncontrolled visual follows native",
+        "uncontrolled one callback",
+        "uncontrolled default true unchecks",
+        "uncontrolled visual unchecks",
+        "indeterminate click becomes checked",
+        "indeterminate one true callback",
+        "register box click checks once",
+        "submit enables after accept",
+        "register box one callback",
+        "touch tap checks once",
+        "touch one callback",
+        "native input hit area is at least 44px",
+        "no overflow at 200% text"
+      ]
+    },
+    {
+      "engine": "chromium-320",
+      "available": true,
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hasTouch": true,
+      "blockedRequests": [],
+      "cases": [
+        {
+          "name": "controlled-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "controlled-checked-mouse",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-false",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "uncontrolled-default-true",
+          "before": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 2,
+            "callbacks": [
+              false,
+              true
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "indeterminate",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": true,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "mixed",
+            "visualState": "indeterminate",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "disabled",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": true,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-box-mouse",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 4,
+            "callbacks": [
+              true,
+              false,
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-external-label",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "legal-links",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "privacy": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [
+              "/terms",
+              "/privacy"
+            ],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "keyboard-space",
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "true",
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": false,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "revoked": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "register-touch",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          },
+          "after": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 1,
+            "roleAriaChecked": "false",
+            "visualState": "unchecked",
+            "callbackCount": 2,
+            "callbacks": [
+              true,
+              false
+            ],
+            "submitDisabled": true,
+            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "1",
+            "inputWidth": 1,
+            "inputHeight": 1,
+            "accessibleCheckboxCount": 2
+          }
+        },
+        {
+          "name": "layout",
+          "metrics": {
+            "overflow": false,
+            "input": {
+              "width": 1,
+              "height": 1
+            },
+            "label": {
+              "width": 256,
+              "height": 72
+            },
+            "submit": {
+              "width": 288,
+              "height": 44
+            },
+            "inputMeets44": false,
+            "roleCheckboxOnPage": 8,
+            "nativeCheckboxOnPage": 8
+          }
+        }
+      ],
+      "failures": [
+        "controlled mouse: native checked after one click",
+        "controlled mouse: visual checked after one click",
+        "controlled mouse: one true callback",
+        "controlled mouse: second callback false",
+        "controlled-checked unchecks once",
+        "controlled-checked one callback",
+        "uncontrolled default false becomes checked",
+        "uncontrolled visual follows native",
+        "uncontrolled one callback",
+        "uncontrolled default true unchecks",
+        "uncontrolled visual unchecks",
+        "indeterminate click becomes checked",
+        "indeterminate one true callback",
+        "register box click checks once",
+        "submit enables after accept",
+        "register box one callback",
+        "touch tap checks once",
+        "touch one callback",
+        "native input hit area is at least 44px",
+        "no overflow at 200% text"
+      ]
+    },
+    {
+      "engine": "webkit-iphone-390",
+      "available": false,
+      "limitation": "Error: browserType.launch: ",
+      "cases": [],
+      "failures": [
+        "webkit-iphone-390 unavailable: Error: browserType.launch: "
+      ]
+    }
+  ],
+  "hardFailures": [
+    "controlled mouse: native checked after one click",
+    "controlled mouse: visual checked after one click",
+    "controlled mouse: one true callback",
+    "controlled mouse: second callback false",
+    "controlled-checked unchecks once",
+    "controlled-checked one callback",
+    "uncontrolled default false becomes checked",
+    "uncontrolled visual follows native",
+    "uncontrolled one callback",
+    "uncontrolled default true unchecks",
+    "uncontrolled visual unchecks",
+    "indeterminate click becomes checked",
+    "indeterminate one true callback",
+    "register box click checks once",
+    "submit enables after accept",
+    "register box one callback",
+    "native input hit area is at least 44px",
+    "controlled mouse: native checked after one click",
+    "controlled mouse: visual checked after one click",
+    "controlled mouse: one true callback",
+    "controlled mouse: second callback false",
+    "controlled-checked unchecks once",
+    "controlled-checked one callback",
+    "uncontrolled default false becomes checked",
+    "uncontrolled visual follows native",
+    "uncontrolled one callback",
+    "uncontrolled default true unchecks",
+    "uncontrolled visual unchecks",
+    "indeterminate click becomes checked",
+    "indeterminate one true callback",
+    "register box click checks once",
+    "submit enables after accept",
+    "register box one callback",
+    "touch tap checks once",
+    "touch one callback",
+    "native input hit area is at least 44px",
+    "no overflow at 200% text",
+    "controlled mouse: native checked after one click",
+    "controlled mouse: visual checked after one click",
+    "controlled mouse: one true callback",
+    "controlled mouse: second callback false",
+    "controlled-checked unchecks once",
+    "controlled-checked one callback",
+    "uncontrolled default false becomes checked",
+    "uncontrolled visual follows native",
+    "uncontrolled one callback",
+    "uncontrolled default true unchecks",
+    "uncontrolled visual unchecks",
+    "indeterminate click becomes checked",
+    "indeterminate one true callback",
+    "register box click checks once",
+    "submit enables after accept",
+    "register box one callback",
+    "touch tap checks once",
+    "touch one callback",
+    "native input hit area is at least 44px",
+    "no overflow at 200% text"
+  ],
+  "pass": false
+}

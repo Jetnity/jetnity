@@ -1,0 +1,68 @@
+{
+  "mode": "fixed-actual-SecurityWidget",
+  "synthetic": true,
+  "signedInAdmin": false,
+  "physicalDevice": false,
+  "productionMutation": false,
+  "faelle": [
+    {
+      "name": "empty-payload",
+      "ok": true,
+      "leer": "Keine aufgezeichneten Events in diesem Zeitraum.",
+      "kpi": {
+        "Aufgezeichnete Events (24h)": "0",
+        "Aufgezeichnete Login-Fehler (24h)": "0",
+        "Aufgezeichnete Auffälligkeiten (24h)": "0",
+        "Gesperrte IPs": "0"
+      },
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "unmatched-filter",
+      "ok": true,
+      "leer": "Keine aufgezeichneten Events passen zu diesem Filter.",
+      "kpiUnveraendert": "1",
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "matched-filter",
+      "ok": true,
+      "zeilen": 1,
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "rows-199",
+      "ok": true,
+      "zeilen": 199,
+      "bound": false,
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "rows-200",
+      "ok": true,
+      "zeilen": 200,
+      "bound": true,
+      "filterOnBound": "Keine aufgezeichneten Events passen zu diesem Filter.",
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "failed-read",
+      "ok": true,
+      "kpi": "—",
+      "consoleErrors": [],
+      "listCalls": 1
+    },
+    {
+      "name": "unmatched-mobile",
+      "ok": true,
+      "leer": "Keine aufgezeichneten Events passen zu diesem Filter.",
+      "consoleErrors": [],
+      "listCalls": 1
+    }
+  ]
+}

@@ -1,0 +1,379 @@
+'use client'
+
+// components/layout/PublicNavbar.tsx
+//
+// Die öffentliche Leiste. Sie kennt die Sitzung.
+//
+// ---------------------------------------------------------------------------
+// Warum die Sitzung im Browser gelesen wird und nicht im Layout
+// ---------------------------------------------------------------------------
+//
+// Ein `createServerComponentClient()` in `app/(public)/layout.tsx` wäre der
+// kürzere Weg – und würde jede öffentliche Seite dynamisch machen, weil das
+// Layout dann Cookies liest. Die Startseite ist Marketing und soll statisch
+// bleiben.
+//
+// Diese Komponente ist ohnehin ein Client Component (Menü, aktiver Pfad). Sie
+// liest die Sitzung deshalb selbst: `getSession()` von `@supabase/ssr` schaut
+// dafür in die Cookies, die der Server gesetzt hat, und geht nicht ins Netz.
+// `onAuthStateChange` hält den Stand nach – eine Anmeldung in einem anderen Tab
+// oder ein Abmelden erreichen die Leiste damit ohne Neuladen.
+//
+// Sicherheit: Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung.
+// Über Zugriff entscheiden weiterhin Middleware, Server Components und RLS.
+//
+// ---------------------------------------------------------------------------
+// Warum nach dem Abmelden erneut gelesen wird
+// ---------------------------------------------------------------------------
+//
+// `signOutAction()` löscht die Cookies auf dem Server und leitet nur nach
+// bestätigtem Erfolg weiter. Die Leiste liegt im Layout und wird dabei nicht
+// neu aufgebaut; `onAuthStateChange` schweigt, weil der Browser-Client nicht
+// selbst abgemeldet hat. Ohne erneutes Lesen stünde nach dem Abmelden weiter
+// „Abmelden“ da. Ein unbestätigter Fehler bleibt sichtbar und retrybar.
+//
+// Gelesen wird deshalb nach jedem Wechsel des Pfads und nach jedem
+// abgeschlossenen Vorgang. Nicht angenommen: `getSession()` schaut jedes Mal in
+// die Cookies, und nur was dort liegt, entscheidet – ein gescheitertes Abmelden
+// darf nicht als beendete Sitzung erscheinen (`standAusSitzung`).
+
+import * as React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useFormStatus } from 'react-dom'
+import { LogOut, Menu, X } from 'lucide-react'
+
+import { signOutAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import GastCreateLink from '@/components/trips/GastCreateLink'
+import {
+  HAUPTNAVIGATION,
+  sitzungseintraege,
+  standAusSitzung,
+  type Navigationseintrag,
+  type Sitzungsstand,
+} from '@/lib/auth/oeffentliche-navigation'
+import { createBrowserClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils'
+
+const MOBILE_NAV_ID = 'oeffentliche-mobile-navigation'
+const FOKUS_RING =
+  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
+
+export default function PublicNavbar() {
+  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [sitzung, setSitzung] = React.useState<Sitzungsstand>('unbekannt')
+  const menuKnopf = React.useRef<HTMLButtonElement>(null)
+
+  React.useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
+
+  // Ohne Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung – bleibt
+  // der Stand `unbekannt`. Die Leiste behauptet dann nichts, statt die Seite mit
+  // einer Ausnahme abzureissen.
+  const clientHolen = () => {
+    try {
+      return createBrowserClient()
+    } catch {
+      return null
+    }
+  }
+
+  const lebt = React.useRef(true)
+  React.useEffect(() => {
+    lebt.current = true
+    return () => {
+      lebt.current = false
+    }
+  }, [])
+
+  const sitzungLesen = React.useCallback(async () => {
+    const client = clientHolen()
+    if (!client) return
+
+    const { data } = await client.auth.getSession()
+    if (lebt.current) setSitzung(standAusSitzung(Boolean(data.session)))
+  }, [])
+
+  // Nach jedem Wechsel des Pfads: Eine Anmeldung leitet auf `/reisen`, ein
+  // Abmelden auf `/`. Beide erreichen die Leiste sonst nicht, weil das Layout
+  // bestehen bleibt.
+  React.useEffect(() => {
+    void sitzungLesen()
+  }, [pathname, sitzungLesen])
+
+  // Eine Anmeldung in einem anderen Tab erreicht die Leiste ohne Neuladen.
+  React.useEffect(() => {
+    const client = clientHolen()
+    if (!client) return
+
+    const { data: beobachter } = client.auth.onAuthStateChange((_ereignis, aktuelleSitzung) => {
+      if (lebt.current) setSitzung(standAusSitzung(Boolean(aktuelleSitzung)))
+    })
+
+    return () => beobachter.subscription.unsubscribe()
+  }, [])
+
+  const isActive = (href: string) => {
+    if (href === '/reisen') return pathname === '/reisen' || pathname.startsWith('/reisen/')
+    if (href === '/account') return pathname === '/account' || pathname.startsWith('/account/')
+    return false
+  }
+
+  // Sprungmarken wie /#entdecken aendern den Pfad nicht, das Menue muss sich
+  // trotzdem schliessen, damit das Ziel sichtbar wird.
+  const closeMobile = () => setMobileOpen(false)
+
+  React.useEffect(() => {
+    if (!mobileOpen) return
+    const schliessen = (ereignis: KeyboardEvent) => {
+      if (ereignis.key !== 'Escape') return
+      ereignis.preventDefault()
+      setMobileOpen(false)
+      menuKnopf.current?.focus()
+    }
+    document.addEventListener('keydown', schliessen)
+    return () => document.removeEventListener('keydown', schliessen)
+  }, [mobileOpen])
+
+  const eintraege = sitzungseintraege(sitzung)
+
+  return (
+    <header
+      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
+                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
+    >
+      <div className="mx-auto flex min-h-[72px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-2 sm:px-8">
+        <Link
+          href="/"
+          aria-label="Jetnity Startseite"
+          className={cn(
+            '-mx-2 inline-flex min-h-11 shrink-0 items-center px-2 md:px-1 lg:px-2',
+            FOKUS_RING,
+          )}
+        >
+          {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
+          {/* 32px nur zwischen md und lg: dort sitzen Navigation und Sitzung in derselben 72px-Zeile. */}
+          <Image
+            src="/brand/jetnity-logo.png"
+            alt=""
+            width={384}
+            height={128}
+            priority
+            unoptimized
+            sizes="(min-width: 1024px) 144px, (min-width: 768px) 96px, 144px"
+            className="h-[48px] w-auto md:h-[32px] lg:h-[48px]"
+            style={{ width: 'auto' }}
+          />
+        </Link>
+
+        <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
+          {HAUPTNAVIGATION.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
+                // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
+                'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
+                FOKUS_RING,
+                isActive(item.href)
+                  ? 'bg-surface-100 text-brand-800'
+                  : 'text-ink-800 hover:bg-white hover:text-brand-800'
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex">
+          {eintraege.map((eintrag) => (
+            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
+          ))}
+          <GastCreateLink
+            createHref="/planen"
+            createLabel="Reise planen"
+            className={cn(
+              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0',
+              FOKUS_RING,
+            )}
+          />
+        </div>
+
+        <button
+          ref={menuKnopf}
+          type="button"
+          aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
+          aria-expanded={mobileOpen}
+          aria-controls={MOBILE_NAV_ID}
+          onClick={() => setMobileOpen((current) => !current)}
+          className={cn(
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden',
+            FOKUS_RING,
+          )}
+        >
+          {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+        </button>
+      </div>
+
+      <nav
+        id={MOBILE_NAV_ID}
+        aria-label="Mobile Navigation"
+        hidden={!mobileOpen}
+        inert={!mobileOpen}
+        className="min-h-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
+      >
+        <div className="grid gap-1">
+          {HAUPTNAVIGATION.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={closeMobile}
+              className={cn(
+                'inline-flex min-h-11 items-center rounded-2xl px-4 text-sm font-semibold text-ink-900 hover:bg-white',
+                FOKUS_RING,
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
+          {eintraege.map((eintrag) => (
+            <Sitzungseintrag
+              key={eintrag.label}
+              eintrag={eintrag}
+              mobil
+              onFertig={closeMobile}
+              onNachlesen={sitzungLesen}
+            />
+          ))}
+          <GastCreateLink
+            createHref="/planen"
+            createLabel="Reise planen"
+            onClick={closeMobile}
+            className={cn(
+              'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
+              FOKUS_RING,
+            )}
+          />
+        </div>
+      </nav>
+    </header>
+  )
+}
+
+/**
+ * Ein sitzungsabhängiger Eintrag: Link oder Vorgang.
+ *
+ * Der Vorgang ist ein Formular auf `signOutAction()`. Die Server Action löscht
+ * die Sitzungscookies und leitet nur nach bestätigtem Erfolg auf die Startseite
+ * – ein Abmelden im Browser allein liesse die Cookies des Servers stehen.
+ */
+function Sitzungseintrag({
+  eintrag,
+  mobil = false,
+  onFertig,
+  onNachlesen,
+}: {
+  eintrag: Navigationseintrag
+  mobil?: boolean
+  onFertig?: () => void
+  onNachlesen: () => void
+}) {
+  if (eintrag.art === 'link') {
+    return mobil ? (
+      <Link
+        href={eintrag.href}
+        onClick={onFertig}
+        className={cn(
+          'flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+          FOKUS_RING,
+        )}
+      >
+        {eintrag.label}
+      </Link>
+    ) : (
+      <Link
+        href={eintrag.href}
+        className={cn(
+          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+          FOKUS_RING,
+        )}
+      >
+        {eintrag.label}
+      </Link>
+    )
+  }
+
+  return (
+    <GlobalesAbmeldenForm
+      action={signOutAction}
+      className={mobil ? undefined : 'flex flex-col items-end'}
+      fehlerClassName={
+        mobil
+          ? 'text-xs font-medium text-red-800'
+          : 'max-w-[14rem] text-right text-xs font-medium text-red-800'
+      }
+    >
+      <AbmeldenKnopf label={eintrag.label} mobil={mobil} onNachlesen={onNachlesen} />
+    </GlobalesAbmeldenForm>
+  )
+}
+
+/**
+ * Der Knopf im Formular – und die Stelle, die den Abschluss des Vorgangs merkt.
+ *
+ * `useFormStatus` gilt nur innerhalb des Formulars, deshalb ist das eine eigene
+ * Komponente. Sobald der Vorgang von „läuft“ auf „fertig“ wechselt, liest die
+ * Leiste die Sitzung erneut. Der Weg über den Server ist nötig, weil ein
+ * Abmelden im Browser die Cookies des Servers stehen liesse – die Leiste erfährt
+ * davon aber nur, wenn sie danach selbst nachsieht.
+ */
+function AbmeldenKnopf({
+  label,
+  mobil,
+  onNachlesen,
+}: {
+  label: string
+  mobil: boolean
+  onNachlesen: () => void
+}) {
+  const { pending } = useFormStatus()
+  const lief = React.useRef(false)
+
+  React.useEffect(() => {
+    if (pending) {
+      lief.current = true
+      return
+    }
+    if (lief.current) {
+      lief.current = false
+      onNachlesen()
+    }
+  }, [pending, onNachlesen])
+
+  return (
+    <button
+      type="submit"
+      className={
+        mobil
+          ? cn(
+              'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+              FOKUS_RING,
+            )
+          : cn(
+              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+              FOKUS_RING,
+            )
+      }
+    >
+      <LogOut className="h-4 w-4" aria-hidden="true" />
+      {label}
+    </button>
+  )
+}

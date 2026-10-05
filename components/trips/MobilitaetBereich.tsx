@@ -1,0 +1,533 @@
+'use client'
+
+// components/trips/MobilitaetBereich.tsx
+//
+// Ein Bereich für Bahn, Bus, Fähre und Transfer. Bestand und ehrliche
+// Abdeckung zuerst, darunter Suche und manuelle Erfassung.
+// Keine Fake-Angebote.
+
+import * as React from 'react'
+import { ArrowRightLeft, Loader2 } from 'lucide-react'
+
+import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import MietwagenBereich from '@/components/trips/MietwagenBereich'
+import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
+import { mobilitySucheFehlerAntwort, mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
+import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
+import { MOBILITY_MODE_BEZEICHNUNG } from '@/lib/mobility/domain'
+import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
+import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import { mobilitySucheStartetAutomatisch } from '@/lib/mobility/suche-ausloeser'
+import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
+import { mietwagenBestand } from '@/lib/rental-cars/bestand'
+import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
+import { datumKurz } from '@/lib/trips/datum-anzeige'
+import {
+  ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_FLAECHE_KLASSE,
+  ORGANISIEREN_PRIMAR_KLASSE,
+  ORGANISIEREN_TEXTAREA_KLASSE,
+} from '@/lib/trips/organize-premium-experience-6'
+import { cn } from '@/lib/utils'
+import { MOBILITY_MODES, type MobilityMode, type Trip, type TripItem } from '@/types/trips'
+
+const UNTERBEREICHE = ['verbindungen', 'mietwagen'] as const
+type MobilitaetUnterbereich = (typeof UNTERBEREICHE)[number]
+
+function kanteTitel(kante: Bewegungskante): string {
+  const route = `${kante.originName} → ${kante.destinationName}`
+  return kante.date ? `${route} · ${datumKurz(kante.date)}` : route
+}
+
+function modusText(punkt: TripItem): string {
+  return punkt.mobilityMode ? MOBILITY_MODE_BEZEICHNUNG[punkt.mobilityMode] : 'Verbindung'
+}
+
+const MODI = MOBILITY_MODES
+
+export default function MobilitaetBereich({
+  reise,
+  ohneTag = [],
+  onBuchungsstatus,
+  onManuellAnlegen,
+  onMietwagenAnlegen,
+}: {
+  reise: Trip
+  ohneTag?: readonly TripItem[]
+  onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onManuellAnlegen?: (eingabe: MobilityManuellEingabe) => Promise<string | null>
+  onMietwagenAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
+}) {
+  const [meldung, setMeldung] = React.useState('')
+  const [laeuft, setLaeuft] = React.useState<string | null>(null)
+  const [suche, setSuche] = React.useState<MobilitySucheAntwort | null>(null)
+  const [sucht, setSucht] = React.useState(false)
+  const abdeckung = mobilitaetsAbdeckung(reise, ohneTag)
+  const mietwagen = mietwagenBestand(reise, ohneTag)
+  const [unterbereich, setUnterbereich] = React.useState<MobilitaetUnterbereich>(() =>
+    mietwagen.items.length > 0 && abdeckung.kanten.every((kante) => !kante.mobilityItem) && abdeckung.unzugeordnet.length === 0
+      ? 'mietwagen'
+      : 'verbindungen',
+  )
+  const [mietwagenBesucht, setMietwagenBesucht] = React.useState(
+    () =>
+      mietwagen.items.length > 0 &&
+      abdeckung.kanten.every((kante) => !kante.mobilityItem) &&
+      abdeckung.unzugeordnet.length === 0,
+  )
+
+  const setzen = async (itemId: string, gebucht: boolean) => {
+    if (!onBuchungsstatus || laeuft) return
+    setMeldung('')
+    setLaeuft(itemId)
+    const fehler = await onBuchungsstatus(itemId, gebucht)
+    setLaeuft(null)
+    if (fehler) setMeldung(fehler)
+  }
+
+  const sucheStarten = () => {
+    if (sucht || mobilitySucheStartetAutomatisch()) return
+    const erste = reise.stages[0]
+    if (!reise.origin || !erste) {
+      setSuche(
+        mobilitySucheFehlerAntwort(
+          'Start und Ziel der Verbindung sind aus den Reisedaten noch nicht bestimmbar.',
+        ),
+      )
+      return
+    }
+    const steuer = new AbortController()
+    setSucht(true)
+    void mobilitySucheVomClient(
+      {
+        originName: reise.origin,
+        destinationName: erste.name,
+        originPlaceId: reise.originPlaceId,
+        destinationPlaceId: erste.placeId,
+        date: erste.arrivalDate ?? reise.startDate,
+        mode: null,
+        travellers: reise.travellers,
+        currency: reise.currency,
+      },
+      steuer.signal,
+    )
+      .then((antwort) => {
+        setSuche(antwort)
+      })
+      .catch((fehler) => {
+        setSuche(
+          mobilitySucheFehlerAntwort(
+            fehler instanceof Error ? fehler.message : 'Die Mobilitätssuche ist gerade nicht verfügbar.',
+          ),
+        )
+      })
+      .finally(() => {
+        setSucht(false)
+      })
+  }
+
+  return (
+    <div className="grid gap-6">
+      <div
+        role="tablist"
+        aria-label="Mobilitätsbereiche"
+        className="flex min-h-11 gap-2 overflow-x-auto"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={unterbereich === 'verbindungen'}
+          onClick={() => setUnterbereich('verbindungen')}
+          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+            unterbereich === 'verbindungen'
+              ? 'bg-brand-800 text-white'
+              : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
+          }`}
+        >
+          Verbindungen
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={unterbereich === 'mietwagen'}
+          onClick={() => {
+            setUnterbereich('mietwagen')
+            setMietwagenBesucht(true)
+          }}
+          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+            unterbereich === 'mietwagen'
+              ? 'bg-brand-800 text-white'
+              : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
+          }`}
+        >
+          Mietwagen
+        </button>
+      </div>
+
+      {mietwagenBesucht ? (
+        <div
+          hidden={unterbereich !== 'mietwagen'}
+          className={unterbereich === 'mietwagen' ? 'grid gap-6' : 'hidden'}
+        >
+          <MietwagenBereich
+            reise={reise}
+            ohneTag={ohneTag}
+            onBuchungsstatus={onBuchungsstatus}
+            onManuellAnlegen={onMietwagenAnlegen}
+          />
+        </div>
+      ) : null}
+
+      <div hidden={unterbereich !== 'verbindungen'} className={unterbereich === 'verbindungen' ? 'grid gap-6' : 'hidden'}>
+      <section
+        aria-label="Deine Verbindungen"
+        data-organisieren-flaeche="bestand"
+        className={ORGANISIEREN_FLAECHE_KLASSE}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+              Deine Verbindungen
+            </p>
+            <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+              Bestand und Status
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-ink-800">{abdeckung.zusammenfassung}</p>
+          </div>
+          <ArrowRightLeft className="h-5 w-5 text-brand-600" aria-hidden="true" />
+        </div>
+
+        {abdeckung.kanten.length === 0 && abdeckung.unzugeordnet.length === 0 ? (
+          <p className="mt-5 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
+            {abdeckung.bestimmbar
+              ? 'Für diese Reise ist keine zusätzliche Bodenverbindung erkennbar, oder es liegt noch keine vor.'
+              : 'Die benötigten Verbindungen sind aus den vorliegenden Reisedaten noch nicht vollständig bestimmbar.'}
+          </p>
+        ) : (
+          <ul className="mt-5 grid gap-2">
+            {abdeckung.kanten.map((kante) => (
+              <li
+                key={kante.id}
+                className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-brand-800 break-words">{kanteTitel(kante)}</p>
+                  {kante.mobilityItem ? (
+                    <p className="mt-0.5 text-xs leading-5 text-ink-800 break-words">
+                      {modusText(kante.mobilityItem)}
+                      {kante.mobilityItem.connectionRef ? ` · ${kante.mobilityItem.connectionRef}` : ''}
+                      {kante.durationMinutes !== null ? ` · ${kante.durationMinutes} Min.` : ''}
+                    </p>
+                  ) : kante.flightItem ? (
+                    <p className="mt-0.5 text-xs leading-5 text-ink-800 break-words">
+                      {kante.flightItem.title}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex min-h-11 flex-wrap items-center gap-2">
+                  <BuchungsSiegel status={kante.status} />
+                  {kante.mobilityItem && kannBuchungMarkieren(kante.mobilityItem) && onBuchungsstatus ? (
+                    <button
+                      type="button"
+                      disabled={laeuft === kante.mobilityItem.id}
+                      onClick={() => void setzen(kante.mobilityItem!.id, kante.status !== 'booked')}
+                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                    >
+                      {kante.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                    </button>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+            {abdeckung.unzugeordnet.map((item) => (
+              <li
+                key={item.id}
+                className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-brand-800 break-words">{item.title}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-ink-800">
+                    {modusText(item)} · noch keinem Reiseabschnitt sicher zuordenbar
+                  </p>
+                </div>
+                <div className="flex min-h-11 flex-wrap items-center gap-2">
+                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  {kannBuchungMarkieren(item) && onBuchungsstatus ? (
+                    <button
+                      type="button"
+                      disabled={laeuft === item.id}
+                      onClick={() => void setzen(item.id, item.bookingStatus !== 'booked')}
+                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                    >
+                      {item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                    </button>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {meldung ? (
+          <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+            {meldung}
+          </p>
+        ) : null}
+      </section>
+
+      <section
+        aria-label="Mobilitätssuche"
+        data-organisieren-flaeche="suche"
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+      >
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
+        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+          Bahn, Bus, Fähre und Transfer
+        </h2>
+        {sucht ? (
+          <p className="mt-5 flex min-h-[4.5rem] items-center gap-2 text-sm leading-6 text-ink-800">
+            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+            Verbindungen werden geprüft …
+          </p>
+        ) : (
+          <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
+            {suche?.message ??
+              'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise. Eine Suche startet nicht automatisch.'}
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={sucheStarten}
+          disabled={sucht}
+          className={cn(ORGANISIEREN_PRIMAR_KLASSE, 'mt-4')}
+        >
+          {sucht ? 'Wird geprüft …' : 'Verbindungen prüfen'}
+        </button>
+      </section>
+
+      {onManuellAnlegen ? <ManuelleVerbindung reise={reise} onAnlegen={onManuellAnlegen} /> : null}
+      </div>
+    </div>
+  )
+}
+
+function ManuelleVerbindung({
+  reise,
+  onAnlegen,
+}: {
+  reise: Trip
+  onAnlegen: (eingabe: MobilityManuellEingabe) => Promise<string | null>
+}) {
+  const [mode, setMode] = React.useState<MobilityMode>('rail')
+  const [originName, setOriginName] = React.useState(reise.origin ?? '')
+  const [destinationName, setDestinationName] = React.useState(reise.stages[0]?.name ?? '')
+  const [startsOn, setStartsOn] = React.useState(reise.startDate ?? '')
+  const [startsAt, setStartsAt] = React.useState('')
+  const [endsOn, setEndsOn] = React.useState('')
+  const [endsAt, setEndsAt] = React.useState('')
+  const [connectionRef, setConnectionRef] = React.useState('')
+  const [note, setNote] = React.useState('')
+  const [dayId, setDayId] = React.useState(reise.days[0]?.id ?? '')
+  const [laeuft, setLaeuft] = React.useState(false)
+  const [meldung, setMeldung] = React.useState('')
+  const [hinweis, setHinweis] = React.useState('')
+
+  const speichern = async (ereignis: React.FormEvent) => {
+    ereignis.preventDefault()
+    if (laeuft) return
+    setMeldung('')
+    setHinweis('')
+    setLaeuft(true)
+    const fehler = await onAnlegen({
+      mode,
+      title: null,
+      originName,
+      destinationName,
+      originPlaceId: null,
+      destinationPlaceId: null,
+      startsOn: startsOn || null,
+      startsAt: startsAt || null,
+      endsOn: endsOn || null,
+      endsAt: endsAt || null,
+      connectionRef: connectionRef || null,
+      mobilityChanges: null,
+      priceAmount: null,
+      priceCurrency: null,
+      note: note || null,
+      dayId: dayId || null,
+      stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? reise.stages[0]?.id ?? null,
+    })
+    setLaeuft(false)
+    if (fehler) {
+      setMeldung(fehler)
+      return
+    }
+    setHinweis('Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
+    setConnectionRef('')
+    setNote('')
+  }
+
+  return (
+    <section
+      aria-label="Manuelle Verbindung"
+      data-organisieren-flaeche="manuell"
+      className={ORGANISIEREN_FLAECHE_KLASSE}
+    >
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Manuell</p>
+      <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        Bekannte Verbindung eintragen
+      </h2>
+      <p className="mt-1 text-sm leading-6 text-ink-800">
+        Das sind deine Angaben, keine geprüften Fahrpläne oder Preise.
+      </p>
+
+      <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
+        <OrganisierenFeldgruppe titel="Einordnung">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Art
+              <select
+                value={mode}
+                onChange={(ereignis) => setMode(ereignis.target.value as MobilityMode)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                {MODI.map((wert) => (
+                  <option key={wert} value={wert}>
+                    {MOBILITY_MODE_BEZEICHNUNG[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Tag
+              <select
+                value={dayId}
+                onChange={(ereignis) => setDayId(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="">Noch nicht eingeplant</option>
+                {reise.days.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.title || (tag.dayDate ? datumKurz(tag.dayDate) : `Tag ${tag.dayIndex}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Route">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Von
+              <input
+                value={originName}
+                onChange={(ereignis) => setOriginName(ereignis.target.value)}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Nach
+              <input
+                value={destinationName}
+                onChange={(ereignis) => setDestinationName(ereignis.target.value)}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Abfahrt">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Abfahrt
+              <input
+                type="date"
+                value={startsOn}
+                onChange={(ereignis) => setStartsOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={startsAt}
+                onChange={(ereignis) => setStartsAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Ankunft">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Ankunft
+              <input
+                type="date"
+                value={endsOn}
+                onChange={(ereignis) => setEndsOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={endsAt}
+                onChange={(ereignis) => setEndsAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <OrganisierenFeldgruppe titel="Angaben">
+          <div className="grid min-w-0 gap-3">
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Verbindungsnummer, falls bekannt
+              <input
+                value={connectionRef}
+                onChange={(ereignis) => setConnectionRef(ereignis.target.value)}
+                maxLength={40}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Notiz
+              <textarea
+                value={note}
+                onChange={(ereignis) => setNote(ereignis.target.value)}
+                maxLength={500}
+                rows={2}
+                className={ORGANISIEREN_TEXTAREA_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
+
+        <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
+          {laeuft ? 'Wird gespeichert …' : 'Verbindung speichern'}
+        </button>
+      </form>
+
+      {meldung ? (
+        <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          {meldung}
+        </p>
+      ) : null}
+      {hinweis ? (
+        <p role="status" className="mt-4 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
+          {hinweis}
+        </p>
+      ) : null}
+    </section>
+  )
+}

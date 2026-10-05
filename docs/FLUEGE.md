@@ -1,0 +1,143 @@
+# Jetnity – Flüge
+
+**Stand:** 1. September 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; provider-neutrale Request-Reconciliation ADR-0207; Runtime-Orchestrierung 0..N Provider ADR-0208 auf Draft-PR #413  
+**Gilt für:** die interne Flugdomäne, den ersten konstruierbaren Duffel-Testadapter, 0..N-Orchestrierung, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
+
+Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
+
+---
+
+## 1. Was Phase 3.1 ist – und was nicht
+
+Jetnity kann für einen Reiseabschnitt echte Flugoptionen suchen, rangieren und als kommerziellen Planpunkt in die Reise übernehmen.
+
+Nicht gebaut:
+
+- eigene Flugbuchung
+- Deeplinks / Affiliate-Übergabe
+- Hotels, Aktivitäten, Transfers
+- Production-Aktivierung (`JETNITY_FLIGHT_AKTIV` bleibt aus, kein Duffel-Token)
+- die Duffel-Sandbox-Verifikation; sie ist nachgelagert und kein Merge-Blocker
+- ein Enterprise-Framework für zehn Provider
+- ein Amadeus-Adapter (Amadeus Self-Service wurde am 17. Juli 2026 eingestellt)
+
+`booking_url` bleibt bei Duffel `null`. Eine spätere Buchungs- oder Affiliate-Schicht ist eine **andere** Verantwortlichkeit als die Suche. Sie darf einen anderen Partner nutzen als den Suchadapter.
+
+---
+
+## 2. Schichten
+
+```
+Suchanfrage (Browser)
+  → POST /api/flights/search
+    → Zustand (Kill Switch, Production-Sperre, Test-Token)
+      → Rate-Limit einmal je Jetnity-Suche
+        → 0..N unabhängige FlugProvider.suchen(dieselbe Anfrage)
+          → provider-lokales FlugProviderTreffer / Fehler
+            → nur FlugOption[] kombinieren
+              → deterministisches globales Ranking + globale Kappe
+                → Client-Sicht (ohne Score, ohne retrievedAt/Evidence, ohne Rohdaten)
+```
+
+Übernahme:
+
+```
+Browser sendet nur tripId, dayId, optionId
+  → FlugNachweis gegen Legs, Passagiere, Kabine, Währung, Gültigkeit
+    → bei Erfolg: Momentaufnahme aus nachgewiesener Option
+      → Länder nur aus public.airports bzw. Such-Referenzkarte
+      → Konto: INSERT trip_items inkl. metadata (RLS), booking_url = null
+      → ohne Nachweis oder Suchkontext: fail closed
+      → Gast: keine kommerzielle Provider-Flugpersistenz
+      → Guest → Account: unbewiesene Flug-Handelsfelder werden gestrichen
+```
+
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Domäne | `lib/flights/domain.ts` | Suchanfrage, Segment, Option, Status |
+| Prüfung | `lib/flights/schema.ts` | Zod, untrusted input |
+| Interface | `lib/flights/provider.ts` | `FlugProvider` – ein zweiter Adapter ohne UI-Rewrite |
+| Sammlung | `lib/flights/provider-sammlung.ts` | 0..N constructible Adapter, kein Default/Primary |
+| Zustand | `lib/flights/zustand.ts` | Production aus, Kill Switch; kein vendor-spezifisches Credential |
+| Ranking | `lib/flights/ranking.ts` | provisionsneutral, deterministisch, kein Modell |
+| Gründe | `lib/flights/gruende.ts` | 2–4 Sätze für „Jetnity empfiehlt“ |
+| Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → 0..N Provider → globales Ranking |
+| Client-Sicht | `lib/flights/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
+| Übernahme | `lib/flights/uebernahme.ts` | nachgewiesene Option → kommerzieller Planpunkt inkl. Itinerary |
+| Nachweis | `lib/flights/nachweis.ts` | `FlugNachweis` bindet optionId an Suchkontext; Umgebung ist `null` |
+| Konto-Grenze | `lib/flights/konto-uebernahme.ts` | identifiers + Nachweis + Graph, fail closed |
+| Route Truth | `lib/route/` | Segmente, Transit, Fingerprint, Metadata-Hülle |
+| Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
+| Provider-neutrale Request-Projektion | `lib/providers/flights/*` | geordnete Legs und `stopPreference` aus `FlugSuchanfrage`; kein Ranking-`context`, kein `returnDate` |
+
+Die UI (`components/trips/FlugSuche.tsx`) spricht nur die interne Domäne. Duffel-Typen kommen dort nicht vor.
+
+Im Flugbereich des Trip Workspace steht zuerst der Reisebestand (`components/trips/FlugBestand.tsx`): benötigte Abschnitte aus Origin und Etappen, gespeicherte Flüge mit manuellem Buchungsstatus, erst darunter die bestehende Suche. Coverage ist Domainlogik in `lib/trips/flug-abdeckung.ts`, nicht im Rendering. Ein vorhandener `trip_item` ist nicht automatisch gebucht (ADR-0089). Production-Suche bleibt aus. Keine Fake-Ergebnisse.
+
+---
+
+## 3. Duffel ist der erste Adapter, nicht die Architektur
+
+Amadeus Self-Service ist seit dem 17. Juli 2026 eingestellt und wird **nicht** angebunden. Duffel Flights API ist der erste Suchadapter: ein Daten- und Entwicklungsweg, keine technische oder geschäftliche Kopplung.
+
+Ein späterer Metasuch-Provider muss dasselbe Runtime-`FlugProvider`-Interface erfüllen. Search, Ranking und Trip-Domain bleiben. Search-Provider und Affiliate-/Booking-Provider sind getrennt.
+
+Die Runtime-Suche orchestriert 0..N `FlugProvider` ohne Composite-Treffer (ADR-0208). Heute ist nur Duffel als Testadapter konstruierbar. Das ist keine Providerwahl und kein Live-Pfad.
+
+Die spätere Offline-Foundation `FlightProviderSearchRequest` ist keine zweite Suche. Sie projiziert dieselbe geordnete 1–6-Bein-Wahrheit (`flightProviderSearchRequestAus`) inklusive kanonischer `stopPreference`. Ranking-`context` gehört nicht in diesen Request. `market`/`locale` sind externer Request-Kontext, nicht Traveller- oder Ranking-Wahrheit (ADR-0207). Skyscanner bleibt fixture-only.
+
+Umgebung:
+
+| Variable | Wirkung |
+| --- | --- |
+| `JETNITY_FLIGHT_AKTIV` | Kill Switch. Nur `true` oder `1`. Teil der globalen `FlugUmgebung`. |
+| `DUFFEL_ACCESS_TOKEN` | serverseitig, nur `duffel_test_…`. Nur Duffel-Fabrik/`lib/flights/duffel/zugang.ts`, nicht `FlugUmgebung`. |
+
+`VERCEL_ENV=production` schaltet hart aus – auch wenn Kill Switch und Token gesetzt wären. Die globale `FlugUmgebung` enthält nur `VERCEL_ENV` und `JETNITY_FLIGHT_AKTIV`. Der globale Flight-Zustand hängt nicht an einem Duffel-Token. Ein Live-Token (`duffel_live_…`) konstruiert den Duffel-Adapter nicht; ohne jeden konstruierbaren Provider bleibt die Suche an der Orchestrierungsnaht unavailable. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Fehlende konstruierbare Provider sind Search-unavailable, kein Buildfehler.
+
+Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
+
+`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback, keinen Duffel-Airport-Weg und keine Live-Abfrage gegen OurAirports. Quelle, Filter, Import und Refresh stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md). Reiseziele stehen in [docs/ORTE.md](ORTE.md) und dürfen nicht aus der Flughafentabelle abgeleitet werden.
+
+---
+
+## 4. Ranking
+
+Kein LLM. Gewichte stehen in `RANGLISTE_GEWICHTE`:
+
+Preis, Gesamtreisezeit, Stopps, sehr früher Abflug, sehr späte Ankunft, lange Umstiege, Overnight-Verbindungen, Passung zum Reisetag.
+
+Marken in der Oberfläche:
+
+- **Jetnity empfiehlt** – höchster Score
+- **Günstigste** – niedrigster Preis
+- **Schnellste** – kürzeste Dauer
+
+Dieselbe Option darf mehrere Marken tragen. Die Empfehlung erklärt 2–4 Gründe, etwa „CHF 42 teurer, aber 4 h 15 min schneller und ohne Umstieg“.
+
+Provision, Providername und interne Score-Zahlen fliessen nicht in das Ranking und nicht in die Gründe.
+
+---
+
+## 5. Sicherheit und Kosten
+
+- Nur serverseitig, geschlossener Endpunkt, kein Provider-Proxy
+- Eingaben begrenzt: 1–6 Beine, 1–9 Personen, IATA, Kabine, Währung
+- Keine Passagiernamen oder Geburtsdaten
+- Rate-Limit im Prozess: 8 Suchen / 10 min und 24 / Tag je IP
+- Timeout 12 s, Duffel-Lieferanten-Timeout 10 s
+- Secrets nicht in Logs, Client oder Fehlermeldungen
+- Keine neuen laufenden Infrastrukturkosten
+
+Das In-Memory-Limit gilt je Serverless-Instanz. Das ist für Development/Preview bewusst schmaler als die Datenbankschranke des Modellwegs.
+
+---
+
+## 6. Aktivierung (Development / Preview)
+
+1. Duffel-Test-Token anlegen (`duffel_test_…`)
+2. `DUFFEL_ACCESS_TOKEN` nur serverseitig setzen
+3. `JETNITY_FLIGHT_AKTIV=true`
+4. Nicht in Production setzen, kein Live-Token
+
+Guest → Account übernimmt keine unbewiesenen Flugpreise, Provider oder External-Refs. Route-Itinerary bleibt Foundation-D-Intake und wird vor `reise_anlegen` kanonisiert. `public.reise_anlegen(jsonb)` verwirft dieselben Flug-Handelsfelder auch beim direkten authentifizierten RPC (ADR-0156, Development). Direkte `trip_items`-INSERT/UPDATE als `authenticated` können sie ebenfalls nicht setzen (ADR-0157, Development). Production-Migrationen bleiben ein separates Gate.

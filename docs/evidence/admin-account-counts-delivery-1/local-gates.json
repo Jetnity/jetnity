@@ -1,0 +1,92 @@
+{
+  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3893, "fail": 0 },
+  "deliveryApplicationTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts",
+    "exitCode": 0,
+    "tests": 36,
+    "fail": 0,
+    "breakdown": {
+      "activationHelpers": 6,
+      "isolatedActualLoaderAndDefaultComponent": 6,
+      "parser": 7,
+      "readerIncludingInjectedRuntimeEnabled": 10,
+      "syntheticAnsichtRenders": 3,
+      "schemaReferenceChecker": 4
+    }
+  },
+  "wrapperSafetyTests": {
+    "command": "node --test scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs",
+    "exitCode": 0,
+    "tests": 2,
+    "fail": 0
+  },
+  "wrapperChecks": {
+    "command": "node scripts/db/admin-account-counts-delivery-1-local-proof.mjs",
+    "exitCode": 0,
+    "passed": 24,
+    "failed": 0,
+    "newExecutionOnThisPersist": true,
+    "sqlSourcesUnchanged": true,
+    "mix": {
+      "sql": { "wrapper-transport-sql": 1, "wrapper-auth-sql": 13, "wrapper-acl-sql": 1, "total": 15 },
+      "catalogIncludingExecutedNoArgRejection": 6,
+      "staticSource": 2,
+      "nodeCleanup": 1
+    },
+    "doNotLabelAllAsExecutedSql": true
+  },
+  "authCapabilityTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal-wiring.test.ts",
+    "exitCode": 0,
+    "tests": 35,
+    "fail": 0
+  },
+  "ssrFactoryContractTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/next/request-api-compat.test.ts",
+    "exitCode": 0,
+    "tests": 14,
+    "note": "includes the 3 existing server-factory assertions; factories still use SUPABASE_URL"
+  },
+  "typecheck": { "command": "npm run typecheck", "exitCode": 0 },
+  "lintDeliveryFiles": {
+    "command": "npx eslint lib/admin/account-counts-delivery lib/supabase/server.ts components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs",
+    "exitCode": 0
+  },
+  "repoLintHistory": {
+    "command": "npm run lint",
+    "historicalSliceIntroducedJsxTryCatch": {
+      "wasPreExistingBaseline": false,
+      "note": "An earlier head on this branch put JSX inside a reader try/catch and eslint failed. That was a slice-introduced error, later moved out of JSX. It is not a pre-existing baseline defect."
+    },
+    "thisHeadDeliveryEslint": 0,
+    "exactHeadCiLint": "record after push; do not treat local repo-wide warning count as that CI job"
+  },
+  "build": { "command": "npm run build", "exitCode": 0, "next": "16.3.3" },
+  "hygiene": {
+    "check:schema-bezug": 0,
+    "check:schema-bezugNote": "generated structures plus disclosed LOCAL/UNAPPLIED admin_account_counts_v1; not a live-schema claim",
+    "check:dead": 0,
+    "check:exports": 0,
+    "check:deps": 0,
+    "check:api-schutz": 0,
+    "check:operating-mode": 0
+  },
+  "notRun": [
+    "authenticated local PostgREST browser E2E",
+    "hosted Admin session",
+    "remote database read or apply",
+    "auth:pruefen against live secrets"
+  ],
+  "reviewFix": {
+    "reviewedHead": "d1d18daca96bb72c4ed6645c46b765e867bd5615",
+    "review": 5283659145,
+    "items": ["R1", "R2", "R3", "R4"]
+  },
+  "residualR1": {
+    "reviewedHead": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
+    "review": 5284045489,
+    "addendum": "86f5d4847fe3c8779d137ba110b04207c9468577",
+    "sharedDelta": "lib/supabase/server.ts getServerSupabaseUrl() returns existing SUPABASE_URL only",
+    "note": "Not a Production incident. Split-capture counterexample is a no-network local/test containment defect."
+  }
+}

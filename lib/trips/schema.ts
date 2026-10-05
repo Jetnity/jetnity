@@ -1,0 +1,714 @@
+// lib/trips/schema.ts
+//
+// Laufzeitprüfung des Reisemodells.
+//
+// Drei Quellen liefern Reisedaten, und keine davon ist vertrauenswürdig:
+//
+//   · der `localStorage` – von Hand editierbar und über Monate gewachsen,
+//   · das Formular unter /planen – ein Client,
+//   · die Nutzlast der Übernahme ins Konto – derselbe Client, nur später.
+//
+// Die Bedingungen hier spiegeln die CHECKs aus
+// `supabase/migrations/20260817120000_reiseschema.sql`. Das ist bewusst doppelt:
+// Die Datenbank ist die letzte Instanz und bleibt es, aber eine Ablehnung dort
+// kommt als SQLSTATE zurück, und ein SQLSTATE ist keine Fehlermeldung für
+// Reisende. Wer hier scheitert, bekommt einen Satz; wer hier durchkommt, wird
+// von der Datenbank nicht mehr überrascht.
+//
+// Frei von React, Next und Supabase: Beide Seiten – Browser und Server Action –
+// benutzen dieselben Schemata, und der Test braucht keine Laufzeit.
+
+import { z } from 'zod'
+
+import {
+  DAY_STAGE_ASSIGNMENT_MODES,
+  TRIP_INTERESTS,
+  TRIP_ITEM_KINDS,
+  TRIP_PACES,
+  TRIP_STATUSES,
+  type Trip,
+} from '@/types/trips'
+import {
+  DayStageAssignmentFehler,
+  dayStageAssignmentModeFuerGast,
+  stagePositionenAusReise,
+} from '@/lib/trips/day-stage-assignment'
+import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
+import {
+  rentalEvidenceLesen,
+  transmissionLesen,
+  vehicleClassLesen,
+} from '@/lib/trips/mietwagen-felder'
+import { TAGE_MAXIMUM } from '@/lib/trips/tage'
+import { partySchema, readinessItemsSchema } from '@/lib/readiness/schema'
+import { flugRouteItinerarySchema } from '@/lib/route/schema'
+
+/** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
+export const GRENZEN = {
+  titel: 120,
+  ort: 120,
+  reisende: 20,
+  reisetageJeReise: TAGE_MAXIMUM,
+  reisedauerInTagen: 365,
+  etappenJeReise: 50,
+  punkteJeReise: 1000,
+  notiz: 500,
+  reisewunsch: 1000,
+} as const
+
+/**
+ * Ein Kalenderdatum, das es gibt.
+ *
+ * `^\d{4}-\d{2}-\d{2}$` allein lässt den 31. Februar durch. PostgreSQL nicht –
+ * dort wäre es ein `22008` mitten in der Übernahme.
+ */
+const datum = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Datum muss die Form JJJJ-MM-TT haben')
+  .refine((wert) => {
+    const [jahr, monat, tag] = wert.split('-').map(Number)
+    const geprueft = new Date(Date.UTC(jahr, monat - 1, tag))
+    return (
+      geprueft.getUTCFullYear() === jahr &&
+      geprueft.getUTCMonth() === monat - 1 &&
+      geprueft.getUTCDate() === tag
+    )
+  }, 'Dieses Datum gibt es nicht')
+
+/** Ortszeit `HH:MM`. Sekunden speichert die Anwendung nicht. */
+const uhrzeit = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Uhrzeit muss die Form HH:MM haben')
+
+const waehrung = z.string().regex(/^[A-Z]{3}$/, 'Währung muss ein ISO-4217-Code sein')
+
+const landescode = z.string().regex(/^[A-Z]{2}$/, 'Ländercode muss zwei Grossbuchstaben haben')
+
+const zeitstempel = z.string().min(1).max(40)
+
+/** Ein Titel ohne Rand-Leerzeichen, wie `char_length(btrim(title))` es verlangt. */
+const titel = z
+  .string()
+  .transform((wert) => wert.trim())
+  .pipe(z.string().min(1, 'Ein Titel ist nötig').max(GRENZEN.titel))
+
+const optionalerText = (maximum: number) =>
+  z
+    .string()
+    .transform((wert) => wert.trim())
+    .pipe(z.string().max(maximum))
+    .transform((wert) => (wert === '' ? null : wert))
+
+/**
+ * Betrag mit zwei Nachkommastellen, wie `numeric(12, 2)`.
+ *
+ * Ohne die Obergrenze schlüge ein grosser Betrag erst in der Datenbank auf, als
+ * `22003 numeric field overflow`.
+ */
+const betrag = z
+  .number()
+  .finite()
+  .nonnegative()
+  .max(9_999_999_999.99, 'Der Betrag ist zu gross')
+  .transform((wert) => Math.round(wert * 100) / 100)
+
+const tempo = z.unknown().transform((wert, ctx) => {
+  const gelesen = tempoLesen(wert)
+  if (!gelesen) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Unbekanntes Reisetempo. Erlaubt: ${TRIP_PACES.join(', ')}`,
+    })
+    return z.NEVER
+  }
+  return gelesen
+})
+
+/**
+ * Interessen als Menge.
+ *
+ * Doppelte Werte fallen heraus, statt eine Ablehnung auszulösen: Der CHECK
+ * `trips_interests_eindeutig` verlangt eine Menge, und aus einer Liste eine
+ * Menge zu machen ist keine Auslegung, sondern dieselbe Aussage.
+ */
+const interessen = z
+  .array(z.unknown())
+  .max(TRIP_INTERESTS.length * 2)
+  .transform((werte, ctx) => {
+    const gelesen = werte.map(interesseLesen)
+    if (gelesen.some((wert) => wert === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Unbekanntes Interesse. Erlaubt: ${TRIP_INTERESTS.join(', ')}`,
+      })
+      return z.NEVER
+    }
+    return [...new Set(gelesen as NonNullable<(typeof gelesen)[number]>[])]
+  })
+
+// ---------------------------------------------------------------------------
+// Der Reisegraph, wie er im Browser liegt
+// ---------------------------------------------------------------------------
+
+const planpunktSchema = z.object({
+  id: z.string().min(1).max(80),
+  dayId: z.string().min(1).max(80).nullable().default(null),
+  stageId: z.string().min(1).max(80).nullable().default(null),
+  kind: z.enum(TRIP_ITEM_KINDS).default('note'),
+  title: titel,
+  note: optionalerText(GRENZEN.notiz).nullable().default(null),
+  position: z.number().int().min(1).max(500).default(1),
+  startsOn: datum.nullable().default(null),
+  startsAt: uhrzeit.nullable().default(null),
+  endsOn: datum.nullable().default(null),
+  endsAt: uhrzeit.nullable().default(null),
+  priceAmount: betrag.nullable().default(null),
+  priceCurrency: waehrung.nullable().default(null),
+  provider: z.string().min(1).max(40).nullable().default(null),
+  externalRef: z.string().min(1).max(200).nullable().default(null),
+  bookingUrl: z
+    .string()
+    .url()
+    .startsWith('https://', 'Ein Buchungslink muss über HTTPS gehen')
+    .max(2048)
+    .nullable()
+    .default(null),
+  bookingStatus: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
+  bookingSource: z.unknown().transform(buchungsquelleLesen).nullable().default(null),
+  bookingConfirmedAt: zeitstempel.nullable().default(null),
+  mobilityMode: z.unknown().transform(mobilityModeLesen).nullable().default(null),
+  originPlaceId: z.string().min(1).max(80).nullable().default(null),
+  destinationPlaceId: z.string().min(1).max(80).nullable().default(null),
+  originName: optionalerText(GRENZEN.ort).nullable().default(null),
+  destinationName: optionalerText(GRENZEN.ort).nullable().default(null),
+  connectionRef: optionalerText(40).nullable().default(null),
+  mobilityChanges: z.number().int().min(0).max(20).nullable().default(null),
+  mobilityEvidence: z.unknown().transform(mobilityEvidenceLesen).nullable().default(null),
+  rentalSupplier: optionalerText(GRENZEN.titel).nullable().default(null),
+  vehicleClass: z.unknown().transform(vehicleClassLesen).nullable().default(null),
+  transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
+  rentalEvidence: z.unknown().transform(rentalEvidenceLesen).nullable().default(null),
+  routeItinerary: flugRouteItinerarySchema.nullable().optional().default(null),
+})
+  .transform((punkt) => {
+    const darfBuchen = kannBuchungMarkieren(punkt)
+    const gebucht = darfBuchen && punkt.bookingStatus === 'booked'
+    const transfer = punkt.kind === 'transfer'
+    const mietwagen = punkt.kind === 'rental_car'
+    const mode = transfer ? punkt.mobilityMode : null
+    const hatMobilitaet =
+      transfer &&
+      Boolean(mode || punkt.originPlaceId || punkt.destinationPlaceId || punkt.originName || punkt.destinationName)
+    const hatMietwagen =
+      mietwagen &&
+      Boolean(
+        punkt.rentalSupplier ||
+          punkt.vehicleClass ||
+          punkt.transmission ||
+          punkt.originPlaceId ||
+          punkt.destinationPlaceId ||
+          punkt.originName ||
+          punkt.destinationName ||
+          punkt.startsOn ||
+          punkt.endsOn,
+      )
+    const orteErlaubt = transfer || mietwagen
+    return {
+      ...punkt,
+      bookingStatus: gebucht ? ('booked' as const) : ('unconfirmed' as const),
+      bookingSource: gebucht ? ('user' as const) : null,
+      bookingConfirmedAt: gebucht ? punkt.bookingConfirmedAt : null,
+      mobilityMode: mode,
+      originPlaceId: orteErlaubt ? punkt.originPlaceId : null,
+      destinationPlaceId: orteErlaubt ? punkt.destinationPlaceId : null,
+      originName: orteErlaubt ? punkt.originName : null,
+      destinationName: orteErlaubt ? punkt.destinationName : null,
+      connectionRef: transfer ? punkt.connectionRef : null,
+      mobilityChanges: transfer ? punkt.mobilityChanges : null,
+      mobilityEvidence: hatMobilitaet ? ('user' as const) : null,
+      rentalSupplier: mietwagen ? punkt.rentalSupplier : null,
+      vehicleClass: mietwagen ? punkt.vehicleClass : null,
+      transmission: mietwagen ? punkt.transmission : null,
+      rentalEvidence: hatMietwagen ? ('user' as const) : null,
+      routeItinerary: punkt.kind === 'flight' ? punkt.routeItinerary : null,
+    }
+  })
+
+const reisetagSchema = z.object({
+  id: z.string().min(1).max(80),
+  stageId: z.string().min(1).max(80).nullable().default(null),
+  dayIndex: z.number().int().min(1).max(GRENZEN.reisetageJeReise),
+  dayDate: datum.nullable().default(null),
+  title: optionalerText(GRENZEN.titel).nullable().default(null),
+  items: z.array(planpunktSchema).max(GRENZEN.punkteJeReise).default([]),
+})
+
+const etappeSchema = z.object({
+  id: z.string().min(1).max(80),
+  position: z.number().int().min(1).max(200).default(1),
+  name: titel,
+  countryCode: landescode.nullable().default(null),
+  arrivalDate: datum.nullable().default(null),
+  departureDate: datum.nullable().default(null),
+  latitude: z.number().min(-90).max(90).nullable().default(null),
+  longitude: z.number().min(-180).max(180).nullable().default(null),
+  placeId: z.string().min(1).max(80).nullable().default(null),
+})
+
+/**
+ * Eine vollständige Reise.
+ *
+ * Auch die Fassung im Browser läuft durch dieses Schema. Was nicht durchkommt,
+ * wird verworfen statt halb geladen: Eine Reise mit einem Tag ohne Nummer wäre
+ * in der Oberfläche ein Rätsel und in der Übernahme eine Ablehnung.
+ */
+export const reiseSchema = z
+  .object({
+    id: z.string().min(1).max(80),
+    clientRef: z.string().min(1).max(64).nullable().default(null),
+    title: titel,
+    origin: optionalerText(GRENZEN.ort).nullable().default(null),
+    originPlaceId: z.string().min(1).max(80).nullable().default(null),
+    startDate: datum.nullable().default(null),
+    endDate: datum.nullable().default(null),
+    travellers: z.number().int().min(1).max(GRENZEN.reisende).default(1),
+    currency: waehrung.default('CHF'),
+    budgetAmount: betrag.nullable().default(null),
+    status: z.enum(TRIP_STATUSES).default('draft'),
+    pace: tempo,
+    interests: interessen.default([]),
+    travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+    dayStageAssignmentMode: z
+      .enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user'])
+      .optional()
+      .transform((wert) => (wert === 'user' ? undefined : wert)),
+    revision: z.number().int().min(1).max(1_000_000_000).default(1),
+    lastMutationId: z.string().min(1).max(64).nullable().default(null),
+    stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
+    days: z.array(reisetagSchema).max(GRENZEN.reisetageJeReise).default([]),
+    ohneTag: z.array(planpunktSchema).max(GRENZEN.punkteJeReise).default([]),
+    readinessItems: readinessItemsSchema,
+    party: partySchema,
+    createdAt: zeitstempel,
+    updatedAt: zeitstempel,
+  })
+  .superRefine((reise, ctx) => {
+    if (reise.startDate && reise.endDate) {
+      if (reise.endDate < reise.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          message: 'Die Rückreise liegt vor der Abreise',
+        })
+      } else if (tageZwischen(reise.startDate, reise.endDate) > GRENZEN.reisedauerInTagen) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          message: `Eine Reise dauert höchstens ${GRENZEN.reisedauerInTagen} Tage`,
+        })
+      }
+    }
+
+    // `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` in der
+    // Datenbank. Während `reise_aendern()` sind sie aufgeschoben; am Ende des
+    // Schreibens und in Zod gelten sie sofort. Zwei Tage mit derselben Nummer
+    // wären dort ein `23505`.
+    pruefeEindeutig(
+      reise.days.map((tag) => tag.dayIndex),
+      ctx,
+      ['days'],
+      'Zwei Tage tragen dieselbe Nummer',
+    )
+    pruefeEindeutig(
+      reise.days.map((tag) => tag.dayDate).filter((wert): wert is string => wert !== null),
+      ctx,
+      ['days'],
+      'Zwei Tage tragen dasselbe Datum',
+    )
+
+    const punkte =
+      reise.days.reduce((summe, tag) => summe + tag.items.length, 0) + reise.ohneTag.length
+    if (punkte > GRENZEN.punkteJeReise) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['days'],
+        message: `Eine Reise trägt höchstens ${GRENZEN.punkteJeReise} Planpunkte`,
+      })
+    }
+
+    const etappenKennungen = new Set(reise.stages.map((etappe) => etappe.id))
+    for (const [stelle, tag] of reise.days.entries()) {
+      if (tag.stageId && !etappenKennungen.has(tag.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['days', stelle, 'stageId'],
+          message: 'Dieser Tag verweist auf eine unbekannte Etappe',
+        })
+      }
+      for (const [ort, punkt] of tag.items.entries()) {
+        if (punkt.stageId && !etappenKennungen.has(punkt.stageId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['days', stelle, 'items', ort, 'stageId'],
+            message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
+          })
+        }
+      }
+    }
+    for (const [ort, punkt] of reise.ohneTag.entries()) {
+      if (punkt.stageId && !etappenKennungen.has(punkt.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['ohneTag', ort, 'stageId'],
+          message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
+        })
+      }
+    }
+
+    const punktKennungen = new Set([
+      ...reise.days.flatMap((tag) => tag.items.map((punkt) => punkt.id)),
+      ...reise.ohneTag.map((punkt) => punkt.id),
+    ])
+    for (const [ort, item] of reise.readinessItems.entries()) {
+      if (item.tripItemId && !punktKennungen.has(item.tripItemId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['readinessItems', ort, 'tripItemId'],
+          message: 'Dieser Vorbereitungspunkt verweist auf einen unbekannten Planpunkt',
+        })
+      }
+    }
+  })
+
+export type GepruefteReise = z.infer<typeof reiseSchema>
+
+function pruefeEindeutig(
+  werte: (string | number)[],
+  ctx: z.RefinementCtx,
+  path: (string | number)[],
+  meldung: string,
+) {
+  if (new Set(werte).size !== werte.length) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path, message: meldung })
+  }
+}
+
+function tageZwischen(von: string, bis: string): number {
+  const einTag = 86_400_000
+  return Math.round((Date.parse(`${bis}T00:00:00Z`) - Date.parse(`${von}T00:00:00Z`)) / einTag)
+}
+
+/**
+ * Liest eine Reise aus unbekannten Daten.
+ *
+ * Gibt `null` statt zu werfen: Der Aufrufer liest den Browserspeicher, und ein
+ * unbrauchbarer Eintrag darf die Seite nicht abbrechen.
+ */
+export function reiseLesen(wert: unknown): Trip | null {
+  const roh = wert && typeof wert === 'object' ? (wert as Record<string, unknown>) : null
+  const mitAlias =
+    roh && roh.dayStageAssignmentMode == null && 'dayStageAssignmentSource' in roh
+      ? { ...roh, dayStageAssignmentMode: roh.dayStageAssignmentSource }
+      : roh ?? wert
+  const ergebnis = reiseSchema.safeParse(mitAlias)
+  if (!ergebnis.success) return null
+  const { dayStageAssignmentMode: _claimed, ...rest } = ergebnis.data
+  try {
+    return {
+      ...rest,
+      dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
+        stageCount: rest.stages.length,
+        positions: stagePositionenAusReise(rest),
+      }),
+    }
+  } catch (fehler) {
+    if (!(fehler instanceof DayStageAssignmentFehler)) throw fehler
+    // 0-Stage-Entwürfe bleiben lesbar, minten aber kein single_destination.
+    // Ungültige Positionen machen den Eintrag unbrauchbar.
+    if (rest.stages.length < 1) return rest
+    return null
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Die Nutzlast von public.reise_anlegen()
+// ---------------------------------------------------------------------------
+//
+// Sie ist keine Umschrift des Reisegraphen, sondern sein Ausschnitt: Was
+// `public.reise_anlegen()` liest, steht hier – und nur das. Ein Feld, das die
+// Funktion nicht liest, mitzuschicken wäre die Behauptung, es käme an.
+//
+// `route_itinerary` liest `reise_anlegen()` und schreibt die validierte
+// Itinerary in derselben Transaktion nach `trip_items.metadata`. Der
+// Anwendung-Nachlauf bleibt fail-closed Recovery, kein stilles ok.
+
+const nutzlastPunktSchema = z.object({
+  kind: z.enum(TRIP_ITEM_KINDS),
+  title: z.string().min(1).max(GRENZEN.titel),
+  note: z.string().max(GRENZEN.notiz).nullable(),
+  position: z.number().int().min(1).max(500),
+  starts_on: datum.nullable().default(null),
+  starts_at: uhrzeit.nullable(),
+  ends_on: datum.nullable().default(null),
+  ends_at: uhrzeit.nullable().default(null),
+  price_amount: betrag.nullable().default(null),
+  price_currency: waehrung.nullable().default(null),
+  provider: z.string().min(1).max(40).nullable().default(null),
+  external_ref: z.string().min(1).max(200).nullable().default(null),
+  booking_url: z
+    .string()
+    .url()
+    .startsWith('https://', 'Ein Buchungslink muss über HTTPS gehen')
+    .max(2048)
+    .nullable()
+    .default(null),
+  booking_status: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
+  booking_confirmed_at: zeitstempel.nullable().default(null),
+  mobility_mode: z.unknown().transform(mobilityModeLesen).nullable().default(null),
+  origin_place_id: z.string().min(1).max(80).nullable().default(null),
+  destination_place_id: z.string().min(1).max(80).nullable().default(null),
+  origin_name: optionalerText(GRENZEN.ort).nullable().default(null),
+  destination_name: optionalerText(GRENZEN.ort).nullable().default(null),
+  connection_ref: optionalerText(40).nullable().default(null),
+  mobility_changes: z.number().int().min(0).max(20).nullable().default(null),
+  rental_supplier: optionalerText(GRENZEN.titel).nullable().default(null),
+  vehicle_class: z.unknown().transform(vehicleClassLesen).nullable().default(null),
+  transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
+  route_itinerary: flugRouteItinerarySchema.nullable().optional().default(null),
+})
+  .superRefine((punkt, ctx) => {
+    if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['price_amount'],
+        message: 'Preis und Währung gehören zusammen.',
+      })
+    }
+  })
+  .transform((punkt) => {
+    const darfBuchen =
+      punkt.kind === 'flight' ||
+      punkt.kind === 'stay' ||
+      punkt.kind === 'transfer' ||
+      punkt.kind === 'rental_car'
+    const gebucht = darfBuchen && punkt.booking_status === 'booked'
+    const transfer = punkt.kind === 'transfer'
+    const mietwagen = punkt.kind === 'rental_car'
+    const orteErlaubt = transfer || mietwagen
+    return {
+      ...punkt,
+      booking_status: gebucht ? ('booked' as const) : ('unconfirmed' as const),
+      booking_confirmed_at: gebucht ? punkt.booking_confirmed_at : null,
+      mobility_mode: transfer ? punkt.mobility_mode : null,
+      origin_place_id: orteErlaubt ? punkt.origin_place_id : null,
+      destination_place_id: orteErlaubt ? punkt.destination_place_id : null,
+      origin_name: orteErlaubt ? punkt.origin_name : null,
+      destination_name: orteErlaubt ? punkt.destination_name : null,
+      connection_ref: transfer ? punkt.connection_ref : null,
+      mobility_changes: transfer ? punkt.mobility_changes : null,
+      rental_supplier: mietwagen ? punkt.rental_supplier : null,
+      vehicle_class: mietwagen ? punkt.vehicle_class : null,
+      transmission: mietwagen ? punkt.transmission : null,
+      route_itinerary: punkt.kind === 'flight' ? punkt.route_itinerary : null,
+    }
+  })
+
+const nutzlastTagSchema = z.object({
+  day_index: z.number().int().min(1).max(GRENZEN.reisetageJeReise),
+  day_date: datum.nullable(),
+  title: z.string().min(1).max(GRENZEN.titel).nullable(),
+  /**
+   * Position der Etappe in derselben Nutzlast, 1-basiert.
+   *
+   * Darüber erhält `trip_days.stage_id` seine Zuordnung, auch ohne Kalenderdatum.
+   */
+  stage_position: z.number().int().min(1).max(200).nullable().optional().default(null),
+  items: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise),
+})
+
+const nutzlastEtappeSchema = z.object({
+  position: z.number().int().min(1).max(200),
+  name: z.string().min(1).max(GRENZEN.titel),
+  country_code: landescode.nullable(),
+  arrival_date: datum.nullable(),
+  departure_date: datum.nullable(),
+  latitude: z.number().min(-90).max(90).nullable().optional().default(null),
+  longitude: z.number().min(-180).max(180).nullable().optional().default(null),
+  place_id: z.string().min(1).max(80).nullable().optional().default(null),
+})
+
+/**
+ * Was zur Datenbank geht.
+ *
+ * `status` fehlt absichtlich: Eine neue Reise ist ein Entwurf, und die Funktion
+ * setzt `draft` selbst. `user_id` fehlt ebenfalls – sie kommt aus `auth.uid()`.
+ * Beides wäre eine Angabe, die der Client machen könnte, und genau deshalb
+ * macht er sie nicht.
+ */
+export const reiseNutzlastSchema = z.object({
+  client_ref: z.string().min(1).max(64),
+  title: z.string().min(1).max(GRENZEN.titel),
+  origin: z.string().min(1).max(GRENZEN.ort).nullable(),
+  origin_place_id: z.string().min(1).max(80).nullable().optional().default(null),
+  start_date: datum.nullable(),
+  end_date: datum.nullable(),
+  travellers: z.number().int().min(1).max(GRENZEN.reisende),
+  currency: waehrung,
+  budget_amount: betrag.nullable(),
+  pace: z.enum(TRIP_PACES),
+  interests: z.array(z.enum(TRIP_INTERESTS)),
+  travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
+  /**
+   * Optionaler Client-Claim. `public.reise_anlegen()` leitet den Mode
+   * serverseitig aus Stages und gültigen `stage_position`-Werten ab.
+   * `legacy_fallback` wird für neue Requests niemals persistiert.
+   */
+  day_stage_assignment_mode: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
+  day_stage_assignment_source: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
+  stages: z
+    .array(nutzlastEtappeSchema)
+    .min(1, 'Die Reise braucht mindestens ein Reiseziel.')
+    .max(GRENZEN.etappenJeReise),
+  days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
+  ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),
+})
+
+export type ReiseNutzlast = z.infer<typeof reiseNutzlastSchema>
+
+// ---------------------------------------------------------------------------
+// Eingaben der Oberfläche
+// ---------------------------------------------------------------------------
+
+export const neueReiseSchema = z.object({
+  /**
+   * Die Kennung, die das Formular je Anlauf erzeugt.
+   *
+   * Sie trägt die Idempotenz bis in die Datenbank: Ein Doppelklick auf „Reise
+   * erstellen" und ein erneut abgeschickter Vorgang nach einer abgebrochenen
+   * Antwort schicken dieselbe Kennung und ergeben über
+   * `unique (user_id, client_ref)` dieselbe Reise.
+   */
+  clientRef: z.string().min(1).max(64),
+  title: titel,
+  destination: titel,
+  destinationPlaceId: z
+    .string()
+    .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
+    .max(80)
+    .refine((wert) => /^geonames:\d+$/.test(wert), 'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.'),
+  weitereDestinationPlaceIds: z
+    .array(
+      z
+        .string()
+        .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
+        .max(80)
+        .refine(
+          (wert) => /^geonames:\d+$/.test(wert),
+          'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.',
+        ),
+    )
+    .max(GRENZEN.etappenJeReise - 1, `Höchstens ${GRENZEN.etappenJeReise} Reiseziele sind möglich.`)
+    .default([]),
+  origin: titel,
+  originPlaceId: z
+    .string()
+    .min(1, 'Bitte wähle einen Abreiseort aus der Liste.')
+    .max(80)
+    .refine((wert) => /^(geonames:\d+|airport:[A-Z]{3})$/.test(wert), 'Dieser Abreiseort ist unbekannt. Bitte wähle einen Eintrag aus der Liste.'),
+  startDate: datum,
+  endDate: datum,
+  travellers: z.number().int().min(1).max(GRENZEN.reisende),
+  currency: waehrung.default('CHF'),
+  budgetAmount: betrag.nullable().default(null),
+  pace: tempo,
+  interests: interessen.default([]),
+  travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+})
+  .superRefine((reise, ctx) => {
+    if (reise.endDate < reise.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        message: 'Die Rückreise darf nicht vor der Abreise liegen.',
+      })
+    }
+  })
+
+export type NeueReise = z.infer<typeof neueReiseSchema>
+
+/**
+ * Was das Formular „Punkt hinzufügen" liefert.
+ *
+ * Ohne Kennungen: Der Tag steht in der Oberfläche fest, und ob er lokal
+ * (`day-<uuid>`) oder in der Datenbank (UUID) liegt, ist eine Frage der Ablage
+ * und nicht der Eingabe. Beide Arbeitsbereiche prüfen deshalb dasselbe.
+ */
+export const planpunktFormularSchema = z.object({
+  kind: z.enum(TRIP_ITEM_KINDS).default('note'),
+  title: titel,
+  note: optionalerText(GRENZEN.notiz).nullable().default(null),
+  startsAt: uhrzeit.nullable().default(null),
+})
+
+export type PlanpunktFormular = z.infer<typeof planpunktFormularSchema>
+
+const manuelleIata = z.string().max(32).trim().transform((wert) => wert.toUpperCase())
+  .pipe(z.string().regex(/^[A-Z]{3}$/, 'Bitte gib einen IATA-Code mit drei Buchstaben an.'))
+const optionaleFlugzeit = z.union([uhrzeit, z.literal(''), z.null()]).optional()
+  .transform((wert) => wert || null)
+const flugSegmentManuellSchema = z.object({
+  origin: manuelleIata,
+  destination: manuelleIata,
+  departureDate: datum,
+  departureTime: optionaleFlugzeit,
+  arrivalDate: datum,
+  arrivalTime: optionaleFlugzeit,
+}).strict('Erlaubt sind nur IATA-Codes, Abflug- und Ankunftsdaten sowie optionale Uhrzeiten.')
+
+export type FlugSegmentManuell = z.infer<typeof flugSegmentManuellSchema>
+
+/** Nur Ankunft und Anschlussabflug am exakt selben Flughafen sind vergleichbar. */
+function anschlusszeitRueckwaerts(vonTag: string, vonZeit: string | null, bisTag: string, bisZeit: string | null): boolean {
+  return bisTag < vonTag || (bisTag === vonTag && vonZeit !== null && bisZeit !== null && bisZeit < vonZeit)
+}
+
+/** Ein manuelles Leg. Keine Client-Country-, Surface- oder Provider-Claims. */
+export const flugRouteManuellSchema = z.object({
+  segments: z.array(flugSegmentManuellSchema).min(1, 'Bitte gib mindestens ein Flugsegment an.')
+    .max(4, 'Höchstens vier Flugsegmente sind möglich.').superRefine((segmente, ctx) => {
+      for (const [index, segment] of segmente.entries()) {
+        const melden = (feld: keyof FlugSegmentManuell, message: string) =>
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: [index, feld], message: `Segment ${index + 1}: ${message}` })
+        if (segment.origin === segment.destination) melden('destination', 'Abflug und Ankunft müssen unterschiedliche Flughäfen sein.')
+        const vorher = segmente[index - 1]
+        if (vorher) {
+          if (segment.origin !== vorher.destination) melden('origin', 'Der Abflug muss am Ankunftsflughafen des vorherigen Segments liegen.')
+          else if (anschlusszeitRueckwaerts(vorher.arrivalDate, vorher.arrivalTime, segment.departureDate, segment.departureTime)) {
+            melden('departureDate', 'Der Anschluss darf nicht vor der vorherigen Ankunft liegen.')
+          }
+        }
+      }
+    }),
+}).strict('Erlaubt sind nur die Flugsegmente.')
+
+/** Derselbe enge Datumsvertrag für Formular, Konto und Gast; keine Ableitung. */
+export const unterkunftZeitraumSchema = z.object({
+  startsOn: z.string({ required_error: 'Bitte gib Check-in und Check-out an.' })
+    .min(1, 'Bitte gib Check-in und Check-out an.').pipe(datum),
+  endsOn: z.string({ required_error: 'Bitte gib Check-in und Check-out an.' })
+    .min(1, 'Bitte gib Check-in und Check-out an.').pipe(datum),
+}).refine((zeitraum) => zeitraum.endsOn > zeitraum.startsOn, {
+  path: ['endsOn'],
+  message: 'Check-out muss nach Check-in liegen.',
+})
+
+/** Dasselbe Formular, an eine Reise und einen Tag im Konto gebunden. */
+export const neuePlanpunktNutzlastSchema = planpunktFormularSchema.extend({
+  tripId: z.string().uuid(),
+  dayId: z.string().uuid(),
+})
+
+/** Die erste Fehlermeldung eines Prüflaufs, für die Anzeige. */
+export function ersteMeldung(fehler: z.ZodError): string {
+  return fehler.issues[0]?.message ?? 'Die Angaben sind unvollständig.'
+}

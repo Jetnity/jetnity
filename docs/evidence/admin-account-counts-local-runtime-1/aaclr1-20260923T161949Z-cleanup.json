@@ -1,0 +1,34 @@
+{
+  "cleanup": {
+    "processesStopped": true,
+    "reaped": true,
+    "neverStarted": true,
+    "unknown": false,
+    "ownershipRetained": false,
+    "dockerServicesUnverified": false,
+    "volumesUnconfirmed": false,
+    "incompleteRegistry": false,
+    "stopUnknown": false,
+    "browserClosed": true,
+    "reports": [],
+    "removals": [
+      {
+        "kind": "dir",
+        "path": "/tmp/aaclr1-home-kYj2oS",
+        "removed": true
+      }
+    ],
+    "usedPkill": false,
+    "usedDockerPrune": false,
+    "stack": null
+  },
+  "cleanupProbe": {
+    "blocked": false,
+    "allowed": true,
+    "unused": true,
+    "signalFailureBlocked": true,
+    "dockerUnverifiedBlocked": true,
+    "foreignBlocked": true,
+    "traversalBlocked": true
+  }
+}

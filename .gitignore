@@ -1,0 +1,46 @@
+# Node.js build & cache
+node_modules/
+.npm/
+*.tsbuildinfo
+*.log
+logs/
+
+# Next.js
+.next/
+out/
+dist/
+
+# Turborepo / allgemeine Caches
+.turbo/
+.cache/
+.eslintcache
+
+# Coverage / Test-Artefakte
+coverage/
+playwright-report/
+test-results/
+cypress/screenshots/
+cypress/videos/
+
+# Vercel (lokal generiert, nicht pushen)
+.vercel/
+
+# Lokale Umgebungen (nie committen)
+.env*
+!.env.example          # Beispiel-Dateien behalten
+!.env.*.example        # auch .env.local.example etc. behalten
+
+# Supabase (lokale Artefakte)
+supabase/.temp/
+supabase/.branches/
+
+# Jetnity intern (lokale Arbeitsverzeichnisse)
+jetnity-clean/
+
+# macOS / Windows Systemdateien
+.DS_Store
+Thumbs.db
+
+# Editor-Ordner
+.vscode/
+.idea/
