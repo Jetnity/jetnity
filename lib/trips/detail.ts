@@ -35,6 +35,12 @@ export type WorkspaceDetailAuswahl =
       sucheOffen: boolean
     }
 
+/** Ein expliziter Parent-Vertrag für beide Detail-Rückkehrflächen. */
+export type WorkspaceRueckkehr = {
+  label: 'Zum Tagesplan' | 'Zur Übersicht' | 'Zur Organisation' | 'Zur Vorbereitung'
+  ausfuehren: () => void
+}
+
 const LEERE_DETAIL_AUSWAHL: WorkspaceDetailAuswahl = { art: 'keine' }
 
 export const DETAIL_SUCHE_BEZEICHNUNG: Record<DetailDomain, string> = {

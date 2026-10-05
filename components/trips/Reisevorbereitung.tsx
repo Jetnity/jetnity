@@ -89,8 +89,14 @@ export default function Reisevorbereitung({
   onTravellerSetzen,
   onTravellerEntfernen,
   registryUebernahme,
+  offeneBereiche,
+  onBereichOffen,
+  onZiel,
 }: {
   reise: Trip
+  offeneBereiche: ReadonlySet<PreparationBereichId>
+  onBereichOffen: (id: PreparationBereichId, offen: boolean) => void
+  onZiel: (id: PreparationBereichId) => void
   officialEvaluations?: OfficialEvaluation[]
   registryUebernahme?: React.ReactNode
   onSetzen?: (eingabe: {
@@ -105,7 +111,6 @@ export default function Reisevorbereitung({
   onTravellerSetzen?: (eingabe: TravellerEingabe) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
 }) {
-  const [offen, setOffen] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [titel, setTitel] = React.useState('')
   const { items, summary, evaluations } = readinessAnsicht(reise, officialEvaluations)
@@ -211,31 +216,16 @@ export default function Reisevorbereitung({
         </p>
       )}
 
-      <button
-        type="button"
-        aria-expanded={offen}
-        aria-controls="reisevorbereitung-detail"
-        onClick={() => setOffen((wert) => !wert)}
-        className="mt-3 inline-flex min-h-[44px] w-full items-center justify-between gap-[12px] rounded-full border border-line-200 px-[16px] text-left text-sm font-semibold break-words text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-      >
-        {offen ? 'Vorbereitung schliessen' : 'Vorbereitung öffnen'}
-        <ChevronDown className={cn('h-4 w-4', offen && 'rotate-180')} aria-hidden="true" />
-      </button>
-
-      <div
-        id="reisevorbereitung-detail"
-        hidden={!offen}
-        className={
-          offen
-            ? 'mt-4 grid w-full min-w-0 max-w-full grid-cols-1 gap-3'
-            : 'hidden'
-        }
-      >
+      <div id="reisevorbereitung-detail" className="mt-4 grid w-full min-w-0 max-w-full grid-cols-1 gap-3">
         <nav aria-label="Bereiche der Vorbereitung" className="grid w-full grid-cols-1 gap-2">
           {PREPARATION_BEREICHE.map((bereich) => (
             <a
               key={bereich.id}
               href={`#preparation-${bereich.id}`}
+              onClick={(event) => {
+                event.preventDefault()
+                onZiel(bereich.id)
+              }}
               className="block min-h-[44px] w-full min-w-0 break-words rounded-2xl border border-line-200 px-[12px] py-[10px] text-sm font-semibold leading-5 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
               {bereich.titel}
@@ -245,6 +235,8 @@ export default function Reisevorbereitung({
 
         <Bereich
           id="reisende-dokumente"
+          offen={offeneBereiche.has('reisende-dokumente')}
+          onOffen={onBereichOffen}
           hinweis={
             fehlendeFakten.length > 0
               ? officialFehlendeAngabenText(fehlendeFakten)
@@ -279,6 +271,8 @@ export default function Reisevorbereitung({
 
         <Bereich
           id="offizielle-anforderungen"
+          offen={offeneBereiche.has('offizielle-anforderungen')}
+          onOffen={onBereichOffen}
           hinweis={officialAbschnittHinweis(checkliste)}
         >
           <p className="text-xs leading-5 text-ink-800">{officialListeHinweis(evaluations)}</p>
@@ -308,6 +302,8 @@ export default function Reisevorbereitung({
 
         <Bereich
           id="tickets-buchungen"
+          offen={offeneBereiche.has('tickets-buchungen')}
+          onOffen={onBereichOffen}
           hinweis={
             persoenlich.tickets.length === 0
               ? 'Noch kein Ticket und keine Buchungsbestätigung'
@@ -340,6 +336,8 @@ export default function Reisevorbereitung({
 
         <Bereich
           id="eigene-vorbereitung"
+          offen={offeneBereiche.has('eigene-vorbereitung')}
+          onOffen={onBereichOffen}
           hinweis={persoenlich.eigene.length === 0 ? 'Eigene Punkte ohne amtliche Wirkung' : punkteHinweis(persoenlich.eigene)}
         >
           {persoenlich.eigene.length > 0 ? punktListe(persoenlich.eigene) : null}
@@ -406,27 +404,29 @@ function Bereich({
   id,
   hinweis,
   children,
+  offen,
+  onOffen,
 }: {
   id: PreparationBereichId
   hinweis: string
   children: React.ReactNode
+  offen: boolean
+  onOffen: (id: PreparationBereichId, offen: boolean) => void
 }) {
-  const ref = React.useRef<HTMLDetailsElement>(null)
-  const bereit = React.useRef(false)
-  React.useLayoutEffect(() => {
-    if (bereit.current || !ref.current) return
-    bereit.current = true
-    ref.current.open = true
-  }, [])
-
   return (
     <details
-      ref={ref}
+      open={offen}
       id={`preparation-${id}`}
       data-preparation-section={id}
       className="group/bereich scroll-mt-28 min-w-0 rounded-2xl border border-line-200 bg-surface-25"
     >
-      <summary className="flex min-h-[44px] w-full min-w-0 cursor-pointer list-none items-center justify-between gap-[8px] rounded-2xl px-[12px] py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+      <summary
+        data-preparation-heading
+        onClick={(event) => {
+          event.preventDefault()
+          onOffen(id, !offen)
+        }}
+        className="flex min-h-[44px] w-full min-w-0 cursor-pointer list-none items-center justify-between gap-[8px] rounded-2xl px-[12px] py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0 flex-1">
           <span className="block break-words text-sm font-semibold leading-5 text-brand-800">{BEREICH_TITEL[id]}</span>
           <span className="mt-0.5 block break-words text-xs leading-5 text-ink-800">{hinweis}</span>
@@ -556,7 +556,7 @@ function Vorbereitungspunkt({
             {item.title ?? READINESS_ART_BEZEICHNUNG[item.kind]}
             {item.countryCode ? ` · ${landAnzeigeText(item.countryCode)}` : ''}
             {item.travellerClientRef
-              ? ` · ${slots.find((slot) => slot.clientRef === item.travellerClientRef)?.label ?? item.travellerClientRef}`
+              ? ` · ${slots.find((slot) => slot.clientRef === item.travellerClientRef)?.label ?? 'Reisende Person'}`
               : ''}
           </p>
           <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
@@ -660,7 +660,7 @@ function ReisendenZusammenfassung({
   const wohnsitz = slot.traveller?.residenceCountryCode
   return (
     <div className="grid min-w-0 gap-1" data-traveller-summary={slot.clientRef}>
-      <p className="break-words text-sm font-semibold text-brand-800">{slot.label}</p>
+      <h5 tabIndex={-1} className="break-words text-sm font-semibold text-brand-800 outline-none">{slot.label}</h5>
       <p className="break-words text-xs leading-5 text-ink-800">
         {wohnsitz ? landPraefixText('Wohnsitz', wohnsitz) : 'Wohnsitz nicht hinterlegt'}
       </p>
@@ -722,7 +722,7 @@ function ReisendenKarte({
   )
 
   return (
-    <article className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
+    <article data-preparation-traveller={slot.clientRef} className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
       <ReisendenZusammenfassung slot={slot} tripStart={tripStart} tripEnd={tripEnd} />
       {onTravellerSetzen ? (
         <details className="group/traveller w-full min-w-0">

@@ -19,6 +19,12 @@ export const PREPARATION_BEREICHE = [
 
 export type PreparationBereichId = (typeof PREPARATION_BEREICHE)[number]['id']
 
+/** Ausschließlich Navigationsreferenzen, keine Reisenden- oder Readiness-Wahrheit. */
+export type PreparationZiel = {
+  bereich: PreparationBereichId
+  travellerClientRef?: string
+}
+
 const TICKET_ARTEN = ['ticket_confirmation_check', 'booking_confirmation_check'] as const
 
 /**

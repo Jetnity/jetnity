@@ -20,6 +20,7 @@ import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { readinessAnsicht } from '@/lib/readiness/status'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
+import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import { safetyLokalFuerReise } from '@/lib/safety/engine'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -55,6 +56,7 @@ export type AttentionLage =
 export type AttentionAktion = {
   art: 'bereich'
   bereich: Arbeitsbereich
+  preparationZiel?: PreparationZiel | null
 }
 
 export type AttentionPunkt = {
@@ -286,7 +288,14 @@ function officialLagenFuerSlot(
 function officialPunktFuerSlot(slot: OfficialSlot, lage: AttentionLage): AttentionPunkt {
   const transit = slot.transitCountryCode ?? 'none'
   const id = `official:${lage}:${slot.travellerClientRef}:${slot.credentialOptionRef}:${slot.destination}:${slot.requirementType}:${transit}`
-  const aktion: AttentionAktion = { art: 'bereich', bereich: 'uebersicht' }
+  const aktion: AttentionAktion = {
+    art: 'bereich',
+    bereich: 'uebersicht',
+    preparationZiel: {
+      bereich: lage === 'insufficient_context' ? 'reisende-dokumente' : 'offizielle-anforderungen',
+      travellerClientRef: slot.travellerClientRef,
+    },
+  }
   if (lage === 'insufficient_context') {
     return {
       id,
@@ -732,7 +741,12 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
       schwere: 'hinweis',
       lage: 'insufficient_context',
       titel: 'Offizielle Prüfung noch nicht möglich',
-      aktion: { art: 'bereich', bereich: 'uebersicht' },
+      aktion: {
+        art: 'bereich',
+        bereich: 'uebersicht',
+        // Das reiseweite Signal benennt keine einzelne Person. Kein Default-Traveller.
+        preparationZiel: { bereich: 'reisende-dokumente' },
+      },
     })
   } else {
     const slots = officialPflichtslots(reise)
@@ -745,7 +759,11 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
         schwere: 'hinweis',
         lage: 'ungeprueft',
         titel: 'Offizielle Einreisehinweise sind nicht vollständig geprüft',
-        aktion: { art: 'bereich', bereich: 'uebersicht' },
+        aktion: {
+          art: 'bereich',
+          bereich: 'uebersicht',
+          preparationZiel: { bereich: 'offizielle-anforderungen' },
+        },
       })
     } else {
       for (const slot of slots) {

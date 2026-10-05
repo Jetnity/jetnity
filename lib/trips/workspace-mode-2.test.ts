@@ -68,10 +68,7 @@ test('ungültige Werte fallen auf Übersicht und bewahren fremde Parameter', () 
     'ansicht=uebersicht',
     'ansicht=Plan',
     'bereich=fluege',
-    'ansicht=organisieren&bereich=plan',
-    'ansicht=organisieren&bereich=',
     'ansicht=foo&ansicht=plan',
-    'ansicht=organisieren&bereich=fluege&bereich=unterkunft',
   ]) {
     const erg = lesen(search)
     assert.equal(erg.modus.ansicht, 'uebersicht', search)
@@ -126,4 +123,54 @@ test('der Workspace schreibt Modus in die History und mountet Suche nur ausdrüc
   const aktiv = quelle.indexOf('data-workspace-active-domain')
   const suche = quelle.indexOf('name="flugsuche"')
   assert.ok(split > -1 && aktiv > split && suche > aktiv)
+})
+
+test('Plan-Tag/Punkt und Preparation-Section/Traveller sind exakte round-trip Werte', () => {
+  for (const modus of [
+    { ansicht: 'plan' as const, bereich: null, tagId: 'day:/opaque', itemId: 'item"with&chars' },
+    { ansicht: 'vorbereitung' as const, bereich: null, preparationZiel: { bereich: 'reisende-dokumente' as const, travellerClientRef: 'exact:/opaque' } },
+    { ansicht: 'vorbereitung' as const, bereich: null, preparationZiel: { bereich: 'offizielle-anforderungen' as const } },
+  ]) {
+    const params = queryFuerModus(new URLSearchParams('foreign=1&foreign=2'), modus)
+    assert.deepEqual(params.getAll('foreign'), ['1', '2'])
+    assert.deepEqual(modusAusQuery(params), { ...modus, urlAnpassen: false })
+  }
+})
+
+test('malformed/duplicate owned Werte schließen zum nächsten sicheren Parent', () => {
+  for (const wert of ['', 'a'.repeat(81), '%00', '%EF%BF%BD', '%20abc', 'abc%20']) {
+    assert.equal(lesen(`ansicht=plan&tag=day-1&punkt=${wert}`).search, 'ansicht=plan&tag=day-1')
+    assert.equal(lesen(`ansicht=plan&tag=${wert}&punkt=item-1`).search, 'ansicht=plan')
+  }
+  for (const [query, kanonisch] of [
+    ['ansicht=plan&ansicht=plan&punkt=a', ''],
+    ['ansicht=plan&tag=a&tag=a&punkt=b', 'ansicht=plan'],
+    ['ansicht=plan&tag=a&punkt=b&punkt=b', 'ansicht=plan&tag=a'],
+    ['ansicht=organisieren&bereich=fluege&bereich=unterkunft', 'ansicht=organisieren'],
+    ['ansicht=organisieren&bereich=unknown', 'ansicht=organisieren'],
+    ['ansicht=vorbereitung&vorbereitung=reisende-dokumente&vorbereitung=reisende-dokumente&reisender=a', 'ansicht=vorbereitung'],
+    ['ansicht=vorbereitung&vorbereitung=unknown&reisender=a', 'ansicht=vorbereitung'],
+    ['ansicht=vorbereitung&vorbereitung=reisende-dokumente&reisender=a&reisender=b', 'ansicht=vorbereitung&vorbereitung=reisende-dokumente'],
+    [`ansicht=vorbereitung&vorbereitung=reisende-dokumente&reisender=${'x'.repeat(65)}`, 'ansicht=vorbereitung&vorbereitung=reisende-dokumente'],
+    ['ansicht=vorbereitung&reisender=alone', 'ansicht=vorbereitung'],
+  ]) {
+    const gelesen = lesen(query)
+    assert.equal(gelesen.search, kanonisch, query)
+    assert.equal(gelesen.modus.urlAnpassen, true, query)
+  }
+})
+
+test('Auswahlen außerhalb ihres Modus werden entfernt, Fremdparameter bleiben', () => {
+  for (const [query, kanonisch] of [
+    ['ansicht=organisieren&bereich=fluege&tag=a&punkt=b&vorbereitung=reisende-dokumente&reisender=c', 'ansicht=organisieren&bereich=fluege'],
+    ['ansicht=plan&bereich=fluege&vorbereitung=reisende-dokumente&reisender=c', 'ansicht=plan'],
+    ['ansicht=vorbereitung&tag=a&punkt=b&bereich=fluege', 'ansicht=vorbereitung'],
+    ['tag=a&punkt=b&bereich=fluege&vorbereitung=reisende-dokumente&reisender=c', ''],
+  ]) {
+    const gelesen = lesen(`foreign=1&${query}`)
+    assert.equal(gelesen.search, `foreign=1${kanonisch ? `&${kanonisch}` : ''}`)
+    assert.equal(gelesen.modus.urlAnpassen, true)
+  }
+  const params = new URLSearchParams('foreign=1&ansicht=plan&tag=a&punkt=b&vorbereitung=reisende-dokumente&reisender=c')
+  assert.equal(queryFuerModus(params, { ansicht: 'uebersicht', bereich: null }).toString(), 'foreign=1')
 })

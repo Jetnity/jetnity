@@ -1,0 +1,123 @@
+npm test (exit 1)
+---
+  duration_ms: 19.412792
+  type: 'test'
+  location: '<repo>/lib/readiness/official-truth-catalog-hardening-schema.test.ts:4:4500'
+  failureType: 'testCodeFailure'
+  error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+  code: 'ENOENT'
+  stack: |-
+  ---
+  duration_ms: 2.693584
+  type: 'test'
+  location: '<repo>/lib/readiness/official-truth-content-identity-schema-v2.test.ts:4:1284'
+  failureType: 'testCodeFailure'
+  error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+  code: 'ENOENT'
+  stack: |-
+      ---
+      duration_ms: 47.296125
+      type: 'test'
+      location: '<repo>/lib/readiness/official-truth-source-catalog-server.test.ts:9:789'
+      failureType: 'testCodeFailure'
+      error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+      code: 'ENOENT'
+      stack: |-
+      ---
+      duration_ms: 83.763875
+      type: 'test'
+      location: '<repo>/lib/readiness/official-truth-store-server.test.ts:9:22373'
+      failureType: 'testCodeFailure'
+      error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+      code: 'ENOENT'
+      stack: |-
+  type: 'suite'
+  ...
+1..874
+# tests 5285
+# suites 800
+# pass 5281
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18366.542333
+
+npm run typecheck (exit 0)
+> jetnity@1.0.0 typecheck
+> next typegen && tsc -p tsconfig.json --noEmit
+
+Generating route types...
+✓ Types generated successfully
+
+npm run lint (exit 0)
+309:10  warning  'sichtbareTexte' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 144 problems (0 errors, 144 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+
+npm run check:operating-mode (exit 0)
+> jetnity@1.0.0 check:operating-mode
+> node scripts/operating-mode-guard.mjs
+
+operating-mode guard: PASS
+
+npm run check:api-schutz (exit 0)
+> jetnity@1.0.0 check:api-schutz
+> node scripts/api-schutz.mjs
+
+API-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi().
+
+npm run check:schema-bezug (exit 0)
+> jetnity@1.0.0 check:schema-bezug
+> node scripts/db/verwendung.mjs --pruefen
+
+Jede angesprochene generierte Struktur existiert – geprüft gegen 22 Tabellen/Views und 25 Funktionen in types/supabase.ts.
+LOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC darf_official_truth_freigeben from lib/readiness/official-truth-fact-entry-authority-server.ts → supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC official_truth_source_catalog_v2 from lib/readiness/official-truth-source-catalog-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC official_truth_store_accepted_v2 from lib/readiness/official-truth-store-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)
+
+npm run check:dead (exit 0)
+> jetnity@1.0.0 check:dead
+> node scripts/erreichbarkeit.mjs
+
+Startpunkte:        657
+erreichbare Module: 1317
+verwaist:           0
+
+
+Keine unbegruendet verwaiste Datei.
+
+npm run check:exports (exit 0)
+> jetnity@1.0.0 check:exports
+> node scripts/exporte.mjs
+
+geprueft: 1057 Dateien
+Exporte ohne Aufrufer: 0
+
+Kein unbegruendeter Export ohne Aufrufer.
+
+npm run check:deps (exit 0)
+> jetnity@1.0.0 check:deps
+> node scripts/pakete.mjs
+
+
+dependencies: 11 geprueft, 0 ohne Verwendung
+
+devDependencies: 2 geprueft, 0 ohne Verwendung
+
+nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide
+
+npm run build (exit 0)
+⚠️  Warnings: 1
+✓ Running next.config.js took 6ms
+✓ Compiled successfully in 2.2s
+  Running TypeScript ...
+  Finished TypeScript in 1784ms ...
+  Generating static pages using 9 workers (0/25) ...
+  Generating static pages using 9 workers (6/25)
+  Generating static pages using 9 workers (12/25)
+  Generating static pages using 9 workers (18/25)
+✓ Generating static pages using 9 workers (25/25) in 176ms
+  Finalizing page optimization ...

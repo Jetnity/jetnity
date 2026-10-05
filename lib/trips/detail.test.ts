@@ -7,6 +7,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { modusAusQuery, modusFuerReise, modusUrl, detailElternModus } from '@/lib/trips/workspace-mode'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import { gewaehlterTagId } from '@/lib/trips/arbeitsbereich'
 import {
@@ -584,5 +585,59 @@ describe('State trägt keine Hard Facts', () => {
     assert.equal(JSON.stringify(auswahl).includes('CHF'), false)
     assert.equal(JSON.stringify(auswahl).includes('unavailable'), false)
     assert.equal(JSON.stringify(auswahl).includes('ZRH'), false)
+  })
+})
+
+describe('Navigation revalidiert am aktuellen Trip-Graph', () => {
+  const item = punkt({ id: 'opaque-not-day-2', kind: 'note', title: 'Nicht aus dem Titel ableiten', dayId: 'day-1' })
+  const trip = reise()
+  trip.days[0].items.push(item)
+  const aufloesen = (query: string, aktuell = trip) => modusFuerReise(modusAusQuery(new URLSearchParams(query)), aktuell, aktuell.ohneTag)
+
+  test('Item-Deep-Link und falscher/alter Tag stellen den tatsächlichen Tag wieder her', () => {
+    for (const query of [
+      'ansicht=plan&punkt=opaque-not-day-2',
+      'ansicht=plan&tag=day-2&punkt=opaque-not-day-2',
+      'ansicht=plan&tag=deleted-day&punkt=opaque-not-day-2',
+    ]) {
+      const modus = aufloesen(query)
+      assert.equal(modus.tagId, 'day-1')
+      assert.equal(modus.itemId, item.id)
+      assert.equal(modus.urlAnpassen, true)
+      assert.equal(modusUrl('/', detailElternModus(modus)), '/?ansicht=plan&tag=day-1')
+    }
+  })
+
+  test('ungeplantes Item und tote dayId erfinden keinen Tag', () => {
+    for (const dayId of [null, 'nicht-mehr-da']) {
+      const aktuell = reise({ ohneTag: [punkt({ ...item, dayId })] })
+      const modus = aufloesen('ansicht=plan&tag=day-2&punkt=opaque-not-day-2', aktuell)
+      assert.equal(modus.tagId, undefined)
+      assert.equal(modus.itemId, item.id)
+      assert.equal(modusUrl('/', detailElternModus(modus)), '/?ansicht=plan')
+    }
+  })
+
+  test('gelöschtes Item fällt auf den gültigen Tag, gelöschter Tag auf Plan zurück', () => {
+    assert.equal(modusUrl('/', aufloesen('ansicht=plan&tag=day-2&punkt=deleted')), '/?ansicht=plan&tag=day-2')
+    assert.equal(modusUrl('/', aufloesen('ansicht=plan&tag=deleted&punkt=deleted')), '/?ansicht=plan')
+    const next = reise({ days: [{ ...trip.days[1], items: [{ ...item, dayId: 'day-2' }] }] })
+    const modus = modusFuerReise(aufloesen('ansicht=plan&punkt=opaque-not-day-2'), next, [])
+    assert.equal(modus.tagId, 'day-2')
+    assert.equal(modus.urlAnpassen, true)
+  })
+
+  test('Preparation-Ref braucht einen exakten anwendbaren Slot, sonst section-only', () => {
+    const prefix = 'ansicht=vorbereitung&vorbereitung=reisende-dokumente'
+    assert.equal(aufloesen(`${prefix}&reisender=traveller%3A1`).preparationZiel?.travellerClientRef, 'traveller:1')
+    for (const ref of ['missing', 'traveller:999', 'traveller:01']) {
+      const modus = aufloesen(`${prefix}&reisender=${ref}`)
+      assert.deepEqual(modus.preparationZiel, { bereich: 'reisende-dokumente' })
+      assert.equal(modus.urlAnpassen, true)
+    }
+  })
+
+  test('Organize-Deep-Link Parent bleibt Organisieren ohne Domain', () => {
+    assert.equal(modusUrl('/?foreign=1', detailElternModus(aufloesen('ansicht=organisieren&bereich=fluege'))), '/?foreign=1&ansicht=organisieren')
   })
 })
