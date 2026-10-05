@@ -1,41 +1,40 @@
-# Trip Workspace Manual Flight Route Completion 1 — Self Review
+# Trip Workspace Manual Flight Route Completion 1 — Correction Self Review
 
 Date: 5 October 2026 · Issue #836 · Draft PR #837
-Implementation reviewed: `9fea3e8284d6d291b809ebc5a9deafaafad25d40`
-Reviewer: the same Generation-1 Codex Desktop writer (`gpt-6-astra`, `xhigh`). **Not an independent TL review.**
+Correction reviewed: `55abce49e72f2758709c357f5d1af8ec4aa3f356`
+Same Generation-1 writer: Codex Desktop, `gpt-6-astra` / `xhigh`. **Not an independent TL review.**
 
-## Contract review
+## Finding and correction
 
-| Boundary | Review and evidence |
+The previous self-review incorrectly treated cross-airport local calendar/clock comparisons as a valid input/DB contract. TL comment `5989842622` correctly rejected that behavior at `b1102d29ba447b6a17cc4a74cb0ed5f1d81e1c46`. This correction removes both unsafe comparisons and keeps complete local itinerary values independent of legacy summary representability. Previous exact-head PASS statements no longer apply.
+
+| Boundary | Correction review and evidence |
 | --- | --- |
-| Scope | Eight permitted runtime files, one test file, three delivery docs; immutable task retained. No parallel-writer file changes. |
-| Manual-only | Shared predicate rejects any non-null identity and non-flight kind; UI, account pre-read, guarded UPDATE and guest all use the boundary. Booking status/source alone does not block. |
-| Input | Strict root and six-field segments; bounded IATA length, 1–4 array, trim/uppercase, real dates, exact optional times, endpoint/continuity/chronology checks. Injection rejected before account auth. |
-| Account airport authority | Actual existing airport resolver called once for distinct IATAs; every code required. Reference-only canonical country/city data; no client surface evidence. |
-| Narrow mutation | Five UPDATE columns only; unrelated metadata retained. No booking/commercial/day/stage/position/title/note changes. Missing update row and provider/kind/metadata races fail. |
-| Auth/errors | Existing `konto()` and RLS; no service role. Sanitized read/write/transport failures, no failure revalidation. No schema or trigger changes. |
-| Guest | Exactly one target across both collections; only route/schedule patch; existing persistence/schema validation. Country/city fields null, siblings preserved. |
-| Route facts | Existing canonicalizer/readers/chronology unchanged; account fixtures yield reference-backed country facts; guest and ambiguous cycles do not fabricate them. |
-| UI/React | Editor declared at module scope; immutable functional updates, interaction work in handlers, one effect for input focus, ref blocks duplicate save. Labels, alerts/status, pending states, explicit controls and separate booking. |
-| Keyboard/mobile | Browser demonstrated Enter/open/add/remove/save, Escape/cancel and focus return; 280/320/390/768/1280 widths have no document/body overflow. |
+| Scope | Only two runtime files, one existing test file and three delivery docs changed; task byte-identical. |
+| Local flight times | Schema accepts earlier local arrival dates and same-date earlier clocks across different airports; no timezone/UTC/duration inference. |
+| Connection order | Continuity enforced; date/clock order only at the exact shared airport. Earlier date rejects, equal-date earlier clock rejects only with both clocks; missing clocks remain unknown. |
+| Pure summary projection | startsOn/startsAt from first departure. Earlier final date nulls both ends. Later date retains arrival clock only with departure clock. Equal date retains arrival clock only with both clocks and nondecreasing strings. |
+| Route retention | No itinerary rewrite; route builder, actual Account metadata, both Guest collections, RouteFacts and FlugRoute preserve exact local fields. Editor reopens those fields. |
+| DB representability | Actual Account UPDATE and Guest summaries checked against all three existing legacy SQL CHECK predicates. Tests do not assert SQL was executed. |
+| Account/Guest sharing | Both unchanged write paths call the same builder and its one pure projection. Eleven table cases exercise both paths and both Guest collections. |
+| Account protection | Existing validation-before-auth, server airport authority, manual guards, five-column UPDATE, metadata CAS, returned-row check and sanitized errors retained. |
+| Guest preservation | Exact-one target; null country/city facts; no surface evidence; siblings and other fields unchanged; existing revision/timestamp behavior. |
+| Other surfaces | No component, route engine, RLS, schema/migration, provider, assignment, Official Truth or other-slice change in this correction. |
 
-## Corrections made during review
+## Fresh validation
 
-1. Corrected the typed nonstandard booking-source fixture; final typecheck succeeds.
-2. Browser identified focus loss after removing segment four because Add was disabled before commit. Deferred focus now targets the re-enabled Add button; repeat browser proof passes.
-3. Empty but structurally parseable itineraries with no airport codes show **Flugroute ergänzen**; a regression assertion covers this case.
-4. Guarded legacy multi-leg/greater-than-four routes against silent truncation and tested refusal.
-5. Added metadata compare-and-set and a concurrent-metadata regression case to prevent unrelated metadata loss between read and write.
+- 51 tests in the manual-flight file, including 15 additional P2 cases; 952 focused tests / 169 suites PASS.
+- Full npm test: **5,261 PASS / 4 FAIL / 0 skipped**. Four unchanged disposable PostgreSQL proofs fail because a hard-coded Linux initdb path does not exist on macOS. No skip/weakening/out-of-scope repair.
+- Typecheck, lint (0 errors / 149 existing warnings), operating mode, API protection, schema-use, dead-code, export and dependency checks PASS; production build PASS.
+- Fresh isolated local Chrome Guest proof: exact Date-Line and earlier-clock save/reload/reopen, missing departure clock, same-airport connection rejection without write, absent connection clock acceptance, exact segment details, no 390px overflow or browser exception. Screenshot visually inspected. An initial browser-script locator used the wrong detail label; the corrected locator against the existing UI passed without product code changes.
+- Final-head CI and Vercel Preview are checked after the docs commit and recorded in the PR delivery receipt; no old-head result is reused.
 
-## Limits, not waived gates
+## Limits and delivery
 
-- Local full suite: **5,246 PASS / 4 FAIL**, not a global PASS. All four failures are unchanged disposable-PostgreSQL tests with `initdb ENOENT` at a hard-coded Linux path. No test was bypassed; final-head Linux CI remains an independent gate.
-- Account proof executes the real action and airport reader with mocked auth/DB transport. There was no hosted account save, RLS exercise or DB trigger execution by this writer.
-- Native browser verification used Chrome on macOS at multiple widths. It is not a claim of a physical iOS/Android or WebKit acceptance pass.
-- Local calendar comparisons implement the binding input/item contract; no timezone or date-line inference was added. Existing general route chronology remains the authority for derived facts.
-- Local guest updates retain the existing persistence/concurrency model; this slice does not introduce a cross-tab transaction system.
-- Build/browser used dummy loopback Supabase configuration. No hosted/Production mutation, provider call, secret use or migration apply occurred.
+Account tests execute actual application action/airport-reader code with mocked auth and DB transport. Constraint assertions mirror the migration predicates; this is not a hosted Account save, trigger execution or independent RLS proof. TL supplied a separate read-only Development/Production RLS result. No hosted DB, provider, secret, migration or Production mutation was performed by this writer.
 
-No remaining implementation defect was found within this review's tested scope. That statement does not replace independent review or the missing local PostgreSQL proof. REPORT and HANDOFF preserve the exact validation limitation and the final-head identification procedure.
+The summary intentionally loses unrepresentable end values while the canonical itinerary retains them. This is the explicitly requested legacy compatibility policy, not a computation of flight duration or UTC order. Existing route chronology/trust and Guest cross-tab persistence models are unchanged. Browser proof is local Chrome, not physical-device acceptance. New recurring cost: none.
 
-**Remain Draft. STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD EXACT-HEAD REVIEW.**
+REPORT/HANDOFF disclose all local failures, exact scope, model evidence and final-head receipt procedure. The binding task remains unchanged. No remaining P2 defect was found by this author review; independent acceptance is still required.
+
+**Remain Draft. STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD RE-REVIEW. No Ready, merge or follow-up.**

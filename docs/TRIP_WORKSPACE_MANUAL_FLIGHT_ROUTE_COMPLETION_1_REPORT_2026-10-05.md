@@ -1,88 +1,98 @@
-# Trip Workspace Manual Flight Route Completion 1 — Report
+# Trip Workspace Manual Flight Route Completion 1 — Correction Report
 
-Date: 5 October 2026
-Issue: #836 · Draft PR: #837
-Writer: Jetnity Trip Workspace manual flight route completion 1, Generation 1
-Status: **IMPLEMENTED / DRAFT / INDEPENDENT EXACT-HEAD REVIEW REQUIRED**
+Date: 5 October 2026 · Issue #836 · Draft PR #837
+Writer: Jetnity Trip Workspace manual flight route completion 1 — Generation 1
+Status: **P2 CORRECTED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 ## Identity and scope
 
-- Execution: Codex Desktop, one writer; no Cursor or replacement/sub-agent writer.
-- Model evidence: this Codex session's `turn_context` records `model: gpt-6-astra`, `effort: xhigh`. Session: `01a10975-730b-79d2-8bc0-fb664cf20085`; local rollout basename: `rollout-2026-10-05T02-27-34-01a10975-730b-79d2-8bc0-fb664cf20085.jsonl`. Only these sanitized fields were extracted.
+This is the same writer and slice. TL comment [5989842622](https://github.com/Jetnity/jetnity/pull/837#issuecomment-5989842622) rejected reviewed head `b1102d29ba447b6a17cc4a74cb0ed5f1d81e1c46` because local wall-clock values at different airports were incorrectly compared. All previous exact-head PASS gates are invalid for this delivery.
+
+- Execution: Codex Desktop; no Cursor, subagent or replacement writer.
+- Model evidence: session `01a10975-730b-79d2-8bc0-fb664cf20085`, rollout basename `rollout-2026-10-05T02-27-34-01a10975-730b-79d2-8bc0-fb664cf20085.jsonl`; correction-turn `turn_context` at `2026-10-05T07:43:10.108Z` records `model: gpt-6-astra`, `effort: xhigh`. Only sanitized identity fields were extracted.
 - Branch: `fix/trip-workspace-manual-flight-route-1`.
 - Main / merge-base: `58d2781d4b48cfdc8f9131f374f90d9b96a10787`.
-- Immutable task seed: `e5ae8e54040c69d38c37e57d740e973982355446`.
-- Implementation and test commit: `9fea3e8284d6d291b809ebc5a9deafaafad25d40`.
-- The subsequent delivery commit adds only REPORT, HANDOFF and SELF_REVIEW. The PR body and delivery readback identify that final head; no self-referential commit hash is claimed inside these documents.
-- Task blob, both seed and current file: `5cd20b05aff41754d62d43c70a269eb4b7cd8c4f`.
+- Immutable task seed: `e5ae8e54040c69d38c37e57d740e973982355446`; unchanged task blob: `5cd20b05aff41754d62d43c70a269eb4b7cd8c4f`.
+- Published correction code/tests commit: `55abce49e72f2758709c357f5d1af8ec4aa3f356`; tree: `d3f53ce8b9fdbdfd7eb86a524f65d22e9f7d82d9`, byte-identical to the locally tested tree.
+- The following docs-only commit updates REPORT, HANDOFF and SELF_REVIEW. The PR-body delivery receipt records its final head and subsequent CI/Preview results, avoiding a self-referential commit hash here.
 
-B03b only: a manual flight can receive or correct one leg with one to four contiguous air segments. No migration, new API route, provider call, provider/search-flight rewrite, Official Truth change, U02/U03/B01 or follow-up slice.
+Only two runtime files and the existing bounded test file changed for the correction: `lib/trips/schema.ts`, `lib/trips/flug-manuell.ts`, `lib/trips/flug-manuell.test.ts`. Together with the three delivery documents this is six files relative to the rejected head. The cumulative PR still contains exactly 13 files, listed in HANDOFF, including the immutable task seed.
 
-## Resulting behavior
+## Corrected local-time contract
 
-`FlugBestand` offers **Flugroute ergänzen** when there are no usable airport codes and **Flugroute ändern** for a stored route. Existing IATA/date/time values prefill the editor; missing values are never inferred from title, note, trip or stage. Users explicitly add/remove segments and save/cancel. Booking remains a separate control and saved display still uses `FlugRoute`.
+The schema no longer compares departure with arrival within a flight or across the whole route. Both may belong to different timezones. Exact user-entered local dates and optional clocks survive unchanged in the canonical itinerary; no timezone, UTC or duration inference was introduced.
 
-The shared predicate permits only `kind === 'flight'` with null/absent provider, external reference and booking URL. Booking status/source alone does not prohibit editing. Existing multi-leg or greater-than-four-segment routes cannot be silently truncated through this editor.
+Continuity still requires the previous destination to equal the next origin. Only at that exact airport is chronology checked: an earlier next departure date fails; on the same date an earlier next departure clock fails when both clocks exist. Missing optional clocks on the same date remain unknown and are accepted. Real dates, exact HH:MM, 1–4 segments, unequal endpoints, bounded normalized IATA and strict key validation remain unchanged.
 
-The strict schema accepts only the six segment fields, normalizes bounded IATA strings by trim/uppercase, requires real dates and optional exact `HH:MM`, and rejects equal endpoints, discontinuities, backwards comparable dates/times and unknown keys. First-departure/last-arrival comparison also preserves the existing item date/time DB constraint when intermediate optional times are absent. No timezone inference was introduced.
+`manuelleFlugSummaryProjizieren` is a shared pure helper, called by the existing `manuelleFlugRouteBauen` used by both Account and Guest. It only expresses what the legacy `trip_items` summary can represent:
 
-## Account and guest trust boundaries
+| Final local arrival relative to first departure | startsOn / startsAt | endsOn | endsAt |
+| --- | --- | --- | --- |
+| Earlier date | Exact first departure date / optional clock | null | null |
+| Later date | Exact first departure date / optional clock | Exact final arrival date | Final arrival clock only if departure clock exists; otherwise null |
+| Same date | Exact first departure date / optional clock | Exact final arrival date | Final arrival clock only if both clocks exist and arrival clock >= departure clock; otherwise null |
 
-The account action validates before authentication, calls existing `konto()`, reads the exact trip/item under existing RLS and checks manual eligibility. It batches every distinct IATA through the unchanged `flughafenReferenzLesen` path. Every code must resolve before a write. Existing canonicalization constructs the itinerary using only server airport country/city references, without surface evidence.
+The itinerary is never rewritten to fit the summary. Summary fields are neither UTC truth nor flight-duration truth. No DB migration is needed or included.
 
-The UPDATE contains only `metadata`, `starts_on`, `starts_at`, `ends_on`, `ends_at`. It retains unrelated metadata and repeats trip/item/kind/null-provider/null-reference/null-booking-URL guards. A metadata equality guard additionally prevents overwriting concurrent unrelated metadata changes. An absent returned row is failure. DB and transport details are sanitized; revalidation occurs only after a returned successful row. Existing RLS and the DB canonicalization trigger remain unchanged.
+## Account, Guest and route display
 
-Guest validates the same segment contract and requires exactly one target across days and `ohneTag`. Only that target's itinerary and four schedule fields change. Airport codes remain visible while countryCode/city/country are null, with no surface field. Persistence uses the existing graph schema and `gastreiseSpeichern`; its existing revision/timestamp behavior is retained. Siblings and all other target fields remain unchanged.
+The Account action and Guest persistence files are byte-identical to the rejected head; their existing shared builder now applies the safe projection. Account still resolves every IATA through the server airport reader, preserves unrelated metadata and writes only `metadata`, `starts_on`, `starts_at`, `ends_on`, `ends_at`. Validation-before-auth, existing RLS, provider/external-reference/booking-URL guards, metadata compare-and-set, returned-row requirement, sanitized failures and success-only revalidation remain intact.
 
-Existing route facts consume the saved itinerary. Account reference fixtures produce CH origin, QA transit and TH destination; guest produces no country facts. Cyclic/ambiguous routes remain fail-closed under the unchanged chronology engine.
+Guest keeps exact IATA/local values with null countryCode/city/country and no surface evidence. Day and undated targets use the same projection; siblings and every other target field remain unchanged. Existing persistence revision/timestamp behavior remains intact. No booking, commercial, stage/day assignment, provider flight, route trust model, Official Truth, U02/U03/B01 or follow-up changes.
 
-## Validation
+RouteFacts tests assert exact equality with the itinerary's segments for Account and Guest even when summary ends are null. The existing unmodified FlugRoute renders exact Date-Line and earlier-clock local strings in segment details; editor prefill also reads the complete itinerary.
 
-Node `22.23.3`; repository dependencies installed from the unchanged lockfile. No real credentials were used for build/browser runs.
+## Required regression proofs
+
+The manual-flight file now has 51 tests. Fifteen added P2 tests include an 11-case table exercised through schema, pure projection, actual Account action/airport-reader with mocked transport, both Guest target locations, persisted graph parsing and RouteFacts. Existing guard/race/error tests still run.
+
+- Date Line: `2026-01-02 23:30 -> 2026-01-01 12:00` passes; exact itinerary retained; startsOn `2026-01-02`, startsAt `23:30`, endsOn/endsAt null.
+- Earlier same-date clock: `2026-01-02 18:00 -> 2026-01-02 09:00` passes; itinerary retains both clocks; endsOn `2026-01-02`, endsAt null.
+- Arrival `09:00` without departure clock passes on same and later dates; summary endsAt is null while itinerary arrivalTime remains `09:00`.
+- Normal direct/connecting routes, equal clocks, absent arrival clock and a later arrival date with an earlier clock retain every representable summary field.
+- Whole-route Date-Line and earlier-clock envelopes pass even across multiple segments; no envelope comparison remains.
+- DOH arrival `18:00` -> DOH departure `17:00` on the same day fails; arrival on the 3rd -> departure on the 2nd fails even with both clocks missing. Account fails before auth/read/write; Guest writes nothing.
+- Missing either/both same-day connection clocks passes; equal clocks and a later connection date pass; airport discontinuity still fails.
+- Actual Account UPDATE payloads and Guest summaries satisfy assertions of the existing SQL predicates `trip_items_ende_braucht_anfang`, `trip_items_endzeit_braucht_anfangszeit`, `trip_items_reihenfolge` from `20260817120000_reiseschema.sql`. This is a constraint-contract test, not a claim of hosted SQL execution.
+
+## Validation rerun after correction
+
+Node 22.23.3; unchanged dependencies/lockfile. All required checks were rerun on corrected runtime/tests.
 
 | Check | Result |
 | --- | --- |
-| `git diff --check` | PASS |
-| `npm run check:operating-mode` | PASS, NORMAL |
-| New manual-flight test file | 36 tests PASS |
-| Focused `lib/route/*.test.ts` + `lib/trips/*.test.ts` | 937 tests / 168 suites PASS, including guest and workspace contracts |
-| `npm test` | **NOT GREEN locally: 5,246 pass, 4 fail, 5,250 total; 0 skipped** |
-| `npm run typecheck` | PASS |
-| `npm run lint` | Exit 0; 0 errors, 149 existing warnings; no new warnings in added code |
-| `npm run check:api-schutz` | PASS |
-| `npm run check:schema-bezug` | PASS |
-| `npm run check:dead` | PASS; 0 orphan modules |
-| `npm run check:exports` | PASS; 0 uncalled exports |
-| `npm run check:deps` | PASS |
-| `npm run build` | PASS, including TypeScript and production compilation |
+| git diff --check | PASS |
+| check:operating-mode | PASS, NORMAL |
+| Manual-flight file | 51 tests PASS |
+| Focused lib/route + lib/trips, including guest/workspace | 952 tests / 169 suites PASS |
+| npm test | **5,261 PASS / 4 FAIL / 5,265 total / 0 skipped locally** |
+| typecheck | PASS |
+| lint | PASS, 0 errors / 149 existing warnings |
+| check:api-schutz | PASS |
+| check:schema-bezug | PASS |
+| check:dead | PASS, 0 orphan modules |
+| check:exports | PASS, 0 uncalled exports |
+| check:deps | PASS |
+| Production build | PASS |
 
-Full-suite failures are the existing disposable PostgreSQL proofs in these unchanged files:
+The four full-suite failures are unchanged disposable PostgreSQL tests in `lib/readiness/official-truth-catalog-hardening-schema.test.ts`, `official-truth-content-identity-schema-v2.test.ts`, `official-truth-source-catalog-server.test.ts` and `official-truth-store-server.test.ts`. Each requires the Linux path `/usr/lib/postgresql/16/bin/initdb`, absent on this Mac, and fails with ENOENT. These files are unchanged, and no test was skipped or weakened. Local full-suite status is not green. The final-head Linux CI result is separately recorded in the PR receipt after this docs commit; old-head CI cannot substitute for it.
 
-- `lib/readiness/official-truth-catalog-hardening-schema.test.ts`
-- `lib/readiness/official-truth-content-identity-schema-v2.test.ts`
-- `lib/readiness/official-truth-source-catalog-server.test.ts`
-- `lib/readiness/official-truth-store-server.test.ts`
+Build used a loopback Supabase URL and a dummy public key, with no hosted credentials. Existing missing-local-env/Browserslist notices are not hosted access. Next-generated AGENTS.md and next-env.d.ts edits were removed after stopping development; neither is part of delivery.
 
-Each fails with `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT` on this macOS host. Their diff against exact baseline is empty. These tests were neither skipped nor weakened; no system PostgreSQL installation or out-of-scope test rewrite was made. Full-suite success therefore still requires the repository's Linux/PostgreSQL validation environment. This report does not turn the local failure into a PASS or claim current-head CI success.
+## New browser proof
 
-The first typecheck exposed an invalid typed test fixture for a nonstandard booking source; it was corrected. The final typecheck passes. The initial sandboxed build could not create tsx's local IPC socket; the normal approved local build outside that sandbox passed. Build used only a loopback Supabase URL and a dummy public key. The setup warning about absent `.env.local` and existing Browserslist-age warning do not represent configured hosted access.
+The actual local Next app and Guest workspace were tested in a fresh isolated Chrome session launched by agent-browser, with Playwright attached. Seven assertions passed: Date-Line save/reload/reopen; same-date earlier-clock save/reload/reopen; arrival clock without departure clock; unchanged siblings/non-route target fields; same-airport reversed connection rejection without write; missing optional connection clock acceptance; exact Date-Line segment detail display, no 390px horizontal overflow, no browser exceptions/framework overlay. The 390px screenshot was visually inspected.
 
-## Browser proof
+The Date-Line browser route uses NRT -> HNL -> LAX and displays `2026-01-02 23:30 -> 2026-01-01 12:00`, followed by the exact next segment's local values, while summary endsOn/endsAt are null. This verifies retention/display, not the real-world validity or duration of a flight schedule. The existing broader keyboard and 280–1280px browser evidence remains historical; it was not represented as a fresh correction-head test.
 
-The real local Next app, real `GastArbeitsbereich` and localStorage persistence were exercised in an isolated Chrome session launched with agent-browser. Playwright attached to that session for deterministic assertions. No test route or harness was added to runtime. The local fixture contains a day flight, an undated flight and a protected provider flight.
+Local evidence: `correction-browser-report.json`, `correction-date-line.png`, and `correction-*.log` are copied to the delivery outputs outside the repository. No browser harness/test-only route entered runtime. Local browser and development server were stopped.
 
-Verified: manual-only affordances; keyboard opening/input focus; invalid submission without write; two-segment entry without autosave; keyboard add to four and remove; explicit save/close; normalized persisted IATA and null country facts; unchanged siblings and other target fields; prefill; Escape/cancel without write; storage-failure input retention; reload/display persistence; independent undated-item save; home navigation; no browser exception or framework error overlay. Booking controls remain outside the route form.
+## Live gates and limits
 
-The browser pass found lost focus when removing the fourth segment while Add was still disabled. Focus now returns after the React commit; the repeated browser pass verifies it. Document/body widths matched the viewport at 280, 320, 390, 768 and 1280 pixels. The 390-pixel full-page screenshot was visually inspected. Final empty-itinerary label handling and whitespace cleanup were additionally covered by the subsequent focused tests/typecheck/lint/build.
+Pre-publication reads reconfirm main, NORMAL mode, #751's same-writer correction and #839's file-disjoint coordinated hold at `3ebf3e4bde5d595722c361c07f62e41dee29ed40`. #748 latest material `5988971332` and TL triage `5989855107` were read; no newer comments appeared. The separate Development hardening decision is resolved and does not expand this slice.
 
-This is not a hosted account/RLS/browser acceptance proof. Account tests execute the actual action and airport reader with mocked auth/transport, and exercise guards, unknown airports, sanitized errors, absent update rows and concurrent conversion/metadata changes. Existing DB policy/trigger behavior was inspected, not applied or reconfigured.
+TL's read-only Development/Production RLS verification is attributed to TL: authenticated UPDATE policy with USING and WITH CHECK `user_id = auth.uid()`. This writer did not connect to hosted DB, apply migrations or change policies. Account proof uses real application code with mocked transport; browser proof is local Guest, not hosted Account/RLS or physical-device acceptance. No new recurring costs.
 
-## Delivery gate
+GitHub Git-data API publishes byte-identical verified trees with non-forced fast-forward updates, since this local shell has no stored GitHub push credentials. The final receipt must identify the final head, completed fresh CI, exact-SHA Preview, task hash, changed-file set and branch graph. These checks do not grant independent approval.
 
-The local HTTPS Git push lacked stored credentials. The connected GitHub Git-data API publishes the same content: implementation tree `704450fc488f0f56868e9a771f789f7709575fec` exactly matches the tested local tree. Commit identities differ because the connector supplies its own commit metadata; the implementation SHA above is the published identity. The branch is advanced with a non-forced fast-forward only.
-
-Startup and pre-delivery rereads confirm exact main, NORMAL mode, #751's two file-disjoint writers, #837 Draft on the assigned branch, and #839 restricted to its own audit task file. #748's newest observed comment is `5985858310`; no newer evidence appeared during the delivery reread. The processed-marker follow-ups concern the separate completed Official Truth hardening and do not change this scope. PR #837 had zero review threads at the pre-delivery read.
-
-No hosted DB/Production mutation, migration apply, provider request, secret change, Ready action or merge was performed. Local development/browser processes were stopped. Next-generated changes to `AGENTS.md` and `next-env.d.ts` were removed; both remain unchanged in the delivery.
-
-**STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD EXACT-HEAD REVIEW.** This implementation report is not independent acceptance and is not merge authority.
+**STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD RE-REVIEW. Keep #837 Draft. No Ready, merge, Production action or follow-up.**

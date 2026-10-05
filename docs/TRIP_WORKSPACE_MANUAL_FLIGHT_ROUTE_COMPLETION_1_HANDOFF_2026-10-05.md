@@ -1,50 +1,56 @@
-# Trip Workspace Manual Flight Route Completion 1 — Handoff
+# Trip Workspace Manual Flight Route Completion 1 — Correction Handoff
 
 Date: 5 October 2026 · Issue #836 · Draft PR #837
-Status: **DRAFT / STOP FOR INDEPENDENT EXACT-HEAD REVIEW**
+Status: **DRAFT / P2 CORRECTION / STOP FOR INDEPENDENT TL RE-REVIEW**
 
 ## Review identity
 
+- Same Generation-1 writer; no new writer, Cursor or subagent.
+- Codex Desktop session `01a10975-730b-79d2-8bc0-fb664cf20085`; correction turn_context `2026-10-05T07:43:10.108Z`: `gpt-6-astra` / `xhigh`.
 - Branch: `fix/trip-workspace-manual-flight-route-1`.
-- Exact baseline and merge-base: `58d2781d4b48cfdc8f9131f374f90d9b96a10787`.
-- Immutable task seed: `e5ae8e54040c69d38c37e57d740e973982355446`.
-- Implementation/tests: `9fea3e8284d6d291b809ebc5a9deafaafad25d40`.
-- Final delivery consists of that implementation plus a docs-only commit containing these three deliverables. Resolve the exact current PR head and compare it with the final PR-body receipt before review. Expected final graph: main 0 ahead / branch 3 ahead, including task seed; no behind commits.
-- Task blob is unchanged: `5cd20b05aff41754d62d43c70a269eb4b7cd8c4f`.
-- Codex Desktop session `01a10975-730b-79d2-8bc0-fb664cf20085`: recorded `gpt-6-astra`, `xhigh`. One Generation-1 writer; no Cursor/subagent/replacement.
+- Baseline / merge-base: `58d2781d4b48cfdc8f9131f374f90d9b96a10787`.
+- Rejected head: `b1102d29ba447b6a17cc4a74cb0ed5f1d81e1c46`; TL CHANGES REQUIRED comment `5989842622`.
+- Correction code/tests: `55abce49e72f2758709c357f5d1af8ec4aa3f356`, followed only by these three updated delivery docs.
+- Exact final review head and fresh completed CI/Preview readback: PR-body delivery receipt. Expected graph: branch 5 ahead / 0 behind main. No previous exact-head PASS carries over.
+- Immutable task seed: `e5ae8e54040c69d38c37e57d740e973982355446`; unchanged task blob `5cd20b05aff41754d62d43c70a269eb4b7cd8c4f`.
 
-## Exact changed-file manifest against baseline
+## Changed-file manifest
 
-1. `components/trips/FlugBestand.tsx`
-2. `components/trips/GastArbeitsbereich.tsx`
-3. `components/trips/KontoArbeitsbereich.tsx`
-4. `components/trips/TripWorkspace.tsx`
-5. `lib/trips/aktionen.ts`
-6. `lib/trips/gastspeicher.ts`
-7. `lib/trips/schema.ts`
-8. `lib/trips/flug-manuell.ts` — the one new bounded helper
-9. `lib/trips/flug-manuell.test.ts` — the one new narrowly scoped test file
-10. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_TASK_2026-10-05.md` — immutable seed addition
-11. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_REPORT_2026-10-05.md`
-12. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_HANDOFF_2026-10-05.md`
-13. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_SELF_REVIEW_2026-10-05.md`
+Correction against the rejected head: exactly six files:
 
-No route-domain/airport-reader file, migration, API, generated DB type, dependency, global governance file or #839 file changes.
+1. `lib/trips/schema.ts` — comparisons only at identical-airport connections.
+2. `lib/trips/flug-manuell.ts` — shared pure legacy-summary projection.
+3. `lib/trips/flug-manuell.test.ts` — P2 schema/projection/Account/Guest/RouteFacts/FlugRoute/editor proofs.
+4. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_REPORT_2026-10-05.md`
+5. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_HANDOFF_2026-10-05.md`
+6. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_SELF_REVIEW_2026-10-05.md`
 
-## Reviewer focus
+Cumulative PR against baseline: the six above plus:
 
-The account boundary is the actual `flugRouteManuellSetzen` server action: strict validation before `konto()`, exact trip/item lookup, all-airport resolution, reference-only canonical fields, five-field write, repeated manual guards, metadata compare-and-set, returned-row requirement and sanitized failure. Ownership still comes from RLS. No arbitrary client metadata update path was added.
+7. `components/trips/FlugBestand.tsx`
+8. `components/trips/GastArbeitsbereich.tsx`
+9. `components/trips/KontoArbeitsbereich.tsx`
+10. `components/trips/TripWorkspace.tsx`
+11. `lib/trips/aktionen.ts`
+12. `lib/trips/gastspeicher.ts`
+13. `docs/TRIP_WORKSPACE_MANUAL_FLIGHT_ROUTE_COMPLETION_1_TASK_2026-10-05.md` — immutable seed addition only.
 
-The guest path uses the same strict input, exact-one target, IATA-only null-country itinerary and existing graph persistence. Review preservation tests for both day and undated items and unchanged route chronology behavior. A guest unknown-but-well-formed IATA may persist as a draft code; account requires every code to exist in airport references.
+No route-domain/airport-reader, migration, API, generated DB type, dependency, central governance or #839 files changed. Items 7–13 are byte-identical to the rejected head.
 
-Review UI save/cancel and prefill through all three callback layers. Larger legacy routes are explicitly blocked from silent truncation. Optional missing times remain null. No dates/airports are inferred from trip/stage/free text. Booking controls do not live inside the route form.
+## Re-review focus
 
-## Evidence and remaining limitation
+Prove there is no cross-airport departure/arrival or route-envelope chronology rejection. Continuity and same-airport connection chronology remain strict; optional absent clocks are not guessed. Review the pure projection against all three date cases and missing clocks. Itinerary values must remain exact while unrepresentable legacy summary ends become null.
 
-See REPORT for commands and browser results. The 36 new tests and all 937 focused tests pass. Typecheck, lint (149 existing warnings), all required hygiene/operating-mode checks and production build pass. Browser verifies keyboard flows, storage-failure retention, persistence and widths 280–1280.
+Account and Guest already share `manuelleFlugRouteBauen`, which now calls `manuelleFlugSummaryProjizieren`; no duplicated mapping was added. Recheck the unchanged Account authority, five-column UPDATE, identity/CAS/returned-row guards and sanitized failures. Tests assert actual Account payloads satisfy the existing SQL constraint predicates, without claiming a hosted save. Both Guest collections retain all sibling and non-route fields and null country/city facts. RouteFacts, FlugRoute and editor prefill consume exact itinerary values.
 
-**Local `npm test` is not green:** 5,246 pass / 4 fail / 0 skipped. Four unchanged Official Truth disposable-PostgreSQL tests require `/usr/lib/postgresql/16/bin/initdb`, absent on this Mac. Independent review must inspect the final-head Linux/PostgreSQL CI result or rerun in that environment. Do not equate the mocked account transport proof with hosted RLS/trigger acceptance. No hosted DB was touched.
+## Validation and limits
 
-Before acceptance, reread main/mode/#751/new #748 evidence and both PRs, prove task identity, final changed files/merge-base/ahead-behind, and inspect review threads on the exact delivered head. #839 was file-disjoint at the writer's last read; #837 had no review threads then. Historical sections of #751 do not override its current writer section.
+REPORT contains the detailed matrix. Fresh correction results: 51 manual-flight tests; 952 focused route/trip/guest/workspace tests; typecheck; lint (0 errors, 149 existing warnings); operating-mode and all five hygiene checks; production build PASS. New real local browser assertions verify Date-Line and earlier-clock persistence/reopen/display, missing-clock handling, invalid connection refusal and mobile overflow.
 
-**The writer stops here.** Keep #837 Draft. No Ready, merge, production action, U02/U03/B01 or follow-up is authorized by this handoff.
+Local full suite: **5,261 PASS / 4 FAIL / 0 skipped**. The four unchanged Official Truth PostgreSQL tests cannot find `/usr/lib/postgresql/16/bin/initdb` on macOS. Assess the final-head Linux CI receipt separately; never reuse old CI `37249798922` or old Preview. The committed docs precede final-head CI, whose completed result is recorded in the PR body after publication.
+
+No hosted Account/DB write, RLS alteration, migration, provider call or Production action occurred. TL's independent RLS read-only evidence remains attributed to TL. No physical-device acceptance is claimed. No new running costs.
+
+Before acceptance reread live main/mode/#751/new #748 evidence, PR #837, file-disjoint #839, task blob and exact final changed files/graph/review threads. Last observed #748 material is `5988971332`, triage `5989855107`; #839 remains held at `3ebf3e4bde5d595722c361c07f62e41dee29ed40` until this writer stops.
+
+**The writer stops after publishing and checking fresh CI/Preview. Keep Draft. Independent ChatGPT / Technical-Lead re-review is required; no Ready, merge, U02/U03/B01 or next slice.**
