@@ -20,6 +20,18 @@ import {
   type OfficialVisaMode,
 } from '@/lib/readiness/official'
 import {
+  regulierungsAnwendbarkeitV2Lesen,
+  regulierungsWirkungsFaktV2Lesen,
+  regulierungsVisaFaktV2Lesen,
+  schema2DatenPruefen,
+  schema2Kanonisch,
+  stayQuantityV2Lesen,
+  type RegulierungsAnwendbarkeitV2,
+  type Schema2WirkungsFakt,
+  type Schema2VisaOptionenFakt,
+  type StayQuantityV2,
+  type V2BlockReason,
+  type V2LeseErgebnis,
   regulierungsAnwendbarkeitVisaOptionLesen,
   regulierungsAnwendbarkeitWirkungLesen,
   type AnforderungswirkungFakt,
@@ -28,7 +40,8 @@ import {
   type VisaOptionenFakt,
 } from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { quellenUrlAufloesen, type QuellenRegistry, type QuellenUrlFehler } from '@/lib/readiness/source-registry'
-import { temporalRuleLesen, type OfficialTemporalRule } from '@/lib/readiness/temporal'
+import { eventDeadlineV2Lesen, type EventDeadlineV2, temporalRuleLesen, type OfficialTemporalRule } from '@/lib/readiness/temporal'
+import { landescodeLesen } from '@/lib/readiness/domain'
 import type { OfficialRequirementType } from '@/types/trips'
 
 export const REGEL_FAKT_ARTEN = [
@@ -760,11 +773,20 @@ function regelFaktLesen(
  * Der Extraktor-Rahmen darf nur diese Funktion benutzen.
  */
 export function regelFaktKanonischLesen(
-  art: RegelFaktArt,
-  requirementType: OfficialRequirementType,
-  wert: unknown,
-  registry: QuellenRegistry,
-): { ok: true; fact: RegelFakt } | { ok: false; reason: RegelClaimFehler } {
+  art: RegelFaktArt, requirementType: OfficialRequirementType, wert: unknown, registry: QuellenRegistry,
+): FaktErgebnis
+export function regelFaktKanonischLesen(
+  art: RegelFaktArt, requirementType: OfficialRequirementType, wert: unknown, registry: QuellenRegistry,
+  vertrag: RegelLeseVertragV2,
+): FaktErgebnisV2
+export function regelFaktKanonischLesen(
+  art: RegelFaktArt, requirementType: OfficialRequirementType, wert: unknown, registry: QuellenRegistry,
+  vertrag?: RegelLeseVertragV2,
+): FaktErgebnis | FaktErgebnisV2 {
+  // Bestehende Registry-/Acceptance-Aufrufer wählen weiterhin ausschließlich
+  // legacy/v1. V2 wird nur ausdrücklich am reinen kanonischen Leser angefordert.
+  // Dieser Parameter ist keine Code-owned Extractor-Pin oder Annahmeautorität.
+  if (vertrag !== undefined) return regelFaktV2Lesen(art, requirementType, wert, vertrag)
   return regelFaktLesen(art, requirementType, wert, registry)
 }
 
@@ -984,4 +1006,130 @@ export function regelKandidatAkzeptieren(eingabe: unknown): RegelAnnahmeErgebnis
     fact: fakt.fact,
   }
   return { ok: true, claim: einfrieren(claim) }
+}
+
+export type StayOutcomeV2 = {
+  perVisit: StayQuantityV2 | null
+  initialGrant: { quantity: StayQuantityV2; event: 'permission_to_enter_granted' } | null
+  extension: {
+    requiresApplication: boolean
+    maximumTotal: StayQuantityV2
+    applicationDeadline: EventDeadlineV2 | null
+    authority: { countryCode: string; role: 'immigration_authority' } | null
+  } | null
+  borderDiscretion: (typeof GRENZ_ERMESSEN)[number]
+}
+export type QualifiedFactV2<K extends 'stay_limit' | 'temporal_rule', T> =
+  | { kind: K; schema: 2; applicability: { schema: 2; kind: 'unconditional' }; outcome: T }
+  | { kind: K; schema: 2; applicability: Extract<RegulierungsAnwendbarkeitV2<T>, { kind: 'branches' }> }
+export type RegelFaktV2 = Schema2WirkungsFakt | Schema2VisaOptionenFakt
+  | QualifiedFactV2<'stay_limit', StayOutcomeV2> | QualifiedFactV2<'temporal_rule', EventDeadlineV2>
+export type RegelLeseVertragV2 = { schema: 2; jurisdictionCountryCode: string }
+type FaktErgebnisV2 = { ok: true; fact: RegelFaktV2 } | { ok: false; reason: V2BlockReason | 'requirement_type_mismatch' }
+
+function deadlineImLandV2(roh: unknown, land: string): V2LeseErgebnis<EventDeadlineV2> {
+  const gelesen = eventDeadlineV2Lesen(roh)
+  if (!gelesen.ok) return gelesen
+  return gelesen.wert.reference.countryCode === land ? gelesen : { ok: false, reason: 'scope_mismatch' }
+}
+
+function stayOutcomeV2Lesen(roh: unknown, land: string): V2LeseErgebnis<StayOutcomeV2> {
+  const s = datensatz(roh)
+  if (!s || !hatGenau(s, ['perVisit', 'initialGrant', 'extension', 'borderDiscretion']) || !istText(s.borderDiscretion, GRENZ_ERMESSEN)) return { ok: false, reason: 'invalid_fact' }
+  let perVisit: StayQuantityV2 | null = null
+  if (s.perVisit !== null) {
+    const q = stayQuantityV2Lesen(s.perVisit)
+    if (!q.ok) return q
+    perVisit = q.wert
+  }
+  let initialGrant: StayOutcomeV2['initialGrant'] = null
+  if (s.initialGrant !== null) {
+    const i = datensatz(s.initialGrant)
+    if (!i || !hatGenau(i, ['quantity', 'event']) || i.event !== 'permission_to_enter_granted') return { ok: false, reason: 'invalid_fact' }
+    const q = stayQuantityV2Lesen(i.quantity)
+    if (!q.ok) return q
+    initialGrant = { quantity: q.wert, event: 'permission_to_enter_granted' }
+  }
+  let extension: StayOutcomeV2['extension'] = null
+  if (s.extension !== null) {
+    const e = datensatz(s.extension)
+    if (!e || !hatGenau(e, ['requiresApplication', 'maximumTotal', 'applicationDeadline', 'authority']) || typeof e.requiresApplication !== 'boolean') return { ok: false, reason: 'invalid_fact' }
+    const q = stayQuantityV2Lesen(e.maximumTotal)
+    if (!q.ok) return q
+    let deadline: EventDeadlineV2 | null = null
+    if (e.applicationDeadline !== null) {
+      if (!e.requiresApplication) return { ok: false, reason: 'invalid_fact' }
+      const d = deadlineImLandV2(e.applicationDeadline, land)
+      if (!d.ok) return d
+      deadline = d.wert
+    }
+    let authority: NonNullable<StayOutcomeV2['extension']>['authority'] = null
+    if (e.authority !== null) {
+      const a = datensatz(e.authority), country = landescodeLesen(a?.countryCode)
+      if (!a || !hatGenau(a, ['countryCode', 'role']) || a.role !== 'immigration_authority' || !country) return { ok: false, reason: 'invalid_fact' }
+      if (country !== land) return { ok: false, reason: 'scope_mismatch' }
+      authority = { countryCode: country, role: 'immigration_authority' }
+    }
+    for (const base of [perVisit, initialGrant?.quantity]) {
+      if (base && base.unit === q.wert.unit && base.value > q.wert.value) return { ok: false, reason: 'invalid_fact' }
+    }
+    extension = { requiresApplication: e.requiresApplication, maximumTotal: q.wert, applicationDeadline: deadline, authority }
+  }
+  if (!perVisit && !initialGrant && !extension) return { ok: false, reason: 'invalid_fact' }
+  return { ok: true, wert: { perVisit, initialGrant, extension, borderDiscretion: s.borderDiscretion } }
+}
+
+function qualifiedFactV2Lesen<K extends 'stay_limit' | 'temporal_rule', T>(
+  s: Record<string, unknown>, kind: K, outLesen: (roh: unknown) => V2LeseErgebnis<T>,
+): V2LeseErgebnis<QualifiedFactV2<K, T>> {
+  const a = regulierungsAnwendbarkeitV2Lesen(s.applicability, outLesen)
+  if (!a.ok) return a
+  if (a.wert.kind === 'branches') {
+    if ('outcome' in s) return { ok: false, reason: 'mixed_outcome' }
+    if (!hatGenau(s, ['schema', 'kind', 'applicability'])) return { ok: false, reason: 'invalid_fact' }
+    return { ok: true, wert: { kind, schema: 2, applicability: a.wert } }
+  }
+  if (!hatGenau(s, ['schema', 'kind', 'applicability', 'outcome'])) return { ok: false, reason: 'invalid_fact' }
+  const o = outLesen(s.outcome)
+  return o.ok ? { ok: true, wert: { kind, schema: 2, applicability: a.wert, outcome: o.wert } } : o
+}
+
+function regelFaktV2Lesen(art: RegelFaktArt, typ: OfficialRequirementType, roh: unknown, vertrag: RegelLeseVertragV2): FaktErgebnisV2 {
+  const start = schema2DatenPruefen(roh, vertrag)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh), v = datensatz(vertrag)
+  if (!s || !v || !hatGenau(v, ['schema', 'jurisdictionCountryCode'])) return { ok: false, reason: 'invalid_fact' }
+  if (s.schema !== 2 || v.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  const land = landescodeLesen(v.jurisdictionCountryCode)
+  if (!land || s.kind !== art) return { ok: false, reason: 'invalid_fact' }
+  let r: V2LeseErgebnis<RegelFaktV2>
+  if (art === 'requirement_effect') r = regulierungsWirkungsFaktV2Lesen(s, typ)
+  else if (art === 'visa_options') {
+    if (typ !== 'visa') return { ok: false, reason: 'requirement_type_mismatch' }
+    r = regulierungsVisaFaktV2Lesen(s)
+  } else if (art === 'stay_limit') r = qualifiedFactV2Lesen(s, 'stay_limit', (x) => stayOutcomeV2Lesen(x, land))
+  else if (art === 'temporal_rule') r = qualifiedFactV2Lesen(s, 'temporal_rule', (x) => deadlineImLandV2(x, land))
+  else return { ok: false, reason: 'invalid_fact' }
+  if (!r.ok) return r
+  // Die Gesamtmenge eines späteren Claims passt weiter in REGEL_SUPPORT_MAX.
+  const ids = new Set<string>()
+  function sammeln(x: unknown): void {
+    if (!x || typeof x !== 'object') return
+    if (Array.isArray(x)) { x.forEach(sammeln); return }
+    for (const [key, value] of Object.entries(x)) {
+      if (key === 'supportVersionIds' && Array.isArray(value)) value.forEach((id: string) => ids.add(id))
+      else sammeln(value)
+    }
+  }
+  sammeln(r.wert)
+  if (ids.size > REGEL_SUPPORT_MAX) return { ok: false, reason: 'support_bound_exceeded' }
+  return { ok: true, fact: r.wert }
+}
+
+/** Vollständiger bereits kanonisch gelesener Fakt, einschließlich unbedingtem
+ * Ausgang. Kein Claim-Key, kein Acceptance-Nachweis, kein persönlicher Kontext. */
+export function regelFaktV2Fingerprint(fact: RegelFaktV2, requirementType: OfficialRequirementType, vertrag: RegelLeseVertragV2): string {
+  const gelesen = regelFaktV2Lesen(fact.kind, requirementType, fact, vertrag)
+  if (!gelesen.ok) throw new Error(gelesen.reason)
+  return `official-rule-fact:v2:${sha256Hex(schema2Kanonisch(gelesen.fact))}`
 }
