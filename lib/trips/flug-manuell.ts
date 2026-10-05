@@ -11,6 +11,22 @@ export function istManuellerFlug(punkt: {
   return punkt.kind === 'flight' && punkt.provider == null && punkt.externalRef == null && punkt.bookingUrl == null
 }
 
+/**
+ * Nur Darstellbarkeit in den Legacy-trip_items-Summary-Feldern, keine Flugdauer-
+ * oder UTC-Wahrheit: Ortszeiten verschiedener Flughäfen sind nicht vergleichbar.
+ * Die vollständigen lokalen Werte bleiben ausschliesslich im Itinerary erhalten.
+ * Gemeinsame pure Projektion für Konto und Gast, nach der Eingabevalidierung.
+ */
+export function manuelleFlugSummaryProjizieren(erstes: FlugSegmentManuell, letztes: FlugSegmentManuell):
+  Pick<TripItem, 'startsOn' | 'startsAt' | 'endsOn' | 'endsAt'> {
+  const startsOn = erstes.departureDate
+  const startsAt = erstes.departureTime
+  const endsOn = letztes.arrivalDate < startsOn ? null : letztes.arrivalDate
+  const endsAt = endsOn !== null && startsAt !== null && letztes.arrivalTime !== null &&
+    (endsOn > startsOn || letztes.arrivalTime >= startsAt) ? letztes.arrivalTime : null
+  return { startsOn, startsAt, endsOn, endsAt }
+}
+
 /** Nur für validierte Segmente; Referenzen stammen im Konto ausschliesslich vom Server. */
 export function manuelleFlugRouteBauen(segments: readonly FlugSegmentManuell[], refs: FlughafenReferenzKarte = {}) {
   const erstes = segments[0]
@@ -31,9 +47,6 @@ export function manuelleFlugRouteBauen(segments: readonly FlugSegmentManuell[], 
   if (!routeItinerary) return null
   return {
     routeItinerary,
-    startsOn: erstes.departureDate,
-    startsAt: erstes.departureTime,
-    endsOn: letztes.arrivalDate,
-    endsAt: letztes.arrivalTime,
+    ...manuelleFlugSummaryProjizieren(erstes, letztes),
   } satisfies Pick<TripItem, 'routeItinerary' | 'startsOn' | 'startsAt' | 'endsOn' | 'endsAt'>
 }

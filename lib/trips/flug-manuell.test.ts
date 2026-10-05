@@ -9,11 +9,12 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import ts from 'typescript'
 
 import FlugBestand from '@/components/trips/FlugBestand'
+import FlugRoute from '@/components/trips/FlugRoute'
 import type { flugRouteManuellSetzen } from '@/lib/trips/aktionen'
 import { meldungAus, NICHT_ANGEMELDET } from '@/lib/trips/anlegen'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { flugRouteManuellSchema, reiseLesen, type FlugSegmentManuell } from '@/lib/trips/schema'
-import { istManuellerFlug, manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
+import { istManuellerFlug, manuelleFlugRouteBauen, manuelleFlugSummaryProjizieren } from '@/lib/trips/flug-manuell'
 import { gastFlugRouteManuellSetzen, gastreiseSpeichern, SCHLUESSEL, SpeicherFehler } from '@/lib/trips/gastspeicher'
 import { routeFactsFuerPunkt } from '@/lib/route/ableitung'
 import { itineraryAusMetadata } from '@/lib/route/metadata'
@@ -35,10 +36,8 @@ const invalidSegments: unknown[] = [
   [{ ...direkt, destination: 'zrh' }], [direkt, { ...anschluss, origin: 'DXB' }],
   ...['2026-02-29', '2026-04-31', '2026-13-01', '2026-00-01', '2026-11-00', '2026-1-01', '01.11.2026', ' 2026-11-01', '2026-11-01T00:00:00Z', ''].map(departureDate => [{ ...direkt, departureDate }]),
   ...['24:00', '12:60', '9:15', '09:15:00', ' 09:15', '09:15Z', 915].map(departureTime => [{ ...direkt, departureTime }]),
-  [{ ...direkt, arrivalDate: '2026-10-31' }], [{ ...direkt, arrivalTime: '09:14' }],
   [direkt, { ...anschluss, departureDate: '2026-10-31' }],
   [direkt, { ...anschluss, departureTime: '16:39' }],
-  [{ ...direkt, arrivalTime: null }, { ...anschluss, departureTime: null, arrivalDate: direkt.departureDate, arrivalTime: '08:00' }],
   ...extras.map(key => [{ ...direkt, [key]: 'forged' }]),
   [{ ...direkt, origin: { airportCode: 'ZRH', countryCode: 'US' } }],
 ]
@@ -82,7 +81,7 @@ describe('Manual flight eligibility and strict input', () => {
     assert.ok(flugRouteManuellSchema.safeParse({ segments: [{ ...direkt, departureTime: null, arrivalTime: null }] }).success)
     assert.ok(flugRouteManuellSchema.safeParse({ segments: [direkt, { ...anschluss, departureTime: '16:40' }] }).success)
   })
-  test('malformed values, reversal, discontinuity, bounds and all extra keys rejected', () => {
+  test('malformed values, same-airport reversal, discontinuity, bounds and all extra keys rejected', () => {
     for (const input of invalidSegments) assert.equal(flugRouteManuellSchema.safeParse({ segments: input }).success, false, JSON.stringify(input))
     for (const key of extras) assert.equal(flugRouteManuellSchema.safeParse({ segments, [key]: 'forged' }).success, false)
   })
@@ -268,6 +267,157 @@ test('route facts after account save; unchanged ambiguity remains fail-closed', 
   assert.equal(ambiguous.chronologieBewiesen, false); assert.equal(ambiguous.origin.airportCode, null); assert.deepEqual(ambiguous.transitCountryCodes, [])
 })
 
+type FlugSummary = Pick<TripItem, 'startsOn' | 'startsAt' | 'endsOn' | 'endsAt'>
+const datumslinie: FlugSegmentManuell = { ...direkt, departureDate: '2026-01-02', departureTime: '23:30', arrivalDate: '2026-01-01', arrivalTime: '12:00' }
+const frueheOrtszeit: FlugSegmentManuell = { ...datumslinie, departureTime: '18:00', arrivalDate: '2026-01-02', arrivalTime: '09:00' }
+const lokaleFaelle: Array<{ name: string; input: FlugSegmentManuell[]; summary: FlugSummary }> = [
+  { name: 'Date Line: earlier local arrival date', input: [datumslinie],
+    summary: { startsOn: '2026-01-02', startsAt: '23:30', endsOn: null, endsAt: null } },
+  { name: 'same date: earlier arrival clock at different airport', input: [frueheOrtszeit],
+    summary: { startsOn: '2026-01-02', startsAt: '18:00', endsOn: '2026-01-02', endsAt: null } },
+  { name: 'same date: arrival clock without departure clock', input: [{ ...frueheOrtszeit, departureTime: null }],
+    summary: { startsOn: '2026-01-02', startsAt: null, endsOn: '2026-01-02', endsAt: null } },
+  { name: 'later date: arrival clock without departure clock', input: [{ ...frueheOrtszeit, departureTime: null, arrivalDate: '2026-01-03' }],
+    summary: { startsOn: '2026-01-02', startsAt: null, endsOn: '2026-01-03', endsAt: null } },
+  { name: 'later date: earlier clock is representable with departure clock', input: [{ ...frueheOrtszeit, arrivalDate: '2026-01-03' }],
+    summary: { startsOn: '2026-01-02', startsAt: '18:00', endsOn: '2026-01-03', endsAt: '09:00' } },
+  { name: 'same date: equal clocks are representable', input: [{ ...frueheOrtszeit, arrivalTime: '18:00' }],
+    summary: { startsOn: '2026-01-02', startsAt: '18:00', endsOn: '2026-01-02', endsAt: '18:00' } },
+  { name: 'missing arrival clock remains null', input: [{ ...frueheOrtszeit, arrivalTime: null }],
+    summary: { startsOn: '2026-01-02', startsAt: '18:00', endsOn: '2026-01-02', endsAt: null } },
+  { name: 'normal direct flight', input: [direkt],
+    summary: { startsOn: '2026-11-01', startsAt: '09:15', endsOn: '2026-11-01', endsAt: '16:40' } },
+  { name: 'normal connecting route', input: segments,
+    summary: { startsOn: '2026-11-01', startsAt: '09:15', endsOn: '2026-11-02', endsAt: '07:10' } },
+  { name: 'Date Line route envelope retains both segments', input: [datumslinie, { ...anschluss,
+    departureDate: '2026-01-01', departureTime: '13:00', arrivalDate: '2026-01-01', arrivalTime: '14:00' }],
+    summary: { startsOn: '2026-01-02', startsAt: '23:30', endsOn: null, endsAt: null } },
+  { name: 'same-date route envelope with missing connection clocks', input: [
+    { ...frueheOrtszeit, arrivalTime: null }, { ...anschluss, departureDate: '2026-01-02', departureTime: null,
+      arrivalDate: '2026-01-02', arrivalTime: '08:00' }],
+    summary: { startsOn: '2026-01-02', startsAt: '18:00', endsOn: '2026-01-02', endsAt: null } },
+]
+
+function summaryVon(punkt: FlugSummary): FlugSummary {
+  return { startsOn: punkt.startsOn, startsAt: punkt.startsAt, endsOn: punkt.endsOn, endsAt: punkt.endsAt }
+}
+function lokaleAngaben(route: NonNullable<TripItem['routeItinerary']>): FlugSegmentManuell[] {
+  return route.legs.flatMap(leg => leg.segments.map(segment => ({
+    origin: segment.origin.airportCode!, destination: segment.destination.airportCode!,
+    departureDate: segment.departureDate!, departureTime: segment.departureTime,
+    arrivalDate: segment.arrivalDate!, arrivalTime: segment.arrivalTime,
+  })))
+}
+/** CHECK predicates from 20260817120000_reiseschema.sql; no duration/UTC assertion. */
+function legacyDbVertragPruefen({ startsOn, startsAt, endsOn, endsAt }: FlugSummary) {
+  assert.ok(endsOn === null || startsOn !== null, 'trip_items_ende_braucht_anfang')
+  assert.ok(endsAt === null || startsAt !== null, 'trip_items_endzeit_braucht_anfangszeit')
+  assert.ok(endsOn === null || endsOn > startsOn! ||
+    (endsOn === startsOn && (endsAt === null || startsAt === null || endsAt >= startsAt)), 'trip_items_reihenfolge')
+}
+
+describe('P2 correction: local airport times and legacy summary representability', () => {
+  for (const { name, input, summary } of lokaleFaelle) test(`${name}: schema, pure projection, account and guest`, async () => {
+    const original = structuredClone(input)
+    const validated = flugRouteManuellSchema.parse({ segments: input }).segments
+    assert.deepEqual(validated, original)
+    const projection = manuelleFlugSummaryProjizieren(validated[0]!, validated.at(-1)!)
+    assert.deepEqual(projection, summary); legacyDbVertragPruefen(projection)
+    const built = manuelleFlugRouteBauen(validated)!
+    assert.deepEqual(summaryVon(built), summary)
+    assert.deepEqual(lokaleAngaben(built.routeItinerary), original)
+    assert.deepEqual(input, original, 'projection must not rewrite route input')
+
+    const account = kontoTest()
+    assert.deepEqual(await account.setzen({ ...eingabe, segments: input }), { ok: true, wert: null })
+    const update = account.operations.find(op => op.art === 'update')!
+    assert.deepEqual(Object.keys(update.payload!).sort(), ['ends_at', 'ends_on', 'metadata', 'starts_at', 'starts_on'])
+    const accountSummary = { startsOn: update.payload!.starts_on, startsAt: update.payload!.starts_at,
+      endsOn: update.payload!.ends_on, endsAt: update.payload!.ends_at } as FlugSummary
+    assert.deepEqual(accountSummary, summary); legacyDbVertragPruefen(accountSummary)
+    const accountRoute = itineraryAusMetadata(update.payload!.metadata)!
+    assert.deepEqual(lokaleAngaben(accountRoute), original)
+    assert.equal(accountRoute.legs[0]!.segments[0]!.origin.countryCode, 'CH')
+    assert.deepEqual((update.payload!.metadata as Record<string, unknown>).unrelated, { nested: ['keep', 3] })
+    assert.deepEqual(account.revalidated, [`/reisen/${TRIP}`, '/reisen'])
+
+    for (const ohneTag of [false, true]) {
+      const storage = speicher(); const reise = gastReise(ohneTag); const untouched = structuredClone(reise)
+      const saved = gastFlugRouteManuellSetzen(reise, ITEM, input)
+      const target = ohneTag ? saved.ohneTag[0]! : saved.days[0]!.items[0]!
+      assert.deepEqual(summaryVon(target), accountSummary); legacyDbVertragPruefen(target)
+      assert.deepEqual(lokaleAngaben(target.routeItinerary!), original)
+      for (const segment of target.routeItinerary!.legs[0]!.segments) {
+        for (const point of [segment.origin, segment.destination]) assert.deepEqual(
+          { countryCode: point.countryCode, city: point.city, country: point.country },
+          { countryCode: null, city: null, country: null })
+        assert.equal(Object.hasOwn(segment, 'surfaceFromAirportCode'), false)
+      }
+      const expected = structuredClone(reise)
+      Object.assign(ohneTag ? expected.ohneTag[0]! : expected.days[0]!.items[0]!, summary, { routeItinerary: target.routeItinerary })
+      expected.revision++; expected.updatedAt = saved.updatedAt
+      assert.deepEqual(saved, expected, 'all sibling and non-route target fields retained')
+      assert.deepEqual(reise, untouched); assert.deepEqual(reiseLesen(JSON.parse(storage.roh()!)), saved)
+      const facts = routeFactsFuerPunkt(target)
+      assert.deepEqual(facts.segments, target.routeItinerary!.legs[0]!.segments)
+      assert.deepEqual(facts.destinationCountryCodes, []); assert.deepEqual(facts.transitCountryCodes, [])
+    }
+    const accountFacts = routeFactsFuerPunkt(flug({ ...accountSummary, routeItinerary: accountRoute }))
+    assert.deepEqual(accountFacts.segments, accountRoute.legs[0]!.segments)
+  })
+
+  test('same-airport reversed connection clock/date fails before auth or guest persistence', async () => {
+    const first = { ...frueheOrtszeit, arrivalTime: '18:00' }
+    for (const input of [
+      [first, { ...anschluss, departureDate: '2026-01-02', departureTime: '17:00' }],
+      [{ ...first, arrivalDate: '2026-01-03', arrivalTime: null }, { ...anschluss, departureDate: '2026-01-02', departureTime: null }],
+    ]) {
+      assert.equal(flugRouteManuellSchema.safeParse({ segments: input }).success, false)
+      const account = kontoTest(); assert.equal((await account.setzen({ ...eingabe, segments: input })).ok, false)
+      assert.equal(account.authCalls(), 0); assert.deepEqual(account.operations, []); assert.deepEqual(account.revalidated, [])
+      const storage = speicher(); const reise = gastReise(true); const before = storage.roh(); const writes = storage.writes()
+      assert.throws(() => gastFlugRouteManuellSetzen(reise, ITEM, input), /Anschluss/)
+      assert.equal(storage.roh(), before); assert.equal(storage.writes(), writes)
+    }
+  })
+
+  test('same-airport missing optional clock remains unknown; equal clock and later date pass', () => {
+    for (const [arrivalTime, departureTime] of [[null, '17:00'], ['18:00', null], [null, null], ['18:00', '18:00']] as const) {
+      const input = [{ ...frueheOrtszeit, arrivalTime }, { ...anschluss, departureDate: '2026-01-02', departureTime }]
+      assert.ok(flugRouteManuellSchema.safeParse({ segments: input }).success)
+    }
+    assert.ok(flugRouteManuellSchema.safeParse({ segments: [{ ...frueheOrtszeit, arrivalTime: '18:00' },
+      { ...anschluss, departureDate: '2026-01-03', departureTime: '01:00' }] }).success)
+    assert.equal(flugRouteManuellSchema.safeParse({ segments: [frueheOrtszeit, { ...anschluss, origin: 'DXB' }] }).success, false)
+  })
+
+  test('existing FlugRoute details show exact local Date-Line and earlier-clock values, never degraded summary', () => {
+    for (const first of [datumslinie, frueheOrtszeit]) {
+      const input = [first, { ...anschluss, departureDate: first.arrivalDate, departureTime: '13:00',
+        arrivalDate: first.arrivalDate, arrivalTime: '14:00' }]
+      const validated = flugRouteManuellSchema.parse({ segments: input }).segments
+      const built = manuelleFlugRouteBauen(validated, TEST_FLUGHAFEN_REFS)!
+      const facts = routeFactsFuerPunkt(flug(built))
+      assert.equal(built.endsAt, null)
+      assert.deepEqual(lokaleAngaben(built.routeItinerary), input)
+      assert.deepEqual(facts.segments, built.routeItinerary.legs[0]!.segments)
+      const html = renderToStaticMarkup(React.createElement(FlugRoute, { facts }))
+      assert.ok(html.includes(`${first.departureDate} ${first.departureTime} → ${first.arrivalDate} ${first.arrivalTime}`))
+      assert.ok(html.includes(`${first.arrivalDate} 13:00 → ${first.arrivalDate} 14:00`))
+    }
+  })
+
+  test('editor accepts and prefills the exact local route rather than its degraded summary', async () => {
+    for (const segment of [datumslinie, frueheOrtszeit]) {
+      const ui = editor(); ui.open(); ui.fill([segment]); await ui.submit()
+      assert.deepEqual(ui.calls, [[ITEM, [segment]]]); assert.equal(ui.inputs().length, 0)
+      const reopened = editor(flug(manuelleFlugRouteBauen([segment])!)); reopened.open()
+      assert.deepEqual(reopened.inputs().map(input => input.props.value), [segment.origin, segment.destination,
+        segment.departureDate, segment.departureTime, segment.arrivalDate, segment.arrivalTime])
+    }
+  })
+})
+
 type Props = {
   children?: React.ReactNode; type?: string; value?: string; id?: string; htmlFor?: string; role?: string; disabled?: boolean; 'aria-label'?: string
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
@@ -350,7 +500,7 @@ describe('Flight editor: actual render and event paths', () => {
   })
   test('invalid submit no callback; no autosave; exact normalized payload; success closes', async () => {
     const ui = editor(); ui.open(); await ui.submit(); assert.deepEqual(ui.calls, [])
-    ui.fill([{ ...direkt, arrivalTime: '08:00' }]); await ui.submit(); assert.deepEqual(ui.calls, [])
+    ui.fill([{ ...direkt, destination: 'ZRH' }]); await ui.submit(); assert.deepEqual(ui.calls, [])
     assert.equal(elements(ui.render(), el => el.props.role === 'alert').length, 1)
     ui.fill([{ ...direkt, origin: 'zrh', departureTime: null }]); assert.deepEqual(ui.calls, [])
     await ui.submit(); assert.deepEqual(ui.calls, [[ITEM, [{ ...direkt, departureTime: null }]]])

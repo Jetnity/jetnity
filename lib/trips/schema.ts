@@ -667,7 +667,8 @@ const flugSegmentManuellSchema = z.object({
 
 export type FlugSegmentManuell = z.infer<typeof flugSegmentManuellSchema>
 
-function flugzeitRueckwaerts(vonTag: string, vonZeit: string | null, bisTag: string, bisZeit: string | null): boolean {
+/** Nur Ankunft und Anschlussabflug am exakt selben Flughafen sind vergleichbar. */
+function anschlusszeitRueckwaerts(vonTag: string, vonZeit: string | null, bisTag: string, bisZeit: string | null): boolean {
   return bisTag < vonTag || (bisTag === vonTag && vonZeit !== null && bisZeit !== null && bisZeit < vonZeit)
 }
 
@@ -679,23 +680,13 @@ export const flugRouteManuellSchema = z.object({
         const melden = (feld: keyof FlugSegmentManuell, message: string) =>
           ctx.addIssue({ code: z.ZodIssueCode.custom, path: [index, feld], message: `Segment ${index + 1}: ${message}` })
         if (segment.origin === segment.destination) melden('destination', 'Abflug und Ankunft müssen unterschiedliche Flughäfen sein.')
-        if (flugzeitRueckwaerts(segment.departureDate, segment.departureTime, segment.arrivalDate, segment.arrivalTime)) {
-          melden('arrivalDate', 'Die Ankunft darf nicht vor dem Abflug liegen.')
-        }
         const vorher = segmente[index - 1]
         if (vorher) {
           if (segment.origin !== vorher.destination) melden('origin', 'Der Abflug muss am Ankunftsflughafen des vorherigen Segments liegen.')
-          if (flugzeitRueckwaerts(vorher.arrivalDate, vorher.arrivalTime, segment.departureDate, segment.departureTime)) {
+          else if (anschlusszeitRueckwaerts(vorher.arrivalDate, vorher.arrivalTime, segment.departureDate, segment.departureTime)) {
             melden('departureDate', 'Der Anschluss darf nicht vor der vorherigen Ankunft liegen.')
           }
         }
-      }
-      // Auch die Item-Grenzen müssen den bestehenden DB-Datumsvertrag erfüllen,
-      // wenn dazwischen optionale Zeiten fehlen. Keine Zeitzonen-Inferenz.
-      const erstes = segmente[0]
-      const letztes = segmente.at(-1)
-      if (erstes && letztes && flugzeitRueckwaerts(erstes.departureDate, erstes.departureTime, letztes.arrivalDate, letztes.arrivalTime)) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Die letzte Ankunft darf nicht vor dem ersten Abflug liegen.' })
       }
     }),
 }).strict('Erlaubt sind nur die Flugsegmente.')
