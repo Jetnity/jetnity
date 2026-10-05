@@ -10,6 +10,18 @@ import { fileURLToPath } from 'node:url'
 
 import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
 import {
+  civilDateOrdinalLesen,
+  schema2DatenPruefen,
+  schema2Kanonisch,
+  stayQuantityV2Lesen,
+  regulierungsAusdruckV2Lesen,
+  regulierungsAnwendbarkeitV2Lesen,
+  regulierungsAnwendbarkeitV2Auswerten,
+  regelAnwendbarkeitV2Fingerprint,
+  regulierungsAusdruckV2StrukturSchluessel,
+  type RegulierungsAusdruckV2,
+  type RegulierungsKontextV2,
+  type RegulierungsAnwendbarkeitV2,
   DOKUMENT_KLASSEN,
   INSTITUTIONS_STATUS,
   NATIONALITAETS_STATUS_KLASSEN,
@@ -670,6 +682,8 @@ describe('regulierungs-anwendbarkeit', () => {
     const gleich = regelAnwendbarkeitFingerprint(links.applicability)
     assert.equal(gleich, regelAnwendbarkeitFingerprint(rechts.applicability))
     assert.match(gleich, /^rule-applicability:v1:[a-f0-9]{64}$/)
+    // Exact baseline main@7fb95414; computed from its original reader.
+    assert.equal(gleich, 'rule-applicability:v1:72a112fc7b579a965fc3cc466d7071062cf9e4f084ad35d64a285899dc7c1972')
     const andereWirkung = faktLesen(
       wirkungsFakt([
         zweig('held', { kind: 'expression', expression: { op: 'all', operands: [staatsbuergerschaft('DE'), staatsbuergerschaft('CH')] } }, { effect: 'required', visaMode: null }, [ev(1), ev(2)]),
@@ -906,6 +920,7 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'official-truth-content-identity.test.ts'),
       join(hier, 'official-truth-content-identity-r2.test.ts'),
       join(hier, 'rule-claims.ts'),
+      join(hier, 'temporal.ts'),
       join(hier, 'official-truth-composition-policy-registry.ts'),
       join(hier, 'official-truth-composition-policy-registry.test.ts'),
     ])
@@ -919,6 +934,7 @@ describe('regulierungs-anwendbarkeit', () => {
       [
         join(hier, 'regulierungs-anwendbarkeit.ts'),
         join(hier, 'rule-claims.ts'),
+      join(hier, 'temporal.ts'),
         join(hier, 'official-truth-composition-policy-registry.ts'),
       ].sort(),
     )
@@ -974,5 +990,244 @@ describe('regulierungs-anwendbarkeit', () => {
     assert.equal(andere.ok, true)
     if (!andere.ok) return
     assert.notEqual(regulierungsAusdruckStrukturSchluessel(links.wert), regulierungsAusdruckStrukturSchluessel(andere.wert))
+  })
+})
+
+// Alle v2-Fälle sind synthetische Vertragsdaten, keine Länderregeln.
+function k2(teil: Partial<RegulierungsKontextV2> = {}): RegulierungsKontextV2 {
+  return { ...kontext(), schema: 2, visitCountryCode: 'ZZ', activityCharacteristics: [], plannedStay: null, nationalPassport: null, ...teil }
+}
+const economic = ['remunerative_activity', 'income_earning_activity', 'profit_making_business_operation', 'business_contacts'] as const
+function activity(name: typeof economic[number] = 'remunerative_activity'): RegulierungsAusdruckV2 {
+  return { op: 'atomic', predicate: { kind: 'activity_characteristic', characteristic: name } }
+}
+function duration(value = 90, unit: 'days' | 'months' = 'days', counting: 'unspecified' | 'calendar_dates_inclusive' | 'calendar_dates_exit_exclusive' = 'unspecified', comparison: 'at_most' | 'more_than' = 'at_most'): RegulierungsAusdruckV2 {
+  return { op: 'atomic', predicate: { kind: 'planned_stay_duration', comparison, duration: { value, unit }, counting } }
+}
+function a2(e: RegulierungsAusdruckV2): RegulierungsAnwendbarkeitV2<boolean> {
+  return { schema: 2, kind: 'branches', branches: [
+    { id: 'condition', when: { kind: 'expression', expression: e }, outcome: true, supportVersionIds: [ev(1)] },
+    { id: 'otherwise', when: { kind: 'otherwise' }, outcome: false, supportVersionIds: [ev(1)] },
+  ] }
+}
+function eval2(e: RegulierungsAusdruckV2, k: unknown = k2()) {
+  return regulierungsAnwendbarkeitV2Auswerten(a2(e), k, 'ZZ', null)
+}
+function stay2(declaration: NonNullable<RegulierungsKontextV2['plannedStay']>['declaredDuration'],
+  arrival: string | null = null, departure: string | 'unknown' | 'open_ended' = 'unknown'): NonNullable<RegulierungsKontextV2['plannedStay']> {
+  return { dates: { arrival: arrival ? { value: arrival, provenance: 'trip_context' } : null,
+    departure: departure === 'unknown' ? { kind: 'unknown' } : departure === 'open_ended' ? { kind: 'open_ended', provenance: 'user_asserted' } : { kind: 'date', value: departure, provenance: 'trip_context' } }, declaredDuration: declaration }
+}
+function declaration(value: number, unit: 'days' | 'months' = 'days', counting: 'unspecified' | 'calendar_dates_inclusive' | 'calendar_dates_exit_exclusive' = 'unspecified') {
+  return { value: { value, unit }, counting, provenance: 'user_asserted' as const }
+}
+function truth2(r: ReturnType<typeof eval2>, truth: boolean) {
+  assert.equal(r.status, 'decided', JSON.stringify(r)); assert.equal(r.outcome, truth)
+}
+function gap2(r: ReturnType<typeof eval2>, ...gaps: string[]) {
+  assert.equal(r.status, 'insufficient_context', JSON.stringify(r)); assert.equal(r.outcome, null); assert.deepEqual(r.missingFacts, gaps.sort())
+}
+function blocked2(r: ReturnType<typeof eval2>, reason: string) {
+  assert.equal(r.status, 'blocked', JSON.stringify(r)); assert.equal(r.reason, reason); assert.equal(r.outcome, null); assert.deepEqual(r.missingFacts, [])
+}
+
+describe('Schema 2: pure applicability conformance', () => {
+  test('frozen v1 unconditional fingerprint and explicit context version dispatch', () => {
+    assert.equal(regelAnwendbarkeitFingerprint({ schema: 1, kind: 'unconditional' }), 'rule-applicability:v1:f3fda302d62b9d4ef17b85da8ba209841c0a7b8f8d01c14ac5599c83fdea320d')
+    assert.equal(regulierungsKontextLesen(k2()).ok, false)
+    assert.deepEqual(regulierungsKontextLesen(rohKontext(), 2), { ok: false, reason: 'unsupported_version' })
+    assert.equal(regulierungsKontextLesen(k2(), 2).ok, true)
+    assert.notEqual(regelAnwendbarkeitV2Fingerprint({ schema: 2, kind: 'unconditional' }), regelAnwendbarkeitFingerprint({ schema: 1, kind: 'unconditional' }))
+    blocked2(eval2(activity(), rohKontext()), 'unsupported_version')
+    blocked2(regulierungsAnwendbarkeitV2Auswerten({ schema: 1, kind: 'unconditional' } as never, k2(), 'ZZ', true), 'unsupported_version')
+  })
+  for (const characteristic of economic) {
+    test(`activity ${characteristic}: true/false/unknown and no purpose inference`, () => {
+      for (const value of [true, false]) {
+        const k = k2({ travelPurpose: fakt(value ? 'visitor' : 'business'), activityCharacteristics: [{ characteristic, value, provenance: 'user_asserted' }] })
+        truth2(eval2(activity(characteristic), k), value)
+        truth2(eval2({ op: 'not', operand: activity(characteristic) }, k), !value)
+        const r = eval2({ op: 'not', operand: activity(characteristic) }, k)
+        if (r.status === 'decided') { assert.equal(r.binding, 'context_asserted'); assert.equal(r.decisionTrace.schema, 2); assert.equal(r.decisionTrace.dependencies[0].polarity, String(value)) }
+      }
+      gap2(eval2(activity(characteristic), k2({ travelPurpose: fakt('business') })), `activity_${characteristic}`)
+      gap2(eval2({ op: 'not', operand: activity(characteristic) }), `activity_${characteristic}`)
+    })
+  }
+  test('activity independence, raw duplicate bound and conflicts before unrelated OR', () => {
+    const a = { characteristic: 'remunerative_activity', value: false, provenance: 'user_asserted' } as const
+    gap2(eval2(activity('income_earning_activity'), k2({ activityCharacteristics: [a] })), 'activity_income_earning_activity')
+    const parsed = regulierungsKontextLesen(k2({ activityCharacteristics: Array(8).fill(a) }), 2)
+    assert.ok(parsed.ok); if (parsed.ok) assert.deepEqual(parsed.wert.activityCharacteristics, [a])
+    assert.deepEqual(regulierungsKontextLesen(k2({ activityCharacteristics: Array(9).fill(a) }), 2), { ok: false, reason: 'bound_exceeded' })
+    blocked2(eval2({ op: 'any', operands: [{ op: 'atomic', predicate: { kind: 'citizenship_includes', countryCode: 'CH' } }, activity()] }, k2({ activityCharacteristics: [a, { ...a, value: true }] })), 'context_conflict')
+    for (const provenance of ['account_profile', 'trip_context', 'model', 'official_document_verified']) {
+      assert.deepEqual(regulierungsKontextLesen(k2({ activityCharacteristics: [{ ...a, provenance }] as never }), 2), { ok: false, reason: 'provenance_not_authorized' })
+    }
+  })
+  for (const value of [89, 90, 91]) test(`direct threshold ${value} same-unit days`, () => {
+    const k = k2({ plannedStay: stay2(declaration(value)) })
+    truth2(eval2(duration(), k), value <= 90)
+    truth2(eval2(duration(90, 'days', 'unspecified', 'more_than'), k), value > 90)
+  })
+  for (const [arrival, departure, inclusive, exclusive] of [
+    ['2028-02-28', '2028-03-01', 3, 2], ['2026-10-06', '2026-10-06', 1, 0],
+    ['2026-03-28', '2026-03-30', 3, 2], ['0001-01-01', '0001-01-02', 2, 1],
+  ] as const) test(`civil arithmetic ${arrival}..${departure}`, () => {
+    const k = k2({ plannedStay: stay2(null, arrival, departure) })
+    truth2(eval2(duration(inclusive, 'days', 'calendar_dates_inclusive'), k), true)
+    truth2(eval2(duration(Math.max(1, exclusive), 'days', 'calendar_dates_exit_exclusive'), k), true)
+    truth2(eval2(duration(Math.max(1, exclusive), 'days', 'calendar_dates_exit_exclusive', 'more_than'), k), false)
+  })
+  test('declaration/date conflict detected under declaration convention before any rule', () => {
+    const k = k2({ plannedStay: stay2(declaration(2, 'days', 'calendar_dates_inclusive'), '2028-02-28', '2028-03-01') })
+    blocked2(eval2(activity(), k), 'context_conflict')
+    blocked2(eval2(duration(3, 'days', 'calendar_dates_exit_exclusive'), k), 'context_conflict')
+    blocked2(eval2(activity(), k2({ plannedStay: stay2(null, '2028-03-02', '2028-03-01') })), 'context_conflict')
+  })
+  test('equal date/assertion candidates retain both dates and assertion provenance', () => {
+    const k = k2({ plannedStay: stay2(declaration(3, 'days', 'calendar_dates_inclusive'), '2028-02-28', '2028-03-01') })
+    const r = eval2(duration(3, 'days', 'calendar_dates_inclusive'), k)
+    truth2(r, true)
+    if (r.status === 'decided') {
+      assert.equal(r.binding, 'context_asserted')
+      assert.deepEqual(r.decisionTrace.dependencies.map((d) => d.provenance), ['user_asserted', 'trip_context', 'trip_context'])
+      assert.doesNotMatch(JSON.stringify(r.decisionTrace), /2028|CH|90|value|characteristic/)
+    }
+    // Different but internally consistent declaration convention is not coerced.
+    truth2(eval2(duration(2, 'days', 'calendar_dates_exit_exclusive'), k), true)
+  })
+  test('open-ended is unknown, conflicts with finite declaration', () => {
+    for (const comparison of ['at_most', 'more_than'] as const) gap2(eval2(duration(90, 'days', 'unspecified', comparison), k2({ plannedStay: stay2(null, null, 'open_ended') })), 'planned_stay_open_ended')
+    blocked2(eval2(activity(), k2({ plannedStay: stay2(declaration(90), null, 'open_ended') })), 'context_conflict')
+  })
+  test('months use only matching direct assertion; no conversions or date rounding', () => {
+    truth2(eval2(duration(3, 'months'), k2({ plannedStay: stay2(declaration(3, 'months')) })), true)
+    gap2(eval2(duration(), k2({ plannedStay: stay2(declaration(3, 'months')) })), 'stay_unit_mismatch')
+    gap2(eval2(duration(3, 'months'), k2({ plannedStay: stay2(declaration(90)) })), 'stay_unit_mismatch')
+    gap2(eval2(duration(1, 'months'), k2({ plannedStay: stay2(null, '2028-01-31', '2028-02-29') })), 'stay_counting_convention')
+    truth2(eval2(duration(30, 'days', 'calendar_dates_inclusive'), k2({ plannedStay: stay2(declaration(1, 'months'), '2028-01-31', '2028-02-29') })), true)
+  })
+  test('exact duration gap precedence', () => {
+    gap2(eval2(duration()), 'planned_stay')
+    gap2(eval2(duration(), k2({ plannedStay: stay2(null) })), 'stay_counting_convention')
+    gap2(eval2(duration(90, 'days', 'calendar_dates_inclusive'), k2({ plannedStay: stay2(null, '2026-10-06') })), 'planned_stay_dates')
+    gap2(eval2(duration(90, 'days', 'calendar_dates_inclusive'), k2({ plannedStay: stay2(declaration(90)) })), 'stay_counting_convention')
+    truth2(eval2(duration(), k2({ plannedStay: stay2(declaration(90), null, 'unknown') })), true)
+    gap2(eval2(duration(), k2({ plannedStay: stay2(null, '2026-10-06', '2026-10-07') })), 'stay_counting_convention')
+  })
+  test('technical quantity bounds, negative zero and no malformed civil dates', () => {
+    for (const value of [0, -0, -1, 3661, 1.2, '90', NaN, Infinity]) assert.equal(regulierungsAusdruckV2Lesen(duration(value as number)).ok, false)
+    assert.equal(regulierungsAusdruckV2Lesen(duration(3660)).ok, true)
+    assert.equal(regulierungsAusdruckV2Lesen(duration(120, 'months')).ok, true)
+    assert.equal(regulierungsAusdruckV2Lesen(duration(121, 'months')).ok, false)
+    assert.equal(regulierungsAusdruckV2Lesen(duration(1, 'months', 'calendar_dates_inclusive')).ok, false)
+    assert.equal(stayQuantityV2Lesen({ value: 0, unit: 'days' }, true).ok, true)
+    for (const counting of ['unspecified', 'calendar_dates_inclusive'] as const) assert.equal(regulierungsKontextLesen(k2({ plannedStay: stay2(declaration(0, 'days', counting)) }), 2).ok, false)
+    truth2(eval2(duration(1, 'days', 'calendar_dates_exit_exclusive'), k2({ plannedStay: stay2(declaration(0, 'days', 'calendar_dates_exit_exclusive')) })), true)
+    for (const date of ['0000-01-01', '10000-01-01', '2027-02-29', '1900-02-29', '2026-04-31', '2026-01-00', '2026-1-01', '2026-10-06T00:00:00.000Z']) {
+      assert.equal(civilDateOrdinalLesen(date), null)
+      assert.equal(regulierungsKontextLesen(k2({ plannedStay: stay2(null, date) }), 2).ok, false)
+    }
+    assert.ok(civilDateOrdinalLesen('2000-02-29')); assert.ok(civilDateOrdinalLesen('9999-12-31'))
+  })
+  test('D=3660 supports exit-exclusive, inclusive candidate blocks without clamping', () => {
+    const k = k2({ plannedStay: stay2(null, '2000-01-01', '2010-01-08') })
+    assert.equal(civilDateOrdinalLesen('2010-01-08')! - civilDateOrdinalLesen('2000-01-01')!, 3660)
+    truth2(eval2(duration(3660, 'days', 'calendar_dates_exit_exclusive'), k), true)
+    blocked2(eval2(duration(3660, 'days', 'calendar_dates_inclusive'), k), 'bound_exceeded')
+    blocked2(eval2({ op: 'any', operands: [activity(), duration(3660, 'days', 'calendar_dates_inclusive')] }, { ...k, activityCharacteristics: [{ characteristic: 'remunerative_activity', value: true, provenance: 'user_asserted' }] }), 'bound_exceeded')
+    assert.deepEqual(regulierungsKontextLesen(k2({ plannedStay: stay2(null, '2000-01-01', '2010-01-09') }), 2), { ok: false, reason: 'bound_exceeded' })
+  })
+  const national: RegulierungsAusdruckV2 = { op: 'atomic', predicate: { kind: 'national_passport_for_citizenship', countryCode: 'CH' } }
+  test('national true is independent of issuer and ordinary class', () => {
+    const k = k2({ nationalPassport: { value: true, provenance: 'user_asserted' }, credential: { documentType: 'passport', issuingCountryCode: 'DE', relatedCitizenshipCountryCode: 'CH' } })
+    truth2(eval2(national, k), true)
+    gap2(eval2({ op: 'all', operands: [national, { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } }] }, k), 'document_class')
+    for (const value of ['emergency', 'diplomatic', 'official'] as const) {
+      truth2(eval2(national, { ...k, documentClass: fakt(value) }), true)
+      truth2(eval2({ op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } }, { ...k, documentClass: fakt(value) }), false)
+    }
+  })
+  test('national false limbs dominate unknown; partial citizenship nonmembership stays unknown', () => {
+    const empty = k2({ citizenshipCountryCodes: [], credential: { documentType: null, issuingCountryCode: null, relatedCitizenshipCountryCode: null } })
+    gap2(eval2(national, empty), 'document_type', 'nationality', 'credential_citizenship_link', 'national_passport_status')
+    truth2(eval2(national, { ...empty, nationalPassport: { value: false, provenance: 'user_asserted' } }), false)
+    truth2(eval2(national, { ...empty, credential: { ...empty.credential, documentType: 'national_id' } }), false)
+    gap2(eval2(national, k2({ citizenshipCountryCodes: ['DE'], credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: null }, nationalPassport: { value: true, provenance: 'user_asserted' } })), 'nationality', 'credential_citizenship_link')
+    truth2(eval2(national, k2({ citizenshipCountryCodes: ['CH', 'DE'], credential: { documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'DE' } })), false)
+    gap2(eval2(national, k2({ nationalPassport: { value: true, provenance: 'user_asserted' }, credential: { documentType: 'unknown', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'CH' } })), 'document_type')
+  })
+  test('national categorical conflicts and absent recorded citizenship rejection', () => {
+    for (const documentClass of ['refugee_travel_document', 'laissez_passer'] as const) blocked2(eval2(activity(), k2({ documentClass: fakt(documentClass), nationalPassport: { value: true, provenance: 'user_asserted' } })), 'context_conflict')
+    blocked2(eval2(activity(), k2({ credential: { documentType: 'national_id', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'CH' }, nationalPassport: { value: true, provenance: 'user_asserted' } })), 'context_conflict')
+    assert.equal(regulierungsKontextLesen(k2({ citizenshipCountryCodes: ['DE'] }), 2).ok, false)
+    assert.deepEqual(regulierungsKontextLesen(k2({ nationalPassport: { value: true, provenance: 'account_profile' } as never }), 2), { ok: false, reason: 'provenance_not_authorized' })
+  })
+  test('outer binding is checked even for unconditional facts', () => {
+    const a = { schema: 2, kind: 'unconditional' } as const
+    gap2(regulierungsAnwendbarkeitV2Auswerten(a, k2({ visitCountryCode: null }), 'ZZ', true), 'visit_scope_missing')
+    blocked2(regulierungsAnwendbarkeitV2Auswerten(a, k2(), 'YY', true), 'scope_mismatch')
+    blocked2(regulierungsAnwendbarkeitV2Auswerten(a, k2(), null, true), 'binding_missing')
+    truth2(regulierungsAnwendbarkeitV2Auswerten(a, k2(), 'ZZ', true), true)
+  })
+  test('branch conflict / disturbing unknown / identical outcome / otherwise', () => {
+    const a = a2(activity())
+    assert.equal(a.kind, 'branches'); if (a.kind !== 'branches') return
+    const b = { id: 'second', when: { kind: 'expression' as const, expression: activity('business_contacts') }, outcome: false, supportVersionIds: [ev(1)] }
+    const k = k2({ activityCharacteristics: [{ characteristic: 'remunerative_activity', value: true, provenance: 'user_asserted' }] })
+    const evaluate = (out: boolean, ctx: unknown = k) => regulierungsAnwendbarkeitV2Auswerten({ ...a, branches: [...a.branches, { ...b, outcome: out }] }, ctx, 'ZZ', null)
+    gap2(evaluate(false), 'activity_business_contacts')
+    truth2(evaluate(true), true)
+    assert.equal(evaluate(false, { ...k, activityCharacteristics: [...k.activityCharacteristics, { characteristic: 'business_contacts', value: true, provenance: 'user_asserted' }] }).reason, 'branch_conflict')
+    truth2(eval2({ op: 'any', operands: [activity(), activity('business_contacts')] }, k), true)
+    truth2(eval2({ op: 'all', operands: [{ op: 'not', operand: activity() }, activity('business_contacts')] }, k), false)
+    assert.equal(regulierungsAnwendbarkeitV2Auswerten({ ...a, branches: [a.branches[0]] }, k2({ activityCharacteristics: [{ characteristic: 'remunerative_activity', value: false, provenance: 'user_asserted' }] }), 'ZZ', null).reason, 'no_applicable_branch')
+  })
+  test('canonical v2 fingerprints sort keys/branches/operands/support; retain every semantic axis', () => {
+    const e: RegulierungsAusdruckV2 = { op: 'all', operands: [activity(), duration()] }
+    const reverse: RegulierungsAusdruckV2 = { op: 'all', operands: [duration(), activity()] }
+    assert.equal(regelAnwendbarkeitV2Fingerprint(a2(e)), regelAnwendbarkeitV2Fingerprint(a2(reverse)))
+    assert.equal(schema2Kanonisch({ z: null, a: { b: 1, a: 2 } }), '{"a":{"a":2,"b":1},"z":null}')
+    assert.equal(regulierungsAusdruckV2StrukturSchluessel({ ...activity(), supportVersionIds: [ev(1)] } as RegulierungsAusdruckV2), regulierungsAusdruckV2StrukturSchluessel(activity()))
+    assert.notEqual(regulierungsAusdruckV2StrukturSchluessel(activity()), regulierungsAusdruckStrukturSchluessel(ausdruck(zweck())))
+    for (const x of [activity('income_earning_activity'), { op: 'not', operand: activity() } as const, duration(3, 'months'), duration(90, 'days', 'calendar_dates_inclusive')]) assert.notEqual(regelAnwendbarkeitV2Fingerprint(a2(x)), regelAnwendbarkeitV2Fingerprint(a2(activity())))
+  })
+  test('strict JSON rejects accessors without invocation, cycles, symbols, prototypes and extra fields', () => {
+    let reads = 0
+    const getter = Object.defineProperty({}, 'schema', { enumerable: true, get() { reads++; return 2 } })
+    assert.deepEqual(regulierungsKontextLesen(getter, 2), { ok: false, reason: 'invalid_fact' }); assert.equal(reads, 0)
+    const cycle: Record<string, unknown> = {}; cycle.self = cycle
+    for (const value of [cycle, { [Symbol('x')]: 1 }, { fn() {} }, /x/, Object.create({}), Object.defineProperty({}, 'hidden', { value: 1 }), JSON.parse('{"__proto__":{}}')]) assert.ok(schema2DatenPruefen(value))
+    for (const extra of ['occupation', 'hotelNights', 'condition', 'attributePath', 'unknown']) assert.equal(regulierungsKontextLesen({ ...k2(), [extra]: 'x' }, 2).ok, false)
+    assert.equal(schema2DatenPruefen({ passportNumber: 'synthetic' }), 'personal_identifier_forbidden')
+    assert.equal(schema2DatenPruefen(Array(8191).fill(null)), null)
+    assert.equal(schema2DatenPruefen(Array(8192).fill(null)), 'bound_exceeded')
+    assert.equal(schema2DatenPruefen(Array(8193).fill(null)), 'bound_exceeded')
+    assert.equal(schema2DatenPruefen('x'.repeat(65_534)), null)
+    assert.equal(schema2DatenPruefen('x'.repeat(65_535)), 'bound_exceeded')
+    assert.equal(schema2DatenPruefen('x'.repeat(32_767), 'x'.repeat(32_766)), 'bound_exceeded')
+    let deep: unknown = null; for (let i = 0; i < 17; i++) deep = [deep]
+    assert.equal(schema2DatenPruefen(deep), 'bound_exceeded')
+    assert.equal(schema2DatenPruefen('x'.repeat(65_537)), 'bound_exceeded')
+  })
+  test('raw and normalized expression limits, branches and support boundaries', () => {
+    let e: RegulierungsAusdruckV2 = activity()
+    for (let i = 0; i < 3; i++) e = { op: 'not', operand: e }
+    assert.equal(regulierungsAusdruckV2Lesen(e).ok, true)
+    assert.deepEqual(regulierungsAusdruckV2Lesen({ op: 'not', operand: e }), { ok: false, reason: 'depth_exceeded' })
+    assert.equal(regulierungsAusdruckV2Lesen({ op: 'all', operands: Array(8).fill(activity()) }).ok, true)
+    assert.deepEqual(regulierungsAusdruckV2Lesen({ op: 'all', operands: Array(9).fill(activity()) }), { ok: false, reason: 'operand_bound_exceeded' })
+    const distinct = Array.from({ length: 9 }, (_, i) => duration(i + 1))
+    assert.deepEqual(regulierungsAusdruckV2Lesen({ op: 'all', operands: [{ op: 'all', operands: distinct.slice(0, 5) }, { op: 'all', operands: distinct.slice(5) }] }), { ok: false, reason: 'operand_bound_exceeded' })
+    const sixteen = { op: 'all', operands: [...Array(7).fill({ op: 'not', operand: activity() }), activity()] }
+    const seventeen = { op: 'all', operands: Array(8).fill({ op: 'not', operand: activity() }) }
+    assert.equal(regulierungsAusdruckV2Lesen(sixteen).ok, true)
+    assert.deepEqual(regulierungsAusdruckV2Lesen(seventeen), { ok: false, reason: 'node_bound_exceeded' })
+    const read = (x: unknown) => regulierungsAnwendbarkeitV2Lesen(x, (wert) => ({ ok: true, wert }))
+    const branches = Array.from({ length: 8 }, (_, i) => ({ id: `b${i}`, when: { kind: 'expression', expression: activity() }, outcome: true, supportVersionIds: Array(8).fill(ev(1)) }))
+    assert.equal(read({ schema: 2, kind: 'branches', branches }).ok, true)
+    assert.deepEqual(read({ schema: 2, kind: 'branches', branches: [...branches, { ...branches[0], id: 'ninth' }] }), { ok: false, reason: 'branch_bound_exceeded' })
+    assert.deepEqual(regulierungsAusdruckV2Lesen({ ...activity(), supportVersionIds: Array(9).fill(ev(1)) }), { ok: false, reason: 'support_bound_exceeded' })
   })
 })

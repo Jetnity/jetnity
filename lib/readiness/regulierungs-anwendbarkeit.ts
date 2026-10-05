@@ -978,7 +978,7 @@ function verknuepfungAuswerten(
   return { wert: 'false', abhaengigkeiten: falsch, fehlende: [], regionUngepinnt: false }
 }
 
-function atomAuswerten(praedikat: RegulierungsPraedikat, kontext: RegulierungsKontext): AusdruckIntern {
+function atomAuswerten(praedikat: RegulierungsPraedikat, kontext: Omit<RegulierungsKontext, 'schema'>): AusdruckIntern {
   switch (praedikat.kind) {
     case 'destination_permission':
       return zielErlaubnisAuswerten(praedikat, kontext)
@@ -1050,7 +1050,7 @@ function atomAuswerten(praedikat: RegulierungsPraedikat, kontext: RegulierungsKo
 
 function zielErlaubnisAuswerten(
   praedikat: Extract<RegulierungsPraedikat, { kind: 'destination_permission' }>,
-  kontext: RegulierungsKontext,
+  kontext: Omit<RegulierungsKontext, 'schema'>,
 ): AusdruckIntern {
   const treffer = kontext.destinationPermissions.filter(
     (fakt) =>
@@ -1068,7 +1068,7 @@ function zielErlaubnisAuswerten(
 
 function wohnsitzAuswerten(
   praedikat: Extract<RegulierungsPraedikat, { kind: 'lawful_residence' }>,
-  kontext: RegulierungsKontext,
+  kontext: Omit<RegulierungsKontext, 'schema'>,
 ): AusdruckIntern {
   const treffer = kontext.lawfulResidence.filter((fakt) => fakt.value.countryCode === praedikat.countryCode)
   const fakt = treffer[0]
@@ -1082,7 +1082,7 @@ function wohnsitzAuswerten(
 
 function herkunftAuswerten(
   praedikat: Extract<RegulierungsPraedikat, { kind: 'journey_origin' }>,
-  kontext: RegulierungsKontext,
+  kontext: Omit<RegulierungsKontext, 'schema'>,
 ): AusdruckIntern {
   const fakt = kontext.journeyOriginCountryCode
   if (!fakt) return unbekannt('journey_origin')
@@ -1098,7 +1098,7 @@ function herkunftAuswerten(
 
 function dokumentKlasseAuswerten(
   praedikat: Extract<RegulierungsPraedikat, { kind: 'document_class' }>,
-  kontext: RegulierungsKontext,
+  kontext: Omit<RegulierungsKontext, 'schema'>,
 ): AusdruckIntern {
   const typ = kontext.credential.documentType
   if (typ === null || typ === 'unknown') return unbekannt('document_type')
@@ -1107,7 +1107,7 @@ function dokumentKlasseAuswerten(
   return atom('document_class', fakt.provenance, fakt.value === praedikat.documentClass ? 'true' : 'false')
 }
 
-function ausstellerAuswerten(land: string, kontext: RegulierungsKontext): AusdruckIntern {
+function ausstellerAuswerten(land: string, kontext: Omit<RegulierungsKontext, 'schema'>): AusdruckIntern {
   const typ = kontext.credential.documentType
   if (typ === null || typ === 'unknown') return unbekannt('document_type')
   if (kontext.credential.issuingCountryCode === null) return unbekannt('document_issuing_country')
@@ -1435,7 +1435,7 @@ function herkunftslandWert(wert: unknown): Schritt<string> {
   return { ok: true, wert: code }
 }
 
-export function regulierungsKontextLesen(roh: unknown): RegulierungsLeseErgebnis<RegulierungsKontext> {
+function regulierungsKontextV1Lesen(roh: unknown): RegulierungsLeseErgebnis<RegulierungsKontext> {
   const start = anfang(roh)
   if (start) return nein(start)
   const satz = datensatz(roh)
@@ -1814,4 +1814,666 @@ export function regelAnwendbarkeitFingerprint(
   anwendbarkeit: RegulierungsAnwendbarkeit<WirkungsAusgang | VisaOptionsAusgang>,
 ): string {
   return `${FINGERPRINT_PRAEFIX}${sha256Hex(json(anwendbarkeitObjekt(anwendbarkeit)))}`
+}
+
+// Schema 2 ist ein eigener, ausdrücklich gewählter reiner Vertrag. Die oben
+// stehenden v1-Leser und ihre Kanonisierung bleiben eingefroren. Kein Producer.
+export type V2BlockReason = RegulierungsLesefehler
+  | 'unsupported_version' | 'bound_exceeded' | 'scope_mismatch' | 'binding_missing'
+export type V2LeseErgebnis<T> = { ok: true; wert: T } | { ok: false; reason: V2BlockReason }
+export type ActivityCharacteristicV2 =
+  | 'remunerative_activity' | 'income_earning_activity'
+  | 'profit_making_business_operation' | 'business_contacts'
+export type ActivityAssertionV2 = {
+  characteristic: ActivityCharacteristicV2
+  value: boolean
+  provenance: 'user_asserted'
+}
+export type StayQuantityV2 = { value: number; unit: 'days' | 'months' }
+export type StayCountingV2 = 'unspecified' | 'calendar_dates_inclusive' | 'calendar_dates_exit_exclusive'
+export type PlannedStayV2 = {
+  dates: {
+    arrival: { value: string; provenance: 'user_asserted' | 'trip_context' } | null
+    departure:
+      | { kind: 'date'; value: string; provenance: 'user_asserted' | 'trip_context' }
+      | { kind: 'unknown' }
+      | { kind: 'open_ended'; provenance: 'user_asserted' }
+  }
+  declaredDuration: { value: StayQuantityV2; counting: StayCountingV2; provenance: 'user_asserted' } | null
+}
+export type RegulierungsKontextV2 = Omit<RegulierungsKontext, 'schema'> & {
+  schema: 2
+  visitCountryCode: string | null
+  activityCharacteristics: readonly ActivityAssertionV2[]
+  plannedStay: PlannedStayV2 | null
+  nationalPassport: { value: boolean; provenance: 'user_asserted' } | null
+}
+export type RegulierungsPraedikatV2 = RegulierungsPraedikat
+  | { kind: 'activity_characteristic'; characteristic: ActivityCharacteristicV2 }
+  | { kind: 'planned_stay_duration'; comparison: 'at_most' | 'more_than'; duration: StayQuantityV2; counting: StayCountingV2 }
+  | { kind: 'national_passport_for_citizenship'; countryCode: string }
+export type RegulierungsAusdruckV2 =
+  | { op: 'atomic'; predicate: RegulierungsPraedikatV2; supportVersionIds?: readonly string[] }
+  | { op: 'all' | 'any'; operands: readonly RegulierungsAusdruckV2[] }
+  | { op: 'not'; operand: RegulierungsAusdruckV2 }
+export type RegulierungsZweigV2<T> = {
+  id: string
+  when: { kind: 'expression'; expression: RegulierungsAusdruckV2 } | { kind: 'otherwise' }
+  outcome: T
+  supportVersionIds: readonly string[]
+}
+export type RegulierungsAnwendbarkeitV2<T> =
+  | { schema: 2; kind: 'unconditional' }
+  | { schema: 2; kind: 'branches'; branches: readonly RegulierungsZweigV2<T>[] }
+export type RegulierungsAbhaengigkeitV2 = Omit<RegulierungsAbhaengigkeit, 'predicateKind'> & {
+  predicateKind: RegulierungsPraedikatV2['kind']
+}
+export type RegulierungsGapV2 = RegulierungsFehlenderFakt | `activity_${ActivityCharacteristicV2}`
+  | 'visit_scope_missing' | 'planned_stay' | 'planned_stay_dates' | 'planned_stay_open_ended'
+  | 'stay_unit_mismatch' | 'stay_counting_convention' | 'national_passport_status'
+export type RegulierungsAuswertungV2<T> =
+  | { status: 'decided'; outcome: T; binding: 'context_recorded' | 'context_asserted' | null
+      decisionTrace: { schema: 2; dependencies: readonly RegulierungsAbhaengigkeitV2[] }
+      missingFacts: readonly []; reason: 'unconditional' | 'branch_matched' }
+  | { status: 'insufficient_context'; outcome: null; binding: null; missingFacts: readonly RegulierungsGapV2[]
+      reason: 'predicate_unknown' | 'no_applicable_branch' | 'branch_conflict' | 'region_membership_unpinned' | 'visit_scope_missing' }
+  | { status: 'blocked'; outcome: null; binding: null; missingFacts: readonly []; reason: V2BlockReason }
+
+const AKTIVITAETEN_V2: readonly ActivityCharacteristicV2[] = [
+  'remunerative_activity', 'income_earning_activity', 'profit_making_business_operation', 'business_contacts',
+]
+const ZAEHLUNG_V2: readonly StayCountingV2[] = ['unspecified', 'calendar_dates_inclusive', 'calendar_dates_exit_exclusive']
+
+/** Bounded JSON-Datenprüfung VOR jedem Zugriff auf rohe Felder. Keine Getter. */
+export function schema2DatenPruefen(...werte: readonly unknown[]): V2BlockReason | null {
+  let anzahl = 0
+  let bytes = 0
+  const aktiv = new Set<object>()
+  const encoder = new TextEncoder()
+  function textBytes(text: string): boolean {
+    if (text.length > 65_536) return false
+    bytes += encoder.encode(JSON.stringify(text)).length
+    return bytes <= 65_536
+  }
+  function besuchen(wert: unknown, tiefe: number): V2BlockReason | null {
+    if (++anzahl > 8192) return 'bound_exceeded'
+    if (wert === null || typeof wert === 'boolean') { bytes += wert === false ? 5 : 4; return null }
+    if (typeof wert === 'number') {
+      if (!Number.isFinite(wert) || !Number.isInteger(wert) || Object.is(wert, -0)) return 'invalid_fact'
+      bytes += String(wert).length
+      return null
+    }
+    if (typeof wert === 'string') return textBytes(wert) ? null : 'bound_exceeded'
+    if (typeof wert !== 'object') return 'invalid_fact'
+    if (tiefe > 16) return 'bound_exceeded'
+    if (aktiv.has(wert)) return 'invalid_fact'
+    const array = Array.isArray(wert)
+    if (Object.getPrototypeOf(wert) !== (array ? Array.prototype : Object.prototype)) return 'invalid_fact'
+    const keys = Reflect.ownKeys(wert)
+    if (keys.length > 8193 || (array && wert.length > 8192)) return 'bound_exceeded'
+    if (array && keys.length !== wert.length + 1) return 'invalid_fact'
+    aktiv.add(wert)
+    bytes += 2
+    let erster = true
+    for (const key of keys) {
+      if (array && key === 'length') continue
+      if (typeof key !== 'string' || key === '__proto__' || key === 'constructor' || key === 'prototype') return 'invalid_fact'
+      if (array && !/^(0|[1-9][0-9]*)$/.test(key)) return 'invalid_fact'
+      const descriptor = Object.getOwnPropertyDescriptor(wert, key)
+      if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return 'invalid_fact'
+      if (PERSONEN_SCHLUESSEL.has(key)) return 'personal_identifier_forbidden'
+      if (VERBOTENE_HERKUNFT.has(key) || (HERKUNFT_FELDER.has(key) && VERBOTENE_HERKUNFT.has(descriptor.value))) {
+        return 'provenance_not_authorized'
+      }
+      if (!array && !textBytes(key)) return 'bound_exceeded'
+      if (!array) bytes++ // Doppelpunkt
+      if (!erster) bytes++ // Komma
+      erster = false
+      const fehler = besuchen(descriptor.value, tiefe + 1)
+      if (fehler) return fehler
+      if (bytes > 65_536) return 'bound_exceeded'
+    }
+    aktiv.delete(wert)
+    return null
+  }
+  try {
+    for (const wert of werte) {
+      const fehler = besuchen(wert, 1)
+      if (fehler) return fehler
+    }
+    return bytes > 65_536 ? 'bound_exceeded' : null
+  } catch { return 'invalid_fact' }
+}
+
+/** Nur für zuvor validierte v2-Daten; ASCII-Schlüssel, keine Locale-Sortierung. */
+export function schema2Kanonisch(wert: unknown): string {
+  if (Array.isArray(wert)) return `[${wert.map(schema2Kanonisch).join(',')}]`
+  if (wert !== null && typeof wert === 'object') {
+    const satz = wert as Record<string, unknown>
+    return `{${Object.keys(satz).sort().map((key) => `${JSON.stringify(key)}:${schema2Kanonisch(satz[key])}`).join(',')}}`
+  }
+  return JSON.stringify(wert)
+}
+
+/** Proleptisch-gregorianischer Ordinaltag. Ohne Zeitstempel oder Zeitzonen. */
+export function civilDateOrdinalLesen(wert: unknown): number | null {
+  if (typeof wert !== 'string' || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(wert)) return null
+  const y = Number(wert.slice(0, 4)), m = Number(wert.slice(5, 7)), d = Number(wert.slice(8, 10))
+  if (y < 1 || m < 1 || m > 12) return null
+  const leap = y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)
+  const tage = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  if (d < 1 || d > tage[m - 1]) return null
+  const vorher = y - 1
+  return vorher * 365 + Math.floor(vorher / 4) - Math.floor(vorher / 100) + Math.floor(vorher / 400)
+    + tage.slice(0, m - 1).reduce((a, b) => a + b, 0) + d
+}
+
+export function stayQuantityV2Lesen(roh: unknown, nullTage = false): V2LeseErgebnis<StayQuantityV2> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh)
+  if (!s || !genau(s, ['value', 'unit']) || (s.unit !== 'days' && s.unit !== 'months')) return nein('invalid_fact')
+  const min = nullTage && s.unit === 'days' ? 0 : 1
+  if (Object.is(s.value, -0)) return nein('invalid_fact')
+  const value = ganzeZahl(s.value, min, s.unit === 'days' ? 3660 : 120)
+  if (value === null) return nein('invalid_fact')
+  return { ok: true, wert: { value, unit: s.unit } }
+}
+
+function zaehlungPasst(q: StayQuantityV2, counting: StayCountingV2): boolean {
+  return (q.unit === 'days' || counting === 'unspecified')
+    && (q.value !== 0 || counting === 'calendar_dates_exit_exclusive')
+}
+
+function plannedStayLesen(roh: unknown): V2LeseErgebnis<PlannedStayV2 | null> {
+  if (roh === null) return { ok: true, wert: null }
+  const s = datensatz(roh), dates = datensatz(s?.dates)
+  if (!s || !genau(s, ['dates', 'declaredDuration']) || !dates || !genau(dates, ['arrival', 'departure'])) return nein('invalid_fact')
+  let arrival: PlannedStayV2['dates']['arrival'] = null
+  if (dates.arrival !== null) {
+    const a = datensatz(dates.arrival)
+    if (!a || !genau(a, ['value', 'provenance']) || civilDateOrdinalLesen(a.value) === null) return nein('invalid_fact')
+    if (a.provenance !== 'user_asserted' && a.provenance !== 'trip_context') return nein('provenance_not_authorized')
+    arrival = { value: a.value as string, provenance: a.provenance }
+  }
+  const d = datensatz(dates.departure)
+  if (!d) return nein('invalid_fact')
+  let departure: PlannedStayV2['dates']['departure']
+  if (d.kind === 'unknown' && genau(d, ['kind'])) departure = { kind: 'unknown' }
+  else if (d.kind === 'open_ended' && genau(d, ['kind', 'provenance'])) {
+    if (d.provenance !== 'user_asserted') return nein('provenance_not_authorized')
+    departure = { kind: 'open_ended', provenance: 'user_asserted' }
+  } else if (d.kind === 'date' && genau(d, ['kind', 'value', 'provenance']) && civilDateOrdinalLesen(d.value) !== null) {
+    if (d.provenance !== 'user_asserted' && d.provenance !== 'trip_context') return nein('provenance_not_authorized')
+    departure = { kind: 'date', value: d.value as string, provenance: d.provenance }
+  } else return nein('invalid_fact')
+  let declaredDuration: PlannedStayV2['declaredDuration'] = null
+  if (s.declaredDuration !== null) {
+    const q = datensatz(s.declaredDuration)
+    if (!q || !genau(q, ['value', 'counting', 'provenance']) || !istText(q.counting, ZAEHLUNG_V2)) return nein('invalid_fact')
+    if (q.provenance !== 'user_asserted') return nein('provenance_not_authorized')
+    const quantity = stayQuantityV2Lesen(q.value, true)
+    if (!quantity.ok) return quantity
+    if (!zaehlungPasst(quantity.wert, q.counting)) return nein('invalid_fact')
+    declaredDuration = { value: quantity.wert, counting: q.counting, provenance: 'user_asserted' }
+  }
+  if (departure.kind === 'open_ended' && declaredDuration) return nein('context_conflict')
+  if (arrival && departure.kind === 'date') {
+    const diff = civilDateOrdinalLesen(departure.value)! - civilDateOrdinalLesen(arrival.value)!
+    if (diff < 0) return nein('context_conflict')
+    if (diff > 3660) return { ok: false, reason: 'bound_exceeded' }
+    if (declaredDuration?.value.unit === 'days' && declaredDuration.counting !== 'unspecified') {
+      const value = diff + (declaredDuration.counting === 'calendar_dates_inclusive' ? 1 : 0)
+      if (value > 3660) return { ok: false, reason: 'bound_exceeded' }
+      if (value !== declaredDuration.value.value) return nein('context_conflict')
+    }
+  }
+  return { ok: true, wert: { dates: { arrival, departure }, declaredDuration } }
+}
+
+function kontextV2Lesen(roh: unknown): V2LeseErgebnis<RegulierungsKontextV2> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh)
+  if (!s) return nein('invalid_fact')
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  if (!genau(s, [...KONTEXT_SCHLUESSEL, 'visitCountryCode', 'activityCharacteristics', 'plannedStay', 'nationalPassport'])) return nein('invalid_fact')
+  // Wiederverwendung ausschließlich der unveränderten gemeinsamen Feldprüfung.
+  // Kein v1-Fakt wird mit diesem v2-Kontext ausgewertet oder nach außen projiziert.
+  const gemeinsameFelder = Object.fromEntries(KONTEXT_SCHLUESSEL.map((key) => [key, s[key]]))
+  const basis = regulierungsKontextV1Lesen({ ...gemeinsameFelder, schema: 1 })
+  if (!basis.ok) return basis
+  const country = landOderNull(s.visitCountryCode)
+  if (!country.ok) return country
+  if (!Array.isArray(s.activityCharacteristics)) return nein('invalid_fact')
+  if (s.activityCharacteristics.length > 8) return { ok: false, reason: 'bound_exceeded' }
+  const activities = new Map<ActivityCharacteristicV2, ActivityAssertionV2>()
+  for (const roh of s.activityCharacteristics) {
+    const a = datensatz(roh)
+    if (!a || !genau(a, ['characteristic', 'value', 'provenance']) || !istText(a.characteristic, AKTIVITAETEN_V2) || typeof a.value !== 'boolean') return nein('invalid_fact')
+    if (a.provenance !== 'user_asserted') return nein('provenance_not_authorized')
+    if (activities.has(a.characteristic) && activities.get(a.characteristic)!.value !== a.value) return nein('context_conflict')
+    activities.set(a.characteristic, { characteristic: a.characteristic, value: a.value, provenance: 'user_asserted' })
+  }
+  const stay = plannedStayLesen(s.plannedStay)
+  if (!stay.ok) return stay
+  let national: RegulierungsKontextV2['nationalPassport'] = null
+  if (s.nationalPassport !== null) {
+    const n = datensatz(s.nationalPassport)
+    if (!n || !genau(n, ['value', 'provenance']) || typeof n.value !== 'boolean') return nein('invalid_fact')
+    if (n.provenance !== 'user_asserted') return nein('provenance_not_authorized')
+    national = { value: n.value, provenance: 'user_asserted' }
+  }
+  if (national?.value && (basis.wert.credential.documentType === 'national_id'
+    || basis.wert.documentClass?.value === 'refugee_travel_document'
+    || basis.wert.documentClass?.value === 'laissez_passer')) return nein('context_conflict')
+  return { ok: true, wert: { ...basis.wert, schema: 2, visitCountryCode: country.wert,
+    activityCharacteristics: [...activities.values()].sort((a, b) => a.characteristic < b.characteristic ? -1 : 1),
+    plannedStay: stay.wert, nationalPassport: national } }
+}
+
+export function regulierungsKontextLesen(roh: unknown): RegulierungsLeseErgebnis<RegulierungsKontext>
+export function regulierungsKontextLesen(roh: unknown, schema: 2): V2LeseErgebnis<RegulierungsKontextV2>
+export function regulierungsKontextLesen(roh: unknown, schema?: 2): RegulierungsLeseErgebnis<RegulierungsKontext> | V2LeseErgebnis<RegulierungsKontextV2> {
+  return schema === 2 ? kontextV2Lesen(roh) : regulierungsKontextV1Lesen(roh)
+}
+
+function praedikatV2Lesen(roh: unknown): V2LeseErgebnis<RegulierungsPraedikatV2> {
+  const s = datensatz(roh)
+  if (!s) return nein('invalid_fact')
+  if (s.kind === 'activity_characteristic') {
+    if (!genau(s, ['kind', 'characteristic']) || !istText(s.characteristic, AKTIVITAETEN_V2)) return nein('invalid_fact')
+    return { ok: true, wert: { kind: s.kind, characteristic: s.characteristic } }
+  }
+  if (s.kind === 'national_passport_for_citizenship') {
+    const countryCode = landescodeLesen(s.countryCode)
+    if (!genau(s, ['kind', 'countryCode']) || !countryCode) return nein('invalid_fact')
+    return { ok: true, wert: { kind: s.kind, countryCode } }
+  }
+  if (s.kind === 'planned_stay_duration') {
+    if (!genau(s, ['kind', 'comparison', 'duration', 'counting']) || !istText(s.counting, ZAEHLUNG_V2)
+      || (s.comparison !== 'at_most' && s.comparison !== 'more_than')) return nein('invalid_fact')
+    const q = stayQuantityV2Lesen(s.duration)
+    if (!q.ok) return q
+    if (!zaehlungPasst(q.wert, s.counting)) return nein('invalid_fact')
+    return { ok: true, wert: { kind: s.kind, comparison: s.comparison, duration: q.wert, counting: s.counting } }
+  }
+  return praedikatLesen(roh)
+}
+
+function ausdruckV2LesenIntern(roh: unknown, tiefe: number, knoten: { n: number }): V2LeseErgebnis<RegulierungsAusdruckV2> {
+  if (typeof roh === 'function' || roh instanceof RegExp || typeof roh === 'string') return nein('invalid_fact')
+  if (tiefe > REGULIERUNGS_TIEFE_MAX) return nein('depth_exceeded')
+  const satz = datensatz(roh)
+  if (!satz || (satz.op !== 'atomic' && satz.op !== 'all' && satz.op !== 'any' && satz.op !== 'not')) {
+    return nein('invalid_fact')
+  }
+  knoten.n += 1
+  if (knoten.n > REGULIERUNGS_KNOTEN_MAX) return nein('node_bound_exceeded')
+  if (satz.op === 'atomic') {
+    const mitSupport = Object.prototype.hasOwnProperty.call(satz, 'supportVersionIds')
+    if (!genau(satz, mitSupport ? ['op', 'predicate', 'supportVersionIds'] : ['op', 'predicate'])) {
+      return nein('invalid_fact')
+    }
+    const praedikat = praedikatV2Lesen(satz.predicate)
+    if (!praedikat.ok) return praedikat
+    if (!mitSupport) return { ok: true, wert: { op: 'atomic', predicate: praedikat.wert } }
+    const support = supportLesen(satz.supportVersionIds)
+    if (!support.ok) return support
+    if (support.wert.length === 0) return { ok: true, wert: { op: 'atomic', predicate: praedikat.wert } }
+    return { ok: true, wert: { op: 'atomic', predicate: praedikat.wert, supportVersionIds: support.wert } }
+  }
+  if (satz.op === 'not') {
+    if (!genau(satz, ['op', 'operand'])) return nein('invalid_fact')
+    const operand = ausdruckV2LesenIntern(satz.operand, tiefe + 1, knoten)
+    if (!operand.ok) return operand
+    return { ok: true, wert: { op: 'not', operand: operand.wert } }
+  }
+  if (!genau(satz, ['op', 'operands']) || !Array.isArray(satz.operands)) return nein('invalid_fact')
+  if (satz.operands.length === 0) return nein('invalid_fact')
+  if (satz.operands.length > REGULIERUNGS_OPERANDE_MAX) return nein('operand_bound_exceeded')
+  const operanden: RegulierungsAusdruckV2[] = []
+  for (const eintrag of satz.operands) {
+    const operand = ausdruckV2LesenIntern(eintrag, tiefe + 1, knoten)
+    if (!operand.ok) return operand
+    operanden.push(operand.wert)
+  }
+  return satz.op === 'all'
+    ? { ok: true, wert: { op: 'all', operands: operanden } }
+    : { ok: true, wert: { op: 'any', operands: operanden } }
+}
+
+function grenzenV2Pruefen(ausdruck: RegulierungsAusdruckV2): RegulierungsLesefehler | null {
+  const knoten = { n: 0 }
+  return tiefeV2Pruefen(ausdruck, 1, knoten)
+}
+
+function tiefeV2Pruefen(ausdruck: RegulierungsAusdruckV2, tiefe: number, knoten: { n: number }): RegulierungsLesefehler | null {
+  if (tiefe > REGULIERUNGS_TIEFE_MAX) return 'depth_exceeded'
+  knoten.n += 1
+  if (knoten.n > REGULIERUNGS_KNOTEN_MAX) return 'node_bound_exceeded'
+  if (ausdruck.op === 'atomic') return null
+  if (ausdruck.op === 'not') return tiefeV2Pruefen(ausdruck.operand, tiefe + 1, knoten)
+  if (ausdruck.operands.length === 0) return 'invalid_fact'
+  if (ausdruck.operands.length > REGULIERUNGS_OPERANDE_MAX) return 'operand_bound_exceeded'
+  for (const operand of ausdruck.operands) {
+    const fehler = tiefeV2Pruefen(operand, tiefe + 1, knoten)
+    if (fehler) return fehler
+  }
+  return null
+}
+
+function normalisierenV2Roh(ausdruck: RegulierungsAusdruckV2): V2LeseErgebnis<RegulierungsAusdruckV2> {
+  if (ausdruck.op === 'atomic') {
+    if (!ausdruck.supportVersionIds || ausdruck.supportVersionIds.length === 0) {
+      return { ok: true, wert: { op: 'atomic', predicate: ausdruck.predicate } }
+    }
+    const ids = dedup([...ausdruck.supportVersionIds]).sort()
+    return { ok: true, wert: { op: 'atomic', predicate: ausdruck.predicate, supportVersionIds: ids } }
+  }
+  if (ausdruck.op === 'not') {
+    const innen = normalisierenV2Roh(ausdruck.operand)
+    if (!innen.ok) return innen
+    if (innen.wert.op === 'not') return { ok: true, wert: innen.wert.operand }
+    return { ok: true, wert: { op: 'not', operand: innen.wert } }
+  }
+  const flach: RegulierungsAusdruckV2[] = []
+  for (const operand of ausdruck.operands) {
+    const innen = normalisierenV2Roh(operand)
+    if (!innen.ok) return innen
+    if (innen.wert.op === ausdruck.op) flach.push(...innen.wert.operands)
+    else flach.push(innen.wert)
+  }
+  flach.sort((links, rechts) => {
+    const kanonLinks = schema2Kanonisch(links)
+    const kanonRechts = schema2Kanonisch(rechts)
+    return kanonLinks < kanonRechts ? -1 : kanonLinks > kanonRechts ? 1 : 0
+  })
+  const einzig: RegulierungsAusdruckV2[] = []
+  const gesehen = new Set<string>()
+  for (const operand of flach) {
+    const kanon = schema2Kanonisch(operand)
+    if (gesehen.has(kanon)) continue
+    gesehen.add(kanon)
+    einzig.push(operand)
+  }
+  if (einzig.length === 0) return nein('invalid_fact')
+  if (einzig.length > REGULIERUNGS_OPERANDE_MAX) return nein('operand_bound_exceeded')
+  const erster = einzig[0]
+  if (einzig.length === 1 && erster) return { ok: true, wert: erster }
+  return ausdruck.op === 'all'
+    ? { ok: true, wert: { op: 'all', operands: einzig } }
+    : { ok: true, wert: { op: 'any', operands: einzig } }
+}
+
+function normalisierenV2(ausdruck: RegulierungsAusdruckV2): V2LeseErgebnis<RegulierungsAusdruckV2> {
+  const roh = normalisierenV2Roh(ausdruck)
+  if (!roh.ok) return roh
+  const grenze = grenzenV2Pruefen(roh.wert)
+  if (grenze) return nein(grenze)
+  return roh
+}
+
+
+export function regulierungsAusdruckV2Lesen(roh: unknown): V2LeseErgebnis<RegulierungsAusdruckV2> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const gelesen = ausdruckV2LesenIntern(roh, 1, { n: 0 })
+  return gelesen.ok ? normalisierenV2(gelesen.wert) : gelesen
+}
+
+export function regulierungsAnwendbarkeitV2Lesen<T>(
+  roh: unknown, ausgangLesen: (roh: unknown) => V2LeseErgebnis<T>,
+): V2LeseErgebnis<RegulierungsAnwendbarkeitV2<T>> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh)
+  if (!s) return nein('invalid_fact')
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  if (s.kind === 'unconditional' && genau(s, ['schema', 'kind'])) return { ok: true, wert: { schema: 2, kind: 'unconditional' } }
+  if (s.kind !== 'branches' || !genau(s, ['schema', 'kind', 'branches']) || !Array.isArray(s.branches) || s.branches.length === 0) return nein('invalid_fact')
+  if (s.branches.length > REGULIERUNGS_ZWEIGE_MAX) return nein('branch_bound_exceeded')
+  const branches: RegulierungsZweigV2<T>[] = []
+  let sonst = 0
+  for (const roh of s.branches) {
+    const b = datensatz(roh), when = datensatz(b?.when)
+    if (!b || !genau(b, ['id', 'when', 'outcome', 'supportVersionIds']) || typeof b.id !== 'string'
+      || !ZWEIG_ID.test(b.id) || branches.some((x) => x.id === b.id) || !when) return nein('invalid_fact')
+    let bedingung: RegulierungsZweigV2<T>['when']
+    if (when.kind === 'otherwise' && genau(when, ['kind'])) { bedingung = { kind: 'otherwise' }; sonst++ }
+    else if (when.kind === 'expression' && genau(when, ['kind', 'expression'])) {
+      const e = regulierungsAusdruckV2Lesen(when.expression)
+      if (!e.ok) return e
+      bedingung = { kind: 'expression', expression: e.wert }
+    } else return nein('invalid_fact')
+    const out = ausgangLesen(b.outcome)
+    if (!out.ok) return out
+    const support = supportLesen(b.supportVersionIds)
+    if (!support.ok) return support
+    branches.push({ id: b.id, when: bedingung, outcome: out.wert, supportVersionIds: support.wert })
+  }
+  if (sonst > 1 || sonst === branches.length) return nein('invalid_fact')
+  branches.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
+  return { ok: true, wert: { schema: 2, kind: 'branches', branches } }
+}
+
+export function regelAnwendbarkeitV2Fingerprint<T>(anwendbarkeit: RegulierungsAnwendbarkeitV2<T>): string {
+  const parsed = regulierungsAnwendbarkeitV2Lesen(anwendbarkeit, (wert) => ({ ok: true, wert }))
+  if (!parsed.ok) throw new Error(parsed.reason)
+  return `rule-applicability:v2:${sha256Hex(schema2Kanonisch(parsed.wert))}`
+}
+
+export function regulierungsAusdruckV2StrukturSchluessel(ausdruck: RegulierungsAusdruckV2): string {
+  function ohneSupport(e: RegulierungsAusdruckV2): RegulierungsAusdruckV2 {
+    if (e.op === 'atomic') return { op: 'atomic', predicate: e.predicate }
+    if (e.op === 'not') return { op: 'not', operand: ohneSupport(e.operand) }
+    return { op: e.op, operands: e.operands.map(ohneSupport) }
+  }
+  const gelesen = regulierungsAusdruckV2Lesen(ausdruck)
+  if (!gelesen.ok) throw new Error(gelesen.reason)
+  const normal = normalisierenV2(ohneSupport(gelesen.wert))
+  if (!normal.ok) throw new Error(normal.reason)
+  return `rule-applicability-structure:v2:${schema2Kanonisch(normal.wert)}`
+}
+
+export type Schema2WirkungsFakt =
+  | { kind: 'requirement_effect'; schema: 2; applicability: { schema: 2; kind: 'unconditional' }; effect: 'required' | 'not_required'; visaMode: OfficialVisaMode | null }
+  | { kind: 'requirement_effect'; schema: 2; applicability: Extract<RegulierungsAnwendbarkeitV2<WirkungsAusgang>, { kind: 'branches' }> }
+export type Schema2VisaOption =
+  | (LegacyVisaOption & { applicability: { schema: 2; kind: 'unconditional' } })
+  | { visaMode: Exclude<OfficialVisaMode, 'unknown'>; applicability: Extract<RegulierungsAnwendbarkeitV2<VisaOptionsAusgang>, { kind: 'branches' }> }
+export type Schema2VisaOptionenFakt = { kind: 'visa_options'; schema: 2; options: readonly Schema2VisaOption[] }
+
+export function regulierungsWirkungsFaktV2Lesen(roh: unknown, typ: OfficialRequirementType): V2LeseErgebnis<Schema2WirkungsFakt> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh)
+  if (!s || s.kind !== 'requirement_effect' || !(OFFICIAL_REQUIREMENT_TYPES as readonly string[]).includes(typ)) return nein('invalid_fact')
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  const a = regulierungsAnwendbarkeitV2Lesen(s.applicability, (roh) => wirkungAusgangLesen(typ, roh))
+  if (!a.ok) return a
+  if (a.wert.kind === 'branches') {
+    if ('effect' in s || 'visaMode' in s) return nein('mixed_outcome')
+    if (!genau(s, ['kind', 'schema', 'applicability'])) return nein('invalid_fact')
+    return { ok: true, wert: { kind: 'requirement_effect', schema: 2, applicability: a.wert } }
+  }
+  if (!genau(s, ['kind', 'schema', 'applicability', 'effect', 'visaMode'])) return nein('invalid_fact')
+  const out = wirkungAusgangLesen(typ, { effect: s.effect, visaMode: s.visaMode })
+  if (!out.ok) return out
+  return { ok: true, wert: { kind: 'requirement_effect', schema: 2, applicability: a.wert, ...out.wert } }
+}
+
+export function regulierungsVisaFaktV2Lesen(roh: unknown): V2LeseErgebnis<Schema2VisaOptionenFakt> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = datensatz(roh)
+  if (!s || s.kind !== 'visa_options') return nein('invalid_fact')
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  if (!genau(s, ['kind', 'schema', 'options']) || !Array.isArray(s.options) || s.options.length === 0) return nein('invalid_fact')
+  if (s.options.length > VISA_OPTIONEN_MAX) return { ok: false, reason: 'bound_exceeded' }
+  const options: Schema2VisaOption[] = []
+  for (const roh of s.options) {
+    const o = datensatz(roh)
+    if (!o) return nein('invalid_fact')
+    const mode = visaModusKonkret(o.visaMode)
+    if (!mode.ok) return mode
+    if (options.some((x) => x.visaMode === mode.wert)) return nein('invalid_fact')
+    const a = regulierungsAnwendbarkeitV2Lesen(o.applicability, visaAusgangLesen)
+    if (!a.ok) return a
+    if (a.wert.kind === 'branches') {
+      if ('eligibility' in o || 'mandate' in o) return nein('mixed_outcome')
+      if (!genau(o, ['visaMode', 'applicability'])) return nein('invalid_fact')
+      options.push({ visaMode: mode.wert, applicability: a.wert })
+    } else {
+      if (!genau(o, ['visaMode', 'applicability', 'eligibility', 'mandate'])) return nein('invalid_fact')
+      const e = optionZulassung(o.eligibility), m = optionMandat(o.mandate)
+      if (!e.ok) return e
+      if (!m.ok) return m
+      options.push({ visaMode: mode.wert, applicability: a.wert, eligibility: e.wert, mandate: m.wert })
+    }
+  }
+  options.sort((a, b) => a.visaMode < b.visaMode ? -1 : 1)
+  return { ok: true, wert: { kind: 'visa_options', schema: 2, options } }
+}
+
+type AusdruckV2Intern = {
+  wert: 'true' | 'false' | 'unknown'
+  abhaengigkeiten: RegulierungsAbhaengigkeitV2[]
+  fehlende: RegulierungsGapV2[]
+  regionUngepinnt: boolean
+}
+function atomV2(art: RegulierungsPraedikatV2['kind'], wert: boolean, ...herkunft: RegulierungsHerkunft[]): AusdruckV2Intern {
+  const polarity = wert ? 'true' : 'false'
+  return { wert: polarity, abhaengigkeiten: herkunft.map((provenance) => ({ predicateKind: art, provenance, polarity })), fehlende: [], regionUngepinnt: false }
+}
+function unbekanntV2(...fehlende: RegulierungsGapV2[]): AusdruckV2Intern {
+  return { wert: 'unknown', abhaengigkeiten: [], fehlende: dedup(fehlende).sort(), regionUngepinnt: false }
+}
+function dauerAuswertenV2(p: Extract<RegulierungsPraedikatV2, { kind: 'planned_stay_duration' }>, k: RegulierungsKontextV2): AusdruckV2Intern {
+  const stay = k.plannedStay
+  if (!stay) return unbekanntV2('planned_stay')
+  const { arrival, departure } = stay.dates
+  if (departure.kind === 'open_ended') return unbekanntV2('planned_stay_open_ended')
+  const q = stay.declaredDuration
+  let candidate: number | null = null
+  const deps: RegulierungsHerkunft[] = []
+  if (q && q.value.unit === p.duration.unit && q.counting === p.counting) {
+    candidate = q.value.value; deps.push(q.provenance)
+  }
+  if (p.duration.unit === 'days' && p.counting !== 'unspecified' && arrival && departure.kind === 'date') {
+    candidate = civilDateOrdinalLesen(departure.value)! - civilDateOrdinalLesen(arrival.value)! + (p.counting === 'calendar_dates_inclusive' ? 1 : 0)
+    deps.push(arrival.provenance, departure.provenance)
+  }
+  if (candidate !== null) return atomV2(p.kind, p.comparison === 'at_most' ? candidate <= p.duration.value : candidate > p.duration.value, ...deps)
+  if (q && q.value.unit !== p.duration.unit) return unbekanntV2('stay_unit_mismatch')
+  if (p.counting === 'unspecified' || (q && q.counting !== p.counting)) return unbekanntV2('stay_counting_convention')
+  return unbekanntV2('planned_stay_dates')
+}
+function nationalAuswertenV2(p: Extract<RegulierungsPraedikatV2, { kind: 'national_passport_for_citizenship' }>, k: RegulierungsKontextV2): AusdruckV2Intern {
+  const typ = k.credential.documentType, link = k.credential.relatedCitizenshipCountryCode, n = k.nationalPassport
+  if (typ === 'national_id') return atomV2(p.kind, false, k.recordedContextProvenance)
+  if (link !== null && link !== p.countryCode) return atomV2(p.kind, false, k.recordedContextProvenance)
+  if (n?.value === false) return atomV2(p.kind, false, n.provenance)
+  const gaps: RegulierungsGapV2[] = []
+  if (typ === null || typ === 'unknown') gaps.push('document_type')
+  if (!k.citizenshipCountryCodes.includes(p.countryCode)) gaps.push('nationality')
+  if (link === null) gaps.push('credential_citizenship_link')
+  if (!n) gaps.push('national_passport_status')
+  return gaps.length ? unbekanntV2(...gaps) : atomV2(p.kind, true, k.recordedContextProvenance, n!.provenance)
+}
+function auswertenV2(e: RegulierungsAusdruckV2, k: RegulierungsKontextV2): AusdruckV2Intern {
+  if (e.op === 'atomic') {
+    const p = e.predicate
+    if (p.kind === 'activity_characteristic') {
+      const a = k.activityCharacteristics.find((a) => a.characteristic === p.characteristic)
+      return a ? atomV2(p.kind, a.value, a.provenance) : unbekanntV2(`activity_${p.characteristic}`)
+    }
+    if (p.kind === 'planned_stay_duration') return dauerAuswertenV2(p, k)
+    if (p.kind === 'national_passport_for_citizenship') return nationalAuswertenV2(p, k)
+    return atomAuswerten(p, k)
+  }
+  if (e.op === 'not') {
+    const r = auswertenV2(e.operand, k)
+    return { ...r, wert: r.wert === 'unknown' ? 'unknown' : r.wert === 'true' ? 'false' : 'true' }
+  }
+  const rs: AusdruckV2Intern[] = []
+  for (const child of e.operands) {
+    const r = auswertenV2(child, k)
+    if ((e.op === 'all' && r.wert === 'false') || (e.op === 'any' && r.wert === 'true')) return r
+    rs.push(r)
+  }
+  const offen = rs.filter((r) => r.wert === 'unknown')
+  const relevant = offen.length ? offen : rs
+  return { wert: offen.length ? 'unknown' : e.op === 'all' ? 'true' : 'false',
+    abhaengigkeiten: relevant.flatMap((r) => r.abhaengigkeiten), fehlende: dedup(relevant.flatMap((r) => r.fehlende)).sort(),
+    regionUngepinnt: relevant.some((r) => r.regionUngepinnt) }
+}
+
+// Regelabhängige Kandidaten-Bounds ebenfalls vor ALL/ANY/Branch-Short-Circuit.
+function kandidatenGrenzeV2(e: RegulierungsAusdruckV2, k: RegulierungsKontextV2): V2BlockReason | null {
+  if (e.op === 'atomic') {
+    const p = e.predicate, dates = k.plannedStay?.dates
+    if (p.kind === 'planned_stay_duration' && p.duration.unit === 'days' && p.counting !== 'unspecified'
+      && dates?.arrival && dates.departure.kind === 'date') {
+      const days = civilDateOrdinalLesen(dates.departure.value)! - civilDateOrdinalLesen(dates.arrival.value)! + (p.counting === 'calendar_dates_inclusive' ? 1 : 0)
+      if (days > 3660) return 'bound_exceeded'
+    }
+    return null
+  }
+  if (e.op === 'not') return kandidatenGrenzeV2(e.operand, k)
+  for (const c of e.operands) { const r = kandidatenGrenzeV2(c, k); if (r) return r }
+  return null
+}
+
+/** Land ist der bereits eindeutig gebundene Visit/Option-Umschlag des künftigen
+ * vertrauenswürdigen Callers; null bedeutet ungebundene/mehrdeutige Auswahl.
+ * Dieser reine Einstieg erzeugt weder diesen Binder noch Accepted Truth. */
+export function regulierungsAnwendbarkeitV2Auswerten<T>(
+  applicability: RegulierungsAnwendbarkeitV2<T>, kontext: unknown, boundCountryCode: string | null, unconditionalOutcome: T | null,
+): RegulierungsAuswertungV2<T> {
+  const block = (reason: V2BlockReason): RegulierungsAuswertungV2<T> => ({ status: 'blocked', outcome: null, binding: null, missingFacts: [], reason })
+  const offen = (reason: Extract<RegulierungsAuswertungV2<T>, { status: 'insufficient_context' }>['reason'], gaps: readonly RegulierungsGapV2[] = []): RegulierungsAuswertungV2<T> =>
+    ({ status: 'insufficient_context', outcome: null, binding: null, missingFacts: dedup(gaps).sort(), reason })
+  const entschieden = (outcome: T, deps: readonly RegulierungsAbhaengigkeitV2[], reason: 'unconditional' | 'branch_matched'): RegulierungsAuswertungV2<T> => ({
+    status: 'decided', outcome, binding: deps.some((d) => d.provenance === 'user_asserted') ? 'context_asserted' : deps.length ? 'context_recorded' : null,
+    decisionTrace: { schema: 2, dependencies: deps.map((d) => ({ ...d })) }, missingFacts: [], reason,
+  })
+  const start = schema2DatenPruefen(applicability, kontext, unconditionalOutcome)
+  if (start) return block(start)
+  const a = regulierungsAnwendbarkeitV2Lesen(applicability, (wert) => ({ ok: true, wert: wert as T }))
+  if (!a.ok) return block(a.reason)
+  const k = kontextV2Lesen(kontext)
+  if (!k.ok) return block(k.reason)
+  if (boundCountryCode === null) return block('binding_missing')
+  const land = landescodeLesen(boundCountryCode)
+  if (!land) return block('invalid_fact')
+  if (k.wert.visitCountryCode === null) return offen('visit_scope_missing', ['visit_scope_missing'])
+  if (k.wert.visitCountryCode !== land) return block('scope_mismatch')
+  if (a.wert.kind === 'unconditional') {
+    if (unconditionalOutcome === null) return block('invalid_fact')
+    return entschieden(unconditionalOutcome, [], 'unconditional')
+  }
+  if (unconditionalOutcome !== null) return block('mixed_outcome')
+  const bewertet: { b: RegulierungsZweigV2<T>; r: AusdruckV2Intern }[] = []
+  for (const b of a.wert.branches) {
+    if (b.when.kind === 'otherwise') continue
+    const grenze = kandidatenGrenzeV2(b.when.expression, k.wert)
+    if (grenze) return block(grenze)
+    bewertet.push({ b, r: auswertenV2(b.when.expression, k.wert) })
+  }
+  const trueBranches = bewertet.filter(({ r }) => r.wert === 'true')
+  const unknownBranches = bewertet.filter(({ r }) => r.wert === 'unknown')
+  const first = trueBranches[0]
+  if (first && trueBranches.some(({ b }) => schema2Kanonisch(b.outcome) !== schema2Kanonisch(first.b.outcome))) return offen('branch_conflict')
+  const pending = first ? unknownBranches.filter(({ b }) => schema2Kanonisch(b.outcome) !== schema2Kanonisch(first.b.outcome)) : unknownBranches
+  if (pending.length) {
+    const gaps = pending.flatMap(({ r }) => r.fehlende)
+    return offen(gaps.length === 0 && pending.some(({ r }) => r.regionUngepinnt) ? 'region_membership_unpinned' : 'predicate_unknown', gaps)
+  }
+  if (first) return entschieden(first.b.outcome, first.r.abhaengigkeiten, 'branch_matched')
+  const sonst = a.wert.branches.find((b) => b.when.kind === 'otherwise')
+  if (!sonst) return offen('no_applicable_branch')
+  const deps = bewertet.flatMap(({ r }) => r.abhaengigkeiten)
+  const einmal = deps.filter((d, i) => deps.findIndex((a) => schema2Kanonisch(a) === schema2Kanonisch(d)) === i)
+  return entschieden(sonst.outcome, einmal, 'branch_matched')
 }

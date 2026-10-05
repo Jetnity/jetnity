@@ -18,6 +18,9 @@ import {
 import { OFFICIAL_VISA_MODES } from '@/lib/readiness/official'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
+  regelFaktV2Fingerprint,
+  type RegelFaktV2,
+  type StayOutcomeV2,
   AUFENTHALT_WERT_MAX,
   REGEL_EVIDENCE_QUALITAETEN,
   REGEL_FAKT_ARTEN,
@@ -1373,3 +1376,103 @@ const R2_PUBLICATIONS = [
   "https://www.provider.example/apply",
   "https://www.visa.example/apply"
 ] as const
+
+const contractV2 = { schema: 2 as const, jurisdictionCountryCode: 'ZZ' }
+const unconditionallyV2 = { schema: 2 as const, kind: 'unconditional' as const }
+const eventV2 = { schema: 2 as const, kind: 'event_deadline' as const, action: 'stay_extension_application' as const,
+  reference: { event: 'current_stay_permission_expiry' as const, countryCode: 'ZZ' }, relation: 'before' as const, semantics: 'mandatory' as const }
+const stayOutV2: StayOutcomeV2 = { perVisit: null, initialGrant: { quantity: { value: 90, unit: 'days' }, event: 'permission_to_enter_granted' },
+  extension: { requiresApplication: true, maximumTotal: { value: 6, unit: 'months' }, applicationDeadline: eventV2, authority: { countryCode: 'ZZ', role: 'immigration_authority' } }, borderDiscretion: 'may_be_shorter' }
+function v2Fixtures(): RegelFaktV2[] {
+  return [
+    { kind: 'requirement_effect', schema: 2, applicability: unconditionallyV2, effect: 'required', visaMode: 'visa_before_travel' },
+    { kind: 'visa_options', schema: 2, options: [{ visaMode: 'visa_before_travel', eligibility: 'allowed', mandate: 'mandatory', applicability: unconditionallyV2 }] },
+    { kind: 'stay_limit', schema: 2, applicability: unconditionallyV2, outcome: stayOutV2 },
+    { kind: 'temporal_rule', schema: 2, applicability: unconditionallyV2, outcome: eventV2 },
+  ]
+}
+function canonicalV2(raw: unknown, kind: RegelFaktV2['kind']) {
+  return regelFaktKanonischLesen(kind, 'visa', raw, registry(), contractV2)
+}
+
+describe('Schema 2: dormant canonical fact carriers', () => {
+  for (const input of v2Fixtures()) test(`strict canonical ${input.kind}: version, null slots, qualifiers and full fingerprint`, () => {
+    const r = canonicalV2(input, input.kind)
+    assert.ok(r.ok, JSON.stringify(r)); if (!r.ok) return
+    assert.deepEqual(r.fact, input)
+    assert.match(fingerprintV2(r.fact), /^official-rule-fact:v2:[a-f0-9]{64}$/)
+    assert.equal(canonicalV2({ ...input, unexpected: true }, input.kind).ok, false)
+    assert.equal(canonicalV2({ ...input, schema: 1 }, input.kind).ok, false)
+    assert.equal(regelFaktKanonischLesen(input.kind, 'visa', input, registry()).ok, false, 'old registry/acceptance reader does not acquire v2')
+    const mixed = input.kind === 'visa_options' ? { ...input, options: input.options.map((o) => ({ ...o, applicability: { schema: 1, kind: 'unconditional' } })) } : { ...input, applicability: { schema: 1, kind: 'unconditional' } }
+    assert.equal(canonicalV2(mixed, input.kind).ok, false)
+  })
+  test('qualified branches preserve full outcomes and normalize ordering', () => {
+    for (const source of v2Fixtures()) {
+      const outcome = source.kind === 'requirement_effect' ? { effect: 'required', visaMode: 'visa_before_travel' }
+        : source.kind === 'visa_options' ? { eligibility: 'allowed', mandate: 'mandatory' }
+          : 'outcome' in source ? source.outcome : null
+      const app = { schema: 2, kind: 'branches', branches: [{ id: 'threshold',
+        when: { kind: 'expression', expression: { op: 'all', operands: [
+          { op: 'atomic', predicate: { kind: 'planned_stay_duration', comparison: 'more_than', duration: { value: 90, unit: 'days' }, counting: 'unspecified' } },
+          { op: 'not', operand: { op: 'atomic', predicate: { kind: 'activity_characteristic', characteristic: 'remunerative_activity' } } },
+        ] } }, outcome, supportVersionIds: ['ev2_' + 'a'.repeat(32)] }] }
+      const raw = source.kind === 'visa_options' ? { kind: source.kind, schema: 2, options: [{ visaMode: 'visa_before_travel', applicability: app }] } : { kind: source.kind, schema: 2, applicability: app }
+      const r = canonicalV2(raw, source.kind)
+      assert.ok(r.ok, JSON.stringify(r)); if (!r.ok) continue
+      const fp = fingerprintV2(r.fact)
+      app.branches[0].when.expression.operands.reverse()
+      const reversed = canonicalV2(raw, source.kind)
+      assert.ok(reversed.ok); if (reversed.ok) assert.equal(fingerprintV2(reversed.fact), fp)
+      app.branches[0].supportVersionIds = ['ev2_' + 'b'.repeat(32)]
+      const changed = canonicalV2(raw, source.kind)
+      assert.ok(changed.ok); if (changed.ok) assert.notEqual(fingerprintV2(changed.fact), fp)
+      assert.equal(canonicalV2({ ...raw, outcome }, source.kind).ok, false)
+    }
+  })
+  test('stay units/grant event/total semantics remain distinct, no legacy rolling/year adaptation', () => {
+    const read = (outcome: unknown) => canonicalV2({ kind: 'stay_limit', schema: 2, applicability: unconditionallyV2, outcome }, 'stay_limit')
+    assert.ok(read(stayOutV2).ok)
+    for (const outcome of [
+      { ...stayOutV2, rollingWindow: null }, { ...stayOutV2, perVisit: { value: 1, unit: 'years' } },
+      { ...stayOutV2, initialGrant: { quantity: { value: 90, unit: 'days' }, event: 'arrival' } },
+      { ...stayOutV2, extension: { ...stayOutV2.extension, requiresApplication: false } },
+      { ...stayOutV2, extension: { ...stayOutV2.extension, maximumTotal: { value: 89, unit: 'days' } } },
+      { ...stayOutV2, perVisit: null, initialGrant: null, extension: null },
+      { ...stayOutV2, perVisit: { value: 0, unit: 'days' } },
+    ]) assert.equal(read(outcome).ok, false, JSON.stringify(outcome))
+    for (const outcome of [
+      { ...stayOutV2, extension: { ...stayOutV2.extension, authority: { countryCode: 'YY', role: 'immigration_authority' } } },
+      { ...stayOutV2, extension: { ...stayOutV2.extension, applicationDeadline: { ...eventV2, reference: { ...eventV2.reference, countryCode: 'YY' } } } },
+    ]) assert.deepEqual(read(outcome), { ok: false, reason: 'scope_mismatch' })
+    const original = read(stayOutV2)
+    const changed = read({ ...stayOutV2, extension: { ...stayOutV2.extension, maximumTotal: { value: 180, unit: 'days' } } })
+    assert.ok(original.ok && changed.ok)
+    if (original.ok && changed.ok) assert.notEqual(fingerprintV2(original.fact), fingerprintV2(changed.fact))
+  })
+  test('unconditional outcome is covered; option sort is canonical ASCII and bounded', () => {
+    const a = canonicalV2(v2Fixtures()[0], 'requirement_effect')
+    const b = canonicalV2({ ...v2Fixtures()[0], effect: 'not_required', visaMode: 'visa_exempt' }, 'requirement_effect')
+    assert.ok(a.ok && b.ok); if (a.ok && b.ok) assert.notEqual(fingerprintV2(a.fact), fingerprintV2(b.fact))
+    const options = OFFICIAL_VISA_MODES.filter((v) => v !== 'unknown').map((visaMode) => ({ visaMode, eligibility: 'allowed', mandate: 'unknown', applicability: unconditionallyV2 }))
+    const left = canonicalV2({ kind: 'visa_options', schema: 2, options }, 'visa_options')
+    const right = canonicalV2({ kind: 'visa_options', schema: 2, options: [...options].reverse() }, 'visa_options')
+    assert.ok(left.ok && right.ok); if (left.ok && right.ok) assert.equal(fingerprintV2(left.fact), fingerprintV2(right.fact))
+    assert.equal(canonicalV2({ kind: 'visa_options', schema: 2, options: [...options, options[0]] }, 'visa_options').ok, false)
+    assert.equal(canonicalV2({ kind: 'visa_options', schema: 2, options: [options[0], options[0]] }, 'visa_options').ok, false)
+  })
+  test('pure parser rejects executable data and does not widen Acceptance', () => {
+    let reads = 0
+    const payload = Object.defineProperty({}, 'schema', { enumerable: true, get() { reads++; return 2 } })
+    assert.equal(canonicalV2(payload, 'stay_limit').ok, false); assert.equal(reads, 0)
+    for (const fact of v2Fixtures()) {
+      assert.equal(regelKandidatAkzeptieren({ trustedRuleFact: fact }).ok, false)
+      assert.equal(canonicalV2({ ...fact, schema: 3 }, fact.kind).ok, false)
+    }
+    assert.equal(requirementsProviderAus(), null)
+  })
+})
+
+function fingerprintV2(fact: RegelFaktV2): string {
+  return regelFaktV2Fingerprint(fact, 'visa', contractV2)
+}
