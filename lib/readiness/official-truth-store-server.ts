@@ -112,6 +112,7 @@ type PersistierbarerRegelClaim = Omit<AkzeptierteRegelClaim, 'fact'> & {
 }
 
 function istPersistierbarerRegelFakt(fact: RegelFakt): fact is PersistierbarerRegelFakt {
+  if (schema2Traeger(fact)) return false
   if (fact.kind === 'requirement_effect') {
     return !('schema' in fact) && !('applicability' in fact) && 'effect' in fact
   }
@@ -390,6 +391,13 @@ export async function akzeptierteRegelClaimSpeichern(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
+  // Jeder v2-Carrier ist in diesem Slice bedingungslos nicht speicherbar.
+  // Vor Acceptance, Payload, Dependencies/Env, Client, Uhr und jeglichem RPC.
+  const trusted = eigenesDatenfeld(eingabe, 'trustedRuleFact')
+  const proposal = eigenesDatenfeld(eigenesDatenfeld(eingabe, 'kandidat'), 'proposal')
+  if (schema2Traeger(eingabe) || schema2Traeger(trusted) || schema2Traeger(proposal)) {
+    return { ok: false, reason: 'schema2_not_persistable' }
+  }
   const angenommen = regelKandidatAkzeptieren(eingabe)
   if (!angenommen.ok) return { ok: false, reason: angenommen.reason }
   const claim = persistierbarenClaim(angenommen.claim)
@@ -405,4 +413,15 @@ export async function akzeptierteRegelClaimSpeichern(
   }
   if (!antwort.ok) return { ok: false, reason: 'store_failed' }
   return ausgang('accepted_rule_claim', antwort.antwort, claim.key, null)
+}
+
+// Getter werden für den Refusal-Dispatch nicht ausgeführt.
+function eigenesDatenfeld(roh: unknown, name: string): unknown {
+  if (!roh || typeof roh !== 'object') return undefined
+  const d = Object.getOwnPropertyDescriptor(roh, name)
+  return d && 'value' in d ? d.value : undefined
+}
+
+function schema2Traeger(roh: unknown): boolean {
+  return eigenesDatenfeld(roh, 'schema') === 2
 }

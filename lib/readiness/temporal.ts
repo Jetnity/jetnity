@@ -4,6 +4,13 @@
 // Nur explizite strukturierte Metadaten. Kein Timestamp, keine Notification.
 // Frei von Next.
 
+import { landescodeLesen } from '@/lib/readiness/domain'
+import { sha256Hex } from '@/lib/readiness/digest'
+import {
+  civilDateOrdinalLesen, schema2DatenPruefen, schema2Kanonisch,
+  type V2BlockReason, type V2LeseErgebnis,
+} from '@/lib/readiness/regulierungs-anwendbarkeit'
+
 export const OFFICIAL_TEMPORAL_KIND = 'relative_duration' as const
 export type OfficialTemporalKind = typeof OFFICIAL_TEMPORAL_KIND
 
@@ -213,4 +220,112 @@ export function officialTemporalTexte(regel: OfficialTemporalRule | null | undef
     }
   }
   return texte
+}
+
+// Eigenständiger Schema-2-Vertrag; relative_duration und UI-Projektion bleiben v1.
+export type EventDeadlineV2 = {
+  schema: 2
+  kind: 'event_deadline'
+  action: 'stay_extension_application'
+  reference: { event: 'current_stay_permission_expiry'; countryCode: string }
+  relation: 'before'
+  semantics: 'mandatory' | 'recommended'
+}
+export type PermissionExpiryContextV2 = {
+  schema: 2
+  visitCountryCode: string
+  permissionState: 'unknown' | 'not_yet_granted' | 'recorded'
+  expiry: {
+    value: { kind: 'instant'; at: string } | { kind: 'civil_date'; on: string }
+    provenance: 'user_asserted'
+  } | null
+}
+export type TemporalObservationV2 = { referenceTime: string }
+export type TemporalGapV2 = 'permission_event_missing' | 'permission_expiry' | 'permission_expiry_precision' | 'reference_time_missing'
+export type EventDeadlineAuswertungV2 =
+  | { status: 'window_evaluated'; window: 'open' | 'closed'; binding: 'context_asserted'; missingFacts: readonly [] }
+  | { status: 'insufficient_context'; window: null; binding: null; missingFacts: readonly TemporalGapV2[] }
+  | { status: 'blocked'; window: null; binding: null; missingFacts: readonly []; reason: V2BlockReason }
+
+function temporalSatzV2(roh: unknown, keys: readonly string[]): Record<string, unknown> | null {
+  if (!roh || typeof roh !== 'object' || Array.isArray(roh)) return null
+  const s = roh as Record<string, unknown>
+  return Object.keys(s).length === keys.length && keys.every((k) => Object.hasOwn(s, k)) ? s : null
+}
+
+function utcInstantV2(wert: unknown): wert is string {
+  if (typeof wert !== 'string' || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/.test(wert)) return false
+  return civilDateOrdinalLesen(wert.slice(0, 10)) !== null && Number(wert.slice(11, 13)) < 24
+    && Number(wert.slice(14, 16)) < 60 && Number(wert.slice(17, 19)) < 60
+}
+
+export function eventDeadlineV2Lesen(roh: unknown): V2LeseErgebnis<EventDeadlineV2> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = temporalSatzV2(roh, ['schema', 'kind', 'action', 'reference', 'relation', 'semantics'])
+  if (!s) return { ok: false, reason: 'invalid_fact' }
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  const r = temporalSatzV2(s.reference, ['event', 'countryCode'])
+  const country = landescodeLesen(r?.countryCode)
+  if (s.kind !== 'event_deadline' || s.action !== 'stay_extension_application'
+    || s.relation !== 'before' || !istDueSemantics(s.semantics)
+    || r?.event !== 'current_stay_permission_expiry' || !country) return { ok: false, reason: 'invalid_fact' }
+  return { ok: true, wert: { schema: 2, kind: 'event_deadline', action: 'stay_extension_application',
+    reference: { event: 'current_stay_permission_expiry', countryCode: country }, relation: 'before', semantics: s.semantics } }
+}
+
+export function permissionExpiryKontextV2Lesen(roh: unknown): V2LeseErgebnis<PermissionExpiryContextV2> {
+  const start = schema2DatenPruefen(roh)
+  if (start) return { ok: false, reason: start }
+  const s = temporalSatzV2(roh, ['schema', 'visitCountryCode', 'permissionState', 'expiry'])
+  if (!s) return { ok: false, reason: 'invalid_fact' }
+  if (s.schema !== 2) return { ok: false, reason: 'unsupported_version' }
+  const country = landescodeLesen(s.visitCountryCode)
+  if (!country || (s.permissionState !== 'unknown' && s.permissionState !== 'not_yet_granted' && s.permissionState !== 'recorded')) return { ok: false, reason: 'invalid_fact' }
+  if (s.permissionState !== 'recorded' && s.expiry !== null) return { ok: false, reason: 'context_conflict' }
+  let expiry: PermissionExpiryContextV2['expiry'] = null
+  if (s.expiry !== null) {
+    const e = temporalSatzV2(s.expiry, ['value', 'provenance'])
+    if (!e) return { ok: false, reason: 'invalid_fact' }
+    if (e.provenance !== 'user_asserted') return { ok: false, reason: 'provenance_not_authorized' }
+    const instant = temporalSatzV2(e.value, ['kind', 'at'])
+    const civil = temporalSatzV2(e.value, ['kind', 'on'])
+    if (instant?.kind === 'instant' && utcInstantV2(instant.at)) expiry = { value: { kind: 'instant', at: instant.at }, provenance: 'user_asserted' }
+    else if (civil?.kind === 'civil_date' && civilDateOrdinalLesen(civil.on) !== null) expiry = { value: { kind: 'civil_date', on: civil.on as string }, provenance: 'user_asserted' }
+    else return { ok: false, reason: 'invalid_fact' }
+  }
+  return { ok: true, wert: { schema: 2, visitCountryCode: country, permissionState: s.permissionState, expiry } }
+}
+
+export function eventDeadlineV2Fingerprint(roh: EventDeadlineV2): string {
+  const r = eventDeadlineV2Lesen(roh)
+  if (!r.ok) throw new Error(r.reason)
+  return `official-temporal:v2:${sha256Hex(schema2Kanonisch(r.wert))}`
+}
+
+/** Der zukünftige vertrauenswürdige Caller bindet genau einen aktuellen Permit
+ * an genau diesen Visit/diese Option. null am Kontext meldet fehlendes Binding.
+ * Keine Uhr, keine Filing-Behauptung, keine Interpretation einer Visa-Expiry. */
+export function eventDeadlineV2Auswerten(regel: unknown, kontext: unknown, observation: unknown): EventDeadlineAuswertungV2 {
+  const block = (reason: V2BlockReason): EventDeadlineAuswertungV2 => ({ status: 'blocked', window: null, binding: null, missingFacts: [], reason })
+  const gap = (code: TemporalGapV2): EventDeadlineAuswertungV2 => ({ status: 'insufficient_context', window: null, binding: null, missingFacts: [code] })
+  const start = schema2DatenPruefen(regel, kontext, observation)
+  if (start) return block(start)
+  const r = eventDeadlineV2Lesen(regel)
+  if (!r.ok) return block(r.reason)
+  if (kontext === null) return block('binding_missing')
+  const k = permissionExpiryKontextV2Lesen(kontext)
+  if (!k.ok) return block(k.reason)
+  if (r.wert.reference.countryCode !== k.wert.visitCountryCode) return block('scope_mismatch')
+  // Ein nicht-null malformed Observation-Objekt ist niemals eine Missing-Antwort.
+  const o = observation === null ? null : temporalSatzV2(observation, ['referenceTime'])
+  if (observation !== null && (!o || !utcInstantV2(o.referenceTime))) return block('invalid_fact')
+  if (k.wert.permissionState !== 'recorded') return gap('permission_event_missing')
+  if (!k.wert.expiry) return gap('permission_expiry')
+  if (k.wert.expiry.value.kind === 'civil_date') return gap('permission_expiry_precision')
+  if (!o) return gap('reference_time_missing')
+  // Strikte, gleichlange validierte UTC-Strings haben dieselbe Ordnung wie ihre
+  // Instants. Kein Date.parse-Rollover, keine Date.now()- oder TZ-Abhängigkeit.
+  return { status: 'window_evaluated', window: (o.referenceTime as string) < k.wert.expiry.value.at ? 'open' : 'closed',
+    binding: 'context_asserted', missingFacts: [] }
 }

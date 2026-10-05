@@ -2051,3 +2051,31 @@ const R2_PUBLICATIONS = [
   "https://www.not-a-government.example/rules",
   "https://www.visa.example/apply"
 ] as const
+
+describe('Schema 2: unconditional refusal before every store side effect', () => {
+  const app = { schema: 2, kind: 'unconditional' }
+  const deadline = { schema: 2, kind: 'event_deadline', action: 'stay_extension_application', reference: { event: 'current_stay_permission_expiry', countryCode: 'ZZ' }, relation: 'before', semantics: 'mandatory' }
+  const stay = { perVisit: { value: 90, unit: 'days' }, initialGrant: null, extension: null, borderDiscretion: 'fixed' }
+  const carriers = [
+    { kind: 'requirement_effect', schema: 2, applicability: app, effect: 'required', visaMode: null },
+    { kind: 'visa_options', schema: 2, options: [{ visaMode: 'visa_before_travel', eligibility: 'allowed', mandate: 'mandatory', applicability: app }] },
+    { kind: 'stay_limit', schema: 2, applicability: app, outcome: stay },
+    { kind: 'temporal_rule', schema: 2, applicability: app, outcome: deadline },
+  ]
+  for (const fact of carriers) for (const branched of [false, true]) test(`${fact.kind} ${branched ? 'branches' : 'unconditional'} refuses before env/client/transport/clock/RPC`, async () => {
+    const outcome = fact.kind === 'requirement_effect' ? { effect: 'required', visaMode: null }
+      : fact.kind === 'visa_options' ? { eligibility: 'allowed', mandate: 'mandatory' } : fact.outcome
+    const branchApp = { schema: 2, kind: 'branches', branches: [{ id: 'synthetic', when: { kind: 'expression', expression: { op: 'atomic', predicate: { kind: 'activity_characteristic', characteristic: 'business_contacts' } } }, outcome, supportVersionIds: ['ev2_' + 'a'.repeat(32)] }] }
+    const carrier = !branched ? fact : fact.kind === 'visa_options'
+      ? { kind: fact.kind, schema: 2, options: [{ visaMode: 'visa_before_travel', applicability: branchApp }] }
+      : { kind: fact.kind, schema: 2, applicability: branchApp }
+    let accessed = 0
+    const deps = Object.defineProperties({}, Object.fromEntries(['env', 'transport', 'jetzt'].map((key) => [key, { enumerable: true, get() { accessed++; throw new Error(`${key} must not be read`) } }])))
+    for (const input of [carrier, { trustedRuleFact: carrier }, { kandidat: { proposal: carrier } }]) {
+      assert.deepEqual(await akzeptierteRegelClaimSpeichern(input, deps), { ok: false, reason: 'schema2_not_persistable' })
+    }
+    let calls = 0
+    assert.deepEqual(await akzeptierteRegelClaimSpeichern({ trustedRuleFact: carrier }, { transport: { async aufrufen() { calls++; return { ok: true, antwort: { ok: true } } } } }), { ok: false, reason: 'schema2_not_persistable' })
+    assert.equal(accessed, 0); assert.equal(calls, 0)
+  })
+})

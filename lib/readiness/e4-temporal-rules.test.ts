@@ -18,6 +18,12 @@ import {
 import { officialChecklist } from '@/lib/readiness/official-presentation'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
 import {
+  eventDeadlineV2Lesen,
+  eventDeadlineV2Auswerten,
+  eventDeadlineV2Fingerprint,
+  permissionExpiryKontextV2Lesen,
+  type EventDeadlineV2,
+  type PermissionExpiryContextV2,
   OFFICIAL_TEMPORAL_ANCHORS,
   OFFICIAL_TEMPORAL_DUE_SEMANTICS,
   OFFICIAL_TEMPORAL_KIND,
@@ -693,5 +699,66 @@ describe('Entry Requirements E4 – Temporal-Rule-Contract', () => {
     assert.equal(OFFICIAL_TEMPORAL_KIND, 'relative_duration')
     assert.equal(OFFICIAL_TEMPORAL_OFFSET_MAX_MINUTES, 2 * 365 * 24 * 60)
     assert.equal(officialDarfTemporalTragen({ result: 'conditional', status: 'current', freshness: 'current' }), true)
+  })
+})
+
+const deadlineV2: EventDeadlineV2 = { schema: 2, kind: 'event_deadline', action: 'stay_extension_application',
+  reference: { event: 'current_stay_permission_expiry', countryCode: 'ZZ' }, relation: 'before', semantics: 'mandatory' }
+const expiryV2: PermissionExpiryContextV2 = { schema: 2, visitCountryCode: 'ZZ', permissionState: 'recorded',
+  expiry: { value: { kind: 'instant', at: '2026-10-06T12:00:00.000Z' }, provenance: 'user_asserted' } }
+
+describe('Schema 2: event deadline conformance', () => {
+  for (const [referenceTime, window] of [
+    ['2026-10-06T11:59:59.999Z', 'open'], ['2026-10-06T12:00:00.000Z', 'closed'], ['2026-10-06T12:00:00.001Z', 'closed'],
+  ]) test(`strict before expiry: ${referenceTime} => ${window}`, () => {
+    assert.deepEqual(eventDeadlineV2Auswerten(deadlineV2, expiryV2, { referenceTime }), { status: 'window_evaluated', window, binding: 'context_asserted', missingFacts: [] })
+  })
+  test('permission state, expiry, precision, observation gap precedence', () => {
+    const gap = (k: unknown, code: string) => assert.deepEqual(eventDeadlineV2Auswerten(deadlineV2, k, null), { status: 'insufficient_context', window: null, binding: null, missingFacts: [code] })
+    for (const permissionState of ['unknown', 'not_yet_granted']) gap({ ...expiryV2, permissionState, expiry: null }, 'permission_event_missing')
+    gap({ ...expiryV2, expiry: null }, 'permission_expiry')
+    gap({ ...expiryV2, expiry: { value: { kind: 'civil_date', on: '2026-10-06' }, provenance: 'user_asserted' } }, 'permission_expiry_precision')
+    gap(expiryV2, 'reference_time_missing')
+    const civil = { ...expiryV2, expiry: { value: { kind: 'civil_date', on: '2026-10-06' }, provenance: 'user_asserted' } }
+    assert.deepEqual(permissionExpiryKontextV2Lesen(civil), { ok: true, wert: civil })
+  })
+  test('conflicts, foreign scope, missing binding and cross-version inputs block', () => {
+    const block = (k: unknown, reason: string) => assert.deepEqual(eventDeadlineV2Auswerten(deadlineV2, k, null), { status: 'blocked', window: null, binding: null, missingFacts: [], reason })
+    for (const permissionState of ['unknown', 'not_yet_granted']) block({ ...expiryV2, permissionState }, 'context_conflict')
+    block({ ...expiryV2, visitCountryCode: 'YY', expiry: null }, 'scope_mismatch')
+    block(null, 'binding_missing')
+    block({ ...expiryV2, schema: 1 }, 'unsupported_version')
+    for (const name of ['permissionId', 'visaExpiry', 'tripEnd', 'filingEvent', 'revision']) block({ ...expiryV2, [name]: 'invented' }, 'invalid_fact')
+    block([expiryV2, expiryV2], 'invalid_fact')
+  })
+  test('strict instants reject rollover, timezone offsets, missing precision and invalid observation', () => {
+    for (const at of ['2027-02-29T12:00:00.000Z', '0000-01-01T00:00:00.000Z', '2026-10-06T24:00:00.000Z', '2026-10-06T12:60:00.000Z', '2026-10-06T12:00:60.000Z', '2026-10-06T12:00:00Z', '2026-10-06T12:00:00.000+00:00', '2026-10-06']) {
+      assert.equal(permissionExpiryKontextV2Lesen({ ...expiryV2, expiry: { value: { kind: 'instant', at }, provenance: 'user_asserted' } }).ok, false)
+      assert.equal(eventDeadlineV2Auswerten(deadlineV2, expiryV2, { referenceTime: at }).status, 'blocked')
+    }
+    assert.equal(eventDeadlineV2Auswerten(deadlineV2, expiryV2, {}).status, 'blocked')
+    assert.equal(eventDeadlineV2Auswerten(deadlineV2, expiryV2, { referenceTime: JETZT, now: JETZT }).status, 'blocked')
+    assert.equal(permissionExpiryKontextV2Lesen({ ...expiryV2, expiry: { value: { kind: 'instant', at: '0001-01-01T00:00:00.000Z' }, provenance: 'user_asserted' } }).ok, true)
+  })
+  test('closed vocabulary and fingerprint covers event identity, scope and semantics', () => {
+    assert.equal(eventDeadlineV2Lesen(deadlineV2).ok, true)
+    for (const x of [{ ...deadlineV2, schema: 1 }, { ...deadlineV2, action: 'visa_application' }, { ...deadlineV2, relation: 'at' }, { ...deadlineV2, offsetMinutes: 0 }, { ...deadlineV2, reference: { event: 'visa_expiry', countryCode: 'ZZ' } }]) assert.equal(eventDeadlineV2Lesen(x).ok, false)
+    const fingerprint = eventDeadlineV2Fingerprint(deadlineV2)
+    assert.match(fingerprint, /^official-temporal:v2:[a-f0-9]{64}$/)
+    assert.equal(fingerprint, eventDeadlineV2Fingerprint({ semantics: 'mandatory', relation: 'before', reference: { countryCode: 'ZZ', event: 'current_stay_permission_expiry' }, action: 'stay_extension_application', kind: 'event_deadline', schema: 2 }))
+    assert.notEqual(fingerprint, eventDeadlineV2Fingerprint({ ...deadlineV2, semantics: 'recommended' }))
+    assert.notEqual(fingerprint, eventDeadlineV2Fingerprint({ ...deadlineV2, reference: { ...deadlineV2.reference, countryCode: 'YY' } }))
+    assert.equal(temporalRuleLesen(deadlineV2), null)
+    assert.equal(eventDeadlineV2Lesen(arrivalCard72h).ok, false)
+  })
+  test('pure evaluation cannot read an internal clock or execute accessors', () => {
+    let reads = 0
+    const observation = Object.defineProperty({}, 'referenceTime', { enumerable: true, get() { reads++; return JETZT } })
+    assert.equal(eventDeadlineV2Auswerten(deadlineV2, expiryV2, observation).status, 'blocked')
+    assert.equal(reads, 0)
+    const original = Date.now
+    Date.now = () => { throw new Error('clock is forbidden') }
+    try { assert.equal(eventDeadlineV2Auswerten(deadlineV2, expiryV2, { referenceTime: JETZT }).status, 'window_evaluated') }
+    finally { Date.now = original }
   })
 })
