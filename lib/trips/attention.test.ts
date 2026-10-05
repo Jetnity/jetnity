@@ -419,7 +419,7 @@ describe('Attention-Flood: kanonische Punkte bleiben vollständig', () => {
     }
   }
 
-  test('64 Official-Einzelpunkte bleiben unverändert als Mitglieder einer Präsentationsgruppe', () => {
+  test('64 Official-Einzelpunkte bleiben unverändert in vier exakten Traveller-Zielgruppen', () => {
     const eingabe = floodEingabe()
     const eingabeVorher = structuredClone(eingabe)
     const attention = attentionAbleiten(eingabe)
@@ -438,12 +438,13 @@ describe('Attention-Flood: kanonische Punkte bleiben vollständig', () => {
     assert.equal(attention.sichtbar.length, 3)
     assert.equal(attention.weitere.length, 61)
     assert.equal(attention.punkte.every((punkt) => punkt.signal === 'official.unavailable'), true)
-    assert.equal(gruppen.length, 1)
-    assert.equal(gruppen[0]!.anzahl, 64)
-    assert.equal(new Set(gruppen[0]!.mitglieder.map((punkt) => punkt.id)).size, 64)
-    assert.deepEqual(gruppen[0]!.mitglieder.map((punkt) => punkt.id), vorher.punkte.map((punkt) => punkt.id))
+    assert.equal(gruppen.length, 4)
+    assert.deepEqual(gruppen.map((gruppe) => gruppe.anzahl), [16, 16, 16, 16])
+    const mitglieder = gruppen.flatMap((gruppe) => gruppe.mitglieder)
+    assert.equal(new Set(mitglieder.map((punkt) => punkt.id)).size, 64)
+    assert.deepEqual(mitglieder.map((punkt) => punkt.id), vorher.punkte.map((punkt) => punkt.id))
     assert.equal(gruppen[0]!.punkt, attention.punkte[0])
-    for (const [index, mitglied] of gruppen[0]!.mitglieder.entries()) {
+    for (const [index, mitglied] of mitglieder.entries()) {
       assert.equal(mitglied, attention.punkte[index])
     }
     assert.deepEqual(attention, vorher)
@@ -464,8 +465,8 @@ describe('Attention-Flood: kanonische Punkte bleiben vollständig', () => {
       assert.ok(signale.indexOf(signal) > 0)
       assert.ok(signale.indexOf(signal) < signale.indexOf('official.unavailable'))
     }
-    assert.equal(gruppen.find((gruppe) => gruppe.punkt.signal === 'official.unavailable')!.anzahl, 64)
-    assert.deepEqual(gruppen.map((gruppe) => attention.punkte.indexOf(gruppe.punkt)), [0, 1, 2, 3])
+    assert.deepEqual(gruppen.filter((gruppe) => gruppe.punkt.signal === 'official.unavailable').map((gruppe) => gruppe.anzahl), [16, 16, 16, 16])
+    assert.deepEqual(gruppen.map((gruppe) => attention.punkte.indexOf(gruppe.punkt)), [0, 1, 2, 3, 19, 35, 51])
   })
 })
 
@@ -1112,5 +1113,40 @@ describe('geschützte item.date_mismatch-Regression', () => {
     assert.equal(sicht.weitere.length, sicht.punkte.length - 2)
     assert.equal(sicht.sichtbar.some((eintrag) => eintrag.signal === 'safety.critical_warning'), false)
     assert.equal(sicht.leerstand, null)
+  })
+})
+
+describe('Official Attention trägt ausschließlich explizite Preparation-Navigation', () => {
+  for (const [status, freshness, bereich] of [
+    ['insufficient_context', 'current', 'reisende-dokumente'],
+    ['unavailable', 'provider_unavailable', 'offizielle-anforderungen'],
+    ['unknown', 'never_checked', 'offizielle-anforderungen'],
+    ['current', 'stale', 'offizielle-anforderungen'],
+  ] as const) {
+    test(`${status}/${freshness}: exakte vorhandene Traveller-Ref, unveränderte Evaluation`, () => {
+      const aktuell = reiseOhneLuecken()
+      const evaluations = officialVollstaendig().map((ev) => ({ ...ev, status, freshness }))
+      const vorher = structuredClone({ aktuell, evaluations })
+      const attention = attentionAbleiten({ reise: aktuell, officialEvaluations: evaluations })
+      const refs = new Set(aktuell.party!.map((person) => person.clientRef))
+      const punkte = attention.punkte.filter((punkt) => punkt.signal.startsWith('official.'))
+      assert.ok(punkte.length > 0)
+      for (const punkt of punkte) {
+        assert.equal(punkt.aktion?.preparationZiel?.bereich, bereich)
+        assert.ok(refs.has(punkt.aktion!.preparationZiel!.travellerClientRef!))
+      }
+      assert.deepEqual({ aktuell, evaluations }, vorher)
+    })
+  }
+
+  test('reiseweites insufficient-context ohne bestimmte Person bleibt section-only; Coverage unverändert', () => {
+    const attention = attentionAbleiten({ reise: reise({ party: [] }) })
+    const official = attention.punkte.find((punkt) => punkt.signal === 'official.insufficient_context')
+    assert.deepEqual(official?.aktion, {
+      art: 'bereich', bereich: 'uebersicht', preparationZiel: { bereich: 'reisende-dokumente' },
+    })
+    for (const bereich of ['fluege', 'unterkunft'] as const) {
+      assert.deepEqual(attention.punkte.find((punkt) => punkt.signal === `coverage.${bereich}`)?.aktion, { art: 'bereich', bereich })
+    }
   })
 })

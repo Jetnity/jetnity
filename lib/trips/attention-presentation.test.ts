@@ -181,3 +181,46 @@ describe('Jetzt wichtig: gerenderte Gruppen', () => {
     assert.doesNotMatch(html, /<li[ >]|<button[ >]/)
   })
 })
+
+describe('Preparation-Ziel gehört zur vollständigen Aktionsgleichheit', () => {
+  const aktion = (bereich: 'reisende-dokumente' | 'offizielle-anforderungen', travellerClientRef?: string): NonNullable<AttentionPunkt['aktion']> => ({
+    art: 'bereich', bereich: 'uebersicht', preparationZiel: { bereich, ...(travellerClientRef && { travellerClientRef }) },
+  })
+
+  test('gleiche Section und exakte Ref gruppieren trotz anderer Objektidentität/Property-Reihenfolge', () => {
+    const erste = punkt('eins', { aktion: aktion('reisende-dokumente', 'opaque:/not-a-person-id') })
+    const zweite = punkt('zwei', { aktion: {
+      preparationZiel: { travellerClientRef: 'opaque:/not-a-person-id', bereich: 'reisende-dokumente' },
+      bereich: 'uebersicht', art: 'bereich',
+    } })
+    assert.notEqual(erste.aktion?.preparationZiel, zweite.aktion?.preparationZiel)
+    assert.deepEqual(attentionGruppieren([erste, zweite]), [{ punkt: erste, mitglieder: [erste, zweite], anzahl: 2 }])
+  })
+
+  for (const [name, anders] of [
+    ['andere Section', aktion('offizielle-anforderungen', 'ref-1')],
+    ['andere Traveller-Ref', aktion('reisende-dokumente', 'ref-2')],
+    ['Section ohne Traveller-Ref', aktion('reisende-dokumente')],
+    ['Target fehlt', { art: 'bereich', bereich: 'uebersicht' }],
+    ['Target null', { art: 'bereich', bereich: 'uebersicht', preparationZiel: null }],
+  ] as const) {
+    test(`${name} bleibt separat und alle Mitglieder bleiben in ursprünglicher Priorität`, () => {
+      const erste = punkt('eins', { aktion: aktion('reisende-dokumente', 'ref-1') })
+      const zweite = punkt('zwei', { aktion: anders })
+      const dritte = punkt('drei', { aktion: aktion('reisende-dokumente', 'ref-1') })
+      const vorher = structuredClone([erste, zweite, dritte])
+      const gruppen = attentionGruppieren([erste, zweite, dritte])
+      assert.deepEqual(gruppen, [
+        { punkt: erste, mitglieder: [erste, dritte], anzahl: 2 },
+        { punkt: zweite, mitglieder: [zweite], anzahl: 1 },
+      ])
+      assert.deepEqual([erste, zweite, dritte], vorher)
+    })
+  }
+
+  test('Coverage bleibt kompatibel; absent und null bedeuten beide kein Preparation-Ziel', () => {
+    const erste = punkt('eins', { signal: 'coverage.fluege', aktion: { art: 'bereich', bereich: 'fluege' } })
+    const zweite = punkt('zwei', { ...erste, id: 'zwei', aktion: { bereich: 'fluege', preparationZiel: null, art: 'bereich' } })
+    assert.deepEqual(attentionGruppieren([erste, zweite]), [{ punkt: erste, mitglieder: [erste, zweite], anzahl: 2 }])
+  })
+})

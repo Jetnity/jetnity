@@ -72,6 +72,9 @@ function formular() {
     index = 0
     return ui.default({
       reise: beispielreise(),
+      offeneBereiche: new Set(['reisende-dokumente', 'offizielle-anforderungen', 'tickets-buchungen', 'eigene-vorbereitung']),
+      onBereichOffen: () => {},
+      onZiel: () => {},
       onSetzen: async (payload) => { payloads.push(payload); return null },
     })
   }

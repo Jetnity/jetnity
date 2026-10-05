@@ -13,6 +13,7 @@ import {
   type GapDetailAbleitung,
   type ItemDetailAbleitung,
   type WorkspaceDetailAuswahl,
+  type WorkspaceRueckkehr,
 } from '@/lib/trips/detail'
 import { ORGANISIEREN_FLAECHE_KLASSE, ORGANISIEREN_RUECKKEHR_KLASSE, detailStatusfolge } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
@@ -22,7 +23,7 @@ export default function TripWorkspaceDetail({
   gap,
   item,
   kompakt,
-  onSchliessen,
+  rueckkehr,
   onSuche,
   fokusRef,
 }: {
@@ -30,7 +31,7 @@ export default function TripWorkspaceDetail({
   gap: GapDetailAbleitung | null
   item: ItemDetailAbleitung | null
   kompakt: boolean
-  onSchliessen: () => void
+  rueckkehr: WorkspaceRueckkehr
   onSuche: (vonTastatur?: boolean) => void
   fokusRef: RefObject<HTMLButtonElement | null>
 }) {
@@ -84,9 +85,9 @@ export default function TripWorkspaceDetail({
           </h2>
         </div>
         {!kompakt ? (
-          <button ref={fokusRef} type="button" onClick={onSchliessen} className={ORGANISIEREN_RUECKKEHR_KLASSE}>
+          <button ref={fokusRef} type="button" onClick={rueckkehr.ausfuehren} className={ORGANISIEREN_RUECKKEHR_KLASSE}>
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Zurück zur Reise
+            {rueckkehr.label}
           </button>
         ) : null}
       </div>
