@@ -119,9 +119,227 @@
         "turn_id": "01a10b6d-b55d-7c30-90ef-edafa0fd14c5",
         "model": "gpt-6-astra",
         "effort": "xhigh"
+      },
+      {
+        "turn_id": "01a10ba4-3fe5-7172-9fb3-ce4802f26a13",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
       }
     ]
   },
   "hostedDbAccess": false,
-  "productionMutation": false
+  "productionMutation": false,
+  "publicationAuthorization": {
+    "scopeComment": 5991882705,
+    "remoteCommitComment": 5992723507,
+    "implementationCommit": "d44b527a93cbfa2d415286c93a32ff496459f11c",
+    "implementationTree": "b7d4f3cd63ac0b4c57d032b28107e0bee95810eb"
+  },
+  "remoteImplementationValidation": {
+    "implementationCommit": "d44b527a93cbfa2d415286c93a32ff496459f11c",
+    "ci": {
+      "runId": 37298050896,
+      "conclusion": "success",
+      "tests": 5346,
+      "passed": 5346,
+      "failed": 0,
+      "jobs": [
+        {
+          "id": 111723903607,
+          "name": "Typecheck, Lint & Build",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 37298050896,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Schutz der Admin-API",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Bezug auf das Schema",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Unerreichbarer Code",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Exporte ohne Aufrufer",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Ungenutzte Pakete",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            }
+          ]
+        },
+        {
+          "id": 111723903800,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 37298050896,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Zugang vorhanden?",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Abgleich",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        }
+      ]
+    },
+    "preview": {
+      "id": "dpl_6PabGKigoVcn26jLx2JPxSngDTqj",
+      "url": "jetnity-bpp8fzkvw-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "target": null,
+      "commit": "d44b527a93cbfa2d415286c93a32ff496459f11c",
+      "aliasError": null,
+      "http": {
+        "status": 200,
+        "title": "Deine ganze Reise. Intelligent an einem Ort. \u2013 Jetnity",
+        "deployment": "dpl_6PabGKigoVcn26jLx2JPxSngDTqj"
+      }
+    }
+  }
 }
