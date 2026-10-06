@@ -39,6 +39,11 @@ export default function FlugRoute({
       {sichtbar.flughafenwechsel ? (
         <p className="mt-1 text-sm leading-6 text-ink-800">Flughafenwechsel erforderlich</p>
       ) : null}
+      {sichtbar.direkt && segmente.length === 1 ? (
+        <p className="mt-1 text-sm leading-6 text-ink-800 break-words">
+          {segmentZeit(segmente[0]!)}
+        </p>
+      ) : null}
       {!sichtbar.direkt && segmente.length > 0 ? (
         <details className="mt-2">
           <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15">
