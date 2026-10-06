@@ -1,10 +1,7 @@
 // Isolated fixed-corpus conformance runner. No shipped route imports this module.
-import { readFileSync, existsSync, readdirSync } from 'node:fs'
-import { resolve, relative, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
+import { consumeControlledImplementationSnapshot } from './controlled-runtime-context'
 import { immutable, historicalPinFor, provenanceCanonical, provenanceHash, historicalValuesEqual, type Pin } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
-import { createIntegratedPilotArtifact, verifyIntegratedPilotBundle,
+import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE,
   type IntegratedPilotArtifactInput, type IntegratedPilotManifestType, type IntegratedPilotManifestContent,
   type IntegratedPilotPayload } from '@/lib/readiness/official-truth-integrated-pilot-bundle'
 import { readHistoricalArtifact, type HistoricalArtifactKind } from '@/lib/readiness/official-truth-autonomous-provenance-record'
@@ -21,9 +18,8 @@ import { decideOfficialTruthSameRequestTrustedFactExtraction, consumeOfficialTru
 import { officialTruthTrustedFactExtrahierenMitDefinitionen } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import { officialTruthFactCitationTargets, officialTruthCompositionSealView } from '@/lib/readiness/official-truth-composition-policy-registry'
 import { PILOT_CORPUS, PILOT_SOURCE, PILOT_ORIGIN_TIME, PILOT_REFERENCE_TIME, PILOT_COMPLETION_TIME,
-  pilotBody, pilotUrl, pilotStartUrl, type PilotMode, type PilotItem } from './corpus'
+  pilotBody, pilotUrl, pilotStartUrl, pilotOtherStartUrl, pilotSecondaryUrl, pilotOriginalRequestUrl, derivePilotValidity, type PilotMode, type PilotItem } from './corpus'
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const bytes = (value: unknown) => { const c = provenanceCanonical(value); if (c === null) throw Error('schema_incompatible'); return new TextEncoder().encode(c) }
 function value<T>(result: { ok: true; value: T } | { ok: false; reason: string }): T {
   if (!result.ok) throw Error(result.reason)
@@ -31,7 +27,10 @@ function value<T>(result: { ok: true; value: T } | { ok: false; reason: string }
 }
 const order = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
 export const PILOT_FAULTS = ['none', 'unknown_body_field', 'changed_fresh_body', 'changed_final_url', 'reversed_clock',
-  'future_original', 'duplicate_support', 'missing_support', 'non_null_proposal', 'missing_origin', 'scope_substitution'] as const
+  'future_original', 'duplicate_support', 'missing_support', 'non_null_proposal', 'missing_origin', 'scope_substitution',
+  'stale_original', 'invalid_utf8', 'missing_execution_context', 'cloned_execution_result', 'replayed_execution_context',
+  'substituted_fact_reference', 'foreign_composition_seal', 'ledger_clone', 'ledger_foreign', 'ledger_replay', 'ledger_closed',
+  'expired_original', 'two_eligible_versions', 'same_item_two_representations', 'eligibility_revoked'] as const
 export type PilotFault = typeof PILOT_FAULTS[number]
 
 /** Invocation-only membership. There is no exported token factory or DTO entrance. */
@@ -49,49 +48,13 @@ function invocation() {
   }
 }
 
-// The exact source dependency closure is a historical artifact, never executed on readback.
-// Package imports are followed from these actual files; Node built-ins are the host runtime.
-function implementationFiles() {
-  const found = new Map<string, string>(), todo = [fileURLToPath(import.meta.url)]
-  const require = createRequire(import.meta.url)
-  while (todo.length) {
-    const path = todo.pop()!
-    if (found.has(path)) continue
-    const source = readFileSync(path, 'utf8'); found.set(path, source)
-    if (found.size > 200) throw Error('implementation_closure_bound')
-    for (const m of source.matchAll(/(?:from\s+|import\s+|require\()['"]([^'"]+)['"]/g)) {
-      const spec = m[1]!
-      if (spec.startsWith('node:') || spec === 'server-only') continue
-      let target: string | null = null
-      if (spec.startsWith('@/')) target = resolve(root, spec.slice(2))
-      else if (spec.startsWith('.')) target = resolve(dirname(path), spec)
-      else if (spec === 'zod') target = require.resolve('zod')
-      // Network/auth package code is outside this synthetic external boundary.
-      // This disk archive is developer evidence, not loaded-code attestation.
-      else if (spec.startsWith('@supabase/')) continue
-      else continue
-      if (target) {
-        const candidates = [target, `${target}.ts`, `${target}.js`, resolve(target, 'index.ts'), resolve(target, 'index.js')]
-        const file = candidates.find(p => existsSync(p) && !p.endsWith('.test.ts'))
-        if (file) todo.push(file)
-      }
-    }
-  }
-  // Zod CommonJS modules use .cjs imports; include its bounded v3 implementation.
-  for (const file of readdirSync(resolve(root, 'node_modules/zod/v3'))) {
-    if (!file.endsWith('.cjs')) continue
-    const p = resolve(root, 'node_modules/zod/v3', file); found.set(p, readFileSync(p, 'utf8'))
-  }
-  return [...found].map(([p, utf8]) => ({ path: relative(root, p), utf8 })).sort((a, b) => order(a.path, b.path))
-}
-
 export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotFault = 'none') {
   const safeMode = typeof mode === 'string' && ['primary', 'composed'].includes(mode) ? mode : null
   const safeFault = typeof fault === 'string' && PILOT_FAULTS.includes(fault) ? fault : null
   const trace = { catalogReads: 0, originalHttp: 0, freshHttp: 0, evidenceAcceptances: 0, proof: false,
     extracted: false, actualFactIdentity: false, receiptProjected: false, publicationCount: 0, storageCalls: 0 }
   const done: string[] = [], ledger = invocation()
-  let closureBound: { limit: 'depth'; observed: number; maximum: 8 } | null = null
+  let closureBound: { limit: 'depth'; observed: number; maximum: 8 | 16 } | null = null
   let token: object | null = null
   const originMembership = new WeakSet<object>()
   const artifacts: IntegratedPilotArtifactInput[] = []
@@ -114,8 +77,10 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     // External bootstrap boundary is synthetic and counted; it grants no hosted principal.
     const authority = immutable({ status: 'authorized', grant: 'role', capability: 'official-truth-freigeben' } as const)
     token = ledger.advance(token)
-    const files = implementationFiles(), capsules: Pin[] = []
-    let group: typeof files = [], size = 0
+    const snapshot = consumeControlledImplementationSnapshot()
+    if (!snapshot) throw Error('runtime_context_missing')
+    const files = snapshot.files, capsules: Pin[] = []
+    let group: { path: string; utf8: string }[] = [], size = 0
     const flush = () => {
       if (!group.length) return
       capsules.push(manifest('implementation_bundle', `pilot-code-${capsules.length}`, { encoding: 'base64',
@@ -162,71 +127,95 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
       return { ok: true, antwort: catalogAnswer }
     } }
     trace.catalogReads++ // one external snapshot; all later catalog reads replay these exact bytes
-    let fresh = false
+    let fresh = false, originalClock = PILOT_ORIGIN_TIME
     async function retrieve(input: unknown, replay: OfficialTruthSourceCatalogTransport = transport) {
       return decideOfficialTruthServerOwnedRetrieval(input, { catalog: { transport: replay, identityProfiles: corpus.profiles },
         now: () => new Date(fresh ? fault === 'reversed_clock' ? PILOT_ORIGIN_TIME : PILOT_COMPLETION_TIME
-          : fault === 'future_original' ? PILOT_COMPLETION_TIME : PILOT_ORIGIN_TIME),
+          : fault === 'future_original' ? PILOT_COMPLETION_TIME : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock),
         resolve: async () => [{ address: '93.184.216.34', family: 4 }],
         http: async request => {
           if (fresh) trace.freshHttp++; else trace.originalHttp++
           // Prove actual DNS validation/lookup path, credentials absent and exact code-owned request.
           await new Promise<void>((ok, no) => request.lookup(new URL(request.url).hostname, { all: true }, error => error ? no(error) : ok()))
           if (Object.keys(request.headers).some(k => /cookie|authorization/i.test(k))) return { ok: false, reason: 'http_failed' }
-          const item = requested.find(i => request.url === pilotStartUrl(i) || request.url === pilotUrl(i))
+          const item = requested.find(i => [pilotStartUrl(i), pilotOtherStartUrl(i), pilotUrl(i), pilotSecondaryUrl(i)].includes(request.url))
           if (!item) return { ok: false, reason: 'http_failed' }
-          if (request.url === pilotStartUrl(item)) return { ok: true, status: 302,
-            headers: { get: n => n.toLowerCase() === 'location' ? fresh && fault === 'changed_final_url' ? 'https://regulations.example/unknown' : pilotUrl(item) : null }, body: null }
-          let body = pilotBody(item)
+          if (fresh && fault === 'changed_final_url') return { ok: true, status: 302,
+            headers: { get: n => n.toLowerCase() === 'location' ? 'https://regulations.example/unknown' : null }, body: null }
+          if (request.url === pilotStartUrl(item) || request.url === pilotOtherStartUrl(item)) return { ok: true, status: 302,
+            headers: { get: n => n.toLowerCase() === 'location' ? pilotUrl(item) : null }, body: null }
+          let body = pilotBody(item, fault === 'expired_original' ? 'expired' : 'current')
           if (fault === 'unknown_body_field' || fresh && fault === 'changed_fresh_body') body = body.slice(0, -1) + ',"unused":"unqualified"}'
           return { ok: true, status: 200, headers: { get: n => n.toLowerCase() === 'content-type' ? 'application/json' : null },
-            body: (async function* () { yield new TextEncoder().encode(body) })() }
+            body: (async function* () { yield fault === 'invalid_utf8' ? new Uint8Array([255]) : new TextEncoder().encode(body) })() }
         } })
     }
     const entries: { custody: unknown; pin: Pin; eligible: boolean }[] = [], accepted: EvidenceVersion[] = []
-    for (const item of requested) {
-      const rep = corpus.registry.contentIdentity!.representations.find(r => r.contentItemId === item)!
+    const originalJobs = requested.map(item => ({ item, secondary: false, extra: false }))
+    if (fault === 'two_eligible_versions' || fault === 'same_item_two_representations') originalJobs.push({
+      item: requested[0]!, secondary: fault === 'same_item_two_representations', extra: true })
+    for (const { item, secondary, extra } of originalJobs) {
+      originalClock = extra ? '2026-10-06T12:00:00.500Z' : PILOT_ORIGIN_TIME
+      const artifactSuffix = `${item}${extra ? '-second' : ''}`
+      const rep = corpus.registry.contentIdentity!.representations.find(r => r.contentItemId === item && r.representationId === (secondary ? 'json-alternate' : 'json'))!
       const itemValue = corpus.registry.contentIdentity!.items.find(r => r.contentItemId === item)!
-      const itemDefinition = manifest('content_item_definition', `pilot-item-${item}`, { descriptor: itemValue })
-      const representationDefinition = manifest('representation_definition', `pilot-representation-${item}`, { descriptor: rep })
-      const qualification = custody('GlobalRepresentationQualificationV1', `pilot-qualification-${item}`, {
+      const itemDefinition = manifest('content_item_definition', `pilot-item-${artifactSuffix}`, { descriptor: itemValue })
+      const representationDefinition = manifest('representation_definition', `pilot-representation-${artifactSuffix}`, { descriptor: rep })
+      const qualification = custody('GlobalRepresentationQualificationV1', `pilot-qualification-${artifactSuffix}`, {
         binding: contentIdentityBinding(rep), itemDefinition, representationDefinition,
         identityProfileDefinition: profile, qualificationContract })
-      const startedAt = fault === 'future_original' ? PILOT_COMPLETION_TIME : PILOT_ORIGIN_TIME
-      const retrieval = await retrieve({ sourceId: PILOT_SOURCE, url: pilotStartUrl(item) })
+      const startedAt = fault === 'future_original' ? PILOT_COMPLETION_TIME : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock
+      const retrieval = await retrieve({ sourceId: PILOT_SOURCE, url: secondary ? pilotSecondaryUrl(item) : pilotOriginalRequestUrl(item) })
       if (retrieval.status !== 'server_owned_official_retrieval') throw Error('representation_not_global')
       if (!ledger.owns(token)) throw Error('authority_required')
       // Issuer owns this exact controlled response; canonical acceptance happens only here.
-      const observation = manifest('original_observation', `pilot-observation-${item}`, {
+      const observation = manifest('original_observation', `pilot-observation-${artifactSuffix}`, {
         binding: contentIdentityBinding(retrieval), requestUrl: retrieval.requestUrl, canonicalFinalUrl: retrieval.canonicalUrl,
         contentType: retrieval.contentType, sourceContentHash: retrieval.sourceContentHash,
         startedAt, completedAt: retrieval.retrievedAt, qualification: qualification.pin,
         transportContract, identityProfile: profile, catalogSnapshot, hashContract })
       const evidenceScope = { ...corpus.scope, sourceId: PILOT_SOURCE }
-      const validityOrigin = manifest('validity_origin', `pilot-validity-${item}`, { observation, evidenceScope,
-        validFrom: null, validUntil: null, validFromBasis: { kind: 'no_bound_asserted' }, validUntilBasis: { kind: 'no_bound_asserted' }, derivationContract })
-      const candidate = evidenceKandidatAusModell({ scope: evidenceScope, validFrom: null, validUntil: null }, retrieval, corpus.registry)
+      const derivedValidity = derivePilotValidity(item, retrieval.sourceSnapshot)
+      if (!derivedValidity) throw Error('validity_origin_invalid')
+      const validityOrigin = manifest('validity_origin', `pilot-validity-${artifactSuffix}`, { observation, evidenceScope,
+        ...derivedValidity, derivationContract })
+      const candidate = evidenceKandidatAusModell({ scope: evidenceScope, validFrom: derivedValidity.validFrom, validUntil: derivedValidity.validUntil }, retrieval, corpus.registry)
       if (!candidate.ok) throw Error(candidate.reason)
       const result = evidenceKandidatAkzeptieren(candidate.evidence, corpus.registry)
       if (!result.ok) throw Error(result.reason)
       trace.evidenceAcceptances++
       const { previousVersionId, lifecycle, validationState, sourceClass, authorityName, publisherName, scope, extractionNote, ...evidenceIdentity } = result.evidence
       void previousVersionId; void lifecycle; void validationState; void sourceClass; void authorityName; void publisherName; void extractionNote
-      const acceptedOrigin = manifest('accepted_origin', `pilot-accepted-${item}`, { observation, validityOrigin, cell,
+      const acceptedOrigin = manifest('accepted_origin', `pilot-accepted-${artifactSuffix}`, { observation, validityOrigin, cell,
         globalAdmission: admission.pin, evidenceIdentity, evidenceScope: scope, acceptanceContract })
-      const issued = custody('AcceptedEvidenceCustodyV1', `pilot-custody-${item}`, { cell, globalAdmission: admission.pin,
+      const issued = custody('AcceptedEvidenceCustodyV1', `pilot-custody-${artifactSuffix}`, { cell, globalAdmission: admission.pin,
         scopeContract, evidenceScope: scope, evidenceIdentity, observation, validityOrigin, acceptedOrigin, identityContract, hashContract })
       originMembership.add(issued.value)
       entries.push({ custody: issued.value, pin: issued.pin, eligible: true }); accepted.push(immutable(result.evidence))
     }
+    if (fault === 'two_eligible_versions' || fault === 'same_item_two_representations') {
+      const first = accepted[0]!, second = accepted.at(-1)!
+      if (first.contentItemId !== second.contentItemId || first.versionId === second.versionId
+        || (fault === 'same_item_two_representations') !== (first.representationId !== second.representationId)) {
+        throw Error('negative_fixture_invalid')
+      }
+    }
     if (fault === 'missing_origin') entries[0]!.custody = structuredClone(entries[0]!.custody)
     if (entries.some(e => !originMembership.has(e.custody as object))) throw Error('custody_missing')
     done.push('controlled_original_observation', 'canonical_evidence_acceptance', 'original_custody_membership'); token = ledger.advance(token)
+    if (fault.startsWith('ledger_')) {
+      const prior = token
+      token = ledger.advance(token)
+      if (fault === 'ledger_closed') ledger.close()
+      ledger.advance(fault === 'ledger_clone' ? structuredClone(token) : fault === 'ledger_foreign' ? invocation().advance(null)
+        : fault === 'ledger_replay' ? prior : token)
+    }
     const requiredContentItemRefs = requested.map(contentItemId => ({ sourceId: PILOT_SOURCE, contentItemId }))
     const quality = mode === 'primary' ? 'explicit_primary_statement' : 'composed_from_multiple_primary_sources'
     const selection = custody('SupportSelectionDefinitionV1', `pilot-${mode}-selection`, { cell, requirementType: 'visa',
       factKind: 'requirement_effect', evidenceQuality: quality, requiredContentItemRefs, selectionContract })
-    const eligibleVersionSnapshot = manifest('eligible_version_snapshot', `pilot-${mode}-eligibility`, { entries: entries.map((e, i) => ({ versionId: accepted[i]!.versionId, custody: e.pin, eligible: true })).sort((a, b) => order(a.versionId, b.versionId)) })
+    if (fault === 'eligibility_revoked') entries[0]!.eligible = false
+    const eligibleVersionSnapshot = manifest('eligible_version_snapshot', `pilot-${mode}-eligibility`, { entries: entries.map((e, i) => ({ versionId: accepted[i]!.versionId, custody: e.pin, eligible: e.eligible })).sort((a, b) => order(a.versionId, b.versionId)) })
     if (fault === 'duplicate_support') entries.push(entries[0]!)
     if (fault === 'missing_support') entries.pop()
     const selected = value(selectHistoricalSupports({ definition, admission: admission.value, admissionPin: admission.pin,
@@ -250,13 +239,21 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
       extract: input => officialTruthTrustedFactExtrahierenMitDefinitionen(input, corpus.extractors),
       compositionExtractors: corpus.extractors, compositionPolicies: [corpus.policy] })
     if (extracted.status === 'blocked') throw Error(extracted.reason)
-    const primary = consumeOfficialTruthSameRequestPrimaryContext(extracted)
-    const composed = consumeOfficialTruthSameRequestCompositionExecutionContext(extracted)
+    const contextResult = fault === 'cloned_execution_result' ? structuredClone(extracted) : fault === 'missing_execution_context' ? {} : extracted
+    if (fault === 'replayed_execution_context') {
+      consumeOfficialTruthSameRequestPrimaryContext(contextResult)
+      consumeOfficialTruthSameRequestCompositionExecutionContext(contextResult)
+    }
+    const primary = consumeOfficialTruthSameRequestPrimaryContext(contextResult)
+    const composed = consumeOfficialTruthSameRequestCompositionExecutionContext(contextResult)
     if (!primary && !composed) throw Error('execution_context_unavailable')
-    const fact = primary ? primary.execution.fact : composed!.context.phaseB.fact
+    const heldFact = primary ? primary.execution.fact : composed!.context.phaseB.fact
+    const fact = fault === 'substituted_fact_reference' ? structuredClone(heldFact) : heldFact
+    if (fact !== heldFact) throw Error('fact_reference_mismatch')
     const selectedExtractor = primary ? primary.execution.selected : composed!.execution.selected.extractor
     if (selectedExtractor.extract !== corpus.extractors.find(e => e.extractorId === selectedExtractor.extractorId)!.extract) throw Error('execution_context_unavailable')
-    if (composed && officialTruthCompositionSealView(composed.context.phaseB.seal)?.fact !== fact) throw Error('composition_context_incomplete')
+    if (fault === 'foreign_composition_seal' && !composed) throw Error('composition_context_incomplete')
+    if (composed && officialTruthCompositionSealView(fault === 'foreign_composition_seal' ? {} : composed.context.phaseB.seal)?.fact !== fact) throw Error('composition_context_incomplete')
     const retrievals = primary ? primary.retrievals : composed!.context.retrievals
     if (retrievals.some(r => Date.parse(r.retrievedAt) < Date.parse(PILOT_REFERENCE_TIME))) throw Error('freshness_gap')
     trace.extracted = true; trace.actualFactIdentity = true; done.push('fresh_retrieval', `${mode}_actual_execution_context`); token = ledger.advance(token)
@@ -306,11 +303,14 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
       value: { receiptFingerprint: recordFingerprint, globalAdmission: admission.pin, selectedSupportManifest: selectedManifest.pin, autonomousReviewConstruction: reviewed.pin } }))
     trace.receiptProjected = true; done.push('private_receipt_and_separate_binding_projection')
     // No intermediate artifact escapes. Typed graph verification must finish before publication.
-    const checked = verifyIntegratedPilotBundle({ recordFingerprint, receiptBytes: bytes(payload), custodyBindingBytes: bytes(binding), artifacts })
+    const envelope = { profile: LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE, bundle: { recordFingerprint, receiptBytes: bytes(payload), custodyBindingBytes: bytes(binding), artifacts } }
+    const checked = verifyLocalIntegratedPilotBundle(envelope)
     if (!checked.ok) { closureBound = checked.bound ?? null; throw Error(checked.reason) }
     if (!ledger.owns(token)) throw Error('authority_required')
-    trace.publicationCount++; ledger.close()
-    return immutable({ status: 'synthetic_bundle_verified' as const, mode, fault, stages: done, trace })
+    ledger.close()
+    // Historical values cross the controlled-runtime boundary only after complete verification.
+    // Persistence/publication is counted solely by the acknowledged commit + fresh reader workflow.
+    return { status: 'synthetic_bundle_verified' as const, mode, fault, stages: done, trace, envelope }
   } catch (error) {
     ledger.close()
     // Fixed diagnostics only; never expose a partial receipt, fact, source body, origin or token.

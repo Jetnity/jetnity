@@ -17,6 +17,9 @@ export type PilotMode = 'primary' | 'composed'
 export type PilotItem = typeof PILOT_ITEMS[number]
 export const pilotUrl = (item: PilotItem) => `https://regulations.example/rules/${item}`
 export const pilotStartUrl = (item: PilotItem) => `https://regulations.example/start/${item}`
+export const pilotOtherStartUrl = (item: PilotItem) => `https://regulations.example/another-start/${item}`
+export const pilotSecondaryUrl = (item: PilotItem) => `https://regulations.example/alternate-rules/${item}`
+export const pilotOriginalRequestUrl = (item: PilotItem) => item === 'primary_rule' ? pilotUrl(item) : pilotStartUrl(item)
 export const PILOT_SCOPE = immutable({ destinationCountryCode: 'GB', transitCountryCode: null,
   citizenship: { mode: 'required', countryCodes: ['CH'] },
   credentialOption: { mode: 'option', documentType: 'passport', issuingCountryCode: 'CH', relatedCitizenshipCountryCode: 'CH' },
@@ -24,20 +27,30 @@ export const PILOT_SCOPE = immutable({ destinationCountryCode: 'GB', transitCoun
 
 // Finite whole-response language: an unknown/unused key cannot be ignored.
 // Values are fictional conformance law, explicitly not a statement about GB/CH.
-export function pilotBody(item: PilotItem): string {
+export function pilotBody(item: PilotItem, variant: 'current' | 'expired' = 'current'): string {
   return provenanceCanonical({ schema: 'synthetic-public-regulation-v1', publication: item,
     ...(item !== 'composed_mode' ? { effect: 'required' } : {}),
     ...(item !== 'composed_effect' ? { visaMode: 'electronic_visa' } : {}),
-    validity: { from: null, until: null } })!
+    validity: { from: item === 'primary_rule' ? '2026-10-01' : null, until: variant === 'expired' ? '2026-10-05' : null } })!
 }
 function parse(item: PilotItem, text: string) {
-  if (text !== pilotBody(item)) return null
-  return JSON.parse(text) as { effect?: 'required'; visaMode?: 'electronic_visa' }
+  if (text !== pilotBody(item) && text !== pilotBody(item, 'expired')) return null
+  return JSON.parse(text) as { effect?: 'required'; visaMode?: 'electronic_visa'; validity: { from: '2026-10-01' | null; until: '2026-10-05' | null } }
+}
+/** Derive bounds only from a whole-response-qualified controlled observation. */
+export function derivePilotValidity(item: PilotItem, sourceSnapshot: string) {
+  const qualified = parse(item, sourceSnapshot)
+  if (!qualified) return null
+  return immutable({ validFrom: qualified.validity.from, validUntil: qualified.validity.until,
+    validFromBasis: qualified.validity.from === null ? { kind: 'no_bound_asserted' as const }
+      : { kind: 'qualified_locator' as const, locator: { kind: 'json_pointer' as const, pointer: '/validity/from' }, value: qualified.validity.from },
+    validUntilBasis: qualified.validity.until === null ? { kind: 'no_bound_asserted' as const }
+      : { kind: 'qualified_locator' as const, locator: { kind: 'json_pointer' as const, pointer: '/validity/until' }, value: qualified.validity.until } })
 }
 const profiles: readonly ContentIdentityProfileDefinition[] = immutable([{
   identityProfileId: 'synthetic-pilot-whole-response', identityProfileVersion: 1, current: true,
   verify: ({ item, representation, responseText, finalUrl, mediaType }) => {
-    if (!PILOT_ITEMS.includes(item.contentItemId as PilotItem) || finalUrl !== pilotUrl(item.contentItemId as PilotItem)
+    if (!PILOT_ITEMS.includes(item.contentItemId as PilotItem) || finalUrl !== (representation.representationId === 'json-alternate' ? pilotSecondaryUrl(item.contentItemId as PilotItem) : pilotUrl(item.contentItemId as PilotItem))
       || mediaType !== 'application/json' || !parse(item.contentItemId as PilotItem, responseText)) return { ok: false, reason: 'invalid_response' }
     return { ok: true, identity: contentIdentityBinding(representation) }
   },
@@ -50,18 +63,22 @@ function sourceRegistry() {
   const items: ContentItemDescriptor[] = PILOT_ITEMS.map(contentItemId => ({ sourceId: PILOT_SOURCE,
     contentItemId, contentItemVersion: 1, current: true, externalIdNamespace: 'synthetic-publication',
     externalContentId: contentItemId, expectedPublisherIds: ['synthetic-publisher'], expectedAuthorityIds: ['synthetic-authority'] }))
-  const representations: RepresentationDescriptor[] = items.map(item => ({ sourceId: item.sourceId,
-    contentItemId: item.contentItemId, contentItemVersion: 1, representationId: 'json', representationVersion: 1,
-    current: true, requestUrls: [pilotStartUrl(item.contentItemId as PilotItem)], expectedFinalUrl: pilotUrl(item.contentItemId as PilotItem),
-    expectedMediaType: 'application/json', identityProfileId: profiles[0]!.identityProfileId, identityProfileVersion: 1,
-    expectedLocale: null, expectedSchema: 'synthetic-public-regulation-v1' }))
+  const representations: RepresentationDescriptor[] = items.flatMap(item => {
+    const name = item.contentItemId as PilotItem
+    const common = { sourceId: item.sourceId, contentItemId: name, contentItemVersion: 1, representationVersion: 1,
+      current: true, expectedMediaType: 'application/json', identityProfileId: profiles[0]!.identityProfileId, identityProfileVersion: 1,
+      expectedLocale: null, expectedSchema: 'synthetic-public-regulation-v1' }
+    return [{ ...common, representationId: 'json',
+      requestUrls: name === 'primary_rule' ? [pilotUrl(name)] : [pilotOtherStartUrl(name), pilotStartUrl(name)], expectedFinalUrl: pilotUrl(name) },
+    { ...common, representationId: 'json-alternate', requestUrls: [pilotSecondaryUrl(name)], expectedFinalUrl: pilotSecondaryUrl(name) }]
+  })
   const graph = createContentIdentityGraph(source.registry, items, representations, profiles)
   if (!graph.ok) throw Error(`synthetic_graph_${graph.reason}`)
   return immutable({ ...graph.value.authorityRegistry, contentIdentity: graph.value })
 }
 const registry = sourceRegistry()
 const ref = (item: PilotItem) => ({ sourceId: PILOT_SOURCE, contentItemId: item })
-const binding = (item: PilotItem) => contentIdentityBinding(registry.contentIdentity!.representations.find(r => r.contentItemId === item)!)
+const binding = (item: PilotItem) => contentIdentityBinding(registry.contentIdentity!.representations.find(r => r.contentItemId === item && r.representationId === 'json')!)
 const policy: OfficialTruthCompositionPolicy = immutable({ policyId: 'otp_integrated_pilot', policyVersion: 1, current: true,
   factKind: 'requirement_effect', requirementType: 'visa', contentItemRefs: [ref('composed_effect'), ref('composed_mode')],
   sourceFamilyId: 'otf_integrated_pilot', schemaFamily: 'ots_integrated_pilot', applicabilitySchema: null,

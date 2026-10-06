@@ -512,6 +512,8 @@ describe('dormancy and architectural boundaries', () => {
     'scripts/official-truth-integrated-pilot-1/corpus.ts',
     'scripts/official-truth-integrated-pilot-1/engine.ts',
     'scripts/official-truth-integrated-pilot-1/official-source.ts',
+    // R1 exact passport representation identity; remains developer-only.
+    'scripts/official-truth-integrated-pilot-1/official-source-profile.ts',
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {

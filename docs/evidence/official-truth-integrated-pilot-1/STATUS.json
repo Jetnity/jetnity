@@ -7,12 +7,12 @@
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
   "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL",
   "phases": {
-    "A": "complete",
-    "B": "partial",
-    "C": "blocked_depth_11_limit_8",
-    "D": "structural_postgresql_proof_only",
-    "E": "blocked",
-    "F": "partial_executable_report_delivered"
+    "A": "r1_reconstructed",
+    "B": "captured_build_primary_composed_verified_more_conformance_in_progress",
+    "C": "both_complete_v2_bundles_verified_v1_refusal_retained",
+    "D": "primary_semantic_sql_readback_passed_composed_and_adversarial_in_progress",
+    "E": "bounded_actual_https_blocked_response_too_large",
+    "F": "one_command_semantic_roundtrip_integration_in_progress"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "NOT_VERIFIED",
@@ -23,7 +23,7 @@
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "Independent Technical-Lead exact-head review; no follow-up or activation dispatched.",
+  "next": "Finish real SQL adversarial/concurrency/reader proof and remaining integrated selector/context tests, then full local/remote gates.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -34,5 +34,14 @@
     "model": "gpt-6-astra",
     "reasoning": "xhigh"
   },
-  "runtimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe"
+  "runtimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe",
+  "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
+  "r1Comment": 6027081169,
+  "localProfile": {
+    "name": "ot-integrated-pilot-local-closure-v2",
+    "maximumDepth": 16,
+    "legacyMaximumDepth": 8,
+    "implementationStatus": "both_canonical_bundles_verified",
+    "hostedAdoption": false
+  }
 }

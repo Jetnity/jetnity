@@ -1,10 +1,10 @@
 {
-  "schema": "official-truth-integrated-pilot-real-source-report-v1",
+  "schema": "official-truth-integrated-pilot-real-source-report-v2",
   "realOfficialSourcePilot": "BLOCKED",
-  "startedAt": "2026-10-06T22:15:38.424Z",
-  "completedAt": "2026-10-06T22:15:38.514Z",
+  "startedAt": "2026-10-06T23:25:35.307Z",
+  "completedAt": "2026-10-06T23:25:35.546Z",
   "researchedFamilyCount": 1,
-  "family": "GOV.UK / UK Government / Home Office",
+  "family": "GOV.UK / UK Government",
   "selectedCase": {
     "citizenship": "CH",
     "documentClass": "ordinary_passport",
@@ -12,29 +12,26 @@
     "purpose": "narrow_passport_validity_only",
     "proposedSemanticTarget": "valid_through_stay",
     "selectedUrl": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk",
-    "corroboratingUrl": "https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen",
-    "researchStatus": "prior_official_public_guidance_read",
-    "researchDateUTC": "2026-10-06",
-    "researchSummary": "The Swiss citizen section describes document validity covering the stay; route and document exceptions must remain explicit. This research text is not a trusted extracted fact."
+    "requestUrl": "https://www.gov.uk/api/content/uk-border-control/before-you-leave-for-the-uk",
+    "expectedFinalUrl": "https://www.gov.uk/api/content/uk-border-control",
+    "scopeLimitation": "one passport-validity dimension; no complete ETA/visa/admission claim"
   },
   "selectedBoundaryAttempt": {
-    "url": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk",
     "status": "BLOCKED",
-    "reason": "content_not_eligible",
+    "reason": "response_too_large",
+    "actualNetworkAttempt": true,
+    "retrievalCompletedAt": null,
+    "redirectCount": null,
+    "profile": "govuk-passport-guide-isolated-en",
+    "sourceProfileImplemented": true,
+    "nationalListProfileUsed": false,
     "sourceProfileQualified": false,
-    "deterministicExtractionExecuted": false
-  },
-  "identityOnlyControl": {
-    "url": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
-    "startedAt": "2026-10-06T22:15:38.424Z",
-    "completedAt": "2026-10-06T22:15:38.514Z",
-    "status": "IDENTITY_VERIFIED_ONLY",
-    "reason": "whole_response_qualification_unavailable",
-    "retrievalCompletedAt": "2026-10-06T22:15:38.514Z",
-    "exactContentIdentityVerified": true,
-    "role": "same_family_existing_identity_profile_control_not_the_passport_rule"
+    "deterministicExtractionImplemented": true,
+    "deterministicExtractionExecuted": false,
+    "sourceSemanticsQualified": false
   },
   "chain": {
+    "identity": "BLOCKED",
     "wholeResponsePrivacyQualification": "BLOCKED",
     "originalObservationOrigin": "NOT_ISSUED",
     "validityOrigin": "NOT_ISSUED",
@@ -44,13 +41,18 @@
     "postgresRoundtrip": "NOT_RUN"
   },
   "blockers": [
-    "passport_representation_identity_profile_unavailable",
-    "source_specific_whole_response_qualification_unavailable",
-    "passport_rule_extractor_unavailable",
-    "national_list_alone_does_not_prove_complete_eta_eligibility"
+    "response_too_large"
   ],
+  "qualificationContract": {
+    "kind": "closed_reviewed_public_components_and_null_opaque_metadata",
+    "unknownUnusedFields": "reject",
+    "changedPublicComponents": "require_fresh_review",
+    "opaquePublishingMetadata": "reject_without_copying_or_publishing_value",
+    "deletingFieldsToQualify": false,
+    "metadataRefusalIsGovernmentAccessBlock": false
+  },
   "controls": {
-    "network": "existing_server_owned_dns_https_redirect_body_utf8_identity_path",
+    "network": "same_server_owned_dns_https_redirect_body_utf8_identity_path",
     "arbitraryUrlInput": false,
     "credentials": false,
     "cookieOrChallengeBypass": false,
@@ -67,12 +69,8 @@
       "url": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk"
     },
     {
-      "title": "Visiting the UK as an EU, EEA or Swiss citizen",
-      "url": "https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen"
+      "title": "Official Content API guide representation",
+      "url": "https://www.gov.uk/api/content/uk-border-control"
     }
-  ],
-  "priorEvidence": [
-    "docs/OFFICIAL_TRUTH_GOVUK_DEVELOPMENT_REGISTRATION_RECEIPT_1_2026-10-04.md",
-    "docs/OFFICIAL_TRUTH_GOVUK_ETA_SEMANTIC_CONTRACT_CLOSURE_1_2026-10-05.md"
   ]
 }

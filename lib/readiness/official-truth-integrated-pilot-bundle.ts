@@ -22,7 +22,7 @@ import { regelScopeAusEvidenceScope, REGEL_FAKT_ARTEN, type RegelFakt } from './
 import { quellenRegistryErstellen, type QuellenRegistry } from './source-registry'
 import { OFFICIAL_REQUIREMENT_TYPES } from '@/types/trips'
 import {
-  officialTruthCitationTargetLesen, officialTruthFactCitationCoverage,
+  officialTruthCitationTargetLesen, officialTruthFactCitationCoverage, officialTruthCompositionRegistriesPruefen,
   type OfficialTruthCompositionCitationTarget,
 } from './official-truth-composition-policy-registry'
 import { officialTruthExtractorDefinitionenPruefen } from './official-truth-trusted-fact-extractor-registry'
@@ -31,6 +31,8 @@ export const INTEGRATED_PILOT_BUNDLE_LIMITS = Object.freeze({
   receiptBytes: 262_144, bindingBytes: 4_096, artifactBytes: 1_048_576,
   totalArtifactBytes: 8_388_608, nodes: 256, edges: 1_024, depth: 8,
 })
+/** R1 changes only the explicitly selected LOCAL transport/storage profile. */
+export const LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE = 'ot-integrated-pilot-local-closure-v2' as const
 const custodyKinds = ['GlobalCellAdmissionV1', 'AcceptedEvidenceCustodyV1', 'SupportSelectionDefinitionV1',
   'SelectedSupportManifestV1', 'GlobalRepresentationQualificationV1', 'AutonomousReviewConstructionV1'] as const
 const manifestKinds = ['catalog_snapshot', 'identity_profile', 'extractor_registry', 'policy_registry',
@@ -47,12 +49,15 @@ export type IntegratedPilotBundleInput = Readonly<{
   recordFingerprint: string; receiptBytes: Uint8Array; custodyBindingBytes: Uint8Array;
   artifacts: readonly IntegratedPilotArtifactInput[]
 }>
+export type LocalIntegratedPilotEnvelope = Readonly<{
+  profile: typeof LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE; bundle: IntegratedPilotBundleInput
+}>
 export type IntegratedPilotDependency = Readonly<{ slot: string; pin: Pin; artifactType: IntegratedPilotArtifactType }>
 export type IntegratedPilotArtifactEdge = IntegratedPilotDependency & Readonly<{ parent: Pin }>
 export type IntegratedPilotBundleFailure = 'receipt_corrupt' | 'binding_corrupt' | 'dependency_missing'
   | 'dependency_corrupt' | 'unsupported_version' | 'closure_bound_exceeded' | 'semantic_mismatch'
 type Result<T> = Readonly<{ ok: true; value: T }> | Readonly<{ ok: false; reason: IntegratedPilotBundleFailure;
-  bound?: Readonly<{ limit: 'depth'; observed: number; maximum: 8 }> }>
+  bound?: Readonly<{ limit: 'depth'; observed: number; maximum: 8 | 16 }> }>
 const fail = (reason: IntegratedPilotBundleFailure): Result<never> => Object.freeze({ ok: false, reason })
 const success = <T>(value: T): Result<T> => Object.freeze({ ok: true, value })
 type Frozen<T> = T extends readonly (infer U)[] ? readonly Frozen<U>[] : T extends object ? { readonly [K in keyof T]: Frozen<T[K]> } : T
@@ -348,10 +353,12 @@ function manifestContentValid(type: IntegratedPilotManifestType, content: Record
   }
   if (type === 'policy_definition') {
     const d = content.descriptor as z.infer<typeof policyDescriptor>
-    return d.policyId === artifactId && d.policyVersion === version
-      && ordered(d.assignments.map(a => provenanceCanonical(a.target)!))
-      && d.assignments.every(a => ordered(a.contentItemRefs.map(r => JSON.stringify([r.sourceId, r.contentItemId])))
-        && (a.relation === 'single_content_item' ? a.contentItemRefs.length === 1 : a.contentItemRefs.length >= 2))
+    if (d.policyId !== artifactId || d.policyVersion !== version || !ordered(d.assignments.map(a => provenanceCanonical(a.target)!))) return false
+    const read = officialTruthCompositionRegistriesPruefen([{ ...d, current: true }], [])
+    if (!read.ok) return false
+    const { current, ...canonicalDescriptor } = read.policies[0]!
+    void current
+    return historicalValuesEqual(canonicalDescriptor, d)
   }
   if (type === 'catalog_snapshot') {
     const c = content as IntegratedPilotManifestContent<'catalog_snapshot'>
@@ -423,11 +430,13 @@ export type IntegratedPilotVerifiedBundle = Readonly<{
 }>
 
 /** This byte/graph checker is historical only; callers cannot register additional codecs. */
-export function verifyIntegratedPilotArtifactClosure(input: {
+export type IntegratedPilotArtifactClosureInput = Readonly<{
   readonly artifacts: readonly IntegratedPilotArtifactInput[];
   readonly receiptRoots: readonly IntegratedPilotDependency[]; readonly bindingRoots: readonly IntegratedPilotDependency[];
   readonly bindingByteLength: number;
-}): Result<Pick<IntegratedPilotVerifiedBundle, 'artifacts' | 'artifactEdges' | 'graph'>> {
+}>
+type ClosureValue = Pick<IntegratedPilotVerifiedBundle, 'artifacts' | 'artifactEdges' | 'graph'>
+function verifyArtifactClosure(input: IntegratedPilotArtifactClosureInput, maximumDepth: 8 | 16): Result<ClosureValue> {
   if (!ownRecord(input, ['artifacts', 'receiptRoots', 'bindingRoots', 'bindingByteLength'])
     || !denseDataArray(input.artifacts) || input.artifacts.length + 1 > INTEGRATED_PILOT_BUNDLE_LIMITS.nodes
     || !denseDataArray(input.receiptRoots) || !denseDataArray(input.bindingRoots)
@@ -454,6 +463,20 @@ export function verifyIntegratedPilotArtifactClosure(input: {
     artifactType: z.enum(['global_cell', ...custodyKinds, ...manifestKinds]) }).strict()).max(11)
   const receiptRoots = exact(rootSchema, input.receiptRoots), bindingRoots = exact(rootSchema, input.bindingRoots)
   if (!receiptRoots || !bindingRoots || !ordered(receiptRoots.map(r => r.slot)) || !ordered(bindingRoots.map(r => r.slot))) return fail('dependency_corrupt')
+  const traversal = verifyResolvedGraph(nodes, receiptRoots, bindingRoots, maximumDepth)
+  if (!traversal.ok) return traversal
+  const { longestDepth } = traversal.value
+  return success({ artifacts: [...nodes.values()].sort((a, b) => order(key(a.pin), key(b.pin))),
+    artifactEdges: artifactEdges.sort((a, b) => order(key(a.parent), key(b.parent)) || order(a.slot, b.slot)),
+    graph: { nodes: nodes.size + 1, edges: edgeCount, bytes: totalBytes, longestDepth } })
+}
+
+/** Private graph arithmetic, after closed codecs and typed roles resolve every node.
+ * Memoized subtree height retains the longest path when a DAG node is shared. */
+function verifyResolvedGraph(nodes: ReadonlyMap<string, IntegratedPilotVerifiedArtifact>,
+  receiptRoots: readonly IntegratedPilotDependency[], bindingRoots: readonly IntegratedPilotDependency[],
+  maximumDepth: 8 | 16,
+): Result<Readonly<{ longestDepth: number }>> {
   const active = new Set<string>(), heights = new Map<string, number>(), reached = new Set<string>()
   function visit(edge: IntegratedPilotDependency): Result<number> {
     const k = key(edge.pin), a = nodes.get(k)
@@ -474,12 +497,23 @@ export function verifyIntegratedPilotArtifactClosure(input: {
   let longestDepth = 1
   for (const root of receiptRoots) { const h = visit(root); if (!h.ok) return h; longestDepth = Math.max(longestDepth, h.value) }
   for (const root of bindingRoots) { const h = visit(root); if (!h.ok) return h; longestDepth = Math.max(longestDepth, 1 + h.value) }
-  if (longestDepth > INTEGRATED_PILOT_BUNDLE_LIMITS.depth) return Object.freeze({ ok: false, reason: 'closure_bound_exceeded',
-    bound: Object.freeze({ limit: 'depth', observed: longestDepth, maximum: 8 }) })
+  if (longestDepth > maximumDepth) return Object.freeze({ ok: false, reason: 'closure_bound_exceeded',
+    bound: Object.freeze({ limit: 'depth', observed: longestDepth, maximum: maximumDepth }) })
   if (reached.size !== nodes.size) return fail('dependency_corrupt')
-  return success({ artifacts: [...nodes.values()].sort((a, b) => order(key(a.pin), key(b.pin))),
-    artifactEdges: artifactEdges.sort((a, b) => order(key(a.parent), key(b.parent)) || order(a.slot, b.slot)),
-    graph: { nodes: nodes.size + 1, edges: edgeCount, bytes: totalBytes, longestDepth } })
+  return success({ longestDepth })
+}
+
+/** Legacy v1 always uses depth 8. It does not recognize a local envelope. */
+export function verifyIntegratedPilotArtifactClosure(input: IntegratedPilotArtifactClosureInput): Result<ClosureValue> {
+  return verifyArtifactClosure(input, INTEGRATED_PILOT_BUNDLE_LIMITS.depth)
+}
+/** Explicit local transport only; neither a caller depth nor an automatic fallback exists. */
+export function verifyLocalIntegratedPilotArtifactClosure(input: Readonly<{
+  profile: typeof LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE; closure: IntegratedPilotArtifactClosureInput
+}>): Result<ClosureValue & Readonly<{ profile: typeof LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }>> {
+  if (!ownRecord(input, ['profile', 'closure']) || input.profile !== LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE) return fail('unsupported_version')
+  const result = verifyArtifactClosure(input.closure, 16)
+  return result.ok ? success({ ...result.value, profile: LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }) : result
 }
 
 function semanticBundle(
@@ -501,6 +535,75 @@ function semanticBundle(
     if (!a || a.artifactType !== kind) return null
     const parsed = readHistoricalArtifact(kind, a.value)
     return parsed.ok ? parsed.value.value : null
+  }
+  // Audit every historical origin in the closure, including versions that were
+  // not selected. Reachability and matching hashes do not establish these joins.
+  for (const artifact of artifacts) {
+    if (artifact.artifactType === 'original_observation') {
+      const observed = (artifact.value as IntegratedPilotManifest<'original_observation'>).content
+      const bound = readContentIdentityBinding(observed.binding)
+      const snapshot = content(observed.catalogSnapshot, 'catalog_snapshot'), registry = snapshot && historicalRegistry(snapshot.registry)
+      const representation = registry && contentRepresentationFromRegistry(registry, observed.canonicalFinalUrl)
+      const qualification = custody(observed.qualification, 'GlobalRepresentationQualificationV1')
+      const profile = content(observed.identityProfile, 'identity_profile')
+      if (!bound.ok || !registry || !representation?.ok || !qualification || !profile
+        || !historicalValuesEqual(contentIdentityBinding(representation.value), bound.value)
+        || !representation.value.requestUrls.includes(observed.requestUrl) || representation.value.expectedMediaType !== observed.contentType
+        || !historicalValuesEqual(qualification.binding, bound.value)
+        || !pinsEqual(qualification.identityProfileDefinition, observed.identityProfile)
+        || profile.identityProfileId !== bound.value.identityProfileId || profile.identityProfileVersion !== bound.value.identityProfileVersion
+        || !snapshot!.profiles.some(entry => entry.identityProfileId === bound.value.identityProfileId
+          && entry.identityProfileVersion === bound.value.identityProfileVersion && pinsEqual(entry.definition, observed.identityProfile))
+        || !semantic(observed.transportContract, 'transport') || !semantic(observed.hashContract, 'source_hash')
+        || !semantic(qualification.qualificationContract, 'representation_qualification')) return false
+      const item = content(qualification.itemDefinition, 'content_item_definition'), rep = content(qualification.representationDefinition, 'representation_definition')
+      if (!item || !rep || !historicalValuesEqual(rep.descriptor, representation.value)
+        || !historicalValuesEqual(item.descriptor, registry.contentIdentity!.items.find(x => x.sourceId === bound.value.sourceId
+          && x.contentItemId === bound.value.contentItemId && x.contentItemVersion === bound.value.contentItemVersion))) return false
+    }
+    if (artifact.artifactType === 'GlobalCellAdmissionV1') {
+      const admission = custody(artifact.pin, 'GlobalCellAdmissionV1')!, cell = readGlobalCellDefinition(get(admission.cell)?.value)
+      if (!cell.ok || !semantic(admission.scopeContract, 'scope') || !semantic(admission.corpusAdmissionContract, 'corpus_admission')
+        || admission.evaluationDatePlan !== null && !semantic(admission.evaluationDatePlan, 'evaluation_date_plan')) return false
+      for (const [dimension, category] of Object.entries(cell.value.scope)) {
+        const basis = admission.dimensionBasis[dimension as keyof typeof admission.dimensionBasis]
+        if (!historicalValuesEqual(basis.category, category) || !semantic(basis.basis, 'category_basis')) return false
+      }
+    }
+    if (artifact.artifactType === 'accepted_origin') {
+      const accepted = (artifact.value as IntegratedPilotManifest<'accepted_origin'>).content
+      const observed = content(accepted.observation, 'original_observation'), valid = content(accepted.validityOrigin, 'validity_origin')
+      const identityValue = accepted.evidenceIdentity as Record<string, unknown>
+      const acceptedCell = readGlobalCellDefinition(get(accepted.cell)?.value)
+      const acceptedAdmission = custody(accepted.globalAdmission, 'GlobalCellAdmissionV1')
+      const bound = readContentIdentityBinding(observed?.binding)
+      if (!observed || !valid || !bound.ok || !acceptedCell.ok || !acceptedAdmission
+        || !pinsEqual(acceptedAdmission.cell, accepted.cell) || !pinsEqual(valid.observation, accepted.observation)
+        || !historicalValuesEqual(valid.evidenceScope, accepted.evidenceScope)
+        || !historicalValuesEqual(accepted.evidenceScope, { ...acceptedCell.value.scope, sourceId: bound.value.sourceId })
+        || valid.validFrom !== identityValue.validFrom || valid.validUntil !== identityValue.validUntil
+        || !semantic(accepted.acceptanceContract, 'evidence_acceptance') || !semantic(valid.derivationContract, 'validity_derivation')) return false
+      const lookup = evidenceSuchschluessel(accepted.evidenceScope, { sourceId: bound.value.sourceId,
+        contentItemId: bound.value.contentItemId, representationId: bound.value.representationId })
+      if (!lookup.ok || !historicalValuesEqual(identityValue, { ...bound.value, identitySchema: 2, lookupKey: lookup.key,
+        canonicalUrl: observed.canonicalFinalUrl, contentType: observed.contentType, sourceContentHash: observed.sourceContentHash,
+        retrievedAt: observed.completedAt, validFrom: valid.validFrom, validUntil: valid.validUntil, versionId: identityValue.versionId })) return false
+    }
+    if (artifact.artifactType === 'AcceptedEvidenceCustodyV1') {
+      const c = custody(artifact.pin, 'AcceptedEvidenceCustodyV1')!
+      const accepted = content(c.acceptedOrigin, 'accepted_origin'), observed = content(c.observation, 'original_observation')
+      const admission = custody(c.globalAdmission, 'GlobalCellAdmissionV1')
+      if (!accepted || !observed || !admission || !pinsEqual(c.cell, accepted.cell) || !pinsEqual(c.cell, admission.cell)
+        || !pinsEqual(c.globalAdmission, accepted.globalAdmission) || !pinsEqual(c.scopeContract, admission.scopeContract)
+        || !pinsEqual(c.observation, accepted.observation) || !pinsEqual(c.validityOrigin, accepted.validityOrigin)
+        || !historicalValuesEqual(c.evidenceIdentity, accepted.evidenceIdentity) || !historicalValuesEqual(c.evidenceScope, accepted.evidenceScope)
+        || !pinsEqual(c.hashContract, observed.hashContract) || !semantic(c.identityContract, 'content_identity')
+        || !semantic(c.hashContract, 'source_hash')) return false
+    }
+    if (artifact.artifactType === 'eligible_version_snapshot') {
+      const snapshot = (artifact.value as IntegratedPilotManifest<'eligible_version_snapshot'>).content
+      if (!snapshot.entries.every(entry => custody(entry.custody, 'AcceptedEvidenceCustodyV1')?.evidenceIdentity.versionId === entry.versionId)) return false
+    }
   }
   const k = readHistoricalArtifact('CustodyDependencyBindingV1', bindingValue)
   if (!k.ok || k.value.value.receiptFingerprint !== receipt.recordFingerprint) return false
@@ -547,6 +650,28 @@ function semanticBundle(
     || ed.schemaFamily !== p.extractor.schemaFamily || ed.sourceFamilyId !== p.extractor.sourceFamilyId
     || ed.factKind !== p.candidate.factKind || ed.policyId !== (p.policy?.policyId ?? null)
     || ed.policyVersion !== (p.policy?.policyVersion ?? null)) return false
+  // Validate the complete historical registries together. A selected entry alone
+  // does not rule out a second current match or a policy/descriptor mismatch.
+  const extractorDefinitions = extractorRegistry.definitions.map(entry => {
+    const definition = content(entry.definition, 'extractor_definition')
+    return definition ? { ...definition.descriptor, current: entry.current,
+      match: () => false, extract: () => ({ ok: false as const, reason: 'fact_incomplete' as const }) } : null
+  })
+  const policyRegistry = p.policy === null ? null : content(p.policy.registrySnapshot, 'policy_registry')
+  const policyDefinitions = policyRegistry?.definitions.map(entry => {
+    const definition = content(entry.definition, 'policy_definition')
+    return definition ? { ...definition.descriptor, current: entry.current } : null
+  }) ?? []
+  if (!(p.policy === null ? officialTruthExtractorDefinitionenPruefen(extractorDefinitions)
+    : officialTruthCompositionRegistriesPruefen(policyDefinitions, extractorDefinitions)).ok) return false
+  for (const artifact of artifacts) {
+    if (artifact.artifactType !== 'catalog_snapshot') continue
+    const snapshot = (artifact.value as IntegratedPilotManifest<'catalog_snapshot'>).content
+    if (!snapshot.profiles.every(entry => {
+      const profile = content(entry.definition, 'identity_profile')
+      return profile?.identityProfileId === entry.identityProfileId && profile.identityProfileVersion === entry.identityProfileVersion
+    })) return false
+  }
   const selectedDefs = extractorRegistry.definitions.filter(d => d.current && pinsEqual(d.definition, p.extractor.definition))
   if (selectedDefs.length !== 1) return false
   const pairs: string[] = [], compactSupports: unknown[] = []
@@ -556,7 +681,8 @@ function semanticBundle(
     if (!c || !b.ok || !pinsEqual(c.cell, p.globalCell.definition) || !pinsEqual(c.globalAdmission, kv.globalAdmission)
       || !pinsEqual(c.scopeContract, admission.scopeContract) || !semantic(c.identityContract, 'content_identity')
       || !semantic(c.hashContract, 'source_hash')) return false
-    const lookup = evidenceSuchschluessel({ ...cell.value.scope, sourceId: b.value.sourceId }, b.value)
+    const lookup = evidenceSuchschluessel({ ...cell.value.scope, sourceId: b.value.sourceId }, { sourceId: b.value.sourceId,
+      contentItemId: b.value.contentItemId, representationId: b.value.representationId })
     if (!lookup.ok) return false
     const identityValue = { ...b.value, identitySchema: 2, lookupKey: lookup.key, canonicalUrl: s.canonicalFinalUrl,
       contentType: s.contentType, sourceContentHash: s.sourceContentHash, retrievedAt: s.acceptedRetrievedAt,
@@ -589,6 +715,8 @@ function semanticBundle(
       || !historicalValuesEqual(contentIdentityBinding(originalRep.value), b.value) || !qualification || !profile
       || !historicalValuesEqual(qualification.binding, b.value) || !pinsEqual(qualification.identityProfileDefinition, observed.identityProfile)
       || profile.identityProfileId !== b.value.identityProfileId || profile.identityProfileVersion !== b.value.identityProfileVersion
+      || !originalCatalog!.profiles.some(entry => entry.identityProfileId === b.value.identityProfileId
+        && entry.identityProfileVersion === b.value.identityProfileVersion && pinsEqual(entry.definition, observed.identityProfile))
       || !semantic(qualification.qualificationContract, 'representation_qualification')) return false
     const item = content(qualification.itemDefinition, 'content_item_definition')
     const rep = content(qualification.representationDefinition, 'representation_definition')
@@ -654,7 +782,7 @@ function semanticBundle(
 }
 
 /** Complete historical audit. Even success cannot mint custody, trigger HTTP, or accept Evidence/Rules. */
-export function verifyIntegratedPilotBundle(input: IntegratedPilotBundleInput): Result<IntegratedPilotVerifiedBundle> {
+function verifyBundle(input: IntegratedPilotBundleInput, maximumDepth: 8 | 16): Result<IntegratedPilotVerifiedBundle> {
   try {
     if (!ownRecord(input, ['recordFingerprint', 'receiptBytes', 'custodyBindingBytes', 'artifacts'])) return fail('receipt_corrupt')
     const payload = decodeProvenanceBytes(input.receiptBytes, INTEGRATED_PILOT_BUNDLE_LIMITS.receiptBytes)
@@ -669,10 +797,24 @@ export function verifyIntegratedPilotBundle(input: IntegratedPilotBundleInput): 
     const bindingRoots = sortDependencies([dep('globalAdmission', v.globalAdmission, 'GlobalCellAdmissionV1'),
       dep('selectedSupportManifest', v.selectedSupportManifest, 'SelectedSupportManifestV1'),
       dep('autonomousReviewConstruction', v.autonomousReviewConstruction, 'AutonomousReviewConstructionV1')])
-    const closure = verifyIntegratedPilotArtifactClosure({ artifacts: input.artifacts, receiptRoots, bindingRoots, bindingByteLength: input.custodyBindingBytes.length })
+    const closure = verifyArtifactClosure({ artifacts: input.artifacts, receiptRoots, bindingRoots, bindingByteLength: input.custodyBindingBytes.length }, maximumDepth)
     if (!closure.ok) return closure
     if (!semanticBundle(receipt.value, k.value, closure.value.artifacts)) return fail('semantic_mismatch')
     return success({ receipt: receipt.value, receiptBytes: input.receiptBytes.slice(), custodyBindingBytes: input.custodyBindingBytes.slice(),
       bindingDigest: sha256Hex(text(input.custodyBindingBytes)), receiptRoots, bindingRoots, ...closure.value })
   } catch { return fail('dependency_corrupt') }
+}
+
+/** Legacy receipt/storage v1 remains depth 8; it never upgrades after refusal. */
+export function verifyIntegratedPilotBundle(input: IntegratedPilotBundleInput): Result<IntegratedPilotVerifiedBundle> {
+  return verifyBundle(input, INTEGRATED_PILOT_BUNDLE_LIMITS.depth)
+}
+
+/** R1 local envelope. Receipt schema, C/H, artifact bytes and K remain unchanged. */
+export function verifyLocalIntegratedPilotBundle(input: LocalIntegratedPilotEnvelope): Result<
+  IntegratedPilotVerifiedBundle & Readonly<{ profile: typeof LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }>
+> {
+  if (!ownRecord(input, ['profile', 'bundle']) || input.profile !== LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE) return fail('unsupported_version')
+  const result = verifyBundle(input.bundle, 16)
+  return result.ok ? success({ ...result.value, profile: LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }) : result
 }
