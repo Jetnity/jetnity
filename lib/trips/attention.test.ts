@@ -13,7 +13,8 @@ import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { leereSeasonalEvidence } from '@/lib/seasonal/evidence'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
-import { itineraryEinTransit } from '@/lib/route/fixtures'
+import { itineraryDirekt, itineraryEinTransit, TEST_FLUGHAFEN_REFS } from '@/lib/route/fixtures'
+import { flughafenPunkt } from '@/lib/route/referenz'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import { attentionGruppieren } from '@/lib/trips/attention-presentation'
 import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType, type Trip, type TripItem, type TripTraveller } from '@/types/trips'
@@ -1148,5 +1149,56 @@ describe('Official Attention trägt ausschließlich explizite Preparation-Naviga
     for (const bereich of ['fluege', 'unterkunft'] as const) {
       assert.deepEqual(attention.punkte.find((punkt) => punkt.signal === `coverage.${bereich}`)?.aktion, { art: 'bereich', bereich })
     }
+  })
+})
+
+
+describe('Flight coverage proof guard — Attention', () => {
+  function reiseMitFluegen(falsch: boolean, mitFacts = true): Trip {
+    const basis = reiseOhneLuecken()
+    const segment = itineraryDirekt().legs[0]!.segments[0]!
+    return reise({
+      ...basis, origin: 'Zürich', originPlaceId: falsch ? 'geonames:2657896' : 'airport:ZRH',
+      stages: [{ ...basis.stages[0]!, name: falsch ? 'Florenz' : 'Bangkok', countryCode: falsch ? 'IT' : 'TH',
+        arrivalDate: '2026-11-01', departureDate: '2026-11-05' }],
+      ohneTag: ['2026-11-01', '2026-11-05'].map((datum, index) => punkt({
+        id: `flug-${index}`, kind: 'flight', title: index === 0 ? 'Hinflug' : 'Rückflug',
+        dayId: null, startsOn: datum, bookingStatus: 'booked', bookingSource: 'user',
+        routeItinerary: {
+          ...itineraryDirekt(), legs: [{ segments: [{ ...segment,
+            origin: falsch ? flughafenPunkt('NRT', mitFacts ? TEST_FLUGHAFEN_REFS : {}) : index === 0 ? segment.origin : segment.destination,
+            destination: falsch ? flughafenPunkt('LAX', mitFacts ? TEST_FLUGHAFEN_REFS : {}) : index === 0 ? segment.destination : segment.origin,
+            departureDate: datum, arrivalDate: datum,
+          }] }],
+        },
+      })),
+    })
+  }
+
+  for (const mitFacts of [false, true]) {
+    test(`zwei falsche gebuchte Flüge lassen Flight Attention bestehen: Facts ${mitFacts}`, () => {
+      const aktuell = reiseMitFluegen(true, mitFacts)
+      const sicht = attentionAbleiten({ reise: aktuell })
+      const flugAttention = sicht.punkte.filter((eintrag) => eintrag.signal === 'coverage.fluege')
+      assert.equal(flugAttention.length, 1)
+      assert.equal(flugAttention[0]?.lage, 'unknown')
+      assert.deepEqual(flugAttention[0]?.aktion, { art: 'bereich', bereich: 'fluege' })
+      assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+      assert.deepEqual(sicht, attentionAbleiten({ reise: aktuell, ohneTag: aktuell.ohneTag }))
+    })
+  }
+
+  test('nur vollständig bewiesene Flugabdeckung entfernt das Coverage-Signal', () => {
+    const aktuell = reiseMitFluegen(false)
+    assert.equal(attentionAbleiten({ reise: aktuell }).punkte.some((eintrag) => eintrag.signal === 'coverage.fluege'), false)
+    const ohneBeweis = structuredClone(aktuell)
+    ohneBeweis.ohneTag[0]!.routeItinerary = null
+    assert.equal(attentionAbleiten({ reise: ohneBeweis }).punkte.some((eintrag) => eintrag.signal === 'coverage.fluege'), true)
+  })
+
+  test('ein zweiter gleichdatiger Kandidat hält Flight Attention offen', () => {
+    const aktuell = reiseMitFluegen(false)
+    aktuell.ohneTag.push({ ...aktuell.ohneTag[0]!, id: 'alternative' })
+    assert.equal(attentionAbleiten({ reise: aktuell }).punkte.some((eintrag) => eintrag.signal === 'coverage.fluege'), true)
   })
 })
