@@ -2,7 +2,9 @@
 
 6 October 2026 · #876 / Draft #880 · author review, not independent acceptance.
 
-**AUTONOMOUS_PRODUCER_CUSTODY_DORMANT_RUNTIME_FOUNDATION_NOT_READY**
+**AUTONOMOUS_PRODUCER_CUSTODY_DORMANT_RUNTIME_FOUNDATION_READY**
+
+Technical evidence is pinned to `bf6df8309c7d67b8cbd2268da25a9621b46e95be`. The [TL documentation review](https://github.com/Jetnity/jetnity/pull/880#issuecomment-6021277541) accepts that technical correction in substance. This update changes only REPORT, HANDOFF and SELF_REVIEW; runtime/test/TASK blobs remain byte-identical to the verified technical head. The immutable TASK blob remains `aae53e21aa91a72a0d30985a523f06be00a90639`. Final review of the new documentation head remains with the TL.
 
 ## Contract review
 
@@ -36,16 +38,34 @@
 
 Graph-depth/node/edge union accounting is not implemented because this slice intentionally has no graph/bundle resolver. Structural decoder depth is distinct and tested. Complete receipt/result publication is not claimed merely because supporting historical values validate.
 
-## Unresolved findings
+## Findings and historical resolution
 
-**P0:** none identified. **P1:** none identified in the bounded path; independent review required.
+**P0:** none identified. **P1:** none identified in the bounded path. Independent TL security review confirmed that the provenance record is a pure historical reader, not an issuer; it grants no authority, the live root stays fail-closed, Zero-I/O is retained and v3 fingerprint semantics/golden compatibility are preserved. This self-review does not replace final TL exact-head review.
 
-**P2 F-01:** the existing exact importer guard in `lib/readiness/official-truth-content-identity.test.ts:485` rejects the new record codec module. This file is outside the immutable TASK allowlist. Changing its list would require explicit scope reconciliation; disguising the import or routing it through an unrelated existing module would hide a real architecture change. Neither was done. Broad tests remain red and classification remains NOT_READY.
+**P2 F-01 — historical importer-guard blocker, RESOLVED:** the exact importer guard first correctly rejected the new record codec module, and the writer reported the failure because `lib/readiness/official-truth-content-identity.test.ts` was outside the initial TASK allowlist. No import disguise, re-export bypass or skipped/weakened assertion was used. Independent TL review then [authorized exactly one finite-list entry](https://github.com/Jetnity/jetnity/pull/880#issuecomment-6020369650): `lib/readiness/official-truth-autonomous-provenance-record.ts`. The technical correction adds only that line; the search expression and finite exact-set assertion remain intact. Afterward the importer guard, local suites and all required remote CI/build/Auth/Vercel gates passed. The original blocked classification was correct for the pre-correction head and is superseded by the READY classification above.
 
-**P2 F-02:** local Production build cannot bind required IPC/worker ports, even after the sandbox escalation attempt. PostgreSQL checks could not start their missing Linux `initdb`; no database was contacted. Those checks are not claimed as passed.
+**P2 F-02 — historical build-gate blocker, RESOLVED remotely:** the local environment could not reliably execute the Production build because IPC/worker port binding failed, even after escalation. No artificial workaround or local build success is claimed. The authoritative GitHub Production Build is now SUCCESS and Vercel Preview is READY for the verified technical head. Local PostgreSQL suites remain unavailable/excluded: earlier checks failed before startup because Linux `initdb` was missing, and no DB was installed or contacted to repair the environment. These suites are not claimed as locally passed. Remote full-suite success is separate evidence.
 
 **P3:** no real origin/qualification release or full receipt closure exists. This is a permanent fail-closed prerequisite for this delivery, not authority to start a follow-up.
 
+## Verification and zero effects
+
+- Foundation **56/56 PASS**; v3 fingerprint/golden/differential **13/13 PASS**; focused Official Truth/importer/mode **272/272 PASS**.
+- Broad local non-PostgreSQL suite **5,411/5,411 PASS**, with PostgreSQL suites explicitly excluded. Historical pre-correction result: 5,410/5,411, solely the now-resolved importer guard.
+- Typecheck, lint (zero errors, 145 existing warnings), six hygiene/mode checks and `git diff --check`: PASS.
+- [GitHub CI 37497332446](https://github.com/Jetnity/jetnity/actions/runs/37497332446): SUCCESS. [Job 112385130370](https://github.com/Jetnity/jetnity/actions/runs/37497332446/job/112385130370): Typecheck/Lint/Tests/Hygiene/Production Build SUCCESS; full CI tests **5,492/5,492 PASS**. [Auth job 112385130837](https://github.com/Jetnity/jetnity/actions/runs/37497332446/job/112385130837): SUCCESS, comparison not skipped.
+- [Vercel Preview dpl_GXdpnrd9SfLcAFMHCctLyDwtpWCc](https://vercel.com/jetnity-e1b93c82/jetnity-app/GXdpnrd9SfLcAFMHCctLyDwtpWCc): READY, exact technical SHA; TL independently confirmed `aliasError=null`.
+
+These executions belong to the technical head named above. The documentation-only successor preserves those runtime/test blobs and is checked for document/scope/TASK hygiene; no new-head test execution is implied.
+
+The instrumented foundation and AST import/call guards continue to prove: HTTP = 0; DB/Supabase = 0; Evidence Acceptance = 0; Rule Acceptance = 0; Store Writes = 0; Provider = 0; Model = 0; Source/Content/Profile Registration = 0 each; Extractor/Policy Activation = 0 each.
+
+No live autonomous producer, live authority, automatic Evidence acceptance, active persistence or Production Official Truth activation is claimed. F8 remains unopened/incomplete. The live root stays fixed `blocked/custody_missing`; historical bytes cannot mint authority.
+
 See the [Report](OFFICIAL_TRUTH_AUTONOMOUS_PRODUCER_CUSTODY_DORMANT_RUNTIME_1_REPORT_2026-10-06.md) for commands, counts, zero-effect counters and complete changed paths.
+
+Codex Desktop; session `01a111ce-44d7-72d1-a378-d5e21ca22244`; recorded model `gpt-6-astra`, reasoning `xhigh`; same writer, no subagents.
+
+**Keep Draft. Do not mark Ready for review. Do not merge. No same-request follow-up.**
 
 **STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD EXACT-HEAD REVIEW.**
