@@ -1,0 +1,294 @@
+{
+  "classification": "TRIP_TIMELINE_CORE_1_READY",
+  "sourceSha256": {
+    "components/trips/TripWorkspacePlan.tsx": "55d290639714777edb9d2b4d049282e5386300133ef9c63985457b3d72b0f6a1",
+    "lib/trips/timeline.ts": "dc86dacd2036c1887483f3e557e58207b48a2d2f43659a360731ecb325f8d2fd",
+    "lib/trips/trip-timeline-core-1.ts": "aa9376486d4f9657deda0fc354185f94ee627f1ee636c2e19a456a4cf0606579",
+    "lib/trips/trip-timeline-core-1.test.ts": "8b23add23ce81d7f9c0bfb6ddc60b5798ffbc5fb02a0b610b54817aab9fd0885",
+    "scripts/trip-timeline-core-1-audit.mjs": "e1d801e5cbc909236a89b627e95157f060218104b39790a72debccb27c8b09f4"
+  },
+  "main": "fc2734ca60ae3c578fbcd414055fe983773d74d2",
+  "taskBlob": "2f7dcd635d3e78bc85c4c62be9dae4ff4b0c1567",
+  "checks": {
+    "npm-ci": {
+      "logSha256": "4075474139f32169bc0e9fb073a7a91c5966aac29e2d11b291cba0a6b9596c5c",
+      "tail": [
+        "  npm audit fix",
+        "",
+        "To address all issues possible (including breaking changes), run:",
+        "  npm audit fix --force",
+        "",
+        "Some issues need review, and may require choosing",
+        "a different dependency.",
+        "",
+        "Run `npm audit` for details.",
+        "npm notice",
+        "npm notice New major version of npm available! 10.9.9 -> 12.2.0",
+        "npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0",
+        "npm notice To update run: npm install -g npm@12.2.0",
+        "npm notice"
+      ]
+    },
+    "focused-core": {
+      "logSha256": "d5581be2c3c625af6faa38e1b7f526ceb7e0f91123eb228bbd15cbc31a093313",
+      "tail": [
+        "ok 17 - echter Render: leer, nur flexibel, nur zeitlich bekannt und ungeplant bleiben getrennt",
+        "  ---",
+        "  duration_ms: 4.395375",
+        "  type: 'test'",
+        "  ...",
+        "1..17",
+        "# tests 27",
+        "# suites 1",
+        "# pass 27",
+        "# fail 0",
+        "# cancelled 0",
+        "# skipped 0",
+        "# todo 0",
+        "# duration_ms 448.880208"
+      ]
+    },
+    "focused-workspace-final": {
+      "logSha256": "9ccfa568c5df4a44ecca505be5a3572b79ec8c91add724d55eea4dd4637a9261",
+      "tail": [
+        "ok 203 - Tage ohne stageId erhalten eine Etappe",
+        "  ---",
+        "  duration_ms: 1.77975",
+        "  type: 'suite'",
+        "  ...",
+        "1..203",
+        "# tests 886",
+        "# suites 154",
+        "# pass 886",
+        "# fail 0",
+        "# cancelled 0",
+        "# skipped 0",
+        "# todo 0",
+        "# duration_ms 2960.720167"
+      ]
+    },
+    "tests-full-final": {
+      "logSha256": "4f6da0b0fb74a057563f819ada8b5514a09207706967ff8d7872ce80d8d4e996",
+      "tail": [
+        "ok 952 - operating-mode guard fixtures",
+        "  ---",
+        "  duration_ms: 3.140625",
+        "  type: 'suite'",
+        "  ...",
+        "1..952",
+        "# tests 5490",
+        "# suites 810",
+        "# pass 5486",
+        "# fail 4",
+        "# cancelled 0",
+        "# skipped 0",
+        "# todo 0",
+        "# duration_ms 17156.116166"
+      ]
+    },
+    "baseline-pg": {
+      "logSha256": "2873f753021d0a14a932d80f32086ed807ab8de7c7208da3b7d082f7a05d0e4a",
+      "tail": [
+        "ok 12 - Schema 2: unconditional refusal before every store side effect",
+        "  ---",
+        "  duration_ms: 0.45475",
+        "  type: 'suite'",
+        "  ...",
+        "1..12",
+        "# tests 131",
+        "# suites 8",
+        "# pass 127",
+        "# fail 4",
+        "# cancelled 0",
+        "# skipped 0",
+        "# todo 0",
+        "# duration_ms 850.177292"
+      ]
+    },
+    "typecheck-final": {
+      "logSha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 typecheck",
+        "> next typegen && tsc -p tsconfig.json --noEmit",
+        "",
+        "Generating route types...",
+        "✓ Types generated successfully"
+      ]
+    },
+    "lint": {
+      "logSha256": "1211d75dc4b4aab074d13c78376ca9f95b8e09b815bdadc472fd4a2591ce28fb",
+      "tail": [
+        "",
+        "/Users/sasa/Documents/Codex/2026-10-06/du-arbeitest-als-implementierungs-agent-f-3/work/jetnity/scripts/e2e/admin-account-counts-browser-flows-1/test.mjs",
+        "   85:3   warning  'assertSanitized' is defined but never used  @typescript-eslint/no-unused-vars",
+        "  159:11  warning  'index' is defined but never used            @typescript-eslint/no-unused-vars",
+        "",
+        "/Users/sasa/Documents/Codex/2026-10-06/du-arbeitest-als-implementierungs-agent-f-3/work/jetnity/scripts/e2e/admin-account-counts-local-runtime-1/test.mjs",
+        "  87:56  warning  'assertOverlayKeepsAuthSemantics' is defined but never used  @typescript-eslint/no-unused-vars",
+        "",
+        "/Users/sasa/Documents/Codex/2026-10-06/du-arbeitest-als-implementierungs-agent-f-3/work/jetnity/scripts/v1-workspace-status-language-1-audit.mjs",
+        "  309:10  warning  'sichtbareTexte' is defined but never used  @typescript-eslint/no-unused-vars",
+        "",
+        "✖ 145 problems (0 errors, 145 warnings)",
+        "  0 errors and 1 warning potentially fixable with the `--fix` option.",
+        ""
+      ]
+    },
+    "lint-changed": {
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": []
+    },
+    "check-setup-ci": {
+      "logSha256": "94debad6a9339133c73ab5cd3ae333d2c5cfaeda191404e166f84e1b3ddffff7",
+      "tail": [
+        "✅ next 16.3.8",
+        "✅ @supabase/ssr ^0.6.1",
+        "",
+        "🖼️ next.config.* – Images",
+        "✅ next.config.js: images{} gefunden",
+        "✅ next.config.js: images.remotePatterns ok",
+        "",
+        "🔐 .env / .env.local – Schlüssel",
+        "⚠️  Keine .env/.local gefunden",
+        "",
+        "------------------------------------------------",
+        "⚠️  Warnings: 1",
+        "------------------------------------------------",
+        ""
+      ]
+    },
+    "check-dead": {
+      "logSha256": "b61a97459a948b967ea83d898818038a7ceaa3f4592d75b8a0123d08c02f179e",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:dead",
+        "> node scripts/erreichbarkeit.mjs",
+        "",
+        "Startpunkte:        662",
+        "erreichbare Module: 1332",
+        "verwaist:           0",
+        "",
+        "",
+        "Keine unbegruendet verwaiste Datei."
+      ]
+    },
+    "check-exports": {
+      "logSha256": "6b6aca523734e35c4325b4a0e27c9c85174f7bdb0cd21e8f5e0fc5c13cb2d664",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:exports",
+        "> node scripts/exporte.mjs",
+        "",
+        "geprueft: 1072 Dateien",
+        "Exporte ohne Aufrufer: 0",
+        "",
+        "Kein unbegruendeter Export ohne Aufrufer."
+      ]
+    },
+    "deps-final": {
+      "logSha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:deps",
+        "> node scripts/pakete.mjs",
+        "",
+        "",
+        "dependencies: 11 geprueft, 0 ohne Verwendung",
+        "",
+        "devDependencies: 2 geprueft, 0 ohne Verwendung",
+        "",
+        "nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide"
+      ]
+    },
+    "check-api-schutz": {
+      "logSha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:api-schutz",
+        "> node scripts/api-schutz.mjs",
+        "",
+        "API-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi()."
+      ]
+    },
+    "check-schema-bezug": {
+      "logSha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:schema-bezug",
+        "> node scripts/db/verwendung.mjs --pruefen",
+        "",
+        "Jede angesprochene generierte Struktur existiert – geprüft gegen 22 Tabellen/Views und 25 Funktionen in types/supabase.ts.",
+        "LOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)",
+        "LOCAL/UNAPPLIED RPC darf_official_truth_freigeben from lib/readiness/official-truth-fact-entry-authority-server.ts → supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql (not in generated schema)",
+        "LOCAL/UNAPPLIED RPC official_truth_source_catalog_v2 from lib/readiness/official-truth-source-catalog-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)",
+        "LOCAL/UNAPPLIED RPC official_truth_store_accepted_v2 from lib/readiness/official-truth-store-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)"
+      ]
+    },
+    "mode-final": {
+      "logSha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "tail": [
+        "",
+        "> jetnity@1.0.0 check:operating-mode",
+        "> node scripts/operating-mode-guard.mjs",
+        "",
+        "operating-mode guard: PASS"
+      ]
+    },
+    "build-final": {
+      "logSha256": "31975e2bd8424c46393dd1bc6de56492d5ba617124d1208dad395f14093409e0",
+      "tail": [
+        "├ ƒ /ui-audit/account-travellers",
+        "├ ƒ /ui-audit/activities",
+        "├ ƒ /ui-audit/admin-provider-ops",
+        "├ ƒ /ui-audit/admin-system-health",
+        "├ ƒ /ui-audit/meine-reisen",
+        "├ ƒ /ui-audit/trip-workspace",
+        "└ ƒ /unauthorized",
+        "",
+        "",
+        "ƒ Proxy (Middleware)",
+        "",
+        "○  (Static)   prerendered as static content",
+        "ƒ  (Dynamic)  server-rendered on demand",
+        ""
+      ]
+    },
+    "audit-final": {
+      "logSha256": "e2fd8afb88967f8a23431d24077e91808c91fc0aa2e849f0161c1a954463f430",
+      "tail": [
+        "{\"pass\":true,\"cases\":40,\"errors\":[],\"blocked\":[]}"
+      ]
+    },
+    "contextual-audit": {
+      "logSha256": "b6f0ee1b89528f8f96504ce6713ff2cddd0fe36dc2d102dde7efe0c33ab56119",
+      "tail": [
+        "PASS: 57 cases across 360/390/1440px"
+      ]
+    },
+    "premium-audit": {
+      "logSha256": "83cacc13c2d823c2213311c5557ab89b2d960598b46ee49eecf9c93f89649a82",
+      "tail": [
+        "{",
+        "  \"ergebnis\": \"FAIL\",",
+        "  \"fehler\": 4,",
+        "  \"schritte\": 26,",
+        "  \"sha\": \"6e5b60d4c91d100d29d71941b4e102031f98a7eb\"",
+        "}",
+        "phone360: Reihenfolge Tsukiji Outer Market|Flug nach Osaka|Freier Nachmittag",
+        "phone: Reihenfolge Tsukiji Outer Market|Flug nach Osaka|Freier Nachmittag",
+        "tablet: Reihenfolge Tsukiji Outer Market|Flug nach Osaka|Freier Nachmittag",
+        "desktop: Reihenfolge Tsukiji Outer Market|Flug nach Osaka|Freier Nachmittag"
+      ]
+    }
+  },
+  "coverageGaps": [
+    "Four unchanged Linux PostgreSQL tests fail locally; same failures on main.",
+    "Premium legacy browser audit has four obsolete chronology expectations, all other assertions pass.",
+    "Synthetic Guest/Account display, not authenticated persistence E2E.",
+    "No physical device, Safari/WebKit or screen-reader run."
+  ],
+  "session": "01a1124b-f76e-7103-9688-40167b5529b2",
+  "model": "gpt-6-astra",
+  "reasoning": "xhigh"
+}

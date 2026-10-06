@@ -27,6 +27,7 @@ import {
 } from '@/lib/trips/trip-plan-premium-experience-4'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { ersterTagDerEtappe, timelineAbleiten } from '@/lib/trips/timeline'
+import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
 import { cn } from '@/lib/utils'
 import { TRIP_ITEM_KINDS, type Trip, type TripDay, type TripItem, type TripItemKind } from '@/types/trips'
 
@@ -345,18 +346,34 @@ export default function TripWorkspacePlan({
           Noch nichts an diesem Tag.
         </p>
       ) : (
-        <ol data-plan-timeline className="mt-3 space-y-1 border-l border-line-200 pl-3">
-          {tag.items.map((punkt) => (
-            <Planpunkt
-              key={punkt.id}
-              punkt={punkt}
-              gesperrt={laeuft}
-              gewaehlt={gewaehlterPunktId === punkt.id}
-              onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-              onEntfernen={() => entfernen(tag.id, punkt.id)}
-            />
+        <div data-plan-tages-timeline className="mt-5 min-w-0 space-y-5">
+          {timeline.tagesplan.map((gruppe) => (
+            <section
+              key={gruppe.id}
+              aria-label={gruppe.titel}
+              data-plan-gruppe={gruppe.id}
+              className={cn('min-w-0', gruppe.id === 'flexibel' && 'border-t border-dashed border-line-300 pt-4')}
+            >
+              <h4 className="text-sm font-semibold text-brand-800">{gruppe.titel}</h4>
+              {gruppe.id === 'flexibel' && (
+                <p className="mt-1 text-xs leading-5 text-ink-800">Für diese Punkte ist keine gültige Uhrzeit hinterlegt.</p>
+              )}
+              <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
+                {gruppe.punkte.map(({ punkt, zeit }) => (
+                  <Planpunkt
+                    key={punkt.id}
+                    punkt={punkt}
+                    zeit={zeit}
+                    gesperrt={laeuft}
+                    gewaehlt={gewaehlterPunktId === punkt.id}
+                    onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
+                    onEntfernen={() => entfernen(tag.id, punkt.id)}
+                  />
+                ))}
+              </ol>
+            </section>
           ))}
-        </ol>
+        </div>
       )}
     </>
   )
@@ -523,11 +540,12 @@ export default function TripWorkspacePlan({
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
             Noch nicht eingeplant
           </p>
-          <ol data-plan-timeline className="mt-3 space-y-1 border-l border-line-200 pl-3">
+          <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
             {timeline.ungeplante.map((punkt) => (
               <Planpunkt
                 key={punkt.id}
                 punkt={punkt}
+                zeit={lokalePlanzeit(punkt.startsAt)}
                 gesperrt={laeuft}
                 gewaehlt={gewaehlterPunktId === punkt.id}
                 onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
@@ -580,12 +598,14 @@ function TagWahl({
 
 function Planpunkt({
   punkt,
+  zeit,
   gesperrt,
   gewaehlt,
   onOeffnen,
   onEntfernen,
 }: {
   punkt: TripItem
+  zeit: string | null
   gesperrt: boolean
   gewaehlt?: boolean
   onOeffnen?: () => void
@@ -596,21 +616,23 @@ function Planpunkt({
     <>
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          {punkt.startsAt ? (
-            <time dateTime={punkt.startsAt} data-plan-zeit className="text-sm font-semibold tabular-nums text-brand-800">
-              {punkt.startsAt}
+          {zeit !== null ? (
+            <time dateTime={zeit} data-plan-zeit className="text-base font-semibold tabular-nums text-brand-800">
+              {zeit}
             </time>
-          ) : null}
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-700">
+          ) : (
+            <span data-plan-flexibel className="text-sm font-medium text-ink-800">Flexibel</span>
+          )}
+          <span className="inline-flex min-w-0 items-center gap-1.5 text-xs font-medium text-ink-800">
             <Symbol className="h-3.5 w-3.5 shrink-0 text-brand-600" aria-hidden="true" />
             {ART_BEZEICHNUNG[punkt.kind]}
           </span>
         </span>
-        <strong className="mt-0.5 block hyphens-auto break-words text-sm font-semibold text-brand-800">
+        <strong className="mt-1 block hyphens-auto break-words text-base font-semibold leading-snug text-brand-800">
           {punkt.title}
         </strong>
         {punkt.note && (
-          <span className="mt-1 block hyphens-auto break-words text-xs leading-5 text-ink-700">
+          <span className="mt-1 block hyphens-auto break-words text-sm leading-6 text-ink-800">
             {punkt.note}
           </span>
         )}
@@ -625,15 +647,18 @@ function Planpunkt({
   )
 
   return (
-    <li className="relative py-1">
+    <li data-plan-punkt={punkt.id} data-plan-gewaehlt={gewaehlt ? 'ja' : 'nein'} className="relative min-w-0 py-1">
       <span
         aria-hidden="true"
-        className="absolute -left-[1.05rem] top-4 h-2.5 w-2.5 rounded-full bg-brand-600 ring-2 ring-surface-50"
+        className={cn(
+          'absolute -left-[1.05rem] top-6 h-2.5 w-2.5 rounded-full border-2 border-brand-600 ring-4 ring-surface-50 sm:-left-[1.3rem]',
+          zeit === null ? 'bg-surface-50' : 'bg-brand-600',
+        )}
       />
       <div
         className={cn(
-          'flex items-start gap-1 rounded-xl border px-2 py-1',
-          gewaehlt ? 'border-brand-600/30 bg-white' : 'border-transparent',
+          'flex min-w-0 flex-wrap items-start gap-1 rounded-2xl border bg-white px-2 py-2 sm:px-3',
+          gewaehlt ? 'border-brand-600 ring-2 ring-brand-600/15' : 'border-line-200',
         )}
       >
         {onOeffnen ? (
@@ -642,14 +667,14 @@ function Planpunkt({
             aria-expanded={gewaehlt || false}
             onClick={onOeffnen}
             className={cn(
-              'flex min-h-11 min-w-0 flex-1 items-start rounded-xl py-1 text-left',
+              'flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start rounded-xl py-1 text-left',
               fokusRing,
             )}
           >
             {inhalt}
           </button>
         ) : (
-          <div className="flex min-h-11 min-w-0 flex-1 items-start py-1">{inhalt}</div>
+          <div className="flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start py-1">{inhalt}</div>
         )}
         <button
           type="button"
@@ -657,7 +682,7 @@ function Planpunkt({
           disabled={gesperrt}
           aria-label={`${punkt.title} entfernen`}
           className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
+            'ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
             fokusRing,
           )}
         >
