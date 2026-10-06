@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "issue": 899,
+  "pr": 900,
+  "branch": "feat/official-truth-integrated-development-pilot-1",
+  "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
+  "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
+  "phases": {
+    "A": "in_progress",
+    "B": "in_progress",
+    "C": "in_progress",
+    "D": "in_progress",
+    "E": "not_started",
+    "F": "not_started"
+  },
+  "checks": {
+    "npmCi": "passed_offline_ignore_scripts"
+  },
+  "realOfficialSourcePilot": "NOT_RUN",
+  "next": "Complete exact codec/issuer contracts, integrate controlled original lifecycle and private execution capture.",
+  "activation": {
+    "F8": false,
+    "hostedApply": false,
+    "requirementsProvider": false
+  },
+  "agents": {
+    "execution_context": "existing execution modules plus new tests",
+    "contract_audit": "new bundle codec/verifier/tests",
+    "storage_proof": "dedicated disposable local SQL scripts/test"
+  }
+}
