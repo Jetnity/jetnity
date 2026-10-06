@@ -7,6 +7,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { itineraryDirekt } from '@/lib/route/fixtures'
 import { modusAusQuery, modusFuerReise, modusUrl, detailElternModus } from '@/lib/trips/workspace-mode'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import { gewaehlterTagId } from '@/lib/trips/arbeitsbereich'
@@ -122,6 +123,8 @@ function reise(teil: Partial<Trip> = {}): Trip {
 }
 
 function flugReise(lage: 'offen' | 'teilweise' | 'unbestimmt'): Trip {
+  if (lage === 'offen') return reise()
+
   if (lage === 'unbestimmt') {
     return reise({
       origin: null,
@@ -131,19 +134,26 @@ function flugReise(lage: 'offen' | 'teilweise' | 'unbestimmt'): Trip {
     })
   }
 
+  const routeItinerary = itineraryDirekt()
+  const segment = routeItinerary.legs[0]!.segments[0]!
+  segment.departureDate = '2026-09-12'
+  segment.arrivalDate = '2026-09-12'
   const hin = punkt({
     id: 'flug-hin',
     kind: 'flight',
-    title: 'Zürich → Ubud',
+    title: 'Zürich → Bangkok',
     dayId: null,
     startsOn: '2026-09-12',
+    routeItinerary,
     bookingStatus: 'booked',
     bookingSource: 'user',
     bookingConfirmedAt: JETZT,
   })
 
   return reise({
-    ohneTag: lage === 'teilweise' ? [hin] : [],
+    originPlaceId: 'airport:ZRH',
+    stages: [{ ...reise().stages[0]!, name: 'Bangkok', countryCode: 'TH', placeId: 'geonames:1609350' }],
+    ohneTag: [hin],
   })
 }
 

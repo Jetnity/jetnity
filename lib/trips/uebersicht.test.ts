@@ -6,6 +6,7 @@
 
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { itineraryDirekt } from '@/lib/route/fixtures'
 
 import { reiseGruppe } from '@/lib/account/reise-lage'
 import {
@@ -254,31 +255,37 @@ describe('Coverage-Verdichtung', () => {
   })
 
   test('gebuchter Hinflug mit offenem Rückflug bleibt teilweise statt belegt', () => {
+    const routeItinerary = itineraryDirekt()
+    const segment = routeItinerary.legs[0]!.segments[0]!
+    segment.departureDate = '2026-08-30'
+    segment.arrivalDate = '2026-08-30'
     const flug = punkt({
       id: 'flug-hin',
       kind: 'flight',
-      title: 'ZRH → DPS',
+      title: 'ZRH → BKK',
       dayId: null,
       startsOn: '2026-08-30',
+      routeItinerary,
       bookingStatus: 'booked',
       bookingSource: 'user',
       bookingConfirmedAt: JETZT,
     })
     const sicht = uebersichtAbleiten(
       reise({
+        originPlaceId: 'airport:ZRH',
         startDate: '2026-08-30',
         endDate: '2026-09-13',
         stages: [
           {
             id: 'stage-1',
             position: 1,
-            name: 'Bali',
-            countryCode: 'ID',
+            name: 'Bangkok',
+            countryCode: 'TH',
             arrivalDate: '2026-08-30',
             departureDate: '2026-09-13',
             latitude: null,
             longitude: null,
-            placeId: 'geonames:1650535',
+            placeId: 'geonames:1609350',
           },
         ],
         ohneTag: [flug],
@@ -288,7 +295,7 @@ describe('Coverage-Verdichtung', () => {
     )
 
     const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
-    assert.equal(fluege?.text, 'Hinflug gebucht · Rückflug offen')
+    assert.equal(fluege?.text, 'Zürich → Bangkok · Hinflug gebucht · Rückflug offen')
     assert.equal(fluege?.lage, 'teilweise')
     assert.match(sicht.fortschrittText, /nur teilweise geplant/)
     assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
