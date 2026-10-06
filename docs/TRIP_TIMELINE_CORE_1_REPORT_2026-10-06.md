@@ -15,7 +15,7 @@ Fresh authenticated clone/fetch and live GitHub reads confirmed:
 - Immutable TASK: `docs/TRIP_TIMELINE_CORE_1_TASK_2026-10-06.md`, blob `2f7dcd635d3e78bc85c4c62be9dae4ff4b0c1567`.
 - Product Differentiation Doctrine, repository instructions, relevant vision/architecture/quality/design/continuity decisions, TripItem, timeline/navigation tests and existing UI audit code were read before implementation.
 
-Only TASK-allowlisted paths changed. #889/#890/#891 ownership stays separate. No global continuity files changed. No DB/schema/Auth/provider/API/Official Truth changes and no new dependencies or recurring costs.
+Only TASK-allowlisted paths and the single audit path expressly authorized by the Technical Lead correction below changed. #889/#890/#891 ownership stays separate. No global continuity files changed. No DB/schema/Auth/provider/API/Official Truth changes and no new dependencies or recurring costs.
 
 ## Delivered behavior
 
@@ -64,18 +64,28 @@ The final production build was served only on loopback with the existing local a
 - Real Workspace: chronological groups; malformed time absent; empty/flexible-only days; day navigation; original special-character ID in open/deep link; mismatched day deep link reconciles to its original day; selected state; Escape and focus return.
 - Real Plan mounted in a temporary React callback harness: keyboard open/delete, flexible and unplanned delete, create arguments, original graph unchanged, on all four widths at 200% text. The existing Workspace audit callbacks are no-ops, so this separate callback observation is deliberate and is not represented as persistence E2E.
 - Final audit: zero page/hydration errors and zero blocked attempted API/nonlocal calls.
-- Existing contextual-navigation audit: **57/57 PASS** at 360/390/1440 on the implementation before the final action-wrap-only CSS refinement; the final new audit repeats the affected open/deep-link/focus/keyboard paths.
-- Existing premium-plan browser audit: **26 scenarios, four obsolete order assertions fail** at line 563, all other assertions pass. It expects `Tsukiji Outer Market | Freier Nachmittag | Flug nach Osaka`. The mandated new result is `Tsukiji Outer Market | Flug nach Osaka | Freier Nachmittag`. This script is outside the allowlist and was not modified. The new audit replaces its chronology assertion with the binding contract; its other navigation/long-trip checks remained passing.
+- Existing contextual-navigation audit rerun during the same-slice correction: **57/57 PASS** at 360/390/1440 on the accepted runtime, including the final action-wrap CSS.
+- Existing premium-plan browser audit after the authorized same-slice correction: **PASS, 26 reported scenarios, zero assertion or console errors**. All four Day-16 interaction runs at 360/390/768/1440 now accept `Tsukiji Outer Market | Flug nach Osaka | Freier Nachmittag`. Only that expected string changed; the time assertion `09:00|18:40`, price truth, navigation, long-trip and every other audit byte remain unchanged. The previous four obsolete chronology failures are closed.
 - Eight full-page screenshots (four widths × default/200%) were recorded. Default phone/desktop and enlarged phone rendering were visually inspected.
 
 Evidence: `docs/evidence/trip-timeline-core-1/audit.json`, `validation.json`, and `screens/`. `headAtRun` is the task-seed checkout HEAD while the new files were in the working tree; **it is not a claim that the seed contained the implementation**. The audit records SHA-256 hashes of the actual executed implementation/audit sources. The delivery verifies those hashes against the committed files. The exact delivered commit is reported in the final external delivery receipt; a commit cannot embed its own SHA in this file.
+
+## Same-slice audit correction
+
+The [Technical Lead CHANGES REQUIRED comment](https://github.com/Jetnity/jetnity/pull/888#issuecomment-6023890620) accepts runtime head `ce746827921f4b5499394f4b9906b929e970a29f` and authorizes exactly `scripts/trip-plan-premium-experience-4-audit.mjs` in addition to updates of these existing review documents. That latest comment was read before editing.
+
+The corrected script equals the accepted-head bytes with exactly one literal replacement. No assertion was removed, weakened or skipped. Product runtime, sorting, existing tests, the new core audit and the immutable TASK remain byte-identical to the accepted head.
+
+Fresh validation on the correction working tree: premium audit PASS (26 reported scenarios plus all four Day-16 interaction runs); Timeline Core audit 40/40 at 360/390/768/1440 with 200% text; focused core/timeline/premium tests 27/27, including 10/10 core cases; all Trip tests 886/886, zero skips. Typecheck, repository lint (zero errors, 145 existing warnings), corrected-script lint (zero warnings), production build, setup, all six hygiene/mode checks and diff whitespace validation pass again. No runtime adjustment was needed.
+
+Rerun browser evidence is retained with the external correction delivery receipt. Its pre-commit HEAD is `ce746827921f4b5499394f4b9906b929e970a29f`; the corrected audit working-tree blob is `af96c55aff04e67d14d86f38fa8f9ab2ac18b14f`, and the runtime source hashes are unchanged. Previously committed evidence remains the original implementation evidence, not a claim of a new rerun. Exact correction head and live CI/Vercel status belong to the final delivery receipt.
 
 ## Coverage gaps and severity
 
 - **P0:** none found in scope.
 - **P1:** none found in scope.
 - **P2:** no known in-scope functional defect. Authenticated account persistence E2E, physical devices, Safari/WebKit and screen-reader operation were not run. Account audit means source-mode rendering, not a logged-in account.
-- **P3:** legacy premium audit retains its now-obsolete list-order expectation; local PostgreSQL proof coverage is unavailable as detailed above. Existing lint/Browserslist warnings and npm's unchanged locked-dependency audit warnings (19: 2 moderate, 17 high) remain outside this slice; no dependency-security clearance is claimed.
+- **P3:** the legacy premium-audit expectation blocker is closed; local PostgreSQL proof coverage is unavailable as detailed above. Existing lint/Browserslist warnings and npm's unchanged locked-dependency audit warnings (19: 2 moderate, 17 high) remain outside this slice; no dependency-security clearance is claimed.
 
 CI/Preview exact-head evidence is a separate post-push/Technical-Lead gate; local evidence does not replace it. Ready/Merge and production acceptance remain Technical-Lead authority.
 
@@ -108,4 +118,5 @@ The TASK entry is the original seed addition and remains byte-identical.
 - `lib/trips/timeline.ts`
 - `lib/trips/trip-timeline-core-1.test.ts`
 - `lib/trips/trip-timeline-core-1.ts`
+- `scripts/trip-plan-premium-experience-4-audit.mjs`
 - `scripts/trip-timeline-core-1-audit.mjs`

@@ -24,13 +24,13 @@ This is the writer's self-review, not independent Technical-Lead approval.
 
 - Final focused Trip suite 886/886, new core 10/10, TypeScript, production build, changed-file lint and hygiene/mode checks pass.
 - Full suite is not reported green: 5,486/5,490 pass; four unavailable Linux PostgreSQL tests reproduce on main.
-- Existing premium browser audit is not reported green: four explicitly superseded chronological expectations fail, no other assertions fail. Its file is outside the allowlist and remains unchanged.
-- New final browser audit: 40 cases, zero errors or outbound/API attempts. Existing contextual navigation: 57 passing cases before final CSS refinement; final audit repeats affected paths.
+- Existing premium browser audit was reconciled under the explicit Technical Lead same-slice authorization: only the Day-16 expected-order literal changed. Full rerun PASS, 26 reported scenarios, all four formerly red chronological assertions green, zero assertion/console errors. Time assertion `09:00|18:40`, price truth, navigation, long-trip and every other script byte are unchanged. Runtime and TASK are byte-identical to accepted head `ce746827921f4b5499394f4b9906b929e970a29f`.
+- Same-slice browser reruns: new core audit 40/40, zero errors or outbound/API attempts; existing contextual navigation 57/57 on the accepted runtime including final CSS.
 - Evidence's task-seed HEAD is distinguished from source hashes and the final delivered HEAD. No physical-device, authenticated account persistence or Preview verification claim is made from local fixture rendering.
 
 ## Findings
 
-P0: none. P1: none. P2: no known in-scope defect; external/device coverage gaps remain explicit. P3: legacy audit expectation maintenance and host/dependency warnings described in the report. No scope expansion attempted to resolve unrelated infrastructure or audit files.
+P0: none. P1: none. P2: no known in-scope defect; external/device coverage gaps remain explicit. P3: legacy premium-audit blocker closed; host/dependency warnings described in the report remain. The explicit scope extension was limited to that one existing audit file and updates of these three review documents. No unrelated infrastructure or runtime change.
 
 Model `gpt-6-astra`, reasoning `xhigh`, session `01a1124b-f76e-7103-9688-40167b5529b2`.
 

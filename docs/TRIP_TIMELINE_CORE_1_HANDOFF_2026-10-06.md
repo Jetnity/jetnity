@@ -27,7 +27,15 @@ Day/stage selection, URL handling, detail selection, prices and booking facts ke
 4. `JETNITY_UI_AUDIT=1 npm start -- --hostname 127.0.0.1 --port 3488`
 5. `AUDIT_BASE=http://127.0.0.1:3488 node --import tsx scripts/trip-timeline-core-1-audit.mjs`
 
-The audit uses installed Chrome by default; `AUDIT_CHROME` can provide an executable path. It writes only approved evidence and temporary callback-harness files, then cleans the temporary harness. No authenticated E2E or physical-device claim. Four existing full-suite PostgreSQL tests need the Linux PostgreSQL 16 binary path; failure is reproduced on unchanged main. The old premium browser script's line-563 order assertion contradicts this TASK; all its other checks pass, and the new audit proves the replacement chronology.
+The audit uses installed Chrome by default; `AUDIT_CHROME` can provide an executable path. It writes only approved evidence and temporary callback-harness files, then cleans the temporary harness. No authenticated E2E or physical-device claim. Four existing full-suite PostgreSQL tests need the Linux PostgreSQL 16 binary path; failure is reproduced on unchanged main. The Technical Lead authorized reconciling the premium browser script's single Day-16 expected-order string in the same slice. Its full rerun now passes: 26 reported scenarios, all four Day-16 chronology assertions green, zero assertion/console errors; `09:00|18:40`, price truth, navigation, long-trip and all other bytes remain intact. Runtime and TASK are byte-identical to accepted head `ce746827921f4b5499394f4b9906b929e970a29f`. The new core audit was also rerun: 40/40, including 200% text at all four widths; focused tests 27/27 (10 core), all Trip tests 886/886.
+
+For the complete premium rerun against the local server:
+
+```sh
+AUDIT_BROWSER=1 AUDIT_BASE=http://127.0.0.1:3488 CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' AUDIT_EVIDENCE_DIR=../correction-premium-audit node scripts/trip-plan-premium-experience-4-audit.mjs
+```
+
+The external correction delivery receipt records the new exact head, fresh checks and browser evidence. The previously open legacy-audit P3 is closed. Correction scope is only the authorized audit literal and REPORT/HANDOFF/SELF_REVIEW; no new repository path.
 
 ## Review boundaries
 
