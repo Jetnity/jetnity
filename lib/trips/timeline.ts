@@ -9,6 +9,7 @@
 
 import { gewaehlterTagId, planStatus } from '@/lib/trips/arbeitsbereich'
 import { dayStageAssignmentModeLesenDb } from '@/lib/trips/day-stage-assignment'
+import { tagesTimelineAbleiten, type TagesTimelineGruppe } from '@/lib/trips/trip-timeline-core-1'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
 export type TimelineEtappe = {
@@ -26,6 +27,8 @@ export type TimelineAbleitung = {
   ungeplante: readonly TripItem[]
   gewaehlterTagId: string
   gewaehlterTag: TripDay | null
+  /** Chronologische Präsentation; gewaehlterTag.items bleibt kanonisch unverändert. */
+  tagesplan: TagesTimelineGruppe[]
   gewaehlteEtappeId: string | null
   hatTage: boolean
   planText: string
@@ -95,6 +98,7 @@ export function timelineAbleiten(
     ungeplante,
     gewaehlterTagId: gewählt,
     gewaehlterTag,
+    tagesplan: tagesTimelineAbleiten(gewaehlterTag?.items ?? []),
     gewaehlteEtappeId: gewaehlterTag?.stageId ?? null,
     hatTage: reise.days.length > 0,
     planText: planStatus(reise, ungeplante).text,
