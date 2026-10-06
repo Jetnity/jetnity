@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import TripTimelineZeitpruefung from '@/components/trips/TripTimelineZeitpruefung'
 import {
   BedDouble,
   Car,
@@ -532,6 +533,8 @@ export default function TripWorkspacePlan({
               )
             })}
           </ol>
+          {tag ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id}
+            onPunktOeffnen={onPunktOeffnen} gesperrt={laeuft} /> : null}
         </>
       )}
 

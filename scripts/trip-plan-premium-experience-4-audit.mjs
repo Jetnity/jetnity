@@ -597,7 +597,7 @@ try {
       const loeschen = lauf.page.getByRole('button', { name: 'Tsukiji Outer Market entfernen' })
       merke((await loeschen.boundingBox())?.height >= 44, `${prefix}: Entfernen unter 44px`)
       await loeschen.click()
-      merke(await lauf.page.getByText('Tsukiji Outer Market').isVisible(), `${prefix}: Löschvertrag hat den Punkt entfernt`)
+      merke(await lauf.page.locator('[data-plan-tages-timeline]').getByText('Tsukiji Outer Market', { exact: true }).isVisible(), `${prefix}: Löschvertrag hat den Punkt entfernt`)
 
       await lauf.page.locator('#plan-tag-kontext [data-plan-timeline] button').filter({ hasText: 'Tsukiji Outer Market' }).click()
       await lauf.page.waitForSelector('[data-detail-item="item-morgen"]')
