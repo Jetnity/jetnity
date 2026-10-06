@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Plane } from 'lucide-react'
+import { CircleAlert, Plane } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import FlugRoute from '@/components/trips/FlugRoute'
@@ -40,12 +40,14 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
   const formular = React.useRef<HTMLFormElement>(null)
+  const fehlerZusammenfassung = React.useRef<HTMLParagraphElement>(null)
   const hinzufuegen = React.useRef<HTMLButtonElement>(null)
   const schreibt = React.useRef(false)
   const [offen, setOffen] = React.useState(false)
   const [segments, setSegments] = React.useState<FlugSegmentManuell[]>([])
   const [fehler, setFehler] = React.useState('')
-  const [feldfehler, setFeldfehler] = React.useState(false)
+  const [validieren, setValidieren] = React.useState(false)
+  const [fokusVersuch, setFokusVersuch] = React.useState(0)
   const [laeuft, setLaeuft] = React.useState(false)
   const [gespeichert, setGespeichert] = React.useState(false)
   const route = flugRouteItineraryLesen(item.routeItinerary)
@@ -53,10 +55,30 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
     segment.origin.airportCode || segment.destination.airportCode))
   // Bestehende grössere/multi-leg Routen niemals unbemerkt abschneiden/zusammenlegen.
   const zuGross = route && (route.legs.length !== 1 || route.legs[0]!.segments.length > 4)
+  // Nach dem ersten Fehlversuch immer den aktuellen Entwurf prüfen, auch nach Add/Remove.
+  const pruefung = validieren ? flugRouteManuellSchema.safeParse({ segments }) : null
+  const validierungsfehler = pruefung && !pruefung.success ? pruefung.error : null
+  const meldung = validierungsfehler ? ersteMeldung(validierungsfehler) : fehler
+  const feldfehler = new Map<string, string>()
+  for (const issue of validierungsfehler?.issues ?? []) {
+    const [wurzel, index, feld] = issue.path
+    if (issue.path.length !== 3 || wurzel !== 'segments' || typeof index !== 'number'
+      || !segments[index] || !FLUGFELDER.some((eintrag) => eintrag.name === feld)) continue
+    const schluessel = `${index}-${feld}`
+    if (!feldfehler.has(schluessel)) feldfehler.set(schluessel, issue.message)
+  }
 
   React.useEffect(() => {
     if (offen) formular.current?.querySelector('input')?.focus()
   }, [offen])
+
+  React.useEffect(() => {
+    if (fokusVersuch === 0) return
+    // Erst nach dem Render sind aktuelle Markierungen und Summary im DOM.
+    const ziel = formular.current?.querySelector<HTMLInputElement>('input[aria-invalid="true"]')
+      ?? fehlerZusammenfassung.current
+    ziel?.focus()
+  }, [fokusVersuch])
 
   const schliessen = () => {
     setOffen(false)
@@ -67,11 +89,13 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
     event.preventDefault()
     if (schreibt.current || zuGross) return
     const geprueft = flugRouteManuellSchema.safeParse({ segments })
-    setFeldfehler(!geprueft.success)
     if (!geprueft.success) {
-      setFehler(ersteMeldung(geprueft.error))
+      setFehler('')
+      setValidieren(true)
+      setFokusVersuch((bisher) => bisher + 1)
       return
     }
+    setValidieren(false)
     schreibt.current = true
     setLaeuft(true)
     setFehler('')
@@ -106,13 +130,14 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
             departureDate: segment.departureDate ?? '', departureTime: segment.departureTime,
             arrivalDate: segment.arrivalDate ?? '', arrivalTime: segment.arrivalTime,
           })) : [leeresFlugsegment()])
-          setFehler(''); setFeldfehler(false); setGespeichert(false); setOffen(true)
+          setFehler(''); setValidieren(false); setGespeichert(false); setOffen(true)
         }}>
         {hatRoute ? 'Flugroute ändern' : 'Flugroute ergänzen'}
       </button>
       {offen ? (
         <form ref={formular} id={`${id}-formular`} aria-label={`Flugroute für ${item.title}`} noValidate
-          onSubmit={speichern} aria-busy={laeuft} className="mt-3 grid min-w-0 gap-3">
+          onSubmit={speichern} aria-busy={laeuft} aria-describedby={meldung ? `${id}-fehler` : undefined}
+          className="mt-3 grid min-w-0 gap-3">
           {zuGross ? (
             <p role="alert" className="break-words text-sm text-danger-600">Diese gespeicherte Route umfasst mehr als eine Flugstrecke oder vier Segmente und kann hier nicht geändert werden.</p>
           ) : <>
@@ -121,18 +146,26 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
               <fieldset key={index} disabled={laeuft} className="grid min-w-0 gap-3 rounded-xl border border-line-200 p-3">
                 <legend className="px-1 text-sm font-semibold text-brand-800">Segment {index + 1}</legend>
                 <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-                  {FLUGFELDER.map((feld) => (
-                    <label key={feld.name} htmlFor={`${id}-${index}-${feld.name}`} className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
-                      {feld.label}
-                      <input id={`${id}-${index}-${feld.name}`} type={feld.type} value={segment[feld.name] ?? ''}
-                        required={feld.type !== 'time'} maxLength={feld.type === 'text' ? 3 : undefined}
-                        autoCapitalize={feld.type === 'text' ? 'characters' : undefined} spellCheck={false}
-                        aria-invalid={feldfehler || undefined} aria-describedby={fehler ? `${id}-fehler` : undefined}
-                        onChange={(event) => setSegments((bisher) => bisher.map((eintrag, stelle) =>
-                          stelle === index ? { ...eintrag, [feld.name]: event.target.value } : eintrag))}
-                        className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
-                    </label>
-                  ))}
+                  {FLUGFELDER.map((feld) => {
+                    const feldId = `${id}-${index}-${feld.name}`
+                    const feldmeldung = feldfehler.get(`${index}-${feld.name}`)
+                    return (
+                      <div key={feld.name} className="grid min-w-0 gap-1">
+                        <label htmlFor={feldId} className="text-sm font-medium text-brand-800">{feld.label}</label>
+                        <input id={feldId} type={feld.type} value={segment[feld.name] ?? ''}
+                          required={feld.type !== 'time'} maxLength={feld.type === 'text' ? 3 : undefined}
+                          autoCapitalize={feld.type === 'text' ? 'characters' : undefined} spellCheck={false}
+                          aria-invalid={Boolean(feldmeldung) || undefined} aria-describedby={feldmeldung ? `${feldId}-fehler` : undefined}
+                          onChange={(event) => setSegments((bisher) => bisher.map((eintrag, stelle) =>
+                            stelle === index ? { ...eintrag, [feld.name]: event.target.value } : eintrag))}
+                          className={`min-h-11 min-w-0 w-full max-w-full rounded-xl border px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${feldmeldung ? 'border-danger-600 bg-surface-50' : 'border-line-300 bg-white'}`} />
+                        {feldmeldung ? <p id={`${feldId}-fehler`} role="alert" className="flex min-w-0 gap-1 text-sm text-danger-600">
+                          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                          <span className="min-w-0 break-words">{feldmeldung}</span>
+                        </p> : null}
+                      </div>
+                    )
+                  })}
                 </div>
                 <button type="button" disabled={segments.length <= 1 || laeuft} className={`${ROUTE_KNOPF} justify-self-start`}
                   aria-label={`Segment ${index + 1} entfernen`} onClick={() => {
@@ -145,7 +178,8 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
             <button ref={hinzufuegen} type="button" disabled={segments.length >= 4 || laeuft} className={`${ROUTE_KNOPF} justify-self-start`}
               onClick={() => setSegments((bisher) => bisher.length < 4 ? [...bisher, leeresFlugsegment()] : bisher)}>Segment hinzufügen</button>
           </>}
-          {fehler ? <p id={`${id}-fehler`} role="alert" className="break-words text-sm text-danger-600">{fehler}</p> : null}
+          {meldung ? <p ref={fehlerZusammenfassung} id={`${id}-fehler`} role={feldfehler.size === 0 ? 'alert' : undefined} tabIndex={-1}
+            className="break-words rounded text-sm text-danger-600 focus:outline-none focus:ring-4 focus:ring-brand-600/15">{meldung}</p> : null}
           <div className="flex flex-wrap gap-2">
             <button type="submit" disabled={laeuft || Boolean(zuGross)} className="min-h-11 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-50">
               {laeuft ? 'Wird gespeichert …' : 'Speichern'}
