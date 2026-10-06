@@ -8,6 +8,8 @@
 //
 // Frei von React, Next und Providern.
 
+import { routeFactsFuerPunkt } from '@/lib/route/ableitung'
+import type { RoutePunkt } from '@/lib/route/domain'
 import { istGebucht } from '@/lib/trips/buchung'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
@@ -37,6 +39,11 @@ export type FlugAbdeckung = {
   abschnitte: FlugAbschnitt[]
   unzugeordnet: TripItem[]
   zusammenfassung: string
+}
+
+type BenoetigterAbschnitt = Omit<FlugAbschnitt, 'status' | 'item'> & {
+  originCountryCode: string | null
+  destinationCountryCode: string | null
 }
 
 function nameGleich(links: string | null | undefined, rechts: string | null | undefined): boolean {
@@ -74,6 +81,40 @@ function etappenOrt(etappe: TripStage): { name: string; placeId: string | null }
 function statusVon(item: TripItem | null, fallback: FlugAbschnittStatus): FlugAbschnittStatus {
   if (!item) return fallback
   return istGebucht(item) ? 'booked' : 'selected'
+}
+
+function routePunktPasst(
+  punkt: RoutePunkt,
+  name: string,
+  placeId: string | null,
+  countryCode: string | null,
+): boolean {
+  if (countryCode && punkt.countryCode !== countryCode) return false
+  // Airport-IDs sind bereits explizite Identität. Ein Widerspruch darf nicht
+  // über den Stadtnamen geheilt werden. GeoNames wird nicht zu IATA aufgelöst.
+  if (placeId?.startsWith('airport:')) {
+    return Boolean(punkt.airportCode) && placeId === `airport:${punkt.airportCode}`
+  }
+  // Nur kanonische City-Facts mit bekanntem Land, niemals IATA als Stadtname,
+  // Country-only, Titel, Notiz oder die Transfer-Felder des Flight-Items.
+  // Ohne Land auf der Sollseite sind gleichnamige Städte nicht unterscheidbar.
+  // Trip-Origin speichert kein Land: dort ist deshalb eine Airport-ID nötig.
+  return Boolean(countryCode) && nameGleich(punkt.city, name)
+}
+
+function bewieseneAbschnitte(item: TripItem, abschnitte: readonly BenoetigterAbschnitt[]): string[] {
+  const facts = routeFactsFuerPunkt(item)
+  // Ein Roundtrip-/Multi-Leg-Item wird nicht auf mehrere Sollstrecken verteilt.
+  if (facts.quelle !== 'flight_itinerary' || !facts.chronologieBewiesen || facts.legs.length !== 1) return []
+  const abflugDatum = facts.segments[0]?.departureDate
+  if (abflugDatum && abflugDatum !== item.startsOn) return []
+  return abschnitte
+    .filter((abschnitt) =>
+      abschnitt.date !== null && item.startsOn === abschnitt.date &&
+      routePunktPasst(facts.origin, abschnitt.originName, abschnitt.originPlaceId, abschnitt.originCountryCode) &&
+      routePunktPasst(facts.destination, abschnitt.destinationName, abschnitt.destinationPlaceId, abschnitt.destinationCountryCode),
+    )
+    .map((abschnitt) => abschnitt.id)
 }
 
 function abschnittWort(abschnitt: FlugAbschnitt): string {
@@ -120,12 +161,12 @@ function zusammenfassungAus(
   return abschnitte.map(abschnittWort).join(' · ')
 }
 
-function benoetigteAbschnitte(reise: Trip): { bestimmbar: boolean; roh: Omit<FlugAbschnitt, 'status' | 'item'>[] } {
+function benoetigteAbschnitte(reise: Trip): { bestimmbar: boolean; roh: BenoetigterAbschnitt[] } {
   const origin = originOrt(reise)
   const etappen = reise.stages.filter((etappe) => etappe.name.trim().length > 0)
   if (!origin || etappen.length === 0) return { bestimmbar: false, roh: [] }
 
-  const roh: Omit<FlugAbschnitt, 'status' | 'item'>[] = []
+  const roh: BenoetigterAbschnitt[] = []
   const erste = etappen[0]
   const letzte = etappen[etappen.length - 1]
 
@@ -137,6 +178,8 @@ function benoetigteAbschnitte(reise: Trip): { bestimmbar: boolean; roh: Omit<Flu
       destinationName: erste.name,
       originPlaceId: origin.placeId,
       destinationPlaceId: erste.placeId,
+      originCountryCode: null,
+      destinationCountryCode: erste.countryCode,
       date: datumOderNull(erste.arrivalDate) ?? datumOderNull(reise.startDate),
     })
   }
@@ -152,6 +195,8 @@ function benoetigteAbschnitte(reise: Trip): { bestimmbar: boolean; roh: Omit<Flu
       destinationName: nach.name,
       originPlaceId: von.placeId,
       destinationPlaceId: nach.placeId,
+      originCountryCode: von.countryCode,
+      destinationCountryCode: nach.countryCode,
       date: datumOderNull(nach.arrivalDate),
     })
   }
@@ -164,6 +209,8 @@ function benoetigteAbschnitte(reise: Trip): { bestimmbar: boolean; roh: Omit<Flu
       destinationName: origin.name,
       originPlaceId: letzte.placeId,
       destinationPlaceId: origin.placeId,
+      originCountryCode: letzte.countryCode,
+      destinationCountryCode: null,
       date: datumOderNull(letzte.departureDate) ?? datumOderNull(reise.endDate),
     })
   }
@@ -185,15 +232,31 @@ export function flugAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = []): F
   }
 
   const rest = [...fluge]
-  const abschnitte: FlugAbschnitt[] = roh.map((abschnitt) => {
+  // Vor dem Verbrauch gegen alle Sollstrecken prüfen: Array-Reihenfolge darf
+  // weder mehrere Kandidaten noch mehrere mögliche Abschnitte disambiguieren.
+  const kandidaten = fluge.map((item) => ({ item, abschnittIds: bewieseneAbschnitte(item, roh) }))
+  const abschnitte: FlugAbschnitt[] = roh.map((bedarf) => {
+    const abschnitt = {
+      id: bedarf.id,
+      art: bedarf.art,
+      originName: bedarf.originName,
+      destinationName: bedarf.destinationName,
+      originPlaceId: bedarf.originPlaceId,
+      destinationPlaceId: bedarf.destinationPlaceId,
+      date: bedarf.date,
+    }
     if (!abschnitt.date) {
       return { ...abschnitt, status: rest.length > 0 ? 'unknown' : 'open', item: null }
     }
-    const treffer = rest.filter((flug) => flug.startsOn === abschnitt.date)
+    const treffer = kandidaten.filter(({ item }) => item.startsOn === abschnitt.date)
     if (treffer.length === 1) {
-      const item = treffer[0]
+      const { item, abschnittIds } = treffer[0]
+      if (abschnittIds.length !== 1 || abschnittIds[0] !== abschnitt.id) {
+        return { ...abschnitt, status: 'unknown', item: null }
+      }
       const stelle = rest.findIndex((flug) => flug.id === item.id)
-      if (stelle >= 0) rest.splice(stelle, 1)
+      if (stelle < 0) return { ...abschnitt, status: 'unknown', item: null }
+      rest.splice(stelle, 1)
       return { ...abschnitt, status: statusVon(item, 'open'), item }
     }
     if (treffer.length > 1) {
