@@ -1,0 +1,6 @@
+{
+  "ergebnis": "PASS",
+  "fehler": 0,
+  "schritte": 26,
+  "sha": "3828fa712b6331d93e521ba1c3457dd520461cee"
+}

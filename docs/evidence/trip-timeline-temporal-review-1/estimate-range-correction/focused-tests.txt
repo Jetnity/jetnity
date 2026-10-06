@@ -1,0 +1,757 @@
+TAP version 13
+# Subtest: unter 1024 bleibt der Arbeitsbereich eine Spalte
+ok 1 - unter 1024 bleibt der Arbeitsbereich eine Spalte
+  ---
+  duration_ms: 3.749583
+  type: 'test'
+  ...
+# Subtest: ab 1024 teilt sich die Fläche, Suche weitet die Arbeitsseite
+ok 2 - ab 1024 teilt sich die Fläche, Suche weitet die Arbeitsseite
+  ---
+  duration_ms: 0.177958
+  type: 'test'
+  ...
+# Subtest: geschlossenes Detail bleibt einspaltig, auch auf weiter Fläche
+ok 3 - geschlossenes Detail bleibt einspaltig, auch auf weiter Fläche
+  ---
+  duration_ms: 0.036875
+  type: 'test'
+  ...
+# Subtest: Formularfelder folgen der Spaltenbreite und nicht dem Viewport-sm
+ok 4 - Formularfelder folgen der Spaltenbreite und nicht dem Viewport-sm
+  ---
+  duration_ms: 0.104208
+  type: 'test'
+  ...
+# Subtest: Gast und Konto hängen dieselbe Workspace-Hülle ein
+ok 5 - Gast und Konto hängen dieselbe Workspace-Hülle ein
+  ---
+  duration_ms: 0.654375
+  type: 'test'
+  ...
+# Subtest: die obere Abdeckung folgt den gemessenen Leisten und nicht einer festen Kopfhöhe
+ok 6 - die obere Abdeckung folgt den gemessenen Leisten und nicht einer festen Kopfhöhe
+  ---
+  duration_ms: 0.659958
+  type: 'test'
+  ...
+# Subtest: kompakt hat nur die sticky Rückkehr, die weite Fläche behält die Karten-Rückkehr
+ok 7 - kompakt hat nur die sticky Rückkehr, die weite Fläche behält die Karten-Rückkehr
+  ---
+  duration_ms: 0.58275
+  type: 'test'
+  ...
+# Subtest: Suche sitzt im aktiven Bereich und startet nicht mit dem blossen Öffnen
+ok 8 - Suche sitzt im aktiven Bereich und startet nicht mit dem blossen Öffnen
+  ---
+  duration_ms: 0.245958
+  type: 'test'
+  ...
+# Subtest: Detail-Resolver
+    # Subtest: leere Auswahl bleibt leer
+    ok 1 - leere Auswahl bleibt leer
+      ---
+      duration_ms: 2.049542
+      type: 'test'
+      ...
+    # Subtest: ein vorhandenes Item bleibt ausgewählt
+    ok 2 - ein vorhandenes Item bleibt ausgewählt
+      ---
+      duration_ms: 0.287459
+      type: 'test'
+      ...
+    # Subtest: ein entferntes Item verwirft die tote Referenz
+    ok 3 - ein entferntes Item verwirft die tote Referenz
+      ---
+      duration_ms: 0.234375
+      type: 'test'
+      ...
+    # Subtest: ein verschobenes Item bleibt über die ID auffindbar
+    ok 4 - ein verschobenes Item bleibt über die ID auffindbar
+      ---
+      duration_ms: 0.291625
+      type: 'test'
+      ...
+    # Subtest: Gap-Refs bleiben gültig und kopieren keine Fakten
+    ok 5 - Gap-Refs bleiben gültig und kopieren keine Fakten
+      ---
+      duration_ms: 0.213583
+      type: 'test'
+      ...
+    # Subtest: historischer Domain-Start öffnet nur das Gap, nicht die Suche
+    ok 6 - historischer Domain-Start öffnet nur das Gap, nicht die Suche
+      ---
+      duration_ms: 0.114916
+      type: 'test'
+      ...
+    1..6
+ok 9 - Detail-Resolver
+  ---
+  duration_ms: 28.444583
+  type: 'suite'
+  ...
+# Subtest: Flight Gap
+    # Subtest: offen bleibt eine bekannte Lücke, ohne Suche
+    ok 1 - offen bleibt eine bekannte Lücke, ohne Suche
+      ---
+      duration_ms: 19.359959
+      type: 'test'
+      ...
+    # Subtest: teilweise bleibt von belegt getrennt
+    ok 2 - teilweise bleibt von belegt getrennt
+      ---
+      duration_ms: 16.189958
+      type: 'test'
+      ...
+    # Subtest: unbestimmt bleibt unbestimmt und nicht unavailable
+    ok 3 - unbestimmt bleibt unbestimmt und nicht unavailable
+      ---
+      duration_ms: 0.680875
+      type: 'test'
+      ...
+    1..3
+ok 10 - Flight Gap
+  ---
+  duration_ms: 36.698167
+  type: 'suite'
+  ...
+# Subtest: Stay Gap
+    # Subtest: offen beschreibt fehlende Nächte nur aus vorhandener Coverage
+    ok 1 - offen beschreibt fehlende Nächte nur aus vorhandener Coverage
+      ---
+      duration_ms: 0.494125
+      type: 'test'
+      ...
+    # Subtest: teilweise bleibt teilweise
+    ok 2 - teilweise bleibt teilweise
+      ---
+      duration_ms: 3.589958
+      type: 'test'
+      ...
+    # Subtest: unbestimmt bleibt unbestimmt
+    ok 3 - unbestimmt bleibt unbestimmt
+      ---
+      duration_ms: 7.738042
+      type: 'test'
+      ...
+    1..3
+ok 11 - Stay Gap
+  ---
+  duration_ms: 12.021834
+  type: 'suite'
+  ...
+# Subtest: Activities
+    # Subtest: 0 Aktivitäten sind kein Pflicht-Gap
+    ok 1 - 0 Aktivitäten sind kein Pflicht-Gap
+      ---
+      duration_ms: 0.37
+      type: 'test'
+      ...
+    # Subtest: vorhandene Aktivitäten bleiben Items, nicht Pflicht-Lücken
+    ok 2 - vorhandene Aktivitäten bleiben Items, nicht Pflicht-Lücken
+      ---
+      duration_ms: 2.553709
+      type: 'test'
+      ...
+    1..2
+ok 12 - Activities
+  ---
+  duration_ms: 3.32725
+  type: 'suite'
+  ...
+# Subtest: Mobility
+    # Subtest: offene Bodenmobilität bleibt offen und täuscht keinen Adapter vor
+    ok 1 - offene Bodenmobilität bleibt offen und täuscht keinen Adapter vor
+      ---
+      duration_ms: 2.161166
+      type: 'test'
+      ...
+    # Subtest: unbestimmte Mobilität bleibt unbestimmt
+    ok 2 - unbestimmte Mobilität bleibt unbestimmt
+      ---
+      duration_ms: 0.216792
+      type: 'test'
+      ...
+    # Subtest: ein gleichdatiger Flug ohne Routennachweis wird nicht zu covered-by-flight erfunden
+    ok 3 - ein gleichdatiger Flug ohne Routennachweis wird nicht zu covered-by-flight erfunden
+      ---
+      duration_ms: 2.480333
+      type: 'test'
+      ...
+    1..3
+ok 13 - Mobility
+  ---
+  duration_ms: 5.021708
+  type: 'suite'
+  ...
+# Subtest: Item Details
+    # Subtest: flight öffnet vorhandene Item-Fakten
+    ok 1 - flight öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.608
+      type: 'test'
+      ...
+    # Subtest: stay öffnet vorhandene Item-Fakten
+    ok 2 - stay öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.103208
+      type: 'test'
+      ...
+    # Subtest: activity öffnet vorhandene Item-Fakten
+    ok 3 - activity öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.111167
+      type: 'test'
+      ...
+    # Subtest: transfer öffnet vorhandene Item-Fakten
+    ok 4 - transfer öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.054583
+      type: 'test'
+      ...
+    # Subtest: rental_car öffnet vorhandene Item-Fakten
+    ok 5 - rental_car öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.053125
+      type: 'test'
+      ...
+    # Subtest: note öffnet vorhandene Item-Fakten
+    ok 6 - note öffnet vorhandene Item-Fakten
+      ---
+      duration_ms: 0.053917
+      type: 'test'
+      ...
+    # Subtest: note bleibt ohne Commercial-Fiktion
+    ok 7 - note bleibt ohne Commercial-Fiktion
+      ---
+      duration_ms: 0.35525
+      type: 'test'
+      ...
+    # Subtest: Preis erscheint nur bei vorhandenem Betrag und Währung
+    ok 8 - Preis erscheint nur bei vorhandenem Betrag und Währung
+      ---
+      duration_ms: 0.070917
+      type: 'test'
+      ...
+    # Subtest: Herkunftsfelder machen kein verifiziertes Angebot
+    ok 9 - Herkunftsfelder machen kein verifiziertes Angebot
+      ---
+      duration_ms: 0.040083
+      type: 'test'
+      ...
+    1..9
+ok 14 - Item Details
+  ---
+  duration_ms: 1.654667
+  type: 'suite'
+  ...
+# Subtest: Ungeplante Items
+    # Subtest: ohneTag öffnet ohne erfundenen Tag oder Stage
+    ok 1 - ohneTag öffnet ohne erfundenen Tag oder Stage
+      ---
+      duration_ms: 0.060041
+      type: 'test'
+      ...
+    # Subtest: ein Item mit totem Tag wird ungeplant, ohne Fake-Tag
+    ok 2 - ein Item mit totem Tag wird ungeplant, ohne Fake-Tag
+      ---
+      duration_ms: 0.030959
+      type: 'test'
+      ...
+    1..2
+ok 15 - Ungeplante Items
+  ---
+  duration_ms: 0.114958
+  type: 'suite'
+  ...
+# Subtest: Auswahlstabilität
+    # Subtest: Detail-State ändert den gewählten Tag nicht
+    ok 1 - Detail-State ändert den gewählten Tag nicht
+      ---
+      duration_ms: 0.188792
+      type: 'test'
+      ...
+    1..1
+ok 16 - Auswahlstabilität
+  ---
+  duration_ms: 0.205417
+  type: 'suite'
+  ...
+# Subtest: Guest und Account
+    # Subtest: dieselbe Presentation-Logik ohne zweite State Machine
+    ok 1 - dieselbe Presentation-Logik ohne zweite State Machine
+      ---
+      duration_ms: 0.75
+      type: 'test'
+      ...
+    1..1
+ok 17 - Guest und Account
+  ---
+  duration_ms: 1.367917
+  type: 'suite'
+  ...
+# Subtest: Geräteparität
+    # Subtest: Ableitungen haben keinen Device-Parameter
+    ok 1 - Ableitungen haben keinen Device-Parameter
+      ---
+      duration_ms: 5.180291
+      type: 'test'
+      ...
+    1..1
+ok 18 - Geräteparität
+  ---
+  duration_ms: 5.700833
+  type: 'suite'
+  ...
+# Subtest: Lazy Mount
+    # Subtest: Initialreise mountet keine Commercial-Suche
+    ok 1 - Initialreise mountet keine Commercial-Suche
+      ---
+      duration_ms: 0.168292
+      type: 'test'
+      ...
+    # Subtest: Gap ohne Suche mountet Bestand, aber nicht die Suche
+    ok 2 - Gap ohne Suche mountet Bestand, aber nicht die Suche
+      ---
+      duration_ms: 0.045334
+      type: 'test'
+      ...
+    # Subtest: explizites Öffnen mountet nur die angeforderte Suche und behält sie
+    ok 3 - explizites Öffnen mountet nur die angeforderte Suche und behält sie
+      ---
+      duration_ms: 26.977917
+      type: 'test'
+      ...
+    1..3
+ok 19 - Lazy Mount
+  ---
+  duration_ms: 27.283916
+  type: 'suite'
+  ...
+# Subtest: Attention bleibt workspace-lokal
+    # Subtest: Coverage-Flight/Stay öffnen Gaps, Official bleibt auf der Reise
+    ok 1 - Coverage-Flight/Stay öffnen Gaps, Official bleibt auf der Reise
+      ---
+      duration_ms: 4.784666
+      type: 'test'
+      ...
+    1..1
+ok 20 - Attention bleibt workspace-lokal
+  ---
+  duration_ms: 4.847125
+  type: 'suite'
+  ...
+# Subtest: State trägt keine Hard Facts
+    # Subtest: Auswahl enthält nur Intent und IDs
+    ok 1 - Auswahl enthält nur Intent und IDs
+      ---
+      duration_ms: 0.086959
+      type: 'test'
+      ...
+    1..1
+ok 21 - State trägt keine Hard Facts
+  ---
+  duration_ms: 0.138667
+  type: 'suite'
+  ...
+# Subtest: Navigation revalidiert am aktuellen Trip-Graph
+    # Subtest: Item-Deep-Link und falscher/alter Tag stellen den tatsächlichen Tag wieder her
+    ok 1 - Item-Deep-Link und falscher/alter Tag stellen den tatsächlichen Tag wieder her
+      ---
+      duration_ms: 1.510833
+      type: 'test'
+      ...
+    # Subtest: ungeplantes Item und tote dayId erfinden keinen Tag
+    ok 2 - ungeplantes Item und tote dayId erfinden keinen Tag
+      ---
+      duration_ms: 0.321959
+      type: 'test'
+      ...
+    # Subtest: gelöschtes Item fällt auf den gültigen Tag, gelöschter Tag auf Plan zurück
+    ok 3 - gelöschtes Item fällt auf den gültigen Tag, gelöschter Tag auf Plan zurück
+      ---
+      duration_ms: 0.260334
+      type: 'test'
+      ...
+    # Subtest: Preparation-Ref braucht einen exakten anwendbaren Slot, sonst section-only
+    ok 4 - Preparation-Ref braucht einen exakten anwendbaren Slot, sonst section-only
+      ---
+      duration_ms: 0.539875
+      type: 'test'
+      ...
+    # Subtest: Organize-Deep-Link Parent bleibt Organisieren ohne Domain
+    ok 5 - Organize-Deep-Link Parent bleibt Organisieren ohne Domain
+      ---
+      duration_ms: 0.1635
+      type: 'test'
+      ...
+    1..5
+ok 22 - Navigation revalidiert am aktuellen Trip-Graph
+  ---
+  duration_ms: 2.935334
+  type: 'suite'
+  ...
+# Subtest: TW-3 Timeline-Ableitung
+    # Subtest: Multi-Stage gruppiert Tage unter die kanonischen Etappen
+    ok 1 - Multi-Stage gruppiert Tage unter die kanonischen Etappen
+      ---
+      duration_ms: 2.309958
+      type: 'test'
+      ...
+    # Subtest: Tage ohne Items bleiben sichtbare leere Tage, nicht ein Fehler
+    ok 2 - Tage ohne Items bleiben sichtbare leere Tage, nicht ein Fehler
+      ---
+      duration_ms: 0.166042
+      type: 'test'
+      ...
+    # Subtest: Items ohne Tag bleiben ungeplant und gehören nicht zum letzten Tag
+    ok 3 - Items ohne Tag bleiben ungeplant und gehören nicht zum letzten Tag
+      ---
+      duration_ms: 0.122583
+      type: 'test'
+      ...
+    # Subtest: Wechsel zwischen Etappen ändert nur den gewählten Tag
+    ok 4 - Wechsel zwischen Etappen ändert nur den gewählten Tag
+      ---
+      duration_ms: 0.174083
+      type: 'test'
+      ...
+    # Subtest: Graph-Mutation behält den Tag, wenn er noch existiert
+    ok 5 - Graph-Mutation behält den Tag, wenn er noch existiert
+      ---
+      duration_ms: 0.362958
+      type: 'test'
+      ...
+    # Subtest: Graph-Mutation fällt deterministisch zurück, wenn der gewählte Tag entfällt
+    ok 6 - Graph-Mutation fällt deterministisch zurück, wenn der gewählte Tag entfällt
+      ---
+      duration_ms: 0.179958
+      type: 'test'
+      ...
+    # Subtest: Guest und Account liefern bei gleichem Graphen dieselbe Timeline
+    ok 7 - Guest und Account liefern bei gleichem Graphen dieselbe Timeline
+      ---
+      duration_ms: 0.316709
+      type: 'test'
+      ...
+    # Subtest: Mobile und Desktop teilen dieselbe fachliche Ableitung
+    ok 8 - Mobile und Desktop teilen dieselbe fachliche Ableitung
+      ---
+      duration_ms: 10.496125
+      type: 'test'
+      ...
+    # Subtest: Transitland wird nicht als Nutzer-Reiseziel gezeigt
+    ok 9 - Transitland wird nicht als Nutzer-Reiseziel gezeigt
+      ---
+      duration_ms: 33.784083
+      type: 'test'
+      ...
+    # Subtest: unassigned Multi-Ziel behauptet keine 2/2/2-Aufenthalte
+    ok 10 - unassigned Multi-Ziel behauptet keine 2/2/2-Aufenthalte
+      ---
+      duration_ms: 28.865041
+      type: 'test'
+      ...
+    # Subtest: Tage ohne Etappe bleiben ehrlich ohne Nutzerziel
+    ok 11 - Tage ohne Etappe bleiben ehrlich ohne Nutzerziel
+      ---
+      duration_ms: 7.05525
+      type: 'test'
+      ...
+    1..11
+ok 23 - TW-3 Timeline-Ableitung
+  ---
+  duration_ms: 84.937042
+  type: 'suite'
+  ...
+# Subtest: lange Reisen bleiben ein Navigator oder ein begrenztes Raster
+ok 24 - lange Reisen bleiben ein Navigator oder ein begrenztes Raster
+  ---
+  duration_ms: 0.825417
+  type: 'test'
+  ...
+# Subtest: Tag X von Y folgt der Timeline und erfindet keinen Sprung
+ok 25 - Tag X von Y folgt der Timeline und erfindet keinen Sprung
+  ---
+  duration_ms: 0.178875
+  type: 'test'
+  ...
+# Subtest: mehrere Etappen behalten die abgeleitete Reihenfolge
+ok 26 - mehrere Etappen behalten die abgeleitete Reihenfolge
+  ---
+  duration_ms: 0.55075
+  type: 'test'
+  ...
+# Subtest: der gewählte Tag bleibt im Streifen, ohne die Seite zu schieben
+ok 27 - der gewählte Tag bleibt im Streifen, ohne die Seite zu schieben
+  ---
+  duration_ms: 0.075375
+  type: 'test'
+  ...
+# Subtest: der gewählte Tag rutscht unter der klebenden Kante frei
+ok 28 - der gewählte Tag rutscht unter der klebenden Kante frei
+  ---
+  duration_ms: 0.46225
+  type: 'test'
+  ...
+# Subtest: der Reiseplan bleibt Darstellung und behält die bestehenden Verträge
+ok 29 - der Reiseplan bleibt Darstellung und behält die bestehenden Verträge
+  ---
+  duration_ms: 0.774167
+  type: 'test'
+  ...
+# Subtest: 04:30, 08:30, 06:30, 20:00: jede Eingabereihenfolge ergibt dieselbe lokale Chronologie
+ok 30 - 04:30, 08:30, 06:30, 20:00: jede Eingabereihenfolge ergibt dieselbe lokale Chronologie
+  ---
+  duration_ms: 13.945917
+  type: 'test'
+  ...
+# Subtest: gleiche Uhrzeit: position vor stabiler ID, unabhängig von Eingabereihenfolge
+ok 31 - gleiche Uhrzeit: position vor stabiler ID, unabhängig von Eingabereihenfolge
+  ---
+  duration_ms: 0.854917
+  type: 'test'
+  ...
+# Subtest: nur exakte gültige HH:MM: Legacy und unbekannte Werte fail-closed, ohne Normalisierung
+ok 32 - nur exakte gültige HH:MM: Legacy und unbekannte Werte fail-closed, ohne Normalisierung
+  ---
+  duration_ms: 0.348083
+  type: 'test'
+  ...
+# Subtest: jede gültige Uhrminute einschließlich aller Daypart-Grenzen ist exakt zugeordnet
+ok 33 - jede gültige Uhrminute einschließlich aller Daypart-Grenzen ist exakt zugeordnet
+  ---
+  duration_ms: 25.327
+  type: 'test'
+  ...
+# Subtest: flexibel einmal am Ende: null und malformed nach position/ID hinter 23:59
+ok 34 - flexibel einmal am Ende: null und malformed nach position/ID hinter 23:59
+  ---
+  duration_ms: 1.049291
+  type: 'test'
+  ...
+# Subtest: leere und rein flexible Tage brauchen keine leeren Zeitgruppen
+ok 35 - leere und rein flexible Tage brauchen keine leeren Zeitgruppen
+  ---
+  duration_ms: 0.120833
+  type: 'test'
+  ...
+# Subtest: gefrorener Source-Graph bleibt unverändert; nur Präsentationsarrays entstehen
+ok 36 - gefrorener Source-Graph bleibt unverändert; nur Präsentationsarrays entstehen
+  ---
+  duration_ms: 1.242625
+  type: 'test'
+  ...
+# Subtest: Guest/Account und geklonter Graph ergeben denselben Tagesplan ohne source/mode-Einfluss
+ok 37 - Guest/Account und geklonter Graph ergeben denselben Tagesplan ohne source/mode-Einfluss
+  ---
+  duration_ms: 0.547625
+  type: 'test'
+  ...
+# Subtest: echter Plan-Render: Chronologie, ausschließlich nichtleere Gruppen, flexible Zeit niemals time
+ok 38 - echter Plan-Render: Chronologie, ausschließlich nichtleere Gruppen, flexible Zeit niemals time
+  ---
+  duration_ms: 121.93975
+  type: 'test'
+  ...
+# Subtest: echter Render: leer, nur flexibel, nur zeitlich bekannt und ungeplant bleiben getrennt
+ok 39 - echter Render: leer, nur flexibel, nur zeitlich bekannt und ungeplant bleiben getrennt
+  ---
+  duration_ms: 24.675875
+  type: 'test'
+  ...
+# Subtest: qualified overlapping, disjoint and half-open touching intervals; scoped exact minutes
+ok 40 - qualified overlapping, disjoint and half-open touching intervals; scoped exact minutes
+  ---
+  duration_ms: 1.508125
+  type: 'test'
+  ...
+# Subtest: start-only: equal start / anchor inside support possible; missing end never blankets later points
+ok 41 - start-only: equal start / anchor inside support possible; missing end never blankets later points
+  ---
+  duration_ms: 0.354667
+  type: 'test'
+  ...
+# Subtest: end-only and explicit milestones are not fabricated occupied intervals
+ok 42 - end-only and explicit milestones are not fabricated occupied intervals
+  ---
+  duration_ms: 0.120083
+  type: 'test'
+  ...
+# Subtest: explicit midnight and qualified Date-Line duration; missing end date never means tomorrow
+ok 43 - explicit midnight and qualified Date-Line duration; missing end date never means tomorrow
+  ---
+  duration_ms: 0.127125
+  type: 'test'
+  ...
+# Subtest: civil overlap requires shared identity, remains possible; civil disjoint is not physical disjointness
+ok 44 - civil overlap requires shared identity, remains possible; civil disjoint is not physical disjointness
+  ---
+  duration_ms: 0.114833
+  type: 'test'
+  ...
+# Subtest: finite ambiguity retains correlations, universal overlap/disjoint and existential possibility
+ok 45 - finite ambiguity retains correlations, universal overlap/disjoint and existential possibility
+  ---
+  duration_ms: 0.7335
+  type: 'test'
+  ...
+# Subtest: empty, mismatched and inconsistent assignments cannot become vacuous positive proofs
+ok 46 - empty, mismatched and inconsistent assignments cannot become vacuous positive proofs
+  ---
+  duration_ms: 0.581792
+  type: 'test'
+  ...
+# Subtest: estimates never prove overlap or disjointness; bounded supported overlap only
+ok 47 - estimates never prove overlap or disjointness; bounded supported overlap only
+  ---
+  duration_ms: 0.3235
+  type: 'test'
+  ...
+# Subtest: closed estimate range: start-only interior witness overlaps an occupied interval
+ok 48 - closed estimate range: start-only interior witness overlaps an occupied interval
+  ---
+  duration_ms: 1.664792
+  type: 'test'
+  ...
+# Subtest: closed estimate range: milestone interior witness is possible without inventing an end
+ok 49 - closed estimate range: milestone interior witness is possible without inventing an end
+  ---
+  duration_ms: 0.770792
+  type: 'test'
+  ...
+# Subtest: closed estimate range: two anchors can intersect without sharing any endpoints
+ok 50 - closed estimate range: two anchors can intersect without sharing any endpoints
+  ---
+  duration_ms: 0.424625
+  type: 'test'
+  ...
+# Subtest: closed estimate range: inclusive anchor bounds versus half-open occupation
+ok 51 - closed estimate range: inclusive anchor bounds versus half-open occupation
+  ---
+  duration_ms: 0.296667
+  type: 'test'
+  ...
+# Subtest: closed estimate range: separated anchors and occupied spans never prove disjointness
+ok 52 - closed estimate range: separated anchors and occupied spans never prove disjointness
+  ---
+  duration_ms: 0.11
+  type: 'test'
+  ...
+# Subtest: closed estimate range: huge ranges use bounded existence checks, not minute enumeration
+ok 53 - closed estimate range: huge ranges use bounded existence checks, not minute enumeration
+  ---
+  duration_ms: 0.046959
+  type: 'test'
+  ...
+# Subtest: closed estimate range: finite alternatives retain holes and civil contexts remain distinct
+ok 54 - closed estimate range: finite alternatives retain holes and civil contexts remain distinct
+  ---
+  duration_ms: 0.08475
+  type: 'test'
+  ...
+# Subtest: closed estimate range: invalid assignments and contradictory explicit duration fail closed
+ok 55 - closed estimate range: invalid assignments and contradictory explicit duration fail closed
+  ---
+  duration_ms: 0.115792
+  type: 'test'
+  ...
+# Subtest: invalid Gregorian dates, invalid clocks and nonpositive occupied intervals fail closed
+ok 56 - invalid Gregorian dates, invalid clocks and nonpositive occupied intervals fail closed
+  ---
+  duration_ms: 0.321708
+  type: 'test'
+  ...
+# Subtest: nonadjacent and adjacent-day events compared from full inventory; coverage independent of findings
+ok 57 - nonadjacent and adjacent-day events compared from full inventory; coverage independent of findings
+  ---
+  duration_ms: 0.105
+  type: 'test'
+  ...
+# Subtest: kernel deduplicates identity and rejects conflicting identities; input permutations are stable
+ok 58 - kernel deduplicates identity and rejects conflicting identities; input permutations are stable
+  ---
+  duration_ms: 0.289708
+  type: 'test'
+  ...
+# Subtest: live adapter rejects caller-supplied zone/instant/verified and shared display-day context
+ok 59 - live adapter rejects caller-supplied zone/instant/verified and shared display-day context
+  ---
+  duration_ms: 0.392875
+  type: 'test'
+  ...
+# Subtest: live same canonical airport supports civil possible; same label/country/different airport cannot
+ok 60 - live same canonical airport supports civil possible; same label/country/different airport cannot
+  ---
+  duration_ms: 0.671625
+  type: 'test'
+  ...
+# Subtest: real Trip Date-Line itinerary preserves exact boundaries, canonical refs, and ignores summary
+ok 61 - real Trip Date-Line itinerary preserves exact boundaries, canonical refs, and ignores summary
+  ---
+  duration_ms: 4.111709
+  type: 'test'
+  ...
+# Subtest: availability, free text, date-only, flexible and unplanned remain distinct without occupied pairs
+ok 62 - availability, free text, date-only, flexible and unplanned remain distinct without occupied pairs
+  ---
+  duration_ms: 0.774709
+  type: 'test'
+  ...
+# Subtest: display day never fills missing date; protected date mismatch retained
+ok 63 - display day never fills missing date; protected date mismatch retained
+  ---
+  duration_ms: 39.658541
+  type: 'test'
+  ...
+# Subtest: canonical unplanned inventory is included even if second projection is partial; duplicate payloads cannot hide
+ok 64 - canonical unplanned inventory is included even if second projection is partial; duplicate payloads cannot hide
+  ---
+  duration_ms: 0.645583
+  type: 'test'
+  ...
+# Subtest: immutable graph and deterministic full projection under graph permutation, Guest/Account parity
+ok 65 - immutable graph and deterministic full projection under graph permutation, Guest/Account parity
+  ---
+  duration_ms: 1.964709
+  type: 'test'
+  ...
+# Subtest: clock-only edit, deletion, move and booking change recompute without revision shortcut
+ok 66 - clock-only edit, deletion, move and booking change recompute without revision shortcut
+  ---
+  duration_ms: 2.371333
+  type: 'test'
+  ...
+# Subtest: event and pair overload cannot silently report complete; counts include every unassessed pair
+ok 67 - event and pair overload cannot silently report complete; counts include every unassessed pair
+  ---
+  duration_ms: 129.046
+  type: 'test'
+  ...
+# Subtest: removing a qualifying source, end or clock can never retain a proven outcome
+ok 68 - removing a qualifying source, end or clock can never retain a proven outcome
+  ---
+  duration_ms: 0.26825
+  type: 'test'
+  ...
+# Subtest: adapter has zero network/derived writes and pure results; no ambient clock use
+ok 69 - adapter has zero network/derived writes and pure results; no ambient clock use
+  ---
+  duration_ms: 1.689708
+  type: 'test'
+  ...
+# Subtest: actual Plan integration: quiet grouped coverage, original IDs, prices and no false green
+ok 70 - actual Plan integration: quiet grouped coverage, original IDs, prices and no false green
+  ---
+  duration_ms: 982.9125
+  type: 'test'
+  ...
+1..70
+# tests 107
+# suites 15
+# pass 107
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2462.756208

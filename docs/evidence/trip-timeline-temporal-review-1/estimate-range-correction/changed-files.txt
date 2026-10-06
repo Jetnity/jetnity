@@ -1,0 +1,16 @@
+docs/TRIP_TIMELINE_TEMPORAL_REVIEW_1_HANDOFF_2026-10-06.md
+docs/TRIP_TIMELINE_TEMPORAL_REVIEW_1_REPORT_2026-10-06.md
+docs/TRIP_TIMELINE_TEMPORAL_REVIEW_1_SELF_REVIEW_2026-10-06.md
+docs/evidence/trip-timeline-temporal-review-1/changed-files.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/build.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/changed-files.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/focused-tests.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/hygiene.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/lint.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/regression-after.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/regression-before.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/trip-route-tests.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/typecheck.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/verification.json
+lib/trips/trip-timeline-temporal-review-1.test.ts
+lib/trips/trip-timeline-temporal-review-1.ts
