@@ -23,6 +23,15 @@ function civil(event: Zeitereignis, context = 'airport:ZRH'): Zeitereignis {
     end: { ...event.end, resolution: { kind: 'civil_only', contextRef: context } } }
 }
 function pair(a: Zeitereignis, b: Zeitereignis) { return zeitereignissePruefen([a, b], 'complete').pairs[0] }
+function estimateRange(earliest: string, latest: string): Zeitgrenze {
+  return { ...boundary(earliest), truthClass: 'estimate', resolution: {
+    kind: 'estimate_range', earliest: Date.parse(`${date}T${earliest}:00Z`) / 60000,
+    latest: Date.parse(`${date}T${latest}:00Z`) / 60000, methodRef: 'synthetic-method/v1',
+  } }
+}
+function estimatedAnchor(id: string, earliest: string, latest: string): Zeitereignis {
+  return { ...event(id, earliest, null), start: estimateRange(earliest, latest) }
+}
 function item(id: string, overrides: Partial<TripItem> = {}): TripItem {
   return { ...beispielreise().days[0].items[0], id, dayId: 'day-1', stageId: null, kind: 'activity', title: id, note: null,
     startsOn: date, startsAt: '10:00', endsOn: date, endsAt: '11:00', routeItinerary: null,
@@ -144,6 +153,89 @@ test('estimates never prove overlap or disjointness; bounded supported overlap o
   assert.equal(pair(tagged, event('b')).state, 'possible_conflict')
   if (a.start.resolution.kind === 'estimate_range') a.start.resolution.latest += 100
   assert.equal(pair(a, event('b')).state, 'not_evaluable')
+})
+
+test('closed estimate range: start-only interior witness overlaps an occupied interval', () => {
+  const a = estimatedAnchor('estimated', '10:00', '11:00')
+  const before = structuredClone(a)
+  for (const result of [pair(a, event('occupied', '10:20', '10:40')), pair(event('occupied', '10:20', '10:40'), a)]) {
+    assert.equal(result.state, 'possible_conflict')
+    assert.equal(result.comparisonBasis, 'estimate')
+    assert.equal(result.overlapMinutes, null)
+    assert(result.reasons.includes('missing_end'))
+    assert(result.reasons.includes('estimate_only'))
+  }
+  assert.deepEqual(a, before)
+})
+
+test('closed estimate range: milestone interior witness is possible without inventing an end', () => {
+  const a = { ...estimatedAnchor('milestone', '10:00', '11:00'), role: 'milestone' as const }
+  const result = pair(a, event('occupied', '10:20', '10:40'))
+  assert.equal(result.state, 'possible_conflict')
+  assert.equal(result.overlapMinutes, null)
+  assert(!result.reasons.includes('missing_end'))
+  assert.equal(a.end.time, null)
+})
+
+test('closed estimate range: two anchors can intersect without sharing any endpoints', () => {
+  const a = estimatedAnchor('a', '10:00', '11:00')
+  for (const b of [estimatedAnchor('nested', '10:20', '10:40'), estimatedAnchor('crossing', '10:30', '11:30'), event('exact', '10:30', null)]) {
+    assert.equal(pair(a, b).state, 'possible_conflict')
+    assert.equal(pair(a, b).overlapMinutes, null)
+  }
+})
+
+test('closed estimate range: inclusive anchor bounds versus half-open occupation', () => {
+  const occupied = event('occupied', '10:20', '10:40')
+  for (const role of ['start_only', 'milestone'] as const) {
+    for (const [earliest, latest, expected] of [
+      ['10:00', '10:20', 'possible_conflict'], ['10:20', '10:20', 'possible_conflict'],
+      ['10:40', '11:00', 'not_evaluable'], ['10:40', '10:40', 'not_evaluable'],
+    ] as const) assert.equal(pair({ ...estimatedAnchor('anchor', earliest, latest), role }, occupied).state, expected)
+  }
+  assert.equal(pair(estimatedAnchor('a', '10:00', '11:00'), estimatedAnchor('b', '11:00', '12:00')).state, 'possible_conflict')
+  const estimatedSpan = { ...event('span'), start: estimateRange('10:00', '10:10'), end: estimateRange('10:30', '10:40') }
+  assert.equal(pair(estimatedSpan, event('at-end', '10:40', null)).state, 'not_evaluable')
+  assert.equal(pair(estimatedSpan, event('inside', '10:39', null)).state, 'possible_conflict')
+})
+
+test('closed estimate range: separated anchors and occupied spans never prove disjointness', () => {
+  const a = estimatedAnchor('a', '10:00', '10:10')
+  const span = { ...event('span'), start: estimateRange('10:00', '10:10'), end: estimateRange('11:00', '11:10') }
+  for (const result of [pair(a, estimatedAnchor('b', '10:20', '10:40')), pair(a, event('b', '10:20', '10:40')),
+    pair(span, event('later', '11:10', '12:00'))]) {
+    assert.equal(result.state, 'not_evaluable')
+    assert.equal(result.comparisonBasis, 'estimate')
+    assert.equal(result.overlapMinutes, null)
+  }
+  assert.equal(pair(span, event('overlap', '10:20', '10:40')).state, 'possible_conflict')
+})
+
+test('closed estimate range: huge ranges use bounded existence checks, not minute enumeration', () => {
+  const a = estimatedAnchor('wide', '10:00', '11:00')
+  a.start.resolution = { kind: 'estimate_range', earliest: -1_000_000_000_000, latest: 1_000_000_000_000, methodRef: 'synthetic-wide/v1' }
+  assert.equal(pair(a, event('inside', '10:20', '10:40')).state, 'possible_conflict')
+})
+
+test('closed estimate range: finite alternatives retain holes and civil contexts remain distinct', () => {
+  const a = estimatedAnchor('a', '10:20', '10:40')
+  const b = event('finite', '10:00', null)
+  const base = Date.parse(`${date}T10:00:00Z`) / 60000
+  b.start.resolution = { kind: 'instant_candidates', candidates: [0, -60].map(offsetMinutes => ({
+    epochMinute: base - offsetMinutes, offsetMinutes, choices: { fold: String(offsetMinutes) },
+  })) }
+  assert.equal(pair(a, b).state, 'not_evaluable') // Neither 10:00 nor 11:00 lies in the estimate.
+  assert.equal(pair(a, civil(event('civil', '10:20', '10:40'))).state, 'not_evaluable')
+})
+
+test('closed estimate range: invalid assignments and contradictory explicit duration fail closed', () => {
+  const a = { ...event('a'), start: estimateRange('10:00', '11:00'), end: estimateRange('10:30', '12:00') }
+  assert(pair(a, event('b')).reasons.includes('conflicting_evidence'))
+  const varying = { ...event('varying'), start: estimateRange('10:00', '10:10'), end: estimateRange('11:00', '11:10'), durationMinutes: 60 }
+  assert.equal(pair(varying, event('b')).state, 'not_evaluable')
+  const singleton = { ...varying, start: estimateRange('10:00', '10:00'), end: estimateRange('11:00', '11:00') }
+  assert.equal(pair(singleton, event('b')).state, 'possible_conflict')
+  assert.equal(pair(estimatedAnchor('reversed', '11:00', '10:00'), event('b')).state, 'not_evaluable')
 })
 
 test('invalid Gregorian dates, invalid clocks and nonpositive occupied intervals fail closed', () => {

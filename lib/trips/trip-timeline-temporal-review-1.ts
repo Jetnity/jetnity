@@ -106,16 +106,18 @@ function fieldReasons(boundary: Zeitgrenze, edge: 'start' | 'end'): Grund[] {
   return unique(reasons)
 }
 
-type Point = { value: number; choices: Auswahl }
-type Bound = { points: Point[]; basis: Basis; context: string | null; reasons: Grund[]; invalid: boolean }
+type ClosedRange = { earliest: number; latest: number }
+type Alternative = { range: ClosedRange; choices: Auswahl }
+const exactRange = (value: number): ClosedRange => ({ earliest: value, latest: value })
+type Bound = { alternatives: Alternative[]; basis: Basis; context: string | null; reasons: Grund[]; invalid: boolean }
 function boundaryRead(boundary: Zeitgrenze, edge: 'start' | 'end'): Bound {
   const reasons = fieldReasons(boundary, edge)
-  const result: Bound = { points: [], basis: 'none', context: null, reasons, invalid: reasons.some(r => ['invalid_local_time', 'conflicting_evidence', 'stale_evidence'].includes(r)) }
+  const result: Bound = { alternatives: [], basis: 'none', context: null, reasons, invalid: reasons.some(r => ['invalid_local_time', 'conflicting_evidence', 'stale_evidence'].includes(r)) }
   if (reasons.length) return result
   const resolution = boundary.resolution
   if (resolution.kind === 'civil_only') {
     if (!resolution.contextRef) return { ...result, reasons: ['missing_clock_context'] }
-    return { ...result, points: [{ value: civilMinute(boundary.date, boundary.time)!, choices: {} }], basis: 'civil_only', context: resolution.contextRef, reasons: ['missing_timezone'] }
+    return { ...result, alternatives: [{ range: exactRange(civilMinute(boundary.date, boundary.time)!), choices: {} }], basis: 'civil_only', context: resolution.contextRef, reasons: ['missing_timezone'] }
   }
   if (resolution.kind === 'instant_candidates') {
     const candidates = resolution.candidates
@@ -133,17 +135,17 @@ function boundaryRead(boundary: Zeitgrenze, edge: 'start' | 'end'): Bound {
       keyed.set(key, c.epochMinute)
     }
     return { ...result, basis: boundary.truthClass === 'estimate' ? 'estimate' : 'instant',
-      points: [...new Map(candidates.map(c => {
-        const point = { value: c.epochMinute, choices: c.choices }
-        return [stable(point), point]
-      })).values()].sort((a, b) => a.value - b.value || sort(stable(a.choices), stable(b.choices))),
+      alternatives: [...new Map(candidates.map(c => {
+        const alternative = { range: exactRange(c.epochMinute), choices: c.choices }
+        return [stable(alternative), alternative]
+      })).values()].sort((a, b) => a.range.earliest - b.range.earliest || sort(stable(a.choices), stable(b.choices))),
       reasons: boundary.truthClass === 'estimate' ? ['estimate_only'] : candidates.length > 1 ? ['ambiguous_local_time'] : [] }
   }
   if (resolution.kind === 'estimate_range') {
     if (!resolution.methodRef || !Number.isSafeInteger(resolution.earliest) || !Number.isSafeInteger(resolution.latest)
       || resolution.earliest > resolution.latest) return { ...result, invalid: true, reasons: ['conflicting_evidence'] }
     return { ...result, basis: 'estimate', reasons: ['estimate_only'],
-      points: unique([String(resolution.earliest), String(resolution.latest)]).map(value => ({ value: Number(value), choices: {} })) }
+      alternatives: [{ range: { earliest: resolution.earliest, latest: resolution.latest }, choices: {} }] }
   }
   return { ...result, reasons: ['missing_clock_context'] }
 }
@@ -157,7 +159,7 @@ function sameChoiceDomains(a: readonly { choices: Auswahl }[], b: readonly { cho
   return keys.every(key => JSON.stringify(unique(a.flatMap(p => Object.hasOwn(p.choices, key) ? [p.choices[key]] : [])))
     === JSON.stringify(unique(b.flatMap(p => Object.hasOwn(p.choices, key) ? [p.choices[key]] : []))))
 }
-type Assignment = { start: number; end: number | null; choices: Auswahl }
+type Assignment = { start: ClosedRange; end: ClosedRange | null; choices: Auswahl }
 type Span = { event: Zeitereignis; assignments: Assignment[]; basis: Basis; context: string | null; reasons: Grund[]; invalid: boolean }
 function spanRead(event: Zeitereignis): Span {
   if (event.role === 'availability_span' || event.role === 'unsupported') {
@@ -172,27 +174,40 @@ function spanRead(event: Zeitereignis): Span {
   const result: Span = { event, assignments: [], basis: 'none', context: null, reasons, invalid }
   if (invalid || !fixed(event)) return result
   if (event.role === 'start_only' || event.role === 'milestone') {
-    return { ...result, basis: start.basis, context: start.context, assignments: start.points.map(p => ({ start: p.value, end: null, choices: p.choices })) }
+    return { ...result, basis: start.basis, context: start.context, assignments: start.alternatives.map(p => ({ start: p.range, end: null, choices: p.choices })) }
   }
-  if (event.role !== 'occupied_interval' || !start.points.length || !end.points.length) return result
+  if (event.role !== 'occupied_interval' || !start.alternatives.length || !end.alternatives.length) return result
   const civil = start.basis === 'civil_only' && end.basis === 'civil_only' && start.context === end.context
   const instant = ['instant', 'estimate'].includes(start.basis) && ['instant', 'estimate'].includes(end.basis)
   if (!civil && !instant) return { ...result, reasons: unique([...reasons, 'missing_clock_context']) }
-  if (!sameChoiceDomains(start.points, end.points)) return { ...result, invalid: true, reasons: unique([...reasons, 'conflicting_evidence']) }
+  if (!sameChoiceDomains(start.alternatives, end.alternatives)) return { ...result, invalid: true, reasons: unique([...reasons, 'conflicting_evidence']) }
   const assignments: Assignment[] = []
-  for (const a of start.points) for (const b of end.points) {
+  for (const a of start.alternatives) for (const b of end.alternatives) {
     const choices = combine(a.choices, b.choices)
     if (!choices) continue // Only explicitly disallowed correlated combinations are excluded.
-    if (b.value <= a.value || (event.durationMinutes !== undefined
-      && (!Number.isSafeInteger(event.durationMinutes) || event.durationMinutes <= 0 || b.value - a.value !== event.durationMinutes))) {
+    // Every admitted combination must be valid; never trim a range to repair duration evidence.
+    if (b.range.earliest <= a.range.latest || (event.durationMinutes !== undefined
+      && (!Number.isSafeInteger(event.durationMinutes) || event.durationMinutes <= 0
+        || b.range.earliest - a.range.latest !== event.durationMinutes
+        || b.range.latest - a.range.earliest !== event.durationMinutes))) {
       return { ...result, invalid: true, reasons: unique([...reasons, 'conflicting_evidence']) }
     }
-    assignments.push({ start: a.value, end: b.value, choices })
+    assignments.push({ start: a.range, end: b.range, choices })
     if (assignments.length > MAX_ASSIGNMENTS) return { ...result, reasons: unique([...reasons, 'work_limit']) }
   }
   if (!assignments.length) return { ...result, invalid: true, reasons: unique([...reasons, 'conflicting_evidence']) }
   return { ...result, assignments, context: civil ? start.context : null,
     basis: civil ? 'civil_only' : start.basis === 'estimate' || end.basis === 'estimate' ? 'estimate' : 'instant' }
+}
+
+/** Constant work per compatible alternative pair, independent of the ranges' widths.
+ * Finite candidates stay separate singleton ranges; estimates retain every interior anchor.
+ * Occupation excludes its end, whereas both limits of an estimated anchor are included. */
+function overlapPossible(a: Assignment, b: Assignment): boolean {
+  if (a.end !== null && b.end !== null) return a.start.earliest < b.end.latest && b.start.earliest < a.end.latest
+  if (a.end !== null) return b.start.latest >= a.start.earliest && b.start.earliest < a.end.latest
+  if (b.end !== null) return a.start.latest >= b.start.earliest && a.start.earliest < b.end.latest
+  return a.start.earliest <= b.start.latest && b.start.earliest <= a.start.latest
 }
 
 function pairRead(a: Span, b: Span): Paar {
@@ -212,13 +227,9 @@ function pairRead(a: Span, b: Span): Paar {
   for (const left of a.assignments) for (const right of b.assignments) {
     if (!combine(left.choices, right.choices)) continue
     count++
-    const minutes = left.end !== null && right.end !== null
-      ? Math.max(0, Math.min(left.end, right.end) - Math.max(left.start, right.start)) : null
-    const overlap = minutes !== null ? minutes > 0
-      : left.start === right.start
-        || (left.end === null && right.end !== null && right.start <= left.start && left.start < right.end)
-        || (right.end === null && left.end !== null && left.start <= right.start && right.start < left.end)
-    if (overlap) overlaps++
+    const minutes = result.comparisonBasis === 'instant' && left.end !== null && right.end !== null
+      ? Math.max(0, Math.min(left.end.earliest, right.end.earliest) - Math.max(left.start.earliest, right.start.earliest)) : null
+    if (overlapPossible(left, right)) overlaps++
     equalMinutes = equalMinutes === undefined ? minutes : equalMinutes === minutes ? minutes : null
   }
   if (!count) return { ...result, reasons: unique([...result.reasons, 'conflicting_evidence']) }

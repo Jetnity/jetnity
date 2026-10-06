@@ -15,6 +15,16 @@ docs/evidence/trip-timeline-temporal-review-1/core/screens/workspace-390-text200
 docs/evidence/trip-timeline-temporal-review-1/core/screens/workspace-390.png
 docs/evidence/trip-timeline-temporal-review-1/core/screens/workspace-768-text200.png
 docs/evidence/trip-timeline-temporal-review-1/core/screens/workspace-768.png
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/build.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/changed-files.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/focused-tests.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/hygiene.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/lint.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/regression-after.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/regression-before.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/trip-route-tests.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/typecheck.txt
+docs/evidence/trip-timeline-temporal-review-1/estimate-range-correction/verification.json
 docs/evidence/trip-timeline-temporal-review-1/gate-output/build.txt
 docs/evidence/trip-timeline-temporal-review-1/gate-output/check-api-schutz.txt
 docs/evidence/trip-timeline-temporal-review-1/gate-output/check-dead.txt

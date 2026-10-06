@@ -1,0 +1,65 @@
+
+GATE check:operating-mode
+
+> jetnity@1.0.0 check:operating-mode
+> node scripts/operating-mode-guard.mjs
+
+operating-mode guard: PASS
+EXIT 0
+
+GATE check:dead
+
+> jetnity@1.0.0 check:dead
+> node scripts/erreichbarkeit.mjs
+
+Startpunkte:        666
+erreichbare Module: 1338
+verwaist:           0
+
+
+Keine unbegruendet verwaiste Datei.
+EXIT 0
+
+GATE check:exports
+
+> jetnity@1.0.0 check:exports
+> node scripts/exporte.mjs
+
+geprueft: 1076 Dateien
+Exporte ohne Aufrufer: 0
+
+Kein unbegruendeter Export ohne Aufrufer.
+EXIT 0
+
+GATE check:deps
+
+> jetnity@1.0.0 check:deps
+> node scripts/pakete.mjs
+
+
+dependencies: 11 geprueft, 0 ohne Verwendung
+
+devDependencies: 2 geprueft, 0 ohne Verwendung
+
+nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide
+EXIT 0
+
+GATE check:api-schutz
+
+> jetnity@1.0.0 check:api-schutz
+> node scripts/api-schutz.mjs
+
+API-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi().
+EXIT 0
+
+GATE check:schema-bezug
+
+> jetnity@1.0.0 check:schema-bezug
+> node scripts/db/verwendung.mjs --pruefen
+
+Jede angesprochene generierte Struktur existiert – geprüft gegen 22 Tabellen/Views und 25 Funktionen in types/supabase.ts.
+LOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC darf_official_truth_freigeben from lib/readiness/official-truth-fact-entry-authority-server.ts → supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC official_truth_source_catalog_v2 from lib/readiness/official-truth-source-catalog-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)
+LOCAL/UNAPPLIED RPC official_truth_store_accepted_v2 from lib/readiness/official-truth-store-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)
+EXIT 0
