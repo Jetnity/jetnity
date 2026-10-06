@@ -498,6 +498,7 @@ describe('dormancy and architectural boundaries', () => {
     walk(root)
     assert.deepEqual(importers.sort(), ['lib/readiness/evidence.ts',
       'lib/readiness/official-truth-accepted-evidence.ts',
+      'lib/readiness/official-truth-autonomous-provenance-record.ts',
       'lib/readiness/official-truth-composition-policy-registry.ts',
       'lib/readiness/official-truth-coverage.ts',
       'lib/readiness/official-truth-discovered-url-candidates.ts',

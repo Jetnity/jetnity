@@ -14,6 +14,7 @@ import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import { officialTruthRegelReviewPacket } from '@/lib/readiness/official-truth-rule-review-packet'
 import {
   officialTruthRegelReviewPacketFingerprint,
+  officialTruthReviewIdentityV3,
   type OfficialTruthRegelReviewFingerprintErgebnis,
 } from '@/lib/readiness/official-truth-rule-review-fingerprint'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
@@ -644,3 +645,31 @@ const R2_PUBLICATIONS = [
   "https://www.gov.example/rules",
   "https://www.interior.example/rules"
 ] as const
+
+// Captured independently from unchanged main@b16a250 fingerprint implementation.
+test('C26 shared compact v3 core is byte/key compatible with baseline golden vectors', () => {
+  for (const [proposal, golden] of [
+    [null, 'review-packet:v3:4a019d77ca3e47d86b88c82717a9f4dbaf3706d0b9670109fbd174e9ca3201b6'],
+    [VORSCHLAG, 'review-packet:v3:67f9d31ff5b5be95d23e9df1b377fdfd903fa8626a02a8a2eb3a1c270dbce8ca'],
+  ] as const) {
+    const metadata = meta({ proposal }), supports = [buendel()]
+    const packet = paketOffen(supports, metadata)
+    const core = officialTruthReviewIdentityV3(packet.kandidat, packet.supports)
+    assert.ok(core.ok)
+    assert.equal(`review-packet:v3:${core.digest}`, golden)
+    assert.equal(offen(finger(supports, metadata)).reviewPacketKey, golden)
+    assert.deepEqual(JSON.parse(core.canonical), core.preimage)
+    assert.doesNotMatch(core.canonical, /sourceSnapshot|extractionNote|custody|referenceTime/)
+  }
+})
+
+test('C26 compact core matches wrapper across proposal-null, original validity, notes and order', () => {
+  const first = buendel(), other = zweiteStuetze('synthetic second body')
+  for (const supports of [[first], [first, other], [other, first], [buendel(huelle(), { validFrom: '2026-09-30', validUntil: '2026-10-10', extractionNote: 'synthetic note excluded' })]]) {
+    const metadata = meta({ proposal: null, evidenceQuality: supports.length === 1 ? 'explicit_primary_statement' : 'composed_from_multiple_primary_sources' })
+    const packet = paketOffen(supports, metadata)
+    const core = officialTruthReviewIdentityV3(packet.kandidat, packet.supports)
+    assert.ok(core.ok)
+    assert.equal(`review-packet:v3:${core.digest}`, offen(finger(supports, metadata)).reviewPacketKey)
+  }
+})
