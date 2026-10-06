@@ -1,0 +1,725 @@
+{
+  "sha": "640cb7c112343a0ac749c4e820779a34347ce91a",
+  "basis": "http://127.0.0.1:3487",
+  "stand": "2026-10-06T08:24:51.266Z",
+  "ergebnis": "FAIL",
+  "fehler": [
+    "compact: locator.focus: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('nav[aria-label=\"Reise\"] button').filter({ hasText: 'Zurück zur Reise' })\u001b[22m\n"
+  ],
+  "schritte": [
+    {
+      "name": "overview_360x800",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 157,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 157,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 157,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 157,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "334px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_360x800.png"
+    },
+    {
+      "name": "overview_390x844",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "364px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_390x844.png"
+    },
+    {
+      "name": "overview_768x1024",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 164,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 164,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 184,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 186,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "358.5px 358.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_768x1024.png"
+    },
+    {
+      "name": "overview_1024x768",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 228,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 228,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 248,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 250,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "486.5px 486.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_1024x768.png"
+    },
+    {
+      "name": "overview_1280x800",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 312,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 314,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "614.5px 614.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_1280x800.png"
+    },
+    {
+      "name": "overview_1440x900",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 312,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 314,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "614.5px 614.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_1440x900.png"
+    },
+    {
+      "name": "overview_1920x1080",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 312,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 314,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "614.5px 614.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/overview_1920x1080.png"
+    },
+    {
+      "name": "full_390x844",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "364px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/full_390x844.png"
+    },
+    {
+      "name": "full_1440x900",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 292,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 312,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 314,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "614.5px 614.5px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/full_1440x900.png"
+    },
+    {
+      "name": "text200_360x800",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "32px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 88,
+          "width": 135,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 88,
+          "width": 135,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 88,
+          "width": 135,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 88,
+          "width": 135,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "310px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 88,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 88,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/text200_360x800.png"
+    },
+    {
+      "name": "reduced-motion_390x844",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "364px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        },
+        {
+          "text": "Reisebegleiter fragen",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0,
+      "screenshot": "docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local/screens/reduced-motion_390x844.png"
+    },
+    {
+      "name": "guest_390",
+      "ansicht": "uebersicht",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "fakten": [
+        "ZEITRAUM",
+        "REISENDE",
+        "BUDGET"
+      ],
+      "knoepfe": [
+        {
+          "text": "Übersicht",
+          "current": "page",
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Reiseplan",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Organisieren",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        },
+        {
+          "text": "Vorbereitung",
+          "current": null,
+          "height": 44,
+          "width": 172,
+          "nowrap": true,
+          "inScroller": true
+        }
+      ],
+      "teileSpalten": "364px",
+      "aktionen": [
+        {
+          "text": "Reise ändern",
+          "height": 44,
+          "expanded": "false"
+        }
+      ],
+      "netz": 0
+    }
+  ]
+}

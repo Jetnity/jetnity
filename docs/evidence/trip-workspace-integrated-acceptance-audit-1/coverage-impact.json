@@ -1,0 +1,159 @@
+{
+  "note": "Synthetic pure-function reproduction only; no storage/DB/provider call.",
+  "coverage": {
+    "bestimmbar": true,
+    "abschnitte": [
+      {
+        "id": "outbound:stage-1",
+        "art": "outbound",
+        "originName": "Zürich",
+        "destinationName": "Florenz",
+        "originPlaceId": null,
+        "destinationPlaceId": null,
+        "date": "2026-11-01",
+        "status": "booked",
+        "item": {
+          "id": "manual-flight",
+          "dayId": "day-1",
+          "stageId": "stage-1",
+          "kind": "flight",
+          "title": "Manueller Flug",
+          "note": null,
+          "position": 2,
+          "startsOn": "2026-11-01",
+          "startsAt": "18:00",
+          "endsOn": "2026-11-01",
+          "endsAt": null,
+          "priceAmount": null,
+          "priceCurrency": null,
+          "provider": null,
+          "externalRef": null,
+          "bookingUrl": null,
+          "bookingStatus": "booked",
+          "bookingSource": "user",
+          "bookingConfirmedAt": null,
+          "mobilityMode": null,
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "originName": null,
+          "destinationName": null,
+          "connectionRef": null,
+          "mobilityChanges": null,
+          "mobilityEvidence": null,
+          "rentalSupplier": null,
+          "vehicleClass": null,
+          "transmission": null,
+          "rentalEvidence": null,
+          "routeItinerary": {
+            "v": 1,
+            "type": "flight_route_itinerary",
+            "legs": [
+              {
+                "segments": [
+                  {
+                    "origin": {
+                      "airportCode": "NRT",
+                      "countryCode": null,
+                      "city": null,
+                      "country": null
+                    },
+                    "destination": {
+                      "airportCode": "LAX",
+                      "countryCode": null,
+                      "city": null,
+                      "country": null
+                    },
+                    "departureDate": "2026-11-01",
+                    "departureTime": "18:00",
+                    "arrivalDate": "2026-11-01",
+                    "arrivalTime": "09:00"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "return:stage-1",
+        "art": "return",
+        "originName": "Florenz",
+        "destinationName": "Zürich",
+        "originPlaceId": null,
+        "destinationPlaceId": null,
+        "date": "2026-11-05",
+        "status": "booked",
+        "item": {
+          "id": "wrong-return",
+          "dayId": "day-5",
+          "stageId": "stage-1",
+          "kind": "flight",
+          "title": "Manueller Flug",
+          "note": null,
+          "position": 2,
+          "startsOn": "2026-11-05",
+          "startsAt": "18:00",
+          "endsOn": "2026-11-01",
+          "endsAt": null,
+          "priceAmount": null,
+          "priceCurrency": null,
+          "provider": null,
+          "externalRef": null,
+          "bookingUrl": null,
+          "bookingStatus": "booked",
+          "bookingSource": "user",
+          "bookingConfirmedAt": null,
+          "mobilityMode": null,
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "originName": null,
+          "destinationName": null,
+          "connectionRef": null,
+          "mobilityChanges": null,
+          "mobilityEvidence": null,
+          "rentalSupplier": null,
+          "vehicleClass": null,
+          "transmission": null,
+          "rentalEvidence": null,
+          "routeItinerary": {
+            "v": 1,
+            "type": "flight_route_itinerary",
+            "legs": [
+              {
+                "segments": [
+                  {
+                    "origin": {
+                      "airportCode": "NRT",
+                      "countryCode": null,
+                      "city": null,
+                      "country": null
+                    },
+                    "destination": {
+                      "airportCode": "LAX",
+                      "countryCode": null,
+                      "city": null,
+                      "country": null
+                    },
+                    "departureDate": "2026-11-05",
+                    "departureTime": "18:00",
+                    "arrivalDate": "2026-11-05",
+                    "arrivalTime": "09:00"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "unzugeordnet": [],
+    "zusammenfassung": "Hinflug gebucht · Rückflug gebucht"
+  },
+  "flightStatus": {
+    "bereich": "fluege",
+    "anzahl": 2,
+    "text": "NRT → LAX | NRT → LAX · Hinflug gebucht · Rückflug gebucht",
+    "lage": "belegt"
+  },
+  "flightAttention": []
+}

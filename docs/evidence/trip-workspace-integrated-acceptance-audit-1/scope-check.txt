@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-06T08:39:25.995813+00:00",
+  "stage": "pre-delivery-commit content scope verification",
+  "remoteMain": "9adfc04ffe90693dedc059f07a396751a0625157",
+  "seedHead": "640cb7c112343a0ac749c4e820779a34347ce91a",
+  "mergeBase": "9adfc04ffe90693dedc059f07a396751a0625157",
+  "main_vs_seed_left_right": "0\t1",
+  "TASK_blob": "258c058187bec13f48d7fd6814dbadca219bb04b",
+  "TASK_unchanged": true,
+  "runtime_and_governance_source_blobs_unchanged": true,
+  "existing_evidence_untouched": true,
+  "new_files": 159,
+  "branch_changed_files_including_seed_task": 160,
+  "permitted_paths_only": true,
+  "next_generated_files_restored": true,
+  "manifest": "changed-files.txt",
+  "final_head_note": "Exact pushed head/ahead/behind resolved in final STOP receipt; this file is pre-commit scope evidence.",
+  "staged_diff_check": "PASS after EOF/trailing-log-whitespace normalization; log normalization hashes recorded here",
+  "logs_note": "Audit logs are force-added only within this unique evidence directory; no original evidence or ignored environment files included.",
+  "log_whitespace_normalization": {
+    "premium-local.log": {
+      "original_sha256": "5d7b9193c60dc4a8db109fce061adc9323b23d9599401c89464bb83dbf449717",
+      "normalized_sha256": "105554e2c4db9a12b7e1e9f44dea4ab8139de78439db9e782b4692706ba27892"
+    },
+    "broader-attempt.log": {
+      "original_sha256": "73eddd28cf4569ef50309dd9c52a3c3b45a45cc2b221bbc64f5043494f113d57",
+      "normalized_sha256": "d4b4455bd6b90b055a76d0ddf6483cc05416c9ec491fd3c31514d0baa78f7f22"
+    }
+  }
+}

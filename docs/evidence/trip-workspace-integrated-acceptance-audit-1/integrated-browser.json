@@ -1,0 +1,3047 @@
+{
+  "checkedAt": "2026-10-06T08:26:01.948Z",
+  "server": "Next development, loopback only, no real auth/DB credentials",
+  "browser": "154.0.8037.95",
+  "runs": [
+    {
+      "name": "360",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "cases": [
+        "real Guest route opens with local fixture",
+        "invalid equal stay dates rejected without persistence",
+        "stay save recomputes 4/4 nights in real Guest graph",
+        "stay reload/reopen/edit recomputes 2/4 nights",
+        "1 segments saved with exact local values and null countries/cities",
+        "2 segments saved with exact local values and null countries/cities",
+        "3 segments saved with exact local values and null countries/cities",
+        "4 segments saved with exact local values and null countries/cities",
+        "same-airport reverse connection rejected without persistence",
+        "flight editor Escape keeps outer detail and restores trigger focus",
+        "date-line single segment preserves itinerary and nulls misleading legacy end",
+        "Guest preparation direct target survives reload",
+        "Guest localStorage has no evaluation payload",
+        "30-day six-stage trip opens day 30 via URL"
+      ],
+      "measurements": [
+        {
+          "name": "overview",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 643.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": 643.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 691.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": 691.359375,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": 200,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": 220,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 1160,
+          "fontSize": "16px",
+          "focus": "Zeitraum ergänzen",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -516.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -516.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -468.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": -468.640625,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -220.640625,
+            "width": 336,
+            "height": 270
+          },
+          "work": {
+            "x": 12,
+            "y": 65.359375,
+            "width": 336,
+            "height": 819
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -960,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -940,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 1160,
+          "fontSize": "16px",
+          "focus": "Zeitraum ändern",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -516.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -516.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -468.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": -468.640625,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -220.640625,
+            "width": 336,
+            "height": 266
+          },
+          "work": {
+            "x": 12,
+            "y": 61.359375,
+            "width": 336,
+            "height": 379
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -960,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -940,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 373,
+          "fontSize": "16px",
+          "focus": "Vorbereitung",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 270.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": 270.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 318.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": 318.359375,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -173,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -153,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "flight-four-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 3249,
+          "fontSize": "16px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -2605.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -2605.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -2557.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": -2557.640625,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -2309.640625,
+            "width": 336,
+            "height": 290
+          },
+          "work": {
+            "x": 12,
+            "y": -2003.640625,
+            "width": 336,
+            "height": 3031
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -3049,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -3029,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "dateline-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 1692,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -1048.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -1048.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -1000.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": -1000.640625,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -752.640625,
+            "width": 336,
+            "height": 270
+          },
+          "work": {
+            "x": 12,
+            "y": -466.640625,
+            "width": 336,
+            "height": 603
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -1492,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -1472,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "plan",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-1",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 325,
+          "fontSize": "16px",
+          "focus": "Reiseplan",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 318.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": 318.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 366.359375,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": 366.359375,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -125,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -105,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation-target",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 2250,
+          "fontSize": "16px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -1502.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -1502.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -1454.640625,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": -1454.640625,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -2050,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -2030,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "preparation-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 2298,
+          "fontSize": "32px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 41,
+              "y": -209.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 184,
+              "y": -209.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 41,
+              "y": -113.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 184,
+              "y": -113.84375,
+              "width": 135,
+              "height": 88
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 97,
+              "y": -1642,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "flight-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 4947,
+          "fontSize": "32px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 41,
+              "y": -3106.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 184,
+              "y": -3106.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 41,
+              "y": -3010.84375,
+              "width": 135,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 184,
+              "y": -3010.84375,
+              "width": 135,
+              "height": 88
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": -2478.84375,
+            "width": 312,
+            "height": 778
+          },
+          "work": {
+            "x": 24,
+            "y": -1668.84375,
+            "width": 312,
+            "height": 3608
+          },
+          "smallControls": [
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 97,
+              "y": -4291,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "long-trip-day30",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-30",
+          "width": 360,
+          "scrollWidth": 360,
+          "overflow": 0,
+          "scrollY": 1038,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -35.921875,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 182,
+              "y": -35.921875,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 12.078125,
+              "width": 157,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 182,
+              "y": 12.078125,
+              "width": 157,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 208.65625,
+              "y": -838,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 49,
+              "y": -818,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        }
+      ],
+      "findings": [],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "accessibilitySnapshot": "- region \"Jetzt wichtig\":\n  - paragraph: Jetzt wichtig\n  - heading \"Was jetzt Aufmerksamkeit braucht\" [level=3]\n  - list:\n    - listitem:\n      - button \"Diese Reise Flugstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Flugstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Diese Reise Unterkunftsstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Unterkunftsstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Reisende Person Offizielle Prüfung noch nicht möglich insufficient_context\":\n        - text: Reisende Person\n        - strong: Offizielle Prüfung noch nicht möglich\n        - text: insufficient_context\n  - button \"2 weitere Hinweisgruppen anzeigen\"",
+      "afterStayOverview": "BEREICHE DIESER REISE\n\nFlüge\nFlugstand noch unklar\nUnterkunft\n2/4 Nächte abgedeckt\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant",
+      "directFlightText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern",
+      "storageKeys": [
+        "jetnity:reise:v3"
+      ],
+      "longTripText": "TAGESPLAN\n\n3 Punkte geplant\n\nTag 30 von 30\n\nMo., 30. Nov. · Etappe 6 – San Casciano in Val di Pesa und Umgebung\n\nEtappe 1 – San Casciano in Val di Pesa und Umgebung\n\n01. Nov. – 06. Nov.\n\nAnreise\n01. Nov. · 2\nAnreise\n02. Nov. · 1\nAnreise\n03. Nov.\nAnreise\n04. Nov.\nAnreise\n05. Nov.\n\nEtappe 2 – San Casciano in Val di Pesa und Umgebung\n\n06. Nov. – 11. Nov.\n\nAnreise\n06. Nov.\nAnreise\n07. Nov.\nAnreise\n08. Nov.\nAnreise\n09. Nov.\nAnreise\n10. Nov.\n\nEtappe 3 – San Casciano in Val di Pesa und Umgebung\n\n11. Nov. – 16. Nov.\n\nAnreise\n11. Nov.\nAnreise\n12. Nov.\nAnreise\n13. Nov.\nAnreise\n14. Nov.\nAnreise\n15. Nov.\n\nEtappe 4 – San Casciano in Val di Pesa und Umgebung\n\n16. Nov. – 21. Nov.\n\nAnreise\n16. Nov.\nAnreise\n17. Nov.\nAnreise\n18. Nov.\nAnreise\n19. Nov.\nAnreise\n20. Nov.\n\nEtappe 5 – San Casciano in Val di Pesa und Umgebung\n\n21. Nov. – 26. Nov.\n\nAnreise\n21. Nov.\nAnreise\n22. Nov.\nAnreise\n23. Nov.\nAnreise\n24. Nov.\nAnreise\n25. Nov.\n\nEtappe 6 – San Casciano in Val di Pesa und Umgebung\n\n26. Nov. – 30. Nov.\n\nAnreise\n26. Nov.\nAnreise\n27. Nov.\nAnreise\n28. Nov.\nAnreise\n29. Nov.\nAnreise\n30. Nov.\n\nETAPPE 6 – SAN CASCIANO IN VAL DI PESA UND UMGEBUNG\n\nMontag, 30. November 2026\nPunkt hinzufügen\n\nNoch nichts an diesem Tag.",
+      "status": "PASS"
+    },
+    {
+      "name": "390",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "cases": [
+        "real Guest route opens with local fixture",
+        "invalid equal stay dates rejected without persistence",
+        "stay save recomputes 4/4 nights in real Guest graph",
+        "stay reload/reopen/edit recomputes 2/4 nights",
+        "1 segments saved with exact local values and null countries/cities",
+        "2 segments saved with exact local values and null countries/cities",
+        "3 segments saved with exact local values and null countries/cities",
+        "4 segments saved with exact local values and null countries/cities",
+        "same-airport reverse connection rejected without persistence",
+        "flight editor Escape keeps outer detail and restores trigger focus",
+        "date-line single segment preserves itinerary and nulls misleading legacy end",
+        "Guest preparation direct target survives reload",
+        "Guest localStorage has no evaluation payload",
+        "30-day six-stage trip opens day 30 via URL"
+      ],
+      "measurements": [
+        {
+          "name": "overview",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 643.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": 643.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 691.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": 691.359375,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": 200,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": 200,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 762,
+          "fontSize": "16px",
+          "focus": "Zeitraum ergänzen",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -118.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -118.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -70.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": -70.640625,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": 157.359375,
+            "width": 366,
+            "height": 270
+          },
+          "work": {
+            "x": 12,
+            "y": 443.359375,
+            "width": 366,
+            "height": 767
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -562,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -562,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 1198,
+          "fontSize": "16px",
+          "focus": "Zeitraum ändern",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -554.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -554.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -506.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": -506.640625,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -278.640625,
+            "width": 366,
+            "height": 266
+          },
+          "work": {
+            "x": 12,
+            "y": 3.359375,
+            "width": 366,
+            "height": 379
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -998,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -998,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 331,
+          "fontSize": "16px",
+          "focus": "Vorbereitung",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 312.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": 312.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 360.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": 360.359375,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -131,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -131,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "flight-four-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 3207,
+          "fontSize": "16px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -2563.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -2563.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -2515.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": -2515.640625,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -2287.640625,
+            "width": 366,
+            "height": 290
+          },
+          "work": {
+            "x": 12,
+            "y": -1981.640625,
+            "width": 366,
+            "height": 3031
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -3007,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -3007,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "dateline-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 1672,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -1028.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -1028.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -980.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": -980.640625,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 12,
+            "y": -752.640625,
+            "width": 366,
+            "height": 270
+          },
+          "work": {
+            "x": 12,
+            "y": -466.640625,
+            "width": 366,
+            "height": 603
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -1472,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -1472,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "plan",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-1",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 283,
+          "fontSize": "16px",
+          "focus": "Reiseplan",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": 360.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": 360.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 408.359375,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": 408.359375,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -83,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -83,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation-target",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 2190,
+          "fontSize": "16px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -1462.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -1462.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": -1414.640625,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": -1414.640625,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -1990,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -1990,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "preparation-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 2238,
+          "fontSize": "32px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 41,
+              "y": -340.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 199,
+              "y": -340.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 41,
+              "y": -244.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 199,
+              "y": -244.5625,
+              "width": 150,
+              "height": 88
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 97,
+              "y": -1662,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "flight-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 4564,
+          "fontSize": "32px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 41,
+              "y": -2914.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 199,
+              "y": -2914.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 41,
+              "y": -2818.5625,
+              "width": 150,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 199,
+              "y": -2818.5625,
+              "width": 150,
+              "height": 88
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": -2286.5625,
+            "width": 342,
+            "height": 730
+          },
+          "work": {
+            "x": 24,
+            "y": -1524.5625,
+            "width": 342,
+            "height": 3486
+          },
+          "smallControls": [
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 97,
+              "y": -3988,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "long-trip-day30",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-30",
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": 0,
+          "scrollY": 994,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 21,
+              "y": -35.921875,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 197,
+              "y": -35.921875,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 21,
+              "y": 12.078125,
+              "width": 172,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 197,
+              "y": 12.078125,
+              "width": 172,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 157.21875,
+              "y": -794,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 279.0625,
+              "y": -794,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        }
+      ],
+      "findings": [],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "accessibilitySnapshot": "- region \"Jetzt wichtig\":\n  - paragraph: Jetzt wichtig\n  - heading \"Was jetzt Aufmerksamkeit braucht\" [level=3]\n  - list:\n    - listitem:\n      - button \"Diese Reise Flugstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Flugstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Diese Reise Unterkunftsstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Unterkunftsstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Reisende Person Offizielle Prüfung noch nicht möglich insufficient_context\":\n        - text: Reisende Person\n        - strong: Offizielle Prüfung noch nicht möglich\n        - text: insufficient_context\n  - button \"2 weitere Hinweisgruppen anzeigen\"",
+      "afterStayOverview": "BEREICHE DIESER REISE\n\nFlüge\nFlugstand noch unklar\nUnterkunft\n2/4 Nächte abgedeckt\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant",
+      "directFlightText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern",
+      "storageKeys": [
+        "jetnity:reise:v3"
+      ],
+      "longTripText": "TAGESPLAN\n\n3 Punkte geplant\n\nTag 30 von 30\n\nMo., 30. Nov. · Etappe 6 – San Casciano in Val di Pesa und Umgebung\n\nEtappe 1 – San Casciano in Val di Pesa und Umgebung\n\n01. Nov. – 06. Nov.\n\nAnreise\n01. Nov. · 2\nAnreise\n02. Nov. · 1\nAnreise\n03. Nov.\nAnreise\n04. Nov.\nAnreise\n05. Nov.\n\nEtappe 2 – San Casciano in Val di Pesa und Umgebung\n\n06. Nov. – 11. Nov.\n\nAnreise\n06. Nov.\nAnreise\n07. Nov.\nAnreise\n08. Nov.\nAnreise\n09. Nov.\nAnreise\n10. Nov.\n\nEtappe 3 – San Casciano in Val di Pesa und Umgebung\n\n11. Nov. – 16. Nov.\n\nAnreise\n11. Nov.\nAnreise\n12. Nov.\nAnreise\n13. Nov.\nAnreise\n14. Nov.\nAnreise\n15. Nov.\n\nEtappe 4 – San Casciano in Val di Pesa und Umgebung\n\n16. Nov. – 21. Nov.\n\nAnreise\n16. Nov.\nAnreise\n17. Nov.\nAnreise\n18. Nov.\nAnreise\n19. Nov.\nAnreise\n20. Nov.\n\nEtappe 5 – San Casciano in Val di Pesa und Umgebung\n\n21. Nov. – 26. Nov.\n\nAnreise\n21. Nov.\nAnreise\n22. Nov.\nAnreise\n23. Nov.\nAnreise\n24. Nov.\nAnreise\n25. Nov.\n\nEtappe 6 – San Casciano in Val di Pesa und Umgebung\n\n26. Nov. – 30. Nov.\n\nAnreise\n26. Nov.\nAnreise\n27. Nov.\nAnreise\n28. Nov.\nAnreise\n29. Nov.\nAnreise\n30. Nov.\n\nETAPPE 6 – SAN CASCIANO IN VAL DI PESA UND UMGEBUNG\n\nMontag, 30. November 2026\nPunkt hinzufügen\n\nNoch nichts an diesem Tag.",
+      "status": "PASS"
+    },
+    {
+      "name": "768",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "cases": [
+        "real Guest route opens with local fixture",
+        "invalid equal stay dates rejected without persistence",
+        "stay save recomputes 4/4 nights in real Guest graph",
+        "stay reload/reopen/edit recomputes 2/4 nights",
+        "1 segments saved with exact local values and null countries/cities",
+        "2 segments saved with exact local values and null countries/cities",
+        "3 segments saved with exact local values and null countries/cities",
+        "4 segments saved with exact local values and null countries/cities",
+        "same-airport reverse connection rejected without persistence",
+        "flight editor Escape keeps outer detail and restores trigger focus",
+        "date-line single segment preserves itinerary and nulls misleading legacy end",
+        "Guest preparation direct target survives reload",
+        "Guest localStorage has no evaluation payload",
+        "30-day six-stage trip opens day 30 via URL"
+      ],
+      "measurements": [
+        {
+          "name": "overview",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": 530.359375,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": 530.359375,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": 530.359375,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": 530.359375,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": 200,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": 200,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 591,
+          "fontSize": "16px",
+          "focus": "Zeitraum ergänzen",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": -60.640625,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": -60.640625,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": -60.640625,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": -60.640625,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": 163.359375,
+            "width": 720,
+            "height": 254
+          },
+          "work": {
+            "x": 24,
+            "y": 433.359375,
+            "width": 720,
+            "height": 541
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": -391,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": -391,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 591,
+          "fontSize": "16px",
+          "focus": "Zeitraum ändern",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": -60.640625,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": -60.640625,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": -60.640625,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": -60.640625,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": 163.359375,
+            "width": 720,
+            "height": 250
+          },
+          "work": {
+            "x": 24,
+            "y": 429.359375,
+            "width": 720,
+            "height": 337
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": -391,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": -391,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 80,
+          "fontSize": "16px",
+          "focus": "Vorbereitung",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": 450.359375,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": 450.359375,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": 450.359375,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": 450.359375,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": 120,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": 120,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "flight-four-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 2024,
+          "fontSize": "16px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": -1493.640625,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": -1493.640625,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": -1493.640625,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": -1493.640625,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": -1269.640625,
+            "width": 720,
+            "height": 250
+          },
+          "work": {
+            "x": 24,
+            "y": -1003.640625,
+            "width": 720,
+            "height": 1955
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": -1824,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": -1824,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "dateline-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 1379,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": -848.640625,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": -848.640625,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": -848.640625,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": -848.640625,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 24,
+            "y": -624.640625,
+            "width": 720,
+            "height": 254
+          },
+          "work": {
+            "x": 24,
+            "y": -354.640625,
+            "width": 720,
+            "height": 495
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": -1179,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": -1179,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "plan",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-1",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 80,
+          "fontSize": "16px",
+          "focus": "Reiseplan",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": 450.359375,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": 450.359375,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": 450.359375,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": 450.359375,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": 120,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": 120,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation-target",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 1729,
+          "fontSize": "16px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": -1114.640625,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": -1114.640625,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": -1114.640625,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": -1114.640625,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": -1529,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": -1529,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "preparation-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 1985,
+          "fontSize": "32px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 57,
+              "y": -319.78125,
+              "width": 180.859375,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 245.859375,
+              "y": -319.78125,
+              "width": 180.734375,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 434.59375,
+              "y": -319.78125,
+              "width": 219.1875,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 661.78125,
+              "y": -319.78125,
+              "width": 221.625,
+              "height": 88
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 316.109375,
+              "y": -1361,
+              "width": 163.484375,
+              "height": 28
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 537.359375,
+              "y": -1361,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "flight-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 2914,
+          "fontSize": "32px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 57,
+              "y": -1416.78125,
+              "width": 180.859375,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 245.859375,
+              "y": -1416.78125,
+              "width": 180.734375,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 434.59375,
+              "y": -1416.78125,
+              "width": 219.1875,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 661.78125,
+              "y": -1416.78125,
+              "width": 221.625,
+              "height": 88
+            }
+          ],
+          "detail": {
+            "x": 48,
+            "y": -972.78125,
+            "width": 672,
+            "height": 554
+          },
+          "work": {
+            "x": 48,
+            "y": -386.78125,
+            "width": 672,
+            "height": 2230
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 316.109375,
+              "y": -2290,
+              "width": 163.484375,
+              "height": 28
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 537.359375,
+              "y": -2290,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "long-trip-day30",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-30",
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 29,
+              "y": 633.71875,
+              "width": 163.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 196.875,
+              "y": 633.71875,
+              "width": 163.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 364.375,
+              "y": 633.71875,
+              "width": 184.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 552.8125,
+              "y": 633.71875,
+              "width": 186.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 120.703125,
+              "y": 200,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 242.546875,
+              "y": 200,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        }
+      ],
+      "findings": [],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "accessibilitySnapshot": "- region \"Jetzt wichtig\":\n  - paragraph: Jetzt wichtig\n  - heading \"Was jetzt Aufmerksamkeit braucht\" [level=3]\n  - list:\n    - listitem:\n      - button \"Diese Reise Flugstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Flugstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Diese Reise Unterkunftsstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Unterkunftsstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Reisende Person Offizielle Prüfung noch nicht möglich insufficient_context\":\n        - text: Reisende Person\n        - strong: Offizielle Prüfung noch nicht möglich\n        - text: insufficient_context\n  - button \"2 weitere Hinweisgruppen anzeigen\"",
+      "afterStayOverview": "BEREICHE DIESER REISE\n\nFlüge\nFlugstand noch unklar\nUnterkunft\n2/4 Nächte abgedeckt\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant",
+      "directFlightText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern",
+      "storageKeys": [
+        "jetnity:reise:v3"
+      ],
+      "longTripText": "TAGESPLAN\n\n3 Punkte geplant\n\nTag 30 von 30\n\nMo., 30. Nov. · Etappe 6 – San Casciano in Val di Pesa und Umgebung\n\nETAPPE 6 – SAN CASCIANO IN VAL DI PESA UND UMGEBUNG\n\nMontag, 30. November 2026\nPunkt hinzufügen\n\nNoch nichts an diesem Tag.\n\nEtappe 1 – San Casciano in Val di Pesa und Umgebung\n01. Nov. – 06. Nov.\nAnreise\n01. Nov. · 2\nAnreise\n02. Nov. · 1\nAnreise\n03. Nov.\nAnreise\n04. Nov.\nAnreise\n05. Nov.\nEtappe 2 – San Casciano in Val di Pesa und Umgebung\n06. Nov. – 11. Nov.\nAnreise\n06. Nov.\nAnreise\n07. Nov.\nAnreise\n08. Nov.\nAnreise\n09. Nov.\nAnreise\n10. Nov.\nEtappe 3 – San Casciano in Val di Pesa und Umgebung\n11. Nov. – 16. Nov.\nAnreise\n11. Nov.\nAnreise\n12. Nov.\nAnreise\n13. Nov.\nAnreise\n14. Nov.\nAnreise\n15. Nov.\nEtappe 4 – San Casciano in Val di Pesa und Umgebung\n16. Nov. – 21. Nov.\nAnreise\n16. Nov.\nAnreise\n17. Nov.\nAnreise\n18. Nov.\nAnreise\n19. Nov.\nAnreise\n20. Nov.\nEtappe 5 – San Casciano in Val di Pesa und Umgebung\n21. Nov. – 26. Nov.\nAnreise\n21. Nov.\nAnreise\n22. Nov.\nAnreise\n23. Nov.\nAnreise\n24. Nov.\nAnreise\n25. Nov.\nEtappe 6 – San Casciano in Val di Pesa und Umgebung\n26. Nov. – 30. Nov.\nAnreise\n26. Nov.\nAnreise\n27. Nov.\nAnreise\n28. Nov.\nAnreise\n29. Nov.\nAnreise\n30. Nov.",
+      "status": "PASS"
+    },
+    {
+      "name": "1440",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "cases": [
+        "real Guest route opens with local fixture",
+        "invalid equal stay dates rejected without persistence",
+        "stay save recomputes 4/4 nights in real Guest graph",
+        "stay reload/reopen/edit recomputes 2/4 nights",
+        "1 segments saved with exact local values and null countries/cities",
+        "2 segments saved with exact local values and null countries/cities",
+        "3 segments saved with exact local values and null countries/cities",
+        "4 segments saved with exact local values and null countries/cities",
+        "same-airport reverse connection rejected without persistence",
+        "flight editor Escape keeps outer detail and restores trigger focus",
+        "date-line single segment preserves itinerary and nulls misleading legacy end",
+        "Guest preparation direct target survives reload",
+        "Guest localStorage has no evaluation payload",
+        "30-day six-stage trip opens day 30 via URL"
+      ],
+      "measurements": [
+        {
+          "name": "overview",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": 551,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": 551,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": 551,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": 551,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": 180,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": 180,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 640,
+          "fontSize": "16px",
+          "focus": "Zeitraum ergänzen",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": -5,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": -5,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": -5,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": -5,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 683.671875,
+            "y": 60,
+            "width": 652.328125,
+            "height": 242
+          },
+          "work": {
+            "x": 683.671875,
+            "y": 318,
+            "width": 652.328125,
+            "height": 581
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": -460,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": -460,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "stay-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=unterkunft",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 640,
+          "fontSize": "16px",
+          "focus": "Zeitraum ändern",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": -5,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": -5,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": -5,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": -5,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 683.671875,
+            "y": 60,
+            "width": 652.328125,
+            "height": 250
+          },
+          "work": {
+            "x": 683.671875,
+            "y": 326,
+            "width": 652.328125,
+            "height": 337
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": -460,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": -460,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 163,
+          "fontSize": "16px",
+          "focus": "Vorbereitung",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": 388,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": 388,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": 388,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": 388,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": 17,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": 17,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "flight-four-editor",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 1763,
+          "fontSize": "16px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": -1128,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": -1128,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": -1128,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": -1128,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 683.671875,
+            "y": -1063,
+            "width": 652.328125,
+            "height": 222
+          },
+          "work": {
+            "x": 683.671875,
+            "y": -825,
+            "width": 652.328125,
+            "height": 1975
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": -1583,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": -1583,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "dateline-saved",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 1086,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": -451,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": -451,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": -451,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": -451,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": {
+            "x": 683.671875,
+            "y": -386,
+            "width": 652.328125,
+            "height": 242
+          },
+          "work": {
+            "x": 683.671875,
+            "y": -128,
+            "width": 652.328125,
+            "height": 495
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": -906,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": -906,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "plan",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-1",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 163,
+          "fontSize": "16px",
+          "focus": "Reiseplan",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": 388,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": 388,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": 388,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": 388,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": 17,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": 17,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "preparation-target",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 1686,
+          "fontSize": "16px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": -1051,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": -1051,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": -1051,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": -1051,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": -1506,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": -1506,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 4
+        },
+        {
+          "name": "preparation-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=vorbereitung&vorbereitung=offizielle-anforderungen",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 1830,
+          "fontSize": "32px",
+          "focus": "Offizielle Anforderungen2 noch nicht prüfbar",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 57,
+              "y": -435.5,
+              "width": 305.75,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 370.75,
+              "y": -435.5,
+              "width": 305.640625,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 684.390625,
+              "y": -435.5,
+              "width": 344.078125,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1036.46875,
+              "y": -435.5,
+              "width": 346.53125,
+              "height": 88
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 139.296875,
+              "y": -1358,
+              "width": 163.484375,
+              "height": 28
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 360.546875,
+              "y": -1358,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "flight-text200",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=organisieren&bereich=fluege",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 2589,
+          "fontSize": "32px",
+          "focus": "INPUT",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 57,
+              "y": -1194.5,
+              "width": 305.75,
+              "height": 88
+            },
+            {
+              "text": "Reiseplan",
+              "x": 370.75,
+              "y": -1194.5,
+              "width": 305.640625,
+              "height": 88
+            },
+            {
+              "text": "Organisieren",
+              "x": 684.390625,
+              "y": -1194.5,
+              "width": 344.078125,
+              "height": 88
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1036.46875,
+              "y": -1194.5,
+              "width": 346.53125,
+              "height": 88
+            }
+          ],
+          "detail": {
+            "x": 692.15625,
+            "y": -1065.5,
+            "width": 699.84375,
+            "height": 530
+          },
+          "work": {
+            "x": 692.15625,
+            "y": -503.5,
+            "width": 699.84375,
+            "height": 2230
+          },
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 139.296875,
+              "y": -2117,
+              "width": 163.484375,
+              "height": 28
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 360.546875,
+              "y": -2117,
+              "width": 107.71875,
+              "height": 28
+            }
+          ],
+          "undersizedInputs": 0
+        },
+        {
+          "name": "long-trip-day30",
+          "url": "http://127.0.0.1:3487/reisen/trip-integrated-audit-869?ansicht=plan&tag=day-30",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": 0,
+          "scrollY": 0,
+          "fontSize": "16px",
+          "focus": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenMeine Re",
+          "hiddenFocus": false,
+          "nav": [
+            {
+              "text": "Übersicht",
+              "x": 109,
+              "y": 623,
+              "width": 291.875,
+              "height": 44
+            },
+            {
+              "text": "Reiseplan",
+              "x": 404.875,
+              "y": 623,
+              "width": 291.5,
+              "height": 44
+            },
+            {
+              "text": "Organisieren",
+              "x": 700.375,
+              "y": 623,
+              "width": 312.4375,
+              "height": 44
+            },
+            {
+              "text": "Vorbereitung",
+              "x": 1016.8125,
+              "y": 623,
+              "width": 314.1875,
+              "height": 44
+            }
+          ],
+          "detail": null,
+          "work": null,
+          "smallControls": [
+            {
+              "text": "Konto erstellen",
+              "tag": "A",
+              "x": 837.90625,
+              "y": 180,
+              "width": 89.203125,
+              "height": 15
+            },
+            {
+              "text": "anmelden",
+              "tag": "A",
+              "x": 959.75,
+              "y": 180,
+              "width": 57.796875,
+              "height": 15
+            }
+          ],
+          "undersizedInputs": 0
+        }
+      ],
+      "findings": [],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "accessibilitySnapshot": "- region \"Jetzt wichtig\":\n  - paragraph: Jetzt wichtig\n  - heading \"Was jetzt Aufmerksamkeit braucht\" [level=3]\n  - list:\n    - listitem:\n      - button \"Diese Reise Flugstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Flugstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Diese Reise Unterkunftsstand noch unklar unknown\":\n        - text: Diese Reise\n        - strong: Unterkunftsstand noch unklar\n        - text: unknown\n    - listitem:\n      - button \"Reisende Person Offizielle Prüfung noch nicht möglich insufficient_context\":\n        - text: Reisende Person\n        - strong: Offizielle Prüfung noch nicht möglich\n        - text: insufficient_context\n  - button \"2 weitere Hinweisgruppen anzeigen\"",
+      "afterStayOverview": "BEREICHE DIESER REISE\n\nFlüge\nFlugstand noch unklar\nUnterkunft\n2/4 Nächte abgedeckt\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant",
+      "directFlightText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern",
+      "storageKeys": [
+        "jetnity:reise:v3"
+      ],
+      "longTripText": "TAGESPLAN\n\n3 Punkte geplant\n\nTag 30 von 30\n\nMo., 30. Nov. · Etappe 6 – San Casciano in Val di Pesa und Umgebung\n\nETAPPE 6 – SAN CASCIANO IN VAL DI PESA UND UMGEBUNG\n\nMontag, 30. November 2026\nPunkt hinzufügen\n\nNoch nichts an diesem Tag.\n\nEtappe 1 – San Casciano in Val di Pesa und Umgebung\n01. Nov. – 06. Nov.\nAnreise\n01. Nov. · 2\nAnreise\n02. Nov. · 1\nAnreise\n03. Nov.\nAnreise\n04. Nov.\nAnreise\n05. Nov.\nEtappe 2 – San Casciano in Val di Pesa und Umgebung\n06. Nov. – 11. Nov.\nAnreise\n06. Nov.\nAnreise\n07. Nov.\nAnreise\n08. Nov.\nAnreise\n09. Nov.\nAnreise\n10. Nov.\nEtappe 3 – San Casciano in Val di Pesa und Umgebung\n11. Nov. – 16. Nov.\nAnreise\n11. Nov.\nAnreise\n12. Nov.\nAnreise\n13. Nov.\nAnreise\n14. Nov.\nAnreise\n15. Nov.\nEtappe 4 – San Casciano in Val di Pesa und Umgebung\n16. Nov. – 21. Nov.\nAnreise\n16. Nov.\nAnreise\n17. Nov.\nAnreise\n18. Nov.\nAnreise\n19. Nov.\nAnreise\n20. Nov.\nEtappe 5 – San Casciano in Val di Pesa und Umgebung\n21. Nov. – 26. Nov.\nAnreise\n21. Nov.\nAnreise\n22. Nov.\nAnreise\n23. Nov.\nAnreise\n24. Nov.\nAnreise\n25. Nov.\nEtappe 6 – San Casciano in Val di Pesa und Umgebung\n26. Nov. – 30. Nov.\nAnreise\n26. Nov.\nAnreise\n27. Nov.\nAnreise\n28. Nov.\nAnreise\n29. Nov.\nAnreise\n30. Nov.",
+      "status": "PASS"
+    }
+  ]
+}
