@@ -7,7 +7,8 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { itineraryEinTransit } from '@/lib/route/fixtures'
+import { itineraryDirekt, itineraryEinTransit, TEST_FLUGHAFEN_REFS } from '@/lib/route/fixtures'
+import { flughafenPunkt } from '@/lib/route/referenz'
 import { routeFactsAusGraph } from '@/lib/route/ableitung'
 import { routeKompaktOhneCode } from '@/lib/route/anzeige'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
@@ -201,27 +202,28 @@ describe('Status der Übersicht', () => {
     const status = bereichStatus(
       reise({
         origin: 'Zürich',
-        originPlaceId: 'geonames:2657896',
+        originPlaceId: 'airport:ZRH',
         startDate: '2026-08-30',
         endDate: '2026-09-13',
         stages: [
           {
             id: 'stage-1',
             position: 1,
-            name: 'Bali',
-            countryCode: 'ID',
+            name: 'Bangkok',
+            countryCode: 'TH',
             arrivalDate: '2026-08-30',
             departureDate: '2026-09-13',
             latitude: null,
             longitude: null,
-            placeId: 'geonames:1650535',
+            placeId: 'geonames:1609350',
           },
         ],
         ohneTag: [
           punkt({
             id: 'flug-hin',
             kind: 'flight',
-            title: 'ZRH → DPS',
+            title: 'ZRH → BKK',
+            routeItinerary: { ...itineraryDirekt(), legs: [{ segments: [{ ...itineraryDirekt().legs[0]!.segments[0]!, departureDate: '2026-08-30', arrivalDate: '2026-08-30' }] }] },
             dayId: null,
             startsOn: '2026-08-30',
             bookingStatus: 'booked',
@@ -235,7 +237,7 @@ describe('Status der Übersicht', () => {
         ],
       }),
     )
-    assert.equal(status[0]?.text, 'Hinflug gebucht · Rückflug offen')
+    assert.match(status[0]?.text ?? '', /Hinflug gebucht · Rückflug offen$/)
   })
 
   test('erfindet keinen Status aus fehlenden Providerdaten', () => {
@@ -460,5 +462,63 @@ describe('Sichtbarkeit und Mount', () => {
     assert.equal(bereichDarstellungKlasse(false, 'mt-6 grid gap-6'), 'mt-6 grid gap-6')
     assert.equal(bereichDarstellungKlasse(false, 'mt-6'), 'mt-6')
     assert.equal(bereichDarstellungKlasse(true), 'hidden')
+  })
+})
+
+
+describe('Flight coverage proof guard — Workspace', () => {
+  for (const mitFacts of [false, true]) {
+    for (const bookingStatus of ['unconfirmed', 'booked'] as const) {
+      test(`zwei falsche Flüge ergeben niemals belegt: Facts ${mitFacts}, ${bookingStatus}`, () => {
+        const items = ['2026-11-01', '2026-11-05'].map((datum, index) => punkt({
+          id: `falsch-${index}`, kind: 'flight', title: 'Zürich → Florenz',
+          dayId: null, startsOn: datum, bookingStatus,
+          bookingSource: bookingStatus === 'booked' ? 'user' : null,
+          routeItinerary: {
+            ...itineraryDirekt(), legs: [{ segments: [{
+              ...itineraryDirekt().legs[0]!.segments[0]!,
+              origin: flughafenPunkt('NRT', mitFacts ? TEST_FLUGHAFEN_REFS : {}),
+              destination: flughafenPunkt('LAX', mitFacts ? TEST_FLUGHAFEN_REFS : {}),
+              departureDate: datum, arrivalDate: datum,
+            }] }],
+          },
+        }))
+        const aktuell = reise({
+          stages: [{ ...reise().stages[0]!, name: 'Florenz', countryCode: 'IT',
+            arrivalDate: '2026-11-01', departureDate: '2026-11-05' }],
+          ohneTag: items,
+        })
+        const status = bereichStatus(aktuell).find((eintrag) => eintrag.bereich === 'fluege')!
+        assert.equal(status.lage, 'unbestimmt')
+        assert.equal(status.anzahl, 2)
+        assert.match(status.text, /Flugstand noch unklar/)
+        assert.doesNotMatch(status.text, /Hinflug (gebucht|ausgewählt)|Rückflug (gebucht|ausgewählt)/)
+        assert.deepEqual(flugAbdeckung(aktuell).unzugeordnet, items)
+        assert.deepEqual(bereichStatus(aktuell), bereichStatus(aktuell, aktuell.ohneTag))
+      })
+    }
+  }
+
+  test('beide bewiesenen Richtungen ergeben weiterhin belegt', () => {
+    const segment = itineraryDirekt().legs[0]!.segments[0]!
+    const aktuell = reise({
+      originPlaceId: 'airport:ZRH',
+      stages: [{ ...reise().stages[0]!, name: 'Bangkok', countryCode: 'TH',
+        arrivalDate: '2026-11-01', departureDate: '2026-11-05' }],
+      ohneTag: [
+        punkt({ id: 'hin', kind: 'flight', title: 'Hinflug', startsOn: '2026-11-01', routeItinerary: itineraryDirekt() }),
+        punkt({ id: 'rueck', kind: 'flight', title: 'Rückflug', startsOn: '2026-11-05',
+          bookingStatus: 'booked', bookingSource: 'user', routeItinerary: {
+            ...itineraryDirekt(), legs: [{ segments: [{ ...segment,
+              origin: segment.destination, destination: segment.origin,
+              departureDate: '2026-11-05', arrivalDate: '2026-11-05',
+            }] }],
+          } }),
+      ],
+    })
+    const status = bereichStatus(aktuell).find((eintrag) => eintrag.bereich === 'fluege')!
+    assert.equal(status.lage, 'belegt')
+    assert.match(status.text, /Hinflug ausgewählt · Rückflug gebucht$/)
+    assert.equal(flugAbdeckung(aktuell).unzugeordnet.length, 0)
   })
 })

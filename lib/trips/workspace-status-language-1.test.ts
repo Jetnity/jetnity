@@ -7,6 +7,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
+import { itineraryDirekt } from '@/lib/route/fixtures'
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import { bereichStatus } from '@/lib/trips/arbeitsbereich'
@@ -129,13 +130,31 @@ function reise(teil: Partial<Trip> = {}): Trip {
   }
 }
 
+function flugReise(teil: Partial<Trip> = {}): Trip {
+  return reise({
+    originPlaceId: 'airport:ZRH',
+    stages: [{ ...reise().stages[0]!, name: 'Bangkok', countryCode: 'TH', placeId: 'geonames:1609350' }],
+    ...teil,
+  })
+}
+
+function flugRoute(datum: string, rueckflug = false) {
+  const route = itineraryDirekt()
+  const segment = route.legs[0]!.segments[0]!
+  segment.departureDate = datum
+  segment.arrivalDate = datum
+  if (rueckflug) [segment.origin, segment.destination] = [segment.destination, segment.origin]
+  return route
+}
+
 function gebuchterHinflug(): TripItem {
   return punkt({
     id: 'flug-hin',
     kind: 'flight',
-    title: 'ZRH → DPS',
+    title: 'ZRH → BKK',
     dayId: null,
     startsOn: '2026-09-12',
+    routeItinerary: flugRoute('2026-09-12'),
     bookingStatus: 'booked',
     bookingSource: 'user',
     bookingConfirmedAt: JETZT,
@@ -212,12 +231,13 @@ describe('bekannte Lagen bleiben unterscheidbar', () => {
     const rueck = punkt({
       id: 'flug-rueck',
       kind: 'flight',
-      title: 'DPS → ZRH',
+      title: 'BKK → ZRH',
       dayId: null,
       startsOn: '2026-09-16',
+      routeItinerary: flugRoute('2026-09-16', true),
     })
-    const teilweise = flugAbdeckung(reise({ ohneTag: [hin] }), [hin])
-    const voll = flugAbdeckung(reise({ ohneTag: [hin, rueck] }), [hin, rueck])
+    const teilweise = flugAbdeckung(flugReise({ ohneTag: [hin] }), [hin])
+    const voll = flugAbdeckung(flugReise({ ohneTag: [hin, rueck] }), [hin, rueck])
     assert.equal(teilweise.abschnitte[0]?.status, 'booked')
     assert.equal(teilweise.abschnitte[1]?.status, 'open')
     assert.equal(teilweise.zusammenfassung, 'Hinflug gebucht · Rückflug offen')
@@ -338,7 +358,7 @@ describe('Übersicht und Attention nutzen dieselben kanonischen Texte', () => {
 
     const hin = gebuchterHinflug()
     const teilweise = attentionAbleiten({
-      reise: reise({ ohneTag: [hin] }),
+      reise: flugReise({ ohneTag: [hin] }),
       ohneTag: [hin],
       orchestriereSafety: false,
       orchestriereSeasonal: false,
@@ -543,7 +563,7 @@ describe('nicht-textliche Ausgänge bleiben kanonisch', () => {
       endsOn: '2026-09-14',
     })
     const status = bereichStatus(
-      reise({
+      flugReise({
         ohneTag: [hin],
         days: [{ ...reise().days[0]!, items: [hotel] }],
       }),
