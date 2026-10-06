@@ -25,6 +25,9 @@ import {
   officialTruthCompositionPhaseA,
   officialTruthCompositionPhaseB,
   officialTruthCompositionRegistriesPruefen,
+  officialTruthCompositionSealView,
+  type OfficialTruthCompositionFreeze,
+  type OfficialTruthCompositionHerkunft,
   type OfficialTruthCompositionPolicy,
   type OfficialTruthCompositionSperrgrund,
 } from '@/lib/readiness/official-truth-composition-policy-registry'
@@ -155,6 +158,145 @@ export type OfficialTruthSameRequestExtractionErgebnis =
     }
 
 type Beweis = Extract<OfficialTruthSameRequestProofErgebnis, { status: 'same_request_proof' }>
+
+type PhaseAInput = Parameters<typeof officialTruthCompositionPhaseA>[0]
+type ExtraktorSicht = Omit<OfficialTruthExtractorDefinition, 'match' | 'extract'>
+type CompositionResult = Extract<OfficialTruthSameRequestExtractionErgebnis, { status: 'same_request_composition_bound' }>
+
+/** Nur internes Ausführungsmaterial, auch bei Testeinspritzungen niemals
+ * globale Zulassung, Original-Custody, Executable-Pin oder Producer-Autorität.
+ * Keine ausführbaren Referenzen, Forschungsumschläge oder Vorschläge. */
+export type OfficialTruthSameRequestCompositionContext = {
+  readonly phaseA: {
+    readonly factKind: PhaseAInput['factKind']
+    readonly requirementType: PhaseAInput['requirementType']
+    readonly supports: PhaseAInput['supports']
+    readonly extractors: readonly ExtraktorSicht[]
+    readonly policies: readonly OfficialTruthCompositionPolicy[]
+    readonly selected: {
+      readonly extractor: ExtraktorSicht
+      readonly policy: OfficialTruthCompositionPolicy
+    }
+  }
+  readonly binding: {
+    readonly registry: QuellenRegistry
+    readonly scope: RegelScope
+    readonly ruleScopeKey: string
+    readonly reviewPacketKey: string
+    readonly supportVersionIds: readonly string[]
+    readonly supports: readonly OfficialTruthServerHeldSameRequestSupport[]
+    readonly serverReferenceTime: string
+  }
+  readonly retrievals: readonly OfficialTruthSameRequestRetrievalProvenienz[]
+  readonly phaseB: {
+    readonly seal: object
+    readonly fact: RegelFakt
+    readonly provenance: readonly OfficialTruthCompositionHerkunft[]
+    readonly extractorId: string
+    readonly extractorVersion: number
+    readonly policyId: string
+    readonly policyVersion: number
+  }
+}
+
+type CompositionStart = {
+  // Exakte validierte Referenzen, vor HTTP festgehalten. Nicht projizieren.
+  readonly input: PhaseAInput
+  readonly freeze: OfficialTruthCompositionFreeze
+  readonly binding: OfficialTruthSameRequestCompositionContext['binding']
+}
+
+const compositionContexts = new WeakMap<CompositionResult, {
+  readonly start: CompositionStart
+  readonly view: OfficialTruthSameRequestCompositionContext
+}>()
+
+/** Einmaliger interner Verbrauch nur für die registrierte Ergebnisidentität.
+ * Ein gleiches DTO, fremdes Siegel oder erneut vorgelegtes Ergebnis genügt nicht.
+ * Die Rückgabe ist keine Autorität und darf nicht als öffentliche Antwort dienen. */
+export function consumeOfficialTruthSameRequestCompositionContext(
+  result: unknown,
+): OfficialTruthSameRequestCompositionContext | null {
+  if (!result || typeof result !== 'object') return null
+  const entry = compositionContexts.get(result as CompositionResult)
+  if (!entry) return null // Keine Property-/Getter-Lesung an fremden Objekten.
+  compositionContexts.delete(result as CompositionResult)
+  try {
+    const bound = result as CompositionResult
+    const { phaseB } = entry.view
+    const sealView = officialTruthCompositionSealView(bound.seal)
+    if (bound.status !== 'same_request_composition_bound' || bound.seal !== phaseB.seal ||
+        !sealView || sealView.fact !== phaseB.fact ||
+        sealView.policyId !== phaseB.policyId || sealView.policyVersion !== phaseB.policyVersion ||
+        !gleicheIds(sealView.supportVersionIds, entry.view.binding.supportVersionIds)) return null
+    return entry.view
+  } catch {
+    return null
+  }
+}
+
+function extraktorSicht(definition: OfficialTruthExtractorDefinition): ExtraktorSicht {
+  return Object.freeze({
+    extractorId: definition.extractorId,
+    extractorVersion: definition.extractorVersion,
+    current: definition.current,
+    factKind: definition.factKind,
+    sourceFamilyId: definition.sourceFamilyId,
+    contentItemRefs: definition.contentItemRefs,
+    representations: definition.representations,
+    urlAllowlist: definition.urlAllowlist,
+    contentTypes: definition.contentTypes,
+    schemaFamily: definition.schemaFamily,
+    policyId: definition.policyId,
+    policyVersion: definition.policyVersion,
+    requiredFieldPaths: definition.requiredFieldPaths,
+  })
+}
+
+function compositionCapture(
+  start: CompositionStart,
+  phaseB: Extract<ReturnType<typeof officialTruthCompositionPhaseB>, { ok: true }>,
+  result: CompositionResult,
+  retrievals: readonly OfficialTruthSameRequestRetrievalProvenienz[],
+): void {
+  // Fehlende Capture-Voraussetzungen ändern keine bestehenden Ergebnisse.
+  // Kein Register-Lookup, keine neue Auswahl, kein neues Siegel/Fact-Objekt.
+  try {
+    const { input, freeze, binding } = start
+    const sealView = officialTruthCompositionSealView(phaseB.seal)
+    if (!sealView || result.seal !== phaseB.seal ||
+        !input.extractors.includes(freeze.extractor) || !input.policies.includes(freeze.policy) ||
+        phaseB.extractorId !== freeze.extractorId || phaseB.extractorVersion !== freeze.extractorVersion ||
+        phaseB.policyId !== freeze.policyId || phaseB.policyVersion !== freeze.policyVersion ||
+        sealView.policyId !== freeze.policyId || sealView.policyVersion !== freeze.policyVersion ||
+        !gleicheIds(sealView.supportVersionIds, binding.supportVersionIds) ||
+        !gleicheIds(retrievals.map((row) => row.versionId), binding.supportVersionIds)) return
+    const view: OfficialTruthSameRequestCompositionContext = tiefEinfrieren({
+      phaseA: {
+        factKind: input.factKind,
+        requirementType: input.requirementType,
+        supports: input.supports,
+        extractors: input.extractors.map(extraktorSicht),
+        policies: input.policies,
+        selected: { extractor: extraktorSicht(freeze.extractor), policy: freeze.policy },
+      },
+      binding,
+      retrievals,
+      phaseB: {
+        seal: phaseB.seal,
+        fact: sealView.fact,
+        provenance: phaseB.provenance,
+        extractorId: phaseB.extractorId,
+        extractorVersion: phaseB.extractorVersion,
+        policyId: phaseB.policyId,
+        policyVersion: phaseB.policyVersion,
+      },
+    })
+    compositionContexts.set(result, Object.freeze({ start, view }))
+  } catch {
+    // Kein teilweiser Capture wird veröffentlicht oder protokolliert.
+  }
+}
 
 type SaubererAbruf = ContentIdentityBinding & {
   readonly identitySchema: 2
@@ -472,19 +614,42 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
 
   const politiken = abhaengigkeiten.compositionPolicies ?? OFFICIAL_TRUTH_COMPOSITION_POLICY_REGISTRY
   const extraktoren = abhaengigkeiten.compositionExtractors ?? OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY
-  let freeze: Extract<ReturnType<typeof officialTruthCompositionPhaseA>, { ok: true }>['freeze'] | null = null
+  let compositionStart: CompositionStart | null = null
   if (zusammengesetzt) {
     const register = officialTruthCompositionRegistriesPruefen(politiken, extraktoren)
     if (!register.ok) return blockiert(register.reason)
-    const phaseA = officialTruthCompositionPhaseA({
+    const input: PhaseAInput = tiefEinfrieren({
       factKind: fest.factKind,
       requirementType: zelle.scope.requirementType,
       supports: fest.supports.map((support) => ({ ...contentIdentityBinding(support), canonicalUrl: support.canonicalUrl })),
       extractors: register.extractors,
       policies: register.policies,
     })
+    const phaseA = officialTruthCompositionPhaseA(input)
     if (!phaseA.ok) return blockiert(phaseA.reason)
-    freeze = phaseA.freeze
+    compositionStart = tiefEinfrieren({
+      input,
+      freeze: phaseA.freeze,
+      binding: {
+        registry: fest.registry,
+        scope: zelle.scope,
+        ruleScopeKey: zelle.key,
+        reviewPacketKey: fest.reviewPacketKey,
+        supportVersionIds: fest.supportVersionIds,
+        supports: fest.supports.map((support) => ({
+          ...contentIdentityBinding(support),
+          identitySchema: 2 as const,
+          versionId: support.versionId,
+          canonicalUrl: support.canonicalUrl,
+          contentType: support.contentType,
+          retrievedAt: support.retrievedAt,
+          sourceContentHash: support.sourceContentHash,
+          validFrom: support.validFrom,
+          validUntil: support.validUntil,
+        })),
+        serverReferenceTime: fest.serverReferenceTime,
+      },
+    })
   }
 
   const replay = wiedergabe(fest.registry)
@@ -518,9 +683,9 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, requestUrl: gelesen.requestUrl, abruf: gelesen.abruf })
   }
 
-  if (freeze) {
+  if (compositionStart) {
     const phaseB = officialTruthCompositionPhaseB({
-      freeze,
+      freeze: compositionStart.freeze,
       supports: gebunden.map((eintrag) => ({
         versionId: eintrag.versionId,
         sourceId: eintrag.sourceId,
@@ -541,7 +706,18 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
       registry: fest.registry,
     })
     if (!phaseB.ok) return blockiert(phaseB.reason)
-    return Object.freeze({ status: 'same_request_composition_bound', seal: phaseB.seal })
+    const result = Object.freeze({ status: 'same_request_composition_bound' as const, seal: phaseB.seal })
+    compositionCapture(compositionStart, phaseB, result, gebunden.map((entry) => ({
+      ...contentIdentityBinding(entry.abruf),
+      identitySchema: 2 as const,
+      versionId: entry.versionId,
+      requestUrl: entry.requestUrl,
+      canonicalUrl: entry.abruf.canonicalUrl,
+      retrievedAt: entry.abruf.retrievedAt,
+      contentType: entry.abruf.contentType,
+      sourceContentHash: entry.abruf.sourceContentHash,
+    })))
+    return result
   }
 
   let extrakt: OfficialTruthTrustedFactExtractorErgebnis
