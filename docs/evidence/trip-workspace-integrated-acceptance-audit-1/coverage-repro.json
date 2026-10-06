@@ -1,0 +1,258 @@
+{
+  "checkedAt": "2026-10-06T08:29:53.002Z",
+  "note": "Synthetic local fixtures. accountLike is pure-function input with explicit route facts, NOT authenticated Account E2E.",
+  "runs": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "blocked": [],
+      "afterSameDaySave": {
+        "activeTag": "BODY",
+        "trigger": {
+          "top": -173.640625,
+          "bottom": -129.640625
+        },
+        "work": {
+          "top": -460.640625,
+          "bottom": 10.359375
+        },
+        "status": [],
+        "scrollY": 1662
+      },
+      "coverageText": "DEINE FLÜGE\n\nBestand und Status\n\nHinflug ausgewählt · Rückflug offen\n\nZürich → Florenz · 1. Nov.\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlorenz → Zürich · 5. Nov.\n\nNoch offen",
+      "bookedText": "DEINE FLÜGE\n\nBestand und Status\n\nHinflug gebucht · Rückflug offen\n\nZürich → Florenz · 1. Nov.\n\nRoute\nNRT → LAX\n\nDirektflug\n\nGebucht\nBuchung korrigieren\nFlugroute ändern\n\nFlorenz → Zürich · 5. Nov.\n\nNoch offen",
+      "afterDateMovesToUnassigned": {
+        "activeTag": "BODY",
+        "trigger": {
+          "top": -74.640625,
+          "bottom": -30.640625
+        },
+        "work": {
+          "top": -603.640625,
+          "bottom": -0.640625
+        },
+        "status": [],
+        "scrollY": 1809
+      },
+      "unassignedText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nGebucht\nBuchung korrigieren\nFlugroute ändern"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "blocked": [],
+      "afterSameDaySave": {
+        "activeTag": "BODY",
+        "trigger": {
+          "top": 211,
+          "bottom": 255
+        },
+        "work": {
+          "top": -28,
+          "bottom": 367
+        },
+        "status": [],
+        "scrollY": 966
+      },
+      "coverageText": "DEINE FLÜGE\n\nBestand und Status\n\nHinflug ausgewählt · Rückflug offen\n\nZürich → Florenz · 1. Nov.\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlorenz → Zürich · 5. Nov.\n\nNoch offen",
+      "bookedText": "DEINE FLÜGE\n\nBestand und Status\n\nHinflug gebucht · Rückflug offen\n\nZürich → Florenz · 1. Nov.\n\nRoute\nNRT → LAX\n\nDirektflug\n\nGebucht\nBuchung korrigieren\nFlugroute ändern\n\nFlorenz → Zürich · 5. Nov.\n\nNoch offen",
+      "afterDateMovesToUnassigned": {
+        "activeTag": "BODY",
+        "trigger": {
+          "top": 526,
+          "bottom": 570
+        },
+        "work": {
+          "top": 109,
+          "bottom": 604
+        },
+        "status": [],
+        "scrollY": 849
+      },
+      "unassignedText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nGebucht\nBuchung korrigieren\nFlugroute ändern"
+    }
+  ],
+  "pure": {
+    "guest": {
+      "bestimmbar": true,
+      "abschnitte": [
+        {
+          "id": "outbound:stage-1",
+          "art": "outbound",
+          "originName": "Zürich",
+          "destinationName": "Florenz",
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "date": "2026-11-01",
+          "status": "selected",
+          "item": {
+            "id": "manual-flight",
+            "dayId": "day-1",
+            "stageId": "stage-1",
+            "kind": "flight",
+            "title": "Manueller Flug",
+            "note": null,
+            "position": 2,
+            "startsOn": "2026-11-01",
+            "startsAt": "18:00",
+            "endsOn": "2026-11-01",
+            "endsAt": null,
+            "priceAmount": null,
+            "priceCurrency": null,
+            "provider": null,
+            "externalRef": null,
+            "bookingUrl": null,
+            "bookingStatus": "unconfirmed",
+            "bookingSource": null,
+            "bookingConfirmedAt": null,
+            "mobilityMode": null,
+            "originPlaceId": null,
+            "destinationPlaceId": null,
+            "originName": null,
+            "destinationName": null,
+            "connectionRef": null,
+            "mobilityChanges": null,
+            "mobilityEvidence": null,
+            "rentalSupplier": null,
+            "vehicleClass": null,
+            "transmission": null,
+            "rentalEvidence": null,
+            "routeItinerary": {
+              "v": 1,
+              "type": "flight_route_itinerary",
+              "legs": [
+                {
+                  "segments": [
+                    {
+                      "origin": {
+                        "airportCode": "NRT",
+                        "countryCode": null,
+                        "city": null,
+                        "country": null
+                      },
+                      "destination": {
+                        "airportCode": "LAX",
+                        "countryCode": null,
+                        "city": null,
+                        "country": null
+                      },
+                      "departureDate": "2026-11-01",
+                      "departureTime": "18:00",
+                      "arrivalDate": "2026-11-01",
+                      "arrivalTime": "09:00"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "return:stage-1",
+          "art": "return",
+          "originName": "Florenz",
+          "destinationName": "Zürich",
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "date": "2026-11-05",
+          "status": "open",
+          "item": null
+        }
+      ],
+      "unzugeordnet": [],
+      "zusammenfassung": "Hinflug ausgewählt · Rückflug offen"
+    },
+    "accountLike": {
+      "bestimmbar": true,
+      "abschnitte": [
+        {
+          "id": "outbound:stage-1",
+          "art": "outbound",
+          "originName": "Zürich",
+          "destinationName": "Florenz",
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "date": "2026-11-01",
+          "status": "selected",
+          "item": {
+            "id": "manual-flight",
+            "dayId": "day-1",
+            "stageId": "stage-1",
+            "kind": "flight",
+            "title": "Manueller Flug",
+            "note": null,
+            "position": 2,
+            "startsOn": "2026-11-01",
+            "startsAt": "18:00",
+            "endsOn": "2026-11-01",
+            "endsAt": null,
+            "priceAmount": null,
+            "priceCurrency": null,
+            "provider": null,
+            "externalRef": null,
+            "bookingUrl": null,
+            "bookingStatus": "unconfirmed",
+            "bookingSource": null,
+            "bookingConfirmedAt": null,
+            "mobilityMode": null,
+            "originPlaceId": null,
+            "destinationPlaceId": null,
+            "originName": null,
+            "destinationName": null,
+            "connectionRef": null,
+            "mobilityChanges": null,
+            "mobilityEvidence": null,
+            "rentalSupplier": null,
+            "vehicleClass": null,
+            "transmission": null,
+            "rentalEvidence": null,
+            "routeItinerary": {
+              "v": 1,
+              "type": "flight_route_itinerary",
+              "legs": [
+                {
+                  "segments": [
+                    {
+                      "origin": {
+                        "airportCode": "NRT",
+                        "countryCode": "JP",
+                        "city": "Tokyo",
+                        "country": null
+                      },
+                      "destination": {
+                        "airportCode": "LAX",
+                        "countryCode": "US",
+                        "city": "Los Angeles",
+                        "country": null
+                      },
+                      "departureDate": "2026-11-01",
+                      "departureTime": "18:00",
+                      "arrivalDate": "2026-11-01",
+                      "arrivalTime": "09:00"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "return:stage-1",
+          "art": "return",
+          "originName": "Florenz",
+          "destinationName": "Zürich",
+          "originPlaceId": null,
+          "destinationPlaceId": null,
+          "date": "2026-11-05",
+          "status": "open",
+          "item": null
+        }
+      ],
+      "unzugeordnet": [],
+      "zusammenfassung": "Hinflug ausgewählt · Rückflug offen"
+    }
+  }
+}

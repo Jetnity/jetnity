@@ -1,0 +1,25 @@
+{
+  "dependency": "npm ci --offline --ignore-scripts --no-audit --no-fund",
+  "focused": "node --import ./scripts/server-only-test-register.mjs --import tsx --test 'lib/trips/*.test.ts' lib/readiness/trip-official-evaluations-server.test.ts lib/readiness/engine.test.ts lib/readiness/zustand.test.ts lib/readiness/workspace-integration-r1.test.ts lib/readiness/preparation-premium-experience-5.test.ts lib/readiness/preparation-identity.test.ts lib/readiness/party-slot-integration.test.ts lib/readiness/official-option-scope.test.ts lib/readiness/traveller-kontext.test.ts lib/readiness/truth.test.ts",
+  "additional": "node --import ./scripts/server-only-test-register.mjs --import tsx --test 'lib/route/*.test.ts' lib/readiness/anfrage.test.ts lib/readiness/kontext.test.ts lib/readiness/schema.test.ts lib/readiness/party.test.ts lib/readiness/status.test.ts lib/readiness/reisende.test.ts lib/readiness/traveller-zuordnung.test.ts lib/readiness/fingerprint.test.ts lib/readiness/e1-detail-contract.test.ts lib/readiness/e3-visitor-checklist.test.ts lib/readiness/e4-temporal-rules.test.ts lib/readiness/e5a-temporal-projection.test.ts 'lib/reiseaenderung/*.test.ts'",
+  "mistakenBroader": "node --import ./scripts/server-only-test-register.mjs --import tsx --test 'lib/route/*.test.ts' 'lib/readiness/*.test.ts' --help",
+  "navigation": "AUDIT_BASE=http://127.0.0.1:3487 AUDIT_EVIDENCE_DIR=docs/evidence/trip-workspace-integrated-acceptance-audit-1/navigation AUDIT_SERVER_MODE=development node --import tsx scripts/trip-workspace-contextual-navigation-1-audit.mjs",
+  "premium": "AUDIT_BASE=http://127.0.0.1:3487 AUDIT_EVIDENCE_DIR=docs/evidence/trip-workspace-integrated-acceptance-audit-1/premium-local AUDIT_BROWSER=1 CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' node scripts/trip-workspace-premium-experience-3-audit.mjs",
+  "browser": [
+    "node --import tsx docs/evidence/trip-workspace-integrated-acceptance-audit-1/integrated-browser.mjs",
+    "node --import tsx docs/evidence/trip-workspace-integrated-acceptance-audit-1/targeted-findings.mjs",
+    "node --import tsx docs/evidence/trip-workspace-integrated-acceptance-audit-1/coverage-repro.mjs",
+    "node --import tsx docs/evidence/trip-workspace-integrated-acceptance-audit-1/create-flow.mjs"
+  ],
+  "firstDev": "JETNITY_UI_AUDIT=1 NEXT_TELEMETRY_DISABLED=1 npm run dev -- --hostname 127.0.0.1 --port 3487",
+  "guestDev": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:9 NEXT_PUBLIC_SUPABASE_ANON_KEY=local-audit-placeholder NEXT_PUBLIC_APP_URL=http://127.0.0.1:3487 JETNITY_UI_AUDIT=1 NEXT_TELEMETRY_DISABLED=1 npm run dev -- --hostname 127.0.0.1 --port 3487",
+  "notes": [
+    "First dev attempt failed sandbox EPERM; reviewed loopback process start then succeeded.",
+    "First premium attempt used evidence /premium without placeholders and was interrupted; no final result. Completed second attempt uses /premium-local and has one stale-selector failure.",
+    "agent-browser isolated session audit869 opened/read/seeded local Guest fixture and was closed.",
+    "Custom browser harnesses block all nonlocal, /api/ and non-GET requests. Recorded blocked arrays empty.",
+    "No real credentials, account cookies, provider activation or hosted DB tools used.",
+    "Full production build/typecheck/lint/full npm test not claimed. Existing pure/mocked tests use only their local fixtures.",
+    "Four unintended local PostgreSQL fixture selections failed ENOENT before database start; complete output recovered from own session."
+  ]
+}

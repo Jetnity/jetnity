@@ -1,0 +1,12 @@
+{
+  "ergebnis": "FAIL",
+  "fehler": 3,
+  "schritte": 11,
+  "sha": "640cb7c112343a0ac749c4e820779a34347ce91a"
+}
+compact: locator.focus: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('nav[aria-label="Reise"] button').filter({ hasText: 'Zurück zur Reise' })[22m
+
+guest: page.waitForFunction: Timeout 30000ms exceeded.
+guest-1440: page.waitForFunction: Timeout 30000ms exceeded.

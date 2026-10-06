@@ -1,0 +1,12 @@
+{
+  "session": "01a10e91-5fda-7002-959d-b93029705c33",
+  "source": "persisted Codex rollout turn_context (only metadata read)",
+  "turns": [
+    {
+      "timestamp": "2026-10-06T00:16:12.380Z",
+      "model": "gpt-6-astra",
+      "effort": "xhigh",
+      "cwd": "/Users/sasa/Documents/Codex/2026-10-06/du-arbeitest-als-product-ux-qa"
+    }
+  ]
+}

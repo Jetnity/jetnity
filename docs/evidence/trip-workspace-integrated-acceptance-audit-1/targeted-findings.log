@@ -1,0 +1,66 @@
+[
+  {
+    viewport: { width: 360, height: 800 },
+    newSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    fourSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    invalid: 24,
+    afterCorrection: 24,
+    error: undefined
+  },
+  {
+    viewport: { width: 390, height: 844 },
+    newSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    fourSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    invalid: 24,
+    afterCorrection: 24,
+    error: undefined
+  },
+  {
+    viewport: { width: 768, height: 1024 },
+    newSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    fourSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    invalid: 24,
+    afterCorrection: 24,
+    error: undefined
+  },
+  {
+    viewport: { width: 1440, height: 900 },
+    newSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    fourSave: {
+      active: 'BUTTON',
+      status: 'Flugroute gespeichert.',
+      trigger: [Object]
+    },
+    invalid: 24,
+    afterCorrection: 24,
+    error: undefined
+  }
+]

@@ -1,0 +1,3387 @@
+TAP version 13
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'test-double',
+#   operation: 'evaluate',
+#   outcome: 'checked_empty',
+#   durationMs: 0,
+#   resultCount: 0,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.273Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'test-double',
+#   operation: 'evaluate',
+#   outcome: 'checked_empty',
+#   durationMs: 0,
+#   resultCount: 0,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.275Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'test-double',
+#   operation: 'evaluate',
+#   outcome: 'checked_empty',
+#   durationMs: 0,
+#   resultCount: 0,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.275Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'test-double',
+#   operation: 'evaluate',
+#   outcome: 'checked_empty',
+#   durationMs: 0,
+#   resultCount: 0,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.275Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'test-double',
+#   operation: 'evaluate',
+#   outcome: 'checked_empty',
+#   durationMs: 0,
+#   resultCount: 0,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.275Z'
+# }
+# Subtest: Readiness-API-Hülle
+    # Subtest: Body-Cap über Content-Length
+    ok 1 - Body-Cap über Content-Length
+      ---
+      duration_ms: 1.142125
+      type: 'test'
+      ...
+    # Subtest: Body-Cap beim Lesen
+    ok 2 - Body-Cap beim Lesen
+      ---
+      duration_ms: 5.125584
+      type: 'test'
+      ...
+    # Subtest: Antworten sind privat und nicht öffentlich gecacht
+    ok 3 - Antworten sind privat und nicht öffentlich gecacht
+      ---
+      duration_ms: 0.236458
+      type: 'test'
+      ...
+    # Subtest: nur application/json
+    ok 4 - nur application/json
+      ---
+      duration_ms: 0.102375
+      type: 'test'
+      ...
+    # Subtest: ungültiges JSON
+    ok 5 - ungültiges JSON
+      ---
+      duration_ms: 0.123958
+      type: 'test'
+      ...
+    # Subtest: Rate-Limit blockiert nach zu vielen Anfragen
+    ok 6 - Rate-Limit blockiert nach zu vielen Anfragen
+      ---
+      duration_ms: 0.764125
+      type: 'test'
+      ...
+    # Subtest: Browser kann official Evidence nicht vortäuschen
+    ok 7 - Browser kann official Evidence nicht vortäuschen
+      ---
+      duration_ms: 2.785166
+      type: 'test'
+      ...
+    # Subtest: API-Evaluations kollabieren nicht auf den ersten Treffer
+    ok 8 - API-Evaluations kollabieren nicht auf den ersten Treffer
+      ---
+      duration_ms: 1.609083
+      type: 'test'
+      ...
+    # Subtest: gültiger plus ungültiger Traveller bleibt fail-closed
+    ok 9 - gültiger plus ungültiger Traveller bleibt fail-closed
+      ---
+      duration_ms: 2.644625
+      type: 'test'
+      ...
+    # Subtest: malformed Citizenship- oder Document-Child bleibt fail-closed
+    ok 10 - malformed Citizenship- oder Document-Child bleibt fail-closed
+      ---
+      duration_ms: 0.65
+      type: 'test'
+      ...
+    # Subtest: falsch typisierte Canonical-Children lösen keinen Legacy-Fallback aus
+    ok 11 - falsch typisierte Canonical-Children lösen keinen Legacy-Fallback aus
+      ---
+      duration_ms: 0.0785
+      type: 'test'
+      ...
+    # Subtest: überlange oder doppelte Children werden nicht still gekürzt
+    ok 12 - überlange oder doppelte Children werden nicht still gekürzt
+      ---
+      duration_ms: 0.086041
+      type: 'test'
+      ...
+    # Subtest: malformed Legacy-Singularfelder bleiben fail-closed und erreichen den Provider nicht
+    ok 13 - malformed Legacy-Singularfelder bleiben fail-closed und erreichen den Provider nicht
+      ---
+      duration_ms: 2.067792
+      type: 'test'
+      ...
+    # Subtest: Legacy-Form ohne Canonical-Properties bleibt an der API gültig
+    ok 14 - Legacy-Form ohne Canonical-Properties bleibt an der API gültig
+      ---
+      duration_ms: 0.085084
+      type: 'test'
+      ...
+    # Subtest: malformed Party bleibt fail-closed
+    ok 15 - malformed Party bleibt fail-closed
+      ---
+      duration_ms: 0.036667
+      type: 'test'
+      ...
+    # Subtest: Reisendenanzahl ohne Party erzeugt getrennte Slots
+    ok 16 - Reisendenanzahl ohne Party erzeugt getrennte Slots
+      ---
+      duration_ms: 0.615833
+      type: 'test'
+      ...
+    1..16
+ok 1 - Readiness-API-Hülle
+  ---
+  duration_ms: 19.779167
+  type: 'suite'
+  ...
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 1,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.264Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.267Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.267Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.268Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.268Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.268Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.268Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 4,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.269Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-untrusted',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.269Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.270Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.270Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.270Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.270Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.270Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.271Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.271Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.271Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.272Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.272Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.272Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.273Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.273Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.273Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.273Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.274Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.274Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e1-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.274Z'
+# }
+# Subtest: Entry Requirements Detail Contract E1 – Taxonomie
+    # Subtest: blank_passport_pages und financial_means sind First-Class-Typen
+    ok 1 - blank_passport_pages und financial_means sind First-Class-Typen
+      ---
+      duration_ms: 0.707
+      type: 'test'
+      ...
+    # Subtest: eTA bleibt eigener Typ und ist kein Visa-Modus
+    ok 2 - eTA bleibt eigener Typ und ist kein Visa-Modus
+      ---
+      duration_ms: 0.1775
+      type: 'test'
+      ...
+    # Subtest: Visa-Modus-Taxonomie ist geschlossen und vollständig
+    ok 3 - Visa-Modus-Taxonomie ist geschlossen und vollständig
+      ---
+      duration_ms: 0.919416
+      type: 'test'
+      ...
+    # Subtest: visaModeLesen: ungültig/fehlend wird unknown, nicht-Visa wird null
+    ok 4 - visaModeLesen: ungültig/fehlend wird unknown, nicht-Visa wird null
+      ---
+      duration_ms: 0.184709
+      type: 'test'
+      ...
+    # Subtest: officialLeer trägt Visa-Modus nur am Typ visa
+    ok 5 - officialLeer trägt Visa-Modus nur am Typ visa
+      ---
+      duration_ms: 0.139875
+      type: 'test'
+      ...
+    # Subtest: requirementsProviderAus bleibt null
+    ok 6 - requirementsProviderAus bleibt null
+      ---
+      duration_ms: 0.061125
+      type: 'test'
+      ...
+    # Subtest: visaResultUndModusWidersprechen: Pflichtpaare widersprechen, conditional nicht
+    ok 7 - visaResultUndModusWidersprechen: Pflichtpaare widersprechen, conditional nicht
+      ---
+      duration_ms: 0.171916
+      type: 'test'
+      ...
+    1..7
+ok 2 - Entry Requirements Detail Contract E1 – Taxonomie
+  ---
+  duration_ms: 3.10175
+  type: 'suite'
+  ...
+# Subtest: Entry Requirements Detail Contract E1 – Engine
+    # Subtest: neue Typen werden ohne Provider fail-closed bewertet, nicht als other_entry_requirement
+    ok 1 - neue Typen werden ohne Provider fail-closed bewertet, nicht als other_entry_requirement
+      ---
+      duration_ms: 1.676291
+      type: 'test'
+      ...
+    # Subtest: trusted Provider-Zeilen für blank_passport_pages und financial_means sind übernehmbar
+    ok 2 - trusted Provider-Zeilen für blank_passport_pages und financial_means sind übernehmbar
+      ---
+      duration_ms: 4.652958
+      type: 'test'
+      ...
+    # Subtest: Visa-Modus wird verlustfrei Provider-Zeile → OfficialEvaluation transportiert
+    ok 3 - Visa-Modus wird verlustfrei Provider-Zeile → OfficialEvaluation transportiert
+      ---
+      duration_ms: 1.509833
+      type: 'test'
+      ...
+    # Subtest: ungültiger oder fehlender Visa-Modus wird unknown, nicht erfunden
+    ok 4 - ungültiger oder fehlender Visa-Modus wird unknown, nicht erfunden
+      ---
+      duration_ms: 0.501375
+      type: 'test'
+      ...
+    # Subtest: nicht-Visa-Zeilen inklusive eTA tragen keinen Visa-Modus als Product Truth
+    ok 5 - nicht-Visa-Zeilen inklusive eTA tragen keinen Visa-Modus als Product Truth
+      ---
+      duration_ms: 0.463667
+      type: 'test'
+      ...
+    # Subtest: untrusted Visa-Zeile setzt keinen konkreten Visa-Modus als Hard Truth
+    ok 6 - untrusted Visa-Zeile setzt keinen konkreten Visa-Modus als Hard Truth
+      ---
+      duration_ms: 0.445583
+      type: 'test'
+      ...
+    # Subtest: widersprüchliche Visa-Modi derselben Option fail-closed ohne Winner-Modus
+    ok 7 - widersprüchliche Visa-Modi derselben Option fail-closed ohne Winner-Modus
+      ---
+      duration_ms: 0.264792
+      type: 'test'
+      ...
+    # Subtest: verschiedene Visa-Modi sind entscheidungsrelevant, Evidence-URLs nicht
+    ok 8 - verschiedene Visa-Modi sind entscheidungsrelevant, Evidence-URLs nicht
+      ---
+      duration_ms: 0.044084
+      type: 'test'
+      ...
+    # Subtest: Multi-Credential bleibt getrennt: kein Default-Pass, getrennte Visa-Modi
+    ok 9 - Multi-Credential bleibt getrennt: kein Default-Pass, getrennte Visa-Modi
+      ---
+      duration_ms: 0.169458
+      type: 'test'
+      ...
+    # Subtest: Fingerprint bleibt anfrage-seitig: Visa-Modus ändert ihn nicht
+    ok 10 - Fingerprint bleibt anfrage-seitig: Visa-Modus ändert ihn nicht
+      ---
+      duration_ms: 0.043417
+      type: 'test'
+      ...
+    1..10
+ok 3 - Entry Requirements Detail Contract E1 – Engine
+  ---
+  duration_ms: 10.119417
+  type: 'suite'
+  ...
+# Subtest: Entry Requirements Detail Contract E1 – result ↔ visaMode
+    # Subtest: required + visa_exempt ist widersprüchlich und bleibt nicht current
+    ok 1 - required + visa_exempt ist widersprüchlich und bleibt nicht current
+      ---
+      duration_ms: 0.170625
+      type: 'test'
+      ...
+    # Subtest: not_required + visumpflichtige Modi sind widersprüchlich
+    ok 2 - not_required + visumpflichtige Modi sind widersprüchlich
+      ---
+      duration_ms: 0.444584
+      type: 'test'
+      ...
+    # Subtest: gültige required-Kombinationen bleiben current
+    ok 3 - gültige required-Kombinationen bleiben current
+      ---
+      duration_ms: 1.383542
+      type: 'test'
+      ...
+    # Subtest: gültige not_required-Kombinationen bleiben current
+    ok 4 - gültige not_required-Kombinationen bleiben current
+      ---
+      duration_ms: 0.5755
+      type: 'test'
+      ...
+    # Subtest: conditional bleibt bei jedem Visa-Modus erlaubt und wird nicht erfunden degradiert
+    ok 5 - conditional bleibt bei jedem Visa-Modus erlaubt und wird nicht erfunden degradiert
+      ---
+      duration_ms: 1.116959
+      type: 'test'
+      ...
+    # Subtest: Widerspruch auf einer Credential-Option lässt die andere unberührt
+    ok 6 - Widerspruch auf einer Credential-Option lässt die andere unberührt
+      ---
+      duration_ms: 0.988834
+      type: 'test'
+      ...
+    1..6
+ok 4 - Entry Requirements Detail Contract E1 – result ↔ visaMode
+  ---
+  duration_ms: 4.865917
+  type: 'suite'
+  ...
+# Subtest: Entry Requirements E3 – Visitor Checklist
+    # Subtest: 1. zwei Credential-Optionen desselben Travellers bleiben getrennt und permutation-stabil
+    ok 1 - 1. zwei Credential-Optionen desselben Travellers bleiben getrennt und permutation-stabil
+      ---
+      duration_ms: 9.490542
+      type: 'test'
+      ...
+    # Subtest: 2. kein evaluations[0]- oder documents[0]-Fallback in Presentation/UI
+    ok 2 - 2. kein evaluations[0]- oder documents[0]-Fallback in Presentation/UI
+      ---
+      duration_ms: 0.835416
+      type: 'test'
+      ...
+    # Subtest: 3. Visa-Modi sind korrekt beschriftet und gruppiert
+    ok 3 - 3. Visa-Modi sind korrekt beschriftet und gruppiert
+      ---
+      duration_ms: 0.802667
+      type: 'test'
+      ...
+    # Subtest: 4. eTA bleibt eigener Requirement-Typ und kein Visa-Modus
+    ok 4 - 4. eTA bleibt eigener Requirement-Typ und kein Visa-Modus
+      ---
+      duration_ms: 0.170958
+      type: 'test'
+      ...
+    # Subtest: 5. blank_passport_pages und financial_means haben First-Class-Labels und Gruppen
+    ok 5 - 5. blank_passport_pages und financial_means haben First-Class-Labels und Gruppen
+      ---
+      duration_ms: 0.170917
+      type: 'test'
+      ...
+    # Subtest: 6. Transit landet in Route / Transit und bleibt scoped
+    ok 6 - 6. Transit landet in Route / Transit und bleibt scoped
+      ---
+      duration_ms: 0.135875
+      type: 'test'
+      ...
+    # Subtest: 7. stale/recheck/unavailable/insufficient_context erzeugen keine aktuelle Hard-Truth-Copy
+    ok 7 - 7. stale/recheck/unavailable/insufficient_context erzeugen keine aktuelle Hard-Truth-Copy
+      ---
+      duration_ms: 0.259666
+      type: 'test'
+      ...
+    # Subtest: 8. Action-Labels kommen nur aus strukturiertem Zweck
+    ok 8 - 8. Action-Labels kommen nur aus strukturiertem Zweck
+      ---
+      duration_ms: 0.142917
+      type: 'test'
+      ...
+    # Subtest: 9. Action und Source mit gleicher URL werden nicht dupliziert
+    ok 9 - 9. Action und Source mit gleicher URL werden nicht dupliziert
+      ---
+      duration_ms: 0.149209
+      type: 'test'
+      ...
+    # Subtest: 10. Credential-Label nutzt nur exakte strukturierte Dokumentdaten
+    ok 10 - 10. Credential-Label nutzt nur exakte strukturierte Dokumentdaten
+      ---
+      duration_ms: 0.29575
+      type: 'test'
+      ...
+    # Subtest: 11. Presentation ändert keine Engine-Wahrheit und bleibt lossless
+    ok 11 - 11. Presentation ändert keine Engine-Wahrheit und bleibt lossless
+      ---
+      duration_ms: 0.349958
+      type: 'test'
+      ...
+    # Subtest: 12. requirementsProviderAus() bleibt null
+    ok 12 - 12. requirementsProviderAus() bleibt null
+      ---
+      duration_ms: 0.090334
+      type: 'test'
+      ...
+    # Subtest: checkedAt ist Jetnity-Prüfzeit, nicht Quellen-Update
+    ok 13 - checkedAt ist Jetnity-Prüfzeit, nicht Quellen-Update
+      ---
+      duration_ms: 0.125375
+      type: 'test'
+      ...
+    # Subtest: Visa unknown erscheint in Vor Abreise, niemals als erledigter Antrag
+    ok 14 - Visa unknown erscheint in Vor Abreise, niemals als erledigter Antrag
+      ---
+      duration_ms: 0.161458
+      type: 'test'
+      ...
+    # Subtest: UI-Quelle rendert Gruppen und purpose-spezifische Actions
+    ok 15 - UI-Quelle rendert Gruppen und purpose-spezifische Actions
+      ---
+      duration_ms: 3.154917
+      type: 'test'
+      ...
+    # Subtest: Residual other_entry_requirement landet in Weitere offizielle Anforderungen
+    ok 16 - Residual other_entry_requirement landet in Weitere offizielle Anforderungen
+      ---
+      duration_ms: 0.192833
+      type: 'test'
+      ...
+    1..16
+ok 5 - Entry Requirements E3 – Visitor Checklist
+  ---
+  duration_ms: 17.45025
+  type: 'suite'
+  ...
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 1,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.277Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.286Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.287Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.287Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.288Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.289Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.289Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.290Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.290Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.291Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.291Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.292Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.292Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.292Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.292Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.293Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.293Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.293Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.294Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.294Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.295Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 1,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.296Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.296Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.296Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 1,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.297Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 2,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.297Z'
+# }
+# provider_ops_event {
+#   domain: 'readiness',
+#   providerId: 'e4-double',
+#   operation: 'evaluate',
+#   outcome: 'ok',
+#   durationMs: 0,
+#   resultCount: 1,
+#   droppedCount: null,
+#   rateLimitHit: false,
+#   recordedAt: '2026-10-06T08:22:26.297Z'
+# }
+# Subtest: Entry Requirements E4 – Temporal-Rule-Contract
+    # Subtest: 1. 72h-before-destination-arrival availableFrom wird korrekt normalisiert
+    ok 1 - 1. 72h-before-destination-arrival availableFrom wird korrekt normalisiert
+      ---
+      duration_ms: 8.681917
+      type: 'test'
+      ...
+    # Subtest: 2. at + 0 akzeptiert, at + nonzero verworfen
+    ok 2 - 2. at + 0 akzeptiert, at + nonzero verworfen
+      ---
+      duration_ms: 0.150125
+      type: 'test'
+      ...
+    # Subtest: 3. before/after mit 0/negativ/Fraction/NaN/Infinity verworfen
+    ok 3 - 3. before/after mit 0/negativ/Fraction/NaN/Infinity verworfen
+      ---
+      duration_ms: 0.259875
+      type: 'test'
+      ...
+    # Subtest: 4. mandatory und recommended bleiben unterscheidbar
+    ok 4 - 4. mandatory und recommended bleiben unterscheidbar
+      ---
+      duration_ms: 0.270792
+      type: 'test'
+      ...
+    # Subtest: 5. malformed/unsupported Timing verändert gültige Requirement-Hard-Truth nicht
+    ok 5 - 5. malformed/unsupported Timing verändert gültige Requirement-Hard-Truth nicht
+      ---
+      duration_ms: 3.849625
+      type: 'test'
+      ...
+    # Subtest: Same-Anchor-Fenster: unmögliche Reihenfolge wird null, Requirement bleibt
+    ok 6 - Same-Anchor-Fenster: unmögliche Reihenfolge wird null, Requirement bleibt
+      ---
+      duration_ms: 2.044041
+      type: 'test'
+      ...
+    # Subtest: 6. not_required trägt nie Timing
+    ok 7 - 6. not_required trägt nie Timing
+      ---
+      duration_ms: 0.245625
+      type: 'test'
+      ...
+    # Subtest: 7. stale/recheck/unavailable/insufficient-context trägt nie Timing
+    ok 8 - 7. stale/recheck/unavailable/insufficient-context trägt nie Timing
+      ---
+      duration_ms: 0.658125
+      type: 'test'
+      ...
+    # Subtest: 8. Visa-Conflict-Degradation löscht Timing
+    ok 9 - 8. Visa-Conflict-Degradation löscht Timing
+      ---
+      duration_ms: 0.299
+      type: 'test'
+      ...
+    # Subtest: 9. Duplicate gleiche Entscheidung + widersprüchliches Timing → Requirement bleibt, Timing null
+    ok 10 - 9. Duplicate gleiche Entscheidung + widersprüchliches Timing → Requirement bleibt, Timing null
+      ---
+      duration_ms: 0.40325
+      type: 'test'
+      ...
+    # Subtest: 10. Duplicate gleiche Entscheidung + identisches Timing → Timing bleibt
+    ok 11 - 10. Duplicate gleiche Entscheidung + identisches Timing → Timing bleibt
+      ---
+      duration_ms: 0.190083
+      type: 'test'
+      ...
+    # Subtest: 11. Duplicate-Reihenfolge/Permutation verändert Ergebnis nicht
+    ok 12 - 11. Duplicate-Reihenfolge/Permutation verändert Ergebnis nicht
+      ---
+      duration_ms: 2.846167
+      type: 'test'
+      ...
+    # Subtest: 12. Multi-Citizenship/Multi-Document: Timing bleibt exakt credential-spezifisch
+    ok 13 - 12. Multi-Citizenship/Multi-Document: Timing bleibt exakt credential-spezifisch
+      ---
+      duration_ms: 0.530208
+      type: 'test'
+      ...
+    # Subtest: 13. Transit-Timing bleibt am exakten Transit-Country-Scope
+    ok 14 - 13. Transit-Timing bleibt am exakten Transit-Country-Scope
+      ---
+      duration_ms: 0.391125
+      type: 'test'
+      ...
+    # Subtest: 14. Presentation zeigt Timing nur aus temporalRule, niemals aus validFrom/URL/Typ
+    ok 15 - 14. Presentation zeigt Timing nur aus temporalRule, niemals aus validFrom/URL/Typ
+      ---
+      duration_ms: 0.55525
+      type: 'test'
+      ...
+    # Subtest: 15. requirementsProviderAus() bleibt null
+    ok 16 - 15. requirementsProviderAus() bleibt null
+      ---
+      duration_ms: 0.033625
+      type: 'test'
+      ...
+    # Subtest: geschlossene Taxonomie und Safety-Bound sind vollständig
+    ok 17 - geschlossene Taxonomie und Safety-Bound sind vollständig
+      ---
+      duration_ms: 0.041666
+      type: 'test'
+      ...
+    1..17
+ok 6 - Entry Requirements E4 – Temporal-Rule-Contract
+  ---
+  duration_ms: 22.489042
+  type: 'suite'
+  ...
+# Subtest: Schema 2: event deadline conformance
+    # Subtest: strict before expiry: 2026-10-06T11:59:59.999Z => open
+    ok 1 - strict before expiry: 2026-10-06T11:59:59.999Z => open
+      ---
+      duration_ms: 0.608708
+      type: 'test'
+      ...
+    # Subtest: strict before expiry: 2026-10-06T12:00:00.000Z => closed
+    ok 2 - strict before expiry: 2026-10-06T12:00:00.000Z => closed
+      ---
+      duration_ms: 0.1655
+      type: 'test'
+      ...
+    # Subtest: strict before expiry: 2026-10-06T12:00:00.001Z => closed
+    ok 3 - strict before expiry: 2026-10-06T12:00:00.001Z => closed
+      ---
+      duration_ms: 0.114125
+      type: 'test'
+      ...
+    # Subtest: permission state, expiry, precision, observation gap precedence
+    ok 4 - permission state, expiry, precision, observation gap precedence
+      ---
+      duration_ms: 0.743667
+      type: 'test'
+      ...
+    # Subtest: conflicts, foreign scope, missing binding and cross-version inputs block
+    ok 5 - conflicts, foreign scope, missing binding and cross-version inputs block
+      ---
+      duration_ms: 0.847958
+      type: 'test'
+      ...
+    # Subtest: strict instants reject rollover, timezone offsets, missing precision and invalid observation
+    ok 6 - strict instants reject rollover, timezone offsets, missing precision and invalid observation
+      ---
+      duration_ms: 0.73275
+      type: 'test'
+      ...
+    # Subtest: closed vocabulary and fingerprint covers event identity, scope and semantics
+    ok 7 - closed vocabulary and fingerprint covers event identity, scope and semantics
+      ---
+      duration_ms: 1.483583
+      type: 'test'
+      ...
+    # Subtest: pure evaluation cannot read an internal clock or execute accessors
+    ok 8 - pure evaluation cannot read an internal clock or execute accessors
+      ---
+      duration_ms: 0.242459
+      type: 'test'
+      ...
+    1..8
+ok 7 - Schema 2: event deadline conformance
+  ---
+  duration_ms: 5.138375
+  type: 'suite'
+  ...
+# Subtest: Entry Requirements E5-A temporal projection
+    # Subtest: 1. 72h before destination_arrival auf Z-Instant
+    ok 1 - 1. 72h before destination_arrival auf Z-Instant
+      ---
+      duration_ms: 1.8555
+      type: 'test'
+      ...
+    # Subtest: 2. 24h before trip_departure normalisiert +02:00 zuerst
+    ok 2 - 2. 24h before trip_departure normalisiert +02:00 zuerst
+      ---
+      duration_ms: 0.343458
+      type: 'test'
+      ...
+    # Subtest: 3. at bleibt identischer normalisierter Instant
+    ok 3 - 3. at bleibt identischer normalisierter Instant
+      ---
+      duration_ms: 0.154125
+      type: 'test'
+      ...
+    # Subtest: 4. after addiert exakt
+    ok 4 - 4. after addiert exakt
+      ---
+      duration_ms: 0.119167
+      type: 'test'
+      ...
+    # Subtest: 5. verschiedene Anchors brauchen explizite Bindings beider Seiten
+    ok 5 - 5. verschiedene Anchors brauchen explizite Bindings beider Seiten
+      ---
+      duration_ms: 0.2975
+      type: 'test'
+      ...
+    # Subtest: 6. fehlender Anchor fällt nicht auf ein anderes Event zurück
+    ok 6 - 6. fehlender Anchor fällt nicht auf ein anderes Event zurück
+      ---
+      duration_ms: 0.133583
+      type: 'test'
+      ...
+    # Subtest: 7. zonenlose lokale Wanduhr wird als Instant abgelehnt
+    ok 7 - 7. zonenlose lokale Wanduhr wird als Instant abgelehnt
+      ---
+      duration_ms: 0.049083
+      type: 'test'
+      ...
+    # Subtest: 8. Date-only wird abgelehnt
+    ok 8 - 8. Date-only wird abgelehnt
+      ---
+      duration_ms: 0.148417
+      type: 'test'
+      ...
+    # Subtest: 9. ungültiger Offset, ungültiges Datum und Freitext werden abgelehnt
+    ok 9 - 9. ungültiger Offset, ungültiges Datum und Freitext werden abgelehnt
+      ---
+      duration_ms: 0.199917
+      type: 'test'
+      ...
+    # Subtest: expliziter Offset ausserhalb der Weltzonen-Hülle bleibt projizierbar
+    ok 10 - expliziter Offset ausserhalb der Weltzonen-Hülle bleibt projizierbar
+      ---
+      duration_ms: 0.216334
+      type: 'test'
+      ...
+    # Subtest: 10. Cross-Anchor availableFrom > dueBy ist invalid_projected_window
+    ok 11 - 10. Cross-Anchor availableFrom > dueBy ist invalid_projected_window
+      ---
+      duration_ms: 0.061458
+      type: 'test'
+      ...
+    # Subtest: 11. eventRef bleibt für available/due Provenance erhalten
+    ok 12 - 11. eventRef bleibt für available/due Provenance erhalten
+      ---
+      duration_ms: 0.045583
+      type: 'test'
+      ...
+    # Subtest: 12. zwei Occurrences werden niemals first-picked
+    ok 13 - 12. zwei Occurrences werden niemals first-picked
+      ---
+      duration_ms: 0.060875
+      type: 'test'
+      ...
+    # Subtest: DST-Übergang bleibt reine Offset-Arithmetik, keine Zonenrekonstruktion
+    ok 14 - DST-Übergang bleibt reine Offset-Arithmetik, keine Zonenrekonstruktion
+      ---
+      duration_ms: 0.044666
+      type: 'test'
+      ...
+    # Subtest: E4-Bound und Overflow erzeugen keinen erfundenen Instant
+    ok 15 - E4-Bound und Overflow erzeugen keinen erfundenen Instant
+      ---
+      duration_ms: 0.036708
+      type: 'test'
+      ...
+    # Subtest: gleiche Eingabe ist value-stabil und unabhängig von Binding-Key-Reihenfolge
+    ok 16 - gleiche Eingabe ist value-stabil und unabhängig von Binding-Key-Reihenfolge
+      ---
+      duration_ms: 0.0455
+      type: 'test'
+      ...
+    # Subtest: leere Projektionen teilen keine mutierbare Referenz zwischen Aufrufen
+    ok 17 - leere Projektionen teilen keine mutierbare Referenz zwischen Aufrufen
+      ---
+      duration_ms: 0.127416
+      type: 'test'
+      ...
+    # Subtest: whitespace-only eventRef ist keine stabile Provenance
+    ok 18 - whitespace-only eventRef ist keine stabile Provenance
+      ---
+      duration_ms: 0.047417
+      type: 'test'
+      ...
+    # Subtest: 13/14. E4-Invarianten und Factory bleiben unangetastet
+    ok 19 - 13/14. E4-Invarianten und Factory bleiben unangetastet
+      ---
+      duration_ms: 0.229334
+      type: 'test'
+      ...
+    1..19
+ok 8 - Entry Requirements E5-A temporal projection
+  ---
+  duration_ms: 4.832958
+  type: 'suite'
+  ...
+# Subtest: Context-Fingerprint
+    # Subtest: ist deterministisch
+    ok 1 - ist deterministisch
+      ---
+      duration_ms: 0.882417
+      type: 'test'
+      ...
+    # Subtest: Länderreihenfolge ist irrelevant
+    ok 2 - Länderreihenfolge ist irrelevant
+      ---
+      duration_ms: 0.362541
+      type: 'test'
+      ...
+    # Subtest: Datumsänderung ändert den Fingerprint
+    ok 3 - Datumsänderung ändert den Fingerprint
+      ---
+      duration_ms: 0.301875
+      type: 'test'
+      ...
+    # Subtest: Transitänderung ändert Einreise-Fingerprint, nicht Buchungsbestätigung
+    ok 4 - Transitänderung ändert Einreise-Fingerprint, nicht Buchungsbestätigung
+      ---
+      duration_ms: 0.744666
+      type: 'test'
+      ...
+    # Subtest: Citizenship-Menge ändert Einreise-Fingerprint, Reihenfolge nicht
+    ok 5 - Citizenship-Menge ändert Einreise-Fingerprint, Reihenfolge nicht
+      ---
+      duration_ms: 0.398
+      type: 'test'
+      ...
+    # Subtest: Dokumentänderung ändert Einreise-Fingerprint, Buchungsbestätigung nicht
+    ok 6 - Dokumentänderung ändert Einreise-Fingerprint, Buchungsbestätigung nicht
+      ---
+      duration_ms: 0.272
+      type: 'test'
+      ...
+    # Subtest: Mietwagen ändert nur den Versicherungs-Fingerprint
+    ok 7 - Mietwagen ändert nur den Versicherungs-Fingerprint
+      ---
+      duration_ms: 0.385291
+      type: 'test'
+      ...
+    # Subtest: Unterschied nach Zeichen 800 der Rohroute bleibt sichtbar
+    ok 8 - Unterschied nach Zeichen 800 der Rohroute bleibt sichtbar
+      ---
+      duration_ms: 0.562417
+      type: 'test'
+      ...
+    # Subtest: Citizenship, spätes Dokument und Residence bleiben bei langer Route sichtbar
+    ok 9 - Citizenship, spätes Dokument und Residence bleiben bei langer Route sichtbar
+      ---
+      duration_ms: 3.152875
+      type: 'test'
+      ...
+    # Subtest: persistierter v2-Fingerprint macht done nicht fälschlich current
+    ok 10 - persistierter v2-Fingerprint macht done nicht fälschlich current
+      ---
+      duration_ms: 6.584083
+      type: 'test'
+      ...
+    # Subtest: persistierter v3-Fingerprint macht done nicht fälschlich current
+    ok 11 - persistierter v3-Fingerprint macht done nicht fälschlich current
+      ---
+      duration_ms: 1.678791
+      type: 'test'
+      ...
+    1..11
+ok 9 - Context-Fingerprint
+  ---
+  duration_ms: 16.432625
+  type: 'suite'
+  ...
+# Subtest: R10 Blocker 23 – Credential-Bedeutung
+    # Subtest: Ref→Country-Tausch ändert den Fingerprint, Array-Reihenfolge nicht
+    ok 1 - Ref→Country-Tausch ändert den Fingerprint, Array-Reihenfolge nicht
+      ---
+      duration_ms: 1.536667
+      type: 'test'
+      ...
+    # Subtest: Dokument wechselt die aufgelöste Citizenship CH→RS
+    ok 2 - Dokument wechselt die aufgelöste Citizenship CH→RS
+      ---
+      duration_ms: 0.359708
+      type: 'test'
+      ...
+    # Subtest: mehrere Dokumente bleiben order-invariant und ohne Passnummern
+    ok 3 - mehrere Dokumente bleiben order-invariant und ohne Passnummern
+      ---
+      duration_ms: 0.738208
+      type: 'test'
+      ...
+    # Subtest: opaque Refs mit Trennzeichen erzeugen keine strukturelle Kollision
+    ok 4 - opaque Refs mit Trennzeichen erzeugen keine strukturelle Kollision
+      ---
+      duration_ms: 0.233625
+      type: 'test'
+      ...
+    1..4
+ok 10 - R10 Blocker 23 – Credential-Bedeutung
+  ---
+  duration_ms: 2.990958
+  type: 'suite'
+  ...
+# Subtest: Readiness-Kontext und Stale-Logik
+    # Subtest: Ziel-Land geändert → alter Check nicht mehr aktuell
+    ok 1 - Ziel-Land geändert → alter Check nicht mehr aktuell
+      ---
+      duration_ms: 2.563834
+      type: 'test'
+      ...
+    # Subtest: Datum geändert → relevanter Check stale
+    ok 2 - Datum geändert → relevanter Check stale
+      ---
+      duration_ms: 1.162542
+      type: 'test'
+      ...
+    # Subtest: gleiches Land mehrfach → keine Duplikate
+    ok 3 - gleiches Land mehrfach → keine Duplikate
+      ---
+      duration_ms: 0.54075
+      type: 'test'
+      ...
+    # Subtest: Abreiseort-Name ist kein Origin-Ländercode und kein Transit
+    ok 4 - Abreiseort-Name ist kein Origin-Ländercode und kein Transit
+      ---
+      duration_ms: 0.576792
+      type: 'test'
+      ...
+    # Subtest: fehlender Country Code → unknown, kein Guess
+    ok 5 - fehlender Country Code → unknown, kein Guess
+      ---
+      duration_ms: 0.397792
+      type: 'test'
+      ...
+    # Subtest: gebuchter Planpunkt ersetzt → Confirmation nicht aktuell
+    ok 6 - gebuchter Planpunkt ersetzt → Confirmation nicht aktuell
+      ---
+      duration_ms: 4.414083
+      type: 'test'
+      ...
+    # Subtest: booked → Confirmation nicht automatisch done
+    ok 7 - booked → Confirmation nicht automatisch done
+      ---
+      duration_ms: 1.759458
+      type: 'test'
+      ...
+    # Subtest: unconfirmed → kein booked-confirmation Fakt
+    ok 8 - unconfirmed → kein booked-confirmation Fakt
+      ---
+      duration_ms: 1.052
+      type: 'test'
+      ...
+    1..8
+ok 11 - Readiness-Kontext und Stale-Logik
+  ---
+  duration_ms: 13.221209
+  type: 'suite'
+  ...
+# Subtest: partyLimitUeberschritten
+    # Subtest: 20 bestehende plus Update derselben Refs bleibt zulässig
+    ok 1 - 20 bestehende plus Update derselben Refs bleibt zulässig
+      ---
+      duration_ms: 0.665
+      type: 'test'
+      ...
+    # Subtest: 19 bestehende plus eine neue Ref bleibt zulässig
+    ok 2 - 19 bestehende plus eine neue Ref bleibt zulässig
+      ---
+      duration_ms: 0.072084
+      type: 'test'
+      ...
+    # Subtest: 20 bestehende plus eine neue Ref wird abgelehnt
+    ok 3 - 20 bestehende plus eine neue Ref wird abgelehnt
+      ---
+      duration_ms: 0.042834
+      type: 'test'
+      ...
+    # Subtest: inkrementelles Übernehmen mehrerer neuer Refs kann das Limit sprengen
+    ok 4 - inkrementelles Übernehmen mehrerer neuer Refs kann das Limit sprengen
+      ---
+      duration_ms: 0.178959
+      type: 'test'
+      ...
+    # Subtest: leere nächste Menge ändert das Limit nicht
+    ok 5 - leere nächste Menge ändert das Limit nicht
+      ---
+      duration_ms: 0.185208
+      type: 'test'
+      ...
+    1..5
+ok 12 - partyLimitUeberschritten
+  ---
+  duration_ms: 2.07325
+  type: 'suite'
+  ...
+# Subtest: Account-Traveller-Mapper
+    # Subtest: kanonisch leere Citizenships bleiben leer trotz Legacy-Nationalität
+    ok 1 - kanonisch leere Citizenships bleiben leer trotz Legacy-Nationalität
+      ---
+      duration_ms: 2.165166
+      type: 'test'
+      ...
+    # Subtest: kanonisch leere Documents bleiben leer trotz Legacy-Passport
+    ok 2 - kanonisch leere Documents bleiben leer trotz Legacy-Passport
+      ---
+      duration_ms: 1.407041
+      type: 'test'
+      ...
+    # Subtest: ohne geladene Child-Relationen expandiert Legacy weiter
+    ok 3 - ohne geladene Child-Relationen expandiert Legacy weiter
+      ---
+      duration_ms: 0.191125
+      type: 'test'
+      ...
+    1..3
+ok 13 - Account-Traveller-Mapper
+  ---
+  duration_ms: 4.547209
+  type: 'suite'
+  ...
+# Subtest: Readiness-Schema
+    # Subtest: gültiger Check kommt durch
+    ok 1 - gültiger Check kommt durch
+      ---
+      duration_ms: 1.073458
+      type: 'test'
+      ...
+    # Subtest: ungültige Enums werden abgelehnt
+    ok 2 - ungültige Enums werden abgelehnt
+      ---
+      duration_ms: 0.457375
+      type: 'test'
+      ...
+    # Subtest: freier Country-Label ist kein Code
+    ok 3 - freier Country-Label ist kein Code
+      ---
+      duration_ms: 0.103542
+      type: 'test'
+      ...
+    # Subtest: Custom Title Längenlimit
+    ok 4 - Custom Title Längenlimit
+      ---
+      duration_ms: 0.369041
+      type: 'test'
+      ...
+    # Subtest: keine arbitrary URLs / HTML im Titel
+    ok 5 - keine arbitrary URLs / HTML im Titel
+      ---
+      duration_ms: 0.291916
+      type: 'test'
+      ...
+    # Subtest: keine sensiblen Dokumentfelder
+    ok 6 - keine sensiblen Dokumentfelder
+      ---
+      duration_ms: 0.093
+      type: 'test'
+      ...
+    # Subtest: Browser darf official evidence nicht setzen
+    ok 7 - Browser darf official evidence nicht setzen
+      ---
+      duration_ms: 0.090667
+      type: 'test'
+      ...
+    # Subtest: Retry/Doppelklick über dieselbe clientRef verdoppelt nicht
+    ok 8 - Retry/Doppelklick über dieselbe clientRef verdoppelt nicht
+      ---
+      duration_ms: 0.158416
+      type: 'test'
+      ...
+    1..8
+ok 14 - Readiness-Schema
+  ---
+  duration_ms: 3.104875
+  type: 'suite'
+  ...
+# Subtest: Readiness-Gesamtstatus
+    # Subtest: 0 persistierte Items bleiben ehrlich
+    ok 1 - 0 persistierte Items bleiben ehrlich
+      ---
+      duration_ms: 3.096459
+      type: 'test'
+      ...
+    # Subtest: nur User Items done + official unknown
+    ok 2 - nur User Items done + official unknown
+      ---
+      duration_ms: 6.011584
+      type: 'test'
+      ...
+    # Subtest: offene Items werden gezählt
+    ok 3 - offene Items werden gezählt
+      ---
+      duration_ms: 0.6385
+      type: 'test'
+      ...
+    # Subtest: stale Items werden separat gezählt
+    ok 4 - stale Items werden separat gezählt
+      ---
+      duration_ms: 2.437709
+      type: 'test'
+      ...
+    # Subtest: mehrere Länder getrennt
+    ok 5 - mehrere Länder getrennt
+      ---
+      duration_ms: 8.436708
+      type: 'test'
+      ...
+    # Subtest: mehrere Reisende verbieten individuelle Aussagen
+    ok 6 - mehrere Reisende verbieten individuelle Aussagen
+      ---
+      duration_ms: 6.321458
+      type: 'test'
+      ...
+    # Subtest: Provider unavailable
+    ok 7 - Provider unavailable
+      ---
+      duration_ms: 2.4735
+      type: 'test'
+      ...
+    # Subtest: gelieferte Evaluations erreichen die Ansicht ohne Client-Provider
+    ok 8 - gelieferte Evaluations erreichen die Ansicht ohne Client-Provider
+      ---
+      duration_ms: 0.857875
+      type: 'test'
+      ...
+    1..8
+ok 15 - Readiness-Gesamtstatus
+  ---
+  duration_ms: 31.186375
+  type: 'suite'
+  ...
+# Subtest: Traveller-Zuordnung für Readiness
+    # Subtest: null-Ref bleibt legal trip-level
+    ok 1 - null-Ref bleibt legal trip-level
+      ---
+      duration_ms: 0.338208
+      type: 'test'
+      ...
+    # Subtest: gültige Ref liefert die echte UUID
+    ok 2 - gültige Ref liefert die echte UUID
+      ---
+      duration_ms: 0.118417
+      type: 'test'
+      ...
+    # Subtest: unbekannte Ref wird abgewiesen
+    ok 3 - unbekannte Ref wird abgewiesen
+      ---
+      duration_ms: 0.050208
+      type: 'test'
+      ...
+    # Subtest: Ref eines anderen Travellers wird abgewiesen
+    ok 4 - Ref eines anderen Travellers wird abgewiesen
+      ---
+      duration_ms: 0.030708
+      type: 'test'
+      ...
+    # Subtest: nicht-UUID-Id degradiert nicht zu trip-level
+    ok 5 - nicht-UUID-Id degradiert nicht zu trip-level
+      ---
+      duration_ms: 0.105125
+      type: 'test'
+      ...
+    1..5
+ok 16 - Traveller-Zuordnung für Readiness
+  ---
+  duration_ms: 1.023458
+  type: 'suite'
+  ...
+# Subtest: Stammdaten
+    # Subtest: eine neue Abreise verliert die alte Place-ID
+    ok 1 - eine neue Abreise verliert die alte Place-ID
+      ---
+      duration_ms: 7.915875
+      type: 'test'
+      ...
+    # Subtest: Reisende, Budget und Tempo
+    ok 2 - Reisende, Budget und Tempo
+      ---
+      duration_ms: 1.863125
+      type: 'test'
+      ...
+    # Subtest: ein neues Startdatum verschiebt den ganzen Zeitraum
+    ok 3 - ein neues Startdatum verschiebt den ganzen Zeitraum
+      ---
+      duration_ms: 1.413625
+      type: 'test'
+      ...
+    1..3
+ok 17 - Stammdaten
+  ---
+  duration_ms: 11.626125
+  type: 'suite'
+  ...
+# Subtest: Datumsverschiebung und Dauer
+    # Subtest: zeitraum_verschieben hält die Struktur
+    ok 1 - zeitraum_verschieben hält die Struktur
+      ---
+      duration_ms: 0.7445
+      type: 'test'
+      ...
+    # Subtest: zwei Tage länger hängt Tage an die letzte Etappe
+    ok 2 - zwei Tage länger hängt Tage an die letzte Etappe
+      ---
+      duration_ms: 1.162375
+      type: 'test'
+      ...
+    # Subtest: zwei Tage kürzer nimmt die letzten Tage
+    ok 3 - zwei Tage kürzer nimmt die letzten Tage
+      ---
+      duration_ms: 0.599458
+      type: 'test'
+      ...
+    1..3
+ok 18 - Datumsverschiebung und Dauer
+  ---
+  duration_ms: 2.987959
+  type: 'suite'
+  ...
+# Subtest: Etappen
+    # Subtest: Los Angeles entfernen – analog Rom
+    ok 1 - Los Angeles entfernen – analog Rom
+      ---
+      duration_ms: 1.6835
+      type: 'test'
+      ...
+    # Subtest: nach Florenz zwei Tage am Meer
+    ok 2 - nach Florenz zwei Tage am Meer
+      ---
+      duration_ms: 1.248959
+      type: 'test'
+      ...
+    # Subtest: Florenz einen Tag kürzer
+    ok 3 - Florenz einen Tag kürzer
+      ---
+      duration_ms: 1.106541
+      type: 'test'
+      ...
+    # Subtest: die letzte Etappe lässt sich nicht entfernen
+    ok 4 - die letzte Etappe lässt sich nicht entfernen
+      ---
+      duration_ms: 0.403042
+      type: 'test'
+      ...
+    1..4
+ok 19 - Etappen
+  ---
+  duration_ms: 4.7015
+  type: 'suite'
+  ...
+# Subtest: Tage und Planpunkte
+    # Subtest: einen Tag entfernen und einen hinzufügen
+    ok 1 - einen Tag entfernen und einen hinzufügen
+      ---
+      duration_ms: 0.747125
+      type: 'test'
+      ...
+    # Subtest: Planpunkt entfernen und einen neuen anlegen
+    ok 2 - Planpunkt entfernen und einen neuen anlegen
+      ---
+      duration_ms: 0.75275
+      type: 'test'
+      ...
+    # Subtest: ein nicht-kommerzieller Planpunkt kann auf einen anderen Tag wandern
+    ok 3 - ein nicht-kommerzieller Planpunkt kann auf einen anderen Tag wandern
+      ---
+      duration_ms: 0.320375
+      type: 'test'
+      ...
+    1..3
+ok 20 - Tage und Planpunkte
+  ---
+  duration_ms: 1.891666
+  type: 'suite'
+  ...
+# Subtest: Geschützte kommerzielle Felder
+    # Subtest: unveränderte Punkte behalten Preis und Anbieter
+    ok 1 - unveränderte Punkte behalten Preis und Anbieter
+      ---
+      duration_ms: 0.237292
+      type: 'test'
+      ...
+    # Subtest: punkt_anpassen ändert einen kommerziellen Punkt nicht
+    ok 2 - punkt_anpassen ändert einen kommerziellen Punkt nicht
+      ---
+      duration_ms: 0.330833
+      type: 'test'
+      ...
+    # Subtest: zeitraum_verschieben lässt Termine eines kommerziellen Punkts stehen
+    ok 3 - zeitraum_verschieben lässt Termine eines kommerziellen Punkts stehen
+      ---
+      duration_ms: 0.645167
+      type: 'test'
+      ...
+    # Subtest: ein neues Startdatum verschiebt den kommerziellen Termin nicht
+    ok 4 - ein neues Startdatum verschiebt den kommerziellen Termin nicht
+      ---
+      duration_ms: 4.986375
+      type: 'test'
+      ...
+    # Subtest: neue Punkte haben keine Handelsfelder
+    ok 5 - neue Punkte haben keine Handelsfelder
+      ---
+      duration_ms: 3.566291
+      type: 'test'
+      ...
+    # Subtest: eine allgemeine Umplanung lässt den kommerziellen Punkt stehen
+    ok 6 - eine allgemeine Umplanung lässt den kommerziellen Punkt stehen
+      ---
+      duration_ms: 0.517083
+      type: 'test'
+      ...
+    # Subtest: punkt_entfernen nimmt einen kommerziellen Punkt nicht weg
+    ok 7 - punkt_entfernen nimmt einen kommerziellen Punkt nicht weg
+      ---
+      duration_ms: 0.255583
+      type: 'test'
+      ...
+    # Subtest: eine gekürzte Etappe bewahrt den kommerziellen Punkt ungeplant
+    ok 8 - eine gekürzte Etappe bewahrt den kommerziellen Punkt ungeplant
+      ---
+      duration_ms: 1.918333
+      type: 'test'
+      ...
+    1..8
+ok 21 - Geschützte kommerzielle Felder
+  ---
+  duration_ms: 12.594583
+  type: 'suite'
+  ...
+# Subtest: Geschützter kommerzieller stay
+    # Subtest: punkt_anpassen ändert einen kommerziellen stay nicht
+    ok 1 - punkt_anpassen ändert einen kommerziellen stay nicht
+      ---
+      duration_ms: 0.30075
+      type: 'test'
+      ...
+    # Subtest: punkt_entfernen nimmt einen kommerziellen stay nicht weg
+    ok 2 - punkt_entfernen nimmt einen kommerziellen stay nicht weg
+      ---
+      duration_ms: 0.204583
+      type: 'test'
+      ...
+    # Subtest: zeitraum_verschieben lässt den stay-Termin stehen
+    ok 3 - zeitraum_verschieben lässt den stay-Termin stehen
+      ---
+      duration_ms: 0.174791
+      type: 'test'
+      ...
+    1..3
+ok 22 - Geschützter kommerzieller stay
+  ---
+  duration_ms: 0.719958
+  type: 'suite'
+  ...
+# Subtest: Unbekannte Referenzen
+    # Subtest: unbekannte Etappe
+    ok 1 - unbekannte Etappe
+      ---
+      duration_ms: 0.079208
+      type: 'test'
+      ...
+    # Subtest: unbekannter Tag
+    ok 2 - unbekannter Tag
+      ---
+      duration_ms: 0.04175
+      type: 'test'
+      ...
+    # Subtest: unbekannter Planpunkt
+    ok 3 - unbekannter Planpunkt
+      ---
+      duration_ms: 0.0405
+      type: 'test'
+      ...
+    1..3
+ok 23 - Unbekannte Referenzen
+  ---
+  duration_ms: 0.188584
+  type: 'suite'
+  ...
+# Subtest: Mehrstufig ohne Kalenderdaten
+    # Subtest: Tage bleiben ihrer Etappe zugeordnet
+    ok 1 - Tage bleiben ihrer Etappe zugeordnet
+      ---
+      duration_ms: 2.070541
+      type: 'test'
+      ...
+    1..1
+ok 24 - Mehrstufig ohne Kalenderdaten
+  ---
+  duration_ms: 2.117792
+  type: 'suite'
+  ...
+# Subtest: Bestehende Kennungen bleiben
+    # Subtest: unveränderte Etappen, Tage und Punkte behalten ihre id
+    ok 1 - unveränderte Etappen, Tage und Punkte behalten ihre id
+      ---
+      duration_ms: 0.439167
+      type: 'test'
+      ...
+    1..1
+ok 25 - Bestehende Kennungen bleiben
+  ---
+  duration_ms: 0.755125
+  type: 'suite'
+  ...
+# Subtest: Der Vorher/Nachher-Diff
+    # Subtest: Reisende und Tempo erscheinen als Stammdaten
+    ok 1 - Reisende und Tempo erscheinen als Stammdaten
+      ---
+      duration_ms: 0.694708
+      type: 'test'
+      ...
+    # Subtest: unveränderte Reisen ergeben eine leere Liste
+    ok 2 - unveränderte Reisen ergeben eine leere Liste
+      ---
+      duration_ms: 0.561708
+      type: 'test'
+      ...
+    # Subtest: entfernte Etappen werden genannt
+    ok 3 - entfernte Etappen werden genannt
+      ---
+      duration_ms: 0.104416
+      type: 'test'
+      ...
+    1..3
+ok 26 - Der Vorher/Nachher-Diff
+  ---
+  duration_ms: 1.723916
+  type: 'suite'
+  ...
+# Subtest: Ein gültiger Wunsch wird zur Vorschau
+    # Subtest: Operationen werden auf die Reise angewendet
+    ok 1 - Operationen werden auf die Reise angewendet
+      ---
+      duration_ms: 21.080708
+      type: 'test'
+      ...
+    # Subtest: bestehende Kennungen bleiben
+    ok 2 - bestehende Kennungen bleiben
+      ---
+      duration_ms: 2.60525
+      type: 'test'
+      ...
+    # Subtest: kommerzielle Felder bleiben
+    ok 3 - kommerzielle Felder bleiben
+      ---
+      duration_ms: 1.084208
+      type: 'test'
+      ...
+    1..3
+ok 27 - Ein gültiger Wunsch wird zur Vorschau
+  ---
+  duration_ms: 25.391333
+  type: 'suite'
+  ...
+# Subtest: Fehlerfälle speichern nichts und erscheinen nicht als Erfolg
+    # Subtest: ein zu kurzer Wunsch
+    ok 1 - ein zu kurzer Wunsch
+      ---
+      duration_ms: 0.245208
+      type: 'test'
+      ...
+    # Subtest: abgeschaltetes Modell
+    ok 2 - abgeschaltetes Modell
+      ---
+      duration_ms: 0.061209
+      type: 'test'
+      ...
+    # Subtest: erschöpftes Kontingent ruft das Modell nicht
+    ok 3 - erschöpftes Kontingent ruft das Modell nicht
+      ---
+      duration_ms: 0.068125
+      type: 'test'
+      ...
+    # Subtest: eine schemawidrige Antwort wird abgeschlossen, nicht übernommen
+    ok 4 - eine schemawidrige Antwort wird abgeschlossen, nicht übernommen
+      ---
+      duration_ms: 0.689
+      type: 'test'
+      ...
+    # Subtest: unbekannte Referenzen werden nicht gespeichert
+    ok 5 - unbekannte Referenzen werden nicht gespeichert
+      ---
+      duration_ms: 0.33975
+      type: 'test'
+      ...
+    # Subtest: eine Änderung, die nichts ändert, wird verworfen
+    ok 6 - eine Änderung, die nichts ändert, wird verworfen
+      ---
+      duration_ms: 0.649125
+      type: 'test'
+      ...
+    1..6
+ok 28 - Fehlerfälle speichern nichts und erscheinen nicht als Erfolg
+  ---
+  duration_ms: 2.3495
+  type: 'suite'
+  ...
+# Subtest: Sol fällt genau einmal auf Terra zurück
+    # Subtest: nach Zeitüberschreitung kommt Terra zum Zug
+    ok 1 - nach Zeitüberschreitung kommt Terra zum Zug
+      ---
+      duration_ms: 0.588542
+      type: 'test'
+      ...
+    1..1
+ok 29 - Sol fällt genau einmal auf Terra zurück
+  ---
+  duration_ms: 0.619208
+  type: 'suite'
+  ...
+# Subtest: Die Änderungsphasen
+    # Subtest: beginnen mit dem Lesen und enden mit der Prüfung
+    ok 1 - beginnen mit dem Lesen und enden mit der Prüfung
+      ---
+      duration_ms: 0.283584
+      type: 'test'
+      ...
+    # Subtest: nennen keine Prozente und keine Providerdaten
+    ok 2 - nennen keine Prozente und keine Providerdaten
+      ---
+      duration_ms: 0.123416
+      type: 'test'
+      ...
+    # Subtest: eine negative Laufzeit gilt als Beginn
+    ok 3 - eine negative Laufzeit gilt als Beginn
+      ---
+      duration_ms: 0.064792
+      type: 'test'
+      ...
+    1..3
+ok 30 - Die Änderungsphasen
+  ---
+  duration_ms: 0.827792
+  type: 'suite'
+  ...
+# Subtest: Geschützte kommerzielle Felder
+    # Subtest: gleiche Kennung stellt den kommerziellen Punkt vollständig wieder her
+    ok 1 - gleiche Kennung stellt den kommerziellen Punkt vollständig wieder her
+      ---
+      duration_ms: 1.325125
+      type: 'test'
+      ...
+    # Subtest: ein neues Element darf keinen Buchungsstatus erfinden
+    ok 2 - ein neues Element darf keinen Buchungsstatus erfinden
+      ---
+      duration_ms: 0.330167
+      type: 'test'
+      ...
+    # Subtest: ein gebuchter Punkt ohne Preis bleibt kommerziell geschützt
+    ok 3 - ein gebuchter Punkt ohne Preis bleibt kommerziell geschützt
+      ---
+      duration_ms: 0.452667
+      type: 'test'
+      ...
+    # Subtest: eine neue Kennung bleibt ohne Handelsfelder
+    ok 4 - eine neue Kennung bleibt ohne Handelsfelder
+      ---
+      duration_ms: 8.015834
+      type: 'test'
+      ...
+    # Subtest: ein verschwundener kommerzieller Punkt kehrt auf seinen Tag zurück
+    ok 5 - ein verschwundener kommerzieller Punkt kehrt auf seinen Tag zurück
+      ---
+      duration_ms: 0.345875
+      type: 'test'
+      ...
+    # Subtest: ein übernommener stay bleibt gegen Modellmutation geschützt
+    ok 6 - ein übernommener stay bleibt gegen Modellmutation geschützt
+      ---
+      duration_ms: 0.284
+      type: 'test'
+      ...
+    # Subtest: ein übernommener Flug bleibt gegen Modellmutation geschützt
+    ok 7 - ein übernommener Flug bleibt gegen Modellmutation geschützt
+      ---
+      duration_ms: 0.253125
+      type: 'test'
+      ...
+    # Subtest: eine gebuchte Verbindung bleibt gegen Modellmutation geschützt
+    ok 8 - eine gebuchte Verbindung bleibt gegen Modellmutation geschützt
+      ---
+      duration_ms: 0.267
+      type: 'test'
+      ...
+    # Subtest: ein gebuchter Mietwagen bleibt gegen Modellmutation geschützt
+    ok 9 - ein gebuchter Mietwagen bleibt gegen Modellmutation geschützt
+      ---
+      duration_ms: 0.350709
+      type: 'test'
+      ...
+    # Subtest: ohne Tag oder Etappe bleibt der kommerzielle Punkt ungeplant und unverändert
+    ok 10 - ohne Tag oder Etappe bleibt der kommerzielle Punkt ungeplant und unverändert
+      ---
+      duration_ms: 0.475125
+      type: 'test'
+      ...
+    1..10
+ok 31 - Geschützte kommerzielle Felder
+  ---
+  duration_ms: 13.0685
+  type: 'suite'
+  ...
+# Subtest: Das Routing für eine Reiseänderung
+    # Subtest: eine kurze Änderung an einer kleinen Reise geht an Terra
+    ok 1 - eine kurze Änderung an einer kleinen Reise geht an Terra
+      ---
+      duration_ms: 0.850042
+      type: 'test'
+      ...
+    # Subtest: eine Umstrukturierung einer mehrstufigen Reise geht an Sol
+    ok 2 - eine Umstrukturierung einer mehrstufigen Reise geht an Sol
+      ---
+      duration_ms: 0.391
+      type: 'test'
+      ...
+    # Subtest: viele Etappen oder Tage gehen an Sol
+    ok 3 - viele Etappen oder Tage gehen an Sol
+      ---
+      duration_ms: 0.062458
+      type: 'test'
+      ...
+    # Subtest: ein gesetzter Name sticht den Pfad
+    ok 4 - ein gesetzter Name sticht den Pfad
+      ---
+      duration_ms: 0.037958
+      type: 'test'
+      ...
+    # Subtest: Luna wird nicht automatisch gewählt
+    ok 5 - Luna wird nicht automatisch gewählt
+      ---
+      duration_ms: 0.043375
+      type: 'test'
+      ...
+    1..5
+ok 32 - Das Routing für eine Reiseänderung
+  ---
+  duration_ms: 1.816834
+  type: 'suite'
+  ...
+# Subtest: Ein vollständiger Änderungsvorschlag kommt durch
+    # Subtest: die Vorlage ist gültig
+    ok 1 - die Vorlage ist gültig
+      ---
+      duration_ms: 7.777709
+      type: 'test'
+      ...
+    # Subtest: eine Fassung gehört zur übernommenen Änderung
+    ok 2 - eine Fassung gehört zur übernommenen Änderung
+      ---
+      duration_ms: 26.613375
+      type: 'test'
+      ...
+    # Subtest: eine fremde Fassung fällt durch
+    ok 3 - eine fremde Fassung fällt durch
+      ---
+      duration_ms: 1.204458
+      type: 'test'
+      ...
+    1..3
+ok 33 - Ein vollständiger Änderungsvorschlag kommt durch
+  ---
+  duration_ms: 41.472084
+  type: 'suite'
+  ...
+# Subtest: Fachliche Grenzen
+    # Subtest: ohne Operationen gibt es keine Änderung
+    ok 1 - ohne Operationen gibt es keine Änderung
+      ---
+      duration_ms: 0.934458
+      type: 'test'
+      ...
+    # Subtest: Stammdaten ohne jedes Feld fallen durch
+    ok 2 - Stammdaten ohne jedes Feld fallen durch
+      ---
+      duration_ms: 4.870166
+      type: 'test'
+      ...
+    # Subtest: Dauer um 0 Tage ändert nichts und fällt durch
+    ok 3 - Dauer um 0 Tage ändert nichts und fällt durch
+      ---
+      duration_ms: 0.342125
+      type: 'test'
+      ...
+    # Subtest: eine Etappe ohne Ort fällt durch
+    ok 4 - eine Etappe ohne Ort fällt durch
+      ---
+      duration_ms: 0.291875
+      type: 'test'
+      ...
+    # Subtest: ein zu langer Wunsch fällt durch
+    ok 5 - ein zu langer Wunsch fällt durch
+      ---
+      duration_ms: 1.018833
+      type: 'test'
+      ...
+    1..5
+ok 34 - Fachliche Grenzen
+  ---
+  duration_ms: 7.9575
+  type: 'suite'
+  ...
+# Subtest: JSON-Schema und Zod sagen dasselbe
+    # Subtest: dieselben Wurzel-Felder
+    ok 1 - dieselben Wurzel-Felder
+      ---
+      duration_ms: 0.681208
+      type: 'test'
+      ...
+    # Subtest: jede Eigenschaft steht in required – strict: true verlangt es
+    ok 2 - jede Eigenschaft steht in required – strict: true verlangt es
+      ---
+      duration_ms: 0.248833
+      type: 'test'
+      ...
+    # Subtest: keine Längenangabe im JSON-Schema
+    ok 3 - keine Längenangabe im JSON-Schema
+      ---
+      duration_ms: 0.080917
+      type: 'test'
+      ...
+    # Subtest: dieselben Aufzählungen
+    ok 4 - dieselben Aufzählungen
+      ---
+      duration_ms: 0.0445
+      type: 'test'
+      ...
+    # Subtest: keine Preise, Anbieter oder Buchungsfelder
+    ok 5 - keine Preise, Anbieter oder Buchungsfelder
+      ---
+      duration_ms: 0.146584
+      type: 'test'
+      ...
+    1..5
+ok 35 - JSON-Schema und Zod sagen dasselbe
+  ---
+  duration_ms: 1.288
+  type: 'suite'
+  ...
+# Subtest: Der Snapshot für das Modell
+    # Subtest: trägt keine kommerziellen Felder
+    ok 1 - trägt keine kommerziellen Felder
+      ---
+      duration_ms: 0.919667
+      type: 'test'
+      ...
+    # Subtest: trägt Kennungen und Etappen-Tage-Zuordnung
+    ok 2 - trägt Kennungen und Etappen-Tage-Zuordnung
+      ---
+      duration_ms: 1.381291
+      type: 'test'
+      ...
+    1..2
+ok 36 - Der Snapshot für das Modell
+  ---
+  duration_ms: 2.9535
+  type: 'suite'
+  ...
+# Subtest: Route & Transit Intelligence
+    # Subtest: 1. Direktflug CH → TH
+    ok 1 - 1. Direktflug CH → TH
+      ---
+      duration_ms: 3.754583
+      type: 'test'
+      ...
+    # Subtest: 2. ein Transit CH → QA → TH
+    ok 2 - 2. ein Transit CH → QA → TH
+      ---
+      duration_ms: 0.55375
+      type: 'test'
+      ...
+    # Subtest: 3. zwei Transits
+    ok 3 - 3. zwei Transits
+      ---
+      duration_ms: 0.3645
+      type: 'test'
+      ...
+    # Subtest: 4. fehlender Airport-Country-Kontext bleibt unknown
+    ok 4 - 4. fehlender Airport-Country-Kontext bleibt unknown
+      ---
+      duration_ms: 0.314166
+      type: 'test'
+      ...
+    # Subtest: 5. gleiche Stadt, unterschiedlicher Airport ist Flughafenwechsel
+    ok 5 - 5. gleiche Stadt, unterschiedlicher Airport ist Flughafenwechsel
+      ---
+      duration_ms: 0.670375
+      type: 'test'
+      ...
+    # Subtest: 6. Transitwechsel QA → SG erzeugt neue Route Facts
+    ok 6 - 6. Transitwechsel QA → SG erzeugt neue Route Facts
+      ---
+      duration_ms: 1.345666
+      type: 'test'
+      ...
+    # Subtest: 7. Readiness Context wird bei Transitänderung stale
+    ok 7 - 7. Readiness Context wird bei Transitänderung stale
+      ---
+      duration_ms: 5.18075
+      type: 'test'
+      ...
+    # Subtest: 8. Segmentreihenfolge bleibt korrekt
+    ok 8 - 8. Segmentreihenfolge bleibt korrekt
+      ---
+      duration_ms: 0.511916
+      type: 'test'
+      ...
+    # Subtest: 9. Connection Duration aus validen Zeiten
+    ok 9 - 9. Connection Duration aus validen Zeiten
+      ---
+      duration_ms: 0.514208
+      type: 'test'
+      ...
+    # Subtest: 10. ungültige oder fehlende Zeiten erzeugen keine Duration
+    ok 10 - 10. ungültige oder fehlende Zeiten erzeugen keine Duration
+      ---
+      duration_ms: 0.63975
+      type: 'test'
+      ...
+    # Subtest: 11. Guest- und Account-Parität über dasselbe Trip-Feld
+    ok 11 - 11. Guest- und Account-Parität über dasselbe Trip-Feld
+      ---
+      duration_ms: 0.556875
+      type: 'test'
+      ...
+    # Subtest: 12. Direktflug-Anzeige ist einfacher als Umstieg
+    ok 12 - 12. Direktflug-Anzeige ist einfacher als Umstieg
+      ---
+      duration_ms: 0.170583
+      type: 'test'
+      ...
+    # Subtest: 13. Titel und Notiz werden nicht zur Route
+    ok 13 - 13. Titel und Notiz werden nicht zur Route
+      ---
+      duration_ms: 0.181375
+      type: 'test'
+      ...
+    # Subtest: 14. FlugOption-Ableitung nutzt nur Referenzländer
+    ok 14 - 14. FlugOption-Ableitung nutzt nur Referenzländer
+      ---
+      duration_ms: 2.221
+      type: 'test'
+      ...
+    1..14
+ok 37 - Route & Transit Intelligence
+  ---
+  duration_ms: 17.825792
+  type: 'suite'
+  ...
+# Subtest: itineraryKanonisieren
+    # Subtest: 1. manipuliertes ZRH-Land wird zu CH
+    ok 1 - 1. manipuliertes ZRH-Land wird zu CH
+      ---
+      duration_ms: 3.30375
+      type: 'test'
+      ...
+    # Subtest: 2. manipuliertes DOH-Transitland wird zu QA
+    ok 2 - 2. manipuliertes DOH-Transitland wird zu QA
+      ---
+      duration_ms: 0.259417
+      type: 'test'
+      ...
+    # Subtest: 3. Client-Stadt und -Landname werden durch die Referenz ersetzt
+    ok 3 - 3. Client-Stadt und -Landname werden durch die Referenz ersetzt
+      ---
+      duration_ms: 0.092166
+      type: 'test'
+      ...
+    # Subtest: 4. unbekannter IATA übernimmt kein Client-Land
+    ok 4 - 4. unbekannter IATA übernimmt kein Client-Land
+      ---
+      duration_ms: 0.146083
+      type: 'test'
+      ...
+    # Subtest: 5. leere Referenz (Lookup-Fehler) fällt nicht auf Clientwerte zurück
+    ok 5 - 5. leere Referenz (Lookup-Fehler) fällt nicht auf Clientwerte zurück
+      ---
+      duration_ms: 0.166583
+      type: 'test'
+      ...
+    # Subtest: 6. Direktflug, ein Transit und Multi-Transit bleiben vollständig
+    ok 6 - 6. Direktflug, ein Transit und Multi-Transit bleiben vollständig
+      ---
+      duration_ms: 0.225167
+      type: 'test'
+      ...
+    # Subtest: Zeiten bleiben erhalten
+    ok 7 - Zeiten bleiben erhalten
+      ---
+      duration_ms: 0.567
+      type: 'test'
+      ...
+    1..7
+ok 38 - itineraryKanonisieren
+  ---
+  duration_ms: 6.025791
+  type: 'suite'
+  ...
+# Subtest: reiseNutzlastRouteKanonisieren
+    # Subtest: 7. Guest-Nutzlast wird vor Persistenz kanonisiert
+    ok 1 - 7. Guest-Nutzlast wird vor Persistenz kanonisiert
+      ---
+      duration_ms: 0.675666
+      type: 'test'
+      ...
+    # Subtest: 8. Fingerprint folgt der kanonischen Route und bleibt bei gleicher Route stabil
+    ok 2 - 8. Fingerprint folgt der kanonischen Route und bleibt bei gleicher Route stabil
+      ---
+      duration_ms: 1.202292
+      type: 'test'
+      ...
+    # Subtest: zweimal kanonisieren bleibt idempotent
+    ok 3 - zweimal kanonisieren bleibt idempotent
+      ---
+      duration_ms: 1.537292
+      type: 'test'
+      ...
+    # Subtest: Surface-Evidence wird bei Guest-Kanonisierung entfernt
+    ok 4 - Surface-Evidence wird bei Guest-Kanonisierung entfernt
+      ---
+      duration_ms: 2.702041
+      type: 'test'
+      ...
+    # Subtest: sammelt IATA-Codes nur aus der Itinerary
+    ok 5 - sammelt IATA-Codes nur aus der Itinerary
+      ---
+      duration_ms: 0.547084
+      type: 'test'
+      ...
+    1..5
+ok 39 - reiseNutzlastRouteKanonisieren
+  ---
+  duration_ms: 6.950834
+  type: 'suite'
+  ...
+# Subtest: Route-Airport-Zeitkontakte
+    # Subtest: getrennte Flight-Items bleiben getrennte BKK-Kontakte
+    ok 1 - getrennte Flight-Items bleiben getrennte BKK-Kontakte
+      ---
+      duration_ms: 8.46525
+      type: 'test'
+      ...
+    # Subtest: getrennte Legs in einer Itinerary werden nicht über den Aufenthalt verbunden
+    ok 2 - getrennte Legs in einer Itinerary werden nicht über den Aufenthalt verbunden
+      ---
+      duration_ms: 1.330584
+      type: 'test'
+      ...
+    # Subtest: echter Transit im selben Leg bleibt ein Layover-Kontakt
+    ok 3 - echter Transit im selben Leg bleibt ein Layover-Kontakt
+      ---
+      duration_ms: 0.866791
+      type: 'test'
+      ...
+    # Subtest: Item-Reihenfolge ändert die kanonische Kontaktmenge nicht
+    ok 4 - Item-Reihenfolge ändert die kanonische Kontaktmenge nicht
+      ---
+      duration_ms: 1.129541
+      type: 'test'
+      ...
+    1..4
+ok 40 - Route-Airport-Zeitkontakte
+  ---
+  duration_ms: 12.760916
+  type: 'suite'
+  ...
+# Subtest: Route-Länderrollen
+    # Subtest: Roundtrip in einer Itinerary: TH ist Ziel, nicht Transit; CH kein zusätzliches Ziel
+    ok 1 - Roundtrip in einer Itinerary: TH ist Ziel, nicht Transit; CH kein zusätzliches Ziel
+      ---
+      duration_ms: 6.875542
+      type: 'test'
+      ...
+    # Subtest: derselbe Roundtrip als zwei Flight-Items liefert dieselben Länderrollen
+    ok 2 - derselbe Roundtrip als zwei Flight-Items liefert dieselben Länderrollen
+      ---
+      duration_ms: 1.023375
+      type: 'test'
+      ...
+    # Subtest: Multi-City CH→TH, TH→SG, SG→CH trägt TH und SG als Ziele, nicht als Transit
+    ok 3 - Multi-City CH→TH, TH→SG, SG→CH trägt TH und SG als Ziele, nicht als Transit
+      ---
+      duration_ms: 0.651209
+      type: 'test'
+      ...
+    # Subtest: echter Transit innerhalb eines Legs bleibt Transit, Leg-Ziel bleibt Ziel
+    ok 4 - echter Transit innerhalb eines Legs bleibt Transit, Leg-Ziel bleibt Ziel
+      ---
+      duration_ms: 0.349458
+      type: 'test'
+      ...
+    # Subtest: Roundtrip mit echtem Transit pro Richtung behält Transitländer und verwechselt Leg-Ziele nicht
+    ok 5 - Roundtrip mit echtem Transit pro Richtung behält Transitländer und verwechselt Leg-Ziele nicht
+      ---
+      duration_ms: 0.422208
+      type: 'test'
+      ...
+    # Subtest: Readiness erhält für Roundtrip die korrekten destinationCountries und transitCountryCodes
+    ok 6 - Readiness erhält für Roundtrip die korrekten destinationCountries und transitCountryCodes
+      ---
+      duration_ms: 2.8495
+      type: 'test'
+      ...
+    # Subtest: Guest- und Account-Parität über dasselbe Trip-Feld
+    ok 7 - Guest- und Account-Parität über dasselbe Trip-Feld
+      ---
+      duration_ms: 1.725875
+      type: 'test'
+      ...
+    # Subtest: Flight-Item-Reihenfolge ändert die kanonische Rollenmenge nicht
+    ok 8 - Flight-Item-Reihenfolge ändert die kanonische Rollenmenge nicht
+      ---
+      duration_ms: 1.131
+      type: 'test'
+      ...
+    1..8
+ok 41 - Route-Länderrollen
+  ---
+  duration_ms: 16.206667
+  type: 'suite'
+  ...
+# Subtest: Routen-Nachzug nach Guest → Account
+    # Subtest: Direktflug behält die Itinerary
+    ok 1 - Direktflug behält die Itinerary
+      ---
+      duration_ms: 12.000542
+      type: 'test'
+      ...
+    # Subtest: ein Transit behält die vollständige Route
+    ok 2 - ein Transit behält die vollständige Route
+      ---
+      duration_ms: 1.266416
+      type: 'test'
+      ...
+    # Subtest: zwei Transits behalten die vollständige Route
+    ok 3 - zwei Transits behalten die vollständige Route
+      ---
+      duration_ms: 0.824583
+      type: 'test'
+      ...
+    # Subtest: ein Lesefehler ist kein vollständiger Erfolg
+    ok 4 - ein Lesefehler ist kein vollständiger Erfolg
+      ---
+      duration_ms: 0.425459
+      type: 'test'
+      ...
+    # Subtest: ein Schreibfehler ist kein vollständiger Erfolg
+    ok 5 - ein Schreibfehler ist kein vollständiger Erfolg
+      ---
+      duration_ms: 0.311833
+      type: 'test'
+      ...
+    # Subtest: fehlende Flugzeilen sind kein vollständiger Erfolg
+    ok 6 - fehlende Flugzeilen sind kein vollständiger Erfolg
+      ---
+      duration_ms: 0.38725
+      type: 'test'
+      ...
+    # Subtest: Retry schreibt dieselbe Route auf dieselbe Zeile, nicht doppelt
+    ok 7 - Retry schreibt dieselbe Route auf dieselbe Zeile, nicht doppelt
+      ---
+      duration_ms: 1.3475
+      type: 'test'
+      ...
+    # Subtest: derselbe Fingerprint bleibt nach erfolgreichem Nachzug stabil
+    ok 8 - derselbe Fingerprint bleibt nach erfolgreichem Nachzug stabil
+      ---
+      duration_ms: 2.42575
+      type: 'test'
+      ...
+    # Subtest: ungültige Route-Metadata wird nicht geschrieben
+    ok 9 - ungültige Route-Metadata wird nicht geschrieben
+      ---
+      duration_ms: 0.55825
+      type: 'test'
+      ...
+    1..9
+ok 42 - Routen-Nachzug nach Guest → Account
+  ---
+  duration_ms: 21.038083
+  type: 'suite'
+  ...
+# Subtest: Flugroute-Persistenz
+    # Subtest: ordnet eine Route nur eindeutig passenden Flügen zu
+    ok 1 - ordnet eine Route nur eindeutig passenden Flügen zu
+      ---
+      duration_ms: 2.488042
+      type: 'test'
+      ...
+    # Subtest: lässt mehrdeutige Treffer aus
+    ok 2 - lässt mehrdeutige Treffer aus
+      ---
+      duration_ms: 0.107042
+      type: 'test'
+      ...
+    # Subtest: unterscheidet Flüge über Provider-Ref und Datum
+    ok 3 - unterscheidet Flüge über Provider-Ref und Datum
+      ---
+      duration_ms: 0.079375
+      type: 'test'
+      ...
+    1..3
+ok 43 - Flugroute-Persistenz
+  ---
+  duration_ms: 3.061334
+  type: 'suite'
+  ...
+# Subtest: R10 Blocker 20 – Intra-Itinerary-Leg-Chronologie
+    # Subtest: umgekehrt datierte Legs erzeugen keinen TH-Origin
+    ok 1 - umgekehrt datierte Legs erzeugen keinen TH-Origin
+      ---
+      duration_ms: 3.305917
+      type: 'test'
+      ...
+    # Subtest: dieselbe Reise als zwei datierte Flight-Items hat dieselbe Country-Truth
+    ok 2 - dieselbe Reise als zwei datierte Flight-Items hat dieselbe Country-Truth
+      ---
+      duration_ms: 0.76825
+      type: 'test'
+      ...
+    # Subtest: normaler Roundtrip, Open Jaw und 3-Leg-Multi-City bleiben korrekt
+    ok 3 - normaler Roundtrip, Open Jaw und 3-Leg-Multi-City bleiben korrekt
+      ---
+      duration_ms: 1.313542
+      type: 'test'
+      ...
+    # Subtest: gleiche Leg-Starts erfinden keine Reihenfolge aus Airport-Text
+    ok 4 - gleiche Leg-Starts erfinden keine Reihenfolge aus Airport-Text
+      ---
+      duration_ms: 0.183125
+      type: 'test'
+      ...
+    # Subtest: Guest- und Account-Parität für umgekehrt gespeicherte Legs
+    ok 5 - Guest- und Account-Parität für umgekehrt gespeicherte Legs
+      ---
+      duration_ms: 0.508084
+      type: 'test'
+      ...
+    1..5
+ok 44 - R10 Blocker 20 – Intra-Itinerary-Leg-Chronologie
+  ---
+  duration_ms: 6.489583
+  type: 'suite'
+  ...
+# Subtest: R10 Blocker 21 – Surface-Grenze in der Route-ID
+    # Subtest: Surface-Change und kontinuierliche Kette haben unterschiedliche Fingerprints
+    ok 1 - Surface-Change und kontinuierliche Kette haben unterschiedliche Fingerprints
+      ---
+      duration_ms: 2.214875
+      type: 'test'
+      ...
+    # Subtest: gleicher Airport bleibt kontinuierlich, fehlende IATA bleibt unknown
+    ok 2 - gleicher Airport bleibt kontinuierlich, fehlende IATA bleibt unknown
+      ---
+      duration_ms: 0.835458
+      type: 'test'
+      ...
+    # Subtest: Open-Jaw- und Leg-Grenzen bleiben unterscheidbar
+    ok 3 - Open-Jaw- und Leg-Grenzen bleiben unterscheidbar
+      ---
+      duration_ms: 0.365541
+      type: 'test'
+      ...
+    1..3
+ok 45 - R10 Blocker 21 – Surface-Grenze in der Route-ID
+  ---
+  duration_ms: 3.654792
+  type: 'suite'
+  ...
+# Subtest: R10 Blocker 22 – Connection Airport-Change und Duration
+    # Subtest: gleicher IATA behält Layover-Dauer, verschiedener IATA nicht
+    ok 1 - gleicher IATA behält Layover-Dauer, verschiedener IATA nicht
+      ---
+      duration_ms: 7.580542
+      type: 'test'
+      ...
+    # Subtest: ein oder kein bekannter IATA bleibt airportChange=null
+    ok 2 - ein oder kein bekannter IATA bleibt airportChange=null
+      ---
+      duration_ms: 1.066542
+      type: 'test'
+      ...
+    # Subtest: R9 Multi-Leg-Segmentzuordnung bleibt korrekt
+    ok 3 - R9 Multi-Leg-Segmentzuordnung bleibt korrekt
+      ---
+      duration_ms: 0.222125
+      type: 'test'
+      ...
+    1..3
+ok 46 - R10 Blocker 22 – Connection Airport-Change und Duration
+  ---
+  duration_ms: 8.938459
+  type: 'suite'
+  ...
+# Subtest: R11 Blocker 24 – lokale Uhren sind keine absolute Chronologie
+    # Subtest: Date-Line NRT 20:00 / HNL 10:00 am selben Kalendertag bleibt NRT-Ursprung
+    ok 1 - Date-Line NRT 20:00 / HNL 10:00 am selben Kalendertag bleibt NRT-Ursprung
+      ---
+      duration_ms: 5.151875
+      type: 'test'
+      ...
+    # Subtest: dieselbe Date-Line-Route als getrennte Items erfindet keine HNL-Origin
+    ok 2 - dieselbe Date-Line-Route als getrennte Items erfindet keine HNL-Origin
+      ---
+      duration_ms: 1.7135
+      type: 'test'
+      ...
+    # Subtest: zwei Starts am selben bekannten Airport bleiben lokal vergleichbar
+    ok 3 - zwei Starts am selben bekannten Airport bleiben lokal vergleichbar
+      ---
+      duration_ms: 0.754208
+      type: 'test'
+      ...
+    # Subtest: Reverse-Roundtrip mit Tagen Abstand bleibt CH-Origin und ZRH-Ziel
+    ok 4 - Reverse-Roundtrip mit Tagen Abstand bleibt CH-Origin und ZRH-Ziel
+      ---
+      duration_ms: 1.579458
+      type: 'test'
+      ...
+    # Subtest: Roundtrip am selben Tag bleibt fail-closed statt lokaler Uhr
+    ok 5 - Roundtrip am selben Tag bleibt fail-closed statt lokaler Uhr
+      ---
+      duration_ms: 0.451333
+      type: 'test'
+      ...
+    # Subtest: Nachbarntag-Roundtrip bleibt fail-closed
+    ok 6 - Nachbarntag-Roundtrip bleibt fail-closed
+      ---
+      duration_ms: 0.460042
+      type: 'test'
+      ...
+    # Subtest: einzigartige azyklische Kette bestätigt die deklarierte Reihenfolge ohne Uhrenvergleich
+    ok 7 - einzigartige azyklische Kette bestätigt die deklarierte Reihenfolge ohne Uhrenvergleich
+      ---
+      duration_ms: 0.423875
+      type: 'test'
+      ...
+    # Subtest: unbewiesene Chronologie bleibt fingerprint-stabil über Eingabereihenfolge
+    ok 8 - unbewiesene Chronologie bleibt fingerprint-stabil über Eingabereihenfolge
+      ---
+      duration_ms: 0.647167
+      type: 'test'
+      ...
+    1..8
+ok 47 - R11 Blocker 24 – lokale Uhren sind keine absolute Chronologie
+  ---
+  duration_ms: 12.191041
+  type: 'suite'
+  ...
+# Subtest: R11 Blocker 25 – Segmentordnung innerhalb eines Legs
+    # Subtest: umgekehrt gespeicherter Transit wird kanonisch ZRH>DOH>BKK
+    ok 1 - umgekehrt gespeicherter Transit wird kanonisch ZRH>DOH>BKK
+      ---
+      duration_ms: 10.16225
+      type: 'test'
+      ...
+    # Subtest: Surface-Change ohne IATA-Kette bleibt erklärte Reihenfolge
+    ok 2 - Surface-Change ohne IATA-Kette bleibt erklärte Reihenfolge
+      ---
+      duration_ms: 0.405958
+      type: 'test'
+      ...
+    # Subtest: vertauschte kontinuierliche CDG-ORY-Kette bleibt ZRH-Origin
+    ok 3 - vertauschte kontinuierliche CDG-ORY-Kette bleibt ZRH-Origin
+      ---
+      duration_ms: 0.2915
+      type: 'test'
+      ...
+    # Subtest: zyklische Segmente bleiben fail-closed
+    ok 4 - zyklische Segmente bleiben fail-closed
+      ---
+      duration_ms: 0.115916
+      type: 'test'
+      ...
+    # Subtest: fehlende IATA ist keine Kontinuität und erfindet keine Reihenfolge
+    ok 5 - fehlende IATA ist keine Kontinuität und erfindet keine Reihenfolge
+      ---
+      duration_ms: 0.10925
+      type: 'test'
+      ...
+    # Subtest: Guest und Account teilen dieselbe rekonstruierte Transit-Truth
+    ok 6 - Guest und Account teilen dieselbe rekonstruierte Transit-Truth
+      ---
+      duration_ms: 0.430584
+      type: 'test'
+      ...
+    1..6
+ok 48 - R11 Blocker 25 – Segmentordnung innerhalb eines Legs
+  ---
+  duration_ms: 11.635125
+  type: 'suite'
+  ...
+# Subtest: R11 Blocker 26 – globales Routenziel
+    # Subtest: zwei Items ZRH→BKK und BKK→SIN setzen Ziel auf SIN
+    ok 1 - zwei Items ZRH→BKK und BKK→SIN setzen Ziel auf SIN
+      ---
+      duration_ms: 0.186958
+      type: 'test'
+      ...
+    # Subtest: drei sequenzielle Items setzen das Ziel auf das letzte Ende
+    ok 2 - drei sequenzielle Items setzen das Ziel auf das letzte Ende
+      ---
+      duration_ms: 7.583875
+      type: 'test'
+      ...
+    # Subtest: umgekehrte Eingabereihenfolge ändert bewiesenes Ziel nicht
+    ok 3 - umgekehrte Eingabereihenfolge ändert bewiesenes Ziel nicht
+      ---
+      duration_ms: 0.543708
+      type: 'test'
+      ...
+    # Subtest: getrennte Roundtrip-Items enden in ZRH
+    ok 4 - getrennte Roundtrip-Items enden in ZRH
+      ---
+      duration_ms: 0.25875
+      type: 'test'
+      ...
+    # Subtest: Open-Jaw-Ziel ist das Ende der letzten Route
+    ok 5 - Open-Jaw-Ziel ist das Ende der letzten Route
+      ---
+      duration_ms: 0.367584
+      type: 'test'
+      ...
+    # Subtest: Open-Jaw DMK→GVA als letztes Item setzt GVA als Ziel
+    ok 6 - Open-Jaw DMK→GVA als letztes Item setzt GVA als Ziel
+      ---
+      duration_ms: 0.235458
+      type: 'test'
+      ...
+    # Subtest: unbewiesene Chronologie leert Ursprung und Ziel
+    ok 7 - unbewiesene Chronologie leert Ursprung und Ziel
+      ---
+      duration_ms: 0.205084
+      type: 'test'
+      ...
+    # Subtest: eine Multi-Leg-Itinerary bleibt korrekt und endet am letzten Leg
+    ok 8 - eine Multi-Leg-Itinerary bleibt korrekt und endet am letzten Leg
+      ---
+      duration_ms: 0.478708
+      type: 'test'
+      ...
+    # Subtest: Airport-Zeitkontakte folgen der kanonischen Reihenfolge
+    ok 9 - Airport-Zeitkontakte folgen der kanonischen Reihenfolge
+      ---
+      duration_ms: 0.3065
+      type: 'test'
+      ...
+    # Subtest: Readiness, Safety und Seasonal sehen dieselbe korrigierte Route Truth
+    ok 10 - Readiness, Safety und Seasonal sehen dieselbe korrigierte Route Truth
+      ---
+      duration_ms: 0.68825
+      type: 'test'
+      ...
+    1..10
+ok 49 - R11 Blocker 26 – globales Routenziel
+  ---
+  duration_ms: 11.077125
+  type: 'suite'
+  ...
+# Subtest: R12 Blocker 27 – bekannte IATA beweisen keine Segmentreihenfolge
+    # Subtest: 1. unverbundene bekannte Segmente bleiben fail-closed ohne Origin/Destination
+    ok 1 - 1. unverbundene bekannte Segmente bleiben fail-closed ohne Origin/Destination
+      ---
+      duration_ms: 3.677125
+      type: 'test'
+      ...
+    # Subtest: 2. dieselbe unbewiesene Segmentmenge bleibt fingerprint-stabil über Array-Permutation
+    ok 2 - 2. dieselbe unbewiesene Segmentmenge bleibt fingerprint-stabil über Array-Permutation
+      ---
+      duration_ms: 1.44375
+      type: 'test'
+      ...
+    # Subtest: 3. verdrehter Surface-plus-Kette-Input wird eindeutig kanonisiert
+    ok 3 - 3. verdrehter Surface-plus-Kette-Input wird eindeutig kanonisiert
+      ---
+      duration_ms: 0.60225
+      type: 'test'
+      ...
+    # Subtest: 4. echter CDG ⇢ ORY-Surface-Change bleibt bewiesen, auch umgekehrt gespeichert
+    ok 4 - 4. echter CDG ⇢ ORY-Surface-Change bleibt bewiesen, auch umgekehrt gespeichert
+      ---
+      duration_ms: 0.446667
+      type: 'test'
+      ...
+    # Subtest: 5. eindeutig rekonstruierbare Transitkette bleibt ZRH>DOH>BKK
+    ok 5 - 5. eindeutig rekonstruierbare Transitkette bleibt ZRH>DOH>BKK
+      ---
+      duration_ms: 0.272208
+      type: 'test'
+      ...
+    # Subtest: 6. Zyklen, fehlende IATA und mehrdeutige Surface-Mengen bleiben fail-closed
+    ok 6 - 6. Zyklen, fehlende IATA und mehrdeutige Surface-Mengen bleiben fail-closed
+      ---
+      duration_ms: 0.425584
+      type: 'test'
+      ...
+    # Subtest: 7. Connection-Indizes folgen nur der kanonischen Segmentreihenfolge
+    ok 7 - 7. Connection-Indizes folgen nur der kanonischen Segmentreihenfolge
+      ---
+      duration_ms: 6.551542
+      type: 'test'
+      ...
+    # Subtest: 8. Seasonal, Safety und Readiness sehen dieselbe korrigierte Route Truth
+    ok 8 - 8. Seasonal, Safety und Readiness sehen dieselbe korrigierte Route Truth
+      ---
+      duration_ms: 1.41475
+      type: 'test'
+      ...
+    # Subtest: 9. Guest und Account teilen dieselbe unbewiesene Segment-Truth
+    ok 9 - 9. Guest und Account teilen dieselbe unbewiesene Segment-Truth
+      ---
+      duration_ms: 2.01025
+      type: 'test'
+      ...
+    # Subtest: 10. Cross-Country-Gap ohne unique Surface-Kante bleibt fail-closed
+    ok 10 - 10. Cross-Country-Gap ohne unique Surface-Kante bleibt fail-closed
+      ---
+      duration_ms: 1.142
+      type: 'test'
+      ...
+    1..10
+ok 50 - R12 Blocker 27 – bekannte IATA beweisen keine Segmentreihenfolge
+  ---
+  duration_ms: 18.726667
+  type: 'suite'
+  ...
+# Subtest: R13 Blocker 28 – same-country ist keine Surface-Evidence
+    # Subtest: 1. LAX→JFK plus SFO→NRT ohne Surface-Evidence bleibt fail-closed
+    ok 1 - 1. LAX→JFK plus SFO→NRT ohne Surface-Evidence bleibt fail-closed
+      ---
+      duration_ms: 4.031292
+      type: 'test'
+      ...
+    # Subtest: 2. dieselbe US-Lücke bleibt fingerprint-stabil über Array-Permutation
+    ok 2 - 2. dieselbe US-Lücke bleibt fingerprint-stabil über Array-Permutation
+      ---
+      duration_ms: 0.690333
+      type: 'test'
+      ...
+    # Subtest: 3. CDG⇢ORY ohne explizite Evidence bleibt fail-closed
+    ok 3 - 3. CDG⇢ORY ohne explizite Evidence bleibt fail-closed
+      ---
+      duration_ms: 0.287416
+      type: 'test'
+      ...
+    # Subtest: 4. echter CDG⇢ORY mit Surface-Evidence bleibt bewiesen
+    ok 4 - 4. echter CDG⇢ORY mit Surface-Evidence bleibt bewiesen
+      ---
+      duration_ms: 0.686792
+      type: 'test'
+      ...
+    # Subtest: 5. verdrehter CDG⇢ORY-Input wird nur mit derselben Evidence kanonisiert
+    ok 5 - 5. verdrehter CDG⇢ORY-Input wird nur mit derselben Evidence kanonisiert
+      ---
+      duration_ms: 0.565459
+      type: 'test'
+      ...
+    # Subtest: 6. eindeutige Transitkette bleibt ZRH>DOH>BKK
+    ok 6 - 6. eindeutige Transitkette bleibt ZRH>DOH>BKK
+      ---
+      duration_ms: 0.782583
+      type: 'test'
+      ...
+    # Subtest: 7. Zyklen, fehlende IATA und unverbundene Cross-Country-Sets bleiben fail-closed
+    ok 7 - 7. Zyklen, fehlende IATA und unverbundene Cross-Country-Sets bleiben fail-closed
+      ---
+      duration_ms: 0.559708
+      type: 'test'
+      ...
+    # Subtest: 8. Connections entstehen nur aus belegter Segmentreihenfolge
+    ok 8 - 8. Connections entstehen nur aus belegter Segmentreihenfolge
+      ---
+      duration_ms: 7.794708
+      type: 'test'
+      ...
+    # Subtest: 9. Fingerprint unterscheidet belegte Surface-Route von unknown Segmentmenge
+    ok 9 - 9. Fingerprint unterscheidet belegte Surface-Route von unknown Segmentmenge
+      ---
+      duration_ms: 0.655792
+      type: 'test'
+      ...
+    # Subtest: 10. Seasonal, Safety, Readiness und Guest/Account teilen dieselbe Truth
+    ok 10 - 10. Seasonal, Safety, Readiness und Guest/Account teilen dieselbe Truth
+      ---
+      duration_ms: 2.272875
+      type: 'test'
+      ...
+    1..10
+ok 51 - R13 Blocker 28 – same-country ist keine Surface-Evidence
+  ---
+  duration_ms: 19.119041
+  type: 'suite'
+  ...
+# Subtest: R14 Blocker 29 / R16 Blocker 31 – untrusted Persistenz entfernt Surface-Evidence
+    # Subtest: 1. ZRH→CDG, ORY→BKK mit surfaceFromAirportCode=CDG ist als In-Memory-Fixture bewiesen
+    ok 1 - 1. ZRH→CDG, ORY→BKK mit surfaceFromAirportCode=CDG ist als In-Memory-Fixture bewiesen
+      ---
+      duration_ms: 5.236792
+      type: 'test'
+      ...
+    # Subtest: 2. Kanonisierung und Metadata-Runde entfernen Client-Surface-Evidence
+    ok 2 - 2. Kanonisierung und Metadata-Runde entfernen Client-Surface-Evidence
+      ---
+      duration_ms: 0.832708
+      type: 'test'
+      ...
+    # Subtest: 3. nach untrusted Persistenzgrenze wird CDG⇢ORY unknown
+    ok 3 - 3. nach untrusted Persistenzgrenze wird CDG⇢ORY unknown
+      ---
+      duration_ms: 0.621083
+      type: 'test'
+      ...
+    # Subtest: 4. Fingerprint nach Persistenz entspricht der Evidence-losen Lücke
+    ok 4 - 4. Fingerprint nach Persistenz entspricht der Evidence-losen Lücke
+      ---
+      duration_ms: 1.458583
+      type: 'test'
+      ...
+    # Subtest: 5. Persistenz erzeugt keinen Airport-Change aus Client-Surface
+    ok 5 - 5. Persistenz erzeugt keinen Airport-Change aus Client-Surface
+      ---
+      duration_ms: 8.044708
+      type: 'test'
+      ...
+    # Subtest: 6. Readiness, Safety und Seasonal sehen nach Persistenz die gestrippte Truth
+    ok 6 - 6. Readiness, Safety und Seasonal sehen nach Persistenz die gestrippte Truth
+      ---
+      duration_ms: 1.494542
+      type: 'test'
+      ...
+    # Subtest: 7. Guest→Account-Kanonisierung adelt Client-Surface nicht
+    ok 7 - 7. Guest→Account-Kanonisierung adelt Client-Surface nicht
+      ---
+      duration_ms: 1.049958
+      type: 'test'
+      ...
+    # Subtest: 8. ungültiges surfaceFromAirportCode wird verworfen, Route bleibt
+    ok 8 - 8. ungültiges surfaceFromAirportCode wird verworfen, Route bleibt
+      ---
+      duration_ms: 0.200541
+      type: 'test'
+      ...
+    # Subtest: 9. Client-Surface macht keine Client-Länder zur Truth
+    ok 9 - 9. Client-Surface macht keine Client-Länder zur Truth
+      ---
+      duration_ms: 0.19275
+      type: 'test'
+      ...
+    # Subtest: 10. LAX→JFK + SFO→NRT bleibt nach Persistenz fail-closed
+    ok 10 - 10. LAX→JFK + SFO→NRT bleibt nach Persistenz fail-closed
+      ---
+      duration_ms: 0.647042
+      type: 'test'
+      ...
+    1..10
+ok 52 - R14 Blocker 29 / R16 Blocker 31 – untrusted Persistenz entfernt Surface-Evidence
+  ---
+  duration_ms: 20.381625
+  type: 'suite'
+  ...
+# Subtest: R15 Blocker 30 – FlugOption erfindet keine Surface-Evidence
+    # Subtest: 1. untrusted LAX→JFK + SFO→NRT erzeugt keine Surface-Evidence
+    ok 1 - 1. untrusted LAX→JFK + SFO→NRT erzeugt keine Surface-Evidence
+      ---
+      duration_ms: 3.792625
+      type: 'test'
+      ...
+    # Subtest: 2. umgekehrte Array-Reihenfolge ändert die semantische Truth nicht
+    ok 2 - 2. umgekehrte Array-Reihenfolge ändert die semantische Truth nicht
+      ---
+      duration_ms: 0.703292
+      type: 'test'
+      ...
+    # Subtest: 3. CDG⇢ORY aus FlugOption bleibt unknown; explizite Itinerary-Evidence bleibt bewiesen
+    ok 3 - 3. CDG⇢ORY aus FlugOption bleibt unknown; explizite Itinerary-Evidence bleibt bewiesen
+      ---
+      duration_ms: 1.13225
+      type: 'test'
+      ...
+    # Subtest: 4. Browser-provider/externalRef oder Extra-Felder erzeugen keine Provider-Evidence
+    ok 4 - 4. Browser-provider/externalRef oder Extra-Felder erzeugen keine Provider-Evidence
+      ---
+      duration_ms: 0.7605
+      type: 'test'
+      ...
+    # Subtest: 5. Save→Reload erfindet keine Surface-Evidence und adelt Client-Claims nicht
+    ok 5 - 5. Save→Reload erfindet keine Surface-Evidence und adelt Client-Claims nicht
+      ---
+      duration_ms: 1.134834
+      type: 'test'
+      ...
+    # Subtest: 6. Guest→Account teilt dieselbe Truth
+    ok 6 - 6. Guest→Account teilt dieselbe Truth
+      ---
+      duration_ms: 2.449041
+      type: 'test'
+      ...
+    # Subtest: 8. Readiness, Safety und Seasonal sehen dieselbe korrigierte Truth
+    ok 7 - 8. Readiness, Safety und Seasonal sehen dieselbe korrigierte Truth
+      ---
+      duration_ms: 2.238583
+      type: 'test'
+      ...
+    # Subtest: 9. eindeutiger kontinuierlicher Transit ZRH→DOH→BKK bleibt bewiesen
+    ok 8 - 9. eindeutiger kontinuierlicher Transit ZRH→DOH→BKK bleibt bewiesen
+      ---
+      duration_ms: 1.084083
+      type: 'test'
+      ...
+    1..8
+ok 53 - R15 Blocker 30 – FlugOption erfindet keine Surface-Evidence
+  ---
+  duration_ms: 13.9885
+  type: 'suite'
+  ...
+# Subtest: R16 Blocker 31 – untrusted routeItinerary adelt keine Surface-Evidence
+    # Subtest: 1. Browser-routeItinerary LAX→JFK + SFO→NRT mit surface=JFK bleibt unknown
+    ok 1 - 1. Browser-routeItinerary LAX→JFK + SFO→NRT mit surface=JFK bleibt unknown
+      ---
+      duration_ms: 4.391167
+      type: 'test'
+      ...
+    # Subtest: 2. Guest→Account adelt dieselbe Clientbehauptung nicht
+    ok 2 - 2. Guest→Account adelt dieselbe Clientbehauptung nicht
+      ---
+      duration_ms: 3.6075
+      type: 'test'
+      ...
+    # Subtest: 3. Save→Reload adelt untrusted Surface-Evidence nicht
+    ok 3 - 3. Save→Reload adelt untrusted Surface-Evidence nicht
+      ---
+      duration_ms: 1.16375
+      type: 'test'
+      ...
+    # Subtest: 4. Metadata-/Schreibvertrag persistiert keine Client-Surface-Behauptung
+    ok 4 - 4. Metadata-/Schreibvertrag persistiert keine Client-Surface-Behauptung
+      ---
+      duration_ms: 0.341292
+      type: 'test'
+      ...
+    # Subtest: 5. R15 FlugOption-Extra-Felder, provider und externalRef erzeugen keine Evidence
+    ok 5 - 5. R15 FlugOption-Extra-Felder, provider und externalRef erzeugen keine Evidence
+      ---
+      duration_ms: 1.726333
+      type: 'test'
+      ...
+    # Subtest: 6. kontinuierlicher ZRH→DOH→BKK bleibt bewiesen
+    ok 6 - 6. kontinuierlicher ZRH→DOH→BKK bleibt bewiesen
+      ---
+      duration_ms: 1.959458
+      type: 'test'
+      ...
+    # Subtest: 7. CDG⇢ORY ist nur als In-Memory-Fixture bewiesen, nicht nach untrusted Intake
+    ok 7 - 7. CDG⇢ORY ist nur als In-Memory-Fixture bewiesen, nicht nach untrusted Intake
+      ---
+      duration_ms: 1.167417
+      type: 'test'
+      ...
+    # Subtest: 8. Fingerprint, Readiness, Safety und Seasonal bleiben nach Strip konsistent
+    ok 8 - 8. Fingerprint, Readiness, Safety und Seasonal bleiben nach Strip konsistent
+      ---
+      duration_ms: 4.818625
+      type: 'test'
+      ...
+    1..8
+ok 54 - R16 Blocker 31 – untrusted routeItinerary adelt keine Surface-Evidence
+  ---
+  duration_ms: 20.091959
+  type: 'suite'
+  ...
+# Subtest: R9 Blocker 16 – Airport-Change- und Segment-Origin
+    # Subtest: Kompaktanzeige und Fingerprint enthalten CDG und ORY
+    ok 1 - Kompaktanzeige und Fingerprint enthalten CDG und ORY
+      ---
+      duration_ms: 3.691709
+      type: 'test'
+      ...
+    # Subtest: anderer zweiter Segment-Origin ändert Fingerprint und Route-Change
+    ok 2 - anderer zweiter Segment-Origin ändert Fingerprint und Route-Change
+      ---
+      duration_ms: 0.733583
+      type: 'test'
+      ...
+    # Subtest: kontinuierliches Leg bleibt eine Kette ohne Trennstelle
+    ok 3 - kontinuierliches Leg bleibt eine Kette ohne Trennstelle
+      ---
+      duration_ms: 0.313125
+      type: 'test'
+      ...
+    # Subtest: Cross-Country-Gap behält das zweite Origin-Land in Seasonal/Readiness/Safety
+    ok 4 - Cross-Country-Gap behält das zweite Origin-Land in Seasonal/Readiness/Safety
+      ---
+      duration_ms: 0.836416
+      type: 'test'
+      ...
+    # Subtest: Guest- und Account-Parität plus Eingabereihenfolge
+    ok 5 - Guest- und Account-Parität plus Eingabereihenfolge
+      ---
+      duration_ms: 1.629625
+      type: 'test'
+      ...
+    1..5
+ok 55 - R9 Blocker 16 – Airport-Change- und Segment-Origin
+  ---
+  duration_ms: 7.735125
+  type: 'suite'
+  ...
+# Subtest: R9 Blocker 17 – Connection-Leg-Zuordnung
+    # Subtest: Hinflug direkt, Rückflug Transit hängt den Umstieg nur ans Rückflug-Segment
+    ok 1 - Hinflug direkt, Rückflug Transit hängt den Umstieg nur ans Rückflug-Segment
+      ---
+      duration_ms: 9.505667
+      type: 'test'
+      ...
+    # Subtest: Hinflug Transit, Rückflug direkt hängt den Umstieg nur ans Hinflug-Segment
+    ok 2 - Hinflug Transit, Rückflug direkt hängt den Umstieg nur ans Hinflug-Segment
+      ---
+      duration_ms: 0.754583
+      type: 'test'
+      ...
+    # Subtest: beide Legs mit Transit bleiben am richtigen Segment
+    ok 3 - beide Legs mit Transit bleiben am richtigen Segment
+      ---
+      duration_ms: 0.801875
+      type: 'test'
+      ...
+    # Subtest: Airport Change nur im zweiten Leg erscheint am richtigen Segment
+    ok 4 - Airport Change nur im zweiten Leg erscheint am richtigen Segment
+      ---
+      duration_ms: 0.736208
+      type: 'test'
+      ...
+    # Subtest: drei Multi-City-Legs mit gemischten Direct/Transit-Verbindungen
+    ok 5 - drei Multi-City-Legs mit gemischten Direct/Transit-Verbindungen
+      ---
+      duration_ms: 0.414291
+      type: 'test'
+      ...
+    # Subtest: FlugKarte-Ableitung teilt dieselbe Connection-Identität
+    ok 6 - FlugKarte-Ableitung teilt dieselbe Connection-Identität
+      ---
+      duration_ms: 0.130583
+      type: 'test'
+      ...
+    # Subtest: FlugBestand-Ableitung teilt dieselbe Connection-Identität
+    ok 7 - FlugBestand-Ableitung teilt dieselbe Connection-Identität
+      ---
+      duration_ms: 1.511291
+      type: 'test'
+      ...
+    1..7
+ok 56 - R9 Blocker 17 – Connection-Leg-Zuordnung
+  ---
+  duration_ms: 14.23825
+  type: 'suite'
+  ...
+# Subtest: R9 Blocker 18 – Chronologie-Präzision
+    # Subtest: gleicher Tag an verschiedenen Flughäfen erfindet keine Cross-Airport-Uhrzeit-Reihenfolge
+    ok 1 - gleicher Tag an verschiedenen Flughäfen erfindet keine Cross-Airport-Uhrzeit-Reihenfolge
+      ---
+      duration_ms: 0.285375
+      type: 'test'
+      ...
+    # Subtest: ein Item date-only und eines mit Zeit degradieren nicht auf 00:00
+    ok 2 - ein Item date-only und eines mit Zeit degradieren nicht auf 00:00
+      ---
+      duration_ms: 0.102542
+      type: 'test'
+      ...
+    # Subtest: identische Same-Day-Starts an verschiedenen Airports bleiben unknown
+    ok 3 - identische Same-Day-Starts an verschiedenen Airports bleiben unknown
+      ---
+      duration_ms: 0.128708
+      type: 'test'
+      ...
+    # Subtest: echte gleiche Starts ohne weitere Evidenz bleiben unknown
+    ok 4 - echte gleiche Starts ohne weitere Evidenz bleiben unknown
+      ---
+      duration_ms: 0.162708
+      type: 'test'
+      ...
+    # Subtest: widersprüchliche Item- und Segmentchronologie bleibt fail-closed
+    ok 5 - widersprüchliche Item- und Segmentchronologie bleibt fail-closed
+      ---
+      duration_ms: 0.101375
+      type: 'test'
+      ...
+    1..5
+ok 57 - R9 Blocker 18 – Chronologie-Präzision
+  ---
+  duration_ms: 0.835167
+  type: 'suite'
+  ...
+# Subtest: Route-Topologie Open Jaw und Leg-Grenzen
+    # Subtest: Open Jaw in einer Itinerary: TH und SG sind Ziele, Transit leer
+    ok 1 - Open Jaw in einer Itinerary: TH und SG sind Ziele, Transit leer
+      ---
+      duration_ms: 4.130458
+      type: 'test'
+      ...
+    # Subtest: derselbe Open Jaw als zwei Flight-Items liefert dieselben Rollen und dieselbe Identität
+    ok 2 - derselbe Open Jaw als zwei Flight-Items liefert dieselben Rollen und dieselbe Identität
+      ---
+      duration_ms: 0.798333
+      type: 'test'
+      ...
+    # Subtest: Seasonal Country Scope SG applies und Provider-Request enthält SG
+    ok 3 - Seasonal Country Scope SG applies und Provider-Request enthält SG
+      ---
+      duration_ms: 2.370583
+      type: 'test'
+      ...
+    # Subtest: Readiness- und Safety-Kontext enthalten SG
+    ok 4 - Readiness- und Safety-Kontext enthalten SG
+      ---
+      duration_ms: 0.478458
+      type: 'test'
+      ...
+    # Subtest: Multi-City und echter Transit bleiben korrekt
+    ok 5 - Multi-City und echter Transit bleiben korrekt
+      ---
+      duration_ms: 0.757625
+      type: 'test'
+      ...
+    # Subtest: Item-Reihenfolge ändert Rollen und Identität bei belegter Chronologie nicht
+    ok 6 - Item-Reihenfolge ändert Rollen und Identität bei belegter Chronologie nicht
+      ---
+      duration_ms: 0.404084
+      type: 'test'
+      ...
+    # Subtest: Outbound ohne Item-Datum, aber mit Segmentdatum, behält Origin CH
+    ok 7 - Outbound ohne Item-Datum, aber mit Segmentdatum, behält Origin CH
+      ---
+      duration_ms: 0.147
+      type: 'test'
+      ...
+    # Subtest: fehlende Item-Daten mit eindeutigen Segmentdaten bestimmen die Reihenfolge
+    ok 8 - fehlende Item-Daten mit eindeutigen Segmentdaten bestimmen die Reihenfolge
+      ---
+      duration_ms: 0.269583
+      type: 'test'
+      ...
+    # Subtest: unklare Chronologie erfindet kein Origin aus dem lexikographischen Pfad
+    ok 9 - unklare Chronologie erfindet kein Origin aus dem lexikographischen Pfad
+      ---
+      duration_ms: 0.4335
+      type: 'test'
+      ...
+    # Subtest: SIN-Rückflug und HKG-Rückflug erzeugen unterschiedliche Fingerprints
+    ok 10 - SIN-Rückflug und HKG-Rückflug erzeugen unterschiedliche Fingerprints
+      ---
+      duration_ms: 0.441625
+      type: 'test'
+      ...
+    # Subtest: Readiness-Context-Fingerprint ändert sich bei SIN→HKG
+    ok 11 - Readiness-Context-Fingerprint ändert sich bei SIN→HKG
+      ---
+      duration_ms: 0.844375
+      type: 'test'
+      ...
+    # Subtest: Anzeige bewahrt den zweiten Leg-Origin und die Leg-Grenze
+    ok 12 - Anzeige bewahrt den zweiten Leg-Origin und die Leg-Grenze
+      ---
+      duration_ms: 0.364708
+      type: 'test'
+      ...
+    # Subtest: Guest- und Account-Parität für dieselbe Open-Jaw-Route
+    ok 13 - Guest- und Account-Parität für dieselbe Open-Jaw-Route
+      ---
+      duration_ms: 0.800042
+      type: 'test'
+      ...
+    1..13
+ok 58 - Route-Topologie Open Jaw und Leg-Grenzen
+  ---
+  duration_ms: 12.971333
+  type: 'suite'
+  ...
+1..58
+# tests 387
+# suites 58
+# pass 387
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1571.442791

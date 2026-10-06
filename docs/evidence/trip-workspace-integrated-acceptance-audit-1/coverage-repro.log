@@ -1,0 +1,116 @@
+[
+  {
+    viewport: { width: 390, height: 844 },
+    coverage: 'DEINE FLÜGE\n' +
+      '\n' +
+      'Bestand und Status\n' +
+      '\n' +
+      'Hinflug ausgewählt · Rückflug offen\n' +
+      '\n' +
+      'Zürich → Florenz · 1. Nov.\n' +
+      '\n' +
+      'Route\n' +
+      'NRT → LAX\n' +
+      '\n' +
+      'Direktflug\n' +
+      '\n' +
+      'Ausgewählt\n' +
+      'Als gebucht markieren\n' +
+      'Flugroute ändern\n' +
+      '\n' +
+      'Florenz → Zürich · 5. Nov.\n' +
+      '\n' +
+      'Noch offen',
+    booked: 'DEINE FLÜGE\n' +
+      '\n' +
+      'Bestand und Status\n' +
+      '\n' +
+      'Hinflug gebucht · Rückflug offen\n' +
+      '\n' +
+      'Zürich → Florenz · 1. Nov.\n' +
+      '\n' +
+      'Route\n' +
+      'NRT → LAX\n' +
+      '\n' +
+      'Direktflug\n' +
+      '\n' +
+      'Gebucht\n' +
+      'Buchung korrigieren\n' +
+      'Flugroute ändern\n' +
+      '\n' +
+      'Florenz → Zürich · 5. Nov.\n' +
+      '\n' +
+      'Noch offen',
+    afterSave: {
+      activeTag: 'BODY',
+      trigger: [Object],
+      work: [Object],
+      status: [],
+      scrollY: 1662
+    },
+    afterReclassification: {
+      activeTag: 'BODY',
+      trigger: [Object],
+      work: [Object],
+      status: [],
+      scrollY: 1809
+    }
+  },
+  {
+    viewport: { width: 1440, height: 900 },
+    coverage: 'DEINE FLÜGE\n' +
+      '\n' +
+      'Bestand und Status\n' +
+      '\n' +
+      'Hinflug ausgewählt · Rückflug offen\n' +
+      '\n' +
+      'Zürich → Florenz · 1. Nov.\n' +
+      '\n' +
+      'Route\n' +
+      'NRT → LAX\n' +
+      '\n' +
+      'Direktflug\n' +
+      '\n' +
+      'Ausgewählt\n' +
+      'Als gebucht markieren\n' +
+      'Flugroute ändern\n' +
+      '\n' +
+      'Florenz → Zürich · 5. Nov.\n' +
+      '\n' +
+      'Noch offen',
+    booked: 'DEINE FLÜGE\n' +
+      '\n' +
+      'Bestand und Status\n' +
+      '\n' +
+      'Hinflug gebucht · Rückflug offen\n' +
+      '\n' +
+      'Zürich → Florenz · 1. Nov.\n' +
+      '\n' +
+      'Route\n' +
+      'NRT → LAX\n' +
+      '\n' +
+      'Direktflug\n' +
+      '\n' +
+      'Gebucht\n' +
+      'Buchung korrigieren\n' +
+      'Flugroute ändern\n' +
+      '\n' +
+      'Florenz → Zürich · 5. Nov.\n' +
+      '\n' +
+      'Noch offen',
+    afterSave: {
+      activeTag: 'BODY',
+      trigger: [Object],
+      work: [Object],
+      status: [],
+      scrollY: 966
+    },
+    afterReclassification: {
+      activeTag: 'BODY',
+      trigger: [Object],
+      work: [Object],
+      status: [],
+      scrollY: 849
+    }
+  }
+]

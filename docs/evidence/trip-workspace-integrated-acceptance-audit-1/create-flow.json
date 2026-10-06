@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-10-06T08:32:52.194Z",
+  "runs": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "steps": [
+        "Unterkunft created through actual plan form and opened as item detail",
+        "Flug created through actual plan form and opened as item detail",
+        "both manually created items survive reload and return preserves day-1"
+      ],
+      "blocked": [],
+      "savedItems": [
+        {
+          "title": "Manuelle Unterkunft",
+          "kind": "stay",
+          "startsOn": null
+        },
+        {
+          "title": "Manueller Flug",
+          "kind": "flight",
+          "startsOn": null
+        },
+        {
+          "title": "UI Unterkunft Audit",
+          "kind": "stay",
+          "startsOn": "2026-11-01"
+        },
+        {
+          "title": "UI Flug Audit",
+          "kind": "flight",
+          "startsOn": "2026-11-01"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "steps": [
+        "Unterkunft created through actual plan form and opened as item detail",
+        "Flug created through actual plan form and opened as item detail",
+        "both manually created items survive reload and return preserves day-1"
+      ],
+      "blocked": [],
+      "savedItems": [
+        {
+          "title": "Manuelle Unterkunft",
+          "kind": "stay",
+          "startsOn": null
+        },
+        {
+          "title": "Manueller Flug",
+          "kind": "flight",
+          "startsOn": null
+        },
+        {
+          "title": "UI Unterkunft Audit",
+          "kind": "stay",
+          "startsOn": "2026-11-01"
+        },
+        {
+          "title": "UI Flug Audit",
+          "kind": "flight",
+          "startsOn": "2026-11-01"
+        }
+      ],
+      "status": "PASS"
+    }
+  ]
+}

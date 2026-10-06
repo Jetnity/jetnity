@@ -1,0 +1,1305 @@
+{
+  "checkedAt": "2026-10-06T08:28:11.887Z",
+  "runs": [
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "blocked": [],
+      "newSingleSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 422.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 466.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 474.359375,
+          "width": 276,
+          "height": 20,
+          "bottom": 494.359375
+        },
+        "scrollY": 1332,
+        "viewport": 800,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "readView": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 422.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 466.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 474.359375,
+          "width": 276,
+          "height": 20,
+          "bottom": 494.359375
+        },
+        "scrollY": 1332,
+        "viewport": 800,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "invalidFirstOfFour": {
+        "activeTag": "BUTTON",
+        "activeText": "Speichern",
+        "trigger": {
+          "x": 42,
+          "y": -2085.640625,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": -2041.640625
+        },
+        "status": null,
+        "statusBox": null,
+        "scrollY": 3840,
+        "viewport": 800,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nEin bis vier zusammenhängende Flugsegmente. Verwende die Daten und Ortszeiten deiner Reiseunterlagen.\n\nSegment 1\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 2\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 3\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 4\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment hinzufügen\n\nBitte gib einen IATA-Code mit drei Buchstaben an.\n\nSpeichern\nAbbrechen\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [
+          {
+            "id": "_r_0_-0-origin",
+            "value": "",
+            "x": 55,
+            "y": -1901.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1857.640625
+          },
+          {
+            "id": "_r_0_-0-destination",
+            "value": "LAX",
+            "x": 55,
+            "y": -1821.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1777.640625
+          },
+          {
+            "id": "_r_0_-0-departureDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": -1741.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1697.640625
+          },
+          {
+            "id": "_r_0_-0-departureTime",
+            "value": "23:30",
+            "x": 55,
+            "y": -1661.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1617.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -1581.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1537.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalTime",
+            "value": "12:00",
+            "x": 55,
+            "y": -1501.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1457.640625
+          },
+          {
+            "id": "_r_0_-1-origin",
+            "value": "LAX",
+            "x": 55,
+            "y": -1320.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1276.640625
+          },
+          {
+            "id": "_r_0_-1-destination",
+            "value": "JFK",
+            "x": 55,
+            "y": -1240.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1196.640625
+          },
+          {
+            "id": "_r_0_-1-departureDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -1160.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1116.640625
+          },
+          {
+            "id": "_r_0_-1-departureTime",
+            "value": "13:00",
+            "x": 55,
+            "y": -1080.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -1036.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -1000.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -956.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalTime",
+            "value": "21:00",
+            "x": 55,
+            "y": -920.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -876.640625
+          },
+          {
+            "id": "_r_0_-2-origin",
+            "value": "JFK",
+            "x": 55,
+            "y": -739.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -695.640625
+          },
+          {
+            "id": "_r_0_-2-destination",
+            "value": "ZRH",
+            "x": 55,
+            "y": -659.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -615.640625
+          },
+          {
+            "id": "_r_0_-2-departureDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -579.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -535.640625
+          },
+          {
+            "id": "_r_0_-2-departureTime",
+            "value": "22:00",
+            "x": 55,
+            "y": -499.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -455.640625
+          },
+          {
+            "id": "_r_0_-2-arrivalDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": -419.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -375.640625
+          },
+          {
+            "id": "_r_0_-2-arrivalTime",
+            "value": "11:00",
+            "x": 55,
+            "y": -339.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -295.640625
+          },
+          {
+            "id": "_r_0_-3-origin",
+            "value": "ZRH",
+            "x": 55,
+            "y": -158.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -114.640625
+          },
+          {
+            "id": "_r_0_-3-destination",
+            "value": "FCO",
+            "x": 55,
+            "y": -78.640625,
+            "width": 250,
+            "height": 44,
+            "bottom": -34.640625
+          },
+          {
+            "id": "_r_0_-3-departureDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": 1.359375,
+            "width": 250,
+            "height": 44,
+            "bottom": 45.359375
+          },
+          {
+            "id": "_r_0_-3-departureTime",
+            "value": "12:00",
+            "x": 55,
+            "y": 81.359375,
+            "width": 250,
+            "height": 44,
+            "bottom": 125.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": 161.359375,
+            "width": 250,
+            "height": 44,
+            "bottom": 205.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalTime",
+            "value": "14:00",
+            "x": 55,
+            "y": 241.359375,
+            "width": 250,
+            "height": 44,
+            "bottom": 285.359375
+          }
+        ],
+        "alerts": [
+          {
+            "text": "Bitte gib einen IATA-Code mit drei Buchstaben an.",
+            "x": 42,
+            "y": 422.359375,
+            "width": 276,
+            "height": 40,
+            "bottom": 462.359375
+          }
+        ]
+      },
+      "afterCorrectionInvalidCount": 24,
+      "fourSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 422.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 466.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 474.359375,
+          "width": 276,
+          "height": 20,
+          "bottom": 494.359375
+        },
+        "scrollY": 1408,
+        "viewport": 800,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX → JFK → ZRH → FCO · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "multiReadText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\n\nSegment 1: NRT → LAX\n\n2026-11-02 23:30 → 2026-11-01 12:00\n\nUmstieg in LAX · 1 h\n\nSegment 2: LAX → JFK\n\n2026-11-01 13:00 → 2026-11-01 21:00\n\nUmstieg in JFK · 1 h\n\nSegment 3: JFK → ZRH\n\n2026-11-01 22:00 → 2026-11-02 11:00\n\nUmstieg in ZRH · 1 h\n\nSegment 4: ZRH → FCO\n\n2026-11-02 12:00 → 2026-11-02 14:00\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert."
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "blocked": [],
+      "newSingleSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 89.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 133.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 141.359375,
+          "width": 306,
+          "height": 20,
+          "bottom": 161.359375
+        },
+        "scrollY": 1645,
+        "viewport": 844,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "readView": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 89.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 133.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 141.359375,
+          "width": 306,
+          "height": 20,
+          "bottom": 161.359375
+        },
+        "scrollY": 1645,
+        "viewport": 844,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "invalidFirstOfFour": {
+        "activeTag": "BUTTON",
+        "activeText": "Speichern",
+        "trigger": {
+          "x": 42,
+          "y": -2063.640625,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": -2019.640625
+        },
+        "status": null,
+        "statusBox": null,
+        "scrollY": 3798,
+        "viewport": 844,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nEin bis vier zusammenhängende Flugsegmente. Verwende die Daten und Ortszeiten deiner Reiseunterlagen.\n\nSegment 1\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 2\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 3\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 4\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment hinzufügen\n\nBitte gib einen IATA-Code mit drei Buchstaben an.\n\nSpeichern\nAbbrechen\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [
+          {
+            "id": "_r_0_-0-origin",
+            "value": "",
+            "x": 55,
+            "y": -1879.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1835.640625
+          },
+          {
+            "id": "_r_0_-0-destination",
+            "value": "LAX",
+            "x": 55,
+            "y": -1799.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1755.640625
+          },
+          {
+            "id": "_r_0_-0-departureDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": -1719.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1675.640625
+          },
+          {
+            "id": "_r_0_-0-departureTime",
+            "value": "23:30",
+            "x": 55,
+            "y": -1639.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1595.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -1559.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1515.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalTime",
+            "value": "12:00",
+            "x": 55,
+            "y": -1479.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1435.640625
+          },
+          {
+            "id": "_r_0_-1-origin",
+            "value": "LAX",
+            "x": 55,
+            "y": -1298.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1254.640625
+          },
+          {
+            "id": "_r_0_-1-destination",
+            "value": "JFK",
+            "x": 55,
+            "y": -1218.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1174.640625
+          },
+          {
+            "id": "_r_0_-1-departureDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -1138.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1094.640625
+          },
+          {
+            "id": "_r_0_-1-departureTime",
+            "value": "13:00",
+            "x": 55,
+            "y": -1058.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -1014.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -978.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -934.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalTime",
+            "value": "21:00",
+            "x": 55,
+            "y": -898.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -854.640625
+          },
+          {
+            "id": "_r_0_-2-origin",
+            "value": "JFK",
+            "x": 55,
+            "y": -717.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -673.640625
+          },
+          {
+            "id": "_r_0_-2-destination",
+            "value": "ZRH",
+            "x": 55,
+            "y": -637.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -593.640625
+          },
+          {
+            "id": "_r_0_-2-departureDate",
+            "value": "2026-11-01",
+            "x": 55,
+            "y": -557.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -513.640625
+          },
+          {
+            "id": "_r_0_-2-departureTime",
+            "value": "22:00",
+            "x": 55,
+            "y": -477.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -433.640625
+          },
+          {
+            "id": "_r_0_-2-arrivalDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": -397.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -353.640625
+          },
+          {
+            "id": "_r_0_-2-arrivalTime",
+            "value": "11:00",
+            "x": 55,
+            "y": -317.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -273.640625
+          },
+          {
+            "id": "_r_0_-3-origin",
+            "value": "ZRH",
+            "x": 55,
+            "y": -136.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -92.640625
+          },
+          {
+            "id": "_r_0_-3-destination",
+            "value": "FCO",
+            "x": 55,
+            "y": -56.640625,
+            "width": 280,
+            "height": 44,
+            "bottom": -12.640625
+          },
+          {
+            "id": "_r_0_-3-departureDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": 23.359375,
+            "width": 280,
+            "height": 44,
+            "bottom": 67.359375
+          },
+          {
+            "id": "_r_0_-3-departureTime",
+            "value": "12:00",
+            "x": 55,
+            "y": 103.359375,
+            "width": 280,
+            "height": 44,
+            "bottom": 147.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalDate",
+            "value": "2026-11-02",
+            "x": 55,
+            "y": 183.359375,
+            "width": 280,
+            "height": 44,
+            "bottom": 227.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalTime",
+            "value": "14:00",
+            "x": 55,
+            "y": 263.359375,
+            "width": 280,
+            "height": 44,
+            "bottom": 307.359375
+          }
+        ],
+        "alerts": [
+          {
+            "text": "Bitte gib einen IATA-Code mit drei Buchstaben an.",
+            "x": 42,
+            "y": 444.359375,
+            "width": 306,
+            "height": 40,
+            "bottom": 484.359375
+          }
+        ]
+      },
+      "afterCorrectionInvalidCount": 24,
+      "fourSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 42,
+          "y": 444.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 488.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 42,
+          "y": 496.359375,
+          "width": 306,
+          "height": 20,
+          "bottom": 516.359375
+        },
+        "scrollY": 1366,
+        "viewport": 844,
+        "bodyText": "Zum Inhalt\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX → JFK → ZRH → FCO · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "multiReadText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\n\nSegment 1: NRT → LAX\n\n2026-11-02 23:30 → 2026-11-01 12:00\n\nUmstieg in LAX · 1 h\n\nSegment 2: LAX → JFK\n\n2026-11-01 13:00 → 2026-11-01 21:00\n\nUmstieg in JFK · 1 h\n\nSegment 3: JFK → ZRH\n\n2026-11-01 22:00 → 2026-11-02 11:00\n\nUmstieg in ZRH · 1 h\n\nSegment 4: ZRH → FCO\n\n2026-11-02 12:00 → 2026-11-02 14:00\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert."
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "blocked": [],
+      "newSingleSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 58,
+          "y": 282.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 326.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 58,
+          "y": 334.359375,
+          "width": 652,
+          "height": 20,
+          "bottom": 354.359375
+        },
+        "scrollY": 1159,
+        "viewport": 1024,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "readView": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 58,
+          "y": 282.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 326.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 58,
+          "y": 334.359375,
+          "width": 652,
+          "height": 20,
+          "bottom": 354.359375
+        },
+        "scrollY": 1159,
+        "viewport": 1024,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "invalidFirstOfFour": {
+        "activeTag": "BUTTON",
+        "activeText": "Speichern",
+        "trigger": {
+          "x": 58,
+          "y": -973.640625,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": -929.640625
+        },
+        "status": null,
+        "statusBox": null,
+        "scrollY": 2415,
+        "viewport": 1024,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nEin bis vier zusammenhängende Flugsegmente. Verwende die Daten und Ortszeiten deiner Reiseunterlagen.\n\nSegment 1\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 2\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 3\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 4\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment hinzufügen\n\nBitte gib einen IATA-Code mit drei Buchstaben an.\n\nSpeichern\nAbbrechen\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [
+          {
+            "id": "_r_0_-0-origin",
+            "value": "",
+            "x": 71,
+            "y": -829.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -785.640625
+          },
+          {
+            "id": "_r_0_-0-destination",
+            "value": "LAX",
+            "x": 390,
+            "y": -829.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -785.640625
+          },
+          {
+            "id": "_r_0_-0-departureDate",
+            "value": "2026-11-02",
+            "x": 71,
+            "y": -749.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -705.640625
+          },
+          {
+            "id": "_r_0_-0-departureTime",
+            "value": "23:30",
+            "x": 390,
+            "y": -749.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -705.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalDate",
+            "value": "2026-11-01",
+            "x": 71,
+            "y": -669.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -625.640625
+          },
+          {
+            "id": "_r_0_-0-arrivalTime",
+            "value": "12:00",
+            "x": 390,
+            "y": -669.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -625.640625
+          },
+          {
+            "id": "_r_0_-1-origin",
+            "value": "LAX",
+            "x": 71,
+            "y": -488.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -444.640625
+          },
+          {
+            "id": "_r_0_-1-destination",
+            "value": "JFK",
+            "x": 390,
+            "y": -488.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -444.640625
+          },
+          {
+            "id": "_r_0_-1-departureDate",
+            "value": "2026-11-01",
+            "x": 71,
+            "y": -408.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -364.640625
+          },
+          {
+            "id": "_r_0_-1-departureTime",
+            "value": "13:00",
+            "x": 390,
+            "y": -408.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -364.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalDate",
+            "value": "2026-11-01",
+            "x": 71,
+            "y": -328.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -284.640625
+          },
+          {
+            "id": "_r_0_-1-arrivalTime",
+            "value": "21:00",
+            "x": 390,
+            "y": -328.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -284.640625
+          },
+          {
+            "id": "_r_0_-2-origin",
+            "value": "JFK",
+            "x": 71,
+            "y": -147.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -103.640625
+          },
+          {
+            "id": "_r_0_-2-destination",
+            "value": "ZRH",
+            "x": 390,
+            "y": -147.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -103.640625
+          },
+          {
+            "id": "_r_0_-2-departureDate",
+            "value": "2026-11-01",
+            "x": 71,
+            "y": -67.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -23.640625
+          },
+          {
+            "id": "_r_0_-2-departureTime",
+            "value": "22:00",
+            "x": 390,
+            "y": -67.640625,
+            "width": 307,
+            "height": 44,
+            "bottom": -23.640625
+          },
+          {
+            "id": "_r_0_-2-arrivalDate",
+            "value": "2026-11-02",
+            "x": 71,
+            "y": 12.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 56.359375
+          },
+          {
+            "id": "_r_0_-2-arrivalTime",
+            "value": "11:00",
+            "x": 390,
+            "y": 12.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 56.359375
+          },
+          {
+            "id": "_r_0_-3-origin",
+            "value": "ZRH",
+            "x": 71,
+            "y": 193.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 237.359375
+          },
+          {
+            "id": "_r_0_-3-destination",
+            "value": "FCO",
+            "x": 390,
+            "y": 193.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 237.359375
+          },
+          {
+            "id": "_r_0_-3-departureDate",
+            "value": "2026-11-02",
+            "x": 71,
+            "y": 273.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 317.359375
+          },
+          {
+            "id": "_r_0_-3-departureTime",
+            "value": "12:00",
+            "x": 390,
+            "y": 273.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 317.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalDate",
+            "value": "2026-11-02",
+            "x": 71,
+            "y": 353.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 397.359375
+          },
+          {
+            "id": "_r_0_-3-arrivalTime",
+            "value": "14:00",
+            "x": 390,
+            "y": 353.359375,
+            "width": 307,
+            "height": 44,
+            "bottom": 397.359375
+          }
+        ],
+        "alerts": [
+          {
+            "text": "Bitte gib einen IATA-Code mit drei Buchstaben an.",
+            "x": 58,
+            "y": 534.359375,
+            "width": 652,
+            "height": 20,
+            "bottom": 554.359375
+          }
+        ]
+      },
+      "afterCorrectionInvalidCount": 24,
+      "fourSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 58,
+          "y": 534.359375,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 578.359375
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 58,
+          "y": 586.359375,
+          "width": 652,
+          "height": 20,
+          "bottom": 606.359375
+        },
+        "scrollY": 959,
+        "viewport": 1024,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nZur Organisation\nFlüge\n\nNRT → LAX → JFK → ZRH → FCO · Flugstand noch unklar\n\nNoch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "multiReadText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\n\nSegment 1: NRT → LAX\n\n2026-11-02 23:30 → 2026-11-01 12:00\n\nUmstieg in LAX · 1 h\n\nSegment 2: LAX → JFK\n\n2026-11-01 13:00 → 2026-11-01 21:00\n\nUmstieg in JFK · 1 h\n\nSegment 3: JFK → ZRH\n\n2026-11-01 22:00 → 2026-11-02 11:00\n\nUmstieg in ZRH · 1 h\n\nSegment 4: ZRH → FCO\n\n2026-11-02 12:00 → 2026-11-02 14:00\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert."
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "blocked": [],
+      "newSingleSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 717.671875,
+          "y": 280,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 324
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 717.671875,
+          "y": 332,
+          "width": 584.328125,
+          "height": 20,
+          "bottom": 352
+        },
+        "scrollY": 1095,
+        "viewport": 900,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nOrganisieren\n\nWähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.\n\nFlüge\nNoch unklar\nUnterkunft\nUnterkunftsstand noch unklar\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant\nFlüge\nZur Organisation\n\nNRT → LAX · Flugstand noch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "readView": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 717.671875,
+          "y": 280,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 324
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 717.671875,
+          "y": 332,
+          "width": 584.328125,
+          "height": 20,
+          "bottom": 352
+        },
+        "scrollY": 1095,
+        "viewport": 900,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nOrganisieren\n\nWähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.\n\nFlüge\nNoch unklar\nUnterkunft\nUnterkunftsstand noch unklar\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant\nFlüge\nZur Organisation\n\nNRT → LAX · Flugstand noch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "invalidFirstOfFour": {
+        "activeTag": "BUTTON",
+        "activeText": "Speichern",
+        "trigger": {
+          "x": 717.671875,
+          "y": -1056,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": -1012
+        },
+        "status": null,
+        "statusBox": null,
+        "scrollY": 2431,
+        "viewport": 900,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nOrganisieren\n\nWähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.\n\nFlüge\nNoch unklar\nUnterkunft\nUnterkunftsstand noch unklar\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant\nFlüge\nZur Organisation\n\nNRT → LAX · Flugstand noch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX\n\nDirektflug\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nEin bis vier zusammenhängende Flugsegmente. Verwende die Daten und Ortszeiten deiner Reiseunterlagen.\n\nSegment 1\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 2\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 3\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment 4\nAbflugflughafen (IATA)\nAnkunftsflughafen (IATA)\nAbflugdatum\nAbflugzeit (optional)\nAnkunftsdatum\nAnkunftszeit (optional)\nSegment entfernen\nSegment hinzufügen\n\nBitte gib einen IATA-Code mit drei Buchstaben an.\n\nSpeichern\nAbbrechen\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [
+          {
+            "id": "_r_0_-0-origin",
+            "value": "",
+            "x": 730.671875,
+            "y": -892,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -848
+          },
+          {
+            "id": "_r_0_-0-destination",
+            "value": "LAX",
+            "x": 1015.828125,
+            "y": -892,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -848
+          },
+          {
+            "id": "_r_0_-0-departureDate",
+            "value": "2026-11-02",
+            "x": 730.671875,
+            "y": -812,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -768
+          },
+          {
+            "id": "_r_0_-0-departureTime",
+            "value": "23:30",
+            "x": 1015.828125,
+            "y": -812,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -768
+          },
+          {
+            "id": "_r_0_-0-arrivalDate",
+            "value": "2026-11-01",
+            "x": 730.671875,
+            "y": -732,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -688
+          },
+          {
+            "id": "_r_0_-0-arrivalTime",
+            "value": "12:00",
+            "x": 1015.828125,
+            "y": -732,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -688
+          },
+          {
+            "id": "_r_0_-1-origin",
+            "value": "LAX",
+            "x": 730.671875,
+            "y": -551,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -507
+          },
+          {
+            "id": "_r_0_-1-destination",
+            "value": "JFK",
+            "x": 1015.828125,
+            "y": -551,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -507
+          },
+          {
+            "id": "_r_0_-1-departureDate",
+            "value": "2026-11-01",
+            "x": 730.671875,
+            "y": -471,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -427
+          },
+          {
+            "id": "_r_0_-1-departureTime",
+            "value": "13:00",
+            "x": 1015.828125,
+            "y": -471,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -427
+          },
+          {
+            "id": "_r_0_-1-arrivalDate",
+            "value": "2026-11-01",
+            "x": 730.671875,
+            "y": -391,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -347
+          },
+          {
+            "id": "_r_0_-1-arrivalTime",
+            "value": "21:00",
+            "x": 1015.828125,
+            "y": -391,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -347
+          },
+          {
+            "id": "_r_0_-2-origin",
+            "value": "JFK",
+            "x": 730.671875,
+            "y": -210,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -166
+          },
+          {
+            "id": "_r_0_-2-destination",
+            "value": "ZRH",
+            "x": 1015.828125,
+            "y": -210,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -166
+          },
+          {
+            "id": "_r_0_-2-departureDate",
+            "value": "2026-11-01",
+            "x": 730.671875,
+            "y": -130,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -86
+          },
+          {
+            "id": "_r_0_-2-departureTime",
+            "value": "22:00",
+            "x": 1015.828125,
+            "y": -130,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -86
+          },
+          {
+            "id": "_r_0_-2-arrivalDate",
+            "value": "2026-11-02",
+            "x": 730.671875,
+            "y": -50,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": -6
+          },
+          {
+            "id": "_r_0_-2-arrivalTime",
+            "value": "11:00",
+            "x": 1015.828125,
+            "y": -50,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": -6
+          },
+          {
+            "id": "_r_0_-3-origin",
+            "value": "ZRH",
+            "x": 730.671875,
+            "y": 131,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": 175
+          },
+          {
+            "id": "_r_0_-3-destination",
+            "value": "FCO",
+            "x": 1015.828125,
+            "y": 131,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": 175
+          },
+          {
+            "id": "_r_0_-3-departureDate",
+            "value": "2026-11-02",
+            "x": 730.671875,
+            "y": 211,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": 255
+          },
+          {
+            "id": "_r_0_-3-departureTime",
+            "value": "12:00",
+            "x": 1015.828125,
+            "y": 211,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": 255
+          },
+          {
+            "id": "_r_0_-3-arrivalDate",
+            "value": "2026-11-02",
+            "x": 730.671875,
+            "y": 291,
+            "width": 273.15625,
+            "height": 44,
+            "bottom": 335
+          },
+          {
+            "id": "_r_0_-3-arrivalTime",
+            "value": "14:00",
+            "x": 1015.828125,
+            "y": 291,
+            "width": 273.171875,
+            "height": 44,
+            "bottom": 335
+          }
+        ],
+        "alerts": [
+          {
+            "text": "Bitte gib einen IATA-Code mit drei Buchstaben an.",
+            "x": 717.671875,
+            "y": 472,
+            "width": 584.328125,
+            "height": 20,
+            "bottom": 492
+          }
+        ]
+      },
+      "afterCorrectionInvalidCount": 24,
+      "fourSave": {
+        "activeTag": "BUTTON",
+        "activeText": "Flugroute ändern",
+        "trigger": {
+          "x": 717.671875,
+          "y": 472,
+          "width": 141.84375,
+          "height": 44,
+          "bottom": 516
+        },
+        "status": "Flugroute gespeichert.",
+        "statusBox": {
+          "x": 717.671875,
+          "y": 524,
+          "width": 584.328125,
+          "height": 20,
+          "bottom": 544
+        },
+        "scrollY": 955,
+        "viewport": 900,
+        "bodyText": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise fortsetzen\nMeine Reisen\n\nDieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und auf allen Geräten sichtbar – Konto erstellen oder anmelden. Deine Reise wird dabei übernommen.\n\nNur auf diesem Gerät\nBevorstehende Reise\nLokaler Audit – Italien\n\nFlorenz · ab Zürich\n\nZEITRAUM\n01. Nov. – 05. Nov.\nREISENDE\n2 Reisende · Angaben noch offen\nBUDGET\nCHF 4’000\nEntwurf verwerfen\nÜbersicht\nReiseplan\nOrganisieren\nVorbereitung\nReise ändern\n\nZeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.\n\nOrganisieren\n\nWähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.\n\nFlüge\nNoch unklar\nUnterkunft\nUnterkunftsstand noch unklar\nAktivitäten\n1 Aktivität geplant\nMobilität\nNoch keine Verbindung geplant\nFlüge\nZur Organisation\n\nNRT → LAX → JFK → ZRH → FCO · Flugstand noch unklar\n\nDer Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.\n\nFlug suchen\n\nDEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert.\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise fortsetzen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+        "invalid": [],
+        "alerts": []
+      },
+      "multiReadText": "DEINE FLÜGE\n\nBestand und Status\n\nFlugstand noch unklar\n\nZürich → Florenz · 1. Nov.\n\nNoch nicht vollständig bestimmbar\n\nFlorenz → Zürich · 5. Nov.\n\nNoch nicht vollständig bestimmbar\n\nManueller Flug\n\nNoch keinem Reiseabschnitt sicher zuordenbar\n\nRoute\nNRT → LAX → JFK → ZRH → FCO\n\n3 Umstiege · LAX · 1 h\n\nVerbindung im Detail\n\nSegment 1: NRT → LAX\n\n2026-11-02 23:30 → 2026-11-01 12:00\n\nUmstieg in LAX · 1 h\n\nSegment 2: LAX → JFK\n\n2026-11-01 13:00 → 2026-11-01 21:00\n\nUmstieg in JFK · 1 h\n\nSegment 3: JFK → ZRH\n\n2026-11-01 22:00 → 2026-11-02 11:00\n\nUmstieg in ZRH · 1 h\n\nSegment 4: ZRH → FCO\n\n2026-11-02 12:00 → 2026-11-02 14:00\n\nAusgewählt\nAls gebucht markieren\nFlugroute ändern\n\nFlugroute gespeichert."
+    }
+  ]
+}

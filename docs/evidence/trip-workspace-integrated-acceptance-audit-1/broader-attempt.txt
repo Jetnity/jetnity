@@ -1,0 +1,7 @@
+Command actually executed (not a help-only invocation):
+node --import ./scripts/server-only-test-register.mjs --import tsx --test 'lib/route/*.test.ts' 'lib/readiness/*.test.ts' --help
+
+Exit 1. Node ran the globbed tests; trailing --help did not prevent execution.
+1539 tests / 1535 pass / 4 fail / 0 skipped. Duration 5355 ms.
+This command unintentionally included four local PostgreSQL fixture tests, outside the intended no-DB focused selection. No hosted credentials were configured. No database was started; missing PostgreSQL 16 initdb prevents fixture bootstrap. This is not a successful full-suite or DB verification. Do not repeat DB fixtures in this audit.
+The model-facing output was truncated. The complete TAP was subsequently recovered from this chat's own CommandExecution aggregated_output into broader-attempt.log; that log confirms all four missing-initdb failures. Relevant source fixtures: official-truth-store-server.test.ts, official-truth-source-catalog-server.test.ts, official-truth-content-identity-schema-v2.test.ts, official-truth-catalog-hardening-schema.test.ts.
