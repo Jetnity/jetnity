@@ -16,7 +16,6 @@ import {
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
   type OfficialTruthRegelReviewPacketSperrgrund,
-  type OfficialTruthRegelReviewSupport,
 } from '@/lib/readiness/official-truth-rule-review-packet'
 
 type RegelReviewPacket = Extract<OfficialTruthRegelReviewPacketErgebnis, { status: 'rule_review_packet' }>
@@ -34,7 +33,7 @@ const PROVENIENZ_FELDER = [
   'validUntil',
 ] as const
 
-type Provenienz = ContentIdentityBinding & {
+export type OfficialTruthCompactReviewProvenance = ContentIdentityBinding & {
   readonly identitySchema: 2
   readonly contentType: string
   readonly versionId: string
@@ -47,7 +46,7 @@ type Provenienz = ContentIdentityBinding & {
 }
 
 type Identitaet =
-  | { readonly ok: true; readonly digest: string; readonly ruleScopeKey: string; readonly supportVersionIds: readonly string[] }
+  | { readonly ok: true; readonly digest: string; readonly canonical: string; readonly preimage: unknown; readonly ruleScopeKey: string; readonly supportVersionIds: readonly string[] }
   | { readonly ok: false; readonly reason: OfficialTruthRegelReviewPacketSperrgrund }
 
 /**
@@ -110,7 +109,7 @@ function fenster(wert: unknown): string | null | undefined {
   return text(wert) ?? undefined
 }
 
-function provenienz(support: OfficialTruthRegelReviewSupport): Provenienz | null {
+function provenienz(support: OfficialTruthCompactReviewProvenance): OfficialTruthCompactReviewProvenance | null {
   const versionId = text(support.versionId)
   const sourceId = text(support.sourceId)
   const canonicalUrl = text(support.canonicalUrl)
@@ -131,7 +130,7 @@ function feldVergleich(links: string | null, rechts: string | null): number {
   return vergleich(links, rechts)
 }
 
-function provenienzVergleich(links: Provenienz, rechts: Provenienz): number {
+function provenienzVergleich(links: OfficialTruthCompactReviewProvenance, rechts: OfficialTruthCompactReviewProvenance): number {
   for (const feld of PROVENIENZ_FELDER) {
     const unterschied = feldVergleich(links[feld], rechts[feld])
     if (unterschied !== 0) return unterschied
@@ -139,7 +138,11 @@ function provenienzVergleich(links: Provenienz, rechts: Provenienz): number {
   return 0
 }
 
-function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly OfficialTruthRegelReviewSupport[]): Identitaet {
+/** Pure checksum seam over validated compact values; never issues authority or a packet. */
+export function officialTruthReviewIdentityV3(
+  kandidat: Pick<RegelReviewPacket['kandidat'], 'scope' | 'key' | 'factKind' | 'evidenceQuality' | 'supportVersionIds' | 'proposal'>,
+  supports: readonly OfficialTruthCompactReviewProvenance[],
+): Identitaet {
   const ruleScopeKey = text(kandidat.key)
   if (!ruleScopeKey) return { ok: false, reason: 'invalid_scope' }
   if (!Array.isArray(kandidat.supportVersionIds) || kandidat.supportVersionIds.length === 0) {
@@ -149,7 +152,7 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
   if (supportVersionIds.some((id) => !text(id))) return { ok: false, reason: 'invalid_support' }
   supportVersionIds.sort(vergleich)
 
-  const provenienzen: Provenienz[] = []
+  const provenienzen: OfficialTruthCompactReviewProvenance[] = []
   for (const support of supports) {
     const eintrag = provenienz(support)
     if (!eintrag) return { ok: false, reason: 'invalid_support' }
@@ -183,7 +186,7 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
   if (!kanonisch) return { ok: false, reason: 'invalid_fact' }
   const digest = sha256Hex(kanonisch)
   if (!HEX64.test(digest)) return { ok: false, reason: 'invalid_fact' }
-  return { ok: true, digest, ruleScopeKey, supportVersionIds }
+  return { ok: true, digest, canonical: kanonisch, preimage: form.wert, ruleScopeKey, supportVersionIds }
 }
 
 /**
@@ -200,7 +203,7 @@ function identitaet(kandidat: RegelReviewPacket['kandidat'], supports: readonly 
 export function officialTruthRegelReviewPacketFingerprint(eingabe: unknown): OfficialTruthRegelReviewFingerprintErgebnis {
   const ergebnis = officialTruthRegelReviewPacket(eingabe)
   if (ergebnis.status !== 'rule_review_packet') return ergebnis
-  const gebaut = identitaet(ergebnis.kandidat, ergebnis.supports)
+  const gebaut = officialTruthReviewIdentityV3(ergebnis.kandidat, ergebnis.supports)
   if (!gebaut.ok) return sperre(gebaut.reason)
   return Object.freeze({
     status: 'rule_review_packet_fingerprint',
