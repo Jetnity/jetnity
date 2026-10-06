@@ -283,6 +283,7 @@ LANGUAGE plpgsql STABLE SET search_path = '' AS $$
 DECLARE receipt_bytes bytea; binding_bytes bytea; a official_provenance_api.artifact_input_v1; closure official_provenance_api.artifact_input_v1[]; root record; edge record; expected integer;
 BEGIN
  SELECT r.canonical_payload_bytes,b.canonical_bytes INTO receipt_bytes,binding_bytes FROM official_provenance_private.receipts r JOIN official_provenance_private.custody_bindings k USING(record_fingerprint) JOIN official_provenance_private.artifact_blobs b ON b.digest=k.binding_digest WHERE r.record_fingerprint=fingerprint;
+ IF (SELECT r.storage_contract_version FROM official_provenance_private.receipts r WHERE r.record_fingerprint=fingerprint) IS DISTINCT FROM 1 THEN RAISE EXCEPTION 'unsupported_version';END IF;
  IF receipt_bytes IS NULL OR binding_bytes IS NULL THEN RAISE EXCEPTION 'existing_integrity_failure'; END IF;
  WITH RECURSIVE reachable(id,version,digest) AS (
   SELECT target_id,target_version,target_digest FROM official_provenance_private.receipt_dependencies WHERE record_fingerprint=fingerprint

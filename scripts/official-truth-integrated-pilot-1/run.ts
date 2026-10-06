@@ -1,82 +1,108 @@
-// Opt-in developer entry point. Synthetic conformance never activates a live root.
+// One opt-in engineering command: actual captured execution -> actual local SQL -> fresh semantic read.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
-import { PILOT_FAULTS, runSyntheticIntegratedPilot } from './engine'
+import { PILOT_FAULTS } from './engine'
+import { runControlledSyntheticPilot } from './controlled-runtime'
+import { verifyIntegratedPilotBundle } from '@/lib/readiness/official-truth-integrated-pilot-bundle'
 import { runLocalStorageProof } from '../db/official-truth-integrated-pilot-1/proof'
+import { runIntegratedLocalStorageProof } from '../db/official-truth-integrated-pilot-1/integrated-proof'
 import { runOfficialSourceQualification } from './official-source'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-const stage = z.object({ mode: z.enum(['primary', 'composed']), fault: z.enum(PILOT_FAULTS),
+const trace = z.object({ catalogReads: z.number().int(), originalHttp: z.number().int(), freshHttp: z.number().int(),
+  evidenceAcceptances: z.number().int(), proof: z.boolean(), extracted: z.boolean(), actualFactIdentity: z.boolean(),
+  receiptProjected: z.boolean(), publicationCount: z.number().int(), storageCalls: z.number().int() }).strict()
+const positive = z.object({ mode: z.enum(['primary','composed']), profile: z.literal('ot-integrated-pilot-local-closure-v2'),
+  status: z.literal('COMMITTED_AND_READBACK_VERIFIED'), stages: z.array(z.string()), trace,
+  recordFingerprint: z.string(), storedReadbackRows: z.number().int().positive(), legacyV1: z.literal('REJECTED_DEPTH_11') }).strict()
+const negative = z.object({ mode: z.enum(['primary','composed']), fault: z.enum(PILOT_FAULTS),
   status: z.literal('blocked'), reason: z.string().regex(/^[a-z_]+$/),
-  closureBound: z.object({ limit: z.literal('depth'), observed: z.number().int(), maximum: z.literal(8) }).strict().nullable(),
-  stages: z.array(z.string()), trace: z.object({ catalogReads: z.number().int(), originalHttp: z.number().int(), freshHttp: z.number().int(),
-    evidenceAcceptances: z.number().int(), proof: z.boolean(), extracted: z.boolean(), actualFactIdentity: z.boolean(),
-    receiptProjected: z.boolean(), publicationCount: z.literal(0), storageCalls: z.literal(0) }).strict() }).strict()
-const reportSchema = z.object({
-  schema: z.literal('official-truth-integrated-pilot-report-v1'),
-  classification: z.literal('OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL'),
-  implementation: z.literal('PARTIAL'),
-  synthetic: z.object({ primary: stage, composed: stage, failurePaths: z.array(stage),
-    positiveIntegratedConformance: z.literal('BLOCKED'), privateReceiptProjection: z.literal('VERIFIED'),
-    fullReceiptCustodyVerification: z.literal('BLOCKED'), publicationCount: z.literal(0) }).strict(),
-  postgres: z.union([z.object({ status: z.literal('PASS'), scope: z.literal('synthetic_storage_structure_only'),
-    postgresVersion: z.string(), checks: z.array(z.string()), integratedReceiptRoundtrip: z.literal('NOT_VERIFIED'),
-    fullSemanticPublication: z.literal('BLOCKED'), productionActivation: z.literal(false), hostedApply: z.literal(false) }).strict(),
-  z.object({ status: z.literal('NOT_VERIFIED'), reason: z.literal('local_postgresql_proof_failed'),
-    integratedReceiptRoundtrip: z.literal('NOT_VERIFIED'), fullSemanticPublication: z.literal('BLOCKED') }).strict()]),
-  realOfficialSourcePilot: z.enum(['BLOCKED', 'NOT_RUN']), officialSourceEvidence: z.string().nullable(),
-  historicalAuditGrantsCurrentAuthority: z.literal(false), sourceCapsuleIsLoadedCodeAttestation: z.literal(false),
-  f8: z.literal('CLOSED'), visitorEvaluation: z.literal('NOT_ACTIVATED'), hostedDevelopmentApply: z.literal(false), productionActivation: z.literal(false),
+  closureBound: z.object({ limit: z.literal('depth'), observed: z.number().int(), maximum: z.union([z.literal(8),z.literal(16)]) }).strict().nullable(),
+  stages: z.array(z.string()), trace }).strict()
+const persisted = z.object({ outcome: z.literal('inserted'), repeat: z.literal('idempotent'), readback: z.literal('VERIFIED'), rowCount: z.number().int().positive() }).strict()
+const postgresSchema = z.object({ status: z.literal('PASS'), profile: z.literal('ot-integrated-pilot-local-closure-v2'),
+  postgresVersion: z.string(), checks: z.array(z.string()).min(1), primary: persisted, composed: persisted,
+  integratedReceiptRoundtrip: z.literal('VERIFIED'), fullSemanticPublication: z.literal('VERIFIED'),
+  productionActivation: z.literal(false), hostedApply: z.literal(false) }).strict()
+const structuralSchema = z.object({ status: z.literal('PASS'), scope: z.literal('synthetic_storage_structure_only'),
+  postgresVersion: z.string(), checks: z.array(z.string()), integratedReceiptRoundtrip: z.literal('NOT_VERIFIED'),
+  fullSemanticPublication: z.literal('BLOCKED'), productionActivation: z.literal(false), hostedApply: z.literal(false) }).strict()
+const reportSchema = z.object({ schema: z.literal('official-truth-integrated-pilot-report-v2'),
+  engineeringAcceptance: z.literal('PASS'),
+  implementation: z.literal('LOCAL_ENGINEERING_VERIFIED'), synthetic: z.object({ primary: positive, composed: positive,
+    failurePaths: z.array(negative), positiveIntegratedConformance: z.literal('VERIFIED'),
+    fullReceiptCustodyVerification: z.literal('VERIFIED'), publicationCount: z.literal(2) }).strict(),
+  postgres: postgresSchema, historicalStructuralProof: structuralSchema,
+  realOfficialSourcePilot: z.enum(['BLOCKED','NOT_RUN']), officialSourceEvidence: z.string().nullable(),
+  loadedApplicationBytes: z.literal('CAPTURED_BUILD_EXECUTED'),
+  trustedComputingBase: z.literal('host_loader_esbuild_node_interpreter_and_finite_builtins'),
+  historicalAuditGrantsCurrentAuthority: z.literal(false), f8: z.literal('CLOSED'), visitorEvaluation: z.literal('NOT_ACTIVATED'),
+  hostedDevelopmentApply: z.literal(false), productionActivation: z.literal(false), independentTLPass: z.literal(false),
 }).strict()
 
 export async function runIntegratedDeveloperProof(runOfficialSource = false) {
-  const primary = await runSyntheticIntegratedPilot('primary')
-  const composed = await runSyntheticIntegratedPilot('composed')
-  const failurePaths = []
-  for (const mode of ['primary', 'composed'] as const) {
-    for (const fault of PILOT_FAULTS.filter(f => f !== 'none')) failurePaths.push(await runSyntheticIntegratedPilot(mode, fault))
-  }
-  // A repaired contract must update this expectation; never silently call the old partial report complete.
+  const primary = await runControlledSyntheticPilot('primary'), composed = await runControlledSyntheticPilot('composed')
+  if (primary.status !== 'synthetic_bundle_verified' || composed.status !== 'synthetic_bundle_verified') throw Error('synthetic_positive_missing')
   for (const result of [primary, composed]) {
-    if (result.status !== 'blocked' || result.reason !== 'closure_bound_exceeded'
-      || result.closureBound?.observed !== 11 || !result.trace.actualFactIdentity || !result.trace.receiptProjected) throw Error('synthetic_path_regression')
+    if (!result.trace.actualFactIdentity || !result.trace.proof || !result.trace.receiptProjected) throw Error('synthetic_path_regression')
+    const legacy = verifyIntegratedPilotBundle(result.envelope.bundle)
+    if (legacy.ok || legacy.reason !== 'closure_bound_exceeded' || legacy.bound?.observed !== 11 || legacy.bound.maximum !== 8) throw Error('legacy_profile_regression')
   }
-  if (failurePaths.some(result => result.status !== 'blocked' || result.trace.receiptProjected)) throw Error('negative_path_regression')
-  let postgres
-  try { postgres = await runLocalStorageProof() } catch {
-    postgres = { status: 'NOT_VERIFIED', reason: 'local_postgresql_proof_failed', integratedReceiptRoundtrip: 'NOT_VERIFIED', fullSemanticPublication: 'BLOCKED' }
+  // These exact producer envelopes are the arguments to real SQL publication;
+  // the SQL proof must return acknowledged commit + fresh fully verified rows.
+  const postgres = postgresSchema.parse(await runIntegratedLocalStorageProof(primary.envelope, composed.envelope))
+  const failurePaths = []
+  for (const mode of ['primary','composed'] as const) for (const fault of PILOT_FAULTS.filter(f => f !== 'none')) {
+    const result = await runControlledSyntheticPilot(mode, fault)
+    if (result.status !== 'blocked' || result.reason === 'closure_bound_exceeded' || result.trace.publicationCount || result.trace.storageCalls) throw Error('negative_path_regression')
+    failurePaths.push(result)
   }
+  const structural = structuralSchema.parse(await runLocalStorageProof())
   const official = runOfficialSource ? await runOfficialSourceQualification() : null
-  const report = reportSchema.parse({ schema: 'official-truth-integrated-pilot-report-v1',
-    classification: 'OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL', implementation: 'PARTIAL',
-    synthetic: { primary, composed, failurePaths, positiveIntegratedConformance: 'BLOCKED', privateReceiptProjection: 'VERIFIED',
-      fullReceiptCustodyVerification: 'BLOCKED', publicationCount: 0 }, postgres,
-    realOfficialSourcePilot: official?.realOfficialSourcePilot ?? 'NOT_RUN',
+  const summary = (result: typeof primary, sql: z.infer<typeof persisted>) => ({ mode: result.mode,
+    profile: result.envelope.profile, status: 'COMMITTED_AND_READBACK_VERIFIED',
+    stages: [...result.stages, 'atomic_sql_commit_acknowledged', 'fresh_full_semantic_readback'],
+    trace: { ...result.trace, publicationCount: 1, storageCalls: 1 }, recordFingerprint: result.envelope.bundle.recordFingerprint,
+    storedReadbackRows: sql.rowCount, legacyV1: 'REJECTED_DEPTH_11' })
+  const report = reportSchema.parse({ schema: 'official-truth-integrated-pilot-report-v2',
+    engineeringAcceptance: 'PASS', implementation: 'LOCAL_ENGINEERING_VERIFIED',
+    synthetic: { primary: summary(primary, postgres.primary), composed: summary(composed, postgres.composed), failurePaths,
+      positiveIntegratedConformance: 'VERIFIED', fullReceiptCustodyVerification: 'VERIFIED', publicationCount: 2 },
+    postgres, historicalStructuralProof: structural, realOfficialSourcePilot: official?.realOfficialSourcePilot ?? 'NOT_RUN',
     officialSourceEvidence: official ? 'docs/evidence/official-truth-integrated-pilot-1/official-source.json' : null,
-    historicalAuditGrantsCurrentAuthority: false, sourceCapsuleIsLoadedCodeAttestation: false,
-    f8: 'CLOSED', visitorEvaluation: 'NOT_ACTIVATED', hostedDevelopmentApply: false, productionActivation: false })
-  const reportText = [report.classification, '',
-    'Primary and composed: real canonical extraction and private receipt projection executed.',
-    'Full receipt/custody publication: BLOCKED (required graph depth 11; unchanged maximum 8).',
-    `Failure paths: ${failurePaths.length} fail closed; publication/storage calls: 0.`,
-    `PostgreSQL: ${report.postgres.status}; scope is synthetic structural storage only.`,
-    'Integrated semantic receipt PostgreSQL roundtrip: NOT_VERIFIED.',
-    `Real official source: ${report.realOfficialSourcePilot}${report.officialSourceEvidence ? `; see ${report.officialSourceEvidence}` : ' (use --run-official-source for the fixed GOV.UK attempt)'}.`,
-    'Source capsules archive disk sources; they do not attest the loaded executable.',
-    'Historical audit is not current authority. F8 closed; no hosted apply or production activation.',
-    '', 'Exit code 2 denotes the expected PARTIAL outcome; 1 denotes an unexpected conformance failure.', ''].join('\n')
-  const output = resolve(root, 'docs/evidence/official-truth-integrated-pilot-1')
-  mkdirSync(output, { recursive: true })
+    loadedApplicationBytes: 'CAPTURED_BUILD_EXECUTED', trustedComputingBase: 'host_loader_esbuild_node_interpreter_and_finite_builtins',
+    historicalAuditGrantsCurrentAuthority: false, f8: 'CLOSED', visitorEvaluation: 'NOT_ACTIVATED', hostedDevelopmentApply: false,
+    productionActivation: false, independentTLPass: false })
+  const reportText = ['LOCAL_ENGINEERING_COMMAND_PASS', '',
+    'Primary and Composition: captured application build executed; complete receipt/K/dependencies verified.',
+    'Both actual bundles: atomic PostgreSQL commit acknowledged; fresh full semantic readback verified.',
+    'Exact idempotent repeats add no data. Legacy v1 separately refuses both depth11 bundles at8.',
+    `Controlled failure paths: ${failurePaths.length}; semantic PostgreSQL checks: ${postgres.checks.length}.`,
+    `Historical structural proof: ${structural.checks.length} checks; separate from semantic publication.`,
+    `Real official source: ${report.realOfficialSourcePilot}${report.officialSourceEvidence ? `; see ${report.officialSourceEvidence}` : ''}.`,
+    'Guarantee: controlled local application execution; host loader/compiler/Node remain the trusted computing base.',
+    'Historical audit grants no current authority. F8 closed; no hosted apply or production activation.',
+    'Author engineering evidence only. Draft retained; independent exact-head TL review required.', '',
+    'Exit0 means engineering conformance passed; exit1 means an unexpected or missing mandatory proof.', ''].join('\n')
+  const output = resolve(root, 'docs/evidence/official-truth-integrated-pilot-1'); mkdirSync(output, { recursive: true })
   writeFileSync(resolve(output, 'developer-report.json'), JSON.stringify(report, null, 2) + '\n')
   writeFileSync(resolve(output, 'developer-report.txt'), reportText)
   return { report, reportText }
 }
-
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   if (process.argv.slice(2).some(arg => arg !== '--run-official-source') || process.argv.length > 3) throw Error('unsupported_pilot_argument')
-  runIntegratedDeveloperProof(process.argv.includes('--run-official-source')).then(({ reportText }) => {
-    process.stdout.write(reportText); process.exitCode = 2
-  }).catch(() => { process.stderr.write('integrated_pilot_conformance_failed\n'); process.exitCode = 1 })
+  runIntegratedDeveloperProof(process.argv.includes('--run-official-source')).then(({ reportText }) => process.stdout.write(reportText))
+    .catch((error: unknown) => {
+      const reason = error instanceof Error && /^[a-z][a-z0-9_]{1,80}$/.test(error.message)
+        ? error.message : 'integrated_pilot_conformance_failed'
+      const output = resolve(root, 'docs/evidence/official-truth-integrated-pilot-1'); mkdirSync(output, { recursive: true })
+      const failed = z.object({ schema: z.literal('official-truth-integrated-pilot-failure-v1'), engineeringAcceptance: z.literal('FAIL'),
+        reason: z.string().regex(/^[a-z][a-z0-9_]{1,80}$/), productionActivation: z.literal(false) }).strict()
+        .parse({ schema: 'official-truth-integrated-pilot-failure-v1', engineeringAcceptance: 'FAIL', reason, productionActivation: false })
+      writeFileSync(resolve(output, 'developer-report.json'), JSON.stringify(failed, null, 2) + '\n')
+      writeFileSync(resolve(output, 'developer-report.txt'), `LOCAL_ENGINEERING_COMMAND_FAIL: ${reason}\n`)
+      process.stderr.write(`integrated_pilot_conformance_failed: ${reason}\n`); process.exitCode = 1
+    })
 }

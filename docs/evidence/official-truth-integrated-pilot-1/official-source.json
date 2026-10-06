@@ -1,8 +1,8 @@
 {
   "schema": "official-truth-integrated-pilot-real-source-report-v2",
   "realOfficialSourcePilot": "BLOCKED",
-  "startedAt": "2026-10-06T23:25:35.307Z",
-  "completedAt": "2026-10-06T23:25:35.546Z",
+  "startedAt": "2026-10-06T23:54:59.854Z",
+  "completedAt": "2026-10-06T23:55:00.054Z",
   "researchedFamilyCount": 1,
   "family": "GOV.UK / UK Government",
   "selectedCase": {

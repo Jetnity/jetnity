@@ -5,25 +5,26 @@
   "branch": "feat/official-truth-integrated-development-pilot-1",
   "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
-  "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL",
+  "classification": "LOCAL_ENGINEERING_VERIFIED_PENDING_FINAL_REMOTE_GATES",
   "phases": {
-    "A": "r1_reconstructed",
-    "B": "captured_build_primary_composed_verified_more_conformance_in_progress",
-    "C": "both_complete_v2_bundles_verified_v1_refusal_retained",
-    "D": "primary_semantic_sql_readback_passed_composed_and_adversarial_in_progress",
-    "E": "bounded_actual_https_blocked_response_too_large",
-    "F": "one_command_semantic_roundtrip_integration_in_progress"
+    "A": "r1_reconstructed_task_unchanged",
+    "B": "captured_build_primary_composed_and_original_validity_verified",
+    "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
+    "D": "both_actual_semantic_sql_roundtrips_and_adversarial_proof_verified",
+    "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
+    "F": "one_command_exit0_full_checks_remote_gates_pending"
   },
   "realOfficialSourcePilot": "BLOCKED",
-  "integratedReceiptRoundtrip": "NOT_VERIFIED",
+  "integratedReceiptRoundtrip": "VERIFIED",
   "depth": {
     "observed": 11,
-    "maximum": 8
+    "legacyMaximum": 8,
+    "explicitLocalV2Maximum": 16
   },
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "Finish real SQL adversarial/concurrency/reader proof and remaining integrated selector/context tests, then full local/remote gates.",
+  "next": "Publish consolidated changes; require fresh final exact-head CI/Auth/Preview and remote tree/TASK readback, then stop for independent TL re-review.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -32,9 +33,10 @@
   "session": {
     "id": "01a11333-cbc2-7282-b194-27335e632c61",
     "model": "gpt-6-astra",
-    "reasoning": "xhigh"
+    "reasoning": "xhigh",
+    "provider": "openai"
   },
-  "runtimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe",
+  "runtimeCommit": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
   "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
   "r1Comment": 6027081169,
   "localProfile": {
@@ -43,5 +45,10 @@
     "legacyMaximumDepth": 8,
     "implementationStatus": "both_canonical_bundles_verified",
     "hostedAdoption": false
-  }
+  },
+  "r1RuntimeCheckpoint": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
+  "observedMain": "0481173cf56f13e5316246503e4683ad843728f2",
+  "mergeBase": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
+  "mainAdvancedBySeparateTripPr897": true,
+  "semanticSqlProofGroups": 35
 }

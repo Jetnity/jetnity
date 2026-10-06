@@ -14,7 +14,7 @@ import {
 } from './official-truth-autonomous-provenance-record'
 import {
   contentEvidenceVersionV2, contentIdentityBinding, contentRepresentationFromRegistry,
-  createContentIdentityGraph, readContentIdentityBinding,
+  createContentIdentityGraph, readContentIdentityBinding, contentIdentityMatches, type ContentIdentityBinding,
 } from './official-truth-content-identity'
 import { evidenceScopeLesen, evidenceSuchschluessel } from './evidence'
 import { checkedAtLesen, gültigkeitszeitLesen } from './official'
@@ -22,10 +22,10 @@ import { regelScopeAusEvidenceScope, REGEL_FAKT_ARTEN, type RegelFakt } from './
 import { quellenRegistryErstellen, type QuellenRegistry } from './source-registry'
 import { OFFICIAL_REQUIREMENT_TYPES } from '@/types/trips'
 import {
-  officialTruthCitationTargetLesen, officialTruthFactCitationCoverage, officialTruthCompositionRegistriesPruefen,
+  officialTruthCitationTargetLesen, officialTruthFactCitationCoverage, officialTruthCompositionRegistriesPruefen, officialTruthCompositionPhaseA,
   type OfficialTruthCompositionCitationTarget,
 } from './official-truth-composition-policy-registry'
-import { officialTruthExtractorDefinitionenPruefen } from './official-truth-trusted-fact-extractor-registry'
+import { officialTruthExtractorDefinitionenPruefen, officialTruthExtractorUrlErlaubt } from './official-truth-trusted-fact-extractor-registry'
 
 export const INTEGRATED_PILOT_BUNDLE_LIMITS = Object.freeze({
   receiptBytes: 262_144, bindingBytes: 4_096, artifactBytes: 1_048_576,
@@ -662,8 +662,10 @@ function semanticBundle(
     const definition = content(entry.definition, 'policy_definition')
     return definition ? { ...definition.descriptor, current: entry.current } : null
   }) ?? []
-  if (!(p.policy === null ? officialTruthExtractorDefinitionenPruefen(extractorDefinitions)
-    : officialTruthCompositionRegistriesPruefen(policyDefinitions, extractorDefinitions)).ok) return false
+  const canonicalExtractors = officialTruthExtractorDefinitionenPruefen(extractorDefinitions)
+  if (!canonicalExtractors.ok) return false
+  const canonicalComposition = p.policy === null ? null : officialTruthCompositionRegistriesPruefen(policyDefinitions, canonicalExtractors.registry)
+  if (canonicalComposition && !canonicalComposition.ok) return false
   for (const artifact of artifacts) {
     if (artifact.artifactType !== 'catalog_snapshot') continue
     const snapshot = (artifact.value as IntegratedPilotManifest<'catalog_snapshot'>).content
@@ -674,6 +676,36 @@ function semanticBundle(
   }
   const selectedDefs = extractorRegistry.definitions.filter(d => d.current && pinsEqual(d.definition, p.extractor.definition))
   if (selectedDefs.length !== 1) return false
+  const selectedExtractor = canonicalExtractors.registry.find(d => d.current
+    && d.extractorId === p.extractor.extractorId && d.extractorVersion === p.extractor.extractorVersion)
+  if (!selectedExtractor) return false
+  // Historical metadata can prove selector eligibility, but never execute an
+  // archived matcher or recreate the live fact/seal. Reuse the canonical URL
+  // and identity predicates for both branches; MIME is a post-HTTP constraint.
+  const selectorSupports: (ContentIdentityBinding & { canonicalUrl: string })[] = []
+  for (const support of p.supports) {
+    const bound = readContentIdentityBinding(support.binding)
+    if (!bound.ok || !selectedExtractor.contentTypes.includes(support.contentType)
+      || !officialTruthExtractorUrlErlaubt(support.canonicalFinalUrl, selectedExtractor.urlAllowlist)
+      || !selectedExtractor.representations.some(allowed => contentIdentityMatches(allowed, bound.value))) return false
+    selectorSupports.push({ ...bound.value, canonicalUrl: support.canonicalFinalUrl })
+  }
+  if (canonicalComposition?.ok) {
+    // Phase A is pure descriptor selection: it never invokes match/extract and
+    // it deliberately cannot use observed MIME as a late selection tie-break.
+    const selected = officialTruthCompositionPhaseA({ factKind: p.candidate.factKind, requirementType: p.candidate.requirementType,
+      supports: selectorSupports, extractors: canonicalComposition.extractors, policies: canonicalComposition.policies })
+    if (!selected.ok || selected.freeze.extractorId !== p.extractor.extractorId
+      || selected.freeze.extractorVersion !== p.extractor.extractorVersion || selected.freeze.policyId !== p.policy!.policyId
+      || selected.freeze.policyVersion !== p.policy!.policyVersion) return false
+  } else {
+    const refs = selectorSupports.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId }))
+      .sort((a, b) => order(JSON.stringify([a.sourceId, a.contentItemId]), JSON.stringify([b.sourceId, b.contentItemId])))
+    const candidates = canonicalExtractors.registry.filter(d => d.current && d.factKind === p.candidate.factKind
+      && d.policyId === null && historicalValuesEqual(d.contentItemRefs, refs)
+      && p.supports.every(support => d.contentTypes.includes(support.contentType)))
+    if (candidates.length !== 1 || candidates[0] !== selectedExtractor) return false
+  }
   const pairs: string[] = [], compactSupports: unknown[] = []
   for (let i = 0; i < p.supports.length; i++) {
     const s = p.supports[i]!, selected = manifest.supports[i]!, c = custody(selected.custody, 'AcceptedEvidenceCustodyV1')

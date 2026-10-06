@@ -1,73 +1,69 @@
-# Integrated development pilot 1 — report
+# Integrated development pilot 1 — R1 report
 
-**OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL**. `realOfficialSourcePilot = BLOCKED`. This is author evidence, not independent TL PASS. PR #900 remains Draft.
+**LOCAL_ENGINEERING_VERIFIED; final exact-head remote gates pending publication.** `realOfficialSourcePilot = BLOCKED`. Author evidence only; independent TL acceptance remains required. PR #900 stays Draft. The final PR delivery receipt supplies the exact final SHA and fresh CI/Auth/Preview results; this report does not assert success for an unpublished head.
 
-The implemented primary and composed developer paths actually execute canonical retrieval, acceptance, support selection, safe review-v3, proof, fresh extraction, exact private fact/seal capture and private receipt/K projection. Both then fail closed at the unchanged dependency-depth limit (required 11, allowed 8). Zero receipt bundles are published or sent to storage. Mandatory complete C25 conformance is unmet.
+Both actual captured canonical Primary and Composition paths now produce complete valid receipt/K closures under the explicitly authorized local profile `ot-integrated-pilot-local-closure-v2`. Exactly those envelopes reach real disposable PostgreSQL, atomically commit, and pass complete fresh semantic readback. Their unchanged bytes still fail legacy v1 at depth11>8. No edge is dropped, profile fallback added or frozen byte identity changed.
 
-## Results by phase
+## Results and evidence
 
-| Phase | Actual result |
+| Phase | R1 result |
 | --- | --- |
-| A | Live reconstruction, PLAN, contracts and machine status recorded; #898 reused; #897 untouched. |
-| B | Private primary and shared one-shot composition context, exact fact/executable references, strict origin value codecs and isolated original lifecycle implemented. Production issuer and loaded-code attestation remain incomplete. |
-| C | Private canonical projection executes in both modes; complete graph verification refuses depth 11. No positive full bundle or atomic publication success claim. |
-| D | Actual disposable PostgreSQL structural/security/concurrency proof PASS, 16 groups. Full #866 semantic SQL/reader and integrated receipt roundtrip NOT_VERIFIED. |
-| E | One GOV.UK family; passport validity candidate blocked by missing exact profile and whole-response qualification. Existing National List control passed real identity retrieval only. |
-| F | One command, 20 negative integration variants, strict JSON and readable report delivered; overall result PARTIAL. |
+| A | Same writer, branch and immutable TASK; full TL R1 reconstructed. #898 reused; #897 and Trip files untouched. |
+| B | Captured application/dependency/build bytes actually execute in a one-shot worker. Held primary executable/F and genuine composed seal/F stay bound. Original observation, real derived non-null validity and accepted-origin joins are checked. |
+| C | Both full typed historical bundles verify under explicit local v2; the same bytes refuse v1. Positive-derived negatives check their intended boundary. |
+| D | Actual PostgreSQL postgres (PostgreSQL) 17.6: 35 semantic/security/adversarial groups; primary652 and composed720 complete reader rows. Insert, exact retry, rollback, races, no-heal and lost-ACK resolution pass. Separate historical16-group structural proof retained. |
+| E | One GOV.UK family; isolated exact passport profile, whole-response qualification proposal and narrow extractor implemented. Real canonical HTTPS stops at unchanged response-size limit; no real origin/fact/receipt issued. |
+| F | One command exits0 only after both actual roundtrips, 50 declared negative paths and both SQL proof groups. Strict JSON and readable report regenerated; failure overwrites stale PASS evidence. |
 
-## Reproduce
+## Reproduce and validation
 
-Use Node 22 and `npm ci`. PostgreSQL initdb/pg_ctl/postgres/psql must exist in one of the explicit local paths in local-cluster.ts (CI Linux /usr/lib/postgresql/16/bin is supported). On this Mac a task-local PostgreSQL 17.6 was compiled from the official tarball; no system service or global installation was changed. Its SHA256 was e0630a3600aea27511715563259ec2111cd5f4353a4b040e0be827f94cd7a8b0, verified against the official .sha256. No PG/DATABASE_URL/Supabase connection environment may be inherited.
+Use Node22, `npm ci`, and local PostgreSQL binaries in an explicit path supported by local-cluster.ts. On this Mac the task-owned PostgreSQL17.6 toolchain was built from the official tarball with verified SHA256 e0630a3600aea27511715563259ec2111cd5f4353a4b040e0be827f94cd7a8b0. No system service or global installation was changed. Inherited PG/DATABASE_URL/Supabase targets are refused. Temporary clusters use private owned Unix sockets and are stopped/removed.
 
 ```
 npm run official-truth:pilot-1
 npm run official-truth:pilot-1 -- --run-official-source
 ```
 
-The first is deterministic synthetic execution plus real local structural SQL. The second opts into the exact fixed public GOV.UK manifest. Expected exit 2 reports PARTIAL; unexpected conformance failure exits 1. Outputs are `docs/evidence/official-truth-integrated-pilot-1/developer-report.{json,txt}` and `official-source.json`. All owned temporary database clusters are stopped/removed. The source compiler toolchain remains task-local for repeatability, outside the Git tree.
+Exit0 means mandatory local engineering proof passed; exit1 means failure. The live flag selects only the fixed GOV.UK attempt. No arbitrary source/DSN/clock/Pin/fact input is accepted.
 
-## Validation
+- Final one-command run including source: PASS/exit0, 50 negative paths, 35 semantic SQL groups plus16 structural groups; two actual confirmed publications/readbacks.
+- Local full suite: 5626 tests, 810 suites; 5622 pass, four environment failures, zero skips. The four unchanged tests require hardcoded Linux `/usr/lib/postgresql/16/bin/initdb`, absent on macOS. No test was suppressed or redirected to manufacture a pass. The new mandatory complete pilot SQL test uses actual local PostgreSQL and passes. Exact-head Linux CI must pass all tests before delivery readiness.
+- Controlled runtime8, integrated engine56, bundle15, isolated source5 and mandatory storage3 tests are included. Correct-hash SQL vectors call the independent validator directly so an earlier retained-name collision cannot mask absent semantic validation.
+- Typecheck, Build, Lint and all six hygiene commands pass. Lint: zero errors,145 existing warnings.
+- No hosted `db:rechte`, `db:rls`, `db:sicherheit` or migration apply was run. Local actual ACL/RLS proofs cover the isolated schema. Auth is verified by the fresh exact-head existing CI job; no Auth/AAL changes or secrets are introduced.
 
-Local final runtime tree `a513590019d9d0840a5a50e6bfb33eda3787a4fe`:
+See command-results.json for command/log receipts, developer-report.json for exact producer fingerprints/stages/counters and actual SQL proof names, and coverage-matrix.json for all C01–C29 obligations. Final remote evidence is separate from local checks and earlier checkpoints.
 
-- `npm ci --offline --cache /Users/sasa/.npm --no-audit --no-fund`: PASS, 530 packages, lifecycle scripts executed.
-- `npm test`: 5,578 tests / 810 suites; 5,574 PASS, 4 FAIL, 0 skipped. Four unchanged Linux-PG16 tests fail on macOS with initdb ENOENT (catalog-hardening-schema, content-identity-schema-v2, source-catalog-server, store-server). No tests were suppressed or paths patched to manufacture a pass.
-- New integrated tests: 29/29 PASS; new storage tests: 2/2 PASS with actual PostgreSQL 17.6, 16 check groups. New execution/citation/bundle and finite-guard tests also pass in the full run.
-- Typecheck PASS. Lint PASS: 0 errors, 145 existing warnings. Production build PASS after a sandbox IPC EPERM was resolved by authorized local execution.
-- All six hygiene/mode commands PASS: check:dead, check:exports, check:deps, check:api-schutz, check:schema-bezug, check:operating-mode.
-- Final full developer command including fixed GOV.UK attempt: expected exit 2 / PARTIAL; 20 negative paths fail closed; structural SQL PASS. Source UTC timestamps are in official-source.json.
+## SQL guarantees
 
-Exact commands, environment failures and local log SHA256/size receipts are in `command-results.json`. Final remote gates are read after push and attached to the PR exact-head delivery receipt; earlier code-head evidence is never a final-head PASS.
+Independent SQL closed typed codecs derive all role edges and validate complete semantic joins; TypeScript approval and declared edges are insufficient. UTC date semantics are independent of caller timezone. Owned bytes are detached before asynchronous work. Publication validates existing shared closure and permanent name metadata before any insertion; both retries and a new receipt sharing damaged data refuse repair. Independent deferred constraints also reject invalid retained-edge changes outside the public publication API.
 
-No hosted `db:rechte`, `db:rls` or `db:sicherheit` execution was performed: existing commands target hosted Supabase, whereas this task permits only the owned local cluster. Their relevant local structural ACL/RLS/transaction properties have the actual 16-group proof. This is not hosted migration/RLS acceptance. Local `auth:pruefen` fails before live read because SUPABASE_PROJECT_REF is absent; exact-head existing CI Auth is authoritative.
+Separate actual connections prove rollback invisibility, identical races and conflicting races with controlled barriers. A genuinely new receipt whose real COMMIT response is lost returns unknown; only full verify-existing resolves it. The fresh reader validates all23 columns, fingerprint/version on every row, null discipline, canonical values, order, exact links/roots and terminal status, then reruns complete semantics and compares owned input bytes. Counters alone never establish success.
 
-## Source evidence
+## Real official source outcome
 
-Only GOV.UK/UK Government/Home Office was researched. Selected narrow CH ordinary-passport case: https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk with corroborating https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen. The source API attempted the selected URL and canonically returned content_not_eligible, before network. It was not mislabelled with the unrelated National List profile.
+Selected public source: https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk. Exact guide content ID435fb04f-2b9f-4f44-8b41-2a962e8c46a8; fixed Content API redirect reaches `/api/content/uk-border-control`. This is a distinct isolated profile, never the National List profile. The canonical bounded HTTPS attempt reaches `response_too_large` because the whole guide exceeds65536 bytes. This is a representation/contract limitation, not a government access refusal. No truncation or limit relaxation occurs. Exact UTC timestamps are in official-source.json.
 
-The existing fixed National List Content API control executed real DNS/SSRF, HTTPS, bounded body/UTF-8/MIME and exact identity validation. See `official-source.json` for exact UTC attempts and result. It does not prove full ETA eligibility. Whole-response privacy qualification, passport-rule extractor and original custody prerequisites are missing; no real accepted origin, fact, receipt, source body or unqualified source hash was published. No source registry was registered in production.
+The proposed whole-response qualifier admits only individually reviewed public components and requires null opaque publishing job/context metadata. The bounded research response also contains non-null opaque publishing metadata, which independently prevents that proposed qualification. Raw responses, opaque values and an unqualified whole-response hash are not published. The narrow semantic helper extracts only the exact Swiss passport-validity proposition; it cannot issue an origin without a qualified complete observation. Actual identity, acceptance, extraction, receipt and storage for this real source remain uncompleted. No synthetic predecessor is substituted.
 
-## Coverage and open findings
+## Assurance limits, findings and coverage gaps
 
-Every C01–C29 obligation is individually recorded in `coverage-matrix.json`. PASS_BOUNDARY only identifies the tested rejection boundary. PARTIAL/helper evidence is not a completed integrated conformance case. C25 is BLOCKED. Core remaining gaps:
+- P0: no open finding identified by this author review; this is not security certification.
+- P1: R1 depth/profile, full semantic SQL/readback and actual positive publication blockers are implemented and tested. No known remaining deterministic engineering blocker; exact final remote gates must still pass before READY_FOR_TL_REVIEW.
+- P2 source limitation: real source-to-receipt remains BLOCKED for the documented whole-response size/privacy prerequisites. This is permitted separately by R1 and does not certify any real immigration requirement.
+- P2 assurance boundary: captured application inputs and emitted/bootstrap bytes are actually executed, while host loader, esbuild compiler, Node and finite builtins remain trusted. No compiler binary, host, hardware or production attestation is claimed. Historical readback grants no current authority.
+- P3 environment: four existing Linux-specific tests cannot run locally on this Mac; mandatory complete Linux CI is required. No additional code defect is open from internal review.
 
-- P0: no newly identified active production exploit or activation; no P0 PASS certification is implied.
-- P1: required original dependency topology is incompatible with unchanged depth 8. Complete primary/composed bundle, semantic SQL readback and C25 are blocked.
-- P1: SQL remains structural proof, lacking full #866 typed semantic SQL codecs and production reader envelope; positive historical semantic verifier branch has no complete bounded fixture.
-- P2: disk source capsules do not prove loaded implementation/release custody; several C01–C29 mutations are helper-level rather than completed end-to-end tests; non-null validity derivation and real issuer lifecycle remain incomplete.
-- P2: real source profile, whole-response privacy qualification and narrow deterministic extraction are missing. National List identity-only success cannot close that gap.
-- P3: no additional implementation finding beyond documented developer ergonomics and environment prerequisites.
+The supported integrated producer emits legacy requirement_effect / visa facts with applicabilitySchema null. Conditional/atom/otherwise/visa-option variants are not emitted. Their shared canonical helper tests remain labelled helper evidence. The 16/17 depth boundary uses the same private production traversal through test instrumentation because the closed current typed-role grammar cannot construct those deeper paths. Actual full primary/composed closures have depth11. Neither boundary test is represented as an actual depth16 receipt publication.
 
-## Consolidated independent-review packet
+Hosted schema/migration/access-principal/retention decisions, live issuer registration, production registries and F8/provider/visitor activation remain outside this local task. No retention period was selected. These are explicit scope boundaries, not actions dispatched by this delivery.
 
-The TL must reconcile #863 origin/role edges with #859/#866 depth accounting without silently deleting edges, repinning existing objects or weakening limits. After a compatible reviewed contract, complete source-to-loaded-executable custody, positive full semantic bundle verification, integrated PostgreSQL publication/readback and the remaining C01–C29 matrix. Independently qualify the narrow official representation before any real origin is issued. Hosted lifecycle/retention/access principals, original live issuer registration, auth/capability wiring and any F8/provider/visitor activation remain separate decisions. No production TTL, hosted migration or follow-up slice is selected here.
+## Identity and final handoff
 
-## Delivery identity
+Same owner: Official Truth integrated development pilot1 — Generation1; Issue#899 / Draft PR#900; branch `feat/official-truth-integrated-development-pilot-1`. Reviewed predecessor e4e61bba66b71656b2f0ba4158689d7b726ed23e; R1 runtime checkpoint dafd5fb024380d8d375d7bb5704b534e78f15d23. Main advanced separately through #897 to0481173cf56f13e5316246503e4683ad843728f2. Merge-base remains ecc0ecf3b9c024b295034b6985fa26ca40bc82f1. No main merge/rebase or foreign branch adoption. Final current refs/ahead/behind/tree and all changed files are re-read after publication.
 
-Owner: Official Truth integrated development pilot 1 — Generation 1. Branch `feat/official-truth-integrated-development-pilot-1`; Issue #899 / Draft PR #900. Baseline and merge-base `ecc0ecf3b9c024b295034b6985fa26ca40bc82f1`; task seed d3ee358fedf87656fc55325200eeade13f840e19; immutable TASK blob ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad. No merge/rebase of main or foreign branch. The normal CLI push lacked GitHub credentials; the authenticated GitHub connector publishes the same three phase trees as fast-forward commits from the unchanged seed. Local checked runtime tree and remote runtime tree are exactly `000e288ead98a6e9da7e5590b2fdcd1a08130f7f`; connector-generated commit metadata changes the commit SHA, not the checked files.
+Immutable TASK blob ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad; seed d3ee358fedf87656fc55325200eeade13f840e19. Authenticated GitHub git-object/ref APIs publish the exact locally checked tree as fast-forward commits on the same branch. No force push or replacement writer.
 
-Actual Codex session `01a11333-cbc2-7282-b194-27335e632c61`; session metadata model `gpt-6-astra`, reasoning `xhigh`, provider openai. Three internal Codex agents used disjoint ownership; none is independent TL approval. No Cursor/Grok agent started or messaged.
+Actual session01a11333-cbc2-7282-b194-27335e632c61; model gpt-6-astra; reasoning xhigh; provider openai, re-read from session metadata. Three internal agents provided disjoint implementation/audit work; none constitutes independent TL PASS. No Cursor/Grok dispatch, Ready, merge or follow-up slice.
 
-The final review SHA is the commit containing the final delivery documents, verified against the remote branch. Exact-head Actions/Auth/Preview and remote tree evidence are posted in the task's final PR delivery comment after push; no earlier-head gate is presented as final-head approval. Full changed-file inventory is in `changed-files.txt`.
-
-**STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD EXACT-HEAD REVIEW.**
+**STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW after fresh final-head gates.**

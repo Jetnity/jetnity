@@ -1,151 +1,153 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "round": "R1",
   "scope": "author_evidence_not_tl_acceptance",
+  "supportedIntegratedFactNamespace": "legacy requirement_effect / visa; applicabilitySchema null",
   "cases": [
     {
       "case": "C01",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Integrated private-ledger forged/clone/foreign/reused/closed tests and one-shot execution tests; general live issuer API remains absent."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Controlled prepared handle and invocation ledger clone/foreign/replay/closed/accessor denial; missing/cloned/replayed actual extraction context in both canonical paths."
     },
     {
       "case": "C02",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Fixed corpus exposes no URL/pin/clock CLI inputs; malformed/extra proof ingress rejected. No general authenticated issuer/resolver lifecycle."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Fixed independent corpus selection; no caller URL/Pin/clock/fact input. Extra loader/worker arguments and forged DTOs rejected; matching data does not mint context."
     },
     {
       "case": "C03",
-      "status": "PASS_BOUNDARY",
-      "evidenceAndGap": "Missing-origin integration rejects clone; dormant root custody_missing; no row/latest fallback."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Cloned original custody fails private origin membership; complete historical receipts cannot enter dormant production root."
     },
     {
       "case": "C04",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Exact identity/proof substitution and existing R2 suite; not every source/item/profile substitution injected through final projection."
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Both positive bundles precede correct-hash source/item/profile/request/context cross-binding mutations; full identity joins reject independently of depth."
     },
     {
       "case": "C05",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Future original and reversed completion integrated; stale/expired reference exercised in proof/context tests, not every expiry through whole producer."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Stale, expired, future original Evidence and reversed completion tests in both modes. Expiry and primary validFrom genuinely derived from qualified body locators."
     },
     {
       "case": "C06",
-      "status": "PASS_BOUNDARY",
-      "evidenceAndGap": "Both modes reject changed fresh body and final URL; zero partial projection."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Changed fresh bytes and final URL reject through canonical retrieval/proof in both modes; no publication or acceptance repair."
     },
     {
       "case": "C07",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Non-null proposal fails in both modes; canonical existing v3 replay/key tests reused."
+      "status": "INTEGRATED_AND_SHARED_V3",
+      "evidenceAndLimit": "Non-null proposal rejected in both pipelines; no external review ingress. Existing canonical v3 golden/differential key/proposal/validity behavior remains mandatory."
     },
     {
       "case": "C08",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Duplicate/missing support integrated; existing selector tests cover ambiguous eligible sets; not every selection variant integrated."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Missing/duplicate supports, genuinely distinct accepted versions and same item under two representations reject at unique selector; no fresh HTTP after rejection."
     },
     {
       "case": "C09",
-      "status": "PARTIAL",
-      "evidenceAndGap": "New shared citation tests cover atom/otherwise/option and duplicates; no completed publisher mutation matrix."
+      "status": "INTEGRATED_NARROW_NAMESPACE",
+      "evidenceAndLimit": "Actual effect/visaMode citations verified; positive-derived missing/foreign citations rejected. Branch/atom/otherwise/equal-values traversal remains shared-helper evidence outside this fixed legacy visa fact namespace."
     },
     {
       "case": "C10",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Both fixed paths use actual initial redirect URL and retained context; existing #898/#891 URL matrix reused."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Primary uses approved final-only request. Composition captures original /start and actual fresh /another-start among approved URLs, both redirecting; receipt and original observations checked."
     },
     {
       "case": "C11",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Genuine composition seal/fact observed; context clones/reuse fail in seam tests; full phase-A/B corruption matrix remains."
+      "status": "INTEGRATED_AND_SHARED_CONTEXT",
+      "evidenceAndLimit": "Actual genuine seal-bound fact retained. Missing/cloned/replayed execution context and foreign seal reject. Detailed phase-A/B mutations remain existing #898 context/citation tests."
     },
     {
       "case": "C12",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Unknown manifest/artifact versions rejected; existing schema1/2 guards unchanged; all mixed-version integrated variants not implemented."
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Unknown receipt/artifact/profile versions, schema confusion, unknown codec/issuer and invalid typed content reject on full positive bundle derivatives; no applicability2/store widening."
     },
     {
       "case": "C13",
-      "status": "PASS_BOUNDARY",
-      "evidenceAndGap": "Receipt-shaped and structural SQL fixtures fail full verifier; historical bytes never issue live origin."
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Missing/corrupt separate K and required origins refuse; historical complete values grant no live issuer authority."
     },
     {
       "case": "C14",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Ledger replay/post-close/parallel isolation and one-shot context tests; no successful receipt retry through producer."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Owned handle/invocation reuse and post-close/replay denied; independent positive executions produce historical envelopes only. SQL exact retry tested separately."
     },
     {
       "case": "C15",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Fixed public corpus only; exact scope substitution rejected; all traveller-derived combinations not integrated."
+      "status": "INTEGRATED_BOUNDARY",
+      "evidenceAndLimit": "Only fixed public corpus can execute; traveller-derived DTO/scope/clock inputs cannot enter controlled runtime. No aggregated/traveller selection path exists."
     },
     {
       "case": "C16",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Exact canonical scope comparison exercised; full seven-dimension adversarial variants remain existing helper evidence."
+      "status": "INTEGRATED_AND_SHARED_SCOPE",
+      "evidenceAndLimit": "Runtime scope substitution rejected; historical cross-joins use canonical complete seven-field equality and key. Exhaustive dimension codec variants remain shared-helper tests."
     },
     {
       "case": "C17",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Whole synthetic response rejects unused unknown field; canonical transport checks credentials; real whole-response qualification absent."
+      "status": "INTEGRATED_PLUS_REAL_BLOCK",
+      "evidenceAndLimit": "Unused synthetic body extension rejected before acceptance/hash admission; canonical credentials/URL/UTF8 controls preserved. Actual passport HTTP stops at unchanged response-size limit; no unqualified body/full hash published."
     },
     {
       "case": "C18",
-      "status": "GAP",
-      "evidenceAndGap": "Complete source/registry snapshots retained but disk archives do not attest actually loaded executable/release closure."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Actual captured source/dependency/emitted build/bootstrap executed in one-shot worker. Deleting/editing a disposable copied dependency after capture cannot replace executed bytes; new capture observes change. Host/compiler/Node are explicit TCB."
     },
     {
       "case": "C19",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Actual primary fact and genuine composed fact references/freeze/clone behavior proven in capture tests; no completed publisher substitution matrix."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Held primary F and genuine composed seal/F remain in worker. Equal-but-different fact reference fails projection; immutable canonical execution context capture tests retained."
     },
     {
       "case": "C20",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Canonical citation coverage helper tested over legal slots; fixed integrated fact is simple requirement_effect."
+      "status": "INTEGRATED_NARROW_NAMESPACE",
+      "evidenceAndLimit": "Private producer emits only legacy requirement_effect/visa with applicabilitySchema null, effect and visaMode fields. Full field coverage is required. Conditional branches/atoms/otherwise/visa-option facts are not emitted by this pilot; shared canonical helper tests cover their traversal, not an integrated publication claim."
     },
     {
       "case": "C21",
-      "status": "PARTIAL",
-      "evidenceAndGap": "SQL structural alternate K refusal proved; full semantic K-crossbinding positive bundle remains unreachable."
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Different/missing/corrupt K and receipt/custody/root cross-bindings reject from actual passing envelopes in both TypeScript and independent SQL; fresh readback verifies complete joins."
     },
     {
       "case": "C22",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Malformed bytes/duplicate keys/accessors/symbols/cycles/null/version cases across helpers/proof; not all through completed pipeline."
+      "status": "INTEGRATED_AND_SHARED_BYTES",
+      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority."
     },
     {
       "case": "C23",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Byte/node boundary+1 and role edges; actual typed depth11 refusal; real SQL depth8 pass/9 refusal. Complete typed longest-shared-DAG boundary matrix remains."
+      "status": "INTEGRATED_AND_BOUNDARY_HELPER",
+      "evidenceAndLimit": "Actual typed graph depth11: v1 refuses/v2 accepts. Same private production traversal proves8/9/16/17 and longer shared DAG; closed typed role grammar cannot construct16/17. Node256/257, edge1024/1025, K4096/4097 and union exactly8MiB/+1 covered."
     },
     {
       "case": "C24",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Frozen registry/executable identity tests; no real current eligibility revocation source or hosted lifecycle."
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Actual captured immutable definitions survive postcapture changes; detected eligibility revocation aborts before fresh retrieval. No second current catalog read replaces captured originals."
     },
     {
       "case": "C25",
-      "status": "BLOCKED",
-      "evidenceAndGap": "Both canonical paths reach private projection then depth11>8; exactly-once full bundle publication and semantic PostgreSQL roundtrip NOT_VERIFIED."
+      "status": "INTEGRATED_POSTGRES_VERIFIED",
+      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; 35 real SQL adversarial/security groups; mandatory CI test cannot skip either positive path."
     },
     {
       "case": "C26",
-      "status": "EXISTING_TESTS",
-      "evidenceAndGap": "Canonical review-v3 golden/differential tests run in full suite; engine uses same safe construction/proof readers."
+      "status": "SHARED_GOLDEN_DIFFERENTIAL",
+      "evidenceAndLimit": "Existing canonical review-v3 golden/differential suite remains required in full CI; same construction/proof algorithms used. No renamed byte contracts."
     },
     {
       "case": "C27",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Existing C/H/custody vectors preserved; new reader/pin families tested. No positive fully verified integrated closure."
+      "status": "INTEGRATED_AND_SHARED_VECTORS",
+      "evidenceAndLimit": "Both full payload/K closures verify through unchanged C/H and exact existing Pin domains; v1 vectors retained. Profile exists only outside frozen bytes."
     },
     {
       "case": "C28",
-      "status": "PARTIAL",
-      "evidenceAndGap": "Real structural SQL denial/rollback/concurrent failure proven; no completed produced bundle -> persisted semantic receipt."
+      "status": "INTEGRATED_POSTGRES_VERIFIED",
+      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested."
     },
     {
       "case": "C29",
-      "status": "PASS_BOUNDARY",
-      "evidenceAndGap": "Dormant production root blocks custody_missing; production extractor/policy registries empty/provider null/app importers absent."
+      "status": "INTEGRATED_BOUNDARY",
+      "evidenceAndLimit": "Default production root remains custody_missing; shipped extractor/policy registries empty, requirements provider null and application import guards remain closed."
     }
   ]
 }

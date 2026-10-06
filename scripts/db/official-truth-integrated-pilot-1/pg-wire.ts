@@ -86,9 +86,11 @@ export class LocalPgConnection {
       if (tag === 'T') {
         names = []; let offset = 2
         for (let i = 0; i < bytes.readInt16BE(0); i++) { const end = bytes.indexOf(0, offset); names.push(bytes.subarray(offset, end).toString()); offset = end + 19 }
+        if(new Set(names).size!==names.length)throw new LocalPgError('duplicate_column')
       }
       if (tag === 'D') {
         if (rows.length >= 1300) throw new LocalPgError('row_bound')
+        if(bytes.readInt16BE(0)!==names.length)throw new LocalPgError('column_count')
         const row: Record<string, string | null> = {}; let offset = 2
         for (let i = 0; i < bytes.readInt16BE(0); i++) { const n = bytes.readInt32BE(offset); offset += 4; row[names[i]!] = n === -1 ? null : bytes.subarray(offset, offset + n).toString(); if (n !== -1) offset += n }
         rows.push(row)
@@ -101,11 +103,13 @@ export class LocalPgConnection {
     if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) throw new LocalPgError('parameter_bound')
     this.busy = true
     try {
-      if (!parameters.length) this.socket.write(packet('Q', z(sql)))
+      if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
       else {
         const parse = Buffer.concat([z(''), z(sql), i16(parameters.length), ...parameters.map(p => i32(p.oid))])
         const bind = Buffer.concat([z(''), z(''), i16(parameters.length), ...parameters.map(p => i16(p.binary ? 1 : 0)), i16(parameters.length), ...parameters.flatMap(p => [i32(p.bytes.length), Buffer.from(p.bytes)]), i16(0)])
-        this.socket.write(Buffer.concat([packet('P', parse), packet('B', bind), packet('D', Buffer.concat([Buffer.from('P'), z('')])), packet('E', Buffer.concat([z(''), i32(0)])), packet('S', Buffer.alloc(0))]))
+        const frame=Buffer.concat([packet('P', parse), packet('B', bind), packet('D', Buffer.concat([Buffer.from('P'), z('')])), packet('E', Buffer.concat([z(''), i32(0)])), packet('S', Buffer.alloc(0))])
+        if(frame.length>10_485_760)throw new LocalPgError('parameter_bound')
+        this.socket.write(frame)
       }
       return await this.result()
     } finally { this.busy = false }

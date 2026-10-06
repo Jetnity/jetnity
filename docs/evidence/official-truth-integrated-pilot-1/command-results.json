@@ -1,37 +1,18 @@
 {
-  "schemaVersion": 1,
-  "subjectRuntimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe",
+  "schemaVersion": 2,
+  "round": "R1",
+  "prePublicationBaseHead": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
   "authorEvidenceOnly": true,
   "checks": [
     {
-      "command": "npm ci --offline --cache /Users/sasa/.npm --no-audit --no-fund",
-      "status": "PASS",
-      "details": "530 packages; lifecycle scripts not suppressed in final run"
-    },
-    {
       "command": "npm test",
       "status": "FAIL_ENVIRONMENT",
-      "tests": 5578,
-      "passed": 5574,
+      "tests": 5626,
+      "passed": 5622,
       "failed": 4,
       "skipped": 0,
       "suites": 810,
-      "durationMs": 21946.370959,
-      "details": "All four failures require hardcoded /usr/lib/postgresql/16/bin/initdb (ENOENT on macOS); existing CI Linux authoritative."
-    },
-    {
-      "command": "new integrated-pilot tests (included in npm test)",
-      "status": "PASS",
-      "tests": 29,
-      "skipped": 0
-    },
-    {
-      "command": "new storage tests (included in npm test)",
-      "status": "PASS",
-      "tests": 2,
-      "skipped": 0,
-      "proofGroups": 16,
-      "postgresVersion": "17.6"
+      "details": "Four unchanged hardcoded Linux PG16 tests fail with initdb ENOENT on macOS; actual new semantic SQL test passes. Final Linux CI must pass without skips."
     },
     {
       "command": "npm run typecheck",
@@ -45,8 +26,7 @@
     },
     {
       "command": "npm run build",
-      "status": "PASS",
-      "details": "Sandbox first attempt blocked tsx IPC with EPERM; authorized unrestricted local retry passed."
+      "status": "PASS"
     },
     {
       "command": "npm run check:dead",
@@ -74,24 +54,18 @@
     },
     {
       "command": "npm run official-truth:pilot-1 -- --run-official-source",
-      "status": "PARTIAL",
-      "exitCode": 2,
-      "negativePaths": 20,
-      "publicationCount": 0,
-      "storageCallsFromProducer": 0,
-      "localPostgresStructuralProof": "PASS",
+      "status": "PASS",
+      "exitCode": 0,
+      "negativePaths": 50,
+      "semanticPostgresGroups": 35,
+      "structuralPostgresGroups": 16,
+      "confirmedProducerRoundtrips": 2,
       "realOfficialSourcePilot": "BLOCKED"
     },
     {
-      "command": "npm run auth:pruefen",
-      "status": "NOT_VERIFIED",
-      "exitCode": 1,
-      "details": "SUPABASE_PROJECT_REF absent; stopped before live read. Existing exact-head CI Auth used after push."
-    },
-    {
-      "command": "db:rechte / db:rls / db:sicherheit",
-      "status": "NOT_RUN",
-      "details": "Existing commands use hosted Supabase. Only owned disposable local SQL is authorized; local actual ACL/RLS proof is separate."
+      "command": "local db:rechte / db:rls / db:sicherheit and auth:pruefen",
+      "status": "NOT_RUN_IN_R1",
+      "details": "Hosted commands are outside local-only scope; existing exact-head CI Auth is required. Actual isolated local ACL/RLS are proven by the real SQL proof."
     }
   ],
   "localMissingPg16Tests": [
@@ -101,41 +75,61 @@
     "official-truth-store-server.test.ts"
   ],
   "intermediateLogs": {
-    "npm-ci-final.log": {
-      "sha256": "b58a97bb4ab370e36716fd265ba30b9e1597d4e25cbc5daf3742580b01f01750",
-      "bytes": 163,
+    "r1-build-final.log": {
+      "sha256": "0702d8f951c44ce685451e00f450122f02e731f32089aba1e26937be4e7804fb",
+      "bytes": 3834,
       "location": "author-local-intermediate-not-public"
     },
-    "npm-test-final.log": {
-      "sha256": "e6a8a2b3c3a44ad1397729ed8fb9494c0ae399f21eb5dd97e66570b403c9b95d",
-      "bytes": 1346325,
+    "r1-final-check-api-schutz.log": {
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "bytes": 136,
       "location": "author-local-intermediate-not-public"
     },
-    "typecheck-final.log": {
-      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
-      "bytes": 135,
+    "r1-final-check-dead.log": {
+      "sha256": "b78d957403dee46882900cc245c5c8ef64faac8ee0b71c5ed353ad531b5c3e04",
+      "bytes": 172,
       "location": "author-local-intermediate-not-public"
     },
-    "lint-final.log": {
+    "r1-final-check-deps.log": {
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "bytes": 340,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r1-final-check-exports.log": {
+      "sha256": "bd05d7ee004b8880f3550ad3e0a87bc1c8bf90af5c4a6cd96b8c54f9ce2f6253",
+      "bytes": 150,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r1-final-check-operating-mode.log": {
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "bytes": 106,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r1-final-check-schema-bezug.log": {
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "bytes": 1028,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r1-lint-final.log": {
       "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
       "bytes": 61204,
       "location": "author-local-intermediate-not-public"
     },
-    "build-final.log": {
-      "sha256": "8a13be4d02fd2b3fe74807516266bb841ac754f8807f84387318f5857a589e0b",
-      "bytes": 3833,
+    "r1-npm-test-final.log": {
+      "sha256": "a902fd1f4105e4e0150a59d208416a1ae7fd23616078f36fb8ff8964a5f3a8da",
+      "bytes": 1361929,
       "location": "author-local-intermediate-not-public"
     },
-    "pilot-final.log": {
-      "sha256": "44a2834e5b41be055ac2637bf91517ab5fa6e418693aeb80be3226de114916ae",
-      "bytes": 979,
+    "r1-pilot-final.log": {
+      "sha256": "1d1dab2ef6f0d3afd6ebdec3f9f3cb3cac9e3a509eab11cfb602cbfa7bbd2c64",
+      "bytes": 1155,
       "location": "author-local-intermediate-not-public"
     },
-    "auth-local.log": {
-      "sha256": "fe28b0f60c7936e66fc458734deff172cf09b0d184650f03a1e9ca9834526da8",
-      "bytes": 102,
+    "r1-typecheck-final.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
       "location": "author-local-intermediate-not-public"
     }
   },
-  "finalExactHeadRemoteGates": "See final PR #900 delivery comment; pre-push local checks do not assert remote CI success."
+  "finalExactHeadRemoteGates": "Required after publication; final PR delivery receipt records fresh exact-head CI/Auth/Preview, remote tree and immutable TASK."
 }

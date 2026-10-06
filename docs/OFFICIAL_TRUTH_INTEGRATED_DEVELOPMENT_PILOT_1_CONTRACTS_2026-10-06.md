@@ -1,6 +1,6 @@
 # Integrated pilot internal contracts
 
-This implementation is PARTIAL and dormant. These are review candidates, not an issuer registration or TL approval. The immutable TASK is unchanged.
+R1 implements a controlled local engineering pilot. These contracts confer no production issuer authority or independent TL approval. The immutable TASK remains unchanged; TL amendment 6027081169 governs the explicit local successor profile.
 
 ## Preserved historical identities
 
@@ -29,9 +29,9 @@ The Zod schemas and independently derived edges in `lib/readiness/official-truth
 | accepted_origin | observation, validityOrigin, cell, globalAdmission, evidenceIdentity, evidenceScope, acceptanceContract |
 | eligible_version_snapshot | entries [{versionId,custody,eligible}] |
 
-Implementation bundle decoded bytes are C({schema:implementation-source-bundle-v1,files:[{path,utf8}]}), sorted by safe relative path. Actual fixed-run source files and local semantic dependencies are archived; no function stringification or guessed Git pin. This is a DISK SOURCE ARCHIVE, not loaded-executable attestation: import-to-read races, runtime/transpiler attestation and omitted external auth/network package code are not solved. No production release-custody claim follows.
+Implementation bundle decoded bytes are C({schema:implementation-source-bundle-v1,files:[{path,utf8}]}), sorted by safe relative path. The captured application/dependency inputs, build metadata, exact emitted CommonJS bytes and worker bootstrap are retained and actually executed as described below. No function stringification or guessed Git pin is used. Host loader, compiler, Node and finite builtins remain the explicit trusted computing base; no production or hardware attestation follows.
 
-Validity basis is exactly {kind:no_bound_asserted} for null, or {kind:qualified_locator,locator:{kind:json_pointer,pointer},value} for a bounded value. The fixed synthetic corpus only exercises null/unasserted bounds. Non-null basis/value equality is parsed; semantic source derivation for all possible locators is not a completed issuer.
+Validity basis is exactly {kind:no_bound_asserted} for null, or {kind:qualified_locator,locator:{kind:json_pointer,pointer},value} for a bounded value. The primary positive derives validFrom=2026-10-01 from its strictly qualified response locator; the composed positive exercises null/unasserted. A qualified expired-response variant derives validUntil and is refused by freshness checks. Arbitrary external locator grammars are outside this fixed corpus.
 
 ## Execution and membership
 
@@ -41,27 +41,33 @@ The pure `proveOfficialTruthCustodiedMaterial` seam accepts exactly authority, r
 
 The original source path executes canonical controlled retrieval, redirect/URL/DNS checks, strict whole-body synthetic profile, hash, canonical Evidence candidate/acceptance and only then original custody membership. Fresh extraction invokes the real primary/composition code. Private projections are staged and verified before any publication. Failure diagnostics contain finite stage names, counters, reasons and graph-bound measurements, never receipt/fact/body/origin bytes.
 
-## Graph constraints and blocking contradiction
+## Closed local graph profiles
 
-Limits: receipt 262144 B; K 4096 B; each artifact 1048576 B; union total 8388608 B including K; 256 nodes including K; 1024 role edges; longest depth 8 including K at depth 1. Strict canonical structural depth remains the existing C contract. Full pin/type uniqueness, closure, collisions and all role edges are checked, without truncation or repair.
+Legacy v1 retains longest path8. The explicit `ot-integrated-pilot-local-closure-v2` envelope permits16 under the same counting: K is depth1; receipt, binding and artifact role edges are retained. Both actual required closures have longest path11. Calling the legacy verifier on exactly those bytes still refuses11>8. There is no automatic fallback, arbitrary budget or old-row relabelling. Unknown or mismatched profile/storage version fails closed. Profile metadata stays outside frozen Receipt/C/H/Pin/K bytes.
 
-The actual required path is K(1) -> AutonomousReviewConstruction(2) -> SelectedSupportManifest(3) -> eligible_version_snapshot(4) -> AcceptedEvidenceCustody(5) -> accepted_origin(6) -> validity_origin(7) -> original_observation(8) -> GlobalRepresentationQualification(9) -> identity_profile(10) -> implementation_bundle(11). Removing eligibility still exceeds 8. Both modes deterministically return closure_bound_exceeded, observed=11, maximum=8. No edge is dropped and no accepted bound is increased. This prevents complete C25 publication and integrated DB roundtrip. Contract reconciliation is required from independent TL review before further implementation.
+Unchanged bounds: receipt262144 bytes; typed roots11; union256 nodes including K; 1024 role edges; artifact1048576 bytes; K4096 bytes; union8388608 bytes excluding receipt and including K; canonical JSON depth32; encoded transport10485760 bytes; all stricter type bounds. Exact pins, types, collisions, declared and independently derived role edges, complete reachability and longest shared paths are mandatory.
 
-Historical verifier failures are receipt_corrupt, binding_corrupt, dependency_missing, dependency_corrupt, unsupported_version, closure_bound_exceeded or semantic_mismatch. Even a historical verifier success cannot mint a live handle, HTTP authority, accepted Evidence/Rule or F8.
+Historical verifier failures remain receipt_corrupt, binding_corrupt, dependency_missing, dependency_corrupt, unsupported_version, closure_bound_exceeded or semantic_mismatch. Historical success grants no live handle, accepted Evidence/Rule, HTTP authority or F8 access.
 
-## Local SQL scope
+## Local SQL and complete reader
 
-SQL lives only under `scripts/db/official-truth-integrated-pilot-1/`; no migration is added. Runner owns a new private Unix-socket cluster, listens on no TCP address, rejects inherited connection/PG/Supabase targets and removes only its own resources. Five script files implement cluster lifecycle, bounded binary PostgreSQL transport, schema/adapter and proof.
+All SQL lives under `scripts/db/official-truth-integrated-pilot-1/`; no migration is added. The runner owns a disposable private Unix-socket cluster with no TCP listener, rejects inherited connection targets and removes only its own resources. The v2 semantic schema is installed after the separately retained structural fixture schema.
 
-Eight FORCE RLS tables, separate writer/reader/NOLOGIN definer roles, fixed search paths/ACL, canonical bytes/pins, immutable collision checks, exact retries, no-repair readback and advisory-lock serialized publication are executable STRUCTURAL fixtures. Public local function names explicitly say structural_fixture. This is not complete #866 semantic SQL verification or its 23-column production reader envelope. `persistVerifiedIntegratedBundleLocally` checks the shared full verifier before SQL; full pipeline inputs cannot currently pass. Transaction/security checks cannot be substituted for missing semantic conformance.
+SQL independently decodes canonical bytes, validates each closed typed object and derives its role edges. It checks all original/validity/accepted custody joins, full registries and selected definition eligibility, receipt/candidate/proof/K identities, exact scopes and validity/freshness semantics. SQL does not trust a TypeScript success flag or submitted edge list. Canonical date-only boundaries are UTC independently of the caller timezone.
+
+Publication owns a byte copy before the first asynchronous boundary and rechecks the complete bundle. One atomic transaction serializes conflicting writers, validates retained shared closure before inserting anything, and enforces permanent name/type metadata, immutable byte identities and independent deferred completeness constraints. Existing missing/corrupt blobs, names or links cannot be repaired by either an identical retry or a different receipt sharing the damaged closure. Exact repeat and verify-existing leave all eight table counts unchanged. An uncertain COMMIT remains commit_outcome_unknown until verify-existing resolves it from retained data.
+
+Success requires acknowledged COMMIT followed by a new REPEATABLE READ, READ ONLY transaction, complete closed #866 23-column response validation, full semantic revalidation and equality with the owned producer bytes. Every row has the requested record fingerprint and exact storage version. Row kind/order, null discipline, canonical integer/byte encoding, exact dependency/root sets and terminal status are checked. Missing, surplus or contradictory rows fail closed. Reader success grants historical audit data only.
+
+Eight FORCE RLS tables, separate finite writer/reader and non-login execution roles, fixed empty search paths, revoked PUBLIC function privileges and no caller table DML are preserved. Local installation ownership is test infrastructure, not an application role. The separate old16-group structural proof does not substitute for the new actual full-domain roundtrip.
 
 ## Consumers and opt-in commands
 
 New pure lib consumers and fixed script imports are exact finite entries in matching guards; app/components/lib remain scanned. Unknown/dynamic/default/namespace additions fail. Shipped producer remains custody_missing, extractors/policies empty, requirementsProviderAus() null. No application imports the isolated scripts.
 
-`npm run official-truth:pilot-1` runs both deterministic paths, 20 negative variants and real local SQL structural proof. `npm run official-truth:pilot-1 -- --run-official-source` additionally runs only the fixed GOV.UK source attempt. Report JSON is checked by a closed schema, then written with a readable text report to the task evidence directory. Exit 2 is expected PARTIAL; exit 1 is unexpected conformance failure. Missing PostgreSQL makes the proof NOT_VERIFIED; the CI-discovered SQL test fails rather than skips. Live research time is distinct from fixed synthetic clocks.
+`npm run official-truth:pilot-1` runs both captured canonical positive paths, actual full semantic SQL publication/readback, all declared negative variants, and the separately labelled historical structural proof. `npm run official-truth:pilot-1 -- --run-official-source` additionally runs only the fixed GOV.UK source attempt. Report JSON is checked by a closed schema, then written with a readable text report to the task evidence directory. Exit0 requires complete engineering success; exit1 reports missing or failed mandatory proof and overwrites any stale success report. Missing PostgreSQL fails the CI-discovered mandatory positive test; no skip or emulator is allowed. Live research time is distinct from fixed synthetic clocks.
 
-## R1 local successor decision — implementation in progress
+## R1 local successor decision
 The explicit TL amendment 6027081169 authorizes `ot-integrated-pilot-local-closure-v2` in a closed local transport/storage/reader envelope. Its longest path maximum is16 under unchanged K/root/role counting; v1 remains8. Unknown or mismatched profiles fail closed without retry. This does not version or modify Receipt, applicability, C/H, Pin or K bytes. The required full path is11, motivating the finite successor budget.
 
 Unchanged limits: B262144; typed roots11; union256 nodes including K; all role edges1024; artifact1048576; K4096; union8388608 excluding B including K; nesting32; encoded transport10485760; stricter domain limits. The same static dispatch is required at local admission, SQL and reader. Historical rows cannot be relabelled. Mandatory tests: v1 8/9 and full11 refusal; v2 16/17; longest shared DAG; profile confusion; all other bounds.

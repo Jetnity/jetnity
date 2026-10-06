@@ -276,9 +276,9 @@ test('R1 validity origins retain derived non-null values and reject invented, sw
 /** Rehash the complete historical closure after a content mutation. This proves
  * semantic refusal independently of byte/checksum/depth failures. It cannot
  * create runtime custody membership or a trusted fact. */
-function rehashMutation(envelope: LocalIntegratedPilotEnvelope, type: IntegratedPilotArtifactInput['artifactType'], mutate: (value: Record<string, unknown>) => void): LocalIntegratedPilotEnvelope {
+function rehashMutation(envelope: LocalIntegratedPilotEnvelope, type: IntegratedPilotArtifactInput['artifactType'], mutate: (value: Record<string, unknown>) => void, selectedId?: string): LocalIntegratedPilotEnvelope {
   const all = envelope.bundle.artifacts
-  const selected = all.find(a => a.artifactType === type)!
+  const selected = all.find(a => a.artifactType === type && (selectedId === undefined || a.pin.id === selectedId))!
   assert.ok(selected)
   const key = (pin: Pin) => `${pin.id}\0${pin.version}\0${pin.digest}`
   const indexed = new Map(all.map(a => [key(a.pin), a])), rebuilt = new Map<string, IntegratedPilotArtifactInput>()
@@ -399,4 +399,86 @@ test('R1 local closure accepts exactly 8 MiB including K and refuses one additio
   assert.ok(input.bindingByteLength > 0 && input.bindingByteLength <= 4096)
   assert.equal(good(localGraph(input)).graph.bytes, 8_388_608)
   assert.deepEqual(localGraph({ ...input, bindingByteLength: input.bindingByteLength + 1 }), { ok: false, reason: 'closure_bound_exceeded' })
+})
+
+
+/** Recompute the real selection/result preimages after repinning a definition.
+ * This deliberately removes the stale-checksum failure that could hide a
+ * missing metadata eligibility check in the historical semantic reader. */
+function extractorDescriptorMutation(envelope: LocalIntegratedPilotEnvelope, mutate: (descriptor: Record<string, unknown>) => void) {
+  const original = good(readIntegratedPilotReceipt({ payload: JSON.parse(Buffer.from(envelope.bundle.receiptBytes).toString('utf8')),
+    recordFingerprint: envelope.bundle.recordFingerprint })).payload
+  const repinned = rehashMutation(envelope, 'extractor_definition', value => {
+    mutate((value.content as { descriptor: Record<string, unknown> }).descriptor)
+  }, original.extractor.definition.id)
+  return receiptMutation(repinned, raw => {
+    const p = raw as unknown as typeof original
+    const binding = (v: unknown) => v as { sourceId: string; contentItemId: string }
+    const contentItemRefs = p.supports.map(s => ({ sourceId: binding(s.binding).sourceId, contentItemId: binding(s.binding).contentItemId }))
+      .sort((a, b) => JSON.stringify([a.sourceId, a.contentItemId]) < JSON.stringify([b.sourceId, b.contentItemId]) ? -1 : 1)
+    const common = { factKind: p.candidate.factKind, requirementType: p.candidate.requirementType, contentItemRefs,
+      representations: p.supports.map(s => s.binding).sort((a, b) => provenanceCanonical(a)! < provenanceCanonical(b)! ? -1 : 1),
+      canonicalFinalUrls: p.supports.map(s => s.canonicalFinalUrl) }
+    const selectionKey = p.policy === null ? provenanceHash('ot-extractor-selection-v1', { path: 'explicit_post_retrieval',
+      selectorContract: p.proof.contract, registrySnapshot: p.extractor.registrySnapshot, ...common,
+      evidenceQuality: p.evidenceQuality, observedContentTypes: [...new Set(p.supports.map(s => s.contentType))].sort(), policy: null })!
+      : provenanceHash('ot-composition-selection-v1', { path: 'composed_pre_http', selectorContract: p.proof.contract,
+        extractorRegistrySnapshot: p.extractor.registrySnapshot, policyRegistrySnapshot: p.policy.registrySnapshot, ...common,
+        sourceFamilyId: p.extractor.sourceFamilyId, schemaFamily: p.extractor.schemaFamily })!
+    ;(raw.extractor as Record<string, unknown>).selectionKey = selectionKey
+    if (p.policy) {
+      const policy = raw.policy as Record<string, unknown>
+      policy.preHttpSelectionKey = selectionKey
+      policy.resultIdentity = provenanceHash('ot-composition-result-v1', { candidateBinding: p.candidate.candidateBinding,
+        factHash: p.candidate.factHash, extractorDefinition: p.extractor.definition, extractorRegistrySnapshot: p.extractor.registrySnapshot,
+        outputContract: p.extractor.outputContract, policyDefinition: p.policy.definition, policyRegistrySnapshot: p.policy.registrySnapshot,
+        preHttpSelectionKey: selectionKey, assignments: p.policy.assignments, supportVersionIds: p.supports.map(s => s.versionId), citations: p.citations })!
+    }
+  })
+}
+
+test('P1 selected extractor metadata must permit every actual support even after complete correct repinning', async () => {
+  for (const mode of ['primary', 'composed'] as const) {
+    const run = await runControlledSyntheticPilot(mode)
+    assert.ok(run.status === 'synthetic_bundle_verified')
+    const baseline = good(verifyLocalIntegratedPilotBundle(run.envelope))
+    const selected = baseline.receipt.payload.extractor.definition.id
+    for (const [name, mutate] of [
+      ['wrong MIME', (d: Record<string, unknown>) => { d.contentTypes = ['text/html'] }],
+      ['wrong exact URL', (d: Record<string, unknown>) => { d.urlAllowlist = [{ kind: 'exact', canonicalUrl: 'https://regulations.example/other' }] }],
+      ['wrong exact host/path', (d: Record<string, unknown>) => { d.urlAllowlist = [{ kind: 'path', host: 'other.example', path: '/rules/primary_rule' }] }],
+      ['path is not a prefix', (d: Record<string, unknown>) => { d.urlAllowlist = [{ kind: 'path', host: 'regulations.example', path: '/rules' }] }],
+      ['different representation', (d: Record<string, unknown>) => {
+        d.representations = (d.representations as Record<string, unknown>[]).map(r => ({ ...r, representationId: 'json-alternate' }))
+      }],
+      ['different representation version', (d: Record<string, unknown>) => {
+        d.representations = (d.representations as Record<string, unknown>[]).map(r => ({ ...r, representationVersion: 2 }))
+      }],
+      ['different profile', (d: Record<string, unknown>) => {
+        d.representations = (d.representations as Record<string, unknown>[]).map(r => ({ ...r, identityProfileId: 'other-profile' }))
+      }],
+      ['different source/item tuple', (d: Record<string, unknown>) => {
+        d.contentItemRefs = (d.contentItemRefs as Record<string, unknown>[]).map(r => ({ ...r, sourceId: 'other-authority' }))
+        d.representations = (d.representations as Record<string, unknown>[]).map(r => ({ ...r, sourceId: 'other-authority' }))
+      }],
+    ] as const) {
+      const changed = extractorDescriptorMutation(run.envelope, mutate)
+      // Both raw bytes and the complete typed closure remain valid. The
+      // selected definition is exactly the edited (not unrelated) registry row.
+      const target = changed.bundle.artifacts.find(a => a.pin.id === selected)!
+      assert.equal(readIntegratedPilotArtifact(target).ok, true, name)
+      const rejected = verifyLocalIntegratedPilotBundle(changed)
+      assert.equal(rejected.ok, false, `${mode}: ${name}`)
+      if (rejected.ok) throw Error('metadata_eligibility_missing')
+      assert.equal(rejected.reason, 'semantic_mismatch', `${mode}: ${name}`)
+    }
+    // Valid allowlist supersets and exact path rules must retain their canonical
+    // semantics; the historical reader cannot demand byte-identical descriptors.
+    for (const mutate of [
+      (d: Record<string, unknown>) => { d.contentTypes = ['application/json', 'text/html'] },
+      (d: Record<string, unknown>) => { d.urlAllowlist = baseline.receipt.payload.supports.map(s => {
+        const url = new URL(s.canonicalFinalUrl); return { kind: 'path', host: url.hostname, path: url.pathname }
+      }) },
+    ]) assert.equal(verifyLocalIntegratedPilotBundle(extractorDescriptorMutation(run.envelope, mutate)).ok, true)
+  }
 })

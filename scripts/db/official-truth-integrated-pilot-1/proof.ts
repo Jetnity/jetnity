@@ -43,7 +43,7 @@ export async function runLocalStorageProof() {
     await installLocalProofSchema(owner)
     const oids = await localArtifactTypeOids(owner), first = structuralStorageFixture('synthetic-first')
     assert.equal(verifyIntegratedPilotBundle(first).ok, false)
-    assert.equal((await persistVerifiedIntegratedBundleLocally(cluster, oids, first)).ok, false)
+    assert.equal((await persistVerifiedIntegratedBundleLocally(cluster, oids, { profile: 'ot-integrated-pilot-local-closure-v2', bundle: first })).ok, false)
     mark('incomplete_domain_bundle_refused_by_shared_verifier_before_write')
     const empty = await owner.query('SELECT count(*)::text AS n FROM official_provenance_private.receipts'); assert.equal(empty[0]?.n, '0')
     // Independent SQL C parity, including UTF-16 ordering beyond the BMP.

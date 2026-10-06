@@ -1,15 +1,15 @@
-# Integrated pilot 1 — handoff
+# Integrated pilot1 — R1 handoff
 
-Classification: OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL. Real official source: BLOCKED. PR #900 stays Draft; no Ready or merge.
+Local engineering: VERIFIED. Real official source: BLOCKED. Final exact-head CI/Auth/Preview remain a required publication gate; the final delivery receipt records their actual outcome. PR#900 stays Draft. No Ready/merge/follow-up.
 
-Read the final REPORT, CONTRACTS, STATUS.json, developer-report.json and coverage-matrix.json in this task. The exact source/runner/tree is on the authorized branch; final exact-head gate evidence is attached to PR #900 after push. Immutable TASK remains ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad. Baseline/merge-base ecc0ecf3b9c024b295034b6985fa26ca40bc82f1; #898 reused; #897 untouched.
+Read the consolidated REPORT, CONTRACTS, STATUS, developer-report and C01–C29 matrix. Both genuine canonical modes now transfer complete verified v2 envelopes to real local PostgreSQL and pass acknowledged commit plus fresh complete semantic readback. Legacy v1 still refuses the identical depth11 graph. Independent SQL codecs/edges, full23-column reader, no-heal, races, rollback and new-receipt uncertain-commit resolution are proven in 35 groups. Separate historical16-group structural evidence remains explicitly separate.
 
-The two genuine canonical synthetic paths reach private receipt and separate K projection. Complete verification refuses required depth11>8 with no publication/storage call. Real PostgreSQL proves only structural bytes/transactions/RLS/ACL/concurrency and cleans owned resources. It does not complete semantic receipt persistence. Source code archives bind disk bytes, not loaded release attestation. One GOV.UK family was tried: real National List identity retrieval succeeds but passport-source/profile/privacy/extraction prerequisites remain absent.
+Captured build inputs and emitted/bootstrap bytes actually execute; held primary executable/fact and genuine composition seal/fact stay inside the one-shot realm. The host loader/compiler/Node remain trusted. Genuine non-null primary validity and null composed bounds are covered. 50 controlled negative paths fail at intended boundaries.
 
-Reproduce with npm run official-truth:pilot-1 (expected exit 2); opt-in fixed live attempt adds -- --run-official-source. Local Node22/PostgreSQL prerequisites and exact check results are in REPORT. No arbitrary URL, database target or production flag is exposed.
+Reproduce: `npm run official-truth:pilot-1`; add `-- --run-official-source` for the fixed opt-in real attempt. Expected engineering exit0; failure exit1. PostgreSQL is mandatory and task-owned. Source guide exceeds the existing whole-body bound; real origins/extraction/receipt remain unissued. No National List substitution or invented source evidence.
 
-Independent TL action: review the depth contradiction and the consolidated remaining implementation/activation packet. Do not increase the bound or remove accepted edges merely to green the test. No caller historical DTO or SQL structural fixture may become live authority. No follow-up work was started. The source-level producer/root remains dormant, production registries empty and requirements provider null.
+Immutable TASK ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad; original merge-base ecc0ecf3b9c024b295034b6985fa26ca40bc82f1. Final delivery records current main/head/ahead/behind and complete changed files. #897/Trip unchanged by this writer. Author session01a11333-cbc2-7282-b194-27335e632c61, gpt-6-astra/xhigh. Internal agent evidence is not TL approval.
 
-Author session: 01a11333-cbc2-7282-b194-27335e632c61; gpt-6-astra; xhigh (actual session metadata). Internal reviewer feedback is author evidence only.
+Independent TL should review the consolidated exact head, especially the closed local profile, independent SQL/reader semantics and stated coverage/TCB limits. Hosted adoption, live issuer/registries, auth/capabilities, F8/provider/visitor activation and retention remain unselected outside this task.
 
-STOP FOR INDEPENDENT CHATGPT / TECHNICAL-LEAD EXACT-HEAD REVIEW.
+STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW.
