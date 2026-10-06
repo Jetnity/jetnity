@@ -560,7 +560,7 @@ try {
       await lauf.page.waitForFunction(() => document.querySelector('[data-plan-tag-zaehler]')?.textContent?.includes('Tag 16 von 32'))
       messung = await stand(lauf.page)
       await bild(lauf.page, `${prefix}_tag16`, true)
-      merke(messung.titel.join('|') === 'Tsukiji Outer Market|Freier Nachmittag|Flug nach Osaka', `${prefix}: Reihenfolge ${messung.titel.join('|')}`)
+      merke(messung.titel.join('|') === 'Tsukiji Outer Market|Flug nach Osaka|Freier Nachmittag', `${prefix}: Reihenfolge ${messung.titel.join('|')}`)
       merke(messung.zeiten.join('|') === '09:00|18:40', `${prefix}: Zeiten ${messung.zeiten.join('|')}`)
       merke(!messung.titel.includes('00:00'), `${prefix}: erfundene Zeit`)
       merke(messung.preis, `${prefix}: Preiswahrheit fehlt`)
