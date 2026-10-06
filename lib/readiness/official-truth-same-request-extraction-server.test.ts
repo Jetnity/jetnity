@@ -1,4 +1,4 @@
-import { r2Registry, r2Binding, r2Profiles, r2CatalogRows } from './official-truth-content-identity-r2.test'
+import { r2Registry, r2Binding, r2Profiles, r2CatalogRows, type R2FixturePublication } from './official-truth-content-identity-r2.test'
 // lib/readiness/official-truth-same-request-extraction-server.test.ts
 //
 // Gleiche-Request-Bindung von Beweis, Wiedergabe und Extraktor.
@@ -12,6 +12,7 @@ import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { contentIdentityBinding } from './official-truth-content-identity'
 import { OFFICIAL_CHECKED_AT_MAX_AGE_MS } from '@/lib/readiness/official'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import { regelScopeAusEvidenceScope, type RegelFaktArt, type RegelScope } from '@/lib/readiness/rule-claims'
@@ -52,7 +53,7 @@ import {
   type OfficialTruthExtractorDefinition,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import { quellenRegistryErstellen, type QuellenEingabe, type QuellenRegistry, type RegistrierteQuelle } from '@/lib/readiness/source-registry'
-import { type QuellenAbdeckung, type QuellenDeskriptor } from '@/lib/readiness/source-router'
+import { quellenInhaltRouten, type QuellenAbdeckung, type QuellenDeskriptor } from '@/lib/readiness/source-router'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
@@ -97,6 +98,7 @@ const PROVENIENZ_SCHLUESSEL = [
   'contentItemId', 'contentItemVersion', 'identityProfileId', 'identityProfileVersion', 'identitySchema', 'representationId', 'representationVersion',
   'canonicalUrl',
   'contentType',
+  'requestUrl',
   'retrievedAt',
   'sourceContentHash',
   'sourceId',
@@ -233,7 +235,7 @@ function katalogZeile(eingabe: QuellenEingabe): Aufruf {
   }
 }
 
-function transportFuer(eingaben: readonly QuellenEingabe[]): {
+function transportFuer(eingaben: readonly QuellenEingabe[], publications: readonly R2FixturePublication[] = R2_PUBLICATIONS): {
   transport: OfficialTruthSourceCatalogTransport
   aufrufe: Aufruf[]
 } {
@@ -246,7 +248,7 @@ function transportFuer(eingaben: readonly QuellenEingabe[]): {
         if (payload.operation !== 'read_registry') return { ok: false }
         return {
           ok: true,
-          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
+          antwort: { ...r2CatalogRows(eingaben.map(katalogZeile), publications), ok: true, operation: 'read_registry' },
         }
       },
     },
@@ -483,7 +485,7 @@ function grund(ergebnis: OfficialTruthSameRequestExtractionErgebnis): string {
 }
 
 function erfolg(ergebnis: OfficialTruthSameRequestExtractionErgebnis) {
-  assert.equal(ergebnis.status, 'same_request_trusted_fact_material')
+  assert.equal(ergebnis.status, 'same_request_trusted_fact_material', JSON.stringify(ergebnis))
   if (ergebnis.status !== 'same_request_trusted_fact_material') throw new Error('erfolg')
   return ergebnis
 }
@@ -514,6 +516,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
 
   test('2 Aufrufer-Beweis, Registry, Evidence, Abruf, Fakt, Extraktor und Politik scheitern an den Beweisgrenzen', async () => {
     const felder: Record<string, unknown> = {
+      requestUrl: 'https://caller.example/forged',
       registry: { sources: [], blockedDomains: [] },
       evidence: { versionId: 'ev2_' + 'a'.repeat(32) },
       evidenceVersions: [],
@@ -730,6 +733,8 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     assert.equal(wert.retrievals[0]?.sourceContentHash, evidenceQuellenFingerprint(SNAPSHOT))
     assert.equal(wert.retrievals[0]?.sourceContentHash, wert.evidenceVersions[0]?.sourceContentHash)
     assert.equal(wert.retrievals[0]?.canonicalUrl, REAL_URL)
+    assert.equal(wert.retrievals[0]?.requestUrl, REAL_URL)
+    assert.equal(wert.retrievals[0]?.requestUrl, spur.http[0])
     assert.equal(wert.retrievals[0]?.sourceId, REAL)
     assert.equal(wert.retrievals[0]?.retrievedAt, ABRUF_ZEIT)
     assert.equal(wert.retrievals[0]?.contentType, 'text/plain')
@@ -748,6 +753,7 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
     const eingang = spur.extrakt[0] as { supports: { retrieval: { sourceSnapshot?: string; status?: string } }[] }
     assert.equal(eingang.supports[0]?.retrieval.sourceSnapshot, SNAPSHOT)
     assert.equal(eingang.supports[0]?.retrieval.status, 'server_owned_official_retrieval')
+    assert.equal(Object.hasOwn(eingang.supports[0]!.retrieval, 'requestUrl'), false)
 
     const vorher = JSON.stringify(wert)
     const material = (huelle.supports[0] as { umschlag: { material: { sourceSnapshot: string } } }).umschlag.material
@@ -782,6 +788,165 @@ describe('Official Truth same-request retrieval-to-extractor binding', () => {
       (vorwaerts.spur.abrufe[0] as { url: string }).url,
       (vorwaerts.spur.abrufe[1] as { url: string }).url,
     )
+  })
+
+  test('Final-only Support bewahrt die tatsächlich gewählte Initial-URL mit Query', async () => {
+    const start = `${REAL_URL}/start?lang=en&part=a%2fb&part=b+two&empty=&literal=%7e`
+    const publications = R2_PUBLICATIONS.map((entry) => entry.url === REAL_URL
+      ? { ...entry, requestUrls: [start, `${REAL_URL}/unused`] } : entry)
+    const sources = quellenRegistryErstellen(realeEingaben())
+    assert.ok(sources.ok)
+    const registered = r2Registry(sources.registry, publications)
+    assert.equal(quellenInhaltRouten(registered, REAL, REAL_URL).ok, false)
+    assert.equal(quellenInhaltRouten(registered, REAL, start).ok, true)
+    const normal = erfolg((await binden(eingabe(), { definitionen: [definition()] })).ergebnis)
+    const { ergebnis, spur } = await binden(eingabe(), {
+      extern: transportFuer(realeEingaben(), publications),
+      definitionen: [definition()],
+      antwort: (url) => url === start ? { status: 302, location: `${REAL_URL}#excluded-fragment` } : standardAntwort(url),
+    })
+    const result = erfolg(ergebnis)
+    assert.deepEqual(spur.abrufe, [{ sourceId: REAL, url: start }])
+    assert.deepEqual(spur.http, [start, REAL_URL])
+    assert.equal(result.retrievals[0]?.requestUrl, spur.http[0])
+    assert.equal(result.retrievals[0]?.canonicalUrl, REAL_URL)
+    assert.deepEqual(contentIdentityBinding(result.retrievals[0]!), r2Binding(registered, REAL_URL))
+    assert.deepEqual(result.evidenceVersions, normal.evidenceVersions)
+    assert.deepEqual(result.supportVersionIds, normal.supportVersionIds)
+    assert.equal(result.reviewPacketKey, normal.reviewPacketKey)
+    assert.deepEqual(result.trustedRuleFact, normal.trustedRuleFact)
+    assert.deepEqual(Object.keys(result.retrievals[0]!).sort(), [...PROVENIENZ_SCHLUESSEL].sort())
+    const serialized = JSON.stringify(result)
+    for (const forbidden of ['sourceSnapshot', 'body', 'headers', 'cookies', 'dns', 'ip', 'redirects', 'redirectCount', 'secrets']) {
+      assert.equal(Object.hasOwn(result.retrievals[0]!, forbidden), false, forbidden)
+    }
+    assert.equal(serialized.includes(SNAPSHOT), false)
+    assert.equal(serialized.includes('excluded-fragment'), false)
+    const checkFrozen = (value: unknown): void => {
+      if (!value || typeof value !== 'object') return
+      assert.ok(Object.isFrozen(value))
+      for (const child of Object.values(value)) checkFrozen(child)
+    }
+    checkFrozen(result)
+    assert.throws(() => { (result.retrievals[0] as { requestUrl: string }).requestUrl = REAL_URL }, TypeError)
+  })
+
+  test('kanonische Support-URL hat Vorrang vor requestUrls[0], ohne spätere Rekonstruktion', async () => {
+    const unused = `${REAL_URL}/first-but-unused`
+    const publications = R2_PUBLICATIONS.map((entry) => entry.url === REAL_URL
+      ? { ...entry, requestUrls: [unused, REAL_URL] } : entry)
+    const { ergebnis, spur } = await binden(eingabe(), {
+      extern: transportFuer(realeEingaben(), publications), definitionen: [definition()],
+    })
+    const result = erfolg(ergebnis)
+    assert.deepEqual(spur.http, [REAL_URL])
+    assert.equal(result.retrievals[0]?.requestUrl, REAL_URL)
+    assert.notEqual(result.retrievals[0]?.requestUrl, unused)
+  })
+
+  test('fehlende oder abweichende requestUrl im Retrieval scheitert vor Extraktion', async () => {
+    for (const requestUrl of [undefined, null, 42, '', `${REAL_URL}#fragment`, `${REAL_URL}?utm_source=forged`, `${REAL_URL}/other`]) {
+      const { ergebnis, spur } = await binden(eingabe(), {
+        retrieve: async (anfrage, transport) => {
+          const actual = await echtAbrufen(anfrage, transport, { abrufe: [], transporte: [], katalogOperationen: [], extrakt: [], http: [] }, standardAntwort)
+          assert.equal(actual.status, 'server_owned_official_retrieval')
+          return { ...actual, requestUrl } as Awaited<ReturnType<typeof echtAbrufen>>
+        },
+      })
+      assert.equal(grund(ergebnis), typeof requestUrl === 'string' ? 'support_binding_mismatch' : 'invalid_source_snapshot')
+      assert.equal(spur.extrakt.length, 0)
+      assert.equal(JSON.stringify(ergebnis).includes('forged'), false)
+    }
+  })
+
+  test('mehrere Supports behalten eigene Initial-URLs in Proof-Reihenfolge an der Materialprojektion', async () => {
+    // Projection-only seam: production primary extraction still requires one
+    // support; production composition still returns only its existing seal.
+    const template = erfolg((await binden(eingabe(), { definitionen: [definition()] })).ergebnis)
+    const starts = new Map([[REAL_URL, `${REAL_URL}/start?lang=en`], [INNEN_URL, `${INNEN_URL}/start?lang=de`]])
+    const publications = R2_PUBLICATIONS.map((entry) => starts.has(entry.url)
+      ? { ...entry, requestUrls: [starts.get(entry.url)!] } : entry)
+    for (const supports of [[erstesBuendel(), zweitesBuendel()], [zweitesBuendel(), erstesBuendel()]]) {
+      const extern = transportFuer(realeEingaben(), publications)
+      const input = eingabe({ supports, metadata: meta({ evidenceQuality: 'composed_from_multiple_primary_sources' }) })
+      const proof = await decideOfficialTruthSameRequestProof(input, {
+        loadAuthority: async () => freigabe(), now: () => JETZT,
+        catalog: { identityProfiles: r2Profiles, transport: extern.transport },
+      })
+      assert.equal(proof.status, 'same_request_proof')
+      if (proof.status !== 'same_request_proof') throw new Error('proof')
+      const answer = (url: string): Schritt => {
+        const target = [...starts].find(([, initial]) => initial === url)?.[0]
+        return target ? { status: 302, location: target } : standardAntwort(url)
+      }
+      const observed: { requestUrl: string; canonicalUrl: string }[] = []
+      const composed = await binden(input, {
+        extern, loadProof: async () => proof,
+        retrieve: async (value, transport) => {
+          const result = await echtAbrufen(value, transport, { abrufe: [], transporte: [], katalogOperationen: [], extrakt: [], http: [] }, answer)
+          assert.equal(result.status, 'server_owned_official_retrieval')
+          if (result.status !== 'server_owned_official_retrieval') throw new Error('retrieval')
+          observed.push({ requestUrl: result.requestUrl, canonicalUrl: result.canonicalUrl })
+          return result
+        },
+        compositionPolicies: [kompositionsPolitik()],
+        compositionExtractors: [kompositionsExtraktor({ match: 0, extract: 0 })],
+      })
+      assert.equal(composed.ergebnis.status, 'same_request_composition_bound')
+      assert.deepEqual(observed, proof.supports.map(({ canonicalUrl }) => ({ canonicalUrl, requestUrl: starts.get(canonicalUrl) })))
+      assert.deepEqual(Object.keys(composed.ergebnis).sort(), ['seal', 'status'])
+
+      const { ergebnis, spur } = await binden(input, {
+        extern,
+        // Deliberately exercise only the array projection through test seams;
+        // the real multi-support composition path above keeps its sealed output.
+        loadProof: async () => ({ ...proof, evidenceQuality: 'explicit_primary_statement' }),
+        antwort: answer,
+        extract: (value) => {
+          const input = value as { supports: { versionId: string; retrieval: Parameters<typeof contentIdentityBinding>[0] }[] }
+          return {
+            status: 'trusted_fact_extracted', fact: template.trustedRuleFact,
+            extractorId: template.extractorId, extractorVersion: template.extractorVersion,
+            schemaFamily: template.schemaFamily, policyId: null, policyVersion: null,
+            sourceIds: input.supports.map(({ retrieval }) => retrieval.sourceId),
+            contentItemRefs: input.supports.map(({ retrieval }) => ({ sourceId: retrieval.sourceId, contentItemId: retrieval.contentItemId })),
+            supportVersionIds: input.supports.map(({ versionId }) => versionId),
+            provenance: input.supports.map(({ versionId, retrieval }) => ({
+              ...template.provenance[0]!, ...contentIdentityBinding(retrieval), versionId,
+            })),
+          }
+        },
+      })
+      const result = erfolg(ergebnis)
+      assert.equal(result.retrievals.length, 2)
+      assert.deepEqual(result.retrievals.map(({ versionId }) => versionId), proof.supports.map(({ versionId }) => versionId))
+      assert.deepEqual(result.retrievals.map(({ requestUrl }) => requestUrl), spur.http.filter((_, i) => i % 2 === 0))
+      for (const retrieval of result.retrievals) {
+        assert.equal(retrieval.requestUrl, starts.get(retrieval.canonicalUrl))
+        assert.deepEqual(contentIdentityBinding(retrieval), r2Binding(result.registry, retrieval.canonicalUrl))
+        assert.ok(Object.isFrozen(retrieval))
+      }
+    }
+  })
+
+  test('enge Retrieval-Provenienz verwirft rohe Transportfelder und bleibt kein Caller-Eingang', async () => {
+    const sentinel = 'excluded-transport-secret'
+    const { ergebnis } = await binden(eingabe(), {
+      definitionen: [definition()],
+      retrieve: async (value, transport) => ({
+        ...await echtAbrufen(value, transport, { abrufe: [], transporte: [], katalogOperationen: [], extrakt: [], http: [] }, standardAntwort),
+        body: sentinel, headers: { authorization: sentinel }, cookies: sentinel,
+        dns: sentinel, ip: sentinel, redirectChain: [sentinel], secrets: sentinel,
+      }),
+    })
+    const result = erfolg(ergebnis)
+    assert.deepEqual(Object.keys(result.retrievals[0]!).sort(), [...PROVENIENZ_SCHLUESSEL].sort())
+    assert.equal(JSON.stringify(result).includes(sentinel), false)
+    assert.equal(JSON.stringify(result).includes(SNAPSHOT), false)
+    const replay = await binden(result.retrievals[0])
+    assert.equal(replay.ergebnis.status, 'blocked')
+    assert.equal(replay.spur.http.length, 0)
+    assert.equal(replay.spur.extrakt.length, 0)
   })
 
   test('19 und 20 der Live-Pfad benutzt nur das leere Produktionsregister', async () => {

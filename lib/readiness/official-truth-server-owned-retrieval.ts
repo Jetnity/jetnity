@@ -49,6 +49,7 @@ const FESTE_HEADER = Object.freeze({
 const TRACKING_NAMEN = new Set(['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid', 'wbraid', 'mc_cid', 'mc_eid'])
 
 const AUTORITAET = new Set([
+  'requestUrl',
   'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
   'identityProfileId', 'identityProfileVersion', 'contentIdentity', 'identityProfiles',
   'registry',
@@ -194,6 +195,8 @@ export type OfficialTruthServerOwnedRetrievalErgebnis =
       readonly identitySchema: 2
       readonly status: 'server_owned_official_retrieval'
       readonly sourceId: string
+      /** Validierte Initial-URL dieses Abrufs; keine Autorität für spätere Abrufe. */
+      readonly requestUrl: string
       readonly canonicalUrl: string
       readonly retrievedAt: string
       readonly contentType: string
@@ -858,6 +861,7 @@ export async function decideOfficialTruthServerOwnedRetrieval(
   const content = quellenInhaltRouten(katalog.registry, sourceId, erstesZiel.canonicalUrl)
   if (!content.ok) return blockiert(content.reason)
   const representation = content.representation
+  const requestUrl = erstesZiel.canonicalUrl
   const identity = contentIdentityBinding(representation)
   const item = katalog.registry.contentIdentity?.items.find((candidate) => candidate.current
     && candidate.sourceId === identity.sourceId && candidate.contentItemId === identity.contentItemId
@@ -873,7 +877,7 @@ export async function decideOfficialTruthServerOwnedRetrieval(
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), frist)
   const gesehen = new Set<string>()
-  let aktuell = erstesZiel.canonicalUrl
+  let aktuell = requestUrl
   let redirects = 0
 
   try {
@@ -920,6 +924,7 @@ export async function decideOfficialTruthServerOwnedRetrieval(
         identitySchema: 2,
         status: 'server_owned_official_retrieval',
         sourceId: erstesZiel.sourceId,
+        requestUrl,
         canonicalUrl: aktuell,
         retrievedAt,
         contentType: hop.contentType,
