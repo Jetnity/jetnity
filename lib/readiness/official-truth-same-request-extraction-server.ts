@@ -45,10 +45,12 @@ import {
 } from '@/lib/readiness/official-truth-server-owned-retrieval'
 import {
   OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY,
+  consumeOfficialTruthTrustedFactExecutionContext,
   officialTruthTrustedFactExtrahieren,
   type OfficialTruthExtractorDefinition,
   type OfficialTruthExtractorHerkunft,
   type OfficialTruthTrustedFactExtractorErgebnis,
+  type OfficialTruthTrustedFactExecutionContext,
   type OfficialTruthTrustedFactExtractorSperrgrund,
 } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import {
@@ -162,6 +164,7 @@ type Beweis = Extract<OfficialTruthSameRequestProofErgebnis, { status: 'same_req
 type PhaseAInput = Parameters<typeof officialTruthCompositionPhaseA>[0]
 type ExtraktorSicht = Omit<OfficialTruthExtractorDefinition, 'match' | 'extract'>
 type CompositionResult = Extract<OfficialTruthSameRequestExtractionErgebnis, { status: 'same_request_composition_bound' }>
+type PrimaryResult = Extract<OfficialTruthSameRequestExtractionErgebnis, { status: 'same_request_trusted_fact_material' }>
 
 /** Nur internes Ausführungsmaterial, auch bei Testeinspritzungen niemals
  * globale Zulassung, Original-Custody, Executable-Pin oder Producer-Autorität.
@@ -199,6 +202,42 @@ export type OfficialTruthSameRequestCompositionContext = {
   }
 }
 
+/** Private Primärausführung vor der historischen Materialkopie. Keine neue
+ * Quellenzulassung, Executable-Pins oder globale Producer-Autorität. */
+export type OfficialTruthSameRequestPrimaryContext = {
+  readonly binding: OfficialTruthSameRequestCompositionContext['binding'] & {
+    readonly evidenceVersions: readonly EvidenceVersion[]
+  }
+  readonly retrievals: readonly OfficialTruthSameRequestRetrievalProvenienz[]
+  readonly execution: OfficialTruthTrustedFactExecutionContext
+}
+
+/** Ausschließlich serverinterner Verbraucher. Die #898-Sicht bleibt unverändert
+ * und enthält weiterhin keine Funktionen; daneben liegen die Originalreferenzen. */
+export type OfficialTruthSameRequestCompositionExecutionContext = {
+  readonly context: OfficialTruthSameRequestCompositionContext
+  readonly execution: {
+    readonly extractors: readonly OfficialTruthExtractorDefinition[]
+    readonly policies: readonly OfficialTruthCompositionPolicy[]
+    readonly selected: {
+      readonly extractor: OfficialTruthExtractorDefinition
+      readonly policy: OfficialTruthCompositionPolicy
+    }
+  }
+}
+
+const primaryContexts = new WeakMap<PrimaryResult, OfficialTruthSameRequestPrimaryContext>()
+
+export function consumeOfficialTruthSameRequestPrimaryContext(
+  result: unknown,
+): OfficialTruthSameRequestPrimaryContext | null {
+  if (!result || typeof result !== 'object') return null
+  const context = primaryContexts.get(result as PrimaryResult)
+  if (!context) return null
+  primaryContexts.delete(result as PrimaryResult)
+  return context
+}
+
 type CompositionStart = {
   // Exakte validierte Referenzen, vor HTTP festgehalten. Nicht projizieren.
   readonly input: PhaseAInput
@@ -217,6 +256,30 @@ const compositionContexts = new WeakMap<CompositionResult, {
 export function consumeOfficialTruthSameRequestCompositionContext(
   result: unknown,
 ): OfficialTruthSameRequestCompositionContext | null {
+  return compositionContextConsume(result)?.view ?? null
+}
+
+/** Derselbe Einmalverbrauch wie #898. Kein zweites Handle, kein Registry-Lookup
+ * und keine erneute Auswahl der bereits vor HTTP eingefrorenen Definition. */
+export function consumeOfficialTruthSameRequestCompositionExecutionContext(
+  result: unknown,
+): OfficialTruthSameRequestCompositionExecutionContext | null {
+  const entry = compositionContextConsume(result)
+  if (!entry) return null
+  return Object.freeze({
+    context: entry.view,
+    execution: Object.freeze({
+      extractors: entry.start.input.extractors,
+      policies: entry.start.input.policies,
+      selected: Object.freeze({ extractor: entry.start.freeze.extractor, policy: entry.start.freeze.policy }),
+    }),
+  })
+}
+
+function compositionContextConsume(result: unknown): {
+  readonly start: CompositionStart
+  readonly view: OfficialTruthSameRequestCompositionContext
+} | null {
   if (!result || typeof result !== 'object') return null
   const entry = compositionContexts.get(result as CompositionResult)
   if (!entry) return null // Keine Property-/Getter-Lesung an fremden Objekten.
@@ -229,7 +292,7 @@ export function consumeOfficialTruthSameRequestCompositionContext(
         !sealView || sealView.fact !== phaseB.fact ||
         sealView.policyId !== phaseB.policyId || sealView.policyVersion !== phaseB.policyVersion ||
         !gleicheIds(sealView.supportVersionIds, entry.view.binding.supportVersionIds)) return null
-    return entry.view
+    return entry
   } catch {
     return null
   }
@@ -526,6 +589,8 @@ function material(
   beweis: Beweis,
   erfolg: Extract<OfficialTruthTrustedFactExtractorErgebnis, { status: 'trusted_fact_extracted' }>,
   gebunden: readonly Gebunden[],
+  scope: RegelScope,
+  execution: OfficialTruthTrustedFactExecutionContext | null,
 ): OfficialTruthSameRequestExtractionErgebnis | null {
   const retrievals: OfficialTruthSameRequestRetrievalProvenienz[] = []
   for (const support of beweis.supports) {
@@ -543,7 +608,7 @@ function material(
       sourceContentHash: fund.abruf.sourceContentHash,
     })
   }
-  return tiefEinfrieren(
+  const result = tiefEinfrieren(
     structuredClone({
       status: 'same_request_trusted_fact_material' as const,
       registry: beweis.registry,
@@ -568,6 +633,24 @@ function material(
       retrievals,
     }),
   )
+  if (execution && execution.fact === erfolg.fact && execution.provenance === erfolg.provenance &&
+      execution.selected.policyId === null && execution.selected.policyVersion === null) {
+    primaryContexts.set(result, tiefEinfrieren({
+      binding: {
+        registry: beweis.registry,
+        scope,
+        ruleScopeKey: beweis.ruleScopeKey,
+        reviewPacketKey: beweis.reviewPacketKey,
+        supportVersionIds: beweis.supportVersionIds,
+        supports: beweis.supports,
+        serverReferenceTime: beweis.serverReferenceTime,
+        evidenceVersions: beweis.evidenceVersions,
+      },
+      retrievals,
+      execution,
+    }))
+  }
+  return result
 }
 
 /**
@@ -720,22 +803,23 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     return result
   }
 
+  const extractionInput = tiefEinfrieren({
+    factKind: fest.factKind,
+    requirementType: zelle.scope.requirementType,
+    scopeKey: zelle.key,
+    scope: zelle.scope,
+    evidenceQuality: 'explicit_primary_statement',
+    supports: gebunden.map((eintrag) => ({
+      versionId: eintrag.versionId,
+      sourceId: eintrag.sourceId,
+      retrieval: eintrag.abruf,
+    })),
+    policy: null,
+    registry: fest.registry,
+  })
   let extrakt: OfficialTruthTrustedFactExtractorErgebnis
   try {
-    extrakt = abhaengigkeiten.extract({
-      factKind: fest.factKind,
-      requirementType: zelle.scope.requirementType,
-      scopeKey: zelle.key,
-      scope: zelle.scope,
-      evidenceQuality: 'explicit_primary_statement',
-      supports: gebunden.map((eintrag) => ({
-        versionId: eintrag.versionId,
-        sourceId: eintrag.sourceId,
-        retrieval: eintrag.abruf,
-      })),
-      policy: null,
-      registry: fest.registry,
-    })
+    extrakt = abhaengigkeiten.extract(extractionInput)
   } catch {
     return blockiert('fact_incomplete')
   }
@@ -745,7 +829,8 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   if (!herkunftPasst(fest, extrakt)) return blockiert('support_binding_mismatch')
 
   try {
-    const gebaut = material(fest, extrakt, gebunden)
+    const execution = consumeOfficialTruthTrustedFactExecutionContext(extrakt, extractionInput)
+    const gebaut = material(fest, extrakt, gebunden, zelle.scope, execution)
     if (!gebaut) return blockiert('support_binding_mismatch')
     return gebaut
   } catch {

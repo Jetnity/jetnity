@@ -868,14 +868,6 @@ function faktSlots(fact: RegelFakt): { zweige: ZweigSicht[]; felder: OfficialTru
   return { zweige: [], felder }
 }
 
-function zuweisungFuer(
-  policy: OfficialTruthCompositionPolicy,
-  target: OfficialTruthCompositionCitationTarget,
-): OfficialTruthCompositionAssignment | null {
-  const key = citationKey(target)
-  return policy.assignments.find((eintrag) => citationKey(eintrag.target) === key) ?? null
-}
-
 function projektion(
   contentItemRefs: readonly ContentItemRef[],
   versionJeQuelle: ReadonlyMap<string, string>,
@@ -893,6 +885,214 @@ function schemaPin(fact: RegelFakt): 1 | null {
   if (fact.kind === 'requirement_effect' && 'schema' in fact && fact.schema === 1) return 1
   if (fact.kind === 'visa_options' && 'schema' in fact && fact.schema === 1) return 1
   return null
+}
+
+type FaktZitatZuweisung = {
+  readonly target: OfficialTruthCompositionCitationTarget
+  readonly supportVersionIds: readonly string[]
+}
+
+function zitatZuweisung(assignments: readonly FaktZitatZuweisung[], target: OfficialTruthCompositionCitationTarget): FaktZitatZuweisung | null {
+  const key = citationKey(target)
+  return assignments.find((entry) => citationKey(entry.target) === key) ?? null
+}
+
+/** Eine gemeinsame Strukturprüfung für Phase B und historische Byteprüfung.
+ * Kein Policy-Dummy, keine zweite Atom-/Locator- oder Annahmeimplementierung. */
+function faktZitatStrukturPruefen(
+  fact: RegelFakt,
+  assignments: readonly FaktZitatZuweisung[],
+  anspruch: readonly string[],
+  akzeptiert: ReadonlySet<string>,
+): { ok: true } | { ok: false; reason: OfficialTruthCompositionSperrgrund } {
+  if ('schema' in fact && fact.schema !== 1) return { ok: false, reason: 'schema_mismatch' }
+  const sicht = faktSlots(fact)
+  const erwartet = new Map<string, OfficialTruthCompositionCitationTarget>()
+  for (const feld of sicht.felder) erwartet.set(citationKey(feld), feld)
+
+  for (const zweig of sicht.zweige) {
+    if (zweig.supportVersionIds.length === 0) return { ok: false, reason: 'support_mismatch' }
+    if (zweig.supportVersionIds.some((id) => !anspruch.includes(id) || !akzeptiert.has(id))) {
+      return { ok: false, reason: 'support_mismatch' }
+    }
+    const ziel = zweig.otherwise ? zweigZiel(zweig, 'otherwise') : zweigZiel(zweig, 'branch')
+    erwartet.set(citationKey(ziel), ziel)
+    if (!zweig.otherwise) {
+      for (const field of zweig.outcomeFields) {
+        const outcome = zweigZiel(zweig, 'outcome', field)
+        erwartet.set(citationKey(outcome), outcome)
+      }
+    }
+    if (!zweig.expression) continue
+    const gelaufen = walk(zweig.visaMode ? `option:${zweig.visaMode}/branch:${zweig.branchId}/` : `branch:${zweig.branchId}/`, zweig.expression)
+    if (!gelaufen.ok) return gelaufen
+    const erforderlich = [
+      ...gelaufen.wert.atoms.map((eintrag) => eintrag.locator),
+      ...gelaufen.wert.ties.flatMap((gruppe) => gruppe.locators),
+    ]
+    if (new Set(erforderlich).size !== erforderlich.length) return { ok: false, reason: 'atom_locator_duplicate' }
+    const policyLocators = assignments.flatMap((eintrag) => {
+      const target = eintrag.target
+      if (target.kind === 'atom' && target.branchId === zweig.branchId && zweig.visaMode === null) return [target.atomLocator]
+      if (target.kind === 'visa_option_atom' && target.branchId === zweig.branchId && target.visaMode === zweig.visaMode) {
+        return [target.atomLocator]
+      }
+      return []
+    })
+    if (erforderlich.some((locator) => !policyLocators.includes(locator))) return { ok: false, reason: 'atom_locator_unassigned' }
+    if (policyLocators.some((locator) => !erforderlich.includes(locator))) return { ok: false, reason: 'atom_locator_missing' }
+    for (const eintrag of gelaufen.wert.atoms) {
+      const target = atomZiel(zweig, eintrag.locator)
+      erwartet.set(citationKey(target), target)
+      const assignment = zitatZuweisung(assignments, target)
+      if (!assignment) return { ok: false, reason: 'atom_locator_unassigned' }
+      const projected = assignment.supportVersionIds
+      if (!projected) return { ok: false, reason: 'support_mismatch' }
+      const cited = eintrag.atom.supportVersionIds ? sortiert([...eintrag.atom.supportVersionIds]) : []
+      if (cited.length === 0) {
+        if (zweig.supportVersionIds.length >= 2) return { ok: false, reason: 'condition_provenance_ambiguous' }
+        if (!gleicheListe(projected, sortiert([...zweig.supportVersionIds]))) return { ok: false, reason: 'support_mismatch' }
+      } else if (!gleicheListe(cited, projected) || cited.some((id) => !zweig.supportVersionIds.includes(id))) {
+        return { ok: false, reason: 'support_mismatch' }
+      }
+    }
+    for (const gruppe of gelaufen.wert.ties) {
+      if (gruppe.atoms.some((atom) => !atom.supportVersionIds || atom.supportVersionIds.length === 0)) {
+        return { ok: false, reason: 'condition_provenance_ambiguous' }
+      }
+      const tieAssignments = gruppe.locators.map((locator) => zitatZuweisung(assignments, atomZiel(zweig, locator)))
+      if (tieAssignments.some((eintrag) => !eintrag)) return { ok: false, reason: 'atom_locator_unassigned' }
+      const getroffen: FaktZitatZuweisung[] = []
+      for (const atom of gruppe.atoms) {
+        const cited = sortiert([...(atom.supportVersionIds ?? [])])
+        if (cited.some((id) => !zweig.supportVersionIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
+        const treffer = tieAssignments.filter((eintrag): eintrag is FaktZitatZuweisung => {
+          if (!eintrag) return false
+          const projected = eintrag.supportVersionIds
+          return projected !== null && gleicheListe(projected, cited)
+        })
+        if (treffer.length === 0) return { ok: false, reason: 'support_mismatch' }
+        if (treffer.length > 1) return { ok: false, reason: 'atom_locator_duplicate' }
+        const gewählt = treffer[0]
+        if (!gewählt) return { ok: false, reason: 'atom_locator_duplicate' }
+        getroffen.push(gewählt)
+        const locator = gruppe.locators.find((eintrag) => {
+          const assignment = zitatZuweisung(assignments, atomZiel(zweig, eintrag))
+          return assignment === gewählt
+        })
+        if (!locator) return { ok: false, reason: 'atom_locator_duplicate' }
+        erwartet.set(citationKey(atomZiel(zweig, locator)), atomZiel(zweig, locator))
+      }
+      if (new Set(getroffen.map((eintrag) => citationKey(eintrag.target))).size !== getroffen.length) {
+        return { ok: false, reason: 'atom_locator_duplicate' }
+      }
+    }
+  }
+
+  const vereinigung = sortiert([...new Set(sicht.zweige.flatMap((zweig) => [...zweig.supportVersionIds]))])
+  if (sicht.zweige.length > 0 && !gleicheListe(vereinigung, anspruch)) return { ok: false, reason: 'support_mismatch' }
+
+  for (const target of erwartet.values()) {
+    if (!zitatZuweisung(assignments, target)) return { ok: false, reason: 'policy_field_unassigned' }
+  }
+  for (const assignment of assignments) {
+    if (!erwartet.has(citationKey(assignment.target))) return { ok: false, reason: 'policy_field_unassigned' }
+    const projected = assignment.supportVersionIds
+    if (!projected || projected.some((id) => !akzeptiert.has(id))) return { ok: false, reason: 'support_mismatch' }
+  }
+
+  for (const zweig of sicht.zweige) {
+    const zweigZielwert = zweig.otherwise ? zweigZiel(zweig, 'otherwise') : zweigZiel(zweig, 'branch')
+    const zweigZuweisung = zitatZuweisung(assignments, zweigZielwert)
+    if (!zweigZuweisung) return { ok: false, reason: 'policy_field_unassigned' }
+    const projected = zweigZuweisung.supportVersionIds
+    if (!projected || !gleicheListe(projected, sortiert([...zweig.supportVersionIds]))) return { ok: false, reason: 'support_mismatch' }
+    if (!zweig.otherwise) {
+      const kinder = new Set<string>()
+      for (const field of zweig.outcomeFields) {
+        const outcome = zitatZuweisung(assignments, zweigZiel(zweig, 'outcome', field))
+        if (!outcome) return { ok: false, reason: 'policy_field_unassigned' }
+        if (outcome.supportVersionIds.some((id) => !zweigZuweisung.supportVersionIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
+        for (const id of outcome.supportVersionIds) kinder.add(id)
+      }
+      for (const assignment of assignments) {
+        const target = assignment.target
+        const passt =
+          (target.kind === 'atom' && target.branchId === zweig.branchId && zweig.visaMode === null) ||
+          (target.kind === 'visa_option_atom' && target.branchId === zweig.branchId && target.visaMode === zweig.visaMode)
+        if (!passt) continue
+        if (assignment.supportVersionIds.some((id) => !zweigZuweisung.supportVersionIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
+        for (const id of assignment.supportVersionIds) kinder.add(id)
+      }
+      if (!gleicheListe(sortiert([...kinder]), zweigZuweisung.supportVersionIds)) {
+        return { ok: false, reason: 'policy_field_unassigned' }
+      }
+    }
+  }
+
+  return { ok: true }
+}
+
+/** Historischer Wertparser, kein Siegel und keine Policy-/Quellenautorität.
+ * Die bestehende Zielgrammatik bleibt die einzige Locator-Grammatik. */
+export function officialTruthCitationTargetLesen(value: unknown): OfficialTruthCompositionCitationTarget | null {
+  try {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype !== Object.prototype && prototype !== null) return null
+    if (Reflect.ownKeys(value).some(key => typeof key !== 'string')) return null
+    const descriptors = Object.values(Object.getOwnPropertyDescriptors(value))
+    if (descriptors.some(entry => !('value' in entry) || !entry.enumerable || typeof entry.value !== 'string')) return null
+    const target = zielLesen(value)
+    return target ? Object.freeze(target) : null
+  } catch {
+    return null
+  }
+}
+
+/** Vollständige Rechtsstellen eines bereits kanonisch gelesenen legacy/v1-Fakts.
+ * Benutzt dieselbe Slot- und Atomtraversierung wie Phase B. Keine Annahme. */
+export function officialTruthFactCitationTargets(fact: RegelFakt): readonly OfficialTruthCompositionCitationTarget[] | null {
+  if ('schema' in fact && fact.schema !== 1) return null
+  const sicht = faktSlots(fact)
+  const targets: OfficialTruthCompositionCitationTarget[] = [...sicht.felder]
+  for (const zweig of sicht.zweige) {
+    targets.push(zweigZiel(zweig, zweig.otherwise ? 'otherwise' : 'branch'))
+    if (!zweig.otherwise) for (const field of zweig.outcomeFields) targets.push(zweigZiel(zweig, 'outcome', field))
+    if (!zweig.expression) continue
+    const walked = walk(zweig.visaMode ? `option:${zweig.visaMode}/branch:${zweig.branchId}/` : `branch:${zweig.branchId}/`, zweig.expression)
+    if (!walked.ok) return null
+    for (const atom of walked.wert.atoms) targets.push(atomZiel(zweig, atom.locator))
+    for (const group of walked.wert.ties) for (const locator of group.locators) targets.push(atomZiel(zweig, locator))
+  }
+  if (new Set(targets.map(citationKey)).size !== targets.length || targets.length === 0) return null
+  return Object.freeze(targets.sort((a, b) => citationKey(a) < citationKey(b) ? -1 : citationKey(a) > citationKey(b) ? 1 : 0).map(target => Object.freeze(target)))
+}
+
+/** Vollständige historische Zitatdeckung, kein Faktparser und keine Annahme.
+ * Aufrufer müssen den Fakt zuvor kanonisch unter seinem Schema lesen. Tie-Atome,
+ * Teilmengen und Zweigvereinigungen prüfen denselben Kern wie die echte Phase B. */
+export function officialTruthFactCitationCoverage(input: {
+  readonly fact: RegelFakt
+  readonly supportVersionIds: readonly string[]
+  readonly citations: readonly { readonly target: OfficialTruthCompositionCitationTarget; readonly versionId: string }[]
+}): boolean {
+  if (input.supportVersionIds.length === 0 || input.supportVersionIds.length > REGEL_SUPPORT_MAX ||
+      new Set(input.supportVersionIds).size !== input.supportVersionIds.length ||
+      input.supportVersionIds.some(id => !VERSION_ID.test(id)) || input.citations.length === 0 || input.citations.length > 512) return false
+  const groups = new Map<string, { target: OfficialTruthCompositionCitationTarget; supportVersionIds: string[] }>()
+  for (const citation of input.citations) {
+    const target = officialTruthCitationTargetLesen(citation.target)
+    if (!target || !input.supportVersionIds.includes(citation.versionId)) return false
+    const key = citationKey(target)
+    const group = groups.get(key)
+    if (group) {
+      if (group.supportVersionIds.includes(citation.versionId)) return false
+      group.supportVersionIds.push(citation.versionId)
+    } else groups.set(key, { target, supportVersionIds: [citation.versionId] })
+  }
+  const assignments = [...groups.values()].map(group => ({ ...group, supportVersionIds: sortiert(group.supportVersionIds) }))
+  return faktZitatStrukturPruefen(input.fact, assignments, sortiert([...input.supportVersionIds]), new Set(input.supportVersionIds)).ok
 }
 
 type ZitatErfolg = { ok: true; provenance: OfficialTruthCompositionHerkunft[] } | { ok: false; reason: OfficialTruthCompositionSperrgrund }
@@ -921,129 +1121,14 @@ function zitatePruefen(input: {
   const anspruch = sortiert(input.proofSupports.map((eintrag) => eintrag.versionId))
   if (anspruch.some((id) => !akzeptiert.has(id) || !VERSION_ID.test(id))) return { ok: false, reason: 'support_mismatch' }
 
-  const sicht = faktSlots(fact)
-  const erwartet = new Map<string, OfficialTruthCompositionCitationTarget>()
-  for (const feld of sicht.felder) erwartet.set(citationKey(feld), feld)
-
-  for (const zweig of sicht.zweige) {
-    if (zweig.supportVersionIds.length === 0) return { ok: false, reason: 'support_mismatch' }
-    if (zweig.supportVersionIds.some((id) => !anspruch.includes(id) || !akzeptiert.has(id))) {
-      return { ok: false, reason: 'support_mismatch' }
-    }
-    const ziel = zweig.otherwise ? zweigZiel(zweig, 'otherwise') : zweigZiel(zweig, 'branch')
-    erwartet.set(citationKey(ziel), ziel)
-    if (!zweig.otherwise) {
-      for (const field of zweig.outcomeFields) {
-        const outcome = zweigZiel(zweig, 'outcome', field)
-        erwartet.set(citationKey(outcome), outcome)
-      }
-    }
-    if (!zweig.expression) continue
-    const gelaufen = walk(zweig.visaMode ? `option:${zweig.visaMode}/branch:${zweig.branchId}/` : `branch:${zweig.branchId}/`, zweig.expression)
-    if (!gelaufen.ok) return gelaufen
-    const erforderlich = [
-      ...gelaufen.wert.atoms.map((eintrag) => eintrag.locator),
-      ...gelaufen.wert.ties.flatMap((gruppe) => gruppe.locators),
-    ]
-    if (new Set(erforderlich).size !== erforderlich.length) return { ok: false, reason: 'atom_locator_duplicate' }
-    const policyLocators = freeze.policy.assignments.flatMap((eintrag) => {
-      const target = eintrag.target
-      if (target.kind === 'atom' && target.branchId === zweig.branchId && zweig.visaMode === null) return [target.atomLocator]
-      if (target.kind === 'visa_option_atom' && target.branchId === zweig.branchId && target.visaMode === zweig.visaMode) {
-        return [target.atomLocator]
-      }
-      return []
-    })
-    if (erforderlich.some((locator) => !policyLocators.includes(locator))) return { ok: false, reason: 'atom_locator_unassigned' }
-    if (policyLocators.some((locator) => !erforderlich.includes(locator))) return { ok: false, reason: 'atom_locator_missing' }
-    for (const eintrag of gelaufen.wert.atoms) {
-      const target = atomZiel(zweig, eintrag.locator)
-      erwartet.set(citationKey(target), target)
-      const assignment = zuweisungFuer(freeze.policy, target)
-      if (!assignment) return { ok: false, reason: 'atom_locator_unassigned' }
-      const projected = projektion(assignment.contentItemRefs, versionJeQuelle)
-      if (!projected) return { ok: false, reason: 'support_mismatch' }
-      const cited = eintrag.atom.supportVersionIds ? sortiert([...eintrag.atom.supportVersionIds]) : []
-      if (cited.length === 0) {
-        if (zweig.supportVersionIds.length >= 2) return { ok: false, reason: 'condition_provenance_ambiguous' }
-        if (!gleicheListe(projected, sortiert([...zweig.supportVersionIds]))) return { ok: false, reason: 'support_mismatch' }
-      } else if (!gleicheListe(cited, projected) || cited.some((id) => !zweig.supportVersionIds.includes(id))) {
-        return { ok: false, reason: 'support_mismatch' }
-      }
-    }
-    for (const gruppe of gelaufen.wert.ties) {
-      if (gruppe.atoms.some((atom) => !atom.supportVersionIds || atom.supportVersionIds.length === 0)) {
-        return { ok: false, reason: 'condition_provenance_ambiguous' }
-      }
-      const assignments = gruppe.locators.map((locator) => zuweisungFuer(freeze.policy, atomZiel(zweig, locator)))
-      if (assignments.some((eintrag) => !eintrag)) return { ok: false, reason: 'atom_locator_unassigned' }
-      const getroffen: OfficialTruthCompositionAssignment[] = []
-      for (const atom of gruppe.atoms) {
-        const cited = sortiert([...(atom.supportVersionIds ?? [])])
-        if (cited.some((id) => !zweig.supportVersionIds.includes(id))) return { ok: false, reason: 'support_mismatch' }
-        const treffer = assignments.filter((eintrag): eintrag is OfficialTruthCompositionAssignment => {
-          if (!eintrag) return false
-          const projected = projektion(eintrag.contentItemRefs, versionJeQuelle)
-          return projected !== null && gleicheListe(projected, cited)
-        })
-        if (treffer.length === 0) return { ok: false, reason: 'support_mismatch' }
-        if (treffer.length > 1) return { ok: false, reason: 'atom_locator_duplicate' }
-        const gewählt = treffer[0]
-        if (!gewählt) return { ok: false, reason: 'atom_locator_duplicate' }
-        getroffen.push(gewählt)
-        const locator = gruppe.locators.find((eintrag) => {
-          const assignment = zuweisungFuer(freeze.policy, atomZiel(zweig, eintrag))
-          return assignment === gewählt
-        })
-        if (!locator) return { ok: false, reason: 'atom_locator_duplicate' }
-        erwartet.set(citationKey(atomZiel(zweig, locator)), atomZiel(zweig, locator))
-      }
-      if (new Set(getroffen.map((eintrag) => citationKey(eintrag.target))).size !== getroffen.length) {
-        return { ok: false, reason: 'atom_locator_duplicate' }
-      }
-    }
-  }
-
-  const vereinigung = sortiert([...new Set(sicht.zweige.flatMap((zweig) => [...zweig.supportVersionIds]))])
-  if (sicht.zweige.length > 0 && !gleicheListe(vereinigung, anspruch)) return { ok: false, reason: 'support_mismatch' }
-
-  for (const target of erwartet.values()) {
-    if (!zuweisungFuer(freeze.policy, target)) return { ok: false, reason: 'policy_field_unassigned' }
-  }
+  const assignments: FaktZitatZuweisung[] = []
   for (const assignment of freeze.policy.assignments) {
-    if (!erwartet.has(citationKey(assignment.target))) return { ok: false, reason: 'policy_field_unassigned' }
-    const projected = projektion(assignment.contentItemRefs, versionJeQuelle)
-    if (!projected || projected.some((id) => !akzeptiert.has(id))) return { ok: false, reason: 'support_mismatch' }
+    const supportVersionIds = projektion(assignment.contentItemRefs, versionJeQuelle)
+    if (!supportVersionIds) return { ok: false, reason: 'support_mismatch' }
+    assignments.push({ target: assignment.target, supportVersionIds })
   }
-
-  for (const zweig of sicht.zweige) {
-    const zweigZielwert = zweig.otherwise ? zweigZiel(zweig, 'otherwise') : zweigZiel(zweig, 'branch')
-    const zweigZuweisung = zuweisungFuer(freeze.policy, zweigZielwert)
-    if (!zweigZuweisung) return { ok: false, reason: 'policy_field_unassigned' }
-    const projected = projektion(zweigZuweisung.contentItemRefs, versionJeQuelle)
-    if (!projected || !gleicheListe(projected, sortiert([...zweig.supportVersionIds]))) return { ok: false, reason: 'support_mismatch' }
-    if (!zweig.otherwise) {
-      const kinder = new Set<string>()
-      for (const field of zweig.outcomeFields) {
-        const outcome = zuweisungFuer(freeze.policy, zweigZiel(zweig, 'outcome', field))
-        if (!outcome) return { ok: false, reason: 'policy_field_unassigned' }
-        if (outcome.contentItemRefs.some((id) => !itemKeys(zweigZuweisung.contentItemRefs).includes(itemKey(id)))) return { ok: false, reason: 'support_mismatch' }
-        for (const id of outcome.contentItemRefs) kinder.add(itemKey(id))
-      }
-      for (const assignment of freeze.policy.assignments) {
-        const target = assignment.target
-        const passt =
-          (target.kind === 'atom' && target.branchId === zweig.branchId && zweig.visaMode === null) ||
-          (target.kind === 'visa_option_atom' && target.branchId === zweig.branchId && target.visaMode === zweig.visaMode)
-        if (!passt) continue
-        if (assignment.contentItemRefs.some((id) => !itemKeys(zweigZuweisung.contentItemRefs).includes(itemKey(id)))) return { ok: false, reason: 'support_mismatch' }
-        for (const id of assignment.contentItemRefs) kinder.add(itemKey(id))
-      }
-      if (!gleicheListe(sortiert([...kinder]), itemKeys(zweigZuweisung.contentItemRefs))) {
-        return { ok: false, reason: 'policy_field_unassigned' }
-      }
-    }
-  }
+  const struktur = faktZitatStrukturPruefen(fact, assignments, anspruch, akzeptiert)
+  if (!struktur.ok) return struktur
 
   // Quellenbezogene Beobachtungen sind Pflicht. Sie stammen aus der einen
   // codeeigenen Ausführung über das frische servereigene Material. Ohne sie

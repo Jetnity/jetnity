@@ -37,6 +37,8 @@ import {
   type RegelKandidat,
 } from '@/lib/readiness/rule-claims'
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
+import { historicalValuesEqual, ownRecord, provenanceCanonical } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
+import { readHistoricalArtifact } from '@/lib/readiness/official-truth-autonomous-provenance-record'
 
 const TIEFE_MAX = 16
 const ANNEHMBAR = new Set(['explicit_primary_statement', 'composed_from_multiple_primary_sources'])
@@ -394,4 +396,49 @@ export async function loadOfficialTruthSameRequestProof(
     loadAuthority: loadOfficialTruthFactEntryAuthority,
     now: serverUhr,
   })
+}
+
+/** Pure internal proof invariants over independently selected, custodied material.
+ * This returns comparison material, never origin membership or authorization.
+ * The dormant production root cannot be entered through this value seam.
+ * No old research envelope, raw response, model proposal or acceptance replay.
+ */
+export function proveOfficialTruthCustodiedMaterial(input: {
+  authority: OfficialTruthFactEntryAuthorityResult
+  registry: QuellenRegistry
+  evidenceVersions: readonly EvidenceVersion[]
+  review: unknown
+  scope: unknown
+  serverReferenceTime: string
+}): OfficialTruthSameRequestProofErgebnis {
+  if (!ownRecord(input, ['authority', 'registry', 'evidenceVersions', 'review', 'scope', 'serverReferenceTime'])
+    || provenanceCanonical(input) === null || !Array.isArray(input.evidenceVersions)) return blockiert('unexpected_fields')
+  if (!istFreigegeben(input.authority)) return blockiert('authority_required')
+  const zeit = referenzLesen(input.serverReferenceTime)
+  if (!zeit) return blockiert('invalid_reference_time')
+  const review = readHistoricalArtifact('AutonomousReviewConstructionV1', input.review)
+  const cell = regelScopeAusEvidenceScope(input.scope)
+  if (!review.ok || !cell.ok) return blockiert('invalid_context')
+  const safe = review.value.value.safePreimage
+  if (!historicalValuesEqual(cell.scope, safe.candidate.scope) || cell.key !== safe.candidate.key) return blockiert('scope_mismatch')
+  const candidate = officialTruthRegelKandidatAusEvidence(input.evidenceVersions, input.registry,
+    { factKind: safe.candidate.factKind, evidenceQuality: safe.candidate.evidenceQuality, proposal: null })
+  if (!candidate.ok) return blockiert(candidate.reason)
+  if (!historicalValuesEqual(candidate.kandidat.scope, cell.scope)
+    || !historicalValuesEqual(candidate.kandidat.supportVersionIds, safe.candidate.supportVersionIds)) return blockiert('support_mismatch')
+  for (const version of input.evidenceVersions) {
+    const scope = regelScopeAusEvidenceScope(version.scope)
+    if (!akzeptierteEvidenceLesen(version, input.registry) || !scope.ok
+      || !historicalValuesEqual(scope.scope, cell.scope) || scope.key !== cell.key) return blockiert('evidence_not_accepted')
+    const compact = safe.supports.find(s => s.versionId === version.versionId)
+    if (!compact || Object.entries(compact).some(([key, value]) => !historicalValuesEqual(value, version[key as keyof EvidenceVersion]))) return blockiert('support_mismatch')
+  }
+  if (input.evidenceVersions.length !== safe.supports.length || safe.supports.some(s => !aktuell(s, zeit)
+    || Date.parse(s.retrievedAt) > Date.parse(zeit))) return blockiert('freshness_not_current')
+  return beweisKopie({ status: 'same_request_proof', registry: input.registry,
+    evidenceVersions: input.evidenceVersions, kandidat: candidate.kandidat,
+    reviewPacketKey: review.value.value.reviewPacketKey, ruleScopeKey: cell.key,
+    factKind: safe.candidate.factKind, evidenceQuality: safe.candidate.evidenceQuality,
+    supportVersionIds: safe.candidate.supportVersionIds, supports: safe.supports,
+    serverReferenceTime: zeit, freshness: 'current', grant: 'role', capability: 'official-truth-freigeben' })
 }
