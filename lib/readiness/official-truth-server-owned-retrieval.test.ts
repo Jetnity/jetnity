@@ -39,6 +39,7 @@ const ERFOLG_SCHLUESSEL = [
   'canonicalUrl',
   'contentType',
   'redirectCount',
+  'requestUrl',
   'retrievedAt',
   'sourceContentHash',
   'sourceId',
@@ -250,6 +251,7 @@ describe('official truth server-owned retrieval', () => {
 
   test('2 Snapshot, Hash, Uhr, Content-Type, Redirect, DNS und Beleg scheitern vor dem Netz', async () => {
     const felder: Record<string, unknown> = {
+      requestUrl: 'https://caller.example/forged',
       sourceSnapshot: TEXT,
       body: TEXT,
       sourceContentHash: 'a'.repeat(64),
@@ -534,6 +536,7 @@ describe('official truth server-owned retrieval', () => {
     const wert = erfolg(lauf)
     assert.deepEqual(Object.keys(wert).sort(), [...ERFOLG_SCHLUESSEL].sort())
     assert.equal(wert.sourceId, AMTLICH)
+    assert.equal(wert.requestUrl, eingabe.url)
     assert.equal(wert.canonicalUrl, `https://www.gov.example/rules?lang=en`)
     assert.equal(wert.retrievedAt, JETZT)
     assert.equal(wert.contentType, 'text/html')
@@ -545,6 +548,8 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(lauf.verbindungen[0]?.url, wert.canonicalUrl)
     eingabe.sourceId = 'mutated-id'
     eingabe.url = 'https://evil.example/mutated'
+    assert.equal(wert.requestUrl, 'https://www.gov.example/rules?lang=en')
+    assert.throws(() => { (wert as { requestUrl: string }).requestUrl = eingabe.url }, TypeError)
     assert.equal(wert.sourceId, AMTLICH)
     assert.equal(wert.canonicalUrl, 'https://www.gov.example/rules?lang=en')
     assert.equal(Object.isFrozen(wert), true)
@@ -568,6 +573,7 @@ describe('official truth server-owned retrieval', () => {
     })
     const wert = erfolg(lauf)
     assert.equal(wert.sourceId, AMTLICH)
+    assert.equal(wert.requestUrl, AMTLICH_URL)
     assert.equal(wert.canonicalUrl, AMTLICH_URL)
     assert.equal(wert.sourceSnapshot, TEXT)
   })
@@ -641,6 +647,8 @@ describe('official truth server-owned retrieval', () => {
       },
     })
     const wert = erfolg(relativ)
+    assert.equal(wert.requestUrl, AMTLICH_URL)
+    assert.equal(wert.requestUrl, relativ.verbindungen[0]?.url)
     assert.equal(wert.canonicalUrl, 'https://www.gov.example/rules/next')
     assert.equal(wert.redirectCount, 1)
     assert.equal(wert.sourceSnapshot, TEXT)
@@ -847,6 +855,8 @@ describe('official truth server-owned retrieval', () => {
     const zweite = await laufen({ eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}?lang=en#${zwei}` } })
     const kanonEins = erfolg(erste)
     const kanonZwei = erfolg(zweite)
+    assert.equal(kanonEins.requestUrl, AMTLICH_URL)
+    assert.equal(kanonZwei.requestUrl, `${AMTLICH_URL}?lang=en`)
     assert.equal(kanonEins.canonicalUrl, AMTLICH_URL)
     assert.equal(erste.verbindungen[0]?.url, AMTLICH_URL)
     assert.equal(kanonZwei.canonicalUrl, `${AMTLICH_URL}?lang=en`)
@@ -879,6 +889,7 @@ describe('official truth server-owned retrieval', () => {
       },
     })
     const ziel = erfolg(weiter)
+    assert.equal(ziel.requestUrl, AMTLICH_URL)
     assert.equal(ziel.canonicalUrl, 'https://www.gov.example/rules/next')
     assert.equal(ziel.redirectCount, 1)
     assert.deepEqual(
@@ -894,6 +905,48 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(grund(tracking), 'tracking_parameter')
     assert.equal(tracking.verbindungen.length, 0)
     assert.equal(JSON.stringify(tracking.ergebnis).includes('tracking-secret-91f3'), false)
+  })
+
+  test('requestUrl erfasst die kanonische Initial-URL mit exakter Query vor mehreren Redirects', async () => {
+    const query = '?lang=en&section=a%2fb&section=b+two&empty=&literal=%7e'
+    const start = `${AMTLICH_URL}${query}`
+    const middle = `${AMTLICH_URL}/middle?lang=de`
+    const final = `${AMTLICH_URL}/final`
+    const raw = ` HTTPS://WWW.GOV.EXAMPLE:443/before/../rules${query}#excluded-fragment `
+    const lauf = await laufen({
+      eingabe: { sourceId: AMTLICH, url: raw },
+      publications: [{ url: final, requestUrls: [middle, start] }],
+      antwort: (url) => url === start ? { status: 302, location: middle }
+        : url === middle ? { status: 307, location: `${final}#excluded-redirect-fragment` }
+          : { body: TEXT, headers: { 'content-type': 'text/plain' } },
+    })
+    const wert = erfolg(lauf)
+    assert.deepEqual(lauf.verbindungen.map(({ url }) => url), [start, middle, final])
+    assert.equal(wert.requestUrl, start)
+    assert.notEqual(wert.requestUrl, raw)
+    assert.equal(new URL(wert.requestUrl).search, query)
+    assert.equal(wert.canonicalUrl, final)
+    assert.equal(wert.redirectCount, 2)
+    assert.equal(JSON.stringify(wert).includes('excluded-'), false)
+  })
+
+  test('historische requestUrl ersetzt keine aktuelle Request-Erlaubnis und kein Tracking-Gate', async () => {
+    const start = `${AMTLICH_URL}?lang=en`
+    const historical = erfolg(await laufen({ eingabe: { sourceId: AMTLICH, url: start } }))
+    const revoked = await laufen({
+      eingabe: { sourceId: AMTLICH, url: historical.requestUrl },
+      publications: [{ url: AMTLICH_URL }],
+    })
+    assert.equal(grund(revoked), 'content_not_eligible')
+    assert.equal(revoked.verbindungen.length, 0)
+    assert.equal(revoked.dns.length, 0)
+    const tracked = await laufen({
+      eingabe: { sourceId: AMTLICH, url: start },
+      antwort: () => ({ status: 302, location: `${AMTLICH_URL}?fbclid=excluded-tracking` }),
+    })
+    assert.equal(grund(tracked), 'tracking_parameter')
+    assert.deepEqual(tracked.verbindungen.map(({ url }) => url), [start])
+    assert.equal(JSON.stringify(tracked.ergebnis).includes('excluded-tracking'), false)
   })
 
   test('Katalogtransport-Helfer bleibt die Live-Lesung und nimmt keine Aufrufer-Registry', async () => {

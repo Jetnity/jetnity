@@ -109,6 +109,8 @@ export type OfficialTruthSameRequestRetrievalProvenienz = ContentIdentityBinding
   readonly identitySchema: 2
   readonly versionId: string
   readonly sourceId: string
+  /** Tatsächlich abgerufene Initial-URL; historische Provenienz, keine Netzautorität. */
+  readonly requestUrl: string
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly contentType: string
@@ -169,6 +171,7 @@ type SaubererAbruf = ContentIdentityBinding & {
 type Gebunden = {
   readonly versionId: string
   readonly sourceId: string
+  readonly requestUrl: string
   readonly abruf: SaubererAbruf
 }
 
@@ -262,7 +265,7 @@ function stuetzeIstAbleitbar(support: OfficialTruthServerHeldSameRequestSupport 
 
 function abrufLesen(
   wert: unknown,
-): { ok: true; abruf: SaubererAbruf } | { ok: false; reason: OfficialTruthSameRequestExtractionSperrgrund } {
+): { ok: true; requestUrl: string; abruf: SaubererAbruf } | { ok: false; reason: OfficialTruthSameRequestExtractionSperrgrund } {
   const satz = datensatz(wert)
   if (!satz) return { ok: false, reason: 'http_failed' }
   if (satz.status === 'retrieved_material') return { ok: false, reason: 'representation_not_eligible' }
@@ -272,6 +275,7 @@ function abrufLesen(
     return { ok: false, reason: 'http_failed' }
   }
   if (satz.status !== 'server_owned_official_retrieval') return { ok: false, reason: 'http_failed' }
+  if (typeof satz.requestUrl !== 'string') return { ok: false, reason: 'invalid_source_snapshot' }
   if (typeof satz.sourceId !== 'string' || typeof satz.canonicalUrl !== 'string' || typeof satz.sourceContentHash !== 'string') {
     return { ok: false, reason: 'invalid_source_snapshot' }
   }
@@ -290,6 +294,9 @@ function abrufLesen(
   const redirectCount = satz.redirectCount
   return {
     ok: true,
+    requestUrl: satz.requestUrl,
+    // Der strikte Extraktorvertrag bleibt unverändert. Request-Provenienz
+    // bleibt daneben gebunden und wird nicht zur Extraktorautorität.
     abruf: {
       ...contentIdentityBinding(satz as unknown as ContentIdentityBinding),
       identitySchema: 2,
@@ -387,6 +394,7 @@ function material(
       identitySchema: 2,
       versionId: support.versionId,
       sourceId: support.sourceId,
+      requestUrl: fund.requestUrl,
       canonicalUrl: fund.abruf.canonicalUrl,
       retrievedAt: fund.abruf.retrievedAt,
       contentType: fund.abruf.contentType,
@@ -501,12 +509,13 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     }
     const gelesen = abrufLesen(roh)
     if (!gelesen.ok) return blockiert(gelesen.reason)
+    if (gelesen.requestUrl !== requestUrl) return blockiert('support_binding_mismatch')
     if (!contentIdentityMatches(gelesen.abruf, support) || gelesen.abruf.contentType !== support.contentType) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.sourceId !== support.sourceId) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.canonicalUrl !== support.canonicalUrl) return blockiert('source_url_changed_since_evidence')
     if (gelesen.abruf.sourceContentHash !== support.sourceContentHash) return blockiert('source_changed_since_evidence')
     if (!evidenceBindet(fest, support)) return blockiert('support_binding_mismatch')
-    gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, abruf: gelesen.abruf })
+    gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, requestUrl: gelesen.requestUrl, abruf: gelesen.abruf })
   }
 
   if (freeze) {
