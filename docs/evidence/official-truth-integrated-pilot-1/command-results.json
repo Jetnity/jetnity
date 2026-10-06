@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "subjectRuntimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe",
+  "authorEvidenceOnly": true,
+  "checks": [
+    {
+      "command": "npm ci --offline --cache /Users/sasa/.npm --no-audit --no-fund",
+      "status": "PASS",
+      "details": "530 packages; lifecycle scripts not suppressed in final run"
+    },
+    {
+      "command": "npm test",
+      "status": "FAIL_ENVIRONMENT",
+      "tests": 5578,
+      "passed": 5574,
+      "failed": 4,
+      "skipped": 0,
+      "suites": 810,
+      "durationMs": 21946.370959,
+      "details": "All four failures require hardcoded /usr/lib/postgresql/16/bin/initdb (ENOENT on macOS); existing CI Linux authoritative."
+    },
+    {
+      "command": "new integrated-pilot tests (included in npm test)",
+      "status": "PASS",
+      "tests": 29,
+      "skipped": 0
+    },
+    {
+      "command": "new storage tests (included in npm test)",
+      "status": "PASS",
+      "tests": 2,
+      "skipped": 0,
+      "proofGroups": 16,
+      "postgresVersion": "17.6"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 145
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS",
+      "details": "Sandbox first attempt blocked tsx IPC with EPERM; authorized unrestricted local retry passed."
+    },
+    {
+      "command": "npm run check:dead",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:exports",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:deps",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run official-truth:pilot-1 -- --run-official-source",
+      "status": "PARTIAL",
+      "exitCode": 2,
+      "negativePaths": 20,
+      "publicationCount": 0,
+      "storageCallsFromProducer": 0,
+      "localPostgresStructuralProof": "PASS",
+      "realOfficialSourcePilot": "BLOCKED"
+    },
+    {
+      "command": "npm run auth:pruefen",
+      "status": "NOT_VERIFIED",
+      "exitCode": 1,
+      "details": "SUPABASE_PROJECT_REF absent; stopped before live read. Existing exact-head CI Auth used after push."
+    },
+    {
+      "command": "db:rechte / db:rls / db:sicherheit",
+      "status": "NOT_RUN",
+      "details": "Existing commands use hosted Supabase. Only owned disposable local SQL is authorized; local actual ACL/RLS proof is separate."
+    }
+  ],
+  "localMissingPg16Tests": [
+    "official-truth-catalog-hardening-schema.test.ts",
+    "official-truth-content-identity-schema-v2.test.ts",
+    "official-truth-source-catalog-server.test.ts",
+    "official-truth-store-server.test.ts"
+  ],
+  "intermediateLogs": {
+    "npm-ci-final.log": {
+      "sha256": "b58a97bb4ab370e36716fd265ba30b9e1597d4e25cbc5daf3742580b01f01750",
+      "bytes": 163,
+      "location": "author-local-intermediate-not-public"
+    },
+    "npm-test-final.log": {
+      "sha256": "e6a8a2b3c3a44ad1397729ed8fb9494c0ae399f21eb5dd97e66570b403c9b95d",
+      "bytes": 1346325,
+      "location": "author-local-intermediate-not-public"
+    },
+    "typecheck-final.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
+      "location": "author-local-intermediate-not-public"
+    },
+    "lint-final.log": {
+      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+      "bytes": 61204,
+      "location": "author-local-intermediate-not-public"
+    },
+    "build-final.log": {
+      "sha256": "8a13be4d02fd2b3fe74807516266bb841ac754f8807f84387318f5857a589e0b",
+      "bytes": 3833,
+      "location": "author-local-intermediate-not-public"
+    },
+    "pilot-final.log": {
+      "sha256": "44a2834e5b41be055ac2637bf91517ab5fa6e418693aeb80be3226de114916ae",
+      "bytes": 979,
+      "location": "author-local-intermediate-not-public"
+    },
+    "auth-local.log": {
+      "sha256": "fe28b0f60c7936e66fc458734deff172cf09b0d184650f03a1e9ca9834526da8",
+      "bytes": 102,
+      "location": "author-local-intermediate-not-public"
+    }
+  },
+  "finalExactHeadRemoteGates": "See final PR #900 delivery comment; pre-push local checks do not assert remote CI success."
+}

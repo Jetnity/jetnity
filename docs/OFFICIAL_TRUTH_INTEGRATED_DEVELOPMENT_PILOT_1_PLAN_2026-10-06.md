@@ -28,3 +28,6 @@ Evidence: task-owned evidence directory; large intermediate logs in chat work di
 
 ## Risks and boundaries
 No API/UI/Trip change, hosted migration, F8, source registration, provider switch, auth change, real TTL, paid service or new secret. Local schema exists solely in task-created disposable cluster. Publication is all-or-nothing; checksums/readback never mint current authority. Implementation bundle binds exact source and semantic dependencies, no function stringification or Git-label identity.
+
+## Final execution checkpoint
+A completed. B implemented partial shared capture/origin/proof foundations. C executes both canonical paths through private projection but blocks required depth11>8. D proves real local structural PostgreSQL only. E is BLOCKED after one GOV.UK family, with real identity-only control. F provides one command and strict/readable reports, overall PARTIAL. All independent authorized code/test work was completed to this boundary; positive full bundle/semantic SQL and loaded-code attestation remain unresolved. See REPORT, STATUS and complete C01–C29 matrix. No new task or activation is dispatched.

@@ -5,27 +5,34 @@
   "branch": "feat/official-truth-integrated-development-pilot-1",
   "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
+  "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL",
   "phases": {
-    "A": "in_progress",
-    "B": "in_progress",
-    "C": "in_progress",
-    "D": "in_progress",
-    "E": "not_started",
-    "F": "not_started"
+    "A": "complete",
+    "B": "partial",
+    "C": "blocked_depth_11_limit_8",
+    "D": "structural_postgresql_proof_only",
+    "E": "blocked",
+    "F": "partial_executable_report_delivered"
   },
-  "checks": {
-    "npmCi": "passed_offline_ignore_scripts"
+  "realOfficialSourcePilot": "BLOCKED",
+  "integratedReceiptRoundtrip": "NOT_VERIFIED",
+  "depth": {
+    "observed": 11,
+    "maximum": 8
   },
-  "realOfficialSourcePilot": "NOT_RUN",
-  "next": "Complete exact codec/issuer contracts, integrate controlled original lifecycle and private execution capture.",
+  "checks": "command-results.json",
+  "coverage": "coverage-matrix.json",
+  "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
+  "next": "Independent Technical-Lead exact-head review; no follow-up or activation dispatched.",
   "activation": {
     "F8": false,
     "hostedApply": false,
     "requirementsProvider": false
   },
-  "agents": {
-    "execution_context": "existing execution modules plus new tests",
-    "contract_audit": "new bundle codec/verifier/tests",
-    "storage_proof": "dedicated disposable local SQL scripts/test"
-  }
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh"
+  },
+  "runtimeCommit": "a513590019d9d0840a5a50e6bfb33eda3787a4fe"
 }

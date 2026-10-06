@@ -1,0 +1,12 @@
+OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL
+
+Primary and composed: real canonical extraction and private receipt projection executed.
+Full receipt/custody publication: BLOCKED (required graph depth 11; unchanged maximum 8).
+Failure paths: 20 fail closed; publication/storage calls: 0.
+PostgreSQL: PASS; scope is synthetic structural storage only.
+Integrated semantic receipt PostgreSQL roundtrip: NOT_VERIFIED.
+Real official source: BLOCKED; see docs/evidence/official-truth-integrated-pilot-1/official-source.json.
+Source capsules archive disk sources; they do not attest the loaded executable.
+Historical audit is not current authority. F8 closed; no hosted apply or production activation.
+
+Exit code 2 denotes the expected PARTIAL outcome; 1 denotes an unexpected conformance failure.

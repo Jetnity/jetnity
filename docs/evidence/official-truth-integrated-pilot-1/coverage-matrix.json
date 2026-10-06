@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "scope": "author_evidence_not_tl_acceptance",
+  "cases": [
+    {
+      "case": "C01",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Integrated private-ledger forged/clone/foreign/reused/closed tests and one-shot execution tests; general live issuer API remains absent."
+    },
+    {
+      "case": "C02",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Fixed corpus exposes no URL/pin/clock CLI inputs; malformed/extra proof ingress rejected. No general authenticated issuer/resolver lifecycle."
+    },
+    {
+      "case": "C03",
+      "status": "PASS_BOUNDARY",
+      "evidenceAndGap": "Missing-origin integration rejects clone; dormant root custody_missing; no row/latest fallback."
+    },
+    {
+      "case": "C04",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Exact identity/proof substitution and existing R2 suite; not every source/item/profile substitution injected through final projection."
+    },
+    {
+      "case": "C05",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Future original and reversed completion integrated; stale/expired reference exercised in proof/context tests, not every expiry through whole producer."
+    },
+    {
+      "case": "C06",
+      "status": "PASS_BOUNDARY",
+      "evidenceAndGap": "Both modes reject changed fresh body and final URL; zero partial projection."
+    },
+    {
+      "case": "C07",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Non-null proposal fails in both modes; canonical existing v3 replay/key tests reused."
+    },
+    {
+      "case": "C08",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Duplicate/missing support integrated; existing selector tests cover ambiguous eligible sets; not every selection variant integrated."
+    },
+    {
+      "case": "C09",
+      "status": "PARTIAL",
+      "evidenceAndGap": "New shared citation tests cover atom/otherwise/option and duplicates; no completed publisher mutation matrix."
+    },
+    {
+      "case": "C10",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Both fixed paths use actual initial redirect URL and retained context; existing #898/#891 URL matrix reused."
+    },
+    {
+      "case": "C11",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Genuine composition seal/fact observed; context clones/reuse fail in seam tests; full phase-A/B corruption matrix remains."
+    },
+    {
+      "case": "C12",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Unknown manifest/artifact versions rejected; existing schema1/2 guards unchanged; all mixed-version integrated variants not implemented."
+    },
+    {
+      "case": "C13",
+      "status": "PASS_BOUNDARY",
+      "evidenceAndGap": "Receipt-shaped and structural SQL fixtures fail full verifier; historical bytes never issue live origin."
+    },
+    {
+      "case": "C14",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Ledger replay/post-close/parallel isolation and one-shot context tests; no successful receipt retry through producer."
+    },
+    {
+      "case": "C15",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Fixed public corpus only; exact scope substitution rejected; all traveller-derived combinations not integrated."
+    },
+    {
+      "case": "C16",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Exact canonical scope comparison exercised; full seven-dimension adversarial variants remain existing helper evidence."
+    },
+    {
+      "case": "C17",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Whole synthetic response rejects unused unknown field; canonical transport checks credentials; real whole-response qualification absent."
+    },
+    {
+      "case": "C18",
+      "status": "GAP",
+      "evidenceAndGap": "Complete source/registry snapshots retained but disk archives do not attest actually loaded executable/release closure."
+    },
+    {
+      "case": "C19",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Actual primary fact and genuine composed fact references/freeze/clone behavior proven in capture tests; no completed publisher substitution matrix."
+    },
+    {
+      "case": "C20",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Canonical citation coverage helper tested over legal slots; fixed integrated fact is simple requirement_effect."
+    },
+    {
+      "case": "C21",
+      "status": "PARTIAL",
+      "evidenceAndGap": "SQL structural alternate K refusal proved; full semantic K-crossbinding positive bundle remains unreachable."
+    },
+    {
+      "case": "C22",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Malformed bytes/duplicate keys/accessors/symbols/cycles/null/version cases across helpers/proof; not all through completed pipeline."
+    },
+    {
+      "case": "C23",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Byte/node boundary+1 and role edges; actual typed depth11 refusal; real SQL depth8 pass/9 refusal. Complete typed longest-shared-DAG boundary matrix remains."
+    },
+    {
+      "case": "C24",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Frozen registry/executable identity tests; no real current eligibility revocation source or hosted lifecycle."
+    },
+    {
+      "case": "C25",
+      "status": "BLOCKED",
+      "evidenceAndGap": "Both canonical paths reach private projection then depth11>8; exactly-once full bundle publication and semantic PostgreSQL roundtrip NOT_VERIFIED."
+    },
+    {
+      "case": "C26",
+      "status": "EXISTING_TESTS",
+      "evidenceAndGap": "Canonical review-v3 golden/differential tests run in full suite; engine uses same safe construction/proof readers."
+    },
+    {
+      "case": "C27",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Existing C/H/custody vectors preserved; new reader/pin families tested. No positive fully verified integrated closure."
+    },
+    {
+      "case": "C28",
+      "status": "PARTIAL",
+      "evidenceAndGap": "Real structural SQL denial/rollback/concurrent failure proven; no completed produced bundle -> persisted semantic receipt."
+    },
+    {
+      "case": "C29",
+      "status": "PASS_BOUNDARY",
+      "evidenceAndGap": "Dormant production root blocks custody_missing; production extractor/policy registries empty/provider null/app importers absent."
+    }
+  ]
+}

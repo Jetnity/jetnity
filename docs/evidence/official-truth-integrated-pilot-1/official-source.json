@@ -1,0 +1,78 @@
+{
+  "schema": "official-truth-integrated-pilot-real-source-report-v1",
+  "realOfficialSourcePilot": "BLOCKED",
+  "startedAt": "2026-10-06T22:15:38.424Z",
+  "completedAt": "2026-10-06T22:15:38.514Z",
+  "researchedFamilyCount": 1,
+  "family": "GOV.UK / UK Government / Home Office",
+  "selectedCase": {
+    "citizenship": "CH",
+    "documentClass": "ordinary_passport",
+    "destination": "GB",
+    "purpose": "narrow_passport_validity_only",
+    "proposedSemanticTarget": "valid_through_stay",
+    "selectedUrl": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk",
+    "corroboratingUrl": "https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen",
+    "researchStatus": "prior_official_public_guidance_read",
+    "researchDateUTC": "2026-10-06",
+    "researchSummary": "The Swiss citizen section describes document validity covering the stay; route and document exceptions must remain explicit. This research text is not a trusted extracted fact."
+  },
+  "selectedBoundaryAttempt": {
+    "url": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk",
+    "status": "BLOCKED",
+    "reason": "content_not_eligible",
+    "sourceProfileQualified": false,
+    "deterministicExtractionExecuted": false
+  },
+  "identityOnlyControl": {
+    "url": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+    "startedAt": "2026-10-06T22:15:38.424Z",
+    "completedAt": "2026-10-06T22:15:38.514Z",
+    "status": "IDENTITY_VERIFIED_ONLY",
+    "reason": "whole_response_qualification_unavailable",
+    "retrievalCompletedAt": "2026-10-06T22:15:38.514Z",
+    "exactContentIdentityVerified": true,
+    "role": "same_family_existing_identity_profile_control_not_the_passport_rule"
+  },
+  "chain": {
+    "wholeResponsePrivacyQualification": "BLOCKED",
+    "originalObservationOrigin": "NOT_ISSUED",
+    "validityOrigin": "NOT_ISSUED",
+    "evidenceAcceptedOrigin": "NOT_ISSUED",
+    "extraction": "NOT_RUN",
+    "custodyBundle": "NOT_PUBLISHED",
+    "postgresRoundtrip": "NOT_RUN"
+  },
+  "blockers": [
+    "passport_representation_identity_profile_unavailable",
+    "source_specific_whole_response_qualification_unavailable",
+    "passport_rule_extractor_unavailable",
+    "national_list_alone_does_not_prove_complete_eta_eligibility"
+  ],
+  "controls": {
+    "network": "existing_server_owned_dns_https_redirect_body_utf8_identity_path",
+    "arbitraryUrlInput": false,
+    "credentials": false,
+    "cookieOrChallengeBypass": false,
+    "rawSourceBodyPublished": false,
+    "unqualifiedSourceHashPublished": false,
+    "hostedDevelopmentApply": false,
+    "productionActivation": false,
+    "evidenceOrRuleWrite": false,
+    "f8": "CLOSED"
+  },
+  "researchSources": [
+    {
+      "title": "Entering the UK: Before you leave for the UK",
+      "url": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk"
+    },
+    {
+      "title": "Visiting the UK as an EU, EEA or Swiss citizen",
+      "url": "https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen"
+    }
+  ],
+  "priorEvidence": [
+    "docs/OFFICIAL_TRUTH_GOVUK_DEVELOPMENT_REGISTRATION_RECEIPT_1_2026-10-04.md",
+    "docs/OFFICIAL_TRUTH_GOVUK_ETA_SEMANTIC_CONTRACT_CLOSURE_1_2026-10-05.md"
+  ]
+}
