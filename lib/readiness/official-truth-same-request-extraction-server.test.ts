@@ -7,7 +7,7 @@ import { r2Registry, r2Binding, r2Profiles, r2CatalogRows, type R2FixturePublica
 
 import assert from 'node:assert/strict'
 import { readFileSync, readdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
@@ -429,6 +429,7 @@ function definition(): OfficialTruthExtractorDefinition {
 async function binden(
   wert: unknown,
   optionen?: {
+    run?: typeof decideOfficialTruthSameRequestTrustedFactExtraction
     extern?: { transport: OfficialTruthSourceCatalogTransport; aufrufe: Aufruf[] }
     loadProof?: (eingabe: unknown) => Promise<OfficialTruthSameRequestProofErgebnis>
     retrieve?: (
@@ -445,7 +446,7 @@ async function binden(
   const extern = optionen?.extern ?? transportFuer(realeEingaben())
   const spur: Spur = { abrufe: [], transporte: [], katalogOperationen: [], extrakt: [], http: [] }
   const antwort = optionen?.antwort ?? standardAntwort
-  const ergebnis = await decideOfficialTruthSameRequestTrustedFactExtraction(wert, {
+  const ergebnis = await (optionen?.run ?? decideOfficialTruthSameRequestTrustedFactExtraction)(wert, {
     loadProof:
       optionen?.loadProof ??
       ((eingabe) =>
@@ -490,7 +491,7 @@ function erfolg(ergebnis: OfficialTruthSameRequestExtractionErgebnis) {
   return ergebnis
 }
 
-describe('Official Truth same-request retrieval-to-extractor binding', () => {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) describe('Official Truth same-request retrieval-to-extractor binding', () => {
   test('1 ein Beweisblock ruft weder Lesung noch Extraktor', async () => {
     const extern = transportFuer(realeEingaben())
     const { ergebnis, spur, extern: aufrufe } = await binden(eingabe(), {
@@ -1509,4 +1510,12 @@ function fixturePin(sourceId: string) {
 function fixtureRef(sourceId: string) {
   const { contentItemId } = fixturePin(sourceId)
   return { sourceId, contentItemId }
+}
+
+// Test-only reuse of the real proof/retrieval/extraction offline harness.
+export const compositionCaptureFixture = {
+  binden, zusammengesetzteEingabe, kompositionsPolitik, gleichwertigePolitik,
+  kompositionsExtraktor, kompositionsBeobachtungen, echtAbrufen, standardAntwort,
+  transportFuer, realeEingaben, eingabe, definition, anfrage,
+  publications: R2_PUBLICATIONS, urls: [REAL_URL, INNEN_URL],
 }
