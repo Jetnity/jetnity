@@ -1,6 +1,6 @@
-# Integrated pilot1 — R1 author self-review
+# Integrated pilot 1 — R1 author self-review
 
-Local deterministic engineering and actual semantic PostgreSQL criteria pass. Final exact-head CI/Auth/Preview are required separately before delivery readiness; no independent TL PASS is claimed. Draft retained.
+Author classification: OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_READY_FOR_TL_REVIEW. Local deterministic engineering and actual semantic PostgreSQL criteria pass. Runtime head 161bab0b has full CI/Auth/Preview SUCCESS, including 5,718 tests/0 failures / 0 skips and38 SQL groups on PostgreSQL 16.15. The final documentation head is re-gated separately in the delivery receipt; no independent TL PASS is claimed. Draft retained.
 
 R1 fixes all four original review areas within the authorized local scope: explicit v2 depth16 with unchanged v1 depth8; actual full producer bytes committed/read back; captured build actually executed with original/executable/fact/seal references and genuine non-null validity; isolated passport profile/qualification/extractor proposal with a bounded actual HTTPS attempt.
 
@@ -12,7 +12,7 @@ The supported integrated producer emits legacy requirement_effect / visa facts w
 
 Real-source BLOCKED remains: complete guide exceeds the unchanged network bound; opaque publishing metadata also prevents proposed whole-response qualification. No official body/hash, fake accepted origin or immigration conclusion is emitted. The fixed synthetic legal corpus is fictional test data.
 
-Linux CI found two operational defects: idle-owner expiry and excessive repeated deferred work. The first is corrected by operation-scoped timeouts; the second was confirmed by safe diagnostics (COMMIT timed out at 30,001ms). Full set-based retained-parent comparison reduces local COMMIT 6,788→3,518ms while preserving all 638 deferred events and the same30-second deadline. Additional direct missing/wrong-edge and missing/wrong-target regressions pass. All failed attempts remain recorded; new-head gates are required.
+Linux CI found two operational defects: idle-owner expiry and excessive repeated deferred work. The first is corrected by operation-scoped timeouts; the second was confirmed by safe diagnostics (COMMIT timed out at 30,001ms). Full set-based retained-parent comparison reduces local COMMIT 6,788→3,518ms while preserving all 638 deferred events and the same 30-second deadline. Additional direct missing/wrong-edge and missing/wrong-target regressions pass. All failed attempts remain recorded; the optimized runtime head passes full Linux CI.
 
 No task allowlist expansion, Trip edit, hosted SQL/migration, Auth/AAL change, activation, TTL choice or recurring service was introduced. Full local checks and the four unchanged macOS/Linux-PG environment failures are reported honestly. Final remote gates and complete tree readback must pass; internal reviewers cannot approve Ready/merge. See REPORT for P0–P3 and coverage-matrix for individual cases.
 

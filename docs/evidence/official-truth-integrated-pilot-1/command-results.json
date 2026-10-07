@@ -131,7 +131,7 @@
       "location": "author-local-intermediate-not-public"
     }
   },
-  "finalExactHeadRemoteGates": "Required after publication; final PR delivery receipt records fresh exact-head CI/Auth/Preview, remote tree and immutable TASK.",
+  "finalExactHeadRemoteGates": "Runtime head161bab0b has complete green CI/Auth/Preview. Final documentation commit is independently re-gated after publication; see final PR delivery receipt for its exact SHA and results.",
   "remoteAttemptHistory": [
     {
       "head": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
@@ -185,5 +185,24 @@
       "commit": 3518,
       "read": 1828
     }
+  },
+  "validatedRuntimeGates": {
+    "head": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
+    "tree": "1cda08eac2aa2968bfb390823106e3503c4b1d3c",
+    "ciRun": 37552600598,
+    "verifyJob": 112571348865,
+    "authJob": 112571349019,
+    "ci": "SUCCESS",
+    "tests": 5718,
+    "passed": 5718,
+    "failed": 0,
+    "skipped": 0,
+    "sqlGroups": 38,
+    "postgres": "16.15",
+    "auth": "SUCCESS_actual_55_values_243_keys",
+    "preview": "dpl_BEDLshwyjvZd4RTBzNbuecV9ohJN",
+    "previewState": "READY",
+    "previewExactSha": true,
+    "aliasError": null
   }
 }

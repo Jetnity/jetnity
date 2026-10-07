@@ -1,6 +1,6 @@
-# Integrated pilot1 — R1 handoff
+# Integrated pilot 1 — R1 handoff
 
-Local engineering: VERIFIED. Real official source: BLOCKED. Final exact-head CI/Auth/Preview remain a required publication gate; the final delivery receipt records their actual outcome. PR#900 stays Draft. No Ready/merge/follow-up.
+Classification: OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_READY_FOR_TL_REVIEW. Local engineering: VERIFIED. Real official source: BLOCKED. Runtime head 161bab0b passes all 5,718 tests and CI 37552600598, Auth 112571349019 and exact Preview dpl_BEDLshwyjvZd4RTBzNbuecV9ohJN. The final documentation head is freshly re-gated and recorded in the final delivery receipt. PR#900 stays Draft. No Ready/merge/follow-up.
 
 Read the consolidated REPORT, CONTRACTS, STATUS, developer-report and C01–C29 matrix. Both genuine canonical modes now transfer complete verified v2 envelopes to real local PostgreSQL and pass acknowledged commit plus fresh complete semantic readback. Legacy v1 still refuses the identical depth11 graph. Independent SQL codecs/edges, full23-column reader, no-heal, races, rollback and new-receipt uncertain-commit resolution are proven in 38 groups. Separate historical16-group structural evidence remains explicitly separate.
 

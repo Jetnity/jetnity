@@ -5,14 +5,14 @@
   "branch": "feat/official-truth-integrated-development-pilot-1",
   "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
-  "classification": "LOCAL_ENGINEERING_VERIFIED_PENDING_FINAL_REMOTE_GATES",
+  "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_READY_FOR_TL_REVIEW",
   "phases": {
     "A": "r1_reconstructed_task_unchanged",
     "B": "captured_build_primary_composed_and_original_validity_verified",
     "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
     "D": "both_actual_semantic_sql_roundtrips_and_adversarial_proof_verified",
     "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
-    "F": "one_command_exit0_full_checks_remote_gates_pending"
+    "F": "one_command_exit0_full_local_checks_and_runtime_exact_head_remote_gates_verified"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "VERIFIED",
@@ -24,7 +24,7 @@
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "Publish measured set-based SQL constraint correction; require fresh optimized exact-head CI/Auth/Preview and full remote readback.",
+  "next": "STOP for independent Technical-Lead exact-head re-review after final documentation-head remote gates/readback. Final PR delivery receipt records that exact SHA; Draft retained, no Ready/merge/follow-up.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -36,7 +36,7 @@
     "reasoning": "xhigh",
     "provider": "openai"
   },
-  "runtimeCommit": "403b93c709f03b445e50b48c78550f04ef8c05bb",
+  "runtimeCommit": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
   "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
   "r1Comment": 6027081169,
   "localProfile": {
@@ -62,5 +62,26 @@
     "reason": "COMMIT_timeout_30001ms_correctly_unknown",
     "auth": "PASS",
     "preview": "READY"
-  }
+  },
+  "validatedRuntimeGates": {
+    "head": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
+    "tree": "1cda08eac2aa2968bfb390823106e3503c4b1d3c",
+    "ciRun": 37552600598,
+    "verifyJob": 112571348865,
+    "authJob": 112571349019,
+    "ci": "SUCCESS",
+    "tests": 5718,
+    "passed": 5718,
+    "failed": 0,
+    "skipped": 0,
+    "sqlGroups": 38,
+    "postgres": "16.15",
+    "auth": "SUCCESS_actual_55_values_243_keys",
+    "preview": "dpl_BEDLshwyjvZd4RTBzNbuecV9ohJN",
+    "previewState": "READY",
+    "previewExactSha": true,
+    "aliasError": null
+  },
+  "finalDocumentationHeadGates": "Fresh after publication; final PR delivery receipt is authoritative.",
+  "independentTLPass": false
 }
