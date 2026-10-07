@@ -9,6 +9,8 @@ import { LocalPgConnection, pgBytes, pgCompositeArray, pgText, type PgRows } fro
 export type StructuralByteFixture = IntegratedPilotBundleInput
 export async function installLocalProofSchema(owner: LocalPgConnection): Promise<void> {
   await owner.query(readFileSync(new URL('./storage.sql', import.meta.url), 'utf8'))
+  await owner.query(readFileSync(new URL('./url-idna-data.sql', import.meta.url), 'utf8'))
+  await owner.query(readFileSync(new URL('./url-codec.sql', import.meta.url), 'utf8'))
   await owner.query(readFileSync(new URL('./semantic-v2.sql', import.meta.url), 'utf8'))
 }
 export async function localArtifactTypeOids(owner: LocalPgConnection) {
@@ -161,9 +163,13 @@ export async function persistVerifiedIntegratedBundleLocally(cluster:LocalProofC
     // Fresh stored bytes must equal the submitted immutable bytes, not only hashes.
     const b=readback.envelope.bundle,submitted=envelope.bundle
     if(Buffer.compare(Buffer.from(b.receiptBytes),Buffer.from(submitted.receiptBytes))||Buffer.compare(Buffer.from(b.custodyBindingBytes),Buffer.from(submitted.custodyBindingBytes))||b.artifacts.length!==submitted.artifacts.length||b.artifacts.some(a=>{const source=submitted.artifacts.find(s=>s.pin.id===a.pin.id&&s.pin.version===a.pin.version);return !source||Buffer.compare(Buffer.from(a.canonicalBytes),Buffer.from(source.canonicalBytes))!==0}))throw Error('local_storage_postcommit_bytes')
-    return {ok:true as const,outcome,readback}
+    const protectionFailure=connection.operationDiagnostics.findLast(d=>d.phase==='commit')?.protectionFailure
+    return {ok:true as const,outcome,readback,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
   }catch(error){
-    if(committing&&!committed)return {ok:false as const,reason:'commit_outcome_unknown' as const}
+    if(committing&&!committed){
+      const protectionFailure=connection.operationDiagnostics.findLast(d=>d.phase==='commit')?.protectionFailure
+      return {ok:false as const,reason:'commit_outcome_unknown' as const,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
+    }
     if(!committing){try{await connection.query('ROLLBACK')}catch{/* Closed connection cannot manufacture success. */}}
     throw error
   }finally{connection.close()}

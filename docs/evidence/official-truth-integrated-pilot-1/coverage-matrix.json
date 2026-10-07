@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "round": "TL-R2",
+  "round": "TL-R3",
   "scope": "author_evidence_not_tl_acceptance",
   "supportedIntegratedFactNamespace": "legacy requirement_effect / visa; applicabilitySchema null",
   "cases": [
@@ -112,7 +112,7 @@
     {
       "case": "C22",
       "status": "INTEGRATED_AND_SHARED_BYTES",
-      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority. R2 audits canonical descriptor MIME, path/locator rules and Unicode length/trim refinements at the direct native publisher boundary."
+      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority. R2 audits canonical descriptor MIME, path/locator rules and Unicode length/trim refinements at the direct native publisher boundary. R3 independently enforces role-specific canonical URL components, hosts/IPs/IDNA and500-character bounds, with rehashed native negatives and encoded positives."
     },
     {
       "case": "C23",
@@ -127,7 +127,7 @@
     {
       "case": "C25",
       "status": "INTEGRATED_POSTGRES_VERIFIED",
-      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; Expanded R2 real SQL adversarial/security groups (exact count in developer-report); mandatory CI test cannot skip either positive path."
+      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; Expanded R2 real SQL adversarial/security groups (exact count in developer-report); mandatory CI test cannot skip either positive path. R3 adds18 mandatory native groups with public publication/COMMIT/empty or complete positive readback; differential comparisons use frozen readers."
     },
     {
       "case": "C26",
@@ -142,7 +142,7 @@
     {
       "case": "C28",
       "status": "INTEGRATED_POSTGRES_VERIFIED",
-      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested. R2 adds effective fixed backend statement/lock/idle-transaction limits and an armed native COMMIT guard, with rollback/lock-release/independent-writer readback and unchanged lost-ACK uncertainty."
+      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested. R2 adds effective fixed backend statement/lock/idle-transaction limits and an armed native COMMIT guard, with rollback/lock-release/independent-writer readback and unchanged lost-ACK uncertainty. R3 observes actual deferred COMMIT before losing only the armed guard, proves bounded identity-scoped interruption/rollback/lock-release/independent writer, and preserves actual ACK-winning race and explicit protection failure."
     },
     {
       "case": "C29",
@@ -151,5 +151,7 @@
     }
   ],
   "r2Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
-  "r2RegressionEvidence": "r2-regression-evidence.json"
+  "r2RegressionEvidence": "r2-regression-evidence.json",
+  "r3Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
+  "r3RegressionEvidence": "r3-regression-evidence.json"
 }

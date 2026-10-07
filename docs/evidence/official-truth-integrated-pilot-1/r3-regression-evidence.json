@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "round": "TL-R3",
+  "authorEvidenceOnly": true,
+  "baselineHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+  "nativePostgres": "17.6",
+  "bindingReport": "https://github.com/Jetnity/jetnity/issues/899",
+  "checkpoint": "JETNITY-HANDOFF-2026-10-07-PR900-TL-R3",
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh",
+    "source": "actual_current_session_turn_metadata_read",
+    "metadataTimestampUTC": "2026-10-07T15:29:19.272Z"
+  },
+  "baselineSqlBlobs": {
+    "storage.sql": "a62bdbafb6918aab7baa263f8287ad3bf97be85d",
+    "semantic-v2.sql": "09b6e4ce868ee8ec470eb9383dc404899dfe2c52",
+    "pg-wire.ts": "7ebda4a7fe96baf7bce7605f649404fd1f659528"
+  },
+  "nativeRed": [
+    {
+      "scenario": "url_quote",
+      "native": "postgres (PostgreSQL) 17.6",
+      "typescript": "dependency_corrupt",
+      "publicPublisher": "inserted",
+      "commit": "succeeded",
+      "readback": {
+        "error": "local_storage_dependency_corrupt"
+      }
+    },
+    {
+      "scenario": "post_arming_guard_loss",
+      "native": "postgres (PostgreSQL) 17.6",
+      "targetDeferredCommitObserved": true,
+      "onlyGuardTerminated": true,
+      "targetResult": {
+        "ok": true
+      },
+      "elapsedMs": 24542,
+      "diagnostics": [
+        {
+          "phase": "commit",
+          "elapsedMs": 24542,
+          "outcome": "complete",
+          "code": null
+        }
+      ]
+    },
+    {
+      "scenario": "post_arming_guard_loss",
+      "native": "postgres (PostgreSQL) 17.6",
+      "typescript": "valid",
+      "publicPublisher": "inserted",
+      "commit": "succeeded",
+      "readback": {
+        "status": "verified",
+        "rowCount": 652
+      }
+    }
+  ],
+  "nativeRedRecipe": "Actual baseline local runner/SQL; controlled primary producer; selected descriptor retains legitimate URL plus quote mutation via r2DescriptorFixture; public writer publication and COMMIT; fresh canonical readback. Separate actual valid bundle plus21-second deferred probe: independently observe target COMMIT/PgSleep and armed guard, terminate only guard, observe24,542ms acknowledged commit and complete652-row readback. No PGlite or fake ACK.",
+  "nativeGreenFromFullSuite": {
+    "status": "PASS",
+    "codecComparisons": 1008,
+    "postgresVersion": "postgres (PostgreSQL) 17.6",
+    "checks": [
+      "r3_native_extractor_url_codec_matches_frozen_reader",
+      "r3_native_identity_url_codec_matches_frozen_reader",
+      "r3_native_rehashed_selected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_path_braces_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_query_apostrophe_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_fragment_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_wildcard_refused_commit_empty_fresh_absent",
+      "r3_native_selected_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_unselected_role_specific_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_representation_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_post_arming_cancel_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_terminate_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_ack_race_observed_protection_loss_honest_outcome_independent_writer_readback"
+    ],
+    "guardLoss": [
+      {
+        "scenario": "cancel",
+        "elapsedAfterLossMs": 101,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3782,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "terminate",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3784,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "ack_race",
+        "elapsedAfterLossMs": 3882,
+        "outcome": "acknowledged_verified_commit",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 5267,
+          "outcome": "complete",
+          "code": null,
+          "commitAcknowledged": true,
+          "protectionFailure": "commit_guard_lost"
+        }
+      }
+    ]
+  },
+  "nativeNegativeGuarantees": {
+    "rehash": "Every artifact digest, ancestor Pin, dependent identity, receipt B and K recomputed before direct SQL call",
+    "preflightDoesNotGateNativeCall": true,
+    "negativePackages": 10,
+    "attemptedCommitAfterRejection": true,
+    "allEightTablesEmpty": true,
+    "freshIndependentRead": "receipt_absent"
+  },
+  "nativePositiveGuarantees": {
+    "packages": 3,
+    "actualPublicPublisher": true,
+    "commitAcknowledged": true,
+    "freshCompleteCanonicalBytesCompared": [
+      "receipt",
+      "K",
+      "all_artifacts"
+    ],
+    "normalDisarmHasNoProtectionFailure": true
+  },
+  "guardScenarios": {
+    "cancelAndTerminate": "Target already observed active in real deferred COMMIT before only guard failure; native57P01, no ACK, unknown adapter outcome, explicit rollback and advisory-lock release; succeeding independent writer/full readback.",
+    "ackRace": "Only owned recovery scheduling delayed1500ms; actual PostgreSQL COMMIT ACK and full readback retained with commit_guard_lost; busy until cleanup; independent retry idempotent. No result/ACK/identity fabrication.",
+    "operationalBoundsMs": {
+      "controlStatement": 2000,
+      "recoveryFallback": 5000,
+      "nativeTerminateWait": 1000
+    },
+    "limitation": "Surviving healthy owned control path; simultaneous server/OS/Node/control failure is not guaranteed rollback or hard real-time."
+  },
+  "urlCompatibility": {
+    "mandatoryRoleComparisons": 1008,
+    "supplementalDiagnosticComparisons": 39781,
+    "supplementalMismatches": 0,
+    "supplementalScope": "A-label endpoints from official Unicode17 mapping/category/bidi/joining/combining inputs plus2000 seeded random ASCII Punycode strings; canonical Node reader is expected-result oracle. Private diagnostic, separate from mandatory1008 vectors.",
+    "runtime": {
+      "node": "22.23.3",
+      "ada": "2.9.2",
+      "icu": "78.3"
+    },
+    "sqlDataSource": "https://raw.githubusercontent.com/ada-url/ada/v2.9.2/src/ada_idna.cpp",
+    "sqlDataSourceSha256": "1b9af936cdb63fb295c61e9444fee89e0b565205f8002fb40425fcaae5d544b7",
+    "mappingVersion": "15.0.0",
+    "offlineRegeneration": "byte_identical_input_digest_pinned",
+    "universalEquivalenceClaim": false
+  },
+  "preserved": {
+    "r2SemanticGroups": 69,
+    "structuralGroups": 16,
+    "primaryRows": 652,
+    "composedRows": 720,
+    "r1ResourceLimits": "UNCHANGED",
+    "canonicalContracts": "UNCHANGED",
+    "realOfficialSourcePilot": "BLOCKED",
+    "sourceRun": false
+  },
+  "attempts": [
+    {
+      "kind": "baseline_red_harness_initial_readback_exception",
+      "resolution": "Caught the expected canonical quote-readback refusal and reran the complete native RED probe; final log contains both actual counterexamples."
+    },
+    {
+      "kind": "sql_implementation_errors",
+      "resolution": "Corrected SQL regex escape and ambiguous alias, plus generated surrogate-range syntax; not counted as baseline RED."
+    },
+    {
+      "kind": "initial_url_parity_mismatch",
+      "resolution": "Ada preserves xn--abc-; exact behavior retained."
+    },
+    {
+      "kind": "reader_execute_privilege",
+      "resolution": "Granted only the four new pure helpers to the existing local read executor; application roles still cannot call private helpers."
+    },
+    {
+      "kind": "positive_fixture_authority_mismatch",
+      "resolution": "Representation positives now use their existing regulations.example catalog domain, so positive/negative URL assertions isolate intended semantics."
+    },
+    {
+      "kind": "initial_unicode17_assumption",
+      "observedMismatches": 1105,
+      "comparisons": 39781,
+      "resolution": "Rejected ICU-based assumption; pinned actual Ada2.9.2 source data and its historical joiner/bidi behavior; zero final diagnostic mismatches."
+    }
+  ],
+  "logs": {
+    "r3-full-test.log": {
+      "sha256": "6cb3ba67d269a698acb666c6c3ed9daa0a58e1d0db9526d266b2c93c2c086e29",
+      "bytes": 1367069,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-native-green-attempt1.log": {
+      "sha256": "d87eab24e12e0afcdf8b4f9bedeaa6325178a203d6d8ad96be6f29f9aa520399",
+      "bytes": 1545,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-native-green-attempt2.log": {
+      "sha256": "c013ff212f16b895f0deb7fbd37011b544f403dc123554774945fc0e1fb48c23",
+      "bytes": 1928,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-native-green-attempt3.log": {
+      "sha256": "0b06f7c336b91113e952151176fdd5922fdb76d6e4c794ab6b5fb0dcec5f5b1b",
+      "bytes": 1516,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-native-green-attempt4.log": {
+      "sha256": "3694bed4320945a2c991c9f5a1fdc8e7ccae13c65aa90675bd7e1ae03d05b77b",
+      "bytes": 2667,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-native-red.log": {
+      "sha256": "ac0db0c1ac4b110e07ffe17f47c2fdc2a435a437e4a80df5468b373c36d6fabd",
+      "bytes": 668,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-url-fuzz-ada2.log": {
+      "sha256": "236abfad3dd981be07dd8aaac790b6c0304e25472a7914614c4d12e2edbc4e2b",
+      "bytes": 37,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-url-fuzz.log": {
+      "sha256": "27678582023695d0e24dc1a61cd18b275e78f98ad08dd5ea04ea998ce7d7637b",
+      "bytes": 76732,
+      "location": "author-local-intermediate-not-public"
+    }
+  },
+  "finalExactHead": "Bound by the separate post-publication receipt; this committed file cannot contain its own final commit hash."
+}

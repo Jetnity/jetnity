@@ -7,12 +7,12 @@
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
   "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_READY_FOR_TL_REVIEW",
   "phases": {
-    "A": "r2_required_entries_index_reviews_checkpoint_refs_and_immutable_task_reconstructed",
+    "A": "r3_entries_live_index_issue_report_r1_r2_checkpoint_refs_and_immutable_task_reconstructed",
     "B": "captured_build_primary_composed_and_original_validity_verified",
     "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
-    "D": "r2_native_69_groups_primary_and_composed_complete_roundtrips_VERIFIED",
+    "D": "r2_69_groups_preserved_plus_r3_18_native_url_and_guard_loss_groups",
     "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
-    "F": "developer_command_PASS_and_local_checks_recorded_new_exact_head_remote_gates_in_final_delivery_receipt"
+    "F": "developer_command_PASS_local_tests_recorded_new_exact_head_remote_gates_in_final_delivery_receipt"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "VERIFIED",
@@ -34,9 +34,10 @@
     "id": "01a11333-cbc2-7282-b194-27335e632c61",
     "model": "gpt-6-astra",
     "reasoning": "xhigh",
-    "provider": "openai"
+    "source": "actual_current_session_turn_metadata_read",
+    "metadataTimestampUTC": "2026-10-07T15:29:19.272Z"
   },
-  "round": "TECHNICAL_LEAD_R2_CONSOLIDATED_CORRECTION",
+  "round": "TECHNICAL_LEAD_R3_CONSOLIDATED_CORRECTION",
   "r1Comment": 6027081169,
   "localProfile": {
     "name": "ot-integrated-pilot-local-closure-v2",
@@ -65,7 +66,18 @@
     "idleTransaction": 20000,
     "commitNativeGuard": 20000,
     "ordinaryIdleSession": 0,
-    "activeTransportFallback": 30000
+    "activeTransportFallback": 30000,
+    "commitRecoveryStatement": 2000,
+    "commitRecovery": 5000
   },
-  "localFullSuiteLimit": "Five initial local failures: four unchanged Linux-PG16 environment failures plus exact importer guard, now corrected and49/49 focused tests pass. Final Linux CI must fully pass."
+  "localFullSuiteLimit": "Four unchanged tests require a hardcoded Linux-PG16 path absent on Mac; no skip. Fresh final-head Linux CI must pass.",
+  "baseHeadBeforeR3": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+  "r3Checkpoint": "JETNITY-HANDOFF-2026-10-07-PR900-TL-R3",
+  "r3BindingReport": "https://github.com/Jetnity/jetnity/issues/899",
+  "r3FormalReviewExists": false,
+  "r3RegressionEvidence": "r3-regression-evidence.json",
+  "r3ProofGroups": 18,
+  "sourceRunInR3": false,
+  "r3Delegation": "SINGLE_AGENT_same_existing_writer",
+  "r3Status": "CORRECTIONS_IMPLEMENTED_NATIVE_AND_LOCAL_GATES_VERIFIED"
 }

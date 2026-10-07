@@ -1,76 +1,57 @@
 {
-  "schemaVersion": 3,
-  "round": "TL-R2",
+  "schemaVersion": 4,
+  "round": "TL-R3",
   "authorEvidenceOnly": true,
-  "basisHead": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
-  "nativeStorage": {
-    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-integrated-pilot-storage.test.ts",
-    "status": "PASS",
-    "tests": 3,
-    "pass": 3,
-    "fail": 0,
-    "skip": 0,
-    "semanticGroups": 69,
+  "basisHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh",
+    "source": "actual_current_session_turn_metadata_read",
+    "metadataTimestampUTC": "2026-10-07T15:29:19.272Z"
+  },
+  "native": {
+    "command": "npm test",
+    "postgres": "17.6",
+    "existingSemanticGroups": 69,
+    "r3Groups": 18,
     "structuralGroups": 16,
-    "postgresVersion": "17.6"
+    "r3CodecComparisons": 1008,
+    "allMandatoryTaskNativeGroups": "PASS",
+    "primaryRows": 652,
+    "composedRows": 720
   },
   "localFullSuite": {
     "command": "npm test",
-    "status": "FAILED_THEN_EXACT_GUARD_CORRECTED_FOCUSED_RERUN",
-    "tests": 5627,
-    "passed": 5622,
-    "failed": 5,
-    "skipped": 0,
+    "exitCode": 1,
+    "status": "FOUR_UNCHANGED_PLATFORM_PATH_FAILURES",
+    "tests": 5628,
+    "pass": 5624,
+    "fail": 4,
     "suites": 810,
-    "durationMs": 423780.674042,
-    "taskFailure": "Exact content-identity importer guard refused new historical r2-fixtures.ts; precisely that reviewed path added, unknown/lookalike cases retained.",
-    "focusedCorrection": {
-      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-content-identity.test.ts",
-      "tests": 49,
-      "passed": 49,
-      "failed": 0,
-      "skipped": 0
-    },
-    "remainingEnvironmentFailures": [
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0,
+    "durationMs": 495381.574667,
+    "failures": [
       "official-truth-catalog-hardening-schema.test.ts",
       "official-truth-content-identity-schema-v2.test.ts",
       "official-truth-source-catalog-server.test.ts",
       "official-truth-store-server.test.ts"
     ],
-    "remainingEnvironmentReason": "Unchanged tests require hardcoded Linux PostgreSQL16 initdb, absent on this Mac; no skip/fallback substitution. Final exact-head Linux CI must pass all tests."
+    "reason": "Unchanged tests require a hardcoded Linux PostgreSQL16 initdb absent on this Mac; no skip or emulator. Fresh final-head Linux CI must pass all tests."
   },
-  "earlierLocalAttempts": [
-    {
-      "kind": "command_setup_error",
-      "detail": "An unintended package-manager fallback moved existing npm modules to its ignored directory; interrupted and restored the same modules, with no dependency/lock change. Superseded module-resolution failures are not product RED evidence."
-    },
-    {
-      "kind": "fixture_typecheck_error",
-      "detail": "Initial unknown-value fixture argument types corrected; full typecheck then passed."
-    },
-    {
-      "kind": "native_commit_probe_RED",
-      "detail": "Startup GUC alone did not cover deferred COMMIT; fixed native guard added and verified."
-    },
-    {
-      "kind": "native_positive_concurrency_failure",
-      "detail": "First UTF-16 counting implementation failed a positive concurrent writer case; precise SQLSTATE not recorded. Equivalent faster count passes full native69-group proof."
-    },
-    {
-      "kind": "importer_guard_RED",
-      "detail": "Closed guard refused exactly the new fixture importer; exact path reviewed, added and all49 Content Identity tests passed."
-    }
-  ],
   "developerCommand": {
     "command": "npm run official-truth:pilot-1",
-    "status": "PASS",
     "exitCode": 0,
+    "status": "PASS",
     "negativePaths": 50,
+    "producerRoundtrips": 2,
     "semanticGroups": 69,
+    "r3Groups": 18,
     "structuralGroups": 16,
-    "confirmedProducerRoundtrips": 2,
     "realSourceThisInvocation": "NOT_RUN",
-    "overallRealOfficialSourcePilot": "BLOCKED_retained_R1_evidence"
+    "overallRealOfficialSourcePilot": "BLOCKED"
   },
   "finalChecks": [
     {
@@ -107,185 +88,112 @@
     },
     {
       "command": "npm run build",
-      "exitCode": 0,
-      "status": "PASS"
+      "exitCode": 0
     }
   ],
-  "finalExactHeadRemoteGates": "Required after publication; recorded in final delivery receipt. Earlier-head gates are historical only.",
-  "historicalR1RemoteAttempts": [
-    {
-      "head": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
-      "run": 37549274500,
-      "verifyJob": 112560613083,
-      "tests": 5718,
-      "passed": 5717,
-      "failed": 1,
-      "skipped": 0,
-      "reason": "idle_owner_connection_timeout",
-      "correction": "Timeout applies to startup/active queries, not ready/idle lifetime."
-    },
-    {
-      "head": "2543988422058e551e9f1a57864cb5adc1c7475d",
-      "run": 37550426404,
-      "verifyJob": 112564306234,
-      "tests": 5718,
-      "passed": 5717,
-      "failed": 1,
-      "skipped": 0,
-      "reason": "primary_publication_non_success; exact cause measured in diagnostic successor"
-    },
-    {
-      "head": "403b93c709f03b445e50b48c78550f04ef8c05bb",
-      "run": 37551625911,
-      "verifyJob": 112568216700,
-      "tests": 5718,
-      "passed": 5717,
-      "failed": 1,
-      "skipped": 0,
-      "reason": "commit_outcome_unknown",
-      "publicationQueryMs": 21757,
-      "commitMs": 30001,
-      "commitOutcome": "timeout",
-      "transportCode": "connection_closed",
-      "correction": "Full retained-parent edge verification uses one materialized derived set and symmetric set comparisons; all constraint events retained; deadline unchanged."
-    }
-  ],
-  "historicalR1ValidatedRuntime": {
-    "head": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
-    "tree": "1cda08eac2aa2968bfb390823106e3503c4b1d3c",
-    "ciRun": 37552600598,
-    "verifyJob": 112571348865,
-    "authJob": 112571349019,
-    "ci": "SUCCESS",
-    "tests": 5718,
-    "passed": 5718,
-    "failed": 0,
-    "skipped": 0,
-    "sqlGroups": 38,
-    "postgres": "16.15",
-    "auth": "SUCCESS_actual_55_values_243_keys",
-    "preview": "dpl_BEDLshwyjvZd4RTBzNbuecV9ohJN",
-    "previewState": "READY",
-    "previewExactSha": true,
-    "aliasError": null
-  },
-  "intermediateLogs": {
-    "r2-additional-red.log": {
-      "sha256": "4364eaa8e3ac7f95020997585ee1a0ab3aa30a93336e36fee3f7ea3f6014672f",
-      "bytes": 971,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-backend.log": {
-      "sha256": "28b95620eb5b3737a96b9de647255b1d597225a8a4af0afd0062058aa20c2c50",
-      "bytes": 581,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-build.log": {
-      "sha256": "cde12efba625f92087c9f42f44edbb291193edf4e0576483e0b1465e1a26ee96",
-      "bytes": 3833,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-bundle.log": {
-      "sha256": "d01165bfd50ad10ae0cec9116fc42fef258eab009cfbf9f78b7f361bd99cb353",
-      "bytes": 4094,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-api-schutz.log": {
-      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
-      "bytes": 136,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-dead.log": {
-      "sha256": "06eca13cda8193820d792154b88d642aa86d7f9596c824fb63cee2e6917a7ae7",
-      "bytes": 172,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-deps.log": {
-      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
-      "bytes": 340,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-exports.log": {
-      "sha256": "bd05d7ee004b8880f3550ad3e0a87bc1c8bf90af5c4a6cd96b8c54f9ce2f6253",
-      "bytes": 150,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-operating-mode.log": {
-      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
-      "bytes": 106,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-check-schema-bezug.log": {
-      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
-      "bytes": 1028,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-lint.log": {
-      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
-      "bytes": 61204,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-final-typecheck.log": {
-      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
-      "bytes": 135,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-full-suite.log": {
-      "sha256": "5448dce5810edce593f16a08dae2ad285e2da0ca7086d8a4289a5b18e77d2953",
-      "bytes": 1365615,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-importer-guard.log": {
-      "sha256": "0ec45a5a9b3298e67ec264a387a91921bdfead1cfc0517e605bc73866b54abd8",
-      "bytes": 12958,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-native-red.log": {
-      "sha256": "cf6d7a9299a9f0b996bb9266f8e6c8128123434372823456a6693c917e47c1d5",
-      "bytes": 1988,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-storage-before-commit-guard.log": {
-      "sha256": "0074e98cdfd31277a2219d6d890e2a78bc6386d282e6242bd7f4da16d13189a3",
-      "bytes": 3432,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-storage-before-utf16-fast-path.log": {
-      "sha256": "d5aba1f1fef56dbfcc7dad12560a186d4d67fe3f9e1257e0694cb64fc401daa8",
-      "bytes": 3472,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-storage.log": {
-      "sha256": "73e0195908243ef09dbd420ad852b49ac5159daf605251674279f57155fc4f49",
-      "bytes": 7590,
-      "location": "author-local-intermediate-not-public"
-    },
-    "r2-developer-command.log": {
-      "sha256": "a373e763fc2543128789ec6bee227ef6b1dba6736a989128e3c0bc8a85da748b",
-      "bytes": 1059,
-      "location": "author-local-intermediate-not-public"
-    }
-  },
   "lint": {
     "errors": 0,
     "warnings": 145
   },
-  "representationBoundaryTest": {
-    "tests": 16,
-    "passed": 16,
-    "failed": 0,
-    "skipped": 0,
-    "covers": [
-      9,
-      16,
-      17
-    ]
+  "earlierAttempts": [
+    {
+      "command": "npm run build",
+      "status": "SANDBOX_IPC_EPERM",
+      "resolution": "Authorized local execution escalation; final build exit0, no deployment."
+    }
+  ],
+  "regressionEvidence": "r3-regression-evidence.json",
+  "intermediateLogs": {
+    "r3-build-final.log": {
+      "sha256": "77a0aeae5bb160d54a7c369e79017adb17a2e5c10c2f29b1bd20e003598c898d",
+      "bytes": 3834,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-api-schutz.log": {
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "bytes": 136,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-dead.log": {
+      "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+      "bytes": 172,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-deps.log": {
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "bytes": 340,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-exports.log": {
+      "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+      "bytes": 150,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-operating-mode.log": {
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "bytes": 106,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-schema-bezug.log": {
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "bytes": 1028,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-developer-command.log": {
+      "sha256": "b56e5d520c92a65bb96c283548d04348a1e0f40ba5083e2c09285609da261afe",
+      "bytes": 1134,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final-lint.log": {
+      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+      "bytes": 61204,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final-typecheck.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-full-test.log": {
+      "sha256": "6cb3ba67d269a698acb666c6c3ed9daa0a58e1d0db9526d266b2c93c2c086e29",
+      "bytes": 1367069,
+      "location": "author-local-intermediate-not-public"
+    }
   },
-  "session": {
-    "id": "01a11333-cbc2-7282-b194-27335e632c61",
-    "model": "gpt-6-astra",
-    "reasoning": "xhigh",
-    "source": "current_session_turn_metadata",
-    "metadataTimestampUTC": "2026-10-07T13:16:22.514Z"
-  }
+  "historicalR2": {
+    "basisHead": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
+    "publishedHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+    "localTests": {
+      "command": "npm test",
+      "status": "FAILED_THEN_EXACT_GUARD_CORRECTED_FOCUSED_RERUN",
+      "tests": 5627,
+      "passed": 5622,
+      "failed": 5,
+      "skipped": 0,
+      "suites": 810,
+      "durationMs": 423780.674042,
+      "taskFailure": "Exact content-identity importer guard refused new historical r2-fixtures.ts; precisely that reviewed path added, unknown/lookalike cases retained.",
+      "focusedCorrection": {
+        "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-content-identity.test.ts",
+        "tests": 49,
+        "passed": 49,
+        "failed": 0,
+        "skipped": 0
+      },
+      "remainingEnvironmentFailures": [
+        "official-truth-catalog-hardening-schema.test.ts",
+        "official-truth-content-identity-schema-v2.test.ts",
+        "official-truth-source-catalog-server.test.ts",
+        "official-truth-store-server.test.ts"
+      ],
+      "remainingEnvironmentReason": "Unchanged tests require hardcoded Linux PostgreSQL16 initdb, absent on this Mac; no skip/fallback substitution. Final exact-head Linux CI must pass all tests."
+    },
+    "remoteCiRun": 37635755030,
+    "remoteTests": 5765,
+    "remotePass": 5765,
+    "remoteFail": 0,
+    "remoteSkip": 0,
+    "appliesToR3": false
+  },
+  "finalExactHeadRemoteGates": "Required after publication, recorded in separate final receipt. Actual CI synthetic-merge checkout and PR head are identified separately."
 }

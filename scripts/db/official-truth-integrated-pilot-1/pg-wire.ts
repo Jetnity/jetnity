@@ -32,7 +32,15 @@ export type LocalPgOperationDiagnostic = Readonly<{
   elapsedMs: number
   outcome: 'complete' | 'timeout' | 'sql_error' | 'transport_error'
   code: string | null
+  commitAcknowledged?: boolean
+  protectionFailure?: 'commit_guard_lost' | 'commit_control_failed' | 'commit_disarm_failed'
 }>
+type CommitDeadline = {
+  sent(): void
+  completed(): void
+  cleanup(): Promise<void>
+  failure(): LocalPgOperationDiagnostic['protectionFailure']
+}
 const diagnosticCode = (error: unknown): string | null => error instanceof LocalPgError
   ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count'].includes(error.code) ? error.code : 'transport_error') : null
 export class LocalPgConnection {
@@ -44,13 +52,16 @@ export class LocalPgConnection {
   private busy = false
   private timedOut = false
   private backendPid = 0
+  private commandTag: string | null = null
   private readonly operations: LocalPgOperationDiagnostic[] = []
   /** Fixed fields only: no SQL, parameter bytes, identities, socket paths or database error text. */
   get operationDiagnostics(): readonly LocalPgOperationDiagnostic[] { return this.operations.slice() }
-  private recordOperation(phase: LocalPgOperationDiagnostic['phase'], started: number, error?: unknown) {
+  private recordOperation(phase: LocalPgOperationDiagnostic['phase'], started: number, error?: unknown, protectionFailure?: LocalPgOperationDiagnostic['protectionFailure']) {
     const code = diagnosticCode(error)
     this.operations.push(Object.freeze({ phase, elapsedMs: Math.ceil(performance.now() - started),
-      outcome: this.timedOut ? 'timeout' : error === undefined ? 'complete' : code && /^[0-9A-Z]{5}$/.test(code) ? 'sql_error' : 'transport_error', code }))
+      outcome: this.timedOut ? 'timeout' : error === undefined ? 'complete' : code && /^[0-9A-Z]{5}$/.test(code) ? 'sql_error' : 'transport_error', code,
+      ...(phase === 'commit' ? { commitAcknowledged: this.commandTag === 'COMMIT' } : {}),
+      ...(protectionFailure ? { protectionFailure } : {}) }))
     if (this.operations.length > 32) this.operations.shift()
   }
   private constructor(private socket: Socket, private cluster: LocalProofCluster) {
@@ -107,6 +118,7 @@ export class LocalPgConnection {
       if (++count > 100_000) throw new LocalPgError('response_bound')
       if (tag === 'R' && bytes.readInt32BE(0) !== 0) throw new LocalPgError('authentication_forbidden')
       if (tag === 'K') this.backendPid = bytes.readInt32BE(0)
+      if (tag === 'C') this.commandTag = bytes.subarray(0, bytes.length - 1).toString()
       if (tag === 'E') {
         let offset = 0, code = 'query_failed'
         while (offset < bytes.length && bytes[offset]) { const field = String.fromCharCode(bytes[offset++]!); const end = bytes.indexOf(0, offset); if (end < 0) break; if (field === 'C') code = bytes.subarray(offset, end).toString(); offset = end + 1 }
@@ -133,38 +145,73 @@ export class LocalPgConnection {
    * + transaction start prevent cancellation of a reused PID or later work.
    * The installation owner is local test infrastructure, never an application role.
    */
-  private async armCommitDeadline(): Promise<() => Promise<void>> {
+  private async armCommitDeadline(sql: string): Promise<CommitDeadline> {
     const guard = await LocalPgConnection.connect(this.cluster)
-    let control: LocalPgConnection | undefined, pending: Promise<unknown> | undefined
-    const cleanup = async () => {
+    let control: LocalPgConnection | undefined, pending: Promise<void> | undefined, recovery: Promise<void> | undefined
+    let armed = false, sent = false, completed = false, disarming = false, finished = false
+    let protectionFailure: LocalPgOperationDiagnostic['protectionFailure']
+    let guardBirth: string | undefined
+    let target: Readonly<Record<string, string | null>> | undefined
+    const recover = async () => {
+      protectionFailure = 'commit_guard_lost'
+      // This connection was established and its fixed backend limit configured
+      // BEFORE arming. Never reconnect or act on a bare/reused PID after loss.
+      const fallback = setTimeout(() => {
+        protectionFailure = 'commit_control_failed'
+        control?.socket.destroy(); this.closed = true; this.socket.destroy()
+      }, LOCAL_PG_DEADLINES.commitRecoveryMs)
       try {
-        if (pending) {
-          control ??= await LocalPgConnection.connect(this.cluster)
-          await control.query('SELECT pg_catalog.pg_cancel_backend($1::integer)', [pgText(String(guard.backendPid), 23)])
-          await pending
+        const rows = await control!.query('SELECT pg_catalog.pg_terminate_backend(a.pid,1000)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz AND a.state=\'active\' AND a.query=$4::text',
+          [pgText(String(this.backendPid), 23), pgText(target!.birth!), pgText(target!.transaction!), pgText(sql)])
+        if (rows.some(row => row.terminated !== 'true')) { protectionFailure = 'commit_control_failed'; this.closed = true; this.socket.destroy() }
+        // No matching activity can mean COMMIT already finished. Neither this
+        // result nor a successful signal establishes commit/rollback truth.
+      } catch { protectionFailure = 'commit_control_failed'; this.closed = true; this.socket.destroy() }
+      finally { clearTimeout(fallback) }
+    }
+    const cleanup = async () => {
+      disarming = true
+      try {
+        await recovery
+        if (pending && !finished) {
+          // No target command or later work can start until cancel + join ends.
+          await control!.query('SELECT pg_catalog.pg_cancel_backend(a.pid) FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz', [pgText(String(guard.backendPid), 23), pgText(guardBirth!)])
         }
+        await pending
       } finally { control?.close(); guard.close() }
     }
     try {
-      const target = (await guard.query('SELECT backend_start::text AS birth,xact_start::text AS transaction FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(this.backendPid), 23)]))[0]
-      if (!target?.birth || !target.transaction) { guard.close(); return async () => {} }
+      target = (await guard.query('SELECT backend_start::text AS birth,xact_start::text AS transaction FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(this.backendPid), 23)]))[0]
+      if (!target?.birth || !target.transaction) { guard.close(); return { sent() {}, completed() {}, cleanup: async () => {}, failure: () => undefined } }
+      control = await LocalPgConnection.connect(this.cluster)
+      await control.query(`SET statement_timeout=${LOCAL_PG_DEADLINES.commitRecoveryStatementMs}`)
+      guardBirth = (await control.query('SELECT backend_start::text AS birth FROM pg_catalog.pg_stat_get_activity($1::integer)', [pgText(String(guard.backendPid), 23)]))[0]?.birth ?? undefined
+      if (!guardBirth) throw new LocalPgError('commit_deadline_not_armed')
       // pg_sleep returns the empty void text. Using its length in the activity
       // function argument forces the fresh activity lookup AFTER the sleep.
-      let finished = false
       pending = guard.query('SELECT pg_catalog.pg_terminate_backend(a.pid)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer + pg_catalog.length(pg_catalog.pg_sleep($4::double precision)::text)) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz',
         [pgText(String(this.backendPid), 23), pgText(target.birth), pgText(target.transaction), pgText(String(LOCAL_PG_DEADLINES.commitMs / 1000))])
-        .then(() => { finished = true }, error => { finished = true; return error as unknown })
-      control = await LocalPgConnection.connect(this.cluster)
-      let armed = false
+        .then(() => { finished = true }, () => {
+          finished = true
+          if (!disarming && armed) {
+            protectionFailure = 'commit_guard_lost'
+            if (sent && !completed) recovery = recover()
+          }
+        })
       for (let attempt = 0; attempt < 50 && !finished; attempt++) {
-        const state = (await control.query('SELECT state,wait_event FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(guard.backendPid), 23)]))[0]
-        if (state?.state === 'active' && state.wait_event === 'PgSleep') { armed = true; break }
+        const state = (await control.query('SELECT state,wait_event,backend_start::text AS birth FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(guard.backendPid), 23)]))[0]
+        if (state?.state === 'active' && state.wait_event === 'PgSleep' && state.birth) { guardBirth = state.birth; armed = true; break }
         await new Promise<void>(resolve => setTimeout(resolve, 20))
       }
       if (!armed || finished) throw new LocalPgError('commit_deadline_not_armed')
       // Cancel and join even after an uncertain target outcome; closing a
       // sleeping socket alone would not release its backend promptly.
-      return cleanup
+      return {
+        sent() { if (finished) throw new LocalPgError('commit_deadline_not_armed'); sent = true },
+        completed() { completed = true; disarming = true },
+        cleanup,
+        failure: () => protectionFailure,
+      }
     } catch (error) { await cleanup(); throw error }
   }
   async query(sql: string, parameters: readonly PgParameter[] = []): Promise<PgRows> {
@@ -173,13 +220,15 @@ export class LocalPgConnection {
     this.busy = true; this.timedOut = false
     const command = /^(BEGIN|COMMIT|ROLLBACK)\b/i.exec(sql.trim())?.[1]?.toLowerCase()
     const phase: LocalPgOperationDiagnostic['phase'] = command === 'begin' || command === 'commit' || command === 'rollback' ? command : 'query'
-    const started = performance.now(); let failure: unknown, disarm: (() => Promise<void>) | undefined
+    const started = performance.now(); let failure: unknown, deadline: CommitDeadline | undefined
+    let cleanupFailure: LocalPgOperationDiagnostic['protectionFailure']
+    this.commandTag = null
     // The backend already bounds every statement (including COMMIT), locks and
     // idle transactions. This independent transport fallback is active only
     // during an operation; ordinary idle sessions remain reusable.
     this.socket.setTimeout(30_000)
     try {
-      if (phase === 'commit') disarm = await this.armCommitDeadline()
+      if (phase === 'commit') { deadline = await this.armCommitDeadline(sql); deadline.sent() }
       if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
       else {
         const parse = Buffer.concat([z(''), z(sql), i16(parameters.length), ...parameters.map(p => i32(p.oid))])
@@ -189,11 +238,18 @@ export class LocalPgConnection {
         this.socket.write(frame)
       }
       return await this.result()
-    } catch (error) { failure = error; throw error }
+    } catch (error) {
+      failure = error
+      // CommandComplete(COMMIT) is an actual backend acknowledgement even if
+      // ReadyForQuery is lost. Preserve it; fresh readback still verifies bytes.
+      if (phase === 'commit' && this.commandTag === 'COMMIT') return []
+      throw error
+    }
     finally {
+      deadline?.completed()
       this.socket.setTimeout(0)
-      try { await disarm?.() } catch (error) { failure ??= error; throw error }
-      finally { this.busy = false; this.recordOperation(phase, started, failure) }
+      try { await deadline?.cleanup() } catch { cleanupFailure = 'commit_disarm_failed'; this.closed = true; this.socket.destroy() }
+      finally { this.busy = false; this.recordOperation(phase, started, failure, deadline?.failure() ?? cleanupFailure) }
     }
   }
   close() { this.socket.setTimeout(0); this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }

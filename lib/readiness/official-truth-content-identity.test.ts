@@ -517,19 +517,23 @@ describe('dormancy and architectural boundaries', () => {
     // R2 historical counterexamples recompute canonical Evidence-v2 identities;
     // this exact fixture importer cannot issue live custody or production facts.
     'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts',
+    // R3 independent SQL differential proof only; frozen reader is the oracle.
+    'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts',
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
       'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
       'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
       'scripts/db/official-truth-integrated-pilot-1/unreviewed.ts',
       'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts.evil.ts',
+      'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts.evil.ts',
       'lib/readiness/official-truth-integrated-pilot-bundle.ts.evil.ts']) assert.equal(contentIdentityImporterAllowed(path), false, path)
   })
-  test('repository search pins the finite R2 application and isolated developer importers', () => {
+  test('repository search pins the finite R3 application and isolated developer importers', () => {
     const root = process.cwd(), importers: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {

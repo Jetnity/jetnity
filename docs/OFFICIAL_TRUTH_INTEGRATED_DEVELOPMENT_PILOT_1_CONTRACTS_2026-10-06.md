@@ -1,6 +1,6 @@
 # Integrated pilot internal contracts
 
-R1 and its binding R2 correction implement a controlled local engineering pilot. These contracts confer no production issuer authority or independent TL approval. The immutable TASK remains unchanged; TL amendment 6027081169 governs the explicit local successor profile.
+R1 and its binding R2/R3 corrections implement a controlled local engineering pilot. These contracts confer no production issuer authority or independent TL approval. The immutable TASK remains unchanged; TL amendment 6027081169 governs the explicit local successor profile.
 
 ## Preserved historical identities
 
@@ -124,3 +124,29 @@ Native regressions prove statement57014, lock55P03, idle-open-transaction termin
 These are operating deadlines, not data TTL, retention, launch, hosted migration or cost decisions.
 
 The closed Content Identity importer guard gains exactly `scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts`: it recomputes historical Evidence-v2 identities for the native counterexamples. No wildcard is added. Unknown siblings and filename lookalikes remain negative guard tests; the canonical production reader is unchanged.
+
+## Binding R3: role-specific URL compatibility and armed-guard loss
+
+The current [Issue #899 body](https://github.com/Jetnity/jetnity/issues/899) is the binding R3 report; checkpoint `JETNITY-HANDOFF-2026-10-07-PR900-TL-R3` is in [index #751](https://github.com/Jetnity/jetnity/issues/751). No formal R3 review was created. Existing R2 threads remain TL-owned. This section supersedes the earlier generic SQL URL/healthy-guard completeness claims, while preserving all R2 corrections.
+
+| URL role | Frozen reader / SQL admission |
+| --- | --- |
+| Extractor exact allowlist, selected and unselected | `quelleUrlLesen(value) === value`; canonical HTTPS, inherited12–500 characters, no credentials, exact localhost or .local; canonical non-default ports, IP hosts, sub.localhost, wildcard characters and fragments remain possible in this historical descriptor role. |
+| Representation request/final URL, Evidence identity, original/fresh observations and receipt support | Content Identity exact URL: same serialization, plus no non-default port, .localhost, wildcard or fragment (including empty #). Source ownership remains an additional independent catalog check. |
+| Path allowlist / source-domain fields | Existing canonical domain/path codecs remain separate; do not impose their DNS grammar on an extractor exact URL. |
+
+`url-codec.sql` checks components independently: literal quote/braces/backtick and backslash in paths; literal quote/angles/apostrophe in queries; literal quote/angles/backtick in fragments; exact literal/encoded dot segments; canonical authority, port, IPv4 and IPv6 spelling. Percent-encoded quotes/braces/apostrophes, empty query markers and encoded slashes remain unchanged valid bytes where the canonical reader accepts them. Neither normalization nor a TypeScript preflight repairs submitted bytes.
+
+A-label validation independently decodes bounded RFC3492 Punycode, verifies unchanged mapping/NFC, and reproduces the actual reader's mark/joiner/bidi behavior. Node22's URL engine is **Ada2.9.2**, whose mapping table is15.0.0; the runtime's ICU78.3/Unicode17 tables are not its URL tables. The local SQL data is pinned to [Ada2.9.2 source](https://raw.githubusercontent.com/ada-url/ada/v2.9.2/src/ada_idna.cpp), SHA256 `1b9af936cdb63fb295c61e9444fee89e0b565205f8002fb40425fcaae5d544b7`. The offline generator verifies that digest; generated SQL regenerates byte-identically. Ada/Unicode notices accompany the data. This is compatibility with the frozen reader, including historical first-joiner and bidi-loop behavior, not a new IDNA policy or authority-domain allowlist. No runtime dependency, compiler, PGlite or Node call enters SQL. Reader changes require a new differential audit; finite vectors are not a universal equivalence theorem.
+
+Native public-publisher regression packages fully rebuild ancestor Pins, B and K. Ten contradictory packages attempt publication and COMMIT; all eight storage tables stay empty and fresh independent reads report receipt_absent. Three matching encoded/role/boundary positives commit and compare the entire fresh canonical B/K/artifact readback. Separate per-role vectors include component ASCII, ports/IPs, IDNA, percent encodings,500/501 and preserved encoded positives.
+
+### Commit guard state and truth
+
+The existing25s statement/15s lock/20s idle-transaction/20s native COMMIT deadlines and30s active transport fallback stay fixed. Ordinary idle sessions remain unlimited. A control connection is established before guard arming; its2s backend statement limit is active before control commands. After observed arming, unexpected rejection of the guard operation while the target COMMIT is pending is recorded as `commit_guard_lost` and starts a single recovery operation through that already-owned control connection.
+
+Recovery acts only on the original PID **and backend birth and transaction start**, with fresh active state and the exact COMMIT query. Native termination waits at most1s; the control command is bounded by2s; an independent5s recovery fallback closes unusable control/target transports and records `commit_control_failed`. No replacement connection or bare target PID is used. Intentional disarm is marked separately before cancel-and-join; cleanup also checks the guard backend birth. The target stays busy until recovery/disarm completes, preventing a later command from racing stale control work.
+
+Only a received PostgreSQL `CommandComplete(COMMIT)` establishes ACK. Losing ReadyForQuery after that ACK does not erase it. Guard/disarm failure is separate fixed-field diagnostic evidence, also surfaced as `commitProtectionFailure` by the local persistence adapter. An acknowledged commit still requires fresh complete semantic and byte-exact readback. Without ACK the adapter returns `commit_outcome_unknown`; neither a signal nor empty activity is rollback evidence. An ACK winning the recovery race remains a verified commit with a disclosed protection failure. A failed surviving control path cannot promise server rollback; uncertainty remains explicit.
+
+The mandatory native failure tests independently observe target `COMMIT/PgSleep` and guard activity before canceling or terminating only the guard. Both prove interruption, eight empty tables, zero deferred-probe rows, fresh absent readback, released advisory lock and a successful independent writer with full readback. A third native race delays only the owned recovery call by1.5s within its5s bound: actual COMMIT ACK wins, reuse during cleanup is refused, full readback verifies the commit and an independent retry is idempotent. The fixture never fabricates ACK, SQL result or target identity. Existing healthy-deadline,31s idle reuse and lost-ACK tests remain mandatory. These are operating limits, not retention decisions or hard real-time guarantees under arbitrary OS/server/control failures.

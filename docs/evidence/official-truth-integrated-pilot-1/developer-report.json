@@ -1,5 +1,5 @@
 {
-  "schema": "official-truth-integrated-pilot-report-v2",
+  "schema": "official-truth-integrated-pilot-report-v3",
   "engineeringAcceptance": "PASS",
   "implementation": "LOCAL_ENGINEERING_VERIFIED",
   "synthetic": {
@@ -1458,6 +1458,72 @@
     "fullSemanticPublication": "VERIFIED",
     "productionActivation": false,
     "hostedApply": false
+  },
+  "r3": {
+    "status": "PASS",
+    "postgresVersion": "postgres (PostgreSQL) 17.6",
+    "checks": [
+      "r3_native_extractor_url_codec_matches_frozen_reader",
+      "r3_native_identity_url_codec_matches_frozen_reader",
+      "r3_native_rehashed_selected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_path_braces_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_query_apostrophe_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_fragment_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_wildcard_refused_commit_empty_fresh_absent",
+      "r3_native_selected_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_unselected_role_specific_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_representation_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_post_arming_cancel_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_terminate_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_ack_race_observed_protection_loss_honest_outcome_independent_writer_readback"
+    ],
+    "codecComparisons": 1008,
+    "guardLoss": [
+      {
+        "scenario": "cancel",
+        "elapsedAfterLossMs": 102,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3669,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "terminate",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3650,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "ack_race",
+        "elapsedAfterLossMs": 3930,
+        "outcome": "acknowledged_verified_commit",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 5045,
+          "outcome": "complete",
+          "code": null,
+          "commitAcknowledged": true,
+          "protectionFailure": "commit_guard_lost"
+        }
+      }
+    ]
   },
   "historicalStructuralProof": {
     "status": "PASS",

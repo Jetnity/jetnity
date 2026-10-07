@@ -8,6 +8,7 @@ import { runControlledSyntheticPilot } from './controlled-runtime'
 import { verifyIntegratedPilotBundle } from '@/lib/readiness/official-truth-integrated-pilot-bundle'
 import { runLocalStorageProof } from '../db/official-truth-integrated-pilot-1/proof'
 import { runIntegratedLocalStorageProof } from '../db/official-truth-integrated-pilot-1/integrated-proof'
+import { runR3NativeProof } from '../db/official-truth-integrated-pilot-1/r3-proof'
 import { runOfficialSourceQualification } from './official-source'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -29,12 +30,21 @@ const postgresSchema = z.object({ status: z.literal('PASS'), profile: z.literal(
 const structuralSchema = z.object({ status: z.literal('PASS'), scope: z.literal('synthetic_storage_structure_only'),
   postgresVersion: z.string(), checks: z.array(z.string()), integratedReceiptRoundtrip: z.literal('NOT_VERIFIED'),
   fullSemanticPublication: z.literal('BLOCKED'), productionActivation: z.literal(false), hostedApply: z.literal(false) }).strict()
-const reportSchema = z.object({ schema: z.literal('official-truth-integrated-pilot-report-v2'),
+const r3Schema = z.object({ status: z.literal('PASS'), postgresVersion: z.string(), checks: z.array(z.string()).length(18),
+  codecComparisons: z.number().int().min(800), guardLoss: z.array(z.object({
+    scenario: z.enum(['cancel','terminate','ack_race']), elapsedAfterLossMs: z.number().int().nonnegative(),
+    outcome: z.enum(['commit_outcome_unknown','acknowledged_verified_commit']), diagnostic: z.object({
+      phase: z.literal('commit'), elapsedMs: z.number().int().nonnegative(), outcome: z.enum(['complete','timeout','sql_error','transport_error']),
+      code: z.string().nullable(), commitAcknowledged: z.boolean(), protectionFailure: z.literal('commit_guard_lost'),
+    }).strict(),
+  }).strict()).length(3),
+}).strict()
+const reportSchema = z.object({ schema: z.literal('official-truth-integrated-pilot-report-v3'),
   engineeringAcceptance: z.literal('PASS'),
   implementation: z.literal('LOCAL_ENGINEERING_VERIFIED'), synthetic: z.object({ primary: positive, composed: positive,
     failurePaths: z.array(negative), positiveIntegratedConformance: z.literal('VERIFIED'),
     fullReceiptCustodyVerification: z.literal('VERIFIED'), publicationCount: z.literal(2) }).strict(),
-  postgres: postgresSchema, historicalStructuralProof: structuralSchema,
+  postgres: postgresSchema, r3: r3Schema, historicalStructuralProof: structuralSchema,
   realOfficialSourcePilot: z.enum(['BLOCKED','NOT_RUN']), officialSourceEvidence: z.string().nullable(),
   loadedApplicationBytes: z.literal('CAPTURED_BUILD_EXECUTED'),
   trustedComputingBase: z.literal('host_loader_esbuild_node_interpreter_and_finite_builtins'),
@@ -59,6 +69,7 @@ export async function runIntegratedDeveloperProof(runOfficialSource = false) {
     if (result.status !== 'blocked' || result.reason === 'closure_bound_exceeded' || result.trace.publicationCount || result.trace.storageCalls) throw Error('negative_path_regression')
     failurePaths.push(result)
   }
+  const r3 = r3Schema.parse(await runR3NativeProof(primary.envelope))
   const structural = structuralSchema.parse(await runLocalStorageProof())
   const official = runOfficialSource ? await runOfficialSourceQualification() : null
   const summary = (result: typeof primary, sql: z.infer<typeof persisted>) => ({ mode: result.mode,
@@ -66,11 +77,11 @@ export async function runIntegratedDeveloperProof(runOfficialSource = false) {
     stages: [...result.stages, 'atomic_sql_commit_acknowledged', 'fresh_full_semantic_readback'],
     trace: { ...result.trace, publicationCount: 1, storageCalls: 1 }, recordFingerprint: result.envelope.bundle.recordFingerprint,
     storedReadbackRows: sql.rowCount, legacyV1: 'REJECTED_DEPTH_11' })
-  const report = reportSchema.parse({ schema: 'official-truth-integrated-pilot-report-v2',
+  const report = reportSchema.parse({ schema: 'official-truth-integrated-pilot-report-v3',
     engineeringAcceptance: 'PASS', implementation: 'LOCAL_ENGINEERING_VERIFIED',
     synthetic: { primary: summary(primary, postgres.primary), composed: summary(composed, postgres.composed), failurePaths,
       positiveIntegratedConformance: 'VERIFIED', fullReceiptCustodyVerification: 'VERIFIED', publicationCount: 2 },
-    postgres, historicalStructuralProof: structural, realOfficialSourcePilot: official?.realOfficialSourcePilot ?? 'NOT_RUN',
+    postgres, r3, historicalStructuralProof: structural, realOfficialSourcePilot: official?.realOfficialSourcePilot ?? 'NOT_RUN',
     officialSourceEvidence: official ? 'docs/evidence/official-truth-integrated-pilot-1/official-source.json' : null,
     loadedApplicationBytes: 'CAPTURED_BUILD_EXECUTED', trustedComputingBase: 'host_loader_esbuild_node_interpreter_and_finite_builtins',
     historicalAuditGrantsCurrentAuthority: false, f8: 'CLOSED', visitorEvaluation: 'NOT_ACTIVATED', hostedDevelopmentApply: false,
@@ -80,6 +91,7 @@ export async function runIntegratedDeveloperProof(runOfficialSource = false) {
     'Both actual bundles: atomic PostgreSQL commit acknowledged; fresh full semantic readback verified.',
     'Exact idempotent repeats add no data. Legacy v1 separately refuses both depth11 bundles at8.',
     `Controlled failure paths: ${failurePaths.length}; semantic PostgreSQL checks: ${postgres.checks.length}.`,
+    `R3 native URL/guard-loss proof: ${r3.checks.length} checks; ${r3.codecComparisons} frozen-reader comparisons.`,
     `Historical structural proof: ${structural.checks.length} checks; separate from semantic publication.`,
     `Real official source: ${report.realOfficialSourcePilot}${report.officialSourceEvidence ? `; see ${report.officialSourceEvidence}` : ''}.`,
     'Guarantee: controlled local application execution; host loader/compiler/Node remain the trusted computing base.',
