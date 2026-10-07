@@ -1480,17 +1480,18 @@
       "r3_native_representation_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
       "r3_native_post_arming_cancel_observed_protection_loss_honest_outcome_independent_writer_readback",
       "r3_native_post_arming_terminate_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_dispatch_gap_observed_protection_loss_honest_outcome_independent_writer_readback",
       "r3_native_post_arming_ack_race_observed_protection_loss_honest_outcome_independent_writer_readback"
     ],
     "codecComparisons": 1008,
     "guardLoss": [
       {
         "scenario": "cancel",
-        "elapsedAfterLossMs": 102,
+        "elapsedAfterLossMs": 103,
         "outcome": "commit_outcome_unknown",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 3669,
+          "elapsedMs": 3666,
           "outcome": "sql_error",
           "code": "57P01",
           "commitAcknowledged": false,
@@ -1499,11 +1500,24 @@
       },
       {
         "scenario": "terminate",
+        "elapsedAfterLossMs": 104,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3816,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "dispatch_gap",
         "elapsedAfterLossMs": 103,
         "outcome": "commit_outcome_unknown",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 3650,
+          "elapsedMs": 111,
           "outcome": "sql_error",
           "code": "57P01",
           "commitAcknowledged": false,
@@ -1512,11 +1526,11 @@
       },
       {
         "scenario": "ack_race",
-        "elapsedAfterLossMs": 3930,
+        "elapsedAfterLossMs": 3935,
         "outcome": "acknowledged_verified_commit",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 5045,
+          "elapsedMs": 5074,
           "outcome": "complete",
           "code": null,
           "commitAcknowledged": true,

@@ -8,7 +8,7 @@ test('R3 native canonical URL publication and post-arming guard loss preserve co
   assert.equal(primary.status, 'synthetic_bundle_verified')
   if (primary.status !== 'synthetic_bundle_verified') throw Error('r3_baseline_failed')
   const result = await runR3NativeProof(primary.envelope)
-  assert.equal(result.status, 'PASS'); assert.equal(result.checks.length, 18)
+  assert.equal(result.status, 'PASS'); assert.equal(result.checks.length, 19)
   assert.ok(result.codecComparisons > 800)
   context.diagnostic(JSON.stringify(result))
 })

@@ -145,7 +145,7 @@ export class LocalPgConnection {
    * + transaction start prevent cancellation of a reused PID or later work.
    * The installation owner is local test infrastructure, never an application role.
    */
-  private async armCommitDeadline(sql: string): Promise<CommitDeadline> {
+  private async armCommitDeadline(): Promise<CommitDeadline> {
     const guard = await LocalPgConnection.connect(this.cluster)
     let control: LocalPgConnection | undefined, pending: Promise<void> | undefined, recovery: Promise<void> | undefined
     let armed = false, sent = false, completed = false, disarming = false, finished = false
@@ -161,8 +161,12 @@ export class LocalPgConnection {
         control?.socket.destroy(); this.closed = true; this.socket.destroy()
       }, LOCAL_PG_DEADLINES.commitRecoveryMs)
       try {
-        const rows = await control!.query('SELECT pg_catalog.pg_terminate_backend(a.pid,1000)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz AND a.state=\'active\' AND a.query=$4::text',
-          [pgText(String(this.backendPid), 23), pgText(target!.birth!), pgText(target!.transaction!), pgText(sql)])
+        // COMMIT may still be in transport while this same transaction is idle.
+        // Query/state sampling must not create an unprotected dispatch window.
+        // busy-through-cleanup prevents later target work; xact identity excludes
+        // a completed commit or another transaction even when its PID survives.
+        const rows = await control!.query('SELECT pg_catalog.pg_terminate_backend(a.pid,1000)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz',
+          [pgText(String(this.backendPid), 23), pgText(target!.birth!), pgText(target!.transaction!)])
         if (rows.some(row => row.terminated !== 'true')) { protectionFailure = 'commit_control_failed'; this.closed = true; this.socket.destroy() }
         // No matching activity can mean COMMIT already finished. Neither this
         // result nor a successful signal establishes commit/rollback truth.
@@ -228,7 +232,7 @@ export class LocalPgConnection {
     // during an operation; ordinary idle sessions remain reusable.
     this.socket.setTimeout(30_000)
     try {
-      if (phase === 'commit') { deadline = await this.armCommitDeadline(sql); deadline.sent() }
+      if (phase === 'commit') { deadline = await this.armCommitDeadline(); deadline.sent() }
       if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
       else {
         const parse = Buffer.concat([z(''), z(sql), i16(parameters.length), ...parameters.map(p => i32(p.oid))])

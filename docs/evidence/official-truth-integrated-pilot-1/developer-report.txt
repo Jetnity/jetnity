@@ -4,7 +4,7 @@ Primary and Composition: captured application build executed; complete receipt/K
 Both actual bundles: atomic PostgreSQL commit acknowledged; fresh full semantic readback verified.
 Exact idempotent repeats add no data. Legacy v1 separately refuses both depth11 bundles at8.
 Controlled failure paths: 50; semantic PostgreSQL checks: 69.
-R3 native URL/guard-loss proof: 18 checks; 1008 frozen-reader comparisons.
+R3 native URL/guard-loss proof: 19 checks; 1008 frozen-reader comparisons.
 Historical structural proof: 16 checks; separate from semantic publication.
 Real official source: NOT_RUN.
 Guarantee: controlled local application execution; host loader/compiler/Node remain the trusted computing base.

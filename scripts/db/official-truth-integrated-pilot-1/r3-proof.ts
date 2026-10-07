@@ -74,14 +74,16 @@ async function urlProof(primary: LocalIntegratedPilotEnvelope, checks: string[])
 
 async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[]) {
   const evidence: { scenario: string; elapsedAfterLossMs: number; outcome: string; diagnostic: LocalPgOperationDiagnostic | undefined }[] = []
-  for (const scenario of ['cancel', 'terminate', 'ack_race'] as const) {
+  for (const scenario of ['cancel', 'terminate', 'dispatch_gap', 'ack_race'] as const) {
     const cluster = startLocalProofCluster(), connect = LocalPgConnection.connect, owner = await connect(cluster)
     let writer: LocalPgConnection | undefined, writerPid = '', recoveryDelay = false, lossAt = 0
+    let commitHeld = false
     const connections: LocalPgConnection[] = []
     try {
       await installLocalProofSchema(owner)
-      const seconds = scenario === 'ack_race' ? '0.3' : '60'
-      await owner.query(`CREATE SCHEMA r3_guard_probe;CREATE TABLE r3_guard_probe.pending(id integer);CREATE FUNCTION r3_guard_probe.wait_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_catalog.pg_sleep(${seconds});RETURN NEW;END $$;CREATE CONSTRAINT TRIGGER r3_wait AFTER INSERT ON r3_guard_probe.pending DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION r3_guard_probe.wait_commit();GRANT USAGE ON SCHEMA r3_guard_probe TO ot_provenance_writer;GRANT INSERT ON r3_guard_probe.pending TO ot_provenance_writer`)
+      const deferredWait = scenario === 'ack_race' ? 'pg_catalog.pg_advisory_xact_lock(19003,1)' : 'pg_catalog.pg_sleep(60)'
+      if (scenario === 'ack_race') await owner.query('SELECT pg_catalog.pg_advisory_lock(19003,1)')
+      await owner.query(`CREATE SCHEMA r3_guard_probe;CREATE TABLE r3_guard_probe.pending(id integer);CREATE FUNCTION r3_guard_probe.wait_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM ${deferredWait};RETURN NEW;END $$;CREATE CONSTRAINT TRIGGER r3_wait AFTER INSERT ON r3_guard_probe.pending DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION r3_guard_probe.wait_commit();GRANT USAGE ON SCHEMA r3_guard_probe TO ot_provenance_writer;GRANT INSERT ON r3_guard_probe.pending TO ot_provenance_writer`)
       const oids = await localArtifactTypeOids(owner)
       // Fault injection changes no ACK, SQL result or target identity. The race
       // adds an owned control-path scheduling delay within the fixed 5s bound;
@@ -90,11 +92,23 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
         const c = await connect(candidate, user); connections.push(c)
         const query = c.query.bind(c)
         if (candidate === cluster && user === 'ot_provenance_writer') {
+          if (scenario === 'dispatch_gap') {
+            // Hold only the actual COMMIT frame before kernel dispatch. All
+            // PostgreSQL connections, earlier publication and results stay real.
+            // On guard loss the original idle transaction must be terminated;
+            // no COMMIT frame or ACK is ever fabricated by this fixture.
+            const socket = Reflect.get(c, 'socket') as { write(bytes: Buffer): boolean }
+            const write = socket.write.bind(socket)
+            socket.write = bytes => {
+              if (bytes[0] === 81 && bytes.subarray(5).toString() === 'COMMIT\0') { commitHeld = true; return true }
+              return write(bytes)
+            }
+          }
           writer = c; writerPid = (await query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
           c.query = async (sql, parameters) => { if (sql === 'COMMIT') await query('INSERT INTO r3_guard_probe.pending VALUES(1)'); return query(sql, parameters) }
         } else if (candidate === cluster && scenario === 'ack_race') {
           c.query = async (sql, parameters) => {
-            if (sql.includes("a.state='active' AND a.query=$4")) { recoveryDelay = true; await pause(1500) }
+            if (sql.includes('pg_terminate_backend(a.pid,1000)')) { recoveryDelay = true; await pause(1500) }
             return query(sql, parameters)
           }
         }
@@ -103,24 +117,39 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
       let settled = false
       const operation = persistVerifiedIntegratedBundleLocally(cluster, oids, primary).finally(() => { settled = true })
       void operation.catch(() => { /* Observed below after the activity barrier. */ })
-      // Observe target actually executing deferred COMMIT, not the earlier arm
-      // handshake. Identify the sole owned guard separately by activity/birth.
+      // Cancel/terminate/ACK-race must observe actual deferred COMMIT. The
+      // additional dispatch-gap case observes the original idle transaction
+      // with its COMMIT frame held after arming. Identify guard by activity/birth.
       let observed = false
       const start = performance.now()
-      while (!settled && performance.now() - start < 29_000) {
+      // Observe across the bounded publication statement AND deferred COMMIT;
+      // 29s from before publication can expire before a valid20s COMMIT begins.
+      const observationMs = LOCAL_PG_DEADLINES.statementMs + LOCAL_PG_DEADLINES.commitMs + 5_000
+      let observedTarget: { state: string | null; wait: string | null } | undefined
+      while (!settled && performance.now() - start < observationMs) {
         if (writerPid) {
-          const rows = await owner.query("SELECT pid::text AS pid,backend_start::text AS birth,query FROM pg_catalog.pg_stat_get_activity(NULL) WHERE state='active' AND wait_event='PgSleep' AND (pid=$1::integer OR query LIKE 'SELECT pg_catalog.pg_terminate_backend(a.pid)%')", [pgText(writerPid, 23)])
-          const target = rows.find(r => r.pid === writerPid && r.query === 'COMMIT'), guard = rows.filter(r => r.pid !== writerPid)
+          const rows = await owner.query("SELECT pid::text AS pid,backend_start::text AS birth,state,wait_event,query FROM pg_catalog.pg_stat_get_activity(NULL) WHERE pid=$1::integer OR (state='active' AND wait_event='PgSleep' AND query LIKE 'SELECT pg_catalog.pg_terminate_backend(a.pid)%')", [pgText(writerPid, 23)])
+          const target = rows.find(r => r.pid === writerPid && (scenario === 'dispatch_gap' ? commitHeld && r.state === 'idle in transaction' : r.state === 'active' && r.wait_event === (scenario === 'ack_race' ? 'advisory' : 'PgSleep') && r.query === 'COMMIT')), guard = rows.filter(r => r.pid !== writerPid)
+          const activity = rows.find(r => r.pid === writerPid)
+          if (activity) observedTarget = { state: activity.state ?? null, wait: activity.wait_event ?? null }
           if (target && guard.length === 1) {
             lossAt = performance.now()
             const fn = scenario === 'terminate' ? 'pg_terminate_backend' : 'pg_cancel_backend'
             const stopped = await owner.query(`SELECT pg_catalog.${fn}(pid)::text AS stopped FROM pg_catalog.pg_stat_get_activity($1::integer) WHERE backend_start=$2::timestamptz AND state='active' AND wait_event='PgSleep' AND query LIKE 'SELECT pg_catalog.pg_terminate_backend(a.pid)%'`, [pgText(guard[0]!.pid!, 23), pgText(guard[0]!.birth!)])
-            assert.equal(stopped[0]?.stopped, 'true'); observed = true; break
+            assert.equal(stopped[0]?.stopped, 'true')
+            if (scenario === 'ack_race') {
+              // Hold real deferred COMMIT until the guard failure is observed.
+              // Then release its native barrier while owned recovery is delayed.
+              for (let i = 0; i < 100 && !recoveryDelay; i++) await pause(10)
+              assert.ok(recoveryDelay, 'native ACK race must observe guard loss before release')
+              assert.equal((await owner.query('SELECT pg_catalog.pg_advisory_unlock(19003,1)::text AS released'))[0]?.released, 'true')
+            }
+            observed = true; break
           }
         }
         await pause(10)
       }
-      assert.ok(observed, 'must observe actual deferred COMMIT before losing its guard')
+      assert.ok(observed, JSON.stringify({ reason: 'native_guard_observation_barrier', scenario, settled, observedTarget, elapsedMs: Math.ceil(performance.now() - start), operations: writer?.operationDiagnostics }))
       if (scenario === 'ack_race') {
         let completedNative = false
         for (let i = 0; i < 100 && !settled; i++) {
@@ -131,6 +160,8 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
         assert.ok(recoveryDelay && completedNative && !settled)
         await assert.rejects(writer!.query('SELECT 1'), sqlState('connection_state'))
       }
+      // In the dispatch gap, only a real backend termination can settle this
+      // held transport operation. Socket closure/rollback is independently read.
       const result = await operation, elapsedAfterLossMs = Math.ceil(performance.now() - lossAt)
       const diagnostic = writer!.operationDiagnostics.findLast(d => d.phase === 'commit')
       assert.equal(diagnostic?.protectionFailure, 'commit_guard_lost')

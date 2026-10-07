@@ -10,9 +10,9 @@
     "A": "r3_entries_live_index_issue_report_r1_r2_checkpoint_refs_and_immutable_task_reconstructed",
     "B": "captured_build_primary_composed_and_original_validity_verified",
     "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
-    "D": "r2_69_groups_preserved_plus_r3_18_native_url_and_guard_loss_groups",
+    "D": "r2_69_groups_preserved_plus_r3_19_native_url_and_guard_loss_groups",
     "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
-    "F": "developer_command_PASS_local_tests_recorded_new_exact_head_remote_gates_in_final_delivery_receipt"
+    "F": "final_developer_command_PASS_69_plus19_plus16_new_exact_head_remote_gates_in_delivery_receipt"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "VERIFIED",
@@ -76,8 +76,9 @@
   "r3BindingReport": "https://github.com/Jetnity/jetnity/issues/899",
   "r3FormalReviewExists": false,
   "r3RegressionEvidence": "r3-regression-evidence.json",
-  "r3ProofGroups": 18,
+  "r3ProofGroups": 19,
   "sourceRunInR3": false,
   "r3Delegation": "SINGLE_AGENT_same_existing_writer",
-  "r3Status": "CORRECTIONS_IMPLEMENTED_NATIVE_AND_LOCAL_GATES_VERIFIED"
+  "r3Status": "FINAL_URL_AND_ALL_ARMED_GUARD_WINDOWS_NATIVE_VERIFIED",
+  "r3SupersededIntermediateHead": "4d8da35a09825963fe435184ab4305936f7d4869"
 }

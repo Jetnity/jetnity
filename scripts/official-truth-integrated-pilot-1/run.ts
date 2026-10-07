@@ -30,14 +30,14 @@ const postgresSchema = z.object({ status: z.literal('PASS'), profile: z.literal(
 const structuralSchema = z.object({ status: z.literal('PASS'), scope: z.literal('synthetic_storage_structure_only'),
   postgresVersion: z.string(), checks: z.array(z.string()), integratedReceiptRoundtrip: z.literal('NOT_VERIFIED'),
   fullSemanticPublication: z.literal('BLOCKED'), productionActivation: z.literal(false), hostedApply: z.literal(false) }).strict()
-const r3Schema = z.object({ status: z.literal('PASS'), postgresVersion: z.string(), checks: z.array(z.string()).length(18),
+const r3Schema = z.object({ status: z.literal('PASS'), postgresVersion: z.string(), checks: z.array(z.string()).length(19),
   codecComparisons: z.number().int().min(800), guardLoss: z.array(z.object({
-    scenario: z.enum(['cancel','terminate','ack_race']), elapsedAfterLossMs: z.number().int().nonnegative(),
+    scenario: z.enum(['cancel','terminate','dispatch_gap','ack_race']), elapsedAfterLossMs: z.number().int().nonnegative(),
     outcome: z.enum(['commit_outcome_unknown','acknowledged_verified_commit']), diagnostic: z.object({
       phase: z.literal('commit'), elapsedMs: z.number().int().nonnegative(), outcome: z.enum(['complete','timeout','sql_error','transport_error']),
       code: z.string().nullable(), commitAcknowledged: z.boolean(), protectionFailure: z.literal('commit_guard_lost'),
     }).strict(),
-  }).strict()).length(3),
+  }).strict()).length(4),
 }).strict()
 const reportSchema = z.object({ schema: z.literal('official-truth-integrated-pilot-report-v3'),
   engineeringAcceptance: z.literal('PASS'),
