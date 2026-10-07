@@ -143,7 +143,7 @@ function AttentionZeile({
             {anzahl} Einzelprüfungen betroffen
           </span>
         )}
-        <span className="sr-only">{punkt.lage}</span>
+        <span className="sr-only">{({ unknown: 'Noch unklar', insufficient_context: 'Angaben fehlen', unavailable: 'Nicht verfügbar', stale: 'Erneut prüfen', error: 'Prüfung fehlgeschlagen', warning: 'Hinweis', known_gap: 'Im Plan offen', ungeprueft: 'Noch nicht geprüft' })[punkt.lage]}</span>
       </span>
       {punkt.aktion ? <ChevronRight className="h-4 w-4 shrink-0 text-brand-800" aria-hidden="true" /> : null}
     </>

@@ -66,7 +66,8 @@ import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
-import { ersteMeldung, flugRouteManuellSchema, reiseLesen, unterkunftZeitraumSchema, type PlanpunktFormular } from '@/lib/trips/schema'
+import { punktAendern, KONFLIKT, manuellerInhaltSchema, allePlanpunkte } from '@/lib/trips/trip-plan-integrated/manual'
+import { planpunktFormularSchema, ersteMeldung, flugRouteManuellSchema, reiseLesen, unterkunftZeitraumSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { istManuellerFlug, manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
 import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPruefen } from '@/lib/mobility/manuell'
@@ -907,21 +908,40 @@ export function gastPlanpunktAnlegen(
   reise: Trip,
   eingabe: PlanpunktFormular & { dayId: string },
 ): Trip {
+  const aktuell = gastreiseLadenNach(reise.id)
+  if (!aktuell || JSON.stringify(aktuell) !== JSON.stringify(reise)) throw new Error(KONFLIKT)
+  const { dayId, ...roh } = eingabe
+  const geprueft = planpunktFormularSchema.parse(roh)
+  if (geprueft.kind === 'activity' || geprueft.kind === 'note') {
+    const { clientRef: _ref, ...inhalt } = geprueft
+    manuellerInhaltSchema.parse(inhalt)
+  } else if (geprueft.startsOn || geprueft.endsOn || geprueft.endsAt) {
+    throw new Error('Bitte verwende für diese Daten die vorgesehene Detailansicht.')
+  }
+  eingabe = { ...geprueft, dayId }
+  const id = eingabe.clientRef ? `item-${eingabe.clientRef}` : kennungErzeugen('item')
+  const existing = allePlanpunkte(reise).filter(item => item.id === id)
+  if (existing.length) {
+    const row = existing[0]
+    if (existing.length !== 1 || row.dayId !== dayId || row.kind !== eingabe.kind || row.title !== eingabe.title || row.note !== eingabe.note ||
+      row.startsOn !== (eingabe.startsOn ?? null) || row.startsAt !== eingabe.startsAt || row.endsOn !== (eingabe.endsOn ?? null) || row.endsAt !== (eingabe.endsAt ?? null)) throw new Error(KONFLIKT)
+    return reise
+  }
   const tag = reise.days.find((eintrag) => eintrag.id === eingabe.dayId)
   if (!tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
 
   const punkt: TripItem = {
-    id: kennungErzeugen('item'),
+    id,
     dayId: tag.id,
     stageId: tag.stageId,
     kind: eingabe.kind,
     title: eingabe.title,
     note: eingabe.note,
     position: tag.items.length + 1,
-    startsOn: tag.dayDate,
+    startsOn: eingabe.startsOn ?? null,
     startsAt: eingabe.startsAt,
-    endsOn: null,
-    endsAt: null,
+    endsOn: eingabe.endsOn ?? null,
+    endsAt: eingabe.endsAt ?? null,
     priceAmount: null,
     priceCurrency: null,
     provider: null,
@@ -1231,3 +1251,10 @@ export const SCHLUESSEL = {
   warteschlange: SCHLUESSEL_WARTESCHLANGE,
   legacy: SCHLUESSEL_LEGACY,
 } as const
+
+/** Current stored graph is the write base; a stale tab cannot overwrite it. */
+export function gastPlanpunktBearbeiten(reise: Trip, original: TripItem, eingabe: unknown): Trip {
+  const aktuell = gastreiseLadenNach(reise.id)
+  if (!aktuell) throw new Error(KONFLIKT)
+  return gastreiseSpeichern(punktAendern(aktuell, original, eingabe))
+}

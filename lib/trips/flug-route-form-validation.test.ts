@@ -27,6 +27,7 @@ const vier: FlugSegmentManuell[] = [direkt,
 const felder = ['origin', 'destination', 'departureDate', 'departureTime', 'arrivalDate', 'arrivalTime'] as const
 
 type Props = {
+  onSpeichern?: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null>
   children?: React.ReactNode; id?: string; type?: string; value?: string; disabled?: boolean; role?: string; tabIndex?: number
   ref?: { current: unknown }; htmlFor?: string; 'aria-label'?: string; 'aria-invalid'?: boolean; 'aria-describedby'?: string
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
@@ -61,7 +62,7 @@ function editor(options: {
   const focusHistory: string[] = []
   const calls: Array<[string, FlugSegmentManuell[]]> = []
   const react = {
-    ...React, useId: () => 'flight-validation',
+    ...React, useId: () => 'flight-validation', useLayoutEffect: () => {},
     useRef: (initial: unknown) => refs[refIndex++] ?? (refs[refIndex - 1] = { current: initial }),
     useState: (initial: unknown) => {
       const slot = stateIndex++
@@ -88,10 +89,11 @@ function editor(options: {
   const component = (loaded.exports as { default: typeof FlugBestand }).default
   const item: TripItem = { ...beispielreise().days[0]!.items[0]!, id: ITEM, kind: 'flight', title: 'Manueller Flug',
     provider: null, externalRef: null, bookingUrl: null, routeItinerary: null }
-  const outer = component({ reise: beispielreise({ days: [], ohneTag: [item] }), onFlugRouteManuell: async (...args) => {
+  const save = async (...args: [string, FlugSegmentManuell[]]) => {
     calls.push(args)
     return options.outcome ? options.outcome() : null
-  } })
+  }
+  const outer = component({ reise: beispielreise({ days: [], ohneTag: [item] }), onFlugRouteManuell: save })
   const child = elements(outer, el => typeof el.type === 'function' && el.type.name === 'ManuelleFlugRoute')[0]!
   states.length = 0; refs.length = 0; deps.length = 0; pendingEffects = []
   const all = () => elements(tree, () => true)
@@ -109,7 +111,7 @@ function editor(options: {
   })
   const render = () => {
     stateIndex = 0; refIndex = 0; effectIndex = 0
-    tree = (child.type as (props: Props) => React.ReactNode)(child.props)
+    tree = (child.type as (props: Props) => React.ReactNode)({ ...child.props, onSpeichern: save })
     for (const ref of refs) if (ref.current && typeof ref.current === 'object') ref.current = null
     for (const el of all()) if (el.props.ref) el.props.ref.current = host(el)
     const effects = pendingEffects; pendingEffects = []

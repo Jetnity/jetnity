@@ -1,0 +1,180 @@
+{
+  "version": 2,
+  "cases": [
+    {
+      "id": "C01",
+      "name": "Core and temporal regression",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "regressions/trip-timeline-core-1/audit.json",
+        "regressions/trip-timeline-temporal-review-1/audit.json"
+      ],
+      "boundary": "Full existing discovery includes corrected #897 closed-range red/green tests; existing read-only domain files unchanged."
+    },
+    {
+      "id": "C02",
+      "name": "Real Guest save/readback/failure",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "r1-red.json",
+        "r1-guest-editor.json"
+      ],
+      "boundary": "Actual production Guest route, actual storage, explicit fields/nulls, reload/identity, failure retention; no success-only callback substitution. R1 response-gated fixture uses actual production Plan/Editor and Guest writes; synchronous storage latency is not claimed."
+    },
+    {
+      "id": "C03",
+      "name": "Account validation ownership/version/readback",
+      "status": "PASS",
+      "evidence": [
+        "account-persistence.json",
+        "r1-account-editor.json",
+        "r1-followup-verification.json"
+      ],
+      "boundary": "Real local GoTrue/PostgREST/RLS and real production Server Actions; hosted stack/schema parity not claimed. R1 delayed create/edit success and actual stale failure pass; old three repeat files are historical R0 only."
+    },
+    {
+      "id": "C04",
+      "name": "Protected commercial editors",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "account-persistence.json",
+        "validation-logs.zip"
+      ],
+      "boundary": "Actual Guest flight Date Line/reclassification; existing structured multi-segment/stay tests; protected commercial Account placement and strict generic denial."
+    },
+    {
+      "id": "C05",
+      "name": "F02/F05 focus/history/status",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "regressions/trip-workspace-contextual-navigation-1/result.json"
+      ],
+      "boundary": "F02 reproduced and fixed, F05 accessible text, exact history/focus and deleted-target fallbacks; screenshots are supplemental."
+    },
+    {
+      "id": "C06",
+      "name": "Booking and exact Preparation navigation",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "regressions/trip-workspace-contextual-navigation-1/result.json",
+        "validation-logs.zip"
+      ],
+      "boundary": "Booking/open/stale personal projection; canonical absent/conflict/multi-credential Official tests retained; no new Official truth write or task-row anchor."
+    },
+    {
+      "id": "C07",
+      "name": "Directed movement coverage",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "validation-logs.zip"
+      ],
+      "boundary": "Directed/incomplete/unplanned/rental/other-flight candidates; qualified prompt uses explicit synthetic typed authority with real Guest persistence. Browser authority is stripped; live complete coverage is not claimed."
+    },
+    {
+      "id": "C08",
+      "name": "Union gaps and buffer phases",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json"
+      ],
+      "boundary": "Union, nesting/touch/midnight, unknown/flexible/civil terms, phase inclusion and unknown policy; no numeric production policy or optional what-if feature."
+    },
+    {
+      "id": "C09",
+      "name": "Qualified next and planned-order fallback",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json",
+        "r1-red.json",
+        "r1-f1-red.txt",
+        "r1-f1-green.txt"
+      ],
+      "boundary": "Qualified ties/uncertainty/boundaries/expiry/resume are synthetic fixtures; production is planned navigation without admitted clock. R1 equal uncertain ranges are indeterminate; exact equal points alone can be current."
+    },
+    {
+      "id": "C10",
+      "name": "Original currency costs",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json",
+        "account-persistence.json"
+      ],
+      "boundary": "Stored CHF/EUR/zero/missing/invalid/duplicate/stay-once/unassigned; existing Guest adoption stripping tests remain in full discovery."
+    },
+    {
+      "id": "C11",
+      "name": "Located/unlocated context",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json"
+      ],
+      "boundary": "Validated 0/0 stage position; repeated titles preserve identities; all unknown venue stops retained; no tiles or guessed route."
+    },
+    {
+      "id": "C12",
+      "name": "Proven impact and invalidation",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json",
+        "account-persistence.json"
+      ],
+      "boundary": "Exact snapshots and unique task targets, pure preview/confirmed save, unchanged revision recomputation, deletion/move and real delayed response. Live external freshness not activated."
+    },
+    {
+      "id": "C13",
+      "name": "Closed external consumers",
+      "status": "PASS",
+      "evidence": [
+        "validation-logs.zip",
+        "browser.json"
+      ],
+      "boundary": "Closed bounded synthetic external admission tests; missing/stale/conflict/wrong scope/unit/currency/region/authority; zero external requests in production Guest flow."
+    },
+    {
+      "id": "C14",
+      "name": "Integrated production-component flow",
+      "status": "PASS",
+      "evidence": [
+        "browser.json",
+        "account-persistence.json"
+      ],
+      "boundary": "Actual production day edit/save/context/Preparation/return, empty/flexible/120-day six-stage trip; typed movement edge separately labelled."
+    },
+    {
+      "id": "C15",
+      "name": "Responsive keyboard/accessibility",
+      "status": "PASS_AUTOMATED",
+      "evidence": [
+        "browser.json",
+        "regressions/trip-plan-premium-experience-4/audit.json"
+      ],
+      "boundary": "360/390/768/1440 ordinary and 200% text, own-form bounds, keyboard/reduced motion/landscape plus existing extra sizes. Physical devices, WebKit and screen-reader operation NOT_RUN."
+    },
+    {
+      "id": "C16",
+      "name": "Full local and exact-head remote gates",
+      "status": "LOCAL_PASS_FINAL_REMOTE_PACKET_REQUIRED",
+      "evidence": [
+        "integrated-audit.json",
+        "validation-logs.zip",
+        "delivery-summary.json",
+        "r1-followup-verification.json"
+      ],
+      "boundary": "Full local run PASS, additional Account focus check PASS; exact final CI/Auth/Preview are read back separately in external exact-head packet."
+    }
+  ],
+  "localSourceCommit": "5784f243372c42b206044c60c9a787c25ffb0ea7",
+  "remoteEquivalentSourceCommit": "047bebdd98cb7e50c39ae020834b3c79a8bca321",
+  "reviewId": "TL-20261007-900-903-R1"
+}

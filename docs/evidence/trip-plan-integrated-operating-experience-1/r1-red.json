@@ -1,0 +1,317 @@
+{
+  "reviewId": "TL-20261007-900-903-R1",
+  "reviewedHead": "b19bfbf9cd591b361740cbb2fbc5920fa81991e6",
+  "sourceBlobs": {
+    "lib/trips/trip-plan-integrated/next.ts": "26f1bbe45c545cc91442d42a314ff33f5ebed03c",
+    "components/trips/PlanpunktEditor.tsx": "db641b7a222d15ab726a67dcdd08f1e5140b4672",
+    "components/trips/TripWorkspacePlan.tsx": "b99c924c51161a3a623b87306b6b7dcbbd79f79b"
+  },
+  "guest": {
+    "status": "FAIL",
+    "failure": "R1/F2: pending fields must be disabled; [{\"name\":\"create success / Art and content\",\"fields\":[{\"label\":\"ArtFlugUnterkunftAktivitätTransferMietwagenNotiz\",\"disabled\":false,\"value\":\"activity\"},{\"label\":\"Ort oder Aktivität\",\"disabled\":false,\"value\":\"Guest pending A\"},{\"label\":\"Notiz, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Anfangsdatum, optional\",\"disabled\":false,\"value\":\"2026-10-07\"},{\"label\":\"Anfangszeit, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Enddatum, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Endzeit, optional\",\"disabled\":false,\"value\":\"\"}],\"before\":\"Guest pending A\",\"during\":\"Guest pending A B\",\"status\":[],\"locked\":false,\"closedAfterSuccess\":true,\"persistedTitle\":\"Guest pending A\"},{\"name\":\"edit success / day assignment and content\",\"fields\":[{\"label\":\"Ort oder Aktivität\",\"disabled\":false,\"value\":\"Guest pending A\"},{\"label\":\"Notiz, optionalSaved note A\",\"disabled\":false,\"value\":\"Saved note A\"},{\"label\":\"Anfangsdatum, optional\",\"disabled\":false,\"value\":\"2026-10-07\"},{\"label\":\"Anfangszeit, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Enddatum, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Endzeit, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09\",\"disabled\":false,\"value\":\"day-<synthetic-id>\"}],\"before\":\"Guest pending A\",\"during\":\"Guest pending A B\",\"status\":[],\"locked\":false,\"closedAfterSuccess\":true},{\"name\":\"edit failure / actual Guest quota exception\",\"fields\":[{\"label\":\"Ort oder Aktivität\",\"disabled\":false,\"value\":\"Guest error draft A\"},{\"label\":\"Notiz, optionalSaved note A\",\"disabled\":false,\"value\":\"Saved note A\"},{\"label\":\"Anfangsdatum, optional\",\"disabled\":false,\"value\":\"2026-10-07\"},{\"label\":\"Anfangszeit, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Enddatum, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Endzeit, optional\",\"disabled\":false,\"value\":\"\"},{\"label\":\"Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09\",\"disabled\":false,\"value\":\"day-<synthetic-id>\"}],\"before\":\"Guest error draft A\",\"during\":\"Guest error draft A B\",\"status\":[],\"locked\":false,\"afterError\":\"Guest error draft A B\"}]",
+    "boundary": "Production Plan/Editor mounted in owned browser fixture with actual Guest persistence. Only response delivery delayed; real production route covered by browser.mjs.",
+    "pending": [
+      {
+        "name": "create success / Art and content",
+        "fields": [
+          {
+            "label": "ArtFlugUnterkunftAktivitätTransferMietwagenNotiz",
+            "disabled": false,
+            "value": "activity"
+          },
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Guest pending A"
+          },
+          {
+            "label": "Notiz, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": ""
+          }
+        ],
+        "before": "Guest pending A",
+        "during": "Guest pending A B",
+        "status": [],
+        "locked": false,
+        "closedAfterSuccess": true,
+        "persistedTitle": "Guest pending A"
+      },
+      {
+        "name": "edit success / day assignment and content",
+        "fields": [
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Guest pending A"
+          },
+          {
+            "label": "Notiz, optionalSaved note A",
+            "disabled": false,
+            "value": "Saved note A"
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09",
+            "disabled": false,
+            "value": "day-<synthetic-id>"
+          }
+        ],
+        "before": "Guest pending A",
+        "during": "Guest pending A B",
+        "status": [],
+        "locked": false,
+        "closedAfterSuccess": true
+      },
+      {
+        "name": "edit failure / actual Guest quota exception",
+        "fields": [
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Guest error draft A"
+          },
+          {
+            "label": "Notiz, optionalSaved note A",
+            "disabled": false,
+            "value": "Saved note A"
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09",
+            "disabled": false,
+            "value": "day-<synthetic-id>"
+          }
+        ],
+        "before": "Guest error draft A",
+        "during": "Guest error draft A B",
+        "status": [],
+        "locked": false,
+        "afterError": "Guest error draft A B"
+      }
+    ],
+    "guards": [
+      {
+        "name": "other editor on same day / unmounted old editor",
+        "status": "PASS"
+      },
+      {
+        "name": "other day / unmounted old editor / new draft",
+        "status": "PASS"
+      },
+      {
+        "name": "whole Plan unmount / late completion / actual storage readback",
+        "status": "PASS"
+      }
+    ],
+    "errors": []
+  },
+  "account": {
+    "boundary": "Real local GoTrue/PostgREST/RLS and production Server Actions; response delivery gate only",
+    "pending": [
+      {
+        "name": "create success / Art and content",
+        "fields": [
+          {
+            "label": "ArtFlugUnterkunftAktivitätTransferMietwagenNotiz",
+            "disabled": false,
+            "value": "activity"
+          },
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Account Browser Termin"
+          },
+          {
+            "label": "Notiz, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": "14:00"
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": "15:00"
+          }
+        ],
+        "before": "Account Browser Termin",
+        "during": "Account Browser Termin B",
+        "status": [],
+        "locked": false,
+        "closedAfterSuccess": true
+      },
+      {
+        "name": "edit success / day assignment and content",
+        "fields": [
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Account Browser Termin"
+          },
+          {
+            "label": "Notiz, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": "14:15"
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": "15:00"
+          },
+          {
+            "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08",
+            "disabled": false,
+            "value": "<synthetic-id>"
+          }
+        ],
+        "before": "Account Browser Termin",
+        "during": "Account Browser Termin B",
+        "status": [],
+        "locked": false,
+        "closedAfterSuccess": true
+      },
+      {
+        "name": "edit failure / real stale version",
+        "fields": [
+          {
+            "label": "Ort oder Aktivität",
+            "disabled": false,
+            "value": "Stale draft must stay"
+          },
+          {
+            "label": "Notiz, optional",
+            "disabled": false,
+            "value": ""
+          },
+          {
+            "label": "Anfangsdatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Anfangszeit, optional",
+            "disabled": false,
+            "value": "14:15"
+          },
+          {
+            "label": "Enddatum, optional",
+            "disabled": false,
+            "value": "2026-10-07"
+          },
+          {
+            "label": "Endzeit, optional",
+            "disabled": false,
+            "value": "15:00"
+          },
+          {
+            "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08",
+            "disabled": false,
+            "value": "<synthetic-id>"
+          }
+        ],
+        "before": "Stale draft must stay",
+        "during": "Stale draft must stay B",
+        "status": [],
+        "locked": false,
+        "afterError": "Stale draft must stay B"
+      }
+    ]
+  },
+  "F1": {
+    "expected": "indeterminate",
+    "actual": "current_by_schedule",
+    "testExitCode": 1
+  },
+  "F2": {
+    "guestExitCode": 1,
+    "accountExitCode": 1,
+    "observed": "All fields enabled while aria-busy=true. Keyboard changes A to A B. Success closes form and storage retains A; error retains B. Existing switch/unmount guards pass."
+  }
+}

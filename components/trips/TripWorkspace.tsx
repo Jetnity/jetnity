@@ -69,6 +69,9 @@ import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomai
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
+import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import { readinessAnsicht } from '@/lib/readiness/status'
+import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
 import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
@@ -213,8 +216,12 @@ function historieSchreiben(
   const jetzt = aktuelleAdresse()
   if (url === jetzt) return
   const elternUrl = kontext === 'child' ? jetzt : kontext === 'canonical' ? historyElternLesen(reiseId) : null
-  // Next-/Browser-State bleibt erhalten; kein zweiter Router und kein fake Origin im Query.
+  // Let Next's public native-history wrapper synchronize its router URL. Passing its
+  // internal markers back would bypass that wrapper and a later refresh replays the old day.
   const stand = { ...window.history.state, jetnityWorkspace: { reiseId, url, ...(elternUrl && { elternUrl }) } }
+  delete stand.__NA
+  delete stand._N
+  delete stand.__PRIVATE_NEXTJS_INTERNALS_TREE
   if (art === 'push') window.history.pushState(stand, '', url)
   else window.history.replaceState(stand, '', url)
 }
@@ -223,6 +230,8 @@ type TripWorkspaceProps = {
   reise: Trip
   quelle: TripSource
   ohneTag?: TripItem[]
+  onVerbindungAnlegen?: (values: MobilityManuellEingabe) => Promise<string | null>
+  onPunktBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
   kopfzeile?: React.ReactNode
@@ -320,6 +329,8 @@ export default function TripWorkspace({
   quelle,
   ohneTag = [],
   onPunktAnlegen,
+  onPunktBearbeiten,
+  onVerbindungAnlegen,
   onPunktEntfernen,
   kopfzeile,
   hinweis,
@@ -566,7 +577,8 @@ export default function TripWorkspace({
 
   const preparationOeffnen = (preparationZiel?: PreparationZiel) => {
     modusTastaturRef.current = false
-    modusSetzen({ ansicht: 'vorbereitung', bereich: null, ...(preparationZiel && { preparationZiel }), urlAnpassen: false }, 'push')
+    merkeAusloeser()
+    modusSetzen({ ansicht: 'vorbereitung', bereich: null, ...(preparationZiel && { preparationZiel }), urlAnpassen: false }, 'push', true)
   }
 
   const sucheAusdruecklich = (vonTastatur = false) => {
@@ -689,6 +701,10 @@ export default function TripWorkspace({
       eingebettet
       onTagWechseln={tagWechseln}
       onPunktAnlegen={onPunktAnlegen}
+      onPunktBearbeiten={onPunktBearbeiten}
+      readinessItems={readinessAnsicht({...reise, ohneTag: ungeplantePunkte}, officialEvaluations).items}
+      onPreparation={preparationOeffnen}
+      onVerbindungAnlegen={onVerbindungAnlegen}
       onPunktEntfernen={onPunktEntfernen}
       onPunktOeffnen={oeffneItem}
       gewaehlterPunktId={gewaehlterPunktId}
@@ -749,7 +765,7 @@ export default function TripWorkspace({
   const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
 
   React.useEffect(() => {
-    if (!detailOffen) return
+    if (!detailOffen && !(modus.ansicht === 'vorbereitung' && historyEltern)) return
     const zu = (ereignis: KeyboardEvent) => {
       if (ereignis.key !== 'Escape' || ereignis.defaultPrevented) return
       const ziel = ereignis.target
@@ -759,7 +775,7 @@ export default function TripWorkspace({
     }
     window.addEventListener('keydown', zu)
     return () => window.removeEventListener('keydown', zu)
-  }, [detailOffen, schliessen])
+  }, [detailOffen, schliessen, modus.ansicht, historyEltern])
 
   const detailSchluessel =
     bereinigt.art === 'item' ? bereinigt.itemId : bereinigt.art === 'gap' ? bereinigt.domain : ''
@@ -795,6 +811,12 @@ export default function TripWorkspace({
       return
     }
     if (!geaendert) return
+    if (vorher.ansicht === 'vorbereitung' && modus.ansicht === 'plan') {
+      const trigger = letzterAusloeserRef.current
+      if (trigger?.isConnected && trigger.getClientRects().length && !trigger.closest('[hidden], [inert]')) {
+        trigger.focus({ preventScroll: true }); arbeitsflaecheZeigen(trigger); return
+      }
+    }
     const tastatur = modusTastaturRef.current
     modusTastaturRef.current = false
     if (modus.ansicht === 'organisieren' && modus.bereich) return
@@ -951,6 +973,10 @@ export default function TripWorkspace({
               >
                 Vorbereitung
               </h2>
+              {historyEltern && <button type="button" onClick={schliessen}
+                className="my-3 min-h-11 rounded-full border border-line-300 px-4 text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15">
+                {rueckkehr.label}
+              </button>}
               {sicherheit}
               {reisezeit}
               {vorbereitung}

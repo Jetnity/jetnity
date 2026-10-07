@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "reason": "Full run passed; add explicit error-focus assertion and capture the actual form instead of a blank viewport screenshot. Runtime code unchanged. Only affected Account harness repeated.",
+  "source": "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs",
+  "sha256": "82aa4dc8aeea7a54b5829b65e743ca85ee5042090d86f2881899c1531ae09fda",
+  "accountCases": 9,
+  "pendingCases": 3,
+  "errorFocus": "PASS",
+  "log": "r1-account-focus.txt",
+  "fullRun": "integrated-audit.json"
+}

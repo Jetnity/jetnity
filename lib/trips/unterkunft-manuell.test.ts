@@ -284,7 +284,7 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
   let refreshes = 0
   let accountError = false
   const account = laden<{ default: (props: { reise: typeof reise; ohneTag: TripItem[] }) => WorkspaceElement }>('components/trips/KontoArbeitsbereich.tsx', {
-    react: { ...React, useState: (initial: unknown) => [initial, () => {}] },
+    react: { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }), useState: (initial: unknown) => [initial, () => {}] },
     'next/navigation': { useRouter: () => ({ refresh: () => { refreshes++ } }) },
     '@/lib/trips/aktionen': { unterkunftZeitraumSetzen: async (input: unknown) => {
       args.push(input); return accountError ? { ok: false, meldung: 'Abgelehnt' } : { ok: true, wert: null }
