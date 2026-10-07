@@ -203,7 +203,13 @@ export default function KontoArbeitsbereich({
         return null
       }}
       aenderung={
-        <ReiseAenderung reise={reise} quelle="account" onGespeichert={() => router.refresh()} />
+        <ReiseAenderung reise={reise} quelle="account" onGespeichert={(graph) => {
+          if (graph && graph.id === reise.id && graph.revision > reise.revision) {
+            order.next()
+            setBestaetigt({ basis: serverReise, graph })
+          }
+          router.refresh()
+        }} />
       }
       begleiter={<Reisebegleiter reise={reise} />}
       flugsuche={

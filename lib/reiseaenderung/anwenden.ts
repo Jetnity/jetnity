@@ -87,9 +87,7 @@ function reindex(reise: Reisegraph): void {
       if (istKommerziell(punkt)) return
       punkt.position = ort + 1
       punkt.dayId = tag.id
-      if (tag.dayDate) {
-        punkt.startsOn = punkt.startsOn ? tag.dayDate : punkt.startsOn
-      }
+      // Explicit point dates are independent of their day container (#903).
     })
   })
   reise.days = geordnet
@@ -460,7 +458,8 @@ export function operationenAnwenden(
 
   try {
     for (const op of operationen) eineOperation(reise, op, kennung)
-    reindex(reise)
+    // Metadata and whole-trip shifts preserve unrelated placement/date facts.
+    if (operationen.some(op => op.art !== 'stammdaten' && op.art !== 'zeitraum_verschieben')) reindex(reise)
     tagePruefen(reise)
   } catch (fehler) {
     if (fehler instanceof ApplyError) {

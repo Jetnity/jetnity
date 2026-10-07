@@ -193,7 +193,7 @@ export class GastspeicherUnlesbarFehler extends Error {
 export class VeralteteFassungFehler extends Error {
   constructor() {
     super(
-      'Diese Reise hat sich inzwischen geändert. Bitte verwirf die Vorschau und formuliere den Wunsch erneut.',
+      'Diese Reise hat sich inzwischen geändert. Bitte prüfe die Änderung am aktuellen Stand erneut.',
     )
     this.name = 'VeralteteFassungFehler'
   }
@@ -725,10 +725,12 @@ export function gastreiseSpeichern(reise: Trip): Trip {
  * Planpunkte bleiben ungeplant – Konto und Gast teilen denselben Graphen.
  */
 export function gastreiseAendern(eingabe: {
+  tripId: string
   mutationId: string
   basisRevision: number
   operationen: Modelloperation[]
   orte?: KanonischeOrte
+  kennung?: (prefix: string) => string
 }): Trip {
   if (!verfuegbar()) throw new SpeicherFehler()
 
@@ -737,20 +739,27 @@ export function gastreiseAendern(eingabe: {
     throw new Error('Diese Reise ist auf diesem Gerät nicht mehr vorhanden.')
   }
 
-  if (aktuell.lastMutationId === eingabe.mutationId) return aktuell
+  if (aktuell.id !== eingabe.tripId) throw new VeralteteFassungFehler()
+  if (aktuell.lastMutationId === eingabe.mutationId) {
+    if (aktuell.revision !== eingabe.basisRevision + 1) throw new VeralteteFassungFehler()
+    return aktuell
+  }
   if (aktuell.revision !== eingabe.basisRevision) throw new VeralteteFassungFehler()
 
-  const angewandt = operationenAnwenden(aktuell, eingabe.operationen, kennungErzeugen)
+  const angewandt = operationenAnwenden(aktuell, eingabe.operationen, eingabe.kennung ?? kennungErzeugen)
   if (!angewandt.ok) throw new Error(angewandt.fehler.meldung)
   const graph = eingabe.orte
     ? reiseMitKanonischenOrten(angewandt.reise, eingabe.orte)
     : angewandt.reise
 
-  return gastreiseSpeichern({
+  const gespeichert = gastreiseSpeichern({
     ...graph,
     revision: aktuell.revision + 1,
     lastMutationId: eingabe.mutationId,
   })
+  const gelesen = gastreiseLaden()
+  if (!gelesen || JSON.stringify(gelesen) !== JSON.stringify(gespeichert)) throw new SpeicherFehler()
+  return gelesen
 }
 
 /**

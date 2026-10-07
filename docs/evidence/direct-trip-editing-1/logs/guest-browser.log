@@ -1,0 +1,45 @@
+RUN Production form 360px / 100% text, reduced motion, focus and no overflow
+PASS Production form 360px / 100% text, reduced motion, focus and no overflow
+RUN Production form 360px / 200% text, reduced motion, focus and no overflow
+PASS Production form 360px / 200% text, reduced motion, focus and no overflow
+RUN Keyboard, field-linked error, cancel/no write at 360
+PASS Keyboard, field-linked error, cancel/no write at 360
+RUN Production form 390px / 100% text, reduced motion, focus and no overflow
+PASS Production form 390px / 100% text, reduced motion, focus and no overflow
+RUN Production form 390px / 200% text, reduced motion, focus and no overflow
+PASS Production form 390px / 200% text, reduced motion, focus and no overflow
+RUN Keyboard, field-linked error, cancel/no write at 390
+PASS Keyboard, field-linked error, cancel/no write at 390
+RUN All basic fields preserve literal user text; explicit confirmation/readback/reload
+PASS All basic fields preserve literal user text; explicit confirmation/readback/reload
+RUN Production compound date shift and identified stage duration show and save exact ranges
+PASS Production compound date shift and identified stage duration show and save exact ranges
+RUN Real disabled free-text server action leaves manual mode usable
+PASS Real disabled free-text server action leaves manual mode usable
+RUN Complete keyboard-only edit, preview, confirm and visible success focus
+PASS Complete keyboard-only edit, preview, confirm and visible success focus
+RUN Browser storage full produces uncertainty, preserves proposal, safely retries once storage recovers
+PASS Browser storage full produces uncertainty, preserves proposal, safely retries once storage recovers
+RUN Same-revision different active Guest trip rejects old accepted proposal
+PASS Same-revision different active Guest trip rejects old accepted proposal
+RUN Production form 768px / 100% text, reduced motion, focus and no overflow
+PASS Production form 768px / 100% text, reduced motion, focus and no overflow
+RUN Production form 768px / 200% text, reduced motion, focus and no overflow
+PASS Production form 768px / 200% text, reduced motion, focus and no overflow
+RUN Keyboard, field-linked error, cancel/no write at 768
+PASS Keyboard, field-linked error, cancel/no write at 768
+RUN Production form 1440px / 100% text, reduced motion, focus and no overflow
+PASS Production form 1440px / 100% text, reduced motion, focus and no overflow
+RUN Production form 1440px / 200% text, reduced motion, focus and no overflow
+PASS Production form 1440px / 200% text, reduced motion, focus and no overflow
+RUN Keyboard, field-linked error, cancel/no write at 1440
+PASS Keyboard, field-linked error, cancel/no write at 1440
+RUN Production flexible trip gets first civil start date and total duration without changing explicit point dates
+PASS Production flexible trip gets first civil start date and total duration without changing explicit point dates
+RUN A09 v1.1 Guest linked removal refuses with zero writes, full preservation and editable draft
+PASS A09 v1.1 Guest linked removal refuses with zero writes, full preservation and editable draft
+RUN A09 v1.1 Guest unrelated edit on the referenced trip still saves and independently reloads
+PASS A09 v1.1 Guest unrelated edit on the referenced trip still saves and independently reloads
+RUN 1000-point graph: every removed/protected point inspectable, hidden pages bounded
+PASS 1000-point graph: every removed/protected point inspectable, hidden pages bounded
+PASS: 22 Guest browser cases

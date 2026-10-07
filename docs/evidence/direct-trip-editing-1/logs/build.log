@@ -1,0 +1,140 @@
+
+> jetnity@1.0.0 prebuild
+> npm run check:setup
+
+
+> jetnity@1.0.0 check:setup
+> tsx check-jetnity-setup.ts
+
+
+🚀 Jetnity Setup-Check (Mega Pro)
+
+• Root: <worktree>
+
+🔎 Dateien – müssen existieren
+✅ tsconfig.json gefunden
+✅ lib/supabase/client.ts gefunden
+✅ lib/supabase/server.ts gefunden
+✅ types/supabase.ts gefunden
+
+🧹 Verbotene/alte Imports
+✅ Import-Scan abgeschlossen
+
+⚙️  tsconfig.json
+✅ baseUrl ist "."
+✅ Pfadalias @/* korrekt
+✅ strict ist aktiv
+✅ moduleResolution "bundler" ok
+
+📦 package.json – Versionen
+✅ next 16.3.8
+✅ @supabase/ssr ^0.6.1
+
+🖼️ next.config.* – Images
+✅ next.config.js: images{} gefunden
+✅ next.config.js: images.remotePatterns ok
+
+🔐 .env / .env.local – Schlüssel
+⚠️  Keine .env/.local gefunden
+
+------------------------------------------------
+⚠️  Warnings: 1
+------------------------------------------------
+
+
+> jetnity@1.0.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.js took 6ms
+- Experiments (use with caution):
+  · optimizePackageImports
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 857ms
+  Running TypeScript ...
+  Finished TypeScript in 1385ms ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/25) ...
+  Generating static pages using 9 workers (6/25)
+  Generating static pages using 9 workers (12/25)
+  Generating static pages using 9 workers (18/25)
+✓ Generating static pages using 9 workers (25/25) in 182ms
+  Finalizing page optimization ...
+
+Route (app)                              Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /account
+├ ƒ /account/bookings
+├ ƒ /account/security
+├ ○ /account/settings
+├ ƒ /account/travellers
+├ ƒ /account/welt
+├ ƒ /admin
+├ ƒ /admin/analytics
+├ ƒ /admin/content
+├ ƒ /admin/localization
+├ ○ /admin/login
+├ ƒ /admin/marketing
+├ ƒ /admin/mfa
+├ ƒ /admin/payments
+├ ƒ /admin/provider-ops
+├ ƒ /admin/security
+├ ƒ /admin/settings
+├ ƒ /admin/system-health
+├ ƒ /admin/users
+├ ƒ /api/account/export
+├ ƒ /api/activities/search
+├ ƒ /api/admin/payments/breakdown
+├ ƒ /api/admin/payments/list
+├ ƒ /api/admin/payments/refund
+├ ƒ /api/admin/payments/summary
+├ ƒ /api/admin/payments/webhooks
+├ ƒ /api/admin/provider-ops
+├ ƒ /api/admin/security/block
+├ ƒ /api/admin/security/events
+├ ƒ /api/admin/security/list
+├ ƒ /api/admin/security/summary
+├ ƒ /api/admin/security/unblock
+├ ƒ /api/admin/system-health
+├ ƒ /api/flights/search
+├ ƒ /api/hotels/search
+├ ƒ /api/mobility/search
+├ ƒ /api/readiness/requirements
+├ ƒ /api/rental-cars/search
+├ ƒ /api/safety/evaluate
+├ ƒ /api/search/airports
+├ ƒ /api/search/places
+├ ƒ /api/seasonal/evaluate
+├ ○ /apple-icon.png
+├ ○ /auth/callback
+├ ○ /auth/update-password
+├ ○ /icon.png
+├ ƒ /impressum
+├ ○ /konto-geloescht
+├ ƒ /login
+├ ○ /manifest.webmanifest
+├ ƒ /planen
+├ ƒ /privacy
+├ ƒ /register
+├ ƒ /reisen
+├ ƒ /reisen/[tripId]
+├ ○ /robots.txt
+├ ○ /sitemap.xml                                 1h      1y
+├ ○ /terms
+├ ƒ /ui-audit/account
+├ ƒ /ui-audit/account-settings-security
+├ ƒ /ui-audit/account-travellers
+├ ƒ /ui-audit/activities
+├ ƒ /ui-audit/admin-provider-ops
+├ ƒ /ui-audit/admin-system-health
+├ ƒ /ui-audit/meine-reisen
+├ ƒ /ui-audit/trip-workspace
+└ ƒ /unauthorized
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

@@ -1,0 +1,163 @@
+{
+  "status": "PASS",
+  "boundary": "Production Plan/Editor mounted in owned browser fixture with actual Guest persistence. Only response delivery delayed; real production route covered by browser.mjs.",
+  "pending": [
+    {
+      "name": "create success / Art and content",
+      "fields": [
+        {
+          "label": "ArtFlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "disabled": true,
+          "value": "activity"
+        },
+        {
+          "label": "Ort oder Aktivität",
+          "disabled": true,
+          "value": "Guest pending A"
+        },
+        {
+          "label": "Notiz, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Anfangsdatum, optional",
+          "disabled": true,
+          "value": "2026-10-07"
+        },
+        {
+          "label": "Anfangszeit, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Enddatum, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Endzeit, optional",
+          "disabled": true,
+          "value": ""
+        }
+      ],
+      "before": "Guest pending A",
+      "during": "Guest pending A",
+      "status": [
+        "Planpunkt wird gespeichert …"
+      ],
+      "locked": true,
+      "closedAfterSuccess": true,
+      "persistedTitle": "Guest pending A"
+    },
+    {
+      "name": "edit success / day assignment and content",
+      "fields": [
+        {
+          "label": "Ort oder Aktivität",
+          "disabled": true,
+          "value": "Guest pending A"
+        },
+        {
+          "label": "Notiz, optionalSaved note A",
+          "disabled": true,
+          "value": "Saved note A"
+        },
+        {
+          "label": "Anfangsdatum, optional",
+          "disabled": true,
+          "value": "2026-10-07"
+        },
+        {
+          "label": "Anfangszeit, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Enddatum, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Endzeit, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09",
+          "disabled": true,
+          "value": "day-4bf8136b-6433-4830-8b4d-f990a1b344d4"
+        }
+      ],
+      "before": "Guest pending A",
+      "during": "Guest pending A",
+      "status": [
+        "Planpunkt wird gespeichert …"
+      ],
+      "locked": true,
+      "closedAfterSuccess": true
+    },
+    {
+      "name": "edit failure / actual Guest quota exception",
+      "fields": [
+        {
+          "label": "Ort oder Aktivität",
+          "disabled": true,
+          "value": "Guest error draft A"
+        },
+        {
+          "label": "Notiz, optionalSaved note A",
+          "disabled": true,
+          "value": "Saved note A"
+        },
+        {
+          "label": "Anfangsdatum, optional",
+          "disabled": true,
+          "value": "2026-10-07"
+        },
+        {
+          "label": "Anfangszeit, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Enddatum, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Endzeit, optional",
+          "disabled": true,
+          "value": ""
+        },
+        {
+          "label": "Zuordnung im TagesplanNoch nicht eingeplantTag 1 · 2026-10-07Tag 2 · 2026-10-08Tag 3 · 2026-10-09",
+          "disabled": true,
+          "value": "day-4bf8136b-6433-4830-8b4d-f990a1b344d4"
+        }
+      ],
+      "before": "Guest error draft A",
+      "during": "Guest error draft A",
+      "status": [
+        "Planpunkt wird gespeichert …"
+      ],
+      "locked": true,
+      "afterError": "Guest error draft A"
+    }
+  ],
+  "guards": [
+    {
+      "name": "other editor on same day / unmounted old editor",
+      "status": "PASS"
+    },
+    {
+      "name": "other day / unmounted old editor / new draft",
+      "status": "PASS"
+    },
+    {
+      "name": "whole Plan unmount / late completion / actual storage readback",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

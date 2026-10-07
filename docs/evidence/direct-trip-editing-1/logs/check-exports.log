@@ -1,0 +1,8 @@
+
+> jetnity@1.0.0 check:exports
+> node scripts/exporte.mjs
+
+geprueft: 1096 Dateien
+Exporte ohne Aufrufer: 0
+
+Kein unbegruendeter Export ohne Aufrufer.

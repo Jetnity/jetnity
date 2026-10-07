@@ -71,7 +71,7 @@ test('die Modusleiste bleibt ein Segment mit den vier Bezeichnungen', () => {
 test('Reise ändern und Reisebegleiter bleiben zwei getrennte, faule Auslöser', () => {
   const uebersicht = quelle('components/trips/TripWorkspaceUebersicht.tsx')
   const workspace = quelle('components/trips/TripWorkspace.tsx')
-  assert.match(uebersicht, /Zeitraum, Ziele oder Reisewünsche/)
+  assert.match(uebersicht, /Grunddaten, Zeitraum und Etappen/)
   assert.match(uebersicht, /ändert nichts/)
   assert.match(uebersicht, /aria-controls="reise-aenderung"/)
   assert.match(uebersicht, /aria-controls="reisebegleiter"/)

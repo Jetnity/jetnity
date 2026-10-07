@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "boundary": "Real GoTrue -> authenticated PostgREST/RLS -> production accountPlanSchreiben -> independent authenticated reload. Browser server-action graph refresh is a separate boundary.",
+  "environment": {
+    "node": "v22.23.3",
+    "authImage": "public.ecr.aws/supabase/gotrue:v2.196.0",
+    "restImage": "public.ecr.aws/supabase/postgrest:v16.2",
+    "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg12+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+  },
+  "results": [
+    {
+      "name": "Real GoTrue signup, password/session issuance and server getUser for two synthetic owners",
+      "status": "PASS"
+    },
+    {
+      "name": "Production manual Account browser with real Auth/RLS/RPC and negative/recovery controls",
+      "status": "PASS"
+    }
+  ],
+  "sources": [
+    {
+      "path": "supabase/migrations/20260817120000_reiseschema.sql",
+      "sha256": "67be0609ee7967801e0b7e19abac28802eeca1ebb5f602b122aff35f9648c50f"
+    },
+    {
+      "path": "supabase/migrations/20260820010000_reise_stage_revision.sql",
+      "sha256": "9443526cd1e57f5254809f8b9f709c28e0129c4a4d1ddfc5f5282ae8da768328"
+    },
+    {
+      "path": "supabase/migrations/20260820060000_reise_graph_revision.sql",
+      "sha256": "03d234f1bc1223d885bf57797bc67c8ec5cb05bb467ed3eddf39345e558711cf"
+    },
+    {
+      "path": "supabase/migrations/20260820080000_reise_tage_eindeutig_aufgeschoben.sql",
+      "sha256": "65ef7560b4abb5cea91622299caf8d3ae85e35af5485ec61f440ac702655f07b"
+    },
+    {
+      "path": "supabase/migrations/20260820120000_places_referenz.sql",
+      "sha256": "f5f69694b2471f0cb1c4a6ec7fff88518c059dfb678081984668bf6628422210"
+    },
+    {
+      "path": "supabase/migrations/20260820130000_reise_aendern_places.sql",
+      "sha256": "561f9f2abfdb9c351c31eb8a7a4e4e454fe9a87ab4d66814009c6b1b63da34b4"
+    },
+    {
+      "path": "supabase/migrations/20260821100000_trip_items_booking_status.sql",
+      "sha256": "153a0053d33f5652930f26b6c771ca4e39b6eefb2554d2b9dc1ea1045128a514"
+    },
+    {
+      "path": "supabase/migrations/20260822010000_trip_readiness_items.sql",
+      "sha256": "1e673b74a172cd369e2eb3d16e6da04fc800b9a4652a557782d35652ab822895"
+    },
+    {
+      "path": "supabase/migrations/20260822020000_trip_travellers.sql",
+      "sha256": "a107f8971c2abb2d1459a16bb02eeb0badc50edf6795b0bd10dbab61fe9deea1"
+    },
+    {
+      "path": "supabase/migrations/20260822160000_traveller_context_intelligence.sql",
+      "sha256": "c4a7d98551feedbf0957915ed3777f6e7b9b1e8326cb05053f9646461a307a2d"
+    }
+  ],
+  "traffic": {
+    "rpc": 8,
+    "tripReads": 64,
+    "catalog": 0,
+    "quota": 0
+  },
+  "cleanup": "Only run-owned containers/network removed",
+  "hostedTargets": false
+}

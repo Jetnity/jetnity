@@ -9,7 +9,7 @@
 // Frei von Next, Supabase und `process.env`.
 
 import { routeAenderungZwischen } from '@/lib/route/vergleich'
-import { TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
 
 export type DiffEintrag = {
@@ -67,6 +67,11 @@ export function reiseDiff(vorher: Reisegraph, nachher: Reisegraph): DiffEintrag[
       text: `Tempo: ${TEMPO_BEZEICHNUNG[vorher.pace].titel} → ${TEMPO_BEZEICHNUNG[nachher.pace].titel}`,
     })
   }
+  if (JSON.stringify([...vorher.interests].sort()) !== JSON.stringify([...nachher.interests].sort())) {
+    const labels = (trip: Reisegraph) => trip.interests.map(i => INTERESSE_BEZEICHNUNG[i]).join(', ') || 'keine'
+    eintraege.push({ art: 'stammdaten', text: `Interessen: ${labels(vorher)} → ${labels(nachher)}` })
+  }
+  if (vorher.travelWish !== nachher.travelWish) eintraege.push({ art: 'stammdaten', text: `Reisewunsch: ${vorher.travelWish ?? 'offen'} → ${nachher.travelWish ?? 'offen'}` })
   if (zeitraum(vorher) !== zeitraum(nachher)) {
     eintraege.push({
       art: 'stammdaten',

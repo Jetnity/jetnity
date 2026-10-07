@@ -231,7 +231,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |
 | Affiliate-Tracking | Phase 4 |
 | gemeinsame Reiseplanung | braucht ein Berechtigungsmodell je Reise. Heute ist eine Reise privat, und das ist die einfachere und sicherere Aussage |
-| Bearbeiten von Etappen und Reisestammdaten als eigenes Formular | Sprachänderung im Arbeitsbereich setzt Titel, Reisende, Budget, Tempo, Etappen und Tage. Ein separates Stammdaten-Formular ist nicht gebaut |
+| Direkte Bearbeitung bestehender Reisen | Im bestehenden „Reise ändern“: Titel, Budgetziel in bestehender Währung, Tempo, Interessen, nichtleerer Reisewunsch, Beginn/Gesamtdauer und Dauer/Entfernen bestehender Etappen. Tatsächliche Auswirkungen vor ausdrücklicher Übernahme und unabhängiger Speicherbestätigung. Keine neuen Orte/Etappen, kein Reorder/Rename, keine neuen Clear-Verträge. Entfernen von Planpunkten mit verknüpfter Vorbereitung bleibt durch die bestehenden Graph-/SQL-Verträge blockiert; siehe `DIRECT_TRIP_EDITING_1_CONTRACTS_2026-10-07.md`. Die Sprachänderung bleibt separat nutzbar. |
 
 ---
 
@@ -239,7 +239,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 | Punkt | Stand |
 | --- | --- |
-| Titel, Zeitraum und Budget einer bestehenden Reise sind in der Oberfläche nicht änderbar | per Sprache im Arbeitsbereich (Phase 2.2). Ein eigenes Formular dafür gibt es nicht |
+| Titel, Zeitraum und Budget einer bestehenden Reise bearbeiten | Direkt im bestehenden Arbeitsbereich mit Vorher/Nachher-Prüfung und ausdrücklicher Übernahme; alternativ per Sprache (Phase 2.2). Speicherung gilt erst nach unabhängiger Rücklesung als bestätigt. |
 | Etappen sind nach dem Anlegen nicht bearbeitbar | per Sprache im Arbeitsbereich. Ein Etappen-Editor ist nicht gebaut |
 | `trip_days.title` wird von keiner Oberfläche gesetzt | seit Phase 2.1 füllt es ein übernommener Reisevorschlag; Phase 2.2 kann es per Sprache setzen. Über das Formular bleibt es leer |
 | Die Liste „Meine Reisen" endet bei 200 Reisen | Vorsichtsmassnahme, keine Produktregel. Blätterung soll bewusst entstehen, nicht als unbemerkt abgeschnittene Liste |

@@ -72,7 +72,7 @@ export function TripWorkspaceAktionen({
         ) : null}
       </div>
       <p className="mt-2 text-xs leading-5 text-ink-700">
-        Zeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.
+        Grunddaten, Zeitraum und Etappen direkt oder in eigenen Worten anpassen.
         {begleiterVorhanden
           ? ' Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und ändert nichts.'
           : null}

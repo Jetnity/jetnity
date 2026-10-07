@@ -1,0 +1,239 @@
+
+> jetnity@1.0.0 lint
+> eslint .
+
+
+<worktree>/app/(admin)/admin/layout.tsx
+  44:24  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/app/(admin)/admin/layout.tsx:44:24
+  42 |     try {
+  43 |       const raw = localStorage.getItem(LS_KEY)
+> 44 |       if (raw === '1') setCollapsed(true)
+     |                        ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  45 |     } catch { /* ignore */ }
+  46 |   }, [])
+  47 |                                         react-hooks/set-state-in-effect
+  58:5   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/app/(admin)/admin/layout.tsx:58:5
+  56 |     const dark = resolveDark(readThemeMode())
+  57 |     applyDark(dark)
+> 58 |     setIsDark(dark)
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |     return () => applyDark(false)
+  60 |   }, [])
+  61 |   const toggleTheme = React.useCallback(() => {                        react-hooks/set-state-in-effect
+  92:21  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/app/(admin)/admin/layout.tsx:92:21
+  90 |   // Close drawer on route change
+  91 |   React.useEffect(() => {
+> 92 |     if (drawerOpen) setDrawerOpen(false)
+     |                     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  93 |     // eslint-disable-next-line react-hooks/exhaustive-deps
+  94 |   }, [pathname])
+  95 |  react-hooks/set-state-in-effect
+
+<worktree>/app/(admin)/admin/users/actions.ts
+  24:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<worktree>/app/(admin)/admin/users/page.tsx
+  49:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<worktree>/app/(public)/admin/mfa/AdminMfaStepUp.tsx
+  32:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/app/(public)/admin/mfa/AdminMfaStepUp.tsx:32:5
+  30 |
+  31 |     let abgebrochen = false
+> 32 |     setBusy(true)
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     void starteTotpChallengeAnzeige(supabase)
+  34 |       .then((anzeige) => {
+  35 |         if (abgebrochen) return  react-hooks/set-state-in-effect
+
+[bounded excerpt: 525 middle lines omitted; full output totals captured]
+<worktree>/lib/flights/domain.ts
+  108:7  warning  'FLUG_MARKEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/flights/provider-sammlung.test.ts
+  9:3  warning  'aktuelleFlugProviderSammlung' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/readiness/kontext.test.ts
+  107:11  warning  'reise' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/readiness/official-truth-composition-policy-registry.test.ts
+  30:68  warning  'RegelFakt' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/readiness/official.ts
+  11:7  warning  'OFFICIAL_RESULTS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  19:7  warning  'OFFICIAL_STATUSES' is assigned a value but only used as a type   @typescript-eslint/no-unused-vars
+  27:7  warning  'OFFICIAL_FRESHNESS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+  37:7  warning  'OFFICIAL_CLASSES' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+
+<worktree>/lib/readiness/schema.ts
+  316:7  warning  'travellerItemSchema' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/readiness/zustand.test.ts
+  9:18  warning  '_anfrage' is defined but never used  @typescript-eslint/no-unused-vars
+  9:49  warning  '_signal' is defined but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/lib/reiseaenderung/geschuetzt.ts
+  16:7  warning  'GESCHUETZTE_FELDER' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/reiseaenderung/schema.ts
+  216:21  warning  'maximum' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/rental-cars/domain.ts
+  97:7  warning  'RENTAL_MARKEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/rental-cars/zeitraum.ts
+  74:3  warning  '_mietwagen' is defined but never used  @typescript-eslint/no-unused-vars
+  75:3  warning  '_kante' is defined but never used      @typescript-eslint/no-unused-vars
+
+<worktree>/lib/route/domain.ts
+  12:7  warning  'ROUTE_QUELLEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/route/r13-chronologie.test.ts
+  115:45  warning  '_ignored' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/route/schema.ts
+  16:35  warning  'RoutePunkt' is defined but never used    @typescript-eslint/no-unused-vars
+  16:47  warning  'RouteSegment' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/safety/domain.ts
+   53:7  warning  'SAFETY_EVIDENCE_STATUSES' is assigned a value but only used as a type     @typescript-eslint/no-unused-vars
+   61:7  warning  'SAFETY_FRESHNESS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   91:7  warning  'SAFETY_PRESENTATION_CLASSES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+   99:7  warning  'SAFETY_RELEVANCE' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+  107:7  warning  'SAFETY_SPATIAL_PRECISIONS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  119:7  warning  'SAFETY_IMPACT_DOMAINS' is assigned a value but only used as a type        @typescript-eslint/no-unused-vars
+  131:7  warning  'SAFETY_IMPACT_STATUSES' is assigned a value but only used as a type       @typescript-eslint/no-unused-vars
+  134:7  warning  'SAFETY_NEXT_ACTIONS' is assigned a value but only used as a type          @typescript-eslint/no-unused-vars
+  145:7  warning  'SAFETY_REF_KINDS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+
+<worktree>/lib/safety/evidence.ts
+  184:37  warning  'fingerprint' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/safety/scope.ts
+  9:7  warning  'SAFETY_SCOPE_KINDS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/safety/status.ts
+  10:7  warning  'SAFETY_CHECK_STATES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/seasonal/domain.ts
+   56:7  warning  'SEASONAL_EVIDENCE_STATUSES' is assigned a value but only used as a type     @typescript-eslint/no-unused-vars
+   64:7  warning  'SEASONAL_FRESHNESS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   83:7  warning  'SEASONAL_PRESENTATION_CLASSES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+   91:7  warning  'SEASONAL_RELEVANCE' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   99:7  warning  'SEASONAL_SPATIAL_PRECISIONS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  122:7  warning  'SEASONAL_IMPACT_STATUSES' is assigned a value but only used as a type       @typescript-eslint/no-unused-vars
+  125:7  warning  'SEASONAL_NEXT_ACTIONS' is assigned a value but only used as a type          @typescript-eslint/no-unused-vars
+  135:7  warning  'SEASONAL_REF_KINDS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+
+<worktree>/lib/seasonal/engine.test.ts
+  19:3  warning  'mehrzielreise' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/seasonal/scope.ts
+  8:7  warning  'SEASONAL_SCOPE_KINDS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/seasonal/status.ts
+  10:7  warning  'SEASONAL_CHECK_STATES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/seo/oeffentlicher-origin.ts
+  164:3  warning  '_env' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/suche/lage.ts
+  6:7  warning  'SUCHE_LAGEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/supabase/server.ts
+  34:9   warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  34:24  warning  '_value' is defined but never used    @typescript-eslint/no-unused-vars
+  34:40  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+  37:12  warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  37:27  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+  55:26  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/trips/day-stage-truth-contract.test.ts
+  160:37  warning  '_mode' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/trips/gastspeicher.ts
+  925:24  warning  '_ref' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  980:3   warning  '_reise' is defined but never used         @typescript-eslint/no-unused-vars
+  981:3   warning  '_aufnahme' is defined but never used      @typescript-eslint/no-unused-vars
+  982:3   warning  '_dayId' is defined but never used         @typescript-eslint/no-unused-vars
+
+<worktree>/lib/trips/schema.test.ts
+  613:25  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  730:24  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/lib/trips/schema.ts
+  416:35  warning  '_claimed' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/activities-ui-audit.mjs
+  317:11  warning  'stil' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/db/admin-account-counts-http-proof-1.mjs
+  26:10  warning  'dirname' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/db/gate-b-tw6-bundle.ts
+  22:3  warning  'writeGateVerifySql' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/db/production-pruefen.ts
+  9:76  warning  'ORT_PFLICHT_KEYWORD' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/db/security-events-dev-1-lokal.mjs
+  184:10  warning  'mussErlauben' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-browser-acceptance-1/preflight.mjs
+   15:10  warning  'defaultWhich' is defined but never used       @typescript-eslint/no-unused-vars
+  103:5   warning  'helpFull' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-browser-acceptance-1/resolve-executable.mjs
+  5:10  warning  'existsSync' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs
+  430:21  warning  'args' is defined but never used        @typescript-eslint/no-unused-vars
+  681:34  warning  'profileDir' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs
+  496:33  warning  '_drop' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-browser-flows-1/test.mjs
+   85:3   warning  'assertSanitized' is defined but never used  @typescript-eslint/no-unused-vars
+  159:11  warning  'index' is defined but never used            @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/e2e/admin-account-counts-local-runtime-1/test.mjs
+  87:56  warning  'assertOverlayKeepsAuthSemantics' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/scripts/v1-workspace-status-language-1-audit.mjs
+  309:10  warning  'sichtbareTexte' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 144 problems (0 errors, 144 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.

@@ -229,7 +229,9 @@ describe('geschützte Terminabweichung nach Reiseverschiebung', () => {
     assert.equal(dom?.startsOn, '2026-09-12')
     assert.equal(dom?.dayId, 'day-1')
     assert.equal(istKommerziell(dom!), true)
-    assert.equal(uffizien?.startsOn, '2026-09-20')
+    // Explicit item date differs from its day: shift the fact by +7, never replace it from the container.
+    assert.equal(vorher.days[1]?.items.find(item => item.id === 'item-2')?.startsOn, '2026-09-12')
+    assert.equal(uffizien?.startsOn, '2026-09-19')
     assert.equal(istKommerziell(uffizien!), false)
 
     const sicht = ableiten(ergebnis.reise)

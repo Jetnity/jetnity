@@ -12,6 +12,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { manuellSchema } from '@/lib/reiseaenderung/direct/entwurf'
+import { manuellVorschau, manuellSpeichern } from '@/lib/reiseaenderung/direct/speichern'
+import { KONFLIKT, UNGEWISS, bedeutung, mutationskennung, type SpeicherErgebnis } from '@/lib/reiseaenderung/direct/bestaetigung'
 import { z } from 'zod'
 
 import { modellAufrufen } from '@/lib/modell/aufruf'
@@ -24,7 +27,7 @@ import { modellFuerReiseaenderung } from '@/lib/reiseaenderung/routing'
 import { reiseaenderungSchema } from '@/lib/reiseaenderung/schema'
 import { reiseMitKanonischenOrten, type KanonischeOrte } from '@/lib/places/kanon'
 import { reiseOrteKanonisieren } from '@/lib/places/lesen'
-import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
+import { NICHT_ANGEMELDET, konto, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
 import { ersteMeldung, reiseSchema } from '@/lib/trips/schema'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
@@ -34,7 +37,7 @@ function heute(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-function kontoKennung(_prefix: string): string {
+function kontoKennung(): string {
   return crypto.randomUUID()
 }
 
@@ -157,7 +160,7 @@ export async function aenderungOrteAufloesen(eingabe: unknown) {
  * Eine veraltete Fassung oder ein Retry derselben Mutation endet in der
  * Datenbank, nicht in einer stillen Doppelanwendung.
  */
-export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<{ revision: number }>> {
+export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<{ revision: number; reise: Reisegraph }>> {
   const geprueft = uebernahmeSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 
@@ -176,17 +179,19 @@ export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionserg
   }
 
   const aktuell = geladen.zeilen[0]
+  const mutationId = await mutationskennung(geprueft.data.mutationId, geprueft.data.tripId, geprueft.data.basisRevision, geprueft.data.aenderung)
   if (!aktuell) return { ok: false, meldung: 'Diese Reise ist unbekannt.' }
 
-  if (aktuell.lastMutationId === geprueft.data.mutationId) {
-    return { ok: true, wert: { revision: aktuell.revision } }
+  if (aktuell.lastMutationId === mutationId) {
+    if (aktuell.revision !== geprueft.data.basisRevision + 1) return { ok: false, meldung: KONFLIKT }
+    return { ok: true, wert: { revision: aktuell.revision, reise: aktuell } }
   }
 
   if (aktuell.revision !== geprueft.data.basisRevision) {
     return {
       ok: false,
       meldung:
-        'Diese Reise hat sich inzwischen geändert. Bitte verwirf die Vorschau und formuliere den Wunsch erneut.',
+        'Diese Reise hat sich inzwischen geändert. Bitte prüfe die Änderung am aktuellen Stand erneut.',
     }
   }
 
@@ -198,30 +203,55 @@ export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionserg
   if (!angewandt.ok) return { ok: false, meldung: angewandt.fehler.meldung }
 
   const orte = await reiseOrteKanonisieren(angewandt.reise)
-  const kanonisch = reiseMitKanonischenOrten(angewandt.reise, orte)
+  const kanonisch = { ...reiseMitKanonischenOrten(angewandt.reise, orte), dayStageAssignmentMode: aktuell.dayStageAssignmentMode }
 
-  const { data, error, status } = await supabase.rpc('reise_aendern', {
-    _aenderung: aenderungAlsNutzlast(
-      kanonisch,
-      geprueft.data.mutationId,
-      geprueft.data.basisRevision,
-    ),
-  })
-
-  if (error) {
-    const meldung =
-      error.code === 'P0001' || error.code === '22023' || error.code === '23505'
-        ? error.message
-        : meldungAus(error, status)
-    return { ok: false, meldung }
-  }
-
-  const revision =
-    data && typeof data === 'object' && 'revision' in data && typeof data.revision === 'number'
-      ? data.revision
-      : angewandt.reise.revision + 1
-
-  revalidatePath(`/reisen/${geprueft.data.tripId}`)
+  let konflikt = false
+  try {
+    const { error } = await supabase.rpc('reise_aendern', {
+      _aenderung: aenderungAlsNutzlast(kanonisch, mutationId, geprueft.data.basisRevision),
+    })
+    konflikt = error?.code === 'P0001'
+  } catch { /* An acknowledgement can be lost after commit; read independently. */ }
+  let fresh: Reisegraph | undefined
+  try {
+    const read = await reiseLaden(geprueft.data.tripId)
+    if (!read.problem) fresh = read.zeilen[0]
+  } catch { /* Keep the accepted proposal for a safe retry. */ }
+  if (!fresh || fresh.id !== aktuell.id || fresh.lastMutationId !== mutationId ||
+      fresh.revision !== geprueft.data.basisRevision + 1 || bedeutung(fresh) !== bedeutung(kanonisch))
+    return { ok: false, meldung: konflikt || (fresh && fresh.revision !== geprueft.data.basisRevision && fresh.lastMutationId !== mutationId) ? KONFLIKT : UNGEWISS }
   revalidatePath('/reisen')
-  return { ok: true, wert: { revision } }
+  return { ok: true, wert: { revision: fresh.revision, reise: fresh } }
+}
+
+/** Model-free preview from the owner-visible authoritative trip. */
+export async function manuelleAenderungVorschau(roh: unknown) {
+  const parsed = z.object({ tripId: z.string().uuid(), basisRevision: z.number().int().min(1), seed: z.string().uuid(), eingabe: manuellSchema }).strict().safeParse(roh)
+  if (!parsed.success) return { ok: false as const, meldung: 'Bitte die Eingaben prüfen.', feld: 'form' }
+  const { benutzerId } = await konto()
+  if (!benutzerId) return { ok: false as const, meldung: NICHT_ANGEMELDET, feld: 'form' }
+  const read = await reiseLaden(parsed.data.tripId)
+  if (read.problem || !read.zeilen[0]) return { ok: false as const, meldung: 'Die Reise kann gerade nicht gelesen werden.', feld: 'form' }
+  if (read.zeilen[0].revision !== parsed.data.basisRevision) return { ok: false as const, meldung: KONFLIKT, feld: 'form' }
+  return manuellVorschau(read.zeilen[0], parsed.data.eingabe, parsed.data.seed, 'account')
+}
+
+/** Strict manual subset; never accepts a replacement graph or location authority. */
+export async function manuelleAenderungUebernehmen(roh: unknown): Promise<SpeicherErgebnis> {
+  const { supabase, benutzerId } = await konto()
+  if (!benutzerId) return { ok: false, art: 'sitzung', meldung: NICHT_ANGEMELDET }
+  return manuellSpeichern(roh, {
+    quelle: 'account',
+    lesen: async id => {
+      if (!z.string().uuid().safeParse(id).success) return null
+      const read = await reiseLaden(id)
+      if (read.problem) throw new Error('read unavailable')
+      return read.zeilen[0] ?? null
+    },
+    schreiben: async (trip, mutationId, revision) => {
+      // No places lookup: this subset cannot change location and uses server-loaded facts.
+      const { error } = await supabase.rpc('reise_aendern', { _aenderung: aenderungAlsNutzlast(trip, mutationId, revision) })
+      return { konflikt: error?.code === 'P0001' }
+    },
+  })
 }

@@ -628,6 +628,7 @@ export default function TripWorkspace({
   }, [navigationAnwenden, anfangsBereich, reise, ungeplantePunkte])
 
   const aenderungOeffnen = () => {
+    if (aenderungFeldRef.current?.querySelector('[data-aenderung-sperre="true"]')) return
     const naechster = !aenderungOffen
     setAenderungOffen(naechster)
     if (naechster) setAenderungBereit(true)
@@ -635,7 +636,8 @@ export default function TripWorkspace({
 
   React.useEffect(() => {
     if (!aenderungOffen) return
-    const feld = aenderungFeldRef.current?.querySelector<HTMLTextAreaElement>('textarea')
+    const feld = aenderungFeldRef.current?.querySelector<HTMLElement>('input[data-aenderung-start], textarea')
+      ?? aenderungFeldRef.current?.querySelector<HTMLElement>('[data-aenderung-start]')
     feld?.focus()
   }, [aenderungOffen])
 
@@ -721,12 +723,13 @@ export default function TripWorkspace({
       }}
       onKeyDown={(ereignis) => {
         if (ereignis.key !== 'Escape' || !aenderungOffen) return
+        if (aenderungFeldRef.current?.querySelector('[data-aenderung-sperre="true"]')) { ereignis.stopPropagation(); return }
         ereignis.stopPropagation()
         setAenderungOffen(false)
         aenderungKnopfRef.current?.focus()
       }}
     >
-      {aenderung}
+      {aenderungSichtbar ? aenderung : null}
     </div>
   )
 
