@@ -1,0 +1,20 @@
+PASS
+Code head at start: 1b38849879f6ad713ea0d5f86b5c0ab1426be5ca
+PASS npm-test-linux (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/npm-test-linux.log
+PASS typecheck (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/typecheck.log
+PASS lint (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/lint.log
+PASS build (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/build.log
+PASS check-dead (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-dead.log
+PASS check-exports (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-exports.log
+PASS check-deps (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-deps.log
+PASS check-api-schutz (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-api-schutz.log
+PASS check-schema-bezug (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-schema-bezug.log
+PASS check-operating-mode (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-operating-mode.log
+PASS diff-check (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/diff-check.log
+PASS guest-browser (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/guest-browser.log
+PASS trip-timeline-core-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-core-1.log
+PASS trip-timeline-temporal-review-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-temporal-review-1.log
+PASS trip-workspace-contextual-navigation-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-workspace-contextual-navigation-1.log
+PASS trip-plan-premium-experience-4 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-plan-premium-experience-4.log
+PASS account-persistence (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/account-persistence.log
+Browser/Account/Device/Live activation boundaries are recorded separately.

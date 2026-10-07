@@ -1,0 +1,263 @@
+{
+  "base": "0481173cf56f13e5316246503e4683ad843728f2",
+  "files": [
+    {
+      "path": "components/trips/FlugBestand.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/GastArbeitsbereich.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/KontoArbeitsbereich.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/MobilitaetBereich.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/PlanpunktEditor.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/TripIntegratedDay.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/TripWorkspaceJetztWichtig.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "components/trips/TripWorkspacePlan.tsx",
+      "ownership": "Plan/Workspace integration, bounded wrappers or dedicated result/focus path"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_CONTRACTS_2026-10-07.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_HANDOFF_2026-10-07.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_PLAN_2026-10-07.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_REPORT_2026-10-07.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_SELF_REVIEW_2026-10-07.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_TASK_2026-10-07.md",
+      "ownership": "Immutable accepted seed, unchanged blob"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/STATUS.md",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/acceptance-matrix.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/account-persistence.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/account-repeat-1.txt",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/account-repeat-2.txt",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/account-repeat-3.txt",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/artifact-notes.txt",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/browser.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/changed-files.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/delivery-source-map.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/delivery-summary.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/integrated-audit.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/integrated-audit.txt",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-plan-premium-experience-4/audit.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-timeline-core-1/audit.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-timeline-temporal-review-1/audit.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-workspace-contextual-navigation-1/result.json",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/screens/account-stale-draft.png",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/screens/flight-reclassified-focus.png",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/screens/form-360-text-200.png",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/screens/plan-1440-text-100.png",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/screens/plan-390-text-100.png",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/validation-logs.zip",
+      "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "lib/trips/abbildung.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/aktionen.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/flug-manuell.test.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/flug-route-form-validation.test.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/gastspeicher.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/schema.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated.test.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/account-write.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/day.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/external-admission.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/external.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/intervals.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/live.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/manual.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/movements.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-integrated/next.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/trip-plan-premium-experience-4.test.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "lib/trips/unterkunft-manuell.test.ts",
+      "ownership": "Trip-only projection, validation, existing-field CRUD/mapping or tests"
+    },
+    {
+      "path": "scripts/db/trip-plan-integrated-operating-experience-1/run.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1-audit.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/browser.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/linux-tests.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-timeline-core-1-audit.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-timeline-temporal-review-1-audit.mjs",
+      "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "types/trips.ts",
+      "ownership": "Backward-compatible optional version for existing updated_at column"
+    }
+  ],
+  "forbiddenDiff": "EMPTY",
+  "taskBlob": "3df8bca929f287cdd7e996b4c051c38205611e67"
+}

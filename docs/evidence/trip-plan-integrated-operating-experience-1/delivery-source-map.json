@@ -1,0 +1,25 @@
+{
+  "mechanism": "Authenticated GitHub connector; non-force expected-head ref updates; SHA-identical trees",
+  "commits": [
+    {
+      "local": "1269ba29c5f4f3578685d31e2f1d25c2e6d6e4e8",
+      "remote": "9c541eb3844c7e53c90c66511176c7db4b3896f3",
+      "tree": "3f74838f0e948a17ba66d16113b4578bf51f3b6f"
+    },
+    {
+      "local": "047ab8463d65ee52ad37a6b2623247df27e724ea",
+      "remote": "879b774dd5ac1a6adba8b698af2406205981b29a",
+      "tree": "3e2c7f3159afdfbf6d71833a6765a5bd3b4ca57a"
+    },
+    {
+      "local": "5d3197fcf443db568850fa5545a8a27642e64b90",
+      "remote": "c2a9a93b3f0591b28a0444062ff4f6efae27784c",
+      "tree": "c6011356b4074715ae1acef8f8e5b01b4cc5e5c6"
+    },
+    {
+      "local": "1b38849879f6ad713ea0d5f86b5c0ab1426be5ca",
+      "remote": "f2c65c41da43236895ee116f9de0c603b7c37859",
+      "tree": "f7cfa0dfe66ebd3197b67a64c883c60e907fab8a"
+    }
+  ]
+}

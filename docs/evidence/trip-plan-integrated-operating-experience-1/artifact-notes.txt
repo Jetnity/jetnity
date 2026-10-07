@@ -1,0 +1,4 @@
+The readable integrated-audit.txt and JSON record the final direct run.
+validation-logs.zip contains the complete raw test/build/gate/browser logs under their recorded logs/ paths. Extract here to follow those paths. Local absolute checkout paths are replaced by <repo>; assertions/results are unchanged.
+Only five curated synthetic screenshots are committed; regression runners generate additional local screenshots when repeated.
+The Guest qualified-movement fixture is explicitly synthetic because canonical Guest intake strips surface authority. Its callback is the real Guest writer, not a mocked success.

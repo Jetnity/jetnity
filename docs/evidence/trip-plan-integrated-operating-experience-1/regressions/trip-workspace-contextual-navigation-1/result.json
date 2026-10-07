@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-07T01:14:45.675Z",
+  "checkout": "1b38849879f6ad713ea0d5f86b5c0ab1426be5ca",
+  "serverMode": "production",
+  "scope": "working-tree U02/U03; synthetic local audit, no production/data writes",
+  "results": [
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "cases": [
+        "overview-gap-visible",
+        "overview-gap-browser",
+        "overview-gap-escape",
+        "direct-gap-parent",
+        "plan-item-visible",
+        "plan-item-forward-visible",
+        "plan-item-browser",
+        "plan-item-forward-browser",
+        "plan-item-escape",
+        "plan-item-forward-escape",
+        "direct-item-correct-day-parent",
+        "unplanned-item-no-invented-day",
+        "deleted-item-safe-parent",
+        "immediate-preparation-preserves-collapse",
+        "attention-exact-traveller-opens-collapsed-section",
+        "saved-target-and-no-visible-raw-ref",
+        "unavailable-official-section-fallback",
+        "stale-traveller-section-only",
+        "repeated-target-refocus"
+      ],
+      "pageErrors": [],
+      "blockedRequests": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "cases": [
+        "overview-gap-visible",
+        "overview-gap-browser",
+        "overview-gap-escape",
+        "direct-gap-parent",
+        "plan-item-visible",
+        "plan-item-forward-visible",
+        "plan-item-browser",
+        "plan-item-forward-browser",
+        "plan-item-escape",
+        "plan-item-forward-escape",
+        "direct-item-correct-day-parent",
+        "unplanned-item-no-invented-day",
+        "deleted-item-safe-parent",
+        "immediate-preparation-preserves-collapse",
+        "attention-exact-traveller-opens-collapsed-section",
+        "saved-target-and-no-visible-raw-ref",
+        "unavailable-official-section-fallback",
+        "stale-traveller-section-only",
+        "repeated-target-refocus"
+      ],
+      "pageErrors": [],
+      "blockedRequests": []
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "cases": [
+        "overview-gap-visible",
+        "overview-gap-browser",
+        "overview-gap-escape",
+        "direct-gap-parent",
+        "plan-item-visible",
+        "plan-item-forward-visible",
+        "plan-item-browser",
+        "plan-item-forward-browser",
+        "plan-item-escape",
+        "plan-item-forward-escape",
+        "direct-item-correct-day-parent",
+        "unplanned-item-no-invented-day",
+        "deleted-item-safe-parent",
+        "immediate-preparation-preserves-collapse",
+        "attention-exact-traveller-opens-collapsed-section",
+        "saved-target-and-no-visible-raw-ref",
+        "unavailable-official-section-fallback",
+        "stale-traveller-section-only",
+        "repeated-target-refocus"
+      ],
+      "pageErrors": [],
+      "blockedRequests": []
+    }
+  ]
+}
