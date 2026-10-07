@@ -33,7 +33,7 @@
         "publicationCount": 1,
         "storageCalls": 1
       },
-      "recordFingerprint": "ot-provenance-v1:d0fc0dd4de7903075c4afadcce3ce38723b702149a3ad0650e97c049bd9146fd",
+      "recordFingerprint": "ot-provenance-v1:51fb7413f2bfe7b0e4d4115a7114bd3fb2e47951f4b5e2fc5d1f270e7b30e5da",
       "storedReadbackRows": 652,
       "legacyV1": "REJECTED_DEPTH_11"
     },
@@ -67,7 +67,7 @@
         "publicationCount": 1,
         "storageCalls": 1
       },
-      "recordFingerprint": "ot-provenance-v1:f6b6edeab850b5ad259585001c06440bd90bd9067b65f39cfbd645d6d14ee2c7",
+      "recordFingerprint": "ot-provenance-v1:4ecb60220f2228e808ee571c2af550b97796869991294a476f64466cafc577d7",
       "storedReadbackRows": 720,
       "legacyV1": "REJECTED_DEPTH_11"
     },
@@ -1487,11 +1487,11 @@
     "guardLoss": [
       {
         "scenario": "cancel",
-        "elapsedAfterLossMs": 103,
+        "elapsedAfterLossMs": 102,
         "outcome": "commit_outcome_unknown",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 3666,
+          "elapsedMs": 2959,
           "outcome": "sql_error",
           "code": "57P01",
           "commitAcknowledged": false,
@@ -1500,11 +1500,11 @@
       },
       {
         "scenario": "terminate",
-        "elapsedAfterLossMs": 104,
+        "elapsedAfterLossMs": 103,
         "outcome": "commit_outcome_unknown",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 3816,
+          "elapsedMs": 2847,
           "outcome": "sql_error",
           "code": "57P01",
           "commitAcknowledged": false,
@@ -1513,7 +1513,7 @@
       },
       {
         "scenario": "dispatch_gap",
-        "elapsedAfterLossMs": 103,
+        "elapsedAfterLossMs": 102,
         "outcome": "commit_outcome_unknown",
         "diagnostic": {
           "phase": "commit",
@@ -1526,11 +1526,11 @@
       },
       {
         "scenario": "ack_race",
-        "elapsedAfterLossMs": 3935,
+        "elapsedAfterLossMs": 3586,
         "outcome": "acknowledged_verified_commit",
         "diagnostic": {
           "phase": "commit",
-          "elapsedMs": 5074,
+          "elapsedMs": 4180,
           "outcome": "complete",
           "code": null,
           "commitAcknowledged": true,

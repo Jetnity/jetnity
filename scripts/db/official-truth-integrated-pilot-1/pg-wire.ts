@@ -42,7 +42,7 @@ type CommitDeadline = {
   failure(): LocalPgOperationDiagnostic['protectionFailure']
 }
 const diagnosticCode = (error: unknown): string | null => error instanceof LocalPgError
-  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count'].includes(error.code) ? error.code : 'transport_error') : null
+  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count','commit_deadline_not_armed'].includes(error.code) ? error.code : 'transport_error') : null
 export class LocalPgConnection {
   private buffer: Buffer = Buffer.alloc(0)
   private messages: { tag: string; bytes: Buffer }[] = []

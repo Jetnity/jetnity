@@ -1,5 +1,7 @@
 # Integrated development pilot 1 — execution plan
 
+Current scope: TL-R5.0 correction, Issue#899 / Draft#906, baseline main de966, TL seed1eb1ce7. Earlier sections retain historical execution plans; the R5 section below is current. Local work preserved before safe fast-forward; SINGLE_AGENT.
+
 Owner: Official Truth integrated development pilot 1 — Generation 1. Issue #899; Draft PR #900.
 Baseline main ecc0ecf3b9c024b295034b6985fa26ca40bc82f1; task seed d3ee358fedf87656fc55325200eeade13f840e19. Immutable TASK ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad.
 
@@ -87,3 +89,18 @@ R3 final self-review correction: a native held-COMMIT-dispatch experiment on4d8d
 
 
 Final local dispatch correction verified: focused native19 groups/1,008 comparisons PASS (0 failures/skips); all three interruption cases complete within the5s bound and the ACK race retains actual ACK/readback. The complete developer command again passes69 existing semantic/security +19 R3 +16 structural groups,50 failure paths and both producer roundtrips. Typecheck, Lint, Build and six hygiene/mode checks pass on this final runtime. The earlier local full-suite result is explicitly historical at4d8da35a; the complete final-head Linux CI must be newly executed after publication. Final delivery waits for that result.
+# TL-R5 continuation — same Generation 1, 7 October 2026
+
+Binding corrective PR#906 starts at1eb1ce7ce1409661a624fad0408aaad38ee97fb8, parent/main de966778a06183748e3807bcb6af9a6cbeaeb326. Original TASK and TL-R5.0 amendment remain immutable. Prior author0ed delivery is privately preserved, including a Git bundle and complete delivery copies; the owned checkout was clean and fast-forwarded only to the TL-prepared branch. Earlier sections below are historical R3 evidence.
+
+1. Preserve the actual failed main run37663759724 (Verify112937599656) and its missing scenario/phase details. Separately measure preparation, test duration and later cancellation. Do not invent the cause from the final cancelled state.
+2. Instrument bounded guard/successor failure diagnostics in the existing native proof, retaining every assertion and all four real causal barriers. Record actual operation elapsed/code/ACK/protection, result classification and independent readback; exclude SQL/parameters/PIDs/home/account values.
+3. Reproduce under native PostgreSQL and Linux/full-suite conditions. Test arming, deadline, cleanup, isolation and contention hypotheses against observed evidence. Make only the demonstrated minimal correction; no retry-to-green, timeout/budget increase, canonical change, dependency or CI edit.
+4. Retain69 semantic/security+19 R3+16 structural groups and complete652/720 readbacks; run targeted causal RED/GREEN, complete developer command, full tests/typecheck/lint/build/hygiene. Update task-only CONTRACTS/STATUS/coverage/commands/REPORT/HANDOFF/SELF_REVIEW and separate R5 evidence without rewriting historical R2/R3 outcomes.
+5. Publish on the same branch, verify complete changed-file blobs/tree/TASK/amendment/scope and fresh final-head Linux CI/Auth/Preview with actual checkout. Stop for independent TL review; no Ready/merge/main merge or further slice.
+
+Current hypotheses are unproven. Scope is dormant local proof/adapter only, no application API/Trip graph/hosted DB or activation changes. Security goal is honest commit truth and verified successor recovery under unchanged resource limits. No new recurring cost or source attempt; realOfficialSourcePilot remains BLOCKED. Session01a11333-cbc2-7282-b194-27335e632c61, actual gpt-6-astra/xhigh read from current turn metadata2026-10-07T20:09:43.182Z. SINGLE_AGENT.
+
+### R5 measured correction and validation progress
+
+Native profiling identified repeated canonical decoding inside actual deferred artifact validation. The controlled Linux contention baseline produced57P01/no ACK at20,070ms with independent eight-table emptiness and successful fresh writer; the shared checked envelope passed the same experiment at17,072ms with actual ACK/full652-row readback/idempotent successor. The historical main attempt's exact missing scenario remains unknown. The correction preserves638 deferred events/retained checks and1568 typed checks while reducing decode calls3963→2395. Six positive and32 negative native envelope calls pass. Typecheck, Lint, Build and all six hygiene/mode checks pass. Full-suite/developer and final-head remote gates are recorded from their actual completed runs in command-results and the publication receipt. No performance claim substitutes for semantic or recovery checks.

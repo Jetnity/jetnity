@@ -102,8 +102,8 @@ CREATE TYPE official_provenance_api.artifact_input_v1 AS (
  byte_contract_family text, artifact_contract_version integer, canonical_bytes bytea
 );
 REVOKE ALL ON TYPE official_provenance_api.artifact_input_v1 FROM PUBLIC;
-CREATE FUNCTION official_provenance_private.artifact_edges(a official_provenance_api.artifact_input_v1)
-RETURNS TABLE(slot text, pin jsonb) LANGUAGE plpgsql IMMUTABLE STRICT SET search_path = '' AS $$
+CREATE FUNCTION official_provenance_private.artifact_envelope(a official_provenance_api.artifact_input_v1)
+RETURNS jsonb LANGUAGE plpgsql IMMUTABLE STRICT SET search_path = '' AS $$
 DECLARE value jsonb; edge jsonb;
 BEGIN
   IF a.artifact_id IS NULL OR a.artifact_version IS NULL OR a.digest IS NULL OR a.artifact_type IS NULL OR a.byte_contract_family IS NULL OR a.artifact_contract_version IS NULL OR a.canonical_bytes IS NULL
@@ -112,20 +112,33 @@ BEGIN
   value := official_provenance_private.decode(a.canonical_bytes,1048576);
   IF a.byte_contract_family = 'global_definition_v1' THEN
     IF a.artifact_type <> 'global_cell' OR NOT official_provenance_private.keys(value,ARRAY['id','version','scope']) OR value->>'id' IS DISTINCT FROM a.artifact_id OR pg_catalog.jsonb_typeof(value->'version') IS DISTINCT FROM 'number' OR (value->>'version')::bigint IS DISTINCT FROM a.artifact_version THEN RAISE EXCEPTION 'invalid_input'; END IF;
-    RETURN;
   ELSIF a.byte_contract_family = 'custody_v1' THEN
     IF a.artifact_type <> ALL(ARRAY['GlobalCellAdmissionV1','AcceptedEvidenceCustodyV1','SupportSelectionDefinitionV1','SelectedSupportManifestV1','GlobalRepresentationQualificationV1','AutonomousReviewConstructionV1'])
       OR NOT official_provenance_private.keys(value,ARRAY['kind','schemaVersion','value']) OR value->>'kind' IS DISTINCT FROM a.artifact_type OR value->'schemaVersion' IS DISTINCT FROM '1'::jsonb THEN RAISE EXCEPTION 'unsupported_version'; END IF;
-    RETURN QUERY SELECT p.slot,p.pin FROM official_provenance_private.pins(value->'value') p;
   ELSIF a.byte_contract_family = 'manifest_v1' THEN
     IF a.artifact_type <> ALL(ARRAY['catalog_snapshot','identity_profile','extractor_registry','policy_registry','extractor_definition','policy_definition','fact_schema','applicability_schema','output_contract','proof_contract','freshness_contract','implementation_bundle','semantic_contract','content_item_definition','representation_definition','original_observation','validity_origin','accepted_origin','eligible_version_snapshot'])
       OR NOT official_provenance_private.keys(value,ARRAY['artifactType','artifactContractVersion','id','version','content','dependencies']) OR value->>'artifactType' IS DISTINCT FROM a.artifact_type OR value->'artifactContractVersion' IS DISTINCT FROM '1'::jsonb OR value->>'id' IS DISTINCT FROM a.artifact_id OR pg_catalog.jsonb_typeof(value->'version') IS DISTINCT FROM 'number' OR (value->>'version')::bigint IS DISTINCT FROM a.artifact_version
       OR pg_catalog.jsonb_typeof(value->'content') <> 'object' OR pg_catalog.jsonb_typeof(value->'dependencies') <> 'array' OR pg_catalog.jsonb_array_length(value->'dependencies') > 256 THEN RAISE EXCEPTION 'unsupported_version'; END IF;
     FOR edge IN SELECT e FROM pg_catalog.jsonb_array_elements(value->'dependencies') e LOOP
       IF NOT official_provenance_private.keys(edge,ARRAY['slot','pin']) OR pg_catalog.jsonb_typeof(edge->'slot') <> 'string' OR pg_catalog.octet_length(edge->>'slot') NOT BETWEEN 1 AND 1024 OR NOT official_provenance_private.valid_pin(edge->'pin') THEN RAISE EXCEPTION 'invalid_input'; END IF;
-      slot:=edge->>'slot'; pin:=edge->'pin'; RETURN NEXT;
     END LOOP;
   ELSE RAISE EXCEPTION 'unsupported_version'; END IF;
+  RETURN value;
+END $$;
+-- Share the checked envelope, not a cache: each invocation still verifies the
+-- bytes/hash/header and every declared edge before deriving its role-specific set.
+CREATE FUNCTION official_provenance_private.artifact_edges(a official_provenance_api.artifact_input_v1)
+RETURNS TABLE(slot text, pin jsonb) LANGUAGE plpgsql IMMUTABLE STRICT SET search_path = '' AS $$
+DECLARE value jsonb; edge jsonb;
+BEGIN
+  value:=official_provenance_private.artifact_envelope(a);
+  IF a.byte_contract_family='custody_v1' THEN
+    RETURN QUERY SELECT p.slot,p.pin FROM official_provenance_private.pins(value->'value') p;
+  ELSIF a.byte_contract_family='manifest_v1' THEN
+    FOR edge IN SELECT e FROM pg_catalog.jsonb_array_elements(value->'dependencies') e LOOP
+      slot:=edge->>'slot'; pin:=edge->'pin'; RETURN NEXT;
+    END LOOP;
+  END IF;
 END $$;
 CREATE FUNCTION official_provenance_private.receipt_roots(value jsonb)
 RETURNS TABLE(slot text, pin jsonb, expected_type text) LANGUAGE plpgsql IMMUTABLE STRICT SET search_path = '' AS $$
@@ -422,7 +435,7 @@ DO $$ DECLARE routine record; BEGIN
 END $$;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA official_provenance_private,official_provenance_api FROM PUBLIC;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA official_provenance_private TO ot_provenance_write_exec;
-GRANT EXECUTE ON FUNCTION official_provenance_private.utf16_sort_key(text),official_provenance_private.canonical(json,integer),official_provenance_private.decode(bytea,integer),official_provenance_private.keys(jsonb,text[]),official_provenance_private.valid_pin(jsonb),official_provenance_private.pins(jsonb,text),official_provenance_private.artifact_edges(official_provenance_api.artifact_input_v1),official_provenance_private.receipt_roots(jsonb),official_provenance_private.binding_roots(jsonb,text),official_provenance_private.validate_structure(text,bytea,bytea,official_provenance_api.artifact_input_v1[]),official_provenance_private.verify_retained(text) TO ot_provenance_read_exec;
+GRANT EXECUTE ON FUNCTION official_provenance_private.utf16_sort_key(text),official_provenance_private.canonical(json,integer),official_provenance_private.decode(bytea,integer),official_provenance_private.keys(jsonb,text[]),official_provenance_private.valid_pin(jsonb),official_provenance_private.pins(jsonb,text),official_provenance_private.artifact_envelope(official_provenance_api.artifact_input_v1),official_provenance_private.artifact_edges(official_provenance_api.artifact_input_v1),official_provenance_private.receipt_roots(jsonb),official_provenance_private.binding_roots(jsonb,text),official_provenance_private.validate_structure(text,bytea,bytea,official_provenance_api.artifact_input_v1[]),official_provenance_private.verify_retained(text) TO ot_provenance_read_exec;
 -- Read executor receives only pure helpers; trigger helpers cannot be invoked directly.
 GRANT EXECUTE ON FUNCTION official_provenance_api.publish_structural_fixture_v1(smallint,text,text,bytea,bytea,official_provenance_api.artifact_input_v1[]) TO ot_provenance_writer;
 GRANT EXECUTE ON FUNCTION official_provenance_api.read_structural_fixture_v1(text) TO ot_provenance_reader;

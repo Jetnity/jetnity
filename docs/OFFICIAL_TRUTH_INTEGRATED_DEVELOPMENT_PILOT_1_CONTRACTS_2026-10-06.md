@@ -153,3 +153,15 @@ The mandatory native failure tests independently observe target `COMMIT/PgSleep`
 
 
 The native observation budget spans the fixed25s publication statement and20s COMMIT plus5s observation margin; it is not a larger operation deadline. Cancel/terminate tests still independently observe actual target COMMIT/PgSleep before guard loss; the ACK race observes actual COMMIT waiting on its owned advisory barrier. Its barrier release is causally after the guard-loss observer, avoiding a timing-sensitive short-sleep assumption. Bounded failure diagnostics identify scenario/phase without SQL, PIDs, paths or parameters.
+
+## Binding R5: shared checked SQL envelope and bounded evidence
+
+Current correction authority is the immutable TL-R5.0 amendment and live#751 / Draft#906, superseding historical delivery-state prose above. Frozen canonical contracts, all R1 limits and R2/R3 URL/guard rules remain unchanged.
+
+`artifact_envelope(artifact_input_v1)` performs the same lexical/hash/header/family/version and declared-edge checks previously inside `artifact_edges`. It returns that already checked JSONB value. Legacy `artifact_edges` retains its edge projection and generic custody-pin traversal. Typed `artifact_v2` consumes the shared envelope, then applies every existing typed-content, codec invariant, semantic and derived-edge equality rule. It does not repeat canonical decoding or compute unused legacy custody edges. No cache or constraint-event suppression is permitted; every deferred parent verification remains. The new helper is pure, private-schema, immutable/strict, empty search_path and explicitly granted only to the existing local execution roles. No hosted schema or auth change.
+
+Diagnostics are bounded to32 operations per connection and16 captured connection records plus the target writer. Fixed fields identify scenario, phase, safe code, elapsed time, actual ACK, protection failure, result, independent readback and completed-check count. The connector remains a pass-through for successor tracking after injection is disabled. Failure readback is independently performed and full submitted B/K/artifact bytes compared; neither termination nor a readback exception is relabelled rollback or success. Arming refusal retains `commit_deadline_not_armed` as a diagnostic.
+
+The separately opt-in native contention fixture changes only owned CPU contention during genuine COMMIT. It does not alter SQL, ACK, target identity or adapter budgets. It requires Linux/one CPU, starts five owned workers with5s startup limits and a35s cleanup fallback, then verifies lock release, absent/all-eight-empty or complete652-row readback and a fresh inserted/idempotent writer. These fixture bounds are not new operating limits or retention policy. Normal mandatory full-suite tests retain all R2/R3 scenarios and add native envelope admission checks.
+
+The historical main log lacks exact failure cause. The measured contention RED/GREEN is a distinct causal experiment; normal full-suite runs and historical CI are not relabelled as its reproduction. Under arbitrary starvation the unchanged20s native COMMIT guard can still legitimately refuse work.
