@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 2,
+  "round": "TL-R3",
+  "scope": "author_evidence_not_tl_acceptance",
+  "supportedIntegratedFactNamespace": "legacy requirement_effect / visa; applicabilitySchema null",
+  "cases": [
+    {
+      "case": "C01",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Controlled prepared handle and invocation ledger clone/foreign/replay/closed/accessor denial; missing/cloned/replayed actual extraction context in both canonical paths."
+    },
+    {
+      "case": "C02",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Fixed independent corpus selection; no caller URL/Pin/clock/fact input. Extra loader/worker arguments and forged DTOs rejected; matching data does not mint context."
+    },
+    {
+      "case": "C03",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Cloned original custody fails private origin membership; complete historical receipts cannot enter dormant production root."
+    },
+    {
+      "case": "C04",
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Both positive bundles precede correct-hash source/item/profile/request/context cross-binding mutations; full identity joins reject independently of depth."
+    },
+    {
+      "case": "C05",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Stale, expired, future original Evidence and reversed completion tests in both modes. Expiry and primary validFrom genuinely derived from qualified body locators."
+    },
+    {
+      "case": "C06",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Changed fresh bytes and final URL reject through canonical retrieval/proof in both modes; no publication or acceptance repair."
+    },
+    {
+      "case": "C07",
+      "status": "INTEGRATED_AND_SHARED_V3",
+      "evidenceAndLimit": "Non-null proposal rejected in both pipelines; no external review ingress. Existing canonical v3 golden/differential key/proposal/validity behavior remains mandatory."
+    },
+    {
+      "case": "C08",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Missing/duplicate supports, genuinely distinct accepted versions and same item under two representations reject at unique selector; no fresh HTTP after rejection."
+    },
+    {
+      "case": "C09",
+      "status": "INTEGRATED_NARROW_NAMESPACE",
+      "evidenceAndLimit": "Actual effect/visaMode citations verified; positive-derived missing/foreign citations rejected. Branch/atom/otherwise/equal-values traversal remains shared-helper evidence outside this fixed legacy visa fact namespace."
+    },
+    {
+      "case": "C10",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Primary uses approved final-only request. Composition captures original /start and actual fresh /another-start among approved URLs, both redirecting; receipt and original observations checked."
+    },
+    {
+      "case": "C11",
+      "status": "INTEGRATED_AND_SHARED_CONTEXT",
+      "evidenceAndLimit": "Actual genuine seal-bound fact retained. Missing/cloned/replayed execution context and foreign seal reject. Detailed phase-A/B mutations remain existing #898 context/citation tests."
+    },
+    {
+      "case": "C12",
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Unknown receipt/artifact/profile versions, schema confusion, unknown codec/issuer and invalid typed content reject on full positive bundle derivatives; no applicability2/store widening."
+    },
+    {
+      "case": "C13",
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Missing/corrupt separate K and required origins refuse; historical complete values grant no live issuer authority."
+    },
+    {
+      "case": "C14",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Owned handle/invocation reuse and post-close/replay denied; independent positive executions produce historical envelopes only. SQL exact retry tested separately."
+    },
+    {
+      "case": "C15",
+      "status": "INTEGRATED_BOUNDARY",
+      "evidenceAndLimit": "Only fixed public corpus can execute; traveller-derived DTO/scope/clock inputs cannot enter controlled runtime. No aggregated/traveller selection path exists."
+    },
+    {
+      "case": "C16",
+      "status": "INTEGRATED_AND_SHARED_SCOPE",
+      "evidenceAndLimit": "Runtime scope substitution rejected; historical cross-joins use canonical complete seven-field equality and key. Exhaustive dimension codec variants remain shared-helper tests. R2 independently checks requirementType against global scope and admission travel_date/evaluationDatePlan in native SQL using complete correctly rehashed counterexamples."
+    },
+    {
+      "case": "C17",
+      "status": "INTEGRATED_PLUS_REAL_BLOCK",
+      "evidenceAndLimit": "Unused synthetic body extension rejected before acceptance/hash admission; canonical credentials/URL/UTF8 controls preserved. Actual passport HTTP stops at unchanged response-size limit; no unqualified body/full hash published."
+    },
+    {
+      "case": "C18",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Actual captured source/dependency/emitted build/bootstrap executed in one-shot worker. Deleting/editing a disposable copied dependency after capture cannot replace executed bytes; new capture observes change. Host/compiler/Node are explicit TCB."
+    },
+    {
+      "case": "C19",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Held primary F and genuine composed seal/F remain in worker. Equal-but-different fact reference fails projection; immutable canonical execution context capture tests retained."
+    },
+    {
+      "case": "C20",
+      "status": "INTEGRATED_NARROW_NAMESPACE",
+      "evidenceAndLimit": "Private producer emits only legacy requirement_effect/visa with applicabilitySchema null, effect and visaMode fields. Full field coverage is required. Conditional branches/atoms/otherwise/visa-option facts are not emitted by this pilot; shared canonical helper tests cover their traversal, not an integrated publication claim."
+    },
+    {
+      "case": "C21",
+      "status": "INTEGRATED_HISTORICAL_MUTATIONS",
+      "evidenceAndLimit": "Different/missing/corrupt K and receipt/custody/root cross-bindings reject from actual passing envelopes in both TypeScript and independent SQL; fresh readback verifies complete joins."
+    },
+    {
+      "case": "C22",
+      "status": "INTEGRATED_AND_SHARED_BYTES",
+      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority. R2 audits canonical descriptor MIME, path/locator rules and Unicode length/trim refinements at the direct native publisher boundary. R3 independently enforces role-specific canonical URL components, hosts/IPs/IDNA and500-character bounds, with rehashed native negatives and encoded positives."
+    },
+    {
+      "case": "C23",
+      "status": "INTEGRATED_AND_BOUNDARY_HELPER",
+      "evidenceAndLimit": "Actual typed graph depth11: v1 refuses/v2 accepts. Same private production traversal proves8/9/16/17 and longer shared DAG; closed typed role grammar cannot construct16/17. Node256/257, edge1024/1025, K4096/4097 and union exactly8MiB/+1 covered. Local descriptor9/16 representation controls and17 refusal restore the existing canonical range without changing any R1 graph/byte bound."
+    },
+    {
+      "case": "C24",
+      "status": "INTEGRATED",
+      "evidenceAndLimit": "Actual captured immutable definitions survive postcapture changes; detected eligibility revocation aborts before fresh retrieval. No second current catalog read replaces captured originals."
+    },
+    {
+      "case": "C25",
+      "status": "INTEGRATED_POSTGRES_VERIFIED",
+      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; Expanded R2 real SQL adversarial/security groups (exact count in developer-report); mandatory CI test cannot skip either positive path. R3 adds19 mandatory native groups with public publication/COMMIT/empty or complete positive readback; differential comparisons use frozen readers."
+    },
+    {
+      "case": "C26",
+      "status": "SHARED_GOLDEN_DIFFERENTIAL",
+      "evidenceAndLimit": "Existing canonical review-v3 golden/differential suite remains required in full CI; same construction/proof algorithms used. No renamed byte contracts."
+    },
+    {
+      "case": "C27",
+      "status": "INTEGRATED_AND_SHARED_VECTORS",
+      "evidenceAndLimit": "Both full payload/K closures verify through unchanged C/H and exact existing Pin domains; v1 vectors retained. Profile exists only outside frozen bytes."
+    },
+    {
+      "case": "C28",
+      "status": "INTEGRATED_POSTGRES_VERIFIED",
+      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested. R2 adds effective fixed backend statement/lock/idle-transaction limits and an armed native COMMIT guard, with rollback/lock-release/independent-writer readback and unchanged lost-ACK uncertainty. R3 observes actual deferred COMMIT before losing only the armed guard, proves bounded identity-scoped interruption/rollback/lock-release/independent writer, and preserves actual ACK-winning race and explicit protection failure. A fourth native guard case covers the original idle transaction during held COMMIT dispatch; original PID/birth/transaction plus busy-through-cleanup preserves identity without a racy active/query filter."
+    },
+    {
+      "case": "C29",
+      "status": "INTEGRATED_BOUNDARY",
+      "evidenceAndLimit": "Default production root remains custody_missing; shipped extractor/policy registries empty, requirements provider null and application import guards remain closed."
+    }
+  ],
+  "r2Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
+  "r2RegressionEvidence": "r2-regression-evidence.json",
+  "r3Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
+  "r3RegressionEvidence": "r3-regression-evidence.json"
+}

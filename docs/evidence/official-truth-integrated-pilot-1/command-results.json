@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 4,
+  "round": "TL-R3",
+  "authorEvidenceOnly": true,
+  "basisHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh",
+    "source": "actual_current_session_turn_metadata_read",
+    "metadataTimestampUTC": "2026-10-07T15:29:19.272Z"
+  },
+  "native": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-integrated-pilot-r3.test.ts",
+    "exitCode": 0,
+    "postgres": "17.6",
+    "r3Groups": 19,
+    "r3CodecComparisons": 1008,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 168034.490083
+  },
+  "developerCommand": {
+    "command": "npm run official-truth:pilot-1",
+    "exitCode": 0,
+    "status": "PASS",
+    "negativePaths": 50,
+    "producerRoundtrips": 2,
+    "semanticGroups": 69,
+    "r3Groups": 19,
+    "structuralGroups": 16,
+    "realSourceThisInvocation": "NOT_RUN",
+    "overallRealOfficialSourcePilot": "BLOCKED",
+    "log": "r3-developer-command-final-barrier.log"
+  },
+  "finalChecks": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 145
+  },
+  "earlierAttempts": [
+    {
+      "command": "npm run build",
+      "status": "SANDBOX_IPC_EPERM",
+      "resolution": "Authorized local execution escalation; final build exit0, no deployment."
+    },
+    {
+      "kind": "superseded_linux_ci_observation_barrier_failure",
+      "head": "4d8da35a09825963fe435184ab4305936f7d4869",
+      "run": 37652425354,
+      "tests": 5766,
+      "pass": 5765,
+      "fail": 1,
+      "skip": 0,
+      "reason": "Required native COMMIT observation barrier not reached; precise scenario/timings not retained. Final fixture uses stable advisory-lock barrier, full-phase observation and bounded diagnostics. No test is skipped or backend limit relaxed."
+    },
+    {
+      "kind": "native_dispatch_window_race",
+      "head": "4d8da35a09825963fe435184ab4305936f7d4869",
+      "evidence": "r3-regression-evidence.json",
+      "oldHeadGatesInvalidForFinal": true
+    }
+  ],
+  "regressionEvidence": "r3-regression-evidence.json",
+  "intermediateLogs": {
+    "r3-build-final.log": {
+      "sha256": "77a0aeae5bb160d54a7c369e79017adb17a2e5c10c2f29b1bd20e003598c898d",
+      "bytes": 3834,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-api-schutz.log": {
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "bytes": 136,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-dead.log": {
+      "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+      "bytes": 172,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-deps.log": {
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "bytes": 340,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-exports.log": {
+      "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+      "bytes": 150,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-operating-mode.log": {
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "bytes": 106,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-check-schema-bezug.log": {
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "bytes": 1028,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-developer-command.log": {
+      "sha256": "b56e5d520c92a65bb96c283548d04348a1e0f40ba5083e2c09285609da261afe",
+      "bytes": 1134,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final-lint.log": {
+      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+      "bytes": 61204,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final-typecheck.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-full-test.log": {
+      "sha256": "6cb3ba67d269a698acb666c6c3ed9daa0a58e1d0db9526d266b2c93c2c086e29",
+      "bytes": 1367069,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-build.log": {
+      "sha256": "8ee68f14b50f4fe096398790ead7a6e8243064f7d694c9839a751d823d0e50c6",
+      "bytes": 3835,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-api-schutz.log": {
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "bytes": 136,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-dead.log": {
+      "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+      "bytes": 172,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-deps.log": {
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "bytes": 340,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-exports.log": {
+      "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+      "bytes": 150,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-operating-mode.log": {
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "bytes": 106,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-check-schema-bezug.log": {
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "bytes": 1028,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-lint.log": {
+      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+      "bytes": 61204,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final2-typecheck.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-build.log": {
+      "sha256": "60f57f143a02339adf80a79c27a898a7152c05901e070eee8610268089986dcf",
+      "bytes": 3642,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-api-schutz.log": {
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+      "bytes": 136,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-dead.log": {
+      "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+      "bytes": 172,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-deps.log": {
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+      "bytes": 340,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-exports.log": {
+      "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+      "bytes": 150,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-operating-mode.log": {
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+      "bytes": 106,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-check-schema-bezug.log": {
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+      "bytes": 1028,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-lint.log": {
+      "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+      "bytes": 61204,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-final3-typecheck.log": {
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+      "bytes": 135,
+      "location": "author-local-intermediate-not-public"
+    },
+    "r3-developer-command-final-barrier.log": {
+      "sha256": "f2f674ba6195b76078853f6b4ace2b7a3b5bef7c3ce1f5ca01508d71d7b858b6",
+      "bytes": 1134,
+      "location": "author-local-intermediate-not-public"
+    }
+  },
+  "historicalR2": {
+    "basisHead": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
+    "publishedHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+    "localTests": {
+      "command": "npm test",
+      "status": "FAILED_THEN_EXACT_GUARD_CORRECTED_FOCUSED_RERUN",
+      "tests": 5627,
+      "passed": 5622,
+      "failed": 5,
+      "skipped": 0,
+      "suites": 810,
+      "durationMs": 423780.674042,
+      "taskFailure": "Exact content-identity importer guard refused new historical r2-fixtures.ts; precisely that reviewed path added, unknown/lookalike cases retained.",
+      "focusedCorrection": {
+        "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-content-identity.test.ts",
+        "tests": 49,
+        "passed": 49,
+        "failed": 0,
+        "skipped": 0
+      },
+      "remainingEnvironmentFailures": [
+        "official-truth-catalog-hardening-schema.test.ts",
+        "official-truth-content-identity-schema-v2.test.ts",
+        "official-truth-source-catalog-server.test.ts",
+        "official-truth-store-server.test.ts"
+      ],
+      "remainingEnvironmentReason": "Unchanged tests require hardcoded Linux PostgreSQL16 initdb, absent on this Mac; no skip/fallback substitution. Final exact-head Linux CI must pass all tests."
+    },
+    "remoteCiRun": 37635755030,
+    "remoteTests": 5765,
+    "remotePass": 5765,
+    "remoteFail": 0,
+    "remoteSkip": 0,
+    "appliesToR3": false
+  },
+  "finalExactHeadRemoteGates": "Required after publication, recorded in separate final receipt. Actual CI synthetic-merge checkout and PR head are identified separately.",
+  "runtimeCorrectionAfterIntermediateHead": "4d8da35a09825963fe435184ab4305936f7d4869",
+  "historicalLocalFullSuiteAt4d8da35a": {
+    "command": "npm test",
+    "exitCode": 1,
+    "status": "FOUR_UNCHANGED_PLATFORM_PATH_FAILURES",
+    "tests": 5628,
+    "pass": 5624,
+    "fail": 4,
+    "suites": 810,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0,
+    "durationMs": 495381.574667,
+    "failures": [
+      "official-truth-catalog-hardening-schema.test.ts",
+      "official-truth-content-identity-schema-v2.test.ts",
+      "official-truth-source-catalog-server.test.ts",
+      "official-truth-store-server.test.ts"
+    ],
+    "reason": "Unchanged tests require a hardcoded Linux PostgreSQL16 initdb absent on this Mac; no skip or emulator. Fresh final-head Linux CI must pass all tests.",
+    "appliesToFinalHead": false
+  },
+  "finalChecksBasis": "Final dispatch-window correction runtime, before publication; final remote CI executes complete suite on its fresh exact-PR-head synthetic checkout."
+}

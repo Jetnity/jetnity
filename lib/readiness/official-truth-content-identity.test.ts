@@ -482,7 +482,58 @@ describe('dormancy and architectural boundaries', () => {
     assert.match(source, /import \{ evidenceScopeLesen \} from/)
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)
   })
-  test('repository search pins the finite R2 production importers', () => {
+  const reviewedContentIdentityImporters = [
+    'lib/readiness/evidence.ts',
+    'lib/readiness/official-truth-accepted-evidence.ts',
+    'lib/readiness/official-truth-autonomous-provenance-record.ts',
+    'lib/readiness/official-truth-composition-policy-registry.ts',
+    'lib/readiness/official-truth-coverage.ts',
+    'lib/readiness/official-truth-discovered-url-candidates.ts',
+    'lib/readiness/official-truth-govuk-content-api-identity-profile.ts',
+    // #899 pure bundle validation reuses the existing complete identity codecs.
+    'lib/readiness/official-truth-integrated-pilot-bundle.ts',
+    'lib/readiness/official-truth-refresh-diff.ts',
+    'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
+    'lib/readiness/official-truth-retrieved-material.ts',
+    'lib/readiness/official-truth-rule-candidate.ts',
+    'lib/readiness/official-truth-rule-review-decision-intent.ts',
+    'lib/readiness/official-truth-rule-review-fingerprint.ts',
+    'lib/readiness/official-truth-rule-review-packet.ts',
+    'lib/readiness/official-truth-same-request-extraction-server.ts',
+    'lib/readiness/official-truth-server-held-source-registry.ts',
+    'lib/readiness/official-truth-server-owned-retrieval.ts',
+    'lib/readiness/official-truth-source-catalog-server.ts',
+    'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
+    'lib/readiness/regulierungs-anwendbarkeit.ts',
+    'lib/readiness/rule-claims.ts',
+    'lib/readiness/source-registry.ts',
+    'lib/readiness/source-router.ts',
+    // Isolated fixed corpus, canonical execution and bounded official-source qualifier.
+    'scripts/official-truth-integrated-pilot-1/corpus.ts',
+    'scripts/official-truth-integrated-pilot-1/engine.ts',
+    'scripts/official-truth-integrated-pilot-1/official-source.ts',
+    // R1 exact passport representation identity; remains developer-only.
+    'scripts/official-truth-integrated-pilot-1/official-source-profile.ts',
+    // R2 historical counterexamples recompute canonical Evidence-v2 identities;
+    // this exact fixture importer cannot issue live custody or production facts.
+    'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts',
+    // R3 independent SQL differential proof only; frozen reader is the oracle.
+    'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts',
+  ]
+  function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
+  test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
+    assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)
+    for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
+      'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
+      'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
+      'scripts/db/official-truth-integrated-pilot-1/unreviewed.ts',
+      'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts.evil.ts',
+      'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts.evil.ts',
+      'lib/readiness/official-truth-integrated-pilot-bundle.ts.evil.ts']) assert.equal(contentIdentityImporterAllowed(path), false, path)
+  })
+  test('repository search pins the finite R3 application and isolated developer importers', () => {
     const root = process.cwd(), importers: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -496,28 +547,7 @@ describe('dormancy and architectural boundaries', () => {
       }
     }
     walk(root)
-    assert.deepEqual(importers.sort(), ['lib/readiness/evidence.ts',
-      'lib/readiness/official-truth-accepted-evidence.ts',
-      'lib/readiness/official-truth-autonomous-provenance-record.ts',
-      'lib/readiness/official-truth-composition-policy-registry.ts',
-      'lib/readiness/official-truth-coverage.ts',
-      'lib/readiness/official-truth-discovered-url-candidates.ts',
-      'lib/readiness/official-truth-govuk-content-api-identity-profile.ts',
-      'lib/readiness/official-truth-refresh-diff.ts',
-      'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
-      'lib/readiness/official-truth-retrieved-material.ts',
-      'lib/readiness/official-truth-rule-candidate.ts',
-      'lib/readiness/official-truth-rule-review-decision-intent.ts',
-      'lib/readiness/official-truth-rule-review-fingerprint.ts',
-      'lib/readiness/official-truth-rule-review-packet.ts',
-      'lib/readiness/official-truth-same-request-extraction-server.ts',
-      'lib/readiness/official-truth-server-held-source-registry.ts',
-      'lib/readiness/official-truth-server-owned-retrieval.ts',
-      'lib/readiness/official-truth-source-catalog-server.ts',
-      'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
-      'lib/readiness/regulierungs-anwendbarkeit.ts',
-      'lib/readiness/rule-claims.ts',
-      'lib/readiness/source-registry.ts',
-      'lib/readiness/source-router.ts'])
+    for (const path of importers) assert.ok(contentIdentityImporterAllowed(path), `unreviewed content-identity importer ${path}`)
+    assert.deepEqual(importers.sort(), [...reviewedContentIdentityImporters].sort())
   })
 })

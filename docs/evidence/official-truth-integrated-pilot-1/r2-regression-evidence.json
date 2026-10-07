@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "round": "TL-R2",
+  "baselineHead": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
+  "nativePostgres": "17.6",
+  "authorEvidenceOnly": true,
+  "red": {
+    "originalNativeSqlProbe": [
+      {
+        "postgres": "postgres (PostgreSQL) 17.6",
+        "settings": [
+          {
+            "statement_timeout": "0",
+            "lock_timeout": "0",
+            "idle_transaction_timeout": "0"
+          }
+        ]
+      },
+      {
+        "name": "baseline",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "unchanged_rehashed",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "travel_date_with_plan",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "representations_9",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "representations_16",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "canonical_extra_mime",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "canonical_path_200",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "candidate_scope_mismatch",
+        "typescript": "semantic_mismatch",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "selected_invalid_mime",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "unselected_invalid_mime",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "unasserted_date_with_plan",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "travel_date_without_plan",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "representations_17",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "P0001"
+      },
+      {
+        "name": "path_dot_segments",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "path_noncanonical_characters",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "path_201",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "validity_locator_257",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      }
+    ],
+    "additionalCodecProbeAgainstBaselineSql": [
+      {
+        "postgres": "postgres (PostgreSQL) 17.6",
+        "settings": [
+          {
+            "statement_timeout": "25s",
+            "lock_timeout": "15s",
+            "idle_transaction_timeout": "20s"
+          }
+        ]
+      },
+      {
+        "name": "canonical_locator_utf16_256",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "canonical_display_name_utf16_80",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "canonical_implementation_text_utf16_524288",
+        "typescript": "valid",
+        "invalidArtifactCount": 0,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "validity_locator_utf16_257",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "display_name_utf16_81",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "display_name_noncanonical_whitespace",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      },
+      {
+        "name": "implementation_text_utf16_524289",
+        "typescript": "dependency_corrupt",
+        "invalidArtifactCount": 1,
+        "publicSQL": "inserted"
+      }
+    ],
+    "additionalProbeNote": "Baseline storage/semantic SQL blobs loaded in a new owned native cluster; runtime startup deadlines were already corrected. Every case was rolled back.",
+    "commitDeadlineProbe": {
+      "initialCorrection": "startup GUC only",
+      "result": "RED",
+      "deferredCommitFailure": "connection_closed_at_client_fallback",
+      "cause": "PostgreSQL finish_xact_command disables statement_timeout before deferred COMMIT work",
+      "correctiveDesign": "fixed20s independently armed native backend guard"
+    },
+    "utf16ImplementationAttempt": {
+      "status": "FAILED_POSITIVE_CONCURRENCY",
+      "nativeStorageRunMs": 570173,
+      "observed": "one inserted writer and one rejected writer instead of inserted/idempotent",
+      "diagnosticLimit": "first failure did not record the rejected SQLSTATE; no more specific cause is asserted",
+      "correction": "UTF-16 length now uses ASCII fast path and strips only supplementary characters, avoiding per-BMP-character replacement. All content and operational bounds unchanged.",
+      "repeat": "GREEN_all69_groups_including_concurrency"
+    }
+  },
+  "green": {
+    "status": "PASS",
+    "nativeMandatoryStorageTests": {
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 397201.730125
+    },
+    "semanticGroups": 69,
+    "r2Checks": [
+      "r2_native_positive_unchanged_rehashed",
+      "r2_native_positive_travel_date_with_plan",
+      "r2_native_positive_representations_9",
+      "r2_native_positive_representations_16",
+      "r2_native_positive_canonical_extra_mime",
+      "r2_native_positive_canonical_path_200",
+      "r2_native_positive_canonical_locator_utf16_256",
+      "r2_native_positive_canonical_display_name_utf16_80",
+      "r2_native_positive_canonical_implementation_text_utf16_524288",
+      "r2_native_rehashed_candidate_scope_mismatch_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_selected_invalid_mime_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_unselected_invalid_mime_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_unasserted_date_with_plan_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_travel_date_without_plan_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_representations_17_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_dot_segments_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_noncanonical_characters_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_201_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_validity_locator_257_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_validity_locator_utf16_257_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_display_name_utf16_81_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_display_name_noncanonical_whitespace_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_implementation_text_utf16_524289_refused_commit_empty_fresh_absent",
+      "r2_sixteen_representations_commit_independent_complete_verified_readback",
+      "r2_backend_statement_57014_before_transport_fallback_aborts_staged_bundle",
+      "r2_statement_all_eight_tables_empty_lock_released_independent_writer_verified_readback",
+      "r2_backend_lock_55P03_at_15_seconds_holder_still_locked",
+      "r2_backend_idle_transaction_terminated_at_20_seconds_without_client_close",
+      "r2_lock_and_idle_transaction_all_eight_tables_empty_lock_released_independent_writer_verified_readback",
+      "r2_backend_commit_guard_57P01_at_20_seconds_rolls_back_deferred_work_and_staged_bundle",
+      "r2_commit_all_eight_tables_empty_lock_released_independent_writer_verified_readback"
+    ],
+    "primary": {
+      "outcome": "inserted",
+      "repeat": "idempotent",
+      "readback": "VERIFIED",
+      "rowCount": 652
+    },
+    "composed": {
+      "outcome": "inserted",
+      "repeat": "idempotent",
+      "readback": "VERIFIED",
+      "rowCount": 720
+    },
+    "nativePostgres": "postgres (PostgreSQL) 17.6",
+    "ordinaryIdleConnection": "same backend reused after31 seconds",
+    "lostCommitAcknowledgement": "commit_outcome_unknown then explicit verify_existing resolves",
+    "developerCommand": {
+      "status": "PASS",
+      "exitCode": 0,
+      "negativePaths": 50,
+      "semanticGroups": 69,
+      "structuralGroups": 16,
+      "realSourceThisInvocation": "NOT_RUN",
+      "overallRealOfficialSourcePilot": "BLOCKED"
+    }
+  },
+  "noHostedApply": true,
+  "noPGlite": true
+}

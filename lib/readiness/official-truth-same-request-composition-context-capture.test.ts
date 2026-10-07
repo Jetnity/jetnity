@@ -379,7 +379,7 @@ test('finite import/export fences, weak ownership, unchanged live wiring and dor
   assert.doesNotMatch(source, /new Map\(|setTimeout|setInterval|Date\.now|randomUUID|\.toString\(\)/)
   assert.doesNotMatch(source, /export (?:async )?function (?:compositionCapture|extraktorSicht)|inspectStart|capturePresent/)
   const runtimeExports = [...source.matchAll(/^export (?:async )?function (\w+)/gm)].map(m => m[1]).sort()
-  assert.deepEqual(runtimeExports, ['consumeOfficialTruthSameRequestCompositionContext', 'decideOfficialTruthSameRequestTrustedFactExtraction', 'loadOfficialTruthSameRequestTrustedFactExtraction'])
+  assert.deepEqual(runtimeExports, ['consumeOfficialTruthSameRequestCompositionContext', 'consumeOfficialTruthSameRequestCompositionExecutionContext', 'consumeOfficialTruthSameRequestPrimaryContext', 'decideOfficialTruthSameRequestTrustedFactExtraction', 'loadOfficialTruthSameRequestTrustedFactExtraction'])
   const imports = [...source.matchAll(/(?:from\s+|import\s+)['"]([^'"]+)['"]/g)].map(m => m[1]).sort()
   assert.deepEqual(imports, ['server-only', ...[
     'evidence', 'official-truth-content-identity', 'official-truth-composition-policy-registry',

@@ -1,0 +1,76 @@
+{
+  "schema": "official-truth-integrated-pilot-real-source-report-v2",
+  "realOfficialSourcePilot": "BLOCKED",
+  "startedAt": "2026-10-07T00:32:10.117Z",
+  "completedAt": "2026-10-07T00:32:10.453Z",
+  "researchedFamilyCount": 1,
+  "family": "GOV.UK / UK Government",
+  "selectedCase": {
+    "citizenship": "CH",
+    "documentClass": "ordinary_passport",
+    "destination": "GB",
+    "purpose": "narrow_passport_validity_only",
+    "proposedSemanticTarget": "valid_through_stay",
+    "selectedUrl": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk",
+    "requestUrl": "https://www.gov.uk/api/content/uk-border-control/before-you-leave-for-the-uk",
+    "expectedFinalUrl": "https://www.gov.uk/api/content/uk-border-control",
+    "scopeLimitation": "one passport-validity dimension; no complete ETA/visa/admission claim"
+  },
+  "selectedBoundaryAttempt": {
+    "status": "BLOCKED",
+    "reason": "response_too_large",
+    "actualNetworkAttempt": true,
+    "retrievalCompletedAt": null,
+    "redirectCount": null,
+    "profile": "govuk-passport-guide-isolated-en",
+    "sourceProfileImplemented": true,
+    "nationalListProfileUsed": false,
+    "sourceProfileQualified": false,
+    "deterministicExtractionImplemented": true,
+    "deterministicExtractionExecuted": false,
+    "sourceSemanticsQualified": false
+  },
+  "chain": {
+    "identity": "BLOCKED",
+    "wholeResponsePrivacyQualification": "BLOCKED",
+    "originalObservationOrigin": "NOT_ISSUED",
+    "validityOrigin": "NOT_ISSUED",
+    "evidenceAcceptedOrigin": "NOT_ISSUED",
+    "extraction": "NOT_RUN",
+    "custodyBundle": "NOT_PUBLISHED",
+    "postgresRoundtrip": "NOT_RUN"
+  },
+  "blockers": [
+    "response_too_large"
+  ],
+  "qualificationContract": {
+    "kind": "closed_reviewed_public_components_and_null_opaque_metadata",
+    "unknownUnusedFields": "reject",
+    "changedPublicComponents": "require_fresh_review",
+    "opaquePublishingMetadata": "reject_without_copying_or_publishing_value",
+    "deletingFieldsToQualify": false,
+    "metadataRefusalIsGovernmentAccessBlock": false
+  },
+  "controls": {
+    "network": "same_server_owned_dns_https_redirect_body_utf8_identity_path",
+    "arbitraryUrlInput": false,
+    "credentials": false,
+    "cookieOrChallengeBypass": false,
+    "rawSourceBodyPublished": false,
+    "unqualifiedSourceHashPublished": false,
+    "hostedDevelopmentApply": false,
+    "productionActivation": false,
+    "evidenceOrRuleWrite": false,
+    "f8": "CLOSED"
+  },
+  "researchSources": [
+    {
+      "title": "Entering the UK: Before you leave for the UK",
+      "url": "https://www.gov.uk/uk-border-control/before-you-leave-for-the-uk"
+    },
+    {
+      "title": "Official Content API guide representation",
+      "url": "https://www.gov.uk/api/content/uk-border-control"
+    }
+  ]
+}

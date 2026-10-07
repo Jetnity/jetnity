@@ -1,0 +1,1579 @@
+{
+  "schema": "official-truth-integrated-pilot-report-v3",
+  "engineeringAcceptance": "PASS",
+  "implementation": "LOCAL_ENGINEERING_VERIFIED",
+  "synthetic": {
+    "primary": {
+      "mode": "primary",
+      "profile": "ot-integrated-pilot-local-closure-v2",
+      "status": "COMMITTED_AND_READBACK_VERIFIED",
+      "stages": [
+        "independent_fixed_cell_admission",
+        "controlled_original_observation",
+        "canonical_evidence_acceptance",
+        "original_custody_membership",
+        "unique_support_selection",
+        "safe_review_v3",
+        "scope_identity_freshness_proof",
+        "fresh_retrieval",
+        "primary_actual_execution_context",
+        "private_receipt_and_separate_binding_projection",
+        "atomic_sql_commit_acknowledged",
+        "fresh_full_semantic_readback"
+      ],
+      "trace": {
+        "catalogReads": 1,
+        "originalHttp": 1,
+        "freshHttp": 1,
+        "evidenceAcceptances": 1,
+        "proof": true,
+        "extracted": true,
+        "actualFactIdentity": true,
+        "receiptProjected": true,
+        "publicationCount": 1,
+        "storageCalls": 1
+      },
+      "recordFingerprint": "ot-provenance-v1:d0fc0dd4de7903075c4afadcce3ce38723b702149a3ad0650e97c049bd9146fd",
+      "storedReadbackRows": 652,
+      "legacyV1": "REJECTED_DEPTH_11"
+    },
+    "composed": {
+      "mode": "composed",
+      "profile": "ot-integrated-pilot-local-closure-v2",
+      "status": "COMMITTED_AND_READBACK_VERIFIED",
+      "stages": [
+        "independent_fixed_cell_admission",
+        "controlled_original_observation",
+        "canonical_evidence_acceptance",
+        "original_custody_membership",
+        "unique_support_selection",
+        "safe_review_v3",
+        "scope_identity_freshness_proof",
+        "fresh_retrieval",
+        "composed_actual_execution_context",
+        "private_receipt_and_separate_binding_projection",
+        "atomic_sql_commit_acknowledged",
+        "fresh_full_semantic_readback"
+      ],
+      "trace": {
+        "catalogReads": 1,
+        "originalHttp": 4,
+        "freshHttp": 4,
+        "evidenceAcceptances": 2,
+        "proof": true,
+        "extracted": true,
+        "actualFactIdentity": true,
+        "receiptProjected": true,
+        "publicationCount": 1,
+        "storageCalls": 1
+      },
+      "recordFingerprint": "ot-provenance-v1:f6b6edeab850b5ad259585001c06440bd90bd9067b65f39cfbd645d6d14ee2c7",
+      "storedReadbackRows": 720,
+      "legacyV1": "REJECTED_DEPTH_11"
+    },
+    "failurePaths": [
+      {
+        "mode": "primary",
+        "fault": "unknown_body_field",
+        "status": "blocked",
+        "reason": "representation_not_global",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 0,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "changed_fresh_body",
+        "status": "blocked",
+        "reason": "content_identity_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "changed_final_url",
+        "status": "blocked",
+        "reason": "representation_url_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "reversed_clock",
+        "status": "blocked",
+        "reason": "freshness_gap",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "future_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "duplicate_support",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "missing_support",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "non_null_proposal",
+        "status": "blocked",
+        "reason": "proposal_not_null",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "missing_origin",
+        "status": "blocked",
+        "reason": "custody_missing",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "scope_substitution",
+        "status": "blocked",
+        "reason": "scope_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "stale_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "invalid_utf8",
+        "status": "blocked",
+        "reason": "representation_not_global",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 0,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "missing_execution_context",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "cloned_execution_result",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "replayed_execution_context",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "substituted_fact_reference",
+        "status": "blocked",
+        "reason": "fact_reference_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "foreign_composition_seal",
+        "status": "blocked",
+        "reason": "composition_context_incomplete",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 1,
+          "evidenceAcceptances": 1,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "ledger_clone",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "ledger_foreign",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "ledger_replay",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "ledger_closed",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "expired_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "two_eligible_versions",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 2,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "same_item_two_representations",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 2,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "primary",
+        "fault": "eligibility_revoked",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 1,
+          "freshHttp": 0,
+          "evidenceAcceptances": 1,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "unknown_body_field",
+        "status": "blocked",
+        "reason": "representation_not_global",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 2,
+          "freshHttp": 0,
+          "evidenceAcceptances": 0,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "changed_fresh_body",
+        "status": "blocked",
+        "reason": "content_identity_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 2,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "changed_final_url",
+        "status": "blocked",
+        "reason": "representation_url_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 1,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "reversed_clock",
+        "status": "blocked",
+        "reason": "freshness_gap",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "future_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "duplicate_support",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "missing_support",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "non_null_proposal",
+        "status": "blocked",
+        "reason": "proposal_not_null",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "missing_origin",
+        "status": "blocked",
+        "reason": "custody_missing",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "scope_substitution",
+        "status": "blocked",
+        "reason": "scope_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "stale_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "invalid_utf8",
+        "status": "blocked",
+        "reason": "representation_not_global",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 2,
+          "freshHttp": 0,
+          "evidenceAcceptances": 0,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "missing_execution_context",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "cloned_execution_result",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "replayed_execution_context",
+        "status": "blocked",
+        "reason": "execution_context_unavailable",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "substituted_fact_reference",
+        "status": "blocked",
+        "reason": "fact_reference_mismatch",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "foreign_composition_seal",
+        "status": "blocked",
+        "reason": "composition_context_incomplete",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection",
+          "safe_review_v3",
+          "scope_identity_freshness_proof"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 4,
+          "evidenceAcceptances": 2,
+          "proof": true,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "ledger_clone",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "ledger_foreign",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "ledger_replay",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "ledger_closed",
+        "status": "blocked",
+        "reason": "authority_required",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "expired_original",
+        "status": "blocked",
+        "reason": "freshness_not_current",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership",
+          "unique_support_selection"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "two_eligible_versions",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 6,
+          "freshHttp": 0,
+          "evidenceAcceptances": 3,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "same_item_two_representations",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 5,
+          "freshHttp": 0,
+          "evidenceAcceptances": 3,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      },
+      {
+        "mode": "composed",
+        "fault": "eligibility_revoked",
+        "status": "blocked",
+        "reason": "support_selection_invalid",
+        "closureBound": null,
+        "stages": [
+          "independent_fixed_cell_admission",
+          "controlled_original_observation",
+          "canonical_evidence_acceptance",
+          "original_custody_membership"
+        ],
+        "trace": {
+          "catalogReads": 1,
+          "originalHttp": 4,
+          "freshHttp": 0,
+          "evidenceAcceptances": 2,
+          "proof": false,
+          "extracted": false,
+          "actualFactIdentity": false,
+          "receiptProjected": false,
+          "publicationCount": 0,
+          "storageCalls": 0
+        }
+      }
+    ],
+    "positiveIntegratedConformance": "VERIFIED",
+    "fullReceiptCustodyVerification": "VERIFIED",
+    "publicationCount": 2
+  },
+  "postgres": {
+    "status": "PASS",
+    "profile": "ot-integrated-pilot-local-closure-v2",
+    "postgresVersion": "postgres (PostgreSQL) 17.6",
+    "checks": [
+      "r2_native_positive_unchanged_rehashed",
+      "r2_native_positive_travel_date_with_plan",
+      "r2_native_positive_representations_9",
+      "r2_native_positive_representations_16",
+      "r2_native_positive_canonical_extra_mime",
+      "r2_native_positive_canonical_path_200",
+      "r2_native_positive_canonical_locator_utf16_256",
+      "r2_native_positive_canonical_display_name_utf16_80",
+      "r2_native_positive_canonical_implementation_text_utf16_524288",
+      "r2_native_rehashed_candidate_scope_mismatch_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_selected_invalid_mime_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_unselected_invalid_mime_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_unasserted_date_with_plan_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_travel_date_without_plan_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_representations_17_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_dot_segments_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_noncanonical_characters_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_path_201_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_validity_locator_257_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_validity_locator_utf16_257_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_display_name_utf16_81_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_display_name_noncanonical_whitespace_refused_commit_empty_fresh_absent",
+      "r2_native_rehashed_implementation_text_utf16_524289_refused_commit_empty_fresh_absent",
+      "r2_sixteen_representations_commit_independent_complete_verified_readback",
+      "r2_backend_statement_57014_before_transport_fallback_aborts_staged_bundle",
+      "r2_statement_all_eight_tables_empty_lock_released_independent_writer_verified_readback",
+      "r2_backend_lock_55P03_at_15_seconds_holder_still_locked",
+      "r2_backend_idle_transaction_terminated_at_20_seconds_without_client_close",
+      "r2_lock_and_idle_transaction_all_eight_tables_empty_lock_released_independent_writer_verified_readback",
+      "r2_backend_commit_guard_57P01_at_20_seconds_rolls_back_deferred_work_and_staged_bundle",
+      "r2_commit_all_eight_tables_empty_lock_released_independent_writer_verified_readback",
+      "idle_owner_connection_survives_31_seconds_and_reuses_same_backend",
+      "active_statement_backend_timeout_25_seconds_before_transport_fallback",
+      "complete_primary_staged_atomically_invisible_then_rollback_no_artifacts",
+      "verify_existing_absent_never_creates",
+      "primary_real_sql_commit_fresh_23_column_semantic_readback",
+      "caller_mutation_after_invocation_cannot_change_owned_bytes",
+      "exact_retry_and_verify_existing_full_semantic_readback_all_eight_table_counts_unchanged",
+      "composed_real_sql_commit_fresh_23_column_semantic_readback",
+      "barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent",
+      "pure_sql_validator_accepts_complete_rehashed_primary_and_composed_baselines",
+      "pure_sql_correct_hash_original_request_unqualified_refused",
+      "pure_sql_correct_hash_validity_origin_identity_mismatch_refused",
+      "pure_sql_correct_hash_global_admission_category_mismatch_refused",
+      "pure_sql_correct_hash_primary_required_field_paths_refused",
+      "pure_sql_correct_hash_selected_content_type_ineligible_refused",
+      "pure_sql_correct_hash_duplicate_content_types_refused",
+      "pure_sql_correct_hash_selected_url_ineligible_refused",
+      "pure_sql_correct_hash_unselected_composed_duplicate_fields_refused",
+      "pure_sql_correct_hash_unselected_primary_illegal_fields_refused",
+      "pure_sql_correct_hash_duplicate_current_selector_distinct_definition_refused",
+      "sql_typed_validity_midnight_boundary_independent_of_three_caller_timezones",
+      "fresh_readback_rejects_noncanonical_edge_versions_out_of_order_rows_and_nonstring_nullable_columns",
+      "sql_unknown_profile_and_mixed_storage_version_refused",
+      "sql_independently_refuses_manipulated_bytes_pins_K_missing_duplicate_artifacts",
+      "valid_hash_bad_fact_semantics_origin_crossbinding_and_missing_extra_declared_edges_refused",
+      "complete_semantically_valid_changed_artifact_name_version_conflict_refused",
+      "barrier_controlled_real_concurrent_conflict_one_idempotent_one_refusal_no_extra_rows",
+      "real_commit_lost_ack_reports_unknown_then_verify_existing_resolves",
+      "closed_23_columns_null_discipline_terminal_status_and_exact_stored_links_required",
+      "valid_hash_conditional_without_applicability_and_foreign_original_url_refused",
+      "independent_retained_parent_exact_edge_set_and_typed_target_name_blob_required",
+      "retained_extra_edge_refused_by_full_read_and_retry",
+      "independent_deferred_constraint_rejects_extra_edge_without_publication_API",
+      "retained_permanent_name_index_missing_refused_without_healing",
+      "retained_artifact_and_K_corruption_refused_without_healing",
+      "new_receipt_shared_subgraph_missing_artifact_cannot_heal",
+      "corrupt_retained_missing_link_refused_by_read_and_retry_without_healing",
+      "owned_cluster_stopped_and_only_owned_resources_removed"
+    ],
+    "primary": {
+      "outcome": "inserted",
+      "repeat": "idempotent",
+      "readback": "VERIFIED",
+      "rowCount": 652
+    },
+    "composed": {
+      "outcome": "inserted",
+      "repeat": "idempotent",
+      "readback": "VERIFIED",
+      "rowCount": 720
+    },
+    "integratedReceiptRoundtrip": "VERIFIED",
+    "fullSemanticPublication": "VERIFIED",
+    "productionActivation": false,
+    "hostedApply": false
+  },
+  "r3": {
+    "status": "PASS",
+    "postgresVersion": "postgres (PostgreSQL) 17.6",
+    "checks": [
+      "r3_native_extractor_url_codec_matches_frozen_reader",
+      "r3_native_identity_url_codec_matches_frozen_reader",
+      "r3_native_rehashed_selected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_path_braces_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_query_apostrophe_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_selected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_unselected_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_literal_quote_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_501_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_fragment_refused_commit_empty_fresh_absent",
+      "r3_native_rehashed_representation_wildcard_refused_commit_empty_fresh_absent",
+      "r3_native_selected_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_unselected_role_specific_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_representation_escaping_and_500_public_commit_full_verified_readback_normal_disarm",
+      "r3_native_post_arming_cancel_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_terminate_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_dispatch_gap_observed_protection_loss_honest_outcome_independent_writer_readback",
+      "r3_native_post_arming_ack_race_observed_protection_loss_honest_outcome_independent_writer_readback"
+    ],
+    "codecComparisons": 1008,
+    "guardLoss": [
+      {
+        "scenario": "cancel",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3666,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "terminate",
+        "elapsedAfterLossMs": 104,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 3816,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "dispatch_gap",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 111,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "ack_race",
+        "elapsedAfterLossMs": 3935,
+        "outcome": "acknowledged_verified_commit",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 5074,
+          "outcome": "complete",
+          "code": null,
+          "commitAcknowledged": true,
+          "protectionFailure": "commit_guard_lost"
+        }
+      }
+    ]
+  },
+  "historicalStructuralProof": {
+    "status": "PASS",
+    "scope": "synthetic_storage_structure_only",
+    "postgresVersion": "postgres (PostgreSQL) 17.6",
+    "checks": [
+      "incomplete_domain_bundle_refused_by_shared_verifier_before_write",
+      "sql_ts_canonical_byte_parity_and_noncanonical_rejection",
+      "binary_bytea_composite_transport_atomic_insert_exact_retry",
+      "read_only_snapshot_exact_historical_bytes_no_semantic_authority",
+      "eight_tables_force_rls_acl_separate_principals_bypass_denial_immutable_guards",
+      "real_transaction_atomic_visibility_repeatable_read_snapshot",
+      "barrier_controlled_real_concurrent_identical_writers",
+      "barrier_controlled_concurrent_conflicting_artifact_versions_one_winner",
+      "depth_eight_pass_depth_nine_duplicate_missing_changed_bytes_refused",
+      "same_artifact_name_version_changed_digest_whole_transaction_refusal",
+      "same_receipt_alternate_custody_binding_refused",
+      "explicit_rollback_no_publication_verify_existing_never_recreates",
+      "sql_failure_after_staging_rolls_back_receipt_binding_and_links",
+      "missing_retained_link_refused_without_incidental_repair",
+      "injected_digest_key_byte_collision_refused_without_repair",
+      "owned_cluster_stopped_and_only_owned_resources_removed"
+    ],
+    "integratedReceiptRoundtrip": "NOT_VERIFIED",
+    "fullSemanticPublication": "BLOCKED",
+    "productionActivation": false,
+    "hostedApply": false
+  },
+  "realOfficialSourcePilot": "NOT_RUN",
+  "officialSourceEvidence": null,
+  "loadedApplicationBytes": "CAPTURED_BUILD_EXECUTED",
+  "trustedComputingBase": "host_loader_esbuild_node_interpreter_and_finite_builtins",
+  "historicalAuditGrantsCurrentAuthority": false,
+  "f8": "CLOSED",
+  "visitorEvaluation": "NOT_ACTIVATED",
+  "hostedDevelopmentApply": false,
+  "productionActivation": false,
+  "independentTLPass": false
+}
