@@ -1,7 +1,7 @@
 import type { Trip } from '@/types/trips'
 import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
-import { scheduleGaps, type Interval } from './intervals'
+import { scheduleGaps, bufferReview, usableWindows, type Interval } from './intervals'
 import { nextReview } from './next'
 
 function civil(date:string|null,time:string|null) {
@@ -26,5 +26,7 @@ export function tripGapContext(reise:Trip,dayId:string) {
   return {groups:[...groups.entries()].filter(([,g])=>g.days.has(dayId)).map(([contextRef,g])=>({contextRef,
     ...scheduleGaps(g.intervals,{kind:'civil_only',contextRef},unassessed===0&&groups.size===1)})),unassessed,
     // No qualified clock path is installed. This cannot become a device-based countdown.
+    margin:bufferReview({transitionId:JSON.stringify([reise.id,dayId]),available:null,phases:[],policy:null,at:null}),
+    usable:usableWindows(null,[],{axis:null,scheduleComplete:false,movementResolved:false,phasesResolved:false,policyResolved:false,exactPlacement:false,flexibleObligation:unassessed>0,stale:false,estimate:false}),
     next:nextReview([],null,{at:0,generation:'unconfigured',complete:false})}
 }

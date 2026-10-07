@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
+import { itineraryAirportChange } from '@/lib/route/fixtures'
 import type { TripItem } from '@/types/trips'
 import { aenderungsAuswirkung, buchungstext, gespeicherteKosten, koordinaten, planSnapshot, tagesOrte } from './trip-plan-integrated/day'
 import { punktAendern, manuellerInhaltSchema } from './trip-plan-integrated/manual'
 import { intervalUnion, scheduleGaps, usableWindows, bufferReview, type PhasePolicy, type Phase } from './trip-plan-integrated/intervals'
-import { movementCoverage, type MovementNeed, type MovementCandidate } from './trip-plan-integrated/movements'
+import { movementCoverage, tripMovements, type MovementNeed, type MovementCandidate } from './trip-plan-integrated/movements'
 import { nextReview, type QualifiedClock, type NextEvent } from './trip-plan-integrated/next'
 import { contextConsumer, type ContextQuery, type ContextPolicy } from './trip-plan-integrated/external-admission'
 import { externalDefault } from './trip-plan-integrated/external'
@@ -100,6 +101,17 @@ test('wrong direction/occurrence is not coverage; same facility is not zero trav
   assert.equal(movementCoverage({...need,ordered:false},[],true).state,'not_evaluable')
   assert.equal(movementCoverage({...need,from:{...edge('A'),precision:'city'}},[],true).state,'not_evaluable')
 })
+test('live movement adapter includes plausible unassigned transfers, rentals and flights',()=>{
+  const flight=item({id:'surface-flight',kind:'flight',routeItinerary:itineraryAirportChange()})
+  const r=graph(flight)
+  assert.equal(tripMovements(r).results[0]?.state,'missing_in_plan')
+  for(const kind of ['transfer','rental_car','flight'] as const) {
+    r.ohneTag=[item({id:'plausible',kind,dayId:null,originPlaceId:'airport:CDG',destinationPlaceId:'airport:ORY',routeItinerary:null})]
+    assert.equal(tripMovements(r).results[0]?.state,'not_evaluable',kind)
+  }
+  r.ohneTag=[item({id:'wrong-direction',kind:'transfer',dayId:null,originPlaceId:'airport:ORY',destinationPlaceId:'airport:CDG'})]
+  assert.equal(tripMovements(r).results[0]?.state,'missing_in_plan')
+})
 test('union prevents false gaps in nested, touching and midnight intervals',()=>{
   const intervals=[{id:'long',start:1380,end:1560},{id:'nested',start:1400,end:1420},{id:'touch',start:1560,end:1600},{id:'later',start:1700,end:1750}]
   assert.deepEqual(intervalUnion(intervals)?.map(x=>[x.start,x.end]),[[1380,1600],[1700,1750]])
@@ -150,7 +162,8 @@ test('qualified next ties, overlapping uncertainty, unresolved competition and e
 const q:ContextQuery={kind:'hours',subject:'venue-1',location:'venue-1',precision:'venue',occurrence:'visit-1',region:'CH',start:100,end:110}
 const source:ContextPolicy={id:'synthetic',version:'1',source:'fixture',sourceOrigin:'https://fixture.invalid',kind:'hours',maxAge:20}
 const payload={version:'plan-context/v1',...q,source:'fixture',sourceRef:'https://fixture.invalid/hours',observedAt:95,retrievedAt:98,validFrom:90,validUntil:120,units:'venue_interval',status:'ok',exceptionsComplete:true,value:{open:true}}
-const {start:_start,end:_end,...data}=payload
+const {start,end,...data}=payload
+void start;void end
 const consume=contextConsumer([source])
 test('external: closed software consumer and zero-I/O default are separate from live activation',()=>{
   assert.equal(contextConsumer()(q,[data],100).state,'unconfigured');assert.equal(externalDefault('weather').state,'unconfigured')

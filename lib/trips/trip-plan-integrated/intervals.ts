@@ -39,7 +39,7 @@ export function bufferReview(input: { transitionId: string; available: [number,n
     if (!x.sourceRef || !Number.isFinite(x.min) || !Number.isFinite(x.max) || x.min < 0 || x.max < x.min) return no('phase_unknown')
     for (const id of x.includesRefs) {
       const sub = byId.get(id)
-      if (!sub || id === x.id || included.has(id) || sub.includesRefs.length || sub.max > x.max) return no('inclusion_ambiguous')
+      if (!sub || id === x.id || included.has(id) || sub.includesRefs.length || sub.max > x.max || sub.min > x.min) return no('inclusion_ambiguous')
       included.add(id)
     }
   }
@@ -57,11 +57,11 @@ export function bufferReview(input: { transitionId: string; available: [number,n
     : available[0] >= required[1] ? 'meets_policy' as const : 'uncertain' as const,
     reason:'named_policy_only', required, residual:[available[0]-required[1],available[1]-required[0]] as [number,number] }
 }
-export function usableWindows(gap: Interval, occupied: readonly Interval[], proof: {
+export function usableWindows(gap: Interval | null, occupied: readonly Interval[], proof: {
   axis: Axis | null; scheduleComplete: boolean; movementResolved: boolean; phasesResolved: boolean;
   policyResolved: boolean; exactPlacement: boolean; flexibleObligation: boolean; stale: boolean; estimate: boolean;
 }) {
-  if (!valid(gap) || proof.axis?.kind !== 'instant' || !proof.axis.contextRef || !proof.scheduleComplete || !proof.movementResolved ||
+  if (!gap || !valid(gap) || proof.axis?.kind !== 'instant' || !proof.axis.contextRef || !proof.scheduleComplete || !proof.movementResolved ||
     !proof.phasesResolved || !proof.policyResolved || !proof.exactPlacement || proof.flexibleObligation || proof.stale) return { state:'unknown' as const, windows:[] }
   const union = intervalUnion(occupied)
   if (!union) return { state:'unknown' as const,windows:[] }

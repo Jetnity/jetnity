@@ -8,7 +8,7 @@ import { aenderungsAuswirkung, planSnapshot } from '@/lib/trips/trip-plan-integr
 import { TRIP_ITEM_KINDS, type Trip, type TripItem, type TripItemKind } from '@/types/trips'
 
 const feld = 'min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 bg-white px-3 py-2 text-base focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-600/10'
-const knopf = 'min-h-11 rounded-full border border-line-300 px-4 py-2 text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
+const knopf = 'min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere] min-h-11 rounded-full border border-line-300 px-4 py-2 text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
 
 /** Mounted per trip/day/editor. A late response cannot close another form. */
 export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearbeiten, onFertig, onAbbrechen }: {
@@ -34,6 +34,7 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
   const schreibt = React.useRef(false)
   const formular = React.useRef<HTMLFormElement>(null)
   React.useEffect(() => { lebendig.current = true; formular.current?.querySelector<HTMLElement>('input,select')?.focus(); return () => { lebendig.current = false } }, [])
+  React.useEffect(() => { if (fehler) formular.current?.querySelector<HTMLElement>('[role="alert"]')?.focus() }, [fehler])
   const inhaltErlaubt = original ? manuellBearbeitbar(original) : kind === 'activity' || kind === 'note'
   const values = { kind, title, note: note || null, startsOn: inhaltErlaubt ? startsOn || null : null,
     startsAt: inhaltErlaubt ? startsAt || null : null, endsOn: inhaltErlaubt ? endsOn || null : null, endsAt: inhaltErlaubt ? endsAt || null : null }
@@ -69,7 +70,7 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
   }
   return <form ref={formular} aria-label={item ? `Punkt bearbeiten: ${item.title}` : 'Punkt hinzufügen'} aria-busy={laeuft}
     onSubmit={speichern} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); if (!laeuft) onAbbrechen() } }}
-    className="mt-4 grid min-w-0 gap-4 rounded-2xl border border-line-200 bg-surface-50 p-4">
+    className="mt-4 grid min-w-0 grid-cols-1 gap-4 py-4 [overflow-wrap:anywhere] sm:rounded-2xl sm:border sm:border-line-200 sm:bg-surface-50 sm:p-4">
     <h4 className="text-lg font-semibold text-brand-800">{original ? 'Punkt bearbeiten' : 'Neuer Punkt'}</h4>
     {!original && <label className="grid min-w-0 gap-1 text-sm">Art<select className={feld} value={kind} onChange={e => setKind(e.target.value as TripItemKind)}>
       {TRIP_ITEM_KINDS.map(value => <option key={value} value={value}>{ART_BEZEICHNUNG[value]}</option>)}
@@ -93,7 +94,7 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
     {preview && preview.changed.length > 0 && <p data-plan-preview className="text-xs leading-5 text-ink-700">
       Nach dem Speichern werden die Tagesinformationen neu ausgewertet. {preview.count} nachweislich verknüpfte Vorbereitungspunkte wären zu prüfen. Weitere Beziehungen sind nicht belegt. Es werden keine anderen Punkte verschoben.
     </p>}
-    {fehler && <p role="alert" className="text-sm text-danger-600">{fehler}</p>}
+    {fehler && <p role="alert" tabIndex={-1} className="rounded text-sm text-danger-600 focus-visible:ring-4 focus-visible:ring-brand-600/15">{fehler}</p>}
     <div className="flex flex-wrap justify-end gap-2"><button type="button" className={knopf} disabled={laeuft} onClick={onAbbrechen}>Abbrechen</button>
       <button type="submit" disabled={laeuft} className={`${knopf} bg-brand-800 text-white`}>{laeuft ? 'Speichern …' : 'Speichern'}</button></div>
   </form>

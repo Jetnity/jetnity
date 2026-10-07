@@ -210,6 +210,7 @@ export default function FlugBestand({
   const [saved, setSaved] = React.useState<{ itemId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
   const [saveStatus, setSaveStatus] = React.useState('')
   const root = React.useRef<HTMLElement>(null)
+  const writeOrder = React.useRef(0)
   React.useLayoutEffect(() => {
     if (!saved || window.location.href !== saved.context || root.current?.closest('[hidden], [inert]')) return
     const item = [...reise.days.flatMap(day => day.items), ...ohneTag, ...reise.ohneTag].find(p => p.id === saved.itemId)
@@ -226,10 +227,11 @@ export default function FlugBestand({
   }, [reise, ohneTag, saved])
   const routeSpeichern: FlugRouteSpeichern = async (itemId, segments) => {
     if (!onFlugRouteManuell) return 'Die Flugroute kann hier nicht gespeichert werden.'
+    const request = ++writeOrder.current
     const context = window.location.href
     setSaveStatus('')
     const error = await onFlugRouteManuell(itemId, segments)
-    if (!error && window.location.href === context) setSaved({ itemId, segments, context })
+    if (!error && request === writeOrder.current && window.location.href === context) setSaved({ itemId, segments, context })
     return error
   }
 

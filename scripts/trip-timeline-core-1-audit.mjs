@@ -219,10 +219,12 @@ try {
     assert.deepEqual(await page.evaluate(() => window.auditEvents.at(-1)), { action: 'delete', dayId: '', id: 'unplanned' })
     await page.getByRole('button', { name: 'Punkt hinzufügen', exact: true }).click()
     await page.getByLabel('Ort oder Aktivität', { exact: true }).fill('Neuer Punkt')
-    await page.getByLabel('Uhrzeit', { exact: true }).fill('07:15')
+    await page.getByLabel('Anfangszeit, optional', { exact: true }).fill('07:15')
     await page.getByRole('button', { name: 'Speichern', exact: true }).click()
-    assert.deepEqual(await page.evaluate(() => window.auditEvents.at(-1)), {
-      action: 'create', dayId: 'day-1', input: { kind: 'activity', title: 'Neuer Punkt', note: null, startsAt: '07:15' },
+    const created = await page.evaluate(() => window.auditEvents.at(-1))
+    assert.match(created.input.clientRef, /^[0-9a-f-]{36}$/)
+    assert.deepEqual({...created, input: {...created.input, clientRef: 'UUID'}}, {
+      action: 'create', dayId: 'day-1', input: { kind: 'activity', title: 'Neuer Punkt', note: null, startsAt: '07:15', startsOn: reise.days[0].dayDate, endsOn: null, endsAt: null, clientRef: 'UUID' },
     })
     assert.equal(await page.evaluate(() => window.auditGraph() === window.auditInitial), true)
     results.push({ name: `callbacks-${viewport.width}`, exactOpenDeleteCreateIds: true, sourceGraphUnchanged: true })

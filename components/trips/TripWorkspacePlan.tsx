@@ -193,9 +193,13 @@ export default function TripWorkspacePlan({
     if (laeuft) return
     setMeldung('')
     setLaeuft(true)
-    const fehler = await onPunktEntfernen(tagId, punktId)
-    setLaeuft(false)
-    if (fehler) setMeldung(fehler)
+    const context = window.location.href
+    try {
+      const fehler = await onPunktEntfernen(tagId, punktId)
+      if (window.location.href === context && fehler) setMeldung(fehler)
+    } catch {
+      if (window.location.href === context) setMeldung('Der Punkt konnte nicht entfernt werden. Bitte versuche es erneut.')
+    } finally { setLaeuft(false) }
   }
 
   const tagesKopf = tag && (
@@ -592,10 +596,10 @@ function Planpunkt({
         ) : (
           <div className="flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start py-1">{inhalt}</div>
         )}
-        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 rounded-full px-3 text-left text-sm text-brand-800',fokusRing)}
+        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-left text-sm text-brand-800 [overflow-wrap:anywhere]',fokusRing)}
           onClick={()=>onPreparation(hinweis.ziel)}>{hinweis.title}</button>}
         {onBearbeiten && <button type="button" onClick={onBearbeiten} aria-label={`${punkt.title} bearbeiten`}
-          className={cn('min-h-11 rounded-full px-3 text-sm font-semibold text-brand-800', fokusRing)}>Bearbeiten</button>}
+          className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-sm font-semibold text-brand-800 [overflow-wrap:anywhere]', fokusRing)}>Bearbeiten</button>}
         <button
           type="button"
           onClick={onEntfernen}

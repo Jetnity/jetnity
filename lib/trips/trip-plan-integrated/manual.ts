@@ -4,7 +4,7 @@ import type { Trip, TripItem } from '@/types/trips'
 
 export const KONFLIKT = 'Der Planpunkt hat sich inzwischen geändert. Bitte lade die Reise neu; deine Eingabe bleibt erhalten.'
 export function manuellBearbeitbar(item: TripItem): boolean {
-  return (item.kind === 'activity' || item.kind === 'note') && !item.provider && !item.externalRef && !item.bookingUrl
+  return (item.kind === 'activity' || item.kind === 'note') && item.provider == null && item.externalRef == null && item.bookingUrl == null
 }
 
 /** Validated explicit local fields. An absent date never comes from placement. */

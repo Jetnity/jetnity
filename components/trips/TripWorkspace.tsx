@@ -216,8 +216,12 @@ function historieSchreiben(
   const jetzt = aktuelleAdresse()
   if (url === jetzt) return
   const elternUrl = kontext === 'child' ? jetzt : kontext === 'canonical' ? historyElternLesen(reiseId) : null
-  // Next-/Browser-State bleibt erhalten; kein zweiter Router und kein fake Origin im Query.
+  // Let Next's public native-history wrapper synchronize its router URL. Passing its
+  // internal markers back would bypass that wrapper and a later refresh replays the old day.
   const stand = { ...window.history.state, jetnityWorkspace: { reiseId, url, ...(elternUrl && { elternUrl }) } }
+  delete stand.__NA
+  delete stand._N
+  delete stand.__PRIVATE_NEXTJS_INTERNALS_TREE
   if (art === 'push') window.history.pushState(stand, '', url)
   else window.history.replaceState(stand, '', url)
 }

@@ -74,8 +74,8 @@ export type PlanSnapshot = ReturnType<typeof planSnapshot>
 export function planSnapshot(reise: Trip) {
   const inv = inventar(reise)
   return { tripId: reise.id, ambiguous: inv.ambiguous,
-    items: inv.items.map(({ rowVersion: _version, ...item }) => item),
-    days: reise.days.map(({ items: _items, ...day }) => day), stages: reise.stages,
+    items: inv.items.map(item => { const value = { ...item }; delete value.rowVersion; return value }),
+    days: reise.days.map(({ items, ...day }) => { void items; return day }), stages: reise.stages,
     tasks: (reise.readinessItems ?? []).map(task => ({ id: task.clientRef, itemId: task.tripItemId })) }
 }
 export function aenderungsAuswirkung(before: PlanSnapshot | null, after: PlanSnapshot) {

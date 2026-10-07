@@ -12,7 +12,7 @@ import type { ReadinessViewItem } from '@/lib/readiness/domain'
 import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
 import type { Trip, TripItem } from '@/types/trips'
 
-const action='inline-flex min-h-11 items-center rounded-full border border-line-200 px-3 py-2 text-left text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
+const action='inline-flex min-w-0 max-w-full [overflow-wrap:anywhere] min-h-11 items-center rounded-full border border-line-200 px-3 py-2 text-left text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
 const summary='min-h-11 cursor-pointer py-3 text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
 export default function TripIntegratedDay({reise,dayId,ordered,selected,tasks=[],onItem,onPreparation,onVerbindungAnlegen}: {
   reise:Trip;dayId:string;ordered:readonly TripItem[];selected?:string;tasks?:readonly ReadinessViewItem[];
@@ -70,13 +70,13 @@ export default function TripIntegratedDay({reise,dayId,ordered,selected,tasks=[]
         const need=movements.needs.find(n=>n.id===movement)
         if (!need?.from || !need.to || !relevant.has(need.sourceItemId)) return null
         return <div className="my-3"><p className="text-xs">Editierbarer Vorschlag aus der gespeicherten Flugroute. Wird erst beim Speichern übernommen.</p>
-          <ManuelleVerbindung key={`${movement}:${dayId}`} reise={reise} onAnlegen={onVerbindungAnlegen}
+          <ManuelleVerbindung key={`${need.occurrence}:${dayId}`} reise={reise} onAnlegen={onVerbindungAnlegen}
             vorgabe={{mode:'transfer',originName:need.from.id,destinationName:need.to.id,
               originPlaceId:`airport:${need.from.id}`,destinationPlaceId:`airport:${need.to.id}`,dayId,startsOn:null}} />
           <button type="button" className={action} onClick={()=>setMovement(null)}>Verbindung schließen</button></div>
       })()}
       {!needs.length && <p className="my-3 text-sm">Eine genaue Verbindungszuordnung ist für diese Punkte noch nicht belegt.</p>}
-      {time.groups.map(group=><div key={group.contextRef} className="my-3 text-sm"><p>Zwischen den eingetragenen Ortszeiten ({group.contextRef}):</p>
+      {time.groups.map(group=><div key={group.contextRef} className="my-3 text-sm"><p>Zwischen ausdrücklich vergleichbaren Ortszeiten:</p>
         {group.gaps.map(gap=><p key={gap.start}>{gap.end-gap.start} Ortszeit-Minuten Abstand. Nutzbare Zeit unklar.</p>)}
         {!group.gaps.length && <p>Keine Lücke zwischen den vergleichbaren Einträgen.</p>}
         {!group.complete && <p>Weitere Verpflichtungen oder Zeitbezüge sind offen.</p>}</div>)}

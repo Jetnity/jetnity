@@ -85,6 +85,7 @@ export default function KontoArbeitsbereich({
   }
 
   const entfernen = async (_tagId: string, punktId: string) => {
+    order.next()
     const ergebnis = await planpunktEntfernen({ tripId: reise.id, itemId: punktId })
     if (!ergebnis.ok) return ergebnis.meldung
     router.refresh()
@@ -120,6 +121,7 @@ export default function KontoArbeitsbereich({
       quelle="account"
       ohneTag={ohneTag}
       onVerbindungAnlegen={async values => {
+        order.next()
         const result = await mobilityManuellInReiseAnlegen({...values, tripId: reise.id})
         if (!result.ok) return result.meldung
         router.refresh(); return null
@@ -135,12 +137,14 @@ export default function KontoArbeitsbereich({
       }}
       onPunktEntfernen={entfernen}
       onFlugRouteManuell={async (itemId, segments) => {
+        order.next()
         const ergebnis = await flugRouteManuellSetzen({ tripId: reise.id, itemId, segments })
         if (!ergebnis.ok) return ergebnis.meldung
         router.refresh()
         return null
       }}
       onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
+        order.next()
         const ergebnis = await unterkunftZeitraumSetzen({ tripId: reise.id, itemId, startsOn, endsOn })
         if (!ergebnis.ok) return ergebnis.meldung
         router.refresh()

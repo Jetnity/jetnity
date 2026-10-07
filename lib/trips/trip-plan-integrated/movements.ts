@@ -52,11 +52,16 @@ export function tripMovements(reise: Trip) {
         surface: true, sourceItemId: item.id })
     }
   }
-  const candidates: MovementCandidate[] = inventory.items.filter(item => item.kind === 'transfer').map(item => ({
-    id: item.id, tripId: reise.id, from: endpoint(item.originPlaceId), to: endpoint(item.destinationPlaceId),
-    // No persisted occurrence link: date/title cannot manufacture it.
-    occurrence: null, completeChain: item.mobilityEvidence === 'user',
-  }))
-  return { needs, results: needs.map(need => movementCoverage(need,candidates,inventory.ambiguous.length === 0 && inventory.items.length <= 1000)),
+  const candidates: MovementCandidate[] = inventory.items.filter(item => ['transfer','rental_car','flight'].includes(item.kind)).map(item => {
+    const route = item.kind === 'flight' ? routeFactsFuerPunkt(item) : null
+    return {
+      id: item.id, tripId: reise.id,
+      from: endpoint(route?.origin?.airportCode ? `airport:${route.origin.airportCode}` : item.originPlaceId),
+      to: endpoint(route?.destination?.airportCode ? `airport:${route.destination.airportCode}` : item.destinationPlaceId),
+      // A rental's pickup/dropoff is not proof of a driven journey. No kind has a persisted occurrence link.
+      occurrence: null, completeChain: item.kind === 'transfer' && item.mobilityEvidence === 'user',
+    }
+  })
+  return { needs, results: needs.map(need => movementCoverage(need,candidates.filter(candidate => candidate.id !== need.sourceItemId),inventory.ambiguous.length === 0 && inventory.items.length <= 1000)),
     coverage: needs.length ? 'partial' as const : 'not_evaluable' as const }
 }

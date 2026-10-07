@@ -336,12 +336,18 @@ export function ManuelleVerbindung({
   const [meldung, setMeldung] = React.useState('')
   const [hinweis, setHinweis] = React.useState('')
 
+  const lebendig = React.useRef(true)
+  const schreibt = React.useRef(false)
+  React.useEffect(() => { lebendig.current = true; return () => { lebendig.current = false } }, [])
+
   const speichern = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
-    if (laeuft) return
+    if (schreibt.current) return
+    schreibt.current = true
     setMeldung('')
     setHinweis('')
     setLaeuft(true)
+    try {
     const fehler = await onAnlegen({
       mode,
       title: null,
@@ -361,7 +367,7 @@ export function ManuelleVerbindung({
       dayId: dayId || null,
       stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? null,
     })
-    setLaeuft(false)
+    if (!lebendig.current) return
     if (fehler) {
       setMeldung(fehler)
       return
@@ -369,6 +375,12 @@ export function ManuelleVerbindung({
     setHinweis('Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
     setConnectionRef('')
     setNote('')
+    } catch {
+      if (lebendig.current) setMeldung('Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
+    } finally {
+      schreibt.current = false
+      if (lebendig.current) setLaeuft(false)
+    }
   }
 
   return (
