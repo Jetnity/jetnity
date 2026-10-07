@@ -190,8 +190,8 @@ async function planSchreiben(art: 'anlegen' | 'bearbeiten', eingabe: unknown): P
     if (gelesen.problem || !graph || !readback || readback.rowVersion !== punkt.rowVersion) {
       return { ok: false, meldung: 'Die Änderung wurde geschrieben, der aktuelle Stand konnte aber nicht bestätigt werden. Bitte lade die Reise neu; ein erneuter Versuch legt keinen zweiten Punkt an.' }
     }
-    revalidatePath(`/reisen/${tripId}`)
-    revalidatePath('/reisen')
+    // The force-dynamic trip routes read fresh data. Return only confirmed data here;
+    // the caller refreshes its current URL without replaying the action's old RSC tree.
     return { ok: true, wert: graph }
   } catch (error) {
     return { ok: false, meldung: error instanceof z.ZodError ? ersteMeldung(error)

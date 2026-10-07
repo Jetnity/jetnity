@@ -159,6 +159,9 @@ export default function TripWorkspacePlan({
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)
+  const editorOwner = React.useRef(0)
+  const [editorGeneration, setEditorGeneration] = React.useState(0)
+  React.useLayoutEffect(() => { editorOwner.current++ }, [aktiverTag])
   const [formularTag, setFormularTag] = React.useState(aktiverTag)
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [bearbeiten, setBearbeiten] = React.useState<TripItem | undefined>()
@@ -220,7 +223,7 @@ export default function TripWorkspacePlan({
       <button
         type="button"
         data-plan-hinzufuegen
-        onClick={(event) => { editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
+        onClick={(event) => { setEditorGeneration(++editorOwner.current); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
         aria-expanded={formularOffen}
         className={cn(
           'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 sm:w-auto',
@@ -237,7 +240,7 @@ export default function TripWorkspacePlan({
     <>
       {formularOffen && <PlanpunktEditor key={`${reise.id}:${tag.id}:${bearbeiten?.id ?? 'new'}`}
         reise={reise} tagId={tag.id} item={bearbeiten} onAnlegen={onPunktAnlegen} onBearbeiten={onPunktBearbeiten}
-        onAbbrechen={zurueck} onFertig={() => { setErfolg('Planpunkt gespeichert.'); zurueck() }} />}
+        onAbbrechen={zurueck} onFertig={() => { if (editorGeneration !== editorOwner.current) return; setErfolg('Planpunkt gespeichert.'); zurueck() }} />}
       {erfolg && <p role="status" className="mt-3 text-sm text-brand-800">{erfolg}</p>}
 
       {meldung && (
@@ -274,7 +277,7 @@ export default function TripWorkspacePlan({
                     gesperrt={laeuft}
                     gewaehlt={gewaehlterPunktId === punkt.id}
                     onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-                    onBearbeiten={onPunktBearbeiten ? () => { editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
+                    onBearbeiten={onPunktBearbeiten ? () => { setEditorGeneration(++editorOwner.current); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                     onEntfernen={() => entfernen(tag.id, punkt.id)}
                   />
                 ))}
@@ -461,7 +464,7 @@ export default function TripWorkspacePlan({
                 gesperrt={laeuft}
                 gewaehlt={gewaehlterPunktId === punkt.id}
                 onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-                onBearbeiten={onPunktBearbeiten ? () => { editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
+                onBearbeiten={onPunktBearbeiten ? () => { setEditorGeneration(++editorOwner.current); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                 onEntfernen={() => entfernen('', punkt.id)}
               />
             ))}
