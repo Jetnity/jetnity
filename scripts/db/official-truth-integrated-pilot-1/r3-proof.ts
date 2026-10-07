@@ -4,7 +4,7 @@ import { contentEvidenceVersionV2 } from '../../../lib/readiness/official-truth-
 import { quelleUrlLesen } from '../../../lib/readiness/official'
 import { sha256Hex } from '../../../lib/readiness/digest'
 import { provenanceHash } from '../../../lib/readiness/official-truth-autonomous-provenance-artifact'
-import { startLocalProofCluster, LOCAL_PG_DEADLINES } from './local-cluster'
+import { startLocalProofCluster, LOCAL_PG_DEADLINES, type LocalProofCluster } from './local-cluster'
 import { LocalPgConnection, LocalPgError, pgText, type LocalPgOperationDiagnostic } from './pg-wire'
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle, persistVerifiedIntegratedBundleLocally, readVerifiedIntegratedBundleLocally } from './storage'
 import { r3UrlFixtures, r3UrlCodecVectors } from './r3-fixtures'
@@ -14,6 +14,17 @@ const counts = (owner: LocalPgConnection) => owner.query(tables.map(t => `SELECT
 const empty = async (owner: LocalPgConnection) => assert.deepEqual(await counts(owner), tables.map(t => ({ t, n: '0' })).sort((a, b) => a.t.localeCompare(b.t)))
 const pause = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 const sqlState = (expected: string) => (error: unknown) => error instanceof LocalPgError && error.code === expected
+
+async function classifyReadback(cluster: LocalProofCluster, envelope: LocalIntegratedPilotEnvelope) {
+  const readback = await readVerifiedIntegratedBundleLocally(cluster, envelope.bundle.recordFingerprint)
+  if (readback.status === 'receipt_absent') return 'receipt_absent'
+  const actual = readback.envelope.bundle, expected = envelope.bundle
+  const same = Buffer.from(actual.receiptBytes).equals(Buffer.from(expected.receiptBytes)) && Buffer.from(actual.custodyBindingBytes).equals(Buffer.from(expected.custodyBindingBytes)) && actual.artifacts.length === expected.artifacts.length && expected.artifacts.every(a => {
+    const b = actual.artifacts.find(x => x.pin.id === a.pin.id && x.pin.version === a.pin.version)
+    return b && Buffer.from(a.canonicalBytes).equals(Buffer.from(b.canonicalBytes))
+  })
+  return same ? 'verified_exact' : 'verified_different_bytes'
+}
 
 async function urlProof(primary: LocalIntegratedPilotEnvelope, checks: string[]) {
   const fixtures = r3UrlFixtures(primary), cluster = startLocalProofCluster(), owner = await LocalPgConnection.connect(cluster)
@@ -52,19 +63,27 @@ async function urlProof(primary: LocalIntegratedPilotEnvelope, checks: string[])
     const positiveCluster = startLocalProofCluster(), owner = await LocalPgConnection.connect(positiveCluster)
     try {
       await installLocalProofSchema(owner)
-      const connection = await LocalPgConnection.connect(positiveCluster, 'ot_provenance_writer')
+      const connection = await LocalPgConnection.connect(positiveCluster, 'ot_provenance_writer'), started = performance.now()
+      let phase = 'begin', independentReadback = 'NOT_RUN'
+      const diagnostic = (status: string, code: string | null = null) => ({ schema: 'ot-pilot-r5-url-diagnostic-v1', status, scenario: name, phase, elapsedMs: Math.ceil(performance.now() - started), code, independentReadback, operations: connection.operationDiagnostics })
       try {
-        await connection.query('BEGIN')
+        await connection.query('BEGIN'); phase = 'publish'
         assert.equal(await publishIntegratedBundle(connection, await localArtifactTypeOids(owner), envelope), 'inserted')
-        await connection.query('COMMIT')
+        phase = 'commit'; await connection.query('COMMIT')
         assert.equal(connection.operationDiagnostics.at(-1)?.commitAcknowledged, true)
         assert.equal(connection.operationDiagnostics.at(-1)?.protectionFailure, undefined)
+        phase = 'readback'
         const readback = await readVerifiedIntegratedBundleLocally(positiveCluster, envelope.bundle.recordFingerprint)
         assert.equal(readback.status, 'verified'); if (readback.status !== 'verified') throw Error('r3_positive_readback')
         assert.deepEqual(Buffer.from(readback.envelope.bundle.receiptBytes), Buffer.from(envelope.bundle.receiptBytes))
         assert.deepEqual(Buffer.from(readback.envelope.bundle.custodyBindingBytes), Buffer.from(envelope.bundle.custodyBindingBytes))
         assert.equal(readback.envelope.bundle.artifacts.length, envelope.bundle.artifacts.length)
         for (const a of envelope.bundle.artifacts) assert.deepEqual(Buffer.from(readback.envelope.bundle.artifacts.find(b => b.pin.id === a.pin.id && b.pin.version === a.pin.version)!.canonicalBytes), Buffer.from(a.canonicalBytes))
+        independentReadback = 'verified_exact'; phase = 'complete'; console.info(JSON.stringify(diagnostic('complete')))
+      } catch (error) {
+        try { independentReadback = await classifyReadback(positiveCluster, envelope) } catch { independentReadback = 'readback_failed' }
+        console.error(JSON.stringify(diagnostic('failure', error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code) ? error.code : error instanceof assert.AssertionError ? 'ASSERTION' : 'OPERATIONAL_FAILURE')))
+        throw error
       } finally { connection.close() }
       checks.push(`r3_native_${name}_public_commit_full_verified_readback_normal_disarm`)
     } finally { owner.close(); positiveCluster.stop() }
@@ -207,18 +226,7 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
       // Preserve partial evidence before cleanup; no SQL, parameters, backend
       // identities, paths or arbitrary database/error text enter public logs.
       inject = false
-      try {
-        const readback = await readVerifiedIntegratedBundleLocally(cluster, primary.bundle.recordFingerprint)
-        if (readback.status === 'receipt_absent') independentReadback = 'receipt_absent'
-        else {
-          const actual = readback.envelope.bundle, expected = primary.bundle
-          const same = Buffer.from(actual.receiptBytes).equals(Buffer.from(expected.receiptBytes)) && Buffer.from(actual.custodyBindingBytes).equals(Buffer.from(expected.custodyBindingBytes)) && actual.artifacts.length === expected.artifacts.length && expected.artifacts.every(a => {
-            const b = actual.artifacts.find(x => x.pin.id === a.pin.id && x.pin.version === a.pin.version)
-            return b && Buffer.from(a.canonicalBytes).equals(Buffer.from(b.canonicalBytes))
-          })
-          independentReadback = same ? 'verified_exact' : 'verified_different_bytes'
-        }
-      } catch { independentReadback = 'readback_failed' }
+      try { independentReadback = await classifyReadback(cluster, primary) } catch { independentReadback = 'readback_failed' }
       const code = error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code) ? error.code : error instanceof assert.AssertionError ? 'ASSERTION' : 'OPERATIONAL_FAILURE'
       console.error(JSON.stringify(diagnostic('failure', code)))
       throw error

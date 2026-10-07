@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "round": "TL-R3",
+  "round": "TL-R5",
   "scope": "author_evidence_not_tl_acceptance",
   "supportedIntegratedFactNamespace": "legacy requirement_effect / visa; applicabilitySchema null",
   "cases": [
@@ -153,5 +153,15 @@
   "r2Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
   "r2RegressionEvidence": "r2-regression-evidence.json",
   "r3Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
-  "r3RegressionEvidence": "r3-regression-evidence.json"
+  "r3RegressionEvidence": "r3-regression-evidence.json",
+  "r5Audit": {
+    "historicalR2R3Preserved": true,
+    "nativeEnvelopePositiveCalls": 6,
+    "nativeEnvelopeRejectedCalls": 32,
+    "controlledNativeCommitContention": "RED_baseline_57P01_unknown_empty_lock_released_then_successor; GREEN_actual_ACK_exact652_rows_then_idempotent_successor",
+    "normalFullSuite": "see_command_results_not_a_claim_of_contention_reproduction",
+    "diagnostics": "scenario_phase_result_safe_code_elapsed_ACK_protection_independent_readback_partial_progress",
+    "frozenBoundsUnchanged": true
+  },
+  "r5RegressionEvidence": "r5-regression-evidence.json"
 }

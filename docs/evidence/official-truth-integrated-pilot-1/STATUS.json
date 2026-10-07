@@ -4,15 +4,15 @@
   "pr": 906,
   "branch": "feat/official-truth-integrated-development-pilot-1",
   "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
-  "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
-  "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_PARTIAL",
+  "baseline": "de966778a06183748e3807bcb6af9a6cbeaeb326",
+  "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CORRECTION_CANDIDATE",
   "phases": {
-    "A": "r3_entries_live_index_issue_report_r1_r2_checkpoint_refs_and_immutable_task_reconstructed",
+    "A": "r5_live_index_amendment_seed_refs_preserved_local_work_and_actual_session_read",
     "B": "captured_build_primary_composed_and_original_validity_verified",
     "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
-    "D": "r2_69_groups_preserved_plus_r3_19_native_url_and_guard_loss_groups",
+    "D": "shared_checked_sql_envelope_preserves_all_semantic_deferred_and_recovery_checks; bounded_R5_diagnostics_and_regressions",
     "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
-    "F": "final_developer_command_PASS_69_plus19_plus16_new_exact_head_remote_gates_in_delivery_receipt"
+    "F": "R5_local_developer_and_Linux_full_suite_PASS; fresh_final_head_CI_Auth_Preview_in_separate_receipt"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "VERIFIED",
@@ -24,7 +24,7 @@
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "Collect instrumented native x64 CI and causal evidence before selecting a minimal correction. No final delivery/acceptance claim.",
+  "next": "Read final exact-head receipt, then independent TL review; no agent Ready/merge/main-sync.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -46,8 +46,8 @@
     "implementationStatus": "both_canonical_bundles_verified",
     "hostedAdoption": false
   },
-  "observedMain": "9ea0e068e1d28b18ed15059fa5bf9b63c0689cfe",
-  "mergeBase": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
+  "observedMain": "de966778a06183748e3807bcb6af9a6cbeaeb326",
+  "mergeBase": "de966778a06183748e3807bcb6af9a6cbeaeb326",
   "semanticSqlProofGroups": 69,
   "independentTLPass": false,
   "r2Review": 5442544139,
@@ -70,7 +70,7 @@
     "commitRecoveryStatement": 2000,
     "commitRecovery": 5000
   },
-  "localFullSuiteLimit": "Four unchanged tests require a hardcoded Linux-PG16 path absent on Mac; no skip. Fresh final-head Linux CI must pass.",
+  "localFullSuiteLimit": "Current native Linux16.15 arm64 full-suite validation; exact final-head GitHub Linux x64 CI remains required. Historical Mac-only path failures are preserved in earlier evidence.",
   "baseHeadBeforeR3": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
   "r3Checkpoint": "JETNITY-HANDOFF-2026-10-07-PR900-TL-R3",
   "r3BindingReport": "https://github.com/Jetnity/jetnity/issues/899",
@@ -85,11 +85,26 @@
     "seedHead": "1eb1ce7ce1409661a624fad0408aaad38ee97fb8",
     "main": "de966778a06183748e3807bcb6af9a6cbeaeb326",
     "amendmentBlob": "cb0605510f205313dd942b4125e801b3da938600",
-    "phase": "DIAGNOSIS_IN_PROGRESS",
-    "implementationFix": "NOT_YET_SELECTED",
+    "phase": "LOCAL_VERIFIED_AWAITING_FINAL_PUBLICATION_GATES",
+    "implementationFix": "share_existing_checked_canonical_envelope_between_legacy_and_typed_SQL_consumers",
     "baselineFailure": "native independent successor assertion before later job cancellation; missing scenario and reason remain unknown",
     "instrumentedMac": "PASS_19_groups_148983.674792ms",
-    "instrumentedLinux": "R3_PASS_full_suite_running",
-    "next": "Collect instrumented native x64 CI and causal evidence before selecting a minimal correction. No final delivery/acceptance claim."
-  }
+    "instrumentedLinux": "BASELINE_FULL_SUITE_PASS_5766; separate_x64_CI_RED_URL_COMMIT_57P01",
+    "next": "Verify final remote head/tree/scope and fresh CI/Auth/Preview, then STOP for independent TL review.",
+    "status": "CORRECTION_IMPLEMENTED_LOCAL_VERIFIED_FINAL_REMOTE_GATES_IN_RECEIPT",
+    "diagnosticHead": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+    "fixSelected": "share_existing_checked_canonical_envelope_between_legacy_and_typed_SQL_consumers",
+    "historicalExactCause": "not_uniquely_recoverable",
+    "causalEvidence": "r5-regression-evidence.json",
+    "normalLinuxFullSuite": {
+      "tests": 5767,
+      "pass": 5767,
+      "fail": 0,
+      "skip": 0
+    },
+    "r3NativeFinal": "19_groups_1008_comparisons_PASS",
+    "developerCommand": "PASS_69_plus19_plus16_and50_fault_paths",
+    "unmodifiedGithubDiagnostic": "FAIL_5765_of5766_normal_URL_COMMIT_57P01"
+  },
+  "r5RegressionEvidence": "r5-regression-evidence.json"
 }

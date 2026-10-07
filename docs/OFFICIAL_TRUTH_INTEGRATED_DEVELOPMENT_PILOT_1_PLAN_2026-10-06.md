@@ -1,5 +1,7 @@
 # Integrated development pilot 1 — execution plan
 
+Current scope: TL-R5.0 correction, Issue#899 / Draft#906, baseline main de966, TL seed1eb1ce7. Earlier sections retain historical execution plans; the R5 section below is current. Local work preserved before safe fast-forward; SINGLE_AGENT.
+
 Owner: Official Truth integrated development pilot 1 — Generation 1. Issue #899; Draft PR #900.
 Baseline main ecc0ecf3b9c024b295034b6985fa26ca40bc82f1; task seed d3ee358fedf87656fc55325200eeade13f840e19. Immutable TASK ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad.
 
@@ -98,3 +100,7 @@ Binding corrective PR#906 starts at1eb1ce7ce1409661a624fad0408aaad38ee97fb8, par
 5. Publish on the same branch, verify complete changed-file blobs/tree/TASK/amendment/scope and fresh final-head Linux CI/Auth/Preview with actual checkout. Stop for independent TL review; no Ready/merge/main merge or further slice.
 
 Current hypotheses are unproven. Scope is dormant local proof/adapter only, no application API/Trip graph/hosted DB or activation changes. Security goal is honest commit truth and verified successor recovery under unchanged resource limits. No new recurring cost or source attempt; realOfficialSourcePilot remains BLOCKED. Session01a11333-cbc2-7282-b194-27335e632c61, actual gpt-6-astra/xhigh read from current turn metadata2026-10-07T20:09:43.182Z. SINGLE_AGENT.
+
+### R5 measured correction and validation progress
+
+Native profiling identified repeated canonical decoding inside actual deferred artifact validation. The controlled Linux contention baseline produced57P01/no ACK at20,070ms with independent eight-table emptiness and successful fresh writer; the shared checked envelope passed the same experiment at17,072ms with actual ACK/full652-row readback/idempotent successor. The historical main attempt's exact missing scenario remains unknown. The correction preserves638 deferred events/retained checks and1568 typed checks while reducing decode calls3963→2395. Six positive and32 negative native envelope calls pass. Typecheck, Lint, Build and all six hygiene/mode checks pass. Full-suite/developer and final-head remote gates are recorded from their actual completed runs in command-results and the publication receipt. No performance claim substitutes for semantic or recovery checks.

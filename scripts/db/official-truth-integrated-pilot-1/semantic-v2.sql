@@ -239,9 +239,9 @@ CREATE FUNCTION official_provenance_private.artifact_v2(a official_provenance_ap
 RETURNS TABLE(slot text,pin jsonb,expected_type text) LANGUAGE plpgsql IMMUTABLE STRICT SET search_path='' SET timezone='UTC' AS $$
 DECLARE envelope jsonb; value jsonb; derived jsonb; key text; item jsonb; previous text; type_name text; decoded jsonb;
 BEGIN
- -- Reuse immutable lexical/hash/outer-envelope checks, never its generic declared-edge result.
- PERFORM * FROM official_provenance_private.artifact_edges(a);
- envelope:=official_provenance_private.decode(a.canonical_bytes,1048576);
+ -- Reuse every lexical/hash/header/declared-edge check and its decoded value.
+ -- No second canonical decode or discarded generic custody-pin traversal.
+ envelope:=official_provenance_private.artifact_envelope(a);
  IF a.byte_contract_family='global_definition_v1' THEN value:=envelope;PERFORM official_provenance_private.typed(value,'global_cell');RETURN;
  ELSIF a.byte_contract_family='custody_v1' THEN value:=envelope->'value';type_name:=a.artifact_type;
  ELSE value:=envelope->'content';type_name:=CASE WHEN a.artifact_type IN ('semantic_contract','fact_schema','applicability_schema','output_contract','proof_contract','freshness_contract') THEN 'contract' ELSE a.artifact_type END;END IF;
