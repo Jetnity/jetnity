@@ -5,7 +5,7 @@
   "branch": "feat/official-truth-integrated-development-pilot-1",
   "taskBlob": "ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad",
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
-  "classification": "R1_REMOTE_CI_CORRECTION_IN_PROGRESS",
+  "classification": "LOCAL_ENGINEERING_VERIFIED_PENDING_FINAL_REMOTE_GATES",
   "phases": {
     "A": "r1_reconstructed_task_unchanged",
     "B": "captured_build_primary_composed_and_original_validity_verified",
@@ -24,7 +24,7 @@
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "Diagnose first publication COMMIT outcome under Linux CI and correct bounded local proof transport or redundant constraint work; retain unknown outcome until actual verified resolution.",
+  "next": "Publish measured set-based SQL constraint correction; require fresh optimized exact-head CI/Auth/Preview and full remote readback.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -36,7 +36,7 @@
     "reasoning": "xhigh",
     "provider": "openai"
   },
-  "runtimeCommit": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
+  "runtimeCommit": "403b93c709f03b445e50b48c78550f04ef8c05bb",
   "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
   "r1Comment": 6027081169,
   "localProfile": {
@@ -50,16 +50,16 @@
   "observedMain": "0481173cf56f13e5316246503e4683ad843728f2",
   "mergeBase": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
   "mainAdvancedBySeparateTripPr897": true,
-  "semanticSqlProofGroups": 37,
+  "semanticSqlProofGroups": 38,
   "lastRemoteAttempt": {
-    "head": "2543988422058e551e9f1a57864cb5adc1c7475d",
-    "run": 37550426404,
-    "verifyJob": 112564306234,
+    "head": "403b93c709f03b445e50b48c78550f04ef8c05bb",
+    "run": 37551625911,
+    "verifyJob": 112568216700,
     "tests": 5718,
     "passed": 5717,
     "failed": 1,
     "skipped": 0,
-    "reason": "primary_publication_returned_non_success_at_assertion",
+    "reason": "COMMIT_timeout_30001ms_correctly_unknown",
     "auth": "PASS",
     "preview": "READY"
   }

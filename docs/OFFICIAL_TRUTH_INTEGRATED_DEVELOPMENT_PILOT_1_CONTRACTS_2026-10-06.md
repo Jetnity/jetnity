@@ -45,7 +45,7 @@ The original source path executes canonical controlled retrieval, redirect/URL/D
 
 Legacy v1 retains longest path8. The explicit `ot-integrated-pilot-local-closure-v2` envelope permits16 under the same counting: K is depth1; receipt, binding and artifact role edges are retained. Both actual required closures have longest path11. Calling the legacy verifier on exactly those bytes still refuses11>8. There is no automatic fallback, arbitrary budget or old-row relabelling. Unknown or mismatched profile/storage version fails closed. Profile metadata stays outside frozen Receipt/C/H/Pin/K bytes.
 
-Unchanged bounds: receipt262144 bytes; typed roots11; union256 nodes including K; 1024 role edges; artifact1048576 bytes; K4096 bytes; union8388608 bytes excluding receipt and including K; canonical JSON depth32; encoded transport10485760 bytes; all stricter type bounds. Exact pins, types, collisions, declared and independently derived role edges, complete reachability and longest shared paths are mandatory.
+Unchanged bounds: receipt262144 bytes; typed roots11; union256 nodes including K; 1024 role edges; artifact1048576 bytes; K4096 bytes; union8388608 bytes excluding receipt and including K; canonical JSON depth32; encoded parameter transport10485760 bytes; all stricter type bounds. Exact pins, types, collisions, declared and independently derived role edges, complete reachability and longest shared paths are mandatory.
 
 Historical verifier failures remain receipt_corrupt, binding_corrupt, dependency_missing, dependency_corrupt, unsupported_version, closure_bound_exceeded or semantic_mismatch. Historical success grants no live handle, accepted Evidence/Rule, HTTP authority or F8 access.
 
@@ -70,7 +70,7 @@ New pure lib consumers and fixed script imports are exact finite entries in matc
 ## R1 local successor decision
 The explicit TL amendment 6027081169 authorizes `ot-integrated-pilot-local-closure-v2` in a closed local transport/storage/reader envelope. Its longest path maximum is16 under unchanged K/root/role counting; v1 remains8. Unknown or mismatched profiles fail closed without retry. This does not version or modify Receipt, applicability, C/H, Pin or K bytes. The required full path is11, motivating the finite successor budget.
 
-Unchanged limits: B262144; typed roots11; union256 nodes including K; all role edges1024; artifact1048576; K4096; union8388608 excluding B including K; nesting32; encoded transport10485760; stricter domain limits. The same static dispatch is required at local admission, SQL and reader. Historical rows cannot be relabelled. Mandatory tests: v1 8/9 and full11 refusal; v2 16/17; longest shared DAG; profile confusion; all other bounds.
+Unchanged limits: B262144; typed roots11; union256 nodes including K; all role edges1024; artifact1048576; K4096; union8388608 excluding B including K; nesting32; encoded parameter transport10485760; stricter domain limits. The same static dispatch is required at local admission, SQL and reader. Historical rows cannot be relabelled. Mandatory tests: v1 8/9 and full11 refusal; v2 16/17; longest shared DAG; profile confusion; all other bounds.
 
 Full publication means acknowledged atomic commit followed by a fresh complete independently verified semantic readback of the actual producer bundle. Structural fixture tests remain labelled as such. Uncertain commit is unresolved until verify-existing verifies full retained data. A captured immutable module/build snapshot must be the bytes actually loaded; runtime disk hashing alone is insufficient. These guarantees are local controlled-software guarantees only. Future hosted use requires a separate reviewed contract/migration/apply gate; none is performed here.
 
@@ -86,3 +86,6 @@ The canonical real HTTPS attempt on 2026-10-06T23:25:35Z reached `response_too_l
 
 ### Local transport liveness
 The30-second inactivity bound applies to connection startup and each active query. A ready connection may remain idle while another owned connection works. Explicit close disables its timer. Real31-second idle reuse preserves the same backend; an active pg_sleep query still loses its connection at30 seconds. This correction addresses Linux CI evidence without changing graph, byte or semantic budgets.
+
+### Independent deferred work
+Every artifact and artifact-link deferred event still validates its retained parent. Expected typed edges are materialized once per event, compared with stored edges in both directions, and checked against exact target/type/family/name/blob metadata. There is no validation cache or skipped event. This removes repeated per-edge SQL work without weakening completeness or changing bounds.

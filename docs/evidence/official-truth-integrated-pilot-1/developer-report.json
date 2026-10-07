@@ -1402,6 +1402,7 @@
       "real_commit_lost_ack_reports_unknown_then_verify_existing_resolves",
       "closed_23_columns_null_discipline_terminal_status_and_exact_stored_links_required",
       "valid_hash_conditional_without_applicability_and_foreign_original_url_refused",
+      "independent_retained_parent_exact_edge_set_and_typed_target_name_blob_required",
       "retained_extra_edge_refused_by_full_read_and_retry",
       "independent_deferred_constraint_rejects_extra_edge_without_publication_API",
       "retained_permanent_name_index_missing_refused_without_healing",

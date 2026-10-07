@@ -504,17 +504,33 @@ BEGIN
 END $$;
 
 CREATE FUNCTION official_provenance_private.verify_artifact_retained_v2(id text,version bigint,digest_value text) RETURNS void LANGUAGE plpgsql STABLE SET search_path='' SET timezone='UTC' AS $$
-DECLARE a official_provenance_api.artifact_input_v1; edge record; expected integer;
+DECLARE a official_provenance_api.artifact_input_v1; complete boolean;
 BEGIN
  SELECT ar.artifact_id,ar.artifact_version,ar.digest,ar.artifact_type,ar.byte_contract_family,ar.artifact_contract_version,b.canonical_bytes INTO a FROM official_provenance_private.artifacts ar JOIN official_provenance_private.artifact_blobs b USING(digest) WHERE (ar.artifact_id,ar.artifact_version,ar.digest)=(id,version,digest_value);
  IF a IS NULL THEN RAISE EXCEPTION 'existing_integrity_failure';END IF;
  PERFORM official_provenance_private.require(EXISTS(SELECT 1 FROM official_provenance_private.artifact_names n WHERE (n.artifact_id,n.artifact_type,n.byte_contract_family)=(a.artifact_id,a.artifact_type,a.byte_contract_family)));
- SELECT pg_catalog.count(*) INTO expected FROM official_provenance_private.artifact_v2(a);
- PERFORM official_provenance_private.require((SELECT pg_catalog.count(*) FROM official_provenance_private.artifact_dependencies e WHERE (e.parent_id,e.parent_version,e.parent_digest)=(id,version,digest_value))=expected);
- FOR edge IN SELECT * FROM official_provenance_private.artifact_v2(a) LOOP
-  PERFORM official_provenance_private.require(EXISTS(SELECT 1 FROM official_provenance_private.artifacts ar JOIN official_provenance_private.artifact_blobs b USING(digest) WHERE ar.artifact_id=edge.pin->>'id' AND ar.artifact_version=(edge.pin->>'version')::bigint AND ar.digest=edge.pin->>'digest')); 
-  PERFORM official_provenance_private.require(EXISTS(SELECT 1 FROM official_provenance_private.artifact_dependencies e WHERE (e.parent_id,e.parent_version,e.parent_digest)=(id,version,digest_value) AND e.slot=edge.slot AND e.target_id=edge.pin->>'id' AND e.target_version=(edge.pin->>'version')::bigint AND e.target_digest=edge.pin->>'digest'));
- END LOOP;
+ -- Every deferred event still verifies the parent. Derive its bounded, typed edge set once;
+ -- compare both directions and inspect all retained target metadata without per-edge queries.
+ WITH expected AS MATERIALIZED (
+  SELECT d.slot,d.pin->>'id' AS target_id,(d.pin->>'version')::bigint AS target_version,d.pin->>'digest' AS target_digest,d.expected_type
+  FROM official_provenance_private.artifact_v2(a) d
+ ), stored AS MATERIALIZED (
+  SELECT e.slot,e.target_id,e.target_version,e.target_digest FROM official_provenance_private.artifact_dependencies e
+  WHERE (e.parent_id,e.parent_version,e.parent_digest)=(id,version,digest_value)
+ ), differences AS (
+  (SELECT e.slot,e.target_id,e.target_version,e.target_digest FROM expected e EXCEPT SELECT s.slot,s.target_id,s.target_version,s.target_digest FROM stored s)
+  UNION ALL
+  (SELECT s.slot,s.target_id,s.target_version,s.target_digest FROM stored s EXCEPT SELECT e.slot,e.target_id,e.target_version,e.target_digest FROM expected e)
+ ) SELECT NOT EXISTS(SELECT 1 FROM differences) AND NOT EXISTS(
+  SELECT 1 FROM expected e
+  LEFT JOIN official_provenance_private.artifacts ar ON (ar.artifact_id,ar.artifact_version,ar.digest)=(e.target_id,e.target_version,e.target_digest)
+   AND ar.artifact_type=e.expected_type AND ar.artifact_contract_version=1
+   AND ar.byte_contract_family=CASE WHEN e.expected_type='global_cell' THEN 'global_definition_v1' WHEN e.expected_type LIKE '%V1' THEN 'custody_v1' ELSE 'manifest_v1' END
+  LEFT JOIN official_provenance_private.artifact_names n ON (n.artifact_id,n.artifact_type,n.byte_contract_family)=(ar.artifact_id,ar.artifact_type,ar.byte_contract_family)
+  LEFT JOIN official_provenance_private.artifact_blobs b ON b.digest=ar.digest
+  WHERE ar.artifact_id IS NULL OR n.artifact_id IS NULL OR b.digest IS NULL
+ ) INTO complete;
+ PERFORM official_provenance_private.require(complete);
 END $$;
 CREATE FUNCTION official_provenance_private.verify_root_links_v2(fingerprint text) RETURNS void LANGUAGE plpgsql STABLE SET search_path='' SET timezone='UTC' AS $$
 DECLARE b bytea;k bytea;expected integer;edge record;

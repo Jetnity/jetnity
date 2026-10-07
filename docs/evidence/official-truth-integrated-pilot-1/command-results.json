@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "round": "R1",
-  "prePublicationBaseHead": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
+  "prePublicationBaseHead": "403b93c709f03b445e50b48c78550f04ef8c05bb",
   "authorEvidenceOnly": true,
   "checks": [
     {
@@ -57,7 +57,7 @@
       "status": "PASS",
       "exitCode": 0,
       "negativePaths": 50,
-      "semanticPostgresGroups": 37,
+      "semanticPostgresGroups": 38,
       "structuralPostgresGroups": 16,
       "confirmedProducerRoundtrips": 2,
       "realOfficialSourcePilot": "BLOCKED"
@@ -116,12 +116,12 @@
       "location": "author-local-intermediate-not-public"
     },
     "r1-npm-test-final.log": {
-      "sha256": "877ccee011181b1b01c5df85ffbe9794455700d5217f29078217ed41f659178d",
-      "bytes": 1361950,
+      "sha256": "7a5e95850fc04ec466abc62fbe6899c449d5d72210953b220bb93d3c45c46b02",
+      "bytes": 1362061,
       "location": "author-local-intermediate-not-public"
     },
     "r1-pilot-final.log": {
-      "sha256": "8891fd4fbb35528e972ef085ece63f592c061d8aa275b2496ab573d8dcdfb606",
+      "sha256": "ca4e69eb07640842aeaf50d78b2da8cdbecb6b963eced22ac3c5816d47e0d83c",
       "bytes": 1155,
       "location": "author-local-intermediate-not-public"
     },
@@ -141,10 +141,49 @@
       "passed": 5717,
       "failed": 1,
       "skipped": 0,
-      "reason": "idle_owner_connection_closed_after_30_seconds_while_other_connection_worked",
-      "correction": "30_second_timeout_only_during_startup_and_active_query; real31second_idle_and_active_timeout_regressions_pass",
-      "auth": "PASS",
-      "preview": "READY"
+      "reason": "idle_owner_connection_timeout",
+      "correction": "Timeout applies to startup/active queries, not ready/idle lifetime."
+    },
+    {
+      "head": "2543988422058e551e9f1a57864cb5adc1c7475d",
+      "run": 37550426404,
+      "verifyJob": 112564306234,
+      "tests": 5718,
+      "passed": 5717,
+      "failed": 1,
+      "skipped": 0,
+      "reason": "primary_publication_non_success; exact cause measured in diagnostic successor"
+    },
+    {
+      "head": "403b93c709f03b445e50b48c78550f04ef8c05bb",
+      "run": 37551625911,
+      "verifyJob": 112568216700,
+      "tests": 5718,
+      "passed": 5717,
+      "failed": 1,
+      "skipped": 0,
+      "reason": "commit_outcome_unknown",
+      "publicationQueryMs": 21757,
+      "commitMs": 30001,
+      "commitOutcome": "timeout",
+      "transportCode": "connection_closed",
+      "correction": "Full retained-parent edge verification uses one materialized derived set and symmetric set comparisons; all constraint events retained; deadline unchanged."
     }
-  ]
+  ],
+  "localSqlProfile": {
+    "postgres": "17.6",
+    "scope": "one actual primary, before/after; not a Linux benchmark",
+    "deferredArtifactEventsBefore": 638,
+    "deferredArtifactEventsAfter": 638,
+    "beforeMs": {
+      "publish": 5797,
+      "commit": 6788,
+      "read": 1799
+    },
+    "afterMs": {
+      "publish": 5848,
+      "commit": 3518,
+      "read": 1828
+    }
+  }
 }

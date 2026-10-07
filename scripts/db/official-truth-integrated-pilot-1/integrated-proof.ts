@@ -159,6 +159,24 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     await rejectSql(sealReceipt(conditional,{...cp,candidate:{...cp.candidate,factHash:conditionalFact,candidateBinding:conditionalCandidate}}));checks.push('valid_hash_conditional_without_applicability_and_foreign_original_url_refused')
     // Real SQL corruption: retries/readers refuse, with no incidental repair.
     const rootArtifact=p.artifacts.find(a=>a.artifactType==='global_cell')!,targetArtifact=p.artifacts.find(a=>a.artifactType==='implementation_bundle')!
+    // Exercise the independent retained-parent verifier directly: receipt validation or
+    // identity conflicts must not mask a missing edge, a same-count wrong edge or target damage.
+    const retainedEdge=rows.find(r=>r.row_kind==='artifact_link'&&r.target_id===targetArtifact.pin.id);assert.ok(retainedEdge)
+    const parentPin=[pgText(retainedEdge.parent_id!),pgText(retainedEdge.parent_version!),pgText(retainedEdge.parent_digest!)]
+    const verifyParent=()=>owner.query('SELECT official_provenance_private.verify_artifact_retained_v2($1,$2::bigint,$3)',parentPin)
+    await verifyParent()
+    for(const damage of ['missing_edge','wrong_target','missing_target_name','missing_target_blob','wrong_target_type'] as const){
+      await owner.query('BEGIN');await owner.query('SET LOCAL session_replication_role=replica')
+      if(damage==='missing_edge')await owner.query('DELETE FROM official_provenance_private.artifact_dependencies WHERE parent_id=$1 AND parent_version=$2::bigint AND parent_digest=$3 AND slot=$4',[...parentPin,pgText(retainedEdge.slot!)])
+      if(damage==='wrong_target')await owner.query('UPDATE official_provenance_private.artifact_dependencies SET target_id=$5,target_version=1,target_digest=$6 WHERE parent_id=$1 AND parent_version=$2::bigint AND parent_digest=$3 AND slot=$4',[...parentPin,pgText(retainedEdge.slot!),pgText(rootArtifact.pin.id),pgText(rootArtifact.pin.digest)])
+      if(damage==='missing_target_name')await owner.query('DELETE FROM official_provenance_private.artifact_names WHERE artifact_id=$1',[pgText(targetArtifact.pin.id)])
+      if(damage==='missing_target_blob')await owner.query('DELETE FROM official_provenance_private.artifact_blobs WHERE digest=$1',[pgText(targetArtifact.pin.digest)])
+      if(damage==='wrong_target_type')await owner.query("UPDATE official_provenance_private.artifacts SET artifact_type='fact_schema' WHERE artifact_id=$1 AND artifact_version=1",[pgText(targetArtifact.pin.id)])
+      await owner.query('SET LOCAL session_replication_role=origin')
+      await assert.rejects(verifyParent(),error=>error instanceof LocalPgError&&error.code==='P0001',damage)
+      await owner.query('ROLLBACK')
+    }
+    await verifyParent();checks.push('independent_retained_parent_exact_edge_set_and_typed_target_name_blob_required')
     await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies DISABLE TRIGGER USER')
     await owner.query('INSERT INTO official_provenance_private.artifact_dependencies VALUES($1,1,$2,$3,$4,1,$5)',[pgText(rootArtifact.pin.id),pgText(rootArtifact.pin.digest),pgText('/unexpected'),pgText(targetArtifact.pin.id),pgText(targetArtifact.pin.digest)])
     await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies ENABLE TRIGGER USER')
