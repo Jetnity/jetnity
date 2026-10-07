@@ -23,6 +23,9 @@ import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rul
 import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
+// #899 permits this one fixed-corpus developer execution, never a live importer.
+const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts']
+function fixtureImporterErlaubt(path: string): boolean { return FIXTURE_IMPORTER.includes(path) }
 const ZEIT = '2026-10-03T00:00:00.000Z'
 const SCOPE = `rule-scope:v1:${'a'.repeat(64)}`
 const SEITEN_ID = 'ev2_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
@@ -812,13 +815,22 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       }
     }
     assert.deepEqual(produktion.sort(), [...erlaubt].sort())
-    assert.deepEqual(naht, ['lib/readiness/official-truth-trusted-fact-extractor-registry.ts'])
+    for (const importer of naht) assert.ok(fixtureImporterErlaubt(importer), `nicht geprüfter Fixture-Importer ${importer}`)
+    assert.deepEqual(naht.sort(), [...FIXTURE_IMPORTER].sort())
     for (const pfad of dateienUnter('app')) {
       const text = readFileSync(pfad, 'utf8')
       assert.equal(text.includes('officialTruthTrustedFactExtrahieren'), false, pfad)
       assert.equal(text.includes('official-truth-trusted-fact-extractor-registry'), false, pfad)
     }
     assert.equal(OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY.length, 0)
+  })
+
+  test('die endliche Fixture-Importer-Liste erlaubt weder Routen noch Namensähnlichkeit', () => {
+    assert.equal(fixtureImporterErlaubt('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
+    for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unknown.ts',
+      'scripts/official-truth-integrated-pilot-1/official-source.ts', 'scripts/official-truth-integrated-pilot-1/unknown.ts',
+      'scripts/official-truth-integrated-pilot-2/engine.ts', 'scripts/official-truth-integrated-pilot-1/engine.ts/../unknown.ts',
+      'app/scripts/official-truth-integrated-pilot-1/engine.ts']) assert.equal(fixtureImporterErlaubt(path), false, path)
   })
 
   test('der kanonische Scope erreicht den Matcher unverändert und ohne Auswahl', () => {

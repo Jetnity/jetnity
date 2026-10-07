@@ -348,6 +348,41 @@ export type OfficialTruthTrustedFactExtractorErgebnis =
   | OfficialTruthTrustedFactExtractorErfolg
   | { readonly status: 'blocked'; readonly reason: OfficialTruthTrustedFactExtractorSperrgrund }
 
+/** Serverintern: die tatsächlich ausgeführte Definition und das ganze geprüfte
+ * Register. Namen allein oder eine Kopie des Ergebnisses ersetzen diese Bindung
+ * nicht. Der rohe Extraktoreingang wird niemals an den Verbraucher projiziert. */
+export type OfficialTruthTrustedFactExecutionContext = {
+  readonly extractors: readonly OfficialTruthExtractorDefinition[]
+  readonly selected: OfficialTruthExtractorDefinition
+  readonly fact: RegelFakt
+  readonly provenance: readonly OfficialTruthExtractorHerkunft[]
+}
+
+const executionContexts = new WeakMap<OfficialTruthTrustedFactExtractorErfolg, {
+  readonly input: object
+  readonly context: OfficialTruthTrustedFactExecutionContext
+}>()
+
+/** Nur die servereigene Same-Request-Naht konsumiert eine echte Ausführung.
+ * Auch ein echter Erfolg eines anderen Eingangs ist kein Same-Request-Beweis. */
+export function consumeOfficialTruthTrustedFactExecutionContext(
+  result: unknown,
+  input: unknown,
+): OfficialTruthTrustedFactExecutionContext | null {
+  if (!result || typeof result !== 'object') return null
+  const entry = executionContexts.get(result as OfficialTruthTrustedFactExtractorErfolg)
+  if (!entry) return null
+  executionContexts.delete(result as OfficialTruthTrustedFactExtractorErfolg)
+  if (entry.input !== input) return null
+  const success = result as OfficialTruthTrustedFactExtractorErfolg
+  if (success.fact !== entry.context.fact || success.provenance !== entry.context.provenance ||
+      !entry.context.extractors.includes(entry.context.selected) ||
+      success.extractorId !== entry.context.selected.extractorId ||
+      success.extractorVersion !== entry.context.selected.extractorVersion ||
+      success.schemaFamily !== entry.context.selected.schemaFamily) return null
+  return entry.context
+}
+
 /**
  * Ergebnis der einen kanonischen Ausführung einer bereits gewählten
  * und geprüften Definition. Es ist kein Annahmeergebnis.
@@ -597,7 +632,7 @@ export function officialTruthExtractorDefinitionenPruefen(wert: unknown): Offici
     if (selektoren.has(selektor)) return { ok: false, reason: 'duplicate_extractor_match' }
     selektoren.add(selektor)
   }
-  return { ok: true, registry: Object.freeze(registry) }
+  return { ok: true, registry: einfrieren(registry) }
 }
 
 function registryLesen(wert: unknown): QuellenRegistry | null {
@@ -1018,7 +1053,17 @@ function ausfuehren(
     supportVersionIds: Object.freeze(sortiert(stuetzen.map((eintrag) => eintrag.versionId))),
     provenance,
   }
-  return einfrieren(erfolg)
+  einfrieren(erfolg)
+  executionContexts.set(erfolg, Object.freeze({
+    input: satz,
+    context: Object.freeze({
+      extractors: definitionen,
+      selected: definition,
+      fact: gelaufen.fact,
+      provenance: erfolg.provenance,
+    }),
+  }))
+  return erfolg
 }
 
 /** Produktions-Einstieg. Das leere Register ist fest. Der Aufrufer wählt keinen Extraktor. */

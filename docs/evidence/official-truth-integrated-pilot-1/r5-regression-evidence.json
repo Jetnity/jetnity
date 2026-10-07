@@ -1,0 +1,1477 @@
+{
+  "schemaVersion": 1,
+  "round": "TL-R5.0",
+  "authorEvidenceOnly": true,
+  "status": "LOCAL_VERIFIED_FINAL_REMOTE_GATES_IN_SEPARATE_RECEIPT",
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh",
+    "source": "actual_current_session_turn_context_read",
+    "metadataTimestampUTC": "2026-10-07T20:09:43.182Z"
+  },
+  "bindingAmendmentBlob": "cb0605510f205313dd942b4125e801b3da938600",
+  "baselineMain": "de966778a06183748e3807bcb6af9a6cbeaeb326",
+  "seedHead": "1eb1ce7ce1409661a624fad0408aaad38ee97fb8",
+  "diagnosticHead": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+  "historicalObservedRed": {
+    "run": 37663759724,
+    "job": 112937599656,
+    "atUTC": "2026-10-07T18:14:46.228Z",
+    "assertion": "assert.ok(recovery.ok)",
+    "r3DurationMs": 294677.027944,
+    "scenario": "NOT_RECORDED",
+    "freshResultReason": "NOT_RECORDED",
+    "commitCode": "NOT_RECORDED",
+    "laterCancellationUTC": "2026-10-07T18:22:52Z",
+    "checkoutSeconds": 279,
+    "testsSecondsUntilCancellation": 852,
+    "configuredJobMinutes": 20,
+    "causeOfHistoricalAttempt": "NOT_UNIQUELY_RECOVERABLE_FROM_RETAINED_LOG",
+    "privateLog": "failed-main-ci.log",
+    "sha256": "259952a0906e2eb0eddd5a786ec5c74856d34d28c072c3ed7dc17dc4c85170b2"
+  },
+  "nativeContention": {
+    "scope": "Controlled native Linux/arm64 causal experiment, distinct from uninstrumented historical x64 failure and unmodified full-suite runs",
+    "image": "sha256:a184368370116fb675edc535efbfa9be2e913d5a605e046a5e41819c1dd6beaf",
+    "postgres": "16.15",
+    "node": "22.23.3",
+    "network": "none",
+    "cpus": 1,
+    "memoryMiB": 4096,
+    "pidsLimit": 512,
+    "cpuCompetitors": 5,
+    "targetPhase": "COMMIT only; no target SQL delay or extra target validation; actual fixed native20s guard",
+    "red": {
+      "sqlHead": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+      "result": [
+        {
+          "phase": "bounded_native_commit_cpu_contention",
+          "writeLockReleased": true,
+          "allTablesEmpty": true,
+          "competitors": 5,
+          "result": "commit_outcome_unknown",
+          "elapsedMs": 26726,
+          "readback": "receipt_absent",
+          "rows": null,
+          "operations": [
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 3,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "begin",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 5817,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "commit",
+                "elapsedMs": 20070,
+                "outcome": "sql_error",
+                "code": "57P01",
+                "commitAcknowledged": false
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 15,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 5,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 20015,
+                "outcome": "complete",
+                "code": null
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 5,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 11,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "begin",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "commit",
+                "elapsedMs": 3,
+                "outcome": "complete",
+                "code": null,
+                "commitAcknowledged": true
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "sql_error",
+                "code": "57014"
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              }
+            ]
+          ]
+        },
+        {
+          "phase": "independent_successor_after_contention",
+          "result": "inserted",
+          "readback": "verified",
+          "rows": 652
+        }
+      ],
+      "command": {
+        "label": "causal-baseline",
+        "exitCode": 1,
+        "elapsedSeconds": 49.045,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "privateLog": "causal-baseline.log",
+      "sha256": "3aaa0a7b542dbee61bc5dbaea215cc5518d0113b3c016fe26d0a1865093740db"
+    },
+    "green": {
+      "result": [
+        {
+          "phase": "bounded_native_commit_cpu_contention",
+          "writeLockReleased": true,
+          "allTablesEmpty": false,
+          "competitors": 5,
+          "result": "inserted",
+          "elapsedMs": 26780,
+          "readback": "verified",
+          "rows": 652,
+          "operations": [
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 3,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "begin",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 4805,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "commit",
+                "elapsedMs": 17072,
+                "outcome": "complete",
+                "code": null,
+                "commitAcknowledged": true
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 15,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 5,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 17047,
+                "outcome": "sql_error",
+                "code": "57014"
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 3,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 4,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 7,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 4,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "begin",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1703,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "commit",
+                "elapsedMs": 8,
+                "outcome": "complete",
+                "code": null,
+                "commitAcknowledged": true
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 5,
+                "outcome": "sql_error",
+                "code": "57014"
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 2,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "begin",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1697,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "commit",
+                "elapsedMs": 14,
+                "outcome": "complete",
+                "code": null,
+                "commitAcknowledged": true
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 10,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "sql_error",
+                "code": "57014"
+              }
+            ],
+            [
+              {
+                "phase": "startup",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              },
+              {
+                "phase": "query",
+                "elapsedMs": 1,
+                "outcome": "complete",
+                "code": null
+              }
+            ]
+          ]
+        },
+        {
+          "phase": "independent_successor_after_contention",
+          "result": "idempotent",
+          "readback": "verified",
+          "rows": 652
+        }
+      ],
+      "command": {
+        "label": "causal-corrected",
+        "exitCode": 0,
+        "elapsedSeconds": 40.513,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "privateLog": "causal-corrected.log",
+      "sha256": "ed64f8fcc80178e2351d53937f9295abecb7677a35a980b4be5d3fc9ab08b2f2"
+    },
+    "initialExperiment": {
+      "red": {
+        "label": "commit-load-red",
+        "exitCode": 1,
+        "elapsedSeconds": 47.644,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "green": {
+        "label": "commit-load-green",
+        "exitCode": 0,
+        "elapsedSeconds": 42.611,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "logs": [
+        {
+          "privateLog": "commit-load-red.log",
+          "sha256": "c16186532a6711c1ff6ad194120189f3570d6a1030210d65138abb1f4c0ad2d6"
+        },
+        {
+          "privateLog": "commit-load-green.log",
+          "sha256": "6940111c2ea17d19389a9fdd40176f5bc054a30dd6d0cb24033e1fd63c860392"
+        }
+      ]
+    },
+    "demonstratedCause": "Redundant canonical decoding and unused generic custody traversal consume the fixed COMMIT budget under the stated contention. Native20s guard expires normally:57P01, no ACK, unknown outcome; independent read proves eight empty tables and lock release, then a fresh writer succeeds. Shared validated envelope removes repeated decode; same contention then produces real ACK, full652-row readback and idempotent successor. No timeout or adapter outcome change.",
+    "historicalAttributionLimit": "This is a measured causal failure mechanism; it does not establish the missing exact scenario/reason in the historical de966 log."
+  },
+  "profiling": {
+    "scope": "Disposable PostgreSQL17.6; one complete actual primary publication and readback; track_functions=all only inside owned local cluster",
+    "before": {
+      "operations": {
+        "result": "inserted",
+        "elapsedMs": 12476,
+        "operations": [
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "begin",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 5989,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "commit",
+              "elapsedMs": 3584,
+              "outcome": "complete",
+              "code": null,
+              "commitAcknowledged": true
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 3580,
+              "outcome": "sql_error",
+              "code": "57014"
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "begin",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1906,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "commit",
+              "elapsedMs": 6,
+              "outcome": "complete",
+              "code": null,
+              "commitAcknowledged": true
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 2,
+              "outcome": "sql_error",
+              "code": "57014"
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            }
+          ]
+        ]
+      },
+      "functions": {
+        "verify_artifact_retained_v2": {
+          "calls": 638,
+          "totalMs": 3462.229,
+          "selfMs": 95.349
+        },
+        "publish_local_integrated_v2": {
+          "calls": 1,
+          "totalMs": 5977.535,
+          "selfMs": 93.239
+        },
+        "closure_v2": {
+          "calls": 4,
+          "totalMs": 1257.26,
+          "selfMs": 85.209
+        },
+        "typed": {
+          "calls": 63596,
+          "totalMs": 2955.777,
+          "selfMs": 825.247
+        },
+        "valid_pin": {
+          "calls": 57061,
+          "totalMs": 1729.548,
+          "selfMs": 821.62
+        },
+        "utf16_sort_key": {
+          "calls": 556163,
+          "totalMs": 744.514,
+          "selfMs": 744.514
+        },
+        "sorted_unique": {
+          "calls": 474,
+          "totalMs": 7.053,
+          "selfMs": 7.053
+        },
+        "require": {
+          "calls": 162329,
+          "totalMs": 53.448,
+          "selfMs": 53.448
+        },
+        "semantic_contract_v2": {
+          "calls": 116,
+          "totalMs": 272.713,
+          "selfMs": 5.901
+        },
+        "decode": {
+          "calls": 3963,
+          "totalMs": 4082.216,
+          "selfMs": 428.607
+        },
+        "derived_edges_v2": {
+          "calls": 3104,
+          "totalMs": 185.443,
+          "selfMs": 32.043
+        },
+        "canonical": {
+          "calls": 614339,
+          "totalMs": 3660.58,
+          "selfMs": 3173.607
+        },
+        "artifact_edges": {
+          "calls": 1568,
+          "totalMs": 2742.18,
+          "selfMs": 304.103
+        },
+        "canonical_url": {
+          "calls": 529,
+          "totalMs": 5.408,
+          "selfMs": 3.52
+        },
+        "utf16_length": {
+          "calls": 8598,
+          "totalMs": 276.869,
+          "selfMs": 276.869
+        },
+        "validate_graph_v2": {
+          "calls": 4,
+          "totalMs": 3908.336,
+          "selfMs": 2747.052
+        },
+        "content_v2": {
+          "calls": 292,
+          "totalMs": 526.956,
+          "selfMs": 247.331
+        },
+        "codec_invariants_v2": {
+          "calls": 7992,
+          "totalMs": 33.433,
+          "selfMs": 24.772
+        },
+        "validate_bundle_v2": {
+          "calls": 4,
+          "totalMs": 4463.643,
+          "selfMs": 2.755
+        },
+        "read_local_integrated_v2": {
+          "calls": 1,
+          "totalMs": 1859.971,
+          "selfMs": 2.189
+        },
+        "artifact_v2": {
+          "calls": 1568,
+          "totalMs": 7646.775,
+          "selfMs": 127.051
+        },
+        "pins": {
+          "calls": 3689,
+          "totalMs": 82.292,
+          "selfMs": 12.542
+        },
+        "validate_semantics_v2": {
+          "calls": 4,
+          "totalMs": 549.427,
+          "selfMs": 12.343
+        },
+        "keys": {
+          "calls": 90961,
+          "totalMs": 1155.834,
+          "selfMs": 1155.834
+        },
+        "artifact_constraint_v2": {
+          "calls": 638,
+          "totalMs": 3573.396,
+          "selfMs": 111.167
+        }
+      },
+      "privateLog": "r5-profile-before.log",
+      "sha256": "f7bbf70b37476f293c08ad3499fca110007f3a51ee097a0558696b79bc65779d"
+    },
+    "after": {
+      "operations": {
+        "result": "inserted",
+        "elapsedMs": 10447,
+        "operations": [
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "begin",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 5250,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "commit",
+              "elapsedMs": 2653,
+              "outcome": "complete",
+              "code": null,
+              "commitAcknowledged": true
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 2649,
+              "outcome": "sql_error",
+              "code": "57014"
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 2,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "begin",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1590,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "commit",
+              "elapsedMs": 8,
+              "outcome": "complete",
+              "code": null,
+              "commitAcknowledged": true
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 3,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 2,
+              "outcome": "sql_error",
+              "code": "57014"
+            }
+          ],
+          [
+            {
+              "phase": "startup",
+              "elapsedMs": 3,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            },
+            {
+              "phase": "query",
+              "elapsedMs": 1,
+              "outcome": "complete",
+              "code": null
+            }
+          ]
+        ]
+      },
+      "functions": {
+        "verify_artifact_retained_v2": {
+          "calls": 638,
+          "totalMs": 2532.298,
+          "selfMs": 93.141
+        },
+        "publish_local_integrated_v2": {
+          "calls": 1,
+          "totalMs": 5240.156,
+          "selfMs": 91.674
+        },
+        "closure_v2": {
+          "calls": 4,
+          "totalMs": 1007.733,
+          "selfMs": 84.839
+        },
+        "typed": {
+          "calls": 63596,
+          "totalMs": 2889.954,
+          "selfMs": 808.131
+        },
+        "valid_pin": {
+          "calls": 53372,
+          "totalMs": 1630.278,
+          "selfMs": 793.508
+        },
+        "sorted_unique": {
+          "calls": 474,
+          "totalMs": 6.773,
+          "selfMs": 6.773
+        },
+        "utf16_sort_key": {
+          "calls": 336933,
+          "totalMs": 517.603,
+          "selfMs": 517.603
+        },
+        "require": {
+          "calls": 162329,
+          "totalMs": 51.399,
+          "selfMs": 51.399
+        },
+        "semantic_contract_v2": {
+          "calls": 116,
+          "totalMs": 260.143,
+          "selfMs": 5.526
+        },
+        "derived_edges_v2": {
+          "calls": 3104,
+          "totalMs": 182.045,
+          "selfMs": 31.317
+        },
+        "canonical_url": {
+          "calls": 529,
+          "totalMs": 5.241,
+          "selfMs": 3.403
+        },
+        "artifact_envelope": {
+          "calls": 1568,
+          "totalMs": 2603.41,
+          "selfMs": 292.461
+        },
+        "utf16_length": {
+          "calls": 8598,
+          "totalMs": 274.512,
+          "selfMs": 274.512
+        },
+        "validate_graph_v2": {
+          "calls": 4,
+          "totalMs": 3550.515,
+          "selfMs": 2636.899
+        },
+        "decode": {
+          "calls": 2395,
+          "totalMs": 2402.176,
+          "selfMs": 259.245
+        },
+        "codec_invariants_v2": {
+          "calls": 7992,
+          "totalMs": 32.383,
+          "selfMs": 24.068
+        },
+        "content_v2": {
+          "calls": 292,
+          "totalMs": 499.227,
+          "selfMs": 225.036
+        },
+        "validate_bundle_v2": {
+          "calls": 4,
+          "totalMs": 4076.874,
+          "selfMs": 2.373
+        },
+        "read_local_integrated_v2": {
+          "calls": 1,
+          "totalMs": 1545.272,
+          "selfMs": 2.191
+        },
+        "canonical": {
+          "calls": 345231,
+          "totalMs": 2149.89,
+          "selfMs": 1882.729
+        },
+        "artifact_v2": {
+          "calls": 1568,
+          "totalMs": 5816.103,
+          "selfMs": 126.173
+        },
+        "validate_semantics_v2": {
+          "calls": 4,
+          "totalMs": 520.892,
+          "selfMs": 11.975
+        },
+        "artifact_constraint_v2": {
+          "calls": 638,
+          "totalMs": 2640.846,
+          "selfMs": 108.547
+        },
+        "keys": {
+          "calls": 87272,
+          "totalMs": 1075.608,
+          "selfMs": 1075.608
+        },
+        "verify_retained_v2": {
+          "calls": 3,
+          "totalMs": 3832.577,
+          "selfMs": 10.678
+        }
+      },
+      "privateLog": "r5-profile-after.log",
+      "sha256": "ee76418500e000aa1fdfb0d89abf367de0d43b3ab72a8f30d126d9aca3774927"
+    },
+    "preservedCounts": {
+      "artifactConstraintEvents": 638,
+      "retainedArtifactVerifications": 638,
+      "typedArtifactVerifications": 1568
+    },
+    "decodeCalls": {
+      "before": 3963,
+      "after": 2395
+    }
+  },
+  "newAdmissionRegression": {
+    "positiveNativeCalls": 6,
+    "rejectedNativeCalls": 32,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 1789.191291,
+    "privateLog": "r5-envelope-focused.log",
+    "sha256": "30dc5b65033599cda27b698f2367328f14f6d2237fbd72f69d3454ccbc4cc5f4"
+  },
+  "preserved": {
+    "semanticGroups": 69,
+    "r3Groups": 19,
+    "structuralGroups": 16,
+    "actualRows": [
+      652,
+      720
+    ],
+    "urlDifferentialComparisons": 1008,
+    "descriptorRepresentations": "1..16",
+    "legacyDepth": 8,
+    "localDepth": 16,
+    "operationalLimitsChanged": false,
+    "canonicalContractsChanged": false,
+    "taskChanged": false,
+    "realOfficialSourcePilot": "BLOCKED"
+  },
+  "normalFullSuiteBefore": {
+    "tests": 5766,
+    "pass": 5766,
+    "fail": 0,
+    "suites": 810,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 403325.201143,
+    "platform": "Linux arm64 PostgreSQL16.15, four CPUs,4GiB",
+    "privateLog": "instrumented-red.log",
+    "sha256": "20a44cecfdb976b6add11ab6d25ff8c6a47c617d38f622f72124e6cb68552207"
+  },
+  "setupFailures": [
+    {
+      "scope": "Disposable container preparation, not product RED",
+      "exitCode": 1,
+      "reason": "Git alternates unavailable inside Linux; replaced mount-only clone with complete Git bundle",
+      "privateLog": "setup-clone-failure.log",
+      "sha256": "e23e8cbe3cf7f61d2d31e202b480cf53a2a2fe6eb627e3cbc5383d7f226914dc"
+    },
+    {
+      "scope": "Inherited image environment rejected by unchanged safety guard before native startup; not semantic/guard-loss RED",
+      "exitCode": 1,
+      "tests": 5766,
+      "pass": 5763,
+      "fail": 3,
+      "skip": 0,
+      "durationMs": 62263.588611,
+      "reason": "local_proof_connection_override_forbidden; removed image PG build metadata only from private child test environment",
+      "privateLog": "setup-environment-refusal.log",
+      "sha256": "a48faefc3b7bf5637b6ad800e1c081f85df77f2e532c41b7ba9b3f333cadef2e"
+    }
+  ],
+  "finalExactHead": "Separate publication receipt binds final head/tree and all new CI/Auth/Preview gates after the final commit.",
+  "instrumentedGithubFullSuiteRed": {
+    "head": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+    "checkout": "e4ea1487d728f2a794e25cc14cda80c4835cf886",
+    "run": 37682469066,
+    "job": 113001755522,
+    "tests": 5766,
+    "pass": 5765,
+    "fail": 1,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 923306.238266,
+    "nativeSemanticGroups": 69,
+    "nativeStructuralGroups": 16,
+    "r3": {
+      "status": "FAIL",
+      "durationMs": 98760.767485,
+      "atUTC": "2026-10-07T20:34:44.438Z",
+      "code": "57P01",
+      "phase": "url_positive_public_COMMIT",
+      "sourceLine": 59,
+      "specificUrlFixture": "NOT_RECORDED",
+      "guardScenarios": "NOT_REACHED"
+    },
+    "inference": "Genuine normal COMMIT termination in an isolated owned cluster, consistent with the measured healthy-guard deadline under SQL workload; no claim of recovered historical de966 scenario",
+    "privateLog": "r5-diagnostic-ci.log",
+    "sha256": "d74f8b44d722c0e76bb100fd26d4e863a7c4b12e00538a8cdec0303a6c243eb2",
+    "checkoutSeconds": 12,
+    "testsSeconds": 923,
+    "jobBudgetMinutes": 20,
+    "laterGates": "skipped_after_test_failure",
+    "diagnosticFollowup": "Add safe scenario/phase/operation/independent-readback evidence to the earlier URL-positive COMMIT phase too.",
+    "checkoutTree": "0498df7d85679e507e857b2cabee18d859072970"
+  },
+  "normalFullSuiteAfter": {
+    "tests": 5767,
+    "pass": 5767,
+    "fail": 0,
+    "suites": 810,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 397221.715681,
+    "platform": "Linux arm64 PostgreSQL16.15, four CPUs,4GiB",
+    "codeBasis": "Corrected SQL and new R5 admission test; before the later URL diagnostic-only expansion",
+    "r3Groups": 19,
+    "semanticGroups": 69,
+    "structuralGroups": 16,
+    "r5NativePositiveCalls": 6,
+    "r5NativeRejectedCalls": 32,
+    "privateLog": "corrected-full.log",
+    "sha256": "8625d50f687691b53014925b30c31bd105b7035d6ca71dd422efd15c7d0e5404"
+  },
+  "finalNativeR3": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-integrated-pilot-r3.test.ts",
+    "exitCode": 0,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 145376.962542,
+    "r3Groups": 19,
+    "codecComparisons": 1008,
+    "guardLoss": [
+      {
+        "scenario": "cancel",
+        "elapsedAfterLossMs": 102,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 2919,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "terminate",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 2909,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "dispatch_gap",
+        "elapsedAfterLossMs": 102,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 111,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "ack_race",
+        "elapsedAfterLossMs": 3552,
+        "outcome": "acknowledged_verified_commit",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 4359,
+          "outcome": "complete",
+          "code": null,
+          "commitAcknowledged": true,
+          "protectionFailure": "commit_guard_lost"
+        }
+      }
+    ],
+    "urlPositiveDiagnostics": [
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "selected_escaping_and_500",
+        "phase": "complete",
+        "elapsedMs": 12004,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 7170,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2790,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      },
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "unselected_role_specific",
+        "phase": "complete",
+        "elapsedMs": 11692,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 6856,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2766,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      },
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "representation_escaping_and_500",
+        "phase": "complete",
+        "elapsedMs": 10661,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 5823,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2776,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      }
+    ],
+    "privateLog": "r5-r3-final-diagnostics.log",
+    "sha256": "e37ba30e07dc7ec077a6b0fc44fbaac86388b0b3cfe98223f3bf383438f7c1a2"
+  },
+  "developerCommand": {
+    "command": "npm run official-truth:pilot-1",
+    "exitCode": 0,
+    "elapsedSeconds": 574.697,
+    "privateLog": "r5-developer-command.log",
+    "sha256": "65b8c535546a96efb73fa7ca79897079c076067f8c320260ad33da4c6d513e01",
+    "status": "PASS",
+    "semanticGroups": 69,
+    "r3Groups": 19,
+    "structuralGroups": 16,
+    "negativePaths": 50,
+    "actualRows": [
+      652,
+      720
+    ],
+    "realSourceThisInvocation": "NOT_RUN",
+    "overallRealOfficialSourcePilot": "BLOCKED",
+    "basis": "Corrected SQL; invocation began before the URL-only diagnostic expansion, separately tested by finalNativeR3."
+  },
+  "cleanup": "All completed owned native clusters stopped by their mandatory finally blocks; disposable Linux containers exited with --rm; no hosted target.",
+  "implementationFileDigests": {
+    "scripts/db/official-truth-integrated-pilot-1/storage.sql": "be1f1a81215ea7dd59686aad00b2e6d7b23a3c85fd4228d4cec531a8756d52ef",
+    "scripts/db/official-truth-integrated-pilot-1/semantic-v2.sql": "cf38bbee86738512b158fb59ee48be5bb16301952f6c5fa1bd4d16abdc30b060",
+    "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts": "ed9c496fc46aef18ea6863b51ef72368e177bbdfbd9ee81150f8f949b4db62e3",
+    "scripts/db/official-truth-integrated-pilot-1/r3-proof.ts": "c645060eb391d4fe5c7037b09af8da7d8dfa09e817b56817d18fde4f02e500c8",
+    "scripts/db/official-truth-integrated-pilot-1/r5-contention-proof.ts": "9f6439f6a297e06e6cadede7f1be0f32aac71db70df785c8dbc13e52a6281e70"
+  }
+}

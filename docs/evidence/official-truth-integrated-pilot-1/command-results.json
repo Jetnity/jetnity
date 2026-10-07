@@ -1,0 +1,754 @@
+{
+  "schemaVersion": 5,
+  "round": "TL-R5",
+  "authorEvidenceOnly": true,
+  "basisHead": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+  "correctedWorkingTree": "implementation file digests in r5-regression-evidence; final exact head/tree in separate receipt",
+  "session": {
+    "id": "01a11333-cbc2-7282-b194-27335e632c61",
+    "model": "gpt-6-astra",
+    "reasoning": "xhigh",
+    "source": "actual_current_session_turn_context_read",
+    "metadataTimestampUTC": "2026-10-07T20:09:43.182Z"
+  },
+  "native": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-integrated-pilot-r3.test.ts",
+    "exitCode": 0,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 145376.962542,
+    "r3Groups": 19,
+    "codecComparisons": 1008,
+    "guardLoss": [
+      {
+        "scenario": "cancel",
+        "elapsedAfterLossMs": 102,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 2919,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "terminate",
+        "elapsedAfterLossMs": 103,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 2909,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "dispatch_gap",
+        "elapsedAfterLossMs": 102,
+        "outcome": "commit_outcome_unknown",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 111,
+          "outcome": "sql_error",
+          "code": "57P01",
+          "commitAcknowledged": false,
+          "protectionFailure": "commit_guard_lost"
+        }
+      },
+      {
+        "scenario": "ack_race",
+        "elapsedAfterLossMs": 3552,
+        "outcome": "acknowledged_verified_commit",
+        "diagnostic": {
+          "phase": "commit",
+          "elapsedMs": 4359,
+          "outcome": "complete",
+          "code": null,
+          "commitAcknowledged": true,
+          "protectionFailure": "commit_guard_lost"
+        }
+      }
+    ],
+    "urlPositiveDiagnostics": [
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "selected_escaping_and_500",
+        "phase": "complete",
+        "elapsedMs": 12004,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 7170,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2790,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      },
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "unselected_role_specific",
+        "phase": "complete",
+        "elapsedMs": 11692,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 6856,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2766,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      },
+      {
+        "schema": "ot-pilot-r5-url-diagnostic-v1",
+        "status": "complete",
+        "scenario": "representation_escaping_and_500",
+        "phase": "complete",
+        "elapsedMs": 10661,
+        "code": null,
+        "independentReadback": "verified_exact",
+        "operations": [
+          {
+            "phase": "startup",
+            "elapsedMs": 2,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "begin",
+            "elapsedMs": 1,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "query",
+            "elapsedMs": 5823,
+            "outcome": "complete",
+            "code": null
+          },
+          {
+            "phase": "commit",
+            "elapsedMs": 2776,
+            "outcome": "complete",
+            "code": null,
+            "commitAcknowledged": true
+          }
+        ]
+      }
+    ],
+    "privateLog": "r5-r3-final-diagnostics.log",
+    "sha256": "e37ba30e07dc7ec077a6b0fc44fbaac86388b0b3cfe98223f3bf383438f7c1a2"
+  },
+  "developerCommand": {
+    "command": "npm run official-truth:pilot-1",
+    "exitCode": 0,
+    "elapsedSeconds": 574.697,
+    "privateLog": "r5-developer-command.log",
+    "sha256": "65b8c535546a96efb73fa7ca79897079c076067f8c320260ad33da4c6d513e01",
+    "status": "PASS",
+    "semanticGroups": 69,
+    "r3Groups": 19,
+    "structuralGroups": 16,
+    "negativePaths": 50,
+    "actualRows": [
+      652,
+      720
+    ],
+    "realSourceThisInvocation": "NOT_RUN",
+    "overallRealOfficialSourcePilot": "BLOCKED",
+    "basis": "Corrected SQL; invocation began before the URL-only diagnostic expansion, separately tested by finalNativeR3."
+  },
+  "fullSuite": {
+    "tests": 5767,
+    "pass": 5767,
+    "fail": 0,
+    "suites": 810,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 397221.715681,
+    "platform": "Linux arm64 PostgreSQL16.15, four CPUs,4GiB",
+    "codeBasis": "Corrected SQL and new R5 admission test; before the later URL diagnostic-only expansion",
+    "r3Groups": 19,
+    "semanticGroups": 69,
+    "structuralGroups": 16,
+    "r5NativePositiveCalls": 6,
+    "r5NativeRejectedCalls": 32,
+    "privateLog": "corrected-full.log",
+    "sha256": "8625d50f687691b53014925b30c31bd105b7035d6ca71dd422efd15c7d0e5404"
+  },
+  "finalChecks": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 2.22
+    },
+    {
+      "command": "./node_modules/.bin/eslint scripts/db/official-truth-integrated-pilot-1/r3-proof.ts scripts/db/official-truth-integrated-pilot-1/r5-contention-proof.ts lib/readiness/official-truth-integrated-pilot-storage.test.ts",
+      "exitCode": 0,
+      "elapsedSeconds": 1.083
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "elapsedSeconds": 0.21
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "elapsedSeconds": 0.137
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "elapsedSeconds": 0.217
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "elapsedSeconds": 0.269
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "elapsedSeconds": 2.747
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "elapsedSeconds": 0.222
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "elapsedSeconds": 15.328
+    }
+  ],
+  "fullLint": {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "errors": 0,
+    "warnings": 146,
+    "durationSeconds": null,
+    "durationNote": "No wall-clock duration captured for the first local lint invocation; final touched-file lint has timed result.",
+    "privateLog": "r5-lint.log",
+    "sha256": "99870396ab7729f1016a76bd2fcab0f4dfd222b82670570e48d475d699281f14"
+  },
+  "additionalTouchedLint": {
+    "command": "./node_modules/.bin/eslint lib/readiness/official-truth-integrated-pilot-storage.test.ts scripts/db/official-truth-integrated-pilot-1/r5-contention-proof.ts",
+    "exitCode": 0,
+    "elapsedSeconds": 1.188
+  },
+  "nativeAdmission": {
+    "positiveNativeCalls": 6,
+    "rejectedNativeCalls": 32,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 1789.191291,
+    "privateLog": "r5-envelope-focused.log",
+    "sha256": "30dc5b65033599cda27b698f2367328f14f6d2237fbd72f69d3454ccbc4cc5f4"
+  },
+  "causalRegression": {
+    "baseline": {
+      "label": "causal-baseline",
+      "exitCode": 1,
+      "elapsedSeconds": 49.045,
+      "network": "none",
+      "cpus": 1,
+      "memoryMiB": 4096,
+      "newDisposableContainer": true
+    },
+    "corrected": {
+      "label": "causal-corrected",
+      "exitCode": 0,
+      "elapsedSeconds": 40.513,
+      "network": "none",
+      "cpus": 1,
+      "memoryMiB": 4096,
+      "newDisposableContainer": true
+    },
+    "initialExperiment": {
+      "red": {
+        "label": "commit-load-red",
+        "exitCode": 1,
+        "elapsedSeconds": 47.644,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "green": {
+        "label": "commit-load-green",
+        "exitCode": 0,
+        "elapsedSeconds": 42.611,
+        "network": "none",
+        "cpus": 1,
+        "memoryMiB": 4096,
+        "newDisposableContainer": true
+      },
+      "logs": [
+        {
+          "privateLog": "commit-load-red.log",
+          "sha256": "c16186532a6711c1ff6ad194120189f3570d6a1030210d65138abb1f4c0ad2d6"
+        },
+        {
+          "privateLog": "commit-load-green.log",
+          "sha256": "6940111c2ea17d19389a9fdd40176f5bc054a30dd6d0cb24033e1fd63c860392"
+        }
+      ]
+    },
+    "evidence": "r5-regression-evidence.json"
+  },
+  "normalInstrumentedMacR3": {
+    "exitCode": 0,
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 148983.674792,
+    "groups": 19,
+    "comparisons": 1008,
+    "privateLog": "r5-native-instrumented-mac.log",
+    "sha256": "48780fef2a999588d6d40c42bfe2e1032672f7b6044065468d8b14bdf29cdbab"
+  },
+  "normalInstrumentedLinuxBefore": {
+    "tests": 5766,
+    "pass": 5766,
+    "fail": 0,
+    "suites": 810,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 403325.201143,
+    "platform": "Linux arm64 PostgreSQL16.15, four CPUs,4GiB",
+    "privateLog": "instrumented-red.log",
+    "sha256": "20a44cecfdb976b6add11ab6d25ff8c6a47c617d38f622f72124e6cb68552207"
+  },
+  "setupFailures": [
+    {
+      "scope": "Disposable container preparation, not product RED",
+      "exitCode": 1,
+      "reason": "Git alternates unavailable inside Linux; replaced mount-only clone with complete Git bundle",
+      "privateLog": "setup-clone-failure.log",
+      "sha256": "e23e8cbe3cf7f61d2d31e202b480cf53a2a2fe6eb627e3cbc5383d7f226914dc"
+    },
+    {
+      "scope": "Inherited image environment rejected by unchanged safety guard before native startup; not semantic/guard-loss RED",
+      "exitCode": 1,
+      "tests": 5766,
+      "pass": 5763,
+      "fail": 3,
+      "skip": 0,
+      "durationMs": 62263.588611,
+      "reason": "local_proof_connection_override_forbidden; removed image PG build metadata only from private child test environment",
+      "privateLog": "setup-environment-refusal.log",
+      "sha256": "a48faefc3b7bf5637b6ad800e1c081f85df77f2e532c41b7ba9b3f333cadef2e"
+    }
+  ],
+  "nativeProfiling": {
+    "beforeExitCode": 0,
+    "afterExitCode": 0,
+    "operationDurationsAndCounts": "r5-regression-evidence.json; total wrapper wall-clock duration not captured"
+  },
+  "instrumentedGithubRed": {
+    "head": "58eb5d932783cbf462189b90e82f9c36e1b3ff90",
+    "checkout": "e4ea1487d728f2a794e25cc14cda80c4835cf886",
+    "run": 37682469066,
+    "job": 113001755522,
+    "tests": 5766,
+    "pass": 5765,
+    "fail": 1,
+    "skip": 0,
+    "cancelled": 0,
+    "durationMs": 923306.238266,
+    "nativeSemanticGroups": 69,
+    "nativeStructuralGroups": 16,
+    "r3": {
+      "status": "FAIL",
+      "durationMs": 98760.767485,
+      "atUTC": "2026-10-07T20:34:44.438Z",
+      "code": "57P01",
+      "phase": "url_positive_public_COMMIT",
+      "sourceLine": 59,
+      "specificUrlFixture": "NOT_RECORDED",
+      "guardScenarios": "NOT_REACHED"
+    },
+    "inference": "Genuine normal COMMIT termination in an isolated owned cluster, consistent with the measured healthy-guard deadline under SQL workload; no claim of recovered historical de966 scenario",
+    "privateLog": "r5-diagnostic-ci.log",
+    "sha256": "d74f8b44d722c0e76bb100fd26d4e863a7c4b12e00538a8cdec0303a6c243eb2",
+    "checkoutSeconds": 12,
+    "testsSeconds": 923,
+    "jobBudgetMinutes": 20,
+    "laterGates": "skipped_after_test_failure",
+    "diagnosticFollowup": "Add safe scenario/phase/operation/independent-readback evidence to the earlier URL-positive COMMIT phase too.",
+    "checkoutTree": "0498df7d85679e507e857b2cabee18d859072970"
+  },
+  "regressionEvidence": "r5-regression-evidence.json",
+  "finalExactHeadRemoteGates": "Must be read after final publication; recorded in separate exact-head receipt. Earlier CI/Auth/Preview do not transfer.",
+  "hostedDatabaseCommands": "Not invoked: correction is disposable native schema only; mandatory native ACL/RLS/immutability proof retained. Fresh remote Auth comparison is read-only and separately required.",
+  "sourceCommand": "NOT_RUN; retained source evidence and overall BLOCKED unchanged",
+  "historicalR3": {
+    "schemaVersion": 4,
+    "round": "TL-R3",
+    "authorEvidenceOnly": true,
+    "basisHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+    "session": {
+      "id": "01a11333-cbc2-7282-b194-27335e632c61",
+      "model": "gpt-6-astra",
+      "reasoning": "xhigh",
+      "source": "actual_current_session_turn_metadata_read",
+      "metadataTimestampUTC": "2026-10-07T15:29:19.272Z"
+    },
+    "native": {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-integrated-pilot-r3.test.ts",
+      "exitCode": 0,
+      "postgres": "17.6",
+      "r3Groups": 19,
+      "r3CodecComparisons": 1008,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "durationMs": 168034.490083
+    },
+    "developerCommand": {
+      "command": "npm run official-truth:pilot-1",
+      "exitCode": 0,
+      "status": "PASS",
+      "negativePaths": 50,
+      "producerRoundtrips": 2,
+      "semanticGroups": 69,
+      "r3Groups": 19,
+      "structuralGroups": 16,
+      "realSourceThisInvocation": "NOT_RUN",
+      "overallRealOfficialSourcePilot": "BLOCKED",
+      "log": "r3-developer-command-final-barrier.log"
+    },
+    "finalChecks": [
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run lint",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:dead",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:exports",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:deps",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:api-schutz",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:schema-bezug",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run check:operating-mode",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 0
+      }
+    ],
+    "lint": {
+      "errors": 0,
+      "warnings": 145
+    },
+    "earlierAttempts": [
+      {
+        "command": "npm run build",
+        "status": "SANDBOX_IPC_EPERM",
+        "resolution": "Authorized local execution escalation; final build exit0, no deployment."
+      },
+      {
+        "kind": "superseded_linux_ci_observation_barrier_failure",
+        "head": "4d8da35a09825963fe435184ab4305936f7d4869",
+        "run": 37652425354,
+        "tests": 5766,
+        "pass": 5765,
+        "fail": 1,
+        "skip": 0,
+        "reason": "Required native COMMIT observation barrier not reached; precise scenario/timings not retained. Final fixture uses stable advisory-lock barrier, full-phase observation and bounded diagnostics. No test is skipped or backend limit relaxed."
+      },
+      {
+        "kind": "native_dispatch_window_race",
+        "head": "4d8da35a09825963fe435184ab4305936f7d4869",
+        "evidence": "r3-regression-evidence.json",
+        "oldHeadGatesInvalidForFinal": true
+      }
+    ],
+    "regressionEvidence": "r3-regression-evidence.json",
+    "intermediateLogs": {
+      "r3-build-final.log": {
+        "sha256": "77a0aeae5bb160d54a7c369e79017adb17a2e5c10c2f29b1bd20e003598c898d",
+        "bytes": 3834,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-api-schutz.log": {
+        "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+        "bytes": 136,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-dead.log": {
+        "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+        "bytes": 172,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-deps.log": {
+        "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+        "bytes": 340,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-exports.log": {
+        "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+        "bytes": 150,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-operating-mode.log": {
+        "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+        "bytes": 106,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-check-schema-bezug.log": {
+        "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+        "bytes": 1028,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-developer-command.log": {
+        "sha256": "b56e5d520c92a65bb96c283548d04348a1e0f40ba5083e2c09285609da261afe",
+        "bytes": 1134,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final-lint.log": {
+        "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+        "bytes": 61204,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final-typecheck.log": {
+        "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+        "bytes": 135,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-full-test.log": {
+        "sha256": "6cb3ba67d269a698acb666c6c3ed9daa0a58e1d0db9526d266b2c93c2c086e29",
+        "bytes": 1367069,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-build.log": {
+        "sha256": "8ee68f14b50f4fe096398790ead7a6e8243064f7d694c9839a751d823d0e50c6",
+        "bytes": 3835,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-api-schutz.log": {
+        "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+        "bytes": 136,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-dead.log": {
+        "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+        "bytes": 172,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-deps.log": {
+        "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+        "bytes": 340,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-exports.log": {
+        "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+        "bytes": 150,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-operating-mode.log": {
+        "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+        "bytes": 106,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-check-schema-bezug.log": {
+        "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+        "bytes": 1028,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-lint.log": {
+        "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+        "bytes": 61204,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final2-typecheck.log": {
+        "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+        "bytes": 135,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-build.log": {
+        "sha256": "60f57f143a02339adf80a79c27a898a7152c05901e070eee8610268089986dcf",
+        "bytes": 3642,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-api-schutz.log": {
+        "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+        "bytes": 136,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-dead.log": {
+        "sha256": "a0d2825bbde17ec56fdf243c0ca29315e8f774eba3a96b518d072f75ee4a2289",
+        "bytes": 172,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-deps.log": {
+        "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+        "bytes": 340,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-exports.log": {
+        "sha256": "c88bfff095a372274ba4085f43e31459258df7f623880fea804843ec7ce11335",
+        "bytes": 150,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-operating-mode.log": {
+        "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+        "bytes": 106,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-check-schema-bezug.log": {
+        "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23",
+        "bytes": 1028,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-lint.log": {
+        "sha256": "c68d47e0383dd1b2310bbc9dc8811d909fcad1d7dc62fc40943aa759fa7137f4",
+        "bytes": 61204,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-final3-typecheck.log": {
+        "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+        "bytes": 135,
+        "location": "author-local-intermediate-not-public"
+      },
+      "r3-developer-command-final-barrier.log": {
+        "sha256": "f2f674ba6195b76078853f6b4ace2b7a3b5bef7c3ce1f5ca01508d71d7b858b6",
+        "bytes": 1134,
+        "location": "author-local-intermediate-not-public"
+      }
+    },
+    "historicalR2": {
+      "basisHead": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
+      "publishedHead": "06a07ba515831380d64fbd7c9b9f9a0cacfd3ddc",
+      "localTests": {
+        "command": "npm test",
+        "status": "FAILED_THEN_EXACT_GUARD_CORRECTED_FOCUSED_RERUN",
+        "tests": 5627,
+        "passed": 5622,
+        "failed": 5,
+        "skipped": 0,
+        "suites": 810,
+        "durationMs": 423780.674042,
+        "taskFailure": "Exact content-identity importer guard refused new historical r2-fixtures.ts; precisely that reviewed path added, unknown/lookalike cases retained.",
+        "focusedCorrection": {
+          "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-content-identity.test.ts",
+          "tests": 49,
+          "passed": 49,
+          "failed": 0,
+          "skipped": 0
+        },
+        "remainingEnvironmentFailures": [
+          "official-truth-catalog-hardening-schema.test.ts",
+          "official-truth-content-identity-schema-v2.test.ts",
+          "official-truth-source-catalog-server.test.ts",
+          "official-truth-store-server.test.ts"
+        ],
+        "remainingEnvironmentReason": "Unchanged tests require hardcoded Linux PostgreSQL16 initdb, absent on this Mac; no skip/fallback substitution. Final exact-head Linux CI must pass all tests."
+      },
+      "remoteCiRun": 37635755030,
+      "remoteTests": 5765,
+      "remotePass": 5765,
+      "remoteFail": 0,
+      "remoteSkip": 0,
+      "appliesToR3": false
+    },
+    "finalExactHeadRemoteGates": "Required after publication, recorded in separate final receipt. Actual CI synthetic-merge checkout and PR head are identified separately.",
+    "runtimeCorrectionAfterIntermediateHead": "4d8da35a09825963fe435184ab4305936f7d4869",
+    "historicalLocalFullSuiteAt4d8da35a": {
+      "command": "npm test",
+      "exitCode": 1,
+      "status": "FOUR_UNCHANGED_PLATFORM_PATH_FAILURES",
+      "tests": 5628,
+      "pass": 5624,
+      "fail": 4,
+      "suites": 810,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 495381.574667,
+      "failures": [
+        "official-truth-catalog-hardening-schema.test.ts",
+        "official-truth-content-identity-schema-v2.test.ts",
+        "official-truth-source-catalog-server.test.ts",
+        "official-truth-store-server.test.ts"
+      ],
+      "reason": "Unchanged tests require a hardcoded Linux PostgreSQL16 initdb absent on this Mac; no skip or emulator. Fresh final-head Linux CI must pass all tests.",
+      "appliesToFinalHead": false
+    },
+    "finalChecksBasis": "Final dispatch-window correction runtime, before publication; final remote CI executes complete suite on its fresh exact-PR-head synthetic checkout."
+  }
+}

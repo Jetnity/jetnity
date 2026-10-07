@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { createHash } from 'node:crypto'
 import { readFileSync, readdirSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { runInNewContext } from 'node:vm'
@@ -307,7 +307,35 @@ const newModules = ['official-truth-autonomous-provenance-artifact', 'official-t
 const forbiddenCalls = ['evidenceKandidatAkzeptieren', 'officialTruthAkzeptierteEvidenceAusAbruf', 'regelKandidatAkzeptieren', 'akzeptierteEvidenceSpeichern', 'akzeptierteRegelClaimSpeichern',
   'quellenKatalogLesen', 'quelleRegistrieren', 'contentItemRegistrieren', 'loadOfficialTruthServerOwnedRetrieval', 'decideOfficialTruthServerOwnedRetrieval',
   'officialTruthTrustedFactExtrahieren', 'officialTruthTrustedFactExtrahierenMitDefinitionen', 'officialTruthCompositionPhaseA', 'officialTruthCompositionPhaseB']
-test('zero-I/O import/call fences; no production consumer or public issuer/test factory', () => {
+// #899: historical bundle verification and pure custodied proof invariants only.
+// No registry-wide, directory-wide or namespace-import exception is authorized.
+const reviewedFoundationImports = new Map<string, readonly string[]>([
+  ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-artifact',
+    ['decodeProvenanceBytes', 'historicalValuesEqual', 'ownRecord', 'pinsEqual', 'provenanceCanonical', 'provenanceHash', 'readPin', 'Pin']],
+  ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-record',
+    ['historicalCandidateIdentity', 'historicalFactIdentity', 'historicalProofIdentity', 'readGlobalCellDefinition', 'readHistoricalArtifact', 'readSupportReceipt', 'HistoricalArtifactKind']],
+  ['lib/readiness/official-truth-same-request-proof-server.ts\0official-truth-autonomous-provenance-artifact',
+    ['historicalValuesEqual', 'ownRecord', 'provenanceCanonical']],
+  ['lib/readiness/official-truth-same-request-proof-server.ts\0official-truth-autonomous-provenance-record', ['readHistoricalArtifact']],
+])
+function foundationImporterAllowed(path: string, importedModule: string, names: readonly string[]): boolean {
+  const expected = reviewedFoundationImports.get(`${path}\0${importedModule}`)
+  return !!expected && names.length === expected.length && new Set(names).size === names.length && names.every(name => expected.includes(name))
+}
+test('foundation finite importer guard rejects unknown paths, modules, namespace and extra imports', () => {
+  const path = 'lib/readiness/official-truth-same-request-proof-server.ts'
+  const importedModule = 'official-truth-autonomous-provenance-record'
+  assert.equal(foundationImporterAllowed(path, importedModule, ['readHistoricalArtifact']), true)
+  for (const unknown of ['app/api/official-truth/route.ts', 'lib/readiness/unknown.ts', `${path}/../unknown.ts`,
+    'lib/readiness/official-truth-integrated-pilot-bundle-copy.ts', 'scripts/official-truth-integrated-pilot-1/engine.ts']) {
+    assert.equal(foundationImporterAllowed(unknown, importedModule, ['readHistoricalArtifact']), false)
+  }
+  assert.equal(foundationImporterAllowed(path, 'official-truth-autonomous-provenance-record-server', ['readHistoricalArtifact']), false)
+  for (const names of [[], ['*'], ['readHistoricalArtifact', 'runOfficialTruthGlobalProduction'], ['readHistoricalArtifact', 'readHistoricalArtifact']]) {
+    assert.equal(foundationImporterAllowed(path, importedModule, names), false)
+  }
+})
+test('zero-I/O foundation fences; finite pure consumers and no public issuer/test factory', () => {
   for (const name of newModules) {
     const source = readFileSync(join(root, 'lib/readiness', name + '.ts'), 'utf8')
     const parsed = ts.createSourceFile(name + '.ts', source, ts.ScriptTarget.Latest, true)
@@ -327,18 +355,35 @@ test('zero-I/O import/call fences; no production consumer or public issuer/test 
   }
   const source = readFileSync(join(root, 'lib/readiness/official-truth-autonomous-provenance-record-server.ts'), 'utf8')
   assert.deepEqual([...source.matchAll(/^export function (\w+)/gm)].map(m => m[1]), ['runOfficialTruthGlobalProduction'])
+  const seen = new Set<string>()
   function scan(dir: string) {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       if (entry.name.startsWith('.')) continue
       const path = join(dir, entry.name)
       if (entry.isDirectory()) scan(path)
       else if (/\.[tj]sx?$/.test(entry.name) && !entry.name.endsWith('.test.ts') && !newModules.some(m => entry.name === m + '.ts')) {
-        const text = readFileSync(path, 'utf8')
-        for (const m of newModules) assert.ok(!text.includes('/' + m + "'"), `unexpected production consumer ${path}`)
+        const source = readFileSync(path, 'utf8'), file = relative(root, path)
+        const parsed = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true)
+        function visit(node: ts.Node) {
+          if (ts.isStringLiteralLike(node)) {
+            const importedModule = newModules.find(name => node.text.endsWith('/' + name) || node.text.endsWith('/' + name + '.ts'))
+            if (importedModule) {
+              const parent = node.parent
+              const imports = ts.isImportDeclaration(parent) && parent.moduleSpecifier === node && !parent.importClause?.name
+                ? parent.importClause?.namedBindings : undefined
+              const names = imports && ts.isNamedImports(imports) ? imports.elements.map(element => (element.propertyName ?? element.name).text) : []
+              assert.ok(foundationImporterAllowed(file, importedModule, names), `unexpected foundation consumer ${file}: ${importedModule} (${names.join(', ')})`)
+              seen.add(`${file}\0${importedModule}`)
+            }
+          }
+          ts.forEachChild(node, visit)
+        }
+        visit(parsed)
       }
     }
   }
-  for (const dir of ['app', 'components', 'lib']) scan(join(root, dir))
+  for (const directory of ['app', 'components', 'lib']) scan(join(root, directory))
+  assert.deepEqual([...seen].sort(), [...reviewedFoundationImports.keys()].sort())
 })
 
 test('explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures', () => {

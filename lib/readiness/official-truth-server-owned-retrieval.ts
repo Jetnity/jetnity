@@ -972,3 +972,14 @@ export async function loadOfficialTruthServerOwnedRetrievalWithCatalogTransport(
     http: serverHttp,
   })
 }
+
+/** Isolated developer-only catalog/profile seam; finite importer guard excludes
+ * application roots. Uses the identical server clock, DNS and HTTPS boundary. */
+export async function retrieveOfficialTruthIsolatedPilotSource(
+  eingabe: unknown,
+  catalog: Required<Pick<OfficialTruthSourceCatalogAbhaengigkeiten, 'transport' | 'identityProfiles'>>,
+): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
+  return decideOfficialTruthServerOwnedRetrieval(eingabe, {
+    catalog, now: serverUhr, resolve: serverDns, http: serverHttp,
+  })
+}
