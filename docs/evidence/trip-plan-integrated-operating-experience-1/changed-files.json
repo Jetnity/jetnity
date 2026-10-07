@@ -1,5 +1,6 @@
 {
   "base": "0481173cf56f13e5316246503e4683ad843728f2",
+  "reviewedHead": "b19bfbf9cd591b361740cbb2fbc5920fa81991e6",
   "files": [
     {
       "path": "components/trips/FlugBestand.tsx",
@@ -112,6 +113,34 @@
     {
       "path": "docs/evidence/trip-plan-integrated-operating-experience-1/integrated-audit.txt",
       "ownership": "Task-owned documentation or synthetic evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-account-editor.json",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-account-focus.txt",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-f1-green.txt",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-f1-red.txt",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-followup-verification.json",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-guest-editor.json",
+      "ownership": "R1 task-owned correction evidence"
+    },
+    {
+      "path": "docs/evidence/trip-plan-integrated-operating-experience-1/r1-red.json",
+      "ownership": "R1 task-owned correction evidence"
     },
     {
       "path": "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-plan-premium-experience-4/audit.json",
@@ -242,8 +271,16 @@
       "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
     },
     {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/guest-pending.mjs",
+      "ownership": "R1 owned active regression runner"
+    },
+    {
       "path": "scripts/trip-plan-integrated-operating-experience-1/linux-tests.mjs",
       "ownership": "Owned local acceptance runner/fixture or permitted narrow legacy audit adaptation"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/pending-form.mjs",
+      "ownership": "R1 owned active regression runner"
     },
     {
       "path": "scripts/trip-timeline-core-1-audit.mjs",
@@ -258,6 +295,37 @@
       "ownership": "Backward-compatible optional version for existing updated_at column"
     }
   ],
-  "forbiddenDiff": "EMPTY",
-  "taskBlob": "3df8bca929f287cdd7e996b4c051c38205611e67"
+  "r1ChangedFiles": [
+    "components/trips/PlanpunktEditor.tsx",
+    "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_HANDOFF_2026-10-07.md",
+    "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_REPORT_2026-10-07.md",
+    "docs/TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_SELF_REVIEW_2026-10-07.md",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/STATUS.md",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/acceptance-matrix.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/artifact-notes.txt",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/browser.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/delivery-source-map.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/delivery-summary.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/integrated-audit.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/integrated-audit.txt",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-account-editor.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-account-focus.txt",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-f1-green.txt",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-f1-red.txt",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-followup-verification.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-guest-editor.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/r1-red.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-plan-premium-experience-4/audit.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-timeline-core-1/audit.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-timeline-temporal-review-1/audit.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/regressions/trip-workspace-contextual-navigation-1/result.json",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/screens/account-stale-draft.png",
+    "docs/evidence/trip-plan-integrated-operating-experience-1/validation-logs.zip",
+    "lib/trips/trip-plan-integrated.test.ts",
+    "lib/trips/trip-plan-integrated/next.ts",
+    "scripts/trip-plan-integrated-operating-experience-1-audit.mjs",
+    "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs",
+    "scripts/trip-plan-integrated-operating-experience-1/guest-pending.mjs",
+    "scripts/trip-plan-integrated-operating-experience-1/pending-form.mjs"
+  ]
 }

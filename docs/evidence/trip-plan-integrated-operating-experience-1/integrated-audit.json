@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-10-07T01:12:34.812Z",
-  "codeHead": "1b38849879f6ad713ea0d5f86b5c0ab1426be5ca",
+  "startedAt": "2026-10-07T10:06:03.329Z",
+  "codeHead": "5784f243372c42b206044c60c9a787c25ffb0ea7",
   "sources": {
     "components/trips/ActivitiesAuditClient.tsx": "953a812cc143d95afc89145911311575c735bdf937df42e473e3581acedc8193",
     "components/trips/AenderungVorschau.tsx": "292132218c8f079499b4674d6133cd24ccd0d603fe3c12b46b1b267c07cc3eec",
@@ -28,7 +28,7 @@
     "components/trips/OrganisierenFeldgruppe.tsx": "48a3414b2cb1e1566786a69b72d5bd3e6fe865b939a60e2a8d16c373fd0a1c74",
     "components/trips/PlanenCreateGate.tsx": "f3a243f40c3e758b6014d162320967801c1fadfa3ef7b7da61a8a101628d28e9",
     "components/trips/PlanenEinstiegNavigation.tsx": "cecbf8e4700b4074c99491e65deaa91d583403f48ef32ddcf2a6a9289949396d",
-    "components/trips/PlanpunktEditor.tsx": "d748eff4214900b6202c517cae4f0a5d55b29a3b2a20c2c1b034be76f87031d2",
+    "components/trips/PlanpunktEditor.tsx": "2bd09f12fd89282ee8325508481638c118c81aef107ee918a7e3ea65f7d23502",
     "components/trips/Planungsfortschritt.tsx": "fc29a0bc7de53cbeb4beac7929ff665a5f3aad40508268438d1faf59d697b7f4",
     "components/trips/RegistryReiseUebernahme.tsx": "abe6777243ca86ab34ceb2d2a1a74a16d450ddfd6988fab216d6a981ac9df8d5",
     "components/trips/ReiseAenderung.tsx": "7324b74e497837c42610b82c0bbf2a66035dbca0d230bdaf7853b4d7fdd5bb50",
@@ -304,7 +304,7 @@
     "lib/trips/tage.ts": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
     "lib/trips/timeline.test.ts": "209f8542856ff38d30aded4f78c7c869a0961c667c6124b4c7c33ef35456a289",
     "lib/trips/timeline.ts": "dc86dacd2036c1887483f3e557e58207b48a2d2f43659a360731ecb325f8d2fd",
-    "lib/trips/trip-plan-integrated.test.ts": "0d10cf8d2ffecc880d5022b48404ecb6d07428359fe283bd4da53ccd91699c30",
+    "lib/trips/trip-plan-integrated.test.ts": "cbb94d95714a33b9a33507247b964f729ab4174a95e907142b93dbfe20a746cc",
     "lib/trips/trip-plan-integrated/account-write.ts": "24ac1b5456355b1c914c68bbd092891ae271e2acb84bfadc1ddd8f4967802548",
     "lib/trips/trip-plan-integrated/day.ts": "069b04bdd702821e68ff47ce7c6ba3a2a1b6b6f3d1b912b156844cc0ae49b7cc",
     "lib/trips/trip-plan-integrated/external-admission.ts": "dbe1b8349f19f5eb618c7d4c92c7f246665b94bc6461109974d6e9f7f9f8e417",
@@ -313,7 +313,7 @@
     "lib/trips/trip-plan-integrated/live.ts": "94ec7c9b0bc7567267429b3b9eaa3be2e2c3e9c2bbbc42bde0fee37ace50675e",
     "lib/trips/trip-plan-integrated/manual.ts": "40585bf800cd7e18ae394ac95d6cea6146e881b901d6c02fe9d286dea3bea99b",
     "lib/trips/trip-plan-integrated/movements.ts": "31b76e47549aa144d722baeba6f59c50721b32e936946edcdb2dea5f059966fb",
-    "lib/trips/trip-plan-integrated/next.ts": "bd4618ed9367140ee8d897d27215dddd7c7163887a77c77b24b9de097de4ca19",
+    "lib/trips/trip-plan-integrated/next.ts": "41f29553faf2839510008175a86e73ca7647c196c2097e1c6bf5417b1c76587f",
     "lib/trips/trip-plan-premium-experience-4.test.ts": "75311359305ab95835f79c26f7e45b1aac7f37b3adfa212865e8fda92fb89a44",
     "lib/trips/trip-plan-premium-experience-4.ts": "a6c610a58e71f03ef9aa41361a028f85958cf4ad4d2739569515391cdd035d6e",
     "lib/trips/trip-timeline-core-1.test.ts": "8b23add23ce81d7f9c0bfb6ddc60b5798ffbc5fb02a0b610b54817aab9fd0885",
@@ -337,10 +337,12 @@
     "lib/trips/zuordnung.test.ts": "acfbb6244264832a0c34286307c2da36713e5c6204d2c6ed5bb65d04d174e8ff",
     "lib/trips/zuordnung.ts": "85ba3f5140a1859fc0fd7c7e65111d90c493effc3d9f684888805ebe00d06d3e",
     "scripts/db/trip-plan-integrated-operating-experience-1/run.mjs": "2fb8ae1247e1d07422f000eba44bfdcc8da430b5bacf8dc4d6454a3f1abd5b23",
-    "scripts/trip-plan-integrated-operating-experience-1-audit.mjs": "293c5e69c0b360b32700d100baf8f85d0f535c3fb9577aed1a273acdd555d6b3",
-    "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs": "fc315f33c2cd779e4edb57d4e937f67b4b6916f0fa66f8968f2de86550f1ff3e",
+    "scripts/trip-plan-integrated-operating-experience-1-audit.mjs": "66da66722e8ace40495ee6c7be281bdc32039931ee085b6d75be543f0e7872b3",
+    "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs": "5ec8aade90010afea13fd2ca0f14899793167f919e209daf203be5f1a4243943",
     "scripts/trip-plan-integrated-operating-experience-1/browser.mjs": "9e32923d1813c21355fc57c2a466de4ca251bfc68925f8076750ca47cdf713ea",
+    "scripts/trip-plan-integrated-operating-experience-1/guest-pending.mjs": "93fa9b8c4ba934b7ede69f137cc85b0d76b59050f899c285f30c4361ac352151",
     "scripts/trip-plan-integrated-operating-experience-1/linux-tests.mjs": "c73f862eddc5c40070c40c4589a754a7e5396516448c537f102b626c3542aded",
+    "scripts/trip-plan-integrated-operating-experience-1/pending-form.mjs": "49789a4ba238484f6c72d864a3c55f0807cf0cf6f6a53f749cda7b117da710ec",
     "scripts/trip-plan-premium-experience-4-audit.mjs": "17a3ac1347284a489d8fd4ed3220e9268faa7cc8053a8a37c344bf61fd8b8736",
     "scripts/trip-timeline-core-1-audit.mjs": "84ae4fa63ccfb0e6626847e1bb01a9fc0c82c6b1da8c22e4b423ee907d670e2c",
     "scripts/trip-timeline-temporal-review-1-audit.mjs": "fc0102c5517bfebee94d2e127ec5cfb357ee2e80d2668bb9408f81670012cf89",
@@ -352,122 +354,129 @@
       "name": "npm-test-linux",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 34590,
+      "durationMs": 35295,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/npm-test-linux.log"
     },
     {
       "name": "typecheck",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 2421,
+      "durationMs": 2493,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/typecheck.log"
     },
     {
       "name": "lint",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 11430,
+      "durationMs": 13136,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/lint.log"
     },
     {
       "name": "build",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 5388,
+      "durationMs": 6067,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/build.log"
     },
     {
       "name": "check-dead",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 232,
+      "durationMs": 234,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-dead.log"
     },
     {
       "name": "check-exports",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 2601,
+      "durationMs": 2615,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-exports.log"
     },
     {
       "name": "check-deps",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 194,
+      "durationMs": 197,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-deps.log"
     },
     {
       "name": "check-api-schutz",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 131,
+      "durationMs": 135,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-api-schutz.log"
     },
     {
       "name": "check-schema-bezug",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 198,
+      "durationMs": 195,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-schema-bezug.log"
     },
     {
       "name": "check-operating-mode",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 161,
+      "durationMs": 171,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-operating-mode.log"
     },
     {
       "name": "diff-check",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 11,
+      "durationMs": 14,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/diff-check.log"
     },
     {
       "name": "guest-browser",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 5392,
+      "durationMs": 6324,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/guest-browser.log"
+    },
+    {
+      "name": "guest-pending-editor",
+      "status": "PASS",
+      "exitCode": 0,
+      "durationMs": 2239,
+      "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/guest-pending-editor.log"
     },
     {
       "name": "trip-timeline-core-1",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 31250,
+      "durationMs": 31225,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-core-1.log"
     },
     {
       "name": "trip-timeline-temporal-review-1",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 11935,
+      "durationMs": 13857,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-temporal-review-1.log"
     },
     {
       "name": "trip-workspace-contextual-navigation-1",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 29586,
+      "durationMs": 45768,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-workspace-contextual-navigation-1.log"
     },
     {
       "name": "trip-plan-premium-experience-4",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 15419,
+      "durationMs": 18346,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-plan-premium-experience-4.log"
     },
     {
       "name": "account-persistence",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 6526,
+      "durationMs": 6798,
       "log": "docs/evidence/trip-plan-integrated-operating-experience-1/logs/account-persistence.log"
     }
   ],
   "status": "PASS",
-  "finishedAt": "2026-10-07T01:15:12.954Z"
+  "finishedAt": "2026-10-07T10:09:09.104Z"
 }

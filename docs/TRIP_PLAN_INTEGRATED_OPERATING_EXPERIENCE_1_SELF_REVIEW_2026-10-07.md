@@ -1,5 +1,18 @@
 # Integrated Reiseplan — implementation self-review
 
+## R1 correction review — current findings
+
+The previous delivery had two valid P2 defects, independently found by TL review `TL-20261007-900-903-R1`. They were not caught by the original tests; the prior delivery is not retroactively presented as bug-free. The user-supplied review was transmitted unchanged as [a PR conversation comment](https://github.com/Jetnity/jetnity/pull/903#issuecomment-6035567894), not authored as this writer's independent review.
+
+- **P2/F1 repaired:** equal interval endpoints alone did not bind independent event and clock values. A current milestone now requires point ranges on both sides at the same value. All overlapping non-point/point uncertainty cases stay indeterminate; strict separated past/future and closed touching boundaries remain intact. Eleven added active tests include the TL's exact reproducer. RED and GREEN are recorded against the actual reviewed source and repaired source hashes.
+- **P2/F2 repaired:** same-editor values could change during an in-flight save and vanish when the older response closed the form. All eight possible controls (seven visible in either create or manual edit), including kind/day assignment, now use `disabled={laeuft}`. Saving status remains accessible. Existing pending submit/Escape, mounted-form, parent-generation and write-order rules are preserved. Real keyboard attempts no longer mutate the draft; real Guest quota and Account stale-version errors restore editing with the correct draft and no false success.
+- **Regression boundary checked:** production Guest routes and Account Server Actions, same-editor success/failure, another editor, day change, unmount and a new draft while an old response completes. Guest latency is explicitly fixture-controlled around actual production components and storage; it does not pretend that localStorage has asynchronous network behavior. Account response delay preserves real authenticated persistence and readback.
+- **Scope review:** runtime changes are only next.ts and PlanpunktEditor.tsx. Existing TripWorkspacePlan required no change. Remaining code changes are the discovered pure test and owned active browser runner. No public API, database column, new package, policy constant, provider source, authorization or commercial-field behavior changed.
+
+See current delivery-summary for the P0/P1/P2/P3 assessment and actual fresh gates. This remains an implementation self-review. Independent exact-head rereview is still required; stay Draft.
+
+## Initial self-review — historical R0 record
+
 Writer: Reiseplan integrated operating experience 1 — Generation 1. Session `01a113b2-5444-7550-983d-7a156c60731e`, actual `gpt-6-astra / xhigh`. This is an implementation self-review, not independent TL approval. PR #903 must remain Draft.
 
 ## Review findings and corrections

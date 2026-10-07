@@ -1,5 +1,23 @@
 # Integrated Reiseplan — delivery report
 
+## R1 correction — current delivery
+
+The independent TL found two P2 defects in delivered head `b19bfbf9cd591b361740cbb2fbc5920fa81991e6`. Review ID: `TL-20261007-900-903-R1`. The user supplied the findings from the steering chat; the TL had read-only GitHub access. They were transmitted unchanged in [PR comment 6035567894](https://github.com/Jetnity/jetnity/pull/903#issuecomment-6035567894). This is a transmitted instruction, not a GitHub review authored by the TL or an independent writer approval.
+
+F1: identical non-point event/clock ranges previously produced a certain current milestone without correlation. The same regression fails on the reviewed source blob `26f1bbe45c545cc91442d42a314ff33f5ebed03c` and passes after restricting current equality to identical exact points. Eleven active cases cover identical ranges, partial overlap, exact points, separated ranges, closed boundaries and one-sided uncertainty. No clock authority, correlation or live activation was added.
+
+F2: actual keyboard input could change a pending title A to B; the older successful response closed the editor while persistence contained A. Both Guest and real local Account reproduced this. All relevant input/select/textarea controls now share the pending disable state, with a visible role=status saving message. Success closes only the accepted draft; errors re-enable the same draft, retain values and show no saved success. Existing parent-generation, alive and write-order guards are unchanged; no edit to TripWorkspacePlan was needed.
+
+Active delayed-response tests cover create success (including Art), edit success (including day assignment), and failure for both modes. Guest uses production Plan/Editor plus actual Guest storage, including a real quota exception; only callback response delivery is gated in an explicitly synthetic fixture because Guest storage writes are synchronous. The full production Guest route is tested separately. Account uses the existing real local GoTrue/PostgREST/RLS stack and production Server Actions; only delivery of the real response is held, and failure comes from a real competing row update. Tests attempt keyboard input, check every field, confirm authoritative readback, and rerun other-editor/day, unmount, late-response and newer-draft protection.
+
+R1 source: local `5784f243372c42b206044c60c9a787c25ffb0ea7`, equivalent remote `047bebdd98cb7e50c39ae020834b3c79a8bca321`, identical tree `f895eb80d948e4e98583e3073497cef6bb31f1a5`. Source publication uses the existing authorized connector and expected-head non-force update. Final evidence delivery, including an additional verified Account error-focus assertion with unchanged production code, receives fresh exact-head CI/Auth/Preview checks recorded in the external exact-head packet. The source hash manifest binds actual test inputs; the Linux full-suite runner overlays these inputs over its preserved local checkpoint clone.
+
+Current totals, gate results and P0/P1/P2/P3 assessment are in `delivery-summary.json`; R1 RED observations and source blobs are in `r1-red.json`, F1 TAP evidence in `r1-f1-{red,green}.txt`, and delayed form observations in `r1-{guest,account}-editor.json`. The original three Account repeat logs are historical R0 evidence, not R1 reruns. Seven scoped existing application migrations (plus GoTrue's own local migrations) are used by the current local harness; the prior report's count of eight application migrations was inaccurate. No hosted schema/Auth/RLS change occurred.
+
+The full C01–C16 acceptance matrix remains, with current R1 evidence added. The historical delivery below records the earlier state and does not assert that R0 was free of the two independently discovered defects. Physical devices, Safari/WebKit and screen-reader operation remain NOT_RUN; live consumers remain unactivated. Remain Draft and STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW.
+
+## Initial delivery — historical R0 record
+
 Writer: Reiseplan integrated operating experience 1 — Generation 1. Issue #902; Draft PR #903. Session `01a113b2-5444-7550-983d-7a156c60731e`, actual model/effort `gpt-6-astra / xhigh` from the persisted session turn context. No external agent was launched.
 
 ## Delivered functionality

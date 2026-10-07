@@ -1,0 +1,319 @@
+TAP version 13
+# Subtest: manual change uses explicit fields, preserves money/booking, and placement does not invent dates
+ok 1 - manual change uses explicit fields, preserves money/booking, and placement does not invent dates
+  ---
+  duration_ms: 1.409416
+  type: 'test'
+  ...
+# Subtest: protected {"kind":"flight"} only placement
+ok 2 - protected {"kind":"flight"} only placement
+  ---
+  duration_ms: 0.604583
+  type: 'test'
+  ...
+# Subtest: protected {"kind":"stay"} only placement
+ok 3 - protected {"kind":"stay"} only placement
+  ---
+  duration_ms: 0.120917
+  type: 'test'
+  ...
+# Subtest: protected {"kind":"transfer"} only placement
+ok 4 - protected {"kind":"transfer"} only placement
+  ---
+  duration_ms: 0.148625
+  type: 'test'
+  ...
+# Subtest: protected {"provider":"source"} only placement
+ok 5 - protected {"provider":"source"} only placement
+  ---
+  duration_ms: 0.073041
+  type: 'test'
+  ...
+# Subtest: protected {"externalRef":"provider-id"} only placement
+ok 6 - protected {"externalRef":"provider-id"} only placement
+  ---
+  duration_ms: 0.110208
+  type: 'test'
+  ...
+# Subtest: protected {"bookingUrl":"https://example.test"} only placement
+ok 7 - protected {"bookingUrl":"https://example.test"} only placement
+  ---
+  duration_ms: 0.083625
+  type: 'test'
+  ...
+# Subtest: closed input rejects authority and ambiguous rollover; missing endpoints remain missing
+ok 8 - closed input rejects authority and ambiguous rollover; missing endpoints remain missing
+  ---
+  duration_ms: 0.310792
+  type: 'test'
+  ...
+# Subtest: costs: original currency, explicit zero, missing/invalid, duplicate identity, unassigned and whole stay
+ok 9 - costs: original currency, explicit zero, missing/invalid, duplicate identity, unassigned and whole stay
+  ---
+  duration_ms: 0.382334
+  type: 'test'
+  ...
+# Subtest: invalid prices never inflate totals
+ok 10 - invalid prices never inflate totals
+  ---
+  duration_ms: 0.2195
+  type: 'test'
+  ...
+# Subtest: booking user confirmation differs from selected and note is not a booking
+ok 11 - booking user confirmation differs from selected and note is not a booking
+  ---
+  duration_ms: 0.07425
+  type: 'test'
+  ...
+# Subtest: stage coordinates never become venue pins, zero valid, impossible/nonfinite rejected
+ok 12 - stage coordinates never become venue pins, zero valid, impossible/nonfinite rejected
+  ---
+  duration_ms: 0.102041
+  type: 'test'
+  ...
+# Subtest: impact exact snapshots, no revision shortcut, no history invented or cross-trip dependency
+ok 13 - impact exact snapshots, no revision shortcut, no history invented or cross-trip dependency
+  ---
+  duration_ms: 0.1235
+  type: 'test'
+  ...
+# Subtest: movement: unique directed occurrence only; unknown candidates block missing
+ok 14 - movement: unique directed occurrence only; unknown candidates block missing
+  ---
+  duration_ms: 0.160417
+  type: 'test'
+  ...
+# Subtest: wrong direction/occurrence is not coverage; same facility is not zero travel
+ok 15 - wrong direction/occurrence is not coverage; same facility is not zero travel
+  ---
+  duration_ms: 0.033667
+  type: 'test'
+  ...
+# Subtest: live movement adapter includes plausible unassigned transfers, rentals and flights
+ok 16 - live movement adapter includes plausible unassigned transfers, rentals and flights
+  ---
+  duration_ms: 6.236292
+  type: 'test'
+  ...
+# Subtest: union prevents false gaps in nested, touching and midnight intervals
+ok 17 - union prevents false gaps in nested, touching and midnight intervals
+  ---
+  duration_ms: 0.115916
+  type: 'test'
+  ...
+# Subtest: phase composition: named policy, maxima per phase, inclusion dedup, unknown never zero
+ok 18 - phase composition: named policy, maxima per phase, inclusion dedup, unknown never zero
+  ---
+  duration_ms: 0.2805
+  type: 'test'
+  ...
+# Subtest: usable window requires all proof terms and never promotes civil or flexible time
+ok 19 - usable window requires all proof terms and never promotes civil or flexible time
+  ---
+  duration_ms: 0.080166
+  type: 'test'
+  ...
+# Subtest: qualified next: equality, occupied half-open, start-only and milestones
+ok 20 - qualified next: equality, occupied half-open, start-only and milestones
+  ---
+  duration_ms: 0.125542
+  type: 'test'
+  ...
+# Subtest: R1 milestone: identical non-point ranges
+not ok 21 - R1 milestone: identical non-point ranges
+  ---
+  duration_ms: 1.841208
+  type: 'test'
+  location: '<repo>/lib/trips/trip-plan-integrated.test.ts:2:16874'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+        {
+          id: 'milestone',
+    +     state: 'current_by_schedule'
+    -     state: 'indeterminate'
+        }
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      id: 'milestone'
+      state: 'indeterminate'
+  actual:
+    0:
+      id: 'milestone'
+      state: 'current_by_schedule'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (<repo>/lib/trips/trip-plan-integrated.test.ts:169:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R1 milestone: partial overlap
+ok 22 - R1 milestone: partial overlap
+  ---
+  duration_ms: 0.031792
+  type: 'test'
+  ...
+# Subtest: R1 milestone: exact equal points
+ok 23 - R1 milestone: exact equal points
+  ---
+  duration_ms: 0.023125
+  type: 'test'
+  ...
+# Subtest: R1 milestone: separated past
+ok 24 - R1 milestone: separated past
+  ---
+  duration_ms: 0.1005
+  type: 'test'
+  ...
+# Subtest: R1 milestone: separated future
+ok 25 - R1 milestone: separated future
+  ---
+  duration_ms: 0.031583
+  type: 'test'
+  ...
+# Subtest: R1 milestone: closed lower boundary
+ok 26 - R1 milestone: closed lower boundary
+  ---
+  duration_ms: 0.025584
+  type: 'test'
+  ...
+# Subtest: R1 milestone: closed upper boundary
+ok 27 - R1 milestone: closed upper boundary
+  ---
+  duration_ms: 0.020208
+  type: 'test'
+  ...
+# Subtest: R1 milestone: exact event within uncertain now
+ok 28 - R1 milestone: exact event within uncertain now
+  ---
+  duration_ms: 0.060917
+  type: 'test'
+  ...
+# Subtest: R1 milestone: uncertain event around exact now
+ok 29 - R1 milestone: uncertain event around exact now
+  ---
+  duration_ms: 0.028916
+  type: 'test'
+  ...
+# Subtest: R1 milestone: point at lower boundary
+ok 30 - R1 milestone: point at lower boundary
+  ---
+  duration_ms: 0.055416
+  type: 'test'
+  ...
+# Subtest: R1 milestone: point at upper boundary
+ok 31 - R1 milestone: point at upper boundary
+  ---
+  duration_ms: 0.02875
+  type: 'test'
+  ...
+# Subtest: qualified next ties, overlapping uncertainty, unresolved competition and expired/resumed fallback
+ok 32 - qualified next ties, overlapping uncertainty, unresolved competition and expired/resumed fallback
+  ---
+  duration_ms: 0.089583
+  type: 'test'
+  ...
+# Subtest: external: closed software consumer and zero-I/O default are separate from live activation
+ok 33 - external: closed software consumer and zero-I/O default are separate from live activation
+  ---
+  duration_ms: 0.4565
+  type: 'test'
+  ...
+# Subtest: external rejects {"verified":true}
+ok 34 - external rejects {"verified":true}
+  ---
+  duration_ms: 0.161541
+  type: 'test'
+  ...
+# Subtest: external rejects {"currency":"CHF"}
+ok 35 - external rejects {"currency":"CHF"}
+  ---
+  duration_ms: 0.075958
+  type: 'test'
+  ...
+# Subtest: external rejects {"subject":"other"}
+ok 36 - external rejects {"subject":"other"}
+  ---
+  duration_ms: 0.049542
+  type: 'test'
+  ...
+# Subtest: external rejects {"location":"other"}
+ok 37 - external rejects {"location":"other"}
+  ---
+  duration_ms: 0.745875
+  type: 'test'
+  ...
+# Subtest: external rejects {"occurrence":"other"}
+ok 38 - external rejects {"occurrence":"other"}
+  ---
+  duration_ms: 0.047792
+  type: 'test'
+  ...
+# Subtest: external rejects {"region":"IT"}
+ok 39 - external rejects {"region":"IT"}
+  ---
+  duration_ms: 0.029625
+  type: 'test'
+  ...
+# Subtest: external rejects {"units":"minutes"}
+ok 40 - external rejects {"units":"minutes"}
+  ---
+  duration_ms: 0.030208
+  type: 'test'
+  ...
+# Subtest: external rejects {"precision":"region"}
+ok 41 - external rejects {"precision":"region"}
+  ---
+  duration_ms: 0.023625
+  type: 'test'
+  ...
+# Subtest: external rejects {"exceptionsComplete":false}
+ok 42 - external rejects {"exceptionsComplete":false}
+  ---
+  duration_ms: 0.02375
+  type: 'test'
+  ...
+# Subtest: external rejects {"sourceRef":"https://untrusted.invalid/hours"}
+ok 43 - external rejects {"sourceRef":"https://untrusted.invalid/hours"}
+  ---
+  duration_ms: 0.024458
+  type: 'test'
+  ...
+# Subtest: external rejects {"value":{"confirmed":true}}
+ok 44 - external rejects {"value":{"confirmed":true}}
+  ---
+  duration_ms: 0.029
+  type: 'test'
+  ...
+# Subtest: external rejects {"retrievedAt":101}
+ok 45 - external rejects {"retrievedAt":101}
+  ---
+  duration_ms: 0.023958
+  type: 'test'
+  ...
+# Subtest: external stale and unknown policy remain unavailable for conclusions
+ok 46 - external stale and unknown policy remain unavailable for conclusions
+  ---
+  duration_ms: 0.050458
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 45
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 322.735333

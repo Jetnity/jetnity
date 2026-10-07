@@ -1,5 +1,5 @@
 PASS
-Code head at start: 1b38849879f6ad713ea0d5f86b5c0ab1426be5ca
+Code head at start: 5784f243372c42b206044c60c9a787c25ffb0ea7
 PASS npm-test-linux (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/npm-test-linux.log
 PASS typecheck (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/typecheck.log
 PASS lint (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/lint.log
@@ -12,6 +12,7 @@ PASS check-schema-bezug (0) -> docs/evidence/trip-plan-integrated-operating-expe
 PASS check-operating-mode (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/check-operating-mode.log
 PASS diff-check (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/diff-check.log
 PASS guest-browser (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/guest-browser.log
+PASS guest-pending-editor (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/guest-pending-editor.log
 PASS trip-timeline-core-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-core-1.log
 PASS trip-timeline-temporal-review-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-timeline-temporal-review-1.log
 PASS trip-workspace-contextual-navigation-1 (0) -> docs/evidence/trip-plan-integrated-operating-experience-1/logs/trip-workspace-contextual-navigation-1.log

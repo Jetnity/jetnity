@@ -1,12 +1,12 @@
 {
-  "headAtRun": "1b38849879f6ad713ea0d5f86b5c0ab1426be5ca",
+  "headAtRun": "5784f243372c42b206044c60c9a787c25ffb0ea7",
   "sourceSha256": {
     "components/trips/TripWorkspacePlan.tsx": "8ccd99185cb359518c8521b90cbd63fd2719efb113caf459da1f58b48c36ea77",
     "lib/trips/timeline.ts": "dc86dacd2036c1887483f3e557e58207b48a2d2f43659a360731ecb325f8d2fd",
     "lib/trips/trip-timeline-core-1.ts": "aa9376486d4f9657deda0fc354185f94ee627f1ee636c2e19a456a4cf0606579",
     "scripts/trip-timeline-core-1-audit.mjs": "84ae4fa63ccfb0e6626847e1bb01a9fc0c82c6b1da8c22e4b423ee907d670e2c"
   },
-  "browser": "154.0.8037.98",
+  "browser": "154.0.8037.99",
   "localSyntheticOnly": true,
   "authenticatedE2E": false,
   "physicalDevice": false,

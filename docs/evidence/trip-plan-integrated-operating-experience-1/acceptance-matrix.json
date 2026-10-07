@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "cases": [
     {
       "id": "C01",
@@ -17,9 +17,11 @@
       "name": "Real Guest save/readback/failure",
       "status": "PASS",
       "evidence": [
-        "browser.json"
+        "browser.json",
+        "r1-red.json",
+        "r1-guest-editor.json"
       ],
-      "boundary": "Actual production Guest route, actual storage, explicit fields/nulls, reload/identity, failure retention; no success-only callback substitution."
+      "boundary": "Actual production Guest route, actual storage, explicit fields/nulls, reload/identity, failure retention; no success-only callback substitution. R1 response-gated fixture uses actual production Plan/Editor and Guest writes; synchronous storage latency is not claimed."
     },
     {
       "id": "C03",
@@ -27,11 +29,10 @@
       "status": "PASS",
       "evidence": [
         "account-persistence.json",
-        "account-repeat-1.txt",
-        "account-repeat-2.txt",
-        "account-repeat-3.txt"
+        "r1-account-editor.json",
+        "r1-followup-verification.json"
       ],
-      "boundary": "Real local GoTrue/PostgREST/RLS and real production Server Actions; hosted stack/schema parity not claimed."
+      "boundary": "Real local GoTrue/PostgREST/RLS and real production Server Actions; hosted stack/schema parity not claimed. R1 delayed create/edit success and actual stale failure pass; old three repeat files are historical R0 only."
     },
     {
       "id": "C04",
@@ -91,9 +92,12 @@
       "status": "PASS",
       "evidence": [
         "validation-logs.zip",
-        "browser.json"
+        "browser.json",
+        "r1-red.json",
+        "r1-f1-red.txt",
+        "r1-f1-green.txt"
       ],
-      "boundary": "Qualified ties/uncertainty/boundaries/expiry/resume are synthetic fixtures; production is planned navigation without admitted clock."
+      "boundary": "Qualified ties/uncertainty/boundaries/expiry/resume are synthetic fixtures; production is planned navigation without admitted clock. R1 equal uncertain ranges are indeterminate; exact equal points alone can be current."
     },
     {
       "id": "C10",
@@ -160,15 +164,17 @@
     {
       "id": "C16",
       "name": "Full local and exact-head remote gates",
-      "status": "PASS_AT_REMOTE_SOURCE_HEAD",
+      "status": "LOCAL_PASS_FINAL_REMOTE_PACKET_REQUIRED",
       "evidence": [
         "integrated-audit.json",
         "validation-logs.zip",
-        "delivery-summary.json"
+        "delivery-summary.json",
+        "r1-followup-verification.json"
       ],
-      "boundary": "All local gates and exact remote source CI/Auth/Preview PASS. The final documentation-only delivery head is rechecked separately in the final packet."
+      "boundary": "Full local run PASS, additional Account focus check PASS; exact final CI/Auth/Preview are read back separately in external exact-head packet."
     }
   ],
-  "localSourceCommit": "1b38849879f6ad713ea0d5f86b5c0ab1426be5ca",
-  "remoteEquivalentSourceCommit": "f2c65c41da43236895ee116f9de0c603b7c37859"
+  "localSourceCommit": "5784f243372c42b206044c60c9a787c25ffb0ea7",
+  "remoteEquivalentSourceCommit": "047bebdd98cb7e50c39ae020834b3c79a8bca321",
+  "reviewId": "TL-20261007-900-903-R1"
 }

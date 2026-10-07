@@ -2,3 +2,5 @@ The readable integrated-audit.txt and JSON record the final direct run.
 validation-logs.zip contains the complete raw test/build/gate/browser logs under their recorded logs/ paths. Extract here to follow those paths. Local absolute checkout paths are replaced by <repo>; assertions/results are unchanged.
 Only five curated synthetic screenshots are committed; regression runners generate additional local screenshots when repeated.
 The Guest qualified-movement fixture is explicitly synthetic because canonical Guest intake strips surface authority. Its callback is the real Guest writer, not a mocked success.
+
+R1: current full run and pending-form regressions replace acceptance evidence; the three account-repeat logs remain historical R0. r1-red.json preserves both pre-fix observations. r1-followup-verification.json binds the additional Account focus assertion after the full run. Its successful focused repeat is r1-account-focus.txt. The Account screenshot captures the retained error form; runtime tests do not rely on screenshots.
