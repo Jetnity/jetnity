@@ -27,6 +27,14 @@ export function pgCompositeArray(oid: number, elementOid: number, rows: readonly
   }
   return { oid, bytes: Buffer.concat(parts), binary: true }
 }
+export type LocalPgOperationDiagnostic = Readonly<{
+  phase: 'startup' | 'begin' | 'query' | 'commit' | 'rollback'
+  elapsedMs: number
+  outcome: 'complete' | 'timeout' | 'sql_error' | 'transport_error'
+  code: string | null
+}>
+const diagnosticCode = (error: unknown): string | null => error instanceof LocalPgError
+  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count'].includes(error.code) ? error.code : 'transport_error') : null
 export class LocalPgConnection {
   private buffer: Buffer = Buffer.alloc(0)
   private messages: { tag: string; bytes: Buffer }[] = []
@@ -34,6 +42,16 @@ export class LocalPgConnection {
   private queuedBytes = 0
   private closed = false
   private busy = false
+  private timedOut = false
+  private readonly operations: LocalPgOperationDiagnostic[] = []
+  /** Fixed fields only: no SQL, parameter bytes, identities, socket paths or database error text. */
+  get operationDiagnostics(): readonly LocalPgOperationDiagnostic[] { return this.operations.slice() }
+  private recordOperation(phase: LocalPgOperationDiagnostic['phase'], started: number, error?: unknown) {
+    const code = diagnosticCode(error)
+    this.operations.push(Object.freeze({ phase, elapsedMs: Math.ceil(performance.now() - started),
+      outcome: this.timedOut ? 'timeout' : error === undefined ? 'complete' : code && /^[0-9A-Z]{5}$/.test(code) ? 'sql_error' : 'transport_error', code }))
+    if (this.operations.length > 32) this.operations.shift()
+  }
   private constructor(private socket: Socket) {
     socket.on('data', chunk => {
       if (this.buffer.length + this.queuedBytes + chunk.length > 24 * 1024 * 1024) { this.socket.destroy(); return }
@@ -50,13 +68,14 @@ export class LocalPgConnection {
     })
     socket.on('error', () => { this.closed = true; this.waiter?.(); this.waiter = null })
     socket.on('close', () => { this.closed = true; this.waiter?.(); this.waiter = null })
-    socket.setTimeout(30_000, () => socket.destroy())
+    socket.setTimeout(30_000, () => { this.timedOut = true; socket.destroy() })
   }
   static async connect(cluster: LocalProofCluster, user = cluster.user): Promise<LocalPgConnection> {
     assertOwnedLocalProofCluster(cluster)
     if (!cluster.socket.startsWith(cluster.root + '/')) throw new LocalPgError('unsafe_socket')
     const socket = createConnection({ path: join(cluster.socket, `.s.PGSQL.${cluster.port}`) })
-    const connection = new LocalPgConnection(socket)
+    const connection = new LocalPgConnection(socket), started = performance.now()
+    let failure: unknown
     try {
       await new Promise<void>((resolve, reject) => {
         const connected = () => { cleanup(); resolve() }
@@ -68,8 +87,8 @@ export class LocalPgConnection {
       socket.write(Buffer.concat([i32(body.length + 4), body]))
       await connection.result()
       return connection
-    } catch (error) { socket.destroy(); throw error }
-    finally { socket.setTimeout(0) }
+    } catch (error) { failure = error; socket.destroy(); throw error }
+    finally { socket.setTimeout(0); connection.recordOperation('startup', started, failure) }
   }
   private async message() {
     while (!this.messages.length) {
@@ -109,7 +128,10 @@ export class LocalPgConnection {
   async query(sql: string, parameters: readonly PgParameter[] = []): Promise<PgRows> {
     if (this.busy || this.closed) throw new LocalPgError('connection_state')
     if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) throw new LocalPgError('parameter_bound')
-    this.busy = true
+    this.busy = true; this.timedOut = false
+    const command = /^(BEGIN|COMMIT|ROLLBACK)\b/i.exec(sql.trim())?.[1]?.toLowerCase()
+    const phase: LocalPgOperationDiagnostic['phase'] = command === 'begin' || command === 'commit' || command === 'rollback' ? command : 'query'
+    const started = performance.now(); let failure: unknown
     // Only an active operation has an inactivity deadline; ready connections may wait.
     this.socket.setTimeout(30_000)
     try {
@@ -122,7 +144,8 @@ export class LocalPgConnection {
         this.socket.write(frame)
       }
       return await this.result()
-    } finally { this.socket.setTimeout(0); this.busy = false }
+    } catch (error) { failure = error; throw error }
+    finally { this.socket.setTimeout(0); this.busy = false; this.recordOperation(phase, started, failure) }
   }
   close() { this.socket.setTimeout(0); this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }
 }

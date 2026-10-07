@@ -81,9 +81,17 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     await staged.query('ROLLBACK');assert.equal((await owner.query('SELECT count(*)::text n FROM official_provenance_private.artifacts'))[0]?.n,'0')
     checks.push('complete_primary_staged_atomically_invisible_then_rollback_no_artifacts','verify_existing_absent_never_creates')
     // Exact admitted bytes are detached synchronously before connection awaits.
-    const caller=structuredClone(primaryEnvelope),pending=persistVerifiedIntegratedBundleLocally(cluster,oids,caller)
-    caller.bundle.receiptBytes.fill(0);caller.bundle.custodyBindingBytes.fill(0);caller.bundle.artifacts[0]!.canonicalBytes.fill(0)
-    const primary=await pending;assert.ok(primary.ok);assert.equal(primary.outcome,'inserted')
+    const primaryConnections:LocalPgConnection[]=[],primaryConnect=LocalPgConnection.connect
+    LocalPgConnection.connect=async(...args:Parameters<typeof LocalPgConnection.connect>)=>{const c=await primaryConnect.call(LocalPgConnection,...args);primaryConnections.push(c);return c}
+    let primary:Awaited<ReturnType<typeof persistVerifiedIntegratedBundleLocally>>
+    const primaryDiagnostics=()=>primaryConnections.map((connection,index)=>({connection:index,operations:connection.operationDiagnostics}))
+    try {
+      const caller=structuredClone(primaryEnvelope),pending=persistVerifiedIntegratedBundleLocally(cluster,oids,caller)
+      caller.bundle.receiptBytes.fill(0);caller.bundle.custodyBindingBytes.fill(0);caller.bundle.artifacts[0]!.canonicalBytes.fill(0)
+      primary=await pending
+    }catch(error){assert.fail(JSON.stringify({stage:'primary_publication',failure:error instanceof LocalPgError&&/^[0-9A-Z]{5}$/.test(error.code)?error.code:'operational_failure',connections:primaryDiagnostics()}))}
+    finally{LocalPgConnection.connect=primaryConnect}
+    assert.ok(primary.ok,JSON.stringify({stage:'primary_publication',reason:primary.ok?null:primary.reason,connections:primaryDiagnostics()}));assert.equal(primary.outcome,'inserted')
     checks.push('primary_real_sql_commit_fresh_23_column_semantic_readback','caller_mutation_after_invocation_cannot_change_owned_bytes')
     const counts=async()=>owner.query("SELECT 'artifact_names' t,count(*)::text n FROM official_provenance_private.artifact_names UNION ALL SELECT 'artifact_blobs',count(*)::text FROM official_provenance_private.artifact_blobs UNION ALL SELECT 'artifacts',count(*)::text FROM official_provenance_private.artifacts UNION ALL SELECT 'receipts',count(*)::text FROM official_provenance_private.receipts UNION ALL SELECT 'receipt_dependencies',count(*)::text FROM official_provenance_private.receipt_dependencies UNION ALL SELECT 'artifact_dependencies',count(*)::text FROM official_provenance_private.artifact_dependencies UNION ALL SELECT 'custody_bindings',count(*)::text FROM official_provenance_private.custody_bindings UNION ALL SELECT 'custody_dependencies',count(*)::text FROM official_provenance_private.custody_dependencies ORDER BY t")
     const beforeRepeat=await counts()
