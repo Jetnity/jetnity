@@ -127,7 +127,7 @@
     {
       "case": "C25",
       "status": "INTEGRATED_POSTGRES_VERIFIED",
-      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; 35 real SQL adversarial/security groups; mandatory CI test cannot skip either positive path."
+      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; 37 real SQL adversarial/security groups; mandatory CI test cannot skip either positive path."
     },
     {
       "case": "C26",

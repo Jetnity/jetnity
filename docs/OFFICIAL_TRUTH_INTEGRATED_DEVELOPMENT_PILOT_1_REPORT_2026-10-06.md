@@ -11,7 +11,7 @@ Both actual captured canonical Primary and Composition paths now produce complet
 | A | Same writer, branch and immutable TASK; full TL R1 reconstructed. #898 reused; #897 and Trip files untouched. |
 | B | Captured application/dependency/build bytes actually execute in a one-shot worker. Held primary executable/F and genuine composed seal/F stay bound. Original observation, real derived non-null validity and accepted-origin joins are checked. |
 | C | Both full typed historical bundles verify under explicit local v2; the same bytes refuse v1. Positive-derived negatives check their intended boundary. |
-| D | Actual PostgreSQL postgres (PostgreSQL) 17.6: 35 semantic/security/adversarial groups; primary652 and composed720 complete reader rows. Insert, exact retry, rollback, races, no-heal and lost-ACK resolution pass. Separate historical16-group structural proof retained. |
+| D | Actual PostgreSQL postgres (PostgreSQL) 17.6: 37 semantic/security/adversarial groups; primary652 and composed720 complete reader rows. Insert, exact retry, rollback, races, no-heal and lost-ACK resolution pass. Separate historical16-group structural proof retained. |
 | E | One GOV.UK family; isolated exact passport profile, whole-response qualification proposal and narrow extractor implemented. Real canonical HTTPS stops at unchanged response-size limit; no real origin/fact/receipt issued. |
 | F | One command exits0 only after both actual roundtrips, 50 declared negative paths and both SQL proof groups. Strict JSON and readable report regenerated; failure overwrites stale PASS evidence. |
 
@@ -26,13 +26,15 @@ npm run official-truth:pilot-1 -- --run-official-source
 
 Exit0 means mandatory local engineering proof passed; exit1 means failure. The live flag selects only the fixed GOV.UK attempt. No arbitrary source/DSN/clock/Pin/fact input is accepted.
 
-- Final one-command run including source: PASS/exit0, 50 negative paths, 35 semantic SQL groups plus16 structural groups; two actual confirmed publications/readbacks.
+- Final one-command run including source: PASS/exit0, 50 negative paths, 37 semantic SQL groups plus16 structural groups; two actual confirmed publications/readbacks.
 - Local full suite: 5626 tests, 810 suites; 5622 pass, four environment failures, zero skips. The four unchanged tests require hardcoded Linux `/usr/lib/postgresql/16/bin/initdb`, absent on macOS. No test was suppressed or redirected to manufacture a pass. The new mandatory complete pilot SQL test uses actual local PostgreSQL and passes. Exact-head Linux CI must pass all tests before delivery readiness.
 - Controlled runtime8, integrated engine56, bundle15, isolated source5 and mandatory storage3 tests are included. Correct-hash SQL vectors call the independent validator directly so an earlier retained-name collision cannot mask absent semantic validation.
 - Typecheck, Build, Lint and all six hygiene commands pass. Lint: zero errors,145 existing warnings.
 - No hosted `db:rechte`, `db:rls`, `db:sicherheit` or migration apply was run. Local actual ACL/RLS proofs cover the isolated schema. Auth is verified by the fresh exact-head existing CI job; no Auth/AAL changes or secrets are introduced.
 
 See command-results.json for command/log receipts, developer-report.json for exact producer fingerprints/stages/counters and actual SQL proof names, and coverage-matrix.json for all C01–C29 obligations. Final remote evidence is separate from local checks and earlier checkpoints.
+
+The first R1 full-SQL remote run37549274500 on a0ba89a3 failed1 of5718 tests: an idle owner connection timed out while another connection completed the full receipt. The transport now arms the unchanged30-second inactivity bound only during startup/active queries. A real31-second idle/same-backend regression and a parallel active-query timeout both pass; the full local suite and complete pilot were rerun successfully within their documented environment limits. This failed attempt is retained in command-results; fresh corrected-head CI remains mandatory.
 
 ## SQL guarantees
 
@@ -60,7 +62,7 @@ Hosted schema/migration/access-principal/retention decisions, live issuer regist
 
 ## Identity and final handoff
 
-Same owner: Official Truth integrated development pilot1 — Generation1; Issue#899 / Draft PR#900; branch `feat/official-truth-integrated-development-pilot-1`. Reviewed predecessor e4e61bba66b71656b2f0ba4158689d7b726ed23e; R1 runtime checkpoint dafd5fb024380d8d375d7bb5704b534e78f15d23. Main advanced separately through #897 to0481173cf56f13e5316246503e4683ad843728f2. Merge-base remains ecc0ecf3b9c024b295034b6985fa26ca40bc82f1. No main merge/rebase or foreign branch adoption. Final current refs/ahead/behind/tree and all changed files are re-read after publication.
+Same owner: Official Truth integrated development pilot1 — Generation1; Issue#899 / Draft PR#900; branch `feat/official-truth-integrated-development-pilot-1`. Reviewed predecessor e4e61bba66b71656b2f0ba4158689d7b726ed23e; R1 runtime checkpoint a0ba89a3ec1300991d2575e3cc1b693e26bb2b90. Main advanced separately through #897 to0481173cf56f13e5316246503e4683ad843728f2. Merge-base remains ecc0ecf3b9c024b295034b6985fa26ca40bc82f1. No main merge/rebase or foreign branch adoption. Final current refs/ahead/behind/tree and all changed files are re-read after publication.
 
 Immutable TASK blob ca60cdd60bdd9682fc0f0a05d9e9f53fe17986ad; seed d3ee358fedf87656fc55325200eeade13f840e19. Authenticated GitHub git-object/ref APIs publish the exact locally checked tree as fast-forward commits on the same branch. No force push or replacement writer.
 

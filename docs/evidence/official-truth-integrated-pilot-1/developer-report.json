@@ -1372,6 +1372,8 @@
     "profile": "ot-integrated-pilot-local-closure-v2",
     "postgresVersion": "postgres (PostgreSQL) 17.6",
     "checks": [
+      "idle_owner_connection_survives_31_seconds_and_reuses_same_backend",
+      "active_query_inactivity_timeout_remains_30_seconds",
       "complete_primary_staged_atomically_invisible_then_rollback_no_artifacts",
       "verify_existing_absent_never_creates",
       "primary_real_sql_commit_fresh_23_column_semantic_readback",

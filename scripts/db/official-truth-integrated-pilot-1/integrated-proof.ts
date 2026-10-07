@@ -65,6 +65,13 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
   const owner=await connect(),root=cluster.root
   try {
     await installLocalProofSchema(owner);const oids=await localArtifactTypeOids(owner)
+    // The owner remains ready while other connections work; its lifetime is not a query deadline.
+    const ownerBackend=await owner.query('SELECT pg_catalog.pg_backend_pid()::text AS pid')
+    const timeoutProbe=await connect()
+    const activeTimeout=assert.rejects(timeoutProbe.query('SELECT pg_catalog.pg_sleep(60)'),error=>error instanceof LocalPgError&&error.code==='connection_closed')
+    await Promise.all([new Promise<void>(resolve=>setTimeout(resolve,31_000)),activeTimeout])
+    assert.deepEqual(await owner.query('SELECT pg_catalog.pg_backend_pid()::text AS pid'),ownerBackend)
+    checks.push('idle_owner_connection_survives_31_seconds_and_reuses_same_backend','active_query_inactivity_timeout_remains_30_seconds')
     const write=async(e:LocalIntegratedPilotEnvelope,mode:'create_or_verify'|'verify_existing'='create_or_verify')=>{const c=await connect('ot_provenance_writer');try{await c.query('BEGIN ISOLATION LEVEL READ COMMITTED');const out=await publishIntegratedBundle(c,oids,e,mode);await c.query('COMMIT');return out}catch(error){try{await c.query('ROLLBACK')}catch{}throw error}finally{c.close()}}
     const rejectSql=async(e:LocalIntegratedPilotEnvelope)=>{await assert.rejects(write(e),LocalPgError)}
     // Verify-existing does not create absent bundles; explicit rollback removes all staged writes.

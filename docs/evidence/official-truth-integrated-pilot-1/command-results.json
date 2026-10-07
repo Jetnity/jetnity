@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "round": "R1",
-  "prePublicationBaseHead": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
+  "prePublicationBaseHead": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
   "authorEvidenceOnly": true,
   "checks": [
     {
@@ -57,7 +57,7 @@
       "status": "PASS",
       "exitCode": 0,
       "negativePaths": 50,
-      "semanticPostgresGroups": 35,
+      "semanticPostgresGroups": 37,
       "structuralPostgresGroups": 16,
       "confirmedProducerRoundtrips": 2,
       "realOfficialSourcePilot": "BLOCKED"
@@ -116,12 +116,12 @@
       "location": "author-local-intermediate-not-public"
     },
     "r1-npm-test-final.log": {
-      "sha256": "a902fd1f4105e4e0150a59d208416a1ae7fd23616078f36fb8ff8964a5f3a8da",
-      "bytes": 1361929,
+      "sha256": "877ccee011181b1b01c5df85ffbe9794455700d5217f29078217ed41f659178d",
+      "bytes": 1361950,
       "location": "author-local-intermediate-not-public"
     },
     "r1-pilot-final.log": {
-      "sha256": "1d1dab2ef6f0d3afd6ebdec3f9f3cb3cac9e3a509eab11cfb602cbfa7bbd2c64",
+      "sha256": "8891fd4fbb35528e972ef085ece63f592c061d8aa275b2496ab573d8dcdfb606",
       "bytes": 1155,
       "location": "author-local-intermediate-not-public"
     },
@@ -131,5 +131,20 @@
       "location": "author-local-intermediate-not-public"
     }
   },
-  "finalExactHeadRemoteGates": "Required after publication; final PR delivery receipt records fresh exact-head CI/Auth/Preview, remote tree and immutable TASK."
+  "finalExactHeadRemoteGates": "Required after publication; final PR delivery receipt records fresh exact-head CI/Auth/Preview, remote tree and immutable TASK.",
+  "remoteAttemptHistory": [
+    {
+      "head": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
+      "run": 37549274500,
+      "verifyJob": 112560613083,
+      "tests": 5718,
+      "passed": 5717,
+      "failed": 1,
+      "skipped": 0,
+      "reason": "idle_owner_connection_closed_after_30_seconds_while_other_connection_worked",
+      "correction": "30_second_timeout_only_during_startup_and_active_query; real31second_idle_and_active_timeout_regressions_pass",
+      "auth": "PASS",
+      "preview": "READY"
+    }
+  ]
 }

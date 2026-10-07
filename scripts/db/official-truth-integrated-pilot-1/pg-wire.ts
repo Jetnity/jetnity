@@ -57,11 +57,19 @@ export class LocalPgConnection {
     if (!cluster.socket.startsWith(cluster.root + '/')) throw new LocalPgError('unsafe_socket')
     const socket = createConnection({ path: join(cluster.socket, `.s.PGSQL.${cluster.port}`) })
     const connection = new LocalPgConnection(socket)
-    await new Promise<void>((resolve, reject) => { socket.once('connect', resolve); socket.once('error', () => reject(new LocalPgError('connection_failed'))) })
-    const body = Buffer.concat([i32(196608), z('user'), z(user), z('database'), z(cluster.database), z('client_encoding'), z('UTF8'), Buffer.from([0])])
-    socket.write(Buffer.concat([i32(body.length + 4), body]))
-    await connection.result()
-    return connection
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const connected = () => { cleanup(); resolve() }
+        const failed = () => { cleanup(); reject(new LocalPgError('connection_failed')) }
+        const cleanup = () => { socket.off('connect', connected); socket.off('error', failed); socket.off('close', failed) }
+        socket.once('connect', connected); socket.once('error', failed); socket.once('close', failed)
+      })
+      const body = Buffer.concat([i32(196608), z('user'), z(user), z('database'), z(cluster.database), z('client_encoding'), z('UTF8'), Buffer.from([0])])
+      socket.write(Buffer.concat([i32(body.length + 4), body]))
+      await connection.result()
+      return connection
+    } catch (error) { socket.destroy(); throw error }
+    finally { socket.setTimeout(0) }
   }
   private async message() {
     while (!this.messages.length) {
@@ -102,6 +110,8 @@ export class LocalPgConnection {
     if (this.busy || this.closed) throw new LocalPgError('connection_state')
     if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) throw new LocalPgError('parameter_bound')
     this.busy = true
+    // Only an active operation has an inactivity deadline; ready connections may wait.
+    this.socket.setTimeout(30_000)
     try {
       if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
       else {
@@ -112,7 +122,7 @@ export class LocalPgConnection {
         this.socket.write(frame)
       }
       return await this.result()
-    } finally { this.busy = false }
+    } finally { this.socket.setTimeout(0); this.busy = false }
   }
-  close() { this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }
+  close() { this.socket.setTimeout(0); this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }
 }

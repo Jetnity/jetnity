@@ -2,7 +2,7 @@
 
 Local engineering: VERIFIED. Real official source: BLOCKED. Final exact-head CI/Auth/Preview remain a required publication gate; the final delivery receipt records their actual outcome. PR#900 stays Draft. No Ready/merge/follow-up.
 
-Read the consolidated REPORT, CONTRACTS, STATUS, developer-report and C01–C29 matrix. Both genuine canonical modes now transfer complete verified v2 envelopes to real local PostgreSQL and pass acknowledged commit plus fresh complete semantic readback. Legacy v1 still refuses the identical depth11 graph. Independent SQL codecs/edges, full23-column reader, no-heal, races, rollback and new-receipt uncertain-commit resolution are proven in 35 groups. Separate historical16-group structural evidence remains explicitly separate.
+Read the consolidated REPORT, CONTRACTS, STATUS, developer-report and C01–C29 matrix. Both genuine canonical modes now transfer complete verified v2 envelopes to real local PostgreSQL and pass acknowledged commit plus fresh complete semantic readback. Legacy v1 still refuses the identical depth11 graph. Independent SQL codecs/edges, full23-column reader, no-heal, races, rollback and new-receipt uncertain-commit resolution are proven in 37 groups. Separate historical16-group structural evidence remains explicitly separate.
 
 Captured build inputs and emitted/bootstrap bytes actually execute; held primary executable/fact and genuine composition seal/fact stay inside the one-shot realm. The host loader/compiler/Node remain trusted. Genuine non-null primary validity and null composed bounds are covered. 50 controlled negative paths fail at intended boundaries.
 

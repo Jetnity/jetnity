@@ -36,7 +36,7 @@
     "reasoning": "xhigh",
     "provider": "openai"
   },
-  "runtimeCommit": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
+  "runtimeCommit": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
   "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
   "r1Comment": 6027081169,
   "localProfile": {
@@ -50,5 +50,17 @@
   "observedMain": "0481173cf56f13e5316246503e4683ad843728f2",
   "mergeBase": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
   "mainAdvancedBySeparateTripPr897": true,
-  "semanticSqlProofGroups": 35
+  "semanticSqlProofGroups": 37,
+  "lastRemoteAttempt": {
+    "head": "a0ba89a3ec1300991d2575e3cc1b693e26bb2b90",
+    "run": 37549274500,
+    "verifyJob": 112560613083,
+    "tests": 5718,
+    "passed": 5717,
+    "failed": 1,
+    "skipped": 0,
+    "reason": "local_pg_connection_state_after_idle_owner_timeout",
+    "auth": "PASS",
+    "preview": "READY"
+  }
 }
