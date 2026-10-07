@@ -78,7 +78,16 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
     const cluster = startLocalProofCluster(), connect = LocalPgConnection.connect, owner = await connect(cluster)
     let writer: LocalPgConnection | undefined, writerPid = '', recoveryDelay = false, lossAt = 0
     let commitHeld = false
-    const connections: LocalPgConnection[] = []
+    const connections: LocalPgConnection[] = [], connectionPhases: string[] = []
+    const scenarioStarted = performance.now()
+    let phase = 'schema', inject = true
+    let operationResult: string | null = null, recoveryResult: string | null = null, independentReadback = 'NOT_RUN'
+    const diagnostic = (status: 'progress' | 'failure' | 'complete', code: string | null = null) => ({
+      schema: 'ot-pilot-r5-guard-diagnostic-v1', status, scenario, phase, elapsedMs: Math.ceil(performance.now() - scenarioStarted),
+      code, operationResult, recoveryResult, independentReadback, checksCompleted: checks.length,
+      targetOperations: writer?.operationDiagnostics,
+      connections: connections.slice(-16).map(c => ({ stage: connectionPhases[connections.indexOf(c)], index: connections.indexOf(c), operations: c.operationDiagnostics })),
+    })
     try {
       await installLocalProofSchema(owner)
       const deferredWait = scenario === 'ack_race' ? 'pg_catalog.pg_advisory_xact_lock(19003,1)' : 'pg_catalog.pg_sleep(60)'
@@ -89,9 +98,9 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
       // adds an owned control-path scheduling delay within the fixed 5s bound;
       // COMMIT and its acknowledged durable publication remain real PostgreSQL.
       LocalPgConnection.connect = async (candidate, user) => {
-        const c = await connect(candidate, user); connections.push(c)
+        const c = await connect(candidate, user); connections.push(c); connectionPhases.push(phase)
         const query = c.query.bind(c)
-        if (candidate === cluster && user === 'ot_provenance_writer') {
+        if (inject && candidate === cluster && user === 'ot_provenance_writer') {
           if (scenario === 'dispatch_gap') {
             // Hold only the actual COMMIT frame before kernel dispatch. All
             // PostgreSQL connections, earlier publication and results stay real.
@@ -106,7 +115,7 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
           }
           writer = c; writerPid = (await query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
           c.query = async (sql, parameters) => { if (sql === 'COMMIT') await query('INSERT INTO r3_guard_probe.pending VALUES(1)'); return query(sql, parameters) }
-        } else if (candidate === cluster && scenario === 'ack_race') {
+        } else if (inject && candidate === cluster && scenario === 'ack_race') {
           c.query = async (sql, parameters) => {
             if (sql.includes('pg_terminate_backend(a.pid,1000)')) { recoveryDelay = true; await pause(1500) }
             return query(sql, parameters)
@@ -115,6 +124,7 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
         return c
       }
       let settled = false
+      phase = 'target_publication_and_commit_observation'
       const operation = persistVerifiedIntegratedBundleLocally(cluster, oids, primary).finally(() => { settled = true })
       void operation.catch(() => { /* Observed below after the activity barrier. */ })
       // Cancel/terminate/ACK-race must observe actual deferred COMMIT. The
@@ -150,6 +160,7 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
         await pause(10)
       }
       assert.ok(observed, JSON.stringify({ reason: 'native_guard_observation_barrier', scenario, settled, observedTarget, elapsedMs: Math.ceil(performance.now() - start), operations: writer?.operationDiagnostics }))
+      phase = 'target_outcome'
       if (scenario === 'ack_race') {
         let completedNative = false
         for (let i = 0; i < 100 && !settled; i++) {
@@ -163,28 +174,54 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
       // In the dispatch gap, only a real backend termination can settle this
       // held transport operation. Socket closure/rollback is independently read.
       const result = await operation, elapsedAfterLossMs = Math.ceil(performance.now() - lossAt)
-      const diagnostic = writer!.operationDiagnostics.findLast(d => d.phase === 'commit')
-      assert.equal(diagnostic?.protectionFailure, 'commit_guard_lost')
-      LocalPgConnection.connect = connect
+      operationResult = result.ok ? 'acknowledged_verified_commit' : result.reason
+      const commitDiagnostic = writer!.operationDiagnostics.findLast(d => d.phase === 'commit')
+      assert.equal(commitDiagnostic?.protectionFailure, 'commit_guard_lost')
+      inject = false
+      phase = 'target_rollback_or_ack_readback'
       // Completion includes fresh semantic readback in the acknowledged case;
       // the operational stop assertion is for the interrupted COMMIT itself.
       if (scenario !== 'ack_race') {
         assert.ok(elapsedAfterLossMs < LOCAL_PG_DEADLINES.commitRecoveryMs)
         assert.deepEqual(result, { ok: false, reason: 'commit_outcome_unknown', commitProtectionFailure: 'commit_guard_lost' })
-        assert.equal(diagnostic?.commitAcknowledged, false); assert.equal(diagnostic?.code, '57P01')
+        assert.equal(commitDiagnostic?.commitAcknowledged, false); assert.equal(commitDiagnostic?.code, '57P01')
         await empty(owner)
         assert.equal((await owner.query('SELECT count(*)::text AS n FROM r3_guard_probe.pending'))[0]?.n, '0')
         assert.equal((await readVerifiedIntegratedBundleLocally(cluster, primary.bundle.recordFingerprint)).status, 'receipt_absent')
       } else {
         assert.ok(result.ok); assert.equal(result.commitProtectionFailure, 'commit_guard_lost')
-        assert.equal(diagnostic?.commitAcknowledged, true)
+        assert.equal(commitDiagnostic?.commitAcknowledged, true)
         assert.equal((await owner.query('SELECT count(*)::text AS n FROM r3_guard_probe.pending'))[0]?.n, '1')
       }
       assert.equal((await owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_locks WHERE pid=$1::integer AND locktype='advisory' AND granted", [pgText(writerPid, 23)]))[0]?.n, '0')
+      phase = 'independent_successor'
+      console.info(JSON.stringify(diagnostic('progress')))
       const recovery = await persistVerifiedIntegratedBundleLocally(cluster, oids, primary)
+      recoveryResult = recovery.ok ? recovery.outcome : recovery.reason
+      independentReadback = recovery.ok ? 'verified_exact' : 'NOT_RUN'
       assert.ok(recovery.ok); assert.equal(recovery.outcome, scenario === 'ack_race' ? 'idempotent' : 'inserted')
       checks.push(`r3_native_post_arming_${scenario}_observed_protection_loss_honest_outcome_independent_writer_readback`)
-      evidence.push({ scenario, elapsedAfterLossMs, outcome: result.ok ? 'acknowledged_verified_commit' : result.reason, diagnostic })
+      evidence.push({ scenario, elapsedAfterLossMs, outcome: result.ok ? 'acknowledged_verified_commit' : result.reason, diagnostic: commitDiagnostic })
+      phase = 'complete'; console.info(JSON.stringify(diagnostic('complete')))
+    } catch (error) {
+      // Preserve partial evidence before cleanup; no SQL, parameters, backend
+      // identities, paths or arbitrary database/error text enter public logs.
+      inject = false
+      try {
+        const readback = await readVerifiedIntegratedBundleLocally(cluster, primary.bundle.recordFingerprint)
+        if (readback.status === 'receipt_absent') independentReadback = 'receipt_absent'
+        else {
+          const actual = readback.envelope.bundle, expected = primary.bundle
+          const same = Buffer.from(actual.receiptBytes).equals(Buffer.from(expected.receiptBytes)) && Buffer.from(actual.custodyBindingBytes).equals(Buffer.from(expected.custodyBindingBytes)) && actual.artifacts.length === expected.artifacts.length && expected.artifacts.every(a => {
+            const b = actual.artifacts.find(x => x.pin.id === a.pin.id && x.pin.version === a.pin.version)
+            return b && Buffer.from(a.canonicalBytes).equals(Buffer.from(b.canonicalBytes))
+          })
+          independentReadback = same ? 'verified_exact' : 'verified_different_bytes'
+        }
+      } catch { independentReadback = 'readback_failed' }
+      const code = error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code) ? error.code : error instanceof assert.AssertionError ? 'ASSERTION' : 'OPERATIONAL_FAILURE'
+      console.error(JSON.stringify(diagnostic('failure', code)))
+      throw error
     } finally { LocalPgConnection.connect = connect; for (const c of connections) c.close(); owner.close(); cluster.stop() }
   }
   return evidence
