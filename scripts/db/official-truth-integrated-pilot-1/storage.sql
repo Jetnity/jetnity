@@ -337,7 +337,7 @@ CREATE CONSTRAINT TRIGGER receipt_links_complete AFTER INSERT ON official_proven
 CREATE CONSTRAINT TRIGGER custody_links_complete AFTER INSERT ON official_provenance_private.custody_dependencies DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION official_provenance_private.receipt_constraint();
 
 CREATE FUNCTION official_provenance_api.publish_structural_fixture_v1(storage_version smallint,mode text,fingerprint text,receipt_bytes bytea,binding_bytes bytea,submitted official_provenance_api.artifact_input_v1[])
-RETURNS text LANGUAGE plpgsql VOLATILE SECURITY DEFINER PARALLEL UNSAFE SET search_path = '' SET lock_timeout = '5s' SET statement_timeout = '15s' AS $$
+RETURNS text LANGUAGE plpgsql VOLATILE SECURITY DEFINER PARALLEL UNSAFE SET search_path = '' AS $$
 DECLARE a official_provenance_api.artifact_input_v1; existing official_provenance_api.artifact_input_v1; edge record; root record; blob bytea; digest_value text; new_objects official_provenance_api.artifact_input_v1[] := '{}'; receipt jsonb; binding jsonb;
 BEGIN
  IF storage_version IS NULL OR storage_version<>1 OR mode IS NULL OR mode<>ALL(ARRAY['create_or_verify','verify_existing']) OR pg_catalog.current_setting('transaction_isolation')<>'read committed' OR pg_catalog.current_setting('transaction_read_only')<>'off' THEN RAISE EXCEPTION 'invalid_input'; END IF;
@@ -398,7 +398,7 @@ END $$;
 ALTER FUNCTION official_provenance_api.publish_structural_fixture_v1(smallint,text,text,bytea,bytea,official_provenance_api.artifact_input_v1[]) OWNER TO ot_provenance_write_exec;
 
 CREATE FUNCTION official_provenance_api.read_structural_fixture_v1(fingerprint text)
-RETURNS TABLE(row_kind text,metadata jsonb,canonical_bytes bytea) LANGUAGE plpgsql STABLE SECURITY DEFINER PARALLEL UNSAFE SET search_path = '' SET statement_timeout = '15s' AS $$
+RETURNS TABLE(row_kind text,metadata jsonb,canonical_bytes bytea) LANGUAGE plpgsql STABLE SECURITY DEFINER PARALLEL UNSAFE SET search_path = '' AS $$
 BEGIN
  IF fingerprint IS NULL OR fingerprint !~ '^ot-provenance-v1:[a-f0-9]{64}$' OR pg_catalog.current_setting('transaction_isolation')<>'repeatable read' OR pg_catalog.current_setting('transaction_read_only')<>'on' THEN RAISE EXCEPTION 'invalid_input'; END IF;
  IF NOT EXISTS(SELECT 1 FROM official_provenance_private.receipts r WHERE r.record_fingerprint=fingerprint) THEN RETURN QUERY SELECT 'read_status'::text,pg_catalog.jsonb_build_object('status','receipt_absent'),NULL::bytea; RETURN; END IF;

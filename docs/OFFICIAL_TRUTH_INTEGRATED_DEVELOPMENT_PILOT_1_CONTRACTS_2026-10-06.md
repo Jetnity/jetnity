@@ -1,6 +1,6 @@
 # Integrated pilot internal contracts
 
-R1 implements a controlled local engineering pilot. These contracts confer no production issuer authority or independent TL approval. The immutable TASK remains unchanged; TL amendment 6027081169 governs the explicit local successor profile.
+R1 and its binding R2 correction implement a controlled local engineering pilot. These contracts confer no production issuer authority or independent TL approval. The immutable TASK remains unchanged; TL amendment 6027081169 governs the explicit local successor profile.
 
 ## Preserved historical identities
 
@@ -89,3 +89,38 @@ The30-second inactivity bound applies to connection startup and each active quer
 
 ### Independent deferred work
 Every artifact and artifact-link deferred event still validates its retained parent. Expected typed edges are materialized once per event, compared with stored edges in both directions, and checked against exact target/type/family/name/blob metadata. There is no validation cache or skipped event. This removes repeated per-edge SQL work without weakening completeness or changing bounds.
+
+
+## Binding R2 semantic and operational correction
+
+R2 review5442544139 and checkpoint6038338666 govern this correction of the same Generation1 writer. The accepted integrated namespace remains legacy requirement_effect / visa with null applicability. Real-source qualification stays separately BLOCKED and is not rerun by R2.
+
+### Independent finite SQL codec audit
+
+The audit compared the complete finite dispatch in `semantic-v2.sql` with `official-truth-integrated-pilot-bundle.ts`, the unchanged `official-truth-autonomous-provenance-record.ts`, content-identity, source-registry, rule-claims, extractor-registry and composition-policy readers. SQL supports the disclosed local namespace; it does not claim to implement every future canonical fact variant.
+
+| Canonical reader family | Native SQL enforcement and R2 comparison |
+| --- | --- |
+| Receipt, candidate, proof and citations | Closed fields, support order/cardinality, exact fact/candidate/proof/selection hashes and finite legal-slot coverage remain. R2 adds the missing candidate.requirementType = global cell scope.requirementType relation. A passport cell with otherwise valid visa candidate artifacts is independently refused. |
+| Admission, scope and custody | All seven categories equal the canonical cell scope, contracts have exact roles, accepted identities/lookup keys/original/validity joins are independently recomputed. R2 adds evaluationDatePlan non-null iff validity.mode is travel_date, before any selected/unselected artifact can be admitted. |
+| Extractor and policy descriptors | Existing ref order/uniqueness, representation coverage, URL membership, policy pairing, assignment roles/cardinalities and registry identity/currentness remain. Every extractor MIME is checked against its canonical MIME grammar, including unselected definitions. Identity/representation MIME uses the separate canonical Content Identity grammar, including its 64-character token limits. |
+| Representation cardinality | Canonical extractor representations are 1–16. Only the new local TypeScript descriptor's erroneous maximum8 becomes16. Actual full bundles with9/16 pass;17 fails at TS and native SQL. Other R1 limits are unchanged. |
+| URL, path and validity locator | Existing conservative canonical HTTPS/domain checks remain. R2 adds canonical path alphabet, no double dots and length<=200. JSON-pointer grammar is retained and its missing maximum256 is enforced in UTF-16 units, matching the TypeScript reader. |
+| Catalog and implementation strings | Existing source/profile/item/currentness/URL uniqueness joins remain. Related audit fixes apply canonical UTF-16 length counting to display names and implementation source text; source names also require exact canonical whitespace trimming. Positive80/256/524288 and contradictory81/257/524289 vectors include supplementary Unicode. |
+| Manifest, graph, K and bytes | Exact envelope metadata, roles/types, implementation dependency order, full reachability, pins/digests, no-heal, collisions and frozen Receipt/C/H/Pin/K remain. No graph, byte, node, edge or transport maximum changes. |
+
+The direct SQL regressions rebuild all ancestor Pins and receipt/K fingerprints. Scope variants also rebuild Evidence-v2, lookup/scope keys, review-v3 and candidate/selection/proof identities. Each negative goes through the public native publisher without TypeScript preflight in an empty cluster; attempted COMMIT leaves all eight tables empty and a new reader reports absent. Positive controls precede refusal claims. The16-representation positive is also committed and independently read back in full. These historical vectors do not mint live execution custody.
+
+### Fixed native backend deadlines, including COMMIT
+
+Owned cluster configuration and protocol startup options establish statement_timeout=25000ms, lock_timeout=15000ms, idle_in_transaction_session_timeout=20000ms and idle_session_timeout=0 before application commands. There is no caller timeout parameter or environment override. The30-second active transport fallback remains. Normal idle connections outside transactions retain their lifetime.
+
+A PostgreSQL-specific caveat is material: `finish_xact_command()` disables the statement timer before deferred COMMIT work. See the [upstream PostgreSQL implementation](https://github.com/postgres/postgres/blob/REL_17_6/src/backend/tcop/postgres.c) and [client timeout definitions](https://www.postgresql.org/docs/16/runtime-config-client.html). Merely moving SET outside the function does not bound that phase.
+
+Before COMMIT, the wire adapter therefore starts a separate backend in the same owned local cluster and verifies its active PgSleep state. A fixed20-second server-side sleep precedes a fresh backend lookup and termination signal. PID, backend birth and transaction-start identity must all still match, so a later transaction or reused PID cannot be targeted. Failure to arm refuses COMMIT. The local installation owner is used only for this disposable proof infrastructure; no application/hosted role gains privileges. On completion or error, the guard is canceled and joined, with its control and guard connections closed. No PostgreSQL extension or PGlite is introduced.
+
+Native regressions prove statement57014, lock55P03, idle-open-transaction termination, and COMMIT/deferred-work57P01. Each interrupted publication leaves all eight tables empty, releases its live advisory lock and permits a subsequent independent writer with full verified readback. The existing genuine committed-but-lost-ACK test still requires explicit verify-existing. Transport loss or COMMIT errors never prove whether a commit happened: the adapter conservatively returns commit_outcome_unknown. PostgreSQL interrupt processing and operating-system I/O remain infrastructure limits; no hardware-level real-time guarantee is claimed.
+
+These are operating deadlines, not data TTL, retention, launch, hosted migration or cost decisions.
+
+The closed Content Identity importer guard gains exactly `scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts`: it recomputes historical Evidence-v2 identities for the native counterexamples. No wildcard is added. Unknown siblings and filename lookalikes remain negative guard tests; the canonical production reader is unchanged.

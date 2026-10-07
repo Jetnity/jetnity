@@ -2,7 +2,7 @@
 // No TCP, DSN, credential, pool, dynamic SQL or runtime application import.
 import { createConnection, type Socket } from 'node:net'
 import { join } from 'node:path'
-import { assertOwnedLocalProofCluster, type LocalProofCluster } from './local-cluster'
+import { assertOwnedLocalProofCluster, LOCAL_PG_DEADLINES, LOCAL_PG_STARTUP_OPTIONS, type LocalProofCluster } from './local-cluster'
 
 export type PgParameter = Readonly<{ oid: number; bytes: Uint8Array; binary?: boolean }>
 export type PgRows = readonly Readonly<Record<string, string | null>>[]
@@ -43,6 +43,7 @@ export class LocalPgConnection {
   private closed = false
   private busy = false
   private timedOut = false
+  private backendPid = 0
   private readonly operations: LocalPgOperationDiagnostic[] = []
   /** Fixed fields only: no SQL, parameter bytes, identities, socket paths or database error text. */
   get operationDiagnostics(): readonly LocalPgOperationDiagnostic[] { return this.operations.slice() }
@@ -52,7 +53,7 @@ export class LocalPgConnection {
       outcome: this.timedOut ? 'timeout' : error === undefined ? 'complete' : code && /^[0-9A-Z]{5}$/.test(code) ? 'sql_error' : 'transport_error', code }))
     if (this.operations.length > 32) this.operations.shift()
   }
-  private constructor(private socket: Socket) {
+  private constructor(private socket: Socket, private cluster: LocalProofCluster) {
     socket.on('data', chunk => {
       if (this.buffer.length + this.queuedBytes + chunk.length > 24 * 1024 * 1024) { this.socket.destroy(); return }
       this.buffer = Buffer.concat([this.buffer, chunk])
@@ -74,7 +75,7 @@ export class LocalPgConnection {
     assertOwnedLocalProofCluster(cluster)
     if (!cluster.socket.startsWith(cluster.root + '/')) throw new LocalPgError('unsafe_socket')
     const socket = createConnection({ path: join(cluster.socket, `.s.PGSQL.${cluster.port}`) })
-    const connection = new LocalPgConnection(socket), started = performance.now()
+    const connection = new LocalPgConnection(socket, cluster), started = performance.now()
     let failure: unknown
     try {
       await new Promise<void>((resolve, reject) => {
@@ -83,7 +84,7 @@ export class LocalPgConnection {
         const cleanup = () => { socket.off('connect', connected); socket.off('error', failed); socket.off('close', failed) }
         socket.once('connect', connected); socket.once('error', failed); socket.once('close', failed)
       })
-      const body = Buffer.concat([i32(196608), z('user'), z(user), z('database'), z(cluster.database), z('client_encoding'), z('UTF8'), Buffer.from([0])])
+      const body = Buffer.concat([i32(196608), z('user'), z(user), z('database'), z(cluster.database), z('client_encoding'), z('UTF8'), z('options'), z(LOCAL_PG_STARTUP_OPTIONS), Buffer.from([0])])
       socket.write(Buffer.concat([i32(body.length + 4), body]))
       await connection.result()
       return connection
@@ -102,9 +103,10 @@ export class LocalPgConnection {
   private async result(): Promise<PgRows> {
     const rows: Record<string, string | null>[] = []; let names: string[] = [], failure: LocalPgError | null = null, count = 0
     while (true) {
-      const { tag, bytes } = await this.message()
+      const { tag, bytes } = await this.message().catch(error => { throw failure ?? error })
       if (++count > 100_000) throw new LocalPgError('response_bound')
       if (tag === 'R' && bytes.readInt32BE(0) !== 0) throw new LocalPgError('authentication_forbidden')
+      if (tag === 'K') this.backendPid = bytes.readInt32BE(0)
       if (tag === 'E') {
         let offset = 0, code = 'query_failed'
         while (offset < bytes.length && bytes[offset]) { const field = String.fromCharCode(bytes[offset++]!); const end = bytes.indexOf(0, offset); if (end < 0) break; if (field === 'C') code = bytes.subarray(offset, end).toString(); offset = end + 1 }
@@ -125,16 +127,59 @@ export class LocalPgConnection {
       if (tag === 'Z') { if (failure) throw failure; return rows }
     }
   }
+  /** PostgreSQL 15–17 disables statement_timeout before deferred COMMIT work.
+   * An independent owned backend therefore arms a fixed deadline before COMMIT.
+   * Its sleep is executed by PostgreSQL, not a client timer. PID + backend birth
+   * + transaction start prevent cancellation of a reused PID or later work.
+   * The installation owner is local test infrastructure, never an application role.
+   */
+  private async armCommitDeadline(): Promise<() => Promise<void>> {
+    const guard = await LocalPgConnection.connect(this.cluster)
+    let control: LocalPgConnection | undefined, pending: Promise<unknown> | undefined
+    const cleanup = async () => {
+      try {
+        if (pending) {
+          control ??= await LocalPgConnection.connect(this.cluster)
+          await control.query('SELECT pg_catalog.pg_cancel_backend($1::integer)', [pgText(String(guard.backendPid), 23)])
+          await pending
+        }
+      } finally { control?.close(); guard.close() }
+    }
+    try {
+      const target = (await guard.query('SELECT backend_start::text AS birth,xact_start::text AS transaction FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(this.backendPid), 23)]))[0]
+      if (!target?.birth || !target.transaction) { guard.close(); return async () => {} }
+      // pg_sleep returns the empty void text. Using its length in the activity
+      // function argument forces the fresh activity lookup AFTER the sleep.
+      let finished = false
+      pending = guard.query('SELECT pg_catalog.pg_terminate_backend(a.pid)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer + pg_catalog.length(pg_catalog.pg_sleep($4::double precision)::text)) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz',
+        [pgText(String(this.backendPid), 23), pgText(target.birth), pgText(target.transaction), pgText(String(LOCAL_PG_DEADLINES.commitMs / 1000))])
+        .then(() => { finished = true }, error => { finished = true; return error as unknown })
+      control = await LocalPgConnection.connect(this.cluster)
+      let armed = false
+      for (let attempt = 0; attempt < 50 && !finished; attempt++) {
+        const state = (await control.query('SELECT state,wait_event FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(guard.backendPid), 23)]))[0]
+        if (state?.state === 'active' && state.wait_event === 'PgSleep') { armed = true; break }
+        await new Promise<void>(resolve => setTimeout(resolve, 20))
+      }
+      if (!armed || finished) throw new LocalPgError('commit_deadline_not_armed')
+      // Cancel and join even after an uncertain target outcome; closing a
+      // sleeping socket alone would not release its backend promptly.
+      return cleanup
+    } catch (error) { await cleanup(); throw error }
+  }
   async query(sql: string, parameters: readonly PgParameter[] = []): Promise<PgRows> {
     if (this.busy || this.closed) throw new LocalPgError('connection_state')
     if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) throw new LocalPgError('parameter_bound')
     this.busy = true; this.timedOut = false
     const command = /^(BEGIN|COMMIT|ROLLBACK)\b/i.exec(sql.trim())?.[1]?.toLowerCase()
     const phase: LocalPgOperationDiagnostic['phase'] = command === 'begin' || command === 'commit' || command === 'rollback' ? command : 'query'
-    const started = performance.now(); let failure: unknown
-    // Only an active operation has an inactivity deadline; ready connections may wait.
+    const started = performance.now(); let failure: unknown, disarm: (() => Promise<void>) | undefined
+    // The backend already bounds every statement (including COMMIT), locks and
+    // idle transactions. This independent transport fallback is active only
+    // during an operation; ordinary idle sessions remain reusable.
     this.socket.setTimeout(30_000)
     try {
+      if (phase === 'commit') disarm = await this.armCommitDeadline()
       if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
       else {
         const parse = Buffer.concat([z(''), z(sql), i16(parameters.length), ...parameters.map(p => i32(p.oid))])
@@ -145,7 +190,11 @@ export class LocalPgConnection {
       }
       return await this.result()
     } catch (error) { failure = error; throw error }
-    finally { this.socket.setTimeout(0); this.busy = false; this.recordOperation(phase, started, failure) }
+    finally {
+      this.socket.setTimeout(0)
+      try { await disarm?.() } catch (error) { failure ??= error; throw error }
+      finally { this.busy = false; this.recordOperation(phase, started, failure) }
+    }
   }
   close() { this.socket.setTimeout(0); this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }
 }

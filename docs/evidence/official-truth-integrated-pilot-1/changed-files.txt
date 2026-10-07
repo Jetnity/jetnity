@@ -11,6 +11,7 @@ docs/evidence/official-truth-integrated-pilot-1/coverage-matrix.json
 docs/evidence/official-truth-integrated-pilot-1/developer-report.json
 docs/evidence/official-truth-integrated-pilot-1/developer-report.txt
 docs/evidence/official-truth-integrated-pilot-1/official-source.json
+docs/evidence/official-truth-integrated-pilot-1/r2-regression-evidence.json
 lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts
 lib/readiness/official-truth-composition-policy-registry.ts
 lib/readiness/official-truth-content-identity.test.ts
@@ -33,6 +34,8 @@ scripts/db/official-truth-integrated-pilot-1/integrated-proof.ts
 scripts/db/official-truth-integrated-pilot-1/local-cluster.ts
 scripts/db/official-truth-integrated-pilot-1/pg-wire.ts
 scripts/db/official-truth-integrated-pilot-1/proof.ts
+scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts
+scripts/db/official-truth-integrated-pilot-1/r2-proof.ts
 scripts/db/official-truth-integrated-pilot-1/semantic-regressions.ts
 scripts/db/official-truth-integrated-pilot-1/semantic-v2.sql
 scripts/db/official-truth-integrated-pilot-1/storage.sql

@@ -7,12 +7,12 @@
   "baseline": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
   "classification": "OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_READY_FOR_TL_REVIEW",
   "phases": {
-    "A": "r1_reconstructed_task_unchanged",
+    "A": "r2_required_entries_index_reviews_checkpoint_refs_and_immutable_task_reconstructed",
     "B": "captured_build_primary_composed_and_original_validity_verified",
     "C": "complete_v2_bundles_verified_legacy_v1_refusal_retained",
-    "D": "both_actual_semantic_sql_roundtrips_and_adversarial_proof_verified",
+    "D": "r2_native_69_groups_primary_and_composed_complete_roundtrips_VERIFIED",
     "E": "BLOCKED_actual_https_response_too_large_no_real_origin",
-    "F": "one_command_exit0_full_local_checks_and_runtime_exact_head_remote_gates_verified"
+    "F": "developer_command_PASS_and_local_checks_recorded_new_exact_head_remote_gates_in_final_delivery_receipt"
   },
   "realOfficialSourcePilot": "BLOCKED",
   "integratedReceiptRoundtrip": "VERIFIED",
@@ -24,7 +24,7 @@
   "checks": "command-results.json",
   "coverage": "coverage-matrix.json",
   "dependencyPacket": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_REPORT_2026-10-06.md",
-  "next": "STOP for independent Technical-Lead exact-head re-review after final documentation-head remote gates/readback. Final PR delivery receipt records that exact SHA; Draft retained, no Ready/merge/follow-up.",
+  "next": "STOP for independent TL exact-head review after final delivery gates. Only TL decides acceptance, controlled main sync, renewed full gates, Ready and merge.",
   "activation": {
     "F8": false,
     "hostedApply": false,
@@ -36,8 +36,7 @@
     "reasoning": "xhigh",
     "provider": "openai"
   },
-  "runtimeCommit": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
-  "round": "TECHNICAL_LEAD_R1_INTEGRATED_PILOT_COMPLETION",
+  "round": "TECHNICAL_LEAD_R2_CONSOLIDATED_CORRECTION",
   "r1Comment": 6027081169,
   "localProfile": {
     "name": "ot-integrated-pilot-local-closure-v2",
@@ -46,42 +45,27 @@
     "implementationStatus": "both_canonical_bundles_verified",
     "hostedAdoption": false
   },
-  "r1RuntimeCheckpoint": "dafd5fb024380d8d375d7bb5704b534e78f15d23",
-  "observedMain": "0481173cf56f13e5316246503e4683ad843728f2",
+  "observedMain": "9ea0e068e1d28b18ed15059fa5bf9b63c0689cfe",
   "mergeBase": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
-  "mainAdvancedBySeparateTripPr897": true,
-  "semanticSqlProofGroups": 38,
-  "lastRemoteAttempt": {
-    "head": "403b93c709f03b445e50b48c78550f04ef8c05bb",
-    "run": 37551625911,
-    "verifyJob": 112568216700,
-    "tests": 5718,
-    "passed": 5717,
-    "failed": 1,
-    "skipped": 0,
-    "reason": "COMMIT_timeout_30001ms_correctly_unknown",
-    "auth": "PASS",
-    "preview": "READY"
+  "semanticSqlProofGroups": 69,
+  "independentTLPass": false,
+  "r2Review": 5442544139,
+  "r2Checkpoint": 6038338666,
+  "r2Status": "CORRECTIONS_IMPLEMENTED_NATIVE_AND_LOCAL_GATES_VERIFIED",
+  "baseHeadBeforeR2": "7f440f4136f54931f9bc1df6b97d03a7718bfe1a",
+  "finalExactHeadEvidence": "Final delivery receipt and PR comment, written after publication; earlier gates are historical only.",
+  "nativePostgres": "17.6",
+  "r2RegressionEvidence": "r2-regression-evidence.json",
+  "sourceRunInR2": false,
+  "mainSynchronized": false,
+  "r2Delegation": "SINGLE_AGENT_same_existing_writer",
+  "backendDeadlinesMs": {
+    "statement": 25000,
+    "lock": 15000,
+    "idleTransaction": 20000,
+    "commitNativeGuard": 20000,
+    "ordinaryIdleSession": 0,
+    "activeTransportFallback": 30000
   },
-  "validatedRuntimeGates": {
-    "head": "161bab0b6522af1964ef0894d4f408532fc3d9c1",
-    "tree": "1cda08eac2aa2968bfb390823106e3503c4b1d3c",
-    "ciRun": 37552600598,
-    "verifyJob": 112571348865,
-    "authJob": 112571349019,
-    "ci": "SUCCESS",
-    "tests": 5718,
-    "passed": 5718,
-    "failed": 0,
-    "skipped": 0,
-    "sqlGroups": 38,
-    "postgres": "16.15",
-    "auth": "SUCCESS_actual_55_values_243_keys",
-    "preview": "dpl_BEDLshwyjvZd4RTBzNbuecV9ohJN",
-    "previewState": "READY",
-    "previewExactSha": true,
-    "aliasError": null
-  },
-  "finalDocumentationHeadGates": "Fresh after publication; final PR delivery receipt is authoritative.",
-  "independentTLPass": false
+  "localFullSuiteLimit": "Five initial local failures: four unchanged Linux-PG16 environment failures plus exact importer guard, now corrected and49/49 focused tests pass. Final Linux CI must fully pass."
 }

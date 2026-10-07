@@ -482,3 +482,15 @@ test('P1 selected extractor metadata must permit every actual support even after
     ]) assert.equal(verifyLocalIntegratedPilotBundle(extractorDescriptorMutation(run.envelope, mutate)).ok, true)
   }
 })
+
+
+test('local descriptor retains canonical representation counts 9 and 16 and rejects 17', async () => {
+  const { runControlledSyntheticPilot } = await import('../../scripts/official-truth-integrated-pilot-1/controlled-runtime')
+  const { r2RepresentationFixture } = await import('../../scripts/db/official-truth-integrated-pilot-1/r2-fixtures')
+  const { verifyLocalIntegratedPilotBundle } = await import('./official-truth-integrated-pilot-bundle')
+  const primary = await runControlledSyntheticPilot('primary')
+  assert.equal(primary.status, 'synthetic_bundle_verified')
+  if (primary.status !== 'synthetic_bundle_verified') throw Error('r2_actual_primary_required')
+  for (const count of [9, 16]) assert.equal(verifyLocalIntegratedPilotBundle(r2RepresentationFixture(primary.envelope, count)).ok, true)
+  assert.equal(verifyLocalIntegratedPilotBundle(r2RepresentationFixture(primary.envelope, 17)).ok, false)
+})

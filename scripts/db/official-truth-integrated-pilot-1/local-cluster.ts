@@ -8,6 +8,10 @@ import { fileURLToPath } from 'node:url'
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const ownedClusters = new WeakSet<object>()
 const binaries = ['initdb', 'pg_ctl', 'postgres', 'psql'] as const
+// Fixed operating deadlines, applied by the backend before its first command.
+// Deliberately separate from retention and from the 30s transport fallback.
+export const LOCAL_PG_DEADLINES = Object.freeze({ statementMs: 25_000, lockMs: 15_000, idleTransactionMs: 20_000, commitMs: 20_000 })
+export const LOCAL_PG_STARTUP_OPTIONS = `-c statement_timeout=${LOCAL_PG_DEADLINES.statementMs} -c lock_timeout=${LOCAL_PG_DEADLINES.lockMs} -c idle_in_transaction_session_timeout=${LOCAL_PG_DEADLINES.idleTransactionMs} -c idle_session_timeout=0`
 export type LocalPgBins = Record<(typeof binaries)[number], string>
 const forbidden = /^(PG|DATABASE_URL$|DIRECT_URL$|POSTGRES|SUPABASE_.*(URL|CONNECTION|REF|PASSWORD)|JETNITY_.*(DB|REMOTE))/i
 export function assertLocalProofEnvironment(env: Readonly<Record<string, string | undefined>> = process.env, argv: readonly string[] = process.argv): void {
@@ -54,7 +58,7 @@ export function startLocalProofCluster(): LocalProofCluster {
   }
   try {
     run(bins.initdb, ['-D', data, '--no-locale', '--encoding=UTF8', '--auth-local=trust', '--auth-host=reject', '--username', user, '--no-sync'], 60_000)
-    writeFileSync(join(data, 'postgresql.auto.conf'), ["listen_addresses = ''", `unix_socket_directories = '${socket.replaceAll("'", "''")}'`, 'unix_socket_permissions = 0700', `port = ${port}`, "timezone = 'UTC'", 'log_statement = none', 'log_min_error_statement = panic', 'log_parameter_max_length = 0', 'log_parameter_max_length_on_error = 0'].join('\n'))
+    writeFileSync(join(data, 'postgresql.auto.conf'), ["listen_addresses = ''", `unix_socket_directories = '${socket.replaceAll("'", "''")}'`, 'unix_socket_permissions = 0700', `port = ${port}`, "timezone = 'UTC'", `statement_timeout = ${LOCAL_PG_DEADLINES.statementMs}`, `lock_timeout = ${LOCAL_PG_DEADLINES.lockMs}`, `idle_in_transaction_session_timeout = ${LOCAL_PG_DEADLINES.idleTransactionMs}`, 'idle_session_timeout = 0', 'log_statement = none', 'log_min_error_statement = panic', 'log_parameter_max_length = 0', 'log_parameter_max_length_on_error = 0'].join('\n'))
     run(bins.pg_ctl, ['-D', data, '-l', join(root, 'postgres.log'), '-w', '-t', '30', 'start']); started = true
     const version = run(bins.postgres, ['--version']).trim()
     owned = Object.freeze({ socket, port, user, database: 'postgres', root, version, stop })

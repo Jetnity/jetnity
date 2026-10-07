@@ -181,7 +181,7 @@ const implementationDependencies = z.array(pin).max(128)
 const contractContent = z.object({ contract: z.enum(contractNames), implementation: pin, implementationDependencies }).strict()
 const registryEntry = z.object({ id, version: positive, current: z.boolean(), definition: pin }).strict()
 const descriptor = z.object({ extractorId: z.string(), extractorVersion: positive, factKind,
-  sourceFamilyId: z.string(), contentItemRefs: refs, representations: z.array(binding).min(1).max(8),
+  sourceFamilyId: z.string(), contentItemRefs: refs, representations: z.array(binding).min(1).max(16),
   urlAllowlist: z.array(z.union([z.object({ kind: z.literal('exact'), canonicalUrl: z.string() }).strict(),
     z.object({ kind: z.literal('path'), host: z.string(), path: z.string() }).strict()])).min(1).max(32),
   contentTypes: z.array(z.string()).min(1).max(16), schemaFamily: z.string(), policyId: z.string().nullable(),

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "round": "R1",
+  "round": "TL-R2",
   "scope": "author_evidence_not_tl_acceptance",
   "supportedIntegratedFactNamespace": "legacy requirement_effect / visa; applicabilitySchema null",
   "cases": [
@@ -82,7 +82,7 @@
     {
       "case": "C16",
       "status": "INTEGRATED_AND_SHARED_SCOPE",
-      "evidenceAndLimit": "Runtime scope substitution rejected; historical cross-joins use canonical complete seven-field equality and key. Exhaustive dimension codec variants remain shared-helper tests."
+      "evidenceAndLimit": "Runtime scope substitution rejected; historical cross-joins use canonical complete seven-field equality and key. Exhaustive dimension codec variants remain shared-helper tests. R2 independently checks requirementType against global scope and admission travel_date/evaluationDatePlan in native SQL using complete correctly rehashed counterexamples."
     },
     {
       "case": "C17",
@@ -112,12 +112,12 @@
     {
       "case": "C22",
       "status": "INTEGRATED_AND_SHARED_BYTES",
-      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority."
+      "evidenceAndLimit": "Closed envelopes reject unknown fields/versions; malformed canonical bytes, duplicates, accessors, symbols, cycles, Unicode and -0 covered by shared byte tests plus positive-derived byte mutations. No getter-based authority. R2 audits canonical descriptor MIME, path/locator rules and Unicode length/trim refinements at the direct native publisher boundary."
     },
     {
       "case": "C23",
       "status": "INTEGRATED_AND_BOUNDARY_HELPER",
-      "evidenceAndLimit": "Actual typed graph depth11: v1 refuses/v2 accepts. Same private production traversal proves8/9/16/17 and longer shared DAG; closed typed role grammar cannot construct16/17. Node256/257, edge1024/1025, K4096/4097 and union exactly8MiB/+1 covered."
+      "evidenceAndLimit": "Actual typed graph depth11: v1 refuses/v2 accepts. Same private production traversal proves8/9/16/17 and longer shared DAG; closed typed role grammar cannot construct16/17. Node256/257, edge1024/1025, K4096/4097 and union exactly8MiB/+1 covered. Local descriptor9/16 representation controls and17 refusal restore the existing canonical range without changing any R1 graph/byte bound."
     },
     {
       "case": "C24",
@@ -127,7 +127,7 @@
     {
       "case": "C25",
       "status": "INTEGRATED_POSTGRES_VERIFIED",
-      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; 38 real SQL adversarial/security groups; mandatory CI test cannot skip either positive path."
+      "evidenceAndLimit": "Both actual captured canonical envelopes atomically commit and pass fresh complete 23-column semantic readback; Expanded R2 real SQL adversarial/security groups (exact count in developer-report); mandatory CI test cannot skip either positive path."
     },
     {
       "case": "C26",
@@ -142,12 +142,14 @@
     {
       "case": "C28",
       "status": "INTEGRATED_POSTGRES_VERIFIED",
-      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested."
+      "evidenceAndLimit": "Actual full-bundle rollback/invisibility, exact retry, real concurrent identical/conflicting connections, new-receipt lost COMMIT ACK then verify-existing resolution; corrupted retained artifacts/name index/K/edges cannot heal, even via a new receipt sharing the damaged graph. Deferred constraints and reader shape/order/versions are tested. R2 adds effective fixed backend statement/lock/idle-transaction limits and an armed native COMMIT guard, with rollback/lock-release/independent-writer readback and unchanged lost-ACK uncertainty."
     },
     {
       "case": "C29",
       "status": "INTEGRATED_BOUNDARY",
       "evidenceAndLimit": "Default production root remains custody_missing; shipped extractor/policy registries empty, requirements provider null and application import guards remain closed."
     }
-  ]
+  ],
+  "r2Audit": "../../OFFICIAL_TRUTH_INTEGRATED_DEVELOPMENT_PILOT_1_CONTRACTS_2026-10-06.md",
+  "r2RegressionEvidence": "r2-regression-evidence.json"
 }

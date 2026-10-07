@@ -4,6 +4,7 @@ import {provenanceCanonical,provenanceHash,type Pin} from '../../../lib/readines
 import {sha256Hex} from '../../../lib/readiness/digest'
 import {LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE,verifyLocalIntegratedPilotBundle,type LocalIntegratedPilotEnvelope,type IntegratedPilotArtifactInput,type IntegratedPilotPayload} from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import {runSemanticRegressions} from './semantic-regressions'
+import {runR2SemanticProof,runR2BackendProof} from './r2-proof'
 import {startLocalProofCluster} from './local-cluster'
 import {LocalPgConnection,LocalPgError,pgBytes,pgText,type PgRows} from './pg-wire'
 import {installLocalProofSchema,localArtifactTypeOids,persistVerifiedIntegratedBundleLocally,publishIntegratedBundle,readVerifiedIntegratedBundleLocally,readIntegratedRows,inspectIntegratedReadback} from './storage'
@@ -60,7 +61,7 @@ function changedImplementation(envelope:LocalIntegratedPilotEnvelope) {
 }
 export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegratedPilotEnvelope,composedEnvelope:LocalIntegratedPilotEnvelope) {
   assert.equal(verifyLocalIntegratedPilotBundle(primaryEnvelope).ok,true);assert.equal(verifyLocalIntegratedPilotBundle(composedEnvelope).ok,true)
-  const checks:string[]=[],cluster=startLocalProofCluster(),connections:LocalPgConnection[]=[]
+  const checks:string[]=[...await runR2SemanticProof(primaryEnvelope),...await runR2BackendProof(primaryEnvelope)],cluster=startLocalProofCluster(),connections:LocalPgConnection[]=[]
   const connect=async(user?:string)=>{const c=await LocalPgConnection.connect(cluster,user);connections.push(c);return c}
   const owner=await connect(),root=cluster.root
   try {
@@ -68,10 +69,10 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     // The owner remains ready while other connections work; its lifetime is not a query deadline.
     const ownerBackend=await owner.query('SELECT pg_catalog.pg_backend_pid()::text AS pid')
     const timeoutProbe=await connect()
-    const activeTimeout=assert.rejects(timeoutProbe.query('SELECT pg_catalog.pg_sleep(60)'),error=>error instanceof LocalPgError&&error.code==='connection_closed')
+    const activeTimeout=assert.rejects(timeoutProbe.query('SELECT pg_catalog.pg_sleep(60)'),error=>error instanceof LocalPgError&&error.code==='57014')
     await Promise.all([new Promise<void>(resolve=>setTimeout(resolve,31_000)),activeTimeout])
     assert.deepEqual(await owner.query('SELECT pg_catalog.pg_backend_pid()::text AS pid'),ownerBackend)
-    checks.push('idle_owner_connection_survives_31_seconds_and_reuses_same_backend','active_query_inactivity_timeout_remains_30_seconds')
+    checks.push('idle_owner_connection_survives_31_seconds_and_reuses_same_backend','active_statement_backend_timeout_25_seconds_before_transport_fallback')
     const write=async(e:LocalIntegratedPilotEnvelope,mode:'create_or_verify'|'verify_existing'='create_or_verify')=>{const c=await connect('ot_provenance_writer');try{await c.query('BEGIN ISOLATION LEVEL READ COMMITTED');const out=await publishIntegratedBundle(c,oids,e,mode);await c.query('COMMIT');return out}catch(error){try{await c.query('ROLLBACK')}catch{}throw error}finally{c.close()}}
     const rejectSql=async(e:LocalIntegratedPilotEnvelope)=>{await assert.rejects(write(e),LocalPgError)}
     // Verify-existing does not create absent bundles; explicit rollback removes all staged writes.
@@ -103,7 +104,7 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     let waiting=false
     for(let i=0;i<1500;i++){const state=await owner.query("SELECT count(*)::text n FROM pg_catalog.pg_locks WHERE locktype='advisory' AND classid=1869901924 AND objid=1 AND NOT granted");if(Number(state[0]?.n)===2){waiting=true;break}await new Promise(r=>setTimeout(r,20))}
     await owner.query('COMMIT');assert.equal(waiting,true)
-    const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'])
+    const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'],JSON.stringify({stage:'concurrent_bundle_writers',outcomes:outcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
     const composed=await readVerifiedIntegratedBundleLocally(cluster,composedEnvelope.bundle.recordFingerprint);assert.equal(composed.status,'verified');if(composed.status!=='verified')throw Error('composed_readback')
     checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent')
     const composedRepeat=await persistVerifiedIntegratedBundleLocally(cluster,oids,composedEnvelope,'verify_existing');assert.ok(composedRepeat.ok);assert.equal(composedRepeat.outcome,'idempotent')

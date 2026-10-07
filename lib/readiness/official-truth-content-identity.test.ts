@@ -514,13 +514,19 @@ describe('dormancy and architectural boundaries', () => {
     'scripts/official-truth-integrated-pilot-1/official-source.ts',
     // R1 exact passport representation identity; remains developer-only.
     'scripts/official-truth-integrated-pilot-1/official-source-profile.ts',
+    // R2 historical counterexamples recompute canonical Evidence-v2 identities;
+    // this exact fixture importer cannot issue live custody or production facts.
+    'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts',
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
       'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
       'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
+      'scripts/db/official-truth-integrated-pilot-1/unreviewed.ts',
+      'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts.evil.ts',
       'lib/readiness/official-truth-integrated-pilot-bundle.ts.evil.ts']) assert.equal(contentIdentityImporterAllowed(path), false, path)
   })
   test('repository search pins the finite R2 application and isolated developer importers', () => {

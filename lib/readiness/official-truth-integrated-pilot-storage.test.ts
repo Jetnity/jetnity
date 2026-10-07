@@ -30,7 +30,7 @@ test('real disposable PostgreSQL proves structural bytes, atomic transactions, c
   context.diagnostic(JSON.stringify(result))
 })
 
-test('actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof', {timeout:600_000}, async context=>{
+test('actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof', {timeout:900_000}, async context=>{
   assert.ok(findLocalPgBins(),'NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator')
   const {runControlledSyntheticPilot}=await import('../../scripts/official-truth-integrated-pilot-1/controlled-runtime')
   const {runIntegratedLocalStorageProof}=await import('../../scripts/db/official-truth-integrated-pilot-1/integrated-proof')
