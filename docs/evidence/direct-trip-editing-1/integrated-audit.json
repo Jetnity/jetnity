@@ -6,8 +6,8 @@
     "model": "disabled",
     "credentials": "synthetic loopback only"
   },
-  "startedAt": "2026-10-07T18:59:40.728Z",
-  "codeHead": "591c012489e90a0074b5f0f8f3934508de6b2bc5",
+  "startedAt": "2026-10-07T21:16:42.129Z",
+  "codeHead": "5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c",
   "sources": {
     "components/trips/ActivitiesAuditClient.tsx": "953a812cc143d95afc89145911311575c735bdf937df42e473e3581acedc8193",
     "components/trips/AenderungVorschau.tsx": "292132218c8f079499b4674d6133cd24ccd0d603fe3c12b46b1b267c07cc3eec",
@@ -213,8 +213,8 @@
     "lib/reiseaenderung/anwenden.ts": "fbed1d67b5b82f3b921fcafad850f3e6f55c8de4065be2d937b651007908896d",
     "lib/reiseaenderung/diff.test.ts": "2db599f5a8ff7b7f70a04e6bbf515be840538a3b786d3d22ae5982a3e0d890b0",
     "lib/reiseaenderung/diff.ts": "c33285f07b27b09e4abc4d4476c1e479d97bfd9e566b2a90edc39a07509be0ad",
-    "lib/reiseaenderung/direct-trip-editing-1.test.ts": "2bd69cce5787a0e2d5b2f1ead7409b381dc1f923a08d497332250b7e3090e326",
-    "lib/reiseaenderung/direct/auswirkungen.ts": "d1df2e777e2d7a75d37abf0015c3614672bcd4e8cff4b12ade2c9da5562673e1",
+    "lib/reiseaenderung/direct-trip-editing-1.test.ts": "9e00192ca1bb1529bab5a9c3a3cd71ec494bc05ecb7704fec46033bbfdfb167f",
+    "lib/reiseaenderung/direct/auswirkungen.ts": "f7ea834bfab7d6953cd771cb200180f83f228e39691422033eede4daa70797c9",
     "lib/reiseaenderung/direct/bestaetigung.ts": "c3ce7da164486be2beb958f2ddf087f9cf329f64a11d14cb5ac16af004ae9abe",
     "lib/reiseaenderung/direct/entwurf.ts": "32a4e0e9125e89a8bb489770268606e1b93ca475d14183ff50df9987110b1a79",
     "lib/reiseaenderung/direct/gast.ts": "4706d4bb797fbc3276a3efe14f447ef0d4aa6eeb1b6ef80e37514ac4f4607ced",
@@ -376,8 +376,8 @@
     "scripts/direct-trip-editing-1-audit.mjs": "a0530e19333beab9169abd5e704f1a26ebaaaca86c6aa7290381f011c7894684",
     "scripts/direct-trip-editing-1/account-browser.mjs": "bb02cd735fa76cf58683f50cbf9e3bcebac093b3a072589d7ad663a18346a707",
     "scripts/direct-trip-editing-1/baseline.mjs": "9e54f68b0a243527fd65cc1b7930e616346e4d43d614d3771dd057d74c8a06db",
-    "scripts/direct-trip-editing-1/browser.mjs": "1fe09ec102bcadacd49f68a897cefe8301ff5cbfda2a0d2c0c8617131f576c3c",
-    "scripts/direct-trip-editing-1/fixture.ts": "f8caac6be49860d0c8c9ae391618f0afaafe5224dbf0eaf9a7974cb1f6d35d13",
+    "scripts/direct-trip-editing-1/browser.mjs": "17e4ac0e368f3ca8983cbabc2b67741f6f6fdc7e0a160f2daef8a6728b198c62",
+    "scripts/direct-trip-editing-1/fixture.ts": "86620226162a8bd26f70aaa3c6625ca0841993c465386765025fa19e264fb289",
     "scripts/direct-trip-editing-1/linux-tests.mjs": "5782cdab0a75ce3500617de1b58886c5ae58c4bc06b8dcac4c80f0f9e9b282c0",
     "scripts/direct-trip-editing-1/prior-regression.mjs": "f278d0c1185bd7abf72380edcedebeee67bf542b3bf2120dade7224f52847265",
     "scripts/trip-plan-premium-experience-4-audit.mjs": "17a3ac1347284a489d8fd4ed3220e9268faa7cc8053a8a37c344bf61fd8b8736",
@@ -390,18 +390,18 @@
     {
       "name": "npm-test-linux",
       "totals": {
-        "tests": 5694,
+        "tests": 5695,
         "suites": 810,
-        "pass": 5694,
+        "pass": 5695,
         "fail": 0,
         "cancelled": 0,
         "skipped": 0,
         "todo": 0,
-        "duration_ms": 28426.69668
+        "duration_ms": 30023.806055
       },
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 37649,
+      "durationMs": 40186,
       "log": "docs/evidence/direct-trip-editing-1/logs/npm-test-linux.log"
     },
     {
@@ -409,7 +409,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 2074,
+      "durationMs": 2456,
       "log": "docs/evidence/direct-trip-editing-1/logs/typecheck.log"
     },
     {
@@ -417,7 +417,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 13009,
+      "durationMs": 12152,
       "log": "docs/evidence/direct-trip-editing-1/logs/lint.log"
     },
     {
@@ -425,7 +425,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 3962,
+      "durationMs": 5810,
       "log": "docs/evidence/direct-trip-editing-1/logs/build.log"
     },
     {
@@ -433,7 +433,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 237,
+      "durationMs": 248,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-dead.log"
     },
     {
@@ -441,7 +441,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 2658,
+      "durationMs": 2749,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-exports.log"
     },
     {
@@ -449,7 +449,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 201,
+      "durationMs": 265,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-deps.log"
     },
     {
@@ -457,7 +457,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 132,
+      "durationMs": 141,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-api-schutz.log"
     },
     {
@@ -465,7 +465,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 215,
+      "durationMs": 218,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-schema-bezug.log"
     },
     {
@@ -473,7 +473,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 160,
+      "durationMs": 188,
       "log": "docs/evidence/direct-trip-editing-1/logs/check-operating-mode.log"
     },
     {
@@ -481,7 +481,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 216,
+      "durationMs": 208,
       "log": "docs/evidence/direct-trip-editing-1/logs/baseline-counterexamples.log"
     },
     {
@@ -489,7 +489,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 24,
+      "durationMs": 20,
       "log": "docs/evidence/direct-trip-editing-1/logs/diff-check.log"
     },
     {
@@ -497,7 +497,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 16296,
+      "durationMs": 45372,
       "log": "docs/evidence/direct-trip-editing-1/logs/guest-browser.log"
     },
     {
@@ -505,7 +505,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 14226,
+      "durationMs": 14021,
       "log": "docs/evidence/direct-trip-editing-1/logs/integrated-903-regression.log"
     },
     {
@@ -513,7 +513,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 47647,
+      "durationMs": 31300,
       "log": "docs/evidence/direct-trip-editing-1/logs/trip-timeline-core-1.log"
     },
     {
@@ -521,7 +521,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 12631,
+      "durationMs": 12294,
       "log": "docs/evidence/direct-trip-editing-1/logs/trip-timeline-temporal-review-1.log"
     },
     {
@@ -529,7 +529,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 45230,
+      "durationMs": 29557,
       "log": "docs/evidence/direct-trip-editing-1/logs/trip-workspace-contextual-navigation-1.log"
     },
     {
@@ -537,7 +537,7 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 13654,
+      "durationMs": 13970,
       "log": "docs/evidence/direct-trip-editing-1/logs/trip-plan-premium-experience-4.log"
     },
     {
@@ -545,10 +545,10 @@
       "totals": null,
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 7860,
+      "durationMs": 7819,
       "log": "docs/evidence/direct-trip-editing-1/logs/account-persistence.log"
     }
   ],
   "status": "PASS",
-  "finishedAt": "2026-10-07T19:03:19.498Z"
+  "finishedAt": "2026-10-07T21:20:21.779Z"
 }

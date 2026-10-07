@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fixture } from '@/scripts/direct-trip-editing-1/fixture'
+import { fixture, conflictFixture } from '@/scripts/direct-trip-editing-1/fixture'
+import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { manuellSchema, manuellerEntwurf, vorschauKennungen } from './direct/entwurf'
 import { auswirkungen } from './direct/auswirkungen'
 import { bedeutung, fingerprint } from './direct/bestaetigung'
@@ -59,6 +60,24 @@ test('removal preview lists every normal removed point and preserved unplanned b
   assert.equal(groups.find(g => g.titel.startsWith('Geschützte'))?.zeilen.length, 1)
   assert(groups.flatMap(g => g.zeilen).some(x => x.text.includes('Tag 3') && x.text.includes('Planpunkt 3')))
   assert.deepEqual(after.ohneTag[0], { ...before.days[3].items[0], dayId: null, stageId: null })
+})
+test('R1: actual proposed temporal conflict is prospective and preview leaves the original graph unchanged', async () => {
+  const before = conflictFixture(), original = structuredClone(before)
+  assert(before)
+  assert(!tripZeitpruefung(before).pairs.some(p => ['possible_conflict', 'proven_conflict'].includes(p.state)))
+  const result = await manuellVorschau(before, { startDate: '2026-10-09' }, seed)
+  assert(result.ok)
+  const after = result.vorschau.nachher, pairs = tripZeitpruefung(after).pairs
+  assert.equal(pairs.length, 1)
+  assert.equal(pairs[0].state, 'possible_conflict')
+  assert.equal(pairs[0].comparisonBasis, 'civil_only')
+  assert.deepEqual(new Set(pairs[0].itemIds), new Set(['item-1', 'fixed-transfer']))
+  const rows = auswirkungen(before, after).find(g => g.titel === 'Zeitprüfung des vorgeschlagenen Plans')!.zeilen
+  const conflict = rows.find(r => r.id === 'time-0')!
+  assert.match(conflict.text, /mögliche Überschneidung im vorgeschlagenen Plan\./)
+  assert.doesNotMatch(conflict.text, /gespeichert|bestätigt|nachgewiesene/)
+  assert.deepEqual(after.days[0].items[1], original.days[0].items[1])
+  assert.deepEqual(before, original)
 })
 test('duplicate authoritative IDs fail closed', () => { const before = fixture(); before.stages[1].id = before.stages[0].id; assert.equal(manuellerEntwurf(before, { title: 'Neu' }, vorschauKennungen(seed)).ok, false) })
 test('readback uses exact stable generated day IDs and all semantic fields, ignoring only row versions', async () => {

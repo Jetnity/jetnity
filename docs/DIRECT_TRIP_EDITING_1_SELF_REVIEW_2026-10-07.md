@@ -25,3 +25,7 @@ React checklist: canonical derivations stay pure, lazy manual boundary, stable I
 2. Inspect shared temporal correction, Guest identity placement, canonical fact preservation and Account confirmation under races.
 3. Independently verify both A09v1.1 paths: valid removal with full preview/readback and invalid linked removal with zero writes, full preservation, retained draft and continued unrelated editing.
 4. Check all24 acceptance rows and the full diff. Author confidence does not replace independent acceptance.
+
+## TL R1 follow-up
+
+[TL R1 review5448280929](https://github.com/Jetnity/jetnity/pull/905#pullrequestreview-5448280929) exposed an omission in the original author review: generated time conflicts used saved-state wording before confirmation. The correction changes one product phrase and adds actual conflict-producing RED/GREEN and production-browser assertions. Possible remains possible; no temporal classification or Preparation state was weakened. Preview/back/cancel storage and POST counters plus full graph equality cover the no-write requirement; later explicit confirmation/readback remains a distinct state. Existing A01–A24 tests are retained and replayed. Fresh corrected-head gates belong to the [final publication receipt](https://github.com/Jetnity/jetnity/pull/905#issuecomment-6043902878); this self-review does not resolve the TL thread or grant content PASS.

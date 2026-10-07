@@ -268,22 +268,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Unterkunft für drei Nächte öffnen",
-          "width": 236.640625,
-          "height": 44,
-          "left": 38,
-          "right": 274.640625
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 263.40625,
-          "height": 44,
-          "left": 38,
-          "right": 301.40625
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -292,11 +276,27 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
           "label": "Manueller Flug öffnen",
           "width": 159.71875,
           "height": 44,
           "left": 38,
           "right": 197.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
         }
       ]
     },
@@ -629,22 +629,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Unterkunft für drei Nächte öffnen",
-          "width": 236.640625,
-          "height": 44,
-          "left": 38,
-          "right": 274.640625
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 263.40625,
-          "height": 44,
-          "left": 38,
-          "right": 301.40625
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -653,11 +637,27 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
           "label": "Manueller Flug öffnen",
           "width": 159.71875,
           "height": 44,
           "left": 38,
           "right": 197.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
         }
       ]
     },
@@ -926,22 +926,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Unterkunft für drei Nächte öffnen",
-          "width": 212,
-          "height": 152,
-          "left": 74,
-          "right": 286
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 212,
-          "height": 152,
-          "left": 74,
-          "right": 286
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 212,
           "height": 112,
@@ -950,9 +934,25 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
           "label": "Manueller Flug öffnen",
           "width": 212,
           "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 212,
+          "height": 152,
           "left": 74,
           "right": 286
         }
@@ -1287,22 +1287,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Unterkunft für drei Nächte öffnen",
-          "width": 212,
-          "height": 152,
-          "left": 74,
-          "right": 286
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 212,
-          "height": 152,
-          "left": 74,
-          "right": 286
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 212,
           "height": 112,
@@ -1311,9 +1295,25 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
           "label": "Manueller Flug öffnen",
           "width": 212,
           "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 212,
+          "height": 152,
           "left": 74,
           "right": 286
         }
@@ -1584,14 +1584,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 159.71875,
-          "height": 44,
-          "left": 38,
-          "right": 197.71875
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -1613,6 +1605,14 @@
           "height": 44,
           "left": 38,
           "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
         }
       ]
     },
@@ -1945,14 +1945,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 159.71875,
-          "height": 44,
-          "left": 38,
-          "right": 197.71875
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -1974,6 +1966,14 @@
           "height": 44,
           "left": 38,
           "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
         }
       ]
     },
@@ -2242,14 +2242,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 242,
-          "height": 112,
-          "left": 74,
-          "right": 316
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 226.359375,
           "height": 88,
@@ -2269,6 +2261,14 @@
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 242,
           "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 242,
+          "height": 112,
           "left": 74,
           "right": 316
         }
@@ -2603,14 +2603,6 @@
         },
         {
           "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 242,
-          "height": 112,
-          "left": 74,
-          "right": 316
-        },
-        {
-          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 226.359375,
           "height": 88,
@@ -2630,6 +2622,14 @@
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 242,
           "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 242,
+          "height": 112,
           "left": 74,
           "right": 316
         }
@@ -2908,6 +2908,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 54,
+          "right": 213.71875
+        },
+        {
+          "tag": "BUTTON",
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 236.640625,
           "height": 44,
@@ -2929,14 +2937,6 @@
           "height": 44,
           "left": 54,
           "right": 173.046875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 159.71875,
-          "height": 44,
-          "left": 54,
-          "right": 213.71875
         }
       ]
     },
@@ -3277,6 +3277,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 54,
+          "right": 213.71875
+        },
+        {
+          "tag": "BUTTON",
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 236.640625,
           "height": 44,
@@ -3298,14 +3306,6 @@
           "height": 44,
           "left": 54,
           "right": 173.046875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 159.71875,
-          "height": 44,
-          "left": 54,
-          "right": 213.71875
         }
       ]
     },
@@ -3582,6 +3582,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        },
+        {
+          "tag": "BUTTON",
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 441.265625,
           "height": 88,
@@ -3603,14 +3611,6 @@
           "height": 88,
           "left": 106,
           "right": 332.359375
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 300.71875,
-          "height": 88,
-          "left": 106,
-          "right": 406.71875
         }
       ]
     },
@@ -3951,6 +3951,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        },
+        {
+          "tag": "BUTTON",
           "label": "Unterkunft für drei Nächte öffnen",
           "width": 441.265625,
           "height": 88,
@@ -3972,14 +3980,6 @@
           "height": 88,
           "left": 106,
           "right": 332.359375
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Manueller Flug öffnen",
-          "width": 300.71875,
-          "height": 88,
-          "left": 106,
-          "right": 406.71875
         }
       ]
     },
@@ -4256,6 +4256,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 134,
+          "right": 397.40625
+        },
+        {
+          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -4277,14 +4285,6 @@
           "height": 44,
           "left": 134,
           "right": 293.71875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 263.40625,
-          "height": 44,
-          "left": 134,
-          "right": 397.40625
         }
       ]
     },
@@ -4625,6 +4625,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 134,
+          "right": 397.40625
+        },
+        {
+          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 119.046875,
           "height": 44,
@@ -4646,14 +4654,6 @@
           "height": 44,
           "left": 134,
           "right": 293.71875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 263.40625,
-          "height": 44,
-          "left": 134,
-          "right": 397.40625
         }
       ]
     },
@@ -4930,6 +4930,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 226.359375,
           "height": 88,
@@ -4951,14 +4959,6 @@
           "height": 88,
           "left": 106,
           "right": 406.71875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 495.53125,
-          "height": 88,
-          "left": 106,
-          "right": 601.53125
         }
       ]
     },
@@ -5299,6 +5299,14 @@
         },
         {
           "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
           "label": "Museum öffnen",
           "width": 226.359375,
           "height": 88,
@@ -5320,14 +5328,6 @@
           "height": 88,
           "left": 106,
           "right": 406.71875
-        },
-        {
-          "tag": "BUTTON",
-          "label": "Spaziergang ohne genaue Zeit öffnen",
-          "width": 495.53125,
-          "height": 88,
-          "left": 106,
-          "right": 601.53125
         }
       ]
     },

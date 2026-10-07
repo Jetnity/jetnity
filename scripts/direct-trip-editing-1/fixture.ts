@@ -13,3 +13,19 @@ export function fixture(): Trip {
         bookingConfirmedAt: i === 4 ? '2026-10-01T10:00:00.000Z' : null }] })),
   })!
 }
+
+// A date shift moves only the unprotected transfer onto the fixed booking's date.
+// Shared explicit civil clock context yields a real possible conflict, never a
+// fabricated proven conflict from missing timezone evidence.
+export function conflictFixture(): Trip {
+  const trip = fixture(), day = trip.days[0], point = day.items[0]
+  return reiseLesen({ ...trip, days: trip.days.map(d => ({ ...d, items: d.id === day.id ? [
+    { ...point, title: 'Verschiebbarer Transfer', kind: 'transfer', mobilityEvidence: 'user',
+      originPlaceId: 'airport:ZRH', destinationPlaceId: 'airport:ZRH',
+      startsOn: '2026-10-07', endsOn: '2026-10-07', startsAt: '10:00', endsAt: '11:00' },
+    { ...point, id: 'fixed-transfer', position: 2, title: 'Fest gebuchter Transfer', kind: 'transfer', mobilityEvidence: 'user',
+      originPlaceId: 'airport:ZRH', destinationPlaceId: 'airport:ZRH',
+      startsOn: '2026-10-09', endsOn: '2026-10-09', startsAt: '10:30', endsAt: '11:30',
+      bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: '2026-10-01T10:00:00.000Z' },
+  ] : [] })) })!
+}

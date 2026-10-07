@@ -26,17 +26,17 @@
     {
       "file": "browser.mjs",
       "exitCode": 0,
-      "durationMs": 5405
+      "durationMs": 5097
     },
     {
       "file": "guest-pending.mjs",
       "exitCode": 0,
-      "durationMs": 2002
+      "durationMs": 1916
     },
     {
       "file": "run.mjs",
       "exitCode": 0,
-      "durationMs": 6762
+      "durationMs": 6942
     }
   ],
   "relocation": "Evidence directory and loopback port only; same production assertions; no modifications to #903 files"

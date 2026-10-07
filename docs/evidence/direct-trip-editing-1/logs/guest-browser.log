@@ -34,6 +34,8 @@ RUN Production form 1440px / 200% text, reduced motion, focus and no overflow
 PASS Production form 1440px / 200% text, reduced motion, focus and no overflow
 RUN Keyboard, field-linked error, cancel/no write at 1440
 PASS Keyboard, field-linked error, cancel/no write at 1440
+RUN R1 actual conflict preview is prospective; preview/back/cancel make zero writes; only confirmation saves
+PASS R1 actual conflict preview is prospective; preview/back/cancel make zero writes; only confirmation saves
 RUN Production flexible trip gets first civil start date and total duration without changing explicit point dates
 PASS Production flexible trip gets first civil start date and total duration without changing explicit point dates
 RUN A09 v1.1 Guest linked removal refuses with zero writes, full preservation and editable draft
@@ -42,4 +44,4 @@ RUN A09 v1.1 Guest unrelated edit on the referenced trip still saves and indepen
 PASS A09 v1.1 Guest unrelated edit on the referenced trip still saves and independently reloads
 RUN 1000-point graph: every removed/protected point inspectable, hidden pages bounded
 PASS 1000-point graph: every removed/protected point inspectable, hidden pages bounded
-PASS: 22 Guest browser cases
+PASS: 23 Guest browser cases

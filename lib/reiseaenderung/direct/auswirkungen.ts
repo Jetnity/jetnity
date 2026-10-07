@@ -52,7 +52,7 @@ export function auswirkungen(vorher: Trip, nachher: Trip): Auswirkungsgruppe[] {
   const zeit = tripZeitpruefung(nachher)
   const labels = new Map([...newItems].map(([id, p]) => [id, `${p.title} · ${tagText(nachher, nachher.days.find(d => d.id === p.dayId))}`]))
   const temporal = zeit.pairs.filter(p => p.state === 'proven_conflict' || p.state === 'possible_conflict')
-    .map((p, i) => ({ id: `time-${i}`, text: `${labels.get(p.itemIds[0])} / ${labels.get(p.itemIds[1])}: ${p.state === 'proven_conflict' ? 'nachgewiesene' : 'mögliche'} Überschneidung im gespeicherten Plan.` }))
+    .map((p, i) => ({ id: `time-${i}`, text: `${labels.get(p.itemIds[0])} / ${labels.get(p.itemIds[1])}: ${p.state === 'proven_conflict' ? 'nachgewiesene' : 'mögliche'} Überschneidung im vorgeschlagenen Plan.` }))
   if (zeit.coverage.state !== 'complete' || zeit.pairs.some(p => p.state === 'not_evaluable')) temporal.push({ id: 'coverage', text: 'Die vorhandenen Zeitangaben erlauben keine vollständige Konfliktprüfung. Fehlende Zeit-, Orts- oder Zeitzonenangaben bleiben offen.' })
   const impact = aenderungsAuswirkung(planSnapshot(vorher), planSnapshot(nachher))
   const preparation = (impact?.targets ?? []).map(target => {

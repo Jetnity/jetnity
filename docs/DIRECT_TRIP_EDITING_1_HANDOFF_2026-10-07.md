@@ -21,3 +21,9 @@ Read PLAN, CONTRACTS, STATUS, REPORT, SELF_REVIEW, the source-bound evidence and
 Review corrections belong to this same session and generation. No new task/session is needed. Main-sync, full renewed gates after synchronization, acceptance, Ready and merge remain TL decisions. No automatic follow-up or Cursor/Grok ping was sent. No review thread was resolved by the author. Self-review is not TL PASS.
 
 **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW.**
+
+## TL R1 same-session correction handoff
+
+Entry review: [TL R1 review5448280929](https://github.com/Jetnity/jetnity/pull/905#pullrequestreview-5448280929), F1/P2 on prior published head **5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c**, tree **41a9ad9a20c8c8006b1455eca315c1e7390f55c9**. Same actual session/generation continued. Only the prospective temporal-conflict phrase changed in product code; focused and actual production-browser conflict/no-write regression added. Complete audit rerun; inspect `r1-regression.json`, `guest-browser.json` conflictEvidence and refreshed `integrated-audit.json`. The [final publication receipt](https://github.com/Jetnity/jetnity/pull/905#issuecomment-6043902878) binds the new ending head/tree, unchanged TASK, full diff/ancestry and fresh remote gates. Old-head gates are not transferred.
+
+Current main remains de966; merge-base9ea. Separate Draft#906 correction now observed at d01bb596, no independent PASS inferred. TL alone reviews/resolves F1 and decides any eventual main sync/Ready/merge. No review-thread resolution or automatic next task by this author. **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW.**

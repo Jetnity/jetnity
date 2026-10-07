@@ -45,3 +45,7 @@ The existing canonical Trip schema also rejects orphaned preparation references 
 ## Unchanged authority
 
 No hosted application write, migration, new secret, dependency, model/provider activation, quota use, traveller/registry/document change, currency/clear contract, new place/stage/reorder/rename semantics, launch or retention decision. All Account fixtures and fault injection use disposable, run-owned local containers with synthetic users. Neither #900 nor any global governance file is edited. No main synchronization, Ready, merge or competing writer.
+
+## TL R1 presentation clarification
+
+Under [TL R1 review5448280929](https://github.com/Jetnity/jetnity/pull/905#pullrequestreview-5448280929), temporal results in direct-edit effects describe the **proposed** graph. The underlying proven/possible classification stays unchanged. “Gespeichert” remains appropriate for the unchanged existing Preparation record and for success only after independent committed-graph readback. This is a wording correction within A10/A11/A23, with no operation, temporal-engine, storage, SQL or authority contract change.

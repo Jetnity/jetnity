@@ -6,235 +6,235 @@ TAP version 13
 # Subtest: die Kontoübersicht benutzt die Vorschau, die Weltseite den vollen Atlas
 ok 1 - die Kontoübersicht benutzt die Vorschau, die Weltseite den vollen Atlas
   ---
-  duration_ms: 0.5745
+  duration_ms: 0.566459
   type: 'test'
   ...
 # Subtest: die Übersicht lässt Länderchips und die volle Ortsliste weg, der Atlas nicht
 ok 2 - die Übersicht lässt Länderchips und die volle Ortsliste weg, der Atlas nicht
   ---
-  duration_ms: 0.108375
+  duration_ms: 0.097042
   type: 'test'
   ...
 # Subtest: der Atlasausbruch gilt nur für die volle Darstellung
 ok 3 - der Atlasausbruch gilt nur für die volle Darstellung
   ---
-  duration_ms: 0.190958
+  duration_ms: 0.214042
   type: 'test'
   ...
 # Subtest: Kennzahlen, Marker, Auswahl und Herkunft bleiben in beiden Darstellungen
 ok 4 - Kennzahlen, Marker, Auswahl und Herkunft bleiben in beiden Darstellungen
   ---
-  duration_ms: 0.126959
+  duration_ms: 0.08075
   type: 'test'
   ...
 # Subtest: nächste Reise und Buchungseinstieg bleiben, ohne erfundene Zahlen
 ok 5 - nächste Reise und Buchungseinstieg bleiben, ohne erfundene Zahlen
   ---
-  duration_ms: 0.102417
+  duration_ms: 0.076875
   type: 'test'
   ...
 # Subtest: lange Herkunfts- und Buchungswörter brechen, statt das Dokument zu weiten
 ok 6 - lange Herkunfts- und Buchungswörter brechen, statt das Dokument zu weiten
   ---
-  duration_ms: 0.089834
+  duration_ms: 0.048
   type: 'test'
   ...
 # Subtest: leer und Fehler bleiben getrennte Aussagen
 ok 7 - leer und Fehler bleiben getrennte Aussagen
   ---
-  duration_ms: 0.124083
+  duration_ms: 0.074959
   type: 'test'
   ...
 # Subtest: die Übersicht startet keine Provider-, Such- oder Karten-Netzwerkanfrage
 ok 8 - die Übersicht startet keine Provider-, Such- oder Karten-Netzwerkanfrage
   ---
-  duration_ms: 0.913
+  duration_ms: 0.852709
   type: 'test'
   ...
 # Subtest: Ozean und neutrales Land sind zwei Flächen, nicht eine verwaschene Mintfläche
 ok 9 - Ozean und neutrales Land sind zwei Flächen, nicht eine verwaschene Mintfläche
   ---
-  duration_ms: 0.497417
+  duration_ms: 0.405125
   type: 'test'
   ...
 # Subtest: das Gradnetz bleibt vorhanden und ist zurückgenommen
 ok 10 - das Gradnetz bleibt vorhanden und ist zurückgenommen
   ---
-  duration_ms: 0.073208
+  duration_ms: 0.111292
   type: 'test'
   ...
 # Subtest: Besucht, geplant und beides bleiben additiv und nicht deckend
 ok 11 - Besucht, geplant und beides bleiben additiv und nicht deckend
   ---
-  duration_ms: 0.172667
+  duration_ms: 0.224958
   type: 'test'
   ...
 # Subtest: die Auswahl sitzt in der Atlaskante und nicht nur in der Ortsliste
 ok 12 - die Auswahl sitzt in der Atlaskante und nicht nur in der Ortsliste
   ---
-  duration_ms: 0.06625
+  duration_ms: 0.07525
   type: 'test'
   ...
 # Subtest: weite Desktops nutzen die Breite, schmale nicht per Ausbruch
 ok 13 - weite Desktops nutzen die Breite, schmale nicht per Ausbruch
   ---
-[bounded excerpt: 41437 middle lines omitted; full output totals captured]
+[bounded excerpt: 41443 middle lines omitted; full output totals captured]
       ---
-      duration_ms: 5.765833
+      duration_ms: 7.140125
       type: 'test'
       ...
     # Subtest: uncontrolled markup starts from defaultChecked
     ok 2 - uncontrolled markup starts from defaultChecked
       ---
-      duration_ms: 1.895959
+      duration_ms: 2.33675
       type: 'test'
       ...
     # Subtest: controlled indeterminate renders mixed visual state
     ok 3 - controlled indeterminate renders mixed visual state
       ---
-      duration_ms: 0.374333
+      duration_ms: 0.488167
       type: 'test'
       ...
     # Subtest: optional label uses a single htmlFor association
     ok 4 - optional label uses a single htmlFor association
       ---
-      duration_ms: 0.385875
+      duration_ms: 0.502833
       type: 'test'
       ...
     1..4
-ok 1086 - Checkbox consent interaction contract
+ok 1087 - Checkbox consent interaction contract
   ---
-  duration_ms: 8.804542
+  duration_ms: 10.978083
   type: 'suite'
   ...
 # Subtest: RegisterForm consent wiring remains explicit
     # Subtest: default consent stays unchecked and submit stays gated
     ok 1 - default consent stays unchecked and submit stays gated
       ---
-      duration_ms: 0.081084
+      duration_ms: 0.078375
       type: 'test'
       ...
     # Subtest: legal links keep destinations and do not activate the label
     ok 2 - legal links keep destinations and do not activate the label
       ---
-      duration_ms: 0.054625
+      duration_ms: 0.060375
       type: 'test'
       ...
     1..2
-ok 1087 - RegisterForm consent wiring remains explicit
+ok 1088 - RegisterForm consent wiring remains explicit
   ---
-  duration_ms: 0.229875
+  duration_ms: 0.252375
   type: 'suite'
   ...
 # Subtest: operating-mode guard fixtures
     # Subtest: valid HOLD schema passes
     ok 1 - valid HOLD schema passes
       ---
-      duration_ms: 1.04075
+      duration_ms: 3.221542
       type: 'test'
       ...
     # Subtest: schema without dedicated HOLD-exit contract fields fails
     ok 2 - schema without dedicated HOLD-exit contract fields fails
       ---
-      duration_ms: 0.136125
+      duration_ms: 0.728459
       type: 'test'
       ...
     # Subtest: governance branch + allowed files => pass
     ok 3 - governance branch + allowed files => pass
       ---
-      duration_ms: 0.436625
+      duration_ms: 1.686166
       type: 'test'
       ...
     # Subtest: product/runtime file during HOLD => fail
     ok 4 - product/runtime file during HOLD => fail
       ---
-      duration_ms: 0.148209
+      duration_ms: 0.810125
       type: 'test'
       ...
     # Subtest: unauthorized branch during HOLD => fail
     ok 5 - unauthorized branch during HOLD => fail
       ---
-      duration_ms: 0.063375
+      duration_ms: 0.287625
       type: 'test'
       ...
     # Subtest: stale merge-authority phrase => fail
     ok 6 - stale merge-authority phrase => fail
       ---
-      duration_ms: 0.164334
+      duration_ms: 0.627792
       type: 'test'
       ...
     # Subtest: normal main push validation => pass
     ok 7 - normal main push validation => pass
       ---
-      duration_ms: 0.048875
+      duration_ms: 0.18475
       type: 'test'
       ...
     # Subtest: path allowlist and branch class helpers
     ok 8 - path allowlist and branch class helpers
       ---
-      duration_ms: 0.117167
+      duration_ms: 0.325833
       type: 'test'
       ...
     # Subtest: head NORMAL while base HOLD without dedicated closure shape => fail
     ok 9 - head NORMAL while base HOLD without dedicated closure shape => fail
       ---
-      duration_ms: 0.278042
+      duration_ms: 0.739083
       type: 'test'
       ...
     # Subtest: head NORMAL while base HOLD with dedicated closure shape => pass
     ok 10 - head NORMAL while base HOLD with dedicated closure shape => pass
       ---
-      duration_ms: 0.279459
+      duration_ms: 0.721792
       type: 'test'
       ...
     # Subtest: head-broadened allowlist cannot authorize otherwise forbidden files
     ok 11 - head-broadened allowlist cannot authorize otherwise forbidden files
       ---
-      duration_ms: 0.173084
+      duration_ms: 0.45375
       type: 'test'
       ...
     # Subtest: head-broadened authorized branches cannot authorize an otherwise forbidden branch
     ok 12 - head-broadened authorized branches cannot authorize an otherwise forbidden branch
       ---
-      duration_ms: 0.139291
+      duration_ms: 0.410458
       type: 'test'
       ...
     # Subtest: parseNameStatus evaluates rename and copy source plus destination
     ok 13 - parseNameStatus evaluates rename and copy source plus destination
       ---
-      duration_ms: 0.087667
+      duration_ms: 0.269292
       type: 'test'
       ...
     # Subtest: forbidden→allowed rename during HOLD => fail
     ok 14 - forbidden→allowed rename during HOLD => fail
       ---
-      duration_ms: 0.125417
+      duration_ms: 0.342375
       type: 'test'
       ...
     # Subtest: allowed→forbidden rename during HOLD => fail
     ok 15 - allowed→forbidden rename during HOLD => fail
       ---
-      duration_ms: 0.084
+      duration_ms: 0.169375
       type: 'test'
       ...
     # Subtest: forbidden deletion during HOLD => fail
     ok 16 - forbidden deletion during HOLD => fail
       ---
-      duration_ms: 0.101917
+      duration_ms: 0.341334
       type: 'test'
       ...
     1..16
-ok 1088 - operating-mode guard fixtures
+ok 1089 - operating-mode guard fixtures
   ---
-  duration_ms: 8.595084
+  duration_ms: 13.384333
   type: 'suite'
   ...
-1..1088
-# tests 5694
+1..1089
+# tests 5695
 # suites 810
-# pass 5694
+# pass 5695
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 28426.69668
+# duration_ms 30023.806055

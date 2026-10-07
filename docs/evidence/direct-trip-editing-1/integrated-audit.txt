@@ -1,5 +1,5 @@
 PASS
-Code head at start: 591c012489e90a0074b5f0f8f3934508de6b2bc5
+Code head at start: 5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c
 PASS npm-test-linux (0) -> docs/evidence/direct-trip-editing-1/logs/npm-test-linux.log
 PASS typecheck (0) -> docs/evidence/direct-trip-editing-1/logs/typecheck.log
 PASS lint (0) -> docs/evidence/direct-trip-editing-1/logs/lint.log

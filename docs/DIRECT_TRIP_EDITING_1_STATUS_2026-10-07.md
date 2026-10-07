@@ -29,3 +29,11 @@ The current #751 checkpoint6044514925 also records #900 merged with failed post-
 The committed report identifies local evidence by source hashes. A separately published receipt on Draft#905 binds the final published head/tree, ancestry, complete diff, unchanged TASK and fresh CI/Auth/Preview. Earlier seed/build checks are not current-head evidence. Read the receipt for actual publication-gate outcome, including failed or unavailable gates.
 
 Next step: independent TL exact-head review of the complete delivered diff, all24 criteria and fresh gates under A09v1.1. Review corrections stay in this session/generation. Only TL may decide main sync, acceptance, Ready and merge. No automatic follow-up or external pings.
+
+## TL R1 correction delivery
+
+[TL R1 review5448280929](https://github.com/Jetnity/jetnity/pull/905#pullrequestreview-5448280929): one bounded F1/P2, CHANGES REQUIRED on prior head `5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c`. The same session corrected prospective conflict wording and added real conflict/no-write regression coverage. The complete audit and actual new-head gates are recorded in the machine evidence and [final publication receipt](https://github.com/Jetnity/jetnity/pull/905#issuecomment-6043902878); prior-head gates are historical only. TL alone reassesses and resolves the R1 thread.
+
+Fresh R1 reconstruction: main `de966778a06183748e3807bcb6af9a6cbeaeb326`, retained merge-base9ea, prior head5b8, immutable TASK unchanged, NORMAL. Current #751 top checkpoint is PR905-TL-R1 (20:59 UTC); separate Draft#906 now has observed correction head `d01bb596b1150ed99acb04d14e93b0196a2d9ecd`, no independent acceptance inferred. Its older seed references above are historical. No main sync or other-writer changes.
+
+R1 local complete audit: **PASS**,5695/5695 tests,0skip;23 Guest and10 native Account browser cases; all19 audit steps exit0. Remote corrected-head disposition remains bound in the final receipt.

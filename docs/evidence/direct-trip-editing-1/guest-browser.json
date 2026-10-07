@@ -78,6 +78,10 @@
       "status": "PASS"
     },
     {
+      "name": "R1 actual conflict preview is prospective; preview/back/cancel make zero writes; only confirmation saves",
+      "status": "PASS"
+    },
+    {
       "name": "Production flexible trip gets first civil start date and total duration without changing explicit point dates",
       "status": "PASS"
     },
@@ -94,6 +98,19 @@
       "status": "PASS"
     }
   ],
+  "conflictEvidence": {
+    "renderedConflict": "Fest gebuchter Transfer · Tag 1 · 2026-10-09 · Etappe 1: Florenz / Verschiebbarer Transfer · Tag 1 · 2026-10-09 · Etappe 1: Florenz: mögliche Überschneidung im vorgeschlagenen Plan.",
+    "previewWrites": 0,
+    "previewPosts": 0,
+    "previewGraphUnchanged": true,
+    "previewSuccessHeadingAbsent": true,
+    "cancelWrites": 0,
+    "cancelPosts": 0,
+    "cancelGraphUnchanged": true,
+    "confirmedWrites": 1,
+    "confirmedReadbackAndReload": true,
+    "protectedBookingUnchanged": true
+  },
   "errors": [],
   "externalRequests": [],
   "explicitFreeTextPosts": 1,
