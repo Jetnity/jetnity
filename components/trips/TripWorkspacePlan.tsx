@@ -1,6 +1,13 @@
 'use client'
 
 import * as React from 'react'
+import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import TripIntegratedDay from '@/components/trips/TripIntegratedDay'
+import { buchungstext, vorbereitungenFuerPunkt } from '@/lib/trips/trip-plan-integrated/day'
+import type { ReadinessViewItem } from '@/lib/readiness/domain'
+import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
+import PlanpunktEditor from '@/components/trips/PlanpunktEditor'
+import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripTimelineZeitpruefung from '@/components/trips/TripTimelineZeitpruefung'
 import {
   BedDouble,
@@ -26,11 +33,11 @@ import {
   tagStreifenZiel,
   tagUnterKanteZiel,
 } from '@/lib/trips/trip-plan-premium-experience-4'
-import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
+import { type PlanpunktFormular } from '@/lib/trips/schema'
 import { ersterTagDerEtappe, timelineAbleiten } from '@/lib/trips/timeline'
 import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
 import { cn } from '@/lib/utils'
-import { TRIP_ITEM_KINDS, type Trip, type TripDay, type TripItem, type TripItemKind } from '@/types/trips'
+import { type Trip, type TripDay, type TripItem, type TripItemKind } from '@/types/trips'
 
 const langesDatum = new Intl.DateTimeFormat('de-CH', {
   weekday: 'long',
@@ -127,10 +134,17 @@ export default function TripWorkspacePlan({
   eingebettet = false,
   onTagWechseln,
   onPunktAnlegen,
+  onPunktBearbeiten,
+  readinessItems = [],
+  onPreparation,
+  onVerbindungAnlegen,
   onPunktEntfernen,
   onPunktOeffnen,
   gewaehlterPunktId,
 }: {
+  readinessItems?: readonly ReadinessViewItem[]
+  onPreparation?: (ziel: PreparationZiel) => void
+  onVerbindungAnlegen?: (values: MobilityManuellEingabe) => Promise<string | null>
   reise: Trip
   ohneTag: TripItem[]
   aktiverTag: string
@@ -138,27 +152,21 @@ export default function TripWorkspacePlan({
   eingebettet?: boolean
   onTagWechseln: (tagId: string) => void
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
+  onPunktBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
   onPunktOeffnen?: (punktId: string) => void
   gewaehlterPunktId?: string
 }) {
+  const root = React.useRef<HTMLElement>(null)
+  const editorTrigger = React.useRef<HTMLElement | null>(null)
   const [formularTag, setFormularTag] = React.useState(aktiverTag)
   const [formularOffen, setFormularOffen] = React.useState(false)
-  const [art, setArt] = React.useState<TripItemKind>('activity')
-  const [titel, setTitel] = React.useState('')
-  const [zeit, setZeit] = React.useState('')
-  const [notiz, setNotiz] = React.useState('')
+  const [bearbeiten, setBearbeiten] = React.useState<TripItem | undefined>()
   const [meldung, setMeldung] = React.useState('')
+  const [erfolg, setErfolg] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
-
   if (formularTag !== aktiverTag) {
-    setFormularTag(aktiverTag)
-    setFormularOffen(false)
-    setTitel('')
-    setZeit('')
-    setNotiz('')
-    setArt('activity')
-    setMeldung('')
+    setFormularTag(aktiverTag); setFormularOffen(false); setBearbeiten(undefined); setMeldung(''); setErfolg('')
   }
 
   const timeline = timelineAbleiten(reise, ohneTag, aktiverTag)
@@ -173,40 +181,12 @@ export default function TripWorkspacePlan({
   }, [timeline.gewaehlterTagId])
 
   const zurueck = () => {
-    setTitel('')
-    setZeit('')
-    setNotiz('')
-    setArt('activity')
-    setFormularOffen(false)
-  }
-
-  const anlegen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
-    ereignis.preventDefault()
-    if (!tag || laeuft) return
-
-    const geprueft = planpunktFormularSchema.safeParse({
-      kind: art,
-      title: titel,
-      note: notiz,
-      startsAt: zeit || null,
+    setFormularOffen(false); setBearbeiten(undefined)
+    requestAnimationFrame(() => {
+      const target = editorTrigger.current?.isConnected && editorTrigger.current.getClientRects().length
+        ? editorTrigger.current : root.current?.querySelector<HTMLElement>('[data-plan-hinzufuegen]')
+      target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'center', behavior: 'instant' })
     })
-
-    if (!geprueft.success) {
-      setMeldung(geprueft.error.issues[0]?.message ?? 'Bitte prüfe deine Angaben.')
-      return
-    }
-
-    setMeldung('')
-    setLaeuft(true)
-    const fehler = await onPunktAnlegen(tag.id, geprueft.data)
-    setLaeuft(false)
-
-    if (fehler) {
-      setMeldung(fehler)
-      return
-    }
-
-    zurueck()
   }
 
   const entfernen = async (tagId: string, punktId: string) => {
@@ -235,7 +215,8 @@ export default function TripWorkspacePlan({
       </div>
       <button
         type="button"
-        onClick={() => setFormularOffen((offen) => !offen)}
+        data-plan-hinzufuegen
+        onClick={(event) => { editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
         aria-expanded={formularOffen}
         className={cn(
           'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 sm:w-auto',
@@ -250,91 +231,10 @@ export default function TripWorkspacePlan({
 
   const tagesFelder = tag && (
     <>
-      {formularOffen && (
-        <form onSubmit={anlegen} className="mt-3 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-3">
-          <fieldset className="min-w-0 max-w-full">
-            <legend className="text-xs font-medium text-ink-900">Art</legend>
-            <div className="mt-2 flex w-full min-w-0 flex-wrap gap-2">
-              {TRIP_ITEM_KINDS.map((option) => {
-                const Symbol = ART_SYMBOL[option]
-                const gewaehlt = art === option
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    aria-pressed={gewaehlt}
-                    onClick={() => setArt(option)}
-                    className={cn(
-                      'inline-flex min-h-11 min-w-0 max-w-full items-center gap-2 break-words rounded-full border px-3.5 text-left text-sm font-medium transition',
-                      fokusRing,
-                      gewaehlt
-                        ? 'border-brand-800 bg-brand-800 text-white'
-                        : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                    )}
-                  >
-                    <Symbol className="h-3.5 w-3.5" aria-hidden="true" />
-                    {ART_BEZEICHNUNG[option]}
-                  </button>
-                )
-              })}
-            </div>
-          </fieldset>
-
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,120px)_minmax(0,1fr)]">
-            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-              Uhrzeit
-              <input
-                type="time"
-                value={zeit}
-                onChange={(ereignis) => setZeit(ereignis.target.value)}
-                className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
-              />
-            </label>
-            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-              Ort oder Aktivität
-              <input
-                value={titel}
-                onChange={(ereignis) => setTitel(ereignis.target.value)}
-                required
-                maxLength={GRENZEN.titel}
-                autoFocus
-                placeholder="z. B. Tsukiji Outer Market"
-                className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
-              />
-            </label>
-          </div>
-          <label className="mt-3 grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-            Notiz, optional
-            <textarea
-              value={notiz}
-              onChange={(ereignis) => setNotiz(ereignis.target.value)}
-              rows={3}
-              maxLength={GRENZEN.notiz}
-              placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
-              className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
-            />
-          </label>
-          <div className="mt-3 flex w-full min-w-0 flex-wrap justify-end gap-2">
-            <button
-              type="button"
-              onClick={zurueck}
-              className={cn(
-                'inline-flex min-h-11 max-w-full items-center rounded-full px-4 text-sm font-medium text-ink-800 transition hover:bg-white',
-                fokusRing,
-              )}
-            >
-              Abbrechen
-            </button>
-            <button
-              type="submit"
-              disabled={laeuft}
-              className="inline-flex min-h-11 max-w-full items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-60 motion-reduce:transition-none"
-            >
-              {laeuft ? 'Speichern …' : 'Speichern'}
-            </button>
-          </div>
-        </form>
-      )}
+      {formularOffen && <PlanpunktEditor key={`${reise.id}:${tag.id}:${bearbeiten?.id ?? 'new'}`}
+        reise={reise} tagId={tag.id} item={bearbeiten} onAnlegen={onPunktAnlegen} onBearbeiten={onPunktBearbeiten}
+        onAbbrechen={zurueck} onFertig={() => { setErfolg('Planpunkt gespeichert.'); zurueck() }} />}
+      {erfolg && <p role="status" className="mt-3 text-sm text-brand-800">{erfolg}</p>}
 
       {meldung && (
         <p role="alert" className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm text-danger-600">
@@ -364,10 +264,13 @@ export default function TripWorkspacePlan({
                   <Planpunkt
                     key={punkt.id}
                     punkt={punkt}
+                    hinweis={vorbereitungenFuerPunkt(punkt.id,readinessItems)[0]}
+                    onPreparation={onPreparation}
                     zeit={zeit}
                     gesperrt={laeuft}
                     gewaehlt={gewaehlterPunktId === punkt.id}
                     onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
+                    onBearbeiten={onPunktBearbeiten ? () => { editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                     onEntfernen={() => entfernen(tag.id, punkt.id)}
                   />
                 ))}
@@ -380,7 +283,7 @@ export default function TripWorkspacePlan({
   )
 
   return (
-    <section
+    <section ref={root}
       aria-label="Tagesplan"
       data-tagesplan-modul="ein"
       data-plan-premium="4"
@@ -533,6 +436,8 @@ export default function TripWorkspacePlan({
               )
             })}
           </ol>
+          {tag ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt))}
+            selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
           {tag ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id}
             onPunktOeffnen={onPunktOeffnen} gesperrt={laeuft} /> : null}
         </>
@@ -552,6 +457,7 @@ export default function TripWorkspacePlan({
                 gesperrt={laeuft}
                 gewaehlt={gewaehlterPunktId === punkt.id}
                 onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
+                onBearbeiten={onPunktBearbeiten ? () => { editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                 onEntfernen={() => entfernen('', punkt.id)}
               />
             ))}
@@ -606,13 +512,19 @@ function Planpunkt({
   gewaehlt,
   onOeffnen,
   onEntfernen,
+  onBearbeiten,
+  hinweis,
+  onPreparation,
 }: {
+  hinweis?: ReturnType<typeof vorbereitungenFuerPunkt>[number]
+  onPreparation?: (ziel: PreparationZiel) => void
   punkt: TripItem
   zeit: string | null
   gesperrt: boolean
   gewaehlt?: boolean
   onOeffnen?: () => void
   onEntfernen: () => void
+  onBearbeiten?: () => void
 }) {
   const Symbol = ART_SYMBOL[punkt.kind]
   const inhalt = (
@@ -634,6 +546,7 @@ function Planpunkt({
         <strong className="mt-1 block hyphens-auto break-words text-base font-semibold leading-snug text-brand-800">
           {punkt.title}
         </strong>
+        <span className="mt-1 block text-xs text-ink-700">{buchungstext(punkt)}</span>
         {punkt.note && (
           <span className="mt-1 block hyphens-auto break-words text-sm leading-6 text-ink-800">
             {punkt.note}
@@ -679,6 +592,10 @@ function Planpunkt({
         ) : (
           <div className="flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start py-1">{inhalt}</div>
         )}
+        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 rounded-full px-3 text-left text-sm text-brand-800',fokusRing)}
+          onClick={()=>onPreparation(hinweis.ziel)}>{hinweis.title}</button>}
+        {onBearbeiten && <button type="button" onClick={onBearbeiten} aria-label={`${punkt.title} bearbeiten`}
+          className={cn('min-h-11 rounded-full px-3 text-sm font-semibold text-brand-800', fokusRing)}>Bearbeiten</button>}
         <button
           type="button"
           onClick={onEntfernen}

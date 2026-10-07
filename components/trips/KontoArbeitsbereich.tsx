@@ -36,7 +36,7 @@ import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
 import { registryTripUebernahmeGesperrt } from '@/lib/traveller/account-registry-trip'
 import RegistryReiseUebernahme from '@/components/trips/RegistryReiseUebernahme'
-import { flugRouteManuellSetzen, planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen, unterkunftZeitraumSetzen } from '@/lib/trips/aktionen'
+import { flugRouteManuellSetzen, planpunktAnlegen, planpunktBearbeiten, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen, unterkunftZeitraumSetzen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
@@ -47,9 +47,15 @@ import Reisebegleiter from '@/components/trips/Reisebegleiter'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip, TripItem } from '@/types/trips'
 
+/** Per-mounted-workspace response order; called only by event handlers, never while rendering. */
+function createWriteOrder() {
+  let generation = 0
+  return { next: () => ++generation, isCurrent: (request: number) => request === generation }
+}
+
 export default function KontoArbeitsbereich({
-  reise,
-  ohneTag,
+  reise: serverReise,
+  ohneTag: serverOhneTag,
   officialEvaluations,
   registry,
 }: {
@@ -62,12 +68,18 @@ export default function KontoArbeitsbereich({
   }
 }) {
   const router = useRouter()
+  const [bestaetigt, setBestaetigt] = React.useState<{ basis: Trip; graph: Trip } | null>(null)
+  const reise = bestaetigt?.basis === serverReise ? bestaetigt.graph : serverReise
+  const ohneTag = bestaetigt?.basis === serverReise ? bestaetigt.graph.ohneTag : serverOhneTag
+  const [order] = React.useState(createWriteOrder())
   const [loeschmeldung, setLoeschmeldung] = React.useState('')
   const [loescht, setLoescht] = React.useState(false)
 
   const anlegen = async (tagId: string, eingabe: PlanpunktFormular) => {
+    const request = order.next()
     const ergebnis = await planpunktAnlegen({ ...eingabe, tripId: reise.id, dayId: tagId })
     if (!ergebnis.ok) return ergebnis.meldung
+    if (order.isCurrent(request)) setBestaetigt({ basis: serverReise, graph: ergebnis.wert })
     router.refresh()
     return null
   }
@@ -107,7 +119,20 @@ export default function KontoArbeitsbereich({
       officialEvaluations={officialEvaluations}
       quelle="account"
       ohneTag={ohneTag}
+      onVerbindungAnlegen={async values => {
+        const result = await mobilityManuellInReiseAnlegen({...values, tripId: reise.id})
+        if (!result.ok) return result.meldung
+        router.refresh(); return null
+      }}
       onPunktAnlegen={anlegen}
+      onPunktBearbeiten={async (original, aenderung) => {
+        const request = order.next()
+        const ergebnis = await planpunktBearbeiten({ tripId: reise.id, itemId: original.id, expectedVersion: original.rowVersion, aenderung })
+        if (!ergebnis.ok) return ergebnis.meldung
+        if (order.isCurrent(request)) setBestaetigt({ basis: serverReise, graph: ergebnis.wert })
+        router.refresh()
+        return null
+      }}
       onPunktEntfernen={entfernen}
       onFlugRouteManuell={async (itemId, segments) => {
         const ergebnis = await flugRouteManuellSetzen({ tripId: reise.id, itemId, segments })

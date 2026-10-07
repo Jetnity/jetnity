@@ -152,6 +152,7 @@ const interessen = z
 
 const planpunktSchema = z.object({
   id: z.string().min(1).max(80),
+  rowVersion: zeitstempel.optional(),
   dayId: z.string().min(1).max(80).nullable().default(null),
   stageId: z.string().min(1).max(80).nullable().default(null),
   kind: z.enum(TRIP_ITEM_KINDS).default('note'),
@@ -648,7 +649,11 @@ export const planpunktFormularSchema = z.object({
   title: titel,
   note: optionalerText(GRENZEN.notiz).nullable().default(null),
   startsAt: uhrzeit.nullable().default(null),
-})
+  startsOn: datum.nullable().optional(),
+  endsOn: datum.nullable().optional(),
+  endsAt: uhrzeit.nullable().optional(),
+  clientRef: z.string().uuid().optional(),
+}).strict()
 
 export type PlanpunktFormular = z.infer<typeof planpunktFormularSchema>
 

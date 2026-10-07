@@ -28,6 +28,9 @@
 
 'use server'
 
+import { accountPlanSchreiben } from '@/lib/trips/trip-plan-integrated/account-write'
+import { reiseLaden } from '@/lib/trips/daten'
+import type { Trip } from '@/types/trips'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -50,7 +53,6 @@ import {
 import {
   ersteMeldung,
   flugRouteManuellSchema,
-  neuePlanpunktNutzlastSchema,
   neueReiseSchema,
   reiseNutzlastSchema,
   unterkunftZeitraumSchema,
@@ -168,44 +170,33 @@ export async function gastreiseUebernehmen(nutzlast: unknown): Promise<Aktionser
 }
 
 /** Hängt einen Planpunkt an einen Tag einer Reise im Konto. */
-export async function planpunktAnlegen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
-  const geprueft = neuePlanpunktNutzlastSchema.safeParse(eingabe)
-  if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
+export async function planpunktAnlegen(eingabe: unknown): Promise<Aktionsergebnis<Trip>> {
+  return planSchreiben('anlegen', eingabe)
+}
 
-  const { supabase, benutzerId } = await konto()
-  if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+export async function planpunktBearbeiten(eingabe: unknown): Promise<Aktionsergebnis<Trip>> {
+  return planSchreiben('bearbeiten', eingabe)
+}
 
-  const punkt = geprueft.data
-
-  // `position` als nächste freie Stelle des Tages. Der Wert kommt nicht vom
-  // Client: Er wäre dort eine Annahme über einen Stand, den zwei offene
-  // Fenster längst geändert haben können.
-  const { count, error: zaehlfehler } = await supabase
-    .from('trip_items')
-    .select('id', { count: 'exact', head: true })
-    .eq('trip_id', punkt.tripId)
-    .eq('day_id', punkt.dayId)
-
-  if (zaehlfehler) return { ok: false, meldung: meldungAus(zaehlfehler) }
-
-  const { error, status } = await supabase.from('trip_items').insert({
-    // `user_id` fehlt bewusst: `default auth.uid()` setzt sie, und die
-    // INSERT-Policy verlangt genau diesen Wert. Sie mitzuschicken wäre die
-    // Einladung, sie irgendwann aus einem Formularfeld zu nehmen.
-    trip_id: punkt.tripId,
-    day_id: punkt.dayId,
-    kind: punkt.kind,
-    title: punkt.title,
-    note: punkt.note,
-    position: Math.min((count ?? 0) + 1, 500),
-    starts_at: punkt.startsAt,
-  })
-
-  if (error) return { ok: false, meldung: meldungAus(error, status) }
-
-  revalidatePath(`/reisen/${punkt.tripId}`)
-  revalidatePath('/reisen')
-  return { ok: true, wert: null }
+async function planSchreiben(art: 'anlegen' | 'bearbeiten', eingabe: unknown): Promise<Aktionsergebnis<Trip>> {
+  try {
+    const { supabase, benutzerId } = await konto()
+    if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+    const punkt = await accountPlanSchreiben(supabase, benutzerId, art, eingabe)
+    const tripId = z.object({ tripId: z.string().uuid() }).parse(eingabe).tripId
+    const gelesen = await reiseLaden(tripId)
+    const graph = gelesen.zeilen?.[0]
+    const readback = graph && [...graph.days.flatMap(day => day.items), ...graph.ohneTag].find(item => item.id === punkt.id)
+    if (gelesen.problem || !graph || !readback || readback.rowVersion !== punkt.rowVersion) {
+      return { ok: false, meldung: 'Die Änderung wurde geschrieben, der aktuelle Stand konnte aber nicht bestätigt werden. Bitte lade die Reise neu; ein erneuter Versuch legt keinen zweiten Punkt an.' }
+    }
+    revalidatePath(`/reisen/${tripId}`)
+    revalidatePath('/reisen')
+    return { ok: true, wert: graph }
+  } catch (error) {
+    return { ok: false, meldung: error instanceof z.ZodError ? ersteMeldung(error)
+      : error instanceof Error ? error.message : 'Der Planpunkt konnte nicht gespeichert werden.' }
+  }
 }
 
 const kennungenSchema = z.object({

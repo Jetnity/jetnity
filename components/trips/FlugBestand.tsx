@@ -207,6 +207,31 @@ export default function FlugBestand({
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const abdeckung = flugAbdeckung(reise, ohneTag)
+  const [saved, setSaved] = React.useState<{ itemId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
+  const [saveStatus, setSaveStatus] = React.useState('')
+  const root = React.useRef<HTMLElement>(null)
+  React.useLayoutEffect(() => {
+    if (!saved || window.location.href !== saved.context || root.current?.closest('[hidden], [inert]')) return
+    const item = [...reise.days.flatMap(day => day.items), ...ohneTag, ...reise.ohneTag].find(p => p.id === saved.itemId)
+    const segments = flugRouteItineraryLesen(item?.routeItinerary)?.legs[0]?.segments
+    if (!segments || JSON.stringify(segments.map(segment => ({ origin: segment.origin.airportCode, destination: segment.destination.airportCode,
+      departureDate: segment.departureDate, departureTime: segment.departureTime, arrivalDate: segment.arrivalDate, arrivalTime: segment.arrivalTime }))) !== JSON.stringify(saved.segments)) return
+    const target = root.current?.querySelector<HTMLElement>(`[data-flug-punkt="${CSS.escape(saved.itemId)}"] button`)
+    if (target) {
+      target.focus({ preventScroll: true })
+      target.scrollIntoView({ block: 'center', behavior: 'instant' })
+      setSaveStatus('Flugroute gespeichert. Der gespeicherte Flug ist ausgewählt.')
+      setSaved(null)
+    }
+  }, [reise, ohneTag, saved])
+  const routeSpeichern: FlugRouteSpeichern = async (itemId, segments) => {
+    if (!onFlugRouteManuell) return 'Die Flugroute kann hier nicht gespeichert werden.'
+    const context = window.location.href
+    setSaveStatus('')
+    const error = await onFlugRouteManuell(itemId, segments)
+    if (!error && window.location.href === context) setSaved({ itemId, segments, context })
+    return error
+  }
 
   const setzen = async (itemId: string, gebucht: boolean) => {
     if (!onBuchungsstatus || laeuft) return
@@ -219,6 +244,7 @@ export default function FlugBestand({
 
   return (
     <section
+      ref={root}
       aria-label="Deine Flüge"
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
@@ -245,6 +271,7 @@ export default function FlugBestand({
           {abdeckung.abschnitte.map((abschnitt) => (
             <li
               key={abschnitt.id}
+              data-flug-punkt={abschnitt.item?.id}
               className="grid min-w-0 gap-3 rounded-2xl border border-line-200 px-3 py-3"
             >
               <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -271,13 +298,14 @@ export default function FlugBestand({
                 </div>
               </div>
               {abschnitt.item && onFlugRouteManuell && istManuellerFlug(abschnitt.item) ? (
-                <ManuelleFlugRoute item={abschnitt.item} onSpeichern={onFlugRouteManuell} />
+                <ManuelleFlugRoute item={abschnitt.item} onSpeichern={routeSpeichern} />
               ) : null}
             </li>
           ))}
           {abdeckung.unzugeordnet.map((item) => (
             <li
               key={item.id}
+              data-flug-punkt={item.id}
               className="grid min-w-0 gap-3 rounded-2xl border border-line-200 px-3 py-3"
             >
               <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -305,13 +333,14 @@ export default function FlugBestand({
                 </div>
               </div>
               {onFlugRouteManuell && istManuellerFlug(item) ? (
-                <ManuelleFlugRoute item={item} onSpeichern={onFlugRouteManuell} />
+                <ManuelleFlugRoute item={item} onSpeichern={routeSpeichern} />
               ) : null}
             </li>
           ))}
         </ul>
       )}
 
+      {saveStatus ? <p role="status" className="mt-3 text-sm text-brand-700">{saveStatus}</p> : null}
       {meldung ? (
         <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {meldung}

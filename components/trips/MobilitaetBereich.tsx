@@ -313,23 +313,25 @@ export default function MobilitaetBereich({
   )
 }
 
-function ManuelleVerbindung({
+export function ManuelleVerbindung({
   reise,
   onAnlegen,
+  vorgabe,
 }: {
   reise: Trip
   onAnlegen: (eingabe: MobilityManuellEingabe) => Promise<string | null>
+  vorgabe?: Partial<MobilityManuellEingabe>
 }) {
-  const [mode, setMode] = React.useState<MobilityMode>('rail')
-  const [originName, setOriginName] = React.useState(reise.origin ?? '')
-  const [destinationName, setDestinationName] = React.useState(reise.stages[0]?.name ?? '')
-  const [startsOn, setStartsOn] = React.useState(reise.startDate ?? '')
+  const [mode, setMode] = React.useState<MobilityMode>(vorgabe?.mode ?? 'rail')
+  const [originName, setOriginName] = React.useState(vorgabe?.originName ?? reise.origin ?? '')
+  const [destinationName, setDestinationName] = React.useState(vorgabe?.destinationName ?? reise.stages[0]?.name ?? '')
+  const [startsOn, setStartsOn] = React.useState(vorgabe ? vorgabe.startsOn ?? '' : reise.startDate ?? '')
   const [startsAt, setStartsAt] = React.useState('')
   const [endsOn, setEndsOn] = React.useState('')
   const [endsAt, setEndsAt] = React.useState('')
   const [connectionRef, setConnectionRef] = React.useState('')
   const [note, setNote] = React.useState('')
-  const [dayId, setDayId] = React.useState(reise.days[0]?.id ?? '')
+  const [dayId, setDayId] = React.useState(vorgabe ? vorgabe.dayId ?? '' : reise.days[0]?.id ?? '')
   const [laeuft, setLaeuft] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [hinweis, setHinweis] = React.useState('')
@@ -345,8 +347,8 @@ function ManuelleVerbindung({
       title: null,
       originName,
       destinationName,
-      originPlaceId: null,
-      destinationPlaceId: null,
+      originPlaceId: originName === vorgabe?.originName ? vorgabe?.originPlaceId ?? null : null,
+      destinationPlaceId: destinationName === vorgabe?.destinationName ? vorgabe?.destinationPlaceId ?? null : null,
       startsOn: startsOn || null,
       startsAt: startsAt || null,
       endsOn: endsOn || null,
@@ -357,7 +359,7 @@ function ManuelleVerbindung({
       priceCurrency: null,
       note: note || null,
       dayId: dayId || null,
-      stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? reise.stages[0]?.id ?? null,
+      stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? null,
     })
     setLaeuft(false)
     if (fehler) {

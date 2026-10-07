@@ -419,6 +419,7 @@ describe('P2 correction: local airport times and legacy summary representability
 })
 
 type Props = {
+  onSpeichern?: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null>
   children?: React.ReactNode; type?: string; value?: string; id?: string; htmlFor?: string; role?: string; disabled?: boolean; 'aria-label'?: string
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
   onSubmit?: (event: { preventDefault: () => void }) => Promise<void>
@@ -435,7 +436,7 @@ function editor(item = flug(), outcome: string | null | Error | (() => Promise<s
   const states: unknown[] = []; const refs: Array<{ current: unknown }> = []; let index = 0; let refIndex = 0
   const calls: unknown[][] = []
   const ui = laden<{ default: typeof FlugBestand }>('components/trips/FlugBestand.tsx', {
-    react: { ...React, useId: () => 'flight-editor', useEffect: () => {},
+    react: { ...React, useId: () => 'flight-editor', useEffect: () => {}, useLayoutEffect: () => {},
       useRef: (initial: unknown) => refs[refIndex++] ?? (refs[refIndex - 1] = { current: initial }),
       useState: (initial: unknown) => {
         const slot = index++; if (!(slot in states)) states[slot] = initial
@@ -443,13 +444,14 @@ function editor(item = flug(), outcome: string | null | Error | (() => Promise<s
       },
     },
   })
-  const outer = ui.default({ reise: beispielreise({ days: [], ohneTag: [item] }), onFlugRouteManuell: async (...args) => {
+  const save = async (...args: unknown[]) => {
     calls.push(args); if (outcome instanceof Error) throw outcome
     return typeof outcome === 'function' ? outcome() : outcome
-  } })
+  }
+  const outer = ui.default({ reise: beispielreise({ days: [], ohneTag: [item] }), onFlugRouteManuell: save })
   const child = elements(outer, el => typeof el.type === 'function' && el.type.name === 'ManuelleFlugRoute')[0]!
   states.length = 0; refs.length = 0
-  const render = () => { index = 0; refIndex = 0; return (child.type as (props: Props) => React.ReactNode)(child.props) }
+  const render = () => { index = 0; refIndex = 0; return (child.type as (props: Props) => React.ReactNode)({ ...child.props, onSpeichern: save }) }
   const buttons = () => elements(render(), el => el.type === 'button')
   const open = () => buttons()[0]!.props.onClick!()
   const inputs = () => elements(render(), el => el.type === 'input')
@@ -535,7 +537,7 @@ test('narrow Workspace wiring refreshes account on success and uses persisted gu
   type WorkspaceElement = React.ReactElement<{ onFlugRouteManuell: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null> }>
   const reise = beispielreise({ id: TRIP }); const args: unknown[] = []; let refreshes = 0; let fail = false
   const account = laden<{ default: (props: { reise: Trip; ohneTag: TripItem[] }) => WorkspaceElement }>('components/trips/KontoArbeitsbereich.tsx', {
-    react: { ...React, useState: (initial: unknown) => [initial, () => {}] },
+    react: { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }), useState: (initial: unknown) => [initial, () => {}] },
     'next/navigation': { useRouter: () => ({ refresh: () => { refreshes++ } }) },
     '@/lib/trips/aktionen': { flugRouteManuellSetzen: async (input: unknown) => { args.push(input); return fail ? { ok: false, meldung: 'Abgelehnt' } : { ok: true, wert: null } } },
   })

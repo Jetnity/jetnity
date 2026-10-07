@@ -29,6 +29,7 @@ import {
   gastMietwagenAnlegen,
   gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
+  gastPlanpunktBearbeiten,
   gastPlanpunktEntfernen,
   gastUnterkunftZeitraumSetzen,
   gastreiseEntfernen,
@@ -152,7 +153,15 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
     <TripWorkspace
       reise={reise}
       quelle="guest"
+      onVerbindungAnlegen={async values => {
+        try { setReise(gastMobilitaetAnlegen(reise, values)); return null }
+        catch (error) { return error instanceof Error ? error.message : 'Die Verbindung konnte nicht gespeichert werden.' }
+      }}
       onPunktAnlegen={anlegen}
+      onPunktBearbeiten={async (original, aenderung) => {
+        try { setReise(gastPlanpunktBearbeiten(reise, original, aenderung)); return null }
+        catch (error) { return error instanceof Error ? error.message : 'Der Punkt konnte nicht gespeichert werden.' }
+      }}
       onPunktEntfernen={entfernen}
       onFlugRouteManuell={async (itemId, segments) => {
         try {
