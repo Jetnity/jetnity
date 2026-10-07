@@ -150,6 +150,27 @@ test('qualified next: equality, occupied half-open, start-only and milestones',(
   assert.deepEqual(r.current,['current','instant']);assert.deepEqual(r.next,['next'])
   assert.equal(r.states.find(x=>x.id==='past')?.state,'past_by_schedule');assert.equal(r.states.find(x=>x.id==='unknown-end')?.state,'started_end_unknown')
 })
+// TL-20261007-900-903-R1/F1: independent uncertainty cannot prove equality.
+const milestoneClock:QualifiedClock={state:'qualified',instant:100,uncertainty:10,sourceRef:'synthetic-clock',sampledAt:100,validUntil:200,policyId:'clock-test',policyVersion:'1',generation:'g'}
+for(const [name,start,uncertainty,expected] of [
+  ['identical non-point ranges',[90,110],10,'indeterminate'],
+  ['partial overlap',[105,120],10,'indeterminate'],
+  ['exact equal points',[100,100],0,'current_by_schedule'],
+  ['separated past',[70,89],10,'past_by_schedule'],
+  ['separated future',[111,130],10,'future'],
+  ['closed lower boundary',[80,90],10,'indeterminate'],
+  ['closed upper boundary',[110,120],10,'indeterminate'],
+  ['exact event within uncertain now',[100,100],10,'indeterminate'],
+  ['uncertain event around exact now',[90,110],0,'indeterminate'],
+  ['point at lower boundary',[90,90],10,'indeterminate'],
+  ['point at upper boundary',[110,110],10,'indeterminate'],
+] as const) test(`R1 milestone: ${name}`,()=>{
+  const r=nextReview([{id:'milestone',start:[...start],end:null,role:'milestone'}],{...milestoneClock,uncertainty},{at:100,generation:'g',complete:true})
+  assert.deepEqual(r.states,[{id:'milestone',state:expected}])
+  assert.deepEqual(r.current,expected==='current_by_schedule'?['milestone']:[])
+  assert.deepEqual(r.next,expected==='future'?['milestone']:[])
+  assert.equal(r.qualification,expected==='indeterminate'?'next_determinable':'whole_declared_scope')
+})
 test('qualified next ties, overlapping uncertainty, unresolved competition and expired/resumed fallback',()=>{
   assert.equal(nextReview([event('a',[12,12]),event('b',[12,12])],clock,ctx).mode,'tie')
   assert.equal(nextReview([event('a',[12,15]),event('b',[14,17])],clock,ctx).mode,'ambiguous')

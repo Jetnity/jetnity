@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict'
+import { writeFileSync } from 'node:fs'
+import { assertPendingForms, delayedAccountSave } from './pending-form.mjs'
 import { chromium } from 'playwright'
 import { createServerClient } from '@supabase/ssr'
 export async function accountBrowser({url,anon,db,tripId,dayId}) {
@@ -11,6 +13,7 @@ export async function accountBrowser({url,anon,db,tripId,dayId}) {
   assert.ifError((await ssr.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token})).error)
   const browser=await chromium.launch({headless:true,channel:'chrome'})
   let page, step='initial'
+  const pending=[]
   try{
     const ctx=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'})
     await ctx.addCookies([...jar.values()].map(c=>({name:c.name,value:c.value,url:base,httpOnly:false,sameSite:'Lax'})))
@@ -31,14 +34,17 @@ export async function accountBrowser({url,anon,db,tripId,dayId}) {
     await form.getByLabel('Anfangszeit, optional').fill('14:00')
     await form.getByLabel('Enddatum, optional').fill('2026-10-07')
     await form.getByLabel('Endzeit, optional').fill('15:00')
-    await form.getByRole('button',{name:'Speichern',exact:true}).click()
+    pending.push(await delayedAccountSave(page,form,tripId,'create success / Art and content'))
     await form.waitFor({state:'detached'})
+    pending.at(-1).closedAfterSuccess=true
     const read=await db.from('trip_items').select('*').eq('trip_id',tripId).eq('title','Account Browser Termin').single();assert.ifError(read.error)
     step='edit after create';const id=read.data.id;assert.equal(read.data.ends_at,'15:00:00')
     await page.reload();await page.getByRole('button',{name:'Account Browser Termin bearbeiten',exact:true}).click()
     form=page.getByRole('form',{name:'Punkt bearbeiten: Account Browser Termin',exact:true})
     assert.equal(await form.getByLabel('Anfangszeit, optional').inputValue(),'14:00')
-    await form.getByLabel('Anfangszeit, optional').fill('14:15');await form.getByRole('button',{name:'Speichern',exact:true}).click();await form.waitFor({state:'detached'})
+    await form.getByLabel('Anfangszeit, optional').fill('14:15')
+    pending.push(await delayedAccountSave(page,form,tripId,'edit success / day assignment and content'))
+    await form.waitFor({state:'detached'});pending.at(-1).closedAfterSuccess=true
     const after=await db.from('trip_items').select('*').eq('id',id).single();assert.ifError(after.error);assert.equal(after.data.starts_at,'14:15:00');assert.notEqual(after.data.updated_at,read.data.updated_at)
     await page.reload();await page.getByRole('button',{name:'Account Browser Termin bearbeiten',exact:true}).click()
     form=page.getByRole('form',{name:'Punkt bearbeiten: Account Browser Termin',exact:true})
@@ -47,8 +53,13 @@ export async function accountBrowser({url,anon,db,tripId,dayId}) {
     // True concurrent persisted update makes the open UI draft stale.
     assert.ifError((await db.from('trip_items').update({note:'Concurrent synthetic note'}).eq('id',id)).error)
     await form.getByLabel('Ort oder Aktivität').fill('Stale draft must stay')
-    await form.getByRole('button',{name:'Speichern',exact:true}).click();await form.getByRole('alert').waitFor()
-    assert.equal(await form.getByLabel('Ort oder Aktivität').inputValue(),'Stale draft must stay')
+    pending.push(await delayedAccountSave(page,form,tripId,'edit failure / real stale version'))
+    await form.getByRole('alert').waitFor()
+    pending.at(-1).afterError=await form.getByLabel('Ort oder Aktivität').inputValue()
+    assert.equal(pending.at(-1).afterError,pending.at(-1).during)
+    assert.equal(await form.locator('input,select,textarea').evaluateAll(nodes=>nodes.every(el=>!el.matches(':disabled'))),true)
+    assert.equal(await form.getAttribute('aria-busy'),'false')
+    assert(!(await page.getByRole('status').allTextContents()).some(s=>s.includes('Planpunkt gespeichert')))
     assert.equal((await db.from('trip_items').select('title,note').eq('id',id).single()).data.title,'Account Browser Termin')
     await page.screenshot({path:'docs/evidence/trip-plan-integrated-operating-experience-1/screens/account-stale-draft.png'})
     step='escape after error';await page.keyboard.press('Escape');await form.waitFor({state:'detached'});await page.reload()
@@ -80,6 +91,7 @@ export async function accountBrowser({url,anon,db,tripId,dayId}) {
     const added=await db.from('trip_items').select('day_id').eq('trip_id',tripId).eq('title','New day draft survives').single();assert.ifError(added.error);assert.equal(added.data.day_id,selectedDay)
     await page.reload();await page.getByRole('button',{name:'New day draft survives bearbeiten',exact:true}).waitFor()
     assert.deepEqual(errors,[])
+    assertPendingForms(pending)
     await ctx.close()
-  } catch(error) { if(page)await page.screenshot({path:'docs/evidence/trip-plan-integrated-operating-experience-1/screens/account-diagnostic.png'});throw new Error(`${step}: ${error.message}; alerts: ${page?await page.locator('[role=alert]').allTextContents():[]}`) } finally {await browser.close();await ssr.auth.stopAutoRefresh()}
+  } catch(error) { if(page)await page.screenshot({path:'docs/evidence/trip-plan-integrated-operating-experience-1/screens/account-diagnostic.png'});throw new Error(`${step}: ${error.message}; alerts: ${page?await page.locator('[role=alert]').allTextContents():[]}`) } finally {writeFileSync('docs/evidence/trip-plan-integrated-operating-experience-1/r1-account-editor.json',JSON.stringify({boundary:'Real local GoTrue/PostgREST/RLS and production Server Actions; response delivery gate only',pending},null,2)+'\n');await browser.close();await ssr.auth.stopAutoRefresh()}
 }

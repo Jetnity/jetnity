@@ -38,6 +38,7 @@ try {
     for(let i=0;i<40;i++){if(server.exitCode!==null)break;try{ready=(await fetch(`${env.AUDIT_BASE}/reisen/trip-readiness`)).ok}catch{}if(ready)break;await new Promise(r=>setTimeout(r,500))}
     if(!ready)throw Error('Owned production server did not start; do not use an unrelated existing server')
     await run('guest-browser',process.execPath,['--import','tsx','scripts/trip-plan-integrated-operating-experience-1/browser.mjs'])
+    await run('guest-pending-editor',process.execPath,['--import','tsx','scripts/trip-plan-integrated-operating-experience-1/guest-pending.mjs'])
     for(const audit of ['trip-timeline-core-1','trip-timeline-temporal-review-1','trip-workspace-contextual-navigation-1','trip-plan-premium-experience-4'])
       await run(audit,process.execPath,['--import','tsx',`scripts/${audit}-audit.mjs`],{AUDIT_EVIDENCE_DIR:join(dir,'regressions',audit),AUDIT_BROWSER:'1',CHROME_PATH:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',AUDIT_SERVER_MODE:'production'})
     await run('account-persistence',process.execPath,['--import','./scripts/server-only-test-register.mjs','--import','tsx','scripts/db/trip-plan-integrated-operating-experience-1/run.mjs'])

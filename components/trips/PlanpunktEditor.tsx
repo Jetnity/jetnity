@@ -72,28 +72,29 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
     onSubmit={speichern} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); if (!laeuft) onAbbrechen() } }}
     className="mt-4 grid min-w-0 grid-cols-1 gap-4 py-4 [overflow-wrap:anywhere] sm:rounded-2xl sm:border sm:border-line-200 sm:bg-surface-50 sm:p-4">
     <h4 className="text-lg font-semibold text-brand-800">{original ? 'Punkt bearbeiten' : 'Neuer Punkt'}</h4>
-    {!original && <label className="grid min-w-0 gap-1 text-sm">Art<select className={feld} value={kind} onChange={e => setKind(e.target.value as TripItemKind)}>
+    {!original && <label className="grid min-w-0 gap-1 text-sm">Art<select disabled={laeuft} className={feld} value={kind} onChange={e => setKind(e.target.value as TripItemKind)}>
       {TRIP_ITEM_KINDS.map(value => <option key={value} value={value}>{ART_BEZEICHNUNG[value]}</option>)}
     </select></label>}
     {(!original || inhaltErlaubt) && <>
-      <label className="grid min-w-0 gap-1 text-sm">Ort oder Aktivität<input className={feld} value={title} maxLength={GRENZEN.titel} required onChange={e => setTitle(e.target.value)} /></label>
-      <label className="grid min-w-0 gap-1 text-sm">Notiz, optional<textarea className={feld} value={note} maxLength={GRENZEN.notiz} rows={3} onChange={e => setNote(e.target.value)} /></label>
+      <label className="grid min-w-0 gap-1 text-sm">Ort oder Aktivität<input disabled={laeuft} className={feld} value={title} maxLength={GRENZEN.titel} required onChange={e => setTitle(e.target.value)} /></label>
+      <label className="grid min-w-0 gap-1 text-sm">Notiz, optional<textarea disabled={laeuft} className={feld} value={note} maxLength={GRENZEN.notiz} rows={3} onChange={e => setNote(e.target.value)} /></label>
     </>}
     {inhaltErlaubt ? <>
       <p className="text-xs leading-5 text-ink-700">Ortszeiten laut deinem Plan. Leere Felder bleiben unbekannt. Ein vorbelegtes Datum wird erst beim Speichern übernommen; die Tageszuordnung ersetzt kein Datum.</p>
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-1 text-sm">Anfangsdatum, optional<input className={feld} type="date" value={startsOn} onChange={e => setStartsOn(e.target.value)} /></label>
-        <label className="grid min-w-0 gap-1 text-sm">Anfangszeit, optional<input className={feld} type="time" value={startsAt} onChange={e => setStartsAt(e.target.value)} /></label>
-        <label className="grid min-w-0 gap-1 text-sm">Enddatum, optional<input className={feld} type="date" value={endsOn} onChange={e => setEndsOn(e.target.value)} /></label>
-        <label className="grid min-w-0 gap-1 text-sm">Endzeit, optional<input className={feld} type="time" value={endsAt} onChange={e => setEndsAt(e.target.value)} /></label>
+        <label className="grid min-w-0 gap-1 text-sm">Anfangsdatum, optional<input disabled={laeuft} className={feld} type="date" value={startsOn} onChange={e => setStartsOn(e.target.value)} /></label>
+        <label className="grid min-w-0 gap-1 text-sm">Anfangszeit, optional<input disabled={laeuft} className={feld} type="time" value={startsAt} onChange={e => setStartsAt(e.target.value)} /></label>
+        <label className="grid min-w-0 gap-1 text-sm">Enddatum, optional<input disabled={laeuft} className={feld} type="date" value={endsOn} onChange={e => setEndsOn(e.target.value)} /></label>
+        <label className="grid min-w-0 gap-1 text-sm">Endzeit, optional<input disabled={laeuft} className={feld} type="time" value={endsAt} onChange={e => setEndsAt(e.target.value)} /></label>
       </div>
     </> : <p className="text-sm leading-6 text-ink-700">Flugroute, Unterkunftszeitraum und Mobilitätsangaben bearbeitest du in der jeweiligen Detailansicht. Die Tageszuordnung ändert diese Angaben nicht.</p>}
-    {original && <label className="grid min-w-0 gap-1 text-sm">Zuordnung im Tagesplan<select className={feld} value={dayId} onChange={e => setDayId(e.target.value)}>
+    {original && <label className="grid min-w-0 gap-1 text-sm">Zuordnung im Tagesplan<select disabled={laeuft} className={feld} value={dayId} onChange={e => setDayId(e.target.value)}>
       <option value="">Noch nicht eingeplant</option>{reise.days.map(day => <option key={day.id} value={day.id}>Tag {day.dayIndex}{day.dayDate ? ` · ${day.dayDate}` : ''}</option>)}
     </select></label>}
     {preview && preview.changed.length > 0 && <p data-plan-preview className="text-xs leading-5 text-ink-700">
       Nach dem Speichern werden die Tagesinformationen neu ausgewertet. {preview.count} nachweislich verknüpfte Vorbereitungspunkte wären zu prüfen. Weitere Beziehungen sind nicht belegt. Es werden keine anderen Punkte verschoben.
     </p>}
+    {laeuft && <p role="status" className="text-sm text-ink-700">Planpunkt wird gespeichert …</p>}
     {fehler && <p role="alert" tabIndex={-1} className="rounded text-sm text-danger-600 focus-visible:ring-4 focus-visible:ring-brand-600/15">{fehler}</p>}
     <div className="flex flex-wrap justify-end gap-2"><button type="button" className={knopf} disabled={laeuft} onClick={onAbbrechen}>Abbrechen</button>
       <button type="submit" disabled={laeuft} className={`${knopf} bg-brand-800 text-white`}>{laeuft ? 'Speichern …' : 'Speichern'}</button></div>

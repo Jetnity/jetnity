@@ -17,7 +17,11 @@ export function nextReview(events: readonly NextEvent[], clock: QualifiedClock |
   const states=events.map(event=> {
     if (!range(event.start) || event.role === 'unresolved' ||
       (event.role === 'occupied' && (!range(event.end) || event.end[0] <= event.start[1]))) return {id:event.id,state:'indeterminate'}
-    if (event.role === 'milestone') return {id:event.id,state:event.start[0]>now[1]?'future':event.start[1]<now[0]?'past_by_schedule':event.start[0]===now[0]&&event.start[1]===now[1]?'current_by_schedule':'indeterminate'}
+    if (event.role === 'milestone') {
+      // Independent closed ranges prove equality only when both are the same single point.
+      const equalPoint = event.start[0] === event.start[1] && now[0] === now[1] && event.start[0] === now[0]
+      return {id:event.id,state:event.start[0]>now[1]?'future':event.start[1]<now[0]?'past_by_schedule':equalPoint?'current_by_schedule':'indeterminate'}
+    }
     if (event.start[0]>now[1]) return {id:event.id,state:'future'}
     if (event.role==='start_only') return {id:event.id,state:event.start[1]<=now[0]?'started_end_unknown':'indeterminate'}
     if (event.end![1]<=now[0]) return {id:event.id,state:'past_by_schedule'}
