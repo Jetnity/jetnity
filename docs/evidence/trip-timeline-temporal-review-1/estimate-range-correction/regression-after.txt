@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: closed estimate range: start-only interior witness overlaps an occupied interval
+ok 1 - closed estimate range: start-only interior witness overlaps an occupied interval
+  ---
+  duration_ms: 1.526083
+  type: 'test'
+  ...
+# Subtest: closed estimate range: milestone interior witness is possible without inventing an end
+ok 2 - closed estimate range: milestone interior witness is possible without inventing an end
+  ---
+  duration_ms: 0.227917
+  type: 'test'
+  ...
+# Subtest: closed estimate range: two anchors can intersect without sharing any endpoints
+ok 3 - closed estimate range: two anchors can intersect without sharing any endpoints
+  ---
+  duration_ms: 0.337
+  type: 'test'
+  ...
+# Subtest: closed estimate range: inclusive anchor bounds versus half-open occupation
+ok 4 - closed estimate range: inclusive anchor bounds versus half-open occupation
+  ---
+  duration_ms: 0.230417
+  type: 'test'
+  ...
+# Subtest: closed estimate range: separated anchors and occupied spans never prove disjointness
+ok 5 - closed estimate range: separated anchors and occupied spans never prove disjointness
+  ---
+  duration_ms: 0.08175
+  type: 'test'
+  ...
+# Subtest: closed estimate range: huge ranges use bounded existence checks, not minute enumeration
+ok 6 - closed estimate range: huge ranges use bounded existence checks, not minute enumeration
+  ---
+  duration_ms: 0.039875
+  type: 'test'
+  ...
+# Subtest: closed estimate range: finite alternatives retain holes and civil contexts remain distinct
+ok 7 - closed estimate range: finite alternatives retain holes and civil contexts remain distinct
+  ---
+  duration_ms: 0.094583
+  type: 'test'
+  ...
+# Subtest: closed estimate range: invalid assignments and contradictory explicit duration fail closed
+ok 8 - closed estimate range: invalid assignments and contradictory explicit duration fail closed
+  ---
+  duration_ms: 0.099333
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 313.012958

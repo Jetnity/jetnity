@@ -1,0 +1,3 @@
+Database ready; starting auth
+Auth ready; starting REST
+PASS: 9 authenticated persistence cases; docs/evidence/trip-plan-integrated-operating-experience-1/account-persistence.json

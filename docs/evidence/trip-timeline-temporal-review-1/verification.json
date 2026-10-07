@@ -1,0 +1,65 @@
+{
+  "classification": "TRIP_TIMELINE_TEMPORAL_REVIEW_1_READY",
+  "evidenceScope": "Final working tree; synthetic only. Exact delivered head is the commit containing this manifest, not headAtRun.",
+  "headAtRun": "3828fa712b6331d93e521ba1c3457dd520461cee",
+  "mainAtVerification": "bbc48401176611af3e736a10f2973e92147aef29",
+  "sourceSha256": {
+    "components/trips/TripWorkspacePlan.tsx": "85dc31ccd3f2c257c8f417caecf18a917ee06692cd23f4e25b2726050d330476",
+    "components/trips/TripTimelineZeitpruefung.tsx": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78",
+    "lib/trips/trip-timeline-temporal-review-1.ts": "d0fdd372512517672113d61506b142917c533cc5a2b6ec1b154fc8d25a412d74",
+    "lib/trips/trip-timeline-temporal-review-1.test.ts": "f68c933a5840fee85a492fc9d176e03bbcba56b7ca0863d3cc024ab590ab0b15",
+    "scripts/trip-timeline-temporal-review-1-audit.mjs": "456677508b3880d81ec85ef8738ea79a47fc97e37a3202a3e1ddb183cbb0b215",
+    "scripts/trip-plan-premium-experience-4-audit.mjs": "17a3ac1347284a489d8fd4ed3220e9268faa7cc8053a8a37c344bf61fd8b8736"
+  },
+  "node": "v22.23.3",
+  "npm": "10.9.9",
+  "chrome": "154.0.8037.98",
+  "focusedTests": 99,
+  "tripRouteTests": 1070,
+  "newTemporalTests": 23,
+  "browserCases": {
+    "temporal": 32,
+    "core": 40,
+    "premium": 26,
+    "navigation": 57
+  },
+  "viewports": [
+    360,
+    390,
+    768,
+    1440
+  ],
+  "text200Percent": {
+    "temporal": [
+      "guest",
+      "account"
+    ],
+    "core": [
+      "guest",
+      "account"
+    ]
+  },
+  "checksPassed": [
+    "npm ci --offline",
+    "typecheck",
+    "lint (0 errors, 145 existing warnings)",
+    "production build",
+    "check:operating-mode",
+    "check:dead",
+    "check:exports",
+    "check:deps",
+    "check:api-schutz",
+    "check:schema-bezug",
+    "git diff --check"
+  ],
+  "coverageGaps": [
+    "physical devices",
+    "screen reader",
+    "authenticated Guest/Account persistence E2E",
+    "full repository npm test not run locally",
+    "auth:pruefen not run locally",
+    "no real provider/timezone admission; deliberately unsupported"
+  ],
+  "noNewCosts": true,
+  "noDatabaseAuthProviderChanges": true
+}

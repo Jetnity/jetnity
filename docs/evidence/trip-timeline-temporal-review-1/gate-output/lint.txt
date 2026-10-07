@@ -1,0 +1,783 @@
+
+> jetnity@1.0.0 lint
+> eslint .
+
+
+<repository>/app/(admin)/admin/layout.tsx
+  44:24  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/app/(admin)/admin/layout.tsx:44:24
+  42 |     try {
+  43 |       const raw = localStorage.getItem(LS_KEY)
+> 44 |       if (raw === '1') setCollapsed(true)
+     |                        ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  45 |     } catch { /* ignore */ }
+  46 |   }, [])
+  47 |                                         react-hooks/set-state-in-effect
+  58:5   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/app/(admin)/admin/layout.tsx:58:5
+  56 |     const dark = resolveDark(readThemeMode())
+  57 |     applyDark(dark)
+> 58 |     setIsDark(dark)
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |     return () => applyDark(false)
+  60 |   }, [])
+  61 |   const toggleTheme = React.useCallback(() => {                        react-hooks/set-state-in-effect
+  92:21  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/app/(admin)/admin/layout.tsx:92:21
+  90 |   // Close drawer on route change
+  91 |   React.useEffect(() => {
+> 92 |     if (drawerOpen) setDrawerOpen(false)
+     |                     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  93 |     // eslint-disable-next-line react-hooks/exhaustive-deps
+  94 |   }, [pathname])
+  95 |  react-hooks/set-state-in-effect
+
+<repository>/app/(admin)/admin/users/actions.ts
+  24:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/app/(admin)/admin/users/page.tsx
+  49:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/app/(public)/admin/mfa/AdminMfaStepUp.tsx
+  32:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/app/(public)/admin/mfa/AdminMfaStepUp.tsx:32:5
+  30 |
+  31 |     let abgebrochen = false
+> 32 |     setBusy(true)
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     void starteTotpChallengeAnzeige(supabase)
+  34 |       .then((anzeige) => {
+  35 |         if (abgebrochen) return  react-hooks/set-state-in-effect
+
+<repository>/app/auth/update-password/page.tsx
+  78:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/check-jetnity-setup.ts
+   98:23  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+  110:30  warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+  150:23  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+  156:51  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+  200:24  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+  208:3   warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+  209:3   warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+  266:7   warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+  285:13  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+
+<repository>/components/account/AccountUebersichtLive.tsx
+  31:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/account/AccountUebersichtLive.tsx:31:5
+  29 |
+  30 |   useEffect(() => {
+> 31 |     setHeute(heutigesDatum())
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |   }, [])
+  33 |
+  34 |   const naechste = problem ? null : naechsteReiseAus(reisen, heute)  react-hooks/set-state-in-effect
+
+<repository>/components/account/AccountWeltKarte.tsx
+  14:3  warning  'weltMusterId' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/components/account/SecurityMFA.tsx
+  154:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/account/SecurityMFA.tsx:154:5
+  152 |
+  153 |   React.useEffect(() => {
+> 154 |     setBrowserWebAuthn(typeof window !== "undefined" && "PublicKeyCredential" in window);
+      |     ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  155 |     void refreshFactors();
+  156 |     // eslint-disable-next-line react-hooks/exhaustive-deps
+  157 |   }, []);  react-hooks/set-state-in-effect
+
+<repository>/components/admin/AdminNavigationSearch.tsx
+  150:15  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/admin/AdminNavigationSearch.tsx:150:15
+  148 |
+  149 |   React.useEffect(() => {
+> 150 |     if (open) closeSearch()
+      |               ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  151 |     // eslint-disable-next-line react-hooks/exhaustive-deps
+  152 |   }, [pathname])
+  153 |  react-hooks/set-state-in-effect
+
+<repository>/components/admin/UsersTable.tsx
+  166:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  179:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/components/admin/payments/PaymentsCenter.tsx
+   95:25  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/admin/payments/PaymentsCenter.tsx:95:25
+  93 |   }
+  94 |
+> 95 |   React.useEffect(()=>{ load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+     |                         ^^^^ Avoid calling setState() directly within an effect
+  96 |
+  97 |   // Ohne Daten keine Kennzahlen: Eine 0 wäre hier die Aussage „kein Umsatz“.
+  98 |   const totals = React.useMemo(() => {  react-hooks/set-state-in-effect
+   95:39  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+  404:17  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+
+<repository>/components/admin/security/SecurityWidget.tsx
+  105:5   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/admin/security/SecurityWidget.tsx:105:5
+  103 |
+  104 |   React.useEffect(() => {
+> 105 |     refresh()
+      |     ^^^^^^^ Avoid calling setState() directly within an effect
+  106 |     const t = setInterval(refresh, 15000)
+  107 |     return () => clearInterval(t)
+  108 |   }, [refresh])  react-hooks/set-state-in-effect
+  125:17  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  180:15  warning  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+<repository>/components/admin/security/SecurityWidget.tsx:180:15
+  178 |   // Beleg dafür, dass kein sicherheitsrelevantes Ereignis stattgefunden hat.
+  179 |   const aufgezeichneteEvents = data?.events ?? []
+> 180 |   const now = Date.now()
+      |               ^^^^^^^^^^ Cannot call impure function
+  181 |   const last24 = aufgezeichneteEvents.filter((e) =>
+  182 |     e.created_at ? now - new Date(e.created_at).getTime() <= 24 * 3600 * 1000 : false
+  183 |   )                                                                                                                                                                                                                            react-hooks/purity
+
+<repository>/components/airports/FlughafenSuche.tsx
+  52:22  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/airports/FlughafenSuche.tsx:52:22
+  50 |
+  51 |   React.useEffect(() => {
+> 52 |     if (value?.name) setText(value.name)
+     |                      ^^^^^^^ Avoid calling setState() directly within an effect
+  53 |   }, [value?.iata, value?.name])
+  54 |
+  55 |   React.useEffect(() => {               react-hooks/set-state-in-effect
+  58:7   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/airports/FlughafenSuche.tsx:58:7
+  56 |     const suche = text.trim()
+  57 |     if (value && suche === value.name) {
+> 58 |       setTreffer([])
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |       setLaedt(false)
+  60 |       setFehlerArt(null)
+  61 |       return  react-hooks/set-state-in-effect
+
+<repository>/components/auth/LoginForm.tsx
+  123:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/components/auth/MFATotpDialog.tsx
+  59:7   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/auth/MFATotpDialog.tsx:59:7
+  57 |   React.useEffect(() => {
+  58 |     if (!open) {
+> 59 |       setCode("");
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  60 |       setMsg(null);
+  61 |       setBusy(false);
+  62 |       if (zurueckRef.current instanceof HTMLElement) zurueckRef.current.focus();  react-hooks/set-state-in-effect
+  81:40  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+
+<repository>/components/auth/RegisterForm.tsx
+  158:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/components/layout/PublicNavbar.tsx
+  71:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/layout/PublicNavbar.tsx:71:5
+  69 |
+  70 |   React.useEffect(() => {
+> 71 |     setMobileOpen(false)
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  72 |   }, [pathname])
+  73 |
+  74 |   // Ohne Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung – bleibt  react-hooks/set-state-in-effect
+
+<repository>/components/places/OrtSuche.tsx
+  109:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/places/OrtSuche.tsx:109:7
+  107 |     const suche = text.trim()
+  108 |     if (value && suche === value.name) {
+> 109 |       setTreffer([])
+      |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  110 |       setLaedt(false)
+  111 |       setFehlerArt(null)
+  112 |       return  react-hooks/set-state-in-effect
+
+<repository>/components/trips/ActivitiesAuditClient.tsx
+  24:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/ActivitiesAuditClient.tsx:24:9
+  22 |       const roh = sessionStorage.getItem(SPEICHER)
+  23 |       if (!roh) {
+> 24 |         setFehlend(true)
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |         return
+  26 |       }
+  27 |       setReise(JSON.parse(roh) as Trip)  react-hooks/set-state-in-effect
+
+<repository>/components/trips/AktivitaetenBereich.tsx
+   61:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/AktivitaetenBereich.tsx:61:5
+  59 |
+  60 |   React.useEffect(() => {
+> 61 |     setEigeneTagId((bisher) =>
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  62 |       reise.days.some((tag) => tag.id === bisher) ? bisher : reise.days[0]?.id ?? '',
+  63 |     )
+  64 |   }, [reise])  react-hooks/set-state-in-effect
+  131:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/AktivitaetenBereich.tsx:131:7
+  129 |   React.useEffect(() => {
+  130 |     if (!eingabe) {
+> 131 |       setLaeuft(false)
+      |       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  132 |       setAntwort(null)
+  133 |       return
+  134 |     }                                                 react-hooks/set-state-in-effect
+
+<repository>/components/trips/GastArbeitsbereich.tsx
+  54:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/GastArbeitsbereich.tsx:54:5
+  52 |   const [speicherfehler, setSpeicherfehler] = React.useState('')
+  53 |   React.useEffect(() => {
+> 54 |     setReise(gastreiseLadenNach(tripId))
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  55 |     setGeladen(true)
+  56 |   }, [tripId])
+  57 |  react-hooks/set-state-in-effect
+
+<repository>/components/trips/GastCreateLink.tsx
+  77:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/GastCreateLink.tsx:77:5
+  75 |       aktiv,
+  76 |     })
+> 77 |     setHref(ziel.href)
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  78 |     setErsetzen(ziel.labelErsetzen)
+  79 |     setLabel(ziel.label)
+  80 |   }, [createHref, createLabel, sitzung])  react-hooks/set-state-in-effect
+
+<repository>/components/trips/GastReisen.tsx
+  31:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/GastReisen.tsx:31:5
+  29 |
+  30 |   React.useEffect(() => {
+> 31 |     setSpeicher(gastspeicherLaden())
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |   }, [])
+  33 |
+  34 |   if (!speicher) {  react-hooks/set-state-in-effect
+
+<repository>/components/trips/GastreiseBruecke.tsx
+  197:10  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/GastreiseBruecke.tsx:197:10
+  195 |
+  196 |   React.useEffect(() => {
+> 197 |     void uebernehmen()
+      |          ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  198 |   }, [uebernehmen])
+  199 |
+  200 |   return <GastreiseBrueckenAnzeige stand={stand} onErneut={() => void uebernehmen()} />  react-hooks/set-state-in-effect
+
+<repository>/components/trips/HotelBereich.tsx
+  108:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/HotelBereich.tsx:108:5
+  106 |   React.useEffect(() => {
+  107 |     let aktiv = true
+> 108 |     setLaeuft(true)
+      |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  109 |     setAntwort(null)
+  110 |     setMeldung('')
+  111 |  react-hooks/set-state-in-effect
+
+<repository>/components/trips/KontoReiseArchivAktion.tsx
+  24:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/KontoReiseArchivAktion.tsx:24:5
+  22 |
+  23 |   useEffect(() => {
+> 24 |     setLaeuft(false)
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |     setMeldung('')
+  26 |   }, [reise.status, reise.archivePreviousStatus])
+  27 |  react-hooks/set-state-in-effect
+
+<repository>/components/trips/KontoReisenGruppen.tsx
+  34:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/KontoReisenGruppen.tsx:34:5
+  32 |
+  33 |   useEffect(() => {
+> 34 |     setHeute(heutigesDatum())
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  35 |   }, [])
+  36 |
+  37 |   const sucheAktiv = suche.trim().length > 0  react-hooks/set-state-in-effect
+
+<repository>/components/trips/MobilitaetBereich.tsx
+  35:7  warning  'UNTERBEREICHE' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/components/trips/PlanenCreateGate.tsx
+  75:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/PlanenCreateGate.tsx:75:5
+  73 |
+  74 |   React.useEffect(() => {
+> 75 |     beobachten()
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  76 |   }, [beobachten])
+  77 |
+  78 |   const sicht = planenCreateGateSicht({  react-hooks/set-state-in-effect
+
+<repository>/components/trips/ReiseAenderung.tsx
+  64:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/ReiseAenderung.tsx:64:7
+  62 |   React.useEffect(() => {
+  63 |     if (!plant) {
+> 64 |       setWarteMs(0)
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  65 |       return
+  66 |     }
+  67 |     const beginn = Date.now()  react-hooks/set-state-in-effect
+
+<repository>/components/trips/Reiseidee.tsx
+  100:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/Reiseidee.tsx:100:7
+   98 |   React.useEffect(() => {
+   99 |     if (!plant) {
+> 100 |       setWarteMs(0)
+      |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  101 |       return
+  102 |     }
+  103 |     const beginn = Date.now()  react-hooks/set-state-in-effect
+
+<repository>/components/trips/TripWorkspace.tsx
+  418:19  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/TripWorkspace.tsx:418:19
+  416 |
+  417 |   React.useEffect(() => {
+> 418 |     if (!kompakt) setAenderungBereit(true)
+      |                   ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  419 |   }, [kompakt])
+  420 |
+  421 |   React.useLayoutEffect(() => {                                                                                                                                              react-hooks/set-state-in-effect
+  612:5   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/TripWorkspace.tsx:612:5
+  610 |     anwenden(navigationBereitRef.current ? 'graph' : 'mount')
+  611 |     navigationBereitRef.current = true
+> 612 |     setModusBereit(true)
+      |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  613 |     const onPop = () => anwenden('pop')
+  614 |     window.addEventListener('popstate', onPop)
+  615 |     return () => window.removeEventListener('popstate', onPop)  react-hooks/set-state-in-effect
+
+<repository>/components/trips/TripWorkspaceAuditClient.tsx
+  64:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<repository>/components/trips/TripWorkspaceAuditClient.tsx:64:9
+  62 |       const roh = sessionStorage.getItem(SPEICHER)
+  63 |       if (!roh) {
+> 64 |         setFehlend(true)
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  65 |         return
+  66 |       }
+  67 |       setDaten(JSON.parse(roh) as AuditNutzlast)  react-hooks/set-state-in-effect
+
+<repository>/components/ui/badge.tsx
+  189:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/components/ui/card.tsx
+   79:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  162:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/docs/evidence/trip-workspace-integrated-acceptance-audit-1/seed-browser.js
+  1:3636  warning  Do not use `location.href` to navigate to internal Next.js pages. Use `redirect()` in the render phase, or `useRouter().push()` in Client Components' event handlers instead. See: https://nextjs.org/docs/messages/no-location-assign-relative-destination  @next/next/no-location-assign-relative-destination
+
+<repository>/lib/account/reise-archiv.ts
+  13:7   warning  'WIEDERHERSTELLBARE_STATI' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+  94:50  warning  '_previous' is assigned a value but never used                          @typescript-eslint/no-unused-vars
+  96:45  warning  '_archiv' is assigned a value but never used                            @typescript-eslint/no-unused-vars
+
+<repository>/lib/airports/importieren.ts
+  10:7  warning  'FLUGHAFEN_KLASSEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/auth/account-session-view.ts
+  143:41  warning  '_zustand' is defined but never used  @typescript-eslint/no-unused-vars
+  147:39  warning  '_zustand' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/auth/admin-guard.ts
+  104:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<repository>/lib/commercial-provenance/konflikt.ts
+  77:46  warning  '_angebote' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/commercial-provenance/pruefen.ts
+  260:52  warning  '_provenance' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/flights/domain.ts
+  108:7  warning  'FLUG_MARKEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/flights/provider-sammlung.test.ts
+  9:3  warning  'aktuelleFlugProviderSammlung' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/readiness/kontext.test.ts
+  107:11  warning  'reise' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/readiness/official-truth-composition-policy-registry.test.ts
+  30:68  warning  'RegelFakt' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/readiness/official.ts
+  11:7  warning  'OFFICIAL_RESULTS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  19:7  warning  'OFFICIAL_STATUSES' is assigned a value but only used as a type   @typescript-eslint/no-unused-vars
+  27:7  warning  'OFFICIAL_FRESHNESS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+  37:7  warning  'OFFICIAL_CLASSES' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+
+<repository>/lib/readiness/schema.ts
+  316:7  warning  'travellerItemSchema' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/readiness/zustand.test.ts
+  9:18  warning  '_anfrage' is defined but never used  @typescript-eslint/no-unused-vars
+  9:49  warning  '_signal' is defined but never used   @typescript-eslint/no-unused-vars
+
+<repository>/lib/reiseaenderung/aktionen.ts
+  37:23  warning  '_prefix' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/reiseaenderung/geschuetzt.ts
+  16:7  warning  'GESCHUETZTE_FELDER' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/reiseaenderung/schema.ts
+  216:21  warning  'maximum' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/rental-cars/domain.ts
+  97:7  warning  'RENTAL_MARKEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/rental-cars/zeitraum.ts
+  74:3  warning  '_mietwagen' is defined but never used  @typescript-eslint/no-unused-vars
+  75:3  warning  '_kante' is defined but never used      @typescript-eslint/no-unused-vars
+
+<repository>/lib/route/domain.ts
+  12:7  warning  'ROUTE_QUELLEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/route/r13-chronologie.test.ts
+  115:45  warning  '_ignored' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/route/schema.ts
+  16:35  warning  'RoutePunkt' is defined but never used    @typescript-eslint/no-unused-vars
+  16:47  warning  'RouteSegment' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/safety/domain.ts
+   53:7  warning  'SAFETY_EVIDENCE_STATUSES' is assigned a value but only used as a type     @typescript-eslint/no-unused-vars
+   61:7  warning  'SAFETY_FRESHNESS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   91:7  warning  'SAFETY_PRESENTATION_CLASSES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+   99:7  warning  'SAFETY_RELEVANCE' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+  107:7  warning  'SAFETY_SPATIAL_PRECISIONS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  119:7  warning  'SAFETY_IMPACT_DOMAINS' is assigned a value but only used as a type        @typescript-eslint/no-unused-vars
+  131:7  warning  'SAFETY_IMPACT_STATUSES' is assigned a value but only used as a type       @typescript-eslint/no-unused-vars
+  134:7  warning  'SAFETY_NEXT_ACTIONS' is assigned a value but only used as a type          @typescript-eslint/no-unused-vars
+  145:7  warning  'SAFETY_REF_KINDS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+
+<repository>/lib/safety/evidence.ts
+  184:37  warning  'fingerprint' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/safety/scope.ts
+  9:7  warning  'SAFETY_SCOPE_KINDS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/safety/status.ts
+  10:7  warning  'SAFETY_CHECK_STATES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/seasonal/domain.ts
+   56:7  warning  'SEASONAL_EVIDENCE_STATUSES' is assigned a value but only used as a type     @typescript-eslint/no-unused-vars
+   64:7  warning  'SEASONAL_FRESHNESS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   83:7  warning  'SEASONAL_PRESENTATION_CLASSES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+   91:7  warning  'SEASONAL_RELEVANCE' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+   99:7  warning  'SEASONAL_SPATIAL_PRECISIONS' is assigned a value but only used as a type    @typescript-eslint/no-unused-vars
+  122:7  warning  'SEASONAL_IMPACT_STATUSES' is assigned a value but only used as a type       @typescript-eslint/no-unused-vars
+  125:7  warning  'SEASONAL_NEXT_ACTIONS' is assigned a value but only used as a type          @typescript-eslint/no-unused-vars
+  135:7  warning  'SEASONAL_REF_KINDS' is assigned a value but only used as a type             @typescript-eslint/no-unused-vars
+
+<repository>/lib/seasonal/engine.test.ts
+  19:3  warning  'mehrzielreise' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/seasonal/scope.ts
+  8:7  warning  'SEASONAL_SCOPE_KINDS' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/seasonal/status.ts
+  10:7  warning  'SEASONAL_CHECK_STATES' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/seo/oeffentlicher-origin.ts
+  164:3  warning  '_env' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/suche/lage.ts
+  6:7  warning  'SUCHE_LAGEN' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+<repository>/lib/supabase/server.ts
+  34:9   warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  34:24  warning  '_value' is defined but never used    @typescript-eslint/no-unused-vars
+  34:40  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+  37:12  warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  37:27  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+  55:26  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/trips/day-stage-truth-contract.test.ts
+  160:37  warning  '_mode' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/trips/gastspeicher.ts
+  951:3  warning  '_reise' is defined but never used     @typescript-eslint/no-unused-vars
+  952:3  warning  '_aufnahme' is defined but never used  @typescript-eslint/no-unused-vars
+  953:3  warning  '_dayId' is defined but never used     @typescript-eslint/no-unused-vars
+
+<repository>/lib/trips/schema.test.ts
+  613:25  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  730:24  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/lib/trips/schema.ts
+  415:35  warning  '_claimed' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/activities-ui-audit.mjs
+  317:11  warning  'stil' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/db/admin-account-counts-http-proof-1.mjs
+  26:10  warning  'dirname' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/db/gate-b-tw6-bundle.ts
+  22:3  warning  'writeGateVerifySql' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/db/production-pruefen.ts
+  9:76  warning  'ORT_PFLICHT_KEYWORD' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/db/security-events-dev-1-lokal.mjs
+  184:10  warning  'mussErlauben' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-browser-acceptance-1/preflight.mjs
+   15:10  warning  'defaultWhich' is defined but never used       @typescript-eslint/no-unused-vars
+  103:5   warning  'helpFull' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-browser-acceptance-1/resolve-executable.mjs
+  5:10  warning  'existsSync' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs
+  430:21  warning  'args' is defined but never used        @typescript-eslint/no-unused-vars
+  681:34  warning  'profileDir' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs
+  496:33  warning  '_drop' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-browser-flows-1/test.mjs
+   85:3   warning  'assertSanitized' is defined but never used  @typescript-eslint/no-unused-vars
+  159:11  warning  'index' is defined but never used            @typescript-eslint/no-unused-vars
+
+<repository>/scripts/e2e/admin-account-counts-local-runtime-1/test.mjs
+  87:56  warning  'assertOverlayKeepsAuthSemantics' is defined but never used  @typescript-eslint/no-unused-vars
+
+<repository>/scripts/v1-workspace-status-language-1-audit.mjs
+  309:10  warning  'sichtbareTexte' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 145 problems (0 errors, 145 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.

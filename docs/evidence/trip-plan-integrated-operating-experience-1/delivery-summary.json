@@ -1,0 +1,80 @@
+{
+  "classification": "TRIP_PLAN_INTEGRATED_OPERATING_EXPERIENCE_1_READY_FOR_TL_REVIEW",
+  "scope": "R1 corrected production source acceptance; final evidence delivery adds the separately verified Account focus assertion and receives final-head remote gates in the external exact-head packet",
+  "localSourceCommit": "5784f243372c42b206044c60c9a787c25ffb0ea7",
+  "remoteSourceCommit": "047bebdd98cb7e50c39ae020834b3c79a8bca321",
+  "sourceTree": "f895eb80d948e4e98583e3073497cef6bb31f1a5",
+  "main": "0481173cf56f13e5316246503e4683ad843728f2",
+  "mergeBase": "0481173cf56f13e5316246503e4683ad843728f2",
+  "sourceAhead": 7,
+  "sourceBehind": 0,
+  "taskBlob": "3df8bca929f287cdd7e996b4c051c38205611e67",
+  "session": "01a113b2-5444-7550-983d-7a156c60731e",
+  "model": "gpt-6-astra",
+  "effort": "xhigh",
+  "guestEndToEnd": "VERIFIED",
+  "accountPersistenceEndToEnd": "VERIFIED_LOCAL_AUTHENTICATED_STACK",
+  "crossDeviceEvidence": "PARTIAL_AUTOMATED_CHROMIUM_VERIFIED_PHYSICAL_WEBKIT_SCREEN_READER_NOT_RUN",
+  "externalConsumers": "SOFTWARE_COMPLETE_NOT_ACTIVATED",
+  "externalLiveActivation": "NOT_ACTIVATED",
+  "localGates": {
+    "npmTests": 5656,
+    "passed": 5656,
+    "failed": 0,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "lintErrors": 0,
+    "lintWarnings": 146,
+    "productionBuild": "PASS",
+    "hygieneModeChecks": 6,
+    "diffCheck": "PASS",
+    "sourceManifestFiles": 346
+  },
+  "browserCases": {
+    "integrated": 24,
+    "core": 40,
+    "temporal": 32,
+    "contextualNavigation": 57,
+    "premiumSteps": 26,
+    "authenticatedAccount": 9,
+    "r1GuestPending": 3,
+    "r1GuestContextGuards": 3,
+    "r1AccountPending": 3,
+    "r1AccountFocusRepeat": 1
+  },
+  "sourceRemoteGates": {
+    "ciRun": 37605564470,
+    "ci": "IN_PROGRESS_AT_PACKET_PREPARATION",
+    "authJob": 112740060616,
+    "auth": "SUCCESS",
+    "authCredentialStep": "SUCCESS",
+    "authAbgleich": "SUCCESS",
+    "preview": "READY",
+    "deploymentId": "dpl_97qATD4BSHV14ayh1p6Rn8qWykQA",
+    "deploymentUrl": "https://jetnity-4s980akc6-jetnity-e1b93c82.vercel.app",
+    "aliasError": null,
+    "finalHeadGates": "See external exact-head packet; never infer final gates from source head."
+  },
+  "openImplementationFindings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0,
+    "knownNonblockingBaseline": "146 retained lint warnings; physical-device, WebKit and screen-reader proof NOT_RUN. No new implementation P3 identified."
+  },
+  "independentTLReview": "R1_RECEIVED_TWO_P2_FIXED_INDEPENDENT_EXACT_HEAD_REREVIEW_REQUIRED",
+  "prDraft": true,
+  "merged": false,
+  "reviewId": "TL-20261007-900-903-R1",
+  "reviewedHead": "b19bfbf9cd591b361740cbb2fbc5920fa81991e6",
+  "browserVersion": "154.0.8037.99",
+  "historicalOnly": [
+    "R0 account-repeat-1.txt",
+    "R0 account-repeat-2.txt",
+    "R0 account-repeat-3.txt"
+  ],
+  "resolvedFindings": {
+    "P2/F1": "Reproduced RED; 11 new milestone range regressions GREEN",
+    "P2/F2": "Guest and real local Account RED; 3 delayed cases per mode GREEN; retained switch/unmount/readback guards GREEN"
+  }
+}

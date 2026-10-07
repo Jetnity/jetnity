@@ -105,6 +105,7 @@ export type TagZeile = {
 
 export type PunktZeile = {
   id: string
+  updated_at?: string
   day_id: string | null
   stage_id: string | null
   kind: string
@@ -195,6 +196,7 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
   return mietwagenNormalisieren(
     mobilitaetNormalisieren({
       id: zeile.id,
+      ...(zeile.updated_at ? { rowVersion: zeile.updated_at } : {}),
       dayId: zeile.day_id,
       stageId: zeile.stage_id,
       kind,

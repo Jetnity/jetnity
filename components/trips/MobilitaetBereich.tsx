@@ -313,40 +313,48 @@ export default function MobilitaetBereich({
   )
 }
 
-function ManuelleVerbindung({
+export function ManuelleVerbindung({
   reise,
   onAnlegen,
+  vorgabe,
 }: {
   reise: Trip
   onAnlegen: (eingabe: MobilityManuellEingabe) => Promise<string | null>
+  vorgabe?: Partial<MobilityManuellEingabe>
 }) {
-  const [mode, setMode] = React.useState<MobilityMode>('rail')
-  const [originName, setOriginName] = React.useState(reise.origin ?? '')
-  const [destinationName, setDestinationName] = React.useState(reise.stages[0]?.name ?? '')
-  const [startsOn, setStartsOn] = React.useState(reise.startDate ?? '')
+  const [mode, setMode] = React.useState<MobilityMode>(vorgabe?.mode ?? 'rail')
+  const [originName, setOriginName] = React.useState(vorgabe?.originName ?? reise.origin ?? '')
+  const [destinationName, setDestinationName] = React.useState(vorgabe?.destinationName ?? reise.stages[0]?.name ?? '')
+  const [startsOn, setStartsOn] = React.useState(vorgabe ? vorgabe.startsOn ?? '' : reise.startDate ?? '')
   const [startsAt, setStartsAt] = React.useState('')
   const [endsOn, setEndsOn] = React.useState('')
   const [endsAt, setEndsAt] = React.useState('')
   const [connectionRef, setConnectionRef] = React.useState('')
   const [note, setNote] = React.useState('')
-  const [dayId, setDayId] = React.useState(reise.days[0]?.id ?? '')
+  const [dayId, setDayId] = React.useState(vorgabe ? vorgabe.dayId ?? '' : reise.days[0]?.id ?? '')
   const [laeuft, setLaeuft] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [hinweis, setHinweis] = React.useState('')
 
+  const lebendig = React.useRef(true)
+  const schreibt = React.useRef(false)
+  React.useEffect(() => { lebendig.current = true; return () => { lebendig.current = false } }, [])
+
   const speichern = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
-    if (laeuft) return
+    if (schreibt.current) return
+    schreibt.current = true
     setMeldung('')
     setHinweis('')
     setLaeuft(true)
+    try {
     const fehler = await onAnlegen({
       mode,
       title: null,
       originName,
       destinationName,
-      originPlaceId: null,
-      destinationPlaceId: null,
+      originPlaceId: originName === vorgabe?.originName ? vorgabe?.originPlaceId ?? null : null,
+      destinationPlaceId: destinationName === vorgabe?.destinationName ? vorgabe?.destinationPlaceId ?? null : null,
       startsOn: startsOn || null,
       startsAt: startsAt || null,
       endsOn: endsOn || null,
@@ -357,9 +365,9 @@ function ManuelleVerbindung({
       priceCurrency: null,
       note: note || null,
       dayId: dayId || null,
-      stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? reise.stages[0]?.id ?? null,
+      stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? null,
     })
-    setLaeuft(false)
+    if (!lebendig.current) return
     if (fehler) {
       setMeldung(fehler)
       return
@@ -367,6 +375,12 @@ function ManuelleVerbindung({
     setHinweis('Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
     setConnectionRef('')
     setNote('')
+    } catch {
+      if (lebendig.current) setMeldung('Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
+    } finally {
+      schreibt.current = false
+      if (lebendig.current) setLaeuft(false)
+    }
   }
 
   return (

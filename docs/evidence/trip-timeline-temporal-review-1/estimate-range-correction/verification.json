@@ -1,0 +1,90 @@
+{
+  "classification": "TRIP_TIMELINE_TEMPORAL_REVIEW_1_READY",
+  "scope": "TL estimate-range correction; current runtime/tests. No fresh browser run.",
+  "review": 5435314344,
+  "correctionParent": "98e7a12920aee0afd1afc138d374588499c3d76c",
+  "mainAtVerification": "ecc0ecf3b9c024b295034b6985fa26ca40bc82f1",
+  "taskBlob": "45dcf5589470247c4c074cacc4d2d7f5c1c65cf6",
+  "beforeRuntimeBlob": "fa30cf1eefa49661717dede498dc19f85a233540",
+  "sourceSha256": {
+    "lib/trips/trip-timeline-temporal-review-1.ts": "b82e38a8bc63e2d68520987440dd01ab794322ec064c75ef5254292b42643714",
+    "lib/trips/trip-timeline-temporal-review-1.test.ts": "7f1ee289bd5dab61b5e1addf25f2828bc435d8a05d4876a49b3e40414a0e4be0",
+    "components/trips/TripTimelineZeitpruefung.tsx": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78",
+    "components/trips/TripWorkspacePlan.tsx": "85dc31ccd3f2c257c8f417caecf18a917ee06692cd23f4e25b2726050d330476",
+    "scripts/trip-timeline-temporal-review-1-audit.mjs": "456677508b3880d81ec85ef8738ea79a47fc97e37a3202a3e1ddb183cbb0b215",
+    "scripts/trip-plan-premium-experience-4-audit.mjs": "17a3ac1347284a489d8fd4ed3220e9268faa7cc8053a8a37c344bf61fd8b8736"
+  },
+  "regressionBefore": {
+    "exitCode": 1,
+    "passed": 4,
+    "failed": 4,
+    "testSourceSha256": "7f1ee289bd5dab61b5e1addf25f2828bc435d8a05d4876a49b3e40414a0e4be0"
+  },
+  "regressionAfter": {
+    "exitCode": 0,
+    "passed": 8,
+    "failed": 0,
+    "testSourceSha256": "7f1ee289bd5dab61b5e1addf25f2828bc435d8a05d4876a49b3e40414a0e4be0"
+  },
+  "focusedTests": 107,
+  "temporalTests": 31,
+  "tripRouteTests": 1078,
+  "checksPassed": [
+    "typecheck",
+    "lint: 0 errors / 145 existing warnings",
+    "production build",
+    "check:operating-mode",
+    "check:dead",
+    "check:exports",
+    "check:deps",
+    "check:api-schutz",
+    "check:schema-bezug",
+    "git diff --check"
+  ],
+  "freshBrowserTests": 0,
+  "inheritedBrowser": {
+    "head": "cef74bc4cfda1999081e0f26913097c78c7118c3",
+    "cases": 155,
+    "manifest": "../verification.json",
+    "notReexecuted": true
+  },
+  "sessionId": "01a112f5-ca7b-77b1-8126-e9b9d22890f2",
+  "model": "gpt-6-astra",
+  "reasoningEffort": "xhigh",
+  "coverageGaps": [
+    "fresh browser run",
+    "physical devices",
+    "screen reader",
+    "authenticated persistence E2E",
+    "local full npm test",
+    "local auth:pruefen",
+    "manual Preview browser acceptance"
+  ],
+  "logSha256": {
+    "build.txt": "3d512fd0d27ade6856df66278637d17232a7770773ddfc26133c23747baa6fcf",
+    "focused-tests.txt": "8f59a368938880baddbd8d94bc409aee03df33f930129be3a9176dfbd31c2f1a",
+    "hygiene.txt": "7539bab2a42dc5ef5b20291477d824393794a211ffebd2a4fe565621b6dcd5a3",
+    "lint.txt": "5ffd6a5d136561ccecece94bfe2c2caa43b5b37b0ba02cb636c5164541b19a44",
+    "regression-after.txt": "9678d805d60e9dce238068f9acac732ff5f446bbe60a358fa7610a06eef22979",
+    "regression-before.txt": "fde2838ffd9471b7e3e009c8dd6630fb0e159db4f6f30d7e286f1ddb8e21f6d5",
+    "trip-route-tests.txt": "5ccfa30c1549b08437fcec6a0199351959159c08980a7681a6778704c86908e8",
+    "typecheck.txt": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+  },
+  "commands": {
+    "regressionBeforeAndAfter": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-name-pattern='closed estimate range:' lib/trips/trip-timeline-temporal-review-1.test.ts",
+    "focused": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/trip-timeline-temporal-review-1.test.ts lib/trips/trip-timeline-core-1.test.ts lib/trips/timeline.test.ts lib/trips/trip-plan-premium-experience-4.test.ts lib/trips/detail.test.ts lib/trips/cross-device-interaction-1.test.ts lib/trips/workspace-mode.test.ts",
+    "tripRoute": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/*.test.ts lib/route/*.test.ts",
+    "typecheck": "npm run typecheck",
+    "lint": "npm run lint",
+    "build": "npm run build",
+    "hygiene": [
+      "npm run check:operating-mode",
+      "npm run check:dead",
+      "npm run check:exports",
+      "npm run check:deps",
+      "npm run check:api-schutz",
+      "npm run check:schema-bezug"
+    ],
+    "diff": "git diff --check"
+  }
+}

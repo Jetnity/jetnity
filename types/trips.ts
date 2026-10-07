@@ -264,6 +264,8 @@ export type TripSource = 'guest' | 'account'
 /** Ein Planpunkt: Flug, Unterkunft, Aktivität, Transfer, Mietwagen oder freie Notiz. */
 export type TripItem = {
   id: string
+  /** Existing account updated_at; absent in legacy/local data. Not a new column. */
+  rowVersion?: string
   /** Tag, an dem der Punkt hängt. `null`, solange er nicht eingeplant ist. */
   dayId: string | null
   /** Etappe, an der der Punkt hängt – etwa eine Unterkunft über mehrere Nächte. */

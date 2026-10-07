@@ -1,0 +1,6 @@
+
+> jetnity@1.0.0 typecheck
+> next typegen && tsc -p tsconfig.json --noEmit
+
+Generating route types...
+✓ Types generated successfully
