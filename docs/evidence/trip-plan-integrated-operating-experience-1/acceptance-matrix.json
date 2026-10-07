@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "C01",
+      "name": "Core and temporal regression",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C02",
+      "name": "Real Guest save/readback/failure",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C03",
+      "name": "Account validation ownership/version/readback",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C04",
+      "name": "Protected commercial editors",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C05",
+      "name": "F02/F05 focus/history/status",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C06",
+      "name": "Booking and exact Preparation navigation",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C07",
+      "name": "Directed movement coverage",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C08",
+      "name": "Union gaps and buffer phases",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C09",
+      "name": "Qualified next and planned-order fallback",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C10",
+      "name": "Original currency costs",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C11",
+      "name": "Located/unlocated context",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C12",
+      "name": "Proven impact and invalidation",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C13",
+      "name": "Closed external consumers",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C14",
+      "name": "Integrated production-component flow",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C15",
+      "name": "Responsive keyboard/accessibility",
+      "status": "NOT_RUN",
+      "evidence": []
+    },
+    {
+      "id": "C16",
+      "name": "Full local and exact-head remote gates",
+      "status": "NOT_RUN",
+      "evidence": []
+    }
+  ]
+}
