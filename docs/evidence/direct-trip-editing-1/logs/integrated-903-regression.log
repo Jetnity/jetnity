@@ -1,0 +1,4 @@
+PASS: 24 browser cases
+Database ready; starting auth
+Auth ready; starting REST
+PASS: 9 authenticated persistence cases; docs/evidence/direct-trip-editing-1/regressions/integrated-903/account-persistence.json

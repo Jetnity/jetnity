@@ -1,0 +1,24 @@
+{
+  "baseline": "9ea0e068e1d28b18ed15059fa5bf9b63c0689cfe",
+  "results": [
+    {
+      "case": "Metadata-only explicit point date",
+      "baseline": {
+        "date": "2026-10-07",
+        "end": "2026-10-10"
+      },
+      "fixed": {
+        "date": "2026-10-09",
+        "end": "2026-10-10"
+      },
+      "status": "BASELINE_DEFECT_FIXED"
+    },
+    {
+      "case": "Guest same-revision other active trip",
+      "baseline": "Wrong trip overwritten",
+      "fixed": "Rejected; active trip preserved",
+      "status": "BASELINE_DEFECT_FIXED"
+    }
+  ],
+  "boundary": "Actual baseline modules replayed against synthetic graph and explicit in-memory Storage test double. No browser/native claim."
+}

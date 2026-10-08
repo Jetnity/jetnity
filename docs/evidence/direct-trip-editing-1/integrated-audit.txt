@@ -1,0 +1,22 @@
+PASS
+Code head at start: 5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c
+PASS npm-test-linux (0) -> docs/evidence/direct-trip-editing-1/logs/npm-test-linux.log
+PASS typecheck (0) -> docs/evidence/direct-trip-editing-1/logs/typecheck.log
+PASS lint (0) -> docs/evidence/direct-trip-editing-1/logs/lint.log
+PASS build (0) -> docs/evidence/direct-trip-editing-1/logs/build.log
+PASS check-dead (0) -> docs/evidence/direct-trip-editing-1/logs/check-dead.log
+PASS check-exports (0) -> docs/evidence/direct-trip-editing-1/logs/check-exports.log
+PASS check-deps (0) -> docs/evidence/direct-trip-editing-1/logs/check-deps.log
+PASS check-api-schutz (0) -> docs/evidence/direct-trip-editing-1/logs/check-api-schutz.log
+PASS check-schema-bezug (0) -> docs/evidence/direct-trip-editing-1/logs/check-schema-bezug.log
+PASS check-operating-mode (0) -> docs/evidence/direct-trip-editing-1/logs/check-operating-mode.log
+PASS baseline-counterexamples (0) -> docs/evidence/direct-trip-editing-1/logs/baseline-counterexamples.log
+PASS diff-check (0) -> docs/evidence/direct-trip-editing-1/logs/diff-check.log
+PASS guest-browser (0) -> docs/evidence/direct-trip-editing-1/logs/guest-browser.log
+PASS integrated-903-regression (0) -> docs/evidence/direct-trip-editing-1/logs/integrated-903-regression.log
+PASS trip-timeline-core-1 (0) -> docs/evidence/direct-trip-editing-1/logs/trip-timeline-core-1.log
+PASS trip-timeline-temporal-review-1 (0) -> docs/evidence/direct-trip-editing-1/logs/trip-timeline-temporal-review-1.log
+PASS trip-workspace-contextual-navigation-1 (0) -> docs/evidence/direct-trip-editing-1/logs/trip-workspace-contextual-navigation-1.log
+PASS trip-plan-premium-experience-4 (0) -> docs/evidence/direct-trip-editing-1/logs/trip-plan-premium-experience-4.log
+PASS account-persistence (0) -> docs/evidence/direct-trip-editing-1/logs/account-persistence.log
+Browser/Account/Device/Live activation boundaries are recorded separately.

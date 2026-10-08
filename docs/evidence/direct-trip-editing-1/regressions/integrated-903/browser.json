@@ -1,0 +1,7484 @@
+{
+  "status": "PASS",
+  "base": "http://127.0.0.1:3517",
+  "browser": "154.0.8037.99",
+  "results": [
+    {
+      "name": "production-plan-360-text-100",
+      "status": "PASS",
+      "width": 360,
+      "scrollWidth": 360,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 38,
+          "right": 82
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 278,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 87.546875,
+          "height": 56,
+          "left": 38,
+          "right": 125.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 71.453125,
+          "height": 56,
+          "left": 133.546875,
+          "right": 205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 87.265625,
+          "height": 56,
+          "left": 213,
+          "right": 300.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 69.296875,
+          "height": 56,
+          "left": 308.265625,
+          "right": 377.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 67.484375,
+          "height": 56,
+          "left": 385.5625,
+          "right": 453.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 249,
+          "height": 98,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 64,
+          "right": 220.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 249,
+          "height": 74,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 249,
+          "height": 94,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 64,
+          "right": 247.328125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 249,
+          "height": 74,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 41,
+          "right": 289.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 278,
+          "height": 64,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 41,
+          "right": 271.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 278,
+          "height": 58,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 38,
+          "right": 157.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
+        }
+      ]
+    },
+    {
+      "name": "production-form-360-text-100",
+      "status": "PASS",
+      "width": 360,
+      "scrollWidth": 360,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 38,
+          "right": 82
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 278,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 87.546875,
+          "height": 56,
+          "left": 38,
+          "right": 125.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 71.453125,
+          "height": 56,
+          "left": 133.546875,
+          "right": 205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 87.265625,
+          "height": 56,
+          "left": 213,
+          "right": 300.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 69.296875,
+          "height": 56,
+          "left": 308.265625,
+          "right": 377.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 67.484375,
+          "height": 56,
+          "left": 385.5625,
+          "right": 453.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 108.046875,
+          "height": 44,
+          "left": 103.515625,
+          "right": 211.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 102.4375,
+          "height": 44,
+          "left": 219.5625,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 249,
+          "height": 98,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 64,
+          "right": 220.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 249,
+          "height": 74,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 249,
+          "height": 94,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 64,
+          "right": 247.328125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 249,
+          "height": 74,
+          "left": 64,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 269,
+          "right": 313
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 41,
+          "right": 289.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 278,
+          "height": 64,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 41,
+          "right": 271.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 278,
+          "height": 58,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 278,
+          "height": 44,
+          "left": 41,
+          "right": 319
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 284,
+          "height": 44,
+          "left": 38,
+          "right": 322
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 38,
+          "right": 157.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
+        }
+      ]
+    },
+    {
+      "name": "production-plan-360-text-200",
+      "status": "PASS",
+      "width": 360,
+      "scrollWidth": 360,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 74,
+          "right": 162
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 198,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 158.265625,
+          "height": 110,
+          "left": 74,
+          "right": 232.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 131.8125,
+          "height": 110,
+          "left": 248.265625,
+          "right": 380.078125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 158.109375,
+          "height": 110,
+          "left": 396.078125,
+          "right": 554.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 127.859375,
+          "height": 110,
+          "left": 570.1875,
+          "right": 698.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 123.90625,
+          "height": 110,
+          "left": 714.046875,
+          "right": 837.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 145,
+          "height": 236,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 145,
+          "height": 160,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 145,
+          "height": 320,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 145,
+          "height": 392,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 145,
+          "height": 160,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 145,
+          "height": 328,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 198,
+          "height": 194,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 198,
+          "height": 128,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 198,
+          "height": 128,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 198,
+          "height": 168,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 198,
+          "height": 154,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 198,
+          "height": 274,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 198,
+          "height": 208,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 198,
+          "height": 168,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 212,
+          "height": 128,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 212,
+          "height": 224,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 212,
+          "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 212,
+          "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        }
+      ]
+    },
+    {
+      "name": "production-form-360-text-200",
+      "status": "PASS",
+      "width": 360,
+      "scrollWidth": 360,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 74,
+          "right": 162
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 198,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 158.265625,
+          "height": 110,
+          "left": 74,
+          "right": 232.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 131.8125,
+          "height": 110,
+          "left": 248.265625,
+          "right": 380.078125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 158.109375,
+          "height": 110,
+          "left": 396.078125,
+          "right": 554.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 127.859375,
+          "height": 110,
+          "left": 570.1875,
+          "right": 698.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 123.90625,
+          "height": 110,
+          "left": 714.046875,
+          "right": 837.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 212,
+          "height": 88,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 206.765625,
+          "height": 88,
+          "left": 79.234375,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 195.78125,
+          "height": 88,
+          "left": 90.21875,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 145,
+          "height": 236,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 145,
+          "height": 160,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 145,
+          "height": 320,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 145,
+          "height": 392,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 145,
+          "height": 160,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 145,
+          "height": 328,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 145,
+          "height": 88,
+          "left": 124,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 181,
+          "right": 269
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 198,
+          "height": 194,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 198,
+          "height": 128,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 198,
+          "height": 128,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 198,
+          "height": 168,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 198,
+          "height": 154,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 198,
+          "height": 274,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 198,
+          "height": 208,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 198,
+          "height": 168,
+          "left": 81,
+          "right": 279
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 212,
+          "height": 128,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 212,
+          "height": 224,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 212,
+          "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 212,
+          "height": 112,
+          "left": 74,
+          "right": 286
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 212,
+          "height": 152,
+          "left": 74,
+          "right": 286
+        }
+      ]
+    },
+    {
+      "name": "production-plan-390-text-100",
+      "status": "PASS",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 38,
+          "right": 82
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 308,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 87.546875,
+          "height": 56,
+          "left": 38,
+          "right": 125.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 71.453125,
+          "height": 56,
+          "left": 133.546875,
+          "right": 205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 87.265625,
+          "height": 56,
+          "left": 213,
+          "right": 300.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 69.296875,
+          "height": 56,
+          "left": 308.265625,
+          "right": 377.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 67.484375,
+          "height": 56,
+          "left": 385.5625,
+          "right": 453.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 279,
+          "height": 98,
+          "left": 64,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 64,
+          "right": 220.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 224.5625,
+          "right": 322.171875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 177.390625,
+          "height": 96,
+          "left": 64,
+          "right": 241.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 245.390625,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 279,
+          "height": 94,
+          "left": 64,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 64,
+          "right": 247.328125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 177.390625,
+          "height": 90,
+          "left": 64,
+          "right": 241.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 245.390625,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 41,
+          "right": 289.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 41,
+          "right": 271.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 308,
+          "height": 58,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 38,
+          "right": 157.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
+        }
+      ]
+    },
+    {
+      "name": "production-form-390-text-100",
+      "status": "PASS",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 38,
+          "right": 82
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 308,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 87.546875,
+          "height": 56,
+          "left": 38,
+          "right": 125.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 71.453125,
+          "height": 56,
+          "left": 133.546875,
+          "right": 205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 87.265625,
+          "height": 56,
+          "left": 213,
+          "right": 300.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 69.296875,
+          "height": 56,
+          "left": 308.265625,
+          "right": 377.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 67.484375,
+          "height": 56,
+          "left": 385.5625,
+          "right": 453.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 108.046875,
+          "height": 44,
+          "left": 133.515625,
+          "right": 241.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 102.4375,
+          "height": 44,
+          "left": 249.5625,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 279,
+          "height": 98,
+          "left": 64,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 64,
+          "right": 220.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 224.5625,
+          "right": 322.171875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 177.390625,
+          "height": 96,
+          "left": 64,
+          "right": 241.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 245.390625,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 279,
+          "height": 94,
+          "left": 64,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 64,
+          "right": 247.328125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 64,
+          "right": 161.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 177.390625,
+          "height": 90,
+          "left": 64,
+          "right": 241.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 245.390625,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 299,
+          "right": 343
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 41,
+          "right": 289.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 41,
+          "right": 271.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 308,
+          "height": 58,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 38,
+          "right": 157.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 38,
+          "right": 301.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 38,
+          "right": 274.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 38,
+          "right": 197.71875
+        }
+      ]
+    },
+    {
+      "name": "production-plan-390-text-200",
+      "status": "PASS",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 74,
+          "right": 162
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 228,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 158.265625,
+          "height": 110,
+          "left": 74,
+          "right": 232.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 131.8125,
+          "height": 110,
+          "left": 248.265625,
+          "right": 380.078125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 158.109375,
+          "height": 110,
+          "left": 396.078125,
+          "right": 554.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 127.859375,
+          "height": 110,
+          "left": 570.1875,
+          "right": 698.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 123.90625,
+          "height": 110,
+          "left": 714.046875,
+          "right": 837.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 175,
+          "height": 236,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 175,
+          "height": 120,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 175,
+          "height": 276,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 175,
+          "height": 348,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 175,
+          "height": 120,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 175,
+          "height": 296,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 228,
+          "height": 194,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 228,
+          "height": 128,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 228,
+          "height": 88,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 228,
+          "height": 168,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 228,
+          "height": 154,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 228,
+          "height": 234,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 228,
+          "height": 168,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 228,
+          "height": 128,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 242,
+          "height": 128,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 242,
+          "height": 176,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 74,
+          "right": 300.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 242,
+          "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 242,
+          "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 242,
+          "height": 112,
+          "left": 74,
+          "right": 316
+        }
+      ]
+    },
+    {
+      "name": "production-form-390-text-200",
+      "status": "PASS",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 74,
+          "right": 162
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 228,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 158.265625,
+          "height": 110,
+          "left": 74,
+          "right": 232.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 131.8125,
+          "height": 110,
+          "left": 248.265625,
+          "right": 380.078125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 158.109375,
+          "height": 110,
+          "left": 396.078125,
+          "right": 554.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 127.859375,
+          "height": 110,
+          "left": 570.1875,
+          "right": 698.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 123.90625,
+          "height": 110,
+          "left": 714.046875,
+          "right": 837.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 242,
+          "height": 88,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 206.765625,
+          "height": 88,
+          "left": 109.234375,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 195.78125,
+          "height": 88,
+          "left": 120.21875,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 175,
+          "height": 236,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 175,
+          "height": 120,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 175,
+          "height": 276,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 175,
+          "height": 348,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 175,
+          "height": 120,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 175,
+          "height": 296,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 175,
+          "height": 88,
+          "left": 124,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 211,
+          "right": 299
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 228,
+          "height": 194,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 228,
+          "height": 128,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 228,
+          "height": 88,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 228,
+          "height": 168,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 228,
+          "height": 154,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 228,
+          "height": 234,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 228,
+          "height": 168,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 228,
+          "height": 128,
+          "left": 81,
+          "right": 309
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 242,
+          "height": 128,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 242,
+          "height": 176,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 74,
+          "right": 300.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 242,
+          "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 242,
+          "height": 152,
+          "left": 74,
+          "right": 316
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 242,
+          "height": 112,
+          "left": 74,
+          "right": 316
+        }
+      ]
+    },
+    {
+      "name": "production-plan-768-text-100",
+      "status": "PASS",
+      "width": 768,
+      "scrollWidth": 768,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 334,
+          "right": 378
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 390,
+          "right": 434
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 174.75,
+          "height": 44,
+          "left": 535.25,
+          "right": 710
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 294.828125,
+          "height": 98,
+          "left": 92,
+          "right": 386.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 390.828125,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 455.390625,
+          "height": 74,
+          "left": 92,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 268.0625,
+          "height": 94,
+          "left": 92,
+          "right": 360.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 364.0625,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 455.390625,
+          "height": 74,
+          "left": 92,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 686,
+          "height": 44,
+          "left": 41,
+          "right": 727
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 165.5,
+          "height": 56,
+          "left": 41,
+          "right": 206.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 214.5,
+          "right": 380
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 165.5,
+          "height": 56,
+          "left": 388,
+          "right": 553.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 561.5,
+          "right": 727
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 41,
+          "right": 206.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 57,
+          "right": 305.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 57,
+          "right": 287.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 379.015625,
+          "height": 44,
+          "left": 57,
+          "right": 436.015625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 660,
+          "height": 44,
+          "left": 54,
+          "right": 714
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 660,
+          "height": 44,
+          "left": 54,
+          "right": 714
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 54,
+          "right": 213.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 54,
+          "right": 290.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 54,
+          "right": 317.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 54,
+          "right": 173.046875
+        }
+      ]
+    },
+    {
+      "name": "production-form-768-text-100",
+      "status": "PASS",
+      "width": 768,
+      "scrollWidth": 768,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 334,
+          "right": 378
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 390,
+          "right": 434
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 174.75,
+          "height": 44,
+          "left": 535.25,
+          "right": 710
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 618,
+          "height": 44,
+          "left": 75,
+          "right": 693
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 618,
+          "height": 44,
+          "left": 75,
+          "right": 693
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 303,
+          "height": 44,
+          "left": 75,
+          "right": 378
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 303,
+          "height": 44,
+          "left": 390,
+          "right": 693
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 303,
+          "height": 44,
+          "left": 75,
+          "right": 378
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 303,
+          "height": 44,
+          "left": 390,
+          "right": 693
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 108.046875,
+          "height": 44,
+          "left": 474.515625,
+          "right": 582.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 102.4375,
+          "height": 44,
+          "left": 590.5625,
+          "right": 693
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 294.828125,
+          "height": 98,
+          "left": 92,
+          "right": 386.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 390.828125,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 455.390625,
+          "height": 74,
+          "left": 92,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 268.0625,
+          "height": 94,
+          "left": 92,
+          "right": 360.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 364.0625,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 455.390625,
+          "height": 74,
+          "left": 92,
+          "right": 547.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 551.390625,
+          "right": 649
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 653,
+          "right": 697
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 686,
+          "height": 44,
+          "left": 41,
+          "right": 727
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 165.5,
+          "height": 56,
+          "left": 41,
+          "right": 206.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 214.5,
+          "right": 380
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 165.5,
+          "height": 56,
+          "left": 388,
+          "right": 553.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 561.5,
+          "right": 727
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 165.5,
+          "height": 56,
+          "left": 41,
+          "right": 206.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 57,
+          "right": 305.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 57,
+          "right": 287.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 379.015625,
+          "height": 44,
+          "left": 57,
+          "right": 436.015625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 654,
+          "height": 44,
+          "left": 57,
+          "right": 711
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 660,
+          "height": 44,
+          "left": 54,
+          "right": 714
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 660,
+          "height": 44,
+          "left": 54,
+          "right": 714
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 54,
+          "right": 213.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 54,
+          "right": 290.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 54,
+          "right": 317.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 54,
+          "right": 173.046875
+        }
+      ]
+    },
+    {
+      "name": "production-plan-768-text-200",
+      "status": "PASS",
+      "width": 768,
+      "scrollWidth": 768,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 284,
+          "right": 372
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 396,
+          "right": 484
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 335.53125,
+          "height": 88,
+          "left": 318.46875,
+          "right": 654
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 449,
+          "height": 196,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 294.75,
+          "height": 88,
+          "left": 180,
+          "right": 474.75
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 449,
+          "height": 148,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 449,
+          "height": 188,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 343.109375,
+          "height": 88,
+          "left": 180,
+          "right": 523.109375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 449,
+          "height": 148,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 606,
+          "height": 88,
+          "left": 81,
+          "right": 687
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 139.5,
+          "height": 142,
+          "left": 81,
+          "right": 220.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 139.5,
+          "height": 142,
+          "left": 236.5,
+          "right": 376
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 139.5,
+          "height": 142,
+          "left": 392,
+          "right": 531.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 139.5,
+          "height": 142,
+          "left": 547.5,
+          "right": 687
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 139.5,
+          "height": 110,
+          "left": 81,
+          "right": 220.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 467.609375,
+          "height": 88,
+          "left": 113,
+          "right": 580.609375
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 542,
+          "height": 128,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 434.625,
+          "height": 88,
+          "left": 113,
+          "right": 547.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 542,
+          "height": 114,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 556,
+          "height": 88,
+          "left": 106,
+          "right": 662
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 556,
+          "height": 88,
+          "left": 106,
+          "right": 662
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 441.265625,
+          "height": 88,
+          "left": 106,
+          "right": 547.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 106,
+          "right": 332.359375
+        }
+      ]
+    },
+    {
+      "name": "production-form-768-text-200",
+      "status": "PASS",
+      "width": 768,
+      "scrollWidth": 768,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 284,
+          "right": 372
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 396,
+          "right": 484
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 335.53125,
+          "height": 88,
+          "left": 318.46875,
+          "right": 654
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 474,
+          "height": 88,
+          "left": 147,
+          "right": 621
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 474,
+          "height": 88,
+          "left": 147,
+          "right": 621
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 225,
+          "height": 88,
+          "left": 147,
+          "right": 372
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 225,
+          "height": 88,
+          "left": 396,
+          "right": 621
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 225,
+          "height": 88,
+          "left": 147,
+          "right": 372
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 225,
+          "height": 108,
+          "left": 396,
+          "right": 621
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 206.765625,
+          "height": 88,
+          "left": 202.453125,
+          "right": 409.21875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 195.78125,
+          "height": 88,
+          "left": 425.21875,
+          "right": 621
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 449,
+          "height": 196,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 294.75,
+          "height": 88,
+          "left": 180,
+          "right": 474.75
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 449,
+          "height": 148,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 449,
+          "height": 188,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 343.109375,
+          "height": 88,
+          "left": 180,
+          "right": 523.109375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 449,
+          "height": 148,
+          "left": 180,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 180,
+          "right": 366.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 541,
+          "right": 629
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 606,
+          "height": 88,
+          "left": 81,
+          "right": 687
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 139.5,
+          "height": 142,
+          "left": 81,
+          "right": 220.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 139.5,
+          "height": 142,
+          "left": 236.5,
+          "right": 376
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 139.5,
+          "height": 142,
+          "left": 392,
+          "right": 531.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 139.5,
+          "height": 142,
+          "left": 547.5,
+          "right": 687
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 139.5,
+          "height": 110,
+          "left": 81,
+          "right": 220.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 467.609375,
+          "height": 88,
+          "left": 113,
+          "right": 580.609375
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 542,
+          "height": 128,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 434.625,
+          "height": 88,
+          "left": 113,
+          "right": 547.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 542,
+          "height": 114,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 542,
+          "height": 88,
+          "left": 113,
+          "right": 655
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 556,
+          "height": 88,
+          "left": 106,
+          "right": 662
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 556,
+          "height": 88,
+          "left": 106,
+          "right": 662
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 441.265625,
+          "height": 88,
+          "left": 106,
+          "right": 547.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 106,
+          "right": 332.359375
+        }
+      ]
+    },
+    {
+      "name": "production-plan-1440-text-100",
+      "status": "PASS",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 670,
+          "right": 714
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 726,
+          "right": 770
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 174.75,
+          "height": 44,
+          "left": 1127.25,
+          "right": 1302
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 806.828125,
+          "height": 98,
+          "left": 172,
+          "right": 978.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 982.828125,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 967.390625,
+          "height": 74,
+          "left": 172,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 780.0625,
+          "height": 94,
+          "left": 172,
+          "right": 952.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 956.0625,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 967.390625,
+          "height": 74,
+          "left": 172,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 1198,
+          "height": 44,
+          "left": 121,
+          "right": 1319
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 164.28125,
+          "height": 56,
+          "left": 121,
+          "right": 285.28125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 164.28125,
+          "height": 56,
+          "left": 293.28125,
+          "right": 457.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 164.28125,
+          "height": 56,
+          "left": 465.5625,
+          "right": 629.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 164.296875,
+          "height": 56,
+          "left": 637.84375,
+          "right": 802.140625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 164.28125,
+          "height": 56,
+          "left": 810.140625,
+          "right": 974.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 137,
+          "right": 385.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 137,
+          "right": 367.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 379.015625,
+          "height": 44,
+          "left": 137,
+          "right": 516.015625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 1172,
+          "height": 44,
+          "left": 134,
+          "right": 1306
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 1172,
+          "height": 44,
+          "left": 134,
+          "right": 1306
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 134,
+          "right": 397.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 134,
+          "right": 253.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 134,
+          "right": 370.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 134,
+          "right": 293.71875
+        }
+      ]
+    },
+    {
+      "name": "production-form-1440-text-100",
+      "status": "PASS",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 670,
+          "right": 714
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 726,
+          "right": 770
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 174.75,
+          "height": 44,
+          "left": 1127.25,
+          "right": 1302
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 1130,
+          "height": 44,
+          "left": 155,
+          "right": 1285
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 1130,
+          "height": 44,
+          "left": 155,
+          "right": 1285
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 559,
+          "height": 44,
+          "left": 155,
+          "right": 714
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 559,
+          "height": 44,
+          "left": 726,
+          "right": 1285
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 559,
+          "height": 44,
+          "left": 155,
+          "right": 714
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 559,
+          "height": 44,
+          "left": 726,
+          "right": 1285
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 108.046875,
+          "height": 44,
+          "left": 1066.515625,
+          "right": 1174.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 102.4375,
+          "height": 44,
+          "left": 1182.5625,
+          "right": 1285
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 806.828125,
+          "height": 98,
+          "left": 172,
+          "right": 978.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 156.5625,
+          "height": 44,
+          "left": 982.828125,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 967.390625,
+          "height": 74,
+          "left": 172,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 780.0625,
+          "height": 94,
+          "left": 172,
+          "right": 952.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 183.328125,
+          "height": 44,
+          "left": 956.0625,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 967.390625,
+          "height": 74,
+          "left": 172,
+          "right": 1139.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 97.609375,
+          "height": 44,
+          "left": 1143.390625,
+          "right": 1241
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 44,
+          "height": 44,
+          "left": 1245,
+          "right": 1289
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 1198,
+          "height": 44,
+          "left": 121,
+          "right": 1319
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 164.28125,
+          "height": 56,
+          "left": 121,
+          "right": 285.28125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 164.28125,
+          "height": 56,
+          "left": 293.28125,
+          "right": 457.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 164.28125,
+          "height": 56,
+          "left": 465.5625,
+          "right": 629.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 164.296875,
+          "height": 56,
+          "left": 637.84375,
+          "right": 802.140625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 164.28125,
+          "height": 56,
+          "left": 810.140625,
+          "right": 974.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 248.625,
+          "height": 44,
+          "left": 137,
+          "right": 385.625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 230.453125,
+          "height": 44,
+          "left": 137,
+          "right": 367.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 379.015625,
+          "height": 44,
+          "left": 137,
+          "right": 516.015625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 1166,
+          "height": 44,
+          "left": 137,
+          "right": 1303
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 1172,
+          "height": 44,
+          "left": 134,
+          "right": 1306
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 1172,
+          "height": 44,
+          "left": 134,
+          "right": 1306
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 263.40625,
+          "height": 44,
+          "left": 134,
+          "right": 397.40625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 119.046875,
+          "height": 44,
+          "left": 134,
+          "right": 253.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 236.640625,
+          "height": 44,
+          "left": 134,
+          "right": 370.640625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 159.71875,
+          "height": 44,
+          "left": 134,
+          "right": 293.71875
+        }
+      ]
+    },
+    {
+      "name": "production-plan-1440-text-200",
+      "status": "PASS",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 620,
+          "right": 708
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 732,
+          "right": 820
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 335.53125,
+          "height": 88,
+          "left": 990.46875,
+          "right": 1326
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 527.296875,
+          "height": 196,
+          "left": 180,
+          "right": 707.296875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 294.75,
+          "height": 88,
+          "left": 715.296875,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 830.046875,
+          "height": 148,
+          "left": 180,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 478.9375,
+          "height": 188,
+          "left": 180,
+          "right": 658.9375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 343.109375,
+          "height": 88,
+          "left": 666.9375,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 830.046875,
+          "height": 148,
+          "left": 180,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 1278,
+          "height": 88,
+          "left": 81,
+          "right": 1359
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 168.84375,
+          "height": 110,
+          "left": 81,
+          "right": 249.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 265.84375,
+          "right": 434.703125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 168.859375,
+          "height": 110,
+          "left": 450.703125,
+          "right": 619.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 635.5625,
+          "right": 804.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 820.421875,
+          "right": 989.28125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 467.609375,
+          "height": 88,
+          "left": 113,
+          "right": 580.609375
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 434.625,
+          "height": 88,
+          "left": 113,
+          "right": 547.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 708.390625,
+          "height": 88,
+          "left": 113,
+          "right": 821.390625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 1228,
+          "height": 88,
+          "left": 106,
+          "right": 1334
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 1228,
+          "height": 88,
+          "left": 106,
+          "right": 1334
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 106,
+          "right": 332.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 441.265625,
+          "height": 88,
+          "left": 106,
+          "right": 547.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        }
+      ]
+    },
+    {
+      "name": "production-form-1440-text-200",
+      "status": "PASS",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": "32px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 88,
+          "height": 88,
+          "left": 620,
+          "right": 708
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 88,
+          "height": 88,
+          "left": 732,
+          "right": 820
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 335.53125,
+          "height": 88,
+          "left": 990.46875,
+          "right": 1326
+        },
+        {
+          "tag": "SELECT",
+          "label": "FlugUnterkunftAktivitätTransferMietwagenNotiz",
+          "width": 1146,
+          "height": 88,
+          "left": 147,
+          "right": 1293
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 1146,
+          "height": 88,
+          "left": 147,
+          "right": 1293
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 561,
+          "height": 88,
+          "left": 147,
+          "right": 708
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 561,
+          "height": 88,
+          "left": 732,
+          "right": 1293
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 561,
+          "height": 88,
+          "left": 147,
+          "right": 708
+        },
+        {
+          "tag": "INPUT",
+          "label": "",
+          "width": 561,
+          "height": 88,
+          "left": 732,
+          "right": 1293
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Abbrechen",
+          "width": 206.765625,
+          "height": 88,
+          "left": 874.453125,
+          "right": 1081.21875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Speichern",
+          "width": 195.78125,
+          "height": 88,
+          "left": 1097.21875,
+          "right": 1293
+        },
+        {
+          "tag": "BUTTON",
+          "label": "10:00AktivitätMuseumGeplantEUR 18",
+          "width": 527.296875,
+          "height": 196,
+          "left": 180,
+          "right": 707.296875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum vorbereiten",
+          "width": 294.75,
+          "height": 88,
+          "left": 715.296875,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelAktivitätSpaziergang ohne genaue ZeitGeplant",
+          "width": 830.046875,
+          "height": 148,
+          "left": 180,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelUnterkunftUnterkunft für drei NächteGebucht · von dir bestätigtCHF 300",
+          "width": 478.9375,
+          "height": 188,
+          "left": 180,
+          "right": 658.9375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Bestätigung noch prüfen",
+          "width": 343.109375,
+          "height": 88,
+          "left": 666.9375,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "FlexibelFlugManueller FlugAusgewählt · Buchung nicht bestätigt",
+          "width": 830.046875,
+          "height": 148,
+          "left": 180,
+          "right": 1010.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug bearbeiten",
+          "width": 186.953125,
+          "height": 88,
+          "left": 1018.046875,
+          "right": 1205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug entfernen",
+          "width": 88,
+          "height": 88,
+          "left": 1213,
+          "right": 1301
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Florenz07. Okt. – 11. Okt.",
+          "width": 1278,
+          "height": 88,
+          "left": 81,
+          "right": 1359
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 168.84375,
+          "height": 110,
+          "left": 81,
+          "right": 249.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 265.84375,
+          "right": 434.703125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 168.859375,
+          "height": 110,
+          "left": 450.703125,
+          "right": 619.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 635.5625,
+          "right": 804.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 168.859375,
+          "height": 110,
+          "left": 820.421875,
+          "right": 989.28125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Punkt im Plan: Museum",
+          "width": 467.609375,
+          "height": 88,
+          "left": 113,
+          "right": 580.609375
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Vorbereitung zu diesem Tag · 2 Prüfungen",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum: Museum vorbereiten",
+          "width": 434.625,
+          "height": 88,
+          "left": 113,
+          "right": 547.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte: Bestätigung noch prüfen",
+          "width": 708.390625,
+          "height": 88,
+          "left": 113,
+          "right": 821.390625
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 1214,
+          "height": 88,
+          "left": 113,
+          "right": 1327
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 1228,
+          "height": 88,
+          "left": 106,
+          "right": 1334
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Berücksichtigte Punkte dieses Tags (4)",
+          "width": 1228,
+          "height": 88,
+          "left": 106,
+          "right": 1334
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Spaziergang ohne genaue Zeit öffnen",
+          "width": 495.53125,
+          "height": 88,
+          "left": 106,
+          "right": 601.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Museum öffnen",
+          "width": 226.359375,
+          "height": 88,
+          "left": 106,
+          "right": 332.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Unterkunft für drei Nächte öffnen",
+          "width": 441.265625,
+          "height": 88,
+          "left": 106,
+          "right": 547.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Manueller Flug öffnen",
+          "width": 300.71875,
+          "height": 88,
+          "left": 106,
+          "right": 406.71875
+        }
+      ]
+    },
+    {
+      "name": "Real Guest create trip -> create item -> edit -> confirmed storage -> reload exact identity and dates",
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown stays unknown; quota failure retains draft without success; Escape restores trigger",
+      "status": "PASS"
+    },
+    {
+      "name": "Pure impact preview, saved impact, currencies, unknown venue; exact Preparation -> back/forward/Escape origin",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty day navigation; exact item move to unassigned retains time and commercial amount across reload",
+      "status": "PASS"
+    },
+    {
+      "name": "F02 reproduced direction bucket change -> saved result/status/focus visible; Date Line exact fields survive reload and Escape",
+      "status": "PASS",
+      "focus": {
+        "tag": "BUTTON",
+        "top": 444.859375,
+        "bottom": 488.859375,
+        "height": 844
+      }
+    },
+    {
+      "name": "Explicit synthetic trusted surface fixture -> production panel editable prefill -> real Guest movement persistence; browser authority remains stripped",
+      "status": "PASS"
+    },
+    {
+      "name": "120-day-trip-last-day",
+      "status": "PASS",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 38,
+          "right": 82
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 308,
+          "right": 352
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 87.546875,
+          "height": 56,
+          "left": 38,
+          "right": 125.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 71.453125,
+          "height": 56,
+          "left": 133.546875,
+          "right": 205
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 87.265625,
+          "height": 56,
+          "left": 213,
+          "right": 300.265625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 69.296875,
+          "height": 56,
+          "left": 308.265625,
+          "right": 377.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 67.484375,
+          "height": 56,
+          "left": 385.5625,
+          "right": 453.046875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 612. Okt.",
+          "width": 69.265625,
+          "height": 56,
+          "left": 461.046875,
+          "right": 530.3125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 713. Okt.",
+          "width": 69.3125,
+          "height": 56,
+          "left": 538.3125,
+          "right": 607.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 814. Okt.",
+          "width": 69.515625,
+          "height": 56,
+          "left": 615.625,
+          "right": 685.140625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 915. Okt.",
+          "width": 69.21875,
+          "height": 56,
+          "left": 693.140625,
+          "right": 762.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1016. Okt.",
+          "width": 69.8125,
+          "height": 56,
+          "left": 770.359375,
+          "right": 840.171875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1117. Okt.",
+          "width": 67.75,
+          "height": 56,
+          "left": 848.171875,
+          "right": 915.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1218. Okt.",
+          "width": 69.453125,
+          "height": 56,
+          "left": 923.921875,
+          "right": 993.375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1319. Okt.",
+          "width": 69.65625,
+          "height": 56,
+          "left": 1001.375,
+          "right": 1071.03125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1420. Okt.",
+          "width": 70.96875,
+          "height": 56,
+          "left": 1079.03125,
+          "right": 1150
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1521. Okt.",
+          "width": 69.5625,
+          "height": 56,
+          "left": 1158,
+          "right": 1227.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1622. Okt.",
+          "width": 70.953125,
+          "height": 56,
+          "left": 1235.5625,
+          "right": 1306.515625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1723. Okt.",
+          "width": 71,
+          "height": 56,
+          "left": 1314.515625,
+          "right": 1385.515625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1824. Okt.",
+          "width": 71.015625,
+          "height": 56,
+          "left": 1393.515625,
+          "right": 1464.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1925. Okt.",
+          "width": 70.890625,
+          "height": 56,
+          "left": 1472.53125,
+          "right": 1543.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2026. Okt.",
+          "width": 71.6875,
+          "height": 56,
+          "left": 1551.421875,
+          "right": 1623.109375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2127. Okt.",
+          "width": 69.421875,
+          "height": 56,
+          "left": 38,
+          "right": 107.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2228. Okt.",
+          "width": 71.1875,
+          "height": 56,
+          "left": 115.421875,
+          "right": 186.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2329. Okt.",
+          "width": 71.53125,
+          "height": 56,
+          "left": 194.609375,
+          "right": 266.140625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2430. Okt.",
+          "width": 71.640625,
+          "height": 56,
+          "left": 274.140625,
+          "right": 345.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2531. Okt.",
+          "width": 71.4375,
+          "height": 56,
+          "left": 353.78125,
+          "right": 425.21875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2601. Nov.",
+          "width": 71.71875,
+          "height": 56,
+          "left": 433.21875,
+          "right": 504.9375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2702. Nov.",
+          "width": 72.515625,
+          "height": 56,
+          "left": 512.9375,
+          "right": 585.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2803. Nov.",
+          "width": 72.5625,
+          "height": 56,
+          "left": 593.453125,
+          "right": 666.015625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2904. Nov.",
+          "width": 72.765625,
+          "height": 56,
+          "left": 674.015625,
+          "right": 746.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3005. Nov.",
+          "width": 72.453125,
+          "height": 56,
+          "left": 754.78125,
+          "right": 827.234375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3106. Nov.",
+          "width": 72.6875,
+          "height": 56,
+          "left": 835.234375,
+          "right": 907.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3207. Nov.",
+          "width": 71.53125,
+          "height": 56,
+          "left": 915.921875,
+          "right": 987.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3308. Nov.",
+          "width": 72.703125,
+          "height": 56,
+          "left": 995.453125,
+          "right": 1068.15625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3409. Nov.",
+          "width": 72.625,
+          "height": 56,
+          "left": 1076.15625,
+          "right": 1148.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3510. Nov.",
+          "width": 71.796875,
+          "height": 56,
+          "left": 1156.78125,
+          "right": 1228.578125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3611. Nov.",
+          "width": 72.015625,
+          "height": 56,
+          "left": 1236.578125,
+          "right": 1308.59375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3712. Nov.",
+          "width": 71.015625,
+          "height": 56,
+          "left": 1316.59375,
+          "right": 1387.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3813. Nov.",
+          "width": 72.171875,
+          "height": 56,
+          "left": 1395.609375,
+          "right": 1467.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3914. Nov.",
+          "width": 72.046875,
+          "height": 56,
+          "left": 1475.78125,
+          "right": 1547.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4015. Nov.",
+          "width": 72.296875,
+          "height": 56,
+          "left": 1555.828125,
+          "right": 1628.125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4116. Nov.",
+          "width": 70.6875,
+          "height": 56,
+          "left": 38,
+          "right": 108.6875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4217. Nov.",
+          "width": 71.78125,
+          "height": 56,
+          "left": 116.6875,
+          "right": 188.46875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4318. Nov.",
+          "width": 72.125,
+          "height": 56,
+          "left": 196.46875,
+          "right": 268.59375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4419. Nov.",
+          "width": 72.375,
+          "height": 56,
+          "left": 276.59375,
+          "right": 348.96875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4520. Nov.",
+          "width": 72.21875,
+          "height": 56,
+          "left": 356.96875,
+          "right": 429.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4621. Nov.",
+          "width": 72.3125,
+          "height": 56,
+          "left": 437.1875,
+          "right": 509.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4722. Nov.",
+          "width": 72.203125,
+          "height": 56,
+          "left": 517.5,
+          "right": 589.703125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4823. Nov.",
+          "width": 72.40625,
+          "height": 56,
+          "left": 597.703125,
+          "right": 670.109375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4924. Nov.",
+          "width": 72.3125,
+          "height": 56,
+          "left": 678.109375,
+          "right": 750.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5025. Nov.",
+          "width": 72.140625,
+          "height": 56,
+          "left": 758.421875,
+          "right": 830.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5126. Nov.",
+          "width": 72.359375,
+          "height": 56,
+          "left": 838.5625,
+          "right": 910.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5227. Nov.",
+          "width": 71.4375,
+          "height": 56,
+          "left": 918.921875,
+          "right": 990.359375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5328. Nov.",
+          "width": 72.390625,
+          "height": 56,
+          "left": 998.359375,
+          "right": 1070.75
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5429. Nov.",
+          "width": 72.3125,
+          "height": 56,
+          "left": 1078.75,
+          "right": 1151.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5530. Nov.",
+          "width": 72.5,
+          "height": 56,
+          "left": 1159.0625,
+          "right": 1231.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5601. Dez.",
+          "width": 71.96875,
+          "height": 56,
+          "left": 1239.5625,
+          "right": 1311.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5702. Dez.",
+          "width": 73.171875,
+          "height": 56,
+          "left": 1319.53125,
+          "right": 1392.703125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5803. Dez.",
+          "width": 73.21875,
+          "height": 56,
+          "left": 1400.703125,
+          "right": 1473.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5904. Dez.",
+          "width": 73.421875,
+          "height": 56,
+          "left": 1481.921875,
+          "right": 1555.34375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6005. Dez.",
+          "width": 73.109375,
+          "height": 56,
+          "left": 1563.34375,
+          "right": 1636.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6106. Dez.",
+          "width": 73.34375,
+          "height": 56,
+          "left": 38,
+          "right": 111.34375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6207. Dez.",
+          "width": 71.71875,
+          "height": 56,
+          "left": 119.34375,
+          "right": 191.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6308. Dez.",
+          "width": 73.359375,
+          "height": 56,
+          "left": 199.0625,
+          "right": 272.421875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6409. Dez.",
+          "width": 73.28125,
+          "height": 56,
+          "left": 280.421875,
+          "right": 353.703125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6510. Dez.",
+          "width": 71.96875,
+          "height": 56,
+          "left": 361.703125,
+          "right": 433.671875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6611. Dez.",
+          "width": 72.25,
+          "height": 56,
+          "left": 441.671875,
+          "right": 513.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6712. Dez.",
+          "width": 71.203125,
+          "height": 56,
+          "left": 521.921875,
+          "right": 593.125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6813. Dez.",
+          "width": 72.34375,
+          "height": 56,
+          "left": 601.125,
+          "right": 673.46875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6914. Dez.",
+          "width": 72.25,
+          "height": 56,
+          "left": 681.46875,
+          "right": 753.71875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7015. Dez.",
+          "width": 71.125,
+          "height": 56,
+          "left": 761.71875,
+          "right": 832.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7116. Dez.",
+          "width": 71.34375,
+          "height": 56,
+          "left": 840.84375,
+          "right": 912.1875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7217. Dez.",
+          "width": 70.65625,
+          "height": 56,
+          "left": 920.1875,
+          "right": 990.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7318. Dez.",
+          "width": 71.375,
+          "height": 56,
+          "left": 998.84375,
+          "right": 1070.21875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7419. Dez.",
+          "width": 71.28125,
+          "height": 56,
+          "left": 1078.21875,
+          "right": 1149.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7520. Dez.",
+          "width": 72.875,
+          "height": 56,
+          "left": 1157.5,
+          "right": 1230.375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7621. Dez.",
+          "width": 71.0625,
+          "height": 56,
+          "left": 1238.375,
+          "right": 1309.4375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7722. Dez.",
+          "width": 72.859375,
+          "height": 56,
+          "left": 1317.4375,
+          "right": 1390.296875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7823. Dez.",
+          "width": 72.90625,
+          "height": 56,
+          "left": 1398.296875,
+          "right": 1471.203125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7924. Dez.",
+          "width": 72.921875,
+          "height": 56,
+          "left": 1479.203125,
+          "right": 1552.125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8025. Dez.",
+          "width": 72.796875,
+          "height": 56,
+          "left": 1560.125,
+          "right": 1632.921875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8126. Dez.",
+          "width": 73.015625,
+          "height": 56,
+          "left": 38,
+          "right": 111.015625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8227. Dez.",
+          "width": 71.8125,
+          "height": 56,
+          "left": 119.015625,
+          "right": 190.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8328. Dez.",
+          "width": 73.046875,
+          "height": 56,
+          "left": 198.828125,
+          "right": 271.875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8429. Dez.",
+          "width": 72.96875,
+          "height": 56,
+          "left": 279.875,
+          "right": 352.84375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8530. Dez.",
+          "width": 73.15625,
+          "height": 56,
+          "left": 360.84375,
+          "right": 434
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8631. Dez.",
+          "width": 72.3125,
+          "height": 56,
+          "left": 442,
+          "right": 514.3125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8701. Jan.",
+          "width": 71.296875,
+          "height": 56,
+          "left": 522.3125,
+          "right": 593.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8802. Jan.",
+          "width": 72.453125,
+          "height": 56,
+          "left": 601.609375,
+          "right": 674.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8903. Jan.",
+          "width": 72.328125,
+          "height": 56,
+          "left": 682.0625,
+          "right": 754.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9004. Jan.",
+          "width": 72.234375,
+          "height": 56,
+          "left": 762.390625,
+          "right": 834.625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9105. Jan.",
+          "width": 71.15625,
+          "height": 56,
+          "left": 842.625,
+          "right": 913.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9206. Jan.",
+          "width": 71.71875,
+          "height": 56,
+          "left": 921.78125,
+          "right": 993.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9307. Jan.",
+          "width": 72,
+          "height": 56,
+          "left": 1001.5,
+          "right": 1073.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9408. Jan.",
+          "width": 72.3125,
+          "height": 56,
+          "left": 1081.5,
+          "right": 1153.8125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9509. Jan.",
+          "width": 71.96875,
+          "height": 56,
+          "left": 1161.8125,
+          "right": 1233.78125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9610. Jan.",
+          "width": 72.25,
+          "height": 56,
+          "left": 1241.78125,
+          "right": 1314.03125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9711. Jan.",
+          "width": 70.921875,
+          "height": 56,
+          "left": 1322.03125,
+          "right": 1392.953125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9812. Jan.",
+          "width": 72.34375,
+          "height": 56,
+          "left": 1400.953125,
+          "right": 1473.296875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9913. Jan.",
+          "width": 72.25,
+          "height": 56,
+          "left": 1481.296875,
+          "right": 1553.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10014. Jan.",
+          "width": 79,
+          "height": 56,
+          "left": 1561.546875,
+          "right": 1640.546875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10115. Jan.",
+          "width": 76.609375,
+          "height": 56,
+          "left": -1347,
+          "right": -1270.390625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10216. Jan.",
+          "width": 78.484375,
+          "height": 56,
+          "left": -1262.390625,
+          "right": -1183.90625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10317. Jan.",
+          "width": 78.765625,
+          "height": 56,
+          "left": -1175.90625,
+          "right": -1097.140625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10418. Jan.",
+          "width": 79.078125,
+          "height": 56,
+          "left": -1089.140625,
+          "right": -1010.0625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10519. Jan.",
+          "width": 78.75,
+          "height": 56,
+          "left": -1002.0625,
+          "right": -923.3125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10620. Jan.",
+          "width": 79.015625,
+          "height": 56,
+          "left": -915.3125,
+          "right": -836.296875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10721. Jan.",
+          "width": 77.6875,
+          "height": 56,
+          "left": -828.296875,
+          "right": -750.609375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10822. Jan.",
+          "width": 79.125,
+          "height": 56,
+          "left": -742.609375,
+          "right": -663.484375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10923. Jan.",
+          "width": 79.015625,
+          "height": 56,
+          "left": -655.484375,
+          "right": -576.46875
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11024. Jan.",
+          "width": 76.609375,
+          "height": 56,
+          "left": -568.46875,
+          "right": -491.859375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11125. Jan.",
+          "width": 74.203125,
+          "height": 56,
+          "left": -483.859375,
+          "right": -409.65625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11226. Jan.",
+          "width": 76.09375,
+          "height": 56,
+          "left": -401.65625,
+          "right": -325.5625
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11327. Jan.",
+          "width": 76.4375,
+          "height": 56,
+          "left": -317.5625,
+          "right": -241.125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11428. Jan.",
+          "width": 76.6875,
+          "height": 56,
+          "left": -233.125,
+          "right": -156.4375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11529. Jan.",
+          "width": 76.34375,
+          "height": 56,
+          "left": -148.4375,
+          "right": -72.09375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11630. Jan.",
+          "width": 76.625,
+          "height": 56,
+          "left": -64.09375,
+          "right": 12.53125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11731. Jan.",
+          "width": 75.578125,
+          "height": 56,
+          "left": 20.53125,
+          "right": 96.109375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11801. Feb.",
+          "width": 76.71875,
+          "height": 56,
+          "left": 104.109375,
+          "right": 180.828125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11902. Feb.",
+          "width": 76.625,
+          "height": 56,
+          "left": 188.828125,
+          "right": 265.453125
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 12003. Feb.",
+          "width": 78.484375,
+          "height": 56,
+          "left": 273.453125,
+          "right": 351.9375
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 308,
+          "height": 44,
+          "left": 41,
+          "right": 349
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 314,
+          "height": 44,
+          "left": 38,
+          "right": 352
+        }
+      ]
+    },
+    {
+      "name": "landscape-844x390",
+      "status": "PASS",
+      "width": 844,
+      "scrollWidth": 844,
+      "font": "16px",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "label": "Vorheriger Tag",
+          "width": 44,
+          "height": 44,
+          "left": 372,
+          "right": 416
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Nächster Tag",
+          "width": 44,
+          "height": 44,
+          "left": 428,
+          "right": 472
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Punkt hinzufügen",
+          "width": 174.75,
+          "height": 44,
+          "left": 611.25,
+          "right": 786
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 107. Okt. – 26. Okt.",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 107. Okt. · 4",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 208. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 309. Okt. · 1",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 410. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 511. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 612. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 713. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 814. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 915. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1016. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1117. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1218. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1319. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1420. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1521. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1622. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1723. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1824. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 1925. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2026. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 227. Okt. – 15. Nov.",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2127. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2228. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2329. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2430. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2531. Okt.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2601. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2702. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2803. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 2904. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3005. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3106. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3207. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3308. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3409. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3510. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3611. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3712. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3813. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 3914. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4015. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 316. Nov. – 05. Dez.",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4116. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4217. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4318. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4419. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4520. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4621. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4722. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4823. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 4924. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5025. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5126. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5227. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5328. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5429. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5530. Nov.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5601. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5702. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5803. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 5904. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6005. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 406. Dez. – 25. Dez.",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6106. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6207. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6308. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6409. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6510. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6611. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6712. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6813. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 6914. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7015. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7116. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7217. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7318. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7419. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7520. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7621. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7722. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7823. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 7924. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8025. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 526. Dez. 2026 – 14. Jan. 2027",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8126. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8227. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8328. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8429. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8530. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8631. Dez.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8701. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8802. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 8903. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9004. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9105. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9206. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9307. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9408. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9509. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9610. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9711. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9812. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 9913. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10014. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Etappe 615. Jan. – 03. Feb.",
+          "width": 762,
+          "height": 44,
+          "left": 41,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10115. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10216. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10317. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10418. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10519. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10620. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10721. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10822. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 10923. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11024. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11125. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11226. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11327. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11428. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11529. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11630. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11731. Jan.",
+          "width": 184.5,
+          "height": 56,
+          "left": 41,
+          "right": 225.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11801. Feb.",
+          "width": 184.5,
+          "height": 56,
+          "left": 233.5,
+          "right": 418
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 11902. Feb.",
+          "width": 184.5,
+          "height": 56,
+          "left": 426,
+          "right": 610.5
+        },
+        {
+          "tag": "BUTTON",
+          "label": "Tag 12003. Feb.",
+          "width": 184.5,
+          "height": 56,
+          "left": 618.5,
+          "right": 803
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Preise aufschlüsseln",
+          "width": 730,
+          "height": 44,
+          "left": 57,
+          "right": 787
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Orte ansehen",
+          "width": 730,
+          "height": 44,
+          "left": 57,
+          "right": 787
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Verbindungen und Zeitgrundlage",
+          "width": 730,
+          "height": 44,
+          "left": 57,
+          "right": 787
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Optionaler externer Kontext",
+          "width": 730,
+          "height": 44,
+          "left": 57,
+          "right": 787
+        },
+        {
+          "tag": "SUMMARY",
+          "label": "Prüfumfang und Details",
+          "width": 736,
+          "height": 44,
+          "left": 54,
+          "right": 790
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "realDevices": "NOT_RUN",
+  "webkit": "NOT_RUN",
+  "screenReader": "NOT_RUN"
+}

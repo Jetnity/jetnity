@@ -748,7 +748,7 @@ describe('Bearbeiten einer Gastreise', () => {
 describe('Sprachänderung im Gastspeicher', () => {
   test('Reisende werden übernommen und die Revision steigt', () => {
     gastreiseAnlegen(eingabe())
-    const danach = gastreiseAendern({
+    const danach = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-1',
       basisRevision: 1,
       operationen: [
@@ -809,8 +809,8 @@ describe('Sprachänderung im Gastspeicher', () => {
       abreiseort: null,
       startdatum: null,
     }
-    const einmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
-    const nochmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+    const einmal = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id, mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+    const nochmal = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id, mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
 
     assert.equal(einmal.days.length, 7)
     assert.equal(nochmal.days.length, 7)
@@ -819,7 +819,7 @@ describe('Sprachänderung im Gastspeicher', () => {
 
   test('eine veraltete Fassung wird abgelehnt', () => {
     gastreiseAnlegen(eingabe())
-    gastreiseAendern({
+    gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-a',
       basisRevision: 1,
       operationen: [
@@ -851,7 +851,7 @@ describe('Sprachänderung im Gastspeicher', () => {
 
     assert.throws(
       () =>
-        gastreiseAendern({
+        gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
           mutationId: 'mut-b',
           basisRevision: 1,
           operationen: [
@@ -952,7 +952,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
       ],
     })
 
-    const danach = gastreiseAendern({
+    const danach = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-ohne-tag',
       basisRevision: 1,
       operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
@@ -1002,7 +1002,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
       ),
     })
 
-    const danach = gastreiseAendern({
+    const danach = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-kuerzen',
       basisRevision: 1,
       operationen: [leerOp({ art: 'dauer_aendern', tageDelta: -2 })],
@@ -1033,7 +1033,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
     assert.equal(danach.revision, 2)
     assert.throws(
       () =>
-        gastreiseAendern({
+        gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
           mutationId: 'mut-stale',
           basisRevision: 1,
           operationen: [leerOp({ art: 'stammdaten', reisende: 4 })],
@@ -1045,7 +1045,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
 
   test('derselbe Retry nach Reload ändert nichts zweimal', () => {
     gastreiseAnlegen(eingabe())
-    const einmal = gastreiseAendern({
+    const einmal = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-reload',
       basisRevision: 1,
       operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
@@ -1053,7 +1053,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
     const nachReload = gastreiseLadenNach(einmal.id)
     assert.equal(nachReload?.revision, 2)
 
-    const nochmal = gastreiseAendern({
+    const nochmal = gastreiseAendern({ tripId: gastspeicherLaden().aktiv!.id,
       mutationId: 'mut-reload',
       basisRevision: 1,
       operationen: [leerOp({ art: 'stammdaten', reisende: 5 })],

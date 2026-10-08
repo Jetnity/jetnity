@@ -1,0 +1,44 @@
+{
+  "review": "https://github.com/Jetnity/jetnity/pull/905#pullrequestreview-5448280929",
+  "finding": "F1/P2",
+  "recordedAt": "2026-10-07T21:18:11.797Z",
+  "reviewedHead": "5b8ef11c5e2b9bccccf7cec9fdbd7eaf8c0bae6c",
+  "baselineProductBlob": "26a1a3361f9a796827840bf6f7e73fa18f32c8e4",
+  "red": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-name-pattern=\"R1: actual proposed\" lib/reiseaenderung/direct-trip-editing-1.test.ts",
+    "exitCode": 1,
+    "totals": {
+      "tests": 1,
+      "suites": 0,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "reason": "Actual possible_conflict effect said im gespeicherten Plan; assertion requires im vorgeschlagenen Plan",
+    "expectedFailure": true
+  },
+  "green": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/reiseaenderung/direct-trip-editing-1.test.ts",
+    "exitCode": 0,
+    "totals": {
+      "tests": 39,
+      "suites": 0,
+      "pass": 39,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "sources": {
+    "lib/reiseaenderung/direct/auswirkungen.ts": "f7ea834bfab7d6953cd771cb200180f83f228e39691422033eede4daa70797c9",
+    "lib/reiseaenderung/direct-trip-editing-1.test.ts": "9e00192ca1bb1529bab5a9c3a3cd71ec494bc05ecb7704fec46033bbfdfb167f",
+    "scripts/direct-trip-editing-1/fixture.ts": "86620226162a8bd26f70aaa3c6625ca0841993c465386765025fa19e264fb289",
+    "scripts/direct-trip-editing-1/browser.mjs": "17e4ac0e368f3ca8983cbabc2b67741f6f6fdc7e0a160f2daef8a6728b198c62"
+  },
+  "browserEvidence": "guest-browser.json#conflictEvidence",
+  "fullAudit": "integrated-audit.json",
+  "boundary": "Synthetic canonical Trip + actual temporal engine; focused RED/GREEN is unit evidence, production browser no-write/readback evidence is separately captured by full audit. No saved/proven classification is fabricated."
+}

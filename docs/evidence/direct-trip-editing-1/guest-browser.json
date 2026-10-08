@@ -1,0 +1,118 @@
+{
+  "status": "PASS",
+  "environment": {
+    "browser": "154.0.8037.99",
+    "node": "v22.23.3"
+  },
+  "results": [
+    {
+      "name": "Production form 360px / 100% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 360px / 200% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard, field-linked error, cancel/no write at 360",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 390px / 100% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 390px / 200% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard, field-linked error, cancel/no write at 390",
+      "status": "PASS"
+    },
+    {
+      "name": "All basic fields preserve literal user text; explicit confirmation/readback/reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Production compound date shift and identified stage duration show and save exact ranges",
+      "status": "PASS"
+    },
+    {
+      "name": "Real disabled free-text server action leaves manual mode usable",
+      "status": "PASS"
+    },
+    {
+      "name": "Complete keyboard-only edit, preview, confirm and visible success focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser storage full produces uncertainty, preserves proposal, safely retries once storage recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "Same-revision different active Guest trip rejects old accepted proposal",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 768px / 100% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 768px / 200% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard, field-linked error, cancel/no write at 768",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 1440px / 100% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Production form 1440px / 200% text, reduced motion, focus and no overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Keyboard, field-linked error, cancel/no write at 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "R1 actual conflict preview is prospective; preview/back/cancel make zero writes; only confirmation saves",
+      "status": "PASS"
+    },
+    {
+      "name": "Production flexible trip gets first civil start date and total duration without changing explicit point dates",
+      "status": "PASS"
+    },
+    {
+      "name": "A09 v1.1 Guest linked removal refuses with zero writes, full preservation and editable draft",
+      "status": "PASS"
+    },
+    {
+      "name": "A09 v1.1 Guest unrelated edit on the referenced trip still saves and independently reloads",
+      "status": "PASS"
+    },
+    {
+      "name": "1000-point graph: every removed/protected point inspectable, hidden pages bounded",
+      "status": "PASS"
+    }
+  ],
+  "conflictEvidence": {
+    "renderedConflict": "Fest gebuchter Transfer · Tag 1 · 2026-10-09 · Etappe 1: Florenz / Verschiebbarer Transfer · Tag 1 · 2026-10-09 · Etappe 1: Florenz: mögliche Überschneidung im vorgeschlagenen Plan.",
+    "previewWrites": 0,
+    "previewPosts": 0,
+    "previewGraphUnchanged": true,
+    "previewSuccessHeadingAbsent": true,
+    "cancelWrites": 0,
+    "cancelPosts": 0,
+    "cancelGraphUnchanged": true,
+    "confirmedWrites": 1,
+    "confirmedReadbackAndReload": true,
+    "protectedBookingUnchanged": true
+  },
+  "errors": [],
+  "externalRequests": [],
+  "explicitFreeTextPosts": 1,
+  "boundary": "Production routes/components, actual browser storage; synthetic seed only; no physical device/WebKit/screen-reader run"
+}

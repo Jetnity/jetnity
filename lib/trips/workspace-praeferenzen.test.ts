@@ -64,7 +64,7 @@ describe('Workspace-Übersicht behauptet kein erfundenes Tempo', () => {
     assert.equal(datei.includes('Tempo & Interessen'), false)
     assert.equal(datei.includes('Ausgewogen'), false)
     assert.equal(datei.includes('reise.pace'), false)
-    assert.match(datei, /Zeitraum, Ziele oder Reisewünsche/)
+    assert.match(datei, /Grunddaten, Zeitraum und Etappen/)
     assert.equal(datei.includes('Zeitraum, Etappen oder Tempo'), false)
     assert.match(datei, /workspacePraeferenzSicht/)
     assert.match(datei, /Reisewunsch/)

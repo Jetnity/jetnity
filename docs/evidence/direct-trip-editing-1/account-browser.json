@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "executionStatus": "PASS",
+  "environment": {
+    "browser": "154.0.8037.99",
+    "node": "v22.23.3"
+  },
+  "contractProbes": [
+    {
+      "name": "Existing composite Preparation FK baseline",
+      "status": "EXPECTED_REJECTION",
+      "sqlstate": "23502",
+      "rollback": "complete graph and Preparation rows equal",
+      "rawErrorPublished": false,
+      "clarification": "https://github.com/Jetnity/jetnity/pull/905#issuecomment-6044443343"
+    }
+  ],
+  "results": [
+    {
+      "name": "Owner production route; model disabled; metadata preserves dates, bookings and canonical locations with catalog 503",
+      "status": "PASS"
+    },
+    {
+      "name": "Second real owner and absent session cannot read or apply; action extras cannot import authority",
+      "status": "PASS"
+    },
+    {
+      "name": "Native #903 child update invalidates an already accepted macro preview",
+      "status": "PASS"
+    },
+    {
+      "name": "Lost RPC acknowledgement is confirmed independently; pending locks and duplicate click cannot double duration",
+      "status": "PASS"
+    },
+    {
+      "name": "Committed write with unavailable readback stays uncertain; same mutation verification recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "Stage removal lists normal losses and protected unplanned preservation; real RPC/reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Later unrelated mutation invalidates replay even if single lastMutationId remains",
+      "status": "PASS"
+    },
+    {
+      "name": "A09 v1.1 Account linked removal refuses before RPC and preserves complete graph, references and draft",
+      "status": "PASS"
+    },
+    {
+      "name": "A09 v1.1 Account unrelated edit remains available on a trip with Preparation references",
+      "status": "PASS"
+    },
+    {
+      "name": "Baseline unchanged SQL linked-deletion probe rejects with 23502 and full rollback; not a supported UI operation",
+      "status": "PASS"
+    }
+  ],
+  "traffic": {
+    "rpc": 8,
+    "tripReads": 64,
+    "catalog": 0,
+    "quota": 0
+  },
+  "errors": [],
+  "outbound": [],
+  "boundary": "Real GoTrue sessions, unchanged production server actions, authenticated PostgREST RLS and reise_aendern, child trigger; isolated loopback proxy fault injection only"
+}

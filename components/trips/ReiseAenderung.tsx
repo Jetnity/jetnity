@@ -13,6 +13,8 @@
 // Ein Speicherfehler löscht die Vorschau nicht. Der Aufruf hat Geld gekostet.
 
 import * as React from 'react'
+import dynamic from 'next/dynamic'
+const Manuell = dynamic(() => import('@/components/trips/ReiseAenderungManuell'))
 import { Sparkles } from 'lucide-react'
 
 import Aenderungsfortschritt from '@/components/trips/Aenderungsfortschritt'
@@ -23,6 +25,7 @@ import {
   aenderungOrteAufloesen,
   aenderungUebernehmen,
 } from '@/lib/reiseaenderung/aktionen'
+import { mutationskennung, UNGEWISS } from '@/lib/reiseaenderung/direct/bestaetigung'
 import { operationenAnwenden } from '@/lib/reiseaenderung/anwenden'
 import type { Aenderungsvorschau } from '@/lib/reiseaenderung/erzeugen'
 import { AENDERUNG_GRENZEN } from '@/lib/reiseaenderung/schema'
@@ -48,7 +51,7 @@ const BEISPIELE = [
   { kurz: 'Tage am Meer', text: 'Füge nach Florenz noch zwei Tage am Meer hinzu.' },
 ]
 
-export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAenderungProps) {
+function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAenderungProps & { onSperre: (busy: boolean) => void }) {
   const [freitext, setFreitext] = React.useState('')
   const [vorschau, setVorschau] = React.useState<Aenderungsvorschau | null>(null)
   const [meldung, setMeldung] = React.useState('')
@@ -56,14 +59,18 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
   const [warteMs, setWarteMs] = React.useState(0)
 
   const anlauf = React.useRef(0)
+  const alive = React.useRef(true)
+  React.useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
+  React.useEffect(() => { onSperre(laeuft); return () => onSperre(false) }, [laeuft, onSperre])
+  const flight = React.useRef(false)
+  const identity = React.useRef({ id: reise.id, revision: reise.revision, quelle })
+  React.useEffect(() => { identity.current = { id: reise.id, revision: reise.revision, quelle } }, [reise.id, reise.revision, quelle])
+  const current = () => alive.current && identity.current.id === reise.id && identity.current.revision === reise.revision && identity.current.quelle === quelle
   const plant = laeuft && !vorschau
   const gast = quelle === 'guest'
 
   React.useEffect(() => {
-    if (!plant) {
-      setWarteMs(0)
-      return
-    }
+    if (!plant) return
     const beginn = Date.now()
     const uhr = window.setInterval(() => setWarteMs(Date.now() - beginn), 1000)
     return () => window.clearInterval(uhr)
@@ -71,83 +78,49 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
 
   const erzeugen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    if (laeuft) return
-
-    setMeldung('')
-    setVorschau(null)
-    setLaeuft(true)
-
+    if (flight.current) return
+    flight.current = true
+    setMeldung(''); setVorschau(null); setLaeuft(true); setWarteMs(0)
     const eigener = ++anlauf.current
-    const ergebnis = gast
-      ? await aenderungErzeugenGast({ reise, text: freitext })
-      : await aenderungErzeugen({ tripId: reise.id, text: freitext })
-
-    if (eigener !== anlauf.current) return
-
-    setLaeuft(false)
-
-    if (!ergebnis.ok) {
-      setMeldung(ergebnis.meldung)
-      return
-    }
-
-    setVorschau(ergebnis.vorschau)
+    try {
+      const ergebnis = gast
+        ? await aenderungErzeugenGast({ reise, text: freitext })
+        : await aenderungErzeugen({ tripId: reise.id, text: freitext })
+      if (!current() || eigener !== anlauf.current) return
+      if (!ergebnis.ok) setMeldung(ergebnis.meldung)
+      else setVorschau(ergebnis.vorschau)
+    } catch { if (current()) setMeldung('Der Vorschlag ist gerade nicht verfügbar. Dein Text bleibt erhalten.') }
+    finally { flight.current = false; if (alive.current) setLaeuft(false) }
   }
 
   const uebernehmen = async () => {
-    if (!vorschau || laeuft) return
-
-    setMeldung('')
-    setLaeuft(true)
-
-    if (gast) {
-      try {
+    if (!vorschau || flight.current) return
+    flight.current = true; setMeldung(''); setLaeuft(true)
+    try {
+      let gespeichert: Trip
+      if (gast) {
+        const mutationId = await mutationskennung(vorschau.mutationId, reise.id, vorschau.basisRevision, vorschau.aenderung)
         const angewandt = operationenAnwenden(reise, vorschau.aenderung.operationen, kennungErzeugen)
         const orte = angewandt.ok ? await aenderungOrteAufloesen(angewandt.reise) : undefined
-        const gespeichert = gastreiseAendern({
-          mutationId: vorschau.mutationId,
-          basisRevision: vorschau.basisRevision,
-          operationen: vorschau.aenderung.operationen,
-          orte,
-        })
-        setVorschau(null)
-        setFreitext('')
-        setLaeuft(false)
-        onGespeichert(gespeichert)
-      } catch (fehler) {
-        setLaeuft(false)
-        setMeldung(
-          fehler instanceof VeralteteFassungFehler || fehler instanceof SpeicherFehler
-            ? fehler.message
-            : fehler instanceof Error
-              ? fehler.message
-              : 'Die Änderung konnte auf diesem Gerät nicht gespeichert werden. Die Vorschau bleibt stehen.',
-        )
+        if (!current()) return
+        gespeichert = gastreiseAendern({ tripId: reise.id, mutationId, basisRevision: vorschau.basisRevision,
+          operationen: vorschau.aenderung.operationen, orte })
+      } else {
+        const ergebnis = await aenderungUebernehmen({ tripId: reise.id, mutationId: vorschau.mutationId,
+          basisRevision: vorschau.basisRevision, aenderung: vorschau.aenderung })
+        if (!current()) return
+        if (!ergebnis.ok) { setMeldung(ergebnis.meldung); return }
+        gespeichert = ergebnis.wert.reise
       }
-      return
-    }
-
-    const ergebnis = await aenderungUebernehmen({
-      tripId: reise.id,
-      mutationId: vorschau.mutationId,
-      basisRevision: vorschau.basisRevision,
-      aenderung: vorschau.aenderung,
-    })
-
-    if (!ergebnis.ok) {
-      setLaeuft(false)
-      setMeldung(ergebnis.meldung)
-      return
-    }
-
-    setVorschau(null)
-    setFreitext('')
-    setLaeuft(false)
-    onGespeichert()
+      if (!current()) return
+      setVorschau(null); setFreitext(''); onGespeichert(gespeichert)
+    } catch (fehler) {
+      if (current()) setMeldung(fehler instanceof VeralteteFassungFehler || fehler instanceof SpeicherFehler ? fehler.message : UNGEWISS)
+    } finally { flight.current = false; if (alive.current) setLaeuft(false) }
   }
 
   return (
-    <div className="mt-6 grid gap-6">
+    <div data-aenderung-sperre={laeuft ? 'true' : 'false'} className="mt-6 grid gap-6">
       <form
         onSubmit={erzeugen}
         className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-7"
@@ -168,8 +141,9 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
         <label className="mt-6 grid min-w-0 gap-2 text-sm font-medium text-brand-800">
           Dein Änderungswunsch
           <textarea
+            disabled={laeuft}
             value={freitext}
-            onChange={(ereignis) => setFreitext(ereignis.target.value)}
+            onChange={(ereignis) => { setFreitext(ereignis.target.value); setVorschau(null) }}
             rows={3}
             maxLength={AENDERUNG_GRENZEN.freitextMaximum}
             placeholder={BEISPIELE[0].text}
@@ -180,9 +154,10 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
         <div className="mt-4 flex flex-wrap gap-2">
           {BEISPIELE.map((beispiel) => (
             <button
+              disabled={laeuft}
               key={beispiel.kurz}
               type="button"
-              onClick={() => setFreitext(beispiel.text)}
+              onClick={() => { setFreitext(beispiel.text); setVorschau(null) }}
               className="inline-flex min-h-11 max-w-full items-center rounded-full border border-line-200 px-4 text-left text-xs font-medium text-ink-900 transition hover:border-line-500"
             >
               <span className="truncate">{beispiel.kurz}</span>
@@ -219,7 +194,8 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
         </div>
       </form>
 
-      {vorschau && (
+      {vorschau && vorschau.basisRevision !== reise.revision && <p role="alert">Die Reise hat sich inzwischen geändert. Bitte erstelle den Vorschlag am aktuellen Stand erneut.</p>}
+      {vorschau && vorschau.basisRevision === reise.revision && (
         <>
           {meldung && (
             <div
@@ -242,4 +218,20 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
       )}
     </div>
   )
+}
+
+export default function ReiseAenderung(props: ReiseAenderungProps) {
+  return <AenderungsSitzung key={`${props.quelle}:${props.reise.id}`} {...props} />
+}
+function AenderungsSitzung(props: ReiseAenderungProps) {
+  const [modus, setModus] = React.useState<'direkt' | 'text'>('direkt')
+  const [generation, setGeneration] = React.useState(0)
+  const [sperre, setSperre] = React.useState(false)
+  return <section aria-label="Reise ändern" data-aenderung-sperre={sperre ? 'true' : 'false'}>
+    <div className="mt-5 flex flex-wrap gap-2" aria-label="Bearbeitungsart">
+      <button data-aenderung-start type="button" disabled={sperre} aria-pressed={modus === 'direkt'} className="min-h-11 rounded-full border border-line-200 bg-white px-5 py-3 focus-visible:ring-2" onClick={() => setModus('direkt')}>Direkt bearbeiten</button>
+      <button type="button" disabled={sperre} aria-pressed={modus === 'text'} className="min-h-11 rounded-full border border-line-200 bg-white px-5 py-3 focus-visible:ring-2" onClick={() => setModus('text')}>In eigenen Worten</button>
+    </div>
+    {modus === 'direkt' ? <Manuell key={generation} {...props} onSperre={setSperre} onNeu={() => setGeneration(n => n + 1)} /> : <FreitextAenderung {...props} onSperre={setSperre} />}
+  </section>
 }
