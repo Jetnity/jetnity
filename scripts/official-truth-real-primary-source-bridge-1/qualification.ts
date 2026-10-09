@@ -45,7 +45,7 @@ export function locateNationality(body: string) {
       const tag = body.slice(cursor, end + 1), parent = stack.at(-1)
       if (tag === '<br>') { if (parent !== 'li') return null; counts[counts.length - 1]!++ }
       else if (tag.startsWith('</')) {
-        if (tag !== `</${parent}>`) return null
+        if (parent === undefined || tag !== `</${parent}>`) return null
         stack.pop(); counts.pop()
       } else {
         const kind = allowed[tag]

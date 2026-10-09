@@ -206,6 +206,12 @@ describe('B13-B17 explicit scope and time', () => {
 })
 
 describe('B12 complete locator grammar', () => {
+  test('unmatched closing tags cannot impersonate an empty parser stack', () => {
+    for (const tag of ['</undefined>', '</p>', '</li>', '</div>']) {
+      assert.equal(locateNationality(tag + FIXTURE_BODY), null)
+      assert.equal(locateNationality(FIXTURE_BODY + tag), null)
+    }
+  })
   for (const body of [FIXTURE_BODY + FIXTURE_BODY, FIXTURE_BODY.replace('Switzerland','Swiss'),
     FIXTURE_BODY.replace('<li>Switzerland','<li><br>Switzerland'), FIXTURE_BODY.replace('<li>','<li title="x">'),
     FIXTURE_BODY.replace('Switzerland','not Switzerland'), FIXTURE_BODY.replace('Switzerland','&#83;witzerland'),

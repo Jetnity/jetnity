@@ -13,7 +13,7 @@ Operating mode: NORMAL. Historical HOLD text is not the current machine state.
 
 ## Delivered engineering and real limit
 
-The maintained developer command, exact disposable GOV.UK catalog/identity adapter, bounded retrieval, fail-closed whole-response qualification, finite locator, explicit canonical research-gap assembly, 81 task tests and B01–B26 evidence are implemented. This is author engineering delivery, **NO_TL_PASS**.
+The maintained developer command, exact disposable GOV.UK catalog/identity adapter, bounded retrieval, fail-closed whole-response qualification, finite locator, explicit canonical research-gap assembly, 82 task tests and B01–B26 evidence are implemented. This is author engineering delivery, **NO_TL_PASS**.
 
 Real read at `2026-10-09T13:51:37.465Z`: 7,788 bytes, no redirect, exact National List/Home Office/item/representation technical identity verified. Source qualification **BLOCKED / opaque_publishing_metadata**. No real located observation, Candidate Evidence, accepted Evidence/Rule or regulatory answer. Whole-response review remains a separate missing contract even if the opaque value later disappears. Synthetic observation/research execution is explicitly labeled and cannot be relabeled live.
 

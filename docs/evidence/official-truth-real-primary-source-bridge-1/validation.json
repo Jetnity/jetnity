@@ -24,9 +24,9 @@
     {
       "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
       "exitCode": 0,
-      "durationSeconds": 0.4347495,
-      "tests": 81,
-      "pass": 81,
+      "durationSeconds": 0.354726417,
+      "tests": 82,
+      "pass": 82,
       "fail": 0,
       "skipped": 0
     },
@@ -46,7 +46,8 @@
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "testDurationSeconds": 478.604428009
+      "testDurationSeconds": 478.604428009,
+      "testedPayload": "Pre-final-locator-correction tree ec51028638a7b05f0e2f2f3919774b3d01f14578. Final full repeat is separately recorded in final PR receipt."
     },
     {
       "command": "npm run typecheck",
@@ -361,6 +362,15 @@
       "command": "npm run check:operating-mode initial bare-clone setup",
       "exitCode": 1,
       "reason": "No local main ref; added exact already-verified baseline main pointer, no main sync."
+    },
+    {
+      "command": "Final parser regression before repair",
+      "exitCode": 1,
+      "tests": 82,
+      "pass": 81,
+      "fail": 1,
+      "durationSeconds": 0.557324625,
+      "reason": "Unmatched closing tag could match undefined parent; added explicit nonempty-stack requirement. Complete source qualification already refused altered bodies."
     }
   ],
   "remoteGates": {
@@ -390,5 +400,11 @@
     "paidServices": false,
     "testSkips": 0,
     "thresholdChanges": false
+  },
+  "finalPayloadFullRepeat": {
+    "location": "Final PR 910 delivery receipt",
+    "localCommand": "npm test in the same controlled networkless Linux container",
+    "remoteCommand": "Exact final-head GitHub CI Tests step",
+    "reason": "Completed results recorded after the immutable payload commit; no pre-correction test result is relabeled."
   }
 }

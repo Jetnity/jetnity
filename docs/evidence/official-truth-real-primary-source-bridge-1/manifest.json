@@ -26,21 +26,21 @@
     },
     {
       "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_REPORT_2026-10-09.md",
-      "bytes": 10692,
-      "sha256": "e241be7a93ee47f20953563d5b831b393c796164c698b695245491a78e4a37e6",
-      "gitBlob": "2b9da9bfdbd0bb8d6beec8bd7428516947c2dea3"
+      "bytes": 11549,
+      "sha256": "72b8b3cdd62eae4c6c7fdb7b9fad477f651cd6dea181b20acddaadb330319de3",
+      "gitBlob": "09417e58b0099fbe56bef31b73f13880f210dd85"
     },
     {
       "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_SELF_REVIEW_2026-10-09.md",
-      "bytes": 3079,
-      "sha256": "aa18a912d91d96bb2b200e2bd9774968fe848c2b582564535893b2230fa3b4cc",
-      "gitBlob": "572c5449835a62757a9fe1acb33252c62c6d3431"
+      "bytes": 3469,
+      "sha256": "51d7d9956e40d8ae99d50d37d709fc22959b74106d5337463a6d49a20a1eede9",
+      "gitBlob": "6e8bd2f8de47dd335dc86fc6521ec7a255564806"
     },
     {
       "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_STATUS_2026-10-09.md",
       "bytes": 2620,
-      "sha256": "f7c6710c6bfb5682a76394b95924ce796cae590d7f2f2e82e83054d6b2d9c3b5",
-      "gitBlob": "466cb7476ebacb36c24443da239c163c7b37092e"
+      "sha256": "937cf615aa9a02a106662e549778446bea9f5d3c301f6e69187dca87c304cbe4",
+      "gitBlob": "b043220ac9d8c9e3bde99a77382aec372dcfdf77"
     },
     {
       "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_TASK_2026-10-09.md",
@@ -68,15 +68,15 @@
     },
     {
       "path": "docs/evidence/official-truth-real-primary-source-bridge-1/validation.json",
-      "bytes": 17490,
-      "sha256": "1e9b400eec8fcec8e5506ecdfce24cecf295e9ac01d9bbdd0086172474cf385e",
-      "gitBlob": "2f0597e991247c387e9d854f3a7526dff359141a"
+      "bytes": 18367,
+      "sha256": "1a76316bdec5cbed5621d4970f8a5265445334f270faa7eb34716a58ae7ebe32",
+      "gitBlob": "d3509d317031f301bfb7dd570938f434c751b5e5"
     },
     {
       "path": "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
-      "bytes": 19451,
-      "sha256": "7996a5d661e4535778ebcab876599621cb7b0c5d9b4201f54658f0575f48699d",
-      "gitBlob": "019fa8cb2422a54ee7e3a8fe65d4144cf0318e20"
+      "bytes": 19741,
+      "sha256": "f62facd4f17ebce3e72486e8f55128fff548311cb19abd5296a0e0837f8bb807",
+      "gitBlob": "607dcba673c97be1a3f1768e72b4e155c8e2f8a1"
     },
     {
       "path": "scripts/official-truth-integrated-pilot-1/official-source.ts",
@@ -104,9 +104,9 @@
     },
     {
       "path": "scripts/official-truth-real-primary-source-bridge-1/qualification.ts",
-      "bytes": 4639,
-      "sha256": "35b1a381d7e38b3beb537f5d66e210da09e1918876906c2eaabb73b96d70dee0",
-      "gitBlob": "f64a7d6e1fb92b897103252f466f9d95b25abad5"
+      "bytes": 4663,
+      "sha256": "f8cd77f6960a5fe7a157012f2572bf9ef7987b500eeb3af7037c3bf7b4863833",
+      "gitBlob": "50c694fd85adb6c3b0ce88aa351b43cfbf384ddd"
     },
     {
       "path": "scripts/official-truth-real-primary-source-bridge-1/report.ts",

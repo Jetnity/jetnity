@@ -6,7 +6,9 @@ The source bridge deliberately stops at the earliest unproved boundary. Actual l
 
 Reviewed threats: lookalike/sibling item on the same official host; copied title/authority; coherent wrong self links; unknown and duplicate unused fields; payload extension after a valid fragment; entity/substr matching; private DNS and forbidden ports; redirect escape/loop; advertised and streamed overflow; invalid UTF-8; unqualified body/hash leakage; swapped retrieval metadata; missing scope and citizenship/issuer/residence conflation; publication dates mistaken for travel validity; synthetic-to-live relabeling; scope or canonical candidate falsely becoming accepted evidence.
 
-Counterevidence is executable in the 81 new task tests and the unchanged full suite. Initial test-expectation/type mistakes and local tool-environment failures are disclosed in REPORT. Canonical guards, registries, body cap, Receipt B/K/C/H/Pin, SQL and dependency manifests were not changed to make tests pass.
+A final direct parser review found an unmatched `</undefined>` closing tag could match the interpolated empty-stack sentinel. Whole-source qualification already denied altered bodies. The task parser now explicitly rejects closing tags when its stack is empty; the new before/after regression was RED 81/82 and GREEN 82/82. Full final-payload results are bound by the PR delivery receipt.
+
+Counterevidence is executable in the 82 new task tests and the unchanged full suite. Initial test-expectation/type mistakes and local tool-environment failures are disclosed in REPORT. Canonical guards, registries, body cap, Receipt B/K/C/H/Pin, SQL and dependency manifests were not changed to make tests pass.
 
 The one existing-file amendment is the explicit narrow adapter allowed by TASK section 6. It keeps the existing isolated retrieval/graph imports in their guarded file; the old passport command and output paths are intact. No hidden dynamic imports or new production callers. All new runtime work is developer-only. Pure research material uses existing canonical constructors with null proposal and zero supports.
 
