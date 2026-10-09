@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "authority": "AUTHOR_LOCAL_VALIDATION_NOT_INDEPENDENT_TL_PASS",
+  "date": "2026-10-09",
+  "baselineMain": "11a1b170dee718ffd68c52bd573db478ce093cc1",
+  "taskSeed": "1faf8643bc9791cda1cf169281d07e37d2f59bbd",
+  "environment": {
+    "node": "22.23.3",
+    "npm": "10.9.9",
+    "nativeProofPlatform": "Linux",
+    "postgresql": "16.15",
+    "image": "existing jetnity-r2-validation:local",
+    "network": "NONE",
+    "sourceMount": "READ_ONLY",
+    "repositoryCopy": "DISPOSABLE_WITH_GIT_CONTEXT",
+    "dependencies": "unchanged lockfile / existing matching validation dependencies",
+    "packageLockSha256": "8dead8237adef171588abd088e25f9be2472a7458121e4198cacd8ece224a7da",
+    "removedImageDefaults": [
+      "PG_MAJOR",
+      "PG_VERSION",
+      "PGDATA"
+    ],
+    "guardChanges": "NONE",
+    "hostedDatabaseAccess": "NONE"
+  },
+  "focusedTestFiles": [
+    "lib/readiness/official-truth-uk-eta-legal-proof-readiness-1.test.ts",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+    "lib/readiness/rule-claims.test.ts",
+    "lib/readiness/official-truth-research-request.test.ts",
+    "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
+    "lib/readiness/e4-temporal-rules.test.ts",
+    "lib/readiness/official-truth-store-server.test.ts"
+  ],
+  "checks": [
+    {
+      "command": "npm ci --no-audit --no-fund",
+      "status": "PASS",
+      "note": "Unchanged lockfile; 530 packages."
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-uk-eta-legal-proof-readiness-1.test.ts",
+      "status": "PASS",
+      "tests": 97,
+      "suites": 0,
+      "pass": 97,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test <focusedTestFiles>",
+      "status": "PASS",
+      "tests": 514,
+      "suites": 18,
+      "pass": 514,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "command": "npm test",
+      "status": "PASS",
+      "tests": 6189,
+      "suites": 817,
+      "pass": 6189,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "durationMs": 364071.965124,
+      "nativePostgresR3Semantic": "EXECUTED_WITHOUT_SKIP"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS",
+      "errors": 0,
+      "existingWarnings": 144
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:setup:ci",
+      "status": "PASS",
+      "warnings": [
+        "NO_LOCAL_ENV_FILE"
+      ]
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "status": "PASS",
+      "mode": "NORMAL"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "status": "PASS",
+      "protectedAdminRoutes": 12
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "status": "PASS",
+      "tablesViews": 22,
+      "functions": 25,
+      "unchangedLocalUnappliedAnnotations": 4
+    },
+    {
+      "command": "npm run check:dead",
+      "status": "PASS",
+      "reachableModules": 1426,
+      "orphans": 0
+    },
+    {
+      "command": "npm run check:exports",
+      "status": "PASS",
+      "files": 1109,
+      "unusedExports": 0
+    },
+    {
+      "command": "npm run check:deps",
+      "status": "PASS",
+      "dependenciesChecked": 11,
+      "devDependenciesChecked": 2,
+      "unused": 0
+    },
+    {
+      "command": "git diff --check; git diff --cached --check",
+      "status": "PASS"
+    },
+    {
+      "command": "offline runner without arguments",
+      "status": "PASS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "command": "offline runner --synthetic",
+      "status": "PASS",
+      "execution": "SYNTHETIC_ONLY",
+      "packetStatus": "BLOCKED"
+    }
+  ],
+  "earlierFailures": [
+    {
+      "stage": "dedicated initial",
+      "tests": 93,
+      "pass": 91,
+      "fail": 2,
+      "resolution": "Canonical missing-destination expectation; reject silently omitted inactive scope fields."
+    },
+    {
+      "stage": "dedicated second",
+      "tests": 93,
+      "pass": 91,
+      "fail": 2,
+      "resolution": "Classify unsupported citizenship before checking canonical input form."
+    },
+    {
+      "stage": "host focused regressions",
+      "tests": 513,
+      "pass": 511,
+      "fail": 2,
+      "resolution": "Use supported native Linux PG environment; apply explicitly user-approved exact importer inventory amendment."
+    },
+    {
+      "stage": "initial Linux full suite",
+      "tests": 6188,
+      "pass": 6184,
+      "fail": 4,
+      "resolution": "Remove inherited PG image defaults; unchanged local proof guards then execute."
+    },
+    {
+      "stage": "sandbox setup",
+      "status": "IPC_UNAVAILABLE",
+      "resolution": "Unchanged command rerun with permitted local IPC execution; PASS."
+    }
+  ],
+  "auth": "NOT_RUN_LOCALLY; genuine exact-head CI/Auth remains independent TL gate",
+  "scopeAmendment": {
+    "authority": "EXPLICIT_USER_REPLY_IN_AUTHOR_CHAT",
+    "scope": "Four additive lines in lib/readiness/regulierungs-anwendbarkeit.test.ts exact importer inventories only",
+    "guardOrThresholdRemoved": false
+  },
+  "exactCommitAndTree": "Published after commit in Draft PR #916 and external delivery receipt; manifest identifies tested executable blobs without self-reference.",
+  "rawLogsPublished": false,
+  "newCosts": false,
+  "legalStatus": "DEVELOPER_ONLY / LEGAL_PROOF_READINESS_NOT_READY / NO_ACCEPTED_OFFICIAL_TRUTH / NOT_APPROVED_FOR_HOSTED_IMPORT_OR_F8"
+}

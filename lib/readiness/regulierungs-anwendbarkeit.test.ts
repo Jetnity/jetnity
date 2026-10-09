@@ -916,6 +916,9 @@ describe('regulierungs-anwendbarkeit', () => {
     const eigene = new Set([
       join(hier, 'regulierungs-anwendbarkeit.ts'),
       join(hier, 'regulierungs-anwendbarkeit.test.ts'),
+      // #915: exact developer-only diagnostic and its test; no runtime caller.
+      join(hier, 'official-truth-uk-eta-legal-proof-readiness-1.test.ts'),
+      join(wurzel, 'scripts/official-truth-uk-eta-legal-proof-readiness-1/packet.ts'),
       // R1's exact importer inventory mentions the module without importing it.
       join(hier, 'official-truth-content-identity.test.ts'),
       join(hier, 'official-truth-content-identity-r2.test.ts'),
@@ -933,6 +936,7 @@ describe('regulierungs-anwendbarkeit', () => {
       produktion.sort(),
       [
         join(hier, 'regulierungs-anwendbarkeit.ts'),
+        join(wurzel, 'scripts/official-truth-uk-eta-legal-proof-readiness-1/packet.ts'),
         join(hier, 'rule-claims.ts'),
       join(hier, 'temporal.ts'),
         join(hier, 'official-truth-composition-policy-registry.ts'),

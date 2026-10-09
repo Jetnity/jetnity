@@ -1,0 +1,519 @@
+{
+  "exitCode": 0,
+  "execution": "SYNTHETIC_ONLY",
+  "packet": {
+    "schemaVersion": 1,
+    "kind": "UK_ETA_LEGAL_PROOF_GAP_PACKET",
+    "legalProofReadiness": "NOT_READY",
+    "authority": "DEVELOPER_RESEARCH_ONLY",
+    "ok": true,
+    "status": "BLOCKED",
+    "reason": "OPAQUE_PUBLISHING_METADATA",
+    "observedAt": "2026-10-09T12:00:00.000Z",
+    "applicationScenario": "NEVER_APPLIED",
+    "scopeAssessment": "EXPLICIT_CH_GB_RESEARCH_SCOPE_ONLY",
+    "sources": [
+      {
+        "source": "ETA_APPENDIX",
+        "url": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-electronic-travel-authorisation",
+        "phase": "RESEARCH_ONLY",
+        "retrievedAt": "2026-10-09T11:00:00.000Z",
+        "publishedAt": null,
+        "sourceRevision": null,
+        "validFrom": null,
+        "validUntil": null,
+        "observation": "SYNTHETIC",
+        "reasons": [
+          "SYNTHETIC_NOT_AUTHORITY"
+        ]
+      },
+      {
+        "source": "NATIONAL_LIST",
+        "url": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+        "phase": "RESEARCH_ONLY",
+        "retrievedAt": "2026-10-09T11:00:00.000Z",
+        "publishedAt": null,
+        "sourceRevision": null,
+        "validFrom": null,
+        "validUntil": null,
+        "observation": "SYNTHETIC",
+        "reasons": [
+          "SYNTHETIC_NOT_AUTHORITY"
+        ]
+      },
+      {
+        "source": "IRISH_GUIDANCE",
+        "url": "https://www.gov.uk/government/publications/electronic-travel-authorisation-irish-resident-exemption-caseworker-guidance/electronic-travel-authorisation-irish-resident-exemption-accessible",
+        "phase": "RESEARCH_ONLY",
+        "retrievedAt": "2026-10-09T11:00:00.000Z",
+        "publishedAt": null,
+        "sourceRevision": null,
+        "validFrom": null,
+        "validUntil": null,
+        "observation": "SYNTHETIC",
+        "reasons": [
+          "SYNTHETIC_NOT_AUTHORITY"
+        ]
+      }
+    ],
+    "gaps": [
+      {
+        "category": "SOURCE_PRIVACY",
+        "layer": "OFFICIAL_SOURCE",
+        "phase": "SOURCE_QUALIFICATION",
+        "reason": "OPAQUE_PUBLISHING_METADATA",
+        "subject": null
+      },
+      {
+        "category": "CONTENT_IDENTITY_AND_SUPPORT",
+        "layer": "OFFICIAL_SOURCE",
+        "phase": "SOURCE_QUALIFICATION",
+        "reason": "DISTINCT_CONTENT_ITEMS_UNQUALIFIED",
+        "subject": null
+      },
+      {
+        "category": "CONTENT_IDENTITY_AND_SUPPORT",
+        "layer": "OFFICIAL_SOURCE",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "SYNTHETIC_NOT_AUTHORITY",
+        "subject": "ETA_APPENDIX"
+      },
+      {
+        "category": "CONTENT_IDENTITY_AND_SUPPORT",
+        "layer": "OFFICIAL_SOURCE",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "SYNTHETIC_NOT_AUTHORITY",
+        "subject": "NATIONAL_LIST"
+      },
+      {
+        "category": "CONTENT_IDENTITY_AND_SUPPORT",
+        "layer": "OFFICIAL_SOURCE",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "SYNTHETIC_NOT_AUTHORITY",
+        "subject": "IRISH_GUIDANCE"
+      },
+      {
+        "category": "LEGAL_EFFECTIVE_INTERVAL",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "SOURCE_REVISION_UNKNOWN",
+        "subject": null
+      },
+      {
+        "category": "LEGAL_EFFECTIVE_INTERVAL",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "COMMENCEMENT_UNPROVEN",
+        "subject": null
+      },
+      {
+        "category": "LEGAL_EFFECTIVE_INTERVAL",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "EFFECTIVE_INTERVAL_UNKNOWN",
+        "subject": null
+      },
+      {
+        "category": "EXEMPTION_COVERAGE",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "EXEMPTION_SET_NON_EXHAUSTIVE",
+        "subject": null
+      },
+      {
+        "category": "EXEMPTION_COVERAGE",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "NO_RESIDUAL_NEGATIVE_PROOF",
+        "subject": null
+      },
+      {
+        "category": "IRELAND_INTERPRETATION",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "QUALIFIER_TARGET_UNRESOLVED",
+        "subject": "R1"
+      },
+      {
+        "category": "IRELAND_INTERPRETATION",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "NEVER_APPLIED_EVENT_UNRESOLVED",
+        "subject": "R1"
+      },
+      {
+        "category": "CASE_SPECIFIC_EXEMPTIONS",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "OFFICIAL_INTERPRETATION_UNRESOLVED",
+        "subject": "R2"
+      },
+      {
+        "category": "CASE_SPECIFIC_EXEMPTIONS",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "OFFICIAL_INTERPRETATION_UNRESOLVED",
+        "subject": "R3"
+      },
+      {
+        "category": "CASE_SPECIFIC_EXEMPTIONS",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "OFFICIAL_INTERPRETATION_UNRESOLVED",
+        "subject": "R4"
+      },
+      {
+        "category": "CASE_SPECIFIC_EXEMPTIONS",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "OFFICIAL_INTERPRETATION_UNRESOLVED",
+        "subject": "R5"
+      },
+      {
+        "category": "CASE_SPECIFIC_EXEMPTIONS",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "OFFICIAL_INTERPRETATION_UNRESOLVED",
+        "subject": "R6"
+      },
+      {
+        "category": "CREDENTIAL_AND_ROUTE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "DOCUMENT_CLASS"
+      },
+      {
+        "category": "CREDENTIAL_AND_ROUTE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "NATIONAL_PASSPORT"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "IRELAND_ACTUAL_RESIDENCE"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "IRELAND_ENTITLEMENT"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "IRELAND_MINISTER_RESTRICTION"
+      },
+      {
+        "category": "CREDENTIAL_AND_ROUTE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "INBOUND_CTA_ORIGIN"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "AGE_AND_PROOF_DUTY"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "VISITOR_PURPOSE"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "BOTC_BNO_STATUS"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "SCHOOL_STUDY_ORGANISER_RELATION"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "SCHOOL_PUPIL_COUNT"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "SCHOOL_FORM_LISTING"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "SCHOOL_FORM_AUTHORITY"
+      },
+      {
+        "category": "CONTEXT_PROOF",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "CONTEXT_MISSING",
+        "subject": "SCHOOL_ADULT_CUSTODY"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "PERMISSION_CLASS_MISSING",
+        "subject": "entry_clearance"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "PERMISSION_CLASS_MISSING",
+        "subject": "permission_to_enter_or_stay"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "PERMISSION_CLASS_MISSING",
+        "subject": "electronic_travel_authorization"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "PERMISSION_CLASS_MISSING",
+        "subject": "visa"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "PERSONAL_CONTEXT",
+        "phase": "CONTEXT_BINDING",
+        "reason": "PERMISSION_CLASS_MISSING",
+        "subject": "residence_permit"
+      },
+      {
+        "category": "UK_PERMISSION_NEGATIVE_KNOWLEDGE",
+        "layer": "LEGAL_SEMANTICS",
+        "phase": "LEGAL_RESEARCH",
+        "reason": "CLASS_WIDE_ABSENCE_UNPROVEN",
+        "subject": null
+      },
+      {
+        "category": "CUSTODY_AND_GOVERNANCE",
+        "layer": "PLATFORM_PO_GATE",
+        "phase": "ACCEPTANCE_ACTIVATION",
+        "reason": "SAME_REQUEST_CUSTODY_ABSENT",
+        "subject": null
+      },
+      {
+        "category": "CUSTODY_AND_GOVERNANCE",
+        "layer": "PLATFORM_PO_GATE",
+        "phase": "ACCEPTANCE_ACTIVATION",
+        "reason": "ACCEPTED_EVIDENCE_RULE_ABSENT",
+        "subject": null
+      },
+      {
+        "category": "CUSTODY_AND_GOVERNANCE",
+        "layer": "PLATFORM_PO_GATE",
+        "phase": "ACCEPTANCE_ACTIVATION",
+        "reason": "REGISTRY_NOT_ACTIVATED",
+        "subject": null
+      },
+      {
+        "category": "CUSTODY_AND_GOVERNANCE",
+        "layer": "PLATFORM_PO_GATE",
+        "phase": "ACCEPTANCE_ACTIVATION",
+        "reason": "F8_NOT_AUTHORIZED",
+        "subject": null
+      },
+      {
+        "category": "CUSTODY_AND_GOVERNANCE",
+        "layer": "PLATFORM_PO_GATE",
+        "phase": "ACCEPTANCE_ACTIVATION",
+        "reason": "HOSTED_IMPORT_NOT_AUTHORIZED",
+        "subject": null
+      }
+    ],
+    "questions": [
+      {
+        "id": "R1",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "ETA14_QUALIFIER_TARGET",
+          "ETA14_NEVER_APPLIED_REFERENCE_EVENT"
+        ],
+        "references": [
+          "ETA_SCOPE",
+          "IRELAND"
+        ]
+      },
+      {
+        "id": "R2",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "BOTC_BNO_STATUS_VS_SELECTED_PASSPORT"
+        ],
+        "references": [
+          "ETA_SCOPE",
+          "IRELAND",
+          "PERMISSION"
+        ]
+      },
+      {
+        "id": "R3",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "PENDING_SAVED_ISLAND_ADMISSION_EFFECT"
+        ],
+        "references": [
+          "PENDING",
+          "CTA",
+          "PERMISSION"
+        ]
+      },
+      {
+        "id": "R4",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "EXEMPT_CONTROL_AGREEMENT_COVERAGE",
+          "CREW_RESTRICTION_RECONCILIATION"
+        ],
+        "references": [
+          "CONTROL",
+          "CREW",
+          "FORCES",
+          "AIRCREW",
+          "SEAFARERS",
+          "ORGANISATIONS"
+        ]
+      },
+      {
+        "id": "R5",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "FRONTIER_S2_ETA_EFFECT_BY_ARRIVAL_MODE"
+        ],
+        "references": [
+          "FRONTIER",
+          "S2",
+          "CTA",
+          "ETA_SCOPE"
+        ]
+      },
+      {
+        "id": "R6",
+        "status": "UNRESOLVED",
+        "unsatisfiedPredicates": [
+          "GERMAN_MIXED_PUPIL_COUNT",
+          "GERMAN_FORM_ORIGIN_DOCUMENT_BOUNDARIES"
+        ],
+        "references": [
+          "SCHOOL_RULE",
+          "GERMAN_SCHOOL",
+          "GERMAN_FORM",
+          "ETA_SCOPE"
+        ]
+      }
+    ],
+    "coverage": [
+      {
+        "case": "UK_ENTRY_CLEARANCE",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "UK_PERMISSION_AND_SETTLED_STATUS",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "RIGHT_OF_ABODE",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "ISLAND_PERMISSION",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "PENDING_SAVED_APPEAL_JOINING_STATUS",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "IRELAND_CTA",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "BOTC_BNO",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "FRENCH_SCHOOL",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "GERMAN_SCHOOL",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "DIPLOMATIC_ROLE_FAMILY_AGREEMENTS",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "FORCES",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "SHIP_AIR_RAIL_CREW",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "FRONTIER_WORKER",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "S2_ARRIVAL",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "UNENUMERATED_EXEMPTIONS",
+        "disposition": "UNRESOLVED"
+      },
+      {
+        "case": "BRITISH_IRISH_CITIZENSHIP",
+        "disposition": "EXCLUDED_BY_EXPLICIT_RESEARCH_SCOPE"
+      },
+      {
+        "case": "AIRSIDE_TRANSIT",
+        "disposition": "EXCLUDED_BY_EXPLICIT_RESEARCH_SCOPE"
+      },
+      {
+        "case": "LANDSIDE_TRANSIT",
+        "disposition": "EXCLUDED_BY_EXPLICIT_RESEARCH_SCOPE"
+      },
+      {
+        "case": "ETA_APPLICATION_AND_USE",
+        "disposition": "APPLICATION_USE_ONLY"
+      },
+      {
+        "case": "CROWN_DEPENDENCY_ETA_RECOGNITION",
+        "disposition": "APPLICATION_USE_ONLY"
+      }
+    ]
+  }
+}
