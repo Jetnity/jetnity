@@ -1,0 +1,114 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "name": "360/1: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 414,
+      "status": "PASS"
+    },
+    {
+      "name": "360/1: no-op, field error and explicit confirmation return",
+      "durationMs": 195,
+      "status": "PASS"
+    },
+    {
+      "name": "360/2: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 406,
+      "status": "PASS"
+    },
+    {
+      "name": "360/2: no-op, field error and explicit confirmation return",
+      "durationMs": 206,
+      "status": "PASS"
+    },
+    {
+      "name": "390/1: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 409,
+      "status": "PASS"
+    },
+    {
+      "name": "390/1: no-op, field error and explicit confirmation return",
+      "durationMs": 194,
+      "status": "PASS"
+    },
+    {
+      "name": "390/2: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 417,
+      "status": "PASS"
+    },
+    {
+      "name": "390/2: no-op, field error and explicit confirmation return",
+      "durationMs": 209,
+      "status": "PASS"
+    },
+    {
+      "name": "768/1: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 361,
+      "status": "PASS"
+    },
+    {
+      "name": "768/1: no-op, field error and explicit confirmation return",
+      "durationMs": 195,
+      "status": "PASS"
+    },
+    {
+      "name": "768/2: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 415,
+      "status": "PASS"
+    },
+    {
+      "name": "768/2: no-op, field error and explicit confirmation return",
+      "durationMs": 209,
+      "status": "PASS"
+    },
+    {
+      "name": "1024/1: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 364,
+      "status": "PASS"
+    },
+    {
+      "name": "1024/1: no-op, field error and explicit confirmation return",
+      "durationMs": 194,
+      "status": "PASS"
+    },
+    {
+      "name": "1024/2: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 428,
+      "status": "PASS"
+    },
+    {
+      "name": "1024/2: no-op, field error and explicit confirmation return",
+      "durationMs": 209,
+      "status": "PASS"
+    },
+    {
+      "name": "1440/1: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 393,
+      "status": "PASS"
+    },
+    {
+      "name": "1440/1: no-op, field error and explicit confirmation return",
+      "durationMs": 195,
+      "status": "PASS"
+    },
+    {
+      "name": "1440/2: stored context, progressive groups, keyboard focus and scroll isolation",
+      "durationMs": 447,
+      "status": "PASS"
+    },
+    {
+      "name": "1440/2: no-op, field error and explicit confirmation return",
+      "durationMs": 207,
+      "status": "PASS"
+    },
+    {
+      "name": "Uncertain save: Escape, browser Back, close and background focus cannot discard; retry writes once",
+      "durationMs": 159,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "outbound": [],
+  "browser": "154.0.8037.99",
+  "boundary": "Production Guest UI and real localStorage, Chromium viewport/text emulation; no physical-device or screen-reader claim"
+}

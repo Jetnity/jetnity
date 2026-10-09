@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "name": "Multi-entry browser Back closes editing and restores the selected historical Workspace mode",
+      "status": "PASS"
+    },
+    {
+      "name": "Removed active day returns to canonical saved context by visible close and browser Back, preserving foreign query/hash",
+      "status": "PASS"
+    },
+    {
+      "name": "Refresh/Forward reopen no draft and restore four-mode navigation without stale modal history",
+      "status": "PASS"
+    },
+    {
+      "name": "Accessibility tree, safe-area padding, short visual viewport and reachable controls",
+      "status": "PASS"
+    }
+  ]
+}

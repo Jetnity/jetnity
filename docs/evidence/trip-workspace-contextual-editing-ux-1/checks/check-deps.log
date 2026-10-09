@@ -1,0 +1,10 @@
+
+> jetnity@1.0.0 check:deps
+> node scripts/pakete.mjs
+
+
+dependencies: 11 geprueft, 0 ohne Verwendung
+
+devDependencies: 2 geprueft, 0 ohne Verwendung
+
+nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide

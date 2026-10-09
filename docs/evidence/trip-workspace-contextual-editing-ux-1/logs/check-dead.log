@@ -1,0 +1,10 @@
+
+> jetnity@1.0.0 check:dead
+> node scripts/erreichbarkeit.mjs
+
+Startpunkte:        717
+erreichbare Module: 1410
+verwaist:           0
+
+
+Keine unbegruendet verwaiste Datei.

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "mode": "account",
+  "sources": [
+    {
+      "path": "scripts/direct-trip-editing-1/fixture.ts",
+      "sha256": "86620226162a8bd26f70aaa3c6625ca0841993c465386765025fa19e264fb289"
+    },
+    {
+      "path": "scripts/direct-trip-editing-1/account-browser.mjs",
+      "sha256": "bb02cd735fa76cf58683f50cbf9e3bcebac093b3a072589d7ad663a18346a707"
+    },
+    {
+      "path": "scripts/db/direct-trip-editing-1/run.mjs",
+      "sha256": "cdc0de95639c516f0fe4de4375c6f428f019d2c4b7d3191d3d558a1836677282"
+    }
+  ],
+  "steps": [
+    {
+      "file": "run.mjs",
+      "exitCode": 0
+    }
+  ],
+  "adaptations": "Task-owned evidence, loopback endpoints, import relocation, current branch and clean PG environment for Linux; timing and all 250 protected rows additionally asserted; #905 manipulation uses real progressive group buttons. Original graph/security assertions unchanged."
+}

@@ -1,0 +1,1107 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-09T15:17:15.241Z",
+  "seed": "c3004bc159bc86a7eb25b741cc0aab49344c63c8",
+  "taskBlob": "e3c0c4b4c37663f4269fae282bfea24f12e1ad01",
+  "sources": {
+    "components/trips/TripWorkspace.tsx": "1375be77e0b8d9f4aa9bad8bf10b826c0bf445f8ee14413cf7d2cfb88682d54b",
+    "components/trips/TripWorkspaceEditSurface.tsx": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041",
+    "components/trips/ReiseAenderung.tsx": "f7df0f87043746314c8e46803bb662aa4cf9df1761f29340b8de4fe479afb08e",
+    "components/trips/ReiseAenderungManuell.tsx": "0d5a4192bdccc23891a0f10f58c631c1ec34bc1292fbbea384945a9b369280b3",
+    "components/trips/ReiseAenderungAuswirkungen.tsx": "bc9401ed0c71b96cae73220910c7e35c7fc390f0f7991fd2f0745337a1d3290c",
+    "lib/trips/workspace-edit-focus.ts": "98aaf72c8dc39bd2048e39301347cc751b6a6824106606a70b570701ae96bec1"
+  },
+  "deliveryFiles": [
+    {
+      "path": "components/trips/ReiseAenderung.tsx",
+      "bytes": 11104,
+      "sha256": "f7df0f87043746314c8e46803bb662aa4cf9df1761f29340b8de4fe479afb08e"
+    },
+    {
+      "path": "components/trips/ReiseAenderungAuswirkungen.tsx",
+      "bytes": 2583,
+      "sha256": "bc9401ed0c71b96cae73220910c7e35c7fc390f0f7991fd2f0745337a1d3290c"
+    },
+    {
+      "path": "components/trips/ReiseAenderungManuell.tsx",
+      "bytes": 19232,
+      "sha256": "0d5a4192bdccc23891a0f10f58c631c1ec34bc1292fbbea384945a9b369280b3"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "bytes": 43341,
+      "sha256": "1375be77e0b8d9f4aa9bad8bf10b826c0bf445f8ee14413cf7d2cfb88682d54b"
+    },
+    {
+      "path": "components/trips/TripWorkspaceEditSurface.tsx",
+      "bytes": 5632,
+      "sha256": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_CONTRACTS_2026-10-09.md",
+      "bytes": 1532,
+      "sha256": "4103a320cdbdc395891aa2454ce1fecec83314f32145e647c157aefe96f284d1"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_HANDOFF_2026-10-09.md",
+      "bytes": 2400,
+      "sha256": "081d13b78404d30f36895acf5dbdb5906435a490be0ad02c606ac781eafc4616"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_PLAN_2026-10-09.md",
+      "bytes": 4504,
+      "sha256": "c35a406a99a267eaceb258282797b4ece6be99067eb5ecd69951e90ba070332e"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_REPORT_2026-10-09.md",
+      "bytes": 12316,
+      "sha256": "bf83a84bf0c04c0bbf604a5365d5c9906fa618377ab83e20743b79164d4e32f3"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_SELF_REVIEW_2026-10-09.md",
+      "bytes": 2749,
+      "sha256": "bed93d4358ff1e476fa1338b83fe32386313b7770f7a41e9e55ee1f7f25946b4"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_STATUS_2026-10-09.md",
+      "bytes": 1893,
+      "sha256": "0f31911c3dd31e7c5dffd9c111e931fae67adcfcf92e35419dcf8208052c9891"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_TASK_2026-10-09.md",
+      "bytes": 13943,
+      "sha256": "bb760c923fe4f22352aafbe76c167dc856ef1261d9a578b4c8a0f1c3357bfedf"
+    },
+    {
+      "path": "docs/TRIP_WORKSPACE_CONTEXTUAL_EDITING_UX_1_TL_PRECHECK_2026-10-09.md",
+      "bytes": 1510,
+      "sha256": "0387c9bdb2ea19a807066e8aa53c8a888fe2f17e4e0dd1adede1415c27b8f8d2"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-1-closed.png",
+      "bytes": 102338,
+      "sha256": "c545ab0872b1e8443652d8427733ccfb31c329dc5b87e9d206cf296068efed2d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-1-open.png",
+      "bytes": 102458,
+      "sha256": "4141524aa35588c7460207ba4762fc3d528cc44bbe2908b746490670fcef39bc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-1-preview.png",
+      "bytes": 120664,
+      "sha256": "65bd99d56ca40ed753922b4638989aca0107372ca97493111645ff802599f762"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-2-closed.png",
+      "bytes": 85812,
+      "sha256": "888928465d08f72591a0acd0d823a3a240e48e6ab02c14cb4d351a88db85a0e9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-2-open.png",
+      "bytes": 92080,
+      "sha256": "65b4753843d4de7e5fd75bc9c330522081294b9dd755b66cf6c1671132d75206"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1024-2-preview.png",
+      "bytes": 116718,
+      "sha256": "397ea5dae22c22b94a0ebb6e9b5b8dfa0e43ee13fd51d13f51ce90e05dae398d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-1-closed.png",
+      "bytes": 110680,
+      "sha256": "f5239a2dc63c6071f634fae162fe972b5c28154c85cd6890b6a995a64d3e20a0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-1-open.png",
+      "bytes": 115545,
+      "sha256": "a2fbe8c1ffec4f51b3dc839576393ae86982f0fcd903aadd1765af3badc98fc9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-1-preview.png",
+      "bytes": 138898,
+      "sha256": "6df31e6ad5e99aba061583f04198834324732651951347e17e6d4c72f1732414"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-2-closed.png",
+      "bytes": 91035,
+      "sha256": "39d9cf626b956feb34205a94ff5b7e10a21d2641b3028359c954c18d4bd73f2a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-2-open.png",
+      "bytes": 106332,
+      "sha256": "232b33b57fcdac5af0a671f9a4dc8c3a104047a8f45e982864fdd79f6cf08010"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/1440-2-preview.png",
+      "bytes": 122787,
+      "sha256": "29369056164e41c8f7cd291e7cc3d912d96e8c1251bbfa8c44ed880a83950bb1"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-1-closed.png",
+      "bytes": 68975,
+      "sha256": "bcedacac5ef156331abd9221be65b7cf00a31c7109ae49a50224766cd3e31007"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-1-open.png",
+      "bytes": 58820,
+      "sha256": "3cad3ad2173cbf49c29093d8119bdf49beef54fa760e5ce822560833221f43b5"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-1-preview.png",
+      "bytes": 63677,
+      "sha256": "57bb007fbffbecb71393d25a41fbe71c41d00638322790cc5b1df5aa49e3160d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-2-closed.png",
+      "bytes": 56080,
+      "sha256": "52954adf06e0a3c0b228f7cef70c9255b9d019631477171d5f7ef6448a2acfee"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-2-open.png",
+      "bytes": 55067,
+      "sha256": "4db8ba0d7759deadc54f80b8ab78dcf6ae6d5cdfd39b59f4def30799f4f61827"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/360-2-preview.png",
+      "bytes": 69096,
+      "sha256": "12502e8d589b1cacb4d311bf5f107e8766ed98e20b642be7d97206a2722530c9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-1-closed.png",
+      "bytes": 69085,
+      "sha256": "bee05523fedb1f9033533ed9077170a204fcdbad19b10947da84f424a2a67ff4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-1-open.png",
+      "bytes": 62776,
+      "sha256": "6af98c2558ad8d1a28290c1a65a4e73c84cb43cd0190cc67e2c201e458e080fb"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-1-preview.png",
+      "bytes": 66423,
+      "sha256": "05ea4926d0d5f8a9e718e3c95ddd0ba2be07c56aa9688e518e0ea30f1ed2e7f7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-2-closed.png",
+      "bytes": 61847,
+      "sha256": "3e219a9a75cdbe8cbe38c3ca1848de35404aea1f40c26014f2d222f9115ef48a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-2-open.png",
+      "bytes": 54733,
+      "sha256": "8bc9f5352bee2e603560b5f4c4422a90e7a27d05700bb012417d5d79e98dfc61"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/390-2-preview.png",
+      "bytes": 75998,
+      "sha256": "4388d766499acb1d845b0d58494a5d01bf0a2e08126589b31aa0188a63b729bd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-1-closed.png",
+      "bytes": 91312,
+      "sha256": "ac76d2d1e06d6e04f7bc145a713063a4699213fb0624a5ace7d2d547769913a8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-1-open.png",
+      "bytes": 75336,
+      "sha256": "7766cb14d95a77f1a72f2c5b0d7c3f80e6eb3a232727cada2f9db68207070543"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-1-preview.png",
+      "bytes": 83854,
+      "sha256": "49a3edd2feb1fa9828cc5270e9e7f418ff2ddd27bb8ed0f1bab5c983fb092bc2"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-2-closed.png",
+      "bytes": 79784,
+      "sha256": "50ce5cffbd5ad07e036fe87284ad11fb538c7978bd197097341a8babec0a3bf6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-2-open.png",
+      "bytes": 65307,
+      "sha256": "504e46d95bd268ba0da99e91cd4bd877a7e6a7ba67b540abdf06f36030c90b68"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/768-2-preview.png",
+      "bytes": 95770,
+      "sha256": "9ce4d4760260a732a506b0ee05ac6efc36bd4abfc045ffd81a8d8f04f28d05a2"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/after/geometry.json",
+      "bytes": 15890,
+      "sha256": "9115237e365b7dee26db9160a8e3206b53f9ac7eed755fb6f6b0d5ff69bad2da"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-1-closed.png",
+      "bytes": 102338,
+      "sha256": "c545ab0872b1e8443652d8427733ccfb31c329dc5b87e9d206cf296068efed2d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-1-open.png",
+      "bytes": 89647,
+      "sha256": "592f6fb0839f5c3ada307d564bbfacddb93dc63912c42ecde8e6fe1ef1039537"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-1-preview.png",
+      "bytes": 100751,
+      "sha256": "894381c69d710ca0ad89d0014da0482deb095ee62a0d80d949e275c7275e3d73"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-2-closed.png",
+      "bytes": 85812,
+      "sha256": "888928465d08f72591a0acd0d823a3a240e48e6ab02c14cb4d351a88db85a0e9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-2-open.png",
+      "bytes": 104314,
+      "sha256": "506338c92e3dc619182ab436a7fdbb22b6e7b418f1e1f47c39d25340afe1867f"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1024-2-preview.png",
+      "bytes": 115983,
+      "sha256": "06e4629149d466971708d142aa997c89f0376b8ede7b32b16d95af5e77c39d68"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-1-closed.png",
+      "bytes": 110680,
+      "sha256": "f5239a2dc63c6071f634fae162fe972b5c28154c85cd6890b6a995a64d3e20a0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-1-open.png",
+      "bytes": 92456,
+      "sha256": "12c8c405b941ee472da0302c1ddc7e08a423013c9ce89c4707618825d5a35967"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-1-preview.png",
+      "bytes": 105009,
+      "sha256": "ebfd92eb27fef8737deee5aaf94a4a48d6688a112e82b6fb632537b9d9d647cc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-2-closed.png",
+      "bytes": 91035,
+      "sha256": "39d9cf626b956feb34205a94ff5b7e10a21d2641b3028359c954c18d4bd73f2a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-2-open.png",
+      "bytes": 113689,
+      "sha256": "0616879218069e462feea21b6081149200df3a89d62bda8bf72b328b34ae0dee"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/1440-2-preview.png",
+      "bytes": 117933,
+      "sha256": "fe17bd0f5bdae08e8130c3ec5fc0639786bf8679953b13a7a31ca61d0cda8282"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-1-closed.png",
+      "bytes": 68975,
+      "sha256": "bcedacac5ef156331abd9221be65b7cf00a31c7109ae49a50224766cd3e31007"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-1-open.png",
+      "bytes": 63390,
+      "sha256": "6beefccfa742aa46c6112ccae5e8b0fc1e990b6583d3f8d11b0769268428d021"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-1-preview.png",
+      "bytes": 69717,
+      "sha256": "261dec75ef95c221c0ac771384cf1e3a2b7cb7a866a9fcce4f1372f2521cf8a8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-2-closed.png",
+      "bytes": 56080,
+      "sha256": "52954adf06e0a3c0b228f7cef70c9255b9d019631477171d5f7ef6448a2acfee"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-2-open.png",
+      "bytes": 54813,
+      "sha256": "24d9675d97ca1f42320066395601c0153d4f5df5b63aba5b4eaee21c68071e95"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/360-2-preview.png",
+      "bytes": 64523,
+      "sha256": "56b60d20d53806f14028ae0e9ed0a09851c149fa8104fd25078f26e10277fad1"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-1-closed.png",
+      "bytes": 69085,
+      "sha256": "bee05523fedb1f9033533ed9077170a204fcdbad19b10947da84f424a2a67ff4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-1-open.png",
+      "bytes": 63152,
+      "sha256": "4ee5c54ad3a0647ec525084a1f4dbb057d8f1802c7135f4aafb7ba0e872079f0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-1-preview.png",
+      "bytes": 73721,
+      "sha256": "7b472e61f58fbe1ed5a66ca2ba65f739e03ad784898fdf21f5c6f4f8f491e115"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-2-closed.png",
+      "bytes": 61847,
+      "sha256": "3e219a9a75cdbe8cbe38c3ca1848de35404aea1f40c26014f2d222f9115ef48a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-2-open.png",
+      "bytes": 58358,
+      "sha256": "2f2fc7bad932085c50c43c377cdd14763bce886dafc7c88fcd9df4bbd4c072e0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/390-2-preview.png",
+      "bytes": 68171,
+      "sha256": "9252a573c34ed0356b3f162d1fd99471ade4d29cdc846dd6c147e2bec468aaff"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-1-closed.png",
+      "bytes": 91312,
+      "sha256": "ac76d2d1e06d6e04f7bc145a713063a4699213fb0624a5ace7d2d547769913a8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-1-open.png",
+      "bytes": 85310,
+      "sha256": "ccc7c80254f577a540917e76ba94ee823ce7e99877e0fa64c416e9d506ddb4b5"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-1-preview.png",
+      "bytes": 98793,
+      "sha256": "a431586a2d200ac51cac8f36344dcfa682260664764bb1ab74a564a33361c7e9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-2-closed.png",
+      "bytes": 79784,
+      "sha256": "50ce5cffbd5ad07e036fe87284ad11fb538c7978bd197097341a8babec0a3bf6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-2-open.png",
+      "bytes": 73605,
+      "sha256": "99cfe1beb0e9b0f9ed359a07531feadf6d9a8edf4d971e8c86bbcc0618e45f7e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/768-2-preview.png",
+      "bytes": 100332,
+      "sha256": "37b07df3892d38ce7f71b563b009e93c572db01bf6e6c398527e2ca4db2c1108"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/baseline/geometry.json",
+      "bytes": 14050,
+      "sha256": "8c8f3ac3780f3f85a4d650ad0917bb60f2a2f39d34141f457bbfe001c4d9de6e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks-audit.json",
+      "bytes": 2676,
+      "sha256": "6aed740f71e64852b2dcd0b0605d08477666762cdcf792092ce86b2c9b594dd6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-api-schutz.log",
+      "bytes": 136,
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-dead.log",
+      "bytes": 172,
+      "sha256": "a0ec9b2b37108904ca2db4418a3d0afa62a7d33986b453ddb0a312d92138f1cd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-deps.log",
+      "bytes": 340,
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-exports.log",
+      "bytes": 150,
+      "sha256": "d341156c6c5b8bf31da565b57c48af65c0e316ca9cd8b56fa20f396a7082daa4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-operating-mode.log",
+      "bytes": 106,
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/check-schema-bezug.log",
+      "bytes": 1028,
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/checks.json",
+      "bytes": 447,
+      "sha256": "7ef3a98e9954644495a1ea143b62354a0104d5df0b063e9450a0dfe8d76a2aab"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/lint.log",
+      "bytes": 14804,
+      "sha256": "84ecba074944517626316f7ebd40081a10364d5f5166e8cb6d44103c17d676c6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/checks/typecheck.log",
+      "bytes": 135,
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/edges/390-short-safe-area.png",
+      "bytes": 24073,
+      "sha256": "ff090ec57f6de4ee1b37561dd99311b0cbbf3ac79602e89f34a2e539fa9660c4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/edges/accessibility.json",
+      "bytes": 13108,
+      "sha256": "5f8fcc27a5c708582deabbaad844186753ed9dad5d9a3f85d404ebb3131cf45f"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/edges/edges.json",
+      "bytes": 642,
+      "sha256": "79d488b91eb1b64f8dea44860b88a658ccfe2db530ec06b84d59b635551edd88"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/journey/journey.json",
+      "bytes": 3367,
+      "sha256": "b20d7c3c38d9c96ecc3a01b84b66e555f1462da3afd0f760ba9dd6b6b2083b22"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/903.log",
+      "bytes": 214,
+      "sha256": "90b28e3aece0c297c91f14bda175e25d09222b6ab968b76da004e07e2298a082"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/account.log",
+      "bytes": 195,
+      "sha256": "efb05829e98d782c8049fbb77fa286f396be01cf16d1f0915276e3fe0e5dd773"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/build.log",
+      "bytes": 3757,
+      "sha256": "450a664a383cc26798550fe27bf74988f9924c9ca43a6f44462d940eb93d40f8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-api-schutz.log",
+      "bytes": 136,
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-dead.log",
+      "bytes": 172,
+      "sha256": "0f3fd3f9394010d5d4ba8b2fc73592161024f79361d6d3389faea7790ccbe3c7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-deps.log",
+      "bytes": 340,
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-exports.log",
+      "bytes": 150,
+      "sha256": "d341156c6c5b8bf31da565b57c48af65c0e316ca9cd8b56fa20f396a7082daa4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-operating-mode.log",
+      "bytes": 106,
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-schema-bezug.log",
+      "bytes": 1028,
+      "sha256": "472595ef5584131dbd942a5e8e1779ef33cbbecc34f8bfde1107b8ab1c8cab23"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/diff-check.log",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/edges-lint.log",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/focused-lint.log",
+      "bytes": 2480,
+      "sha256": "779491c6f5a48b3ee2358aee0000f3b6fa23f7bcfea701e0b9a39ea2db1fc15c"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/guest.log",
+      "bytes": 3754,
+      "sha256": "1e2cac6ee2a4ed3c8518dc3fc8f62eff6ccd3413a6c01c0a2ced308b196472f9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/lint.log",
+      "bytes": 14804,
+      "sha256": "84ecba074944517626316f7ebd40081a10364d5f5166e8cb6d44103c17d676c6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/scripts-lint.log",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/typecheck.log",
+      "bytes": 135,
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/publication-context.json",
+      "bytes": 426,
+      "sha256": "ae05cd8bd0ed8744a86845bb831dcc1bfda4b9e2033c198d1f7baa269d0289f4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/account-persistence.json",
+      "bytes": 2681,
+      "sha256": "6fa891b300cc5eae8fbbfadae7c620d9c2c74f1c7c19dddbecc13ff6133b64e6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/browser.json",
+      "bytes": 182362,
+      "sha256": "e3504bcfb8e41ef9cdb695ed31ee3ec94f5adbd29687224346a214809fa41b3b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/r1-account-editor.json",
+      "bytes": 3793,
+      "sha256": "4ce1a496f875c7bdc5a80b688b25856d230bb36c5f65dd00e8e507167ce053c3"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/r1-guest-editor.json",
+      "bytes": 4273,
+      "sha256": "68e262db45df72c27a0761621a4039a692329496cfc6c9985698ce524d44db4a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/replay.json",
+      "bytes": 1374,
+      "sha256": "6cf22cd0210206f60338c3caa6f93076d049ba379133f003502c06c5b406db55"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/account-stale-draft.png",
+      "bytes": 69092,
+      "sha256": "8c83285c6032f81bb77e49f207775c6616c52c5e341a6296db689d7321cbdee8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/flight-reclassified-focus.png",
+      "bytes": 56464,
+      "sha256": "87c00e30d97248abba0fbbefb12076de67f2dd5b16042bd3a3e72537b6cd8886"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/form-360-text-200.png",
+      "bytes": 89754,
+      "sha256": "1b047a11a2d8c14bdcacf78d3cd304517888248ce5859b2b1e3a3fbe3bd488c4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/plan-1440-text-100.png",
+      "bytes": 261371,
+      "sha256": "c9fd2c7bd9ad143fcd81861d6b020ab8db0aa8536055ab1a3170427a3dc1308b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/plan-360-text-200.png",
+      "bytes": 502005,
+      "sha256": "57a937dc495363afbdde0489d6e60f9eb86799f6c47b7a4fe9445c9f439a8e9b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/903/screens/plan-390-text-100.png",
+      "bytes": 230721,
+      "sha256": "357ca51376f19cef3db76b5749ebaf52e35f7f46f54c7fde066ea1a07efd154b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/account/account-browser.json",
+      "bytes": 2300,
+      "sha256": "f551b6bb707d5d68137e6cb44bd0159e769415331316077fe99658a4cd801ce2"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/account/account-persistence.json",
+      "bytes": 2765,
+      "sha256": "4774e12d1f3aa93d6fac3132040ed6a3964e49e7406386d38866a023dcce68dd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/account/replay.json",
+      "bytes": 898,
+      "sha256": "12a6ab1dd23d7074738a39b8e1394d1683431533ff9299d3cb35aa6308500edd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/account/screens/account-pending.png",
+      "bytes": 221742,
+      "sha256": "93b78d9313cb859056892e5d836bf40755dd0f8542a09b4b0d270e055e2b68e9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/account/screens/account-uncertain.png",
+      "bytes": 226154,
+      "sha256": "1b5dd7bab30d0e8226fc443d465a9c83c8844a389d0d3fbd1441028e6ff05b29"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/guest-browser.json",
+      "bytes": 4427,
+      "sha256": "c4a05c5f4ef033cabb1909d26869b3ea03933c02b8fda8ac70ebf08ef0ee399a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/replay.json",
+      "bytes": 584,
+      "sha256": "0bfd6c2455aae605d5fc2e833761bde4a64920fe4ab9f04f5970bb2e7d1459e5"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/screens/direct-1440-text-100.png",
+      "bytes": 219423,
+      "sha256": "97a7e3d31bd8c457bfb990b819d3214056d87b5fcddbf31e45adf73457720a2d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/screens/direct-360-text-200.png",
+      "bytes": 419579,
+      "sha256": "f8cc2030ff4877e179f33c9eefe3e42a2363e82ceedf2d74b771974ef97668d2"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/screens/direct-390-text-100.png",
+      "bytes": 187422,
+      "sha256": "0064853a98da593137cb11173e4cf04728d47ff93ca25f089f11f0e2d2a058fc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/screens/large-preview.png",
+      "bytes": 243304,
+      "sha256": "eb8310571b32e10974bea453512411384400f2d8d9309508546f814107c61e74"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/guest/screens/r1-conflict-preview.png",
+      "bytes": 191342,
+      "sha256": "560f91f9b8f49a7c943d0677f13d944b3c790b45b1f1b75e099e3a6910b9141d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/linux/npm-test-full.log",
+      "bytes": 7500,
+      "sha256": "f02c8f8f1ca5b3d6f143831941a9088aacdc4130a7af5830144117bb74c51ccd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/linux/replay.json",
+      "bytes": 504,
+      "sha256": "f57fed350f08e7002fefb4156cdf68f98483c69ba777dcc79f5d44880f1dd174"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/linux/totals.json",
+      "bytes": 145,
+      "sha256": "8cc43f465e545e78cdd18305a83e02aca8f750ad5e4e7d0e04636587b86102fc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/audit.json",
+      "bytes": 13974,
+      "sha256": "11fd4579315c8678bc9ab4384929343dd81cd484898e050d281bce40dec52a6e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/execution.log",
+      "bytes": 111,
+      "sha256": "2c0e583791411ad184e615fbbe4c60fc3365193cd47c3bd2564f5c05fb13ef00"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/desktop_detail.png",
+      "bytes": 78882,
+      "sha256": "f2a56eb8c0b5e0462b24c46edd5d2f1e8d750cc6036c73e882e71bbeddbca2a9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/desktop_formular_zu.png",
+      "bytes": 48431,
+      "sha256": "2399de5e9b43b890a827b2d80fa521199b393c85705ce99a5a50ab76bc123cbc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/desktop_letzter.png",
+      "bytes": 84046,
+      "sha256": "ef8a09fd7cec8c71ba4ee0754e31132317fcfc6860d3b9da162da5c70aec30b3"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/desktop_tag16.png",
+      "bytes": 80763,
+      "sha256": "976a5fb5dcfa7d4197d3bcb1b0b47c5f51894ef0cda08bdbb9b0d04298c79d24"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_14_1440x900.png",
+      "bytes": 89215,
+      "sha256": "a5a5da9bcc1cfe9c638504e5ac14c921a20242f24feae996680afe473cb7a3f0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_14_390x844.png",
+      "bytes": 58559,
+      "sha256": "7693980f8fee04e077ec9ec67e584269e900721c4e449e44dd8b691da0c5f5aa"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_1_1440x900.png",
+      "bytes": 88700,
+      "sha256": "136a3ba118ef59b092ee6e57e307a845c962c3c5c922e4c06db247285c2b09f6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_1_390x844.png",
+      "bytes": 59003,
+      "sha256": "c282534c7d60809135142e0a314f10bcb274e6c46d8bf464a9ce72f7f95fa00e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_21_1440x900.png",
+      "bytes": 89351,
+      "sha256": "f8bba650ea65ba0d4bbc3aac10b629b96f4afd3ad84a9ee95ec35af8ae9c4a43"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_21_390x844.png",
+      "bytes": 58677,
+      "sha256": "4aab3c9e0045f780096b5483f306fdd6b85a3319052d53b0e23048f9f431c6f4"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_7_1440x900.png",
+      "bytes": 89790,
+      "sha256": "b6b5efc982cefc98c59395adc0ceec164819917031b8b39638e9968212ab0e36"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/form_7_390x844.png",
+      "bytes": 59168,
+      "sha256": "222e36fcbe54035edf5a1e223c7189158e8538e6ebed51a28d1dd6be5cb59c2c"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone360_detail.png",
+      "bytes": 35397,
+      "sha256": "2e12a4e49632d2521538364ff5e3e8c9e1414ffd11afc49c0a0cab37bdba9b11"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone360_formular_zu.png",
+      "bytes": 2404,
+      "sha256": "1aa62bf2ac1b5c8b423a8db35f7458628feb57225b5950c8a098de43529afa92"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone360_letzter.png",
+      "bytes": 64422,
+      "sha256": "81b4e350a0eefc9507d5210f727fcfdc694272f3385dd1a5533814d199487e7a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone360_tag16.png",
+      "bytes": 63934,
+      "sha256": "22eb9e969299b8dd27d02dc33554008992f0ebd7dce1429037bd70b6262a5154"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone_detail.png",
+      "bytes": 42415,
+      "sha256": "103983458d4a1aca18f607c5f16d41132d08969754de9992e57a5ae734bc48d6"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone_formular_zu.png",
+      "bytes": 3231,
+      "sha256": "9a41ef91a7de258368fed61f0bd034acd9088980045bece3dd74db9beed23626"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone_letzter.png",
+      "bytes": 70837,
+      "sha256": "f0b19c74555c82bb1f973299084057180edbf250ab8ca58d1c7ac04fcae25553"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/phone_tag16.png",
+      "bytes": 69160,
+      "sha256": "66a04c0fb7aaa6d33f441b9ec41cd986c33a73613426e5fd60270b2945f8c0d9"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_1024x768.png",
+      "bytes": 75111,
+      "sha256": "1f88550486445aefa0f6af4d978ecddb95e01d76ee215bb37a9e09392c6206e7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_1280x800.png",
+      "bytes": 78503,
+      "sha256": "929fadb037a99f45dd1af54df91220970dfab77cb6bb92e2a0596512a98086a1"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_1440x900.png",
+      "bytes": 91594,
+      "sha256": "0fa668570edee496038d2b9b64334609fc3b52ba383e65dc865d6b01b1816db7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_1728x1117.png",
+      "bytes": 120988,
+      "sha256": "3203a86ce215301712e6161601e322a377b9ad5feb25cc422dfdb62584285034"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_1920x1080.png",
+      "bytes": 113020,
+      "sha256": "05a43d867afd5657318ac5c9ef32f07df0d9cc221ead81c401e5ca7a4f23bc60"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_320x568.png",
+      "bytes": 41747,
+      "sha256": "58f6b944ee67dfe87d6b9938c79bbfb771cfb8b8b412fb7b3033df56c223f242"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_360x800.png",
+      "bytes": 57480,
+      "sha256": "b774744d40abf0f5c1959090a398e09056f93c2b572263e17f61c8305a763d6b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_375x812.png",
+      "bytes": 57677,
+      "sha256": "00bbd0ed7fced5054d3fbd1ae7a0064ae0ae2c272b00980e888dd88c0658cbda"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_390x844.png",
+      "bytes": 61024,
+      "sha256": "98d350572508a8545f19741f75bb2a9263d7b6fb537b7b34de7397ce025626b7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_412x915.png",
+      "bytes": 64102,
+      "sha256": "4ac845df0397a69cb7228004094110d17187d0cf173d19b0ab614075d3c3edba"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_430x932.png",
+      "bytes": 64759,
+      "sha256": "5d19bd04e88cc0a6c84a71e0364a0ce02858f5d26bb2769888ec07506e14a870"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_768x1024.png",
+      "bytes": 93387,
+      "sha256": "3756d60304b5e6161f7014b056447d274d6a61428ac6500a747539bb1f866107"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_820x1180.png",
+      "bytes": 108113,
+      "sha256": "a78645fc7722a93f0dcc6158043ca1bec6608d11e92eb20370a890a3cb3e9a6b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/plan_844x390.png",
+      "bytes": 42640,
+      "sha256": "46e6633cab107ce11e8f1c2204c17423f827fcae134ee6013b9fa2c29e225469"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/reduced_390x844.png",
+      "bytes": 61024,
+      "sha256": "98d350572508a8545f19741f75bb2a9263d7b6fb537b7b34de7397ce025626b7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/tablet_detail.png",
+      "bytes": 50807,
+      "sha256": "356bd6c94786f3a0738226a7bff8e9feb95db2e84ca8f4313b0e3e4e17d99c6d"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/tablet_formular_zu.png",
+      "bytes": 48940,
+      "sha256": "b30530c82298d101d0b7540de3dc8a2eccc3e98295acc79aae6fb599fc2ffe37"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/tablet_letzter.png",
+      "bytes": 77452,
+      "sha256": "feddd79ad2910da2c0bbfd8dbcfb2ad05fa03bbd32c96bbe6dfc4a8b922f99be"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/tablet_tag16.png",
+      "bytes": 84994,
+      "sha256": "6250f3fdfe3dc654fa1aa1b28edcaa6064322702963dd380f8b95537b07ff60e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/text200_360x800.png",
+      "bytes": 40186,
+      "sha256": "9d7028c9e3ef6e029311008989d6bf829d83c1fd8bd29bbeda143e0f904747e1"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/zoom_125_1440x900.png",
+      "bytes": 98355,
+      "sha256": "e517b2f8ae063cc2fe195d5f314779280fa2f49e17ff945dc45b3a3fc3fc1b7a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-plan-premium-experience-4/screens/zoom_150_1440x900.png",
+      "bytes": 104839,
+      "sha256": "8fab5e50eb516156199903f79b08f332696821503b650fc007c0228488f2dd09"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/audit.json",
+      "bytes": 61304,
+      "sha256": "d62e13a983c23b7d994c1d81b4e06bad4a2e13b169ad4bad81eefdd3852c58d8"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/execution.log",
+      "bytes": 50,
+      "sha256": "e2fd8afb88967f8a23431d24077e91808c91fc0aa2e849f0161c1a954463f430"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-1440-text200.png",
+      "bytes": 93448,
+      "sha256": "f6c7f9e528abaf372b9c3054c9418cfd591318bd1423d5abb00f955026c32edc"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-1440.png",
+      "bytes": 95454,
+      "sha256": "4cb8fe69dc38e8c21e4502bc42610a674135d2b547cd9944123d68ee5967d167"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-360-text200.png",
+      "bytes": 43061,
+      "sha256": "c5d68c4ff883e9839a302125bdd6e308757c97d564eaaaf1bef567126bd227a3"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-360.png",
+      "bytes": 57324,
+      "sha256": "4367ce22a193a19c0e978d3ed8f9bf33e964dfccd2ac58483eda367236fd2b24"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-390-text200.png",
+      "bytes": 44933,
+      "sha256": "ba4ace1a78028877023b0a66e31433a5e81459bea7b600f580910fc5d99c8b00"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-390.png",
+      "bytes": 62337,
+      "sha256": "c359fe6ac37716debf2333774279b1b7664e41af7cdba8fdd9152662c02dae30"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-768-text200.png",
+      "bytes": 68269,
+      "sha256": "47401b4ad46b753d0cbc2546987a485a93316b9a6fedb3518cb73bf00d8a56c0"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-core-1/screens/workspace-768.png",
+      "bytes": 96116,
+      "sha256": "f18872120ffe2d15a2b7d2e5d7ca1acdf59dd08ab0729ddb8b74b66c598eb6c5"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/audit.json",
+      "bytes": 56680,
+      "sha256": "352e8d166f098cf5360fae12c6965e01aec7dbe587bf40ee4934f32a86d5239b"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/execution.log",
+      "bytes": 52,
+      "sha256": "0c3a94b2cc7f0bef0659eea706a5c5467ebcea5c20a46b7f29f7f1109891b7cd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/1440-collapsed.png",
+      "bytes": 13099,
+      "sha256": "eadffdd186c04d0d579b850adf985376faeba5400b9d3d6410270e13d0e50589"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/1440-details.png",
+      "bytes": 105318,
+      "sha256": "8a870fdd192546b2aac8a1d56aff5a1bd687bd111b3a4c85220bca36cf3c22cd"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/1440-text200.png",
+      "bytes": 137024,
+      "sha256": "cc27a71afdcd9d11695eb2006746bd1fd52a92499b0e7a1489aec4eb69135e07"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/360-collapsed.png",
+      "bytes": 12549,
+      "sha256": "57955845e0972bf1e9e9231dfbb5dc761fc39c99b361bb5480b6dc3cf49f8e8a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/360-details.png",
+      "bytes": 109842,
+      "sha256": "5cce74062643772064e1264fdcd9320e6f9bf8321cd90a5b1836ae89f692fe81"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/360-text200.png",
+      "bytes": 47077,
+      "sha256": "3af6a068d78cc0593f6ac90a57940806042a5bf99da2c9e10a03e1d1536ebc0a"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/390-collapsed.png",
+      "bytes": 12218,
+      "sha256": "e318344febe30ef94bce7deb4c58c517f00a8e4fb95621cae48f5d39ea2ded44"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/390-details.png",
+      "bytes": 107921,
+      "sha256": "1b77b378e29826d99d8c82b64623f1566df413d7375be72b969fdb205f2e0719"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/390-text200.png",
+      "bytes": 54153,
+      "sha256": "cb86c564bfa0791ff5ff74a3d28379dfa61d26212731a9fb8b0ac2c182dda12e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/768-collapsed.png",
+      "bytes": 12502,
+      "sha256": "d21c7c0fb4d5773f0b636aa3e040e3eeab2b605e67d8901b4a3f2072f84698b5"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/768-details.png",
+      "bytes": 109608,
+      "sha256": "f26b0846debc41bdd06019259b89e597f7562f764a6f069b266ca95942bccf74"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-timeline-temporal-review-1/screens/768-text200.png",
+      "bytes": 101364,
+      "sha256": "53d1b3c2a6034a611d8148d46096cd6e97e7dca8de1cab61de71261e1c13185c"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/1440-item.png",
+      "bytes": 76926,
+      "sha256": "f4083919516504f71a5be3b79122d2e170f672159d26a819d2c0d9fb1281edf7"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/1440-preparation.png",
+      "bytes": 107479,
+      "sha256": "42b6cb1d3ff9ebe6b46aa2dcb4dadf5d0ad1dfcc0448056bea1ab3d81364dc84"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/360-item.png",
+      "bytes": 41719,
+      "sha256": "4e82f5d07f92e772a82b828e682b9c596bc997891227b2844650daea9c4bec2e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/360-preparation.png",
+      "bytes": 63487,
+      "sha256": "e0dcac5a4e5e2de75cd4d1165ef26e9b8eb83fac96aadc8c561f657a0bb1f3d1"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/390-item.png",
+      "bytes": 45234,
+      "sha256": "5936986800f8914d3c7be883c61d4cc80ad446e0cee09d628e4244a58479fa1f"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/390-preparation.png",
+      "bytes": 74411,
+      "sha256": "567a0604362f87acd306ae54ea8ee36a2a24cc5b99865b28ca1d8f04fb2ebd9e"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/execution.log",
+      "bytes": 37,
+      "sha256": "b6f0ee1b89528f8f96504ce6713ff2cddd0fe36dc2d102dde7efe0c33ab56119"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/trip-workspace-contextual-navigation-1/result.json",
+      "bytes": 2920,
+      "sha256": "63ba3d540662bcf8541a6c2b9ecd04f652317d23d88c6cb55b3a86a160f2f8bf"
+    },
+    {
+      "path": "docs/evidence/trip-workspace-contextual-editing-ux-1/regressions/workspace-regressions.json",
+      "bytes": 1281,
+      "sha256": "a6a9e5ae78ba42143d43c98de180ac94fc19c5871cdbd68dc46c7f5b252e5816"
+    },
+    {
+      "path": "lib/trips/workspace-edit-focus.ts",
+      "bytes": 1005,
+      "sha256": "98aaf72c8dc39bd2048e39301347cc751b6a6824106606a70b570701ae96bec1"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/audit.mjs",
+      "bytes": 3897,
+      "sha256": "7841cc1fb111e790967cf3bf0be6608b9c19a021a602b38468131d15e10ffdae"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/browser.mjs",
+      "bytes": 10098,
+      "sha256": "feb4e642afbe48010ad9addc805d021642dba130c615fd85a76bff1f8cd76367"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/edges.mjs",
+      "bytes": 6654,
+      "sha256": "d907c49459a7601bd88d7271a8d5d72b810b6fd22f952d1f242f283837f147a4"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/evidence.mjs",
+      "bytes": 4434,
+      "sha256": "f489bf6ecf0d42a3f8c8e228f6956dc287eb2e11d35a1afe1a1b0f95c74e8618"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/geometry.mjs",
+      "bytes": 3664,
+      "sha256": "fe88f50a4373f9aa92ac12fb028ba689253827ab7a1f821b992373d81fc16154"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/navigation.mjs",
+      "bytes": 1032,
+      "sha256": "f18a96817b66a06e6abadd79702ffbd518610a6534d0a4738fb101d3208eb9c9"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/regressions.mjs",
+      "bytes": 1809,
+      "sha256": "937bb135cb036f2fcbd2cd719a0ae063030b9b004418643936369c9b4e4cc095"
+    },
+    {
+      "path": "scripts/trip-workspace-contextual-editing-ux-1/replay.mjs",
+      "bytes": 4380,
+      "sha256": "06685ccdab327ba21f63176cccd35154db9b9ef21d0a6e7946fff51084f65af0"
+    }
+  ],
+  "self": "This manifest is additionally delivered; self-hash intentionally excluded. Exact published head and remote gates are in the PR receipt."
+}

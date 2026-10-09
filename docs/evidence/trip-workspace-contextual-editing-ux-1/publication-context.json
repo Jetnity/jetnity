@@ -1,0 +1,8 @@
+{
+  "preparedMain": "2ee48bcd40ba9c056898474a2eab87d0ce0d91ca",
+  "preparedHead": "c3004bc159bc86a7eb25b741cc0aab49344c63c8",
+  "latestObservedMain": "d70af4a869716f11bf5c556a1dc679c973f290c2",
+  "mainAdvance": "Independent TL merge of #910, separate Official Truth task",
+  "authorMainSync": false,
+  "externalReceipt": "Final published SHA, CI/Auth job evidence and exact Preview are recorded in PR #909 after publication"
+}

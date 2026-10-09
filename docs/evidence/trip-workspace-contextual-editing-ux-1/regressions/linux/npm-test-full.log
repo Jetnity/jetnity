@@ -1,0 +1,240 @@
+
+> jetnity@1.0.0 test
+> node --import ./scripts/server-only-test-register.mjs --import tsx --test "lib/**/*.test.ts" "scripts/operating-mode-guard.test.mjs"
+
+TAP version 13
+# Subtest: die Kontoübersicht benutzt die Vorschau, die Weltseite den vollen Atlas
+ok 1 - die Kontoübersicht benutzt die Vorschau, die Weltseite den vollen Atlas
+  ---
+  duration_ms: 0.44
+  type: 'test'
+  ...
+# Subtest: die Übersicht lässt Länderchips und die volle Ortsliste weg, der Atlas nicht
+ok 2 - die Übersicht lässt Länderchips und die volle Ortsliste weg, der Atlas nicht
+  ---
+  duration_ms: 0.077584
+  type: 'test'
+  ...
+# Subtest: der Atlasausbruch gilt nur für die volle Darstellung
+ok 3 - der Atlasausbruch gilt nur für die volle Darstellung
+  ---
+  duration_ms: 0.149333
+  type: 'test'
+  ...
+# Subtest: Kennzahlen, Marker, Auswahl und Herkunft bleiben in beiden Darstellungen
+ok 4 - Kennzahlen, Marker, Auswahl und Herkunft bleiben in beiden Darstellungen
+  ---
+  duration_ms: 0.093792
+  type: 'test'
+  ...
+# Subtest: nächste Reise und Buchungseinstieg bleiben, ohne erfundene Zahlen
+ok 5 - nächste Reise und Buchungseinstieg bleiben, ohne erfundene Zahlen
+  ---
+  duration_ms: 0.095083
+  type: 'test'
+  ...
+# Subtest: lange Herkunfts- und Buchungswörter brechen, statt das Dokument zu weiten
+ok 6 - lange Herkunfts- und Buchungswörter brechen, statt das Dokument zu weiten
+  ---
+  duration_ms: 0.060959
+  type: 'test'
+  ...
+# Subtest: leer und Fehler bleiben getrennte Aussagen
+ok 7 - leer und Fehler bleiben getrennte Aussagen
+  ---
+  duration_ms: 0.095333
+  type: 'test'
+  ...
+# Subtest: die Übersicht startet keine Provider-, Such- oder Karten-Netzwerkanfrage
+ok 8 - die Übersicht startet keine Provider-, Such- oder Karten-Netzwerkanfrage
+  ---
+  duration_ms: 0.972417
+  type: 'test'
+  ...
+# Subtest: Ozean und neutrales Land sind zwei Flächen, nicht eine verwaschene Mintfläche
+ok 9 - Ozean und neutrales Land sind zwei Flächen, nicht eine verwaschene Mintfläche
+  ---
+  duration_ms: 2.912459
+  type: 'test'
+  ...
+# Subtest: das Gradnetz bleibt vorhanden und ist zurückgenommen
+ok 10 - das Gradnetz bleibt vorhanden und ist zurückgenommen
+  ---
+  duration_ms: 0.315208
+  type: 'test'
+  ...
+# Subtest: Besucht, geplant und beides bleiben additiv und nicht deckend
+ok 11 - Besucht, geplant und beides bleiben additiv und nicht deckend
+  ---
+  duration_ms: 0.398083
+  type: 'test'
+  ...
+# Subtest: die Auswahl sitzt in der Atlaskante und nicht nur in der Ortsliste
+ok 12 - die Auswahl sitzt in der Atlaskante und nicht nur in der Ortsliste
+  ---
+  duration_ms: 0.069459
+  type: 'test'
+  ...
+# Subtest: weite Desktops nutzen die Breite, schmale nicht per Ausbruch
+ok 13 - weite Desktops nutzen die Breite, schmale nicht per Ausbruch
+  ---
+[bounded excerpt; middle lines omitted; totals retained]
+      ---
+      duration_ms: 10.279959
+      type: 'test'
+      ...
+    # Subtest: uncontrolled markup starts from defaultChecked
+    ok 2 - uncontrolled markup starts from defaultChecked
+      ---
+      duration_ms: 2.186458
+      type: 'test'
+      ...
+    # Subtest: controlled indeterminate renders mixed visual state
+    ok 3 - controlled indeterminate renders mixed visual state
+      ---
+      duration_ms: 0.467667
+      type: 'test'
+      ...
+    # Subtest: optional label uses a single htmlFor association
+    ok 4 - optional label uses a single htmlFor association
+      ---
+      duration_ms: 0.427917
+      type: 'test'
+      ...
+    1..4
+ok 1196 - Checkbox consent interaction contract
+  ---
+  duration_ms: 13.81825
+  type: 'suite'
+  ...
+# Subtest: RegisterForm consent wiring remains explicit
+    # Subtest: default consent stays unchecked and submit stays gated
+    ok 1 - default consent stays unchecked and submit stays gated
+      ---
+      duration_ms: 0.115625
+      type: 'test'
+      ...
+    # Subtest: legal links keep destinations and do not activate the label
+    ok 2 - legal links keep destinations and do not activate the label
+      ---
+      duration_ms: 0.080666
+      type: 'test'
+      ...
+    1..2
+ok 1197 - RegisterForm consent wiring remains explicit
+  ---
+  duration_ms: 0.341792
+  type: 'suite'
+  ...
+# Subtest: operating-mode guard fixtures
+    # Subtest: valid HOLD schema passes
+    ok 1 - valid HOLD schema passes
+      ---
+      duration_ms: 1.087041
+      type: 'test'
+      ...
+    # Subtest: schema without dedicated HOLD-exit contract fields fails
+    ok 2 - schema without dedicated HOLD-exit contract fields fails
+      ---
+      duration_ms: 0.183666
+      type: 'test'
+      ...
+    # Subtest: governance branch + allowed files => pass
+    ok 3 - governance branch + allowed files => pass
+      ---
+      duration_ms: 1.049541
+      type: 'test'
+      ...
+    # Subtest: product/runtime file during HOLD => fail
+    ok 4 - product/runtime file during HOLD => fail
+      ---
+      duration_ms: 0.179417
+      type: 'test'
+      ...
+    # Subtest: unauthorized branch during HOLD => fail
+    ok 5 - unauthorized branch during HOLD => fail
+      ---
+      duration_ms: 0.100125
+      type: 'test'
+      ...
+    # Subtest: stale merge-authority phrase => fail
+    ok 6 - stale merge-authority phrase => fail
+      ---
+      duration_ms: 0.231708
+      type: 'test'
+      ...
+    # Subtest: normal main push validation => pass
+    ok 7 - normal main push validation => pass
+      ---
+      duration_ms: 0.059625
+      type: 'test'
+      ...
+    # Subtest: path allowlist and branch class helpers
+    ok 8 - path allowlist and branch class helpers
+      ---
+      duration_ms: 0.131208
+      type: 'test'
+      ...
+    # Subtest: head NORMAL while base HOLD without dedicated closure shape => fail
+    ok 9 - head NORMAL while base HOLD without dedicated closure shape => fail
+      ---
+      duration_ms: 0.297083
+      type: 'test'
+      ...
+    # Subtest: head NORMAL while base HOLD with dedicated closure shape => pass
+    ok 10 - head NORMAL while base HOLD with dedicated closure shape => pass
+      ---
+      duration_ms: 0.36075
+      type: 'test'
+      ...
+    # Subtest: head-broadened allowlist cannot authorize otherwise forbidden files
+    ok 11 - head-broadened allowlist cannot authorize otherwise forbidden files
+      ---
+      duration_ms: 1.707041
+      type: 'test'
+      ...
+    # Subtest: head-broadened authorized branches cannot authorize an otherwise forbidden branch
+    ok 12 - head-broadened authorized branches cannot authorize an otherwise forbidden branch
+      ---
+      duration_ms: 0.223667
+      type: 'test'
+      ...
+    # Subtest: parseNameStatus evaluates rename and copy source plus destination
+    ok 13 - parseNameStatus evaluates rename and copy source plus destination
+      ---
+      duration_ms: 0.124208
+      type: 'test'
+      ...
+    # Subtest: forbidden→allowed rename during HOLD => fail
+    ok 14 - forbidden→allowed rename during HOLD => fail
+      ---
+      duration_ms: 0.129292
+      type: 'test'
+      ...
+    # Subtest: allowed→forbidden rename during HOLD => fail
+    ok 15 - allowed→forbidden rename during HOLD => fail
+      ---
+      duration_ms: 0.069
+      type: 'test'
+      ...
+    # Subtest: forbidden deletion during HOLD => fail
+    ok 16 - forbidden deletion during HOLD => fail
+      ---
+      duration_ms: 0.094625
+      type: 'test'
+      ...
+    1..16
+ok 1198 - operating-mode guard fixtures
+  ---
+  duration_ms: 6.794042
+  type: 'suite'
+  ...
+1..1198
+# tests 5806
+# suites 810
+# pass 5806
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 459562.664918

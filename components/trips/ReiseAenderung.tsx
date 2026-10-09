@@ -13,6 +13,7 @@
 // Ein Speicherfehler löscht die Vorschau nicht. Der Aufruf hat Geld gekostet.
 
 import * as React from 'react'
+import { useWorkspaceEditSurface } from './TripWorkspaceEditSurface'
 import dynamic from 'next/dynamic'
 const Manuell = dynamic(() => import('@/components/trips/ReiseAenderungManuell'))
 import { Sparkles } from 'lucide-react'
@@ -61,7 +62,7 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
   const anlauf = React.useRef(0)
   const alive = React.useRef(true)
   React.useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
-  React.useEffect(() => { onSperre(laeuft); return () => onSperre(false) }, [laeuft, onSperre])
+  React.useLayoutEffect(() => { onSperre(laeuft); return () => onSperre(false) }, [laeuft, onSperre])
   const flight = React.useRef(false)
   const identity = React.useRef({ id: reise.id, revision: reise.revision, quelle })
   React.useEffect(() => { identity.current = { id: reise.id, revision: reise.revision, quelle } }, [reise.id, reise.revision, quelle])
@@ -224,9 +225,11 @@ export default function ReiseAenderung(props: ReiseAenderungProps) {
   return <AenderungsSitzung key={`${props.quelle}:${props.reise.id}`} {...props} />
 }
 function AenderungsSitzung(props: ReiseAenderungProps) {
+  const surface = useWorkspaceEditSurface()
   const [modus, setModus] = React.useState<'direkt' | 'text'>('direkt')
   const [generation, setGeneration] = React.useState(0)
   const [sperre, setSperre] = React.useState(false)
+  React.useLayoutEffect(() => { surface?.setBusy(sperre); return () => surface?.setBusy(false) }, [sperre, surface])
   return <section aria-label="Reise ändern" data-aenderung-sperre={sperre ? 'true' : 'false'}>
     <div className="mt-5 flex flex-wrap gap-2" aria-label="Bearbeitungsart">
       <button data-aenderung-start type="button" disabled={sperre} aria-pressed={modus === 'direkt'} className="min-h-11 rounded-full border border-line-200 bg-white px-5 py-3 focus-visible:ring-2" onClick={() => setModus('direkt')}>Direkt bearbeiten</button>

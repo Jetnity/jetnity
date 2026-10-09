@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "mode": "checks",
+  "startedAt": "2026-10-09T14:11:27.747Z",
+  "codeHead": "c3004bc159bc86a7eb25b741cc0aab49344c63c8",
+  "sources": {
+    "components/trips/TripWorkspace.tsx": "1375be77e0b8d9f4aa9bad8bf10b826c0bf445f8ee14413cf7d2cfb88682d54b",
+    "components/trips/TripWorkspaceEditSurface.tsx": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041",
+    "components/trips/ReiseAenderung.tsx": "f7df0f87043746314c8e46803bb662aa4cf9df1761f29340b8de4fe479afb08e",
+    "components/trips/ReiseAenderungManuell.tsx": "0d5a4192bdccc23891a0f10f58c631c1ec34bc1292fbbea384945a9b369280b3",
+    "components/trips/ReiseAenderungAuswirkungen.tsx": "bc9401ed0c71b96cae73220910c7e35c7fc390f0f7991fd2f0745337a1d3290c",
+    "lib/trips/workspace-edit-focus.ts": "98aaf72c8dc39bd2048e39301347cc751b6a6824106606a70b570701ae96bec1"
+  },
+  "steps": [
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "durationMs": 2008,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/typecheck.log"
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "durationMs": 13788,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/lint.log"
+    },
+    {
+      "name": "check-dead",
+      "exitCode": 0,
+      "durationMs": 296,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-dead.log"
+    },
+    {
+      "name": "check-exports",
+      "exitCode": 0,
+      "durationMs": 3064,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-exports.log"
+    },
+    {
+      "name": "check-deps",
+      "exitCode": 0,
+      "durationMs": 223,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-deps.log"
+    },
+    {
+      "name": "check-api-schutz",
+      "exitCode": 0,
+      "durationMs": 141,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-api-schutz.log"
+    },
+    {
+      "name": "check-schema-bezug",
+      "exitCode": 0,
+      "durationMs": 206,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-schema-bezug.log"
+    },
+    {
+      "name": "check-operating-mode",
+      "exitCode": 0,
+      "durationMs": 957,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/check-operating-mode.log"
+    },
+    {
+      "name": "diff-check",
+      "exitCode": 0,
+      "durationMs": 17,
+      "log": "docs/evidence/trip-workspace-contextual-editing-ux-1/logs/diff-check.log"
+    }
+  ],
+  "boundary": "Owned local production build; synthetic Guest and local Account fixtures; no hosted writes or paid/model/provider activation",
+  "finishedAt": "2026-10-09T14:11:48.460Z"
+}
