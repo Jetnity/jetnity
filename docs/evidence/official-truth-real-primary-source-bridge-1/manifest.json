@@ -1,0 +1,145 @@
+{
+  "schema": "official-truth-real-primary-source-bridge-1-manifest-v1",
+  "baselineMain": "2ee48bcd40ba9c056898474a2eab87d0ce0d91ca",
+  "preparedHead": "093efa9ba610a856b498899dda826a6c74e29798",
+  "scope": "All final branch changed files relative to baseline, including immutable seed documents; manifest itself excluded to avoid self-reference. Compare Git tree/commit in final PR receipt.",
+  "excludedSelf": "docs/evidence/official-truth-real-primary-source-bridge-1/manifest.json",
+  "fileCountExcludingSelf": 20,
+  "files": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_CONTRACTS_2026-10-09.md",
+      "bytes": 9607,
+      "sha256": "96421f153d5a1a5a43b2262b5dab6a99973f50e76dd9106cf70f11e660646cb7",
+      "gitBlob": "92fab82c67e988a8fa0417c51675f58056fc8f96"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_HANDOFF_2026-10-09.md",
+      "bytes": 3544,
+      "sha256": "a4721a2a407964f4ea6c475afdd04d1900387db8fcb768f385b52b04c67434da",
+      "gitBlob": "41b29c3614a0d92ec01046b92971423e779c0fd1"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_PLAN_2026-10-09.md",
+      "bytes": 4043,
+      "sha256": "9de66b27d36783dead7340e6ca4d73d8836f65ab937e2565c601811d32ac2a09",
+      "gitBlob": "35004b1aa6e68cf2ed259d80847c761412579994"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_REPORT_2026-10-09.md",
+      "bytes": 10692,
+      "sha256": "e241be7a93ee47f20953563d5b831b393c796164c698b695245491a78e4a37e6",
+      "gitBlob": "2b9da9bfdbd0bb8d6beec8bd7428516947c2dea3"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_SELF_REVIEW_2026-10-09.md",
+      "bytes": 3079,
+      "sha256": "aa18a912d91d96bb2b200e2bd9774968fe848c2b582564535893b2230fa3b4cc",
+      "gitBlob": "572c5449835a62757a9fe1acb33252c62c6d3431"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_STATUS_2026-10-09.md",
+      "bytes": 2620,
+      "sha256": "f7c6710c6bfb5682a76394b95924ce796cae590d7f2f2e82e83054d6b2d9c3b5",
+      "gitBlob": "466cb7476ebacb36c24443da239c163c7b37092e"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_TASK_2026-10-09.md",
+      "bytes": 17779,
+      "sha256": "578a604b684724575ba30f19ab2eb700126461310008aef62ea15941218da5ce",
+      "gitBlob": "a8c51c72c29d523c77786bae2d810a61ff8c9814"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_TL_PRECHECK_2026-10-09.md",
+      "bytes": 2031,
+      "sha256": "597c4c438b03892a2f875901a75f599f78fe06206645156a766d72586c3b6c23",
+      "gitBlob": "8c9ca367f8c6072936eabf7af781850ea7c566fa"
+    },
+    {
+      "path": "docs/evidence/official-truth-real-primary-source-bridge-1/live.json",
+      "bytes": 1724,
+      "sha256": "2dc5ff8498156031b1307af2576a71fa09241d76ba536452bef914e77031e329",
+      "gitBlob": "8ec1d0667425f10d31b28afdca1251e175fabd01"
+    },
+    {
+      "path": "docs/evidence/official-truth-real-primary-source-bridge-1/offline.json",
+      "bytes": 3794,
+      "sha256": "69ad2ba1dfed9b0abbbbcb7512e22c86098e5d071cfa843b1c9a511d1f8fcab7",
+      "gitBlob": "12302f803ea4476d986915e82bc36fda0e79a091"
+    },
+    {
+      "path": "docs/evidence/official-truth-real-primary-source-bridge-1/validation.json",
+      "bytes": 17490,
+      "sha256": "1e9b400eec8fcec8e5506ecdfce24cecf295e9ac01d9bbdd0086172474cf385e",
+      "gitBlob": "2f0597e991247c387e9d854f3a7526dff359141a"
+    },
+    {
+      "path": "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
+      "bytes": 19451,
+      "sha256": "7996a5d661e4535778ebcab876599621cb7b0c5d9b4201f54658f0575f48699d",
+      "gitBlob": "019fa8cb2422a54ee7e3a8fe65d4144cf0318e20"
+    },
+    {
+      "path": "scripts/official-truth-integrated-pilot-1/official-source.ts",
+      "bytes": 9255,
+      "sha256": "b6f1fe0467be29c973f91149199cc141854df37d812b091bda007c71002c03af",
+      "gitBlob": "5732ceca7fb2a3d37822a58954e3118e768229c6"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/bridge.ts",
+      "bytes": 6296,
+      "sha256": "7d8e6dd40167592a9400d1057d800590db8ef95a897414177b17c7f54d9d8ea4",
+      "gitBlob": "6d3e981e49d0a61335bcea6ebd7333ff2b371ad8"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/fixtures.ts",
+      "bytes": 2028,
+      "sha256": "b3db441e6cef8504660d232e69707034fc5a7cc921b3b5d74f45b9edd58d5474",
+      "gitBlob": "f567ddb0046fa551ed76939fdd3c3bc2f2cc91fb"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/manifest.ts",
+      "bytes": 1630,
+      "sha256": "e06906eee628bbcb0fa01843135dd76b7b34e7ecf145bbe4406a3427236acbb4",
+      "gitBlob": "f987a6a878b318193575c9f530700c74e074f0d7"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/qualification.ts",
+      "bytes": 4639,
+      "sha256": "35b1a381d7e38b3beb537f5d66e210da09e1918876906c2eaabb73b96d70dee0",
+      "gitBlob": "f64a7d6e1fb92b897103252f466f9d95b25abad5"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/report.ts",
+      "bytes": 6673,
+      "sha256": "1f22afe82e03859772ef8d3aef763da03396ab133bb0500f922d30c3703638ee",
+      "gitBlob": "a2bb345ea44926b06963d0f01561b9257a531c61"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/research.ts",
+      "bytes": 3439,
+      "sha256": "1f91b7df8b7e7cf229241f8111dc8aa0974b3da1a91a9cb3fd3bc03ab1e14361",
+      "gitBlob": "842d9e08d15d4f039305a74656c2e8e379073010"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/run.ts",
+      "bytes": 1481,
+      "sha256": "ff6ace7f35cb41ca82720bdf054acfad3390a1a33f28c1648b8a63e7d1d0b8c0",
+      "gitBlob": "ccde1d9d4462a7ffc49ac44b35ccc465dbcda678"
+    }
+  ],
+  "immutableProofs": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_REAL_PRIMARY_SOURCE_BRIDGE_1_TASK_2026-10-09.md",
+      "gitBlob": "a8c51c72c29d523c77786bae2d810a61ff8c9814",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/official-truth-integrated-pilot-1/official-source.json",
+      "gitBlob": "d7fc909c13dfae94bbac33c1d15942266bb2fcbf",
+      "unchanged": true
+    }
+  ],
+  "frozenPathsChanged": false,
+  "productionRegistriesChanged": false,
+  "newDependencies": false
+}
