@@ -1,0 +1,254 @@
+{
+  "schema": "official-truth-whole-response-qualification-2-validation-v1",
+  "classification": "author_local_evidence_not_TL_PASS",
+  "baselineFocused": {
+    "tests": 82,
+    "suites": 6,
+    "pass": 82,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 368.552459
+  },
+  "redOrderingAndReportState": {
+    "tests": 84,
+    "suites": 6,
+    "pass": 82,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 404.22125
+  },
+  "greenOrderingAndReportState": {
+    "tests": 84,
+    "suites": 6,
+    "pass": 84,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 445.658667
+  },
+  "finalFocused": {
+    "tests": 286,
+    "suites": 7,
+    "pass": 286,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 343.398125
+  },
+  "finalFocusedAndExistingProfile": {
+    "tests": 619,
+    "suites": 11,
+    "pass": 619,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 827.516667
+  },
+  "initialFullNative": {
+    "tests": 6092,
+    "suites": 817,
+    "pass": 6089,
+    "fail": 3,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 378274.761506
+  },
+  "initialFullNativeFailures": [
+    "Two existing Git checks failed because disposable copy omitted Git metadata; restored actual Git metadata in repeat.",
+    "Existing ownership guard rejected direct frozen-profile import; corrected to existing permitted adapter, guard unchanged."
+  ],
+  "finalFullNative": {
+    "tests": 6092,
+    "suites": 817,
+    "pass": 6092,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 377805.991672
+  },
+  "nativeGroups": [
+    {
+      "status": "PASS",
+      "checks": 19,
+      "codecComparisons": 1008,
+      "guardLossScenarios": [
+        "cancel",
+        "terminate",
+        "dispatch_gap",
+        "ack_race"
+      ]
+    },
+    {
+      "status": "PASS",
+      "checks": 16,
+      "scope": "synthetic_storage_structure_only",
+      "integratedReceiptRoundtrip": "NOT_VERIFIED",
+      "fullSemanticPublication": "BLOCKED",
+      "productionActivation": false,
+      "hostedApply": false
+    },
+    {
+      "status": "PASS",
+      "checks": 69,
+      "profile": "ot-integrated-pilot-local-closure-v2",
+      "primary": {
+        "outcome": "inserted",
+        "repeat": "idempotent",
+        "readback": "VERIFIED",
+        "rowCount": 652
+      },
+      "composed": {
+        "outcome": "inserted",
+        "repeat": "idempotent",
+        "readback": "VERIFIED",
+        "rowCount": 720
+      },
+      "integratedReceiptRoundtrip": "VERIFIED",
+      "fullSemanticPublication": "VERIFIED",
+      "productionActivation": false,
+      "hostedApply": false
+    }
+  ],
+  "localEnvironment": {
+    "node": "22.23.3",
+    "nativePostgreSQL": "16.15",
+    "network": "none",
+    "cpus": 4,
+    "memoryGiB": 4,
+    "inputCheckout": "owned_readonly_mount_copied_to_disposable_directory_including_git",
+    "dependencies": "existing_linux_image_lockfile_compared_equal",
+    "connectionEnvironment": "image_inherited_connection_variables_removed_original_guards_unchanged"
+  },
+  "commands": [
+    {
+      "command": "npm ci --offline",
+      "exitCode": 0
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
+      "exitCode": 0
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-real-primary-source-bridge-1.test.ts lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts",
+      "exitCode": 0
+    },
+    {
+      "command": "npm test",
+      "context": "final_complete_networkless_native_linux_run",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "errors": 0,
+      "existingUnrelatedWarnings": 144
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 0,
+      "seconds": 0.477
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "seconds": 0.227
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "seconds": 0.182
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "seconds": 0.295
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "seconds": 0.392
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "seconds": 3.857
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "seconds": 0.299
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "liveReads": [
+    {
+      "retrievedAt": "2026-10-09T17:30:28.483Z",
+      "responseBytes": 7788,
+      "redirectCount": 0,
+      "sourceStatus": "BLOCKED",
+      "stage": "qualification",
+      "reason": "opaque_publishing_metadata"
+    },
+    {
+      "retrievedAt": "2026-10-09T17:33:51.034Z",
+      "responseBytes": 7788,
+      "redirectCount": 0,
+      "sourceStatus": "BLOCKED",
+      "stage": "qualification",
+      "reason": "opaque_publishing_metadata"
+    },
+    {
+      "retrievedAt": "2026-10-09T17:35:02.526Z",
+      "responseBytes": 7788,
+      "redirectCount": 0,
+      "sourceStatus": "BLOCKED",
+      "stage": "qualification",
+      "reason": "opaque_publishing_metadata"
+    },
+    {
+      "retrievedAt": "2026-10-09T17:40:40.930Z",
+      "responseBytes": 7788,
+      "redirectCount": 0,
+      "sourceStatus": "BLOCKED",
+      "stage": "qualification",
+      "reason": "opaque_publishing_metadata"
+    }
+  ],
+  "sourceResult": "BLOCKED_opaque_publishing_metadata",
+  "regulatoryResult": "BLOCKED",
+  "privacyScan": {
+    "taskOwnedFilesOnly": true,
+    "localHomePaths": 0,
+    "credentialPatterns": 0,
+    "emailPatterns": 0,
+    "realBodyOrOpaqueValuePersisted": false,
+    "liveObservation": null,
+    "liveResearch": null
+  },
+  "limitations": [
+    "No local hosted Auth call; TL verifies exact-head CI Auth Abgleich.",
+    "Exact-head CI and Vercel Preview are independent TL gates, not replaced by author tests.",
+    "No physical-device, hosted database, provider or Production test/action claimed.",
+    "Structure-only success is not privacy/legal admission."
+  ]
+}

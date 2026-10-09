@@ -1,0 +1,123 @@
+{
+  "schema": "official-truth-whole-response-qualification-2-manifest-v1",
+  "baseMain": "b00e5b29f6c523f6e3b10f82f3032d90c503a251",
+  "initialHead": "3fb8f90c36c9282928ae015c478130ded8945e3d",
+  "taskBlob": "4d69d2bdaf7233118dac6f542851e7bd8d14dde3",
+  "manifestSelfExcluded": true,
+  "files": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_CONTRACTS_2026-10-09.md",
+      "bytes": 13240,
+      "sha256": "41a7a50373455b5ce6c331abd98d9a08238610cb14c675ca239452678bbf39ea",
+      "gitBlob": "a98954770e8ce17bfca3f8df2b504e39a392b326"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_HANDOFF_2026-10-09.md",
+      "bytes": 3328,
+      "sha256": "ccdbb2e6c154336c7175601e9dead9024217dbc96e3599baba6c197ae3a48902",
+      "gitBlob": "38f3d0cfd038adc50edd32d2b649204e6ec7e012"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_PLAN_2026-10-09.md",
+      "bytes": 3772,
+      "sha256": "a0ac02ea6b567ef0640416ab1e3953361cf181bca3f5daa9c157559189388ac6",
+      "gitBlob": "f1821c23a6bbbb0697dadf7cb3641c16dc4ba556"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_REPORT_2026-10-09.md",
+      "bytes": 10121,
+      "sha256": "f2495a18b8154677cb0934e44f9314c213fbe524e33b605dbebff4c46c71e211",
+      "gitBlob": "8fbf39a7c7bcb0986dae78e9bd8cda5eaebaff02"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_SELF_REVIEW_2026-10-09.md",
+      "bytes": 4793,
+      "sha256": "03f7be44a99d6b2b79149019a50869143149a4eabff1716fc969e62b9ee78eca",
+      "gitBlob": "4190529d2502e03e0862478a5948db81b505c162"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_STATUS_2026-10-09.md",
+      "bytes": 2100,
+      "sha256": "4c1927ee5fd041f216e11018596d48f5e0bab2781ac3fcf2441b79ab0d9360d4",
+      "gitBlob": "e779b803ab845dbff679826cca52889ea8267348"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_WHOLE_RESPONSE_QUALIFICATION_2_TASK_2026-10-09.md",
+      "bytes": 9338,
+      "sha256": "be64d665a2d0c50ba3ebe193d5c24d7bd6188f1fb95c57b9e019ed24a8524b54",
+      "gitBlob": "4d69d2bdaf7233118dac6f542851e7bd8d14dde3"
+    },
+    {
+      "path": "docs/evidence/official-truth-whole-response-qualification-2/baseline-live.json",
+      "bytes": 1724,
+      "sha256": "38808ee5565f9aa576df0481887fd63c163a3812c82a38e7d6bbcc7158b53572",
+      "gitBlob": "09f66553bf56d0dc770d4db807c282b580cd8951"
+    },
+    {
+      "path": "docs/evidence/official-truth-whole-response-qualification-2/default.json",
+      "bytes": 1460,
+      "sha256": "35da20737cc58c9f8c8f1831c38c06e0d53741ec01b68e0d61de059a74c64391",
+      "gitBlob": "b80a09f2e509ba90d0403fe483aaebaec572336d"
+    },
+    {
+      "path": "docs/evidence/official-truth-whole-response-qualification-2/live.json",
+      "bytes": 1801,
+      "sha256": "89252725863edc12fdb1e29a3760f01dd7410afc09debd8b15e0a59b570ea57c",
+      "gitBlob": "ee463512a82f944d155e276582afd61b7625a76a"
+    },
+    {
+      "path": "docs/evidence/official-truth-whole-response-qualification-2/offline.json",
+      "bytes": 3871,
+      "sha256": "13622344652217124939a04c6d05f3bb7ae8c0ceb9c84c7a89ef37a4e2880347",
+      "gitBlob": "7f9c3cb626200a612f0c51cd69847ba4694acfe4"
+    },
+    {
+      "path": "docs/evidence/official-truth-whole-response-qualification-2/validation.json",
+      "bytes": 6490,
+      "sha256": "919fe11f8d59e7ca29fedce8fb4d094c45c06eeecd304c0498a89a9af577b693",
+      "gitBlob": "32caf44028b12667853f8ec1678777da636a22fe"
+    },
+    {
+      "path": "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts",
+      "bytes": 29019,
+      "sha256": "5572f6209e58eaea944a7506c317ffa9e1ef5081b993790a8128a1dcb4444e0c",
+      "gitBlob": "7fce66c443d979e18a05b50a88113600ad7d414e"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/bridge.ts",
+      "bytes": 6399,
+      "sha256": "e222f7380f5c9334f8e3db6ce58cd6eec4a0f55ed944922c2feab20509691529",
+      "gitBlob": "583c4364d8609aa198316a5dd56ad5042037d098"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/fixtures.ts",
+      "bytes": 3647,
+      "sha256": "76b05be7aada9786e578bc99a3bc24e3c50cc128361ee9e45af72f8c9102530c",
+      "gitBlob": "ab087d179c0cea884b41c554177d74ef1ec5a4ff"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/fragment.ts",
+      "bytes": 2864,
+      "sha256": "d9bc16880eb3d88ab2e9fa6dce397679b0cc4dac00f4c09fe67fccdf6750b0a2",
+      "gitBlob": "54e683911cc815838863b0da41a388ee7cc9f298"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/qualification.ts",
+      "bytes": 2438,
+      "sha256": "3297d88f949cfc1c9b7fcdc2dab0200ac170c2c6e3f26e928f4c0404d611e123",
+      "gitBlob": "9ebac67acd6ab69b20e1e1d6221fb16fe948f6b7"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/report.ts",
+      "bytes": 7253,
+      "sha256": "9b90ea808ff4aa132138a635b4a7559a9d825fa8ad790e30278c938127e3e11f",
+      "gitBlob": "2241bae007731e5754f30bbf9191fcdad9e88572"
+    },
+    {
+      "path": "scripts/official-truth-real-primary-source-bridge-1/whole-response.ts",
+      "bytes": 7990,
+      "sha256": "1280e427fc0d1258917f639dd62e87b7cd05ae06eae8a7e85ca5299c6da97a0e",
+      "gitBlob": "ace54f584ebe1d810cbda93d61d15cf7eca2edff"
+    }
+  ]
+}

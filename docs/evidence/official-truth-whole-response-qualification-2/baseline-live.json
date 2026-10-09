@@ -1,0 +1,51 @@
+{
+  "schema": "official-truth-real-primary-source-bridge-1-v1",
+  "mode": "live",
+  "engineering": "EXECUTED",
+  "sourceStatus": "BLOCKED",
+  "regulatoryStatus": "BLOCKED",
+  "stage": "qualification",
+  "reason": "opaque_publishing_metadata",
+  "referenceAt": "2026-10-09T17:30:28.484Z",
+  "requestUrl": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+  "publicUrl": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+  "identity": {
+    "sourceId": "govuk",
+    "contentItemId": "eta-national-list",
+    "contentItemVersion": 1,
+    "representationId": "eta-national-list-api-en",
+    "representationVersion": 1,
+    "identityProfileId": "govuk-eta-national-list-content-api-en",
+    "identityProfileVersion": 1
+  },
+  "retrievedAt": "2026-10-09T17:30:28.483Z",
+  "responseBytes": 7788,
+  "redirectCount": 0,
+  "qualification": "BLOCKED",
+  "observation": null,
+  "research": null,
+  "observationQuality": null,
+  "gaps": [
+    "whole_response_privacy_unproved",
+    "legal_effect_unproved",
+    "travel_effective_period_unproved",
+    "appendix_exceptions_unexamined",
+    "ordinary_passport_predicate_unproved",
+    "scope_not_selected",
+    "official_action_unproved",
+    "custody_authority_unavailable"
+  ],
+  "conflictAssessment": "NOT_ASSESSED_SINGLE_SOURCE",
+  "provenanceAuthority": "NO_CUSTODY_OR_ACCEPTANCE_ORIGIN",
+  "previousRealOfficialSourcePilot": "BLOCKED",
+  "controls": {
+    "hostedWrites": 0,
+    "acceptedEvidence": 0,
+    "acceptedRules": 0,
+    "f8": false,
+    "productionChanges": false,
+    "rawBodyPublished": false,
+    "opaqueMetadataPublished": false,
+    "shippedRegistration": false
+  }
+}

@@ -33,13 +33,6 @@ export function evaluateResearchRetrieval(retrieval: OfficialTruthServerOwnedRet
     report.reason = 'invalid_reference_time'; return reportSchema.parse(report)
   }
   report.referenceAt = referenceAt
-  const research = createGapResearch(selection)
-  if (research.ok) {
-    report.research = { selection: research.selection, requestKey: research.requestKey, ruleScopeKey: research.candidate.key,
-      lifecycle: research.candidate.lifecycle, validationState: research.candidate.validationState,
-      evidenceQuality: 'research_gap', proposal: null, supportVersionIds: [], documentSubclassProven: false }
-    report.gaps = report.gaps.filter(g => g !== 'scope_not_selected')
-  }
   if (retrieval.status === 'blocked') { report.reason = retrieval.reason; return reportSchema.parse(report) }
   if (retrieval.requestUrl !== N.requestUrl || retrieval.canonicalUrl !== N.requestUrl || retrieval.contentType !== 'application/json'
     || retrieval.identitySchema !== 2 || Object.entries({ sourceId: N.sourceId, contentItemId: N.contentItemId,
@@ -51,7 +44,7 @@ export function evaluateResearchRetrieval(retrieval: OfficialTruthServerOwnedRet
   }
   const age = observationAge(retrieval.retrievedAt, referenceAt)
   if (age === 'invalid_reference_time') { report.reason = age; return reportSchema.parse(report) }
-  const q = qualifyNationalList(retrieval.sourceSnapshot, mode)
+  const q = qualifyNationalList(retrieval.sourceSnapshot, mode, retrieval.retrievedAt)
   // Expected descriptor values only; opaque metadata and unqualified hashes never escape.
   report.identity = { sourceId: 'govuk', contentItemId: 'eta-national-list', contentItemVersion: 1,
     representationId: 'eta-national-list-api-en', representationVersion: 1, identityProfileId: N.profileId, identityProfileVersion: 1 }
@@ -61,6 +54,14 @@ export function evaluateResearchRetrieval(retrieval: OfficialTruthServerOwnedRet
   report.qualification = 'SYNTHETIC_ONLY'; report.gaps = report.gaps.filter(g => g !== 'whole_response_privacy_unproved')
   const locator = locateNationality(q.row.details.body)
   if (!locator) { report.stage = 'observation'; report.reason = 'locator_unproved'; return reportSchema.parse(report) }
+  // Never construct research/candidate material from a blocked upstream stage.
+  const research = createGapResearch(selection)
+  if (research.ok) {
+    report.research = { selection: research.selection, requestKey: research.requestKey, ruleScopeKey: research.candidate.key,
+      lifecycle: research.candidate.lifecycle, validationState: research.candidate.validationState,
+      evidenceQuality: 'research_gap', proposal: null, supportVersionIds: [], documentSubclassProven: false }
+    report.gaps = report.gaps.filter(g => g !== 'scope_not_selected')
+  }
   report.observation = { kind: 'source_list_membership_observation', identity: report.identity,
     literalResponseSha256: digest(retrieval.sourceSnapshot), normalizedSourceContentHash: retrieval.sourceContentHash,
     responseBytes: report.responseBytes, retrievedAt: retrieval.retrievedAt,
