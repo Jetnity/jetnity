@@ -1,0 +1,105 @@
+{
+  "schema": "official-truth-real-primary-source-bridge-1-v1",
+  "mode": "synthetic",
+  "engineering": "EXECUTED",
+  "sourceStatus": "SYNTHETIC_OBSERVATION_ONLY",
+  "regulatoryStatus": "BLOCKED",
+  "stage": "research",
+  "reason": "legal_predicate_unproved",
+  "referenceAt": "2026-10-09T12:00:00.000Z",
+  "requestUrl": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+  "publicUrl": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+  "identity": {
+    "sourceId": "govuk",
+    "contentItemId": "eta-national-list",
+    "contentItemVersion": 1,
+    "representationId": "eta-national-list-api-en",
+    "representationVersion": 1,
+    "identityProfileId": "govuk-eta-national-list-content-api-en",
+    "identityProfileVersion": 1
+  },
+  "retrievedAt": "2026-10-09T12:00:00.000Z",
+  "responseBytes": 3118,
+  "redirectCount": 0,
+  "qualification": "SYNTHETIC_ONLY",
+  "observation": {
+    "kind": "source_list_membership_observation",
+    "identity": {
+      "sourceId": "govuk",
+      "contentItemId": "eta-national-list",
+      "contentItemVersion": 1,
+      "representationId": "eta-national-list-api-en",
+      "representationVersion": 1,
+      "identityProfileId": "govuk-eta-national-list-content-api-en",
+      "identityProfileVersion": 1
+    },
+    "literalResponseSha256": "68f6aba3331a1cf572c6d293f506043e436a4c3861718bc56ba90a2c2fd4d374",
+    "normalizedSourceContentHash": "68f6aba3331a1cf572c6d293f506043e436a4c3861718bc56ba90a2c2fd4d374",
+    "responseBytes": 3118,
+    "retrievedAt": "2026-10-09T12:00:00.000Z",
+    "sourceAt": {
+      "firstPublishedAt": "2026-10-09T12:00:00.000Z",
+      "publicUpdatedAt": "2026-10-09T12:00:00.000Z",
+      "updatedAt": "2026-10-09T12:00:00.000Z"
+    },
+    "legalValidFrom": null,
+    "legalValidUntil": null,
+    "officialActionUrl": null,
+    "sourceUrl": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+    "representationUrl": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
+    "locator": {
+      "pointer": "/details/body",
+      "list": 1,
+      "item": 1,
+      "start": 123,
+      "end": 134,
+      "byteStart": 123,
+      "byteEnd": 134,
+      "quote": "Switzerland"
+    },
+    "entitlement": "UNPROVED",
+    "documentClass": "UNPROVED"
+  },
+  "research": {
+    "selection": {
+      "citizenship": "CH",
+      "documentClass": "ordinary_passport",
+      "issuingCountry": "CH",
+      "relatedCitizenship": "CH",
+      "destination": "GB",
+      "transitCountry": null,
+      "residenceCountry": null,
+      "travelDate": "2026-10-10"
+    },
+    "requestKey": "research-request:v1:388a581563e335d7398f19ef933f7cca636421f1663719d150f4ac78c0d6ed52",
+    "ruleScopeKey": "rule-scope:v1:69a3075aee4374615294bf00efb33a1ca80c782e2d7c244610a4be69d619ca64",
+    "lifecycle": "candidate",
+    "validationState": "pending",
+    "evidenceQuality": "research_gap",
+    "proposal": null,
+    "supportVersionIds": [],
+    "documentSubclassProven": false
+  },
+  "observationQuality": "research_gap",
+  "gaps": [
+    "legal_effect_unproved",
+    "travel_effective_period_unproved",
+    "appendix_exceptions_unexamined",
+    "ordinary_passport_predicate_unproved",
+    "official_action_unproved",
+    "custody_authority_unavailable"
+  ],
+  "conflictAssessment": "NOT_ASSESSED_SINGLE_SOURCE",
+  "provenanceAuthority": "NO_CUSTODY_OR_ACCEPTANCE_ORIGIN",
+  "previousRealOfficialSourcePilot": "BLOCKED",
+  "controls": {
+    "hostedWrites": 0,
+    "acceptedEvidence": 0,
+    "acceptedRules": 0,
+    "f8": false,
+    "productionChanges": false,
+    "rawBodyPublished": false,
+    "opaqueMetadataPublished": false,
+    "shippedRegistration": false
+  }
+}
