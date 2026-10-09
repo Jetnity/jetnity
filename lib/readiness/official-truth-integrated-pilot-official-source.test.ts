@@ -52,7 +52,7 @@ test('isolated real-network seam has one exact developer caller and keeps canoni
     }
   }
   for (const area of ['app', 'components', 'lib', 'scripts']) walk(join(root, area))
-  assert.deepEqual(found.sort(), ['lib/readiness/official-truth-server-owned-retrieval.ts', 'scripts/official-truth-integrated-pilot-1/official-source.ts'])
+  assert.deepEqual(found.sort(), ['lib/readiness/official-truth-server-owned-retrieval.ts', 'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts', 'scripts/official-truth-integrated-pilot-1/official-source.ts'])
   const source = readFileSync(join(root, 'lib/readiness/official-truth-server-owned-retrieval.ts'), 'utf8').split(`export async function ${name}`)[1]!
   assert.match(source, /catalog, now: serverUhr, resolve: serverDns, http: serverHttp/)
 })
