@@ -1,0 +1,21 @@
+{
+  "schema": "ch-de-visa-research-v1",
+  "sourceStatus": "SOURCE_NOT_QUALIFIED",
+  "regulatoryE2E": "NOT_RUN",
+  "acceptedOfficialTruth": false,
+  "f8": false,
+  "hostedImport": false,
+  "publicActivation": false,
+  "blockers": [
+    "whole_source_not_qualified",
+    "aa_identity_and_privacy_profile_not_approved",
+    "legal_scope_and_effective_interval_unproven",
+    "ordinary_passport_subclass_not_in_canonical_context",
+    "purpose_and_direct_route_not_in_provider_contract",
+    "trusted_accepted_reader_unavailable",
+    "owner_acceptance_and_activation_not_authorized"
+  ],
+  "mode": "OFFLINE",
+  "execution": "NOT_RUN",
+  "observations": []
+}

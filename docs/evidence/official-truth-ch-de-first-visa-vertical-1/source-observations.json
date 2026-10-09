@@ -1,0 +1,63 @@
+{
+  "schema": "ch-de-visa-research-v1",
+  "sourceStatus": "SOURCE_NOT_QUALIFIED",
+  "regulatoryE2E": "NOT_RUN",
+  "acceptedOfficialTruth": false,
+  "f8": false,
+  "hostedImport": false,
+  "publicActivation": false,
+  "blockers": [
+    "whole_source_not_qualified",
+    "aa_identity_and_privacy_profile_not_approved",
+    "legal_scope_and_effective_interval_unproven",
+    "ordinary_passport_subclass_not_in_canonical_context",
+    "purpose_and_direct_route_not_in_provider_contract",
+    "trusted_accepted_reader_unavailable",
+    "owner_acceptance_and_activation_not_authorized"
+  ],
+  "mode": "LIVE_RESEARCH",
+  "execution": "EXECUTED",
+  "observations": [
+    {
+      "source": "S1",
+      "url": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "startedAt": "2026-10-09T20:52:16.804Z",
+      "completedAt": "2026-10-09T20:52:17.515Z",
+      "status": "SOURCE_NOT_QUALIFIED",
+      "reason": "response_too_large",
+      "completeBodyBytes": null,
+      "allowedMediaType": "text/html",
+      "observedMediaType": null,
+      "redirectCount": null,
+      "fullResponseSizeKnown": false,
+      "exceedsBodyBound": true,
+      "identityQualified": false,
+      "privacyQualified": false,
+      "legalLocator": null,
+      "candidateEvidence": "NOT_CREATED",
+      "ruleReview": "NOT_RUN",
+      "acceptedRule": "NOT_CREATED"
+    },
+    {
+      "source": "S2",
+      "url": "https://www.auswaertiges-amt.de/de/service/fragenkatalog-node/01-visumnoetig-606470",
+      "startedAt": "2026-10-09T20:52:17.515Z",
+      "completedAt": "2026-10-09T20:52:17.888Z",
+      "status": "SOURCE_NOT_QUALIFIED",
+      "reason": "response_too_large",
+      "completeBodyBytes": null,
+      "allowedMediaType": "text/html",
+      "observedMediaType": null,
+      "redirectCount": null,
+      "fullResponseSizeKnown": false,
+      "exceedsBodyBound": true,
+      "identityQualified": false,
+      "privacyQualified": false,
+      "legalLocator": null,
+      "candidateEvidence": "NOT_CREATED",
+      "ruleReview": "NOT_RUN",
+      "acceptedRule": "NOT_CREATED"
+    }
+  ],
+  "captureNote": "Original live diagnostic before wording-only sizeObservation refinement. exceedsBodyBound means guard declared-or-observed cap refusal, not a measured full-response size. No live source was retried."
+}

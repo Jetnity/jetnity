@@ -310,6 +310,8 @@ const forbiddenCalls = ['evidenceKandidatAkzeptieren', 'officialTruthAkzeptierte
 // #899: historical bundle verification and pure custodied proof invariants only.
 // No registry-wide, directory-wide or namespace-import exception is authorized.
 const reviewedFoundationImports = new Map<string, readonly string[]>([
+  ['lib/readiness/official-truth-ch-de-first-visa-vertical-1/research.ts\0official-truth-autonomous-provenance-artifact',
+    ['immutable', 'provenanceCanonical']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-artifact',
     ['decodeProvenanceBytes', 'historicalValuesEqual', 'ownRecord', 'pinsEqual', 'provenanceCanonical', 'provenanceHash', 'readPin', 'Pin']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-record',
@@ -323,6 +325,10 @@ function foundationImporterAllowed(path: string, importedModule: string, names: 
   return !!expected && names.length === expected.length && new Set(names).size === names.length && names.every(name => expected.includes(name))
 }
 test('foundation finite importer guard rejects unknown paths, modules, namespace and extra imports', () => {
+  const chde = 'lib/readiness/official-truth-ch-de-first-visa-vertical-1/research.ts'
+  assert.equal(foundationImporterAllowed(chde, 'official-truth-autonomous-provenance-artifact', ['immutable', 'provenanceCanonical']), true)
+  assert.equal(foundationImporterAllowed(chde + '.evil.ts', 'official-truth-autonomous-provenance-artifact', ['immutable', 'provenanceCanonical']), false)
+  assert.equal(foundationImporterAllowed(chde, 'official-truth-autonomous-provenance-artifact', ['immutable', 'provenanceCanonical', 'historicalPinFor']), false)
   const path = 'lib/readiness/official-truth-same-request-proof-server.ts'
   const importedModule = 'official-truth-autonomous-provenance-record'
   assert.equal(foundationImporterAllowed(path, importedModule, ['readHistoricalArtifact']), true)
