@@ -24,3 +24,26 @@ export function nationalListFixture() {
     scheduled_publishing_delay_seconds: null, schema_name: 'manual_section',
     title: 'Synthetic National List fixture', updated_at: FIXTURE_TIME, withdrawn_notice: {} }
 }
+
+/** SYNTHETIC structural coverage only, deliberately NOT a qualified observation.
+ * Exercises every optional linked-metadata family without copying real values. */
+export function nationalListStructuralFixture() {
+  const row = nationalListFixture()
+  const publicMetadata = { acronym: 'SYN', brand: 'synthetic-brand',
+    default_news_image: { high_resolution_url: 'https://assets.publishing.service.gov.uk/media/synthetic/high.png',
+      url: 'https://assets.publishing.service.gov.uk/media/synthetic/low.png' },
+    logo: { crest: 'synthetic-crest', formatted_title: 'Synthetic<br/>organisation' },
+    organisation_govuk_status: { status: 'live', updated_at: FIXTURE_TIME,
+      url: 'https://www.gov.uk/government/organisations/home-office' } }
+  return { ...row, details: { ...row.details,
+    change_history: [{ public_timestamp: FIXTURE_TIME, note: 'Synthetic change only' }],
+    organisations: [{ title: 'Synthetic organisation', abbreviation: 'SYN',
+      web_url: 'https://www.gov.uk/government/organisations/home-office' }] },
+    links: { ...row.links,
+      available_translations: row.links.available_translations.map(x => ({ ...x, public_updated_at: FIXTURE_TIME })),
+      manual: row.links.manual.map(x => ({ ...x, public_updated_at: FIXTURE_TIME })),
+      organisations: row.links.organisations.map(x => ({ ...x, analytics_identifier: 'synthetic-analytics', details: publicMetadata })),
+      primary_publishing_organisation: row.links.primary_publishing_organisation.map(x => ({ ...x,
+        analytics_identifier: 'synthetic-analytics', details: structuredClone(publicMetadata) })),
+    } }
+}

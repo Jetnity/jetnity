@@ -8,7 +8,8 @@ import { OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY } from './official-tru
 import { OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY } from './official-truth-trusted-fact-extractor-registry'
 import { requirementsProviderAus } from './provider'
 import { nationalListResearchCatalog, verifyNationalListResearchText } from '../../scripts/official-truth-integrated-pilot-1/official-source'
-import { FIXTURE_BODY, FIXTURE_TIME, nationalListFixture } from '../../scripts/official-truth-real-primary-source-bridge-1/fixtures'
+import { FIXTURE_BODY, FIXTURE_TIME, nationalListFixture, nationalListStructuralFixture } from '../../scripts/official-truth-real-primary-source-bridge-1/fixtures'
+import { checkNationalListWholeResponse, WHOLE_RESPONSE_CONTRACT } from '../../scripts/official-truth-real-primary-source-bridge-1/whole-response'
 import { NATIONAL_LIST as N } from '../../scripts/official-truth-real-primary-source-bridge-1/manifest'
 import { digest, locateNationality, qualifyNationalList } from '../../scripts/official-truth-real-primary-source-bridge-1/qualification'
 import { evaluateResearchRetrieval, retrieveSyntheticNationalList, runOfflineFixture } from '../../scripts/official-truth-real-primary-source-bridge-1/bridge'
@@ -23,7 +24,136 @@ const set = (row: unknown, path: (string | number)[], value: unknown) => {
   x[path.at(-1)!] = value
 }
 
+describe('qualification 2 complete proposed structure, never privacy admission', () => {
+  const check = (value: unknown, at = FIXTURE_TIME) => checkNationalListWholeResponse(JSON.stringify(value), at)
+  test('minimal and full synthetic structures pass only STRUCTURE_ONLY', () => {
+    for (const row of [nationalListFixture(), nationalListStructuralFixture()]) {
+      assert.deepEqual(check(row), { ok: true, status: 'STRUCTURE_ONLY', contract: WHOLE_RESPONSE_CONTRACT })
+      assert.deepEqual(qualifyNationalList(JSON.stringify(row), 'live', FIXTURE_TIME),
+        { ok: false, stage: 'qualification', reason: 'whole_response_review_not_established' })
+    }
+    assert.equal(qualifyNationalList(JSON.stringify(nationalListStructuralFixture()), 'synthetic').ok, false)
+  })
+  // Traverse this explicitly synthetic fixture once to enumerate every field and
+  // object family; mutate each independently, never derive test cases from live data.
+  const objects: (string | number)[][] = [], fields: (string | number)[][] = []
+  function walk(v: unknown, path: (string | number)[]) {
+    if (!v || typeof v !== 'object') return
+    if (Array.isArray(v)) { v.forEach((x, i) => walk(x, [...path, i])); return }
+    objects.push(path)
+    for (const [k, x] of Object.entries(v)) { fields.push([...path, k]); walk(x, [...path, k]) }
+  }
+  walk(nationalListStructuralFixture(), [])
+  for (const path of objects) test(`unknown key at ${path.join('/') || 'root'} refuses without echo`, () => {
+    const row = nationalListStructuralFixture()
+    set(row, [...path, 'private-synthetic-key'], 'private-synthetic-value')
+    const result = check(row)
+    assert.equal(result.ok, false)
+    assert.doesNotMatch(JSON.stringify(result), /private-synthetic/)
+  })
+  for (const path of fields) test(`wrong type at ${path.join('/')} refuses`, () => {
+    const row = nationalListStructuralFixture(); set(row, path, 42)
+    assert.equal(check(row).ok, false)
+  })
+  for (const key of Object.keys(nationalListFixture())) test(`missing root ${key} refuses`, () => {
+    const row = { ...nationalListFixture() } as Record<string, unknown>; delete row[key]
+    assert.equal(check(row).ok, false)
+  })
+  for (const value of ['opaque-synthetic-only', '', null, 42, false, {}, []]) test(`metadata case ${JSON.stringify(value)} never live admission`, async () => {
+    const row = { ...nationalListStructuralFixture(), publishing_request_id: value }
+    const raw = JSON.stringify(row)
+    const r = evaluateResearchRetrieval(await retrieveSyntheticNationalList(raw), 'live', FIXTURE_TIME, SYNTHETIC_SELECTION)
+    assert.equal(r.sourceStatus, 'BLOCKED'); assert.equal(r.research, null); assert.equal(r.observation, null)
+    assert.doesNotMatch(serializeReport(r), /opaque-synthetic-only/)
+    assert.ok(!serializeReport(r).includes(digest(raw)))
+    assert.equal(r.reason, value === null ? 'whole_response_review_not_established'
+      : typeof value === 'string' ? 'opaque_publishing_metadata' : 'invalid_response_field')
+  })
+  test('metadata cannot conceal malformed unused siblings', () => {
+    const row = { ...nationalListStructuralFixture(), publishing_request_id: 'opaque-synthetic-only' }
+    set(row, ['details', 'change_history', 0, 'unreviewed'], true)
+    assert.deepEqual(check(row), { ok: false, reason: 'unexpected_response_fields' })
+  })
+  for (const [path, value, reason] of [
+    [['details','attachments'], [{}], 'unreviewed_attachment'],
+    [['publishing_scheduled_at'], FIXTURE_TIME, 'unreviewed_scheduling'],
+    [['scheduled_publishing_delay_seconds'], 0, 'unreviewed_scheduling'],
+    [['first_published_at'], '2026-02-30T00:00:00Z', 'invalid_response_field'],
+    [['first_published_at'], '2026-10-10T00:00:00Z', 'source_time_conflict'],
+    [['updated_at'], '2026-10-08T00:00:00Z', 'source_time_conflict'],
+    [['updated_at'], '2026-10-10T00:00:00Z', 'source_time_conflict'],
+    [['details','change_history',0,'public_timestamp'], '2026-10-10T00:00:00Z', 'source_time_conflict'],
+    [['details','change_history',0,'public_timestamp'], '2026-10-08T00:00:00Z', 'source_time_conflict'],
+    [['links','manual',0,'public_updated_at'], '2026-10-10T00:00:00Z', 'source_time_conflict'],
+    [['links','organisations',0,'details','organisation_govuk_status','updated_at'], '2026-10-10T00:00:00Z', 'source_time_conflict'],
+  ] as [ (string | number)[], unknown, string ][]) test(`finite refusal ${path.join('/')} ${reason} ${String(value)}`, () => {
+    const row = nationalListStructuralFixture(); set(row, path, value)
+    assert.deepEqual(check(row), { ok: false, reason })
+  })
+  for (const time of ['2026-02-30T00:00:00Z', '2026-10-09', '2026-10-09T12:00:00',
+    '2026-10-09T12:00:60Z', '2026-10-09T12:00:00-00:00', '2026-10-09T12:00:00+24:00']) test(`ambiguous source timestamp ${time} refuses`, () => {
+    assert.equal(check({ ...nationalListFixture(), first_published_at: time }).ok, false)
+  })
+  test('equivalent explicit offset is calendar-checked without mutating source time', () => {
+    const row = { ...nationalListFixture(), first_published_at: '2026-10-09T13:00:00+01:00' }
+    assert.equal(check(row).ok, true)
+    assert.equal(row.first_published_at, '2026-10-09T13:00:00+01:00')
+    assert.deepEqual(check(row, 'invalid'), { ok: false, reason: 'invalid_reference_time' })
+  })
+  for (const url of ['https://evil.invalid/image.png', 'http://assets.publishing.service.gov.uk/image.png',
+    'https://assets.publishing.service.gov.uk:443/image.png', 'https://assets.publishing.service.gov.uk/image.png?trace=x',
+    'https://assets.publishing.service.gov.uk/image.png#fragment', 'https://assets.publishing.service.gov.uk/media/../image.png',
+    'https://assets.publishing.service.gov.uk/%2e%2e/image.png']) test(`unsafe unused asset URL refuses ${url}`, () => {
+    const row = nationalListStructuralFixture()
+    set(row, ['links','organisations',0,'details','default_news_image','url'], url)
+    assert.equal(check(row).ok, false)
+  })
+  for (const body of [FIXTURE_BODY + '<script>private-synthetic-value</script>', FIXTURE_BODY + '</undefined>',
+    FIXTURE_BODY.replace('Switzerland', '&#83;witzerland'), FIXTURE_BODY.replace('Switzerland', 'Swi\u202etz'),
+    FIXTURE_BODY.replace('<li>', '<li onclick="x">'), FIXTURE_BODY + '<!--tail-->', FIXTURE_BODY.slice(0,-1),
+    FIXTURE_BODY.replace('Switzerland', '&lt;script&gt;'), FIXTURE_BODY + 'trailing text']) test(`unsafe fragment variant ${body.length}`, () => {
+    const row = nationalListFixture(); row.details.body = body
+    assert.equal(check(row).ok, false)
+    assert.equal(qualifyNationalList(JSON.stringify(row), 'synthetic').ok, false)
+  })
+  for (const key of ['__proto__', 'constructor', 'prototype', '\\u005f_proto__']) test(`prototype ambiguity ${key}`, () => {
+    const raw = json().replace('"change_history":[]', `"change_history":[{"${key}":{}}]`)
+    assert.equal(checkNationalListWholeResponse(raw, FIXTURE_TIME).ok, false)
+  })
+  test('duplicate spellings in unused deep objects, prefixes and trailing JSON refuse', () => {
+    const raw = JSON.stringify(nationalListStructuralFixture())
+    for (const bad of [raw.replace('"crest":', '"\\u0063rest":"duplicate","crest":'), '\ufeff' + raw,
+      raw + '{}', raw.slice(0,-1), raw.replace('Synthetic change only', '\\ud800'),
+      raw.replace('"publishing_request_id":null', '"publishing_request_id":null,"publishing_request_id":null')]) {
+      assert.equal(checkNationalListWholeResponse(bad, FIXTURE_TIME).ok, false)
+    }
+    assert.equal(checkNationalListWholeResponse(json().padEnd(65_536), FIXTURE_TIME).ok, true)
+    assert.equal(checkNationalListWholeResponse(json().padEnd(65_537), FIXTURE_TIME).ok, false)
+  })
+  test('replayed or transplanted bytes never create live research or custody', async () => {
+    const retrieval = await retrieveSyntheticNationalList()
+    for (const at of [FIXTURE_TIME, '2026-10-11T12:00:00.000Z', '2026-10-08T12:00:00.000Z']) {
+      const r = evaluateResearchRetrieval(retrieval, 'live', at, SYNTHETIC_SELECTION)
+      assert.equal(r.sourceStatus, 'BLOCKED'); assert.equal(r.research, null); assert.equal(r.observation, null)
+      assert.equal(r.provenanceAuthority, 'NO_CUSTODY_OR_ACCEPTANCE_ORIGIN')
+    }
+  })
+})
+
 describe('B02/B10/B12/B18 research-only end-to-end', () => {
+  test('B09 upstream refusal cannot create research even with a complete selection', async () => {
+    for (const retrieval of [await retrieveSyntheticNationalList(), { status: 'blocked' as const, reason: 'timeout' as const }]) {
+      const r = evaluateResearchRetrieval(retrieval, 'live', FIXTURE_TIME, SYNTHETIC_SELECTION)
+      assert.equal(r.sourceStatus, 'BLOCKED')
+      assert.equal(r.research, null)
+      assert.equal(r.observation, null)
+    }
+  })
+  test('B07 serializer refuses research attached to an upstream-blocked report', async () => {
+    const candidate = (await runOfflineFixture()).research
+    const blocked = evaluateResearchRetrieval(await retrieveSyntheticNationalList(), 'live', FIXTURE_TIME, null)
+    assert.throws(() => serializeReport({ ...blocked, research: candidate }), /report_state_invalid/)
+  })
   test('offline fixed source passes genuine catalog/identity/whole-fixture/locator and canonical research gap', async () => {
     const r = await runOfflineFixture()
     assert.equal(r.mode, 'synthetic'); assert.equal(r.sourceStatus, 'SYNTHETIC_OBSERVATION_ONLY')
@@ -112,7 +242,7 @@ describe('B03-B06/B09/B21 independent full-response mutations', () => {
     for (const value of ['private-opaque-sentinel', '', 0, false, {}, []]) {
       const row = { ...nationalListFixture(), publishing_request_id: value }
       const text = JSON.stringify(row), r = evaluateResearchRetrieval(await retrieveSyntheticNationalList(text), 'synthetic', FIXTURE_TIME, null)
-      assert.equal(r.reason, 'opaque_publishing_metadata'); assert.equal(r.observation, null)
+      assert.equal(r.reason, typeof value === 'string' ? 'opaque_publishing_metadata' : 'invalid_response_field'); assert.equal(r.observation, null)
       assert.ok(!serializeReport(r).includes('private-opaque-sentinel')); assert.ok(!serializeReport(r).includes(digest(text)))
     }
   })
