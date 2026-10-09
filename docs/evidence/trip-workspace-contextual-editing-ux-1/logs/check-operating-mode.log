@@ -1,0 +1,5 @@
+
+> jetnity@1.0.0 check:operating-mode
+> node scripts/operating-mode-guard.mjs
+
+operating-mode guard: PASS

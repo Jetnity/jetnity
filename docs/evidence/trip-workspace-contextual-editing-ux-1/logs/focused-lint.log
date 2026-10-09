@@ -1,0 +1,36 @@
+
+<worktree>/components/trips/TripWorkspace.tsx
+  430:19  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/components/trips/TripWorkspace.tsx:430:19
+  428 |
+  429 |   React.useEffect(() => {
+> 430 |     if (!kompakt) setAenderungBereit(true)
+      |                   ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  431 |   }, [kompakt])
+  432 |
+  433 |   React.useLayoutEffect(() => {                                                                                                                                              react-hooks/set-state-in-effect
+  625:5   warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+<worktree>/components/trips/TripWorkspace.tsx:625:5
+  623 |     anwenden(navigationBereitRef.current ? 'graph' : 'mount')
+  624 |     navigationBereitRef.current = true
+> 625 |     setModusBereit(true)
+      |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  626 |     const onPop = () => anwenden('pop')
+  627 |     window.addEventListener('popstate', onPop)
+  628 |     return () => window.removeEventListener('popstate', onPop)  react-hooks/set-state-in-effect
+
+✖ 2 problems (0 errors, 2 warnings)

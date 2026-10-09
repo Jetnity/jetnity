@@ -1,0 +1,5 @@
+
+> jetnity@1.0.0 check:api-schutz
+> node scripts/api-schutz.mjs
+
+API-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi().

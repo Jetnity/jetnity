@@ -1,0 +1,1370 @@
+{
+  "passed": true,
+  "headAtRun": "bf398335e8ba7f3d939d55cf4e33f6f41d05c41a",
+  "sourceSha256": {
+    "components/trips/TripWorkspacePlan.tsx": "8ccd99185cb359518c8521b90cbd63fd2719efb113caf459da1f58b48c36ea77",
+    "components/trips/TripTimelineZeitpruefung.tsx": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78",
+    "lib/trips/trip-timeline-temporal-review-1.ts": "b82e38a8bc63e2d68520987440dd01ab794322ec064c75ef5254292b42643714",
+    "scripts/trip-timeline-temporal-review-1-audit.mjs": "fc0102c5517bfebee94d2e127ec5cfb357ee2e80d2668bb9408f81670012cf89"
+  },
+  "browser": "154.0.8037.99",
+  "localSyntheticOnly": true,
+  "authenticatedE2E": false,
+  "physicalDevice": false,
+  "results": [
+    {
+      "name": "workspace-guest-360",
+      "width": 360,
+      "scrollWidth": 360,
+      "targets": [
+        {
+          "width": 284,
+          "height": 44,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 284,
+          "height": 44,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 284,
+          "height": 56,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 274.640625,
+          "left": 38
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 212.734375,
+          "left": 38
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-guest-360-text200",
+      "width": 360,
+      "scrollWidth": 360,
+      "targets": [
+        {
+          "width": 212,
+          "height": 128,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 224,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 112,
+          "right": 286,
+          "left": 74
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-guest-360",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "workspace-account-360",
+      "width": 360,
+      "scrollWidth": 360,
+      "targets": [
+        {
+          "width": 284,
+          "height": 44,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 284,
+          "height": 44,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 284,
+          "height": 56,
+          "right": 322,
+          "left": 38
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 274.640625,
+          "left": 38
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 212.734375,
+          "left": 38
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-account-360-text200",
+      "width": 360,
+      "scrollWidth": 360,
+      "targets": [
+        {
+          "width": 212,
+          "height": 128,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 224,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 192,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 152,
+          "right": 286,
+          "left": 74
+        },
+        {
+          "width": 212,
+          "height": 112,
+          "right": 286,
+          "left": 74
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-account-360",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "callbacks-360",
+      "width": 360,
+      "scrollWidth": 360,
+      "targets": [
+        {
+          "width": 276,
+          "height": 44,
+          "right": 318,
+          "left": 42
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 285.703125,
+          "left": 42
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 296.203125,
+          "left": 42
+        },
+        {
+          "width": 276,
+          "height": 44,
+          "right": 318,
+          "left": 42
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 285.703125,
+          "left": 42
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 296.203125,
+          "left": 42
+        },
+        {
+          "width": 276,
+          "height": 56,
+          "right": 318,
+          "left": 42
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 278.640625,
+          "left": 42
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 216.734375,
+          "left": 42
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "updates-360",
+      "unchangedRevisionRecomputed": true,
+      "deletedTargetRemoved": true,
+      "originalCallbackIds": true
+    },
+    {
+      "name": "workspace-guest-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "targets": [
+        {
+          "width": 314,
+          "height": 44,
+          "right": 352,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 314,
+          "height": 44,
+          "right": 352,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 342.25,
+          "left": 38
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 274.640625,
+          "left": 38
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 212.734375,
+          "left": 38
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-guest-390-text200",
+      "width": 390,
+      "scrollWidth": 390,
+      "targets": [
+        {
+          "width": 242,
+          "height": 128,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 176,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 192,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-guest-390",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "workspace-account-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "targets": [
+        {
+          "width": 314,
+          "height": 44,
+          "right": 352,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 314,
+          "height": 44,
+          "right": 352,
+          "left": 38
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 281.703125,
+          "left": 38
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 292.203125,
+          "left": 38
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 342.25,
+          "left": 38
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 274.640625,
+          "left": 38
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 212.734375,
+          "left": 38
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-account-390-text200",
+      "width": 390,
+      "scrollWidth": 390,
+      "targets": [
+        {
+          "width": 242,
+          "height": 128,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 176,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 192,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 152,
+          "right": 316,
+          "left": 74
+        },
+        {
+          "width": 242,
+          "height": 112,
+          "right": 316,
+          "left": 74
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-account-390",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "callbacks-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "targets": [
+        {
+          "width": 306,
+          "height": 44,
+          "right": 348,
+          "left": 42
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 285.703125,
+          "left": 42
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 296.203125,
+          "left": 42
+        },
+        {
+          "width": 306,
+          "height": 44,
+          "right": 348,
+          "left": 42
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 285.703125,
+          "left": 42
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 296.203125,
+          "left": 42
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 346.25,
+          "left": 42
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 278.640625,
+          "left": 42
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 216.734375,
+          "left": 42
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "updates-390",
+      "unchangedRevisionRecomputed": true,
+      "deletedTargetRemoved": true,
+      "originalCallbackIds": true
+    },
+    {
+      "name": "workspace-guest-768",
+      "width": 768,
+      "scrollWidth": 768,
+      "targets": [
+        {
+          "width": 660,
+          "height": 44,
+          "right": 714,
+          "left": 54
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 297.703125,
+          "left": 54
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 559.90625,
+          "left": 305.703125
+        },
+        {
+          "width": 660,
+          "height": 44,
+          "right": 714,
+          "left": 54
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 297.703125,
+          "left": 54
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 308.203125,
+          "left": 54
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 358.25,
+          "left": 54
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 290.640625,
+          "left": 54
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 228.734375,
+          "left": 54
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-guest-768-text200",
+      "width": 768,
+      "scrollWidth": 768,
+      "targets": [
+        {
+          "width": 556,
+          "height": 88,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 556,
+          "height": 88,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 556,
+          "height": 112,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 441.265625,
+          "height": 88,
+          "right": 547.265625,
+          "left": 106
+        },
+        {
+          "width": 331.84375,
+          "height": 88,
+          "right": 437.84375,
+          "left": 106
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-guest-768",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "workspace-account-768",
+      "width": 768,
+      "scrollWidth": 768,
+      "targets": [
+        {
+          "width": 660,
+          "height": 44,
+          "right": 714,
+          "left": 54
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 297.703125,
+          "left": 54
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 559.90625,
+          "left": 305.703125
+        },
+        {
+          "width": 660,
+          "height": 44,
+          "right": 714,
+          "left": 54
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 297.703125,
+          "left": 54
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 308.203125,
+          "left": 54
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 358.25,
+          "left": 54
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 290.640625,
+          "left": 54
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 228.734375,
+          "left": 54
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-account-768-text200",
+      "width": 768,
+      "scrollWidth": 768,
+      "targets": [
+        {
+          "width": 556,
+          "height": 88,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 556,
+          "height": 88,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 556,
+          "height": 112,
+          "right": 662,
+          "left": 106
+        },
+        {
+          "width": 441.265625,
+          "height": 88,
+          "right": 547.265625,
+          "left": 106
+        },
+        {
+          "width": 331.84375,
+          "height": 88,
+          "right": 437.84375,
+          "left": 106
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-account-768",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "callbacks-768",
+      "width": 768,
+      "scrollWidth": 768,
+      "targets": [
+        {
+          "width": 676,
+          "height": 44,
+          "right": 722,
+          "left": 46
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 289.703125,
+          "left": 46
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 551.90625,
+          "left": 297.703125
+        },
+        {
+          "width": 676,
+          "height": 44,
+          "right": 722,
+          "left": 46
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 289.703125,
+          "left": 46
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 300.203125,
+          "left": 46
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 350.25,
+          "left": 46
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 282.640625,
+          "left": 46
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 220.734375,
+          "left": 46
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "updates-768",
+      "unchangedRevisionRecomputed": true,
+      "deletedTargetRemoved": true,
+      "originalCallbackIds": true
+    },
+    {
+      "name": "workspace-guest-1440",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "targets": [
+        {
+          "width": 1172,
+          "height": 44,
+          "right": 1306,
+          "left": 134
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 377.703125,
+          "left": 134
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 639.90625,
+          "left": 385.703125
+        },
+        {
+          "width": 1172,
+          "height": 44,
+          "right": 1306,
+          "left": 134
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 377.703125,
+          "left": 134
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 388.203125,
+          "left": 134
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 438.25,
+          "left": 134
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 370.640625,
+          "left": 134
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 308.734375,
+          "left": 134
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-guest-1440-text200",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "targets": [
+        {
+          "width": 1228,
+          "height": 88,
+          "right": 1334,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 1052.953125,
+          "left": 576.984375
+        },
+        {
+          "width": 1228,
+          "height": 88,
+          "right": 1334,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 570.3125,
+          "height": 88,
+          "right": 676.3125,
+          "left": 106
+        },
+        {
+          "width": 441.265625,
+          "height": 88,
+          "right": 547.265625,
+          "left": 106
+        },
+        {
+          "width": 331.84375,
+          "height": 88,
+          "right": 437.84375,
+          "left": 106
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-guest-1440",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "workspace-account-1440",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "targets": [
+        {
+          "width": 1172,
+          "height": 44,
+          "right": 1306,
+          "left": 134
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 377.703125,
+          "left": 134
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 639.90625,
+          "left": 385.703125
+        },
+        {
+          "width": 1172,
+          "height": 44,
+          "right": 1306,
+          "left": 134
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 377.703125,
+          "left": 134
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 388.203125,
+          "left": 134
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 438.25,
+          "left": 134
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 370.640625,
+          "left": 134
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 308.734375,
+          "left": 134
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "workspace-account-1440-text200",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "targets": [
+        {
+          "width": 1228,
+          "height": 88,
+          "right": 1334,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 1052.953125,
+          "left": 576.984375
+        },
+        {
+          "width": 1228,
+          "height": 88,
+          "right": 1334,
+          "left": 106
+        },
+        {
+          "width": 454.984375,
+          "height": 88,
+          "right": 560.984375,
+          "left": 106
+        },
+        {
+          "width": 475.96875,
+          "height": 88,
+          "right": 581.96875,
+          "left": 106
+        },
+        {
+          "width": 570.3125,
+          "height": 88,
+          "right": 676.3125,
+          "left": 106
+        },
+        {
+          "width": 441.265625,
+          "height": 88,
+          "right": 547.265625,
+          "left": 106
+        },
+        {
+          "width": 331.84375,
+          "height": 88,
+          "right": 437.84375,
+          "left": 106
+        }
+      ],
+      "fontSize": "32px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "navigation-account-1440",
+      "exactOriginalId": true,
+      "focusReturned": true,
+      "storageUnchanged": true
+    },
+    {
+      "name": "callbacks-1440",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "targets": [
+        {
+          "width": 932,
+          "height": 44,
+          "right": 1186,
+          "left": 254
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 497.703125,
+          "left": 254
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 759.90625,
+          "left": 505.703125
+        },
+        {
+          "width": 932,
+          "height": 44,
+          "right": 1186,
+          "left": 254
+        },
+        {
+          "width": 243.703125,
+          "height": 44,
+          "right": 497.703125,
+          "left": 254
+        },
+        {
+          "width": 254.203125,
+          "height": 44,
+          "right": 508.203125,
+          "left": 254
+        },
+        {
+          "width": 304.25,
+          "height": 44,
+          "right": 558.25,
+          "left": 254
+        },
+        {
+          "width": 236.640625,
+          "height": 44,
+          "right": 490.640625,
+          "left": 254
+        },
+        {
+          "width": 174.734375,
+          "height": 44,
+          "right": 428.734375,
+          "left": 254
+        }
+      ],
+      "fontSize": "16px",
+      "text": "Zeitprüfung\n\n1 mögliche oder belegte Überschneidung im Plan. Die Zeitprüfung ist teilweise möglich.\n\nPrüfumfang und Details\n\nGesamte Reise einschließlich nicht eingeplanter Punkte: 1 von 3 Vergleichen auswertbar. 2 nicht auswertbar oder noch ungeprüft. 5 Punkte zeitlich nicht vollständig bestimmbar.\n\nFür diesen Tag: 1 von 3 berücksichtigten Vergleichen auswertbar. Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.\n\nMögliche Überschneidung im Plan.\n\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\n\nErster Termin am Flughafen öffnen\nZweiter Termin am Flughafen öffnen\n\nWas für die Prüfung noch fehlt\n\nEin gemeinsam belegter Zeitbezug fehlt. Gleiche Uhrzeiten oder derselbe Reisetag reichen dafür nicht.\nEinzelnen Terminen fehlt ein ausdrücklich gespeichertes Datum. Die Zuordnung zum Tag ergänzt es nicht.\nEine Endzeit fehlt. Der nächste Termin ersetzt sie nicht.\nEine Anfangszeit fehlt.\nEs liegen nur lokale Uhrzeiten vor. Zeitzone und mögliche Zeitumstellungen sind nicht geklärt.\nPunkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.\nNotizen gelten nicht automatisch als feste Termine.\n\nHotelaufenthalte und Mietwagenzeiten belegen nicht deinen ganzen Tagesablauf. Flexible Punkte und Notizen bleiben ohne erfundene Dauer.\n\nBerücksichtigte Punkte dieses Tags (5)",
+      "coverage": "partial"
+    },
+    {
+      "name": "updates-1440",
+      "unchangedRevisionRecomputed": true,
+      "deletedTargetRemoved": true,
+      "originalCallbackIds": true
+    }
+  ],
+  "errors": [],
+  "blocked": []
+}

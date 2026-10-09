@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "mode": "linux",
+  "sources": [
+    {
+      "path": "scripts/direct-trip-editing-1/linux-tests.mjs",
+      "sha256": "5782cdab0a75ce3500617de1b58886c5ae58c4bc06b8dcac4c80f0f9e9b282c0"
+    }
+  ],
+  "steps": [
+    {
+      "file": "linux.mjs",
+      "exitCode": 0
+    }
+  ],
+  "adaptations": "Task-owned evidence, loopback endpoints, import relocation, current branch for Linux; #905 manipulation uses real progressive group buttons. Original graph/security assertions unchanged."
+}

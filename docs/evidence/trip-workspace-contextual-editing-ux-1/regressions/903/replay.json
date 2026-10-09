@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "mode": "903",
+  "sources": [
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/browser.mjs",
+      "sha256": "9e32923d1813c21355fc57c2a466de4ca251bfc68925f8076750ca47cdf713ea"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/guest-pending.mjs",
+      "sha256": "93fa9b8c4ba934b7ede69f137cc85b0d76b59050f899c285f30c4361ac352151"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/pending-form.mjs",
+      "sha256": "49789a4ba238484f6c72d864a3c55f0807cf0cf6f6a53f749cda7b117da710ec"
+    },
+    {
+      "path": "scripts/trip-plan-integrated-operating-experience-1/account-browser.mjs",
+      "sha256": "82aa4dc8aeea7a54b5829b65e743ca85ee5042090d86f2881899c1531ae09fda"
+    },
+    {
+      "path": "scripts/db/trip-plan-integrated-operating-experience-1/run.mjs",
+      "sha256": "2fb8ae1247e1d07422f000eba44bfdcc8da430b5bacf8dc4d6454a3f1abd5b23"
+    }
+  ],
+  "steps": [
+    {
+      "file": "browser.mjs",
+      "exitCode": 0
+    },
+    {
+      "file": "guest-pending.mjs",
+      "exitCode": 0
+    },
+    {
+      "file": "run.mjs",
+      "exitCode": 0
+    }
+  ],
+  "adaptations": "Task-owned evidence, loopback endpoints, import relocation, current branch for Linux; #905 manipulation uses real progressive group buttons. Original graph/security assertions unchanged."
+}

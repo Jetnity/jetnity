@@ -1,0 +1,30 @@
+[
+  {
+    "audit": "trip-timeline-core-1",
+    "exitCode": 0,
+    "source": "scripts/trip-timeline-core-1-audit.mjs",
+    "sourceSha256": "84ae4fa63ccfb0e6626847e1bb01a9fc0c82c6b1da8c22e4b423ee907d670e2c",
+    "adaptations": "Import relocation and viewport screenshots only; assertions unchanged"
+  },
+  {
+    "audit": "trip-timeline-temporal-review-1",
+    "exitCode": 0,
+    "source": "scripts/trip-timeline-temporal-review-1-audit.mjs",
+    "sourceSha256": "fc0102c5517bfebee94d2e127ec5cfb357ee2e80d2668bb9408f81670012cf89",
+    "adaptations": "Import relocation and viewport screenshots only; assertions unchanged"
+  },
+  {
+    "audit": "trip-workspace-contextual-navigation-1",
+    "exitCode": 0,
+    "source": "scripts/trip-workspace-contextual-navigation-1-audit.mjs",
+    "sourceSha256": "e246b7e308a3bbf7da4462e9c91c47a6812162a19ffaa42839ec0a159e0c5e40",
+    "adaptations": "Import relocation and viewport screenshots only; assertions unchanged"
+  },
+  {
+    "audit": "trip-plan-premium-experience-4",
+    "exitCode": 0,
+    "source": "scripts/trip-plan-premium-experience-4-audit.mjs",
+    "sourceSha256": "17a3ac1347284a489d8fd4ed3220e9268faa7cc8053a8a37c344bf61fd8b8736",
+    "adaptations": "Import relocation and viewport screenshots only; assertions unchanged"
+  }
+]

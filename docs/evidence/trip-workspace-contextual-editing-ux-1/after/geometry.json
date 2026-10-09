@@ -1,0 +1,739 @@
+{
+  "phase": "after",
+  "browser": "154.0.8037.99",
+  "results": [
+    {
+      "width": 360,
+      "scale": 1,
+      "open": {
+        "scrollY": 0,
+        "documentWidth": 360,
+        "viewport": 360,
+        "form": {
+          "top": 551,
+          "bottom": 1293,
+          "height": 742,
+          "width": 294
+        },
+        "nav": {
+          "top": 634.359375,
+          "bottom": 744.359375,
+          "height": 110,
+          "width": 336
+        },
+        "focus": {
+          "top": 713,
+          "bottom": 763,
+          "height": 50,
+          "width": 294
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 360
+        },
+        "overview": {
+          "top": 864.359375,
+          "bottom": 2117.359375,
+          "height": 1253,
+          "width": 336
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 0,
+        "documentWidth": 360,
+        "viewport": 360,
+        "form": null,
+        "nav": {
+          "top": 634.359375,
+          "bottom": 744.359375,
+          "height": 110,
+          "width": 336
+        },
+        "focus": {
+          "top": 175,
+          "bottom": 203,
+          "height": 28,
+          "width": 294
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 360
+        },
+        "overview": {
+          "top": 864.359375,
+          "bottom": 2117.359375,
+          "height": 1253,
+          "width": 336
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 360,
+      "scale": 2,
+      "open": {
+        "scrollY": 1559,
+        "documentWidth": 360,
+        "viewport": 360,
+        "form": {
+          "top": 384,
+          "bottom": 2262,
+          "height": 1878,
+          "width": 294
+        },
+        "nav": {
+          "top": 216.9375,
+          "bottom": 434.9375,
+          "height": 218,
+          "width": 312
+        },
+        "focus": {
+          "top": 786,
+          "bottom": 884,
+          "height": 98,
+          "width": 294
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 360
+        },
+        "overview": {
+          "top": 714.9375,
+          "bottom": 4830.4375,
+          "height": 4115.5,
+          "width": 312
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 1559,
+        "documentWidth": 360,
+        "viewport": 360,
+        "form": null,
+        "nav": {
+          "top": 216.9375,
+          "bottom": 434.9375,
+          "height": 218,
+          "width": 312
+        },
+        "focus": {
+          "top": 16,
+          "bottom": 128,
+          "height": 112,
+          "width": 294
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 360
+        },
+        "overview": {
+          "top": 714.9375,
+          "bottom": 4830.4375,
+          "height": 4115.5,
+          "width": 312
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 390,
+      "scale": 1,
+      "open": {
+        "scrollY": 0,
+        "documentWidth": 390,
+        "viewport": 390,
+        "form": {
+          "top": 493,
+          "bottom": 1235,
+          "height": 742,
+          "width": 324
+        },
+        "nav": {
+          "top": 634.359375,
+          "bottom": 744.359375,
+          "height": 110,
+          "width": 366
+        },
+        "focus": {
+          "top": 655,
+          "bottom": 705,
+          "height": 50,
+          "width": 324
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 390
+        },
+        "overview": {
+          "top": 864.359375,
+          "bottom": 2117.359375,
+          "height": 1253,
+          "width": 366
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 0,
+        "documentWidth": 390,
+        "viewport": 390,
+        "form": null,
+        "nav": {
+          "top": 634.359375,
+          "bottom": 744.359375,
+          "height": 110,
+          "width": 366
+        },
+        "focus": {
+          "top": 223,
+          "bottom": 251,
+          "height": 28,
+          "width": 324
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 390
+        },
+        "overview": {
+          "top": 864.359375,
+          "bottom": 2117.359375,
+          "height": 1253,
+          "width": 366
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 390,
+      "scale": 2,
+      "open": {
+        "scrollY": 1399,
+        "documentWidth": 390,
+        "viewport": 390,
+        "form": {
+          "top": 384,
+          "bottom": 2174,
+          "height": 1790,
+          "width": 324
+        },
+        "nav": {
+          "top": 216.9375,
+          "bottom": 434.9375,
+          "height": 218,
+          "width": 342
+        },
+        "focus": {
+          "top": 786,
+          "bottom": 884,
+          "height": 98,
+          "width": 324
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 390
+        },
+        "overview": {
+          "top": 714.9375,
+          "bottom": 4614.4375,
+          "height": 3899.5,
+          "width": 342
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 1399,
+        "documentWidth": 390,
+        "viewport": 390,
+        "form": null,
+        "nav": {
+          "top": 216.9375,
+          "bottom": 434.9375,
+          "height": 218,
+          "width": 342
+        },
+        "focus": {
+          "top": 16,
+          "bottom": 128,
+          "height": 112,
+          "width": 324
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 0,
+          "bottom": 900,
+          "height": 900,
+          "width": 390
+        },
+        "overview": {
+          "top": 714.9375,
+          "bottom": 4614.4375,
+          "height": 3899.5,
+          "width": 342
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 768,
+      "scale": 1,
+      "open": {
+        "scrollY": 0,
+        "documentWidth": 768,
+        "viewport": 768,
+        "form": {
+          "top": 506,
+          "bottom": 1090,
+          "height": 584,
+          "width": 652
+        },
+        "nav": {
+          "top": 525.359375,
+          "bottom": 579.359375,
+          "height": 54,
+          "width": 720
+        },
+        "focus": {
+          "top": 668,
+          "bottom": 718,
+          "height": 50,
+          "width": 652
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 16,
+          "bottom": 884,
+          "height": 868,
+          "width": 736
+        },
+        "overview": {
+          "top": 679.359375,
+          "bottom": 1707.859375,
+          "height": 1028.5,
+          "width": 720
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 0,
+        "documentWidth": 768,
+        "viewport": 768,
+        "form": null,
+        "nav": {
+          "top": 525.359375,
+          "bottom": 579.359375,
+          "height": 54,
+          "width": 720
+        },
+        "focus": {
+          "top": 354,
+          "bottom": 386,
+          "height": 32,
+          "width": 652
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 16,
+          "bottom": 884,
+          "height": 868,
+          "width": 736
+        },
+        "overview": {
+          "top": 679.359375,
+          "bottom": 1707.859375,
+          "height": 1028.5,
+          "width": 720
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 768,
+      "scale": 2,
+      "open": {
+        "scrollY": 1216,
+        "documentWidth": 768,
+        "viewport": 768,
+        "form": {
+          "top": 392,
+          "bottom": 1872,
+          "height": 1480,
+          "width": 540
+        },
+        "nav": {
+          "top": 328.21875,
+          "bottom": 434.21875,
+          "height": 106,
+          "width": 672
+        },
+        "focus": {
+          "top": 754,
+          "bottom": 852,
+          "height": 98,
+          "width": 540
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 704
+        },
+        "overview": {
+          "top": 674.21875,
+          "bottom": 2959.21875,
+          "height": 2285,
+          "width": 672
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 1216,
+        "documentWidth": 768,
+        "viewport": 768,
+        "form": null,
+        "nav": {
+          "top": 328.21875,
+          "bottom": 434.21875,
+          "height": 106,
+          "width": 672
+        },
+        "focus": {
+          "top": 48,
+          "bottom": 112,
+          "height": 64,
+          "width": 540
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 704
+        },
+        "overview": {
+          "top": 674.21875,
+          "bottom": 2959.21875,
+          "height": 2285,
+          "width": 672
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 1024,
+      "scale": 1,
+      "open": {
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "viewport": 1024,
+        "form": {
+          "top": 294,
+          "bottom": 878,
+          "height": 584,
+          "width": 616.75
+        },
+        "nav": {
+          "top": 563.796875,
+          "bottom": 617.796875,
+          "height": 54,
+          "width": 976
+        },
+        "focus": {
+          "top": 456,
+          "bottom": 506,
+          "height": 50,
+          "width": 616.75
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 16,
+          "bottom": 884,
+          "height": 868,
+          "width": 992
+        },
+        "overview": {
+          "top": 717.796875,
+          "bottom": 1665.796875,
+          "height": 948,
+          "width": 976
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "viewport": 1024,
+        "form": null,
+        "nav": {
+          "top": 563.796875,
+          "bottom": 617.796875,
+          "height": 54,
+          "width": 976
+        },
+        "focus": {
+          "top": 282,
+          "bottom": 314,
+          "height": 32,
+          "width": 616.75
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 88,
+          "bottom": 812,
+          "height": 724,
+          "width": 992
+        },
+        "overview": {
+          "top": 717.796875,
+          "bottom": 1665.796875,
+          "height": 948,
+          "width": 976
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 1024,
+      "scale": 2,
+      "open": {
+        "scrollY": 965,
+        "documentWidth": 1024,
+        "viewport": 1024,
+        "form": {
+          "top": 392,
+          "bottom": 1920,
+          "height": 1528,
+          "width": 511.59375
+        },
+        "nav": {
+          "top": 328.09375,
+          "bottom": 434.09375,
+          "height": 106,
+          "width": 928
+        },
+        "focus": {
+          "top": 754,
+          "bottom": 852,
+          "height": 98,
+          "width": 511.59375
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 960
+        },
+        "overview": {
+          "top": 634.09375,
+          "bottom": 2851.09375,
+          "height": 2217,
+          "width": 928
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 965,
+        "documentWidth": 1024,
+        "viewport": 1024,
+        "form": null,
+        "nav": {
+          "top": 328.09375,
+          "bottom": 434.09375,
+          "height": 106,
+          "width": 928
+        },
+        "focus": {
+          "top": 48,
+          "bottom": 112,
+          "height": 64,
+          "width": 511.59375
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 960
+        },
+        "overview": {
+          "top": 634.09375,
+          "bottom": 2851.09375,
+          "height": 2217,
+          "width": 928
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 1440,
+      "scale": 1,
+      "open": {
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "viewport": 1440,
+        "form": {
+          "top": 294,
+          "bottom": 878,
+          "height": 584,
+          "width": 730.09375
+        },
+        "nav": {
+          "top": 546,
+          "bottom": 600,
+          "height": 54,
+          "width": 1232
+        },
+        "focus": {
+          "top": 456,
+          "bottom": 506,
+          "height": 50,
+          "width": 730.09375
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 16,
+          "bottom": 884,
+          "height": 868,
+          "width": 1152
+        },
+        "overview": {
+          "top": 700,
+          "bottom": 1648,
+          "height": 948,
+          "width": 1232
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "viewport": 1440,
+        "form": null,
+        "nav": {
+          "top": 546,
+          "bottom": 600,
+          "height": 54,
+          "width": 1232
+        },
+        "focus": {
+          "top": 294,
+          "bottom": 326,
+          "height": 32,
+          "width": 730.09375
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 100,
+          "bottom": 800,
+          "height": 700,
+          "width": 1152
+        },
+        "overview": {
+          "top": 700,
+          "bottom": 1648,
+          "height": 948,
+          "width": 1232
+        },
+        "overflow": false
+      }
+    },
+    {
+      "width": 1440,
+      "scale": 2,
+      "open": {
+        "scrollY": 889,
+        "documentWidth": 1440,
+        "viewport": 1440,
+        "form": {
+          "top": 432,
+          "bottom": 1672,
+          "height": 1240,
+          "width": 806.25
+        },
+        "nav": {
+          "top": 328.5,
+          "bottom": 434.5,
+          "height": 106,
+          "width": 1344
+        },
+        "focus": {
+          "top": 754,
+          "bottom": 852,
+          "height": 98,
+          "width": 806.25
+        },
+        "focusTag": "INPUT",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 1376
+        },
+        "overview": {
+          "top": 634.5,
+          "bottom": 2498.5,
+          "height": 1864,
+          "width": 1344
+        },
+        "overflow": false
+      },
+      "preview": {
+        "scrollY": 889,
+        "documentWidth": 1440,
+        "viewport": 1440,
+        "form": null,
+        "nav": {
+          "top": 328.5,
+          "bottom": 434.5,
+          "height": 106,
+          "width": 1344
+        },
+        "focus": {
+          "top": 48,
+          "bottom": 112,
+          "height": 64,
+          "width": 806.25
+        },
+        "focusTag": "H2",
+        "dialog": {
+          "top": 32,
+          "bottom": 868,
+          "height": 836,
+          "width": 1376
+        },
+        "overview": {
+          "top": 634.5,
+          "bottom": 2498.5,
+          "height": 1864,
+          "width": 1344
+        },
+        "overflow": false
+      }
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "boundary": "Chromium emulation; no physical device or screen reader; safe-area rules inspected separately"
+}

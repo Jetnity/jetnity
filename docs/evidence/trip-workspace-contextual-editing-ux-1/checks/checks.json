@@ -1,0 +1,34 @@
+[
+  {
+    "name": "typecheck",
+    "exitCode": 0
+  },
+  {
+    "name": "lint",
+    "exitCode": 0
+  },
+  {
+    "name": "check:dead",
+    "exitCode": 0
+  },
+  {
+    "name": "check:exports",
+    "exitCode": 0
+  },
+  {
+    "name": "check:deps",
+    "exitCode": 0
+  },
+  {
+    "name": "check:api-schutz",
+    "exitCode": 0
+  },
+  {
+    "name": "check:schema-bezug",
+    "exitCode": 0
+  },
+  {
+    "name": "check:operating-mode",
+    "exitCode": 0
+  }
+]

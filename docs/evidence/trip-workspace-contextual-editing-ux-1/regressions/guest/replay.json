@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "mode": "guest",
+  "sources": [
+    {
+      "path": "scripts/direct-trip-editing-1/browser.mjs",
+      "sha256": "17e4ac0e368f3ca8983cbabc2b67741f6f6fdc7e0a160f2daef8a6728b198c62"
+    }
+  ],
+  "steps": [
+    {
+      "file": "browser.mjs",
+      "exitCode": 0
+    }
+  ],
+  "adaptations": "Task-owned evidence, loopback endpoints, import relocation, current branch and clean PG environment for Linux; timing and all 250 protected rows additionally asserted; #905 manipulation uses real progressive group buttons. Original graph/security assertions unchanged."
+}

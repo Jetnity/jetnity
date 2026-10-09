@@ -67,6 +67,7 @@ import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '
 import type { FlugSegmentManuell, PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
+import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
@@ -634,13 +635,6 @@ export default function TripWorkspace({
     if (naechster) setAenderungBereit(true)
   }
 
-  React.useEffect(() => {
-    if (!aenderungOffen) return
-    const feld = aenderungFeldRef.current?.querySelector<HTMLElement>('input[data-aenderung-start], textarea')
-      ?? aenderungFeldRef.current?.querySelector<HTMLElement>('[data-aenderung-start]')
-    feld?.focus()
-  }, [aenderungOffen])
-
   const begleiterOeffnen = () => {
     const naechster = !begleiterOffen
     setBegleiterOffen(naechster)
@@ -721,15 +715,14 @@ export default function TripWorkspace({
         aenderungFeldRef.current = el
         setzeInert(el, !aenderungSichtbar)
       }}
-      onKeyDown={(ereignis) => {
-        if (ereignis.key !== 'Escape' || !aenderungOffen) return
-        if (aenderungFeldRef.current?.querySelector('[data-aenderung-sperre="true"]')) { ereignis.stopPropagation(); return }
-        ereignis.stopPropagation()
-        setAenderungOffen(false)
-        aenderungKnopfRef.current?.focus()
-      }}
     >
-      {aenderungSichtbar ? aenderung : null}
+      {aenderungSichtbar ? <TripWorkspaceEditSurface key={`${quelle}:${reise.id}`} reise={reise} quelle={quelle} ansicht={modus.ansicht} onClose={() => {
+        // A confirmed graph may have removed the initiating day/item. Reuse the
+        // Workspace canonicalizer after consuming the edit-only history entry.
+        const aktuell = modusFuerReise(modusAusQuery(new URLSearchParams(window.location.search)), reise, ungeplantePunkte)
+        historieSchreiben(reise.id, aktuell, 'replace', 'canonical')
+        setAenderungOffen(false)
+      }}>{aenderung}</TripWorkspaceEditSurface> : null}
     </div>
   )
 

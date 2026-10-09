@@ -1,0 +1,684 @@
+{
+  "nodes": [
+    {
+      "role": "RootWebArea",
+      "name": "Reiseübersicht – Jetnity",
+      "properties": [
+        {
+          "name": "focused",
+          "value": true
+        }
+      ]
+    },
+    {
+      "role": "dialog",
+      "name": "Reise ändern",
+      "properties": [
+        {
+          "name": "modal",
+          "value": true
+        }
+      ]
+    },
+    {
+      "role": "heading",
+      "name": "Reise ändern",
+      "properties": []
+    },
+    {
+      "role": "button",
+      "name": "Zurück zum Workspace",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "complementary",
+      "name": "Gespeicherter Reisekontext",
+      "properties": []
+    },
+    {
+      "role": "region",
+      "name": "Reise ändern",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reise ändern",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Zurück zum Workspace",
+      "properties": []
+    },
+    {
+      "role": "paragraph",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "paragraph",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "paragraph",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "paragraph",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "group",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "generic",
+      "name": "Bearbeitungsart",
+      "properties": []
+    },
+    {
+      "role": "heading",
+      "name": "Reise direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "paragraph",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "form",
+      "name": "Reise direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reise ändern",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Zurück zum Workspace",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reiseplan",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": " · ",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Gastreise",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Synthetische Reise",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "2026-10-07",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": " – ",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "2026-10-10",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": " · ",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "4",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": " Tage · ",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "2",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": " Etappen",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Gespeicherter Stand",
+      "properties": []
+    },
+    {
+      "role": "DisclosureTriangle",
+      "name": "Reiseziele ansehen",
+      "properties": []
+    },
+    {
+      "role": "button",
+      "name": "Direkt bearbeiten",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "button",
+      "name": "In eigenen Worten",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "StaticText",
+      "name": "Reise direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Wähle einen Bereich. Du kannst mehrere Bereiche vor der Vorschau ändern.",
+      "properties": []
+    },
+    {
+      "role": "group",
+      "name": "Reisedaten bearbeiten",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "status",
+      "name": "",
+      "properties": [
+        {
+          "name": "live",
+          "value": "polite"
+        }
+      ]
+    },
+    {
+      "role": "button",
+      "name": "Eingaben verwerfen",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "button",
+      "name": "Auswirkungen ansehen",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reiseplan",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": " · ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Gastreise",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Synthetische Reise",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "2026-10-07",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": " – ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "2026-10-10",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": " · ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "4",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": " Tage · ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "2",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": " Etappen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Gespeicherter Stand",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reiseziele ansehen",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "In eigenen Worten",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reise direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Wähle einen Bereich. Du kannst mehrere Bereiche ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "vor der Vorschau ändern.",
+      "properties": []
+    },
+    {
+      "role": "Legend",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "generic",
+      "name": "Bearbeitungsbereiche",
+      "properties": []
+    },
+    {
+      "role": "heading",
+      "name": "Grunddaten",
+      "properties": []
+    },
+    {
+      "role": "generic",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Bisher keine Eingaben geändert",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Eingaben verwerfen",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Auswirkungen ansehen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reiseziele ansehen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Direkt bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "In eigenen Worten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reisedaten bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "button",
+      "name": "1. Grunddaten",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "button",
+      "name": "2. Zeitraum",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "button",
+      "name": "3. Etappen",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "StaticText",
+      "name": "Grunddaten",
+      "properties": []
+    },
+    {
+      "role": "LabelText",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "LabelText",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "LabelText",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "group",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Bisher keine Eingaben geändert",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Eingaben verwerfen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Auswirkungen ansehen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reisedaten bearbeiten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Grunddaten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Zeitraum",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Etappen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Grunddaten",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reisetitel",
+      "properties": []
+    },
+    {
+      "role": "textbox",
+      "name": "Reisetitel",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        },
+        {
+          "name": "focused",
+          "value": true
+        }
+      ]
+    },
+    {
+      "role": "StaticText",
+      "name": "Budgetziel (",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "CHF",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": ")",
+      "properties": []
+    },
+    {
+      "role": "spinbutton",
+      "name": "Budgetziel (CHF) Dein Zielbetrag in der bisherigen Währung; kein gebuchter Gesamtpreis. Ein gesetztes Budget kann hier ersetzt, nicht geleert werden.",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "StaticText",
+      "name": "Dein Zielbetrag in der bisherigen Währung; kein gebuchter Gesamtpreis. Ein gesetztes Budget kann hier ersetzt, nicht geleert werden.",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Reisetempo",
+      "properties": []
+    },
+    {
+      "role": "combobox",
+      "name": "Reisetempo",
+      "properties": [
+        {
+          "name": "invalid",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "role": "DisclosureTriangle",
+      "name": "Interessen und Reisewunsch",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Grunddaten",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Zeitraum",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Etappen",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reisetitel",
+      "properties": []
+    },
+    {
+      "role": "generic",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Budgetziel (",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "CHF",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": ")",
+      "properties": []
+    },
+    {
+      "role": "generic",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Dein Zielbetrag in der bisherigen Währung; kein ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "gebuchter Gesamtpreis. Ein gesetztes Budget kann hier ",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "ersetzt, nicht geleert werden.",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Reisetempo",
+      "properties": []
+    },
+    {
+      "role": "MenuListPopup",
+      "name": "",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Interessen und Reisewunsch",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "Synthetische Reise",
+      "properties": []
+    },
+    {
+      "role": "StaticText",
+      "name": "1200",
+      "properties": []
+    },
+    {
+      "role": "option",
+      "name": "Ruhig",
+      "properties": []
+    },
+    {
+      "role": "option",
+      "name": "Ausgewogen",
+      "properties": []
+    },
+    {
+      "role": "option",
+      "name": "Intensiv",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Interessen und Reisewunsch",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Synthetische Reise",
+      "properties": []
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "1200",
+      "properties": []
+    }
+  ],
+  "boundary": "Chromium accessibility tree inspection, no screen-reader session"
+}
