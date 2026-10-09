@@ -2,12 +2,43 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createContentIdentityGraph } from '@/lib/readiness/official-truth-content-identity'
+import { createContentIdentityGraph, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY } from '@/lib/readiness/official-truth-content-identity'
 import { quellenRegistryErstellen } from '@/lib/readiness/source-registry'
 import { quellenKatalogSnapshotAntwort, type OfficialTruthSourceCatalogTransport } from '@/lib/readiness/official-truth-source-catalog-server'
 import { retrieveOfficialTruthIsolatedPilotSource } from '@/lib/readiness/official-truth-server-owned-retrieval'
 import { immutable, ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
 import { PASSPORT_GUIDE, PASSPORT_IDENTITY_PROFILE, qualifyPassportWholeResponse, extractQualifiedPassportObservation } from './official-source-profile'
+import { NATIONAL_LIST, NATIONAL_ITEM, NATIONAL_REPRESENTATION } from '../official-truth-real-primary-source-bridge-1/manifest'
+
+// #908 narrow adapter at the existing finite developer-only seam. The passport
+// path below is unchanged. No caller URL, network implementation or registry input.
+export function nationalListResearchCatalog() {
+  const authority = quellenRegistryErstellen([{ sourceId: 'govuk', sourceClass: 'official_authority',
+    publisherName: 'GOV.UK', authorityName: 'UK Government', domains: ['www.gov.uk'] }])
+  if (!authority.ok) throw Error('local_manifest_invalid')
+  const identityProfiles = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.filter(p => p.identityProfileId === NATIONAL_LIST.profileId && p.identityProfileVersion === 1)
+  const graph = createContentIdentityGraph(authority.registry, [NATIONAL_ITEM], [NATIONAL_REPRESENTATION], identityProfiles)
+  if (!graph.ok || identityProfiles.length !== 1) throw Error('local_manifest_invalid')
+  const registry = immutable({ ...authority.registry, contentIdentity: graph.value })
+  const snapshot = quellenKatalogSnapshotAntwort(registry)
+  if (!snapshot) throw Error('local_manifest_invalid')
+  const transport: OfficialTruthSourceCatalogTransport = Object.freeze({ async aufrufen(input: unknown) {
+    return ownRecord(input, ['operation'])?.operation === 'read_registry'
+      ? { ok: true as const, antwort: snapshot } : { ok: false as const }
+  } })
+  return { registry, catalog: { transport, identityProfiles } }
+}
+
+export function verifyNationalListResearchText(responseText: string) {
+  const { catalog } = nationalListResearchCatalog()
+  return catalog.identityProfiles[0]!.verify({ item: NATIONAL_ITEM, representation: NATIONAL_REPRESENTATION,
+    responseText, finalUrl: NATIONAL_LIST.requestUrl, mediaType: 'application/json' })
+}
+
+export async function retrieveNationalListResearchSource() {
+  return retrieveOfficialTruthIsolatedPilotSource({ sourceId: NATIONAL_LIST.sourceId, url: NATIONAL_LIST.requestUrl },
+    nationalListResearchCatalog().catalog)
+}
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const evidencePath = resolve(root, 'docs/evidence/official-truth-integrated-pilot-1/official-source.json')
