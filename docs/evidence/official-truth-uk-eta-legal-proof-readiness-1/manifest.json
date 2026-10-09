@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "SCOPED_AUTHOR_DELIVERY_MANIFEST",
+  "baselineMain": "11a1b170dee718ffd68c52bd573db478ce093cc1",
+  "seedHead": "1faf8643bc9791cda1cf169281d07e37d2f59bbd",
+  "immutableTask": {
+    "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_TASK_2026-10-09.md",
+    "gitBlob": "2d2e0acf7db2f1f7054a0c644b9ce683721d0de8"
+  },
+  "files": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_CONTRACTS_2026-10-09.md",
+      "gitBlob": "d109c0b01857feef4df7dac7cc91e9fa839398a2",
+      "sha256": "01db24cb553127d85c77d200ca8287b742dae76d06cb77270037cc9d03dc369d",
+      "bytes": 11898,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_HANDOFF_2026-10-09.md",
+      "gitBlob": "a7836c3a10923e41c51adc1fa69d47acc6e84dca",
+      "sha256": "4620e04fcd22e00687aa258f920a681f0b27ec8b347551f09440f6acb89cba6e",
+      "bytes": 4258,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_PLAN_2026-10-09.md",
+      "gitBlob": "a86af8f07968ee2b88591d0c64c25358aa5f2a9d",
+      "sha256": "3611c829b119dabdc3b95174997cf5d3864785afb2cbe580d7090b9957324f7f",
+      "bytes": 6198,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_REPORT_2026-10-09.md",
+      "gitBlob": "f86fc3f0ef71f92a634071509293221937c17fb8",
+      "sha256": "08ab9846a46b2093d5303d403f1728150ffff35a206ca7fd2662556733bae402",
+      "bytes": 11479,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_SELF_REVIEW_2026-10-09.md",
+      "gitBlob": "b3b7f2cdee5c93e6b19b8096b924c06eb113d2d9",
+      "sha256": "043e6a22768350036e96ebecfdea8f4118ee856f71ba028356a50faaed831882",
+      "bytes": 5549,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_UK_ETA_LEGAL_PROOF_READINESS_1_STATUS_2026-10-09.md",
+      "gitBlob": "fa77612d6c584ed5448c0e1e0641a112ef4f5bde",
+      "sha256": "57ebb5825c80ca7edce0e703b4e224851238c1b2a82e61f8f0f62a7bc6d66da6",
+      "bytes": 2114,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/evidence/official-truth-uk-eta-legal-proof-readiness-1/default.json",
+      "gitBlob": "0931fe094cf44cac12aae2c572b030afbc592fb5",
+      "sha256": "6ff3d6353eed2af60b7a1bb19b6c91b5b6762d1740c81e6dfc260b513de00790",
+      "bytes": 64,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/evidence/official-truth-uk-eta-legal-proof-readiness-1/research.json",
+      "gitBlob": "ba11a3de5bc271b56846309a4b04a78089106322",
+      "sha256": "51eebe104c7678dbdb97c1063aef58389d291a8f56207d81e7cbcaf7bf5f1938",
+      "bytes": 2922,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/evidence/official-truth-uk-eta-legal-proof-readiness-1/synthetic.json",
+      "gitBlob": "49736090f9f1759e838d16006eed68c26e24245e",
+      "sha256": "008141d1c33309d173c6f181a146f053f38d72777f041d4bebbfea37f7d215f7",
+      "bytes": 14728,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "docs/evidence/official-truth-uk-eta-legal-proof-readiness-1/validation.json",
+      "gitBlob": "d187cdb5bcffa6bc62d438f85ce4ab7a622543bb",
+      "sha256": "4e9f8064deac79b3abcd6fc15e0642b89c76f65bbce67cd2f1b358543188b06e",
+      "bytes": 5689,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "lib/readiness/official-truth-uk-eta-legal-proof-readiness-1.test.ts",
+      "gitBlob": "9970a7fd82176f19b4e325f837908863b669b9d5",
+      "sha256": "909120a854bbee3a68b758a6efdaf805e1464ffd0b1d8f3c3f9e2e774603eae2",
+      "bytes": 20893,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "gitBlob": "fdd06ace70551afa15838ffb2f9257d98bd65031",
+      "sha256": "e065dba7f36b56762a8041d945d121efd8ea7f967bf86f4821085d07433bb612",
+      "bytes": 70044,
+      "mode": "100644",
+      "change": "APPROVED_ADDITIVE_TEST_INVENTORY"
+    },
+    {
+      "path": "scripts/official-truth-uk-eta-legal-proof-readiness-1/catalog.ts",
+      "gitBlob": "b49169576736540391b015330e18d503803af9d4",
+      "sha256": "eb9233c16bf0f9339bf1157fb6f207261de1b363200f9ed20f7cd505c82c1ee1",
+      "bytes": 7487,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "scripts/official-truth-uk-eta-legal-proof-readiness-1/fixtures.ts",
+      "gitBlob": "32d9d63504f32dd1a3d86501fc30e8eb0880fdbe",
+      "sha256": "7375eb9fb2fcd8629f2b72393ade98d47799b70ac37ff007697cd7153b222200",
+      "bytes": 1102,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "scripts/official-truth-uk-eta-legal-proof-readiness-1/packet.ts",
+      "gitBlob": "2b2420f1d1e5ab204ba126f31ffc1d4667e6308c",
+      "sha256": "4e29de8794fefa2e253faedda2ee96ef7c11d382107fae3f01b1e780d4582fe5",
+      "bytes": 15590,
+      "mode": "100644",
+      "change": "NEW"
+    },
+    {
+      "path": "scripts/official-truth-uk-eta-legal-proof-readiness-1/run.ts",
+      "gitBlob": "4eef1a742c5df916e4edb760c038c82011baaf53",
+      "sha256": "366963c8f3e47c38e16e88d20ee7aaa67359ef02a7506493bc92651cecfa4274",
+      "bytes": 880,
+      "mode": "100644",
+      "change": "NEW"
+    }
+  ],
+  "selfExcluded": "manifest.json is excluded from its own hashes; final commit/tree are recorded after commit in Draft #916.",
+  "liveSourceOrOpaqueMetadataHashes": "NONE"
+}
