@@ -437,6 +437,22 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal(JSON.stringify(ergebnis).includes(SEITEN_TEXT), false)
   })
 
+  test('6a ein eingespritztes Profil erteilt keine V2-Fingerprint-Autorität', () => {
+    const zaehler = { match: 0, extract: 0 }
+    const support = stuetze(SEITEN_ID, AMT, SEITEN_URL, SEITEN_TEXT)
+    const retrieval = {
+      ...support.retrieval,
+      sourceFingerprintProtocol: 2,
+    }
+    const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(
+      eingabe({ supports: [{ ...support, retrieval }] }),
+      [seitenDefinition(zaehler)],
+    )
+    assert.equal(grund(ergebnis), 'representation_not_eligible')
+    assert.equal(zaehler.match, 0)
+    assert.equal(zaehler.extract, 0)
+  })
+
   test('7 Inhaltstyp außerhalb der Definition scheitert', () => {
     const zaehler = { match: 0, extract: 0 }
     const ergebnis = officialTruthTrustedFactExtrahierenMitDefinitionen(

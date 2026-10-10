@@ -155,6 +155,11 @@ export type EvidenceVersion = ContentEvidenceIdentity & {
   extractionNote: string | null
 }
 
+export function evidenceSourceFingerprintProtocol(value: { sourceFingerprintProtocol?: unknown }): 1 | 2 | null {
+  if (!Object.hasOwn(value, 'sourceFingerprintProtocol')) return 1
+  return value.sourceFingerprintProtocol === 2 ? 2 : null
+}
+
 export type EvidenceSuchschluessel =
   | { ok: true; key: string; canonical: string; scope: EvidenceScope }
   | { ok: false; reason: EvidenceRahmenFehler; fields?: readonly string[] }
@@ -788,8 +793,8 @@ export function evidenceVersionenVergleichen(
 ): EvidenceVersionsVergleich {
   const links = hashLesen(vorher.sourceContentHash)
   const rechts = hashLesen(nachher.sourceContentHash)
-  const vorherProtocol = vorher.sourceFingerprintProtocol ?? 1
-  const nachherProtocol = nachher.sourceFingerprintProtocol ?? 1
+  const vorherProtocol = evidenceSourceFingerprintProtocol(vorher)
+  const nachherProtocol = evidenceSourceFingerprintProtocol(nachher)
   if (!links || !rechts || (vorherProtocol !== 1 && vorherProtocol !== 2)
     || (nachherProtocol !== 1 && nachherProtocol !== 2) || vorherProtocol !== nachherProtocol) {
     return { ok: false, reason: 'invalid_hash' }
@@ -818,7 +823,9 @@ export function evidenceKonfliktHalten(bestehend: EvidenceVersion, eingehend: Ev
   if (bestehend.lifecycle !== 'accepted' || bestehend.validationState !== 'valid') {
     return { ok: false, reason: 'not_accepted_baseline' }
   }
-  if ((bestehend.sourceFingerprintProtocol ?? 1) !== (eingehend.sourceFingerprintProtocol ?? 1)) {
+  const baseProtocol = evidenceSourceFingerprintProtocol(bestehend)
+  const incomingProtocol = evidenceSourceFingerprintProtocol(eingehend)
+  if (baseProtocol === null || incomingProtocol === null || baseProtocol !== incomingProtocol) {
     return { ok: false, reason: 'fingerprint_protocol_mismatch' }
   }
   return {

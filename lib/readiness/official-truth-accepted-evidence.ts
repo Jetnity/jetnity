@@ -114,6 +114,7 @@ function annahmePasst(akzeptiert: EvidenceVersion, kandidat: EvidenceVersion): b
     akzeptiert.publisherName === kandidat.publisherName &&
     akzeptiert.canonicalUrl === kandidat.canonicalUrl &&
     akzeptiert.retrievedAt === kandidat.retrievedAt &&
+    akzeptiert.sourceFingerprintProtocol === kandidat.sourceFingerprintProtocol &&
     akzeptiert.sourceContentHash === kandidat.sourceContentHash &&
     akzeptiert.versionId === kandidat.versionId &&
     akzeptiert.previousVersionId === kandidat.previousVersionId &&

@@ -91,6 +91,7 @@ export type OfficialTruthServerHeldReviewReproofSupport = {
   readonly versionId: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
+  readonly sourceFingerprintProtocol?: 2
   readonly validFrom: string | null
   readonly validUntil: string | null
 }
@@ -124,6 +125,7 @@ export type OfficialTruthServerHeldReviewReproofErgebnis =
  */
 export type OfficialTruthServerHeldSameRequestSupport = ContentIdentityBinding & {
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -352,6 +354,7 @@ function materialStuetze(
   return {
     ...contentIdentityBinding(support),
     identitySchema: 2,
+    ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
     contentType: support.contentType,
     versionId: support.versionId,
     sourceId: support.sourceId,
@@ -368,6 +371,7 @@ function reproofStuetze(support: OfficialTruthServerHeldSameRequestSupport): Off
     versionId: support.versionId,
     retrievedAt: support.retrievedAt,
     sourceContentHash: support.sourceContentHash,
+    ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
     validFrom: support.validFrom,
     validUntil: support.validUntil,
   })
