@@ -1,7 +1,8 @@
 # CH→DE Source-Bound 128 KiB Retrieval 1 — Status
 
-**State:** Code implementation and author-side local verification complete on
-Draft PR #920; source/legal qualification and independent review remain blocked.
+**State:** Code implementation, author-side verification and read-only code
+review complete on Draft PR #920; source/legal qualification and independent
+Technical Lead review remain outstanding.
 
 ## Completed so far
 
@@ -13,19 +14,20 @@ Draft PR #920; source/legal qualification and independent review remain blocked.
 - Full serial suite passed: 6,264/6,264, including native PostgreSQL 16 checks.
 - Lint, production build, setup/API/schema/dead-code/export/dependency checks
   passed. Full results and the initial parallel timeout correction are in REPORT.
-- First implementation commit is
-  `34cc75b1ee649dd56ab442876e28e02f6860f0a5`; full verification and final
-  handoff commit are still pending.
+- Implementation commit is
+  `34cc75b1ee649dd56ab442876e28e02f6860f0a5`; verified handoff/test addendum is
+  `11136c58a7e6c22a6952c54dacdbf254f38d9eec`. Final metadata close-out and
+  exact final SHA/tree recording remain.
 
 ## Still required
 
-- Record final exact SHA/tree and CI state after the handoff commit.
-- Recheck operating mode, exact task blob, branch, PR Draft state and competing
-  writers before delivery.
-- Finish REPORT/HANDOFF with exact final head/tree, commands, totals and blockers;
-  the checks and CI state for the first implementation head are recorded.
-- Secret-scan all changed files, commit/push the author handoff, then run required
-  parallel validation and incorporate valid findings.
+- Commit the final exact SHA/tree close-out; supply that commit identity in the
+  final delivery comment.
+- Recheck operating mode, exact task blob, branch, PR Draft state, Actions and
+  competing writers before delivery.
+- Secret-scan the final metadata update. The separate read-only code review found
+  no significant issues; bundled CodeQL and Code Review were unavailable/skipped
+  as recorded in REPORT.
 - Keep PR #920 Draft; do not merge, activate the source, or start follow-up work.
 
 ## Invariants and blockers

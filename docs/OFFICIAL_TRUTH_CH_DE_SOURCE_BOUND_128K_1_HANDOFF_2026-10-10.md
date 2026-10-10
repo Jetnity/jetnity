@@ -10,9 +10,13 @@ Repository: `Jetnity/jetnity`; existing branch
 Immutable binding task blob:
 `6116b7a90afdcbddc6a46052834a775c19295d47`.
 
-Final author SHA/tree: **fill after all docs and validation commits**.
-PR must remain Draft. No Ready, merge, hosted deployment or follow-up is
-authorized by this handoff.
+Verified implementation commit: `34cc75b1ee649dd56ab442876e28e02f6860f0a5`,
+tree `9abd8b9ead5d1bed53753a9ff89095f0971e31eb`. The handoff/test addendum commit
+is `11136c58a7e6c22a6952c54dacdbf254f38d9eec`, tree
+`d37015053be6037de142aa5eac43a4fe9956acfd`. The final close-out commit's exact
+HEAD/tree are provided in the author delivery comment; a commit cannot include
+its own Git object ID. PR #920 must remain Draft. No Ready, merge, hosted
+deployment or follow-up is authorized by this handoff.
 
 ## Delivery summary
 
@@ -38,10 +42,12 @@ not qualify the Bern source. Initial implementation-head CI run `38061856864` is
 `action_required` with zero jobs; no implementation CI pass is claimed. Seed-head
 CI `38038004927` passed but is not evidence for the implementation head.
 
-The implementation-head `Vercel Preview Comments` check succeeded, but does not
-prove a deployed Preview or Auth approval. Preview/Auth acceptance and independent
-Technical Lead review remain unverified; do not represent unavailable gates as
-passed.
+The implementation-head `Vercel Preview Comments` check succeeded, but does not prove a deployed Preview
+or Auth approval. Preview/Auth acceptance and independent Technical Lead review
+remain unverified; do not represent unavailable gates as passed. The separate
+read-only code review found no significant issues. Bundled Code Review was
+unavailable because its configured model was not in the registry; CodeQL was
+skipped because the database was too large.
 
 Source title/publisher/canonical identity/current legal statement/whole-page
 privacy and operative references are not qualified here. No live source read was

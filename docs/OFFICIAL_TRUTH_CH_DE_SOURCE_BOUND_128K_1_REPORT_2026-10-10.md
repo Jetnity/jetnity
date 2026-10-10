@@ -59,6 +59,12 @@ activation, or merge authorization.
   which is not evidence of a deployed Preview or Auth approval. Preview/Auth
   acceptance and independent Technical Lead review remain separate gates; no PASS
   is claimed for them.
+- Final review tools were invoked. A separate read-only code-review agent found
+  no significant issues. The bundled parallel-validation Code Review could not
+  start because its configured model was unavailable; CodeQL was skipped because
+  the database was too large. Neither is reported as a completed scan/review.
+- PR #920 remains open and Draft. No Ready, merge, Production action, source
+  qualification, or follow-up was performed.
 
 ## Source, legal, privacy and operations
 
