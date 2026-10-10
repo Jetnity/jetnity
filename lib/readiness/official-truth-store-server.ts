@@ -228,7 +228,11 @@ function hatAutoritaet(satz: Record<string, unknown> | null): boolean {
   return AUTORITAET.some((name) => Object.hasOwn(satz, name))
 }
 
-function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Record<string, unknown> {
+function evidencePayload(
+  evidence: EvidenceVersion,
+  ruleScopeKey: string,
+  sourceSnapshot?: string,
+): Record<string, unknown> {
   return {
     operation: 'accepted_evidence',
     evidence: {
@@ -248,6 +252,7 @@ function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Recor
       canonical_url: evidence.canonicalUrl,
       retrieved_at: evidence.retrievedAt,
       source_content_hash: evidence.sourceContentHash,
+      ...(evidence.sourceFingerprintProtocol === 2 ? { source_fingerprint_protocol: 2 } : {}),
       valid_from: evidence.validFrom,
       valid_until: evidence.validUntil,
       lookup_key: evidence.lookupKey,
@@ -255,6 +260,7 @@ function evidencePayload(evidence: EvidenceVersion, ruleScopeKey: string): Recor
       rule_scope_key: ruleScopeKey,
       ...scopeSpalten(evidence.scope),
     },
+    ...(evidence.sourceFingerprintProtocol === 2 ? { source_snapshot: sourceSnapshot } : {}),
   }
 }
 
@@ -286,6 +292,15 @@ function dienstTransport(env: Record<string, string | undefined>): OfficialTruth
 
   return {
     async aufrufen(payload) {
+      const evidence = payload.evidence
+      if (evidence && typeof evidence === 'object'
+        && (evidence as Record<string, unknown>).source_fingerprint_protocol === 2) {
+        const { data, error } = await erzeugt.rpc('official_truth_store_accepted_fingerprint_v2', {
+          payload: { ...payload },
+        })
+        if (error) return { ok: false }
+        return { ok: true, antwort: data }
+      }
       const { data, error } = await erzeugt.rpc('official_truth_store_accepted_v2', {
         payload: { ...payload },
       })
@@ -319,13 +334,23 @@ function katalogAbhaengigkeit(
   return undefined
 }
 
-function ausgang(operation: string, antwort: unknown, ruleScopeKey: string, versionId: string | null): OfficialTruthStoreErgebnis {
+function ausgang(
+  operation: string,
+  antwort: unknown,
+  ruleScopeKey: string,
+  versionId: string | null,
+  fingerprintProtocol: 1 | 2 = 1,
+): OfficialTruthStoreErgebnis {
   if (!antwort || typeof antwort !== 'object' || Array.isArray(antwort)) return { ok: false, reason: 'store_failed' }
   const satz = antwort as Record<string, unknown>
   if (satz.ok !== true || satz.identity_schema !== 2 || satz.operation !== operation) return { ok: false, reason: 'store_failed' }
   if (satz.outcome !== 'inserted' && satz.outcome !== 'idempotent') return { ok: false, reason: 'store_failed' }
   if (operation === 'accepted_evidence') {
     if (satz.version_id !== versionId || typeof versionId !== 'string') return { ok: false, reason: 'store_failed' }
+    if ((fingerprintProtocol === 2 && satz.source_fingerprint_protocol !== 2)
+      || (fingerprintProtocol === 1 && Object.hasOwn(satz, 'source_fingerprint_protocol'))) {
+      return { ok: false, reason: 'store_failed' }
+    }
     return {
       ok: true,
       operation: 'accepted_evidence',
@@ -370,14 +395,23 @@ export async function akzeptierteEvidenceSpeichern(
   if (!scope.ok) return { ok: false, reason: scope.reason }
   const transport = transportAus(abhaengigkeiten)
   if (!transport) return { ok: false, reason: 'store_not_configured' }
+  const protocol = evidence.sourceFingerprintProtocol === 2 ? 2 : 1
+  const envelope = datensatz(umschlag)
+  const material = envelope && eigenesDatenfeld(envelope, 'material')
+  const sourceSnapshot = datensatz(material) && eigenesDatenfeld(material, 'sourceSnapshot')
+  if (protocol === 2 && typeof sourceSnapshot !== 'string') {
+    return { ok: false, reason: 'source_snapshot_missing' }
+  }
   let antwort: { ok: true; antwort: unknown } | { ok: false }
   try {
-    antwort = await transport.aufrufen(evidencePayload(evidence, scope.key))
+    antwort = await transport.aufrufen(
+      evidencePayload(evidence, scope.key, protocol === 2 ? sourceSnapshot as string : undefined),
+    )
   } catch {
     return { ok: false, reason: 'store_failed' }
   }
   if (!antwort.ok) return { ok: false, reason: 'store_failed' }
-  return ausgang('accepted_evidence', antwort.antwort, scope.key, evidence.versionId)
+  return ausgang('accepted_evidence', antwort.antwort, scope.key, evidence.versionId, protocol)
 }
 
 /**

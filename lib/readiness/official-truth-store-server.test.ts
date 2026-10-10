@@ -18,6 +18,8 @@ import {
   evidenceKandidatAusModell,
   type EvidenceVersion,
 } from '@/lib/readiness/evidence'
+import { contentEvidenceVersionV2 } from '@/lib/readiness/official-truth-content-identity'
+import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import { officialTruthServerHeldEvidenceAnnehmen } from '@/lib/readiness/official-truth-server-held-source-registry'
 import { officialTruthRechercheEntscheiden } from '@/lib/readiness/official-truth-research-request'
 import {
@@ -789,8 +791,8 @@ describe('trusted Official Truth accepted-store writer', () => {
 })
 
 type Cluster = {
-  aufruf(sql: string, rolle?: string): string
-  scheitert(sql: string, rolle?: string): string
+  aufruf(sql: string, rolle?: string, viaStdin?: boolean): string
+  scheitert(sql: string, rolle?: string, viaStdin?: boolean): string
   stop(): void
 }
 
@@ -871,10 +873,13 @@ function clusterStarten(): Cluster {
       migrationSql().name,
       '20261001193748_official_truth_source_catalog_gateway_1.sql',
       '20261004010705_official_truth_content_identity_2.sql',
+      '20261010180000_official_truth_source_fingerprint_protocol_2.sql',
     ]
     lauf(
       ['-d', 'official_truth_store_proof'],
       `
+        create schema extensions;
+        create extension pgcrypto with schema extensions;
         create role anon nologin noinherit;
         create role authenticated nologin noinherit;
         create role service_role nologin noinherit bypassrls;
@@ -889,23 +894,25 @@ function clusterStarten(): Cluster {
     throw error
   }
 
-  const aufruf = (sql: string, rolle?: string) => {
+  const aufruf = (sql: string, rolle?: string, viaStdin = false) => {
     const args = ['-d', 'official_truth_store_proof', '-t', '-A']
     if (rolle) args.push('-c', `set role ${rolle}`)
-    args.push('-c', sql)
-    return lauf(args)
+    if (viaStdin) args.push('-f', '-')
+    else args.push('-c', sql)
+    return lauf(args, viaStdin ? sql : undefined)
       .split('\n')
       .map((zeile) => zeile.trim())
       .filter((zeile) => zeile.length > 0 && zeile !== 'SET')
       .join('\n')
   }
 
-  const scheitert = (sql: string, rolle?: string) => {
+  const scheitert = (sql: string, rolle?: string, viaStdin = false) => {
     const args = ['-d', 'official_truth_store_proof']
     if (rolle) args.push('-c', `set role ${rolle}`)
-    args.push('-c', sql)
+    if (viaStdin) args.push('-f', '-')
+    else args.push('-c', sql)
     try {
-      lauf(args)
+      lauf(args, viaStdin ? sql : undefined)
     } catch (error) {
       const fehler = error as { stderr?: string; stdout?: string; message?: string }
       return `${fehler.stderr ?? ''}\n${fehler.stdout ?? ''}\n${fehler.message ?? ''}`
@@ -963,6 +970,13 @@ function payloadTag(payload: unknown): string {
   const tag = '$jetnity_payload$'
   if (json.includes(tag)) throw new Error('payload tag')
   return `public.official_truth_store_accepted_v2(${tag}${json}${tag}::jsonb)`
+}
+
+function fingerprintPayloadTag(payload: unknown): string {
+  const json = JSON.stringify(payload)
+  const tag = '$jetnity_fingerprint_payload$'
+  if (json.includes(tag)) throw new Error('fingerprint payload tag')
+  return `public.official_truth_store_accepted_fingerprint_v2(${tag}${json}${tag}::jsonb)`
 }
 
 function appTexte(): string {
@@ -1521,7 +1535,7 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
           join pg_namespace n on n.oid = p.pronamespace
           where p.prosecdef
         `),
-        'public.official_truth_source_catalog_v1,public.official_truth_source_catalog_v2,public.official_truth_store_accepted_v1,public.official_truth_store_accepted_v2',
+        'public.official_truth_source_catalog_v1,public.official_truth_source_catalog_v2,public.official_truth_store_accepted_fingerprint_v2,public.official_truth_store_accepted_v1,public.official_truth_store_accepted_v2',
       )
       assert.equal(cluster.aufruf(`select count(*) from pg_proc where proname = 'official_truth_store_accepted_v2'`), '1')
       const proconfig = cluster.aufruf(`select proconfig::text from pg_proc where proname = 'official_truth_store_accepted_v2'`)
@@ -1560,6 +1574,8 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       for (const name of OFFICIAL_TABLES) {
         assert.equal(rls.includes(`${name}:true:true:0`), true, name)
       }
+      assert.equal(rls.includes('official_source_fingerprint_protocols:true:true:0'), true)
+      assert.equal(rls.includes('official_truth_v2_fingerprint_receipts:true:true:0'), true)
       const policies = cluster.aufruf(`select count(*) from pg_policy pol join pg_class c on c.oid = pol.polrelid join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'private'`)
       assert.equal(policies, '0')
 
@@ -1574,6 +1590,11 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       assert.match(schreiben, /permission denied/i)
       const lesen = cluster.scheitert('select count(*) from private.official_evidence_versions', 'service_role')
       assert.match(lesen, /permission denied/i)
+      const fingerprintProfileRead = cluster.scheitert(
+        'select count(*) from private.official_source_fingerprint_protocols',
+        'service_role',
+      )
+      assert.match(fingerprintProfileRead, /permission denied/i)
       const fremd = cluster.scheitert(`select ${payloadTag({ operation: 'import' })}`, 'service_role')
       assert.match(fremd, /unsupported v2 store operation/i)
       assert.equal(cluster.aufruf(`select ${summe}`), '0')
@@ -1663,11 +1684,174 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       if (!zweite.ok) return
       assert.equal(zweite.outcome, 'idempotent')
       assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), '1')
+      assert.equal(
+        cluster.aufruf(`select source_fingerprint_protocol from private.official_evidence_versions where version_id = '${erste.versionId}'`),
+        '1',
+      )
+
+      const sourceSnapshot = 'SYNTHETIC-LOCAL-ONLY-' + 'x'.repeat(65_537)
+      const sourceEvidence = structuredClone(evidencePayloads[0]?.evidence) as Record<string, unknown>
+      const binding = {
+        sourceId: sourceEvidence.source_id as string,
+        contentItemId: sourceEvidence.content_item_id as string,
+        contentItemVersion: sourceEvidence.content_item_version as number,
+        representationId: sourceEvidence.representation_id as string,
+        representationVersion: sourceEvidence.representation_version as number,
+        identityProfileId: sourceEvidence.identity_profile_id as string,
+        identityProfileVersion: sourceEvidence.identity_profile_version as number,
+        canonicalUrl: sourceEvidence.canonical_url as string,
+        contentType: sourceEvidence.content_type as string,
+      }
+      const fingerprintPayloadBuild = (snapshot: string) => {
+        const hash = officialTruthSourceFingerprintV2(snapshot, binding)
+        if (!hash) return null
+        const version = contentEvidenceVersionV2({
+          identitySchema: 2,
+          ...binding,
+          lookupKey: sourceEvidence.lookup_key,
+          sourceContentHash: hash,
+          retrievedAt: sourceEvidence.retrieved_at,
+          validFrom: sourceEvidence.valid_from,
+          validUntil: sourceEvidence.valid_until,
+          sourceFingerprintProtocol: 2,
+        })
+        if (!version.ok) return null
+        return {
+          sourceHash: hash,
+          versionId: version.value.versionId,
+          payload: {
+            operation: 'accepted_evidence',
+            evidence: {
+              ...sourceEvidence,
+              source_fingerprint_protocol: 2,
+              source_content_hash: hash,
+              version_id: version.value.versionId,
+            },
+            source_snapshot: snapshot,
+          },
+        }
+      }
+      const sourceProof = fingerprintPayloadBuild(sourceSnapshot)
+      assert.ok(sourceProof)
+      if (!sourceProof) return
+      const { sourceHash, versionId, payload: fingerprintPayload } = sourceProof
+      const missingProfile = cluster.scheitert(
+        `select ${fingerprintPayloadTag(fingerprintPayload)}`,
+        'service_role',
+        true,
+      )
+      assert.match(missingProfile, /fingerprint profile is not approved/i)
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), '1')
+      const sqlString = (value: string) => `'${value.replaceAll("'", "''")}'`
+      const profileInsertDenied = cluster.scheitert(
+        `insert into private.official_source_fingerprint_protocols
+          (source_id, content_item_id, content_item_version, representation_id, representation_version,
+           identity_profile_id, identity_profile_version, canonical_url, content_type, max_bytes)
+         values (${sqlString(binding.sourceId)}, ${sqlString(binding.contentItemId)}, ${binding.contentItemVersion},
+           ${sqlString(binding.representationId)}, ${binding.representationVersion}, ${sqlString(binding.identityProfileId)},
+           ${binding.identityProfileVersion}, ${sqlString(binding.canonicalUrl)}, ${sqlString(binding.contentType)}, 131072)`,
+        'service_role',
+      )
+      assert.match(profileInsertDenied, /permission denied/i)
+      cluster.aufruf(`insert into private.official_source_fingerprint_protocols
+        (source_id, content_item_id, content_item_version, representation_id, representation_version,
+         identity_profile_id, identity_profile_version, canonical_url, content_type, max_bytes)
+        values (${sqlString(binding.sourceId)}, ${sqlString(binding.contentItemId)}, ${binding.contentItemVersion},
+          ${sqlString(binding.representationId)}, ${binding.representationVersion}, ${sqlString(binding.identityProfileId)},
+          ${binding.identityProfileVersion}, ${sqlString(binding.canonicalUrl)}, ${sqlString(binding.contentType)}, 131072)`)
+      const profileMutationDenied = cluster.scheitert(
+        `update private.official_source_fingerprint_protocols set max_bytes = 131072
+          where source_id = ${sqlString(binding.sourceId)} and content_item_id = ${sqlString(binding.contentItemId)}`,
+      )
+      assert.match(profileMutationDenied, /fingerprint profile is append-only/i)
+      const insertedV2 = JSON.parse(cluster.aufruf(`select ${fingerprintPayloadTag(fingerprintPayload)}`, 'service_role', true)) as {
+        outcome: string
+        source_fingerprint_protocol: number
+        version_id: string
+      }
+      assert.equal(insertedV2.outcome, 'inserted')
+      assert.equal(insertedV2.source_fingerprint_protocol, 2)
+      assert.equal(insertedV2.version_id, versionId)
+      assert.equal(cluster.aufruf(`select source_fingerprint_protocol || ':' || source_content_hash
+        from private.official_evidence_versions where version_id = '${versionId}'`),
+      `2:${sourceHash}`)
+      const beforeV2Retry = cluster.aufruf('select count(*) from private.official_evidence_versions')
+      const repeatedV2 = JSON.parse(cluster.aufruf(`select ${fingerprintPayloadTag(fingerprintPayload)}`, 'service_role', true)) as {
+        outcome: string
+        source_fingerprint_protocol: number
+      }
+      assert.equal(repeatedV2.outcome, 'idempotent')
+      assert.equal(repeatedV2.source_fingerprint_protocol, 2)
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), beforeV2Retry)
+      const exactByteBoundary = fingerprintPayloadBuild('é'.repeat(65_536))
+      assert.ok(exactByteBoundary)
+      if (!exactByteBoundary) return
+      assert.equal(Buffer.byteLength(exactByteBoundary.payload.source_snapshot, 'utf8'), 131_072)
+      const boundaryResponse = JSON.parse(cluster.aufruf(
+        `select ${fingerprintPayloadTag(exactByteBoundary.payload)}`,
+        'service_role',
+        true,
+      )) as { outcome: string; source_fingerprint_protocol: number }
+      assert.equal(boundaryResponse.outcome, 'inserted')
+      assert.equal(boundaryResponse.source_fingerprint_protocol, 2)
+      const unicodeProof = fingerprintPayloadBuild('first\r\n😀"/\u2028\rfinal')
+      assert.ok(unicodeProof)
+      if (!unicodeProof) return
+      const unicodeResponse = JSON.parse(cluster.aufruf(
+        `select ${fingerprintPayloadTag(unicodeProof.payload)}`,
+        'service_role',
+        true,
+      )) as { outcome: string; source_fingerprint_protocol: number }
+      assert.equal(unicodeResponse.outcome, 'inserted')
+      assert.equal(unicodeResponse.source_fingerprint_protocol, 2)
+      const rollbackProof = fingerprintPayloadBuild(`SYNTHETIC-ROLLBACK-${'r'.repeat(65_536)}`)
+      assert.ok(rollbackProof)
+      if (!rollbackProof) return
+      const beforeRollback = cluster.aufruf('select count(*) from private.official_evidence_versions')
+      cluster.aufruf(`begin; select ${fingerprintPayloadTag(rollbackProof.payload)}; rollback`, 'service_role', true)
+      assert.equal(
+        cluster.aufruf(`select count(*) from private.official_evidence_versions
+          where version_id = '${rollbackProof.versionId}'`),
+        '0',
+      )
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), beforeRollback)
+      assert.equal(cluster.aufruf('select count(*) from private.official_truth_v2_fingerprint_receipts'), '0')
+      const tamperedBody = { ...fingerprintPayload, source_snapshot: `${sourceSnapshot}x` }
+      assert.match(
+        cluster.scheitert(`select ${fingerprintPayloadTag(tamperedBody)}`, 'service_role', true),
+        /source fingerprint verification failed/i,
+      )
+      const forgedVersion = { ...fingerprintPayload, evidence: { ...fingerprintPayload.evidence, version_id: `ev2_${'f'.repeat(32)}` } }
+      assert.match(
+        cluster.scheitert(`select ${fingerprintPayloadTag(forgedVersion)}`, 'service_role', true),
+        /Evidence identity verification failed/i,
+      )
+      const oversizeBody = { ...fingerprintPayload, source_snapshot: 'x'.repeat(131_073) }
+      assert.match(
+        cluster.scheitert(`select ${fingerprintPayloadTag(oversizeBody)}`, 'service_role', true),
+        /source fingerprint verification failed/i,
+      )
+      assert.equal(cluster.aufruf('select count(*) from private.official_truth_v2_fingerprint_receipts'), '0')
+      assert.equal(
+        cluster.aufruf(`select count(*) from information_schema.columns
+          where table_schema = 'private' and table_name = 'official_evidence_versions' and column_name = 'source_snapshot'`),
+        '0',
+      )
+      const legacyRejectsV2Carrier = cluster.scheitert(
+        `select ${payloadTag({
+          operation: 'accepted_evidence',
+          evidence: { ...fingerprintPayload.evidence, source_fingerprint_protocol: 2 },
+        })}`,
+        'service_role',
+      )
+      assert.match(legacyRejectsV2Carrier, /invalid v2 object shape/i)
+
       const konflikt = structuredClone(evidencePayloads[0]) as { evidence: { extraction_note: string | null } }
       konflikt.evidence.extraction_note = 'anderer Text'
       const konfliktFehler = cluster.scheitert(`select ${payloadTag(konflikt)}`, 'service_role')
       assert.match(konfliktFehler, /conflicting official evidence version/i)
-      assert.equal(cluster.aufruf(`select extraction_note is null from private.official_evidence_versions`), 't')
+      assert.equal(cluster.aufruf(`select extraction_note is null from private.official_evidence_versions
+        where version_id = '${erste.versionId}'`), 't')
 
       const claimTransport = (payloads: Aufruf[]): OfficialTruthStoreTransport => ({
         async aufrufen(payload) {

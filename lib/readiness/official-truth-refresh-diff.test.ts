@@ -290,6 +290,25 @@ function kopf(text: string): string {
 }
 
 describe('Official Truth accepted Evidence refresh diff', () => {
+  test('der Refresh-Vergleich vermischt keine unterschiedlichen Fingerprint-Protokolle', () => {
+    const hash = evidenceQuellenFingerprint('synthetic protocol comparison')
+    assert.ok(hash)
+    assert.deepEqual(
+      evidenceVersionenVergleichen(
+        { sourceContentHash: hash },
+        { sourceContentHash: hash, sourceFingerprintProtocol: 2 },
+      ),
+      { ok: false, reason: 'invalid_hash' },
+    )
+    assert.deepEqual(
+      evidenceVersionenVergleichen(
+        { sourceContentHash: hash, sourceFingerprintProtocol: 3 },
+        { sourceContentHash: hash, sourceFingerprintProtocol: 3 },
+      ),
+      { ok: false, reason: 'invalid_hash' },
+    )
+  })
+
   test('der Vergleich beweist die Annahme neu und benutzt nur die bestehende Vergleichsfunktion', () => {
     assert.equal(keineWirkung, true)
     const text = datei('lib/readiness/official-truth-refresh-diff.ts')
