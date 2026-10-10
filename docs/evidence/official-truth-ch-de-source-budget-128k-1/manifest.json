@@ -1,0 +1,61 @@
+{
+  "schema": "jetnity.synthetic-transport-boundary-evidence.v1",
+  "task": "OFFICIAL_TRUTH_CH_DE_SOURCE_BOUND_128K_1",
+  "sourceStatus": "SOURCE_NOT_QUALIFIED",
+  "fixtureType": "synthetic-only",
+  "liveSourceRead": false,
+  "sourceBodyStored": false,
+  "sourceHashStored": false,
+  "personalDataIncluded": false,
+  "databaseOrProductionMutation": false,
+  "acceptedEvidenceOrRule": false,
+  "cases": [
+    {
+      "name": "default-below-boundary",
+      "bytes": 65535,
+      "expected": "transport-pass"
+    },
+    {
+      "name": "default-inclusive-boundary",
+      "bytes": 65536,
+      "expected": "transport-pass"
+    },
+    {
+      "name": "default-over-boundary",
+      "bytes": 65537,
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "bern-candidate-below-boundary",
+      "bytes": 131071,
+      "expected": "synthetic-transport-pass-only"
+    },
+    {
+      "name": "bern-candidate-inclusive-boundary",
+      "bytes": 131072,
+      "expected": "synthetic-transport-pass-only"
+    },
+    {
+      "name": "bern-candidate-over-boundary",
+      "bytes": 131073,
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "bern-candidate-quarantined-verifier",
+      "bytes": 70000,
+      "expected": "refuse-content-identity-mismatch"
+    },
+    {
+      "name": "bern-candidate-without-production-profile",
+      "bytes": 0,
+      "expected": "refuse-before-network"
+    }
+  ],
+  "omitted": [
+    "live HTML or extracted source text",
+    "content hashes",
+    "resolved network addresses",
+    "machine paths",
+    "credentials and personal data"
+  ]
+}

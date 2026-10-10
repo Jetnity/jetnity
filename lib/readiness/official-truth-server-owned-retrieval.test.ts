@@ -254,6 +254,7 @@ function bernProfil(accept: boolean): ContentIdentityProfileDefinition {
     current: true,
     verify: ({ representation, responseText }: Parameters<ContentIdentityProfileDefinition['verify']>[0]) =>
       accept && responseText.startsWith('<!doctype html><html><body>SYNTHETIC TRANSPORT FIXTURE ')
+        && responseText.endsWith('</body></html>')
         ? { ok: true as const, identity: contentIdentityBinding(representation) }
         : { ok: false as const, reason: 'identity_mismatch' as const },
   })
@@ -713,6 +714,14 @@ describe('official truth server-owned retrieval', () => {
       assert.equal(streamedOverflow.abgebrochen, true, String(contentLength))
       assert.equal(JSON.stringify(late.ergebnis).includes('SYNTHETIC'), false)
     }
+    const oversizedFirstChunk = { gesehen: false, abgebrochen: false }
+    const firstChunk = await laufenBern(() => ({
+      headers: { 'content-type': 'text/html', 'content-length': '1' },
+      stuecke: [new TextEncoder().encode(syntheticHtml(131_073))],
+      lesen: oversizedFirstChunk,
+    }))
+    assert.equal(grund(firstChunk), 'response_too_large')
+    assert.equal(oversizedFirstChunk.abgebrochen, true)
   })
 
   test('128 KiB selection is an exact immutable S3 tuple and never follows metadata lookalikes', () => {
@@ -780,6 +789,11 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(grund(result), 'content_identity_mismatch')
     assert.equal(result.uhr, 0)
     assert.equal(JSON.stringify(result.ergebnis).includes('SYNTHETIC'), false)
+    const malformed = await laufenBern(() => ({
+      body: syntheticHtml(100).slice(0, -7),
+      headers: { 'content-type': 'text/html', 'content-length': '93' },
+    }))
+    assert.equal(grund(malformed), 'content_identity_mismatch')
   })
 
   test('content encodings, charset conflicts and UTF-8 BOM fail closed before identity qualification', async () => {
