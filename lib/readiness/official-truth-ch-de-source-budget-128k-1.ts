@@ -92,3 +92,38 @@ export function officialTruthChDeSourceBudget128k1(
     ? candidate.maxBytes
     : null
 }
+
+export function officialTruthChDeSourceFingerprintV2Allowed(
+  registry: unknown,
+  identity: Candidate,
+  finalUrl: string,
+  mediaType: string,
+): boolean {
+  if (!registry || typeof registry !== 'object' || Array.isArray(registry)) return false
+  const graph = (registry as { contentIdentity?: unknown }).contentIdentity
+  if (!graph || typeof graph !== 'object' || Array.isArray(graph)) return false
+  const contentGraph = graph as {
+    items?: readonly Item[]
+    representations?: readonly Representation[]
+  }
+  if (!Array.isArray(contentGraph.items) || !Array.isArray(contentGraph.representations)) return false
+  const item = contentGraph.items.find((entry) =>
+    entry.sourceId === identity.sourceId
+    && entry.contentItemId === identity.contentItemId
+    && entry.contentItemVersion === identity.contentItemVersion)
+  const representation = contentGraph.representations.find((entry) =>
+    entry.sourceId === identity.sourceId
+    && entry.contentItemId === identity.contentItemId
+    && entry.representationId === identity.representationId
+    && entry.contentItemVersion === identity.contentItemVersion
+    && entry.representationVersion === identity.representationVersion
+    && entry.identityProfileId === identity.identityProfileId
+    && entry.identityProfileVersion === identity.identityProfileVersion)
+  const profile = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.find((entry) =>
+    entry.current
+    && entry.identityProfileId === identity.identityProfileId
+    && entry.identityProfileVersion === identity.identityProfileVersion)
+  return !!item && !!representation && !!profile
+    && officialTruthChDeSourceBudget128k1(identity, item, representation,
+      OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1.requestUrl, finalUrl, mediaType, profile) === 131_072
+}

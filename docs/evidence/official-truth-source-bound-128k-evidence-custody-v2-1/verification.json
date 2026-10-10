@@ -1,0 +1,43 @@
+{
+  "task": "OFFICIAL_TRUTH_SOURCE_BOUND_128K_EVIDENCE_CUSTODY_V2_1",
+  "classification": "synthetic_finite_engineering_evidence_only",
+  "sourceAuthority": "none",
+  "hostedDatabaseAccess": false,
+  "migrationApplied": false,
+  "realSourceProfileApproved": false,
+  "realEvidenceOrRulePromoted": false,
+  "tests": {
+    "focusedR1": {
+      "passed": 85,
+      "failed": 0,
+      "skipped": 0
+    },
+    "serialFullSuite": {
+      "precedingHead": "64029e2a4a453ca95a59e4d0d188ce72fe88441e",
+      "passed": 6273,
+      "failed": 2,
+      "skipped": 0,
+      "failureClasses": [
+        "stale_local_rpc_inventory_assertion_fixed_and_verified_standalone_4_of_4",
+        "concurrent_bundle_writer_returned_postgresql_55P03_instead_of_idempotent_unresolved"
+      ],
+      "rerunAfterInventoryFix": false
+    },
+    "nativePostgres16StoreProof": "PASS_22_OF_22"
+  },
+  "typecheck": "PASS",
+  "productionBuild": "PASS",
+  "focusedTests": "PASS_85_OF_85",
+  "localRpcInventory": "PASS_4_OF_4_AFTER_FIX",
+  "operatingModeGuard": "BLOCKED_MISSING_LOCAL_MAIN_REF",
+  "lint": "PASS_0_ERRORS_144_WARNINGS",
+  "secretScan": "PASS",
+  "githubActionsExactHead": "action_required_zero_jobs_not_pass",
+  "auth": "NOT_VERIFIED",
+  "preview": "NOT_VERIFIED",
+  "rawSourceBodyStored": false,
+  "contentDigestPublished": false,
+  "personalDataIncluded": false,
+  "additionalRecurringCostUsd": 0,
+  "disposition": "PARTIAL_BLOCKED_FOR_TECHNICAL_LEAD_R2"
+}

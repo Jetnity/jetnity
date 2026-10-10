@@ -73,7 +73,8 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     await Promise.all([new Promise<void>(resolve=>setTimeout(resolve,31_000)),activeTimeout])
     assert.deepEqual(await owner.query('SELECT pg_catalog.pg_backend_pid()::text AS pid'),ownerBackend)
     checks.push('idle_owner_connection_survives_31_seconds_and_reuses_same_backend','active_statement_backend_timeout_25_seconds_before_transport_fallback')
-    const write=async(e:LocalIntegratedPilotEnvelope,mode:'create_or_verify'|'verify_existing'='create_or_verify')=>{const c=await connect('ot_provenance_writer');try{await c.query('BEGIN ISOLATION LEVEL READ COMMITTED');const out=await publishIntegratedBundle(c,oids,e,mode);await c.query('COMMIT');return out}catch(error){try{await c.query('ROLLBACK')}catch{}throw error}finally{c.close()}}
+    type WriteDiagnostic={phase:string;elapsedMs:number;result?:string;sqlState?:string}
+    const write=async(e:LocalIntegratedPilotEnvelope,mode:'create_or_verify'|'verify_existing'='create_or_verify',diagnostic?:WriteDiagnostic)=>{const started=performance.now();let phase='connect';const c=await connect('ot_provenance_writer');try{phase='begin';await c.query('BEGIN ISOLATION LEVEL READ COMMITTED');phase='publish_rpc';const out=await publishIntegratedBundle(c,oids,e,mode);phase='commit';await c.query('COMMIT');if(diagnostic)Object.assign(diagnostic,{phase:'complete',elapsedMs:performance.now()-started,result:out});return out}catch(error){if(diagnostic)Object.assign(diagnostic,{phase,elapsedMs:performance.now()-started,sqlState:error instanceof LocalPgError?error.code:'operational_failure'});try{await c.query('ROLLBACK')}catch{}throw error}finally{c.close()}}
     const rejectSql=async(e:LocalIntegratedPilotEnvelope)=>{await assert.rejects(write(e),LocalPgError)}
     // Verify-existing does not create absent bundles; explicit rollback removes all staged writes.
     await assert.rejects(write(primaryEnvelope,'verify_existing'),LocalPgError)
@@ -100,13 +101,15 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     assert.deepEqual(await counts(),beforeRepeat);checks.push('exact_retry_and_verify_existing_full_semantic_readback_all_eight_table_counts_unchanged')
     // Genuine concurrent connections: both complete independent validation, then wait on the same owned lock.
     await owner.query('BEGIN');await owner.query('SELECT pg_catalog.pg_advisory_xact_lock(1869901924,1)')
-    const raced=Promise.allSettled([write(composedEnvelope),write(composedEnvelope)])
+    const raceStarted=performance.now(),raceDiagnostics:WriteDiagnostic[]=[{phase:'starting',elapsedMs:0},{phase:'starting',elapsedMs:0}]
+    const raced=Promise.allSettled([write(composedEnvelope,'create_or_verify',raceDiagnostics[0]),write(composedEnvelope,'create_or_verify',raceDiagnostics[1])])
     let waiting=false
     for(let i=0;i<1500;i++){const state=await owner.query("SELECT count(*)::text n FROM pg_catalog.pg_locks WHERE locktype='advisory' AND classid=1869901924 AND objid=1 AND NOT granted");if(Number(state[0]?.n)===2){waiting=true;break}await new Promise(r=>setTimeout(r,20))}
-    await owner.query('COMMIT');assert.equal(waiting,true)
-    const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'],JSON.stringify({stage:'concurrent_bundle_writers',outcomes:outcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
+    const barrierWaitMs=performance.now()-raceStarted,releaseAt=performance.now()
+    await owner.query('COMMIT');const ownerReleaseMs=performance.now()-releaseAt;assert.equal(waiting,true)
+    const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'],JSON.stringify({stage:'concurrent_bundle_writers',barrierWaitMs,ownerReleaseMs,elapsedMs:performance.now()-raceStarted,diagnostics:raceDiagnostics,outcomes:outcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
     const composed=await readVerifiedIntegratedBundleLocally(cluster,composedEnvelope.bundle.recordFingerprint);assert.equal(composed.status,'verified');if(composed.status!=='verified')throw Error('composed_readback')
-    checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent')
+    checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent',`concurrent_timing:${JSON.stringify({barrierWaitMs:Math.ceil(barrierWaitMs),ownerReleaseMs:Math.ceil(ownerReleaseMs),writers:raceDiagnostics})}`)
     const composedRepeat=await persistVerifiedIntegratedBundleLocally(cluster,oids,composedEnvelope,'verify_existing');assert.ok(composedRepeat.ok);assert.equal(composedRepeat.outcome,'idempotent')
     checks.push(...await runSemanticRegressions({owner,cluster,oids,primaryEnvelope,composedEnvelope}))
     // All negatives originate from successfully verified complete bundles; call SQL directly to prove independent refusal.

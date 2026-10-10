@@ -35,6 +35,7 @@ const PROVENIENZ_FELDER = [
 
 export type OfficialTruthCompactReviewProvenance = ContentIdentityBinding & {
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -119,7 +120,10 @@ function provenienz(support: OfficialTruthCompactReviewProvenance): OfficialTrut
   const validUntil = fenster(support.validUntil)
   if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
   if (validFrom === undefined || validUntil === undefined) return null
-  return { ...contentIdentityBinding(support), identitySchema: 2, contentType: support.contentType,
+  if (support.sourceFingerprintProtocol !== undefined && support.sourceFingerprintProtocol !== 2) return null
+  return { ...contentIdentityBinding(support), identitySchema: 2,
+    ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+    contentType: support.contentType,
     versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
 }
 
@@ -131,6 +135,8 @@ function feldVergleich(links: string | null, rechts: string | null): number {
 }
 
 function provenienzVergleich(links: OfficialTruthCompactReviewProvenance, rechts: OfficialTruthCompactReviewProvenance): number {
+  const protocolOrder = (links.sourceFingerprintProtocol === 2 ? 2 : 1) - (rechts.sourceFingerprintProtocol === 2 ? 2 : 1)
+  if (protocolOrder !== 0) return protocolOrder
   for (const feld of PROVENIENZ_FELDER) {
     const unterschied = feldVergleich(links[feld], rechts[feld])
     if (unterschied !== 0) return unterschied

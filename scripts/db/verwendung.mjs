@@ -64,6 +64,11 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sqlPath: 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql',
   }),
   Object.freeze({
+    name: 'official_truth_store_accepted_fingerprint_v2',
+    sourcePath: 'lib/readiness/official-truth-store-server.ts',
+    sqlPath: 'supabase/migrations/20261010180000_official_truth_source_fingerprint_protocol_2.sql',
+  }),
+  Object.freeze({
     name: 'official_truth_source_catalog_v2',
     sourcePath: 'lib/readiness/official-truth-source-catalog-server.ts',
     sqlPath: 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql',
