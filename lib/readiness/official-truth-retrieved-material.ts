@@ -14,7 +14,7 @@ import {
   contentRepresentationFromRegistry,
   type ContentIdentityBinding,
 } from '@/lib/readiness/official-truth-content-identity'
-import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { officialTruthRechercheQuellenRouten } from '@/lib/readiness/official-truth-research-source-routing'
@@ -300,7 +300,8 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
   if (!representation.ok || url.canonicalUrl !== representation.value.expectedFinalUrl
     || material.contentType !== representation.value.expectedMediaType) return sperre('content_identity_mismatch')
   const identity = contentIdentityBinding(representation.value)
-  const sourceFingerprintProtocol = material.sourceSnapshot.length > 65_536 ? 2 : 1
+  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
+  if (!sourceFingerprintProtocol) return sperre('invalid_source_snapshot')
   const sourceContentHash = sourceFingerprintProtocol === 2
     ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
       ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {

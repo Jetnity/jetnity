@@ -24,7 +24,7 @@ import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_
 import { officialTruthBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'
 import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
-import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import {
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogAbhaengigkeiten,
@@ -919,7 +919,8 @@ async function decideServerOwnedRetrieval(
         if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
           || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
       } catch { return blockiert('content_identity_mismatch') }
-      const sourceFingerprintProtocol = text.text.length > 65_536 ? 2 : 1
+      const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(text.text, hop.bytes.byteLength)
+      if (!sourceFingerprintProtocol) return blockiert('invalid_source_snapshot')
       const fingerprintBinding = { ...identity, canonicalUrl: aktuell, contentType: hop.contentType }
       const hash = sourceFingerprintProtocol === 2
         ? officialTruthChDeSourceFingerprintV2Allowed(katalog.registry, identity, aktuell, hop.contentType)

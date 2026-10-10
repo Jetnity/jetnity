@@ -5,6 +5,7 @@ import { describe, test } from 'node:test'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
   OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_BYTES,
+  officialTruthSourceFingerprintProtocol,
   officialTruthSourceFingerprintV2,
   type OfficialTruthSourceFingerprintV2Binding,
 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
@@ -65,6 +66,21 @@ describe('officialTruthSourceFingerprintV2', () => {
     assert.equal(new TextEncoder().encode(exactAstral).length, 131_072)
     assert.match(officialTruthSourceFingerprintV2(exactAstral, BINDING) ?? '', /^[a-f0-9]{64}$/)
     assert.equal(officialTruthSourceFingerprintV2('😀'.repeat(32_769), BINDING), null)
+  })
+
+  test('selects the protocol from complete UTF-8 bytes and UTF-16 limits', () => {
+    const multibyte = 'é'.repeat(40_000)
+    assert.equal(multibyte.length, 40_000)
+    assert.equal(new TextEncoder().encode(multibyte).length, 80_000)
+    assert.equal(officialTruthSourceFingerprintProtocol(multibyte), 2)
+    assert.equal(officialTruthSourceFingerprintProtocol(multibyte, 80_000), 2)
+    assert.equal(officialTruthSourceFingerprintProtocol(multibyte, 79_999), null)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(65_536)), 1)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(65_537)), 2)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(131_071)), 2)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(131_072)), 2)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(131_073)), null)
+    assert.equal(officialTruthSourceFingerprintProtocol('a'.repeat(131_072), 131_073), null)
   })
 
   test('rejects malformed, unbounded, or non-canonical binding input', () => {

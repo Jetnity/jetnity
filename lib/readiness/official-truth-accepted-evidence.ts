@@ -37,6 +37,7 @@ const EVIDENCE_FELDER = [
   'lookupKey',
   'extractionNote',
 ] as const
+const EVIDENCE_V2_FELDER = [...EVIDENCE_FELDER, 'sourceFingerprintProtocol'] as const
 
 const SCOPE_FELDER = [
   'destinationCountryCode',
@@ -77,6 +78,11 @@ function genaueSchluessel(satz: object, erlaubt: readonly string[]): boolean {
   return namen.length === erlaubt.length && erlaubt.every((name) => Object.hasOwn(satz, name))
 }
 
+function genaueEvidenceSchluessel(evidence: EvidenceVersion): boolean {
+  if (!Object.hasOwn(evidence, 'sourceFingerprintProtocol')) return genaueSchluessel(evidence, EVIDENCE_FELDER)
+  return evidence.sourceFingerprintProtocol === 2 && genaueSchluessel(evidence, EVIDENCE_V2_FELDER)
+}
+
 function registryAusUmschlag(umschlag: unknown): QuellenRegistry | null {
   const satz = datensatz(umschlag)
   if (!satz) return null
@@ -91,7 +97,7 @@ function pendingOfficial(evidence: EvidenceVersion): boolean {
     evidence.validationState === 'pending' &&
     evidence.sourceClass === 'official_authority' &&
     evidence.previousVersionId === null &&
-    genaueSchluessel(evidence, EVIDENCE_FELDER) &&
+    genaueEvidenceSchluessel(evidence) &&
     genaueSchluessel(evidence.scope, SCOPE_FELDER)
   )
 }
@@ -107,7 +113,7 @@ function annahmePasst(akzeptiert: EvidenceVersion, kandidat: EvidenceVersion): b
     akzeptiert.lifecycle === 'accepted' &&
     akzeptiert.validationState === 'valid' &&
     akzeptiert.sourceClass === 'official_authority' &&
-    genaueSchluessel(akzeptiert, EVIDENCE_FELDER) &&
+    genaueEvidenceSchluessel(akzeptiert) &&
     genaueSchluessel(akzeptiert.scope, SCOPE_FELDER) &&
     akzeptiert.sourceId === kandidat.sourceId &&
     akzeptiert.authorityName === kandidat.authorityName &&

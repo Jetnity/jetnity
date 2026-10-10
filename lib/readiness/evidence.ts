@@ -8,7 +8,7 @@
 import { sha256Hex } from '@/lib/readiness/digest'
 import { contentEvidenceLookupV3, contentEvidenceVersionV2, contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentEvidenceIdentity, type RepresentationRef } from '@/lib/readiness/official-truth-content-identity'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
-import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -625,7 +625,8 @@ function versionIdFuer(value: ContentEvidenceIdentity): string | null {
   const built = contentEvidenceVersionV2({ ...contentIdentityBinding(value), identitySchema: value.identitySchema,
     lookupKey: value.lookupKey, canonicalUrl: value.canonicalUrl, contentType: value.contentType,
     sourceContentHash: value.sourceContentHash, retrievedAt: value.retrievedAt,
-    validFrom: value.validFrom, validUntil: value.validUntil })
+    validFrom: value.validFrom, validUntil: value.validUntil,
+    ...(value.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}) })
   return built.ok && built.value.versionId.startsWith(VERSION_PREFIX) ? built.value.versionId : null
 }
 
@@ -676,7 +677,8 @@ export function evidenceKandidatAusModell(
   if (!representation.ok || hülle.canonicalUrl !== representation.value.expectedFinalUrl
     || hülle.contentType !== representation.value.expectedMediaType) return { ok: false, reason: 'content_identity_mismatch' }
   const identity = contentIdentityBinding(representation.value)
-  const sourceFingerprintProtocol = snapshot.length > INHALT_MAX ? 2 : 1
+  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(snapshot)
+  if (!sourceFingerprintProtocol) return { ok: false, reason: 'invalid_source_snapshot' }
   const sourceContentHash = sourceFingerprintProtocol === 2
     ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, hülle.contentType)
       ? officialTruthSourceFingerprintV2(snapshot, {

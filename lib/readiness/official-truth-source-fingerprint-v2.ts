@@ -2,6 +2,18 @@ import { sha256Hex } from '@/lib/readiness/digest'
 
 export const OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_BYTES = 131_072
 const OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_UTF16_UNITS = 131_072
+const LEGACY_SOURCE_FINGERPRINT_MAX_BYTES = 65_536
+const LEGACY_SOURCE_FINGERPRINT_MAX_UTF16_UNITS = 65_536
+
+export function officialTruthSourceFingerprintProtocol(snapshot: unknown, transportBytes?: number): 1 | 2 | null {
+  if (typeof snapshot !== 'string') return null
+  const actualBytes = new TextEncoder().encode(snapshot).byteLength
+  if (transportBytes !== undefined && (!Number.isSafeInteger(transportBytes) || transportBytes !== actualBytes)) return null
+  if (actualBytes <= LEGACY_SOURCE_FINGERPRINT_MAX_BYTES && snapshot.length <= LEGACY_SOURCE_FINGERPRINT_MAX_UTF16_UNITS) return 1
+  if (actualBytes <= OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_BYTES
+    && snapshot.length <= OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_UTF16_UNITS) return 2
+  return null
+}
 
 export type OfficialTruthSourceFingerprintV2Binding = Readonly<{
   sourceId: string
