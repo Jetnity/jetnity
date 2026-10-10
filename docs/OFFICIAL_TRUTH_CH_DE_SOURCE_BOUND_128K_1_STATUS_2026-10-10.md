@@ -2,8 +2,9 @@
 
 **State:** R1 corrections and exact importer-guard amendment are implemented on
 Draft PR #920. Focused/full tests, typecheck, lint, build and hygiene checks pass.
-Exact-head GitHub Actions remains `action_required` with zero jobs; independent
-Technical Lead review remains outstanding.
+Exact-head GitHub Actions remains `action_required` with zero jobs. Parallel
+Code Review/CodeQL could not complete for the documented tool/database reasons;
+independent Technical Lead review remains outstanding.
 
 ## Completed so far
 
@@ -25,12 +26,13 @@ Technical Lead review remains outstanding.
   refusal were added without weakening the guard, then focused and full suites
   passed.
 - R1 correction commit is `167bb9e4bb1ee613b1757934e67dbf52d51158f4`; the
-  importer guard and final report updates are pending commit to the same branch.
+  importer-guard/report update is committed to the same branch. The verified
+  code/test head/tree and validation limits are in REPORT.
 
 ## Still required
 
-- Secret-scan final docs, run parallel validation on the corrected diff, and
-  recheck the exact final Actions state after commit. Do not bypass authorization.
+- Recheck final metadata commit, Actions authorization status and PR Draft state.
+  Do not bypass authorization.
 - Recheck operating mode, exact task blob, branch, PR Draft state and competing
   writers before delivery.
 - Keep PR #920 Draft; do not merge, activate the source, or start follow-up work.

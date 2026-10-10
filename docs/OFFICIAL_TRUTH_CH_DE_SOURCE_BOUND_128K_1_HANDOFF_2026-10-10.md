@@ -53,8 +53,15 @@ The prior correction head `167bb9e4bb1ee613b1757934e67dbf52d51158f4` had a
 successful `Vercel Preview Comments` check, but that does not prove a deployed
 Preview or Auth approval. Preview/Auth acceptance for the final head and
 independent Technical Lead review remain unverified; do not represent unavailable
-gates as passed. The previous separate read-only code review is stale for these
-corrections. Current parallel validation results must be recorded before delivery.
+gates as passed. Exact code/test validation head/tree:
+`f5f0c21af694e5f91b662488db8efc839533557b` /
+`4a617583bc53c600a1071d6e5541affc14380ee6`. Its Actions run
+`38066022947` is `action_required` with zero jobs. Parallel Code Review could
+not start because its configured model was unavailable; CodeQL skipped because
+the database was too large. Neither is reported as a completed independent review
+or security scan. The later update to this handoff/report is documentation-only;
+the final metadata commit identity and exact branch HEAD/tree are included in the
+author delivery comment.
 
 Source title/publisher/canonical identity/current legal statement/whole-page
 privacy and operative references are not qualified here. No live source read was

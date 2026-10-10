@@ -72,20 +72,24 @@ activation, or merge authorization.
   `tsx`/`next`; `npm ci` restored the lockfile dependencies. The first focused
   run after header hardening caught one fixture missing a required Content-Type;
   the fixture was corrected and the focused rerun passed.
-- Exact correction-head CI run `38064852781` is `action_required`; Actions
-  reports zero jobs and the failed-job log request confirms `total_jobs: 0`.
-  This is an unresolved GitHub authorization gate, **not a CI pass**; no retry
-  or security bypass was attempted. Earlier implementation-head runs are likewise
-  not evidence of a passing CI. Seed-head run `38038004927` passed but does not
-  validate implementation changes.
+- Exact code/test-head `f5f0c21af694e5f91b662488db8efc839533557b` (tree
+  `4a617583bc53c600a1071d6e5541affc14380ee6`) CI run `38066022947` is
+  `action_required`; Actions reports zero jobs and the failed-job log request
+  confirms `total_jobs: 0`. This is an unresolved GitHub authorization gate,
+  **not a CI pass**; no retry or security bypass was attempted. Earlier
+  implementation-head runs are likewise not evidence of a passing CI.
+  Seed-head run `38038004927` passed but does not validate implementation
+  changes.
 - The prior correction head `167bb9e4bb1ee613b1757934e67dbf52d51158f4` had a
   successful `Vercel Preview Comments` check, which is not evidence of a deployed
   Preview or Auth approval. Preview/Auth acceptance for the final head and
   independent Technical Lead review remain separate gates; no PASS is claimed.
-- The prior-head separate read-only code-review agent found no significant
-  issues, but that review is stale for the correction. Final parallel validation
-  on the current changes remains to be recorded; no stale review or CodeQL result
-  is represented as current.
+- Final parallel validation was invoked on the code/test head. No review findings
+  were returned, but the Code Review engine could not start because its configured
+  `claude-sonnet-4.6` model was unavailable; it is **not an independent review**.
+  CodeQL was skipped because the database was too large. Neither is claimed as a
+  completed review/scan. A documentation-only handoff update followed; the exact
+  verified code/test head/tree are recorded above.
 - PR #920 remains open and Draft. No Ready, merge, Production action, source
   qualification, or follow-up was performed.
 
