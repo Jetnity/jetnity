@@ -1,33 +1,38 @@
 # CH→DE Source-Bound 128 KiB Retrieval 1 — Status
 
-**State:** Code implementation, author-side verification and read-only code
-review complete on Draft PR #920; source/legal qualification and independent
-Technical Lead review remain outstanding.
+**State:** R1 corrections and exact importer-guard amendment are implemented on
+Draft PR #920. Focused/full tests, typecheck, lint, build and hygiene checks pass.
+Exact-head GitHub Actions remains `action_required` with zero jobs; independent
+Technical Lead review remains outstanding.
 
 ## Completed so far
 
 - Confirmed the active Copilot coding-agent run and existing branch.
 - Preserved the immutable task file and seed head as the base.
-- Implemented the exact candidate tuple, bounded stream handling, media/encoding
-  checks and synthetic regression tests.
-- Focused retrieval tests passed: 40/40; `npm run typecheck` passed.
-- Full serial suite passed: 6,264/6,264, including native PostgreSQL 16 checks.
-- Lint, production build, setup/API/schema/dead-code/export/dependency checks
-  passed. Full results and the initial parallel timeout correction are in REPORT.
-- Implementation commit is
-  `34cc75b1ee649dd56ab442876e28e02f6860f0a5`; verified handoff/test addendum is
-  `11136c58a7e6c22a6952c54dacdbf254f38d9eec`. Final metadata close-out and
-  exact final SHA/tree recording remain.
+- Preserved the 65,536-byte ceiling for all non-authorized/injected paths;
+  Bern's privileged path remains dormant because no approved compiled profile
+  exists.
+- Removed the alternate source hash; canonical Evidence fingerprint rejection
+  now produces no trusted retrieval envelope.
+- Added a bounded byte-only transport utility for synthetic 128 KiB boundary
+  tests, and fail-closed ambiguous-length/unknown-media-parameter checks.
+- Focused tests passed 93/93; full serial suite passed 6,268/6,268 across 818
+  suites, with PostgreSQL 16.15 R2/R3 and structural outcomes recorded in REPORT.
+  `npm run typecheck`, lint, build, and
+  setup/API/schema/dead-code/export/dependency/operating-mode checks passed.
+- The first corrected full-suite attempt exposed the finite importer inventory
+  omission for the new policy module; the exact path and adversarial lookalike
+  refusal were added without weakening the guard, then focused and full suites
+  passed.
+- R1 correction commit is `167bb9e4bb1ee613b1757934e67dbf52d51158f4`; the
+  importer guard and final report updates are pending commit to the same branch.
 
 ## Still required
 
-- Commit the final exact SHA/tree close-out; supply that commit identity in the
-  final delivery comment.
-- Recheck operating mode, exact task blob, branch, PR Draft state, Actions and
-  competing writers before delivery.
-- Secret-scan the final metadata update. The separate read-only code review found
-  no significant issues; bundled CodeQL and Code Review were unavailable/skipped
-  as recorded in REPORT.
+- Secret-scan final docs, run parallel validation on the corrected diff, and
+  recheck the exact final Actions state after commit. Do not bypass authorization.
+- Recheck operating mode, exact task blob, branch, PR Draft state and competing
+  writers before delivery.
 - Keep PR #920 Draft; do not merge, activate the source, or start follow-up work.
 
 ## Invariants and blockers

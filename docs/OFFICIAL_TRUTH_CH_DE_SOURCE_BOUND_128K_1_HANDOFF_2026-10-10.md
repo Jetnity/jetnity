@@ -20,11 +20,15 @@ deployment or follow-up is authorized by this handoff.
 
 ## Delivery summary
 
-The source-bound transport policy allows an inclusive 131,072 bytes only for the
-exact code-owned Bern candidate tuple. All other representations retain the
-65,536-byte default. GET length and streamed bytes are both bounded; compression,
-invalid media/charset/BOM and unsafe redirects fail closed. Tests use synthetic
-content only.
+The 131,072-byte byte-collector boundary is tested only by a bounded,
+non-authoritative utility that returns bytes and cannot produce a source result.
+Server-owned retrieval remains at 65,536 bytes for every current path: the
+compiled registry has no Bern profile, injected profile/catalog seams cannot
+elevate the cap, and the live authorization path requires the exact compiled
+profile object. All source hashes use canonical `evidenceQuellenFingerprint`;
+there is no direct-SHA fallback or trusted envelope when that contract refuses a
+snapshot. Header ambiguity, compression, unknown media parameters, and
+oversized streams fail closed.
 
 `TRANSPORT_CODE_ONLY_READY_FOR_TL_REVIEW` may be claimed only if exact final
 local checks and CI complete successfully. It does not mean source approval.
@@ -35,19 +39,22 @@ activation is created.
 
 ## Verification and remaining blockers
 
-Local verification is recorded in REPORT. The serialized full suite passed
-6,264/6,264, including native PostgreSQL 16 R2 semantic, R3, and integrated/storage
-proofs. The R2/storage evidence is limited to synthetic test fixtures and does
-not qualify the Bern source. Initial implementation-head CI run `38061856864` is
-`action_required` with zero jobs; no implementation CI pass is claimed. Seed-head
-CI `38038004927` passed but is not evidence for the implementation head.
+Local verification is recorded in REPORT. Focused correction tests pass 93/93,
+the full serial suite passes 6,268/6,268 across 818 suites, and typecheck/lint/
+build/hygiene checks pass. The corrected full suite includes native PostgreSQL
+16.15 R3 and R2 proof outcomes; structural proof passed while its separate
+integrated receipt roundtrip remained `NOT_VERIFIED` and full semantic publication
+remained `BLOCKED`. Exact correction-head GitHub Actions run `38064852781` is
+`action_required` with zero jobs; its log query confirms no jobs executed. This is
+not a CI pass, and no retry or authorization bypass was attempted. Seed-head CI
+`38038004927` passed but does not validate implementation changes.
 
-The implementation-head `Vercel Preview Comments` check succeeded, but does not prove a deployed Preview
-or Auth approval. Preview/Auth acceptance and independent Technical Lead review
-remain unverified; do not represent unavailable gates as passed. The separate
-read-only code review found no significant issues. Bundled Code Review was
-unavailable because its configured model was not in the registry; CodeQL was
-skipped because the database was too large.
+The prior correction head `167bb9e4bb1ee613b1757934e67dbf52d51158f4` had a
+successful `Vercel Preview Comments` check, but that does not prove a deployed
+Preview or Auth approval. Preview/Auth acceptance for the final head and
+independent Technical Lead review remain unverified; do not represent unavailable
+gates as passed. The previous separate read-only code review is stale for these
+corrections. Current parallel validation results must be recorded before delivery.
 
 Source title/publisher/canonical identity/current legal statement/whole-page
 privacy and operative references are not qualified here. No live source read was

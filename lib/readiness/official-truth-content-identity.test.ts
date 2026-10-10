@@ -504,6 +504,8 @@ describe('dormancy and architectural boundaries', () => {
     'lib/readiness/official-truth-server-owned-retrieval.ts',
     'lib/readiness/official-truth-source-catalog-server.ts',
     'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
+    // The source-bound budget reads the compiled registry only; it cannot register profiles.
+    'lib/readiness/official-truth-ch-de-source-budget-128k-1.ts',
     'lib/readiness/regulierungs-anwendbarkeit.ts',
     'lib/readiness/rule-claims.ts',
     'lib/readiness/source-registry.ts',
@@ -530,12 +532,15 @@ describe('dormancy and architectural boundaries', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts.evil.ts'), false)
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
       'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
       'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
       'scripts/db/official-truth-integrated-pilot-1/unreviewed.ts',
       'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts.evil.ts',
       'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts.evil.ts',
+      'lib/readiness/official-truth-ch-de-source-budget-128k-1.ts.evil.ts',
       'lib/readiness/official-truth-integrated-pilot-bundle.ts.evil.ts']) assert.equal(contentIdentityImporterAllowed(path), false, path)
   })
   test('repository search pins the finite R3 application and isolated developer importers', () => {
