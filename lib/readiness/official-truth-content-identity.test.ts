@@ -513,6 +513,8 @@ describe('dormancy and architectural boundaries', () => {
     // Isolated fixed corpus, canonical execution and bounded official-source qualifier.
     // #917 fixed S1/S2 quarantine probe; verifier can never accept identity.
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts',
+    // #923 fixed S4/S5 Bern quarantine probe; verifier can never accept identity.
+    'scripts/official-truth-ch-de-compact-primary-source-1/source-probe.ts',
     'scripts/official-truth-integrated-pilot-1/corpus.ts',
     'scripts/official-truth-integrated-pilot-1/engine.ts',
     'scripts/official-truth-integrated-pilot-1/official-source.ts',
@@ -529,6 +531,9 @@ describe('dormancy and architectural boundaries', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts.evil.ts'), false)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/unreviewed.ts'), false)
+    assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-compact-primary-source-1/source-probe.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-compact-primary-source-1/source-probe.ts.evil.ts'), false)
+    assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-compact-primary-source-1/unreviewed.ts'), false)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)

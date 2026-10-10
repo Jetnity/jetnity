@@ -1,0 +1,14 @@
+{
+  "schema": "ch-de-compact-primary-source-evidence-v1",
+  "taskBlob": "f14ff315daa02097ab89f816d04929d742be6c58",
+  "phaseA": "NOT_RUN_NETWORK_UNAVAILABLE",
+  "observations": [
+    { "source": "S4", "url": "https://bern.diplo.de/ch-de/service/visa/2643834-2643834", "startedAt": null, "completedAt": null, "reason": null, "completeBodyBytes": null },
+    { "source": "S5", "url": "https://bern.diplo.de/ch-de/service/visa/schengen-visa-2643132", "startedAt": null, "completedAt": null, "reason": null, "completeBodyBytes": null }
+  ],
+  "identityQualified": false,
+  "privacyQualified": false,
+  "legalQualified": false,
+  "acceptedOfficialTruth": false,
+  "productionActivated": false
+}
