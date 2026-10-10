@@ -1,7 +1,7 @@
 import { sha256Hex } from '@/lib/readiness/digest'
 
 export const OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_BYTES = 131_072
-export const OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_UTF16_UNITS = 131_072
+const OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V2_MAX_UTF16_UNITS = 131_072
 
 export type OfficialTruthSourceFingerprintV2Binding = Readonly<{
   sourceId: string

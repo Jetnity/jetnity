@@ -155,7 +155,7 @@ export type EvidenceVersion = ContentEvidenceIdentity & {
   extractionNote: string | null
 }
 
-export function evidenceSourceFingerprintProtocol(value: { sourceFingerprintProtocol?: unknown }): 1 | 2 | null {
+function evidenceSourceFingerprintProtocol(value: { sourceFingerprintProtocol?: unknown }): 1 | 2 | null {
   if (!Object.hasOwn(value, 'sourceFingerprintProtocol')) return 1
   return value.sourceFingerprintProtocol === 2 ? 2 : null
 }
