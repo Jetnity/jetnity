@@ -109,7 +109,7 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     await owner.query('COMMIT');const ownerReleaseMs=performance.now()-releaseAt;assert.equal(waiting,true)
     const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'],JSON.stringify({stage:'concurrent_bundle_writers',barrierWaitMs,ownerReleaseMs,elapsedMs:performance.now()-raceStarted,diagnostics:raceDiagnostics,outcomes:outcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
     const composed=await readVerifiedIntegratedBundleLocally(cluster,composedEnvelope.bundle.recordFingerprint);assert.equal(composed.status,'verified');if(composed.status!=='verified')throw Error('composed_readback')
-    checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent')
+    checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent',`concurrent_timing:${JSON.stringify({barrierWaitMs:Math.ceil(barrierWaitMs),ownerReleaseMs:Math.ceil(ownerReleaseMs),writers:raceDiagnostics})}`)
     const composedRepeat=await persistVerifiedIntegratedBundleLocally(cluster,oids,composedEnvelope,'verify_existing');assert.ok(composedRepeat.ok);assert.equal(composedRepeat.outcome,'idempotent')
     checks.push(...await runSemanticRegressions({owner,cluster,oids,primaryEnvelope,composedEnvelope}))
     // All negatives originate from successfully verified complete bundles; call SQL directly to prove independent refusal.
