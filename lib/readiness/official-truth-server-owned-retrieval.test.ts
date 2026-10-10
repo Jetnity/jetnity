@@ -26,6 +26,10 @@ import {
   type OfficialTruthServerOwnedRetrievalLookup,
 } from '@/lib/readiness/official-truth-server-owned-retrieval'
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenEingabe } from '@/lib/readiness/source-registry'
+import {
+  OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1,
+  officialTruthChDeSourceBudget128k1,
+} from './official-truth-ch-de-source-budget-128k-1'
 
 const DATEI = 'lib/readiness/official-truth-server-owned-retrieval.ts'
 const AMTLICH = 'example-real-government'
@@ -141,11 +145,13 @@ function lookupWarten(
 
 async function laufen(teil?: {
   eingabe?: unknown
-  publications?: readonly { url: string; requestUrls?: readonly string[]; mediaType?: string }[]
+  publications?: readonly { url: string; itemId?: string; representationId?: string; requestUrls?: readonly string[]; mediaType?: string }[]
   quellen?: readonly QuellenEingabe[]
   katalog?: 'ok' | 'missing' | 'fail' | 'throw'
   adressen?: (hostname: string) => readonly OfficialTruthServerOwnedRetrievalAdresse[] | 'throw'
   antwort?: (url: string) => Schritt
+  identityProfiles?: readonly ContentIdentityProfileDefinition[]
+  identityProfileId?: string
   timeoutMs?: number
   now?: () => Date
 }): Promise<Lauf> {
@@ -160,14 +166,19 @@ async function laufen(teil?: {
       katalog += 1
       if (modus === 'throw') throw new Error('catalog down')
       if (modus === 'fail' || payload.operation !== 'read_registry') return { ok: false }
+      const snapshot = structuredClone(r2CatalogRows(liste.map(katalogZeile), teil?.publications ?? R2_PUBLICATIONS))
+      if (teil?.identityProfileId) {
+        const reps = snapshot.representations
+        assert.ok(Array.isArray(reps))
+        for (const rep of reps) Object.assign(rep, { identity_profile_id: teil.identityProfileId })
+      }
       return {
-        ok: true,
-        antwort: { ...r2CatalogRows(liste.map(katalogZeile), teil?.publications ?? R2_PUBLICATIONS), ok: true, operation: 'read_registry' },
+        ok: true, antwort: { ...snapshot, ok: true, operation: 'read_registry' },
       }
     },
   }
   const ergebnis = await decideOfficialTruthServerOwnedRetrieval(teil?.eingabe ?? { sourceId: AMTLICH, url: AMTLICH_URL }, {
-    catalog: modus === 'missing' ? { env: {} } : { identityProfiles: r2Profiles, transport },
+    catalog: modus === 'missing' ? { env: {} } : { identityProfiles: teil?.identityProfiles ?? r2Profiles, transport },
     now: () => {
       uhr += 1
       return teil?.now ? teil.now() : new Date(JETZT)
@@ -236,11 +247,54 @@ function grund(lauf: Lauf): string {
   return lauf.ergebnis.reason
 }
 
+function bernProfil(accept: boolean): ContentIdentityProfileDefinition {
+  return Object.freeze({
+    identityProfileId: OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1.identityProfileId,
+    identityProfileVersion: OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1.identityProfileVersion,
+    current: true,
+    verify: ({ representation, responseText }: Parameters<ContentIdentityProfileDefinition['verify']>[0]) =>
+      accept && responseText.startsWith('<!doctype html><html><body>SYNTHETIC TRANSPORT FIXTURE ')
+        ? { ok: true as const, identity: contentIdentityBinding(representation) }
+        : { ok: false as const, reason: 'identity_mismatch' as const },
+  })
+}
+
+function syntheticHtml(byteLength: number): string {
+  const start = '<!doctype html><html><body>SYNTHETIC TRANSPORT FIXTURE '
+  const end = '</body></html>'
+  assert.ok(byteLength >= start.length + end.length)
+  return `${start}${'x'.repeat(byteLength - start.length - end.length)}${end}`
+}
+
+async function laufenBern(antwort: (url: string) => Schritt, accept = true): Promise<Lauf> {
+  const candidate = OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1
+  return laufen({
+    eingabe: { sourceId: candidate.sourceId, url: candidate.requestUrl },
+    quellen: [{
+      sourceId: candidate.sourceId,
+      sourceClass: 'official_authority',
+      publisherName: 'Synthetic authority fixture',
+      authorityName: 'Synthetic authority fixture',
+      domains: [new URL(candidate.requestUrl).hostname],
+    }],
+    publications: [{
+      url: candidate.requestUrl,
+      itemId: candidate.contentItemId,
+      representationId: candidate.representationId,
+      mediaType: candidate.mediaType,
+    }],
+    identityProfiles: [bernProfil(accept)],
+    identityProfileId: candidate.identityProfileId,
+    antwort,
+  })
+}
+
 describe('official truth server-owned retrieval', () => {
   test('1 Registry, sourceClass, domains und blockedDomains scheitern vor Katalog und Netz', async () => {
-    const felder = ['registry', 'sourceClass', 'domains', 'blockedDomains'] as const
+    const felder = ['registry', 'sourceClass', 'domains', 'blockedDomains', 'maxBytes'] as const
     for (const feld of felder) {
-      const wert = feld === 'sourceClass' ? 'official_authority' : feld === 'registry' ? { sources: [] } : ['not-a-government.example']
+      const wert = feld === 'sourceClass' ? 'official_authority' : feld === 'registry' ? { sources: [] }
+        : feld === 'maxBytes' ? 131_072 : ['not-a-government.example']
       const lauf = await laufen({ eingabe: { sourceId: AMTLICH, url: AMTLICH_URL, [feld]: wert } })
       assert.equal(grund(lauf), 'caller_authority_forbidden', feld)
       assert.equal(lauf.katalog, 0, feld)
@@ -611,6 +665,167 @@ describe('official truth server-owned retrieval', () => {
     const wert = erfolg(grenze)
     assert.equal(wert.sourceSnapshot.length, 65_536)
     assert.equal(wert.sourceContentHash, evidenceQuellenFingerprint(wert.sourceSnapshot))
+  })
+
+  test('default and exact Bern candidate byte ceilings are inclusive and independently selected', async () => {
+    for (const byteLength of [65_535, 65_536]) {
+      const result = await laufen({
+        antwort: () => ({ body: 'x'.repeat(byteLength), headers: { 'content-type': 'text/plain', 'content-length': String(byteLength) } }),
+      })
+      assert.equal(result.ergebnis.status, 'server_owned_official_retrieval', JSON.stringify(result.ergebnis))
+      if (result.ergebnis.status !== 'server_owned_official_retrieval') continue
+      assert.equal(result.ergebnis.sourceSnapshot.length, byteLength)
+    }
+    const defaultOverflow = await laufen({
+      antwort: () => ({ body: 'x'.repeat(65_537), headers: { 'content-type': 'text/plain', 'content-length': '65536' } }),
+    })
+    assert.equal(grund(defaultOverflow), 'response_too_large')
+
+    for (const byteLength of [131_071, 131_072]) {
+      const result = await laufenBern(() => ({
+        body: syntheticHtml(byteLength),
+        headers: { 'content-type': 'text/html; charset=utf-8', 'content-length': String(byteLength) },
+      }))
+      assert.equal(result.ergebnis.status, 'server_owned_official_retrieval', JSON.stringify(result.ergebnis))
+      if (result.ergebnis.status !== 'server_owned_official_retrieval') continue
+      assert.equal(result.ergebnis.sourceSnapshot.length, byteLength)
+      assert.equal(evidenceQuellenFingerprint(result.ergebnis.sourceSnapshot), null)
+      assert.notEqual(result.ergebnis.sourceContentHash, null)
+    }
+    const declaredOverflow = { gesehen: false, abgebrochen: false }
+    const early = await laufenBern(() => ({
+      body: 'x',
+      headers: { 'content-type': 'text/html', 'content-length': '131073' },
+      lesen: declaredOverflow,
+    }))
+    assert.equal(grund(early), 'response_too_large')
+    assert.equal(declaredOverflow.gesehen, false)
+    assert.equal(declaredOverflow.abgebrochen, true)
+
+    for (const contentLength of [undefined, '0', 'malformed', '1', '131072', '0, 131073']) {
+      const streamedOverflow = { gesehen: false, abgebrochen: false }
+      const late = await laufenBern(() => ({
+        headers: { 'content-type': 'text/html', ...(contentLength ? { 'content-length': contentLength } : {}) },
+        stuecke: [new TextEncoder().encode(syntheticHtml(131_072)), Uint8Array.of(0x78)],
+        lesen: streamedOverflow,
+      }))
+      assert.equal(grund(late), 'response_too_large', String(contentLength))
+      assert.equal(streamedOverflow.abgebrochen, true, String(contentLength))
+      assert.equal(JSON.stringify(late.ergebnis).includes('SYNTHETIC'), false)
+    }
+  })
+
+  test('128 KiB selection is an exact immutable S3 tuple and never follows metadata lookalikes', () => {
+    const candidate = OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1
+    const identity: ContentIdentityBinding = {
+      sourceId: candidate.sourceId, contentItemId: candidate.contentItemId, contentItemVersion: candidate.contentItemVersion,
+      representationId: candidate.representationId, representationVersion: candidate.representationVersion,
+      identityProfileId: candidate.identityProfileId, identityProfileVersion: candidate.identityProfileVersion,
+    }
+    const item = { sourceId: candidate.sourceId, contentItemId: candidate.contentItemId,
+      contentItemVersion: candidate.contentItemVersion, current: true }
+    const representation = {
+      ...identity, current: true, requestUrls: [candidate.requestUrl], expectedFinalUrl: candidate.requestUrl, expectedMediaType: candidate.mediaType,
+    }
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl, candidate.requestUrl, 'text/html'), 131_072)
+    const identityChanges: Partial<typeof identity>[] = [
+      { sourceId: 'aa-research-only' }, { contentItemId: 'other-item' }, { contentItemVersion: 2 },
+      { representationId: 'other-representation' }, { representationVersion: 2 },
+      { identityProfileId: 'synthetic_identity' }, { identityProfileVersion: 2 },
+    ]
+    for (const change of identityChanges) {
+      assert.equal(officialTruthChDeSourceBudget128k1({ ...identity, ...change }, item, representation,
+        candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+    }
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, { ...representation, requestUrls: [`${candidate.requestUrl}/` ] },
+      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
+      `${candidate.requestUrl}/`, 'text/html'), null)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
+      candidate.requestUrl, 'text/plain'), null)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, `${candidate.requestUrl}?lang=de`,
+      candidate.requestUrl, 'text/html'), null)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, { ...item, current: false }, representation,
+      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, { ...representation, current: false },
+      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+    assert.equal(Object.isFrozen(candidate), true)
+  })
+
+  test('Bern catalog tuple stays inactive without the independently registered code-owned profile', async () => {
+    const candidate = OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1
+    const result = await laufen({
+      eingabe: { sourceId: candidate.sourceId, url: candidate.requestUrl },
+      quellen: [{
+        sourceId: candidate.sourceId, sourceClass: 'official_authority', publisherName: 'Synthetic authority fixture',
+        authorityName: 'Synthetic authority fixture', domains: [new URL(candidate.requestUrl).hostname],
+      }],
+      publications: [{
+        url: candidate.requestUrl, itemId: candidate.contentItemId,
+        representationId: candidate.representationId, mediaType: candidate.mediaType,
+      }],
+      identityProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+      identityProfileId: candidate.identityProfileId,
+    })
+    assert.equal(grund(result), 'catalog_failed')
+    assert.equal(result.verbindungen.length, 0)
+    assert.equal(result.dns.length, 0)
+  })
+
+  test('Bern exact tuple does not qualify a source when its verifier quarantines the response', async () => {
+    const result = await laufenBern(() => ({
+      body: syntheticHtml(70_000),
+      headers: { 'content-type': 'text/html', 'content-length': '70000' },
+    }), false)
+    assert.equal(grund(result), 'content_identity_mismatch')
+    assert.equal(result.uhr, 0)
+    assert.equal(JSON.stringify(result.ergebnis).includes('SYNTHETIC'), false)
+  })
+
+  test('content encodings, charset conflicts and UTF-8 BOM fail closed before identity qualification', async () => {
+    for (const encoding of ['gzip', 'br', 'deflate', 'identity, gzip', 'identity, identity']) {
+      const track = { gesehen: false, abgebrochen: false }
+      const result = await laufenBern(() => ({
+        body: syntheticHtml(100),
+        headers: { 'content-type': 'text/html', 'content-encoding': encoding },
+        lesen: track,
+      }))
+      assert.equal(grund(result), 'http_failed', encoding)
+      assert.equal(track.gesehen, false, encoding)
+      assert.equal(track.abgebrochen, true, encoding)
+    }
+    for (const encoding of [undefined, 'identity']) {
+      const result = await laufenBern(() => ({
+        body: syntheticHtml(100),
+        headers: { 'content-type': 'text/html; charset=utf-8', ...(encoding ? { 'content-encoding': encoding } : {}) },
+      }))
+      assert.equal(erfolg(result).sourceSnapshot, syntheticHtml(100))
+    }
+    const badCharset = await laufenBern(() => ({
+      body: syntheticHtml(100),
+      headers: { 'content-type': 'text/html; charset=iso-8859-1' },
+    }))
+    assert.equal(grund(badCharset), 'content_type_mismatch')
+    const bom = await laufenBern(() => ({
+      body: Uint8Array.of(0xef, 0xbb, 0xbf, ...new TextEncoder().encode(syntheticHtml(100))),
+      headers: { 'content-type': 'text/html' },
+    }))
+    assert.equal(grund(bom), 'invalid_utf8')
+  })
+
+  test('non-exact Bern content type and representation redirects keep the 64 KiB default or refuse', async () => {
+    const oversized = await laufenBern(() => ({
+      body: 'x'.repeat(65_537),
+      headers: { 'content-type': 'text/plain', 'content-length': '65537' },
+    }))
+    assert.equal(grund(oversized), 'response_too_large')
+    const redirect = await laufenBern(() => ({
+      status: 302,
+      location: '/ch-de/service/visumundeinreise/other-representation',
+      headers: {},
+    }))
+    assert.equal(grund(redirect), 'representation_url_mismatch')
+    assert.equal(redirect.verbindungen.length, 1)
   })
 
   test('20 ungültiges UTF-8 und ein leerer Body scheitern', async () => {

@@ -21,6 +21,7 @@ import https from 'node:https'
 import net from 'node:net'
 
 import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import { sha256Hex } from '@/lib/readiness/digest'
 import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
@@ -33,6 +34,7 @@ import {
   type QuellenRegistry,
   type QuellenUrlFehler,
 } from '@/lib/readiness/source-registry'
+import { officialTruthChDeSourceBudget128k1 } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 
 const TIEFE_MAX = 8
 const REDIRECT_MAX = 5
@@ -55,6 +57,7 @@ const AUTORITAET = new Set([
   'registry',
   'sourceClass',
   'source_class',
+  'maxBytes',
   'domains',
   'blockedDomains',
   'blocked_domains',
@@ -582,8 +585,18 @@ function zielPruefen(registry: QuellenRegistry, sourceId: string, url: string, h
 
 function medientyp(wert: string | null): string | null {
   if (wert == null) return null
-  const roh = wert.split(',')[0]?.split(';')[0]?.trim().toLowerCase() ?? ''
+  if (wert.includes(',')) return null
+  const teile = wert.split(';')
+  const roh = teile.shift()?.trim().toLowerCase() ?? ''
   if (!roh || !/^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/.test(roh)) return null
+  let charset = false
+  for (const parameter of teile) {
+    const teil = parameter.trim()
+    if (/^charset\s*=/i.test(teil)) {
+      if (charset || !/^charset\s*=\s*(?:utf-8|"utf-8")$/i.test(teil)) return null
+      charset = true
+    }
+  }
   return roh
 }
 
@@ -598,11 +611,12 @@ function inhaltLaenge(wert: string | null): number | null {
 async function koerperLesen(
   body: AsyncIterable<Uint8Array> | null,
   signal: AbortSignal,
+  maxBytes: number,
   abbrechen?: () => void,
 ): Promise<{ ok: true; bytes: Uint8Array } | { ok: false; reason: 'response_too_large' | 'timeout' | 'http_failed' }> {
   if (signal.aborted) return { ok: false, reason: 'timeout' }
   if (!body) return { ok: true, bytes: new Uint8Array() }
-  const teile: Uint8Array[] = []
+  const gesammelt = new Uint8Array(maxBytes)
   let gesamt = 0
   try {
     for await (const stueck of body) {
@@ -612,11 +626,11 @@ async function koerperLesen(
       }
       const bytes = stueck instanceof Uint8Array ? stueck : new Uint8Array(stueck)
       if (bytes.byteLength === 0) continue
-      if (gesamt + bytes.byteLength > BODY_MAX) {
+      if (gesamt + bytes.byteLength > maxBytes) {
         abbrechen?.()
         return { ok: false, reason: 'response_too_large' }
       }
-      teile.push(bytes)
+      gesammelt.set(bytes, gesamt)
       gesamt += bytes.byteLength
     }
   } catch {
@@ -625,17 +639,14 @@ async function koerperLesen(
     return { ok: false, reason: 'http_failed' }
   }
   if (signal.aborted) return { ok: false, reason: 'timeout' }
-  const alle = new Uint8Array(gesamt)
-  let offset = 0
-  for (const teil of teile) {
-    alle.set(teil, offset)
-    offset += teil.byteLength
-  }
-  return { ok: true, bytes: alle }
+  return { ok: true, bytes: gesammelt.slice(0, gesamt) }
 }
 
 function textAus(bytes: Uint8Array): { ok: true; text: string } | { ok: false; reason: 'invalid_utf8' | 'empty_body' } {
   if (bytes.byteLength === 0) return { ok: false, reason: 'empty_body' }
+  if (bytes.byteLength >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    return { ok: false, reason: 'invalid_utf8' }
+  }
   try {
     const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
     if (!text) return { ok: false, reason: 'empty_body' }
@@ -797,6 +808,7 @@ async function hopLesen(
   url: string,
   lookup: OfficialTruthServerOwnedRetrievalLookup,
   signal: AbortSignal,
+  maxBytesForMediaType: (mediaType: string | null) => number,
 ): Promise<HopKörper> {
   let antwort: OfficialTruthServerOwnedRetrievalHttpErgebnis
   try {
@@ -818,20 +830,27 @@ async function hopLesen(
     antwort.cancel?.()
     return { art: 'blocked', reason: 'http_status' }
   }
+  const contentEncoding = antwort.headers.get('content-encoding')
+  if (contentEncoding != null && contentEncoding.trim().toLowerCase() !== 'identity') {
+    antwort.cancel?.()
+    return { art: 'blocked', reason: 'http_failed' }
+  }
+  const contentType = medientyp(antwort.headers.get('content-type'))
+  const maxBytes = maxBytesForMediaType(contentType)
   const laenge = inhaltLaenge(antwort.headers.get('content-length'))
-  if (laenge != null && laenge > BODY_MAX) {
+  if (laenge != null && laenge > maxBytes) {
     antwort.cancel?.()
     return { art: 'blocked', reason: 'response_too_large' }
   }
   const koerper = await Promise.race([
-    koerperLesen(antwort.body, signal, antwort.cancel),
+    koerperLesen(antwort.body, signal, maxBytes, antwort.cancel),
     abbruch(signal),
   ])
   if (!koerper.ok) {
     antwort.cancel?.()
     return { art: 'blocked', reason: koerper.reason }
   }
-  return { art: 'bytes', bytes: koerper.bytes, contentType: medientyp(antwort.headers.get('content-type')) }
+  return { art: 'bytes', bytes: koerper.bytes, contentType }
 }
 
 /**
@@ -885,7 +904,9 @@ export async function decideOfficialTruthServerOwnedRetrieval(
       if (controller.signal.aborted) return blockiert('timeout')
       if (gesehen.has(aktuell)) return blockiert('redirect_loop')
       gesehen.add(aktuell)
-      const hop = await hopLesen(abhaengigkeiten.http, aktuell, lookup, controller.signal)
+      const maxBytesForMediaType = (mediaType: string | null) =>
+        officialTruthChDeSourceBudget128k1(identity, item, representation, requestUrl, aktuell, mediaType ?? '') ?? BODY_MAX
+      const hop = await hopLesen(abhaengigkeiten.http, aktuell, lookup, controller.signal, maxBytesForMediaType)
       if (hop.art === 'blocked') return blockiert(hop.reason)
       if (hop.art === 'redirect') {
         if (redirects >= REDIRECT_MAX) return blockiert('redirect_limit')
@@ -915,7 +936,9 @@ export async function decideOfficialTruthServerOwnedRetrieval(
         if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
           || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
       } catch { return blockiert('content_identity_mismatch') }
-      const hash = evidenceQuellenFingerprint(text.text)
+      const hash = hop.bytes.byteLength <= BODY_MAX
+        ? evidenceQuellenFingerprint(text.text)
+        : sha256Hex(text.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n'))
       if (!hash) return blockiert('invalid_source_snapshot')
       const retrievedAt = uhrLesen(abhaengigkeiten.now)
       if (!retrievedAt) return blockiert('invalid_retrieval_time')
