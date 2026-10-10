@@ -1,0 +1,66 @@
+{
+  "schema": "jetnity.synthetic-transport-boundary-evidence.v1",
+  "task": "OFFICIAL_TRUTH_CH_DE_SOURCE_BOUND_128K_1",
+  "sourceStatus": "SOURCE_NOT_QUALIFIED",
+  "fixtureType": "synthetic-only",
+  "liveSourceRead": false,
+  "sourceBodyStored": false,
+  "sourceHashStored": false,
+  "personalDataIncluded": false,
+  "databaseOrProductionMutation": false,
+  "acceptedEvidenceOrRule": false,
+  "cases": [
+    {
+      "name": "default-below-boundary",
+      "bytes": 65535,
+      "expected": "transport-pass"
+    },
+    {
+      "name": "default-inclusive-boundary",
+      "bytes": 65536,
+      "expected": "transport-pass"
+    },
+    {
+      "name": "default-over-boundary",
+      "bytes": 65537,
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "bounded-transport-utility-below-boundary",
+      "bytes": 131071,
+      "expected": "non-authoritative-transport-pass-only"
+    },
+    {
+      "name": "bounded-transport-utility-inclusive-boundary",
+      "bytes": 131072,
+      "expected": "non-authoritative-transport-pass-only"
+    },
+    {
+      "name": "bounded-transport-utility-over-boundary",
+      "bytes": 131073,
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "injected-bern-profile-over-default-ceiling",
+      "bytes": 70000,
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "canonical-fingerprint-over-character-limit",
+      "bytes": 65537,
+      "expected": "canonical-fingerprint-refuses"
+    },
+    {
+      "name": "bern-candidate-without-production-profile",
+      "bytes": 0,
+      "expected": "refuse-before-network"
+    }
+  ],
+  "omitted": [
+    "live HTML or extracted source text",
+    "content hashes",
+    "resolved network addresses",
+    "machine paths",
+    "credentials and personal data"
+  ]
+}
