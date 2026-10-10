@@ -4,18 +4,27 @@
 
 - The `BODY_MAX` default remains exactly 65,536 bytes. Neither request input nor
   environment/catalog extras can select a larger value.
-- The larger allowance requires exact source, item/version, current item,
-  representation/version, current representation, profile/version, one
-  canonical request/final URL and received `text/html`.
+- The candidate 128 KiB allowance is dormant: the compiled identity-profile
+  registry contains no Bern profile. Any future selection requires the exact
+  compiled profile object, exact current tuple and the private direct-live-loader
+  authorization path. Test seams and injected catalog/profile calls stay at
+  65,536 bytes.
 - Candidate metadata is not added to the production identity profile registry.
   A catalog descriptor with no registered verifier fails before network access.
-- A successful synthetic transport test is not treated as a source/legal
-  qualification. A quarantined verifier still causes `content_identity_mismatch`.
+- The 131,071/131,072 synthetic boundary pass is tested only in the bounded
+  response-byte utility. It yields bytes, not a source retrieval or identity
+  result. A quarantined in-boundary test verifier still causes
+  `content_identity_mismatch`.
+- `sourceContentHash` uses only canonical `evidenceQuellenFingerprint`. When that
+  contract refuses a snapshot, retrieval returns `invalid_source_snapshot`; no
+  direct SHA-256 substitute or trusted envelope is produced.
 - GET `Content-Length` is only an early refusal optimization. Streamed actual
-  bytes remain authoritative even for absent, zero, malformed, contradictory or
-  short declarations. Overflow cancels and produces no partial result.
+  bytes remain authoritative for absent, zero or valid short declarations.
+  Malformed/comma-joined lengths and conflicts fail before body reads; overflow
+  cancels and produces no partial result.
 - Encodings and media/charset anomalies refuse before body accumulation.
-  Fatal UTF-8 and BOM rejection remain in the complete-response path.
+  Unknown/duplicate media parameters fail closed; fatal UTF-8 and BOM rejection
+  remain in the complete-response path.
 - Redirects must be registered for the exact representation; the per-hop cap is
   recomputed and no candidate cap is inherited onto another URL.
 - Public-address/DNS/socket pin/TLS/timeout/no-auth checks and the existing

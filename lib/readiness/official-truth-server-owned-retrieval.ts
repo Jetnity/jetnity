@@ -21,7 +21,7 @@ import https from 'node:https'
 import net from 'node:net'
 
 import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
-import { sha256Hex } from '@/lib/readiness/digest'
+import { officialTruthBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'
 import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import {
@@ -41,6 +41,7 @@ const REDIRECT_MAX = 5
 const BODY_MAX = 65_536
 const TIMEOUT_MS = 10_000
 const UMLEITUNG = new Set([301, 302, 303, 307, 308])
+const LIVE_PRIVILEGED_TRANSPORT = Symbol('live-privileged-transport')
 
 const FESTE_HEADER = Object.freeze({
   'accept-encoding': 'identity',
@@ -595,51 +596,17 @@ function medientyp(wert: string | null): string | null {
     if (/^charset\s*=/i.test(teil)) {
       if (charset || !/^charset\s*=\s*(?:utf-8|"utf-8")$/i.test(teil)) return null
       charset = true
-    }
+    } else return null
   }
   return roh
 }
 
-function inhaltLaenge(wert: string | null): number | null {
-  if (wert == null) return null
+function inhaltLaenge(wert: string | null): { ok: true; value: number | null } | { ok: false } {
+  if (wert == null) return { ok: true, value: null }
   const text = wert.trim()
-  if (!/^\d+$/.test(text)) return null
+  if (!/^\d+$/.test(text)) return { ok: false }
   const zahl = Number(text)
-  return Number.isSafeInteger(zahl) ? zahl : null
-}
-
-async function koerperLesen(
-  body: AsyncIterable<Uint8Array> | null,
-  signal: AbortSignal,
-  maxBytes: number,
-  abbrechen?: () => void,
-): Promise<{ ok: true; bytes: Uint8Array } | { ok: false; reason: 'response_too_large' | 'timeout' | 'http_failed' }> {
-  if (signal.aborted) return { ok: false, reason: 'timeout' }
-  if (!body) return { ok: true, bytes: new Uint8Array() }
-  const gesammelt = new Uint8Array(maxBytes)
-  let gesamt = 0
-  try {
-    for await (const stueck of body) {
-      if (signal.aborted) {
-        abbrechen?.()
-        return { ok: false, reason: 'timeout' }
-      }
-      const bytes = stueck instanceof Uint8Array ? stueck : new Uint8Array(stueck)
-      if (bytes.byteLength === 0) continue
-      if (gesamt + bytes.byteLength > maxBytes) {
-        abbrechen?.()
-        return { ok: false, reason: 'response_too_large' }
-      }
-      gesammelt.set(bytes, gesamt)
-      gesamt += bytes.byteLength
-    }
-  } catch {
-    abbrechen?.()
-    if (signal.aborted) return { ok: false, reason: 'timeout' }
-    return { ok: false, reason: 'http_failed' }
-  }
-  if (signal.aborted) return { ok: false, reason: 'timeout' }
-  return { ok: true, bytes: gesammelt.slice(0, gesamt) }
+  return Number.isSafeInteger(zahl) ? { ok: true, value: zahl } : { ok: false }
 }
 
 function textAus(bytes: Uint8Array): { ok: true; text: string } | { ok: false; reason: 'invalid_utf8' | 'empty_body' } {
@@ -836,14 +803,22 @@ async function hopLesen(
     return { art: 'blocked', reason: 'http_failed' }
   }
   const contentType = medientyp(antwort.headers.get('content-type'))
+  if (contentType == null) {
+    antwort.cancel?.()
+    return { art: 'blocked', reason: 'content_type_mismatch' }
+  }
   const maxBytes = maxBytesForMediaType(contentType)
   const laenge = inhaltLaenge(antwort.headers.get('content-length'))
-  if (laenge != null && laenge > maxBytes) {
+  if (!laenge.ok) {
+    antwort.cancel?.()
+    return { art: 'blocked', reason: 'http_failed' }
+  }
+  if (laenge.value != null && laenge.value > maxBytes) {
     antwort.cancel?.()
     return { art: 'blocked', reason: 'response_too_large' }
   }
   const koerper = await Promise.race([
-    koerperLesen(antwort.body, signal, maxBytes, antwort.cancel),
+    officialTruthBoundedResponseBody(antwort.body, signal, maxBytes, antwort.cancel),
     abbruch(signal),
   ])
   if (!koerper.ok) {
@@ -857,9 +832,10 @@ async function hopLesen(
  * Prüft den Vorschlag, liest den Katalog einmal und holt die Antwort selbst.
  * Eine mitgelieferte Registry, Uhr, Adresse oder ein Body ist keine Lesung.
  */
-export async function decideOfficialTruthServerOwnedRetrieval(
+async function decideServerOwnedRetrieval(
   eingabe: unknown,
   abhaengigkeiten: OfficialTruthServerOwnedRetrievalAbhaengigkeiten,
+  authorization?: typeof LIVE_PRIVILEGED_TRANSPORT,
 ): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
   const form = eingabeLesen(eingabe)
   if (!form.ok) return blockiert(form.reason)
@@ -905,7 +881,9 @@ export async function decideOfficialTruthServerOwnedRetrieval(
       if (gesehen.has(aktuell)) return blockiert('redirect_loop')
       gesehen.add(aktuell)
       const maxBytesForMediaType = (mediaType: string | null) =>
-        officialTruthChDeSourceBudget128k1(identity, item, representation, requestUrl, aktuell, mediaType ?? '') ?? BODY_MAX
+        authorization === LIVE_PRIVILEGED_TRANSPORT && abhaengigkeiten.catalog == null
+          ? officialTruthChDeSourceBudget128k1(identity, item, representation, requestUrl, aktuell, mediaType ?? '', profile) ?? BODY_MAX
+          : BODY_MAX
       const hop = await hopLesen(abhaengigkeiten.http, aktuell, lookup, controller.signal, maxBytesForMediaType)
       if (hop.art === 'blocked') return blockiert(hop.reason)
       if (hop.art === 'redirect') {
@@ -936,9 +914,7 @@ export async function decideOfficialTruthServerOwnedRetrieval(
         if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
           || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
       } catch { return blockiert('content_identity_mismatch') }
-      const hash = hop.bytes.byteLength <= BODY_MAX
-        ? evidenceQuellenFingerprint(text.text)
-        : sha256Hex(text.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n'))
+      const hash = evidenceQuellenFingerprint(text.text)
       if (!hash) return blockiert('invalid_source_snapshot')
       const retrievedAt = uhrLesen(abhaengigkeiten.now)
       if (!retrievedAt) return blockiert('invalid_retrieval_time')
@@ -962,6 +938,13 @@ export async function decideOfficialTruthServerOwnedRetrieval(
   }
 }
 
+export async function decideOfficialTruthServerOwnedRetrieval(
+  eingabe: unknown,
+  abhaengigkeiten: OfficialTruthServerOwnedRetrievalAbhaengigkeiten,
+): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
+  return decideServerOwnedRetrieval(eingabe, abhaengigkeiten)
+}
+
 /**
  * Live-Einstieg. Uhr, Katalog und HTTPS-Verbindung gehören diesem Server.
  * Eine Route kann sie hier nicht einsetzen.
@@ -969,11 +952,11 @@ export async function decideOfficialTruthServerOwnedRetrieval(
 export async function loadOfficialTruthServerOwnedRetrieval(
   eingabe: unknown,
 ): Promise<OfficialTruthServerOwnedRetrievalErgebnis> {
-  return decideOfficialTruthServerOwnedRetrieval(eingabe, {
+  return decideServerOwnedRetrieval(eingabe, {
     now: serverUhr,
     resolve: serverDns,
     http: serverHttp,
-  })
+  }, LIVE_PRIVILEGED_TRANSPORT)
 }
 
 /**

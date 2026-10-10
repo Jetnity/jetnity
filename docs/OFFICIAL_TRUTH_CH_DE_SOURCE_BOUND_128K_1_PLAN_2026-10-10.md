@@ -30,13 +30,17 @@ profile, create Evidence or Rule, or enable a public result.
 1. Pin the S3 URL, source/item/representation/profile identifiers, versions and
    `text/html` in an immutable candidate policy. Require a current item and
    representation and exact request/final URL/media matches on each response
-   hop. Return to 65,536 bytes for every mismatch.
+   hop. Do not grant the exception unless the exact compiled profile object is
+   separately present in the approved registry and the private live-loader
+   authorization path is used.
 2. Keep the catalog/profile verification and source-class/URL checks before
    DNS/HTTP. Do not add the candidate profile to the production identity
-   registry; without its separately registered profile the live path must fail
-   before network access.
+   registry. The registry currently has no Bern profile, so the live S3 path
+   remains blocked and every injected-catalog/test seam remains at 65,536 bytes.
 3. Use the selected limit for GET `Content-Length` and bounded actual-byte
-   accumulation. Do not use HEAD as a trust or body-size decision.
+   accumulation. Do not use HEAD as a trust or body-size decision. Test the
+   128 KiB byte collector directly as non-authoritative transport only; it must
+   not produce a source retrieval envelope.
 4. Require absent or single `identity` content encoding, strict UTF-8 without a
    leading BOM, and valid UTF-8 charset when declared. Preserve TLS, HTTPS/443,
    DNS/public-address validation, socket pinning, redirect, timeout, media and
@@ -58,9 +62,10 @@ profile, create Evidence or Rule, or enable a public result.
   a permanent size guarantee. Future growth above 131,072 bytes must refuse.
 - No S3 source-identity, whole-page privacy or legal-effect proof is available in
   this implementation. It must remain `SOURCE_NOT_QUALIFIED`.
-- The 128 KiB body path computes the same normalized SHA-256 for its volatile
-  retrieval object, but the existing Evidence fingerprint still rejects bodies
-  above its 65,536-character contract. No accepted Evidence/Rule is introduced.
+- `sourceContentHash` always uses canonical `evidenceQuellenFingerprint`.
+  Oversized snapshots that canonical Evidence cannot carry fail closed with no
+  trusted retrieval envelope; a global Evidence/custody limit change requires
+  separate scope arbitration.
 - Each request uses at most a 131,072-byte accumulation buffer plus a bounded
   copy for the returned bytes. Conservatively budgeting the byte buffers, UTF-16
   text, normalized hash input, SHA-256 encoder/padding bytes and immutable result

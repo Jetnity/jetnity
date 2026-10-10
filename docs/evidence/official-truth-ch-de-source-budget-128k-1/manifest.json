@@ -26,24 +26,29 @@
       "expected": "refuse-response-too-large"
     },
     {
-      "name": "bern-candidate-below-boundary",
+      "name": "bounded-transport-utility-below-boundary",
       "bytes": 131071,
-      "expected": "synthetic-transport-pass-only"
+      "expected": "non-authoritative-transport-pass-only"
     },
     {
-      "name": "bern-candidate-inclusive-boundary",
+      "name": "bounded-transport-utility-inclusive-boundary",
       "bytes": 131072,
-      "expected": "synthetic-transport-pass-only"
+      "expected": "non-authoritative-transport-pass-only"
     },
     {
-      "name": "bern-candidate-over-boundary",
+      "name": "bounded-transport-utility-over-boundary",
       "bytes": 131073,
       "expected": "refuse-response-too-large"
     },
     {
-      "name": "bern-candidate-quarantined-verifier",
+      "name": "injected-bern-profile-over-default-ceiling",
       "bytes": 70000,
-      "expected": "refuse-content-identity-mismatch"
+      "expected": "refuse-response-too-large"
+    },
+    {
+      "name": "canonical-fingerprint-over-character-limit",
+      "bytes": 65537,
+      "expected": "canonical-fingerprint-refuses"
     },
     {
       "name": "bern-candidate-without-production-profile",

@@ -650,7 +650,7 @@ describe('official truth server-owned retrieval', () => {
     const strom = { gesehen: false, abgebrochen: false }
     const zuviel = await laufen({
       antwort: () => ({
-        headers: { 'content-length': '100' },
+        headers: { 'content-type': 'text/plain', 'content-length': '100' },
         stuecke: [new Uint8Array(40_000), new Uint8Array(40_000)],
         lesen: strom,
       }),
@@ -668,7 +668,7 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(wert.sourceContentHash, evidenceQuellenFingerprint(wert.sourceSnapshot))
   })
 
-  test('default and exact Bern candidate byte ceilings are inclusive and independently selected', async () => {
+  test('default ceiling remains inclusive and injected Bern profiles cannot enlarge it', async () => {
     for (const byteLength of [65_535, 65_536]) {
       const result = await laufen({
         antwort: () => ({ body: 'x'.repeat(byteLength), headers: { 'content-type': 'text/plain', 'content-length': String(byteLength) } }),
@@ -682,7 +682,7 @@ describe('official truth server-owned retrieval', () => {
     })
     assert.equal(grund(defaultOverflow), 'response_too_large')
 
-    for (const byteLength of [131_071, 131_072]) {
+    for (const byteLength of [65_535, 65_536]) {
       const result = await laufenBern(() => ({
         body: syntheticHtml(byteLength),
         headers: { 'content-type': 'text/html; charset=utf-8', 'content-length': String(byteLength) },
@@ -690,8 +690,15 @@ describe('official truth server-owned retrieval', () => {
       assert.equal(result.ergebnis.status, 'server_owned_official_retrieval', JSON.stringify(result.ergebnis))
       if (result.ergebnis.status !== 'server_owned_official_retrieval') continue
       assert.equal(result.ergebnis.sourceSnapshot.length, byteLength)
-      assert.equal(evidenceQuellenFingerprint(result.ergebnis.sourceSnapshot), null)
-      assert.notEqual(result.ergebnis.sourceContentHash, null)
+      assert.equal(result.ergebnis.sourceContentHash, evidenceQuellenFingerprint(result.ergebnis.sourceSnapshot))
+    }
+    for (const byteLength of [65_537, 131_071, 131_072]) {
+      const result = await laufenBern(() => ({
+        body: syntheticHtml(byteLength),
+        headers: { 'content-type': 'text/html; charset=utf-8', 'content-length': String(byteLength) },
+      }))
+      assert.equal(grund(result), 'response_too_large')
+      assert.notEqual(result.ergebnis.status, 'server_owned_official_retrieval')
     }
     const declaredOverflow = { gesehen: false, abgebrochen: false }
     const early = await laufenBern(() => ({
@@ -703,25 +710,32 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(declaredOverflow.gesehen, false)
     assert.equal(declaredOverflow.abgebrochen, true)
 
-    for (const contentLength of [undefined, '0', 'malformed', '1', '131072', '0, 131073']) {
+    for (const contentLength of [undefined, '0', '1', '65536']) {
       const streamedOverflow = { gesehen: false, abgebrochen: false }
       const late = await laufenBern(() => ({
         headers: { 'content-type': 'text/html', ...(contentLength ? { 'content-length': contentLength } : {}) },
-        stuecke: [new TextEncoder().encode(syntheticHtml(131_072)), Uint8Array.of(0x78)],
+        stuecke: [new TextEncoder().encode(syntheticHtml(65_536)), Uint8Array.of(0x78)],
         lesen: streamedOverflow,
       }))
       assert.equal(grund(late), 'response_too_large', String(contentLength))
       assert.equal(streamedOverflow.abgebrochen, true, String(contentLength))
       assert.equal(JSON.stringify(late.ergebnis).includes('SYNTHETIC'), false)
     }
-    const oversizedFirstChunk = { gesehen: false, abgebrochen: false }
-    const firstChunk = await laufenBern(() => ({
-      headers: { 'content-type': 'text/html', 'content-length': '1' },
-      stuecke: [new TextEncoder().encode(syntheticHtml(131_073))],
-      lesen: oversizedFirstChunk,
-    }))
-    assert.equal(grund(firstChunk), 'response_too_large')
-    assert.equal(oversizedFirstChunk.abgebrochen, true)
+    for (const length of ['malformed', '0, 131073', '10, 10']) {
+      const conflicting = { gesehen: false, abgebrochen: false }
+      const result = await laufenBern(() => ({
+        body: syntheticHtml(100),
+        headers: { 'content-type': 'text/html', 'content-length': length },
+        lesen: conflicting,
+      }))
+      assert.equal(grund(result), 'http_failed', length)
+      assert.equal(conflicting.gesehen, false, length)
+      assert.equal(conflicting.abgebrochen, true, length)
+    }
+  })
+
+  test('canonical Evidence fingerprint refuses snapshots above its existing text limit', () => {
+    assert.equal(evidenceQuellenFingerprint(syntheticHtml(65_537)), null)
   })
 
   test('128 KiB selection is an exact immutable S3 tuple and never follows metadata lookalikes', () => {
@@ -736,7 +750,9 @@ describe('official truth server-owned retrieval', () => {
     const representation = {
       ...identity, current: true, requestUrls: [candidate.requestUrl], expectedFinalUrl: candidate.requestUrl, expectedMediaType: candidate.mediaType,
     }
-    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl, candidate.requestUrl, 'text/html'), 131_072)
+    const injectedProfile = bernProfil(true)
+    assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
+      candidate.requestUrl, 'text/html', injectedProfile), null)
     const identityChanges: Partial<typeof identity>[] = [
       { sourceId: 'aa-research-only' }, { contentItemId: 'other-item' }, { contentItemVersion: 2 },
       { representationId: 'other-representation' }, { representationVersion: 2 },
@@ -744,20 +760,20 @@ describe('official truth server-owned retrieval', () => {
     ]
     for (const change of identityChanges) {
       assert.equal(officialTruthChDeSourceBudget128k1({ ...identity, ...change }, item, representation,
-        candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+        candidate.requestUrl, candidate.requestUrl, 'text/html', injectedProfile), null)
     }
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, { ...representation, requestUrls: [`${candidate.requestUrl}/` ] },
-      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+      candidate.requestUrl, candidate.requestUrl, 'text/html', injectedProfile), null)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
-      `${candidate.requestUrl}/`, 'text/html'), null)
+      `${candidate.requestUrl}/`, 'text/html', injectedProfile), null)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
-      candidate.requestUrl, 'text/plain'), null)
+      candidate.requestUrl, 'text/plain', injectedProfile), null)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, `${candidate.requestUrl}?lang=de`,
-      candidate.requestUrl, 'text/html'), null)
+      candidate.requestUrl, 'text/html', injectedProfile), null)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, { ...item, current: false }, representation,
-      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+      candidate.requestUrl, candidate.requestUrl, 'text/html', injectedProfile), null)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, { ...representation, current: false },
-      candidate.requestUrl, candidate.requestUrl, 'text/html'), null)
+      candidate.requestUrl, candidate.requestUrl, 'text/html', injectedProfile), null)
     assert.equal(Object.isFrozen(candidate), true)
   })
 
@@ -786,9 +802,15 @@ describe('official truth server-owned retrieval', () => {
       body: syntheticHtml(70_000),
       headers: { 'content-type': 'text/html', 'content-length': '70000' },
     }), false)
-    assert.equal(grund(result), 'content_identity_mismatch')
+    assert.equal(grund(result), 'response_too_large')
     assert.equal(result.uhr, 0)
     assert.equal(JSON.stringify(result.ergebnis).includes('SYNTHETIC'), false)
+    const quarantined = await laufenBern(() => ({
+      body: syntheticHtml(65_000),
+      headers: { 'content-type': 'text/html', 'content-length': '65000' },
+    }), false)
+    assert.equal(grund(quarantined), 'content_identity_mismatch')
+    assert.equal(quarantined.uhr, 0)
     const malformed = await laufenBern(() => ({
       body: syntheticHtml(100).slice(0, -7),
       headers: { 'content-type': 'text/html', 'content-length': '93' },
@@ -820,6 +842,17 @@ describe('official truth server-owned retrieval', () => {
       headers: { 'content-type': 'text/html; charset=iso-8859-1' },
     }))
     assert.equal(grund(badCharset), 'content_type_mismatch')
+    for (const contentType of [
+      'text/html; profile=unreviewed',
+      'text/html; charset=utf-8; profile=unreviewed',
+      'text/html; charset=utf-8; charset=utf-8',
+    ]) {
+      const unknownParameter = await laufenBern(() => ({
+        body: syntheticHtml(100),
+        headers: { 'content-type': contentType },
+      }))
+      assert.equal(grund(unknownParameter), 'content_type_mismatch', contentType)
+    }
     const bom = await laufenBern(() => ({
       body: Uint8Array.of(0xef, 0xbb, 0xbf, ...new TextEncoder().encode(syntheticHtml(100))),
       headers: { 'content-type': 'text/html' },

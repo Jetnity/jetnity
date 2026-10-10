@@ -1,3 +1,8 @@
+import {
+  OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+  type ContentIdentityProfileDefinition,
+} from '@/lib/readiness/official-truth-content-identity'
+
 export const OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1 = Object.freeze({
   sourceId: 'de-bern-embassy-research-only',
   contentItemId: 'bern-visa-entry-2611474',
@@ -49,8 +54,14 @@ export function officialTruthChDeSourceBudget128k1(
   requestUrl: string,
   currentUrl: string,
   mediaType: string,
+  identityProfile: ContentIdentityProfileDefinition,
 ): number | null {
   const candidate = OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1
+  const approvedProfile = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.find((profile) =>
+    profile.current
+    && profile.identityProfileId === candidate.identityProfileId
+    && profile.identityProfileVersion === candidate.identityProfileVersion)
+  if (!approvedProfile || identityProfile !== approvedProfile) return null
   const exactIdentity = identity.sourceId === candidate.sourceId
     && identity.contentItemId === candidate.contentItemId
     && identity.contentItemVersion === candidate.contentItemVersion
