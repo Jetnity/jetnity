@@ -25,6 +25,8 @@ const WRAPPER_NAME = ['admin', 'account', 'counts', 'v1'].join('_')
 const STORE_SOURCE = 'lib/readiness/official-truth-store-server.ts'
 const STORE_SQL = 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql'
 const STORE_RPC = ['official', 'truth', 'store', 'accepted', 'v2'].join('_')
+const STORE_FINGERPRINT_SQL = 'supabase/migrations/20261010180000_official_truth_source_fingerprint_protocol_2.sql'
+const STORE_FINGERPRINT_RPC = ['official', 'truth', 'store', 'accepted', 'fingerprint', 'v2'].join('_')
 const CATALOG_SOURCE = 'lib/readiness/official-truth-source-catalog-server.ts'
 const CATALOG_SQL = 'supabase/migrations/20261004010705_official_truth_content_identity_2.sql'
 const CATALOG_RPC = ['official', 'truth', 'source', 'catalog', 'v2'].join('_')
@@ -75,6 +77,11 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sqlPath: STORE_SQL,
         },
         {
+          name: STORE_FINGERPRINT_RPC,
+          sourcePath: STORE_SOURCE,
+          sqlPath: STORE_FINGERPRINT_SQL,
+        },
+        {
           name: CATALOG_RPC,
           sourcePath: CATALOG_SOURCE,
           sqlPath: CATALOG_SQL,
@@ -90,27 +97,29 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
     const result = pruefeMit(
       {
         [READER]: rpcCall(WRAPPER_NAME),
-        [STORE_SOURCE]: rpcCall(STORE_RPC),
+        [STORE_SOURCE]: `${rpcCall(STORE_RPC)}${rpcCall(STORE_FINGERPRINT_RPC)}`,
         [CATALOG_SOURCE]: rpcCall(CATALOG_RPC),
         [FACT_ENTRY_SOURCE]: rpcCall(FACT_ENTRY_RPC),
       },
       {
         [SQL]: `create function public.${WRAPPER_NAME}()`,
         [STORE_SQL]: `create function public.${STORE_RPC}(payload jsonb); create function public.${CATALOG_RPC}(payload jsonb)`,
+        [STORE_FINGERPRINT_SQL]: `create function public.${STORE_FINGERPRINT_RPC}(payload jsonb)`,
         [FACT_ENTRY_SQL]: `create function public.${FACT_ENTRY_RPC}()`,
       },
     )
     assert.equal(result.befunde.length, 0)
-    assert.equal(result.lokaleUnapplied.length, 4)
+    assert.equal(result.lokaleUnapplied.length, 5)
     assert.deepEqual(
       result.lokaleUnapplied.map((eintrag) => eintrag.name),
-      [WRAPPER_NAME, FACT_ENTRY_RPC, CATALOG_RPC, STORE_RPC],
+      [WRAPPER_NAME, FACT_ENTRY_RPC, CATALOG_RPC, STORE_FINGERPRINT_RPC, STORE_RPC],
     )
     for (const eintrag of result.lokaleUnapplied) {
       assert.equal(eintrag.classification, 'LOCAL/UNAPPLIED')
     }
     assert.equal(result.bekannteFunktionen.has(WRAPPER_NAME), false)
     assert.equal(result.bekannteFunktionen.has(STORE_RPC), false)
+    assert.equal(result.bekannteFunktionen.has(STORE_FINGERPRINT_RPC), false)
     assert.equal(result.bekannteFunktionen.has(CATALOG_RPC), false)
     assert.equal(result.bekannteFunktionen.has(FACT_ENTRY_RPC), false)
   })
