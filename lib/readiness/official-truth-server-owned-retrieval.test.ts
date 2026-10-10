@@ -28,6 +28,7 @@ import {
 import { quellenRegistryErstellen, quellenUrlAufloesen, type QuellenEingabe } from '@/lib/readiness/source-registry'
 import {
   OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1,
+  officialTruthChDeSourceFingerprintV2Allowed,
   officialTruthChDeSourceBudget128k1,
 } from './official-truth-ch-de-source-budget-128k-1'
 
@@ -753,6 +754,9 @@ describe('official truth server-owned retrieval', () => {
     const injectedProfile = bernProfil(true)
     assert.equal(officialTruthChDeSourceBudget128k1(identity, item, representation, candidate.requestUrl,
       candidate.requestUrl, 'text/html', injectedProfile), null)
+    assert.equal(officialTruthChDeSourceFingerprintV2Allowed({
+      contentIdentity: { items: [item], representations: [representation] },
+    }, identity, candidate.requestUrl, 'text/html'), false)
     const identityChanges: Partial<typeof identity>[] = [
       { sourceId: 'aa-research-only' }, { contentItemId: 'other-item' }, { contentItemVersion: 2 },
       { representationId: 'other-representation' }, { representationVersion: 2 },

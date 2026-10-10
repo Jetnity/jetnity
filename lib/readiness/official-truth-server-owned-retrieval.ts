@@ -24,6 +24,7 @@ import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_
 import { officialTruthBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'
 import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import {
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogAbhaengigkeiten,
@@ -34,7 +35,10 @@ import {
   type QuellenRegistry,
   type QuellenUrlFehler,
 } from '@/lib/readiness/source-registry'
-import { officialTruthChDeSourceBudget128k1 } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
+import {
+  officialTruthChDeSourceBudget128k1,
+  officialTruthChDeSourceFingerprintV2Allowed,
+} from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 
 const TIEFE_MAX = 8
 const REDIRECT_MAX = 5
@@ -206,6 +210,7 @@ export type OfficialTruthServerOwnedRetrievalErgebnis =
       readonly contentType: string
       readonly sourceSnapshot: string
       readonly sourceContentHash: string
+      readonly sourceFingerprintProtocol?: 2
       readonly redirectCount: number
     })
   | {
@@ -914,7 +919,13 @@ async function decideServerOwnedRetrieval(
         if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
           || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
       } catch { return blockiert('content_identity_mismatch') }
-      const hash = evidenceQuellenFingerprint(text.text)
+      const sourceFingerprintProtocol = text.text.length > 65_536 ? 2 : 1
+      const fingerprintBinding = { ...identity, canonicalUrl: aktuell, contentType: hop.contentType }
+      const hash = sourceFingerprintProtocol === 2
+        ? officialTruthChDeSourceFingerprintV2Allowed(katalog.registry, identity, aktuell, hop.contentType)
+          ? officialTruthSourceFingerprintV2(text.text, fingerprintBinding)
+          : null
+        : evidenceQuellenFingerprint(text.text)
       if (!hash) return blockiert('invalid_source_snapshot')
       const retrievedAt = uhrLesen(abhaengigkeiten.now)
       if (!retrievedAt) return blockiert('invalid_retrieval_time')
@@ -929,6 +940,7 @@ async function decideServerOwnedRetrieval(
         contentType: hop.contentType,
         sourceSnapshot: text.text,
         sourceContentHash: hash,
+        ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
         redirectCount: redirects,
       })
     }
