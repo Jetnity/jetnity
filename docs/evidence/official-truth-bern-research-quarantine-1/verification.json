@@ -1,0 +1,125 @@
+{
+  "schema": "official-truth-bern-research-quarantine-1-verification-v1",
+  "network": {
+    "realNetworkAttempts": 0,
+    "execution": "offline_only"
+  },
+  "localCommands": [
+    {
+      "command": "npm run check:setup",
+      "status": "PASS_WITH_WARNING",
+      "details": "No .env/.env.local found warning"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "status": "PASS_AFTER_HISTORY_FETCH",
+      "details": "Guard initially failed in shallow clone; fixed with `git fetch origin main:main` and `git fetch --deepen=200 origin copilot/featofficial-truth-bern-research-quarantine-1 main`"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS_WITH_EXISTING_WARNINGS",
+      "details": "eslint exit 0; existing repository warnings remain"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "status": "PASS",
+      "details": "LOCAL/UNAPPLIED RPC notices only"
+    },
+    {
+      "command": "npm run check:dead",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:exports",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:deps",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS",
+      "details": "next build succeeded"
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts",
+      "status": "PASS",
+      "details": "40/40 tests pass after R3 correction"
+    },
+    {
+      "command": "npm test",
+      "status": "PASS",
+      "details": "6455/6455 tests pass, duration_ms=687085.754387"
+    }
+  ],
+  "artifacts": [
+    {
+      "type": "full_test_output",
+      "path": "/tmp/1791746271368-copilot-tool-output-3736-29cccbbb-68ae-48e2-aee9-f472baed1cad.txt"
+    },
+    {
+      "type": "full_test_output_r1_correction",
+      "path": "/tmp/1791748019121-copilot-tool-output-3913-c9103b6b-845b-4f4e-b06c-beae1bea0b91.txt"
+    },
+    {
+      "type": "full_test_output_r2_correction",
+      "path": "/tmp/1791749970560-copilot-tool-output-3658-d61446ca-755a-49f8-9db8-aa009aa495cf.txt"
+    },
+    {
+      "type": "full_test_output_r3_correction",
+      "path": "/tmp/1791751574285-copilot-tool-output-3662-7fa010d5-0110-443d-8fe0-081aa8e6003e.txt"
+    }
+  ],
+  "githubEvidence": {
+    "authorBranchHeadAtCollectionTime": "3365eb338eb24b078554f8be0a77bbfb60b9f88c",
+    "pr933HeadAtCollectionTime": "3365eb338eb24b078554f8be0a77bbfb60b9f88c",
+    "pr933BranchRef": "feat/official-truth-bern-research-quarantine-1",
+    "authorWorkingBranchRef": "copilot/featofficial-truth-bern-research-quarantine-1",
+    "ci": {
+      "prHeadRun": {
+        "id": 38172983300,
+        "workflow": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/38172983300",
+        "headSha": "3365eb338eb24b078554f8be0a77bbfb60b9f88c"
+      },
+      "authJob": {
+        "id": 114569326183,
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/38172983300/job/114569326183"
+      }
+    },
+    "authJob": {
+      "prHead": "contained in CI run 38172983300",
+      "authorHeadExact": "success in job 114569326183"
+    },
+    "preview": {
+      "prHead": "Vercel bot preview updated 2026-10-11T20:38:04Z on PR #933",
+      "authorHeadExact": "ready deployment https://vercel.com/jetnity-e1b93c82/jetnity-app/BV5rPUCvzNVPZKrqErCt5oN7D1PD"
+    },
+    "parallelValidation": {
+      "codeReview": "tool execution unavailable in environment (missing model claude-sonnet-4.6 in registry)",
+      "codeql": "0 alerts; analysis skipped because database size is too large"
+    }
+  },
+  "notes": [
+    "RESEARCH_ONLY_NOT_QUALIFIED",
+    "No real HTTP request executed in this task.",
+    "No hosted database write or migration executed.",
+    "R3 correction adds task-owned abort-listener cancellation for delayed/stalled post-header streams; protected retrieval module remained unchanged."
+  ]
+}

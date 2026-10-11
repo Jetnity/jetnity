@@ -1,0 +1,16 @@
+{
+  "schema": "official-truth-bern-research-quarantine-1-offline-refusals-v1",
+  "sourceUrl": "https://bern.diplo.de/ch-de/service/visumundeinreise/2611474-2611474",
+  "networkAttempted": false,
+  "realNetworkAttempts": 0,
+  "researchOnlyNotQualified": true,
+  "categories": [
+    "request_guard",
+    "ip_dns_safety",
+    "redirect_and_url_policy",
+    "http_timeout_and_encoding",
+    "body_utf8_and_size_bounds",
+    "publication_boundary"
+  ],
+  "notes": "All checks are synthetic/offline. No raw HTML body is retained in this evidence file."
+}
