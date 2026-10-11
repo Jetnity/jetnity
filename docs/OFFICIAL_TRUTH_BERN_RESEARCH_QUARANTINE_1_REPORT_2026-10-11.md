@@ -70,5 +70,5 @@ real network sockets against origin infrastructure.
 - Parent #917 remains SOURCE_NOT_QUALIFIED.
 - Any future real Bern fetch or live 131,072-byte path still requires separate TL/PO gate.
 - Exact-head CI/Auth/Preview for author commit
-  `a0793bd518c9aba87c6f9f9abb593abf600e2b7f` is pending because PR #933 still
+  `5b954f6677f073f471ddb07b9204f9999fbf0c72` is pending because PR #933 still
   references `feat/...@37e3e47` at evidence collection time.
