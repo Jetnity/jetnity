@@ -14,6 +14,12 @@
 
 The new SQL migration is repository-only and unapplied. It pin-gates synthetic V2 proof and accepts the complete body transiently; it does not persist the raw snapshot. Local synthetic PostgreSQL proof is structural only. No Bern/AA profile, source registration, accepted legal Evidence/Rule, or visitor result is authorized.
 
-## Remaining verification limits
+## V2 retry and deferred integrity gates
 
-Same-request/review/extractor modules carry protocol 2 and re-prove the fingerprint. The new-head trusted-store test passed 22/22, including a disposable PostgreSQL proof. The serial suite remains red from an unresolved concurrent integrated-pilot bundle writer (`55P03`); it also exposed an outdated local-RPC inventory assertion, fixed and verified 4/4 standalone but not yet rerun in the full suite. GitHub CI is action-required with zero jobs; Auth and Preview are unverified. No end-to-end real-source or positive legal-result claim is made.
+On implementation HEAD `8731807082298554a33da845dd765e78c644f2ed`, an existing-receipt retry still calls `verify_retained_v2(fingerprint)` before the set-based submission comparison. That comparison joins every submitted artifact by `(artifact_id, artifact_version)` and compares digest, type, byte-contract family, contract version, and complete stored bytes; `validate_bundle_v2` has already refused missing/duplicate/extra closure members. The lock remains transaction-scoped and all store reads remain after it under READ COMMITTED.
+
+For inserts, the RPC explicitly sets the receipt/binding/root constraint triggers IMMEDIATE before returning. The V2 `receipt_constraint()` dispatches receipt inserts to `verify_retained_v2`; the native test directly inserts an incomplete synthetic V2 receipt, forces `receipt_complete`, observes SQL refusal, rolls back, and proves all eight persisted table counts unchanged. Native regressions also cover wrong/missing edges and typed targets, absent permanent names/blobs, changed retained bytes, corruption refusal without repair, conflicts, and rollback.
+
+`npm test` passed 6,275/6,275 tests across 819 suites with 0 skips/cancellations/TODO; native PostgreSQL 16.15 structural/R2/R3/V2 tests were included. The focused integrated proof additionally passed two repeated barrier-controlled retry races (14,559 ms, 14,613 ms) and the initial insert/idempotent race (12,431 ms, 16,883 ms). The full synthetic proof is not legal/source acceptance.
+
+Exact-head GitHub Actions remains `action_required` with zero jobs; Auth is not independently verified, and the last Preview predates this implementation head. Migration is repository-only and unapplied. No end-to-end real-source admission or positive legal result is claimed.

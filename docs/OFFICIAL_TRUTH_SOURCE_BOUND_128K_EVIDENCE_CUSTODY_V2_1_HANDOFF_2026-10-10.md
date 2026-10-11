@@ -2,9 +2,13 @@
 
 **To:** Jetnity Technical Lead  
 **Branch/PR:** `feat/official-truth-128k-evidence-custody-v2-1`, existing Draft #926  
-**R1 code commit:** `64029e2a4a453ca95a59e4d0d188ce72fe88441e`  
+**Validated implementation HEAD/tree:** `8731807082298554a33da845dd765e78c644f2ed` / `29b2ee86a7eb89c572ac8b522aaad5020061535d`
 **Base:** `main@c3db56a4021904aa21c25d75d218f91ee1127697`
 
-The R1 byte-selection, exact accepted-Evidence V2 shape, historical identity protocol changes, and six required reports are present on this branch. Focused tests (85/85), trusted-store tests (22/22 with disposable PostgreSQL), local-RPC mapping (4/4), typecheck, and production build passed. The serial suite was 6,273/6,275 before the local-RPC inventory fix; the remaining concurrent writer error was PostgreSQL `55P03` rather than `idempotent`, and its cause remains unresolved. Exact-head CI has zero jobs (`action_required`); Auth and Preview are unverified. The migration remains repository-only and unapplied.
+The R1 byte-selection, exact accepted-Evidence V2 shape, historical identity protocol changes, and six required reports are present on this branch. The R2 concurrency correction retains the existing receipt verification, uses an exact set-based submitted-vs-stored comparison, and proves the immediate receipt trigger rejects an incomplete receipt before return with atomic rollback. Native PG16.15 proof passed with two repeated identical-writer retry races (14,559 ms / 14,613 ms) and no `55P03`/`57014`; missing/altered artifacts, edge/name/blob damage, retained corruption, conflicts and rollback are covered.
 
-**Disposition:** PARTIAL / BLOCKED, not ready for merge. No source profile or regulatory result is approved. Please review the complete diff and exact-head evidence; do not treat `action_required` with zero jobs as success. The author stops here pending independent TL R2.
+Full `npm test` passed **6,275/6,275 tests, 819 suites, 0 skipped/cancelled/TODO**. Typecheck and production build passed; ESLint exited 0 with 144 warnings/0 errors; setup/API/schema/dead/export/dependency/diff checks passed. Operating-mode guard remains blocked because the shallow clone has no local `main` ref. `npm ci` surfaced 19 advisories (2 moderate, 17 high), not triaged. The SQL migration remains repository-only and unapplied.
+
+Exact-head Actions run `38097024708` is `action_required` with zero jobs, not success; Auth is not independently verified and the last Preview predates this implementation head. No hosted database mutation, source approval, or positive legal claim occurred. This remains PARTIAL and blocked for TL R3.
+
+**Disposition:** PARTIAL / BLOCKED, not ready for merge. No source profile or regulatory result is approved. Please review the complete diff and exact-head evidence; do not treat `action_required` with zero jobs as success. The author stops here pending independent TL R3.

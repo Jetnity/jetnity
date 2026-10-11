@@ -1,7 +1,7 @@
 # Official Truth source-bound 128KiB Evidence/custody V2.1 — PLAN
 
 **Bound TASK:** `OFFICIAL_TRUTH_SOURCE_BOUND_128K_EVIDENCE_CUSTODY_V2_1_TASK_2026-10-10.md` (immutable blob `fa3c4ef3addaa0168ca5418e99de90522e758c24`).  
-**Scope:** R1 corrections on existing Draft PR #926 only. No hosted writes, source activation, legal acceptance, UI/Auth/RLS, providers, or costs.
+**Scope:** R1 corrections plus exact-head R2 native concurrency/integrity evidence on existing Draft PR #926 only. No hosted writes, source activation, legal acceptance, UI/Auth/RLS, providers, or costs.
 
 ## Goal
 
@@ -16,8 +16,10 @@ Keep the 65,536-byte legacy transport and V1 identities intact while selecting a
 
 ## Validation and current disposition
 
-Focused retrieval/Evidence/accepted/replay tests passed (85/85), store tests including disposable PostgreSQL passed (22/22), schema-reference regression passed (4/4), typecheck and production build passed. The serial full suite ended 6,273/6,275: the first failure was the stale local-RPC test inventory and now passes standalone; the remaining failure is a concurrent local bundle writer receiving PostgreSQL `55P03`, not yet reproduced or resolved. `check:operating-mode` could not run because this shallow clone has no local `main` ref. Exact-head CI/Auth/Preview and complete task acceptance remain unverified.
+On implementation HEAD `8731807082298554a33da845dd765e78c644f2ed` (tree `29b2ee86a7eb89c572ac8b522aaad5020061535d`), the complete `npm test` suite passed **6,275/6,275 tests, 819 suites, 0 failed, skipped, cancelled, or TODO**, in 864,976 ms. Native PostgreSQL 16.15 structural, R2, R3, and integrated custody suites ran in disposable clusters. The V2 integrated proof passed with exact retry integrity, receipt trigger refusal/rollback, no-healing row counts, and two additional barrier-controlled concurrent identical-retry trials (14,559 ms and 14,613 ms); the initial simultaneous insert/idempotent pair completed in 12,431 ms / 16,883 ms. No `55P03` or `57014` occurred in these bounded trials.
+
+Typecheck, production build, `check:setup:ci`, API protection, schema reference, dead-route, export, dependency and diff checks passed. ESLint exited 0 with 144 warnings / 0 errors. The operating-mode guard was attempted but is blocked because it invokes `git diff main...HEAD` and the shallow clone has no local `main` ref; the matching remote base is known from the PR and was not turned into a working branch. `npm ci` reported 19 dependency audit advisories (2 moderate, 17 high), not changed or remediated. Exact-head Actions remains `action_required` with zero jobs; no Auth pass is established. The last verified Preview predates this head.
 
 ## Risk and stop conditions
 
-No Bern/AA profile is compiled or approved. Therefore >65,536-byte material remains blocked unless a future separately approved exact code-owned profile authorizes it. Synthetic structural SQL success is not source qualification or legal acceptance. Stop for independent Technical Lead R2; keep #926 Draft.
+No Bern/AA profile is compiled or approved. Therefore >65,536-byte material remains blocked unless a future separately approved exact code-owned profile authorizes it. Synthetic local SQL success is not source qualification or legal acceptance. Stop for independent Technical Lead R3; keep #926 Draft.

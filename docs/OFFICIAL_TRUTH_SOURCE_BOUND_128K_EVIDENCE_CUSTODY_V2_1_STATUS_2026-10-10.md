@@ -1,15 +1,16 @@
 # Official Truth source-bound 128KiB Evidence/custody V2.1 — STATUS
 
-**Status: PARTIAL / BLOCKED FOR INDEPENDENT TL R2.**
+**Status: PARTIAL / BLOCKED FOR INDEPENDENT TL R3.**
 
 - R1 code corrections are committed on the existing Draft #926 branch; no new branch/PR.
-- Targeted protocol/acceptance/replay/retrieval tests: 85 passed, 0 failed, 0 skipped.
-- TypeScript typecheck: passed.
-- Full serial suite: 6,273/6,275 on the preceding code/test inventory. One local-RPC expected-list assertion was fixed and passes standalone; full suite not rerun. The second failure is concurrent bundle writers receiving `55P03` instead of the expected idempotent outcome; root cause unresolved, no timeout was increased.
-- Disposable PostgreSQL 16 trusted-store test: 22/22 passed on corrected code, including structural roundtrip/rollback/ACL paths.
-- GitHub Actions run `38090932090`: `action_required`; no jobs. This is not CI success. Auth and exact Preview: not verified.
+- Implementation validation HEAD: `8731807082298554a33da845dd765e78c644f2ed`; tree: `29b2ee86a7eb89c572ac8b522aaad5020061535d`; base `main@c3db56a4021904aa21c25d75d218f91ee1127697`.
+- Targeted integrated native PostgreSQL 16.15 proof: 1/1 test passed, 0 skipped; included two additional barrier-controlled identical retry races, exact results and unchanged eight-table counts, incomplete receipt trigger refusal/rollback, and retained data corruption/conflict regressions.
+- Full `npm test`: **6,275 passed, 0 failed, 0 skipped/cancelled/TODO; 819 suites** (864,976 ms). Includes native PG16 structural, R2, R3, and integrated V2 storage cases.
+- Typecheck and production build passed. ESLint: 0 errors / 144 warnings. Setup CI warning-only (no `.env`); API/schema/dead/export/dependency/diff checks passed. Operating-mode guard blocked because local `main` ref is absent.
+- `npm ci` reported 19 audit advisories (2 moderate, 17 high), not triaged. Migration is repository-only/unapplied.
+- Exact-head Actions run `38097024708`: `action_required`, zero jobs (not CI/Auth success). Auth is not verified; prior Preview does not match this HEAD.
 - No hosted migration, source approval, genuine Evidence/Rule, or public result.
 
-`check:operating-mode` failed to run because this shallow clone has no local `main` ref. Build and TypeScript passed. Lint completed with 0 errors and 144 warnings. API/schema/dead/export/dependency checks passed after the RPC inventory correction. `npm ci` surfaced 19 dependency audit advisories, not triaged here.
+The stressed concurrency reproduction established that retained validation and repeated per-artifact reads could exceed the fixed statement deadline while competing under the global transaction lock; optimized retry comparison plus bounded native repeat tests pass without changing timeout or assertions. No legal/source/production authority is inferred.
 
 Do not mark Ready or merge. Technical Lead controls independent review and all reserved gates.
