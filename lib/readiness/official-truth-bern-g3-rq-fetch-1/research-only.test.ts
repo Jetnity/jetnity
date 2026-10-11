@@ -227,6 +227,7 @@ test('only task-owned developer runner imports the live research entry (no app/A
       } else if (/\.(ts|tsx|js|mjs)$/.test(d.name)) {
         const text = readFileSync(name, 'utf8')
         if (name !== 'lib/readiness/official-truth-server-owned-retrieval.ts'
+          && name !== 'lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts'
           && text.includes('retrieveOfficialTruthBernOneShotResearchOnly')) imported.push(name)
       }
     }
