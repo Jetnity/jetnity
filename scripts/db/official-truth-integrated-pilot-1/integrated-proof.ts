@@ -110,6 +110,19 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     const outcomes=await raced;assert.deepEqual(outcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','inserted'],JSON.stringify({stage:'concurrent_bundle_writers',barrierWaitMs,ownerReleaseMs,elapsedMs:performance.now()-raceStarted,diagnostics:raceDiagnostics,outcomes:outcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
     const composed=await readVerifiedIntegratedBundleLocally(cluster,composedEnvelope.bundle.recordFingerprint);assert.equal(composed.status,'verified');if(composed.status!=='verified')throw Error('composed_readback')
     checks.push('composed_real_sql_commit_fresh_23_column_semantic_readback','barrier_controlled_real_concurrent_full_bundle_writers_inserted_idempotent',`concurrent_timing:${JSON.stringify({barrierWaitMs:Math.ceil(barrierWaitMs),ownerReleaseMs:Math.ceil(ownerReleaseMs),writers:raceDiagnostics})}`)
+    const retryRaceTimings:number[]=[]
+    for(let trial=0;trial<2;trial++){
+      const beforeRetryRace=await counts();await owner.query('BEGIN');await owner.query('SELECT pg_catalog.pg_advisory_xact_lock(1869901924,1)')
+      const started=performance.now(),diagnostics:WriteDiagnostic[]=[{phase:'starting',elapsedMs:0},{phase:'starting',elapsedMs:0}]
+      const retryRace=Promise.allSettled([write(composedEnvelope,'create_or_verify',diagnostics[0]),write(composedEnvelope,'create_or_verify',diagnostics[1])])
+      let bothWaiting=false
+      for(let i=0;i<1500;i++){const state=await owner.query("SELECT count(*)::text n FROM pg_catalog.pg_locks WHERE locktype='advisory' AND classid=1869901924 AND objid=1 AND NOT granted");if(Number(state[0]?.n)===2){bothWaiting=true;break}await new Promise(r=>setTimeout(r,20))}
+      await owner.query('COMMIT');const retryOutcomes=await retryRace
+      assert.equal(bothWaiting,true,JSON.stringify({trial,diagnostics}))
+      assert.deepEqual(retryOutcomes.map(r=>r.status==='fulfilled'?r.value:'failed').sort(),['idempotent','idempotent'],JSON.stringify({trial,elapsedMs:performance.now()-started,diagnostics,outcomes:retryOutcomes.map(r=>r.status==='fulfilled'?{outcome:r.value}:{error:r.reason instanceof LocalPgError?r.reason.code:'operational_failure'})}))
+      assert.deepEqual(await counts(),beforeRetryRace);retryRaceTimings.push(Math.ceil(performance.now()-started))
+    }
+    checks.push(`bounded_concurrent_identical_retry_repetitions:2:${JSON.stringify(retryRaceTimings)}`)
     const composedRepeat=await persistVerifiedIntegratedBundleLocally(cluster,oids,composedEnvelope,'verify_existing');assert.ok(composedRepeat.ok);assert.equal(composedRepeat.outcome,'idempotent')
     checks.push(...await runSemanticRegressions({owner,cluster,oids,primaryEnvelope,composedEnvelope}))
     // All negatives originate from successfully verified complete bundles; call SQL directly to prove independent refusal.
@@ -144,6 +157,12 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     checks.push('complete_semantically_valid_changed_artifact_name_version_conflict_refused','barrier_controlled_real_concurrent_conflict_one_idempotent_one_refusal_no_extra_rows')
     // Transport lost its COMMIT acknowledgement after a genuine commit. No success until explicit verify_existing.
     const ackEnvelope=sealReceipt(primaryEnvelope,{...payload,supports:payload.supports.map(s=>({...s,freshRetrieval:{...s.freshRetrieval,completedAt:new Date(Date.parse(s.freshRetrieval.completedAt)+1000).toISOString()}}))});assert.equal(verifyLocalIntegratedPilotBundle(ackEnvelope).ok,true)
+    const incompleteReceiptPayload=parse(ackEnvelope.bundle.receiptBytes) as {schema:string;schemaVersion:number;canonicalization:string}
+    const beforeIncompleteReceipt=await counts();await owner.query('BEGIN')
+    await owner.query('INSERT INTO official_provenance_private.receipts(record_fingerprint,canonical_payload_bytes,storage_contract_version,receipt_schema,receipt_schema_version,canonicalization) VALUES($1,$2,2,$3,$4,$5)',[pgText(ackEnvelope.bundle.recordFingerprint),pgBytes(ackEnvelope.bundle.receiptBytes),pgText(incompleteReceiptPayload.schema),pgText(String(incompleteReceiptPayload.schemaVersion),21),pgText(incompleteReceiptPayload.canonicalization)])
+    await assert.rejects(owner.query('SET CONSTRAINTS official_provenance_private.receipt_complete IMMEDIATE'),LocalPgError)
+    await owner.query('ROLLBACK');assert.deepEqual(await counts(),beforeIncompleteReceipt)
+    checks.push('receipt_complete_trigger_rejects_incomplete_v2_receipt_before_return_and_rollback_is_atomic')
     const originalConnect=LocalPgConnection.connect
     LocalPgConnection.connect=async(...args:Parameters<typeof LocalPgConnection.connect>)=>{const c=await originalConnect.call(LocalPgConnection,...args);if(args[1]==='ot_provenance_writer'){const query=c.query.bind(c);c.query=async(sql,params)=>{const rows=await query(sql,params);if(sql==='COMMIT'){c.close();throw new LocalPgError('connection_closed')}return rows}}return c}
     let unknown:Awaited<ReturnType<typeof persistVerifiedIntegratedBundleLocally>>
@@ -184,7 +203,7 @@ export async function runIntegratedLocalStorageProof(primaryEnvelope:LocalIntegr
     await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies DISABLE TRIGGER USER')
     await owner.query('INSERT INTO official_provenance_private.artifact_dependencies VALUES($1,1,$2,$3,$4,1,$5)',[pgText(rootArtifact.pin.id),pgText(rootArtifact.pin.digest),pgText('/unexpected'),pgText(targetArtifact.pin.id),pgText(targetArtifact.pin.digest)])
     await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies ENABLE TRIGGER USER')
-    await rejectSql(primaryEnvelope);await assert.rejects(readVerifiedIntegratedBundleLocally(cluster,p.recordFingerprint),LocalPgError)
+    const beforeMissingLinkRetry=await counts();await rejectSql(primaryEnvelope);await assert.deepEqual(await counts(),beforeMissingLinkRetry);await assert.rejects(readVerifiedIntegratedBundleLocally(cluster,p.recordFingerprint),LocalPgError)
     await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies DISABLE TRIGGER USER');await owner.query('DELETE FROM official_provenance_private.artifact_dependencies WHERE parent_id=$1 AND slot=$2',[pgText(rootArtifact.pin.id),pgText('/unexpected')]);await owner.query('ALTER TABLE official_provenance_private.artifact_dependencies ENABLE TRIGGER USER');checks.push('retained_extra_edge_refused_by_full_read_and_retry')
     await owner.query('BEGIN');await owner.query('SET LOCAL ROLE ot_provenance_write_exec')
     await owner.query('INSERT INTO official_provenance_private.artifact_dependencies VALUES($1,1,$2,$3,$4,1,$5)',[pgText(rootArtifact.pin.id),pgText(rootArtifact.pin.digest),pgText('/constraint-check'),pgText(targetArtifact.pin.id),pgText(targetArtifact.pin.digest)])
