@@ -1,0 +1,204 @@
+{
+  "schema": "jetnity.ch-de-g1-g3.local-verification.v1",
+  "author": "Jetnity Official Truth CH-DE G1 G3 Preflight 1 — Codex Generation 1",
+  "branch": "feat/official-truth-ch-de-g1-g3-preflight-1",
+  "seed": "0262f60b1a6b613333184215123cfb992f020b7d",
+  "baselineMainAndMergeBase": "5bd1b0f57eec8f4eed0d749a8f9b848eb90f419f",
+  "originalTaskGitBlob": "d95a59e3e0e948cd7c1ff70cb795319e48d090e5",
+  "operatingMode": "NORMAL",
+  "localEnvironment": {
+    "node": "22.23.3",
+    "npm": "10.9.9",
+    "postgresql": "16.15",
+    "native": true,
+    "platform": "macOS",
+    "hostOnlyPathAdapter": "docs/evidence/official-truth-ch-de-source-to-workspace-v2-1/native-pg16-host-path-adapter.cjs.txt",
+    "adapterByteIdenticalToExistingArtifact": true,
+    "shortDisposableTempRoot": true,
+    "sqlArgumentsAssertionsAndDeadlinesUnchanged": true,
+    "testSelection": "complete npm test; no skip/name filtering",
+    "hostedDatabaseConnections": 0
+  },
+  "reviewedCodeFilesSha256": {
+    "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+    "lib/readiness/official-truth-ch-de-first-visa-vertical-1/adapter.ts": "c5f53c36b155f0f28b1d273e9305f4620213a057698f679c5276aa628445a017",
+    "lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts": "76290a4f7b9730e0d7607a87896db890f54333ba7fe411cf7d6e477cda1fcd87",
+    "lib/readiness/official-truth-ch-de-g1-g3-1/context.test.ts": "38b13153a5675c9e97a4091274bdc626caada3b20ac3be1f467c9e7dff81610a",
+    "lib/readiness/official-truth-ch-de-g1-g3-1/bern-preflight.test.ts": "3ea4d5c2716d37ec74ddf241eb2e1a6b9149da20a6f15720d5c8701ab26f78e9"
+  },
+  "commands": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "durationSeconds": 3.935
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "durationSeconds": 15.103
+    },
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 0,
+      "durationSeconds": 0.341
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "durationSeconds": 0.161
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "durationSeconds": 0.2
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "durationSeconds": 0.13
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "durationSeconds": 0.235
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "durationSeconds": 2.767
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "durationSeconds": 0.202
+    },
+    {
+      "command": "NEXT_TELEMETRY_DISABLED=1 npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "finalFocusedOffline": {
+    "tests": 182,
+    "suites": 8,
+    "pass": 182,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 319.976833
+  },
+  "finalFullNative": {
+    "tests": 6415,
+    "suites": 819,
+    "pass": 6415,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 402268.744167
+  },
+  "nativeProofs": [
+    {
+      "status": "PASS",
+      "codecComparisons": 1008,
+      "postgresVersion": "postgres (PostgreSQL) 16.15"
+    },
+    {
+      "schema": "original-custody-m1-m4-local-v1",
+      "status": "PASS",
+      "postgres": "postgres (PostgreSQL) 16.15",
+      "positiveStructuralAcceptedRead": "VERIFIED_SYNTHETIC_ONLY",
+      "productionAcceptedRead": "NOT_AUTHORIZED",
+      "hostedWrites": 0,
+      "realOriginals": 0,
+      "positiveVisaCells": 0,
+      "checksPassed": 12,
+      "durationMs": 73259.743334
+    }
+  ],
+  "earlierFullRun": {
+    "counts": {
+      "tests": 6353,
+      "suites": 819,
+      "pass": 6348,
+      "fail": 5,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 418211.991333
+    },
+    "status": "FAIL_NOT_FINAL_PROOF",
+    "reasons": [
+      {
+        "category": "protected_provenance_importer_guard",
+        "count": 1,
+        "correction": "removed forbidden artifact import; request-only snapshot; guard unchanged"
+      },
+      {
+        "category": "hardcoded_linux_pg16_executable_missing_on_macos",
+        "count": 4,
+        "correction": "existing host-only path adapter; four executable paths only"
+      }
+    ],
+    "note": "Some native tests declare additional subtests only after cluster startup; initial and complete totals differ. Final source correction occurred after this exploratory run started."
+  },
+  "otherVerificationCorrections": [
+    "tsx IPC sandbox refusal resolved by permitted local execution of identical setup command",
+    "two new unused fixture variables removed; final lint returns baseline 144 warnings"
+  ],
+  "lint": {
+    "errors": 0,
+    "existingWarnings": 144
+  },
+  "dependencyAudit": {
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 2,
+        "high": 17,
+        "critical": 0,
+        "total": 19
+      }
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 3,
+        "critical": 0,
+        "total": 3
+      },
+      "packages": [
+        "sharp",
+        "source-map-js",
+        "ws"
+      ]
+    }
+  },
+  "auditCommands": [
+    {
+      "command": "npm audit --json",
+      "exitCode": 1
+    },
+    {
+      "command": "npm audit --json --omit=dev",
+      "exitCode": 1
+    }
+  ],
+  "residualSecurityStatus": "G7_OPEN; advisories not fixed; reachability not assessed",
+  "residualNativeTimingRisk": "P2_OPEN; passing execution does not guarantee shared-runner timing",
+  "G1": "PASS_CODE_ONLY_PROPOSED_CONTEXT",
+  "G3": "CAPTURE_BLOCKED",
+  "actualBernOriginAttempts": 0,
+  "provider": null,
+  "workspaceVisa": "unknown",
+  "parent917": "OPEN_SOURCE_NOT_QUALIFIED",
+  "remoteEvidence": "NOT_ASSERTED_AT_COMMIT; final exact-author-head Verify/Auth/Vercel evidence is recorded in the author publication receipt on PR #931",
+  "finalBoundary": "STOP_FOR_INDEPENDENT_TECHNICAL_LEAD_REVIEW; NO_READY; NO_MERGE; NO_FOLLOW_UP"
+}
