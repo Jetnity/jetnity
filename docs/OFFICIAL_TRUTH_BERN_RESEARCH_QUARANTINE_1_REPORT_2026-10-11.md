@@ -20,9 +20,10 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   - no live mode switch.
 - Added adversarial tests in
   `lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts`.
-- Added explicit completeness guard in the quarantine-owned offline wrapper:
-  declared `Content-Length` (when present and bounded) must match streamed byte
-  count exactly before any analysis fields are emitted.
+- Added explicit bounded completeness guard in the quarantine-owned offline wrapper:
+  declared `Content-Length` is validated via bounded stream processing
+  (max 65,536 bytes) before analysis fields can be emitted; overrun stops early
+  with cancellation and refusal.
 
 ## Security and publication boundary
 
@@ -30,9 +31,10 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   law validity intervals, review packet keys, accepted Evidence/Rule, or provider activation.
 - No persistent HTML/body storage and no network call in this task.
 - Authority/PII-style injected request fields are rejected as invalid request shape.
-- Truncated or mismatched declared-length responses now refuse with
-  `content_length_mismatch`, keep `bodyByteCount=null`, and keep conservative
-  unknown/safety flags (no false “absence” publication).
+- Declared-length overruns now refuse with `response_too_large`; bounded short
+  streams refuse with `content_length_mismatch`; both keep
+  `bodyByteCount=null` and conservative unknown/safety flags (no false
+  “absence” publication).
 
 ## What was tested by offline mocks vs. provided by protected architecture
 
@@ -69,5 +71,6 @@ real network sockets against origin infrastructure.
 - This slice is intentionally non-authoritative and offline-only.
 - Parent #917 remains SOURCE_NOT_QUALIFIED.
 - Any future real Bern fetch or live 131,072-byte path still requires separate TL/PO gate.
-- Exact-head CI/Auth/Preview for the current author HEAD is pending because PR #933
-  still references `feat/...@37e3e47` at evidence collection time.
+- Latest collected exact-head CI/Auth/Preview gate (pre-R2-F1 push) is
+  `feat/...@283cbbb` with CI run `38171090532` success, Auth job success,
+  and Vercel Preview Ready.

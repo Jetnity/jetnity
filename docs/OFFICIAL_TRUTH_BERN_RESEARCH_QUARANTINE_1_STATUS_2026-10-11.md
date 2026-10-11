@@ -6,7 +6,7 @@ Draft #933 / Issue #932. Parent #917 stays OPEN.
 | Workstream | Disposition | Limit |
 | --- | --- | --- |
 | Quarantine contract | PASS (offline code path only) | Distinct `research_only_quarantine` result type; never trusted retrieval/evidence/rule/provider output. |
-| Response completeness | PASS (R1 correction) | Declared `Content-Length` mismatch/short stream now blocks with `content_length_mismatch`, `bodyByteCount=null`, conservative flags. |
+| Response completeness | PASS (R2 correction) | Bounded stream gate (max 65,536) with early cancel on overrun (`response_too_large`), short-stream mismatch (`content_length_mismatch`), `bodyByteCount=null` + conservative flags on failures. |
 | Network execution | NOT_RUN | `networkAttempted:false`, no real HTTP in this task. |
 | Security reuse | PASS | Uses `decideOfficialTruthServerOwnedRetrieval` internals with offline-injected DNS/HTTP mocks. |
 | 65,536 default bound | PASS | Existing protected retrieval path unchanged. |
@@ -20,10 +20,9 @@ Sanitized verification/evidence files are under
 Current author branch HEAD:
 latest push on `copilot/featofficial-truth-bern-research-quarantine-1`.
 
-At evidence collection time, PR #933 still referenced
-`feat/official-truth-bern-research-quarantine-1@37e3e47`; exact-head
-CI/Auth/Preview evidence for the current author HEAD is therefore pending PR head
-fast-forward by Technical Lead.
+Latest collected exact-head gate proof (pre-R2-F1 push) is
+`feat/official-truth-bern-research-quarantine-1@283cbbb`:
+CI run `38171090532` success (including Auth job), Vercel Preview Ready.
 
 Open gates remain unchanged: #917 SOURCE_NOT_QUALIFIED, #913 blocked, G7 advisories,
 P2 timing variance. No Ready, no merge, no follow-up slice.

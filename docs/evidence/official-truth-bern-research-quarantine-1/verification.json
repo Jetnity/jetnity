@@ -57,12 +57,12 @@
     {
       "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts",
       "status": "PASS",
-      "details": "35/35 tests pass after R1 correction"
+      "details": "39/39 tests pass after R2 correction"
     },
     {
       "command": "npm test",
       "status": "PASS",
-      "details": "6450/6450 tests pass, duration_ms=899021.172286, M1–M4 suite duration_ms=224978.228416"
+      "details": "6454/6454 tests pass, duration_ms=680161.501935"
     }
   ],
   "artifacts": [
@@ -73,32 +73,39 @@
     {
       "type": "full_test_output_r1_correction",
       "path": "/tmp/1791748019121-copilot-tool-output-3913-c9103b6b-845b-4f4e-b06c-beae1bea0b91.txt"
+    },
+    {
+      "type": "full_test_output_r2_correction",
+      "path": "/tmp/1791749970560-copilot-tool-output-3658-d61446ca-755a-49f8-9db8-aa009aa495cf.txt"
     }
   ],
   "githubEvidence": {
-    "authorBranchHeadAtCollectionTime": "5b954f6677f073f471ddb07b9204f9999fbf0c72",
-    "pr933HeadAtCollectionTime": "37e3e47af04307fae66260d370250ea2b30c3039",
+    "authorBranchHeadAtCollectionTime": "283cbbbfd22d84497c072d939ece986172b7a8b0",
+    "pr933HeadAtCollectionTime": "283cbbbfd22d84497c072d939ece986172b7a8b0",
     "pr933BranchRef": "feat/official-truth-bern-research-quarantine-1",
     "authorWorkingBranchRef": "copilot/featofficial-truth-bern-research-quarantine-1",
     "ci": {
       "prHeadRun": {
-        "id": 38168755005,
+        "id": 38171090532,
         "workflow": "CI",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/Jetnity/jetnity/actions/runs/38168755005",
-        "headSha": "37e3e47af04307fae66260d370250ea2b30c3039"
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/38171090532",
+        "headSha": "283cbbbfd22d84497c072d939ece986172b7a8b0"
       },
-      "authorHeadExactRun": null,
-      "authorHeadExactRunStatus": "not_available_in_actions_list_at_collection_time"
+      "authJob": {
+        "id": 114563670788,
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/38171090532/job/114563670788"
+      }
     },
     "authJob": {
-      "prHead": "contained in CI run 38168755005",
-      "authorHeadExact": "not_available_in_actions_list_at_collection_time"
+      "prHead": "contained in CI run 38171090532",
+      "authorHeadExact": "success in job 114563670788"
     },
     "preview": {
-      "prHead": "latest PR preview evidence remains tied to PR head 37e3e47 (Vercel bot comment on PR #933)",
-      "authorHeadExact": "not_available_before PR head fast-forward"
+      "prHead": "Vercel bot preview updated 2026-10-11T20:11:13Z on PR #933",
+      "authorHeadExact": "ready deployment https://vercel.com/jetnity-e1b93c82/jetnity-app/DHRmVFx1jr1bytoTEe1c9yWTFsNs"
     },
     "parallelValidation": {
       "codeReview": "tool execution unavailable in environment (missing model claude-sonnet-4.6 in registry)",
@@ -109,6 +116,6 @@
     "RESEARCH_ONLY_NOT_QUALIFIED",
     "No real HTTP request executed in this task.",
     "No hosted database write or migration executed.",
-    "Exact-head CI/Auth/Preview for the current author HEAD is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
+    "R2 correction uses bounded stream processing in task-owned offline wrapper; protected retrieval module remained unchanged."
   ]
 }

@@ -24,9 +24,10 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 2. Fixed Bern target is immutable and caller cannot provide URL/profile authority.
 3. Retrieval security internals are reused via `decideOfficialTruthServerOwnedRetrieval`
    with offline-injected transport only.
-4. Declared Content-Length mismatch now refuses with precise
-   `content_length_mismatch`; result keeps `bodyByteCount=null` and conservative
-   unknown flags (no false-negative analysis publication).
+4. Bounded Content-Length gate uses max 65,536 bytes with early cancel/refusal
+   on overrun (`response_too_large`) and precise short-stream mismatch
+   (`content_length_mismatch`); result keeps `bodyByteCount=null` and
+   conservative unknown flags (no false-negative analysis publication).
 5. 65,536 default retrieval bound remains unchanged; 131,072 is only modeled offline.
 6. One-shot future permit semantics show refusal + consumed state + second refusal.
 7. Script remains offline-only and does not expose a live launcher.
@@ -41,9 +42,10 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 
 ## STOP
 
-Author HEAD for this R1 correction: latest pushed commit on
+Author HEAD for this correction slice: latest pushed commit on
 `copilot/featofficial-truth-bern-research-quarantine-1`.
-PR #933 currently points to `feat/...@37e3e47` at collection time, so exact-head
-CI/Auth/Preview proof for the current author HEAD remains pending TL fast-forward.
+Latest collected exact-head gate proof before this R2-F1 correction push:
+`feat/official-truth-bern-research-quarantine-1@283cbbb` with CI/Auth success
+and Vercel Preview Ready.
 
 Await independent ChatGPT Technical-Lead review.

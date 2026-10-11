@@ -1,6 +1,9 @@
 import 'server-only'
 
 import {
+  officialTruthBoundedResponseBody,
+} from '@/lib/readiness/official-truth-bounded-response-body'
+import {
   decideOfficialTruthServerOwnedRetrieval,
   type OfficialTruthServerOwnedRetrievalAbhaengigkeiten,
   type OfficialTruthServerOwnedRetrievalDnsResolver,
@@ -87,7 +90,7 @@ type Observation = {
   bodyByteCount: number | null
   flags: OfficialTruthBernResearchQuarantineFlags | null
   declaredLengthVerified: boolean
-  integrityReason: 'content_length_mismatch' | null
+  integrityReason: OfficialTruthBernResearchQuarantineResult['reason'] | null
 }
 
 const CONSERVATIVE_FLAGS: OfficialTruthBernResearchQuarantineFlags = Object.freeze({
@@ -340,15 +343,31 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
     if (!/^\d+$/.test(text)) return response
     const declaredLength = Number(text)
     if (!Number.isSafeInteger(declaredLength)) return response
-    if (declaredLength > 65_536) return response
-    const chunks: Uint8Array[] = []
-    let actual = 0
-    for await (const chunk of response.body) {
-      if (anfrage.signal.aborted) return { ok: false, reason: 'timeout' }
-      chunks.push(chunk)
-      actual += chunk.byteLength
+    if (declaredLength > 65_536) {
+      observation.bodyByteCount = null
+      observation.flags = null
+      observation.declaredLengthVerified = false
+      observation.integrityReason = 'response_too_large'
+      response.cancel?.()
+      return { ok: false, reason: 'http_failed' }
     }
-    if (actual !== declaredLength) {
+    const boundedMaxBytes = declaredLength === 0 ? 1 : declaredLength
+    const bounded = await officialTruthBoundedResponseBody(
+      response.body,
+      anfrage.signal,
+      boundedMaxBytes,
+      response.cancel,
+    )
+    if (!bounded.ok) {
+      observation.bodyByteCount = null
+      observation.flags = null
+      observation.declaredLengthVerified = false
+      observation.integrityReason = bounded.reason === 'response_too_large'
+        ? 'response_too_large'
+        : bounded.reason
+      return { ok: false, reason: bounded.reason === 'timeout' ? 'timeout' : 'http_failed' }
+    }
+    if (bounded.bytes.byteLength !== declaredLength) {
       observation.bodyByteCount = null
       observation.flags = null
       observation.declaredLengthVerified = false
@@ -362,7 +381,7 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
       status: response.status,
       headers: response.headers,
       body: (async function* () {
-        for (const chunk of chunks) yield chunk
+        if (bounded.bytes.byteLength > 0) yield bounded.bytes
       })(),
       cancel: response.cancel,
     }

@@ -26,12 +26,16 @@ type Scenario = {
   status?: number
   body?: Uint8Array
   chunks?: readonly Uint8Array[]
+  throwInBodyAtChunk?: number
   location?: string
   contentType?: string | null
   contentLength?: number | null
+  contentLengthRaw?: string | null
   contentEncoding?: string | null
   timeout?: boolean
   fail?: boolean
+  timeoutMs?: number
+  chunkDelayMs?: number
   addresses?: readonly { address: string; family: 4 | 6 }[]
 }
 
@@ -45,12 +49,13 @@ async function lookupWarten(lookup: OfficialTruthServerOwnedRetrievalLookup, hos
 
 async function laufen(scenario: Scenario = {}) {
   let cancelled = 0
+  let yieldedChunks = 0
   const result = await decideOfficialTruthBernResearchQuarantineOfflineMock(
     { operation: 'offline_mock' },
     {
       now: () => new Date('2026-10-11T00:00:00.000Z'),
       resolve: async () => scenario.addresses ?? [{ address: '93.184.216.34', family: 4 }],
-      timeoutMs: 8,
+      timeoutMs: scenario.timeoutMs ?? 8,
       http: async ({ url, lookup, signal }): Promise<OfficialTruthServerOwnedRetrievalHttpErgebnis> => {
         const host = new URL(url).hostname
         const checked = await lookupWarten(lookup, host)
@@ -68,14 +73,20 @@ async function laufen(scenario: Scenario = {}) {
               const name = key.toLowerCase()
               if (name === 'location') return scenario.location ?? null
               if (name === 'content-type') return scenario.contentType ?? 'text/html; charset=utf-8'
-              if (name === 'content-length') return scenario.contentLength == null ? null : String(scenario.contentLength)
+              if (name === 'content-length') {
+                if (scenario.contentLengthRaw !== undefined) return scenario.contentLengthRaw
+                return scenario.contentLength == null ? null : String(scenario.contentLength)
+              }
               if (name === 'content-encoding') return scenario.contentEncoding ?? null
               return null
             },
           },
           body: (async function* () {
-            for (const chunk of body) {
+            for (const [index, chunk] of body.entries()) {
               if (signal.aborted) return
+              if (scenario.throwInBodyAtChunk === index) throw Error('synthetic stream failure')
+              if (scenario.chunkDelayMs && scenario.chunkDelayMs > 0) await new Promise((resolve) => setTimeout(resolve, scenario.chunkDelayMs))
+              yieldedChunks += 1
               yield chunk
             }
           })(),
@@ -86,7 +97,7 @@ async function laufen(scenario: Scenario = {}) {
       },
     },
   )
-  return { result, cancelled }
+  return { result, cancelled, yieldedChunks }
 }
 
 function assertKonservativ(result: Awaited<ReturnType<typeof laufen>>['result']) {
@@ -192,8 +203,9 @@ test('mock-only body policy rejects mismatch, invalid UTF-8 and BOM', () => {
 
 test('declared length mismatch blocks with precise reason and conservative publication fields', async () => {
   const tooSmall = await laufen({ body: Buffer.from('synthetic-body'), contentLength: 5 })
-  assert.equal(tooSmall.result.reason, 'content_length_mismatch')
+  assert.equal(tooSmall.result.reason, 'response_too_large')
   assertKonservativ(tooSmall.result)
+  assert.ok(tooSmall.cancelled > 0)
   const tooLarge = await laufen({ body: Buffer.from('synthetic-body'), contentLength: 100 })
   assert.equal(tooLarge.result.reason, 'content_length_mismatch')
   assertKonservativ(tooLarge.result)
@@ -206,6 +218,46 @@ test('missing declared length stays blocked and does not publish completed analy
   const withoutLength = await laufen({ body: Buffer.from('<html><script>analytics</script></html>'), contentLength: null })
   assert.equal(withoutLength.result.reason, 'content_identity_mismatch')
   assertKonservativ(withoutLength.result)
+})
+
+test('invalid declared length stays fail-closed and does not publish completed analysis', async () => {
+  const invalidLength = await laufen({
+    body: Buffer.from('<html><script>analytics</script></html>'),
+    contentLengthRaw: 'nope',
+  })
+  assert.equal(invalidLength.result.reason, 'http_failed')
+  assertKonservativ(invalidLength.result)
+})
+
+test('advertised length 1 aborts early on oversize stream without full consumption', async () => {
+  const hugeChunks = Array.from({ length: 32 }, () => Buffer.alloc(4096, 65))
+  const { result, cancelled, yieldedChunks } = await laufen({ chunks: hugeChunks, contentLength: 1 })
+  assert.equal(result.reason, 'response_too_large')
+  assertKonservativ(result)
+  assert.ok(cancelled > 0)
+  assert.ok(yieldedChunks <= 1)
+})
+
+test('oversized single chunk is rejected early and cancelled', async () => {
+  const { result, cancelled, yieldedChunks } = await laufen({
+    chunks: [Buffer.alloc(4096, 65)],
+    contentLength: 1,
+  })
+  assert.equal(result.reason, 'response_too_large')
+  assertKonservativ(result)
+  assert.ok(cancelled > 0)
+  assert.equal(yieldedChunks, 1)
+})
+
+test('faulty stream is cancelled and does not publish observations', async () => {
+  const { result, cancelled } = await laufen({
+    chunks: [Uint8Array.of(65, 66), Uint8Array.of(67, 68)],
+    contentLength: 4,
+    throwInBodyAtChunk: 1,
+  })
+  assert.equal(result.reason, 'http_failed')
+  assertKonservativ(result)
+  assert.ok(cancelled > 0)
 })
 
 for (const [label, scenario, reason] of [
@@ -228,7 +280,7 @@ for (const [label, scenario, reason] of [
   ['bom', { body: new Uint8Array([0xef, 0xbb, 0xbf]), contentLength: 3 }, 'invalid_utf8'],
   ['empty body', { body: new Uint8Array(), contentLength: 0 }, 'empty_body'],
   ['truncated content-length mismatch stays blocked', { body: Buffer.from('synthetic-body'), contentLength: 100 }, 'content_length_mismatch'],
-  ['streamed overrun', { chunks: [Buffer.alloc(65_536, 65), Buffer.alloc(1, 65)], contentLength: 65_536 }, 'content_length_mismatch'],
+  ['streamed overrun', { chunks: [Buffer.alloc(65_536, 65), Buffer.alloc(1, 65)], contentLength: 65_536 }, 'response_too_large'],
 ] as const) {
   test(`offline transport refusal: ${label}`, async () => {
     const { result } = await laufen(scenario)
