@@ -1,0 +1,229 @@
+{
+  "schema": "official-truth-ch-de-r3-correction-author-v1",
+  "recordedAt": "2026-10-11T12:24:09.120820+00:00",
+  "author": "Jetnity Official Truth CH-DE Source-to-Workspace V2 1 — Codex Generation 1",
+  "scope": "ONE_SYNTHETIC_TEST_FIXTURE_AND_TASK_REPORTS_ONLY",
+  "review": "https://github.com/Jetnity/jetnity/pull/928#pullrequestreview-5483234554",
+  "checkpoint751": 6108860539,
+  "startingHead": "8e4ef997708202cf1653555816d4da34174def03",
+  "main": "fcab99dd96e23749dd2624ad5cbe4c2749b127e1",
+  "codeCommit": "121329c5416b021a6474fdb1c2afa2f0e4de7401",
+  "codeTree": "78c7b4816ba4d7ba0e9a21460b9b8ce9505d0fae",
+  "fixture": {
+    "path": "lib/readiness/official-truth-original-custody.test.ts",
+    "line": 167,
+    "gitBlob": "6c8b5d2e1255ec49f6fd9a097a1678adda3f8ba6",
+    "sha256": "78c33c55698316e2ade26b5cbe72da31296cb23d7fd9c850b79b406b804f0dd0",
+    "exactSingleReplacement": true,
+    "bytes": [
+      102,
+      111,
+      114,
+      103,
+      101,
+      100
+    ],
+    "negativeFingerprintAssertionUnchanged": true
+  },
+  "unchangedProtectedBlobs": {
+    "scripts/db/verwendung.mjs": "f636380779a342c94dcfac7f7dd80b9f9a941222",
+    "supabase/migrations/20261011111839_official_truth_original_custody_lifecycle_1.sql": "36b525580509069039ca6787c25a0a5b94155986",
+    "scripts/db/official-truth-original-custody-1/storage.ts": "e9798d606309fa121cf4fb21a28cf15e191fd27d",
+    "package.json": "aa1083f1bb84f9ad97439c80c14a3cefa5bb41fa",
+    "package-lock.json": "6f3f59c8067aabe406922f78f7fcf7ae6bf26883",
+    "docs/OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_TASK_2026-10-11.md": "d590a9769915ba1cbb6bb3cab8c401f0dac70460",
+    "docs/OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_TL_G2_SCOPE_ARBITRATION_2026-10-11.md": "bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7",
+    "docs/OFFICIAL_TRUTH_SOURCE_ORIGINAL_RETENTION_TL_OWNER_DELEGATED_DIRECTION_2026-10-11.md": "db9b62a0d2637e40eefe25ee49c0e7a08be3b420"
+  },
+  "previousRemoteFailure": {
+    "run": 38137038210,
+    "job": 114462920488,
+    "head": "8e4ef997708202cf1653555816d4da34174def03",
+    "failure": "check:schema-bezug interpreted the synthetic Buffer constructor argument as table forged",
+    "source": "Full TL R3 review, read in this continuation; earlier local summary does not establish final tracked-head schema PASS."
+  },
+  "focusedNative": {
+    "tests": 13,
+    "suites": 0,
+    "pass": 13,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 107990.717125,
+    "status": "PASS",
+    "logSha256": "ffb31ffc5744e99cc6775ec13f9153cf2919b87c505db83096fcaa72ed0e0170"
+  },
+  "fullNative": {
+    "tests": 6326,
+    "suites": 819,
+    "pass": 6326,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 432810.166584,
+    "status": "PASS",
+    "logSha256": "e8e6f5facdc84ec11f8a3df69a8ad9dd18256f5b6f791ed47b530920a8085db2"
+  },
+  "environment": {
+    "postgres": "16.15",
+    "node": "22.23.3",
+    "database": "Disposable local Unix-socket clusters; synthetic data only",
+    "hostPathAdapter": "native-pg16-host-path-adapter.cjs.txt",
+    "adapterScope": "Existing unchanged Linux-to-macOS native PG16 executable path mapping only; no test selection, SQL, assertion or result changes"
+  },
+  "testCommands": {
+    "focused": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-original-custody.test.ts",
+    "full": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' npm test -- --test-concurrency=1"
+  },
+  "npmCi": {
+    "exitCode": 0,
+    "packagesAdded": 530,
+    "logSha256": "dfbaf00a0512df5c4ab3a134d526f4ee595ce463a32cc7b487ba85be2af2d53d"
+  },
+  "checksAfterNpmCi": [
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 0,
+      "durationSeconds": 1.796,
+      "logSha256": "5a14c076fd54b6723d94fcdce05abd8c948e7cd2574ac8d6c49043980fa1d747"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "durationSeconds": 0.451,
+      "logSha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "durationSeconds": 7.083,
+      "logSha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "durationSeconds": 30.387,
+      "logSha256": "8cd52300c551de2e2014eb2d5cf60f6b1cd370b3fe23a1c45d2ad6d4e162ae7d"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "durationSeconds": 0.472,
+      "logSha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "durationSeconds": 0.471,
+      "logSha256": "0a2dca793641f33b1b99bbbb6d46f296d52176f8c467f1d043837f30a09cd1f1"
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "durationSeconds": 0.407,
+      "logSha256": "3378dd10dfa6c069037c119982416d8437146c441573f3e748a4276ecd650b7a"
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "durationSeconds": 3.543,
+      "logSha256": "2778cbfd2a6004c8aee8667994ce0075a448f316fbb332ba83281eb10cd904f1"
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "durationSeconds": 0.332,
+      "logSha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "durationSeconds": 6.93,
+      "logSha256": "0873346416c49cb13b68ed28aaa811958edb228841dd9f3bbb1e7d9179ebe982"
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "existingWarnings": 144
+  },
+  "dependencyAudits": {
+    "status": "FAIL_EXISTING_UNCHANGED",
+    "full": {
+      "exitCode": 1,
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 2,
+        "high": 17,
+        "critical": 0,
+        "total": 19
+      },
+      "packages": [
+        "@next/eslint-plugin-next",
+        "brace-expansion",
+        "braces",
+        "browserslist",
+        "chokidar",
+        "eslint-config-next",
+        "fast-glob",
+        "glob",
+        "micromatch",
+        "minimatch",
+        "picomatch",
+        "playwright",
+        "postcss-selector-parser",
+        "sharp",
+        "source-map-js",
+        "tailwindcss",
+        "tailwindcss-animate",
+        "ws",
+        "yaml"
+      ]
+    },
+    "production": {
+      "exitCode": 1,
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 3,
+        "critical": 0,
+        "total": 3
+      },
+      "packages": [
+        "sharp",
+        "source-map-js",
+        "ws"
+      ]
+    },
+    "reachability": "NOT_ASSESSED",
+    "lockfileChanged": false
+  },
+  "currentProductState": "Dormant synthetic M1-M4 candidate only; SOURCE_NOT_QUALIFIED; Requirements Provider null; Trip Workspace unknown",
+  "remainingGates": [
+    "Production accepted-store/legacy Rule/refresh adapter not implemented",
+    "Independent production restore witness and managed key custody not implemented",
+    "Real AAL2 protected reviewer, Bern/AA legal/privacy/source approval and 128-KiB admission not authorized",
+    "Hosted DDL, real Evidence/Rule promotion, Requirements Provider and positive visa activation not authorized",
+    "Existing dependency reachability/security review remains open",
+    "Independent Technical Lead R4 review and exact-final-head remote verification"
+  ],
+  "scopePreservation": {
+    "schemaCheckerChanged": false,
+    "m1M4ContractChanged": false,
+    "securityAssertionWeakened": false,
+    "authRlsChanged": false,
+    "hostedWrites": 0,
+    "productionChanges": 0,
+    "realOriginalsStored": 0,
+    "realApprovals": 0,
+    "providerActivations": 0,
+    "newBranches": 0,
+    "newPullRequests": 0,
+    "readyOrMerge": 0,
+    "automaticFollowups": 0
+  },
+  "finalIdentity": "The final docs commit descends from codeCommit. R3_CORRECTION_AUTHOR_RECEIPT.json and R3_CORRECTION_AUTHOR_HANDOFF.md outside Git record its exact post-push HEAD/tree and remote gates, avoiding a self-referential commit hash. No pre-push remote PASS is claimed."
+}

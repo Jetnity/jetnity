@@ -1,0 +1,15 @@
+// Host-only path compatibility: unchanged repository tests name Linux PG16
+// binaries. Execute the same native PostgreSQL 16.15 programs built for macOS.
+// No SQL, arguments, result, error, assertion or test-selection alteration.
+const cp = require('node:child_process');
+const path = require('node:path');
+const { syncBuiltinESMExports } = require('node:module');
+const pg16 = path.join(__dirname, 'postgresql-toolchain/install/bin');
+for (const method of ['execFileSync', 'spawnSync', 'spawn']) {
+const original = cp[method];
+cp[method] = function(file, ...args) {
+  const match = typeof file === 'string' && /^\/usr\/lib\/postgresql\/16\/bin\/(initdb|pg_ctl|postgres|psql)$/.exec(file);
+  return original.call(this, match ? path.join(pg16, match[1]) : file, ...args);
+};
+}
+syncBuiltinESMExports();

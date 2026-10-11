@@ -1,0 +1,177 @@
+{
+  "schema": "official-truth-ch-de-source-to-workspace-m1-m4-author-v1",
+  "author": "Jetnity Official Truth CH-DE Source-to-Workspace V2 1 — Codex Generation 1",
+  "scope": "CODE_ONLY_SYNTHETIC_DISPOSABLE_POSTGRESQL16",
+  "startingHead": "002d99f5e44c367545804fe42675bc587419f2c4",
+  "main": "fcab99dd96e23749dd2624ad5cbe4c2749b127e1",
+  "codeCommit": "ddc96dbe89534d27bf08fdfebee87172030db4d4",
+  "codeTree": "8c84ca1bdf9dec68e8a5bbfb242ef6fd748d78d5",
+  "taskBlob": "d590a9769915ba1cbb6bb3cab8c401f0dac70460",
+  "g2ArbitrationBlob": "bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7",
+  "directionBlob": "db9b62a0d2637e40eefe25ee49c0e7a08be3b420",
+  "liveCheckpoint751": 6108418500,
+  "tlR2Review": 5483042946,
+  "guardian748Material": 6032030807,
+  "guardian748Receipt": 6036558748,
+  "files": {
+    "supabase/migrations/20261011111839_official_truth_original_custody_lifecycle_1.sql": {
+      "sha256": "c0dbe4aef1a8f8d56f8575a0eade668ad2ef2870cd02bd9ea5e5aa2e451d72c9",
+      "gitBlob": "36b525580509069039ca6787c25a0a5b94155986",
+      "bytes": 28958
+    },
+    "scripts/db/official-truth-original-custody-1/storage.ts": {
+      "sha256": "0c3f76c0fdbc226ee755750c86864c643f7e18e2a4de959be22304a4f9ac6149",
+      "gitBlob": "e9798d606309fa121cf4fb21a28cf15e191fd27d",
+      "bytes": 9103
+    },
+    "lib/readiness/official-truth-original-custody.test.ts": {
+      "sha256": "9c0fb15dc990e10c0a307e6b2159dc4be05ded3a7b023d2ffc0da01eaed90ce2",
+      "gitBlob": "cb10a16258d5b07b26550af43bdc8c58e8082590",
+      "bytes": 27541
+    }
+  },
+  "nativeProof": {
+    "schema": "original-custody-m1-m4-local-v1",
+    "status": "PASS",
+    "postgres": "postgres (PostgreSQL) 16.15",
+    "checks": [
+      "atomic failed producer rolls back all eight provenance and all eight vault relations",
+      "protected review and cross-account capabilities are denied with SQLSTATE 42501",
+      "whole-body UTF8 boundaries and SQL TypeScript fingerprint V1/V2 parity",
+      "acknowledged commit fresh-reader full closure and exact encrypted original reproof",
+      "composed ordered supports commit atomically with exact reviewer packet",
+      "lost commit acknowledgement returns unknown; explicit retry proves durable existing state",
+      "native quota backpressure enforces per-source/day, total items and total live bytes",
+      "history update delete truncate and stale transaction are refused",
+      "missing ciphertext review support event and corrupted encrypted original refuse",
+      "source profile withdrawal and Rule supersession never rewrite accepted history",
+      "reader lifecycle lock orders concurrent revocation and prevents obsolete cursor reuse",
+      "expiry withdraws reliance before disposal; retained metadata and retries cannot resurrect bytes"
+    ],
+    "positiveStructuralAcceptedRead": "VERIFIED_SYNTHETIC_ONLY",
+    "productionAcceptedRead": "NOT_AUTHORIZED",
+    "hostedWrites": 0,
+    "realOriginals": 0,
+    "positiveVisaCells": 0
+  },
+  "firstFullRun": {
+    "tests": 6326,
+    "suites": 819,
+    "pass": 6325,
+    "fail": 1,
+    "skip": 0,
+    "durationMs": 425641.542125,
+    "failure": "Existing sanitation invariant rejected CLI-generated ignored supabase/.temp/cli-latest; removed that generated cache; invariant unchanged; focused sanitation recheck passed."
+  },
+  "cleanFullRun": {
+    "status": "PASS",
+    "tests": 6326,
+    "suites": 819,
+    "pass": 6326,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 421884.115417,
+    "logSha256": "0a358ab622bff6885c47bd56131a866b71bc150cf54ceae3d898c312e5f049d0",
+    "command": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' npm test -- --test-concurrency=1"
+  },
+  "verification": {
+    "typecheck": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 144,
+      "newWarnings": 0
+    },
+    "build": "PASS",
+    "setup": "PASS_NO_ENV_CONFIGURED",
+    "operatingMode": "PASS_NORMAL",
+    "apiProtection": "PASS_12_ROUTES",
+    "schemaReferences": "PASS",
+    "deadFiles": 0,
+    "unusedExports": 0,
+    "unusedDependencies": 0
+  },
+  "dependencyAudit": {
+    "status": "FAIL_EXISTING_UNCHANGED",
+    "all": {
+      "high": 17,
+      "moderate": 2,
+      "total": 19
+    },
+    "production": {
+      "high": 3,
+      "total": 3
+    },
+    "productionPackages": [
+      "sharp",
+      "source-map-js",
+      "ws"
+    ],
+    "reachability": "NOT_ASSESSED",
+    "lockfileChanged": false
+  },
+  "authorDeltaPrivacyScan": {
+    "machinePaths": 0,
+    "credentialPatterns": 0,
+    "rawHtmlBodies": 0,
+    "scope": "task-owned text delta, not repository-wide certification"
+  },
+  "whitespace": {
+    "authorDelta": "PASS",
+    "inheritedFindings": 26,
+    "files": [
+      "immutable TASK",
+      "immutable G2 arbitration",
+      "immutable delegated direction"
+    ]
+  },
+  "environment": {
+    "postgres": "16.15",
+    "node": "22.23.3",
+    "transport": "owned Unix-socket disposable cluster; no DSN",
+    "hostPathAdapter": "native-pg16-host-path-adapter.cjs.txt",
+    "migrationGenerator": "Supabase CLI 2.48.3, isolated cache outside repository; no dependency change"
+  },
+  "notDelivered": [
+    "production accepted-store/legacy-claim projection and refresh adapter",
+    "real Owner-AAL2 review integration",
+    "managed production key custody and log policy",
+    "durable independent production restore witness",
+    "hosted provenance prerequisite or migration apply",
+    "real 128-KiB profile admission and positive atomic real-source proof",
+    "real source qualification or visa result"
+  ],
+  "noGoCounters": {
+    "hostedWrites": 0,
+    "realOriginalsStored": 0,
+    "realSourcesApproved": 0,
+    "realRulesApproved": 0,
+    "productionProviderActivations": 0,
+    "existingAuthRlsChanges": 0,
+    "newBranches": 0,
+    "newPullRequests": 0,
+    "readyOrMerge": 0,
+    "automaticFollowups": 0,
+    "newRecurringSpendUsd": 0
+  },
+  "finalIdentity": "The external post-push receipt binds final HEAD/tree and remote Draft/check observations; this file cannot embed its own containing commit.",
+  "ddlSupplementalProof": {
+    "schema": "m1-m4-ddl-rollback-v1",
+    "status": "PASS",
+    "postgres": "postgres (PostgreSQL) 16.15",
+    "ddlTransactionRollback": "VERIFIED_SCHEMAS_AND_ROLES_ABSENT",
+    "dormantForwardInstallWithoutProvenance": "VERIFIED",
+    "missingProvenanceRefusalSqlstate": "3F000",
+    "originals": 0,
+    "reviews": 0,
+    "rules": 0,
+    "hostedWrites": 0
+  },
+  "newNativeTests": {
+    "pass": 13,
+    "fail": 0,
+    "skip": 0,
+    "source": "final clean full run; 12 subtests plus parent"
+  }
+}

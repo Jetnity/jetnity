@@ -1,0 +1,69 @@
+# CH→DE Source-to-Workspace V2.1 — Contracts
+
+## M1–M4 continuation — current contract
+
+The new delegated direction at `002d99f5e44c367545804fe42675bc587419f2c4` supersedes the G2 reader-only STOP. Read the [complete M1–M4 contract](OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_M1_M4_CONTRACT_2026-10-11.md) first. Separate encrypted originals, exact existing receipt/Evidence bindings, protected synthetic review, append-only current lifecycle and post-COMMIT re-proof are implemented as a dormant local candidate. The one new SQL artifact is UNAPPLIED outside disposable local tests. No global provenance body storage or second fact engine.
+
+The positive result is explicitly synthetic structural custody. It is not a bridge to legacy accepted Rule rows, a real protected review capability or a production provider. Those distinctions and remaining adapter/hosting work are explicit in the new contract. Existing Auth/RLS and provider remain unchanged. The G2 inventory below accurately describes the seven old migrations, not the newly added extension.
+
+**PARTIAL / GATED.** Existing Draft #928, Issue #927. TASK blob `d590a9769915ba1cbb6bb3cab8c401f0dac70460`. No accepted German source, positive accepted reader or user visa result is delivered. This is the separable negative/read-interface path expressly allowed by SW07/SW08/SW15/SW21.
+
+## G2 inventory before implementation — 11 October 2026
+
+Binding arbitration blob `bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7`, starting HEAD `9905ff8e66ef1e9f45069e6119f27ae7c9b82591`. The former blanket SQL-contract prohibition below is superseded: one indispensable read-only additive migration artifact is permitted, hosted apply is not. The investigation found missing **stored data**, independently of the now-authorized reader primitive.
+
+Finite required dependency graph (existing accepted store, not an alternate engine):
+
+`claim_id + exact rule_scope_key/fact -> support(claim_id, version_id, source_id, exact identity tuple) -> evidence(version_id, protocol, source_content_hash, retrieved_at, valid_from/until) -> retained original complete bytes + immutable custody closure -> acceptance review + ordered lifecycle/revocation history -> current code-owned profile/catalog + current source/review state -> scoped reader -> existing OfficialEvaluation`.
+
+| Required edge | Actual retained contract | Result / exact missing proof |
+|---|---|---|
+| Claim -> Evidence | `official_rule_claim_support` composite FKs bind claim scope, Evidence version/source/lifecycle and identity tuple; typed fact tables persist legacy facts. | Present as relational structure, insufficient alone for authoritative read. |
+| Evidence -> original bytes | `official_evidence_versions` retains hash, URL, retrieval/validity text and V2 identity columns. The writer receives `source_snapshot` transiently. No whole-body/canonical-bytes column or durable body/receipt reference exists. | M1: immutable full original material and versioned custody reference absent. A hash cannot reconstruct original bytes. |
+| Evidence -> durable receipt | `official_truth_v2_fingerprint_receipts` has only backend PID, transaction ID, version ID. Trigger consumes it; fingerprint wrapper deletes any remainder before returning (V2 SQL lines 137–151, 246–252). | M2: this is transaction-local insertion authorization, not retained custody or a COMMIT ACK. |
+| Claim -> accepted Review/history | `claimPayload()` sends scope, support IDs and typed fact, plus accepted timestamp. No `reviewPacketKey`, review decision, reviewer authority, ordered history or provenance receipt reference is persisted. `officialTruthRegelReviewEntscheidungsabsicht` produces intent only; its module lines 85–89 explicitly deny acceptance. | M3: acceptance/review binding and durable decision history absent. `accepted_at` is not legal validity or review proof. |
+| Claim/source -> current revocation/conflict | Evidence has lifecycle/previous-version fields; catalog has current flags and blocked domains. Accepted Rule lifecycle is constrained to `accepted`, validation to `valid`; unique scope/fact and support FKs do not provide a Rule retirement/revocation event stream. Profile pins are append-only and their comment reserves retirement to reviewed transition. | M4: a complete ordered current Rule/source withdrawal/conflict history and its freshness proof cannot be reconstructed from current flags. |
+| Existing local provenance -> actual accepted Claim | Eight local-only tables retain immutable bytes/links. `readVerifiedIntegratedBundleLocally` already verifies those under repeatable-read/read-only with a dedicated reader role. No accepted-store FK or writer binding links its receipt/custody to `claim_id`, persisted Rule review, or lifecycle events. | Do not join by similar hashes or relabel a local closure profile as actual accepted Rule provenance. Reuse is a future linkage decision, not missing technology. |
+
+**G2 technical STOP:** No additional read RPC/SELECT grant can recover M1–M4. Building retention producers, Rule acceptance/history transitions and a durable cross-store binding is outside the authorized smallest read-only primitive. G2 expressly says to return `NOT_VERIFIED` with a minimal missing-schema/Owner packet in this case. Therefore no migration artifact is added merely to expose incomplete rows, and no protected reader or positive structural accepted-store proof is claimed. The native proof now includes catalog hardening and checks actual installed schema fields/relationships, existing permission denial, writer-only operations and empty authority-bearing stores. Existing eight-table local proofs remain covered by the full suite; they are not renamed CH→DE accepted reads.
+
+## Initial author record — actual dependency path and missing primitives
+
+References below are repository-relative, verified against the author code. Unchanged foundation references resolve at main `fcab99dd96e23749dd2624ad5cbe4c2749b127e1`.
+
+| Step | Existing function / location | Binding constraint |
+|---|---|---|
+| Source/profile | `lib/readiness/official-truth-content-identity.ts:80`, `OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY` | Only GOV.UK profile; no approved Bern/AA profile. Candidate labels cannot confer authority. |
+| Complete response | `lib/readiness/official-truth-ch-de-source-budget-128k-1.ts:50`, `officialTruthChDeSourceBudget128k1`; protocol check at line 96 | 65,536-byte default; 131,072 only for exact genuinely compiled/current S3 identity. No added HTTP client, registry row or bypass. |
+| Accepted writes | `lib/readiness/official-truth-store-server.ts:377`, `akzeptierteEvidenceSpeichern`; line 424, `akzeptierteRegelClaimSpeichern` | Writer re-proof does not create a read capability. |
+| SQL accepted store | `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql:97` and `:263` | Operations are accepted Evidence/Rule writes, not `read_accepted`, `read_registry`, or `read_rule_history`. |
+| V2 custody lifetime | `supabase/migrations/20261010180000_official_truth_source_fingerprint_protocol_2.sql:137` | Transaction receipt consumed at insertion; full source input is not a retained, reader-accessible whole-custody history. Profile/receipt tables explicitly revoke client and service access at lines 44/66. |
+| Local provenance proof | `scripts/db/official-truth-integrated-pilot-1/storage.ts:131`, `readVerifiedIntegratedBundleLocally` | Existing repeatable-read local bundle verification is useful infrastructure; its developer schema/profile is not the accepted Evidence/Rule store or a production current-revocation/review reader. |
+| Scope | `types/trips.ts:135`; `lib/readiness/provider.ts:42`, `RequirementsAnfrage` | Generic passport only; no ordinary subtype, purpose, explicitly selected option or complete direct-route assertion. A list of transit countries cannot prove completeness. |
+| Negative interface | `lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts`, `chDeVisaReadRequestPruefen`; `adapter.ts`, `chDeVisaReadForTrip` | New bounded request checks; every return has null provider/Evidence/Rule. Passing prerequisites is not eligibility. |
+| Canonical evaluation | `lib/readiness/trip-official-evaluations-server.ts:10` → `lib/readiness/engine.ts:721`, `requirementsFuerReise` | Existing canonical engine retained; `provider.ts:99` remains null; `zustand.ts:41` retains the hard-off. |
+| Account Workspace | `app/(public)/reisen/[tripId]/page.tsx:81`; `lib/trips/daten.ts:200`, `reiseLaden` | Existing authenticated/RLS trip loading and presentation retained; no alternate browser or API admission path. |
+
+One required positive path: **approved exact profile → protected complete-source retrieval → versioned Evidence/custody → accepted Rule/support/review → protected read plus current registry/revocation/effective-time re-proof → exact selected scope → existing Requirements engine → canonical OfficialEvaluation → existing Workspace**. It stops independently at the source profile, accepted-read contract, and Trip scope contracts. No one of these approvals substitutes for the others.
+
+## Implemented negative request contract
+
+The server-owned caller supplies the already Auth/RLS-loaded Trip and an untrusted lookup request containing exactly `travellerClientRef`, `credentialOptionRef`, `destinationCountryCode: DE`, `requirementType: visa`. The request supplies no account identity, credentials, approval, transport, provider, source, profile or evidence. Descriptor inspection avoids invoking getters and never recursively traverses foreign DTOs. The four string fields are individually bounded before strict parsing; refs use ASCII identity characters and lengths 64/129. No JSON canonicalization or custody-foundation consumer is introduced.
+
+Work bounds: 1–32 travellers, at most 32 citizenship/document entries for the selected traveller, 1–64 stages. Overflow rejects without truncation. Duplicate traveller/document/citizenship refs reject. Selection must match the canonical `credentialOptionsAus` option for that exact traveller and an explicitly linked CH citizenship/CH-issued passport. Residence and issuer alone never establish nationality. Dates must be real calendar dates in the supported 2000–2099 interval, with end >= start; every stage must explicitly be DE. These checks establish only representable prerequisites. They do not establish ordinary class, document validity, purpose, direct route, source/legal scope or visa eligibility.
+
+The default `chDeVisaReadBoundary()` remains compatible and ignores arguments. `chDeVisaReadForTrip()` adds deterministic scope refusal reasons and always returns a frozen `unavailable` boundary with null authority-bearing outputs. No environment variable or configured secret changes this. The interface has no success variant; G2 arbitration now permits investigation but the retained-data dependencies above remain absent.
+
+## Local integration and proof contract
+
+`scripts/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.ts` runs the null reader projection through `requirementsProviderNachZustand` and the existing `requirementsFuerReise`, and independently runs `tripOfficialEvaluationsAuswerten`. Tests require both arrays to match, with unknown results and no official source/action/check timestamp. Existing Preparation checklist and Destination Essentials projections are exercised. No runtime page imports this developer harness.
+
+`accepted-read-proof.ts` accepts no DSN or fixtures from callers. It creates a disposable native PG16 cluster, applies the six existing migrations in the minimal accepted-store/V2 chain, and verifies SQLSTATE 42501 for private Evidence/Rule/support/receipt SELECT by anon, authenticated and service_role, plus 22023 for unsupported read operations on the writer RPC. All source-profile/Evidence/Rule/receipt counts remain zero. No synthetic accepted identity is invented. Result `REFUSAL_VERIFIED` is diagnostic only; supplying it to the adapter is rejected. Positive acceptance/read/projection is **NOT_VERIFIED**.
+
+The initial six-migration fixture was not a hosted schema rehearsal. G2 now also installs catalog hardening; Owner-role/AAL2 regressions remain in the full suite. This does not replace an Auth/RLS integration test: the new function is dormant and its Trip argument is a trusted-server precondition. Existing account/RLS regression tests remain responsible for loading. The new tests establish reference isolation and inability to inject authority, not real stale/revoked Rule processing. The latter cannot be claimed until the protected read primitive exists.
+
+## Exact contract arbitration
+
+1. **TL + PO / scope:** Decide how the authenticated canonical Trip records selected traveller+credential, ordinary passport subclass, purpose, complete direct-route facts and supported travel interval without inferring them. Any shared types/ownership/scope changes require an explicit amendment. Client booleans in this adapter are not an acceptable substitute.
+2. **TL / accepted read:** Specify the least-privilege, bounded server read primitive for accepted Evidence/Rule/support plus retained full versioned custody, signed review/history, current source registry, expiry/effective-time and current revocation/conflict state. Require a consistent read and post-COMMIT acknowledgement proof. Decide whether existing local storage can be reused without treating its profile as regulatory authority. Historical initial gate: G2 now permits an indispensable additive read-only SQL artifact. The current missing-data stop is specified above; direct table grants remain forbidden.
+3. **PO / source/legal/privacy:** See the separate finite source and Owner packet. Source research is not approval. Gates stay closed even after a code-only merge.
