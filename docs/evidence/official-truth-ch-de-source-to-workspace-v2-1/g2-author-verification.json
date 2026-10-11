@@ -1,0 +1,137 @@
+{
+  "schema": "ch-de-source-to-workspace-v2-1-g2-author-verification",
+  "recordedAt": "2026-10-11T10:47:56.698708+00:00",
+  "status": "PARTIAL_GATED_TECHNICAL_STOP",
+  "author": "Jetnity Official Truth CH-DE Source-to-Workspace V2 1 — Codex Generation 1",
+  "branch": "feat/official-truth-ch-de-source-to-workspace-v2-1",
+  "main": "fcab99dd96e23749dd2624ad5cbe4c2749b127e1",
+  "arbitrationHead": "9905ff8e66ef1e9f45069e6119f27ae7c9b82591",
+  "taskBlob": "d590a9769915ba1cbb6bb3cab8c401f0dac70460",
+  "arbitrationBlob": "bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7",
+  "localDiagnosticCommit": "b679b35c78a26a6864849b4db4ce5a4f3549114f",
+  "publishedDiagnosticCommit": "f692ab41738d7f70500219c6371fe06da068629c",
+  "identicalDiagnosticTree": "777e2d01d4ac606983e7b9aa3f491c8def3288a2",
+  "testedExecutableBlobs": {
+    "lib/readiness/official-truth-ch-de-first-visa-vertical-1/adapter.ts": "69fa5150c8419e6c8f8edd4f391aed3745f0011a",
+    "lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts": "8226883b8093d850e30fa3ddf7e4a0fb1abf7521",
+    "scripts/official-truth-ch-de-first-visa-vertical-1/accepted-read-proof.ts": "1d95c912952b53790ac0ea0b2fa4167cfcfd35f0"
+  },
+  "finalHeadReceipt": "External G2 receipt produced after final documentation commit; exact remote tree must equal local final tree.",
+  "fullSuite": {
+    "tests": 6313,
+    "suites": 819,
+    "pass": 6313,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 413067.284042,
+    "exitCode": 0,
+    "command": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' npm test -- --test-concurrency=1"
+  },
+  "focusedSuite": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "skipped": 0
+  },
+  "initialFocusedFailure": {
+    "pass": 37,
+    "fail": 1,
+    "reason": "sandbox prevented local PostgreSQL socket startup",
+    "nativeRetry": "38/38 PASS; no skipped assertion"
+  },
+  "nativeProof": {
+    "schema": "ch-de-accepted-read-boundary-v2",
+    "status": "REFUSAL_VERIFIED",
+    "postgres": "postgres (PostgreSQL) 16.15",
+    "checks": [
+      "installed_evidence_has_metadata_without_retained_whole_body",
+      "fingerprint_receipt_has_only_transaction_coordinates",
+      "installed_rule_has_no_review_or_revocation_history",
+      "accepted_store_has_no_durable_provenance_store_link",
+      "anon_cannot_read_accepted_rows_or_custody",
+      "authenticated_cannot_read_accepted_rows_or_custody",
+      "service_role_cannot_read_accepted_rows_or_custody",
+      "writer_rpc_is_not_a_read_capability",
+      "no_source_profile_evidence_rule_or_receipt_promoted"
+    ],
+    "migrationCount": 7,
+    "positiveAcceptedRead": "NOT_VERIFIED",
+    "sourceStatus": "SOURCE_NOT_QUALIFIED",
+    "reason": "retained_accepted_custody_contract_missing",
+    "missingDependencies": [
+      "M1_retained_original_material",
+      "M2_durable_custody_binding",
+      "M3_accepted_review_history",
+      "M4_current_revocation_history"
+    ],
+    "positiveStructuralAcceptedRead": "NOT_VERIFIED",
+    "hostedWrites": 0,
+    "positiveVisaCells": 0
+  },
+  "typecheck": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 144,
+    "status": "PASS"
+  },
+  "build": "PASS",
+  "hygiene": {
+    "setup:ci": "PASS",
+    "operating-mode": "PASS",
+    "api-schutz": "PASS",
+    "schema-bezug": "PASS",
+    "dead": "PASS",
+    "exports": "PASS",
+    "deps": "PASS"
+  },
+  "dependencyAudit": {
+    "full": {
+      "high": 17,
+      "moderate": 2,
+      "total": 19,
+      "exitCode": 1
+    },
+    "production": {
+      "high": 3,
+      "total": 3,
+      "exitCode": 1
+    },
+    "packages": [
+      "sharp 0.35.4",
+      "source-map-js 1.2.1",
+      "ws 8.18.1 / 8.18.3"
+    ],
+    "reachability": "NOT_ASSESSED",
+    "lockfileChanged": false
+  },
+  "scopeAndPrivacyScan": {
+    "changedAuthorFiles": "owned task paths only",
+    "rawGovernmentHtml": false,
+    "machinePaths": false,
+    "credentialPatterns": false,
+    "claim": "bounded author scan, not repository-wide privacy certification"
+  },
+  "whitespace": {
+    "g2AuthorDelta": "PASS",
+    "wholePrAgainstMain": "23 inherited hard-break whitespace findings in immutable TASK and arbitration; both blobs preserved"
+  },
+  "remoteExactHeadGates": "Observe after push in external receipt; independent CI/Auth/Preview TL R2 review pending",
+  "notVerified": [
+    "complete protected accepted reader",
+    "positive structural accepted-store read",
+    "reader history/revocation/freshness/validity re-proof",
+    "reader forged/incomplete data and concurrency/retry handling",
+    "positive cross-account accepted read",
+    "positive visa projection"
+  ],
+  "ownerGate": "M1–M4 retained custody/review/lifecycle contract and existing D01–D12 retention decision; no real source or hosted authority implied",
+  "hostedWrites": 0,
+  "newMigrationArtifacts": 0,
+  "newApprovedSources": 0,
+  "newAcceptedEvidenceOrRules": 0,
+  "positiveVisaCells": 0,
+  "newRecurringCostUsd": 0,
+  "next": "STOP for independent TL R2; no Ready, merge or automatic follow-up"
+}

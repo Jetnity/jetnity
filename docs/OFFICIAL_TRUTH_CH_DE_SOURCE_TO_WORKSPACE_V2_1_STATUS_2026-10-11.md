@@ -1,5 +1,28 @@
 # CH→DE Source-to-Workspace V2.1 — Status
 
+## G2 final author verification — PARTIAL / GATED / STOP
+
+The complete protected reader and positive structural accepted-store read remain **NOT_VERIFIED**, for the precise missing durable data M1–M4 in CONTRACTS/OWNER_PACKET. Read-only SQL artifact authority was granted and is not the blocker. No new SQL artifact, hosted change, real source/Rule approval or runtime activation was made. Existing Workspace output remains unknown/null.
+
+| Fresh G2 verification | Actual result |
+|---|---|
+| Full serial native PG16 | **6313/6313 PASS**, 819 suites, 0 fail/cancel/skip/TODO, 413067.284042 ms |
+| Focused current CH→DE tests | 38/38 PASS; initial sandbox socket startup failure honestly retained in evidence |
+| Native proof | PostgreSQL 16.15, seven existing migrations including catalog hardening; nine diagnostic checks; authority counts zero, no positive accepted read |
+| Typecheck / Lint / Build | PASS / PASS (0 errors, 144 existing warnings) / PASS |
+| Setup / mode / API / schema / dead / exports / deps | All PASS |
+| Full / production dependency audit | **FAIL:** 17 high + 2 moderate / 3 high; lockfile unchanged, reachability not assessed |
+| Scope/privacy author scan | Only task-owned delta; no raw HTML, credential pattern or machine path detected; not a global privacy certificate |
+| Whitespace | G2 author delta PASS; whole PR has **23 inherited** Markdown hard-break findings in immutable TASK + arbitration, preserved exactly |
+| TASK / arbitration blobs | Unchanged d590a9769915ba1cbb6bb3cab8c401f0dac70460 / bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7 |
+| Exact-head GitHub CI/Auth/Preview | Post-push observation in external G2 receipt; independent TL R2 gates pending |
+
+Diagnostic code commit `f692ab41738d7f70500219c6371fe06da068629c`, tree `777e2d01d4ac606983e7b9aa3f491c8def3288a2`, byte-identical to locally committed/tested `b679b35c78a26a6864849b4db4ce5a4f3549114f`. Git Data delivery reuses the authenticated connection because native Git has no push credential; final update is expected-head checked, fast-forward only. Final documentation commit/hash is in the external receipt. Sanitized current evidence: `docs/evidence/official-truth-ch-de-source-to-workspace-v2-1/g2-author-verification.json`.
+
+All initial author results below are historical. No self-review constitutes TL acceptance. Do not start a follow-up; wait for independent R2.
+
+## Initial author record — historical verification
+
 **PARTIAL / GATED / SOURCE_NOT_QUALIFIED.** Draft PR #928. Production provider null; positive accepted read and positive visa projection NOT_VERIFIED. No hosted migration, real acceptance, activation, Ready or merge.
 
 | Verification | Author result |

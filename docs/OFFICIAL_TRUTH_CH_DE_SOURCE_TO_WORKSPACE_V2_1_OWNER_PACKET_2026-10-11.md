@@ -1,5 +1,25 @@
 # CH→DE Source-to-Workspace V2.1 — Source candidate / Owner decision packet
 
+## G2 exact stopped decision — durable custody and lifecycle
+
+**NOT_VERIFIED. G2 reader-only SQL authority is already granted; do not ask the Owner to approve it again.** The blocker is missing persisted proof, not a missing SELECT grant. G2 explicitly requires a missing-schema/Owner packet rather than manufacturing acceptance.
+
+Minimal missing data contract, reusing existing Official Truth artifacts (proposed requirements, no schema or real records created):
+
+| Gap | Smallest required durable binding | Integrity / lifecycle condition |
+|---|---|---|
+| M1 | Evidence `version_id`/fingerprint protocol/exact source-item-representation-profile tuple -> retained complete original material artifact pin and canonicalization contract | Recompute the source fingerprint from complete bytes; no excerpt, recreated HTML or newly fetched body can be substituted for original retained bytes. Bounds remain 65,536 / conditional 131,072. |
+| M2 | Evidence version -> existing versioned provenance receipt/custody closure, including full support/artifact pins and original retrieval/validity provenance | Atomic commit with accepted record, immutable binding, idempotent exact-byte verification and independently acknowledged readback. Transient backend PID/XID receipt cannot serve this purpose. |
+| M3 | Versioned accepted Rule -> exact review packet/decision/authority proof + ordered immutable support version/pin set + original acceptance time | Persist actual protected decision; never convert review intent, timestamp, SQL accepted flag or synthetic fixture into approval. Current Rule fact schema limitations also remain. |
+| M4 | Source/profile/Evidence/Rule lifecycle events -> exact affected immutable identity, ordered predecessor/revision, effective instant, authorized withdrawal/conflict decision and current read position | A future reader must prove no intervening relevant withdrawal/conflict and fail when sequence/freshness is uncertain. Do not invent validity or silently update accepted history. |
+
+**Single reserved Owner decision now needed:** Product Owner with Security/Privacy must approve the bounded retention/lifecycle policy for retaining complete original material and the linked acceptance/review/withdrawal history, using the existing unsigned [D01–D12 retention packet](OFFICIAL_TRUTH_PROVENANCE_RETENTION_LIFECYCLE_DECISION_PACKET_1_2026-10-06.md). Required answers include retained data classes, purpose, access, clock/duration, active-reference protection, expiry/deletion/backup/restore behavior and accountable operator. No value or signature is filled by this author. This is neither government-source approval nor hosted apply permission.
+
+**Independent TL R2 decision after assessing this finding:** explicitly scope an atomic producer/linkage and Rule lifecycle contract for M1–M4, reusing the existing eight-table provenance technology, if that work should proceed. The present read-only grant does not authorize changing the accepted writer or inventing this history. A disposable synthetic proof can validate a future technical contract; it cannot cure missing historical bytes in existing rows, approve a real source, or fulfill the reserved retention decision.
+
+No new migration artifact is delivered, so there is no G2 migration for an Owner to apply. The already listed fingerprint migration under G4 cannot create M1–M4. Existing unlinked rows must remain NOT_VERIFIED; a later, explicitly approved fresh acquisition/acceptance would create new provenance rather than silently backfill historical truth. Cost now $0; no hosted retention, source activation, real AAL2 decision or runtime rehearsal performed. STOP for TL R2; no automatic new storage task.
+
+
 **RESEARCH_ONLY / SOURCE_NOT_QUALIFIED / PARTIAL / GATED.** This packet requests distinct decisions; it approves none. No full governmental response, snippet, source hash, personal record, contact address, secret or database locator is stored here.
 
 ## Research provenance
@@ -44,7 +64,7 @@ No direct contradiction between S3 and S1 was identified in the rendered Swiss v
 | Gate / decision owner | Exact decision and prerequisite | Reversible outcome / stop condition |
 |---|---|---|
 | G1 — TL + PO, Trip scope | Approve the shared selected-credential/ordinary/purpose/direct-route/date contract described in CONTRACTS. | Only an explicit scope amendment permits code changes; unsupported facts continue unknown. |
-| G2 — TL, accepted-read contract | Approve least-privilege bounded read semantics for retained custody, Rule review/support/history, registry/revocation/conflict/currentness and consistent post-COMMIT re-proof. | No blanket private SELECT. If a new migration is needed, a separate exact code-only authorization is required before implementation. |
+| G2 — TL, read-only scope granted; missing-data STOP | Read-only code/artifact authority granted by arbitration. M1–M4 producer/linkage/lifecycle contract is missing; see the precise packet above. | No blanket SELECT or invented historical bytes/decision. No new migration artifact delivered. |
 | G3 — PO + privacy/legal source reviewer | Review the exact S3 tuple, whole-response privacy/retention evidence, publisher predicates and expiry. Authorize a narrowly bounded research capture if needed; separate subsequent profile approval. S1 is corroboration only. | Capture approval confers no regulatory acceptance. Reject on unresolved content/rights/identity, oversize, redirect or privacy risk. No source registration in this PR. |
 | G4 — PO, hosted Development | After independent TL code review, separately decide applying **only** `20261010180000_official_truth_source_fingerprint_protocol_2.sql` to the intended hosted Development target, with prerequisites and schema/history rechecked. | This existing migration is merged as code, not applied by this task. It does not provide G2's missing reader. Require exact target, backup/rehearsal and read-only verification. Production is excluded. Prefer forward corrective migration over destructive rollback. |
 | G5 — protected AAL2 reviewer + legal owner | After G1–G4 prerequisites and reader implementation, accept exact real Evidence/Rule/support and review pins via existing protected workflow. Approve legal effective window/currentness explicitly. | No autonomous acceptance, F8 storage or model approval. Reject missing proof, changed bytes, conflict, stale/revoked state or lost ACK. |
