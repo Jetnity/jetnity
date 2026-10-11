@@ -164,7 +164,7 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       await assert.rejects(owner.query('SELECT official_original_private.source_hash($1::bytea,$2::jsonb,65536)', [pgBytes(Uint8Array.of(0xc3, 0x28)), pgText(JSON.stringify(support), 3802)]), code('22021'))
       await assert.rejects(owner.query('SELECT official_original_private.source_hash($1::bytea,$2::jsonb,65536)', [pgBytes(Buffer.from('\uFEFFbody')), pgText(JSON.stringify(support), 3802)]), code('22023'))
       assert.throws(() => prepareOriginals(p.envelope, [...p.bodies, p.bodies[0]!]), /support_count/)
-      assert.throws(() => prepareOriginals(p.envelope, [Buffer.from('forged')]), /fingerprint/)
+      assert.throws(() => prepareOriginals(p.envelope, [new TextEncoder().encode('forged')]), /fingerprint/)
     })
     await check('acknowledged commit fresh-reader full closure and exact encrypted original reproof', async () => {
       const input = structuredClone(p), pending = persistCandidate(cluster, oids, input, review, key, witness)
