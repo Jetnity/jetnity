@@ -52,16 +52,14 @@ async function run(scenario: Scenario = {}) {
       }
       if (scenario.stallHeaders) return new Promise(() => {})
       const bytes = scenario.chunks ?? [scenario.body ?? Buffer.from('<html><script>analytics</script></html>')]
-      const inferredLength = bytes.reduce((total, chunk) => total + chunk.byteLength, 0)
+      const inferredLength = bytes.reduce<number>((total, chunk) => total + chunk.byteLength, 0)
       const contentLength = scenario.declaredRaw ??
         (scenario.declared === null ? null : String(scenario.declared ?? inferredLength))
-      const headers = new Map<string, string>([
-        ['content-type', scenario.media ?? 'text/html; charset=utf-8'],
-        ...(contentLength === null ? [] : [['content-length', contentLength]]),
-        ...(scenario.encoding === undefined || scenario.encoding === null
-          ? [] : [['content-encoding', scenario.encoding]]),
-        ...(scenario.location ? [['location', scenario.location]] : []),
-      ])
+      const headers = new Map<string, string>()
+      headers.set('content-type', scenario.media ?? 'text/html; charset=utf-8')
+      if (contentLength !== null) headers.set('content-length', contentLength)
+      if (scenario.encoding != null) headers.set('content-encoding', scenario.encoding)
+      if (scenario.location) headers.set('location', scenario.location)
       return {
         ok: true,
         status: scenario.status ?? 200,
