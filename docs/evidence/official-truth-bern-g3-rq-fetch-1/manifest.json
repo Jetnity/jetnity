@@ -1,0 +1,15 @@
+{
+  "schema": "official_truth_bern_g3_rq_fetch_1_evidence_v1",
+  "date": "2026-10-12",
+  "phase": "A03_arbitration",
+  "status": "BLOCKED_PENDING_INDEPENDENT_TL_ARBITRATION",
+  "real_network_attempts": 0,
+  "task_blob": "fc4a2db0fd9a3ee552ce6da212d696ee38ef8135",
+  "seed_head": "057d39f72aa476b5f2fa2d1853c34880c1c37086",
+  "protected_file_blob": "43492d1bfd5a326b7a6a44f78bcfa4aaffd2b746",
+  "notes": [
+    "No protected retrieval edits were applied.",
+    "No real Bern request executed.",
+    "Arbitration proposal recorded in docs/OFFICIAL_TRUTH_BERN_G3_RQ_FETCH_1_ARBITRATION_PROPOSAL_2026-10-12.md"
+  ]
+}
