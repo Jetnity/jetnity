@@ -246,6 +246,8 @@ export type OfficialTruthServerOwnedRetrievalHttpErgebnis =
       headers: HttpKopf
       body: AsyncIterable<Uint8Array> | null
       cancel?: () => void
+      /** Native HTTP parser framing proof; ignored by existing official retrieval. */
+      framingComplete?: () => boolean
     }
   | { ok: false; reason: 'address_not_permitted' | 'dns_failed' | 'dns_empty' | 'timeout' | 'http_failed' }
 
@@ -727,6 +729,7 @@ function serverHttp(anfrage: {
             },
           },
           body: bytesAusAntwort(antwort),
+          framingComplete: () => antwort.complete,
           cancel: () => {
             antwort.destroy()
             req.destroy()
@@ -1001,4 +1004,231 @@ export async function retrieveOfficialTruthIsolatedPilotSource(
   return decideOfficialTruthServerOwnedRetrieval(eingabe, {
     catalog, now: serverUhr, resolve: serverDns, http: serverHttp,
   })
+}
+
+
+/**
+ * Bern S3 developer RESEARCH only. This path deliberately does NOT call
+ * decideServerOwnedRetrieval, any profile/catalog, or issue a trusted receipt.
+ * It shares the same private TLS/public-pinned-DNS/HTTPS/stream primitives.
+ * Do NOT import from app/api, public routes, cron or an automatic CI runner.
+ */
+const BERN_RESEARCH_URL = 'https://bern.diplo.de/ch-de/service/visumundeinreise/2611474-2611474' as const
+const BERN_RESEARCH_MAX = 131_072
+const BERN_RESEARCH_SOURCE = 'german_embassy_bern_research_candidate' as const
+
+export type OfficialTruthBernRealResearchIndicators = Readonly<{
+  html_scripts_present: boolean
+  analytics_or_tracking_indicators_present: boolean
+  possible_personal_metadata_present: boolean
+  embedded_external_asset_indicators_present: boolean
+  copyright_or_rights_indicators_present: boolean
+  unknown_dynamic_sections: boolean
+}>
+
+export type OfficialTruthBernRealResearchOutcome = Readonly<
+  | {
+      status: 'bern_research_only'
+      phase: 'observed_research_only'
+      reason: null
+      sourceFamily: typeof BERN_RESEARCH_SOURCE
+      sourceUrl: typeof BERN_RESEARCH_URL
+      networkAttempted: boolean
+      fullBodyByteCount: number
+      indicators: OfficialTruthBernRealResearchIndicators
+    }
+  | {
+      status: 'bern_research_only'
+      phase: 'blocked'
+      reason: OfficialTruthServerOwnedRetrievalSperrgrund
+        | 'redirect_detected'
+        | 'content_length_mismatch'
+        | 'framing_unverified'
+      sourceFamily: typeof BERN_RESEARCH_SOURCE
+      sourceUrl: typeof BERN_RESEARCH_URL
+      networkAttempted: boolean
+      fullBodyByteCount: null
+      indicators: null
+    }
+>
+
+type BernResearchPhysicalDependencies = Readonly<{
+  resolve: OfficialTruthServerOwnedRetrievalDnsResolver
+  http: OfficialTruthServerOwnedRetrievalHttpClient
+  /** Only for deterministic offline tests. Live always uses 10000ms. */
+  timeoutMs?: number
+}>
+
+function bernResearchIndicators(text: string): OfficialTruthBernRealResearchIndicators {
+  const scripts = /<script\\b|javascript:/i.test(text)
+  const analytics = /(matomo|_paq\\b|piwik|google-analytics|googletagmanager|gtag\\(|analytics|tracking|fbclid|gclid|dclid|msclkid)/i.test(text)
+  const personal = /(mailto:|\\b(?:e-?mail|telefon|tel:|kontakt|ansprechpartner|impressum|pressestelle)\\b|@[a-z0-9.-]+\\.[a-z]{2,})/i.test(text)
+  const external = /(?:src|href)\\s*=\\s*['"]https?:\\/\\/(?!bern\\.diplo\\.de)[^'"\\s>]*/i.test(text)
+  const rights = /(copyright|urheberrecht|rights reserved|alle rechte vorbehalten|©)/i.test(text)
+  return Object.freeze({
+    html_scripts_present: scripts,
+    analytics_or_tracking_indicators_present: analytics,
+    possible_personal_metadata_present: personal,
+    embedded_external_asset_indicators_present: external,
+    copyright_or_rights_indicators_present: rights,
+    unknown_dynamic_sections: scripts || /<iframe\\b|<template\\b|{{|\\bwindow\\.[a-z0-9_$]+|data-reactroot|ng-[a-z0-9_-]+/i.test(text),
+  })
+}
+
+function bernResearchBlocked(
+  reason: Extract<OfficialTruthBernRealResearchOutcome, { phase: 'blocked' }>['reason'],
+  networkAttempted: boolean,
+): OfficialTruthBernRealResearchOutcome {
+  return Object.freeze({
+    status: 'bern_research_only' as const,
+    phase: 'blocked' as const,
+    reason,
+    sourceFamily: BERN_RESEARCH_SOURCE,
+    sourceUrl: BERN_RESEARCH_URL,
+    networkAttempted,
+    fullBodyByteCount: null,
+    indicators: null,
+  })
+}
+
+/** Purely local test seam: injected mocks can never create trusted source results.
+ * Production site code must never import it; the real loader below owns transport. */
+export async function decideOfficialTruthBernRealResearchForOfflineTests(
+  deps: BernResearchPhysicalDependencies,
+): Promise<OfficialTruthBernRealResearchOutcome> {
+  return bernResearchPhysicalRead(deps)
+}
+
+/** EXPLICIT developer-only live seam. Its sole return type is research-only.
+ * Never invoked by import, rendering, CI, cron or public application runtime. */
+export async function retrieveOfficialTruthBernOneShotResearchOnly(): Promise<OfficialTruthBernRealResearchOutcome> {
+  return bernResearchPhysicalRead({ resolve: serverDns, http: serverHttp, timeoutMs: TIMEOUT_MS })
+}
+
+async function bernResearchPhysicalRead(
+  deps: BernResearchPhysicalDependencies,
+): Promise<OfficialTruthBernRealResearchOutcome> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), fristMs(deps.timeoutMs))
+  const lookup = officialTruthServerOwnedRetrievalLookup(deps.resolve)
+  let attempted = false
+  let streamFailure: Extract<OfficialTruthBernRealResearchOutcome, { phase: 'blocked' }>['reason'] | null = null
+  let complete = false
+  const controlledHttp: OfficialTruthServerOwnedRetrievalHttpClient = async (request) => {
+    attempted = true
+    const reply = await deps.http(request)
+    if (!reply.ok || (reply.status >= 300 && reply.status < 400)) return reply
+    if (reply.status !== 200 || !reply.body) return reply
+
+    let cancelled = false
+    const cancel = () => {
+      if (cancelled) return
+      cancelled = true
+      try { reply.cancel?.() } catch { /* fail closed, no exception or raw response leak */ }
+    }
+    const encoding = reply.headers.get('content-encoding')
+    if (encoding != null && encoding.trim().toLowerCase() !== 'identity') {
+      streamFailure = 'http_failed'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    if (medientyp(reply.headers.get('content-type')) !== 'text/html') {
+      streamFailure = 'content_type_mismatch'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    const declared = inhaltLaenge(reply.headers.get('content-length'))
+    if (!declared.ok) {
+      streamFailure = 'http_failed'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    if (declared.value != null && declared.value > BERN_RESEARCH_MAX) {
+      streamFailure = 'response_too_large'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    const listener = () => cancel()
+    if (request.signal.aborted) {
+      cancel()
+      streamFailure = 'timeout'
+      return { ok: false, reason: 'timeout' }
+    }
+    request.signal.addEventListener('abort', listener, { once: true })
+    let bounded: Awaited<ReturnType<typeof officialTruthBoundedResponseBody>>
+    try {
+      bounded = await Promise.race([
+        officialTruthBoundedResponseBody(
+          reply.body, request.signal, declared.value === null
+            ? BERN_RESEARCH_MAX : Math.max(1, declared.value), cancel),
+        abbruch(request.signal),
+      ])
+    } finally {
+      request.signal.removeEventListener('abort', listener)
+    }
+    if (!bounded.ok) {
+      streamFailure = bounded.reason
+      cancel()
+      return { ok: false, reason: bounded.reason === 'timeout' ? 'timeout' : 'http_failed' }
+    }
+    if (request.signal.aborted) {
+      streamFailure = 'timeout'
+      cancel()
+      return { ok: false, reason: 'timeout' }
+    }
+    if (declared.value != null && bounded.bytes.byteLength !== declared.value) {
+      streamFailure = 'content_length_mismatch'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    // Native IncomingMessage.complete proves EOF of chunked framing where no
+    // Content-Length exists. Mocks without that witness cannot authorize it.
+    if (reply.framingComplete && !reply.framingComplete()) {
+      streamFailure = 'framing_unverified'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    if (declared.value === null && (!reply.framingComplete || !reply.framingComplete())) {
+      streamFailure = 'framing_unverified'
+      cancel()
+      return { ok: false, reason: 'http_failed' }
+    }
+    complete = true
+    return {
+      ok: true,
+      status: reply.status,
+      headers: reply.headers,
+      body: (async function* () {
+        if (bounded.bytes.byteLength > 0) yield bounded.bytes
+      })(),
+      cancel,
+    }
+  }
+  try {
+    const hop = await hopLesen(controlledHttp, BERN_RESEARCH_URL, lookup, controller.signal,
+      () => BERN_RESEARCH_MAX)
+    if (controller.signal.aborted) return bernResearchBlocked('timeout', attempted)
+    if (hop.art === 'redirect') return bernResearchBlocked('redirect_detected', attempted)
+    if (hop.art === 'blocked') return bernResearchBlocked(streamFailure ?? hop.reason, attempted)
+    if (!complete || hop.contentType !== 'text/html') {
+      return bernResearchBlocked(!complete ? 'framing_unverified' : 'content_type_mismatch', attempted)
+    }
+    const body = textAus(hop.bytes)
+    if (!body.ok) return bernResearchBlocked(body.reason, attempted)
+    return Object.freeze({
+      status: 'bern_research_only' as const,
+      phase: 'observed_research_only' as const,
+      reason: null,
+      sourceFamily: BERN_RESEARCH_SOURCE,
+      sourceUrl: BERN_RESEARCH_URL,
+      networkAttempted: attempted,
+      fullBodyByteCount: hop.bytes.byteLength,
+      indicators: bernResearchIndicators(body.text),
+    })
+  } catch {
+    return bernResearchBlocked(controller.signal.aborted ? 'timeout' : 'http_failed', attempted)
+  } finally {
+    clearTimeout(timer)
+    controller.abort()
+  }
 }
