@@ -20,6 +20,9 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   - no live mode switch.
 - Added adversarial tests in
   `lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts`.
+- Added explicit completeness guard in the quarantine-owned offline wrapper:
+  declared `Content-Length` (when present and bounded) must match streamed byte
+  count exactly before any analysis fields are emitted.
 
 ## Security and publication boundary
 
@@ -27,6 +30,30 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   law validity intervals, review packet keys, accepted Evidence/Rule, or provider activation.
 - No persistent HTML/body storage and no network call in this task.
 - Authority/PII-style injected request fields are rejected as invalid request shape.
+- Truncated or mismatched declared-length responses now refuse with
+  `content_length_mismatch`, keep `bodyByteCount=null`, and keep conservative
+  unknown/safety flags (no false “absence” publication).
+
+## What was tested by offline mocks vs. provided by protected architecture
+
+### Offline-mock tested in this task-owned module
+- Fixed Bern target tuple pinning in quarantine-owned request path.
+- Request-shape and authority-field rejection.
+- Declared length vs streamed byte count mismatch rejection.
+- Stream overrun handling against the existing 65,536 default cap.
+- Conservative publication fallback when completeness is not verified.
+- Redirect/scheme/port/content-type/charset/compression/timeout/error refusal
+  behavior via synthetic HTTP/DNS fixtures.
+
+### Provided by existing protected architecture (not re-implemented here)
+- Core DNS/IP/public-address enforcement internals.
+- HTTPS-only transport contract, redirect-depth limits and bounded body reader.
+- UTF-8/BOM handling and media-type parsing in shared retrieval internals.
+- Existing server-owned retrieval trust boundary and official-source contract.
+
+This slice validates integration behavior through offline injection. It does not
+claim that mocks exercised live TLS certificate chains, real SNI validation, or
+real network sockets against origin infrastructure.
 
 ## Scope compliance
 

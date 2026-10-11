@@ -89,6 +89,16 @@ async function laufen(scenario: Scenario = {}) {
   return { result, cancelled }
 }
 
+function assertKonservativ(result: Awaited<ReturnType<typeof laufen>>['result']) {
+  assert.equal(result.bodyByteCount, null)
+  assert.equal(result.html_scripts_present, true)
+  assert.equal(result.analytics_or_tracking_indicators_present, true)
+  assert.equal(result.possible_personal_metadata_present, true)
+  assert.equal(result.embedded_external_asset_indicators_present, true)
+  assert.equal(result.copyright_or_rights_indicators_present, true)
+  assert.equal(result.unknown_dynamic_sections, true)
+}
+
 test('not-run contract is conservative and contains no trusted retrieval fields', () => {
   const report = officialTruthBernResearchQuarantineNotRun()
   assert.equal(report.status, 'research_only_quarantine')
@@ -137,6 +147,7 @@ for (const [label, size, reason] of [
     if (size > 65_536) {
       assert.equal(result.bodyByteCount, null)
       assert.ok(cancelled > 0)
+      assertKonservativ(result)
     } else {
       assert.equal(result.bodyByteCount, size)
     }
@@ -179,6 +190,24 @@ test('mock-only body policy rejects mismatch, invalid UTF-8 and BOM', () => {
   if (ok.ok) assert.equal(ok.bodyByteCount, multibyte.byteLength)
 })
 
+test('declared length mismatch blocks with precise reason and conservative publication fields', async () => {
+  const tooSmall = await laufen({ body: Buffer.from('synthetic-body'), contentLength: 5 })
+  assert.equal(tooSmall.result.reason, 'content_length_mismatch')
+  assertKonservativ(tooSmall.result)
+  const tooLarge = await laufen({ body: Buffer.from('synthetic-body'), contentLength: 100 })
+  assert.equal(tooLarge.result.reason, 'content_length_mismatch')
+  assertKonservativ(tooLarge.result)
+  const shortStream = await laufen({ chunks: [Uint8Array.of(115, 101, 103, 109, 101, 110, 116)], contentLength: 64 })
+  assert.equal(shortStream.result.reason, 'content_length_mismatch')
+  assertKonservativ(shortStream.result)
+})
+
+test('missing declared length stays blocked and does not publish completed analysis', async () => {
+  const withoutLength = await laufen({ body: Buffer.from('<html><script>analytics</script></html>'), contentLength: null })
+  assert.equal(withoutLength.result.reason, 'content_identity_mismatch')
+  assertKonservativ(withoutLength.result)
+})
+
 for (const [label, scenario, reason] of [
   ['private ipv4', { addresses: [{ address: '127.0.0.1', family: 4 as const }] }, 'address_not_permitted'],
   ['private ipv6', { addresses: [{ address: '::1', family: 6 as const }] }, 'address_not_permitted'],
@@ -198,13 +227,14 @@ for (const [label, scenario, reason] of [
   ['invalid utf8', { body: new Uint8Array([0xc3, 0x28]), contentLength: 2 }, 'invalid_utf8'],
   ['bom', { body: new Uint8Array([0xef, 0xbb, 0xbf]), contentLength: 3 }, 'invalid_utf8'],
   ['empty body', { body: new Uint8Array(), contentLength: 0 }, 'empty_body'],
-  ['truncated content-length mismatch stays blocked', { body: Buffer.from('synthetic-body'), contentLength: 100 }, 'content_identity_mismatch'],
-  ['streamed overrun', { chunks: [Buffer.alloc(65_536, 65), Buffer.alloc(1, 65)], contentLength: 65_536 }, 'response_too_large'],
+  ['truncated content-length mismatch stays blocked', { body: Buffer.from('synthetic-body'), contentLength: 100 }, 'content_length_mismatch'],
+  ['streamed overrun', { chunks: [Buffer.alloc(65_536, 65), Buffer.alloc(1, 65)], contentLength: 65_536 }, 'content_length_mismatch'],
 ] as const) {
   test(`offline transport refusal: ${label}`, async () => {
     const { result } = await laufen(scenario)
     assert.equal(result.phase, 'blocked')
     assert.equal(result.reason, reason)
+    if (reason === 'content_length_mismatch') assertKonservativ(result)
   })
 }
 

@@ -12,8 +12,8 @@
     },
     {
       "command": "npm run check:operating-mode",
-      "status": "PASS_AFTER_FETCH",
-      "details": "First run failed because local clone lacked main; fixed via `git fetch origin main:main`"
+      "status": "PASS_AFTER_HISTORY_FETCH",
+      "details": "Guard initially failed in shallow clone; fixed with `git fetch origin main:main` and `git fetch --deepen=200 origin copilot/featofficial-truth-bern-research-quarantine-1 main`"
     },
     {
       "command": "npm run typecheck",
@@ -57,18 +57,22 @@
     {
       "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts",
       "status": "PASS",
-      "details": "33/33 tests pass"
+      "details": "35/35 tests pass after R1 correction"
     },
     {
       "command": "npm test",
       "status": "PASS",
-      "details": "6448/6448 tests pass, duration_ms=684854.522006, M1–M4 suite duration_ms=140437.483165"
+      "details": "6450/6450 tests pass, duration_ms=899021.172286, M1–M4 suite duration_ms=224978.228416"
     }
   ],
   "artifacts": [
     {
       "type": "full_test_output",
       "path": "/tmp/1791746271368-copilot-tool-output-3736-29cccbbb-68ae-48e2-aee9-f472baed1cad.txt"
+    },
+    {
+      "type": "full_test_output_r1_correction",
+      "path": "/tmp/1791748019121-copilot-tool-output-3913-c9103b6b-845b-4f4e-b06c-beae1bea0b91.txt"
     }
   ],
   "notes": [

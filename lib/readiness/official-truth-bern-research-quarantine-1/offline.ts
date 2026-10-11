@@ -38,7 +38,11 @@ export type OfficialTruthBernResearchQuarantineFlags = Readonly<{
 export type OfficialTruthBernResearchQuarantineResult = Readonly<{
   status: 'research_only_quarantine'
   phase: 'not_run' | 'blocked'
-  reason: OfficialTruthServerOwnedRetrievalSperrgrund | 'unexpected_identity_success' | 'not_authorized' | 'already_consumed'
+  reason: OfficialTruthServerOwnedRetrievalSperrgrund
+    | 'content_length_mismatch'
+    | 'unexpected_identity_success'
+    | 'not_authorized'
+    | 'already_consumed'
   sourceFamily: typeof OFFICIAL_TRUTH_BERN_RESEARCH_QUARANTINE_1.sourceFamily
   sourceUrl: typeof OFFICIAL_TRUTH_BERN_RESEARCH_QUARANTINE_1.sourceUrl
   networkAttempted: false
@@ -82,6 +86,8 @@ type OfflineAbhaengigkeiten = Readonly<{
 type Observation = {
   bodyByteCount: number | null
   flags: OfficialTruthBernResearchQuarantineFlags | null
+  declaredLengthVerified: boolean
+  integrityReason: 'content_length_mismatch' | null
 }
 
 const CONSERVATIVE_FLAGS: OfficialTruthBernResearchQuarantineFlags = Object.freeze({
@@ -243,7 +249,7 @@ function quarantineCatalog(observation: Observation): Required<Pick<OfficialTrut
       finalUrl: string
       mediaType: string
     }>) {
-      if (input.finalUrl === source.sourceUrl && input.mediaType === source.mediaType) {
+      if (observation.declaredLengthVerified && input.finalUrl === source.sourceUrl && input.mediaType === source.mediaType) {
         observation.bodyByteCount = Buffer.byteLength(input.responseText, 'utf8')
         observation.flags = analysiereHtml(input.responseText)
       }
@@ -272,7 +278,9 @@ function result(
 }
 
 export function officialTruthBernResearchQuarantineNotRun(): OfficialTruthBernResearchQuarantineResult {
-  return result('not_run', 'not_authorized', { bodyByteCount: null, flags: null })
+  return result('not_run', 'not_authorized', {
+    bodyByteCount: null, flags: null, declaredLengthVerified: false, integrityReason: null,
+  })
 }
 
 /** Future permit is reserved and never callable in this task. First refused attempt
@@ -315,14 +323,55 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
   input: unknown,
   abhaengigkeiten: OfflineAbhaengigkeiten,
 ): Promise<OfficialTruthBernResearchQuarantineResult> {
-  if (!parseRequest(input)) return result('blocked', 'invalid_request', { bodyByteCount: null, flags: null })
-  const observation: Observation = { bodyByteCount: null, flags: null }
+  if (!parseRequest(input)) return result('blocked', 'invalid_request', {
+    bodyByteCount: null, flags: null, declaredLengthVerified: false, integrityReason: null,
+  })
+  const observation: Observation = { bodyByteCount: null, flags: null, declaredLengthVerified: false, integrityReason: null }
   const catalog = quarantineCatalog(observation)
+  const httpWithIntegrity: OfficialTruthServerOwnedRetrievalHttpClient = async (anfrage) => {
+    const response = await abhaengigkeiten.http(anfrage)
+    if (!response.ok || response.body == null) return response
+    const declared = response.headers.get('content-length')
+    if (declared == null) {
+      observation.declaredLengthVerified = false
+      return response
+    }
+    const text = declared.trim()
+    if (!/^\d+$/.test(text)) return response
+    const declaredLength = Number(text)
+    if (!Number.isSafeInteger(declaredLength)) return response
+    if (declaredLength > 65_536) return response
+    const chunks: Uint8Array[] = []
+    let actual = 0
+    for await (const chunk of response.body) {
+      if (anfrage.signal.aborted) return { ok: false, reason: 'timeout' }
+      chunks.push(chunk)
+      actual += chunk.byteLength
+    }
+    if (actual !== declaredLength) {
+      observation.bodyByteCount = null
+      observation.flags = null
+      observation.declaredLengthVerified = false
+      observation.integrityReason = 'content_length_mismatch'
+      response.cancel?.()
+      return { ok: false, reason: 'http_failed' }
+    }
+    observation.declaredLengthVerified = true
+    return {
+      ok: true,
+      status: response.status,
+      headers: response.headers,
+      body: (async function* () {
+        for (const chunk of chunks) yield chunk
+      })(),
+      cancel: response.cancel,
+    }
+  }
   const deps: OfficialTruthServerOwnedRetrievalAbhaengigkeiten = {
     catalog,
     now: abhaengigkeiten.now,
     resolve: abhaengigkeiten.resolve,
-    http: abhaengigkeiten.http,
+    http: httpWithIntegrity,
     timeoutMs: abhaengigkeiten.timeoutMs,
   }
   const retrieval = await decideOfficialTruthServerOwnedRetrieval(
@@ -333,5 +382,6 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
     deps,
   )
   if (retrieval.status !== 'blocked') return result('blocked', 'unexpected_identity_success', observation)
+  if (observation.integrityReason) return result('blocked', observation.integrityReason, observation)
   return result('blocked', retrieval.reason, observation)
 }

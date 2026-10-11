@@ -24,10 +24,20 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 2. Fixed Bern target is immutable and caller cannot provide URL/profile authority.
 3. Retrieval security internals are reused via `decideOfficialTruthServerOwnedRetrieval`
    with offline-injected transport only.
-4. 65,536 default retrieval bound remains unchanged; 131,072 is only modeled offline.
-5. One-shot future permit semantics show refusal + consumed state + second refusal.
-6. Script remains offline-only and does not expose a live launcher.
-7. `REAL_NETWORK_ATTEMPTS=0`, no persistent HTML storage, no hosted writes.
+4. Declared Content-Length mismatch now refuses with precise
+   `content_length_mismatch`; result keeps `bodyByteCount=null` and conservative
+   unknown flags (no false-negative analysis publication).
+5. 65,536 default retrieval bound remains unchanged; 131,072 is only modeled offline.
+6. One-shot future permit semantics show refusal + consumed state + second refusal.
+7. Script remains offline-only and does not expose a live launcher.
+8. `REAL_NETWORK_ATTEMPTS=0`, no persistent HTML storage, no hosted writes.
+
+## R1-F2 architecture distinction
+
+- Offline mocks in this task verify integration behavior and negative publication
+  boundaries only.
+- The underlying protected architecture provides DNS/IP/HTTPS/redirect/body
+  safety mechanics; this task does not claim live TLS/SNI/certificate execution.
 
 ## STOP
 

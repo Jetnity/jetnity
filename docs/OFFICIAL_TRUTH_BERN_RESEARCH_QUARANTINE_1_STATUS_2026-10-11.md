@@ -6,6 +6,7 @@ Draft #933 / Issue #932. Parent #917 stays OPEN.
 | Workstream | Disposition | Limit |
 | --- | --- | --- |
 | Quarantine contract | PASS (offline code path only) | Distinct `research_only_quarantine` result type; never trusted retrieval/evidence/rule/provider output. |
+| Response completeness | PASS (R1 correction) | Declared `Content-Length` mismatch/short stream now blocks with `content_length_mismatch`, `bodyByteCount=null`, conservative flags. |
 | Network execution | NOT_RUN | `networkAttempted:false`, no real HTTP in this task. |
 | Security reuse | PASS | Uses `decideOfficialTruthServerOwnedRetrieval` internals with offline-injected DNS/HTTP mocks. |
 | 65,536 default bound | PASS | Existing protected retrieval path unchanged. |
