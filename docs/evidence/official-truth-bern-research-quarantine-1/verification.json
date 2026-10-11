@@ -1,0 +1,11 @@
+{
+  "schema": "official-truth-bern-research-quarantine-1-verification-v1",
+  "network": {
+    "realNetworkAttempts": 0,
+    "execution": "offline_only"
+  },
+  "localCommands": [],
+  "notes": [
+    "Populate with final exact command outcomes before handoff completion."
+  ]
+}
