@@ -1,6 +1,18 @@
 # CH→DE Source-to-Workspace V2.1 — Author report
 
-## M1–M4 continuation — current delivery
+## R3 correction — current delivery
+
+Full [Technical Lead R3 review](https://github.com/Jetnity/jetnity/pull/928#pullrequestreview-5483234554) and latest #751 checkpoint `6108860539` were read; same Generation 1 writer, existing branch/Draft #928. Main remains `fcab99dd96e23749dd2624ad5cbe4c2749b127e1`, mode NORMAL. The earlier HEAD `8e4ef997708202cf1653555816d4da34174def03` failed remote schema checking despite its passing native tests; the previous local hygiene summary is historical, not a final-head CI PASS.
+
+Changed only `lib/readiness/official-truth-original-custody.test.ts:167`: the forged bytes now come from `new TextEncoder().encode('forged')`, preserving bytes `[102,111,114,103,101,100]` and the exact fingerprint rejection assertion. The conservative schema scanner is unchanged. No real additional M1–M4 defect was discovered or security contract changed; SQL and storage remain byte-identical.
+
+Fresh verification: focused native16.15 **13/13** and full serial native16.15 **6326/6326**, 819 suites, zero fail/cancel/skip/TODO; clean `npm ci`, Typecheck, Lint (0 errors/144 existing warnings), Build, setup, operating-mode, API, schema, dead, export and dependency-use checks PASS. Full/production advisory audits still FAIL at 19 total / 3 production high; package/lock unchanged and reachability unassessed. Exact commands, timing and log digests are in the R3 evidence JSON and STATUS. No skipped check is counted as PASS.
+
+Executable correction commit `121329c5416b021a6474fdb1c2afa2f0e4de7401`, tree `78c7b4816ba4d7ba0e9a21460b9b8ce9505d0fae`; Git Data blob/tree equality checked against local Git objects. A report-only descendant completes delivery on the existing branch with expected-head / fast-forward protection. External `R3_CORRECTION_AUTHOR_RECEIPT.json` and `R3_CORRECTION_AUTHOR_HANDOFF.md` bind the actual final HEAD/tree and fresh remote CI/Auth/Preview after push; this tracked report does not claim a self-referential final hash or pre-push remote success.
+
+The SQL artifact stays unapplied outside synthetic disposable local tests. No production/hosted change, government HTML/source approval, Evidence/Rule promotion, provider activation, Auth/RLS modification, #913 change, new branch/PR, Ready/Merge or automatic follow-up. Existing production adapter, key/witness, genuine reviewer, 128-KiB/source/legal/privacy and G7 gates remain exactly as reviewed. **Keep DRAFT and STOP for independent TL R4.**
+
+## M1–M4 historical delivery — superseded by R3 above
 
 Binding direction blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420` verified; R2 review `5483042946` and #751 checkpoint `6108418500` read. Author resumes the same Generation 1 branch/Draft #928. The new grant permits the atomic local producer/storage/read/lifecycle work previously blocked under G2.
 

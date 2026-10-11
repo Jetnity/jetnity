@@ -1,6 +1,26 @@
 # CH→DE Source-to-Workspace V2.1 — Status
 
-## M1–M4 current author verification
+## R3 correction — current author verification / independent R4 pending
+
+Full [TL R3 review](https://github.com/Jetnity/jetnity/pull/928#pullrequestreview-5483234554) and #751 checkpoint `6108860539` read. Reviewed starting HEAD `8e4ef997708202cf1653555816d4da34174def03` had **GitHub CI FAILURE** in run `38137038210`, schema job `114462920488`; that fact supersedes the historical all-green local hygiene summary below.
+
+Exactly one executable line changed: test line 167 uses `new TextEncoder().encode('forged')`. It preserves all six bytes and the same `assert.throws(..., /fingerprint/)` negative assertion. The schema checker, SQL, storage, security contracts, package/lock files and immutable directions are byte-identical to the reviewed HEAD.
+
+| Fresh R3 verification | Result |
+|---|---|
+| Native PostgreSQL 16.15 full serial suite | **6326/6326 PASS**, 819 suites, zero fail/cancel/skip/TODO; 432810.166584 ms |
+| Focused M1–M4 native tests | **13/13 PASS**, zero fail/cancel/skip/TODO; 107990.717125 ms |
+| Clean install / Typecheck / Lint / Build | PASS / PASS / PASS (0 errors, 144 existing warnings) / PASS |
+| Setup / mode / API / schema / dead / exports / dependencies | All PASS after clean install; mode NORMAL; no configured hosted environment |
+| Dependency audit | **FAIL, unchanged:** 19 total (17 high, 2 moderate), 3 production high (`sharp`, `source-map-js`, `ws`); reachability unassessed |
+| Scope / privacy / whitespace | One test line plus STATUS/REPORT/evidence; protected code and exact instruction blobs unchanged; final scoped checks recorded in post-push receipt |
+| GitHub CI / Auth / Vercel Preview | Fresh final-HEAD observation belongs to external R3 receipt; old-head green subjobs are not reused |
+
+Tested correction commit: `121329c5416b021a6474fdb1c2afa2f0e4de7401`, tree `78c7b4816ba4d7ba0e9a21460b9b8ce9505d0fae`. Final report-only commit descends from it. Exact final HEAD/tree and remote outcomes are recorded in the external `R3_CORRECTION_AUTHOR_RECEIPT.json` / `R3_CORRECTION_AUTHOR_HANDOFF.md`; a tracked report cannot embed its own containing commit hash. Sanitized current evidence: `docs/evidence/official-truth-ch-de-source-to-workspace-v2-1/r3-correction-author-verification.json`.
+
+No M1–M4 authority gap is closed by this fixture correction. Synthetic local candidate only; real source `SOURCE_NOT_QUALIFIED`, provider null, Workspace unknown. All production accepted-store/AAL2/key-custody/restore-witness/source/legal/privacy/hosted-apply gates and G7 remain. **Draft #928 / NOT READY / DO NOT MERGE / STOP for independent Technical Lead R4.** No automatic follow-up.
+
+## M1–M4 historical author verification — superseded by R3 above
 
 Status: **SYNTHETIC STRUCTURAL CUSTODY IMPLEMENTED / PRODUCTION GATED**. The new private original/review/lifecycle extension is positively tested locally; the canonical live accepted-store adapter and real source/Rule/visa authority are not delivered or claimed. SQL artifact is unapplied outside disposable local PostgreSQL16. Existing Workspace remains unknown and provider null.
 
