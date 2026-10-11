@@ -1060,10 +1060,10 @@ type BernResearchPhysicalDependencies = Readonly<{
 }>
 
 function bernResearchIndicators(text: string): OfficialTruthBernRealResearchIndicators {
-  const scripts = /<script\\b|javascript:/i.test(text)
-  const analytics = /(matomo|_paq\\b|piwik|google-analytics|googletagmanager|gtag\\(|analytics|tracking|fbclid|gclid|dclid|msclkid)/i.test(text)
-  const personal = /(mailto:|\\b(?:e-?mail|telefon|tel:|kontakt|ansprechpartner|impressum|pressestelle)\\b|@[a-z0-9.-]+\\.[a-z]{2,})/i.test(text)
-  const external = /(?:src|href)\\s*=\\s*['"]https?:\\/\\/(?!bern\\.diplo\\.de)[^'"\\s>]*/i.test(text)
+  const scripts = /<script\b|javascript:/i.test(text)
+  const analytics = /(matomo|_paq\b|piwik|google-analytics|googletagmanager|gtag\(|analytics|tracking|fbclid|gclid|dclid|msclkid)/i.test(text)
+  const personal = /(mailto:|\b(?:e-?mail|telefon|tel:|kontakt|ansprechpartner|impressum|pressestelle)\b|@[a-z0-9.-]+\.[a-z]{2,})/i.test(text)
+  const external = /(?:src|href)\s*=\s*['"]https?:\/\/(?!bern\.diplo\.de)[^'"\s>]*/i.test(text)
   const rights = /(copyright|urheberrecht|rights reserved|alle rechte vorbehalten|©)/i.test(text)
   return Object.freeze({
     html_scripts_present: scripts,
@@ -1071,7 +1071,7 @@ function bernResearchIndicators(text: string): OfficialTruthBernRealResearchIndi
     possible_personal_metadata_present: personal,
     embedded_external_asset_indicators_present: external,
     copyright_or_rights_indicators_present: rights,
-    unknown_dynamic_sections: scripts || /<iframe\\b|<template\\b|{{|\\bwindow\\.[a-z0-9_$]+|data-reactroot|ng-[a-z0-9_-]+/i.test(text),
+    unknown_dynamic_sections: scripts || /<iframe\b|<template\b|{{|\bwindow\.[a-z0-9_$]+|data-reactroot|ng-[a-z0-9_-]+/i.test(text),
   })
 }
 
