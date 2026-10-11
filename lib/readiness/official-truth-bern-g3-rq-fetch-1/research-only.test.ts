@@ -51,8 +51,8 @@ async function run(scenario: Scenario = {}) {
           ? 'address_not_permitted' : 'dns_failed' }
       }
       if (scenario.stallHeaders) return new Promise(() => {})
-      const bytes = scenario.chunks ?? [scenario.body ?? Buffer.from('<html><script>analytics</script></html>')]
-      const inferredLength = bytes.reduce<number>((total, chunk) => total + chunk.byteLength, 0)
+      const bytes: readonly Uint8Array[] = scenario.chunks ?? [scenario.body ?? Buffer.from('<html><script>analytics</script></html>')]
+      const inferredLength = bytes.reduce((total, chunk) => total + chunk.byteLength, 0)
       const contentLength = scenario.declaredRaw ??
         (scenario.declared === null ? null : String(scenario.declared ?? inferredLength))
       const headers = new Map<string, string>()
