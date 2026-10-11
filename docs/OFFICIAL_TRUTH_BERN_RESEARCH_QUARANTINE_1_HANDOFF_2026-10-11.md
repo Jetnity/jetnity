@@ -41,8 +41,8 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 
 ## STOP
 
-Author HEAD for this R1 correction: `4811ea143049b5b9051cc3e11f99414b953641f2`.
+Author HEAD for this R1 correction: `a0793bd518c9aba87c6f9f9abb593abf600e2b7f`.
 PR #933 currently points to `feat/...@37e3e47` at collection time, so exact-head
-CI/Auth/Preview proof for `4811ea14` remains pending TL fast-forward.
+CI/Auth/Preview proof for `a0793bd5` remains pending TL fast-forward.
 
 Await independent ChatGPT Technical-Lead review.

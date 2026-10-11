@@ -76,7 +76,7 @@
     }
   ],
   "githubEvidence": {
-    "authorBranchHead": "4811ea143049b5b9051cc3e11f99414b953641f2",
+    "authorBranchHead": "a0793bd518c9aba87c6f9f9abb593abf600e2b7f",
     "pr933HeadAtCollectionTime": "37e3e47af04307fae66260d370250ea2b30c3039",
     "pr933BranchRef": "feat/official-truth-bern-research-quarantine-1",
     "authorWorkingBranchRef": "copilot/featofficial-truth-bern-research-quarantine-1",
@@ -99,12 +99,16 @@
     "preview": {
       "prHead": "latest PR preview evidence remains tied to PR head 37e3e47 (Vercel bot comment on PR #933)",
       "authorHeadExact": "not_available_before PR head fast-forward"
+    },
+    "parallelValidation": {
+      "codeReview": "tool execution unavailable in environment (missing model claude-sonnet-4.6 in registry)",
+      "codeql": "0 alerts; analysis skipped because database size is too large"
     }
   },
   "notes": [
     "RESEARCH_ONLY_NOT_QUALIFIED",
     "No real HTTP request executed in this task.",
     "No hosted database write or migration executed.",
-    "Exact-head CI/Auth/Preview for 4811ea14 is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
+    "Exact-head CI/Auth/Preview for a0793bd5 is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
   ]
 }
