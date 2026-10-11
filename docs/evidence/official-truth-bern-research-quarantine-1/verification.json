@@ -75,9 +75,36 @@
       "path": "/tmp/1791748019121-copilot-tool-output-3913-c9103b6b-845b-4f4e-b06c-beae1bea0b91.txt"
     }
   ],
+  "githubEvidence": {
+    "authorBranchHead": "4811ea143049b5b9051cc3e11f99414b953641f2",
+    "pr933HeadAtCollectionTime": "37e3e47af04307fae66260d370250ea2b30c3039",
+    "pr933BranchRef": "feat/official-truth-bern-research-quarantine-1",
+    "authorWorkingBranchRef": "copilot/featofficial-truth-bern-research-quarantine-1",
+    "ci": {
+      "prHeadRun": {
+        "id": 38168755005,
+        "workflow": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/38168755005",
+        "headSha": "37e3e47af04307fae66260d370250ea2b30c3039"
+      },
+      "authorHeadExactRun": null,
+      "authorHeadExactRunStatus": "not_available_in_actions_list_at_collection_time"
+    },
+    "authJob": {
+      "prHead": "contained in CI run 38168755005",
+      "authorHeadExact": "not_available_in_actions_list_at_collection_time"
+    },
+    "preview": {
+      "prHead": "latest PR preview evidence remains tied to PR head 37e3e47 (Vercel bot comment on PR #933)",
+      "authorHeadExact": "not_available_before PR head fast-forward"
+    }
+  },
   "notes": [
     "RESEARCH_ONLY_NOT_QUALIFIED",
     "No real HTTP request executed in this task.",
-    "No hosted database write or migration executed."
+    "No hosted database write or migration executed.",
+    "Exact-head CI/Auth/Preview for 4811ea14 is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
   ]
 }

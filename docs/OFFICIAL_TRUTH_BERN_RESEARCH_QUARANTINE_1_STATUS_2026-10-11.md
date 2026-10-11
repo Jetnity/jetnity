@@ -17,5 +17,14 @@ Draft #933 / Issue #932. Parent #917 stays OPEN.
 Sanitized verification/evidence files are under
 `docs/evidence/official-truth-bern-research-quarantine-1/`.
 
+Current author branch HEAD:
+`4811ea143049b5b9051cc3e11f99414b953641f2` on
+`copilot/featofficial-truth-bern-research-quarantine-1`.
+
+At evidence collection time, PR #933 still referenced
+`feat/official-truth-bern-research-quarantine-1@37e3e47`; exact-head
+CI/Auth/Preview evidence for `4811ea14` is therefore pending PR head
+fast-forward by Technical Lead.
+
 Open gates remain unchanged: #917 SOURCE_NOT_QUALIFIED, #913 blocked, G7 advisories,
 P2 timing variance. No Ready, no merge, no follow-up slice.
