@@ -8,6 +8,8 @@
   "realEvidenceOrRulePromoted": false,
   "validatedImplementationHead": "8731807082298554a33da845dd765e78c644f2ed",
   "validatedTree": "29b2ee86a7eb89c572ac8b522aaad5020061535d",
+  "reportSnapshotHead": "5f83574ca7e78ce634c4de58238f581b967763ba",
+  "reportSnapshotTree": "3d79ddcc5f382a5a85f7cadc05bdf8b54e51526f",
   "baseMain": "c3db56a4021904aa21c25d75d218f91ee1127697",
   "tests": {
     "targetedNativePostgres16IntegratedV2": {
@@ -44,9 +46,9 @@
   "diffCheck": "PASS",
   "operatingModeGuard": "BLOCKED_MISSING_LOCAL_MAIN_REF",
   "secretScan": "PASS",
-  "githubActionsExactHead": "38097024708_action_required_zero_jobs_not_pass",
+  "githubActionsExactHead": "38097157157_action_required_zero_jobs_not_pass",
   "auth": "NOT_VERIFIED",
-  "preview": "STALE_PREVIOUS_HEAD_NOT_VERIFIED_FOR_CURRENT",
+  "preview": "PENDING_DEPLOY_FOR_REPORT_SNAPSHOT_NOT_READY",
   "codeql": "UNAVAILABLE_DATABASE_TOO_LARGE",
   "dependencyAudit": "19_ADVISORIES_2_MODERATE_17_HIGH_NOT_TRIAGED",
   "rawSourceBodyStored": false,

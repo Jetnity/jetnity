@@ -22,4 +22,4 @@ For inserts, the RPC explicitly sets the receipt/binding/root constraint trigger
 
 `npm test` passed 6,275/6,275 tests across 819 suites with 0 skips/cancellations/TODO; native PostgreSQL 16.15 structural/R2/R3/V2 tests were included. The focused integrated proof additionally passed two repeated barrier-controlled retry races (14,559 ms, 14,613 ms) and the initial insert/idempotent race (12,431 ms, 16,883 ms). The full synthetic proof is not legal/source acceptance.
 
-Exact-head GitHub Actions remains `action_required` with zero jobs; Auth is not independently verified, and the last Preview predates this implementation head. Migration is repository-only and unapplied. No end-to-end real-source admission or positive legal result is claimed.
+On report snapshot `5f83574ca7e78ce634c4de58238f581b967763ba`, Actions run `38097157157` was `action_required` with zero jobs and Vercel was pending/deploying; Auth is not independently verified. The subsequent report-only update requires fresh remote gates. Migration is repository-only and unapplied. No end-to-end real-source admission or positive legal result is claimed.
