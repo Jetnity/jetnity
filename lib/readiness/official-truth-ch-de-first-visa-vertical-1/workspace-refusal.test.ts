@@ -32,10 +32,10 @@ const request = { travellerClientRef: 'synthetic-a', credentialOptionRef: 'synth
 test('explicit linked option passes only representable prerequisites, never the missing contract gates', t => {
   t.mock.method(https, 'request', () => { throw Error('no network authorized') })
   const read = chDeVisaReadForTrip(trip(), request)
-  assert.equal(read.reason, 'trusted_accepted_reader_unavailable')
-  assert.ok(read.blockers.includes('ordinary_document_class_unrepresented'))
-  assert.ok(read.blockers.includes('purpose_unrepresented'))
-  assert.ok(read.blockers.includes('direct_route_unproven'))
+  assert.equal(read.reason, 'explicit_proposed_context_required')
+  assert.ok(read.blockers.includes('explicit_proposed_context_required'))
+  assert.ok(read.blockers.includes('persisted_regulatory_context_unavailable'))
+  assert.ok(read.blockers.includes('legal_applicability_unverified'))
   assert.ok(read.blockers.includes('source_not_qualified'))
   assert.ok(read.blockers.includes('retained_custody_read_unavailable'))
   assert.equal(read.provider, null)
@@ -91,11 +91,11 @@ test('selection never crosses traveller/options and ordering cannot choose a pas
   const reise = trip()
   const selected = reise.party![0]!
   selected.documents.unshift({ ...selected.documents[0]!, id: 'other', clientRef: 'other', issuingCountryCode: 'US' })
-  assert.equal(chDeVisaReadForTrip(reise, request).reason, 'trusted_accepted_reader_unavailable')
+  assert.equal(chDeVisaReadForTrip(reise, request).reason, 'explicit_proposed_context_required')
   assert.equal(chDeVisaReadForTrip(reise, { ...request, credentialOptionRef: credentialOptionsAus(selected).find(o => o.document?.clientRef === 'other')!.optionRef }).reason, 'linked_ch_passport_required')
   assert.equal(chDeVisaReadForTrip(reise, { ...request, credentialOptionRef: 'synthetic-b:synthetic-b-p' }).reason, 'selected_credential_not_in_traveller')
   reise.party!.reverse(); selected.documents.reverse()
-  assert.equal(chDeVisaReadForTrip(reise, request).reason, 'trusted_accepted_reader_unavailable')
+  assert.equal(chDeVisaReadForTrip(reise, request).reason, 'explicit_proposed_context_required')
   const foreign = trip(); foreign.party = [person('other-trip', 'CH')]
   assert.equal(chDeVisaReadForTrip(foreign, request).reason, 'traveller_not_in_trip')
 })
