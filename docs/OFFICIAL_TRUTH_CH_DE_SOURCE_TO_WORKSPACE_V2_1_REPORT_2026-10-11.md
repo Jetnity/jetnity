@@ -1,5 +1,15 @@
 # CH→DE Source-to-Workspace V2.1 — Author report
 
+## M1–M4 continuation — current delivery
+
+Binding direction blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420` verified; R2 review `5483042946` and #751 checkpoint `6108418500` read. Author resumes the same Generation 1 branch/Draft #928. The new grant permits the atomic local producer/storage/read/lifecycle work previously blocked under G2.
+
+Implemented one unapplied private-vault migration plus a server-only local producer/reader and native adversarial tests. Primary and composed synthetic custody now have a positive original-to-review-to-receipt readback; no real source, legacy accepted Rule, government HTML or visa result is created. [Detailed contract, explicit limits, cost and reconciliation](OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_M1_M4_CONTRACT_2026-10-11.md). Source remains `SOURCE_NOT_QUALIFIED`; real provider remains null.
+
+Verification is recorded in the current STATUS and `m1-m4-author-verification.json`. Historical G2/initial reports below are preserved, not claimed as proof for this code.
+
+M1–M4 executable commit: `ddc96dbe89534d27bf08fdfebee87172030db4d4`, tree `8c84ca1bdf9dec68e8a5bbfb242ef6fd748d78d5`. Git Data API blobs/tree were checked against the local staged objects byte-for-byte. The final documentation commit will descend from this commit; only the existing branch ref is updated, with expected-head/fast-forward protection. Native Git has no push credential in this session.
+
 ## G2 result — PARTIAL / GATED / technical STOP
 
 Binding G2 arbitration: starting HEAD `9905ff8e66ef1e9f45069e6119f27ae7c9b82591`, blob `bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7`. Original TASK remains `d590a9769915ba1cbb6bb3cab8c401f0dac70460`. Same Codex Generation 1, existing branch/Draft #928 only. Main/merge-base `fcab99dd96e23749dd2624ad5cbe4c2749b127e1`, NORMAL. Latest #751 checkpoint `6108109937` and R1 review `5482954320` read; #748 has no newer MATERIAL beyond `6032030807` / receipt `6036558748`. Open PRs remain #928, blocked #913 and historical #52/#50/#40/#39/#28; no competing writer identified. User's continuation explicitly starts this same author despite checkpoint's pending-resume wording.

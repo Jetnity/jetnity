@@ -1,5 +1,15 @@
 # CH→DE Source-to-Workspace V2.1 — Source candidate / Owner decision packet
 
+## M1–M4 continuation — exact remaining decision package
+
+The broad original-retention direction is already decided in blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420`; do not ask the Owner to choose it again. The authorized local atomic implementation is now delivered for independent TL review. [Reviewable implementation contract](OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_M1_M4_CONTRACT_2026-10-11.md).
+
+Before real use, approve or refuse each **exact representation** for rights, content/privacy eligibility, retention purpose and duration; have Security review pgcrypto/key custody, log redaction and role separation; inventory and approve residual backup/PITR/WAL/replica/export access/expiry and a durable independent restore witness. The local choice is a stricter immutable 30-day original lifetime, not 180-day retention by default. Existing global #865 D01–D12 remains unsigned and excludes raw original bodies.
+
+Separate engineering/release gates remain: review the canonical accepted-store/Owner-AAL2 bridge and refresh projection (not implemented by this candidate), reconcile/approve the hosted migration chain and local-provenance prerequisite, resolve canonical ordinary-document/purpose/direct-route scope, qualify the genuine compiled source profile, then separately authorize real Rule acceptance and provider activation. Do not infer that a synthetic capability or a successful ciphertext roundtrip opens any gate. The implementation can be reviewed now without any hosted mutation or real source approval. No new provider/spend is authorized; #913 is untouched.
+
+Author stops for TL review; no automatic next task. The old G2 request for an M1–M4 engineering grant below is historical and has been superseded.
+
 ## G2 exact stopped decision — durable custody and lifecycle
 
 **NOT_VERIFIED. G2 reader-only SQL authority is already granted; do not ask the Owner to approve it again.** The blocker is missing persisted proof, not a missing SELECT grant. G2 explicitly requires a missing-schema/Owner packet rather than manufacturing acceptance.

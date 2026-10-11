@@ -1,5 +1,11 @@
 # CH→DE Source-to-Workspace V2.1 — Contracts
 
+## M1–M4 continuation — current contract
+
+The new delegated direction at `002d99f5e44c367545804fe42675bc587419f2c4` supersedes the G2 reader-only STOP. Read the [complete M1–M4 contract](OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_M1_M4_CONTRACT_2026-10-11.md) first. Separate encrypted originals, exact existing receipt/Evidence bindings, protected synthetic review, append-only current lifecycle and post-COMMIT re-proof are implemented as a dormant local candidate. The one new SQL artifact is UNAPPLIED outside disposable local tests. No global provenance body storage or second fact engine.
+
+The positive result is explicitly synthetic structural custody. It is not a bridge to legacy accepted Rule rows, a real protected review capability or a production provider. Those distinctions and remaining adapter/hosting work are explicit in the new contract. Existing Auth/RLS and provider remain unchanged. The G2 inventory below accurately describes the seven old migrations, not the newly added extension.
+
 **PARTIAL / GATED.** Existing Draft #928, Issue #927. TASK blob `d590a9769915ba1cbb6bb3cab8c401f0dac70460`. No accepted German source, positive accepted reader or user visa result is delivered. This is the separable negative/read-interface path expressly allowed by SW07/SW08/SW15/SW21.
 
 ## G2 inventory before implementation — 11 October 2026

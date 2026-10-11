@@ -1,5 +1,13 @@
 # CH→DE Source-to-Workspace V2.1 — Plan
 
+## M1–M4 continuation — delegated direction
+
+Starting HEAD `002d99f5e44c367545804fe42675bc587419f2c4`; binding direction blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420`. R2 review `5483042946`, direction comment `6108412328` and #751 checkpoint `6108418500` read. The new permission supersedes the G2 reader-only STOP below. Original TASK and G2 arbitration remain byte-identical.
+
+Implement a separate encrypted original vault and immutable custody/review/lifecycle extension around the existing eight-table closure and verifier. No duplicate fact engine or global artifact body storage. The repository artifact has no application-role grants or real-source admission. A separate reviewer capability binds the exact receipt and ordered original digests before the atomic producer transaction. The reader re-proves the existing closure and source bytes after acknowledged COMMIT, against an independently held current cursor. Local synthetic capabilities cannot produce real accepted Evidence or visa results. Exercise expiry, quota, access, rollback, immutable history and restore refusal with native PostgreSQL16. Then run all required checks and deliver exact limitations, hosting gates and HEAD for independent review.
+
+Use the stricter 30-day immutable original lifetime for this candidate (within both 30-day unreferenced and 180-day absolute ceilings). Production key management, durable off-database restore witnesses, real Owner-AAL2 admission and integration into the hosted accepted-store path remain gated. No hosted action is needed to implement and prove the local contract.
+
 ## G2 continuation — completed inventory, technical STOP
 
 Binding G2 arbitration: starting HEAD `9905ff8e66ef1e9f45069e6119f27ae7c9b82591`, blob `bf4ad6b82c2f5b4b67dea5a3ab028707831bafa7`. Original TASK remains `d590a9769915ba1cbb6bb3cab8c401f0dac70460`. Same Codex Generation 1, existing branch/Draft #928 only. Main/merge-base `fcab99dd96e23749dd2624ad5cbe4c2749b127e1`, NORMAL. Latest #751 checkpoint `6108109937` and R1 review `5482954320` read; #748 has no newer MATERIAL beyond `6032030807` / receipt `6036558748`. Open PRs remain #928, blocked #913 and historical #52/#50/#40/#39/#28; no competing writer identified. User's continuation explicitly starts this same author despite checkpoint's pending-resume wording.

@@ -1,5 +1,13 @@
 # CH→DE Source-to-Workspace V2.1 — Self-review
 
+## M1–M4 self-review — current scope
+
+This is author self-review, not independent TL acceptance. Reviewed private ACLs, closed synthetic source admission, byte/key handling, immutable metadata, SQLSTATE rollback, existing closure reuse, transaction isolation, ACK uncertainty, quotas, absolute expiry and independent-witness restore refusal. The native proof exercises structural positives and refusal paths; real accepted-store/provider integration remains unproven. [Contract and limitations](OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_M1_M4_CONTRACT_2026-10-11.md).
+
+No existing foundation guard, timeout, test assertion, Auth/RLS boundary, Source Registry, real profile, dependency or provider is weakened. Two implementation errors found during local development (SQL reserved/special syntax and calling the existing historical reader under READ COMMITTED) were corrected before delivery. The existing reader remains REPEATABLE READ / READ ONLY; a separate guard transaction holds current lifecycle state. Calendar-relative synthetic rehashing preserves strict support ordering.
+
+Remaining material risks: no managed production key/log/backup policy; local witness is not a durable independent production anchor; no legacy accepted-claim projection/refresh adapter; 128-KiB atomic source admission not established by the synthetic V1 fixture; no competent legal/privacy certification; unchanged 19 dependency findings including three production highs. No P0/P1-free or production-safe certification is claimed.
+
 ## G2 self-review — STOP for independent R2
 
 The G2 SQL grant was applied as permission to investigate/implement an indispensable reader, not mistaken for hosted or retention approval. Inventory found four missing durable edges M1–M4 (CONTRACTS), activating G2's explicit missing-schema stop. No new reader RPC, grant, table or authority-returning success variant has been added. The extended native diagnostic reads catalog metadata only, in one read-only repeatable-read transaction; it does not infer semantics solely from field names or certify hosted state. Function/writer inspection establishes why transient fingerprint coordinates are not custody/history. Existing local provenance is not relabelled as the accepted store.
