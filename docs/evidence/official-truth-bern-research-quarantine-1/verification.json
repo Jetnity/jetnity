@@ -4,8 +4,76 @@
     "realNetworkAttempts": 0,
     "execution": "offline_only"
   },
-  "localCommands": [],
+  "localCommands": [
+    {
+      "command": "npm run check:setup",
+      "status": "PASS_WITH_WARNING",
+      "details": "No .env/.env.local found warning"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "status": "PASS_AFTER_FETCH",
+      "details": "First run failed because local clone lacked main; fixed via `git fetch origin main:main`"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS_WITH_EXISTING_WARNINGS",
+      "details": "eslint exit 0; existing repository warnings remain"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "status": "PASS",
+      "details": "LOCAL/UNAPPLIED RPC notices only"
+    },
+    {
+      "command": "npm run check:dead",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:exports",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check:deps",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS",
+      "details": "next build succeeded"
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts",
+      "status": "PASS",
+      "details": "33/33 tests pass"
+    },
+    {
+      "command": "npm test",
+      "status": "PASS",
+      "details": "6448/6448 tests pass, duration_ms=684854.522006, M1–M4 suite duration_ms=140437.483165"
+    }
+  ],
+  "artifacts": [
+    {
+      "type": "full_test_output",
+      "path": "/tmp/1791746271368-copilot-tool-output-3736-29cccbbb-68ae-48e2-aee9-f472baed1cad.txt"
+    }
+  ],
   "notes": [
-    "Populate with final exact command outcomes before handoff completion."
+    "RESEARCH_ONLY_NOT_QUALIFIED",
+    "No real HTTP request executed in this task.",
+    "No hosted database write or migration executed."
   ]
 }

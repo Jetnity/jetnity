@@ -25,7 +25,7 @@ void _forbiddenCast
 type Scenario = {
   status?: number
   body?: Uint8Array
-  chunks?: Uint8Array[]
+  chunks?: readonly Uint8Array[]
   location?: string
   contentType?: string | null
   contentLength?: number | null
@@ -152,7 +152,7 @@ for (const [label, size, ok] of [
     const body = Buffer.alloc(size, 98)
     const decision = officialTruthBernResearchQuarantineMockBody({ body, declaredLength: body.byteLength })
     assert.equal(decision.ok, ok)
-    if (ok) {
+    if (decision.ok) {
       assert.equal(decision.bodyByteCount, size)
     } else {
       assert.equal(decision.reason, 'response_too_large')
@@ -162,7 +162,7 @@ for (const [label, size, ok] of [
 
 test('mock-only body policy rejects mismatch, invalid UTF-8 and BOM', () => {
   assert.deepEqual(
-    officialTruthBernResearchQuarantineMockBody({ body: Buffer.from('abc'), declaredLength: 4 }),
+    officialTruthBernResearchQuarantineMockBody({ body: Buffer.from('synthetic-body'), declaredLength: 4 }),
     { ok: false, reason: 'content_length_mismatch' },
   )
   assert.deepEqual(
@@ -198,7 +198,7 @@ for (const [label, scenario, reason] of [
   ['invalid utf8', { body: new Uint8Array([0xc3, 0x28]), contentLength: 2 }, 'invalid_utf8'],
   ['bom', { body: new Uint8Array([0xef, 0xbb, 0xbf]), contentLength: 3 }, 'invalid_utf8'],
   ['empty body', { body: new Uint8Array(), contentLength: 0 }, 'empty_body'],
-  ['truncated content-length mismatch stays blocked', { body: Buffer.from('abc'), contentLength: 100 }, 'content_identity_mismatch'],
+  ['truncated content-length mismatch stays blocked', { body: Buffer.from('synthetic-body'), contentLength: 100 }, 'content_identity_mismatch'],
   ['streamed overrun', { chunks: [Buffer.alloc(65_536, 65), Buffer.alloc(1, 65)], contentLength: 65_536 }, 'response_too_large'],
 ] as const) {
   test(`offline transport refusal: ${label}`, async () => {
@@ -216,7 +216,7 @@ test('offline profile only emits conservative indicators and no raw body', async
   assert.equal(result.html_scripts_present, true)
   assert.equal(result.embedded_external_asset_indicators_present, true)
   assert.equal(result.copyright_or_rights_indicators_present, true)
-  assert.equal(Object.values(result).includes('<html>'), false)
+  assert.equal(JSON.stringify(result).includes('<html>'), false)
 })
 
 test('task script remains offline-only with no live switch and no network call', async (t) => {
