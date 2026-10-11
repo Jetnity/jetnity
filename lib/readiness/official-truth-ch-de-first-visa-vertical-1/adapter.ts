@@ -1,12 +1,43 @@
 import 'server-only'
 
-/** The existing store is a guarded writer, not a trusted accepted-read capability.
- * No Evidence/Rule DTO, local research result or caller status is authority.
- * No accepted-reader injection is exposed. A future implementation requires a
- * separately reviewed server-held reader and full canonical scope revalidation.
- * Until then the existing engine must receive null and produce unavailable.
+import { chDeVisaReadRequestPruefen } from './read-request'
+import type { Trip } from '@/types/trips'
+
+const GATES = Object.freeze([
+  'source_not_qualified',
+  'ordinary_document_class_unrepresented',
+  'purpose_unrepresented',
+  'direct_route_unproven',
+  'accepted_reader_contract_unavailable',
+  'retained_custody_read_unavailable',
+  'rule_review_history_unavailable',
+  'current_revocation_state_unavailable',
+] as const)
+
+/** Negative half of the server-owned reader contract (SW07/SW08/SW15).
+ * No transport, environment, profile, Evidence or Rule injection exists.
+ * Passing representable scope checks is NOT acceptance: the current SQL store
+ * cannot serve full retained custody/review/current-revocation proof, and Trip
+ * cannot encode ordinary subtype/purpose. Adding an RPC or widening that scope
+ * requires TL arbitration. Keep the provider null, even with configured secrets.
  */
 export function chDeVisaReadBoundary() {
-  return Object.freeze({ status: 'unavailable' as const, reason: 'trusted_accepted_reader_unavailable' as const,
-    provider: null, acceptedEvidence: null, acceptedRule: null })
+  return Object.freeze({
+    status: 'unavailable' as const,
+    reason: 'trusted_accepted_reader_unavailable',
+    blockers: GATES,
+    provider: null,
+    acceptedEvidence: null,
+    acceptedRule: null,
+  })
+}
+
+/** Scoped negative read interface. No caller-provided reader capability. */
+export function chDeVisaReadForTrip(reise: Trip, request?: unknown) {
+  const scope = chDeVisaReadRequestPruefen(reise, request)
+  const boundary = chDeVisaReadBoundary()
+  return Object.freeze({ ...boundary,
+    reason: scope.ok ? boundary.reason : scope.reason,
+    blockers: scope.ok ? boundary.blockers : Object.freeze([scope.reason, ...boundary.blockers]),
+  })
 }
