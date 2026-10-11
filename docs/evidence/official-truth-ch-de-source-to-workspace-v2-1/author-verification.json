@@ -1,0 +1,254 @@
+{
+  "schema": "ch-de-source-to-workspace-author-evidence-v1",
+  "author": "Jetnity Official Truth CH-DE Source-to-Workspace V2 1 — Codex Generation 1",
+  "status": "PARTIAL_GATED",
+  "sourceStatus": "SOURCE_NOT_QUALIFIED",
+  "baselineMain": "fcab99dd96e23749dd2624ad5cbe4c2749b127e1",
+  "seedCommit": "9852be4b4ba176e614ceaf2fa349dbee91f3af75",
+  "taskBlob": "d590a9769915ba1cbb6bb3cab8c401f0dac70460",
+  "implementationCommit": "123ada36c62a7e6fe63f98b3409b20ce2e537435",
+  "implementationTree": "e2e3ee01167b2ea190a4bc562dc3d426edc9fe6e",
+  "finalCommitBinding": "External post-commit author receipt; no self-referential hash claim.",
+  "runtime": {
+    "node": "22.23.3",
+    "postgres": "16.15",
+    "native": true,
+    "host": "macOS",
+    "disposableClusters": true,
+    "hostPathAdapter": "native-pg16-host-path-adapter.cjs.txt",
+    "shortTemporarySocketDirectory": true
+  },
+  "commands": {
+    "install": "npm ci --offline (existing package cache, scripts enabled)",
+    "full": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' npm test -- --test-concurrency=1",
+    "typecheck": "npm run typecheck",
+    "lint": "npm run lint",
+    "build": "npm run build",
+    "audit": "npm audit --json",
+    "productionAudit": "npm audit --omit=dev --json"
+  },
+  "initialFull": {
+    "tests": 6252,
+    "suites": 819,
+    "pass": 6248,
+    "fail": 4,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "status": "FAIL",
+    "causes": [
+      "disallowed_new_foundation_consumer_removed_without_changing_fence",
+      "two_legacy_pg16_spawnSync_paths_missing",
+      "one_macos_unix_socket_path_too_long"
+    ]
+  },
+  "focusedChDeBeforeParserCorrection": {
+    "tests": 107,
+    "suites": 0,
+    "pass": 107,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "correctedAffectedRegressionSet": {
+    "tests": 160,
+    "suites": 0,
+    "pass": 160,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "shortSocketCatalogRegression": {
+    "tests": 105,
+    "suites": 4,
+    "pass": 105,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "finalFull": {
+    "status": "PASS",
+    "tests": 6313,
+    "suites": 819,
+    "pass": 6313,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "nativeR2": "PASS",
+    "nativeR3": "PASS",
+    "durationMs": 427577.888709
+  },
+  "typecheck": "PASS",
+  "lint": {
+    "status": "PASS",
+    "errors": 0,
+    "warnings": 144
+  },
+  "build": "PASS",
+  "hygiene": {
+    "setup:ci": "PASS",
+    "operating-mode": "PASS",
+    "api-schutz": "PASS",
+    "schema-bezug": "PASS",
+    "dead": "PASS",
+    "exports": "PASS",
+    "deps": "PASS"
+  },
+  "dependencyAudit": {
+    "status": "FAIL",
+    "exitCode": 1,
+    "lockfileChanged": false,
+    "all": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 17,
+      "critical": 0,
+      "total": 19
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 3,
+      "critical": 0,
+      "total": 3
+    },
+    "productionPackages": [
+      {
+        "name": "sharp",
+        "severity": "high",
+        "advisoryUrls": [
+          "https://github.com/advisories/GHSA-wq5f-xc86-pv6w"
+        ],
+        "lockedVersions": [
+          "0.35.4"
+        ]
+      },
+      {
+        "name": "source-map-js",
+        "severity": "high",
+        "advisoryUrls": [
+          "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
+        ],
+        "lockedVersions": [
+          "1.2.1"
+        ]
+      },
+      {
+        "name": "ws",
+        "severity": "high",
+        "advisoryUrls": [
+          "https://github.com/advisories/GHSA-58qx-3vcg-4xpx",
+          "https://github.com/advisories/GHSA-96hv-2xvq-fx4p"
+        ],
+        "lockedVersions": [
+          "8.18.1",
+          "8.18.3"
+        ]
+      }
+    ],
+    "reachability": "NOT_ASSESSED",
+    "ownerGate": "G7"
+  },
+  "localReadBoundary": {
+    "schema": "ch-de-accepted-read-boundary-v1",
+    "status": "REFUSAL_VERIFIED",
+    "postgres": "postgres (PostgreSQL) 16.15",
+    "checks": [
+      "anon_cannot_read_accepted_rows_or_custody",
+      "authenticated_cannot_read_accepted_rows_or_custody",
+      "service_role_cannot_read_accepted_rows_or_custody",
+      "writer_rpc_is_not_a_read_capability",
+      "no_source_profile_evidence_rule_or_receipt_promoted"
+    ],
+    "migrationCount": 6,
+    "positiveAcceptedRead": "NOT_VERIFIED",
+    "sourceStatus": "SOURCE_NOT_QUALIFIED",
+    "reason": "accepted_reader_contract_unavailable",
+    "hostedWrites": 0,
+    "positiveVisaCells": 0
+  },
+  "notVerified": [
+    "positive_accepted_evidence_rule_read",
+    "positive_source_attributed_visa_projection",
+    "whole_response_source_identity_privacy",
+    "current_legal_effective_window",
+    "real_reader_stale_revoked_conflict_projection",
+    "database_backed_authenticated_positive_workspace_browser_rehearsal"
+  ],
+  "invariants": {
+    "provider": null,
+    "acceptedRealSources": 0,
+    "acceptedRealEvidence": 0,
+    "acceptedRealRules": 0,
+    "positiveVisaCells": 0,
+    "hostedWrites": 0,
+    "newSqlMigrations": 0,
+    "newPaidProviders": 0,
+    "newPaidProviderSpendUSD": 0,
+    "defaultRawByteLimit": 65536,
+    "conditionalExactS3RawByteLimit": 131072,
+    "sourceBudgetChanged": false,
+    "authRlsChanged": false,
+    "taskChanged": false,
+    "pr913Touched": false
+  },
+  "gates": {
+    "independentTLFinalPass": "PENDING",
+    "ready": "NOT_PERFORMED",
+    "merge": "NOT_PERFORMED",
+    "followup": "NOT_STARTED",
+    "ownerDecisions": [
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7"
+    ]
+  },
+  "artifactHygiene": {
+    "scope": "15 task diff and evidence files including immutable seed task",
+    "checkedPatterns": [
+      "local user paths",
+      "hosted Supabase URL",
+      "common secret token prefixes",
+      "email addresses"
+    ],
+    "findings": 0,
+    "claim": "Focused pattern scan and author review; not repository-wide privacy certification"
+  },
+  "baselineMainCI": {
+    "runId": 38098855665,
+    "head": "fcab99dd96e23749dd2624ad5cbe4c2749b127e1",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/38098855665"
+  },
+  "diffWhitespace": {
+    "authorChangesSinceSeed": "PASS",
+    "wholePrVersusMain": "FAIL_SEED_ONLY",
+    "seedTaskLines": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "cause": "Pre-existing Markdown hard breaks; immutable task blob preserved"
+  },
+  "localTestedImplementationCommit": "7fa2ad87b7cda811f10566873d50574241891567",
+  "deliveryTransport": {
+    "method": "existing authenticated GitHub Git Data connection",
+    "implementationBlobHashesVerified": 5,
+    "implementationTreeIdentical": true,
+    "reason": "No terminal HTTPS credentials or SSH-agent identity",
+    "branchUpdate": "non-forced fast-forward with expected seed head",
+    "noNewBranchOrPR": true
+  }
+}
