@@ -41,8 +41,9 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 
 ## STOP
 
-Author HEAD for this R1 correction: `5b954f6677f073f471ddb07b9204f9999fbf0c72`.
+Author HEAD for this R1 correction: latest pushed commit on
+`copilot/featofficial-truth-bern-research-quarantine-1`.
 PR #933 currently points to `feat/...@37e3e47` at collection time, so exact-head
-CI/Auth/Preview proof for `5b954f66` remains pending TL fast-forward.
+CI/Auth/Preview proof for the current author HEAD remains pending TL fast-forward.
 
 Await independent ChatGPT Technical-Lead review.

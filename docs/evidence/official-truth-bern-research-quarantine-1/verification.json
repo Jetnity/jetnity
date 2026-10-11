@@ -76,7 +76,7 @@
     }
   ],
   "githubEvidence": {
-    "authorBranchHead": "5b954f6677f073f471ddb07b9204f9999fbf0c72",
+    "authorBranchHeadAtCollectionTime": "5b954f6677f073f471ddb07b9204f9999fbf0c72",
     "pr933HeadAtCollectionTime": "37e3e47af04307fae66260d370250ea2b30c3039",
     "pr933BranchRef": "feat/official-truth-bern-research-quarantine-1",
     "authorWorkingBranchRef": "copilot/featofficial-truth-bern-research-quarantine-1",
@@ -109,6 +109,6 @@
     "RESEARCH_ONLY_NOT_QUALIFIED",
     "No real HTTP request executed in this task.",
     "No hosted database write or migration executed.",
-    "Exact-head CI/Auth/Preview for 5b954f66 is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
+    "Exact-head CI/Auth/Preview for the current author HEAD is pending because PR #933 still points to feat/...@37e3e47 at evidence collection time."
   ]
 }
