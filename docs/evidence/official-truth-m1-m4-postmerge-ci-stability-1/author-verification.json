@@ -1,0 +1,1842 @@
+{
+  "schema": "jetnity-m1-m4-stability-author-v1",
+  "author": "Jetnity Official Truth CH-DE Source-to-Workspace V2 1 \u2014 Codex Generation 1",
+  "pr": 929,
+  "branch": "fix/official-truth-m1-m4-postmerge-ci-stability-1",
+  "codeCommit": "e78732eb29420d5a17db9cf0be0c85727e025409",
+  "codeTree": "f69b8e767f3d5cd3f7afec1419c3951f2e0d381b",
+  "testBlob": "fea99201117ffb41564c381eea39f0adb7f62ace",
+  "parent": "3fca59c237e2c61f5deba90a28716747755c7d74",
+  "baseMain": "bc5d7a98f78e4560785127d9a20d6ee99a78e438",
+  "originalMainFailure": {
+    "schema": "jetnity-st-original-main-failure-v1",
+    "run": 38142134697,
+    "event": "push",
+    "head": "bc5d7a98f78e4560785127d9a20d6ee99a78e438",
+    "verify": {
+      "job": 114477982326,
+      "conclusion": "failure",
+      "tests": 6326,
+      "suites": 819,
+      "pass": 6317,
+      "fail": 7,
+      "cancelled": 2,
+      "skipped": 0,
+      "todo": 0,
+      "durationMs": 901958.469892,
+      "firstSubstantiveFailure": {
+        "subtest": "acknowledged commit fresh-reader full closure and exact encrypted original reproof",
+        "durationMs": 83705.129733,
+        "sqlState": "55000",
+        "phase": "bindCandidate via persistCandidate verify_existing",
+        "testLine": 177
+      },
+      "parent": {
+        "timeoutMs": 240000,
+        "durationMs": 240002.246612
+      },
+      "schemaApiHygieneBuild": "SKIPPED"
+    },
+    "auth": {
+      "job": 114477982172,
+      "conclusion": "success",
+      "expectedValues": 55,
+      "keys": 243
+    },
+    "review": "https://github.com/Jetnity/jetnity/issues/927#issuecomment-6109767151",
+    "classification": "Original redacted CI logs do not retain the backend error message; do not claim direct recovery of it. Native controlled reproduction plus unchanged-state error-path isolation support checkpoint expiry; no CI rerun-as-fix."
+  },
+  "native": {
+    "postgres": "16.15",
+    "node": "22.23.3",
+    "host": "macOS arm64",
+    "hostAdapterSha256": "ed356bcd76b137ce08a127ad7b8911891035b065a4e0063b5a38680433176480",
+    "hostAdapter": "Unchanged native-pg16.cjs only maps hardcoded Linux executable paths to native PG16.15. No SQL/arguments/assertions/results/concurrency/timeout changes.",
+    "targetedCommand": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-original-custody.test.ts",
+    "fullCommand": "TMPDIR=/tmp NODE_OPTIONS='--import ../native-pg16.cjs' npm test",
+    "concurrency": "npm test unchanged CI default, no --test-concurrency override; separate full gate/build process overlapped the full suite; first targeted repetition overlapped diagnostic/typecheck work.",
+    "baseline": {
+      "tests": 13,
+      "suites": 0,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 105555.665125
+    },
+    "compactOnlyExperiment": {
+      "tests": 13,
+      "suites": 0,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 53433.321917
+    },
+    "targeted": [
+      {
+        "run": 1,
+        "tap": {
+          "tests": 13,
+          "suites": 0,
+          "pass": 13,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "duration_ms": 53439.029208
+        },
+        "diagnostics": [
+          {
+            "schema": "custody-fixture-v1",
+            "authority": "synthetic-historical-only",
+            "fixtures": [
+              {
+                "artifacts": 63,
+                "artifactBytes": 190420,
+                "originals": 1,
+                "originalBytes": [
+                  167
+                ]
+              },
+              {
+                "artifacts": 72,
+                "artifactBytes": 211903,
+                "originals": 2,
+                "originalBytes": [
+                  133,
+                  140
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 1,
+            "atMs": 2462,
+            "elapsedMs": 4985,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 3,
+                "elapsedMs": 3328,
+                "maxMs": 1427,
+                "sqlStates": [
+                  "P0001"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 1585,
+                "maxMs": 793,
+                "sqlStates": [
+                  "23514",
+                  "P0002"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 2,
+            "atMs": 7446,
+            "elapsedMs": 36,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 3,
+            "atMs": 7482,
+            "elapsedMs": 104,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 4,
+            "atMs": 7586,
+            "elapsedMs": 14911,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2700,
+                "maxMs": 1432,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3157,
+                "maxMs": 1586,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 8,
+                "elapsedMs": 2766,
+                "maxMs": 2730,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 4,
+                "elapsedMs": 3142,
+                "maxMs": 793,
+                "sqlStates": [
+                  "39000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 3,
+                "elapsedMs": 2846,
+                "maxMs": 954,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 5,
+            "atMs": 22497,
+            "elapsedMs": 7952,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 1,
+                "elapsedMs": 1712,
+                "maxMs": 1712,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3721,
+                "maxMs": 1863,
+                "sqlStates": [
+                  "23505"
+                ]
+              },
+              {
+                "phase": "commit",
+                "calls": 3,
+                "elapsedMs": 332,
+                "maxMs": 322,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 938,
+                "maxMs": 938,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1118,
+                "maxMs": 1118,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 6,
+            "atMs": 30449,
+            "elapsedMs": 7574,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2555,
+                "maxMs": 1291,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3115,
+                "maxMs": 1559,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 4,
+                "elapsedMs": 19,
+                "maxMs": 5,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 792,
+                "maxMs": 792,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 948,
+                "maxMs": 948,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 7,
+            "atMs": 38023,
+            "elapsedMs": 40,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 8,
+            "atMs": 38062,
+            "elapsedMs": 3,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 3,
+                "maxMs": 1,
+                "sqlStates": [
+                  "25000",
+                  "55000"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1,
+                "maxMs": 1,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 9,
+            "atMs": 38065,
+            "elapsedMs": 4696,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 8,
+                "elapsedMs": 4693,
+                "maxMs": 795,
+                "sqlStates": [
+                  "39000",
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 10,
+            "atMs": 42761,
+            "elapsedMs": 3691,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 5,
+                "elapsedMs": 3688,
+                "maxMs": 923,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 11,
+            "atMs": 46451,
+            "elapsedMs": 2592,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 1547,
+                "maxMs": 775,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 946,
+                "maxMs": 946,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 11,
+                "maxMs": 6,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 12,
+            "atMs": 49043,
+            "elapsedMs": 3996,
+            "phases": [
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1848,
+                "maxMs": 1848,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 922,
+                "maxMs": 922,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1118,
+                "maxMs": 1118,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 10,
+                "maxMs": 5,
+                "sqlStates": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": 2,
+        "tap": {
+          "tests": 13,
+          "suites": 0,
+          "pass": 13,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "duration_ms": 54056.218584
+        },
+        "diagnostics": [
+          {
+            "schema": "custody-fixture-v1",
+            "authority": "synthetic-historical-only",
+            "fixtures": [
+              {
+                "artifacts": 63,
+                "artifactBytes": 190420,
+                "originals": 1,
+                "originalBytes": [
+                  167
+                ]
+              },
+              {
+                "artifacts": 72,
+                "artifactBytes": 211903,
+                "originals": 2,
+                "originalBytes": [
+                  140,
+                  133
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 1,
+            "atMs": 2450,
+            "elapsedMs": 4919,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 3,
+                "elapsedMs": 3276,
+                "maxMs": 1408,
+                "sqlStates": [
+                  "P0001"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 1574,
+                "maxMs": 788,
+                "sqlStates": [
+                  "23514",
+                  "P0002"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 2,
+            "atMs": 7370,
+            "elapsedMs": 34,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 3,
+            "atMs": 7404,
+            "elapsedMs": 101,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 4,
+            "atMs": 7505,
+            "elapsedMs": 15060,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2730,
+                "maxMs": 1439,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3185,
+                "maxMs": 1602,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 8,
+                "elapsedMs": 2755,
+                "maxMs": 2718,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 4,
+                "elapsedMs": 3196,
+                "maxMs": 811,
+                "sqlStates": [
+                  "39000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 3,
+                "elapsedMs": 2891,
+                "maxMs": 974,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 5,
+            "atMs": 22565,
+            "elapsedMs": 8100,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 1,
+                "elapsedMs": 1725,
+                "maxMs": 1725,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3781,
+                "maxMs": 1908,
+                "sqlStates": [
+                  "23505"
+                ]
+              },
+              {
+                "phase": "commit",
+                "calls": 3,
+                "elapsedMs": 339,
+                "maxMs": 329,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 955,
+                "maxMs": 955,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1160,
+                "maxMs": 1160,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 6,
+            "atMs": 30665,
+            "elapsedMs": 7709,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2583,
+                "maxMs": 1293,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3176,
+                "maxMs": 1593,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 4,
+                "elapsedMs": 20,
+                "maxMs": 5,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 811,
+                "maxMs": 811,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 972,
+                "maxMs": 972,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 7,
+            "atMs": 38374,
+            "elapsedMs": 38,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 8,
+            "atMs": 38412,
+            "elapsedMs": 3,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 3,
+                "maxMs": 1,
+                "sqlStates": [
+                  "25000",
+                  "55000"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1,
+                "maxMs": 1,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 9,
+            "atMs": 38415,
+            "elapsedMs": 4847,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 8,
+                "elapsedMs": 4844,
+                "maxMs": 896,
+                "sqlStates": [
+                  "39000",
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 10,
+            "atMs": 43261,
+            "elapsedMs": 3764,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 5,
+                "elapsedMs": 3761,
+                "maxMs": 943,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 11,
+            "atMs": 47025,
+            "elapsedMs": 2627,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 1568,
+                "maxMs": 784,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 963,
+                "maxMs": 963,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 11,
+                "maxMs": 6,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 12,
+            "atMs": 49652,
+            "elapsedMs": 4066,
+            "phases": [
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1890,
+                "maxMs": 1890,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 934,
+                "maxMs": 934,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1129,
+                "maxMs": 1129,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 11,
+                "maxMs": 6,
+                "sqlStates": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run": 3,
+        "tap": {
+          "tests": 13,
+          "suites": 0,
+          "pass": 13,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "duration_ms": 53447.57225
+        },
+        "diagnostics": [
+          {
+            "schema": "custody-fixture-v1",
+            "authority": "synthetic-historical-only",
+            "fixtures": [
+              {
+                "artifacts": 63,
+                "artifactBytes": 190420,
+                "originals": 1,
+                "originalBytes": [
+                  167
+                ]
+              },
+              {
+                "artifacts": 72,
+                "artifactBytes": 211903,
+                "originals": 2,
+                "originalBytes": [
+                  140,
+                  133
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 1,
+            "atMs": 2475,
+            "elapsedMs": 4977,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 3,
+                "elapsedMs": 3321,
+                "maxMs": 1424,
+                "sqlStates": [
+                  "P0001"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 1585,
+                "maxMs": 793,
+                "sqlStates": [
+                  "23514",
+                  "P0002"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 2,
+            "atMs": 7452,
+            "elapsedMs": 36,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 3,
+            "atMs": 7488,
+            "elapsedMs": 105,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 4,
+            "atMs": 7593,
+            "elapsedMs": 15018,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2748,
+                "maxMs": 1444,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3147,
+                "maxMs": 1578,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 8,
+                "elapsedMs": 2745,
+                "maxMs": 2706,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 4,
+                "elapsedMs": 3209,
+                "maxMs": 851,
+                "sqlStates": [
+                  "39000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 3,
+                "elapsedMs": 2866,
+                "maxMs": 964,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 5,
+            "atMs": 22611,
+            "elapsedMs": 7900,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 1,
+                "elapsedMs": 1692,
+                "maxMs": 1692,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3698,
+                "maxMs": 1850,
+                "sqlStates": [
+                  "23505"
+                ]
+              },
+              {
+                "phase": "commit",
+                "calls": 3,
+                "elapsedMs": 331,
+                "maxMs": 321,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 932,
+                "maxMs": 932,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1111,
+                "maxMs": 1111,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 6,
+            "atMs": 30511,
+            "elapsedMs": 7551,
+            "phases": [
+              {
+                "phase": "publish",
+                "calls": 2,
+                "elapsedMs": 2535,
+                "maxMs": 1271,
+                "sqlStates": []
+              },
+              {
+                "phase": "bind",
+                "calls": 2,
+                "elapsedMs": 3114,
+                "maxMs": 1559,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 4,
+                "elapsedMs": 22,
+                "maxMs": 7,
+                "sqlStates": []
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 788,
+                "maxMs": 788,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 947,
+                "maxMs": 947,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 7,
+            "atMs": 38062,
+            "elapsedMs": 37,
+            "phases": []
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 8,
+            "atMs": 38098,
+            "elapsedMs": 3,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 3,
+                "maxMs": 1,
+                "sqlStates": [
+                  "25000",
+                  "55000"
+                ]
+              },
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1,
+                "maxMs": 1,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 9,
+            "atMs": 38101,
+            "elapsedMs": 4741,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 8,
+                "elapsedMs": 4737,
+                "maxMs": 834,
+                "sqlStates": [
+                  "39000",
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 10,
+            "atMs": 42841,
+            "elapsedMs": 3688,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 5,
+                "elapsedMs": 3686,
+                "maxMs": 927,
+                "sqlStates": [
+                  "55000"
+                ]
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 11,
+            "atMs": 46530,
+            "elapsedMs": 2595,
+            "phases": [
+              {
+                "phase": "current_read",
+                "calls": 3,
+                "elapsedMs": 1559,
+                "maxMs": 784,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 944,
+                "maxMs": 944,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 11,
+                "maxMs": 6,
+                "sqlStates": []
+              }
+            ]
+          },
+          {
+            "schema": "custody-phase-v1",
+            "stage": 12,
+            "atMs": 49125,
+            "elapsedMs": 3990,
+            "phases": [
+              {
+                "phase": "bind",
+                "calls": 1,
+                "elapsedMs": 1852,
+                "maxMs": 1852,
+                "sqlStates": [
+                  "55000"
+                ]
+              },
+              {
+                "phase": "current_read",
+                "calls": 1,
+                "elapsedMs": 917,
+                "maxMs": 917,
+                "sqlStates": []
+              },
+              {
+                "phase": "archive_read",
+                "calls": 1,
+                "elapsedMs": 1110,
+                "maxMs": 1110,
+                "sqlStates": []
+              },
+              {
+                "phase": "commit",
+                "calls": 2,
+                "elapsedMs": 11,
+                "maxMs": 6,
+                "sqlStates": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "full": {
+      "tap": {
+        "tests": 6326,
+        "suites": 819,
+        "pass": 6326,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 411401.133791
+      },
+      "m1m4ParentDurationMs": 79713.785667,
+      "diagnostics": [
+        {
+          "schema": "custody-fixture-v1",
+          "authority": "synthetic-historical-only",
+          "fixtures": [
+            {
+              "artifacts": 63,
+              "artifactBytes": 190420,
+              "originals": 1,
+              "originalBytes": [
+                167
+              ]
+            },
+            {
+              "artifacts": 72,
+              "artifactBytes": 211903,
+              "originals": 2,
+              "originalBytes": [
+                140,
+                133
+              ]
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 1,
+          "atMs": 4623,
+          "elapsedMs": 13275,
+          "phases": [
+            {
+              "phase": "publish",
+              "calls": 3,
+              "elapsedMs": 8631,
+              "maxMs": 3871,
+              "sqlStates": [
+                "P0001"
+              ]
+            },
+            {
+              "phase": "bind",
+              "calls": 2,
+              "elapsedMs": 4471,
+              "maxMs": 2250,
+              "sqlStates": [
+                "23514",
+                "P0002"
+              ]
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 2,
+          "atMs": 17898,
+          "elapsedMs": 77,
+          "phases": []
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 3,
+          "atMs": 17975,
+          "elapsedMs": 235,
+          "phases": []
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 4,
+          "atMs": 18210,
+          "elapsedMs": 26776,
+          "phases": [
+            {
+              "phase": "publish",
+              "calls": 2,
+              "elapsedMs": 5117,
+              "maxMs": 3261,
+              "sqlStates": []
+            },
+            {
+              "phase": "bind",
+              "calls": 2,
+              "elapsedMs": 6137,
+              "maxMs": 3790,
+              "sqlStates": []
+            },
+            {
+              "phase": "commit",
+              "calls": 8,
+              "elapsedMs": 6087,
+              "maxMs": 6019,
+              "sqlStates": []
+            },
+            {
+              "phase": "current_read",
+              "calls": 4,
+              "elapsedMs": 4626,
+              "maxMs": 1221,
+              "sqlStates": [
+                "39000"
+              ]
+            },
+            {
+              "phase": "archive_read",
+              "calls": 3,
+              "elapsedMs": 4284,
+              "maxMs": 1431,
+              "sqlStates": []
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 5,
+          "atMs": 44986,
+          "elapsedMs": 10204,
+          "phases": [
+            {
+              "phase": "publish",
+              "calls": 1,
+              "elapsedMs": 2306,
+              "maxMs": 2306,
+              "sqlStates": []
+            },
+            {
+              "phase": "bind",
+              "calls": 2,
+              "elapsedMs": 4940,
+              "maxMs": 2776,
+              "sqlStates": [
+                "23505"
+              ]
+            },
+            {
+              "phase": "commit",
+              "calls": 3,
+              "elapsedMs": 386,
+              "maxMs": 376,
+              "sqlStates": []
+            },
+            {
+              "phase": "current_read",
+              "calls": 1,
+              "elapsedMs": 1092,
+              "maxMs": 1092,
+              "sqlStates": []
+            },
+            {
+              "phase": "archive_read",
+              "calls": 1,
+              "elapsedMs": 1287,
+              "maxMs": 1287,
+              "sqlStates": []
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 6,
+          "atMs": 55189,
+          "elapsedMs": 8341,
+          "phases": [
+            {
+              "phase": "publish",
+              "calls": 2,
+              "elapsedMs": 2824,
+              "maxMs": 1447,
+              "sqlStates": []
+            },
+            {
+              "phase": "bind",
+              "calls": 2,
+              "elapsedMs": 3461,
+              "maxMs": 1770,
+              "sqlStates": []
+            },
+            {
+              "phase": "commit",
+              "calls": 4,
+              "elapsedMs": 20,
+              "maxMs": 5,
+              "sqlStates": []
+            },
+            {
+              "phase": "current_read",
+              "calls": 1,
+              "elapsedMs": 851,
+              "maxMs": 851,
+              "sqlStates": []
+            },
+            {
+              "phase": "archive_read",
+              "calls": 1,
+              "elapsedMs": 1020,
+              "maxMs": 1020,
+              "sqlStates": []
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 7,
+          "atMs": 63530,
+          "elapsedMs": 40,
+          "phases": []
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 8,
+          "atMs": 63570,
+          "elapsedMs": 3,
+          "phases": [
+            {
+              "phase": "current_read",
+              "calls": 3,
+              "elapsedMs": 3,
+              "maxMs": 1,
+              "sqlStates": [
+                "25000",
+                "55000"
+              ]
+            },
+            {
+              "phase": "bind",
+              "calls": 1,
+              "elapsedMs": 1,
+              "maxMs": 1,
+              "sqlStates": [
+                "55000"
+              ]
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 9,
+          "atMs": 63573,
+          "elapsedMs": 5026,
+          "phases": [
+            {
+              "phase": "current_read",
+              "calls": 8,
+              "elapsedMs": 5023,
+              "maxMs": 856,
+              "sqlStates": [
+                "39000",
+                "55000"
+              ]
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 10,
+          "atMs": 68598,
+          "elapsedMs": 3952,
+          "phases": [
+            {
+              "phase": "current_read",
+              "calls": 5,
+              "elapsedMs": 3949,
+              "maxMs": 992,
+              "sqlStates": [
+                "55000"
+              ]
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 11,
+          "atMs": 72550,
+          "elapsedMs": 2766,
+          "phases": [
+            {
+              "phase": "current_read",
+              "calls": 3,
+              "elapsedMs": 1658,
+              "maxMs": 830,
+              "sqlStates": [
+                "55000"
+              ]
+            },
+            {
+              "phase": "archive_read",
+              "calls": 1,
+              "elapsedMs": 1001,
+              "maxMs": 1001,
+              "sqlStates": []
+            },
+            {
+              "phase": "commit",
+              "calls": 2,
+              "elapsedMs": 11,
+              "maxMs": 6,
+              "sqlStates": []
+            }
+          ]
+        },
+        {
+          "schema": "custody-phase-v1",
+          "stage": 12,
+          "atMs": 75316,
+          "elapsedMs": 4226,
+          "phases": [
+            {
+              "phase": "bind",
+              "calls": 1,
+              "elapsedMs": 1965,
+              "maxMs": 1965,
+              "sqlStates": [
+                "55000"
+              ]
+            },
+            {
+              "phase": "current_read",
+              "calls": 1,
+              "elapsedMs": 969,
+              "maxMs": 969,
+              "sqlStates": []
+            },
+            {
+              "phase": "archive_read",
+              "calls": 1,
+              "elapsedMs": 1170,
+              "maxMs": 1170,
+              "sqlStates": []
+            },
+            {
+              "phase": "commit",
+              "calls": 2,
+              "elapsedMs": 12,
+              "maxMs": 6,
+              "sqlStates": []
+            }
+          ]
+        }
+      ]
+    },
+    "controlledExpiryReproduction": {
+      "tap": {
+        "tests": 13,
+        "suites": 0,
+        "pass": 11,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 151927.911166
+      },
+      "expectedFailure": true,
+      "noRetryOrSuppression": true,
+      "observation": {
+        "probe": "ST-baseline",
+        "stage": 4,
+        "phase": "bind",
+        "atMs": 92262,
+        "elapsedMs": 3,
+        "before": [
+          {
+            "age_ms": "65130",
+            "witness_matches": "t"
+          }
+        ],
+        "sqlState": "55000",
+        "lastKnownServerError": "cursor_unavailable"
+      },
+      "functionProfile": [
+        {
+          "funcname": "validate_graph_v2",
+          "calls": "52",
+          "self_ms": "30786",
+          "total_ms": "43235"
+        },
+        {
+          "funcname": "canonical",
+          "calls": "2649584",
+          "self_ms": "17950",
+          "total_ms": "20183"
+        },
+        {
+          "funcname": "typed",
+          "calls": "554013",
+          "self_ms": "9166",
+          "total_ms": "29058"
+        },
+        {
+          "funcname": "keys",
+          "calls": "540264",
+          "self_ms": "7371",
+          "total_ms": "7371"
+        },
+        {
+          "funcname": "valid_pin",
+          "calls": "304840",
+          "self_ms": "4778",
+          "total_ms": "9852"
+        },
+        {
+          "funcname": "utf16_sort_key",
+          "calls": "2517367",
+          "self_ms": "4059",
+          "total_ms": "4059"
+        },
+        {
+          "funcname": "utf16_length",
+          "calls": "106217",
+          "self_ms": "3536",
+          "total_ms": "3536"
+        },
+        {
+          "funcname": "decode",
+          "calls": "24482",
+          "self_ms": "3284",
+          "total_ms": "23373"
+        },
+        {
+          "funcname": "content_v2",
+          "calls": "4452",
+          "self_ms": "2153",
+          "total_ms": "6533"
+        },
+        {
+          "funcname": "artifact_envelope",
+          "calls": "13582",
+          "self_ms": "1687",
+          "total_ms": "17963"
+        },
+        {
+          "funcname": "closure_v2",
+          "calls": "50",
+          "self_ms": "1253",
+          "total_ms": "13400"
+        },
+        {
+          "funcname": "artifact_v2",
+          "calls": "13582",
+          "self_ms": "844",
+          "total_ms": "48767"
+        }
+      ]
+    },
+    "earlierDiagnosticAttempts": [
+      {
+        "attempt": "launcher",
+        "result": "CJS top-level-await launcher error before tests; corrected scratch launcher only"
+      },
+      {
+        "attempt": "profiling-1",
+        "result": "42501 on protected test principal attempting SET track_functions; no grant change; moved diagnostic default to disposable database owner"
+      },
+      {
+        "attempt": "expiry-1",
+        "result": "Delay after BEGIN correctly hit unchanged 20s idle-transaction limit; connection_state, not evidence for heartbeat expiry; 11 pass / 2 fail; subsequent experiment waits before BEGIN"
+      }
+    ],
+    "sourceFixtureSizes": [
+      {
+        "mode": "primary",
+        "artifacts": 63,
+        "artifactBytes": 5390676,
+        "implementationCapsules": 30,
+        "implementationBytes": 5215996
+      },
+      {
+        "mode": "composed",
+        "artifacts": 72,
+        "artifactBytes": 5412159,
+        "implementationCapsules": 30,
+        "implementationBytes": 5215996
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 0,
+      "durationMs": 759,
+      "log": "st-check-setup-ci.log"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "durationMs": 337,
+      "log": "st-check-operating-mode.log"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "durationMs": 5755,
+      "log": "st-typecheck.log"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "durationMs": 32556,
+      "log": "st-lint.log"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "durationMs": 512,
+      "log": "st-check-api-schutz.log"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "durationMs": 740,
+      "log": "st-check-schema-bezug.log"
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "durationMs": 386,
+      "log": "st-check-dead.log"
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "durationMs": 3660,
+      "log": "st-check-exports.log"
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "durationMs": 320,
+      "log": "st-check-deps.log"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "durationMs": 10899,
+      "log": "st-build.log"
+    }
+  ],
+  "npmCi": {
+    "exitCode": 0,
+    "lockfileUnchanged": true
+  },
+  "audits": {
+    "status": "FAIL_EXISTING_UNCHANGED",
+    "reachability": "NOT_ASSESSED",
+    "full": {
+      "exitCode": 1,
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 2,
+        "high": 17,
+        "critical": 0,
+        "total": 19
+      },
+      "packages": [
+        "@next/eslint-plugin-next",
+        "brace-expansion",
+        "braces",
+        "browserslist",
+        "chokidar",
+        "eslint-config-next",
+        "fast-glob",
+        "glob",
+        "micromatch",
+        "minimatch",
+        "picomatch",
+        "playwright",
+        "postcss-selector-parser",
+        "sharp",
+        "source-map-js",
+        "tailwindcss",
+        "tailwindcss-animate",
+        "ws",
+        "yaml"
+      ]
+    },
+    "production": {
+      "exitCode": 1,
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 3,
+        "critical": 0,
+        "total": 3
+      },
+      "packages": [
+        "sharp",
+        "source-map-js",
+        "ws"
+      ]
+    }
+  },
+  "scope": {
+    "status": "PASS",
+    "base": "bc5d7a98f78e4560785127d9a20d6ee99a78e438",
+    "originalSubtestsPreserved": [
+      "atomic failed producer rolls back all eight provenance and all eight vault relations",
+      "protected review and cross-account capabilities are denied with SQLSTATE 42501",
+      "whole-body UTF8 boundaries and SQL TypeScript fingerprint V1/V2 parity",
+      "acknowledged commit fresh-reader full closure and exact encrypted original reproof",
+      "composed ordered supports commit atomically with exact reviewer packet",
+      "lost commit acknowledgement returns unknown; explicit retry proves durable existing state",
+      "native quota backpressure enforces per-source/day, total items and total live bytes",
+      "history update delete truncate and stale transaction are refused",
+      "missing ciphertext review support event and corrupted encrypted original refuse",
+      "source profile withdrawal and Rule supersession never rewrite accepted history",
+      "reader lifecycle lock orders concurrent revocation and prevents obsolete cursor reuse",
+      "expiry withdraws reliance before disposal; retained metadata and retries cannot resurrect bytes"
+    ],
+    "parentTimeoutMs": 240000,
+    "heartbeatGuardSeconds": 60,
+    "assertionCountBefore": 67,
+    "assertionCountAfter": 72,
+    "protectedUnchanged": {
+      "supabase/migrations/20261011111839_official_truth_original_custody_lifecycle_1.sql": {
+        "blob": "36b525580509069039ca6787c25a0a5b94155986",
+        "sha256": "c0dbe4aef1a8f8d56f8575a0eade668ad2ef2870cd02bd9ea5e5aa2e451d72c9"
+      },
+      "scripts/db/official-truth-original-custody-1/storage.ts": {
+        "blob": "e9798d606309fa121cf4fb21a28cf15e191fd27d",
+        "sha256": "0c3f76c0fdbc226ee755750c86864c643f7e18e2a4de959be22304a4f9ac6149"
+      },
+      "scripts/db/official-truth-integrated-pilot-1/storage.ts": {
+        "blob": "109e8ac57029a03afa55219c8132e8bf004b2dee",
+        "sha256": "a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f"
+      },
+      "scripts/db/official-truth-integrated-pilot-1/semantic-v2.sql": {
+        "blob": "4474216661c54b762c53be415c81bef4a25a10e0",
+        "sha256": "23239ade2a90059a3dafa83ea1262e174c4d16faa1eb1b1f486f2b4532a5fa7c"
+      },
+      "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts": {
+        "blob": "0d546eaf0acedff4e75157cdd1f05c6090ec30e2",
+        "sha256": "ed9c496fc46aef18ea6863b51ef72368e177bbdfbd9ee81150f8f949b4db62e3"
+      },
+      "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts": {
+        "blob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+        "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10"
+      },
+      "scripts/official-truth-integrated-pilot-1/controlled-runtime.ts": {
+        "blob": "3d30867d1567dd3cbc9a7bf60191f89f7dc0dee3",
+        "sha256": "f35703aa97f32433d29363ae54585d855b272b5a0d6b558a50393982ba3dab96"
+      },
+      ".github/workflows/ci.yml": {
+        "blob": "926f577f39d4fd3129e4acfb861d17ea2fafdb3a",
+        "sha256": "b5951a4f08ffd071c835d2092b92b5cffaab638c00cff977d18042ddac7aae4d"
+      },
+      "package.json": {
+        "blob": "aa1083f1bb84f9ad97439c80c14a3cefa5bb41fa",
+        "sha256": "5432224c7d5ffa3b0a7bb145d1e82230f69f44466d61e90da854b59783091440"
+      },
+      "package-lock.json": {
+        "blob": "6f3f59c8067aabe406922f78f7fcf7ae6bf26883",
+        "sha256": "8dead8237adef171588abd088e25f9be2472a7458121e4198cacd8ece224a7da"
+      },
+      "scripts/db/verwendung.mjs": {
+        "blob": "f636380779a342c94dcfac7f7dd80b9f9a941222",
+        "sha256": "c2586672b21d3ceda89c75d5dbf52216d9b89c3cb695b1ff847016715202714a"
+      },
+      "lib/readiness/provider.ts": {
+        "blob": "9383eeac26b22cdc933149df8354c935af0bb5de",
+        "sha256": "1c93d9c9ebc11117a4714f5c439501b01c13c8e32c7fd5eb003d3c25dc78a8cc"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/adapter.ts": {
+        "blob": "69fa5150c8419e6c8f8edd4f391aed3745f0011a",
+        "sha256": "cc516591a561bb99633fe89e65a84d9bcea9b6f730243a35b92ffb83c641be74"
+      },
+      "AGENTS.md": {
+        "blob": "1c3cf7e28a5cb94ad6e3125827bcd28f835453b9",
+        "sha256": "1c951643c86360971bac693f67f1d5ee20036ebdf0600d8a5ce9801161af19cf"
+      }
+    },
+    "hostedWrites": 0,
+    "productionWrites": 0,
+    "paidCalls": 0,
+    "recurringCostUsd": 0,
+    "sqlMigrationsAppliedOutsideDisposableLocal": 0,
+    "trackedDiffAtValidation": [
+      "docs/OFFICIAL_TRUTH_M1_M4_POSTMERGE_CI_STABILITY_1_TASK_2026-10-11.md",
+      "lib/readiness/official-truth-original-custody.test.ts"
+    ]
+  },
+  "remoteFinalGates": "Must be independently read after final branch push. Final STABILITY_1_AUTHOR_RECEIPT.json and STABILITY_1_AUTHOR_HANDOFF.md outside Git bind the actual final HEAD/tree, original CI/Auth logs and matching Preview. No pre-push CI PASS claim.",
+  "stop": "Draft; independent TL review required; no Ready/merge/follow-up; issue 927 stays open until eventual actual-main push is independently verified.",
+  "localLogDigests": {
+    "st-full-test.log": "2dfe2db01c161f3d37a93bf0644bf02b72b64a42372d7585815895bf11b8d251",
+    "st-targeted-1.log": "c793ab5d55db4c6c1ab11a4f14b11fe3f9828ea88fc4e4f2917e7b6fceca5477",
+    "st-targeted-2.log": "1c9aec20dc982db88e615a76f77bece71633b650cc29b590b9c6ae2724c8ba01",
+    "st-targeted-3.log": "0b058969701b9304704e360b2a2ed5de339dc796f6d331726fcf9822fb7c5f0b",
+    "st-baseline-probe.log": "3f7ae2f13fe9e3ac7b3c85a664d2ad3310b64d9ca7cbad2a29f32a1d237392a3",
+    "st-expiry-profile-3.log": "8a8b8be756dcf1e794b9e4ed4332352e229afc6c3e66a41cb0d33ad610078eed",
+    "st-npm-ci.log": "873d76183e614426271d82a2a2e88d8561544f32e3caad2ee9f0dab1135fb690",
+    "st-check-setup-ci.log": "5a14c076fd54b6723d94fcdce05abd8c948e7cd2574ac8d6c49043980fa1d747",
+    "st-check-operating-mode.log": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+    "st-typecheck.log": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848",
+    "st-lint.log": "8cd52300c551de2e2014eb2d5cf60f6b1cd370b3fe23a1c45d2ad6d4e162ae7d",
+    "st-check-api-schutz.log": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+    "st-check-schema-bezug.log": "0a2dca793641f33b1b99bbbb6d46f296d52176f8c467f1d043837f30a09cd1f1",
+    "st-check-dead.log": "3378dd10dfa6c069037c119982416d8437146c441573f3e748a4276ecd650b7a",
+    "st-check-exports.log": "2778cbfd2a6004c8aee8667994ce0075a448f316fbb332ba83281eb10cd904f1",
+    "st-check-deps.log": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+    "st-build.log": "22cefaa7baab8913d854131ea5f45c25989185c3eb1a5b64932d0562a4583fb3"
+  }
+}
