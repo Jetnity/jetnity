@@ -1044,6 +1044,7 @@ export type OfficialTruthBernRealResearchOutcome = Readonly<
         | 'redirect_detected'
         | 'content_length_mismatch'
         | 'framing_unverified'
+        | 'attempt_already_consumed'
       sourceFamily: typeof BERN_RESEARCH_SOURCE
       sourceUrl: typeof BERN_RESEARCH_URL
       networkAttempted: boolean
@@ -1099,9 +1100,15 @@ export async function decideOfficialTruthBernRealResearchForOfflineTests(
   return bernResearchPhysicalRead(deps)
 }
 
+/** In-process backstop. The developer CLI additionally requires the TL's
+ * permanent GitHub reservation receipt and atomically writes a local marker. */
+let bernLiveAttemptStarted = false
+
 /** EXPLICIT developer-only live seam. Its sole return type is research-only.
  * Never invoked by import, rendering, CI, cron or public application runtime. */
 export async function retrieveOfficialTruthBernOneShotResearchOnly(): Promise<OfficialTruthBernRealResearchOutcome> {
+  if (bernLiveAttemptStarted) return bernResearchBlocked('attempt_already_consumed', false)
+  bernLiveAttemptStarted = true
   return bernResearchPhysicalRead({ resolve: serverDns, http: serverHttp, timeoutMs: TIMEOUT_MS })
 }
 
