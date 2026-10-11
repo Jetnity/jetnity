@@ -50,6 +50,8 @@ async function lookupWarten(lookup: OfficialTruthServerOwnedRetrievalLookup, hos
 async function laufen(scenario: Scenario = {}) {
   let cancelled = 0
   let yieldedChunks = 0
+  const startedAt = Date.now()
+  let firstCancelAtMs: number | null = null
   const result = await decideOfficialTruthBernResearchQuarantineOfflineMock(
     { operation: 'offline_mock' },
     {
@@ -86,18 +88,20 @@ async function laufen(scenario: Scenario = {}) {
               if (signal.aborted) return
               if (scenario.throwInBodyAtChunk === index) throw Error('synthetic stream failure')
               if (scenario.chunkDelayMs && scenario.chunkDelayMs > 0) await new Promise((resolve) => setTimeout(resolve, scenario.chunkDelayMs))
+              if (signal.aborted) return
               yieldedChunks += 1
               yield chunk
             }
           })(),
           cancel() {
+            if (firstCancelAtMs == null) firstCancelAtMs = Date.now() - startedAt
             cancelled += 1
           },
         }
       },
     },
   )
-  return { result, cancelled, yieldedChunks }
+  return { result, cancelled, yieldedChunks, firstCancelAtMs }
 }
 
 function assertKonservativ(result: Awaited<ReturnType<typeof laufen>>['result']) {
@@ -258,6 +262,21 @@ test('faulty stream is cancelled and does not publish observations', async () =>
   assert.equal(result.reason, 'http_failed')
   assertKonservativ(result)
   assert.ok(cancelled > 0)
+})
+
+test('timeout after headers cancels stalled stream promptly and publishes no incomplete analysis', async () => {
+  const { result, cancelled, yieldedChunks, firstCancelAtMs } = await laufen({
+    chunks: [Buffer.alloc(128, 65)],
+    contentLength: 128,
+    chunkDelayMs: 200,
+    timeoutMs: 20,
+  })
+  assert.equal(result.reason, 'timeout')
+  assertKonservativ(result)
+  assert.ok(cancelled > 0)
+  assert.equal(yieldedChunks, 0)
+  assert.notEqual(firstCancelAtMs, null)
+  assert.ok((firstCancelAtMs ?? Number.POSITIVE_INFINITY) < 200)
 })
 
 for (const [label, scenario, reason] of [

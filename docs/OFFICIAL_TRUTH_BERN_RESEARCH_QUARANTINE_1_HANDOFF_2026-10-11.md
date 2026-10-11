@@ -28,10 +28,13 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
    on overrun (`response_too_large`) and precise short-stream mismatch
    (`content_length_mismatch`); result keeps `bodyByteCount=null` and
    conservative unknown flags (no false-negative analysis publication).
-5. 65,536 default retrieval bound remains unchanged; 131,072 is only modeled offline.
-6. One-shot future permit semantics show refusal + consumed state + second refusal.
-7. Script remains offline-only and does not expose a live launcher.
-8. `REAL_NETWORK_ATTEMPTS=0`, no persistent HTML storage, no hosted writes.
+5. Task-owned abort listener now cancels stalled post-header streams on timeout
+   (`response.cancel()`), with listener cleanup in `finally`; timeout path
+   keeps conservative output and no completed analysis fields.
+6. 65,536 default retrieval bound remains unchanged; 131,072 is only modeled offline.
+7. One-shot future permit semantics show refusal + consumed state + second refusal.
+8. Script remains offline-only and does not expose a live launcher.
+9. `REAL_NETWORK_ATTEMPTS=0`, no persistent HTML storage, no hosted writes.
 
 ## R1-F2 architecture distinction
 
@@ -44,8 +47,8 @@ Draft #933 / Issue #932 / Parent #917 OPEN.
 
 Author HEAD for this correction slice: latest pushed commit on
 `copilot/featofficial-truth-bern-research-quarantine-1`.
-Latest collected exact-head gate proof before this R2-F1 correction push:
-`feat/official-truth-bern-research-quarantine-1@283cbbb` with CI/Auth success
+Latest collected exact-head gate proof before this R3-F1 correction push:
+`feat/official-truth-bern-research-quarantine-1@3365eb3` with CI/Auth success
 and Vercel Preview Ready.
 
 Await independent ChatGPT Technical-Lead review.

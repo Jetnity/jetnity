@@ -334,30 +334,52 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
   const httpWithIntegrity: OfficialTruthServerOwnedRetrievalHttpClient = async (anfrage) => {
     const response = await abhaengigkeiten.http(anfrage)
     if (!response.ok || response.body == null) return response
+    let cancelled = false
+    const cancelStream = () => {
+      if (cancelled) return
+      cancelled = true
+      response.cancel?.()
+    }
+    const abortListener = () => cancelStream()
+    if (anfrage.signal.aborted) cancelStream()
+    else anfrage.signal.addEventListener('abort', abortListener, { once: true })
     const declared = response.headers.get('content-length')
     if (declared == null) {
       observation.declaredLengthVerified = false
+      anfrage.signal.removeEventListener('abort', abortListener)
       return response
     }
     const text = declared.trim()
-    if (!/^\d+$/.test(text)) return response
+    if (!/^\d+$/.test(text)) {
+      anfrage.signal.removeEventListener('abort', abortListener)
+      return response
+    }
     const declaredLength = Number(text)
-    if (!Number.isSafeInteger(declaredLength)) return response
+    if (!Number.isSafeInteger(declaredLength)) {
+      anfrage.signal.removeEventListener('abort', abortListener)
+      return response
+    }
     if (declaredLength > 65_536) {
       observation.bodyByteCount = null
       observation.flags = null
       observation.declaredLengthVerified = false
       observation.integrityReason = 'response_too_large'
-      response.cancel?.()
+      cancelStream()
+      anfrage.signal.removeEventListener('abort', abortListener)
       return { ok: false, reason: 'http_failed' }
     }
     const boundedMaxBytes = declaredLength === 0 ? 1 : declaredLength
-    const bounded = await officialTruthBoundedResponseBody(
-      response.body,
-      anfrage.signal,
-      boundedMaxBytes,
-      response.cancel,
-    )
+    let bounded: Awaited<ReturnType<typeof officialTruthBoundedResponseBody>>
+    try {
+      bounded = await officialTruthBoundedResponseBody(
+        response.body,
+        anfrage.signal,
+        boundedMaxBytes,
+        cancelStream,
+      )
+    } finally {
+      anfrage.signal.removeEventListener('abort', abortListener)
+    }
     if (!bounded.ok) {
       observation.bodyByteCount = null
       observation.flags = null
@@ -372,7 +394,7 @@ export async function decideOfficialTruthBernResearchQuarantineOfflineMock(
       observation.flags = null
       observation.declaredLengthVerified = false
       observation.integrityReason = 'content_length_mismatch'
-      response.cancel?.()
+      cancelStream()
       return { ok: false, reason: 'http_failed' }
     }
     observation.declaredLengthVerified = true

@@ -24,6 +24,9 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   declared `Content-Length` is validated via bounded stream processing
   (max 65,536 bytes) before analysis fields can be emitted; overrun stops early
   with cancellation and refusal.
+- Added task-owned AbortSignal cancellation for active pre-read streams:
+  timeout/abort now triggers immediate `response.cancel()` while waiting on a
+  delayed/stalled post-header chunk; listener cleanup runs in `finally`.
 
 ## Security and publication boundary
 
@@ -35,6 +38,8 @@ Issue #932 / Draft #933. This is an author report for independent TL review.
   streams refuse with `content_length_mismatch`; both keep
   `bodyByteCount=null` and conservative unknown/safety flags (no false
   “absence” publication).
+- Timeout on delayed post-header chunk now proves cancellation invocation and
+  keeps conservative publication output (no partial analysis markers).
 
 ## What was tested by offline mocks vs. provided by protected architecture
 
@@ -71,6 +76,6 @@ real network sockets against origin infrastructure.
 - This slice is intentionally non-authoritative and offline-only.
 - Parent #917 remains SOURCE_NOT_QUALIFIED.
 - Any future real Bern fetch or live 131,072-byte path still requires separate TL/PO gate.
-- Latest collected exact-head CI/Auth/Preview gate (pre-R2-F1 push) is
-  `feat/...@283cbbb` with CI run `38171090532` success, Auth job success,
+- Latest collected exact-head CI/Auth/Preview gate (pre-R3-F1 push) is
+  `feat/...@3365eb3` with CI run `38172983300` success, Auth job success,
   and Vercel Preview Ready.
