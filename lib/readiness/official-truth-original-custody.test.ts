@@ -18,6 +18,11 @@ import { officialTruthReviewIdentityV3 } from './official-truth-rule-review-fing
 import { rewriteIntegratedFixture } from '../../scripts/db/official-truth-integrated-pilot-1/integrated-proof'
 
 // Calendar-relative SYNTHETIC historical fixture, never live retrieval authority.
+// This custody proof retains the complete typed graph but uses explicitly synthetic
+// implementation capsules, bounding this fixture independently of compiler and
+// dependency growth. The integrated pilot's separate native proof still exercises
+// the full captured execution bytes. No original response,
+// support, review, dependency edge or validation step is removed here.
 // Recompute Evidence/review identities and every ancestor Pin using existing codecs.
 function currentSyntheticFixture(envelope: LocalIntegratedPilotEnvelope, origin: number) {
   type Value = Record<string, unknown>
@@ -26,6 +31,11 @@ function currentSyntheticFixture(envelope: LocalIntegratedPilotEnvelope, origin:
   const parse = (b: Uint8Array): Value => JSON.parse(Buffer.from(b).toString())
   const encode = (v: unknown) => Buffer.from(provenanceCanonical(v)!)
   const values = envelope.bundle.artifacts.map(a => parse(a.canonicalBytes)), identities = new Map<string, Value>(), replacements = new Map<string, string>()
+  for (const value of values) if (value.artifactType === 'implementation_bundle') {
+    value.content = { ...(value.content as Value), bundleBase64: encode({ schema: 'implementation-source-bundle-v1', files: [
+      { path: 'synthetic-custody-fixture.ts', utf8: '// Synthetic custody conformance capsule; no execution or source authority.\nexport const fixture = true;\n' },
+    ] }).toString('base64') }
+  }
   const collect = (value: unknown): void => {
     if (Array.isArray(value)) { value.forEach(collect); return }
     if (!value || typeof value !== 'object') return
@@ -86,6 +96,7 @@ const migrations = [
 const code = (expected: string) => (error: unknown) => error instanceof LocalPgError && error.code === expected
 
 test('M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16', { timeout: 240_000 }, async context => {
+  const started = performance.now()
   const primary = await runControlledSyntheticPilot('primary'), composed = await runControlledSyntheticPilot('composed')
   assert.equal(primary.status, 'synthetic_bundle_verified'); assert.equal(composed.status, 'synthetic_bundle_verified')
   if (primary.status !== 'synthetic_bundle_verified' || composed.status !== 'synthetic_bundle_verified') throw Error('fixture_required')
@@ -95,7 +106,35 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
   }
   const origin = Math.floor((Date.now() - 120_000) / 1000) * 1000
   const p = originals(currentSyntheticFixture(primary.envelope, origin)), c = originals(currentSyntheticFixture(composed.envelope, origin))
+  for (const [full, fixture] of [[primary.envelope, p.envelope], [composed.envelope, c.envelope]]) {
+    assert.deepEqual(fixture!.bundle.artifacts.map(a => [a.pin.id, a.artifactType]).sort(), full!.bundle.artifacts.map(a => [a.pin.id, a.artifactType]).sort())
+  }
+  context.diagnostic(JSON.stringify({ schema: 'custody-fixture-v1', authority: 'synthetic-historical-only', fixtures: [p, c].map(prepared => ({
+    artifacts: prepared.envelope.bundle.artifacts.length, artifactBytes: prepared.envelope.bundle.artifacts.reduce((n, a) => n + a.canonicalBytes.length, 0),
+    originals: prepared.bodies.length, originalBytes: prepared.bodies.map(b => b.length),
+  })) }))
   const cluster = startLocalProofCluster(), connections: LocalPgConnection[] = [], checks: string[] = []
+  // Test-local observations only. Fixed labels, numeric aggregates and SQLSTATEs;
+  // never SQL, parameters, source bytes, keys, hashes or connection identities.
+  const originalConnect = LocalPgConnection.connect
+  type Phase = 'publish' | 'bind' | 'current_read' | 'archive_read' | 'commit'
+  const phases = new Map<Phase, { calls: number; elapsedMs: number; maxMs: number; sqlStates: Set<string> }>()
+  LocalPgConnection.connect = async (...args: Parameters<typeof LocalPgConnection.connect>) => {
+    const connection = await originalConnect(...args), query = connection.query.bind(connection)
+    connection.query = async (sql, params) => {
+      const phase: Phase | undefined = sql.startsWith('SELECT official_provenance_api.publish_local_integrated_v2(') ? 'publish'
+        : sql.startsWith('SELECT official_original_api.bind_candidate(') ? 'bind'
+        : sql.includes('FROM official_original_api.read_candidate(') ? 'current_read'
+        : sql.includes('FROM official_provenance_api.read_local_integrated_v2(') ? 'archive_read' : sql === 'COMMIT' ? 'commit' : undefined
+      if (!phase) return query(sql, params)
+      const at = performance.now(), sample = phases.get(phase) ?? { calls: 0, elapsedMs: 0, maxMs: 0, sqlStates: new Set<string>() }
+      phases.set(phase, sample)
+      try { return await query(sql, params) }
+      catch (error) { if (error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code)) sample.sqlStates.add(error.code); throw error }
+      finally { const elapsed = Math.ceil(performance.now() - at); sample.calls++; sample.elapsedMs += elapsed; sample.maxMs = Math.max(sample.maxMs, elapsed) }
+    }
+    return connection
+  }
   const connect = async (role?: string) => { const connection = await LocalPgConnection.connect(cluster, role); connections.push(connection); return connection }
   const owner = await connect(), key = randomBytes(32).toString('hex')
   try {
@@ -121,17 +160,28 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       try { const result = await readCandidate(cluster, conn, fp, secret, at); await conn.query('COMMIT'); return result }
       catch (error) { await conn.query('ROLLBACK'); throw error }
     }
-    const check = async (name: string, run: () => Promise<void>) => {
+    // Independent test lifecycle authority renews only the externally held exact
+    // witness, between logical operations. Never re-bootstrap from a database
+    // cursor, refresh inside the producer/reader, or retry a rejected operation.
+    const checkpoint = async () => {
       await lifecycle.query('SELECT official_original_api.checkpoint($1::bigint,$2::text)', [pgText(witness.sequence, 20), pgText(witness.eventHash)])
-      await context.test(name, run); checks.push(name)
+    }
+    const check = async (name: string, run: () => Promise<void>) => {
+      await checkpoint(); phases.clear()
+      const at = performance.now()
+      try { await context.test(name, run); checks.push(name) }
+      finally { context.diagnostic(JSON.stringify({ schema: 'custody-phase-v1', stage: checks.length, atMs: Math.ceil(at - started), elapsedMs: Math.ceil(performance.now() - at),
+        phases: [...phases].map(([phase, sample]) => ({ phase, ...sample, sqlStates: [...sample.sqlStates].sort() })) })) }
     }
     await check('atomic failed producer rolls back all eight provenance and all eight vault relations', async () => {
       const before = await counts()
       await writer.query('BEGIN'); await publishIntegratedBundle(writer, oids, p.envelope)
       await assert.rejects(bindCandidate(writer, { ...p, bodies: [Buffer.from('forged synthetic body')] }, review, key, witness, 'create_or_verify'), code('23514'))
       await writer.query('ROLLBACK'); assert.deepEqual(await counts(), before)
+      await checkpoint()
       await assert.rejects(persistCandidate(cluster, oids, p, reviewC, key, witness), code('P0002'))
       assert.deepEqual(await counts(), before)
+      await checkpoint()
       await assert.rejects(persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing'), LocalPgError)
       assert.deepEqual(await counts(), before)
     })
@@ -174,6 +224,7 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       assert.equal((await read()).positiveVisaCells, 0)
       const bytes = await owner.query('SELECT encrypted_bytes::text FROM official_original_private.ciphertexts')
       assert.ok(!bytes[0]!.encrypted_bytes!.includes(Buffer.from(p.bodies[0]!).toString('hex')))
+      await checkpoint()
       const before = await counts(), retry = await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing')
       assert.ok(retry.ok); assert.equal(retry.outcome, 'idempotent'); assert.deepEqual(await counts(), before)
       await assert.rejects(read(undefined, reader, witness, '0'.repeat(64)), code('39000'))
@@ -203,6 +254,7 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       try { assert.deepEqual(await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing'), { ok: false, reason: 'commit_outcome_unknown' }) }
       finally { LocalPgConnection.connect = originalConnect }
       assert.deepEqual(await counts(), before)
+      await checkpoint()
       const resolved = await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing'); assert.ok(resolved.ok); assert.equal(resolved.outcome, 'idempotent')
     })
     await check('native quota backpressure enforces per-source/day, total items and total live bytes', async () => {
@@ -231,6 +283,24 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       await reader.query('BEGIN ISOLATION LEVEL REPEATABLE READ')
       await assert.rejects(readCandidate(cluster, reader, p.envelope.bundle.recordFingerprint, key, witness), code('25000')); await reader.query('ROLLBACK')
       await assert.rejects(read(undefined, reader, { sequence: '0', eventHash: '0'.repeat(64) }), code('55000'))
+      // Same intact history/bytes, matching witness, valid source and current
+      // isolation: advancing only checkpoint age must reject both write and read.
+      const before = await counts()
+      await owner.query('BEGIN')
+      try {
+        await owner.query("UPDATE official_original_private.head SET checked_at=clock_timestamp()-interval '61 seconds'")
+        const state = await owner.query("SELECT sequence=$1::bigint AND event_hash=$2::text AS witness_matches,checked_at<clock_timestamp()-interval '60 seconds' AS expired FROM official_original_private.head", [pgText(witness.sequence, 20), pgText(witness.eventHash)])
+        assert.deepEqual(Object.values(state[0]!), ['t', 't'])
+        await assert.rejects(owner.query('SELECT official_original_private.check_head($1::bigint,$2::text)', [pgText(witness.sequence, 20), pgText(witness.eventHash)]), code('55000'))
+      } finally { await owner.query('ROLLBACK') }
+      for (const operation of ['bind', 'read'] as const) {
+        await owner.query('BEGIN')
+        try {
+          await owner.query("UPDATE official_original_private.head SET checked_at=clock_timestamp()-interval '61 seconds'")
+          await assert.rejects(operation === 'bind' ? bindCandidate(owner, p, review, key, witness, 'verify_existing') : readCandidate(cluster, owner, p.envelope.bundle.recordFingerprint, key, witness), code('55000'))
+        } finally { await owner.query('ROLLBACK') }
+      }
+      assert.deepEqual(await counts(), before)
     })
     const corrupt = async (sql: string, expected: string) => {
       const before = await counts()
@@ -292,5 +362,5 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
     const legacy = await owner.query('SELECT (SELECT count(*) FROM private.official_evidence_versions)::text AS evidence,(SELECT count(*) FROM private.official_rule_claims)::text AS rules,(SELECT count(*) FROM private.official_source_fingerprint_protocols)::text AS profiles')
     assert.deepEqual(Object.values(legacy[0]!), ['0', '0', '0'])
     context.diagnostic(JSON.stringify({ schema: 'original-custody-m1-m4-local-v1', status: 'PASS', postgres: cluster.version, checks, positiveStructuralAcceptedRead: 'VERIFIED_SYNTHETIC_ONLY', productionAcceptedRead: 'NOT_AUTHORIZED', hostedWrites: 0, realOriginals: 0, positiveVisaCells: 0 }))
-  } finally { for (const connection of connections) connection.close(); cluster.stop() }
+  } finally { LocalPgConnection.connect = originalConnect; for (const connection of connections) connection.close(); cluster.stop() }
 })
