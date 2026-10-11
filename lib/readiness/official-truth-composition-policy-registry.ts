@@ -180,6 +180,7 @@ export type OfficialTruthCompositionProvenanceIdentity = {
 export type OfficialTruthCompositionRetrieval = ContentIdentityBinding & {
   readonly status: 'server_owned_official_retrieval'
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly sourceId: string
   readonly canonicalUrl: string
   readonly retrievedAt: string
@@ -196,6 +197,7 @@ export type OfficialTruthCompositionSupport = {
 }
 
 export type OfficialTruthCompositionProofSupport = ContentIdentityBinding & {
+  readonly sourceFingerprintProtocol?: 2
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -675,7 +677,7 @@ export function officialTruthCompositionPreHttpKey(policy: OfficialTruthComposit
 export function officialTruthCompositionPhaseA(input: {
   readonly factKind: RegelFaktArt
   readonly requirementType: OfficialRequirementType
-  readonly supports: readonly (ContentIdentityBinding & { readonly canonicalUrl: string })[]
+  readonly supports: readonly (ContentIdentityBinding & { readonly canonicalUrl: string; readonly sourceFingerprintProtocol?: 2 })[]
   readonly extractors: readonly OfficialTruthExtractorDefinition[]
   readonly policies: readonly OfficialTruthCompositionPolicy[]
 }): OfficialTruthCompositionPhaseAErgebnis {
@@ -1233,7 +1235,8 @@ export function officialTruthCompositionPhaseB(input: {
     if (stuetze.retrieval.canonicalUrl !== proof.canonicalUrl) {
       return freezeBlock('source_url_changed_since_evidence', freeze)
     }
-    if (stuetze.retrieval.sourceContentHash !== proof.sourceContentHash) {
+    if (stuetze.retrieval.sourceFingerprintProtocol !== proof.sourceFingerprintProtocol ||
+        stuetze.retrieval.sourceContentHash !== proof.sourceContentHash) {
       return freezeBlock('source_changed_since_evidence', freeze)
     }
   }
@@ -1255,7 +1258,8 @@ export function officialTruthCompositionPhaseB(input: {
     const stuetze = gelaufen.supports.find((eintrag) => eintrag.versionId === proof.versionId)
     if (!stuetze || !contentIdentityMatches(stuetze, proof) || stuetze.contentType !== proof.contentType) return freezeBlock('support_binding_mismatch', freeze)
     if (stuetze.canonicalUrl !== proof.canonicalUrl) return freezeBlock('source_url_changed_since_evidence', freeze)
-    if (stuetze.sourceContentHash !== proof.sourceContentHash) {
+    if (stuetze.sourceFingerprintProtocol !== proof.sourceFingerprintProtocol ||
+        stuetze.sourceContentHash !== proof.sourceContentHash) {
       return freezeBlock('source_changed_since_evidence', freeze)
     }
   }

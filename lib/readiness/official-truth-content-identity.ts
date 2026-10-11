@@ -396,6 +396,7 @@ export function contentEvidenceLookupV3(scope: unknown, representation: unknown)
 
 export type ContentEvidenceIdentity = ContentIdentityBinding & Readonly<{
   identitySchema: 2
+  sourceFingerprintProtocol?: 2
   lookupKey: string
   canonicalUrl: string
   contentType: string
@@ -407,6 +408,7 @@ export type ContentEvidenceIdentity = ContentIdentityBinding & Readonly<{
 const EVIDENCE_FIELDS = [...REPRESENTATION_FIELDS, 'contentItemVersion', 'representationVersion', 'identityProfileId',
   'identityProfileVersion', 'identitySchema', 'lookupKey', 'canonicalUrl', 'contentType', 'sourceContentHash',
   'retrievedAt', 'validFrom', 'validUntil'] as const
+const EVIDENCE_V2_FINGERPRINT_FIELDS = [...EVIDENCE_FIELDS, 'sourceFingerprintProtocol'] as const
 
 /** Calendar hardening for supplied timestamps only; no current-time authority. */
 function validTime(value: unknown, dateOnly: boolean): value is string {
@@ -423,9 +425,15 @@ function validTime(value: unknown, dateOnly: boolean): value is string {
 export function contentEvidenceVersionV2(value: unknown): Result<Readonly<{
   identity: ContentEvidenceIdentity; canonical: string; versionId: string
 }>> {
-  const row = record(value, EVIDENCE_FIELDS), ref = row && representationFrom(row)
+  const row = record(value, EVIDENCE_FIELDS) ?? record(value, EVIDENCE_V2_FINGERPRINT_FIELDS)
+  const ref = row && representationFrom(row)
+  const sourceFingerprintProtocol = row && Object.hasOwn(row, 'sourceFingerprintProtocol')
+    ? row.sourceFingerprintProtocol
+    : 1
   if (!row || !ref || row.identitySchema !== 2 || !version(row.contentItemVersion) || !version(row.representationVersion)
     || !id(row.identityProfileId) || !version(row.identityProfileVersion)
+    || (sourceFingerprintProtocol !== 1 && sourceFingerprintProtocol !== 2)
+    || (Object.hasOwn(row, 'sourceFingerprintProtocol') && sourceFingerprintProtocol !== 2)
     || typeof row.lookupKey !== 'string' || !/^evidence-key:v3:[a-f0-9]{64}$/.test(row.lookupKey)
     || !exactUrl(row.canonicalUrl) || !mediaType(row.contentType)
     || typeof row.sourceContentHash !== 'string' || !/^[a-f0-9]{64}$/.test(row.sourceContentHash)
@@ -440,6 +448,7 @@ export function contentEvidenceVersionV2(value: unknown): Result<Readonly<{
     identityProfileId: row.identityProfileId, identityProfileVersion: row.identityProfileVersion,
     lookupKey: row.lookupKey, canonicalUrl: row.canonicalUrl, contentType: row.contentType,
     sourceContentHash: row.sourceContentHash, retrievedAt: row.retrievedAt, validFrom: row.validFrom, validUntil: row.validUntil,
+    ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
   }
   const canonical = JSON.stringify(identity)
   return success({ identity, canonical, versionId: `ev2_${sha256Hex(canonical).slice(0, 32)}` })

@@ -112,6 +112,7 @@ export type OfficialTruthSameRequestExtractionSperrgrund =
 
 export type OfficialTruthSameRequestRetrievalProvenienz = ContentIdentityBinding & {
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly versionId: string
   readonly sourceId: string
   /** Tatsächlich abgerufene Initial-URL; historische Provenienz, keine Netzautorität. */
@@ -363,6 +364,7 @@ function compositionCapture(
 
 type SaubererAbruf = ContentIdentityBinding & {
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly status: 'server_owned_official_retrieval'
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -481,6 +483,9 @@ function abrufLesen(
   }
   if (satz.status !== 'server_owned_official_retrieval') return { ok: false, reason: 'http_failed' }
   if (typeof satz.requestUrl !== 'string') return { ok: false, reason: 'invalid_source_snapshot' }
+  if (Object.hasOwn(satz, 'sourceFingerprintProtocol') && satz.sourceFingerprintProtocol !== 2) {
+    return { ok: false, reason: 'invalid_source_snapshot' }
+  }
   if (typeof satz.sourceId !== 'string' || typeof satz.canonicalUrl !== 'string' || typeof satz.sourceContentHash !== 'string') {
     return { ok: false, reason: 'invalid_source_snapshot' }
   }
@@ -505,6 +510,7 @@ function abrufLesen(
     abruf: {
       ...contentIdentityBinding(satz as unknown as ContentIdentityBinding),
       identitySchema: 2,
+      ...(satz.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
       status: 'server_owned_official_retrieval',
       sourceId: satz.sourceId,
       canonicalUrl: satz.canonicalUrl,
@@ -565,6 +571,7 @@ function evidenceBindet(beweis: Beweis, support: OfficialTruthServerHeldSameRequ
   if (!contentIdentityMatches(gelesen, support) || gelesen.contentType !== support.contentType) return false
   if (gelesen.versionId !== support.versionId || gelesen.sourceId !== support.sourceId) return false
   if (gelesen.canonicalUrl !== support.canonicalUrl || gelesen.sourceContentHash !== support.sourceContentHash) return false
+  if (gelesen.sourceFingerprintProtocol !== support.sourceFingerprintProtocol) return false
   if (gelesen.scope.sourceId !== support.sourceId) return false
   const zelle = regelScopeAusEvidenceScope(gelesen.scope)
   if (!zelle.ok || zelle.key !== beweis.ruleScopeKey) return false
@@ -606,6 +613,7 @@ function material(
       retrievedAt: fund.abruf.retrievedAt,
       contentType: fund.abruf.contentType,
       sourceContentHash: fund.abruf.sourceContentHash,
+      ...(fund.abruf.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
     })
   }
   const result = tiefEinfrieren(
@@ -704,7 +712,11 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     const input: PhaseAInput = tiefEinfrieren({
       factKind: fest.factKind,
       requirementType: zelle.scope.requirementType,
-      supports: fest.supports.map((support) => ({ ...contentIdentityBinding(support), canonicalUrl: support.canonicalUrl })),
+      supports: fest.supports.map((support) => ({
+        ...contentIdentityBinding(support),
+        canonicalUrl: support.canonicalUrl,
+        ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+      })),
       extractors: register.extractors,
       policies: register.policies,
     })
@@ -727,6 +739,7 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
           contentType: support.contentType,
           retrievedAt: support.retrievedAt,
           sourceContentHash: support.sourceContentHash,
+          ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
           validFrom: support.validFrom,
           validUntil: support.validUntil,
         })),
@@ -761,6 +774,9 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     if (!contentIdentityMatches(gelesen.abruf, support) || gelesen.abruf.contentType !== support.contentType) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.sourceId !== support.sourceId) return blockiert('support_binding_mismatch')
     if (gelesen.abruf.canonicalUrl !== support.canonicalUrl) return blockiert('source_url_changed_since_evidence')
+    if (gelesen.abruf.sourceFingerprintProtocol !== support.sourceFingerprintProtocol) {
+      return blockiert('source_changed_since_evidence')
+    }
     if (gelesen.abruf.sourceContentHash !== support.sourceContentHash) return blockiert('source_changed_since_evidence')
     if (!evidenceBindet(fest, support)) return blockiert('support_binding_mismatch')
     gebunden.push({ versionId: support.versionId, sourceId: support.sourceId, requestUrl: gelesen.requestUrl, abruf: gelesen.abruf })
@@ -780,6 +796,7 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
         versionId: support.versionId,
         sourceId: support.sourceId,
         canonicalUrl: support.canonicalUrl,
+        ...(support.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
         sourceContentHash: support.sourceContentHash,
       })),
       acceptedVersionIds: fest.supportVersionIds,
@@ -798,6 +815,7 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
       canonicalUrl: entry.abruf.canonicalUrl,
       retrievedAt: entry.abruf.retrievedAt,
       contentType: entry.abruf.contentType,
+      ...(entry.abruf.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
       sourceContentHash: entry.abruf.sourceContentHash,
     })))
     return result

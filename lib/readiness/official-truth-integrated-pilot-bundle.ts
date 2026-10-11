@@ -75,10 +75,14 @@ const scope = z.unknown().refine(value => { const r = regelScopeAusEvidenceScope
 const evidenceScope = z.unknown().refine(value => { const r = evidenceScopeLesen(value); return r.ok && historicalValuesEqual(value, r.scope) })
 const binding = z.unknown().refine(value => { const r = readContentIdentityBinding(value); return r.ok && historicalValuesEqual(value, r.value) })
 const identity = z.unknown().refine(value => {
-  const row = ownRecord(value, ['sourceId', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false
+  const legacyFields = ['sourceId', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
     'identityProfileId', 'identityProfileVersion', 'identitySchema', 'lookupKey', 'canonicalUrl', 'contentType', 'sourceContentHash',
-    'retrievedAt', 'validFrom', 'validUntil', 'versionId'])
+    'retrievedAt', 'validFrom', 'validUntil', 'versionId']
+  const row = ownRecord(value, Object.hasOwn(value as object, 'sourceFingerprintProtocol')
+    ? [...legacyFields, 'sourceFingerprintProtocol'] : legacyFields)
   if (!row) return false
+  if (Object.hasOwn(row, 'sourceFingerprintProtocol') && row.sourceFingerprintProtocol !== 2) return false
   const { versionId: expected, ...preimage } = row
   const read = contentEvidenceVersionV2(preimage)
   return read.ok && read.value.versionId === expected && historicalValuesEqual(read.value.identity, preimage)
@@ -96,6 +100,7 @@ const assignment = z.object({ target, contentItemRefs: refs,
 }).strict()
 const support = z.object({ versionId, identitySchema: z.literal(2), binding, canonicalFinalUrl: z.string(),
   contentType: z.string(), sourceContentHash: z.string(), acceptedRetrievedAt: stamp, validFrom: dateBound, validUntil: dateBound,
+  sourceFingerprintProtocol: z.literal(2).optional(),
   freshRetrieval: z.object({ requestUrl: z.string(), completedAt: stamp }).strict(),
 }).strict()
 const payloadSchema = z.object({
@@ -587,7 +592,9 @@ function semanticBundle(
         contentItemId: bound.value.contentItemId, representationId: bound.value.representationId })
       if (!lookup.ok || !historicalValuesEqual(identityValue, { ...bound.value, identitySchema: 2, lookupKey: lookup.key,
         canonicalUrl: observed.canonicalFinalUrl, contentType: observed.contentType, sourceContentHash: observed.sourceContentHash,
-        retrievedAt: observed.completedAt, validFrom: valid.validFrom, validUntil: valid.validUntil, versionId: identityValue.versionId })) return false
+        retrievedAt: observed.completedAt, validFrom: valid.validFrom, validUntil: valid.validUntil,
+        ...(identityValue.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 } : {}),
+        versionId: identityValue.versionId })) return false
     }
     if (artifact.artifactType === 'AcceptedEvidenceCustodyV1') {
       const c = custody(artifact.pin, 'AcceptedEvidenceCustodyV1')!
@@ -718,7 +725,9 @@ function semanticBundle(
     if (!lookup.ok) return false
     const identityValue = { ...b.value, identitySchema: 2, lookupKey: lookup.key, canonicalUrl: s.canonicalFinalUrl,
       contentType: s.contentType, sourceContentHash: s.sourceContentHash, retrievedAt: s.acceptedRetrievedAt,
-      validFrom: s.validFrom, validUntil: s.validUntil, versionId: s.versionId }
+      validFrom: s.validFrom, validUntil: s.validUntil,
+      ...(s.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+      versionId: s.versionId }
     if (!historicalValuesEqual(identityValue, c.evidenceIdentity)
       || !historicalValuesEqual(c.evidenceScope, { ...cell.value.scope, sourceId: b.value.sourceId })
       || !readSupportReceipt(s, identityValue, p.proof.serverReferenceTime).ok) return false

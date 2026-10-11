@@ -7,6 +7,8 @@
 
 import { sha256Hex } from '@/lib/readiness/digest'
 import { contentEvidenceLookupV3, contentEvidenceVersionV2, contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentEvidenceIdentity, type RepresentationRef } from '@/lib/readiness/official-truth-content-identity'
+import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -68,8 +70,8 @@ const ENTSCHEIDUNGS_FELDER = [
   'visaMode',
 ] as const
 
-const FINGERPRINT_OVERRIDE = ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash'] as const
-const PROVENIENZ_OVERRIDE = ['canonicalUrl', 'retrievedAt', 'identitySchema', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion', 'identityProfileId', 'identityProfileVersion', 'contentType'] as const
+const FINGERPRINT_OVERRIDE = ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash', 'sourceFingerprintProtocol'] as const
+const PROVENIENZ_OVERRIDE = ['canonicalUrl', 'retrievedAt', 'identitySchema', 'sourceFingerprintProtocol', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion', 'identityProfileId', 'identityProfileVersion', 'contentType'] as const
 
 /**
  * Retrieval-Hülle. Sie wird nicht vom Modell gebaut.
@@ -153,6 +155,11 @@ export type EvidenceVersion = ContentEvidenceIdentity & {
   extractionNote: string | null
 }
 
+function evidenceSourceFingerprintProtocol(value: { sourceFingerprintProtocol?: unknown }): 1 | 2 | null {
+  if (!Object.hasOwn(value, 'sourceFingerprintProtocol')) return 1
+  return value.sourceFingerprintProtocol === 2 ? 2 : null
+}
+
 export type EvidenceSuchschluessel =
   | { ok: true; key: string; canonical: string; scope: EvidenceScope }
   | { ok: false; reason: EvidenceRahmenFehler; fields?: readonly string[] }
@@ -198,7 +205,7 @@ export type EvidenceKonflikt =
       situation: 'conflict_preserved' | 'unchanged_content'
       ruleChange: 'not_asserted'
     }
-  | { ok: false; reason: 'not_accepted_baseline' | 'different_lookup_key' | 'lookup_key_mismatch' }
+  | { ok: false; reason: 'not_accepted_baseline' | 'different_lookup_key' | 'lookup_key_mismatch' | 'fingerprint_protocol_mismatch' }
 
 /**
  * Späterer Persistenz-Port. Dieser Slice hat keine Implementierung,
@@ -618,7 +625,8 @@ function versionIdFuer(value: ContentEvidenceIdentity): string | null {
   const built = contentEvidenceVersionV2({ ...contentIdentityBinding(value), identitySchema: value.identitySchema,
     lookupKey: value.lookupKey, canonicalUrl: value.canonicalUrl, contentType: value.contentType,
     sourceContentHash: value.sourceContentHash, retrievedAt: value.retrievedAt,
-    validFrom: value.validFrom, validUntil: value.validUntil })
+    validFrom: value.validFrom, validUntil: value.validUntil,
+    ...(value.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}) })
   return built.ok && built.value.versionId.startsWith(VERSION_PREFIX) ? built.value.versionId : null
 }
 
@@ -626,6 +634,8 @@ function identitaetPasst(value: EvidenceVersion, registry: QuellenRegistry): boo
   const rep = contentRepresentationFromRegistry(registry, value.canonicalUrl)
   return rep.ok && value.identitySchema === 2 && contentIdentityMatches(value, rep.value)
     && value.canonicalUrl === rep.value.expectedFinalUrl && value.contentType === rep.value.expectedMediaType
+    && (value.sourceFingerprintProtocol !== 2
+      || officialTruthChDeSourceFingerprintV2Allowed(registry, value, value.canonicalUrl, value.contentType))
     && versionIdFuer(value) === value.versionId
 }
 
@@ -658,8 +668,7 @@ export function evidenceKandidatAusModell(
   if (override.length > 0) return { ok: false, reason: 'source_fingerprint_override_forbidden', fields: override }
   const hülle = material && typeof material === 'object' && !Array.isArray(material) ? material : null
   const snapshot = hülle ? hülle.sourceSnapshot : null
-  const sourceContentHash = typeof snapshot === 'string' ? evidenceQuellenFingerprint(snapshot) : null
-  if (!sourceContentHash || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
+  if (typeof snapshot !== 'string' || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
   const satz = datensatz(modell)
   if (!satz) return { ok: false, reason: 'invalid_context' }
   const url = quellenUrlAufloesen(registry, hülle.canonicalUrl)
@@ -668,6 +677,18 @@ export function evidenceKandidatAusModell(
   if (!representation.ok || hülle.canonicalUrl !== representation.value.expectedFinalUrl
     || hülle.contentType !== representation.value.expectedMediaType) return { ok: false, reason: 'content_identity_mismatch' }
   const identity = contentIdentityBinding(representation.value)
+  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(snapshot)
+  if (!sourceFingerprintProtocol) return { ok: false, reason: 'invalid_source_snapshot' }
+  const sourceContentHash = sourceFingerprintProtocol === 2
+    ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, hülle.contentType)
+      ? officialTruthSourceFingerprintV2(snapshot, {
+        ...identity,
+        canonicalUrl: url.canonicalUrl,
+        contentType: hülle.contentType,
+      })
+      : null
+    : evidenceQuellenFingerprint(snapshot)
+  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
   const schluessel = evidenceSuchschluessel(satz.scope ?? satz, { sourceId: identity.sourceId,
     contentItemId: identity.contentItemId, representationId: identity.representationId })
   if (!schluessel.ok) return schluessel
@@ -686,7 +707,8 @@ export function evidenceKandidatAusModell(
   }
   const observation: ContentEvidenceIdentity = { ...identity, identitySchema: 2, lookupKey: schluessel.key,
     canonicalUrl: url.canonicalUrl, contentType: hülle.contentType, sourceContentHash, retrievedAt,
-    validFrom: fenster.validFrom, validUntil: fenster.validUntil }
+    validFrom: fenster.validFrom, validUntil: fenster.validUntil,
+    ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}) }
   const versionId = versionIdFuer(observation)
   if (!versionId) return { ok: false, reason: 'content_identity_mismatch' }
   const evidence: EvidenceVersion = {
@@ -768,12 +790,17 @@ export function akzeptierteEvidenceLesen(version: EvidenceVersion, registry: Que
 }
 
 export function evidenceVersionenVergleichen(
-  vorher: { sourceContentHash: unknown },
-  nachher: { sourceContentHash: unknown },
+  vorher: { sourceContentHash: unknown; sourceFingerprintProtocol?: unknown },
+  nachher: { sourceContentHash: unknown; sourceFingerprintProtocol?: unknown },
 ): EvidenceVersionsVergleich {
   const links = hashLesen(vorher.sourceContentHash)
   const rechts = hashLesen(nachher.sourceContentHash)
-  if (!links || !rechts) return { ok: false, reason: 'invalid_hash' }
+  const vorherProtocol = evidenceSourceFingerprintProtocol(vorher)
+  const nachherProtocol = evidenceSourceFingerprintProtocol(nachher)
+  if (!links || !rechts || (vorherProtocol !== 1 && vorherProtocol !== 2)
+    || (nachherProtocol !== 1 && nachherProtocol !== 2) || vorherProtocol !== nachherProtocol) {
+    return { ok: false, reason: 'invalid_hash' }
+  }
   const contentChanged = links !== rechts
   return {
     ok: true,
@@ -797,6 +824,11 @@ export function evidenceKonfliktHalten(bestehend: EvidenceVersion, eingehend: Ev
   if (basis.key !== neu.key) return { ok: false, reason: 'different_lookup_key' }
   if (bestehend.lifecycle !== 'accepted' || bestehend.validationState !== 'valid') {
     return { ok: false, reason: 'not_accepted_baseline' }
+  }
+  const baseProtocol = evidenceSourceFingerprintProtocol(bestehend)
+  const incomingProtocol = evidenceSourceFingerprintProtocol(eingehend)
+  if (baseProtocol === null || incomingProtocol === null || baseProtocol !== incomingProtocol) {
+    return { ok: false, reason: 'fingerprint_protocol_mismatch' }
   }
   return {
     ok: true,

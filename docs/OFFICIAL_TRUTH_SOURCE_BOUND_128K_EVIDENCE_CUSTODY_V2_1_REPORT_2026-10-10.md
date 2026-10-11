@@ -1,0 +1,16 @@
+# Official Truth source-bound 128KiB Evidence/custody V2.1 — REPORT
+
+**Disposition: PARTIAL — STOP FOR TL R3.** The immutable task is not declared complete. Results below were validated at implementation HEAD `8731807082298554a33da845dd765e78c644f2ed` (tree `29b2ee86a7eb89c572ac8b522aaad5020061535d`). A documentation snapshot was pushed at `5f83574ca7e78ce634c4de58238f581b967763ba` (tree `3d79ddcc5f382a5a85f7cadc05bdf8b54e51526f`); this current report-only delta requires fresh remote gates.
+
+## R1 finding dispositions
+
+- **P1-F1:** Changed selection to count UTF-8 bytes separately from UTF-16 units, verify the transport byte count against strict-decoded text at the private retrieval boundary, and refuse excess/mismatched input. Synthetic boundary tests cover 80,000 UTF-8 bytes / 40,000 UTF-16 units, 65,536, 131,071, 131,072, 131,073, and byte-count mismatch. Bern/AA remain unqualified; a positive authorized Bern path is intentionally unavailable.
+- **P1-F2:** Accepted Evidence now uses an exact legacy field set or an exact V2 set containing only protocol 2; candidate and accepted discriminators must match. No positive live-source acceptance is claimed.
+- **P1-F3:** Integrated-pilot historical identity parsing now preserves the optional V2 discriminator and rejects unsupported values while retaining the old V1 shape. V2 legal/source provenance remains dormant; complete end-to-end V2 acceptance/replay is not asserted.
+- **R2 V1/V2:** Reproduced a stressed concurrent custody run where an RPC exceeded the fixed 25s statement timeout after expensive retained validation under the global advisory lock. Changed retry comparison to one exact set-based comparison and removed the duplicate post-insert retained verification; receipt constraints still execute `verify_retained_v2` before successful insertion return. No lock/deadline was raised.
+- **P2-F4 / R2 V1:** Targeted native PG16.15 proof passed, including two additional repeated genuine identical retry races, exact `inserted`/`idempotent` outcomes, unchanged eight-table counts, incomplete receipt trigger refusal/rollback, and existing missing/altered artifact/edge/blob/name/corruption/conflict regressions. Complete `npm test`: **6,275/6,275; 819 suites; 0 failed, skipped, cancelled, TODO** (864,976 ms). Typecheck and production build passed. ESLint: 0 errors / 144 warnings. Setup/API/schema/dead/export/dependency/diff checks passed. Operating-mode guard was attempted but blocked by missing local `main` ref. Exact-head Actions run `38097157157` was `action_required`, zero jobs; Vercel was pending/deploying for the documentation snapshot and Auth was not verified.
+- **P2-F5:** The required six task reports and sanitized synthetic manifest are supplied in this document set.
+
+## Safety
+
+No hosted Dev/Production SQL or data operation, no source registration, no approved profile, no legal fact/Rule promotion, no F8, no public indexing, no change to #913, and no new service or recurring cost. `npm ci` reported 19 dependency audit advisories (2 moderate, 17 high); no dependency changes were made and these were not triaged in this correction. The migration remains repository-only/unapplied. Current remote CI/Auth/Preview evidence is not a pass; do not Ready or merge.

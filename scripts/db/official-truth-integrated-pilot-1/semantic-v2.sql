@@ -580,10 +580,15 @@ BEGIN
   IF NOT FOUND THEN RAISE EXCEPTION 'existing_integrity_failure'; END IF;
   IF blob<>binding_bytes THEN RAISE EXCEPTION 'conflicting_identity'; END IF;
   PERFORM official_provenance_private.verify_retained_v2(fingerprint);
-  FOREACH a IN ARRAY submitted LOOP
-   SELECT r.artifact_id,r.artifact_version,r.digest,r.artifact_type,r.byte_contract_family,r.artifact_contract_version,b.canonical_bytes INTO existing FROM official_provenance_private.artifacts r JOIN official_provenance_private.artifact_blobs b USING(digest) WHERE (r.artifact_id,r.artifact_version)=(a.artifact_id,a.artifact_version);
-   IF existing IS DISTINCT FROM a THEN RAISE EXCEPTION 'conflicting_identity'; END IF;
-  END LOOP;
+  IF EXISTS(
+   SELECT 1 FROM pg_catalog.unnest(submitted) x
+   LEFT JOIN official_provenance_private.artifacts r ON (r.artifact_id,r.artifact_version)=(x.artifact_id,x.artifact_version)
+   LEFT JOIN official_provenance_private.artifact_blobs b ON b.digest=r.digest
+   WHERE r.artifact_id IS NULL OR r.artifact_id IS DISTINCT FROM x.artifact_id OR r.artifact_version IS DISTINCT FROM x.artifact_version
+    OR r.digest IS DISTINCT FROM x.digest OR r.artifact_type IS DISTINCT FROM x.artifact_type
+    OR r.byte_contract_family IS DISTINCT FROM x.byte_contract_family OR r.artifact_contract_version IS DISTINCT FROM x.artifact_contract_version
+    OR b.canonical_bytes IS DISTINCT FROM x.canonical_bytes
+  ) THEN RAISE EXCEPTION 'conflicting_identity'; END IF;
   RETURN 'idempotent';
  END IF;
  IF mode='verify_existing' THEN RAISE EXCEPTION 'existing_receipt_absent'; END IF;
@@ -623,7 +628,6 @@ BEGIN
  INSERT INTO official_provenance_private.custody_bindings VALUES(fingerprint,digest_value,1);
  FOR root IN SELECT * FROM official_provenance_private.binding_roots(binding,fingerprint) ORDER BY slot LOOP INSERT INTO official_provenance_private.custody_dependencies VALUES(fingerprint,root.slot,root.pin->>'id',(root.pin->>'version')::bigint,root.pin->>'digest'); END LOOP;
  SET CONSTRAINTS official_provenance_private.receipt_complete,official_provenance_private.binding_complete,official_provenance_private.receipt_links_complete,official_provenance_private.custody_links_complete IMMEDIATE;
- PERFORM official_provenance_private.verify_retained_v2(fingerprint);
  RETURN 'inserted';
 END $$;
 ALTER FUNCTION official_provenance_api.publish_local_integrated_v2(text,smallint,text,text,bytea,bytea,official_provenance_api.artifact_input_v1[]) OWNER TO ot_provenance_write_exec;

@@ -9,7 +9,13 @@
 // Der Inhaltsfingerprint kommt nur aus dem bestehenden Quellenfingerprint.
 
 import { evidenceQuellenFingerprint, type EvidenceQuellenmaterial } from '@/lib/readiness/evidence'
-import { contentIdentityBinding, contentRepresentationFromRegistry, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import {
+  contentIdentityBinding,
+  contentRepresentationFromRegistry,
+  type ContentIdentityBinding,
+} from '@/lib/readiness/official-truth-content-identity'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { officialTruthRechercheQuellenRouten } from '@/lib/readiness/official-truth-research-source-routing'
 import { quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
@@ -113,6 +119,7 @@ export type OfficialTruthAbgerufenBeleg = ContentIdentityBinding & {
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
+  readonly sourceFingerprintProtocol?: 2
   readonly material: EvidenceQuellenmaterial
 }
 
@@ -288,13 +295,23 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
   if (Date.parse(retrievedAt) > uhrMs) return sperre('retrieved_at_in_future')
 
   if (typeof material.sourceSnapshot !== 'string') return sperre('invalid_source_snapshot')
-  const sourceContentHash = evidenceQuellenFingerprint(material.sourceSnapshot)
-  if (!sourceContentHash) return sperre('invalid_source_snapshot')
 
   const representation = contentRepresentationFromRegistry(registry, url.canonicalUrl)
   if (!representation.ok || url.canonicalUrl !== representation.value.expectedFinalUrl
     || material.contentType !== representation.value.expectedMediaType) return sperre('content_identity_mismatch')
   const identity = contentIdentityBinding(representation.value)
+  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
+  if (!sourceFingerprintProtocol) return sperre('invalid_source_snapshot')
+  const sourceContentHash = sourceFingerprintProtocol === 2
+    ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
+      ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {
+        ...identity,
+        canonicalUrl: url.canonicalUrl,
+        contentType: material.contentType,
+      })
+      : null
+    : evidenceQuellenFingerprint(material.sourceSnapshot)
+  if (!sourceContentHash) return sperre('invalid_source_snapshot')
   const belegMaterial: EvidenceQuellenmaterial = Object.freeze({
     contentType: representation.value.expectedMediaType,
     canonicalUrl: url.canonicalUrl,
@@ -312,6 +329,7 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
     sourceContentHash,
+    ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
     material: belegMaterial,
   })
 }

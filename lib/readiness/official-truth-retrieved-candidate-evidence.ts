@@ -180,6 +180,7 @@ function kandidatPasst(evidence: EvidenceVersion, beleg: OfficialTruthAbgerufenB
     evidence.sourceId === beleg.sourceId &&
     evidence.canonicalUrl === beleg.canonicalUrl &&
     evidence.retrievedAt === beleg.retrievedAt &&
+    evidence.sourceFingerprintProtocol === beleg.sourceFingerprintProtocol &&
     evidence.sourceContentHash === beleg.sourceContentHash
   )
 }

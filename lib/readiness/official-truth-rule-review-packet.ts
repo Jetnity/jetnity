@@ -85,6 +85,7 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
  */
 export type OfficialTruthRegelReviewSupport = ContentIdentityBinding & {
   readonly identitySchema: 2
+  readonly sourceFingerprintProtocol?: 2
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -182,6 +183,7 @@ function stuetzEintrag(belegt: Belegt): OfficialTruthRegelReviewSupport {
   return Object.freeze({
     ...contentIdentityBinding(belegt.evidence),
     identitySchema: 2,
+    ...(belegt.evidence.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
     contentType: belegt.evidence.contentType,
     versionId: belegt.evidence.versionId,
     sourceId: belegt.evidence.sourceId,
@@ -216,6 +218,7 @@ function buendelLesen(wert: unknown): { ok: true; belegt: Belegt; registry: stri
     beleg.ruleScopeKey !== zelle.key ||
     beleg.canonicalUrl !== evidence.canonicalUrl ||
     beleg.retrievedAt !== evidence.retrievedAt ||
+    beleg.sourceFingerprintProtocol !== evidence.sourceFingerprintProtocol ||
     beleg.sourceContentHash !== evidence.sourceContentHash
   ) {
     return { ok: false, reason: 'invalid_context' }
