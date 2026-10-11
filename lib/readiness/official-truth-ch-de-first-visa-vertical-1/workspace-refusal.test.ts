@@ -132,7 +132,12 @@ test('native PG16 proves why accepted-store rows cannot be projected through a b
   assert.equal(proof.status, 'REFUSAL_VERIFIED')
   assert.equal(proof.positiveAcceptedRead, 'NOT_VERIFIED')
   assert.equal(proof.positiveVisaCells, 0)
-  assert.equal(proof.checks.length, 5)
+  assert.equal(proof.checks.length, 9)
+  assert.equal(proof.migrationCount, 7)
+  assert.equal(proof.positiveStructuralAcceptedRead, 'NOT_VERIFIED')
+  assert.equal(proof.reason, 'retained_accepted_custody_contract_missing')
+  assert.deepEqual(proof.missingDependencies, ['M1_retained_original_material', 'M2_durable_custody_binding',
+    'M3_accepted_review_history', 'M4_current_revocation_history'])
   const result = await chDeWorkspaceRefusal(trip(), { ...request, acceptedStoreProof: proof })
   assert.equal(result.read.reason, 'unsupported_read_request')
   assert.ok(result.evaluations.every(e => e.result === 'unknown'))

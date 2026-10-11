@@ -18,8 +18,9 @@ const GATES = Object.freeze([
  * No transport, environment, profile, Evidence or Rule injection exists.
  * Passing representable scope checks is NOT acceptance: the current SQL store
  * cannot serve full retained custody/review/current-revocation proof, and Trip
- * cannot encode ordinary subtype/purpose. Adding an RPC or widening that scope
- * requires TL arbitration. Keep the provider null, even with configured secrets.
+ * cannot encode ordinary subtype/purpose. G2 permits a bounded read-only SQL
+ * artifact, but cannot reconstruct absent durable body/review/revocation data.
+ * That retention/acceptance contract remains gated. Keep the provider null.
  */
 export function chDeVisaReadBoundary() {
   return Object.freeze({
