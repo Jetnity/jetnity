@@ -134,10 +134,10 @@ test('131073 streamed bytes with unprovided length cancel on overrun and never p
 })
 
 test('declared length shorter and longer than actual are refused fail-closed', async () => {
-  const short = await run({ declared: 3, body: Buffer.from('synthetic') })
+  const short = await run({ declared: 3, body: new TextEncoder().encode('synthetic') })
   blocked(short.report, 'response_too_large')
   assert.ok(short.cancels > 0)
-  const long = await run({ declared: 15, body: Buffer.from('synthetic') })
+  const long = await run({ declared: 15, body: new TextEncoder().encode('synthetic') })
   blocked(long.report, 'content_length_mismatch')
 })
 
@@ -151,7 +151,7 @@ test('missing Content-Length requires complete verified native framing', async (
 })
 
 test('incomplete HTTP framing fails even if declared byte length matches', async () => {
-  const fail = await run({ declared: 8, body: Buffer.from('complete'), framingComplete: false })
+  const fail = await run({ declared: 8, body: new TextEncoder().encode('complete'), framingComplete: false })
   blocked(fail.report, 'framing_unverified')
 })
 
