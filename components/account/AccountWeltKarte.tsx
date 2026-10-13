@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { ArrowUpRight, MapPin, MapPinOff } from 'lucide-react'
 import { useCallback, useId, useMemo, useState } from 'react'
+import WorldExplorer from '@/components/account/world-explorer-1/WorldExplorer'
 
 import {
   WeltFuellungen,
@@ -404,7 +405,20 @@ function AtlasLegende({ kompakt = false }: { kompakt?: boolean }) {
   )
 }
 
-export default function AccountWeltKarte({
+export default function AccountWeltKarte(props: {
+  welt: WorldMapAbleitung
+  besucht: WeltBesuchtAnsicht
+  laender: WeltLaenderAbleitung
+  aktion?: { href: Route; text: string } | null
+  darstellung?: 'atlas' | 'uebersicht'
+}) {
+  return props.darstellung === 'uebersicht'
+    ? <BestehendeWeltKarte {...props} />
+    : <WorldExplorer welt={props.welt} besucht={props.besucht} laender={props.laender} aktion={props.aktion} />
+}
+
+/** Existing compact experience is kept independent of explorer state and controls. */
+function BestehendeWeltKarte({
   welt,
   besucht,
   laender,

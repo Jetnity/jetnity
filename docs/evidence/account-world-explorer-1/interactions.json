@@ -1,0 +1,62 @@
+{
+  "environment": "local existing /ui-audit/account; synthetic fixtures; Chromium desktop/touch emulation, not real devices",
+  "checks": [
+    {
+      "name": "viewport-360",
+      "detail": "search/diacritics/counts, repeated visits/partial dates, distinct trip IDs, all filters/both-state/totals, no-match/clear, no-country/no-coordinate, focus/close, keyboard scope, 1–4x/reset, SVG+HTML alignment, resize, drag/cancel, groups, 44px targets, no overflow/page errors"
+    },
+    {
+      "name": "viewport-390",
+      "detail": "search/diacritics/counts, repeated visits/partial dates, distinct trip IDs, all filters/both-state/totals, no-match/clear, no-country/no-coordinate, focus/close, keyboard scope, 1–4x/reset, SVG+HTML alignment, resize, drag/cancel, groups, 44px targets, no overflow/page errors"
+    },
+    {
+      "name": "viewport-768",
+      "detail": "search/diacritics/counts, repeated visits/partial dates, distinct trip IDs, all filters/both-state/totals, no-match/clear, no-country/no-coordinate, focus/close, keyboard scope, 1–4x/reset, SVG+HTML alignment, resize, drag/cancel, groups, 44px targets, no overflow/page errors"
+    },
+    {
+      "name": "viewport-1280",
+      "detail": "search/diacritics/counts, repeated visits/partial dates, distinct trip IDs, all filters/both-state/totals, no-match/clear, no-country/no-coordinate, focus/close, keyboard scope, 1–4x/reset, SVG+HTML alignment, resize, drag/cancel, groups, 44px targets, no overflow/page errors"
+    },
+    {
+      "name": "viewport-1440",
+      "detail": "search/diacritics/counts, repeated visits/partial dates, distinct trip IDs, all filters/both-state/totals, no-match/clear, no-country/no-coordinate, focus/close, keyboard scope, 1–4x/reset, SVG+HTML alignment, resize, drag/cancel, groups, 44px targets, no overflow/page errors"
+    },
+    {
+      "name": "touch-scroll",
+      "detail": "Chromium touch dispatch over map scrolls page in default mode"
+    },
+    {
+      "name": "touch-map-pan",
+      "detail": "Explicit movement mode pans; mode can be ended by touch"
+    },
+    {
+      "name": "besuch-fehler",
+      "detail": "Empty/intersection state is honest; independent load-error text retained"
+    },
+    {
+      "name": "fehler",
+      "detail": "Empty/intersection state is honest; independent load-error text retained"
+    },
+    {
+      "name": "leer",
+      "detail": "Empty/intersection state is honest; independent load-error text retained"
+    },
+    {
+      "name": "progressive-disclosure",
+      "detail": "24 of 47 initially, all 47 reachable, total never truncated"
+    },
+    {
+      "name": "compact-overview",
+      "detail": "Existing markers and world link remain, full explorer controls absent"
+    },
+    {
+      "name": "trip-link-navigation",
+      "detail": "Click reaches exact stored fixture-ID /reisen path in existing application; authenticated trip content not verified"
+    },
+    {
+      "name": "actual-account-page",
+      "detail": "Unauthenticated /account/welt redirects to login; no authenticated account session used"
+    }
+  ],
+  "errors": []
+}

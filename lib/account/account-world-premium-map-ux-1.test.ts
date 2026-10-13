@@ -73,6 +73,8 @@ test('Projektion, Trefferflächen und lokale Karte bleiben unverändert im Vertr
   assert.match(karte, /viewBox=\{ansicht\.viewBox\}/)
   assert.equal(karte.includes('WORLD_MAP_LAND_PFADE.map('), false)
   assert.match(karte, /data-world-map-search="nein"/)
+  assert.match(karte, /<WorldExplorer welt=\{props\.welt\}/)
+  assert.match(quelle('../../components/account/world-explorer-1/WorldExplorer.tsx'), /data-world-map-search="ja"/)
   assert.match(karte, /motion-reduce:transition-none/)
   assert.match(karte, /<WeltPunktMarken/)
   const punkte = karte.indexOf('<WeltPunktMarken')

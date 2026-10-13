@@ -1,0 +1,189 @@
+{
+  "environment": "Own isolated checkout; Node 22.23.3/npm 10.9.9; localhost3497; unchanged package lock. Local source worktree before delivery commit; exact remote delivery envelope in PR941 author comment.",
+  "sourceSha256": {
+    "components/account/AccountWeltKarte.tsx": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+    "components/account/WeltZustaende.tsx": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c",
+    "components/account/world-explorer-1/ExplorerDetails.tsx": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8",
+    "components/account/world-explorer-1/ExplorerMap.tsx": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb",
+    "components/account/world-explorer-1/WorldExplorer.tsx": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+    "lib/account/account-home-premium-overview-1.test.ts": "0f172556550bc209f63a715eb83444ce43082cfc4a0ff4403be2efa66ebb3017",
+    "lib/account/account-world-premium-map-ux-1.test.ts": "6ce529143a20394d884ffad65b068ab2c8ca47edb457ec0f1bd74e9eeb43490a",
+    "lib/account/world-explorer-1/presentation.test.ts": "500db36afa7dd8e0e2bdb62fac30c73abce017b32d16d4d204c1b014f1cee274",
+    "lib/account/world-explorer-1/presentation.ts": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697",
+    "lib/account/world-explorer-1/viewport.ts": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604",
+    "lib/account/world-map.test.ts": "6e48d35cca5927338ae27bdb628c6fdfecb59b16621a6f9860647e588a32171f",
+    "scripts/account-world-explorer-1-audit.mjs": "73e76f699db8bbe9827a1ea0043aaee2115b04a65078c555f40de3f4a00097d1",
+    "scripts/account-world-explorer-1-props-audit.mjs": "39928928ae5914383195ce53fe7acfaf99ad76786180640b1a2c6c62586c6cb6",
+    "scripts/account-world-explorer-1-props.tsx": "9c9c81d3656c629b4d1056616e5f6888bfb657fdf87d33a78ee60d0d4f7daf91"
+  },
+  "gates": [
+    {
+      "script": "check:setup:ci",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 765
+    },
+    {
+      "script": "check:operating-mode",
+      "exit": 1,
+      "signal": null,
+      "durationMs": 177
+    },
+    {
+      "script": "typecheck",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 9322
+    },
+    {
+      "script": "lint",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 15959
+    },
+    {
+      "script": "test",
+      "exit": 1,
+      "signal": null,
+      "durationMs": 476192
+    },
+    {
+      "script": "check:api-schutz",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 307
+    },
+    {
+      "script": "check:schema-bezug",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 588
+    },
+    {
+      "script": "check:dead",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 558
+    },
+    {
+      "script": "check:exports",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 4606
+    },
+    {
+      "script": "check:deps",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 453
+    },
+    {
+      "script": "build",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 36126
+    }
+  ],
+  "operatingModeCorrection": {
+    "initial": "origin/main missing in single-branch checkout",
+    "resolution": "Fetched baseline main; unchanged command PASS"
+  },
+  "macFullTests": {
+    "result": {
+      "tests": 6584,
+      "suites": 819,
+      "pass": 6578,
+      "fail": 6,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 475814.922292
+    },
+    "failure": "6 environmental failures: four missing Linux PG16 initdb paths, two PG17-versus-required-PG16 refusals; original failure retained"
+  },
+  "linuxPg16FullTests": {
+    "result": {
+      "tests": 6657,
+      "suites": 819,
+      "pass": 6654,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 419970.055569
+    },
+    "environment": "New task-owned Linux container, source and npm-ci from own checkout; native PostgreSQL16.15; network disconnected; no hosted DB",
+    "failure": "3 environment-copy failures: two missing-Git-metadata subtests and one missing tracked .env.example. All native PG16 tests passed. Original full attempt remains failed; focused confirmations follow."
+  },
+  "linuxGitMetadataConfirmation": {
+    "tests": 22,
+    "suites": 1,
+    "pass": 22,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "duration_ms": 2039.615792
+  },
+  "linuxExampleEnvConfirmation": {
+    "tests": 14,
+    "suites": 3,
+    "pass": 14,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "duration_ms": 124.298416
+  },
+  "browserProduction": {
+    "script": "scripts/account-world-explorer-1-audit.mjs",
+    "packages": 14,
+    "failures": 0,
+    "widths": [
+      360,
+      390,
+      768,
+      1280,
+      1440
+    ],
+    "realDevice": false,
+    "authenticatedAccount": false
+  },
+  "propsAndZoom": {
+    "checks": 4,
+    "failures": 0,
+    "nativeBrowserZoomVerified": false,
+    "cssZoom200Verified": true
+  },
+  "knownResiduals": {
+    "npmAdvisories": 19,
+    "high": 17,
+    "moderate": 2,
+    "eslintWarnings": 145,
+    "eslintErrors": 0,
+    "P2Closed": false
+  },
+  "logSha256": {
+    "build.log": "7dbffb40ca8ad8166386b55296fe45fec51137d9a1b0444f37b16510b4bf738c",
+    "check-api-schutz.log": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79",
+    "check-dead.log": "661294d34a9f656eb53a2ab38b02e5de6c9fa5fa9ac15182c6d99469f8d6ca5b",
+    "check-deps.log": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d",
+    "check-exports.log": "a9925c15d5a599406598f55c9e300e6e01ab9f5ea886c505f17f0ef233031398",
+    "check-operating-mode-initial-failure.log": "ec8cd1e7982508a1ac0bbd37481290dfb4b0283b5206fd06e1c76f9d088d1b04",
+    "check-operating-mode.log": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f",
+    "check-schema-bezug.log": "0a2dca793641f33b1b99bbbb6d46f296d52176f8c467f1d043837f30a09cd1f1",
+    "check-setup-ci.log": "d71ea5cc4d01462474a1a1ff61a02b0931ec25c9e9a07b9428db8329b412dd40",
+    "lint.log": "12b5901537fa644a4d9a5c6df2159d963aa7b7bd00ef6090478753942d77f361",
+    "linux-example-env-confirmation.log": "89925f974aee1fe2a73f4a0ef3812362e4964581ae4fad3fe4d718e85eb48f19",
+    "linux-git-metadata-confirmation.log": "199d18f53efef046de2096fbda51cfc3d26fdbe150be7e2271e8c696d474347c",
+    "linux-npm-ci.log": "8f8bbda029eab21649c3ad8ed99b8ddc745428d52cc67417b5c9a275070b4bed",
+    "linux-pg16-test.log": "db1cfa52c53c3db3f59a92172be00f1372a8ae08364dffb4e128debec4792423",
+    "test.log": "4453edeaa896296b31aa47f7f3fda8013cd5ac4597e9710a2f3e5fd82e25e730",
+    "typecheck.log": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+  },
+  "otherEvidenceLogSha256": {
+    "focused-final.log": "cb67dfd7a84dd85314a7d8e6633c2e4da0bb46f895078bbc964ec8aab7919267",
+    "interaction-run-1-preserved.log": "a03e9ede28403a6dbb23111c6588fbd045a0a98b028d2f1f9ff8b9e451ee160c",
+    "interaction-run-2.log": "c73fdf0b9e6b7ce4956e9e579e08380c5e9cf6597fc7e29b248f8612e1f88593",
+    "interaction-production.log": "c73fdf0b9e6b7ce4956e9e579e08380c5e9cf6597fc7e29b248f8612e1f88593",
+    "props-audit-first-failure.log": "293a979140f9bc9a9083d996176575abba3a0693d4ed153969b6b456e7d19cb7",
+    "props-audit.log": "974ff35cbf3a717e9ac19fc29dbedb8a7f4adbd19beae48104df29d970fe653f",
+    "props-production.log": "974ff35cbf3a717e9ac19fc29dbedb8a7f4adbd19beae48104df29d970fe653f"
+  }
+}
