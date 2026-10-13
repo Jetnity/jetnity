@@ -108,10 +108,15 @@ const MARKE_RAND: Readonly<Record<WeltLandZustand, string>> = {
  * vor den Ortsmarken steht, liegt sie unter ihnen: der Ring umschliesst den
  * Punkt, statt mit ihm zu ringen.
  */
-export function WeltPunktMarken({ flaechen }: { flaechen: readonly WeltLandFlaeche[] }) {
+export function WeltPunktMarken({ flaechen, lageTransform }: {
+  flaechen: readonly WeltLandFlaeche[]
+  /** Optional atlas viewport; overview retains its unchanged positions. */
+  lageTransform?: (lage: { links: number; oben: number }) => { links: number; oben: number } | null
+}) {
   const marken = flaechen.flatMap((flaeche) => {
     if (flaeche.punkt === null) return []
-    const lage = weltPunktLage(flaeche.punkt.x, flaeche.punkt.y)
+    const basis = weltPunktLage(flaeche.punkt.x, flaeche.punkt.y)
+    const lage = basis && lageTransform ? lageTransform(basis) : basis
     return lage ? [{ flaeche, lage }] : []
   })
 

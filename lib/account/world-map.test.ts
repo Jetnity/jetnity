@@ -621,7 +621,10 @@ describe('World Map bleibt lokal und nicht-kommerziell', () => {
       }
     }
     const karte = quelle('../../components/account/AccountWeltKarte.tsx')
+    // Compact overview stays search-free; the full atlas searches loaded account data.
     assert.match(karte, /data-world-map-search="nein"/)
+    assert.match(karte, /props\.darstellung === 'uebersicht'/)
+    assert.match(quelle('../../components/account/world-explorer-1/WorldExplorer.tsx'), /data-world-map-search="ja"/)
   })
 
   test('Reise öffnen benutzt nicht herkuenfte[0] als stillen Navigationsdefault', () => {

@@ -1,0 +1,9 @@
+{
+  "environment": "local synthetic React prop-update fixture, no deployed route",
+  "checks": [
+    "Selected revoked event closes on real React prop update even when its country remains; restoring props does not resurrect selection.",
+    "plan-error: available data persists; opposite history unknown, no false both-state.",
+    "visit-error: available data persists; opposite history unknown, no false both-state.",
+    "200% CSS zoom: no horizontal overflow, controls and selected details work. This is not native browser zoom proof."
+  ]
+}
