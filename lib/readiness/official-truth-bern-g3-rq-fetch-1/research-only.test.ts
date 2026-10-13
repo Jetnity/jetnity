@@ -214,7 +214,7 @@ test('deadline includes stalled response headers, no reattempt', async () => {
   assert.ok(res.elapsed < 200)
 })
 
-test('only task-owned developer runner imports the live research entry (no app/API/cron imports)', () => {
+test('only task-owned runner and direct-denial test reference the live entry (no app/API/cron imports)', () => {
   const roots = ['app', 'components', 'lib', 'scripts']
   const imported: string[] = []
   const walk = (path: string) => {
@@ -231,5 +231,26 @@ test('only task-owned developer runner imports the live research entry (no app/A
     }
   }
   for (const root of roots) walk(root)
-  assert.deepEqual(imported, ['scripts/official-truth-bern-g3-rq-fetch-1/run.ts'])
+  assert.deepEqual(imported, ['lib/readiness/official-truth-bern-g3-rq-fetch-1/cli.test.ts',
+    'scripts/official-truth-bern-g3-rq-fetch-1/run.ts'])
+})
+
+test('ALL 300–399 cancel without reading headers/body or attempting a second GET', async () => {
+  for (let status = 300; status <= 399; status++) {
+    let calls = 0, cancels = 0
+    const result = await decideOfficialTruthBernRealResearchForOfflineTests({
+      resolve: async () => [{ address: '93.184.216.34', family: 4 }],
+      http: async ({ url }) => {
+        calls++
+        assert.equal(url, BERN)
+        return { ok: true, status,
+          headers: { get: () => { assert.fail('no Location or headers may be read') } },
+          get body(): AsyncIterable<Uint8Array> { return (async function* () { assert.fail('body may not be read'); yield new Uint8Array() })() },
+          cancel: () => { cancels++; if (status === 399) throw Error('cancel failed') },
+        }
+      },
+    })
+    blocked(result, 'redirect_detected')
+    assert.equal(calls, 1, String(status)); assert.equal(cancels, 1, String(status))
+  }
 })

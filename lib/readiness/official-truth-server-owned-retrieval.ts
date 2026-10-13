@@ -1045,6 +1045,7 @@ export type OfficialTruthBernRealResearchOutcome = Readonly<
         | 'content_length_mismatch'
         | 'framing_unverified'
         | 'attempt_already_consumed'
+        | 'live_execution_not_authorized'
       sourceFamily: typeof BERN_RESEARCH_SOURCE
       sourceUrl: typeof BERN_RESEARCH_URL
       networkAttempted: boolean
@@ -1100,16 +1101,12 @@ export async function decideOfficialTruthBernRealResearchForOfflineTests(
   return bernResearchPhysicalRead(deps)
 }
 
-/** In-process backstop. The developer CLI additionally requires the TL's
- * permanent GitHub reservation receipt and atomically writes a local marker. */
-let bernLiveAttemptStarted = false
-
-/** EXPLICIT developer-only live seam. Its sole return type is research-only.
- * Never invoked by import, rendering, CI, cron or public application runtime. */
+/** R3 code-only hard stop, including direct imports. Read-only GitHub
+ * preflight and synthetic claims are NOT execution capabilities. There is no
+ * live claim writer or escape hatch in this revision. Separate independent
+ * authorization/implementation is required before enabling Phase B. */
 export async function retrieveOfficialTruthBernOneShotResearchOnly(): Promise<OfficialTruthBernRealResearchOutcome> {
-  if (bernLiveAttemptStarted) return bernResearchBlocked('attempt_already_consumed', false)
-  bernLiveAttemptStarted = true
-  return bernResearchPhysicalRead({ resolve: serverDns, http: serverHttp, timeoutMs: TIMEOUT_MS })
+  return bernResearchBlocked('live_execution_not_authorized', false)
 }
 
 async function bernResearchPhysicalRead(
@@ -1124,7 +1121,12 @@ async function bernResearchPhysicalRead(
   const controlledHttp: OfficialTruthServerOwnedRetrievalHttpClient = async (request) => {
     attempted = true
     const reply = await deps.http(request)
-    if (!reply.ok || (reply.status >= 300 && reply.status < 400)) return reply
+    if (!reply.ok) return reply
+    if (reply.status >= 300 && reply.status < 400) {
+      streamFailure = 'redirect_detected'
+      try { reply.cancel?.() } catch { /* cancellation cannot authorize a follow-up */ }
+      return { ok: false, reason: 'http_failed' }
+    }
     if (reply.status !== 200 || !reply.body) return reply
 
     let cancelled = false
