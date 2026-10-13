@@ -7,6 +7,7 @@ import { readinessBegrenztLesen, readinessContentLengthUeberschritten, readiness
 import { withinDeadline } from './deadline-server'
 import { declarationSchema } from './context'
 import { saveDeclaration } from './database-server'
+import { applicationPilotAvailable } from './availability-server'
 import { tripOfficialPilotPruefen } from '@/lib/readiness/trip-official-evaluations-server'
 
 const identity = { tripId: z.string().uuid(), revision: z.number().int().positive().max(999_999_999) }
@@ -17,7 +18,7 @@ const requestSchema = z.discriminatedUnion('operation', [
 const unavailable = { message: 'Die Reise ist mit dieser Anmeldung nicht verfügbar.' }
 export async function applicationPilotRequest(req: Request): Promise<{ status: number; body: unknown }> {
   try { return await withinDeadline(req.signal, 17_000, signal => handleRequest(req, signal)) }
-  catch { return { status: 503, body: { message: 'Die Anfrage konnte nicht rechtzeitig abgeschlossen werden.' } } }
+  catch { return { status: 503, body: { message: 'Die Anfrage konnte nicht bestätigt werden. Bereits gestartete Speichervorgänge können abgeschlossen sein. Bitte neu laden und Angaben prüfen.' } } }
 }
 async function handleRequest(req: Request, signal: AbortSignal): Promise<{ status: number; body: unknown }> {
   const answer = (status: number, body: unknown) => ({ status, body })
@@ -34,6 +35,7 @@ async function handleRequest(req: Request, signal: AbortSignal): Promise<{ statu
   const parsed = requestSchema.safeParse(input)
   if (!parsed.success) return answer(400,{ message: 'Ungültige Anfrage.' })
   signal.throwIfAborted()
+  if (!applicationPilotAvailable()) return answer(503,{ message: 'Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.' })
   const db = await createServerComponentClient()
   signal.throwIfAborted()
   const auth = await db.auth.getUser()
@@ -43,14 +45,15 @@ async function handleRequest(req: Request, signal: AbortSignal): Promise<{ statu
   if (!limit.ok) return answer(429,{ message: 'Zu viele Anfragen. Bitte später erneut versuchen.' })
   signal.throwIfAborted()
   const request = parsed.data
-  const read = await reiseLaden(request.tripId)
+  const read = await reiseLaden(request.tripId, signal)
   signal.throwIfAborted()
   if (read.problem) return answer(503,{ message: 'Die Reise kann gerade nicht gelesen werden.' })
   const trip = read.zeilen[0]
   if (!trip) return answer(404,unavailable)
   if (trip.revision!==request.revision) return answer(409,{ message: 'Die Reise hat sich geändert. Bitte neu laden.' })
   if (request.operation==='save') {
-    const saved = await saveDeclaration(trip,request.declaration,request.mutationId)
+    const saved = await saveDeclaration(trip,request.declaration,request.mutationId,signal)
+    signal.throwIfAborted()
     return saved ? answer(200,{ trip: saved }) : answer(409,{ message: 'Das Speichern konnte nicht bestätigt werden. Bitte neu laden und Angaben prüfen.' })
   }
   return answer(200,await tripOfficialPilotPruefen(trip,signal))

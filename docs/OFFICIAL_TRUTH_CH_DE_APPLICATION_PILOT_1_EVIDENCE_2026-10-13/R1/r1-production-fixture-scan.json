@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "markers": [
+    "application-pilot.example",
+    "SYNTHETIC LOCAL APPLICATION TEST ONLY",
+    "browser-ports"
+  ],
+  "scope": ".next/**/*.js and .next/**/*.json",
+  "matches": []
+}

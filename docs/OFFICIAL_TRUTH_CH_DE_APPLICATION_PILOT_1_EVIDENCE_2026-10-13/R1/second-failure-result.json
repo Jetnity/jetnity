@@ -1,0 +1,16 @@
+{
+  "status": "FAIL",
+  "boundary": "Actual Next account route/components, GoTrue getUser, PostgREST RLS, context RPC, real Owner/AAL guards and one-shot RPC. AAL2 claim and profiles are disposable synthetic fixtures, not a genuine Owner/MFA witness. Only source/gate ports substituted in destroyed copy. No hosted writes or government traffic.",
+  "results": [
+    {
+      "name": "Closed pre-migration deployment: normal Workspace loads; no pilot controls or direct POST RPC",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "outbound": [],
+  "sourceRequests": 0,
+  "pilotRpcRequests": 0,
+  "failure": "Actual owned account route, explicit linked declarations, save, authenticated reload: locator.selectOption: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Angaben zur CH–DE-Prüfung' }).getByLabel('Reisende Person und verknüpftes Dokument')\u001b[22m\n",
+  "cleanup": "Owned copy/containers/network removed; no real credentials used"
+}

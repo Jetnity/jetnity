@@ -1,0 +1,7 @@
+{
+  "docs/OFFICIAL_TRUTH_CH_DE_APPLICATION_PILOT_1_TASK_2026-10-13.md": "41431c461c25a21e76398631c421fe071895139a",
+  "lib/readiness/official-truth-server-owned-retrieval.ts": "5998fdea54d3337fb68cd7111460b59e43a3cef7",
+  "supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql": "87639107883cb9771ed5b19db68994ba08a6c930",
+  "package.json": "aa1083f1bb84f9ad97439c80c14a3cefa5bb41fa",
+  "package-lock.json": "6f3f59c8067aabe406922f78f7fcf7ae6bf26883"
+}

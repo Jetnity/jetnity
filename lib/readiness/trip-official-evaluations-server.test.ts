@@ -17,6 +17,7 @@ import { tripOfficialEvaluationsAuswerten } from '@/lib/readiness/trip-official-
 import { requirementsProviderNachZustand, type ReadinessUmgebung } from '@/lib/readiness/zustand'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { itineraryZweiTransits } from '@/lib/route/fixtures'
+import { applicationPilotAvailable } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server'
 import { istKontoKennung } from '@/lib/trips/daten'
 import { leseRequestParam } from '@/lib/next/request-api'
 import type { Lesung } from '@/lib/api/datenbank-lesen'
@@ -261,6 +262,7 @@ function pageTest(options: {
       events.push('loaded')
       return result
     } },
+    '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server': { applicationPilotAvailable },
     '@/lib/readiness/trip-official-evaluations-server': { async tripOfficialEvaluationsAuswerten(trip: Trip) {
       assert.ok(events.includes('loaded'))
       assert.equal(trip, snapshot)
@@ -283,6 +285,7 @@ describe('B01 authenticated page and account handoff', () => {
     const result = await page.default({ params: Promise.resolve({ tripId: TRIP_ID }) })
     assert.ok(React.isValidElement<AccountProps>(result))
     assert.equal(result.type, Account)
+    assert.equal(result.props.officialPilotAvailable, false)
     assert.equal(result.props.reise, page.snapshot)
     assert.equal(result.props.officialEvaluations, page.evaluations.at(-1))
     assert.equal(result.props.registry?.travellers, page.registryDisplay)
@@ -355,8 +358,8 @@ describe('B01 authenticated page and account handoff', () => {
     const account = laden<{ default: typeof KontoArbeitsbereich }>(ACCOUNT, dependencies)
     const snapshot = einfrieren(reise())
     const rows = einfrieren(await tripOfficialEvaluationsAuswerten(snapshot))
-    const render = (evaluations: OfficialEvaluation[]) => {
-      const wrapper = account.default({ reise: snapshot, ohneTag: snapshot.ohneTag ?? [], officialEvaluations: evaluations, registry: { problem: null, travellers: [] } })
+    const render = (evaluations: OfficialEvaluation[], officialPilotAvailable?: boolean) => {
+      const wrapper = account.default({ reise: snapshot, ohneTag: snapshot.ohneTag ?? [], officialEvaluations: evaluations, officialPilotAvailable, registry: { problem: null, travellers: [] } })
       assert.equal(wrapper.type, 'div')
       assert.equal(typeof wrapper.props.onChangeCapture, 'function')
       const result = wrapper.props.children
@@ -367,6 +370,12 @@ describe('B01 authenticated page and account handoff', () => {
       return result.props
     }
     const props = render(rows)
+    assert.ok(React.isValidElement<{children: string}>(props.officialPilot))
+    assert.equal(props.officialPilot.type, 'p')
+    assert.match(props.officialPilot.props.children, /noch nicht gespeichert oder geprüft/)
+    const available = render(rows,true).officialPilot
+    assert.ok(React.isValidElement(available))
+    assert.equal(available.type, (dependencies['./OfficialTruthPilotForm'] as {default: unknown}).default)
     render([])
     render(rows)
     assert.deepEqual(writes, [])

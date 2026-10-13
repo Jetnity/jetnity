@@ -6,7 +6,7 @@ export const pilotMigration='20261013184409_official_truth_ch_de_application_pil
 export const tripMigrations=['20260817120000_reiseschema.sql','20260820010000_reise_stage_revision.sql','20260820060000_reise_graph_revision.sql','20260820080000_reise_tage_eindeutig_aufgeschoben.sql','20260820120000_places_referenz.sql','20260820130000_reise_aendern_places.sql','20260821100000_trip_items_booking_status.sql','20260822010000_trip_readiness_items.sql','20260822020000_trip_travellers.sql','20260822160000_traveller_context_intelligence.sql','20260829201500_account_traveller_registry_persistence.sql']
 const read=(name:string)=>readFileSync(`supabase/migrations/${name}`,'utf8')
 export const quote=(value:string)=>`'${value.replaceAll("'","''")}'`
-export function localSchema(sql:(text:string)=>string, includePlaces=true) {
+export function localSchema(sql:(text:string)=>string, includePlaces=true, includePilot=true) {
   sql('create schema private; revoke all on schema private from public;')
   if(includePlaces)sql('create schema extensions; create extension pg_trgm with schema extensions;')
   for(const file of tripMigrations) {
@@ -21,7 +21,7 @@ export function localSchema(sql:(text:string)=>string, includePlaces=true) {
     ['20260817100000_rollenmodell.sql','hat_rolle_mindestens'],['20260827170000_admin_aal2_data_plane_alignment.sql','aktuelles_admin_aal2'],
   ]) {const statement=read(file!).match(new RegExp(`create or replace function public\\.${fn}\\([\\s\\S]*?\\$\\$;`))?.[0];assert(statement);sql(statement)}
   sql(read('20261002154952_official_truth_owner_reviewer_capability_1.sql'))
-  sql(read(pilotMigration))
+  if(includePilot)sql(read(pilotMigration))
 }
 export function seedTrip(sql:(text:string)=>string,userId=fixtureUserId) {
   const t=fixtureTrip(false),p=t.party![0]!,c=p.citizenships[0]!,d=p.documents[0]!,s=t.stages[0]!

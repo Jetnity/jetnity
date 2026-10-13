@@ -43,7 +43,7 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
   try {
     const authority = await loadOfficialTruthFactEntryAuthority()
     if (expired() || authority.status !== 'authorized' || authority.grant !== 'role' || authority.capability !== 'official-truth-freigeben') return empty('unavailable')
-    const grant = await pilotGrant(trip, null)
+    const grant = await pilotGrant(trip, null, signal)
     if (!grant || expired()) return empty('source_not_admitted')
     const contract = applicationContract(grant.contractId, grant.contractDigest)
     if (!contract || contract.applicationScope !== 'ch-ordinary-tourism-direct-de-v1'
@@ -120,7 +120,7 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     // Recheck kill/admission, actual Auth and account graph AFTER verification.
     if (expired()) return empty('unavailable')
     const [currentGrant, currentAuthority, currentTrip, currentCatalog] = await Promise.all([
-      pilotGrant(trip, grant.id), loadOfficialTruthFactEntryAuthority(), reiseLaden(trip.id), quellenKatalogLesen(),
+      pilotGrant(trip, grant.id, signal), loadOfficialTruthFactEntryAuthority(), reiseLaden(trip.id, signal), quellenKatalogLesen(),
     ])
     if (!applicationPilotEnabled() || expired() || currentAuthority.status !== 'authorized' || currentAuthority.grant !== 'role'
       || currentAuthority.capability !== 'official-truth-freigeben'

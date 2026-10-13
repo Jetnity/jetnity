@@ -59,11 +59,13 @@ export default function KontoArbeitsbereich({
   reise: serverReise,
   ohneTag: serverOhneTag,
   officialEvaluations,
+  officialPilotAvailable = false,
   registry,
 }: {
   reise: Trip
   ohneTag: TripItem[]
   officialEvaluations: OfficialEvaluation[]
+  officialPilotAvailable?: boolean
   registry?: {
     problem: Problem | null
     travellers: RegistryTripAnzeige[] | null
@@ -128,7 +130,9 @@ export default function KontoArbeitsbereich({
     <TripWorkspace
       reise={reise}
       officialEvaluations={pilot.evaluations}
-      officialPilot={<OfficialTruthPilotForm key={`${reise.id}:${reise.revision}`} trip={reise} status={pilot.status} busy={pilot.busy} error={pilot.error} onChange={pilot.invalidate} onSave={pilot.save} onCheck={pilot.check} />}
+      officialPilot={officialPilotAvailable
+        ? <OfficialTruthPilotForm key={`${reise.id}:${reise.revision}`} trip={reise} status={pilot.status} busy={pilot.busy} error={pilot.error} onChange={pilot.invalidate} onSave={pilot.save} onCheck={pilot.check} />
+        : <p className="rounded-2xl border border-line-200 bg-surface-25 p-4 text-sm leading-6 text-ink-900">Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.</p>}
       quelle="account"
       ohneTag={ohneTag}
       onVerbindungAnlegen={async values => {

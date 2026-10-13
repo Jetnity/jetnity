@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { loadFixtureModule, fixtureTrip, fixtureDeclaration } from '../../../scripts/official-truth-ch-de-application-pilot-1/fixtures'
 import type * as RequestModule from './request-server'
+import { applicationPilotAvailable } from './availability-server'
 import { withinDeadline } from './deadline-server'
 import { reiseSchema } from '@/lib/trips/schema'
 import { alsNutzlast } from '@/lib/trips/abbildung'
@@ -11,10 +12,11 @@ import { pilotContextCurrent } from './context'
 function runtime(fault='none') {
  const trip=fixtureTrip();let checks=0,saves=0,auths=0
  const handler=loadFixtureModule<typeof RequestModule>('lib/readiness/official-truth-ch-de-application-pilot-1/request-server.ts',{
+  './availability-server':{applicationPilotAvailable:fault==='deployment-closed'?applicationPilotAvailable:()=>true},
   '@/lib/supabase/server':{createServerComponentClient:async()=>({auth:{getUser:async()=>{auths++;return{error:null,data:{user:fault==='anonymous'?null:{id:'fixture'}}}}}})},
   '@/lib/trips/daten':{reiseLaden:async()=>({problem:fault==='database'?{}:null,zeilen:['foreign','missing'].includes(fault)?[]:[trip]})},
   '@/lib/readiness/rate-limit':{readinessAnfrageErlaubt:async()=>({ok:fault!=='rate'})},
-  './database-server':{saveDeclaration:async()=>{saves++;return fault==='save-failure'?null:trip}},
+  './database-server':{saveDeclaration:async(_trip:unknown,_declaration:unknown,_mutation:unknown,signal:AbortSignal)=>{assert(signal instanceof AbortSignal);assert(!signal.aborted);saves++;if(fault==='save-interrupted')throw Error('aborted submitted write');return fault==='save-failure'?null:trip}},
   '@/lib/readiness/trip-official-evaluations-server':{tripOfficialPilotPruefen:async()=>{checks++;return {status:'disabled'}}},
  })
  return{trip,handler,counters:()=>({checks,saves,auths})}
@@ -44,5 +46,23 @@ test('same-trip serialization preserves declaration; copying/import cannot trans
 test('deployed gate and extractor remain empty; production files never import local synthetic ports',()=>{
  const contract=readFileSync('lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts','utf8')
  assert.match(contract,/contracts[^=]*= Object.freeze\(\[\]\)/);assert.match(contract,/applicationPilotEnabled\(\): boolean \{ return false \}/)
- for(const file of ['evaluate-server.ts','request-server.ts','database-server.ts','contract-server.ts'])assert.doesNotMatch(readFileSync(`lib/readiness/official-truth-ch-de-application-pilot-1/${file}`,'utf8'),/from\s+['"][^'"]*(?:scripts|fixtures)|process\.env/)
+ for(const file of ['evaluate-server.ts','request-server.ts','database-server.ts','contract-server.ts','availability-server.ts'])assert.doesNotMatch(readFileSync(`lib/readiness/official-truth-ch-de-application-pilot-1/${file}`,'utf8'),/from\s+['"][^'"]*(?:scripts|fixtures)|process\.env/)
+})
+
+test('unprepared deployment blocks direct save AND check before Auth/database regardless of caller selectors',async()=>{
+ assert.equal(applicationPilotAvailable(),false)
+ for(const operation of ['save','check']) {
+  const r=runtime('deployment-closed')
+  const body={operation,tripId:r.trip.id,revision:1,...(operation==='save'?{mutationId:randomUUID(),declaration:fixtureDeclaration}:{})}
+  const got=await r.handler.applicationPilotRequest(request(body,{'x-pilot-enabled':'true'}))
+  assert.equal(got.status,503);assert.match(JSON.stringify(got.body),/Angaben können noch nicht gespeichert/)
+  assert.deepEqual(r.counters(),{checks:0,saves:0,auths:0})
+ }
+})
+
+test('interrupted submitted save is explicitly unconfirmed, never reported rolled back',async()=>{
+ const r=runtime('save-interrupted')
+ const got=await r.handler.applicationPilotRequest(request({operation:'save',tripId:r.trip.id,revision:1,mutationId:randomUUID(),declaration:fixtureDeclaration}))
+ assert.equal(got.status,503);assert.match(JSON.stringify(got.body),/Bereits gestartete Speichervorgänge können abgeschlossen sein/)
+ assert.match(JSON.stringify(got.body),/neu laden/);assert.equal(r.counters().saves,1)
 })

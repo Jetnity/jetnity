@@ -2,7 +2,7 @@
 // Docker images and Chrome; never pulls packages/images or accepts a remote URL.
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
-import { randomBytes, createHmac } from 'node:crypto'
+import { randomBytes, createHmac, randomUUID } from 'node:crypto'
 import { cpSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync, symlinkSync, rmSync, openSync, closeSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve, join } from 'node:path'
@@ -10,17 +10,17 @@ import { createServer, request } from 'node:http'
 import { createClient } from '@supabase/supabase-js'
 import { createServerClient } from '@supabase/ssr'
 import { chromium } from 'playwright'
-import { localSchema, seedTrip } from './local-schema'
+import { localSchema, seedTrip, pilotMigration } from './local-schema'
 import { fixtureTripId, fixtureDeclaration, fixtureContract } from './fixtures'
 import { reiseAus } from '@/lib/trips/abbildung'
 import { partyAusZeilen } from '@/lib/readiness/reisende'
 import { pilotContextFingerprint } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 
-const root=process.cwd(),output=resolve('../application-proof'),owned=mkdtempSync(join(tmpdir(),'ch-de-application-'))
+const root=process.cwd(),output=resolve('../application-proof-r1'),owned=mkdtempSync(join(tmpdir(),'ch-de-application-'))
 const app=join(owned,'app'),faultFile=join(owned,'fault.json'),run=`jetnity-application-${randomBytes(5).toString('hex')}`,created:string[]=[]
 const secret=randomBytes(48).toString('hex'),password=randomBytes(24).toString('hex'),results:unknown[]=[],errors:string[]=[],outbound:string[]=[]
 let server:ReturnType<typeof spawn>|undefined,gateway:ReturnType<typeof createServer>|undefined,browser:Awaited<ReturnType<typeof chromium.launch>>|undefined
-let stage='bootstrap',failure:string|undefined,sourceRequests=0
+let stage='bootstrap',failure:string|undefined,sourceRequests=0,pilotRpcRequests=0
 const docker=(args:string[],input?:string)=>execFileSync('docker',args,{input,encoding:'utf8',stdio:['pipe','pipe','pipe'],maxBuffer:8*1024*1024,timeout:60_000})
 const sql=(text:string)=>docker(['exec','-i',`${run}-db`,'psql','-U','postgres','-v','ON_ERROR_STOP=1','-Atq'],text).trim()
 const start=(name:string,args:string[])=>{docker(['run','-d','--pull=never','--name',name,'--label',`jetnity.application.owner=${run}`,...args]);created.push(name)}
@@ -28,6 +28,14 @@ const wait=async(fn:()=>unknown)=>{for(let i=0;i<90;i++){try{if(await fn())retur
 const sign=(claims:unknown)=>{const a=Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('base64url'),b=Buffer.from(JSON.stringify(claims)).toString('base64url');return `${a}.${b}.${createHmac('sha256',secret).update(`${a}.${b}`).digest('base64url')}`}
 const fault=(value:string)=>writeFileSync(faultFile,JSON.stringify(value))
 const check=async(name:string,fn:()=>Promise<void>)=>{stage=name;await fn();results.push({name,status:'PASS'})}
+async function stopServer() {
+ if(server?.pid && server.exitCode===null) {
+  const child=server
+  try{process.kill(-child.pid!,'SIGTERM')}catch{}
+  await new Promise<void>(r=>{const timer=setTimeout(()=>{try{process.kill(-child.pid!,'SIGKILL')}catch{};r()},5000);child.once('exit',()=>{clearTimeout(timer);r()})})
+ }
+ server=undefined
+}
 async function main() {
 mkdirSync(output,{recursive:true});fault('none')
 try{
@@ -41,10 +49,11 @@ try{
  const port=(name:string)=>Number(docker(['port',name]).trim().split(':').at(-1)),authPort=port(`${run}-auth`)
  await wait(async()=> (await fetch(`http://127.0.0.1:${authPort}/health`)).ok)
  sql('grant usage on schema auth to anon,authenticated; grant execute on function auth.uid() to anon,authenticated; grant execute on function auth.jwt() to anon,authenticated;')
- localSchema(sql)
+ localSchema(sql,true,false)
  start(`${run}-rest`,['--network',run,'-p','127.0.0.1::3000','-e','PGRST_DB_URI=postgres://authenticator@db:5432/postgres','-e','PGRST_DB_SCHEMAS=public','-e','PGRST_DB_ANON_ROLE=anon','-e',`PGRST_JWT_SECRET=${secret}`,'public.ecr.aws/supabase/postgrest:v16.2'])
  const restPort=port(`${run}-rest`);await wait(async()=> (await fetch(`http://127.0.0.1:${restPort}/`)).ok)
  gateway=createServer((req,res)=>{
+  if(req.url?.startsWith('/rest/v1/rpc/trip_regulatory_context_save_v1') || req.url?.startsWith('/rest/v1/rpc/official_truth_application_pilot_run_v1'))pilotRpcRequests++
   const isAuth=req.url!.startsWith('/auth/v1/'),isRest=req.url!.startsWith('/rest/v1/')
   if(!isAuth&&!isRest){res.writeHead(404);res.end();return}
   const proxy=request({host:'127.0.0.1',port:isAuth?authPort:restPort,path:req.url!.replace(isAuth?'/auth/v1':'/rest/v1',''),method:req.method,headers:req.headers},up=>{res.writeHead(up.statusCode!,up.headers);up.pipe(res)})
@@ -72,9 +81,12 @@ try{
  for(const path of ['./contract-server','@/lib/readiness/official-truth-source-catalog-server','@/lib/readiness/official-truth-server-owned-retrieval','@/lib/readiness/official-truth-trusted-fact-extractor-registry'])evaluator=evaluator.replace(`from '${path}'`,"from '@/scripts/official-truth-ch-de-application-pilot-1/browser-ports'")
  writeFileSync(evaluatePath,evaluator)
  const env:NodeJS.ProcessEnv={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,NEXT_TELEMETRY_DISABLED:'1',NEXT_PUBLIC_SUPABASE_URL:url,NEXT_PUBLIC_SUPABASE_ANON_KEY:anon}
- const log=openSync(join(output,'local-next.log'),'w')
+ const startServer=async()=>{
+ const log=openSync(join(output,'local-next.log'),'a')
  server=spawn(process.execPath,[join(root,'node_modules/next/dist/bin/next'),'dev','--webpack','--hostname','127.0.0.1','--port','3529'],{cwd:app,env,detached:true,stdio:['ignore',log,log]});closeSync(log)
  await wait(async()=> (await fetch(`${base}/api/health`)).status!==0)
+ }
+ await startServer()
  browser=await chromium.launch({headless:true,channel:'chrome'})
  const contextFor=async(session:typeof aal1)=>{
   const context=await browser!.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'}),jar=new Map<string,{name:string;value:string}>()
@@ -89,6 +101,29 @@ try{
  const graph=async()=>{const raw=await db.from('trips').select('*,trip_stages(*),trip_days(*),trip_items(*),trip_travellers(*,trip_traveller_citizenships(*),trip_traveller_documents(*))').eq('id',fixtureTripId).single();assert.ifError(raw.error);const r=raw.data;return {...reiseAus(r,r.trip_stages,r.trip_days,r.trip_items),party:partyAusZeilen(r.trip_travellers)}}
  const admit=async(seconds=120)=>{const trip=await graph();sql(`delete from private.official_truth_application_pilot_grants;insert into private.official_truth_application_pilot_grants(user_id,trip_id,trip_revision,context_fingerprint,contract_id,contract_digest,approval_reference,enabled,expires_at) values('${owner}','${trip.id}',${trip.revision},'${pilotContextFingerprint(trip)}','${fixtureContract.id}','${fixtureContract.digest}','SYNTHETIC LOCAL TEST ONLY',true,clock_timestamp()+interval '${seconds} seconds')`);return trip.revision}
  const clickCheck=async()=>{const response=page.waitForResponse(r=>r.url().endsWith('/api/readiness/ch-de-application')&&r.request().method()==='POST');await form().getByRole('button',{name:'Offizielle Prüfung starten'}).click();return (await response).json()}
+ await check('Closed pre-migration deployment: normal Workspace loads; no pilot controls or direct POST RPC',async()=>{
+  const before=await graph()
+  assert.equal(sql("select to_regprocedure('public.trip_regulatory_context_save_v1(jsonb)') is null and to_regprocedure('public.official_truth_application_pilot_run_v1(jsonb)') is null"),'t')
+  await page.goto(`${base}/reisen/${fixtureTripId}`);await page.getByRole('button',{name:/Vorbereitung/}).first().click()
+  await page.getByText('Die CH–DE-Prüfung ist derzeit nicht verfügbar.',{exact:false}).waitFor()
+  assert.equal(await form().count(),0);assert.equal(await page.getByRole('button',{name:'Angaben speichern'}).count(),0)
+  assert.equal(await page.getByRole('button',{name:'Offizielle Prüfung starten'}).count(),0)
+  await page.getByText('Die CH–DE-Prüfung ist derzeit nicht verfügbar.',{exact:false}).scrollIntoViewIfNeeded()
+  await page.screenshot({path:join(output,'smartphone-unavailable.png')})
+  for(const operation of ['save','check']) {
+   const response=await context.request.post(`${base}/api/readiness/ch-de-application?pilot=true`,{headers:{origin:base,'x-pilot-enabled':'true'},data:{operation,tripId:fixtureTripId,revision:1,...(operation==='save'?{mutationId:randomUUID(),declaration:fixtureDeclaration}:{})}})
+   assert.equal(response.status(),503);assert.match(JSON.stringify(await response.json()),/Angaben können noch nicht gespeichert/)
+  }
+  assert.equal(pilotRpcRequests,0);assert.deepEqual(await graph(),before)
+ })
+ // Prepare ONLY the disposable database/copy, after proving actual absent RPCs.
+ sql(readFileSync(join(root,'supabase/migrations',pilotMigration),'utf8'));sql("NOTIFY pgrst, 'reload schema'")
+ await wait(async()=>{const response=await fetch(`http://127.0.0.1:${restPort}/`,{headers:{authorization:`Bearer ${aal2.access_token}`}});return (await response.json()).paths?.['/rpc/trip_regulatory_context_save_v1']})
+ const availabilityPath=join(app,'lib/readiness/official-truth-ch-de-application-pilot-1/availability-server.ts')
+ const availability=readFileSync(availabilityPath,'utf8');assert.match(availability,/return false/)
+ await stopServer()
+ writeFileSync(availabilityPath,availability.replace('return false','return true'))
+ await startServer()
  await check('Actual owned account route, explicit linked declarations, save, authenticated reload',async()=>{
   await page.goto(`${base}/reisen/${fixtureTripId}`)
   await page.getByRole('button',{name:/Vorbereitung/}).first().click()
@@ -136,10 +171,10 @@ try{
  await context.close();await db.auth.stopAutoRefresh();await outsider.auth.stopAutoRefresh()
 }catch(e){failure=`${stage}: ${(e as Error).message}`.replaceAll(secret,'[redacted]').replaceAll(password,'[redacted]');process.exitCode=1;console.error(failure);if(browser){const page=browser.contexts()[0]?.pages()[0];await page?.screenshot({path:join(output,'diagnostic.png'),fullPage:true}).catch(()=>{})}}
 finally{
- await browser?.close();if(server?.pid && server.exitCode===null){try{process.kill(-server.pid,'SIGTERM')}catch{};await new Promise<void>(r=>{const timer=setTimeout(()=>{try{process.kill(-server!.pid!,'SIGKILL')}catch{};r()},5000);server!.once('exit',()=>{clearTimeout(timer);r()})})}if(gateway?.listening){gateway.closeAllConnections();await new Promise<void>(r=>gateway!.close(()=>r()))}
+ await browser?.close();await stopServer();if(gateway?.listening){gateway.closeAllConnections();await new Promise<void>(r=>gateway!.close(()=>r()))}
  for(const name of created.reverse())try{docker(['rm','-fv',name])}catch{}try{docker(['network','rm',run])}catch{}
  rmSync(owned,{recursive:true,force:true})
- writeFileSync(join(output,'result.json'),JSON.stringify({status:failure?'FAIL':'PASS',boundary:'Actual Next account route/components, GoTrue getUser, PostgREST RLS, context RPC, real Owner/AAL guards and one-shot RPC. AAL2 claim and profiles are disposable synthetic fixtures, not a genuine Owner/MFA witness. Only source/gate ports substituted in destroyed copy. No hosted writes or government traffic.',results,errors,outbound,sourceRequests,failure,cleanup:'Owned copy/containers/network removed; no real credentials used'},null,2)+'\n')
+ writeFileSync(join(output,'result.json'),JSON.stringify({status:failure?'FAIL':'PASS',boundary:'Actual Next account route/components, GoTrue getUser, PostgREST RLS, context RPC, real Owner/AAL guards and one-shot RPC. AAL2 claim and profiles are disposable synthetic fixtures, not a genuine Owner/MFA witness. Only source/gate ports substituted in destroyed copy. No hosted writes or government traffic.',results,errors,outbound,sourceRequests,pilotRpcRequests,failure,cleanup:'Owned copy/containers/network removed; no real credentials used'},null,2)+'\n')
  console.log(`${failure?'FAIL':'PASS'}: ${results.length} application checks; ${output}`)
 }
 

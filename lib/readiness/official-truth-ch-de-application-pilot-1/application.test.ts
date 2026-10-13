@@ -11,7 +11,7 @@ function runtime(fault='none') {
   const grant={id:'77777777-7777-4777-8777-777777777777',contractId:fixtureContract.id,contractDigest:fixtureContract.digest,expiresAt:new Date(Date.now()+120000).toISOString()}
   const evaluator=loadFixtureModule<typeof Evaluation>('lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts',{
     './contract-server':{applicationPilotEnabled:()=>fault!=='disabled',applicationContract:()=>fault==='missing-contract'?null:fixtureContract},
-    './database-server':{pilotGrant:async()=>{rechecks++;return fault==='not-admitted'||fault==='withdrawn'&&rechecks>1?null:grant}},
+    './database-server':{pilotGrant:async(_trip:unknown,_grant:unknown,signal:AbortSignal)=>{assert(signal instanceof AbortSignal);assert(!signal.aborted);rechecks++;return fault==='not-admitted'||fault==='withdrawn'&&rechecks>1?null:grant}},
     '@/lib/readiness/official-truth-fact-entry-authority-server':{loadOfficialTruthFactEntryAuthority:async()=>fault==='authority'?{status:'access_forbidden'}:{status:'authorized',grant:'role',capability:'official-truth-freigeben'}},
     '@/lib/readiness/official-truth-source-catalog-server':{quellenKatalogLesen:async()=>({ok:true,registry:fixtureRegistry})},
     '@/lib/readiness/official-truth-server-owned-retrieval':{loadOfficialTruthServerOwnedRetrieval:async()=>{retrievals++;return fixtureRetrieve(fault)}},
