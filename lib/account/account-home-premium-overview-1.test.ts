@@ -16,6 +16,7 @@ const besuche = quelle('../../components/account/AccountBesuche.tsx')
 
 test('die Kontoübersicht benutzt die Vorschau, die Weltseite den vollen Atlas', () => {
   assert.match(uebersicht, /darstellung="uebersicht"/)
+  assert.match(karte, /props\.darstellung === 'uebersicht'[\s\S]*<BestehendeWeltKarte[\s\S]*<WorldExplorer/)
   assert.match(karte, /darstellung = 'atlas'/)
   assert.match(karte, /data-world-map-darstellung=\{darstellung\}/)
   assert.match(besuche, /<AccountWeltKarte welt=\{welt\} besucht=\{besucht\} laender=\{laender\} \/>/)
