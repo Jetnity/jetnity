@@ -513,6 +513,9 @@ describe('dormancy and architectural boundaries', () => {
     // Isolated fixed corpus, canonical execution and bounded official-source qualifier.
     // #917 fixed S1/S2 quarantine probe; verifier can never accept identity.
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts',
+    'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts',
+    'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts',
+    'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
     'scripts/official-truth-integrated-pilot-1/corpus.ts',
     'scripts/official-truth-integrated-pilot-1/engine.ts',
     'scripts/official-truth-integrated-pilot-1/official-source.ts',

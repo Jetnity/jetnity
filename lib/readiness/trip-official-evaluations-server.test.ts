@@ -333,6 +333,7 @@ describe('B01 authenticated page and account handoff', () => {
 
   test('account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh', async () => {
     let refreshes = 0
+    let invalidations = 0
     const writes: unknown[] = []
     const dependencies: Record<string, unknown> = {
       react: { ...React, useState: (initial: unknown) => [initial, () => {}] },
@@ -349,11 +350,16 @@ describe('B01 authenticated page and account handoff', () => {
     for (const domain of ['activities', 'flights', 'hotels', 'mobility', 'rental-cars', 'readiness']) dependencies[`@/lib/${domain}/aktionen`] = {}
     for (const component of ['RegistryReiseUebernahme', 'AktivitaetenBereich', 'MobilitaetBereich', 'FlugSuche', 'HotelBereich', 'ReiseAenderung', 'Reisebegleiter']) dependencies[`@/components/trips/${component}`] = { default: () => null }
     dependencies['@/components/trips/TripWorkspace'] = { default: Workspace }
+    dependencies['./OfficialTruthPilotForm'] = { default: () => null }
+    dependencies['./useOfficialTruthPilot'] = { useOfficialTruthPilot: (_trip: unknown, evaluations: OfficialEvaluation[]) => ({ evaluations, invalidate() { invalidations += 1 } }) }
     const account = laden<{ default: typeof KontoArbeitsbereich }>(ACCOUNT, dependencies)
     const snapshot = einfrieren(reise())
     const rows = einfrieren(await tripOfficialEvaluationsAuswerten(snapshot))
     const render = (evaluations: OfficialEvaluation[]) => {
-      const result = account.default({ reise: snapshot, ohneTag: snapshot.ohneTag ?? [], officialEvaluations: evaluations, registry: { problem: null, travellers: [] } })
+      const wrapper = account.default({ reise: snapshot, ohneTag: snapshot.ohneTag ?? [], officialEvaluations: evaluations, registry: { problem: null, travellers: [] } })
+      assert.equal(wrapper.type, 'div')
+      assert.equal(typeof wrapper.props.onChangeCapture, 'function')
+      const result = wrapper.props.children
       assert.ok(React.isValidElement<React.ComponentProps<typeof TripWorkspace>>(result))
       assert.equal(result.type, Workspace)
       assert.equal(result.props.officialEvaluations, evaluations)
@@ -367,6 +373,7 @@ describe('B01 authenticated page and account handoff', () => {
     await props.onTravellerEntfernen!('peer-a')
     await props.onUnterkunftZeitraum!('stay-fixture', '2026-11-01', '2026-11-03')
     assert.equal(refreshes, 2)
+    assert.equal(invalidations, 2, 'each existing mutation clears any pilot result before its write')
     assert.deepEqual(writes, [{ tripId: TRIP_ID, clientRef: 'peer-a' }, { tripId: TRIP_ID, itemId: 'stay-fixture', startsOn: '2026-11-01', endsOn: '2026-11-03' }])
   })
 

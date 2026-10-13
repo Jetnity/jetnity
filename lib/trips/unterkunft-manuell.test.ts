@@ -283,14 +283,17 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
   const args: unknown[] = []
   let refreshes = 0
   let accountError = false
-  const account = laden<{ default: (props: { reise: typeof reise; ohneTag: TripItem[] }) => WorkspaceElement }>('components/trips/KontoArbeitsbereich.tsx', {
+  let invalidations = 0
+  const account = laden<{ default: (props: { reise: typeof reise; ohneTag: TripItem[] }) => React.ReactElement<{ children: WorkspaceElement; onChangeCapture: () => void }> }>('components/trips/KontoArbeitsbereich.tsx', {
     react: { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }), useState: (initial: unknown) => [initial, () => {}] },
+    './OfficialTruthPilotForm': { default: () => null },
+    './useOfficialTruthPilot': { useOfficialTruthPilot: () => ({ evaluations: [], invalidate() { invalidations++ } }) },
     'next/navigation': { useRouter: () => ({ refresh: () => { refreshes++ } }) },
     '@/lib/trips/aktionen': { unterkunftZeitraumSetzen: async (input: unknown) => {
       args.push(input); return accountError ? { ok: false, meldung: 'Abgelehnt' } : { ok: true, wert: null }
     } },
   })
-  const callback = account.default({ reise, ohneTag: [] }).props.onUnterkunftZeitraum
+  const callback = account.default({ reise, ohneTag: [] }).props.children.props.onUnterkunftZeitraum
   assert.equal(await callback(ITEM, zeitraum.startsOn, zeitraum.endsOn), null)
   assert.deepEqual(args, [eingabe])
   assert.equal(refreshes, 1)
@@ -298,6 +301,7 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
   assert.equal(await callback(ITEM, zeitraum.startsOn, zeitraum.endsOn), 'Abgelehnt')
   assert.equal(refreshes, 1, 'kein Refresh bei Failure')
 
+  assert.equal(invalidations, 2, 'success and failure both invalidate before the mutation')
   const gespeichert = { ...reise, revision: reise.revision + 1 }
   const states = [reise, true, '']
   const stateWrites: unknown[] = []

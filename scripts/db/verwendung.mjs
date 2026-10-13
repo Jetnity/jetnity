@@ -53,6 +53,11 @@ const RPC_RE = /\.rpc\(\s*['"`]([\w.]+)['"`]/g
  * sourcePath and only while its sqlPath still contains that name.
  */
 export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
+  ...['trip_regulatory_context_save_v1', 'official_truth_application_pilot_run_v1'].map(name => Object.freeze({
+    name,
+    sourcePath: 'lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts',
+    sqlPath: 'supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql',
+  })),
   Object.freeze({
     name: 'admin_account_counts_v1',
     sourcePath: 'lib/admin/account-counts-delivery/reader.ts',

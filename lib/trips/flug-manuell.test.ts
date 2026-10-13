@@ -536,14 +536,18 @@ describe('Flight editor: actual render and event paths', () => {
 test('narrow Workspace wiring refreshes account on success and uses persisted guest graph', async () => {
   type WorkspaceElement = React.ReactElement<{ onFlugRouteManuell: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null> }>
   const reise = beispielreise({ id: TRIP }); const args: unknown[] = []; let refreshes = 0; let fail = false
-  const account = laden<{ default: (props: { reise: Trip; ohneTag: TripItem[] }) => WorkspaceElement }>('components/trips/KontoArbeitsbereich.tsx', {
+  let invalidations = 0
+  const account = laden<{ default: (props: { reise: Trip; ohneTag: TripItem[] }) => React.ReactElement<{ children: WorkspaceElement; onChangeCapture: () => void }> }>('components/trips/KontoArbeitsbereich.tsx', {
     react: { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }), useState: (initial: unknown) => [initial, () => {}] },
+    './OfficialTruthPilotForm': { default: () => null },
+    './useOfficialTruthPilot': { useOfficialTruthPilot: () => ({ evaluations: [], invalidate() { invalidations++ } }) },
     'next/navigation': { useRouter: () => ({ refresh: () => { refreshes++ } }) },
     '@/lib/trips/aktionen': { flugRouteManuellSetzen: async (input: unknown) => { args.push(input); return fail ? { ok: false, meldung: 'Abgelehnt' } : { ok: true, wert: null } } },
   })
-  const callback = account.default({ reise, ohneTag: [] }).props.onFlugRouteManuell
+  const callback = account.default({ reise, ohneTag: [] }).props.children.props.onFlugRouteManuell
   assert.equal(await callback(ITEM, segments), null); assert.deepEqual(args, [eingabe]); assert.equal(refreshes, 1)
   fail = true; assert.equal(await callback(ITEM, segments), 'Abgelehnt'); assert.equal(refreshes, 1)
+  assert.equal(invalidations, 2, 'success and failure both invalidate before the mutation')
   const saved = { ...reise, revision: reise.revision + 1 }; const states = [reise, true, '']; const writes: unknown[] = []; const guestArgs: unknown[] = []
   let guestFail = false
   const guest = laden<{ default: (props: { tripId: string }) => WorkspaceElement }>('components/trips/GastArbeitsbereich.tsx', {

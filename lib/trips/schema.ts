@@ -19,6 +19,7 @@
 // benutzen dieselben Schemata, und der Test braucht keine Laufzeit.
 
 import { z } from 'zod'
+import { regulatoryContextSchema } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 
 import {
   DAY_STAGE_ASSIGNMENT_MODES,
@@ -267,6 +268,7 @@ export const reiseSchema = z
   .object({
     id: z.string().min(1).max(80),
     clientRef: z.string().min(1).max(64).nullable().default(null),
+    regulatoryContext: regulatoryContextSchema.nullable().optional(),
     title: titel,
     origin: optionalerText(GRENZEN.ort).nullable().default(null),
     originPlaceId: z.string().min(1).max(80).nullable().default(null),

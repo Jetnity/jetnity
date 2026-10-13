@@ -63,10 +63,12 @@ import {
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { citizenshipCodesAus, credentialOptionsAus, documentCitizenshipCode } from '@/lib/readiness/traveller-kontext'
 import type { Trip } from '@/types/trips'
+import { pilotContextFingerprint } from './official-truth-ch-de-application-pilot-1/context'
 
 const KERN_TYPEN = OFFICIAL_REQUIREMENT_TYPES
 
 export function officialFingerprint(anfrage: {
+  regulatoryContextFingerprint?: string | null
   travellerClientRef: string | null
   credentialOptionRef?: string | null
   citizenshipCountryCodes?: readonly string[]
@@ -120,6 +122,7 @@ export function officialFingerprint(anfrage: {
     .sort()
   return [
     'off-v2',
+    ...(anfrage.regulatoryContextFingerprint ? [`decl=${anfrage.regulatoryContextFingerprint}`] : []),
     `t=${anfrage.travellerClientRef ?? ''}`,
     `opt=${anfrage.credentialOptionRef ?? ''}`,
     `cit=${citizenships.join(',')}`,
@@ -305,6 +308,7 @@ function requirementsAnfrageAusReise(reise: Trip): RequirementsAnfrage {
   const slots = travellerSlots(reise).filter((slot) => slot.applicable)
   return {
     originCountryCode: kontext.originCountryCode,
+    ...(reise.regulatoryContext ? { regulatoryContextFingerprint: pilotContextFingerprint(reise) } : {}),
     destinationCountryCodes: kontext.destinationCountries,
     transitCountryCodes: kontext.transitCountryCodes,
     startDate: kontext.startDate,
@@ -340,6 +344,7 @@ function fingerprintFuer(
 ): string {
   return officialFingerprint({
     travellerClientRef: traveller.clientRef,
+    regulatoryContextFingerprint: anfrage.regulatoryContextFingerprint,
     credentialOptionRef: option.optionRef,
     citizenshipCountryCodes: traveller.citizenshipCountryCodes,
     residenceCountryCode: traveller.residenceCountryCode,

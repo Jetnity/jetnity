@@ -120,5 +120,10 @@ test('owned source path is developer-only with one exact live importer, no direc
     }
   }
   for (const dir of ['app', 'components', 'lib']) walk(dir)
-  assert.deepEqual(found, [])
+  // #938 reuses only the pure, strict read-request validator. The developer
+  // source probe and its physical-network authority remain unreachable.
+  assert.deepEqual(found, ['lib/readiness/official-truth-ch-de-application-pilot-1/scope-server.ts'])
+  const consumer=readFileSync(found[0]!, 'utf8')
+  assert.match(consumer, /from '@\/lib\/readiness\/official-truth-ch-de-first-visa-vertical-1\/read-request'/)
+  assert.doesNotMatch(consumer, /source-probe|loadOfficialTruthServerOwnedRetrieval|fetch\s*\(/)
 })

@@ -24,7 +24,7 @@ import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/
 
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 // #899 permits this one fixed-corpus developer execution, never a live importer.
-const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts']
+const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts']
 function fixtureImporterErlaubt(path: string): boolean { return FIXTURE_IMPORTER.includes(path) }
 const ZEIT = '2026-10-03T00:00:00.000Z'
 const SCOPE = `rule-scope:v1:${'a'.repeat(64)}`
@@ -814,10 +814,12 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
     assert.equal('fact' in ergebnis, false)
   })
 
-  test('der Produktions-Einstieg wird außerhalb von Tests nur von der gleichen-Request-Bindung importiert', () => {
+  test('nur die gleichen-Request-Bindungen und die isolierte Anwendungstest-Kopie verwenden den Produktions-Einstieg', () => {
     const erlaubt = [
       'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
       'lib/readiness/official-truth-same-request-extraction-server.ts',
+      'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts',
+      'scripts/official-truth-ch-de-application-pilot-1/application-browser.ts',
     ]
     const produktion: string[] = []
     const naht: string[] = []

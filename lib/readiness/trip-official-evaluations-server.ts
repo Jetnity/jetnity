@@ -10,3 +10,9 @@ import type { Trip } from '@/types/trips'
 export async function tripOfficialEvaluationsAuswerten(reise: Trip): Promise<OfficialEvaluation[]> {
   return requirementsFuerReise(reise, requirementsProviderNachZustand(requirementsProviderAus()))
 }
+
+/** Explicit authenticated action only; render-time evaluation stays OFF. */
+export async function tripOfficialPilotPruefen(reise: Trip, signal: AbortSignal) {
+  const { evaluateApplicationPilot } = await import('./official-truth-ch-de-application-pilot-1/evaluate-server')
+  return evaluateApplicationPilot(reise, signal)
+}

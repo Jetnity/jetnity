@@ -16,6 +16,7 @@
 // `lib/trips/bezeichnungen.ts`.
 
 import type { FlugRouteItinerary } from '@/lib/route/domain'
+import type { TripRegulatoryContext } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 
 /** Reisetempo. Werte wie in `trips.pace`. */
 export const TRIP_PACES = ['calm', 'balanced', 'intense'] as const
@@ -357,6 +358,8 @@ export type TripStage = {
 }
 
 export type Trip = {
+  /** Versioned user declarations, never official evidence; absent on old trips. */
+  regulatoryContext?: TripRegulatoryContext | null
   id: string
   /**
    * Die Kennung, unter der der Client diese Reise angelegt hat.
