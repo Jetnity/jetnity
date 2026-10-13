@@ -254,3 +254,48 @@ test('ALL 300–399 cancel without reading headers/body or attempting a second G
     assert.equal(calls, 1, String(status)); assert.equal(cancels, 1, String(status))
   }
 })
+
+const externalAssetCases: readonly [string, string, boolean][] = [
+  ['ordinary external control', '<img src="https://example.invalid/a.png">', true],
+  ['scheme-relative external', '<img src="//example.invalid/a.png">', true],
+  ['hostname-prefix lookalike', '<img src="https://bern.diplo.de.example.invalid/a.png">', true],
+  ['userinfo is not the host', '<img src="https://bern.diplo.de@example.invalid/a.png">', true],
+  ['unquoted external', '<img src=https://example.invalid/a.png>', true],
+  ['single-quoted href', "<link href='//example.invalid/a.css'>", true],
+  ['unquoted mixed-case href', '<LINK HREF = //example.invalid/a.css>', true],
+  ['same-host absolute control', '<img src="https://bern.diplo.de/a.png">', false],
+  ['same-host case/default-port normalization', '<img src="HTTPS://BERN.DIPLO.DE:443/a.png">', false],
+  ['same-host scheme-relative', '<img src="//bern.diplo.de/a.png">', false],
+  ['same-host unquoted', '<img src=https://bern.diplo.de/a.png>', false],
+  ['root-relative', '<img src="/a.png">', false],
+  ['document-relative', '<img src="../a.png">', false],
+  ['query-relative', '<a href="?view=assets">synthetic</a>', false],
+  ['fragment-relative', '<a href="#asset">synthetic</a>', false],
+  ['external-looking path is still relative', '<img src="/example.invalid/a.png">', false],
+  ['userinfo-looking path is still relative', '<img src="/bern.diplo.de@example.invalid/a.png">', false],
+  ['empty quoted reference', '<img src="">', false],
+  ['later external attribute is still detected', '<img src="/a.png"><img src="//example.invalid/b.png">', true],
+  ['data attribute alone is not src', '<img data-src="https://example.invalid/a.png">', false],
+  ['non-default port conservatively distinct', '<img src="https://bern.diplo.de:444/a.png">', true],
+  ['invalid host', '<img src="https://[invalid/a.png">', true],
+  ['missing absolute host', '<img src="https://">', true],
+  ['unclosed quote', '<img src="https://example.invalid/a.png>', true],
+  ['missing unquoted value', '<img src=>', true],
+  ['entity ambiguity', '<img src="https://bern.diplo.de&#64;example.invalid/a.png">', true],
+  ['backslash ambiguity', '<img src="\\\\example.invalid/a.png">', true],
+  ['control-character ambiguity', '<img src="https://bern.diplo.de\u0000.example.invalid/a.png">', true],
+  ['unsupported opaque scheme', '<img src="data:image/png,synthetic">', true],
+]
+for (const [name, html, expected] of externalAssetCases) {
+  test('R4 external-resource URL semantics: ' + name, async () => {
+    const res = await run({ body: Buffer.from(html) })
+    assert.equal(res.report.phase, 'observed_research_only')
+    if (res.report.phase !== 'observed_research_only') assert.fail('synthetic response must be observed')
+    assert.equal(res.report.indicators.embedded_external_asset_indicators_present, expected)
+    assert.equal(res.httpCalls, 1)
+    assert.deepEqual(res.urls, [BERN])
+    assert.equal(Object.values(res.report.indicators).every(value => typeof value === 'boolean'), true)
+    assert.equal(JSON.stringify(res.report).includes('example.invalid'), false)
+    assert.equal(JSON.stringify(res.report).includes(html), false)
+  })
+}

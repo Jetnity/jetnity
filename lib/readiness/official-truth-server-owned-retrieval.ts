@@ -1065,7 +1065,18 @@ function bernResearchIndicators(text: string): OfficialTruthBernRealResearchIndi
   const scripts = /<script\b|javascript:/i.test(text)
   const analytics = /(matomo|_paq\b|piwik|google-analytics|googletagmanager|gtag\(|analytics|tracking|fbclid|gclid|dclid|msclkid)/i.test(text)
   const personal = /(mailto:|\b(?:e-?mail|telefon|tel:|kontakt|ansprechpartner|impressum|pressestelle)\b|@[a-z0-9.-]+\.[a-z]{2,})/i.test(text)
-  const external = /(?:src|href)\s*=\s*['"]https?:\/\/(?!bern\.diplo\.de)[^'"\s>]*/i.test(text)
+  const documentUrl = new URL(BERN_RESEARCH_URL)
+  const attributes = text.matchAll(/(?:^|[\s<])(?:src|href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]*))/gi)
+  const external = Array.from(attributes).some(match => {
+    const value = (match[1] ?? match[2] ?? match[3] ?? '').trim()
+    // Bounded observation, not an HTML parser or absence/rights clearance.
+    // Undecoded entities, broken quoting and ambiguous values remain a hint.
+    if (match[3] === '' || /[&\\<>"'`\u0000-\u0020\u007f]/.test(value)) return true
+    try {
+      const resource = new URL(value, documentUrl)
+      return !['http:', 'https:'].includes(resource.protocol) || resource.host !== documentUrl.host
+    } catch { return true }
+  })
   const rights = /(copyright|urheberrecht|rights reserved|alle rechte vorbehalten|©)/i.test(text)
   return Object.freeze({
     html_scripts_present: scripts,
