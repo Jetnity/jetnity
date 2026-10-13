@@ -179,3 +179,35 @@ and [expiry from creation](https://docs.github.com/en/rest/apps/apps#create-an-i
 Operational custody, real App installation/configuration and A01/A02/A09/A10
 remain OPEN. No real secrets, App changes, source/ref action, shared-code edit,
 new dependency/cost, Ready/merge or follow-up. LIVE B HARD-BLOCKED.
+
+## CUSTODY-2 continuation — current author delivery
+
+R2 review5506773206 ACCEPTED R1-F1/F2 and closed their threads on95d5552a.
+Those accepted source blobs remain unchanged. Scope is existing #936
+comment6150274275, same writer/branch/Draft937, not a new task/framework.
+
+Added the default-disabled Swift signer, a foreign executable denial probe,
+an explicit offline preparation/rehearsal script and27 portable negative/
+boundary tests. Fixed internal synthetic issuer, RS256 claims, five-minute
+expiry, OS clock and process deadline; no claims/key/path/clock/real-App input.
+Actual macOS run independently verified signatures, restrictive ACL including
+same-identifier replacement, nonextractability, refusal/error cleanup, locked/
+wrong/missing keys and unchanged search list. The new task-only owner-local
+0700 candidate remains empty after cleanup.
+
+Time Machine reports Included. Exact one-leaf proposal6150498189 awaits TL;
+no exclusion applied. Third-party sync and actual attended browser transfer
+are unproved. See CUSTODY's current section and custody-2-synthetic.json.
+This is a concrete preparation/proof, not operational acceptance.
+
+Fresh published-HEAD task/regression/full/nativePG16/static/build and original
+CI/Auth/Preview results, exact SHA/tree/diffs and log hashes are attached in the
+post-commit CUSTODY-2 handoff; no earlier-head success substitution.
+Historical CI38421167519 attempt1 Verify failure (240111.161869/240000ms,
+6979 pass/2 cancelled) and same-head attempt2 success (6981/6981,
+PG222641.661284ms) remain evidence. Auth55/243 executed once and was carried
+forward, not rerun. Any new failure is retained too; P2 timing is not fixed.
+
+No TASK/shared/accepted-auth/package/lock/workflow/config/route/legacy changes,
+migration/RLS/hosted Auth, product flow or recurring cost. A01/A02/A09/A10 OPEN.
+No genuine key/token/App/ref/Bern operation. AUTHOR STOP; LIVE B HARD-BLOCKED.

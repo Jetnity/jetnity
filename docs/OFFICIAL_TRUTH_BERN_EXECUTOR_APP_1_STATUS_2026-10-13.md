@@ -34,3 +34,20 @@ Fresh new-HEAD results belong to the R1 publication receipt; previous-head gates
 do not count for this correction. Independent re-review/thread disposition remains
 OPEN. A01 installation/A02 operational custody/A10 provisioning remain OPEN;
 no real configuration or credential, no renewed Owner approval, no live activation.
+
+## Current CUSTODY-2 override
+
+TL R2 review5506773206 accepted R1-F1/F2 on95d5552a and resolved both threads.
+The preceding R1 "re-review OPEN" sentence is historical for that correction;
+no token fix is reopened here. CUSTODY-2 comment6150274275 authorizes this same
+session's remaining signer/staging work. Changed HEAD needs its own TL review.
+
+A02 now has a constrained default-disabled signer and passing actual synthetic
+staged-import/sign/verify/denial/error/cleanup proof. One new owner-local0700
+task candidate is established and empty. Operational acceptance stays OPEN:
+Time Machine Included; exact one-leaf proposal6150498189 awaits TL; no backup
+change; third-party sync and attended browser destination remain unproved.
+A01 real installation/A09 independent changed-HEAD review/A10 provisioning OPEN.
+Fresh published-HEAD gates and exact metadata are in the CUSTODY-2 publication
+receipt. All historic failed CI attempts remain documented. Draft/STOP;
+LIVE B HARD-BLOCKED, no real configuration or credential.

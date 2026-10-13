@@ -78,3 +78,27 @@ not claims of observed live GitHub compatibility. No actual credential exchange
 or TLS handshake occurred. Unchanged custody evidence was not rerun or promoted
 to operational acceptance. Final new-HEAD full checks are in the R1 publication
 receipt; author testing is not independent TL acceptance.
+
+## CUSTODY-2 self-review (not independent TL acceptance)
+
+- R2 accepted both token findings; authentication/evidence/transport are unchanged.
+- Default native build refuses before lookup; only explicit manual synthetic
+  build receives fresh internal public pin + disposable path. No real issuer,
+  raw private key input, arbitrary signing message, supplied clock or lifetime.
+- Actual independent signature verification and native ACL/export/locked-key/
+  wrong-key/missing-key/invalid-input/failed-import cleanup evidence pass.
+  Different binary re-signed with the same identifier remains denied.
+- O_NOFOLLOW, restrictive ownership/modes, hardlink rejection, bounded read and
+  matching snapshot import prevent the tested path/content substitutions.
+  Same-user/host-admin takeover is not claimed solved.
+- All diagnostic/public evidence values are controlled fields; no JWT/private
+  bytes, actual private paths or unrelated keychain metadata. Clear env/fixed
+  absolute programs, no shell, no network or Owner-token fallback.
+- Backup Included is a blocker for genuine staging. Exact proposal6150498189
+  is NOT applied; unrelated settings/files are untouched. Browser and arbitrary
+  third-party sync remain unproved. No hardware/SSD erasure claim.
+- Native first compile/package failures and cleanup are retained privately;
+  historical R1 CI failure remains explicit. All new-HEAD gates must be fresh.
+- No external API/product/DB/cost surface. A01/A02/A09/A10 remain OPEN.
+- Remaining native API deprecation, clock, same-user/admin/memory/snapshot and
+  final production binary/ACL/attended-provisioning risks belong to TL review.

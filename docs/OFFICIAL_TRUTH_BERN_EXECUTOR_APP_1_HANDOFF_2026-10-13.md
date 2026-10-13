@@ -63,3 +63,29 @@ matching Preview/testmerge evidence. Prior receipt6147479645 is historical.
 No automatic resolution of independent review threads, Ready, merge, credentials
 or follow-up. Operational custody and real identity remain unaccepted/unconfigured.
 AUTHOR STOP for independent TL re-review; LIVE B HARD-BLOCKED.
+
+## CUSTODY-2 author handoff continuation
+
+R2 accepted R1-F1/F2 and closed their threads; do not redo them. This same
+session delivered the bounded remaining original-task signer/local staging
+preparation under6150274275, preserving immutable TASK and accepted code.
+
+Review custody-signer.swift, custody-denial-probe.swift, custody-2.mjs,
+custody.test.ts and the current CUSTODY section/sanitized JSON. Native proof:
+independent public signature/claims, denied export/foreign and same-identifier
+binary, locked/wrong/missing key, invalid input/import and success/failure
+cleanup. Persistent candidate is0700 and empty; default real invocation closed.
+
+**Exact remaining setup decision:** directory-only backup proposal6150498189
+is published for TL arbitration but NOT applied; observed status Included.
+No third-party sync or attended browser-transfer proof is invented. Final
+production package/ACL/config and real provisioning need TL sequence; real IDs
+remain null. No real key/token/App/ref/Bern, DB/Auth/RLS/Production/cost change.
+
+The post-commit CUSTODY-2 author receipt supplies exact HEAD/tree/parent/diff,
+main/merge-base/ahead/behind, fresh local/full/nativePG/CI/Auth/Preview IDs and
+logs, retaining failed attempts. Prior R1 CI38421167519 attempt1 failure and
+attempt2 success remain historical, not gates for the new HEAD.
+
+**AUTHOR STOP for independent TL review and exact backup arbitration.
+No Ready, merge or follow-up. LIVE B HARD-BLOCKED.**

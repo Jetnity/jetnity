@@ -61,3 +61,33 @@ owned authentication, transport, synthetic tests and task documentation.
   credential. Security risk is compatibility correction at an inactive boundary;
   operational custody and independent re-review remain open. Publish exact evidence
   and STOP; no Ready/merge/follow-up.
+
+## CUSTODY-2 continuation — same session
+
+R2 review 5506773206 accepts R1-F1/F2 on 95d5552a; those corrections stay
+unchanged. Binding scope is issue936 comment6150274275; current #751 checkpoint
+6150282850. No new writer, branch, permission or framework.
+
+1. Prepare one new empty owner-local Application Support/Jetnity task directory
+   after canonical parent/owner/mode/ACL checks. Inspect backup status without
+   changing it. Present any exact directory-only exclusion/rollback to TL first.
+2. Add a small standalone macOS Security signer, compiled production-disabled.
+   The manual synthetic build pins its generated public key and exact disposable
+   keychain, executable identity and fixed RS256 claims. No arbitrary payload,
+   key path, supplied credentials, clock, App identity or lifetime input.
+3. Rehearse staged regular-file/owner/mode/link checks, nonextractable import,
+   constrained signing, independent public verification, foreign executable and
+   export denial, malformed input, locked/wrong/missing key and cleanup failures.
+   Only fresh unregistered material; no network. Report fixed codes/booleans.
+4. Keep the persistent candidate empty after rehearsal. Document backup/sync and
+   actual browser-transfer limits, exact later attended steps and rollback.
+   No backup-policy change without the required exact TL arbitration.
+5. Preserve TASK, accepted authentication, evidence, legacy and shared files.
+   Run fresh task/regression/full nativePG16/static/build gates, publish on #937,
+   retain every CI attempt and collect exact-head original Auth/Verify/Preview.
+
+Only task-owned scripts/tests/docs/evidence change. No API, database, dependency,
+workflow, public UX, travel-graph or recurring-cost change. Software ACLs do not
+protect against owner/host-admin takeover; clock, same-user memory, SSD/snapshot,
+unknown third-party sync and attended browser handling remain explicit limits.
+Real lookup/provisioning stays technically disabled. Deliver and STOP for TL.
