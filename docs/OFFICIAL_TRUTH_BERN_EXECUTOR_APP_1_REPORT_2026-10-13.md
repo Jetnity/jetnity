@@ -211,3 +211,15 @@ forward, not rerun. Any new failure is retained too; P2 timing is not fixed.
 No TASK/shared/accepted-auth/package/lock/workflow/config/route/legacy changes,
 migration/RLS/hosted Auth, product flow or recurring cost. A01/A02/A09/A10 OPEN.
 No genuine key/token/App/ref/Bern operation. AUTHOR STOP; LIVE B HARD-BLOCKED.
+
+First CUSTODY-2 publication e57cd04c8eb8b90e7e278060c5d17b1395317515
+triggered fresh gates. Local schema scanning treated a Buffer.from synthetic
+underscore-only marker as a table reference; only that fake marker was changed
+to hyphenated text. No schema scanner/shared-code weakening. The first local
+full run also correctly refused the container image's inherited PGDATA/PG_MAJOR/
+PG_VERSION variables (6990/6996 pass,6 failures,0 skipped,65834.313656ms;
+nested native cases could not start). The corrected launch removes those image
+variables; the connection-override guard and240s native deadline are unchanged.
+An initial host tsx IPC EPERM was rerun through the existing allowed local
+execution boundary. All these logs and the superseded-head CI disposition stay
+in the final receipt; neither failure is a new App-credential compatibility bug.

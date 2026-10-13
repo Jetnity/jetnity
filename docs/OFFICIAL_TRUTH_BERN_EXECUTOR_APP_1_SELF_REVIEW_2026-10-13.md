@@ -102,3 +102,7 @@ receipt; author testing is not independent TL acceptance.
 - No external API/product/DB/cost surface. A01/A02/A09/A10 remain OPEN.
 - Remaining native API deprecation, clock, same-user/admin/memory/snapshot and
   final production binary/ACL/attended-provisioning risks belong to TL review.
+- Fresh gates exposed a schema-scanner collision in a fake file marker, fixed
+  only in the owned fixture string. First container full run's inherited PG
+  image-variable refusals and initial tsx IPC failure are retained; rerun uses
+  clean PG environment without changing guards, workflows or timeout budgets.

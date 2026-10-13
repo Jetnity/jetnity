@@ -104,7 +104,7 @@ export function syntheticStagingCaseForTests(kind) {
   if (!cases.includes(kind)) return false
   const directory = realpathSync(mkdtempSync(join(tmpdir(), 'bern-custody-stage-test-')))
   chmodSync(directory, 0o700)
-  const path = join(directory, 'synthetic-only.pem'), bytes = Buffer.from('UNREGISTERED_SYNTHETIC_FILE_ONLY')
+  const path = join(directory, 'synthetic-only.pem'), bytes = Buffer.from('UNREGISTERED-SYNTHETIC-FILE-ONLY')
   try {
     writeFileSync(path, bytes, { mode: 0o600, flag: 'wx' })
     if (kind === 'symlink') { renameSync(path, path + '.target'); symlinkSync(path + '.target', path) }
