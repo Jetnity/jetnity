@@ -61,7 +61,7 @@ export function appFixture() {
   set('/app/installations/' + pins.installationId, installation)
   set(API + '/installation', installation)
   set('/app/installations/' + pins.installationId + '/access_tokens', { token: 'synthetic-installation-only-not-a-real-credential',
-    permissions: { ...P.permissions }, repository_selection: 'selected', expires_at: '2026-10-13T16:00:00Z', repositories: [repository] }, 201)
+    permissions: { ...P.permissions }, repository_selection: 'selected', expires_at: new Date(now + 3_600_000).toISOString(), repositories: [repository] }, 201)
   set('/installation/repositories?per_page=100&page=1', { total_count: 1, repositories: [repository] })
   set(API, repository)
   set(API + '/git/ref/heads/main', { ref: 'refs/heads/main', url: 'https://api.github.com' + API + '/git/refs/heads/main',

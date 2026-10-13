@@ -37,3 +37,27 @@ authentication, an execution capability or an ATTEMPT_CONSUMED receipt.
 
 No real secrets, App settings, Bern DNS/HTTP, ref writes, Ready, merge or follow-up.
 LIVE B HARD-BLOCKED. Independent TL owns acceptance and later sequencing.
+# R1 correction plan — same session, 2026-10-13
+
+Authority: TL review5505320406 / issue936 checkpoint6148167645; reviewed starting
+HEAD372f063f52aed2a6c8e6f00d004b46897dfbd0bb. Correct only R1-F1/F2 in the
+owned authentication, transport, synthetic tests and task documentation.
+
+- Use one finite 4096-byte, nonempty visible-ASCII credential boundary for the
+  authenticated exchange and fixed Authorization header. No prefix, JWT content,
+  legacy override, supplied bearer or owner-token authority.
+- Measure token creation within trusted monotonic send/receive times of the
+  exchange. Keep one-hour maximum with at most one second clock/serialization
+  skew, minimum remaining life above60s, per-read5s reserve, request5s and total60s.
+  Reject nonfinite/backward clocks and elapsed deadlines after responses too.
+- Extend only the offline harness with internally constructed credential cases
+  and a synthetic elapsed clock. Test520/longer/boundary opaque credentials,
+  malformed/header-injection/over-limit controls,2s/20s delayed issuance,
+  progressing reads, expiry/remaining life, excessive lifetime and clock anomalies.
+- Run fresh focused regressions, full nativePG16 suite with unchanged240s,
+  prescribed static gates/build, then original Verify/Auth/Preview at the new HEAD.
+- Preserve TASK/history/protected blobs, closed real configuration and custody
+  findings. No DB/API/product/travel-graph change, dependency, new cost or real
+  credential. Security risk is compatibility correction at an inactive boundary;
+  operational custody and independent re-review remain open. Publish exact evidence
+  and STOP; no Ready/merge/follow-up.

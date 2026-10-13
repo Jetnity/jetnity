@@ -7,7 +7,7 @@ import { APP_API as API, APP_POLICY as P, AppBlocked, canonical, type JsonObject
 import { simulateAppPreflightForTests } from './authentication'
 import { appFixture } from './fixture'
 import { bernAppCustodyGate, bernAppDeveloperPreflight } from '../../../scripts/official-truth-bern-executor-app-1/run'
-import { liveAppTransport } from '../../../scripts/official-truth-bern-executor-app-1/github'
+import { liveAppTransport, type AppSyntheticCredentialCase, type AppHttpRequest } from '../../../scripts/official-truth-bern-executor-app-1/github'
 
 type Fixture = ReturnType<typeof appFixture>
 const exchange = '/app/installations/90002/access_tokens'
@@ -136,6 +136,136 @@ test('complete synthetic protocol proves no live authentication or capability', 
 })
 // Supply only the harness contract, never the fixture's inspection helpers.
 function simulation(f: Fixture) { return { pins: f.pins, checkout: f.checkout, receipts: f.receipts, now: f.now, respond: f.respond } }
+
+for (const credentialCase of ['short', 'stateless520', 'stateless1200', 'opaque_min', 'opaque_punctuation', 'opaque_limit'] as const) {
+  test('opaque exchange credential supports ' + credentialCase + ' without interpreting contents', async () => {
+    const f = appFixture()
+    const result = await simulateAppPreflightForTests({ ...simulation(f), credentialCase })
+    assert.equal(result.status, 'SYNTHETIC_PREFLIGHT_PASS')
+    assert.equal(result.liveAuthenticated, false); assert.equal(result.executionCapability, false)
+    assert.equal(f.calls.filter(r => r.method === 'POST').length, 1)
+    assert.ok(!JSON.stringify(result).includes('ghs_'))
+  })
+}
+for (const credentialCase of ['empty', 'too_long', 'crlf', 'lf', 'nul', 'tab', 'space', 'del', 'non_ascii', 'non_string'] as const) {
+  test('exchange rejects internally generated unsafe opaque credential: ' + credentialCase, async () => {
+    const f = appFixture()
+    const result = await simulateAppPreflightForTests({ ...simulation(f), credentialCase })
+    assert.equal(result.status, 'BLOCKED'); assert.equal(result.reason, 'exchange_invalid')
+    assert.equal(f.calls.filter(r => r.method === 'POST').length, 1)
+    assert.equal(f.calls.some(r => r.path === installationRepos), false)
+    assert.ok(!JSON.stringify(result).includes('synthetic'))
+    assert.ok(f.signals.every(s => s.aborted))
+  })
+}
+test('opaque contents neither grant permissions nor admit caller-supplied credentials', async () => {
+  const f = appFixture(); (f.body(exchange).permissions as JsonObject).administration = 'write'
+  const result = await simulateAppPreflightForTests({ ...simulation(f), credentialCase: 'stateless520' })
+  assert.equal(result.reason, 'permission_mismatch')
+  const other = appFixture()
+  assert.equal((await simulateAppPreflightForTests({ ...simulation(other),
+    credentialCase: 'ghp_supplied-not-a-real-token' as AppSyntheticCredentialCase })).status, 'BLOCKED')
+  assert.equal(other.calls.length, 0)
+})
+
+function timedSimulation(f: Fixture, onResponse: (r: AppHttpRequest, clock: { elapsed: number }) => void) {
+  const clock = { elapsed: 0 }
+  return { clock, input: { ...simulation(f), syntheticElapsedMs: () => clock.elapsed,
+    respond: async (r: AppHttpRequest, s: AbortSignal) => { onResponse(r, clock); return f.respond(r, s) } } }
+}
+for (const delay of [2000, 20_000]) {
+  test('one-hour token created after advancing clock by ' + delay + 'ms is accepted', async () => {
+    const f = appFixture(); let created = false
+    const timed = timedSimulation(f, (r, c) => {
+      if (!created) c.elapsed += delay / 5 // four identity reads, then exchange; each stays below5s
+      if (r.method === 'POST') {
+        f.body(exchange).expires_at = new Date(f.now + c.elapsed + 3_600_000).toISOString(); created = true
+      }
+    })
+    assert.equal((await simulateAppPreflightForTests(timed.input)).status, 'SYNTHETIC_PREFLIGHT_PASS')
+    assert.equal(timed.clock.elapsed, delay)
+    assert.equal(f.calls.filter(r => r.method === 'POST').length, 1)
+  })
+}
+test('creation within a delayed exchange interval and second-resolution expiry is accepted', async () => {
+  const f = appFixture()
+  const timed = timedSimulation(f, (r, c) => {
+    if (r.method === 'POST') {
+      const createdAt = c.elapsed + 2100
+      c.elapsed += 4200
+      f.body(exchange).expires_at = new Date(Math.floor((f.now + createdAt + 3_600_000) / 1000) * 1000).toISOString()
+    }
+  })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).status, 'SYNTHETIC_PREFLIGHT_PASS')
+})
+for (const [name, lifetime, expected] of [
+  ['expired', -1, 'BLOCKED'], ['zero remaining', 0, 'BLOCKED'],
+  ['insufficient remaining', 59_999, 'BLOCKED'], ['minimum boundary', 60_000, 'BLOCKED'],
+  ['above minimum', 60_001, 'SYNTHETIC_PREFLIGHT_PASS'], ['one-hour maximum', 3_600_000, 'SYNTHETIC_PREFLIGHT_PASS'],
+  ['one-second skew boundary', 3_601_000, 'SYNTHETIC_PREFLIGHT_PASS'],
+  ['excess beyond bounded skew', 3_601_001, 'BLOCKED'], ['excessive', 3_700_000, 'BLOCKED'],
+] as const) test('exchange-relative lifetime: ' + name, async () => {
+  const f = appFixture()
+  const timed = timedSimulation(f, (r, c) => {
+    if (r.method === 'POST') {
+      c.elapsed += 2000
+      f.body(exchange).expires_at = new Date(f.now + c.elapsed + lifetime).toISOString()
+    }
+  })
+  const result = await simulateAppPreflightForTests(timed.input)
+  assert.equal(result.status, expected)
+  if (expected === 'BLOCKED') assert.equal(result.reason, 'exchange_expiry_invalid')
+})
+test('remaining life is evaluated when delayed response arrives, not at request/start time', async () => {
+  const f = appFixture(); f.body(exchange).expires_at = new Date(f.now + 61_000).toISOString()
+  const timed = timedSimulation(f, (r, c) => { if (r.method === 'POST') c.elapsed = 2000 })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'exchange_expiry_invalid')
+})
+test('five-second reserve is rechecked after progressing token-authenticated reads', async () => {
+  const f = appFixture(); let issued = false
+  f.body(exchange).expires_at = new Date(f.now + 60_001).toISOString()
+  const timed = timedSimulation(f, (r, c) => {
+    if (issued) c.elapsed += 2000
+    if (r.method === 'POST') issued = true
+  })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'session_expired')
+  assert.ok(timed.clock.elapsed >= 56_000 && timed.clock.elapsed < 60_000)
+})
+test('exchange response at five-second request deadline is rejected without retry', async () => {
+  const f = appFixture()
+  const timed = timedSimulation(f, (r, c) => { if (r.method === 'POST') c.elapsed = 5000 })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'github_unverifiable')
+  assert.equal(f.calls.filter(r => r.method === 'POST').length, 1)
+})
+test('advancing total time to60s blocks even though each request takes only4s', async () => {
+  const f = appFixture()
+  const timed = timedSimulation(f, (_r, c) => { c.elapsed += 4000 })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'session_expired')
+  assert.equal(timed.clock.elapsed, 60_000); assert.ok(f.signals.every(s => s.aborted))
+})
+test('final response cannot turn an elapsed overall deadline into success', async () => {
+  const f = appFixture(); let absenceReads = 0
+  const timed = timedSimulation(f, (r, c) => {
+    if (r.path === API + '/git/ref/' + P.consumedRef.slice(5) && ++absenceReads === 2) c.elapsed = 60_000
+  })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'session_expired')
+  assert.equal(absenceReads, 2)
+})
+for (const value of [NaN, Infinity, -Infinity, -1]) test('nonfinite/negative elapsed clock blocks: ' + String(value), async () => {
+  const f = appFixture(); const timed = timedSimulation(f, (_r, c) => { c.elapsed = value })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'invalid_time')
+})
+test('backward monotonic clock blocks before credential exchange', async () => {
+  const f = appFixture(); let n = 0
+  const timed = timedSimulation(f, (_r, c) => { c.elapsed = ++n === 1 ? 1000 : 999 })
+  assert.equal((await simulateAppPreflightForTests(timed.input)).reason, 'invalid_time')
+  assert.equal(f.calls.some(r => r.method === 'POST'), false)
+})
+for (const now of [NaN, Infinity, -1, Number.MAX_SAFE_INTEGER + 1]) test('invalid initial time blocks: ' + String(now), async () => {
+  const f = appFixture()
+  assert.equal((await simulateAppPreflightForTests({ ...simulation(f), now })).reason, 'invalid_time')
+  assert.equal(f.calls.length, 0)
+})
 for (const [name, mutate] of cases) test('deny: ' + name, async () => {
   const f = appFixture(); mutate(f)
   const r = await simulateAppPreflightForTests(simulation(f))

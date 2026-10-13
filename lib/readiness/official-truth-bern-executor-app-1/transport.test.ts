@@ -56,10 +56,33 @@ test('fixed GitHub HTTPS request options, strict TLS, no redirect and no caller 
   assert.equal(o.servername, 'api.github.com'); assert.equal(o.rejectUnauthorized, true)
   assert.equal(o.checkServerIdentity, checkServerIdentity); assert.equal(o.agent, false)
   assert.equal(o.minVersion, 'TLSv1.2'); assert.equal(o.maxHeaderSize, 16384)
-  assert.deepEqual(o.headers, { Authorization: 'Bearer synthetic-not-a-github-credential',
+  assert.deepEqual(o.headers, { Authorization: 'Bearer synthetic-installation-only-not-a-real-credential',
     Accept: 'application/vnd.github+json', 'Accept-Encoding': 'identity', 'X-GitHub-Api-Version': '2022-11-28',
     'User-Agent': 'jetnity-bern-executor-app-1-preflight' })
 })
+for (const [credentialCase, length] of [['stateless520', 520], ['stateless1200', 1200], ['opaque_min', 1], ['opaque_limit', 4096]] as const) {
+  test('opaque credential reaches fixed header intact: ' + credentialCase, async () => {
+    const f = fake()
+    await exerciseAppTransportForTests(pins, f.request, get, new AbortController().signal, credentialCase)
+    const authorization = (f.captured!.headers as Record<string, string>).Authorization!
+    assert.equal(authorization.length, 'Bearer '.length + length); assert.equal(f.calls, 1)
+    assert.ok(authorization.startsWith('Bearer '))
+    assert.equal(Object.hasOwn(f.captured!.headers!, 'X-GitHub-Stateless-S2S-Token'), false)
+  })
+}
+test('opaque punctuation is not decoded, normalized or truncated in the header', async () => {
+  const f = fake()
+  await exerciseAppTransportForTests(pins, f.request, get, new AbortController().signal, 'opaque_punctuation')
+  assert.equal((f.captured!.headers as Record<string, string>).Authorization, 'Bearer synthetic!opaque~value+/=:,')
+})
+for (const credentialCase of ['empty', 'too_long', 'crlf', 'lf', 'nul', 'tab', 'space', 'del', 'non_ascii', 'non_string'] as const) {
+  test('unsafe opaque credential never opens transport: ' + credentialCase, async () => {
+    const f = fake()
+    await assert.rejects(exerciseAppTransportForTests(pins, f.request, get, new AbortController().signal, credentialCase),
+      /^Error: github_unverifiable$/)
+    assert.equal(f.calls, 0); assert.equal(f.captured, undefined)
+  })
+}
 test('sole POST uses fixed scoped token exchange body', async () => {
   const f = fake({ status: 201 })
   const body = { repository_ids: [P.repositoryId], permissions: P.permissions }

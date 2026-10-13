@@ -123,3 +123,59 @@ Primary mechanics checked: [GitHub Apps REST](https://docs.github.com/en/rest/ap
 [App JWT](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app),
 [ruleset read](https://docs.github.com/en/rest/repos/rules#get-a-repository-ruleset).
 Those references do not prove this App or this runtime is accepted.
+
+## R1-F1 / R1-F2 correction — same writer/session
+
+[TL review5505320406](https://github.com/Jetnity/jetnity/pull/937#pullrequestreview-5505320406)
+and [checkpoint6148167645](https://github.com/Jetnity/jetnity/issues/936#issuecomment-6148167645)
+reviewed HEAD372f063f52aed2a6c8e6f00d004b46897dfbd0bb. Both compatibility findings
+are corrected within owned files; independent re-review remains required.
+
+R1-F1: the same `headerSafeAppCredential` predicate now protects exchange output
+and Authorization serialization: nonempty, at most4096 visible ASCII bytes
+(0x21–0x7e). This finite resource bound is not a token-layout/identity check.
+Whitespace/control/DEL/non-ASCII/non-string/over-limit values fail closed. There
+is no prefix, JWT decoding, format override or legacy-token request. Only the
+App-authenticated exchange supplies the installation credential; API identity,
+permissions, repository inventory and all evidence checks remain mandatory.
+
+The offline harness accepts only a closed synthetic-case selector, never a raw
+bearer. Internally generated520- and1200-byte stateless-shaped cases intentionally
+contain foreign unsigned claims: the protocol neither trusts nor interprets them.
+One-byte/punctuation/4096-byte opaque values pass the same header-safety boundary;
+4097 bytes and unsafe controls fail before token-authenticated reads/socket use.
+Wrong authenticated permissions still fail for a long token. Output remains
+redacted and non-live/non-capability. This proves local opaque handling, not that
+any particular string is a valid GitHub credential.
+
+R1-F2: time is anchored once, then advanced by monotonic elapsed time. Immediately
+before and after the exchange, the code records a bounded creation interval.
+Maximum expiry is receipt-time plus one hour plus at most1000ms of tolerated
+issuer/local clock discrepancy or second-granularity serialization. The interval
+itself must stay below5000ms. One second is an explicit conservative compatibility
+budget, not a GitHub guarantee of clock synchronization; larger disagreement
+blocks. A future approved runtime must supply its own trusted clock anchor, never
+a caller-provided timestamp. No such live runtime is activated by this correction.
+
+Minimum remaining life stays strictly above60000ms measured on receipt. The5000ms
+remaining reserve is checked both before and after token reads. Request5000ms and
+overall60000ms bounds remain, including actual abort timers; elapsed deadlines
+are checked after responses as well. Nonfinite/backward monotonic samples and
+invalid anchors block. Evidence snapshots receive the progressed time. Only the
+strictly synthetic entry accepts a deterministic elapsed clock; it cannot provide
+real credentials, a live requester or access through the production hard gates.
+
+New regressions exercise2s/20s delayed creation with normal one-hour expiry,
+creation during an in-flight exchange, second-resolution timestamps, exact
+minimum/skew/excessive-lifetime boundaries, delayed-response remaining life,
+progressing reads, request/overall/final-response deadlines and clock anomalies.
+Fresh complete task/regression/full/nativePG/static/build/original CI/Auth/Preview
+results and exact publication identifiers are in the new post-commit R1 handoff;
+the previous green run is historical evidence only.
+
+Primary contract: [GitHub installation-token format notice](https://github.blog/changelog/2026-04-24-notice-about-upcoming-new-format-for-github-app-installation-tokens/),
+[completed rollout notice](https://github.blog/changelog/2026-10-02-stateless-github-app-installation-tokens-rolled-out/),
+and [expiry from creation](https://docs.github.com/en/rest/apps/apps#create-an-installation-access-token-for-an-app).
+Operational custody, real App installation/configuration and A01/A02/A09/A10
+remain OPEN. No real secrets, App changes, source/ref action, shared-code edit,
+new dependency/cost, Ready/merge or follow-up. LIVE B HARD-BLOCKED.

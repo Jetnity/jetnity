@@ -24,3 +24,13 @@ SOURCE_NOT_QUALIFIED, ProviderNULL, VisaUNKNOWN. #913/P2/G7 unchanged.
 The author delivers code and evidence, then STOP. Exact final SHA/tree/parent and
 CI/Preview identifiers are deliberately in the post-commit handoff, not a
 self-referential commit. Any later changed head requires fresh gates and TL review.
+
+## Same-session R1 correction
+
+Consumed independent TL review5505320406 and issue936 checkpoint6148167645 against
+HEAD372f063f52aed2a6c8e6f00d004b46897dfbd0bb. R1-F1 opaque/header-safe token handling
+and R1-F2 trusted exchange-interval expiry are corrected with synthetic regressions.
+Fresh new-HEAD results belong to the R1 publication receipt; previous-head gates
+do not count for this correction. Independent re-review/thread disposition remains
+OPEN. A01 installation/A02 operational custody/A10 provisioning remain OPEN;
+no real configuration or credential, no renewed Owner approval, no live activation.

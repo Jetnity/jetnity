@@ -3,7 +3,8 @@ import { generateKeyPairSync, sign, verify, type KeyObject } from 'node:crypto'
 import { APP_API as API, APP_POLICY as P, AppBlocked, blocked, demand, obj, owner, permissions, repository, same,
   timestamp, validatePins, type AppCheckout, type AppPins, type AppReceipts, type AppResult } from './policy'
 import { verifyAppEvidence } from './evidence'
-import { validateAppRequest, type AppHttpRequest, type AppHttpResponse, type AppWire } from '../../../scripts/official-truth-bern-executor-app-1/github'
+import { headerSafeAppCredential, syntheticAppCredentialForTests, validateAppRequest,
+  type AppSyntheticCredentialCase, type AppHttpRequest, type AppHttpResponse, type AppWire } from '../../../scripts/official-truth-bern-executor-app-1/github'
 
 function jwt(key: KeyObject, pins: AppPins, now: number): string {
   demand(key.type === 'private' && key.asymmetricKeyType === 'rsa'
@@ -38,16 +39,29 @@ function repositories(value: unknown) {
 // Private: no public supplied-bearer, injected signer or live dependency seam.
 // The only caller today is the strictly synthetic harness below.
 async function protocol(pins: AppPins, checkout: AppCheckout, receipts: AppReceipts, key: KeyObject,
-  wire: AppWire, now: number): Promise<AppResult> {
+  wire: AppWire, now: number, elapsedMs: () => number): Promise<AppResult> {
   const controller = new AbortController()
   const lifetime = setTimeout(() => controller.abort(), 60_000)
   const started = performance.now()
+  let previousElapsed = 0
+  const elapsed = () => {
+    const value = elapsedMs()
+    demand(Number.isSafeInteger(now) && now > 0 && Number.isFinite(value)
+      && value >= previousElapsed && Number.isSafeInteger(now + Math.floor(value)), 'invalid_time')
+    previousElapsed = value
+    demand(!controller.signal.aborted && value < 60_000 && performance.now() - started < 60_000, 'session_expired')
+    return value
+  }
+  // Wall time is anchored once; all later time comes from monotonic elapsed
+  // time, so wall-clock adjustments cannot extend credential/session validity.
+  const currentTime = () => now + Math.floor(elapsed())
   let assertion = '', token = ''
   try {
     validatePins(pins)
+    currentTime()
     assertion = jwt(key, pins, now)
     const call = async (request: AppHttpRequest, credential: string) => {
-      demand(!controller.signal.aborted && performance.now() - started < 60_000, 'session_expired')
+      const requestStarted = elapsed()
       validateAppRequest(request, pins)
       let timer: ReturnType<typeof setTimeout> | undefined
       try {
@@ -55,6 +69,7 @@ async function protocol(pins: AppPins, checkout: AppCheckout, receipts: AppRecei
           new Promise<never>((_, reject) => {
             timer = setTimeout(() => { controller.abort(); reject(new AppBlocked('github_unverifiable')) }, 5000)
           })])
+        demand(elapsed() - requestStarted < 5000, 'github_unverifiable')
         const expectedStatus = request.path === API + '/git/ref/' + P.consumedRef.slice(5) ? 404 : request.method === 'POST' ? 201 : 200
         demand(!controller.signal.aborted && response.status === expectedStatus
           && response.link === undefined, 'github_unverifiable')
@@ -73,31 +88,39 @@ async function protocol(pins: AppPins, checkout: AppCheckout, receipts: AppRecei
       return { a, i }
     }
     const before = await authenticate()
+    const exchangeStarted = currentTime()
     const issued = obj(await call({ method: 'POST', path: '/app/installations/' + pins.installationId + '/access_tokens',
       body: { repository_ids: [P.repositoryId], permissions: P.permissions } }, assertion))
+    const exchangeCompleted = currentTime()
     // Accept credentials only from this authenticated exchange. Format rejects
     // header injection; it is deliberately NOT evidence of credential identity.
-    demand(typeof issued.token === 'string' && /^[A-Za-z0-9_-]{20,255}$/.test(issued.token), 'exchange_invalid')
+    demand(headerSafeAppCredential(issued.token), 'exchange_invalid')
     token = issued.token
     permissions(issued.permissions)
     demand(issued.repository_selection === 'selected', 'exchange_scope_invalid')
     const expires = timestamp(issued.expires_at)
-    demand(expires > now + 60_000 && expires <= now + 3_600_000, 'exchange_expiry_invalid')
+    // Creation occurs within this bounded send/receive interval, not at the
+    // start of preflight. One second covers second-granularity serialization /
+    // small issuer-host clock skew; larger clock disagreement fails closed.
+    demand(exchangeCompleted - exchangeStarted < 5000 && expires > exchangeCompleted + 60_000
+      && expires <= exchangeCompleted + 3_600_000 + 1000, 'exchange_expiry_invalid')
     if (Object.hasOwn(issued, 'repositories')) {
       demand(Array.isArray(issued.repositories) && issued.repositories.length === 1, 'exchange_scope_invalid')
       repository(issued.repositories[0])
     }
     const read = async (path: string) => {
-      demand(now + (performance.now() - started) < expires - 5000, 'session_expired')
-      return call({ method: 'GET', path }, token)
+      demand(currentTime() < expires - 5000, 'session_expired')
+      const body = await call({ method: 'GET', path }, token)
+      demand(currentTime() < expires - 5000, 'session_expired')
+      return body
     }
     repositories(await read('/installation/repositories?per_page=100&page=1'))
     repository(await read(API))
     demand(obj(await read(API + '/git/ref/' + P.consumedRef.slice(5))).message === 'Not Found', 'attempt_unavailable')
-    const evidence = await verifyAppEvidence(read, pins, checkout, receipts, now)
+    const evidence = await verifyAppEvidence(read, pins, checkout, receipts, currentTime())
     demand(same(before, await authenticate()), 'installation_changed')
     repositories(await read('/installation/repositories?per_page=100&page=1'))
-    demand(evidence === await verifyAppEvidence(read, pins, checkout, receipts, now + Math.floor(performance.now() - started)),
+    demand(evidence === await verifyAppEvidence(read, pins, checkout, receipts, currentTime()),
       'evidence_changed')
     demand(obj(await read(API + '/git/ref/' + P.consumedRef.slice(5))).message === 'Not Found', 'attempt_unavailable')
     return Object.freeze({ status: 'SYNTHETIC_PREFLIGHT_PASS', reason: 'offline_protocol_only',
@@ -112,7 +135,7 @@ async function protocol(pins: AppPins, checkout: AppCheckout, receipts: AppRecei
 
 export type AppSimulation = Readonly<{ pins: AppPins; checkout: AppCheckout; receipts: AppReceipts; now: number;
   respond: (request: AppHttpRequest, signal: AbortSignal) => Promise<AppHttpResponse>;
-  wrongSigningKey?: boolean }>
+  wrongSigningKey?: boolean; credentialCase?: AppSyntheticCredentialCase; syntheticElapsedMs?: () => number }>
 
 /** Every credential is generated inside this offline harness and is never
  * registered with GitHub. No secret, bearer, signer or production transport
@@ -121,10 +144,11 @@ export async function simulateAppPreflightForTests(input: AppSimulation): Promis
   if (process.env.NODE_TEST_CONTEXT === undefined) return blocked('offline_only')
   let key: KeyObject | undefined
   try {
-    demand(Object.keys(input).every(k => ['pins', 'checkout', 'receipts', 'now', 'respond', 'wrongSigningKey'].includes(k)), 'supplied_credentials_forbidden')
+    demand(Object.keys(input).every(k => ['pins', 'checkout', 'receipts', 'now', 'respond', 'wrongSigningKey',
+      'credentialCase', 'syntheticElapsedMs'].includes(k)), 'supplied_credentials_forbidden')
     const pair = generateKeyPairSync('rsa', { modulusLength: 2048 })
     key = input.wrongSigningKey ? generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey : pair.privateKey
-    const syntheticToken = 'synthetic-installation-only-not-a-real-credential'
+    const syntheticToken = syntheticAppCredentialForTests(input.credentialCase)
     let exchanged = false
     const wire: AppWire = async (request, credential, signal) => {
       const appEndpoint = request.path === '/app' || request.path.startsWith('/app/') || request.path === API + '/installation'
@@ -138,13 +162,16 @@ export async function simulateAppPreflightForTests(input: AppSimulation): Promis
       } else demand(exchanged && credential === syntheticToken, 'installation_authentication_failed')
       const response = await input.respond(structuredClone(request), signal)
       if (request.method === 'POST' && response.status === 201) {
-        demand(obj(response.body).token === syntheticToken, 'supplied_credentials_forbidden')
+        demand(obj(response.body).token === syntheticAppCredentialForTests(), 'supplied_credentials_forbidden')
         exchanged = true
+        return structuredClone({ ...response, body: { ...obj(response.body), token: syntheticToken } })
       }
       // Detach fixtures; no mutable truth or credential object leaves the seam.
       return structuredClone(response)
     }
-    return await protocol(input.pins, input.checkout, input.receipts, key, wire, input.now)
+    const started = performance.now()
+    return await protocol(input.pins, input.checkout, input.receipts, key, wire, input.now,
+      input.syntheticElapsedMs ?? (() => performance.now() - started))
   } catch { return blocked('simulation_invalid') }
   finally { key = undefined }
 }

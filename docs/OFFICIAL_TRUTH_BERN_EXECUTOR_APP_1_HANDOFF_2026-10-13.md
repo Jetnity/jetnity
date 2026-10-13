@@ -50,3 +50,16 @@ the Owner to repeat the existing approval.
 settings change, tag reservation, Bern DNS/HTTP or live activation. LIVE B remains
 HARD-BLOCKED.** #934/#917 open; source not qualified; ProviderNULL/VisaUNKNOWN;
 #913/P2/G7 unchanged; zero new recurring cost.
+
+## R1 correction handoff
+
+Same writer/session consumes review5505320406 and checkpoint6148167645; this is
+the bounded correction of R1-F1/F2 from reviewed HEAD372f063f52aed2a6c8e6f00d004b46897dfbd0bb.
+See REPORT's R1 section for the shared4096-byte opaque header boundary, trusted
+exchange-time interval,1000ms skew budget and retained expiry/deadline controls.
+The new post-commit R1 receipt supplies exact HEAD/tree/parent, correction-vs-R1
+and full-vs-main diff, fresh full tests/nativePG16, original CI Verify/Auth and
+matching Preview/testmerge evidence. Prior receipt6147479645 is historical.
+No automatic resolution of independent review threads, Ready, merge, credentials
+or follow-up. Operational custody and real identity remain unaccepted/unconfigured.
+AUTHOR STOP for independent TL re-review; LIVE B HARD-BLOCKED.

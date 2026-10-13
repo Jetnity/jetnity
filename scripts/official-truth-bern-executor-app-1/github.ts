@@ -8,6 +8,37 @@ export type AppHttpResponse = Readonly<{ status: number; body: unknown; link?: s
 export type AppWire = (request: AppHttpRequest, authorization: string, signal: AbortSignal) => Promise<AppHttpResponse>
 const MAX_BYTES = 262144
 
+/** Resource/header safety only, never token identity or authority. Keep the
+ * exchange and transport on this same bound; do not interpret opaque contents. */
+export function headerSafeAppCredential(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0 && value.length <= 4096
+    && /^[\x21-\x7e]+$/.test(value)
+}
+
+export type AppSyntheticCredentialCase = 'short' | 'stateless520' | 'stateless1200'
+  | 'opaque_min' | 'opaque_punctuation' | 'opaque_limit' | 'empty' | 'too_long'
+  | 'crlf' | 'lf' | 'nul' | 'tab' | 'space' | 'del' | 'non_ascii' | 'non_string'
+
+/** Closed, internally built noncredentials. No caller-supplied bearer seam. */
+export function syntheticAppCredentialForTests(kind: AppSyntheticCredentialCase = 'short'): unknown {
+  demand(process.env.NODE_TEST_CONTEXT !== undefined, 'offline_only')
+  if (kind === 'stateless520' || kind === 'stateless1200') {
+    // Deliberately foreign claims and no valid issuer signature: contents must
+    // not influence authority. Only the authenticated exchange establishes it.
+    const head = Buffer.from('{"alg":"none"}').toString('base64url')
+    const body = Buffer.from('{"app_id":7,"permissions":{"administration":"write"}}').toString('base64url')
+    const prefix = 'ghs_90001_' + head + '.' + body + '.'
+    return prefix + 'x'.repeat((kind === 'stateless520' ? 520 : 1200) - prefix.length)
+  }
+  const cases = { short: 'synthetic-installation-only-not-a-real-credential', opaque_min: 'x',
+    opaque_punctuation: 'synthetic!opaque~value+/=:,', opaque_limit: 'x'.repeat(4096),
+    empty: '', too_long: 'x'.repeat(4097), crlf: 'synthetic\r\nInjected: value', lf: 'synthetic\n',
+    nul: 'synthetic\0value', tab: 'synthetic\tvalue', space: 'synthetic value', del: 'synthetic\x7f',
+    non_ascii: 'syntheticé', non_string: 12345 }
+  demand(Object.hasOwn(cases, kind), 'simulation_invalid')
+  return cases[kind]
+}
+
 export function validateAppRequest(r: AppHttpRequest, pins: AppPins) {
   validatePins(pins)
   demand(same(Object.keys(r).sort(), r.body === undefined ? ['method', 'path'] : ['body', 'method', 'path']), 'request_not_allowed')
@@ -70,7 +101,7 @@ function parseJson(text: string): unknown {
 function transport(pins: AppPins, request: typeof https.request): AppWire {
   return async (input, authorization, signal) => {
     validateAppRequest(input, pins)
-    demand(!signal.aborted && /^[A-Za-z0-9_.-]{20,4096}$/.test(authorization), 'github_unverifiable')
+    demand(!signal.aborted && headerSafeAppCredential(authorization), 'github_unverifiable')
     demand(!['NODE_OPTIONS', 'NODE_EXTRA_CA_CERTS', 'SSL_CERT_FILE', 'SSL_CERT_DIR', 'NODE_TLS_REJECT_UNAUTHORIZED',
       'HTTPS_PROXY', 'HTTP_PROXY', 'ALL_PROXY', 'https_proxy', 'http_proxy', 'all_proxy'].some(k => process.env[k]), 'unsafe_environment')
     return new Promise((resolve, reject) => {
@@ -150,7 +181,7 @@ export function liveAppTransport(): AppWire {
 /** Offline harness only. Always supplies a noncredential and requires a mock
  * request implementation; it cannot import a key or inject a live bearer. */
 export function exerciseAppTransportForTests(pins: AppPins, request: typeof https.request,
-  input: AppHttpRequest, signal: AbortSignal): Promise<AppHttpResponse> {
+  input: AppHttpRequest, signal: AbortSignal, credentialCase: AppSyntheticCredentialCase = 'short'): Promise<AppHttpResponse> {
   demand(process.env.NODE_TEST_CONTEXT !== undefined && request !== https.request, 'offline_only')
-  return transport(pins, request)(input, 'synthetic-not-a-github-credential', signal)
+  return transport(pins, request)(input, syntheticAppCredentialForTests(credentialCase) as string, signal)
 }

@@ -56,3 +56,25 @@ No remaining finding is represented as a security PASS. Existing P2 nativePG16
 timing variance, G7 dependency advisories and #913 privacy block remain. No new
 recurring cost. TL must independently inspect all changed files, original CI/
 Preview evidence and custody limitations before deciding. No Ready/merge/follow-up.
+
+## R1 correction self-review
+
+The independent R1 review5505320406 correctly identified two gaps missed by the
+original short-token/frozen-clock fixtures. Same writer/session correction only:
+opaque bounded header-safe exchange credentials and exchange-relative expiry.
+Original TASK, baseline history and all protected blobs remain unchanged.
+
+Checked both boundaries share one predicate and the synthetic case selector cannot
+inject a bearer; the mock still authenticates the App assertion before replacing
+its exact noncredential sentinel. Long-token contents carry no authority. Checked
+normal delayed one-hour expiry, receipt-relative minimum, one-second skew ceiling,
+remaining reserve on both sides of a read, request/overall deadline on response,
+clock anomalies, redaction, scope/identity and all existing live hard gates.
+
+The deterministic clock is confined to the already synthetic-only harness. Live
+transport remains an unconditional refusal. The1000ms issuer-clock/serialization
+budget and4096-byte resource bound are explicit policies for independent review,
+not claims of observed live GitHub compatibility. No actual credential exchange
+or TLS handshake occurred. Unchanged custody evidence was not rerun or promoted
+to operational acceptance. Final new-HEAD full checks are in the R1 publication
+receipt; author testing is not independent TL acceptance.
