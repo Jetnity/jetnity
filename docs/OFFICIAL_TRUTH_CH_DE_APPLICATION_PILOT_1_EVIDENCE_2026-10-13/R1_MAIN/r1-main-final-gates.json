@@ -1,0 +1,62 @@
+[
+  {
+    "command": "npm run check:setup:ci",
+    "exitCode": 0,
+    "seconds": 0.33,
+    "log": "r1-main-final-check-setup-ci.log"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "seconds": 2.14,
+    "log": "r1-main-final-typecheck.log"
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "seconds": 12.11,
+    "log": "r1-main-final-lint.log"
+  },
+  {
+    "command": "npm run check:api-schutz",
+    "exitCode": 0,
+    "seconds": 0.13,
+    "log": "r1-main-final-check-api-schutz.log"
+  },
+  {
+    "command": "npm run check:schema-bezug",
+    "exitCode": 0,
+    "seconds": 0.2,
+    "log": "r1-main-final-check-schema-bezug.log"
+  },
+  {
+    "command": "npm run check:dead",
+    "exitCode": 0,
+    "seconds": 0.24,
+    "log": "r1-main-final-check-dead.log"
+  },
+  {
+    "command": "npm run check:exports",
+    "exitCode": 0,
+    "seconds": 2.86,
+    "log": "r1-main-final-check-exports.log"
+  },
+  {
+    "command": "npm run check:deps",
+    "exitCode": 0,
+    "seconds": 0.2,
+    "log": "r1-main-final-check-deps.log"
+  },
+  {
+    "command": "npm run check:operating-mode",
+    "exitCode": 0,
+    "seconds": 0.17,
+    "log": "r1-main-final-check-operating-mode.log"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 6.33,
+    "log": "r1-main-final-build.log"
+  }
+]

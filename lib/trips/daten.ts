@@ -197,20 +197,25 @@ function graphZeileZuReise(zeile: GraphZeile): Reisegraph {
  * anderem. Die Unterscheidung ist bewusst keine – wer eine fremde Kennung
  * errät, soll nicht erfahren, dass sie existiert.
  */
-export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
+export async function reiseLaden(id: string, signal?: AbortSignal): Promise<Lesung<Reisegraph>> {
+  signal?.throwIfAborted()
   const supabase = await createServerComponentClient()
+  signal?.throwIfAborted()
 
-  return accountGraphLesen({
-    kanonisch: () =>
-      alsAntwort<GraphZeile>(
-        supabase.from('trips').select(TRIP_GRAPH_SELECT_KANONISCH).eq('id', id).limit(1),
-      ),
-    fallback: () =>
-      alsAntwort<GraphZeile>(
-        supabase.from('trips').select(TRIP_GRAPH_SELECT_LEGACY).eq('id', id).limit(1),
-      ),
+  const abfrage = (columns: string) => {
+    // Also guards a legacy fallback reached after an awaited canonical read.
+    signal?.throwIfAborted()
+    const query = supabase.from('trips').select(columns).eq('id', id).limit(1)
+    return alsAntwort<GraphZeile>(signal ? query.abortSignal(signal) : query)
+  }
+
+  const result = await accountGraphLesen({
+    kanonisch: () => abfrage(TRIP_GRAPH_SELECT_KANONISCH),
+    fallback: () => abfrage(TRIP_GRAPH_SELECT_LEGACY),
     mapper: graphZeileZuReise,
   })
+  signal?.throwIfAborted()
+  return result
 }
 
 /**

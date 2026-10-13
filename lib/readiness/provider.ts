@@ -40,6 +40,8 @@ export type RequirementsTravellerInput = {
 }
 
 export type RequirementsAnfrage = {
+  /** Declaration identity only; never source authority. */
+  regulatoryContextFingerprint?: string | null
   originCountryCode: string | null
   destinationCountryCodes: string[]
   transitCountryCodes: string[]

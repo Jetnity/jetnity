@@ -89,6 +89,7 @@ export default function Reisevorbereitung({
   onTravellerSetzen,
   onTravellerEntfernen,
   registryUebernahme,
+  officialPilot,
   offeneBereiche,
   onBereichOffen,
   onZiel,
@@ -98,6 +99,7 @@ export default function Reisevorbereitung({
   onBereichOffen: (id: PreparationBereichId, offen: boolean) => void
   onZiel: (id: PreparationBereichId) => void
   officialEvaluations?: OfficialEvaluation[]
+  officialPilot?: React.ReactNode
   registryUebernahme?: React.ReactNode
   onSetzen?: (eingabe: {
     clientRef: string
@@ -249,6 +251,7 @@ export default function Reisevorbereitung({
           </p>
           <p className="text-xs leading-5 text-ink-800">{DOKUMENT_LEBENSZYKLUS_COPY.reiseHinweis}</p>
           {registryUebernahme}
+          {officialPilot}
           {unterschiede.mehrereTraveller &&
           (unterschiede.unterschiedlicheCitizenships || unterschiede.unterschiedlicheDokumente) ? (
             <p className="text-xs leading-5 text-ink-800">

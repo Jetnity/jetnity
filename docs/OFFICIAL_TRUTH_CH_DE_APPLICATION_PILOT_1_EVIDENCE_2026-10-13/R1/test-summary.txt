@@ -1,0 +1,12 @@
+not ok 695 - catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof
+not ok 932 - S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races
+not ok 1101 - throwaway PostgreSQL proof for the source catalog gateway
+not ok 1107 - throwaway PostgreSQL proof for the trusted store gateway
+# tests 6623
+# suites 819
+# pass 6619
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 415047.538542

@@ -1,0 +1,62 @@
+[
+  {
+    "command": "npm run check:setup:ci",
+    "exitCode": 0,
+    "seconds": 0.72,
+    "log": "final-check-setup-ci.log"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "seconds": 5.46,
+    "log": "final-typecheck.log"
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "seconds": 31.5,
+    "log": "final-lint.log"
+  },
+  {
+    "command": "npm run check:api-schutz",
+    "exitCode": 0,
+    "seconds": 0.52,
+    "log": "final-check-api-schutz.log"
+  },
+  {
+    "command": "npm run check:schema-bezug",
+    "exitCode": 0,
+    "seconds": 0.98,
+    "log": "final-check-schema-bezug.log"
+  },
+  {
+    "command": "npm run check:dead",
+    "exitCode": 0,
+    "seconds": 0.42,
+    "log": "final-check-dead.log"
+  },
+  {
+    "command": "npm run check:exports",
+    "exitCode": 0,
+    "seconds": 3.78,
+    "log": "final-check-exports.log"
+  },
+  {
+    "command": "npm run check:deps",
+    "exitCode": 0,
+    "seconds": 0.36,
+    "log": "final-check-deps.log"
+  },
+  {
+    "command": "npm run check:operating-mode",
+    "exitCode": 0,
+    "seconds": 0.28,
+    "log": "final-check-operating-mode.log"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 25.32,
+    "log": "final-build.log"
+  }
+]

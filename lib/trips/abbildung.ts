@@ -57,9 +57,11 @@ import {
 } from '@/lib/trips/mietwagen-felder'
 import { readinessAusZeilen, type ReadinessZeile } from '@/lib/readiness/persistenz'
 import { partyAusZeilen, type TravellerZeile } from '@/lib/readiness/reisende'
+import { regulatoryContextFromMetadata } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
+  metadata?: unknown
   id: string
   client_ref: string | null
   title: string
@@ -312,6 +314,7 @@ export function reiseAus(
   return {
     id: reise.id,
     clientRef: reise.client_ref,
+    regulatoryContext: regulatoryContextFromMetadata(reise.metadata),
     title: reise.title,
     origin: reise.origin,
     originPlaceId: reise.origin_place_id ?? null,
@@ -349,6 +352,9 @@ export function reiseAus(
  * gehen nicht mit – in der Datenbank hätten sie keine Bedeutung, und die
  * Zuordnung eines Punkts zu seinem Tag läuft über `day_index`.
  */
+/** A copy/import gets new account/Trip/child identities. Declarations bound to
+ * the old graph are deliberately excluded; reselect and save on the new Trip.
+ * Same-Trip serialization retains regulatoryContext through reiseSchema. */
 export function alsNutzlast(reise: Trip): ReiseNutzlast {
   const assignmentMode = dayStageAssignmentModeAbleiten({
     stageCount: reise.stages.length,

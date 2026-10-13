@@ -24,6 +24,7 @@ import { istKontoKennung, reiseLaden } from '@/lib/trips/daten'
 import { registryLaden } from '@/lib/traveller/account-registry-daten'
 import { registryTripAnzeigenAus } from '@/lib/traveller/account-registry-trip'
 import { tripOfficialEvaluationsAuswerten } from '@/lib/readiness/trip-official-evaluations-server'
+import { applicationPilotAvailable } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 
@@ -85,6 +86,7 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
     <KontoArbeitsbereich
       reise={reise}
       officialEvaluations={officialEvaluations}
+      officialPilotAvailable={applicationPilotAvailable()}
       ohneTag={reise.ohneTag}
       registry={{
         problem: registry.problem,

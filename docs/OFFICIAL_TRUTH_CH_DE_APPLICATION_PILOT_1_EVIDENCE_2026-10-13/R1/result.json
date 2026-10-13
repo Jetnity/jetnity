@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "boundary": "Actual Next account route/components, GoTrue getUser, PostgREST RLS, context RPC, real Owner/AAL guards and one-shot RPC. AAL2 claim and profiles are disposable synthetic fixtures, not a genuine Owner/MFA witness. Only source/gate ports substituted in destroyed copy. No hosted writes or government traffic.",
+  "results": [
+    {
+      "name": "Closed pre-migration deployment: normal Workspace loads; no pilot controls or direct POST RPC",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual owned account route, explicit linked declarations, save, authenticated reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Full current-only synthetic source to canonical Workspace visa and unknown other cells",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsaved edit immediately removes positive; save is keyboard accessible and no horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Presentation expiry clears the visible synthetic positive without inventing legal validity",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: disabled",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: not-admitted",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: altered",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: partial",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: oversize",
+      "status": "PASS"
+    },
+    {
+      "name": "Workspace no positive: timeout",
+      "status": "PASS"
+    },
+    {
+      "name": "Real guards deny synthetic AAL1/wrong account/stale revision and withdrawn admission",
+      "status": "PASS"
+    },
+    {
+      "name": "Saved incompatible route cannot request a source",
+      "status": "PASS"
+    },
+    {
+      "name": "Fetch failure announces error and clears prior result",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "outbound": [],
+  "sourceRequests": 7,
+  "pilotRpcRequests": 16,
+  "cleanup": "Owned copy/containers/network removed; no real credentials used"
+}

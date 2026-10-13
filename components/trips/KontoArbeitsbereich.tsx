@@ -16,6 +16,8 @@
 // was gespeichert ist.
 
 import * as React from 'react'
+import OfficialTruthPilotForm from './OfficialTruthPilotForm'
+import { useOfficialTruthPilot } from './useOfficialTruthPilot'
 import { useRouter } from 'next/navigation'
 import { Cloud, Trash2 } from 'lucide-react'
 
@@ -57,11 +59,13 @@ export default function KontoArbeitsbereich({
   reise: serverReise,
   ohneTag: serverOhneTag,
   officialEvaluations,
+  officialPilotAvailable = false,
   registry,
 }: {
   reise: Trip
   ohneTag: TripItem[]
   officialEvaluations: OfficialEvaluation[]
+  officialPilotAvailable?: boolean
   registry?: {
     problem: Problem | null
     travellers: RegistryTripAnzeige[] | null
@@ -74,8 +78,14 @@ export default function KontoArbeitsbereich({
   const [order] = React.useState(createWriteOrder())
   const [loeschmeldung, setLoeschmeldung] = React.useState('')
   const [loescht, setLoescht] = React.useState(false)
+  const pilot = useOfficialTruthPilot(reise, officialEvaluations, graph => {
+    order.next()
+    setBestaetigt({ basis: serverReise, graph })
+    router.refresh()
+  })
 
   const anlegen = async (tagId: string, eingabe: PlanpunktFormular) => {
+    pilot.invalidate()
     const request = order.next()
     const ergebnis = await planpunktAnlegen({ ...eingabe, tripId: reise.id, dayId: tagId })
     if (!ergebnis.ok) return ergebnis.meldung
@@ -85,6 +95,7 @@ export default function KontoArbeitsbereich({
   }
 
   const entfernen = async (_tagId: string, punktId: string) => {
+    pilot.invalidate()
     order.next()
     const ergebnis = await planpunktEntfernen({ tripId: reise.id, itemId: punktId })
     if (!ergebnis.ok) return ergebnis.meldung
@@ -115,12 +126,17 @@ export default function KontoArbeitsbereich({
   }
 
   return (
+    <div onChangeCapture={pilot.invalidate}>
     <TripWorkspace
       reise={reise}
-      officialEvaluations={officialEvaluations}
+      officialEvaluations={pilot.evaluations}
+      officialPilot={officialPilotAvailable
+        ? <OfficialTruthPilotForm key={`${reise.id}:${reise.revision}`} trip={reise} status={pilot.status} busy={pilot.busy} error={pilot.error} onChange={pilot.invalidate} onSave={pilot.save} onCheck={pilot.check} />
+        : <p className="rounded-2xl border border-line-200 bg-surface-25 p-4 text-sm leading-6 text-ink-900">Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.</p>}
       quelle="account"
       ohneTag={ohneTag}
       onVerbindungAnlegen={async values => {
+        pilot.invalidate()
         order.next()
         const result = await mobilityManuellInReiseAnlegen({...values, tripId: reise.id})
         if (!result.ok) return result.meldung
@@ -128,6 +144,7 @@ export default function KontoArbeitsbereich({
       }}
       onPunktAnlegen={anlegen}
       onPunktBearbeiten={async (original, aenderung) => {
+        pilot.invalidate()
         const request = order.next()
         const ergebnis = await planpunktBearbeiten({ tripId: reise.id, itemId: original.id, expectedVersion: original.rowVersion, aenderung })
         if (!ergebnis.ok) return ergebnis.meldung
@@ -137,6 +154,7 @@ export default function KontoArbeitsbereich({
       }}
       onPunktEntfernen={entfernen}
       onFlugRouteManuell={async (itemId, segments) => {
+        pilot.invalidate()
         order.next()
         const ergebnis = await flugRouteManuellSetzen({ tripId: reise.id, itemId, segments })
         if (!ergebnis.ok) return ergebnis.meldung
@@ -144,6 +162,7 @@ export default function KontoArbeitsbereich({
         return null
       }}
       onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
+        pilot.invalidate()
         order.next()
         const ergebnis = await unterkunftZeitraumSetzen({ tripId: reise.id, itemId, startsOn, endsOn })
         if (!ergebnis.ok) return ergebnis.meldung
@@ -157,12 +176,14 @@ export default function KontoArbeitsbereich({
         return null
       }}
       onTravellerSetzen={async (eingabe) => {
+        pilot.invalidate()
         const ergebnis = await travellerSetzen({ ...eingabe, tripId: reise.id })
         if (!ergebnis.ok) return ergebnis.meldung
         router.refresh()
         return null
       }}
       onTravellerEntfernen={async (clientRef) => {
+        pilot.invalidate()
         const ergebnis = await travellerEntfernen({ tripId: reise.id, clientRef })
         if (!ergebnis.ok) return ergebnis.meldung
         router.refresh()
@@ -175,6 +196,7 @@ export default function KontoArbeitsbereich({
             travellers={registry.travellers}
             voll={registryTripUebernahmeGesperrt(reise)}
             onUebernehmen={async (registryTravellerId) => {
+              pilot.invalidate()
               const ergebnis = await registryTravellerInReiseUebernehmen({
                 tripId: reise.id,
                 registryTravellerId,
@@ -205,6 +227,7 @@ export default function KontoArbeitsbereich({
       aenderung={
         <ReiseAenderung reise={reise} quelle="account" onGespeichert={(graph) => {
           if (graph && graph.id === reise.id && graph.revision > reise.revision) {
+            pilot.invalidate()
             order.next()
             setBestaetigt({ basis: serverReise, graph })
           }
@@ -217,6 +240,7 @@ export default function KontoArbeitsbereich({
           reise={reise}
           tagId={reise.days[0]?.id ?? null}
           onUebernehmen={async (tagId, option: FlugOptionSichtbar) => {
+            pilot.invalidate()
             const ergebnis = await flugInReiseUebernehmen({
               tripId: reise.id,
               dayId: tagId,
@@ -232,6 +256,7 @@ export default function KontoArbeitsbereich({
         <HotelBereich
           reise={reise}
           onUebernehmen={async (etappe, option: HotelOptionSichtbar, _zeitraum, dayId) => {
+            pilot.invalidate()
             const ergebnis = await hotelInReiseUebernehmen({
               tripId: reise.id,
               stageId: etappe.id,
@@ -259,6 +284,7 @@ export default function KontoArbeitsbereich({
             return null
           }}
           onManuellAnlegen={async (eingabe: MobilityManuellEingabe) => {
+            pilot.invalidate()
             const ergebnis = await mobilityManuellInReiseAnlegen({
               ...eingabe,
               tripId: reise.id,
@@ -268,6 +294,7 @@ export default function KontoArbeitsbereich({
             return null
           }}
           onMietwagenAnlegen={async (eingabe: RentalCarManuellEingabe) => {
+            pilot.invalidate()
             const ergebnis = await rentalCarManuellInReiseAnlegen({
               ...eingabe,
               tripId: reise.id,
@@ -282,6 +309,7 @@ export default function KontoArbeitsbereich({
         <AktivitaetenBereich
           reise={reise}
           onUebernehmen={async (etappe, tag, option: ActivityOptionSichtbar) => {
+            pilot.invalidate()
             const ergebnis = await activityInReiseUebernehmen({
               tripId: reise.id,
               stageId: etappe.id,
@@ -319,5 +347,6 @@ export default function KontoArbeitsbereich({
         </div>
       }
     />
+    </div>
   )
 }
