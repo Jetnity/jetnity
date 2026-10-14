@@ -1,0 +1,85 @@
+{
+  "environment": "macOS arm64 Node22.23.3 npm10.9.9; isolated checkout; no env file",
+  "results": [
+    {
+      "command": "npm ci",
+      "exitCode": 0,
+      "advisories": {
+        "high": 17,
+        "moderate": 2
+      }
+    },
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 1,
+      "seconds": 0.3,
+      "firstAttempt": "sandbox tsx IPC EPERM; not a code failure",
+      "approvedRetryExitCode": 0
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "seconds": 0.15
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "seconds": 3.82
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "seconds": 30.79
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "seconds": 0.16
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "seconds": 0.22
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "seconds": 0.26
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "seconds": 2.98
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "seconds": 0.24
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 1,
+      "seconds": 0.24,
+      "firstAttempt": "sandbox tsx IPC EPERM; not a code failure",
+      "approvedRetryExitCode": 0
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "tests": 6751,
+      "suites": 819,
+      "passed": 6740,
+      "failed": 10,
+      "skipped": 1,
+      "seconds": 59.728146291,
+      "limitation": "native PostgreSQL binaries absent; no hosted fallback"
+    },
+    {
+      "command": "focused BP1 + existing retrieval/identity/importer/S1-S2 regression",
+      "exitCode": 0,
+      "tests": 248,
+      "passed": 248,
+      "failed": 0
+    }
+  ]
+}
