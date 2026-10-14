@@ -8,7 +8,7 @@ import GastCreateLink from '@/components/trips/GastCreateLink'
 const productLinks = [
   { label: 'Reise planen', href: '/planen' },
   { label: 'Meine Reisen', href: '/reisen' },
-  { label: 'Entdecken', href: '/#entdecken' },
+  { label: 'Entdecken', href: '/entdecken' },
   { label: 'Jetnity Pro', href: '/#pro' },
 ]
 

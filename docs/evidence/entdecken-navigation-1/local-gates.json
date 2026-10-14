@@ -1,0 +1,136 @@
+{
+  "generatedAt": "2026-10-14T12:52:15.960823+00:00",
+  "scope": "Final runtime files before evidence-only commit; remote exact-HEAD gates recorded separately in PR handoff. Logs remain private.",
+  "npmCi": {
+    "exit": 0,
+    "packages": 530,
+    "advisories": {
+      "high": 17,
+      "moderate": 2
+    },
+    "privateLogSha256": "874e25e02a834318c86ccf7683f6478a65bf663be1f6aaee2a9e9cd0008e4f88"
+  },
+  "focusedNavigation": {
+    "tests": 12,
+    "suites": 6,
+    "pass": 12,
+    "fail": 0,
+    "skip": 0
+  },
+  "focusedLint": {
+    "exit": 0,
+    "warnings": 1,
+    "note": "Unchanged existing set-state-in-effect warning in PublicNavbar"
+  },
+  "gates": [
+    {
+      "script": "check:setup:ci",
+      "exit": 0,
+      "signal": null,
+      "seconds": 1,
+      "privateLogSha256": "7af0f956203fdfe7a25ef49cfa55d867e5e30d15580c41e10422c161470a8f8c"
+    },
+    {
+      "script": "check:operating-mode",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "privateLogSha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+    },
+    {
+      "script": "typecheck",
+      "exit": 0,
+      "signal": null,
+      "seconds": 8,
+      "privateLogSha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+    },
+    {
+      "script": "lint",
+      "exit": 0,
+      "signal": null,
+      "seconds": 13,
+      "privateLogSha256": "931a2d4430b0ba56e4ecbc20f299a411a22f3ac34e04c0c01b5db0f336a1dc64"
+    },
+    {
+      "script": "test",
+      "exit": 1,
+      "signal": null,
+      "seconds": 55,
+      "privateLogSha256": "5c97a363574ff8053bdb240df5f7e7385f59a160cfdc71b87d79eea6d1506666"
+    },
+    {
+      "script": "check:api-schutz",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "privateLogSha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+    },
+    {
+      "script": "check:schema-bezug",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "privateLogSha256": "2ad501d7ca052708110bd99edb7c8723c5162a9654fe4d00a65ff9fa8c5bd954"
+    },
+    {
+      "script": "check:dead",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "privateLogSha256": "88ce4eb25e27474d6bc458f07087e278258f8e395116bf3c10dfe92da07d2295"
+    },
+    {
+      "script": "check:exports",
+      "exit": 0,
+      "signal": null,
+      "seconds": 3,
+      "privateLogSha256": "3d88e84183ede21fc7d2a08c9931aa073c018326818dd5364b26aab0523d28a8"
+    },
+    {
+      "script": "check:deps",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "privateLogSha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+    },
+    {
+      "script": "build",
+      "exit": 0,
+      "signal": null,
+      "seconds": 14,
+      "privateLogSha256": "e0ebbfbcc17976de8d7974e3e6205c692a42d2e766531c864aa87dc10b3be4c1"
+    }
+  ],
+  "fullSuite": {
+    "tests": 6756,
+    "suites": 820,
+    "pass": 6745,
+    "fail": 10,
+    "cancelled": 0,
+    "skipped": 1,
+    "todo": 0
+  },
+  "localNativePostgresFailures": {
+    "leafFailures": 10,
+    "failedTestAndSuiteNames": [
+      "catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof",
+      "native PG16 proves why accepted-store rows cannot be projected through a bypass",
+      "S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races",
+      "R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover",
+      "real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed",
+      "actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof",
+      "R5 native legacy and typed SQL consumers preserve envelope admission boundaries",
+      "M1\u2013M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16",
+      "Rollen, Atome und genaue Duplikate",
+      "throwaway PostgreSQL proof for the source catalog gateway",
+      "Rollen, Rollback und genaue Duplikate",
+      "throwaway PostgreSQL proof for the trusted store gateway"
+    ],
+    "cause": "Missing local PostgreSQL binaries; four suites assume the Linux PG16 binary path. One additional native proof self-skipped. No install campaign, hosted fallback or assertion changes."
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 145
+  },
+  "auth": "No local Auth command or hosted Supabase access; existing independent CI Auth job is required on final SHA."
+}

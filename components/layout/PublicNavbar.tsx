@@ -118,12 +118,13 @@ export default function PublicNavbar() {
   }, [])
 
   const isActive = (href: string) => {
+    if (href === '/entdecken') return pathname === '/entdecken'
     if (href === '/reisen') return pathname === '/reisen' || pathname.startsWith('/reisen/')
     if (href === '/account') return pathname === '/account' || pathname.startsWith('/account/')
     return false
   }
 
-  // Sprungmarken wie /#entdecken aendern den Pfad nicht, das Menue muss sich
+  // Sprungmarken wie /#pro aendern den Pfad nicht, das Menue muss sich
   // trotzdem schliessen, damit das Ziel sichtbar wird.
   const closeMobile = () => setMobileOpen(false)
 
@@ -175,6 +176,7 @@ export default function PublicNavbar() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
               className={cn(
                 // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
                 // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
@@ -232,10 +234,14 @@ export default function PublicNavbar() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
               onClick={closeMobile}
               className={cn(
-                'inline-flex min-h-11 items-center rounded-2xl px-4 text-sm font-semibold text-ink-900 hover:bg-white',
+                'inline-flex min-h-11 items-center rounded-2xl px-4 text-sm font-semibold',
                 FOKUS_RING,
+                item.href === '/entdecken' && isActive(item.href)
+                  ? 'bg-surface-100 text-brand-800'
+                  : 'text-ink-900 hover:bg-white',
               )}
             >
               {item.label}

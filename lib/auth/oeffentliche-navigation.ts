@@ -62,7 +62,7 @@ export type Navigationseintrag =
 
 /** Die Ziele, die für alle gelten. Unabhängig von der Sitzung. */
 export const HAUPTNAVIGATION = [
-  { label: 'Entdecken', href: '/#entdecken' },
+  { label: 'Entdecken', href: '/entdecken' },
   { label: 'Meine Reisen', href: '/reisen' },
   { label: 'Jetnity Pro', href: '/#pro' },
 ] as const
