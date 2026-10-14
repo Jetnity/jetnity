@@ -1,0 +1,38 @@
+Synthetic/local evidence only. No real source requests.
+
+  ...
+1..1910
+# tests 6751
+# suites 819
+# pass 6740
+# fail 10
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 59728.146291
+
+Native PostgreSQL failures (no protected tests changed):
+835 - catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof
+979 - native PG16 proves why accepted-store rows cannot be projected through a bypass
+1072 - S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races
+1121 - R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover
+1123 - real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed
+1124 - actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof
+1125 - R5 native legacy and typed SQL consumers preserve envelope admission boundaries
+1182 - M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16
+1241 - throwaway PostgreSQL proof for the source catalog gateway
+1247 - throwaway PostgreSQL proof for the trusted store gateway
+
+Existing skip: native PG declaration revision/RLS/shape/idempotence and protected finite one-shot admission.
+
+Focused regression:
+  ...
+1..165
+# tests 248
+# suites 7
+# pass 248
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1301.367542
