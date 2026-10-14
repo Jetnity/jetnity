@@ -1,0 +1,16 @@
+{
+  "stand": "2026-10-14T09:05:51.073Z",
+  "dateien": [
+    "app/(public)/page.tsx",
+    "lib/seo/final-homepage.ts",
+    "components/home/HomeHero.tsx",
+    "components/home/HomeWerkzeuge.tsx",
+    "components/home/HomeProduktfenster.tsx",
+    "components/home/HomeBegleitung.tsx",
+    "components/home/HomeUnterschied.tsx",
+    "components/home/HomeInspiration.tsx",
+    "components/home/HomeVertrauen.tsx"
+  ],
+  "fehler": [],
+  "ergebnis": "PASS"
+}

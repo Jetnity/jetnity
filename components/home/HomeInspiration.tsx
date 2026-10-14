@@ -60,6 +60,13 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
           </li>
         ))}
       </ul>
+      <Link
+        href="/entdecken"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-800 px-5 py-3 text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
+      >
+        Reiseinspiration entdecken
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
     </section>
   )
 }
