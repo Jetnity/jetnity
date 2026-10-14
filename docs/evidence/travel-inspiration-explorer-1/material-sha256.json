@@ -1,0 +1,10 @@
+{
+  "app/(public)/entdecken/page.tsx": "4855dc7c5e10233a0369013ca3f07e7e6ffe5628763ae6ffe21ff12ba8bc536b",
+  "components/home/HomeInspiration.tsx": "863a291a224c002c4d0821e5d2cb3b84d3843a5379bdba1b75df68d77859f697",
+  "components/inspiration/explorer-1/InspirationExplorer.tsx": "37929db3f0af0a0408269ea2638a37a413f640aebb07785f9d1b9281c9d09f3b",
+  "components/inspiration/explorer-1/Inspirationskarte.tsx": "6df78044e94515c4b1d9cac0fa33da25fa12dcb7f41e6aa952e2a7238a8ccf5b",
+  "lib/inspiration/explorer-1/katalog.test.ts": "c1f716f7e486a3772f5b05a7142f68fd93c98b967a19f331362e14e4e543b966",
+  "lib/inspiration/explorer-1/katalog.ts": "2aceb5b616bc9d6a8c5256551d1ce7a24746baf40a649867880e81540c5601ac",
+  "lib/security/next-16-3-8-security-upgrade-1.test.ts": "a8f8067d3db7ca8aaadae4c126934c93a2220b933c21b5f52c519881f23976cd",
+  "scripts/travel-inspiration-explorer-1-audit.mjs": "e131f9bb10f177184f46b5748dec27d7a35897efef1c1e44c4522e0c0be28f99"
+}

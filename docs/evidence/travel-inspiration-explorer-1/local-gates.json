@@ -1,0 +1,166 @@
+{
+  "note": "Full runtime gates on final material runtime before the one-line approved security inventory amendment. Only full test suite and inventory lint repeated after that additive test update. GitHub exact-head gates follow the final commit. No local Auth API run or hosted Supabase access.",
+  "npmCi": {
+    "exit": 0,
+    "advisories": {
+      "high": 17,
+      "moderate": 2
+    },
+    "packageInputsUnchanged": true
+  },
+  "initialGates": [
+    {
+      "script": "check:setup:ci",
+      "exit": 0,
+      "signal": null,
+      "seconds": 1,
+      "outputTail": "✅ strict ist aktiv\n✅ moduleResolution \"bundler\" ok\n\n📦 package.json – Versionen\n✅ next 16.3.8\n✅ @supabase/ssr ^0.6.1\n\n🖼️ next.config.* – Images\n✅ next.config.js: images{} gefunden\n✅ next.config.js: images.remotePatterns ok\n\n🔐 .env / .env.local – Schlüssel\n⚠️  Keine .env/.local gefunden\n\n------------------------------------------------\n⚠️  Warnings: 1\n------------------------------------------------\n"
+    },
+    {
+      "script": "check:operating-mode",
+      "exit": 1,
+      "signal": null,
+      "seconds": 0,
+      "outputTail": "\n> jetnity@1.0.0 check:operating-mode\n> node scripts/operating-mode-guard.mjs\n\noperating-mode guard: FAIL (Command failed: git diff --name-status -M -C main...HEAD\nfatal: ambiguous argument 'main...HEAD': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n)"
+    },
+    {
+      "script": "typecheck",
+      "exit": 0,
+      "signal": null,
+      "seconds": 2,
+      "outputTail": "\n> jetnity@1.0.0 typecheck\n> next typegen && tsc -p tsconfig.json --noEmit\n\nGenerating route types...\n✓ Types generated successfully"
+    },
+    {
+      "script": "lint",
+      "exit": 0,
+      "signal": null,
+      "seconds": 13,
+      "outputTail": "  681:34  warning  'profileDir' is defined but never used  @typescript-eslint/no-unused-vars\n\n<checkout>/scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs\n  496:33  warning  '_drop' is assigned a value but never used  @typescript-eslint/no-unused-vars\n\n<checkout>/scripts/e2e/admin-account-counts-browser-flows-1/test.mjs\n   85:3   warning  'assertSanitized' is defined but never used  @typescript-eslint/no-unused-vars\n  159:11  warning  'index' is defined but never used            @typescript-eslint/no-unused-vars\n\n<checkout>/scripts/e2e/admin-account-counts-local-runtime-1/test.mjs\n  87:56  warning  'assertOverlayKeepsAuthSemantics' is defined but never used  @typescript-eslint/no-unused-vars\n\n<checkout>/scripts/v1-workspace-status-language-1-audit.mjs\n  309:10  warning  'sichtbareTexte' is defined but never used  @typescript-eslint/no-unused-vars\n\n✖ 145 problems (0 errors, 145 warnings)\n  0 errors and 1 warning potentially fixable with the `--fix` option.\n"
+    },
+    {
+      "script": "test",
+      "exit": 1,
+      "signal": null,
+      "seconds": 53,
+      "outputTail": "      duration_ms: 0.084625\n      type: 'test'\n      ...\n    1..16\nok 1781 - operating-mode guard fixtures\n  ---\n  duration_ms: 6.078083\n  type: 'suite'\n  ...\n1..1781\n# tests 6626\n# suites 820\n# pass 6614\n# fail 11\n# cancelled 0\n# skipped 1\n# todo 0\n# duration_ms 53161.861333"
+    },
+    {
+      "script": "check:api-schutz",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "outputTail": "\n> jetnity@1.0.0 check:api-schutz\n> node scripts/api-schutz.mjs\n\nAPI-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi()."
+    },
+    {
+      "script": "check:schema-bezug",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "outputTail": "\n> jetnity@1.0.0 check:schema-bezug\n> node scripts/db/verwendung.mjs --pruefen\n\nJede angesprochene generierte Struktur existiert – geprüft gegen 22 Tabellen/Views und 25 Funktionen in types/supabase.ts.\nLOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC darf_official_truth_freigeben from lib/readiness/official-truth-fact-entry-authority-server.ts → supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC official_truth_application_pilot_run_v1 from lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts → supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC official_truth_source_catalog_v2 from lib/readiness/official-truth-source-catalog-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC official_truth_store_accepted_fingerprint_v2 from lib/readiness/official-truth-store-server.ts → supabase/migrations/20261010180000_official_truth_source_fingerprint_protocol_2.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC official_truth_store_accepted_v2 from lib/readiness/official-truth-store-server.ts → supabase/migrations/20261004010705_official_truth_content_identity_2.sql (not in generated schema)\nLOCAL/UNAPPLIED RPC trip_regulatory_context_save_v1 from lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts → supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql (not in generated schema)"
+    },
+    {
+      "script": "check:dead",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "outputTail": "\n> jetnity@1.0.0 check:dead\n> node scripts/erreichbarkeit.mjs\n\nStartpunkte:        772\nerreichbare Module: 1493\nverwaist:           0\n\n\nKeine unbegruendet verwaiste Datei."
+    },
+    {
+      "script": "check:exports",
+      "exit": 0,
+      "signal": null,
+      "seconds": 3,
+      "outputTail": "\n> jetnity@1.0.0 check:exports\n> node scripts/exporte.mjs\n\ngeprueft: 1157 Dateien\nExporte ohne Aufrufer: 0\n\nKein unbegruendeter Export ohne Aufrufer."
+    },
+    {
+      "script": "check:deps",
+      "exit": 0,
+      "signal": null,
+      "seconds": 0,
+      "outputTail": "\n> jetnity@1.0.0 check:deps\n> node scripts/pakete.mjs\n\n\ndependencies: 11 geprueft, 0 ohne Verwendung\n\ndevDependencies: 2 geprueft, 0 ohne Verwendung\n\nnicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide"
+    },
+    {
+      "script": "build",
+      "exit": 0,
+      "signal": null,
+      "seconds": 13,
+      "outputTail": "├ ○ /sitemap.xml                                 1h      1y\n├ ○ /terms\n├ ƒ /ui-audit/account\n├ ƒ /ui-audit/account-settings-security\n├ ƒ /ui-audit/account-travellers\n├ ƒ /ui-audit/activities\n├ ƒ /ui-audit/admin-provider-ops\n├ ƒ /ui-audit/admin-system-health\n├ ƒ /ui-audit/meine-reisen\n├ ƒ /ui-audit/trip-workspace\n└ ƒ /unauthorized\n\n\nƒ Proxy (Middleware)\n\n○  (Static)   prerendered as static content\nƒ  (Dynamic)  server-rendered on demand\n"
+    }
+  ],
+  "modeCorrection": {
+    "exit": 0,
+    "cause": "single-branch clone lacked origin/main; fetched current main in owned clone",
+    "output": "\n> jetnity@1.0.0 check:operating-mode\n> node scripts/operating-mode-guard.mjs\n\noperating-mode guard: PASS\n"
+  },
+  "finalTests": {
+    "exit": 1,
+    "tests": 6626,
+    "suites": 820,
+    "pass": 6615,
+    "fail": 10,
+    "skipped": 1,
+    "cancelled": 0,
+    "durationMs": 50321.892958,
+    "footer": "  ...\n1..1781\n# tests 6626\n# suites 820\n# pass 6615\n# fail 10\n# cancelled 0\n# skipped 1\n# todo 0\n# duration_ms 50321.892958",
+    "failures": [
+      {
+        "name": "not ok 706 - catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof",
+        "location": "'<checkout>/lib/readiness/official-truth-catalog-hardening-schema.test.ts:4:4500'",
+        "error": "'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'"
+      },
+      {
+        "name": "not ok 850 - native PG16 proves why accepted-store rows cannot be projected through a bypass",
+        "location": "'<checkout>/lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts:2:10111'",
+        "error": "'local_postgresql_not_available'"
+      },
+      {
+        "name": "not ok 943 - S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races",
+        "location": "'<checkout>/lib/readiness/official-truth-content-identity-schema-v2.test.ts:4:1284'",
+        "error": "'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'"
+      },
+      {
+        "name": "not ok 992 - R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover",
+        "location": "'<checkout>/lib/readiness/official-truth-integrated-pilot-r3.test.ts:2:1085'",
+        "error": "'local_postgresql_not_available'"
+      },
+      {
+        "name": "not ok 994 - real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed",
+        "location": "'<checkout>/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:2815'",
+        "error": "'NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator'"
+      },
+      {
+        "name": "not ok 995 - actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof",
+        "location": "'<checkout>/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:3879'",
+        "error": "'NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator'"
+      },
+      {
+        "name": "not ok 996 - R5 native legacy and typed SQL consumers preserve envelope admission boundaries",
+        "location": "'<checkout>/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:5950'",
+        "error": "'local_postgresql_not_available'"
+      },
+      {
+        "name": "not ok 1053 - M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16",
+        "location": "'<checkout>/lib/readiness/official-truth-original-custody.test.ts:2:6330'",
+        "error": "'local_postgresql_not_available'"
+      },
+      {
+        "name": "not ok 1 - Rollen, Atome und genaue Duplikate",
+        "location": "'<checkout>/lib/readiness/official-truth-source-catalog-server.test.ts:9:789'",
+        "error": "'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'"
+      },
+      {
+        "name": "not ok 1 - Rollen, Rollback und genaue Duplikate",
+        "location": "'<checkout>/lib/readiness/official-truth-store-server.test.ts:11:22697'",
+        "error": "'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'"
+      }
+    ],
+    "skipLines": [
+      "ok 736 - native PG: declaration revision/RLS/shape/idempotence and protected finite one-shot admission # SKIP"
+    ]
+  },
+  "inventoryLint": {
+    "exit": 0,
+    "output": ""
+  },
+  "focusedTests": "TAP version 13\n# Subtest: Reise-Inspiration Explorer: bounded URL and editorial search\n    # Subtest: reuses precisely the four base identities, images, ideas and canonical handoffs\n    ok 1 - reuses precisely the four base identities, images, ideas and canonical handoffs\n      ---\n      duration_ms: 0.920125\n      type: 'test'\n      ...\n    # Subtest: uses first repeated values, drops unknown params and defaults unknown themes\n    ok 2 - uses first repeated values, drops unknown params and defaults unknown themes\n      ---\n      duration_ms: 0.129042\n      type: 'test'\n      ...\n    # Subtest: bounds and cleans hostile input without caller-controlled navigation\n    ok 3 - bounds and cleans hostile input without caller-controlled navigation\n      ---\n      duration_ms: 0.367334\n      type: 'test'\n      ...\n    # Subtest: matches case, accents, whitespace, countries and editorial words\n    ok 4 - matches case, accents, whitespace, countries and editorial words\n      ---\n      duration_ms: 0.220958\n      type: 'test'\n      ...\n    # Subtest: combines themes and search without inventing matches; resets to all\n    ok 5 - combines themes and search without inventing matches; resets to all\n      ---\n      duration_ms: 0.071292\n      type: 'test'\n      ...\n    1..5\nok 1 - Reise-Inspiration Explorer: bounded URL and editorial search\n  ---\n  duration_ms: 2.064417\n  type: 'suite'\n  ...\n1..1\n# tests 5\n# suites 1\n# pass 5\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 171.0765\n"
+}

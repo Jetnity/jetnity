@@ -1,0 +1,48 @@
+[
+  {
+    "attempt": "browser",
+    "result": "FAIL",
+    "checksPassed": [],
+    "error": "Error: listen EPERM: operation not permitted 127.0.0.1:3541\n    at Server.setupListenHandle [as _listen2] (node:net:1919:21)\n    at listenInCluster (node:net:1998:12)\n    at node:net:2207:7\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+  },
+  {
+    "attempt": "browser-attempt-2",
+    "result": "FAIL",
+    "checksPassed": [
+      "homepage: keyboard discovery edge and four unchanged direct planning links",
+      "keyboard search/theme/details → unchanged server confirmation → populated editable planning form; dates/origin empty",
+      "back from plan and reload restore URL search/theme without hydration errors",
+      "browser back/forward reproduces theme history"
+    ],
+    "error": "AssertionError [ERR_ASSERTION]: typing causes no network request\n+ actual - expected\n\n+ [\n+   'http://127.0.0.1:3541/_next/image?url=%2Fimages%2Flisbon.jpg&w=640&q=75',\n+   'http://127.0.0.1:3541/_next/image?url=%2Fimages%2Fzermatt.jpg&w=640&q=75',\n+   'http://127.0.0.1:3541/icon.png?icon.3zfxg1mfnux48.png',\n+   'http://127.0.0.1:3541/icon.png?icon.3zfxg1mfnux48.png'\n+ ]\n- []\n\n    at file://<checkout>/scripts/travel-inspiration-explorer-1-audit.mjs:173:10"
+  },
+  {
+    "attempt": "browser-attempt-3",
+    "result": "FAIL",
+    "checksPassed": [
+      "homepage: keyboard discovery edge and four unchanged direct planning links",
+      "keyboard search/theme/details → unchanged server confirmation → populated editable planning form; dates/origin empty",
+      "back from plan and reload restore URL search/theme without hydration errors",
+      "browser back/forward reproduces theme history"
+    ],
+    "error": "AssertionError [ERR_ASSERTION]: typing causes no network request\n+ actual - expected\n\n+ [\n+   'http://127.0.0.1:3541/icon.png?icon.3zfxg1mfnux48.png'\n+ ]\n- []\n\n    at file://<checkout>/scripts/travel-inspiration-explorer-1-audit.mjs:174:10"
+  },
+  {
+    "attempt": "browser-attempt-4",
+    "result": "PASS",
+    "checksPassed": [
+      "homepage: keyboard discovery edge and four unchanged direct planning links",
+      "keyboard search/theme/details → unchanged server confirmation → populated editable planning form; dates/origin empty",
+      "back from plan and reload restore URL search/theme without hydration errors",
+      "browser back/forward reproduces theme history",
+      "zero-result/reset restores catalogue and focus; no application requests while typing (browser favicon recorded separately)",
+      "360x800, 390x844, 768x1024, 1440x900: no overflow, 44px targets, 16px inputs, four local images",
+      "duplicate/unknown/overlong/malformed URL values deterministic; canonical and noindex preserved",
+      "no JavaScript: SSR catalogue, native GET search/theme, details, planning links and reset usable",
+      "image failure has stable accessible fallback, text and planning action",
+      "synthetic place read failure is not a confirmed planning destination",
+      "no unexpected browser writes/external origins, no browser exceptions; local fixtures only"
+    ],
+    "error": ""
+  }
+]

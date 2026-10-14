@@ -1,0 +1,70 @@
+{
+  "head": "84d4f9781f3fd57f411a0e3ffdbbb2bf65e1eb87",
+  "dirty": "M components/home/HomeInspiration.tsx\n?? app/(public)/entdecken/\n?? components/inspiration/\n?? docs/TRAVEL_INSPIRATION_EXPLORER_1_PLAN_2026-10-14.md\n?? docs/evidence/travel-inspiration-explorer-1/\n?? lib/inspiration/\n?? scripts/travel-inspiration-explorer-1-audit.mjs",
+  "environment": "Actual local Next routes; existing GeoNames fixture HTTP responses; guest; Chrome headless viewport emulation, not physical devices or native zoom",
+  "checks": [
+    "homepage: keyboard discovery edge and four unchanged direct planning links",
+    "keyboard search/theme/details → unchanged server confirmation → populated editable planning form; dates/origin empty",
+    "back from plan and reload restore URL search/theme without hydration errors",
+    "browser back/forward reproduces theme history",
+    "zero-result/reset restores catalogue and focus; no application requests while typing (browser favicon recorded separately)",
+    "360x800, 390x844, 768x1024, 1440x900: no overflow, 44px targets, 16px inputs, four local images",
+    "duplicate/unknown/overlong/malformed URL values deterministic; canonical and noindex preserved",
+    "no JavaScript: SSR catalogue, native GET search/theme, details, planning links and reset usable",
+    "image failure has stable accessible fallback, text and planning action",
+    "synthetic place read failure is not a confirmed planning destination",
+    "no unexpected browser writes/external origins, no browser exceptions; local fixtures only"
+  ],
+  "measurements": [
+    {
+      "width": 360,
+      "height": 800,
+      "overflow": 0,
+      "small": [],
+      "inputFont": "16px",
+      "imageCount": 4
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": 0,
+      "small": [],
+      "inputFont": "16px",
+      "imageCount": 4
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "overflow": 0,
+      "small": [],
+      "inputFont": "16px",
+      "imageCount": 4
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "overflow": 0,
+      "small": [],
+      "inputFont": "16px",
+      "imageCount": 4
+    }
+  ],
+  "fixtureReads": [
+    {
+      "id": "geonames:1650535",
+      "failure": false
+    },
+    {
+      "id": "geonames:1650535",
+      "failure": true
+    }
+  ],
+  "unexpected": [],
+  "browserErrors": [],
+  "typingRequests": [
+    "http://127.0.0.1:3541/icon.png?icon.3zfxg1mfnux48.png"
+  ],
+  "result": "PASS",
+  "materialManifest": "../material-sha256.json",
+  "note": "Captured before implementation commit; HEAD field is the seed, dirty field lists candidate changes. Final exact HEAD/tree are published on PR #943; this is final-runtime local evidence."
+}
