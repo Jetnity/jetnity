@@ -1,0 +1,18 @@
+{
+  "scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts": {
+    "gitBlob": "9b92c0b09c67e60329f71b1922295cf43dae4e70",
+    "sha256": "4ec2c496f5325df3a32d3cd088529014b7f5c5bbb02d1af4123dc1fe54afd191"
+  },
+  "scripts/official-truth-bundesportal-bp1-observation-1/observations.ts": {
+    "gitBlob": "6dce4270b796f50b3115871f5cfc4d5e76da6bc4",
+    "sha256": "84b13d68be6c4864098d4e8c599c783ee6b951eaef1184a7670670dfb57ad8aa"
+  },
+  "scripts/official-truth-bundesportal-bp1-observation-1/run.ts": {
+    "gitBlob": "2c81f067a909102071ed8ab613de82174b9cb455",
+    "sha256": "9df2bb16f5e638ef8cac3d9827eabc038bb67c66b52b9dc39b60d207a39e161c"
+  },
+  "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts": {
+    "gitBlob": "a36ecbd1bb84a9178b31eb1458e997c003f9176f",
+    "sha256": "f0c36b00a4377bb7898e66fee57b6d9cd2d922adf3a96b7e78c2549d31e38a3f"
+  }
+}

@@ -513,6 +513,7 @@ describe('dormancy and architectural boundaries', () => {
     // Isolated fixed corpus, canonical execution and bounded official-source qualifier.
     // #917 fixed S1/S2 quarantine probe; verifier can never accept identity.
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts',
+    'scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts',
     'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts',
     'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts',
     'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
@@ -529,6 +530,12 @@ describe('dormancy and architectural boundaries', () => {
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
+    assert.equal(contentIdentityImporterAllowed('scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts'), true)
+    for (const path of ['scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts.evil.ts',
+      'scripts/official-truth-bundesportal-bp1-observation-1/run.ts',
+      'app/api/official-truth-bundesportal-bp1-observation-1/source-probe.ts']) {
+      assert.equal(contentIdentityImporterAllowed(path), false)
+    }
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts.evil.ts'), false)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-ch-de-first-visa-vertical-1/unreviewed.ts'), false)
