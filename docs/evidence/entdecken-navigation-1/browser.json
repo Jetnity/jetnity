@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-10-14T12:52:14.950Z",
+  "checkoutHead": "bc8e451a13c48a61f9892cbbaab8fce7eda28122",
+  "runtimeSha256": {
+    "lib/auth/oeffentliche-navigation.ts": "c6de418a0b1ceedea24b7c270a72898abecc630435901423a2723fd11a163b3b",
+    "components/layout/PublicNavbar.tsx": "97f3f32131a77147959ac1474efba3290ab3af142747e434551ad78b0325c01e",
+    "components/layout/Footer.tsx": "9c0b27a82e6cb26546fd0a639da45c2132c74a60378dc915cd5465d626e5e85b"
+  },
+  "environment": "Actual local Next production routes; fresh credential-free Chrome; desktop 1440x1000 and mobile viewport 390x844, not physical hardware; no screenshots or image re-audit",
+  "checks": [
+    "Hauptnavigation: keyboard home → existing Entdecken link → actual Explorer heading and /entdecken; active colors and aria-current; menu closed/inert",
+    "Hauptnavigation: genuine /#entdecken return and footer keyboard navigation preserved",
+    "Hauptnavigation: query variant current; home and unrelated /privacy not current",
+    "Mobile Navigation: keyboard home → existing Entdecken link → actual Explorer heading and /entdecken; active colors and aria-current; menu closed/inert",
+    "Mobile: same-path Enter closes; Escape closes and restores toggle focus; hidden menu excluded from Tab order",
+    "Mobile Navigation: genuine /#entdecken return and footer keyboard navigation preserved",
+    "Mobile Navigation: query variant current; home and unrelated /privacy not current",
+    "No external browser requests, server fetches or browser page errors; no session/provider/database access"
+  ],
+  "blockedBrowserRequests": 0,
+  "blockedServerFetches": 0,
+  "browserErrors": 0,
+  "browserVersion": "155.0.8059.40",
+  "status": "PASS"
+}
