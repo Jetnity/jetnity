@@ -1,0 +1,162 @@
+{
+  "status": "BLOCKED_SCOPE_AMENDMENT_REQUIRED",
+  "implementationDelivered": false,
+  "baselineCommit": "35ed794ae5b8a354e46d3e051dbc7935e95976e7",
+  "baselineTree": "3581e246920f5e047129ebf86a1c1a1228076e0c",
+  "taskBlob": "0ab1d067d45a84b51c9f4acfcf3539ad2a0b94cf",
+  "node": "22.23.3",
+  "npm": "10.9.9",
+  "focusedTests": {
+    "tests": 130,
+    "passed": 130,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fullTests": {
+    "tests": 6756,
+    "passed": 6745,
+    "failed": 10,
+    "skipped": 1,
+    "failureClass": "required_native_postgresql_unavailable"
+  },
+  "importProbe": {
+    "testCount": 1,
+    "passed": 0,
+    "failed": 1,
+    "exitCode": 1,
+    "proposedImporter": "lib/readiness/official-truth-source-discovery-v1/coordinator.ts",
+    "probeRemoved": true,
+    "existingTestChanged": false
+  },
+  "syntheticBoundary": {
+    "scenario": "synthetic CH citizenship / CH passport / VN",
+    "tourist21DayScenarioNotEncodedInCanonicalScope": true,
+    "officialResult": "unknown",
+    "sourceQualified": false,
+    "observations": [
+      {
+        "fixture": "complete",
+        "plan": "ready",
+        "urlValidator": "validated_url_candidates",
+        "graphValidator": "valid"
+      },
+      {
+        "fixture": "missing_item",
+        "plan": "ready",
+        "urlValidator": "validated_url_candidates",
+        "graphValidator": "missing_item_version"
+      },
+      {
+        "fixture": "conflicting_item",
+        "plan": "ready",
+        "urlValidator": "validated_url_candidates",
+        "graphValidator": "duplicate_item_version"
+      },
+      {
+        "fixture": "missing_profile",
+        "plan": "ready",
+        "urlValidator": "validated_url_candidates",
+        "graphValidator": "profile_unavailable"
+      }
+    ],
+    "emptyRegistry": "no_eligible_official_source"
+  },
+  "localGates": [
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 1,
+      "durationSeconds": 0.42,
+      "sha256": "3477ae43eb9def81a94fa85f4ca11ba6ef234b04bcc530a6474353bc6e91820d"
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 0,
+      "durationSeconds": 0.15,
+      "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "durationSeconds": 7.48,
+      "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "durationSeconds": 12.76,
+      "sha256": "d5303a5e0047dc8073b80bd0698abea047718339317b1f46f8f2fe8e2fa8b790"
+    },
+    {
+      "command": "npm run test",
+      "exitCode": 1,
+      "durationSeconds": 53.54,
+      "sha256": "589d661831d0639d4cee6e6bafc8e2767915530e3a71bda75ee42e7f85f3aa4b"
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "durationSeconds": 0.16,
+      "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "durationSeconds": 0.27,
+      "sha256": "2ad501d7ca052708110bd99edb7c8723c5162a9654fe4d00a65ff9fa8c5bd954"
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "durationSeconds": 0.25,
+      "sha256": "88ce4eb25e27474d6bc458f07087e278258f8e395116bf3c10dfe92da07d2295"
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "durationSeconds": 2.89,
+      "sha256": "3d88e84183ede21fc7d2a08c9931aa073c018326818dd5364b26aab0523d28a8"
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "durationSeconds": 0.2,
+      "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 1,
+      "durationSeconds": 0.23,
+      "sha256": "aae01d87b9d391b1ce905a93bd1be9ffef82ce55fc88286eb2218e19ca46c162"
+    }
+  ],
+  "originalEvidenceDigests": [
+    {
+      "evidence": "dependency_install",
+      "sha256": "874e25e02a834318c86ccf7683f6478a65bf663be1f6aaee2a9e9cd0008e4f88"
+    },
+    {
+      "evidence": "focused_regressions",
+      "sha256": "39115d033b66732e4d31cd445264c96fc73d068d120ccc32c7243f4d451d2da3"
+    },
+    {
+      "evidence": "original_import_guard_failure",
+      "sha256": "7acd0515261de660d7cbdc059efc39bbf8ad83b116abf9a9a399c79552b0bccf"
+    },
+    {
+      "evidence": "private_synthetic_reproduction_script",
+      "sha256": "6ab4c8b3e04bf376d528368db0d798f55284283831713efa0e965a092551eaea"
+    },
+    {
+      "evidence": "synthetic_reproduction_output",
+      "sha256": "7405e6b730db494c473b6f1b637a32b0867fc6dfdc2de27b52cde31c25e727dd"
+    }
+  ],
+  "limitations": [
+    "Full new coordinator and query-intent acceptance not implemented",
+    "Local setup CI and build prebuild stopped at sandbox IPC EPERM; Next production build did not run",
+    "Ten native PostgreSQL failures remain failed; no hosted fallback or new database tooling",
+    "Local gates used seed runtime; delivered-head CI/Auth is separate",
+    "No physical network denial proof for a new module because no module was delivered",
+    "No user-facing UI exists for this slice; no interactive Preview acceptance"
+  ]
+}
