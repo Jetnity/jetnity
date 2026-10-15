@@ -8,14 +8,14 @@ import { fileURLToPath } from 'node:url'
 const wurzel = join(dirname(fileURLToPath(import.meta.url)), '../..')
 const lese = (relativ: string) => readFileSync(join(wurzel, relativ), 'utf8')
 
-describe('Next.js 16.3.8 security upgrade 1', () => {
-  test('exact pins stay on 16.3.8 without moving React', () => {
+describe('Next.js 16.4.1 security upgrade 1', () => {
+  test('exact pins stay on 16.4.1 without moving React', () => {
     const pkg = JSON.parse(lese('package.json')) as {
       dependencies: Record<string, string>
       devDependencies: Record<string, string>
     }
-    assert.equal(pkg.dependencies.next, '16.3.8')
-    assert.equal(pkg.devDependencies['eslint-config-next'], '16.3.8')
+    assert.equal(pkg.dependencies.next, '16.4.1')
+    assert.equal(pkg.devDependencies['eslint-config-next'], '16.4.1')
     assert.equal(pkg.dependencies.react, '19.2.8')
     assert.equal(pkg.dependencies['react-dom'], '19.2.8')
     assert.equal(pkg.dependencies.next.includes('canary'), false)
@@ -37,7 +37,7 @@ describe('Next.js 16.3.8 security upgrade 1', () => {
   })
 
   test('audit script reports no runtime advisory prerequisites and exits 0', () => {
-    const run = spawnSync(process.execPath, ['scripts/next-16-3-8-security-upgrade-1-audit.mjs'], {
+    const run = spawnSync(process.execPath, ['scripts/next-16-4-1-security-patch-p1/audit.mjs'], {
       cwd: wurzel,
       encoding: 'utf8',
     })
@@ -57,8 +57,8 @@ describe('Next.js 16.3.8 security upgrade 1', () => {
       }
       failures: string[]
     }
-    assert.equal(report.pins.next, '16.3.8')
-    assert.equal(report.pins.eslintConfigNext, '16.3.8')
+    assert.equal(report.pins.next, '16.4.1')
+    assert.equal(report.pins.eslintConfigNext, '16.4.1')
     assert.deepEqual(report.failures, [])
     assert.deepEqual(report.inventory.nextOgImports, [])
     assert.deepEqual(report.inventory.imageResponse, [])
