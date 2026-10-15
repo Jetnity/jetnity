@@ -1,0 +1,13 @@
+# Next.js 16.4.1 P1 security patch — plan
+
+Author: Jetnity Next.js 16.4.1 P1 Security Patch 1 — Codex Generation 1, existing session `01a13fa3-1333-7fb1-ba4c-8219f37507de`. Issue #950 / Draft #951 / branch `security/next-16-4-1-emergency-p1`.
+
+Authority: immutable TASK blob `f2459159d5bb64e7c64d19b8abf36c8d917eeb0c`, [historical-audit clarification](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6193122773), and [two-test amendment](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6197089734). Main remains `10fdee40c3e4fcc7dffb6515dda5acf1db391aed`; author seed `7948f0688425bfceae4fc14f8603abc3997825d5`, tree `fa094683ab581f69dc30b0f9d5a60ac13347d11d`. Live #751, scoped #748 and open drafts checked; NORMAL, no competing security writer or baseline drift.
+
+1. Verify official Next advisories and registry versions directly in the existing workspace. Preserve the original two DNS failures and R3 scope blocker as historical evidence in PR comments. Temporary Full Access was explicitly granted by the Product Owner; no settings or credentials are changed by this work.
+2. Change only exact Next/eslint-config-next pins to 16.4.1, regenerate npm lock with Node 22/npm 10, retain all other direct pins and overrides. Verify every Sharp/native resolution and installed host binaries. No audit fix.
+3. Update only the two expressly approved existing tests. Preserve every other assertion. Keep the historical audit byte-identical; new read-only `scripts/next-16-4-1-security-patch-p1/audit.mjs` accepts only its two exact dated pin mismatches, preserves its entire inventory and independently checks current package/lock/install provenance. Add controlled adversarial tests under that new namespace.
+4. Run original npm ci, setup, mode, typecheck, lint, full tests, API/schema/dead/exports/deps and build. Record failures honestly, including Mac/native PostgreSQL variance. Validate the new audit with synthetic negative cases; no exploit or external source traffic.
+5. Review the complete scoped diff and sanitized evidence, commit/push only this existing branch without force. Inspect actual new-head Verify/Auth and automatic Preview metadata. Publish exact HEAD/tree/parent/blob identities and complete diff, test evidence, risks and self-review in #951; then STOP for independent TL.
+
+Only package.json, package-lock.json, the two approved existing test files, the new audit namespace and TASK-permitted PLAN/REPORT/SELF_REVIEW/HANDOFF/evidence are writable. Runtime/config/auth/RLS/headers/image rules, historical audit, immutable TASK, workflows, Supabase and other PRs stay unchanged. No Ready, merge, manual deployment or follow-up slice. P1 remains open pending a separately authorized rollout and production verification.

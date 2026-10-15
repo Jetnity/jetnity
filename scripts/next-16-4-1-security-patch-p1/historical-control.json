@@ -1,0 +1,89 @@
+{
+  "deployment": {
+    "vercelJson": true,
+    "pagesRouter": false,
+    "outputStandalone": false,
+    "cacheComponents": false,
+    "experimentalUseCache": false
+  },
+  "remotePatterns": [
+    {
+      "protocol": "https",
+      "hostname": "oaidalleapiprodscus.blob.core.windows.net",
+      "pathname": "/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "Microsoft Azure Blob DNS for the OpenAI DALL-E production account. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "build-time NEXT_PUBLIC_SUPABASE_URL hostname, fallback example.supabase.co",
+      "pathname": "/storage/v1/object/public/**",
+      "hostnameControl": "fixed-at-build-from-public-env",
+      "dnsAssumption": "Operator-controlled Supabase project host. Not request-controlled.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "jetnity.ai",
+      "pathname": "/static/avatars/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "First-party product domain. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    }
+  ],
+  "inventory": {
+    "nextImageImports": [
+      "components/home/HomeHero.tsx",
+      "components/home/HomeInspiration.tsx",
+      "components/inspiration/explorer-1/Inspirationskarte.tsx",
+      "components/layout/Footer.tsx",
+      "components/layout/PublicNavbar.tsx"
+    ],
+    "nextOgImports": [],
+    "imageResponse": [],
+    "dynamicParams": [],
+    "generateStaticParams": [],
+    "useCacheDirectives": [],
+    "draftModeCalls": [],
+    "metadataImageRoutes": [],
+    "catchAllRoutes": [],
+    "dynamicSegments": [
+      "app/(public)/reisen/[tripId]"
+    ]
+  },
+  "seed": "7948f0688425bfceae4fc14f8603abc3997825d5",
+  "protectedBlobs": {
+    "scripts/next-16-3-8-security-upgrade-1-audit.mjs": "0a1f58a7fa718b73e63c4111d91b8817c6b372a2",
+    "next.config.js": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+    "vercel.json": "85deee8e24190cf03ff339b4273b2a3295847073"
+  },
+  "serverActions": {
+    "app/(admin)/admin/users/actions.ts": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+    "app/(public)/admin/login/actions.ts": "ce6bb6b399ed19a6ef7b39f8b2abdf2344b0a0bc",
+    "app/(public)/admin/mfa/actions.ts": "57119aa9b38c3921a576edb1eac5ac75d6b2bd50",
+    "app/account/security/logout-action.ts": "e5389e5b451ea01a52d356cd65f683d14c5ac3c6",
+    "app/auth/sign-out.ts": "1fe5d1b61e94f4b4b36496595c0b6523931907c1",
+    "lib/account/besuche-aktionen.ts": "1593b5ea4cd146aee95b6702172a403c90d73458",
+    "lib/activities/aktionen.ts": "a129821becb2fe1b91011e49691d8c8fedd216c4",
+    "lib/flights/aktionen.ts": "d1290edacb9c09169abdb2928b4aa6bf07fb627e",
+    "lib/hotels/aktionen.ts": "af69f50972ead0205ba970351c0ae5e85717bcfd",
+    "lib/mobility/aktionen.ts": "47c807f5155fdc0436f4130c8e0adb72e2a6eea7",
+    "lib/places/aktionen.ts": "ea60a82a4ba327ba42572b4d3b2f2e813ff537bd",
+    "lib/readiness/aktionen.ts": "3e4e6ecf724a557907bb7151304929dcefb14c2f",
+    "lib/readiness/reisende-aktionen.ts": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+    "lib/reiseaenderung/aktionen.ts": "5cd97cbf2cd711dec2ad01f31c65b93f3ec11bf2",
+    "lib/reisebegleiter/aktionen.ts": "70a19fd4cc80974a74e3e06e414fcfaa7b93b07d",
+    "lib/reisevorschlag/aktionen.ts": "e07f5f58fe5305c7f248589c72fea9acf8addef8",
+    "lib/rental-cars/aktionen.ts": "9299d15c5a7592988e43572449fc33fda2c91c01",
+    "lib/traveller/account-registry-aktionen.ts": "453cc96456d9b2bc9c1a5a3acbd288005f8d54ce",
+    "lib/trips/aktionen.ts": "4833378894aeedb152e093912574a698a9701b33",
+    "lib/trips/archiv-aktionen.ts": "1b4851b604f19588899b78153b1509d8e1674dd1"
+  }
+}

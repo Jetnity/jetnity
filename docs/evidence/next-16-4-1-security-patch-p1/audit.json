@@ -1,0 +1,394 @@
+{
+  "slice": "next-16-4-1-security-patch-p1",
+  "pins": {
+    "next": "16.4.1",
+    "eslintConfigNext": "16.4.1",
+    "react": "19.2.8",
+    "reactDom": "19.2.8"
+  },
+  "deployment": {
+    "vercelJson": true,
+    "pagesRouter": false,
+    "outputStandalone": false,
+    "cacheComponents": false,
+    "experimentalUseCache": false
+  },
+  "remotePatterns": [
+    {
+      "protocol": "https",
+      "hostname": "oaidalleapiprodscus.blob.core.windows.net",
+      "pathname": "/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "Microsoft Azure Blob DNS for the OpenAI DALL-E production account. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "build-time NEXT_PUBLIC_SUPABASE_URL hostname, fallback example.supabase.co",
+      "pathname": "/storage/v1/object/public/**",
+      "hostnameControl": "fixed-at-build-from-public-env",
+      "dnsAssumption": "Operator-controlled Supabase project host. Not request-controlled.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "jetnity.ai",
+      "pathname": "/static/avatars/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "First-party product domain. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    }
+  ],
+  "inventory": {
+    "nextImageImports": [
+      "components/home/HomeHero.tsx",
+      "components/home/HomeInspiration.tsx",
+      "components/inspiration/explorer-1/Inspirationskarte.tsx",
+      "components/layout/Footer.tsx",
+      "components/layout/PublicNavbar.tsx"
+    ],
+    "nextOgImports": [],
+    "imageResponse": [],
+    "dynamicParams": [],
+    "generateStaticParams": [],
+    "useCacheDirectives": [],
+    "draftModeCalls": [],
+    "metadataImageRoutes": [],
+    "catchAllRoutes": [],
+    "dynamicSegments": [
+      "app/(public)/reisen/[tripId]"
+    ]
+  },
+  "serverActions": {
+    "app/(admin)/admin/users/actions.ts": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+    "app/(public)/admin/login/actions.ts": "ce6bb6b399ed19a6ef7b39f8b2abdf2344b0a0bc",
+    "app/(public)/admin/mfa/actions.ts": "57119aa9b38c3921a576edb1eac5ac75d6b2bd50",
+    "app/account/security/logout-action.ts": "e5389e5b451ea01a52d356cd65f683d14c5ac3c6",
+    "app/auth/sign-out.ts": "1fe5d1b61e94f4b4b36496595c0b6523931907c1",
+    "lib/account/besuche-aktionen.ts": "1593b5ea4cd146aee95b6702172a403c90d73458",
+    "lib/activities/aktionen.ts": "a129821becb2fe1b91011e49691d8c8fedd216c4",
+    "lib/flights/aktionen.ts": "d1290edacb9c09169abdb2928b4aa6bf07fb627e",
+    "lib/hotels/aktionen.ts": "af69f50972ead0205ba970351c0ae5e85717bcfd",
+    "lib/mobility/aktionen.ts": "47c807f5155fdc0436f4130c8e0adb72e2a6eea7",
+    "lib/places/aktionen.ts": "ea60a82a4ba327ba42572b4d3b2f2e813ff537bd",
+    "lib/readiness/aktionen.ts": "3e4e6ecf724a557907bb7151304929dcefb14c2f",
+    "lib/readiness/reisende-aktionen.ts": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+    "lib/reiseaenderung/aktionen.ts": "5cd97cbf2cd711dec2ad01f31c65b93f3ec11bf2",
+    "lib/reisebegleiter/aktionen.ts": "70a19fd4cc80974a74e3e06e414fcfaa7b93b07d",
+    "lib/reisevorschlag/aktionen.ts": "e07f5f58fe5305c7f248589c72fea9acf8addef8",
+    "lib/rental-cars/aktionen.ts": "9299d15c5a7592988e43572449fc33fda2c91c01",
+    "lib/traveller/account-registry-aktionen.ts": "453cc96456d9b2bc9c1a5a3acbd288005f8d54ce",
+    "lib/trips/aktionen.ts": "4833378894aeedb152e093912574a698a9701b33",
+    "lib/trips/archiv-aktionen.ts": "1b4851b604f19588899b78153b1509d8e1674dd1"
+  },
+  "protectedBlobs": {
+    "scripts/next-16-3-8-security-upgrade-1-audit.mjs": "0a1f58a7fa718b73e63c4111d91b8817c6b372a2",
+    "next.config.js": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+    "vercel.json": "85deee8e24190cf03ff339b4273b2a3295847073"
+  },
+  "historical": {
+    "status": 1,
+    "classification": "EXPECTED_DATED_PIN_MISMATCH_NOT_PASS",
+    "failures": [
+      "next pin is 16.4.1, expected 16.3.8",
+      "eslint-config-next pin is 16.4.1, expected 16.3.8"
+    ]
+  },
+  "lock": {
+    "node_modules/@img/sharp-darwin-arm64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz",
+      "integrity": "sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg=="
+    },
+    "node_modules/@img/sharp-darwin-x64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz",
+      "integrity": "sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw=="
+    },
+    "node_modules/@img/sharp-freebsd-wasm32": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw=="
+    },
+    "node_modules/@img/sharp-libvips-darwin-arm64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz",
+      "integrity": "sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw=="
+    },
+    "node_modules/@img/sharp-libvips-darwin-x64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz",
+      "integrity": "sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ=="
+    },
+    "node_modules/@img/sharp-libvips-linux-arm": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.4.tgz",
+      "integrity": "sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw=="
+    },
+    "node_modules/@img/sharp-libvips-linux-arm64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.4.tgz",
+      "integrity": "sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A=="
+    },
+    "node_modules/@img/sharp-libvips-linux-ppc64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.3.4.tgz",
+      "integrity": "sha512-Le6boB8Tai0Nis+gIxIpKx68UDVVIqdR8Tin5Yf1z2LJJQLDJvCDRqRu+jC2qCoD+eIomonmOwB4smBRxfVpYQ=="
+    },
+    "node_modules/@img/sharp-libvips-linux-riscv64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-riscv64/-/sharp-libvips-linux-riscv64-1.3.4.tgz",
+      "integrity": "sha512-aHkkIEHPRdQEegJN20MLmGtxYD9R2wQr3Cwpddnu5+YKMt6Uzax7S9h5gpZTo8wyrGuZSlfQ63OevL5mTyOC7Q=="
+    },
+    "node_modules/@img/sharp-libvips-linux-s390x": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.3.4.tgz",
+      "integrity": "sha512-ra/mB6MikESDUO7Yg+Mi95bFBb9GsObURuhnOv3OqknjGe9sZrG8tCe9q0xSIGrtLgvgw0gKnFWcK4blSgQOuQ=="
+    },
+    "node_modules/@img/sharp-libvips-linux-x64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.3.4.tgz",
+      "integrity": "sha512-GJ//SSXbnwSDes02umB3nDJLFcQzw8a18V8fyhqr6tV515tOEMdImjjxj1AoafMRz56F3PHgftnj1QEKSU1zkw=="
+    },
+    "node_modules/@img/sharp-libvips-linuxmusl-arm64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.3.4.tgz",
+      "integrity": "sha512-hvulFwtjUcagsis6BBxHwGFwWoNZjgYmULGVrZcyfNbjA8hKILbRxGg15/7w5HDyXHXUos/j6baAWqnCyQ2DWA=="
+    },
+    "node_modules/@img/sharp-libvips-linuxmusl-x64": {
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.3.4.tgz",
+      "integrity": "sha512-6zXKeE/p39I1AmA3cJG35eyBGNqNddLnUXjhwBnsGjFPWqf5VKkDBEqaEkPDoTEtkxwi2vv8Tcr2mDyP4So7Fg=="
+    },
+    "node_modules/@img/sharp-linux-arm": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.35.5.tgz",
+      "integrity": "sha512-LEaXK2WdXVK5ykcw0buWyPMsmLLL2vpHLD6yrNSW+JGEL3BZPA4tpKN6iaMc4AxTTAoaX/sU1rOL51lcIz48ZQ=="
+    },
+    "node_modules/@img/sharp-linux-arm64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.35.5.tgz",
+      "integrity": "sha512-LYVx5JTsOM2CBzmxreh+nl64/3H6Xb09iSLknqH47z2T2DFFxDeFLP5y4dJwe6H7uGQlHPyEEtIqyo3DYsRwdQ=="
+    },
+    "node_modules/@img/sharp-linux-ppc64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.35.5.tgz",
+      "integrity": "sha512-QVxAAq8evVRI9ia2vqgwrmWucn5Dfv+JdWzj75pD8omHLPSP7f8p20O8jxzjCcuCEQEOtYOZUmX1hkiZ0kdevA=="
+    },
+    "node_modules/@img/sharp-linux-riscv64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-riscv64/-/sharp-linux-riscv64-0.35.5.tgz",
+      "integrity": "sha512-LtdreXguaavKODPIfzJ4kffx7UNt1omwtK0rch4EBbbSTXPnxWmYSayXdLJw0fJzQ97kHt1gL/yh4tvU+nCyRQ=="
+    },
+    "node_modules/@img/sharp-linux-s390x": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.35.5.tgz",
+      "integrity": "sha512-UZasTOFiYzotTsGOCu42BfUzP6Tu6Do/947iRm1RsLKvlllxwGcn4RN27LibGWceix4Y+Pmw3jsnTcCQIgWjqA=="
+    },
+    "node_modules/@img/sharp-linux-x64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.35.5.tgz",
+      "integrity": "sha512-SxFtLTeJInhAA9Q836kux2vZNeOBQEx658qvbboZScr0wIARym3IcGmW7KpVD5sbVg0Ojy+udFQdayYIZyoNog=="
+    },
+    "node_modules/@img/sharp-linuxmusl-arm64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.35.5.tgz",
+      "integrity": "sha512-9HbMclmI1zlNkFRs3z9/eBtDjfD0sGlrX1z6b1qwmiFY5ElDLh4BC0LPBdVp7z1DXFiKlIcznf+ZlsuZzLxQqg=="
+    },
+    "node_modules/@img/sharp-linuxmusl-x64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.35.5.tgz",
+      "integrity": "sha512-4KOphqB035HrVdqLZfCgMzzERrQkkzOwRhl4OAkRO1YCldbaFjySXMaK534Mo0V+LndnlJk+sbUyLeU0ULyD1A=="
+    },
+    "node_modules/@img/sharp-wasm32": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Ptsga1su4tQx+LLF1ECS9U6nz5kmrXKo6XVbtR48Ke3ZRxxgaWBu7IDtEe1quo8hiupwm6WFqxVlXaSf7IINGQ=="
+    },
+    "node_modules/@img/sharp-webcontainers-wasm32": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-webcontainers-wasm32/-/sharp-webcontainers-wasm32-0.35.5.tgz",
+      "integrity": "sha512-hfhF/FmoQyTUkA0bIKFOtw536BQSeBMe6BF6QyWlrPxT754+TFLaZ7sKKTfvvM0yJgKgaYTwnFCIZ/GuDw5SUA=="
+    },
+    "node_modules/@img/sharp-win32-arm64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.35.5.tgz",
+      "integrity": "sha512-X4t7g+7ZA5DKblCBEXGjUqqemj4vczING/5viFwAL8h4N3qYeyjwdCvRLHi4EdOUI+2Z7UFlp1VM+p/AuEtm6Q=="
+    },
+    "node_modules/@img/sharp-win32-ia32": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.35.5.tgz",
+      "integrity": "sha512-5Zm82LoBc43nhwNybZlG7Y1KO//Zhsn306fQl29ZOuStHLGTo3BWL83q3cznX0poxSAMuYL1On/BHBxkBeKr6A=="
+    },
+    "node_modules/@img/sharp-win32-x64": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.5.tgz",
+      "integrity": "sha512-x76eH0vEiHlcMQu8Y8IenntaACtddpT6W0wmXtWrnKcnKI7ME5DdgqhAD6SEWOEl1v2zDvkZDhFA9KnURwpfqg=="
+    },
+    "node_modules/@next/env": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.1.tgz",
+      "integrity": "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g=="
+    },
+    "node_modules/@next/eslint-plugin-next": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.4.1.tgz",
+      "integrity": "sha512-2io6M+wAqe7nT5mt2gEVy6FOzye2DmwhjaYCpSvHfrIKL11SXNTwSARxpPHJacRmfgSBSDnNmnEXSp0DaJ23BQ=="
+    },
+    "node_modules/@next/swc-darwin-arm64": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.1.tgz",
+      "integrity": "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg=="
+    },
+    "node_modules/@next/swc-darwin-x64": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.1.tgz",
+      "integrity": "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ=="
+    },
+    "node_modules/@next/swc-linux-arm64-gnu": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.1.tgz",
+      "integrity": "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw=="
+    },
+    "node_modules/@next/swc-linux-arm64-musl": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.1.tgz",
+      "integrity": "sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw=="
+    },
+    "node_modules/@next/swc-linux-x64-gnu": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.1.tgz",
+      "integrity": "sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A=="
+    },
+    "node_modules/@next/swc-linux-x64-musl": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.1.tgz",
+      "integrity": "sha512-aSC9wMNiZRRFVpPkPWBzRwLQxIGm/CiQcXyFF1XNcgodb+uMxdk7aSSGGpDXCbnvZdf4itjHxpOd5h7i7zaiYw=="
+    },
+    "node_modules/@next/swc-win32-arm64-msvc": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.4.1.tgz",
+      "integrity": "sha512-t/myvwFDlypMUjRvbBf8qLPyuaB0iXYYdBtwMt6DM6f+60wtGr4bSYholdPqNeV5VUXZhrpMwfza829kmhS3iA=="
+    },
+    "node_modules/@next/swc-win32-x64-msvc": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.4.1.tgz",
+      "integrity": "sha512-6ICqPo9awCkrtYNPhwkx1uU7rlFWrZRrIboDHS2LU+jv088UBYQtmJ25h6pCp27/+FZjF6BQ4Te4ErugyMeuBg=="
+    },
+    "node_modules/@types/node": {
+      "version": "22.20.1",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-22.20.1.tgz",
+      "integrity": "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="
+    },
+    "node_modules/@types/react": {
+      "version": "19.2.18",
+      "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.18.tgz",
+      "integrity": "sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w=="
+    },
+    "node_modules/@types/react-dom": {
+      "version": "19.2.5",
+      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.5.tgz",
+      "integrity": "sha512-fMPwH9v7r/pp43yUd2/Mbiex5KouJwwR3dzHkhLREUC6764VyDsqxhAxv6OFEYR1RhjOyD1naqba8ECDBe7ZQg=="
+    },
+    "node_modules/eslint": {
+      "version": "9.39.5",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.5.tgz",
+      "integrity": "sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw=="
+    },
+    "node_modules/eslint-config-next": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-16.4.1.tgz",
+      "integrity": "sha512-6AsojbCfRdpWkP6BIUnMBv3MH4OvtfmH9p4hSfLh8ZgsW7nfhu7DpUMNBB7leisDyyMz+YYxTc+NAdBOQfovlA=="
+    },
+    "node_modules/next": {
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/next/-/next-16.4.1.tgz",
+      "integrity": "sha512-uc657V62E34fOI6W5NtG9IzwsPcms0Z60grz2MJGtglgD+pTFnNt4Yw2PzaU622tfX4vhrDgLZzicE2YlhI20Q=="
+    },
+    "node_modules/react": {
+      "version": "19.2.8",
+      "resolved": "https://registry.npmjs.org/react/-/react-19.2.8.tgz",
+      "integrity": "sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw=="
+    },
+    "node_modules/react-dom": {
+      "version": "19.2.8",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.8.tgz",
+      "integrity": "sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ=="
+    },
+    "node_modules/sharp": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.5.tgz",
+      "integrity": "sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g=="
+    },
+    "node_modules/typescript": {
+      "version": "5.9.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="
+    }
+  },
+  "installed": {
+    "node_modules/@img/sharp-darwin-arm64": "0.35.5",
+    "node_modules/@img/sharp-libvips-darwin-arm64": "1.3.4",
+    "node_modules/@img/sharp-wasm32": "0.35.5",
+    "node_modules/@next/env": "16.4.1",
+    "node_modules/@next/eslint-plugin-next": "16.4.1",
+    "node_modules/@next/swc-darwin-arm64": "16.4.1",
+    "node_modules/@types/node": "22.20.1",
+    "node_modules/@types/react": "19.2.18",
+    "node_modules/@types/react-dom": "19.2.5",
+    "node_modules/eslint": "9.39.5",
+    "node_modules/eslint-config-next": "16.4.1",
+    "node_modules/next": "16.4.1",
+    "node_modules/react": "19.2.8",
+    "node_modules/react-dom": "19.2.8",
+    "node_modules/sharp": "0.35.5",
+    "node_modules/typescript": "5.9.3"
+  },
+  "runtime": {
+    "node": "22.23.3",
+    "platform": "darwin",
+    "arch": "arm64",
+    "native": "@img/sharp-darwin-arm64",
+    "nativeEntry": "node_modules/@img/sharp-darwin-arm64/index.cjs",
+    "nativeBinary": "node_modules/@img/sharp-darwin-arm64/lib/sharp-darwin-arm64-0.35.5.node",
+    "sharpEntry": "node_modules/sharp/dist/index.cjs",
+    "versions": {
+      "aom": "3.15.1",
+      "archive": "3.8.9",
+      "cairo": "1.18.6",
+      "cgif": "0.5.4",
+      "exif": "0.6.26",
+      "expat": "2.8.5",
+      "ffi": "3.8.0",
+      "fontconfig": "2.18.3",
+      "freetype": "2.14.3",
+      "fribidi": "1.0.17",
+      "glib": "2.90.0",
+      "harfbuzz": "14.5.0",
+      "heif": "1.23.5",
+      "highway": "1.4.0",
+      "imagequant": "2.4.1",
+      "lcms": "2.19.1",
+      "mozjpeg": "0826579",
+      "pango": "1.58.2",
+      "pixman": "0.46.4",
+      "png": "1.6.58",
+      "proxy-libintl": "0.5",
+      "rsvg": "2.63.2",
+      "tiff": "4.7.2",
+      "uhdr": "2.0.2",
+      "vips": "8.18.7",
+      "webp": "1.6.0",
+      "xml2": "2.15.4",
+      "zlib-ng": "2.3.3",
+      "sharp": "0.35.5"
+    }
+  },
+  "failures": []
+}

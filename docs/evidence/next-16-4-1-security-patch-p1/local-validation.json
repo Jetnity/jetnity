@@ -1,0 +1,175 @@
+{
+  "environment": {
+    "os": "macOS",
+    "arch": "arm64",
+    "node": "22.23.3",
+    "npm": "10.9.9"
+  },
+  "commands": [
+    {
+      "command": "npm run check:setup",
+      "exitCode": 0,
+      "seconds": 0.67
+    },
+    {
+      "command": "npm run check:setup:ci",
+      "exitCode": 0,
+      "seconds": 0.3
+    },
+    {
+      "command": "npm run check:operating-mode",
+      "exitCode": 1,
+      "seconds": 0.16
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "seconds": 7.48
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "seconds": 13.63
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "seconds": 56.01
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exitCode": 0,
+      "seconds": 0.17
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exitCode": 0,
+      "seconds": 0.28
+    },
+    {
+      "command": "npm run check:dead",
+      "exitCode": 0,
+      "seconds": 0.27
+    },
+    {
+      "command": "npm run check:exports",
+      "exitCode": 0,
+      "seconds": 2.89
+    },
+    {
+      "command": "npm run check:deps",
+      "exitCode": 0,
+      "seconds": 0.21
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "seconds": 13.48
+    }
+  ],
+  "tests": {
+    "tests": 6756,
+    "suites": 820,
+    "pass": 6745,
+    "fail": 10,
+    "cancelled": 0,
+    "skipped": 1,
+    "todo": 0
+  },
+  "failures": [
+    {
+      "test": "836 - catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof",
+      "location": "lib/readiness/official-truth-catalog-hardening-schema.test.ts:4:4500",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "test": "980 - native PG16 proves why accepted-store rows cannot be projected through a bypass",
+      "location": "lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts:2:10111",
+      "error": "local_postgresql_not_available"
+    },
+    {
+      "test": "1073 - S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races",
+      "location": "lib/readiness/official-truth-content-identity-schema-v2.test.ts:4:1284",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "test": "1122 - R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover",
+      "location": "lib/readiness/official-truth-integrated-pilot-r3.test.ts:2:1085",
+      "error": "local_postgresql_not_available"
+    },
+    {
+      "test": "1124 - real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed",
+      "location": "lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:2815",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "test": "1125 - actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof",
+      "location": "lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:3879",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "test": "1126 - R5 native legacy and typed SQL consumers preserve envelope admission boundaries",
+      "location": "lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:5950",
+      "error": "local_postgresql_not_available"
+    },
+    {
+      "test": "1183 - M1\u2013M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16",
+      "location": "lib/readiness/official-truth-original-custody.test.ts:2:6330",
+      "error": "local_postgresql_not_available"
+    },
+    {
+      "test": "1 - Rollen, Atome und genaue Duplikate",
+      "location": "lib/readiness/official-truth-source-catalog-server.test.ts:9:789",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "test": "1 - Rollen, Rollback und genaue Duplikate",
+      "location": "lib/readiness/official-truth-store-server.test.ts:11:22697",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    }
+  ],
+  "existingConditionalSkip": {
+    "file": "lib/readiness/official-truth-ch-de-application-pilot-1/database.test.ts",
+    "condition": "skip: !findLocalPgBins()",
+    "modified": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 145
+  },
+  "setupWarnings": [
+    "No .env/.env.local present; no values loaded"
+  ],
+  "build": {
+    "next": "16.4.1",
+    "bundler": "Turbopack",
+    "compiledSeconds": 4.7,
+    "staticPages": 26,
+    "exitCode": 0
+  },
+  "newAuditAdversarialTests": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "skipped": 0
+  },
+  "finalContractTests": {
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0
+  },
+  "finalAuditLint": {
+    "exitCode": 0,
+    "warnings": 0
+  },
+  "operatingModeInitialFailure": "Single-branch checkout lacks local main/origin-main ref; original guard fails on main...HEAD. Exact base/head parameters supported by unchanged CI will be checked after commit; final receipt in PR #951.",
+  "rawLocalLogDigests": {
+    "validation-test.log": "69c89f4e1438909a4bb6685dc0ee65479b1d3387d3a458443c771d3f2a00c950",
+    "validation-check-operating-mode.log": "ec8cd1e7982508a1ac0bbd37481290dfb4b0283b5206fd06e1c76f9d088d1b04",
+    "validation-build.log": "404d6fc5e9c9f36ab5c6b5972340e1121ea963330043e2101ffd75863671296f",
+    "npm-ci.log": "9c4514038dfaa8ae63e266eb8f15b8aee55bd0c40fb26113786e3ad96632ecef",
+    "audit-tests-final.log": "9b7de464e2faeed779a19992f711d1fab92839d22d6c20f23645cec62d4ed734",
+    "contract-tests-final.log": "22d2722e5772b1a2e7ccfe53978c52d56bf60443b204df2b2e378f72ad948d86"
+  }
+}
