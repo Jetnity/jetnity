@@ -14,7 +14,8 @@ import {
 import type { DestinationEssentialsAbleitung } from '@/lib/trips/destination-essentials'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
-import type { Trip } from '@/types/trips'
+import type { Trip, TripItem } from '@/types/trips'
+import TripAuditV1Panel from '@/components/trips/TripAuditV1Panel'
 import TripWorkspaceDestinationEssentials from '@/components/trips/TripWorkspaceDestinationEssentials'
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 
@@ -83,6 +84,7 @@ export function TripWorkspaceAktionen({
 
 export default function TripWorkspaceUebersicht({
   reise,
+  ungeplantePunkte,
   uebersicht,
   attention,
   destinationEssentials,
@@ -90,6 +92,7 @@ export default function TripWorkspaceUebersicht({
   onAttention,
 }: {
   reise: Trip
+  ungeplantePunkte?: readonly TripItem[]
   uebersicht: UebersichtAbleitung
   attention: AttentionAbleitung
   destinationEssentials: DestinationEssentialsAbleitung
@@ -115,6 +118,8 @@ export default function TripWorkspaceUebersicht({
       </header>
 
       <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />
+
+      <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} />
 
       <TripWorkspaceDestinationEssentials essentials={destinationEssentials} />
 
