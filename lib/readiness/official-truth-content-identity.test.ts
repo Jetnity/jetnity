@@ -503,6 +503,8 @@ describe('dormancy and architectural boundaries', () => {
     'lib/readiness/official-truth-server-held-source-registry.ts',
     'lib/readiness/official-truth-server-owned-retrieval.ts',
     'lib/readiness/official-truth-source-catalog-server.ts',
+    // #948/#949: offline-only complete graph prevalidation; exact TL R1 amendment.
+    'lib/readiness/official-truth-source-discovery-v1/coordinator.ts',
     'lib/readiness/official-truth-trusted-fact-extractor-registry.ts',
     // The source-bound budget reads the compiled registry only; it cannot register profiles.
     'lib/readiness/official-truth-ch-de-source-budget-128k-1.ts',
@@ -530,6 +532,13 @@ describe('dormancy and architectural boundaries', () => {
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
+    for (const path of [
+      'lib/readiness/official-truth-source-discovery-v1/coordinator.ts.evil.ts',
+      'app/api/official-truth-source-discovery-v1/coordinator.ts',
+      'lib/readiness/official-truth-source-discovery-v1/coordinator.ts/../unreviewed.ts',
+      'lib/readiness/official-truth-source-discovery-v2/coordinator.ts',
+      'lib/readiness/official-truth-source-discovery-v1/coordinator-server.ts',
+    ]) assert.equal(contentIdentityImporterAllowed(path), false, path)
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts'), true)
     for (const path of ['scripts/official-truth-bundesportal-bp1-observation-1/source-probe.ts.evil.ts',
       'scripts/official-truth-bundesportal-bp1-observation-1/run.ts',
