@@ -1,10 +1,18 @@
-# Source Discovery 1 — author plan and scope stop
+# Source Discovery 1 — implementation plan and retained blocker history
 
 Author: **Jetnity Research Engine V1 Source Discovery 1 — Codex Generation 1**.
 Issue #948 / existing Draft PR #949 / branch `feat/research-engine-v1-source-discovery-1`.
 Binding TASK blob: `0ab1d067d45a84b51c9f4acfcf3539ad2a0b94cf` (unchanged).
 
-## Intended implementation
+## Resumed plan — 15 October 2026
+
+The exact amendment [TL R1 / 6179537467](https://github.com/Jetnity/jetnity/pull/949#issuecomment-6179537467) supersedes the historical stop below. Same author/session/branch; TASK unchanged. Deliver the two planned runtime modules and namespaced acceptance/cold-start tests, and change only the single literal importer entry plus finite negative lookalike assertions in `lib/readiness/official-truth-content-identity.test.ts`. No other existing code changes.
+
+The coordinator accepts bounded data only, rebuilds the complete synthetic graph using `createContentIdentityGraph`, and supplies the rebuilt registry to both existing routing and URL validation. Injected functions, proxies/accessors, source flags, extra descriptor fields and inconsistent registry copies fail closed. Profile pins receive a code-owned always-refusing verifier solely to reconstruct the data graph; no verifier is invoked and no content is qualified. Query intents are capped at six source/domain pairs; overflow fails closed, without truncation or ranking. Candidate batches remain capped at sixteen. Repeated calls are pure and deterministic.
+
+Run focused adversarial/scenario/cold-start tests and unchanged regressions, then all original required gates. Preserve original failures; publish only inspected counts and digests. Exact delivered-head Verify/Auth/Preview are separate external gates. The new #748 report COS-20261015-0757-014 (P1 Next.js advisory exposure) is an open TL/Owner risk; this scope authorizes no dependency upgrade. No direct source, Supabase or provider access.
+
+## Original intended implementation (retained history)
 
 Compose the existing coverage → research request → source routing/allowlist → bounded deterministic query descriptors → synthetic strict `{sourceId,url}` hits → canonical URL validator. Keep `officialResult=unknown`, `sourceQualified=false`; never accept Evidence or a Rule. Preserve canonical scope and fact kind. No second registry or URL/identity validator.
 

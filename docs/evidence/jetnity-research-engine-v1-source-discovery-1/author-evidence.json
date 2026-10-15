@@ -1,72 +1,29 @@
 {
-  "status": "BLOCKED_SCOPE_AMENDMENT_REQUIRED",
-  "implementationDelivered": false,
-  "baselineCommit": "35ed794ae5b8a354e46d3e051dbc7935e95976e7",
-  "baselineTree": "3581e246920f5e047129ebf86a1c1a1228076e0c",
+  "author": "Jetnity Research Engine V1 Source Discovery 1 — Codex Generation 1",
+  "session": "01a13c62-4e98-7902-9f90-8ab134a98fb7",
+  "status": "OFFLINE_IMPLEMENTATION_DELIVERED_AWAITING_INDEPENDENT_TL_REVIEW",
+  "branch": "feat/research-engine-v1-source-discovery-1",
+  "pr": "https://github.com/Jetnity/jetnity/pull/949",
+  "scopeAmendment": "https://github.com/Jetnity/jetnity/pull/949#issuecomment-6179537467",
+  "parent": "dfcc58f576b5ae3f7b73e2396206e4f3be2639c5",
+  "main": "10fdee40c3e4fcc7dffb6515dda5acf1db391aed",
   "taskBlob": "0ab1d067d45a84b51c9f4acfcf3539ad2a0b94cf",
-  "node": "22.23.3",
-  "npm": "10.9.9",
-  "focusedTests": {
-    "tests": 130,
-    "passed": 130,
+  "publishedIdentityReceipt": "Exact published HEAD/tree/parent and external CI/Auth/Preview are recorded in the final PR author handoff after this tree is published.",
+  "focused": {
+    "tests": 205,
+    "passed": 205,
     "failed": 0,
-    "skipped": 0
-  },
-  "fullTests": {
-    "tests": 6756,
-    "passed": 6745,
-    "failed": 10,
-    "skipped": 1,
-    "failureClass": "required_native_postgresql_unavailable"
-  },
-  "importProbe": {
-    "testCount": 1,
-    "passed": 0,
-    "failed": 1,
-    "exitCode": 1,
-    "proposedImporter": "lib/readiness/official-truth-source-discovery-v1/coordinator.ts",
-    "probeRemoved": true,
-    "existingTestChanged": false
-  },
-  "syntheticBoundary": {
-    "scenario": "synthetic CH citizenship / CH passport / VN",
-    "tourist21DayScenarioNotEncodedInCanonicalScope": true,
-    "officialResult": "unknown",
-    "sourceQualified": false,
-    "observations": [
-      {
-        "fixture": "complete",
-        "plan": "ready",
-        "urlValidator": "validated_url_candidates",
-        "graphValidator": "valid"
-      },
-      {
-        "fixture": "missing_item",
-        "plan": "ready",
-        "urlValidator": "validated_url_candidates",
-        "graphValidator": "missing_item_version"
-      },
-      {
-        "fixture": "conflicting_item",
-        "plan": "ready",
-        "urlValidator": "validated_url_candidates",
-        "graphValidator": "duplicate_item_version"
-      },
-      {
-        "fixture": "missing_profile",
-        "plan": "ready",
-        "urlValidator": "validated_url_candidates",
-        "graphValidator": "profile_unavailable"
-      }
-    ],
-    "emptyRegistry": "no_eligible_official_source"
+    "skipped": 0,
+    "newAcceptanceTests": 30,
+    "sha256": "47308b450462c58bcf8109e17d91e00fa5b121b056ea2cf433bc2ae0aba99dea"
   },
   "localGates": [
     {
       "command": "npm run check:setup:ci",
       "exitCode": 1,
-      "durationSeconds": 0.42,
-      "sha256": "3477ae43eb9def81a94fa85f4ca11ba6ef234b04bcc530a6474353bc6e91820d"
+      "durationSeconds": 0.17,
+      "sha256": "2c5ea537f165eb01a2288fc72548ccb96ec01a934da83d32d8427b8db0b38d18",
+      "limitation": "sandbox_tsx_IPC_EPERM"
     },
     {
       "command": "npm run check:operating-mode",
@@ -77,44 +34,51 @@
     {
       "command": "npm run typecheck",
       "exitCode": 0,
-      "durationSeconds": 7.48,
+      "durationSeconds": 1.91,
       "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
     },
     {
       "command": "npm run lint",
       "exitCode": 0,
-      "durationSeconds": 12.76,
-      "sha256": "d5303a5e0047dc8073b80bd0698abea047718339317b1f46f8f2fe8e2fa8b790"
+      "durationSeconds": 12.57,
+      "sha256": "d5303a5e0047dc8073b80bd0698abea047718339317b1f46f8f2fe8e2fa8b790",
+      "errors": 0,
+      "warnings": 145
     },
     {
       "command": "npm run test",
       "exitCode": 1,
-      "durationSeconds": 53.54,
-      "sha256": "589d661831d0639d4cee6e6bafc8e2767915530e3a71bda75ee42e7f85f3aa4b"
+      "durationSeconds": 50.39,
+      "sha256": "e42af39fd4975ae299cade715b82d0b7037af89500d2294abeaea3ccfed22db7",
+      "tests": 6786,
+      "passed": 6775,
+      "failed": 10,
+      "skipped": 1,
+      "limitation": "native PostgreSQL binaries unavailable; no hosted fallback"
     },
     {
       "command": "npm run check:api-schutz",
       "exitCode": 0,
-      "durationSeconds": 0.16,
+      "durationSeconds": 0.15,
       "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
     },
     {
       "command": "npm run check:schema-bezug",
       "exitCode": 0,
-      "durationSeconds": 0.27,
+      "durationSeconds": 0.2,
       "sha256": "2ad501d7ca052708110bd99edb7c8723c5162a9654fe4d00a65ff9fa8c5bd954"
     },
     {
       "command": "npm run check:dead",
       "exitCode": 0,
-      "durationSeconds": 0.25,
-      "sha256": "88ce4eb25e27474d6bc458f07087e278258f8e395116bf3c10dfe92da07d2295"
+      "durationSeconds": 0.24,
+      "sha256": "18e209740af89e79119fb597cba6e2bfa41014170f6372362fc37c2cdef9f58f"
     },
     {
       "command": "npm run check:exports",
       "exitCode": 0,
-      "durationSeconds": 2.89,
-      "sha256": "3d88e84183ede21fc7d2a08c9931aa073c018326818dd5364b26aab0523d28a8"
+      "durationSeconds": 2.91,
+      "sha256": "fb59ec37fd66df06b00856daa795f2f8a1f51c5a5ecc6a85ee8f80d7d003d860"
     },
     {
       "command": "npm run check:deps",
@@ -126,37 +90,208 @@
       "command": "npm run build",
       "exitCode": 1,
       "durationSeconds": 0.23,
-      "sha256": "aae01d87b9d391b1ce905a93bd1be9ffef82ce55fc88286eb2218e19ca46c162"
+      "sha256": "30d01a284d4cbe3d108b4b6e1e74de1a24b16cd74e2232fd5c3964f014584edb",
+      "limitation": "sandbox_tsx_IPC_EPERM; Next compilation not reached"
     }
   ],
-  "originalEvidenceDigests": [
-    {
-      "evidence": "dependency_install",
-      "sha256": "874e25e02a834318c86ccf7683f6478a65bf663be1f6aaee2a9e9cd0008e4f88"
+  "developmentFailures": {
+    "firstAcceptanceRun": {
+      "tests": 26,
+      "passed": 24,
+      "failed": 2,
+      "sha256": "c78e71a58ea4d69378964386408ff3682ae41b4b3d3d43fcedd97f0811a27807",
+      "resolution": "Corrected test-only numeric-hash regex collision and invalid document fixture label; canonical national_id used."
     },
-    {
-      "evidence": "focused_regressions",
-      "sha256": "39115d033b66732e4d31cd445264c96fc73d068d120ccc32c7243f4d451d2da3"
-    },
-    {
-      "evidence": "original_import_guard_failure",
-      "sha256": "7acd0515261de660d7cbdc059efc39bbf8ad83b116abf9a9a399c79552b0bccf"
-    },
-    {
-      "evidence": "private_synthetic_reproduction_script",
-      "sha256": "6ab4c8b3e04bf376d528368db0d798f55284283831713efa0e965a092551eaea"
-    },
-    {
-      "evidence": "synthetic_reproduction_output",
-      "sha256": "7405e6b730db494c473b6f1b637a32b0867fc6dfdc2de27b52cde31c25e727dd"
+    "initialTypecheck": {
+      "errors": 2,
+      "sha256": "353cbbf4f111e2efcdbf3d12e66e57520b3352e7df65ad791b8600b4eeb081df",
+      "resolution": "Explicit profile pin type and void test callback; original log retained."
     }
-  ],
-  "limitations": [
-    "Full new coordinator and query-intent acceptance not implemented",
-    "Local setup CI and build prebuild stopped at sandbox IPC EPERM; Next production build did not run",
-    "Ten native PostgreSQL failures remain failed; no hosted fallback or new database tooling",
-    "Local gates used seed runtime; delivered-head CI/Auth is separate",
-    "No physical network denial proof for a new module because no module was delivered",
-    "No user-facing UI exists for this slice; no interactive Preview acceptance"
-  ]
+  },
+  "networkProof": {
+    "coldStartAttempts": 0,
+    "scenarios": [
+      "ready_candidate_urls",
+      "gap_unqualified",
+      "gap_unqualified",
+      "blocked_invalid"
+    ],
+    "runtimeImportClosureChecked": true,
+    "hostedImporterAbsent": true
+  },
+  "limits": {
+    "intents": 6,
+    "candidates": 16,
+    "arrayEntries": 128,
+    "objectProperties": 129,
+    "nodes": 8192,
+    "depth": 16,
+    "stringCodeUnits": 4096,
+    "chargedUTF8Budget": 65536
+  },
+  "scenarioLimit": "CH citizenship / CH passport class and issuer / VN visa cell only; ordinary subtype, tourism and 21 days are scenario notes, not encoded applicability.",
+  "newSecurityReport": "https://github.com/Jetnity/jetnity/issues/748#issuecomment-6185540871",
+  "securityLimit": "COS-20261015-0757-014 reports P1 Next.js exposure; package/lock unchanged, no live reproduction or security clearance.",
+  "priorBlockerDelivery": {
+    "status": "BLOCKED_SCOPE_AMENDMENT_REQUIRED",
+    "implementationDelivered": false,
+    "baselineCommit": "35ed794ae5b8a354e46d3e051dbc7935e95976e7",
+    "baselineTree": "3581e246920f5e047129ebf86a1c1a1228076e0c",
+    "taskBlob": "0ab1d067d45a84b51c9f4acfcf3539ad2a0b94cf",
+    "node": "22.23.3",
+    "npm": "10.9.9",
+    "focusedTests": {
+      "tests": 130,
+      "passed": 130,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullTests": {
+      "tests": 6756,
+      "passed": 6745,
+      "failed": 10,
+      "skipped": 1,
+      "failureClass": "required_native_postgresql_unavailable"
+    },
+    "importProbe": {
+      "testCount": 1,
+      "passed": 0,
+      "failed": 1,
+      "exitCode": 1,
+      "proposedImporter": "lib/readiness/official-truth-source-discovery-v1/coordinator.ts",
+      "probeRemoved": true,
+      "existingTestChanged": false
+    },
+    "syntheticBoundary": {
+      "scenario": "synthetic CH citizenship / CH passport / VN",
+      "tourist21DayScenarioNotEncodedInCanonicalScope": true,
+      "officialResult": "unknown",
+      "sourceQualified": false,
+      "observations": [
+        {
+          "fixture": "complete",
+          "plan": "ready",
+          "urlValidator": "validated_url_candidates",
+          "graphValidator": "valid"
+        },
+        {
+          "fixture": "missing_item",
+          "plan": "ready",
+          "urlValidator": "validated_url_candidates",
+          "graphValidator": "missing_item_version"
+        },
+        {
+          "fixture": "conflicting_item",
+          "plan": "ready",
+          "urlValidator": "validated_url_candidates",
+          "graphValidator": "duplicate_item_version"
+        },
+        {
+          "fixture": "missing_profile",
+          "plan": "ready",
+          "urlValidator": "validated_url_candidates",
+          "graphValidator": "profile_unavailable"
+        }
+      ],
+      "emptyRegistry": "no_eligible_official_source"
+    },
+    "localGates": [
+      {
+        "command": "npm run check:setup:ci",
+        "exitCode": 1,
+        "durationSeconds": 0.42,
+        "sha256": "3477ae43eb9def81a94fa85f4ca11ba6ef234b04bcc530a6474353bc6e91820d"
+      },
+      {
+        "command": "npm run check:operating-mode",
+        "exitCode": 0,
+        "durationSeconds": 0.15,
+        "sha256": "e93933dd64bf35c8d02baf9e17ca3d48e081910f352150061e72c7bfb88e3f7f"
+      },
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "durationSeconds": 7.48,
+        "sha256": "dd3664593253fd7f51f6967257a09ef001e381f7c8968d6b82c9d5cd462ed848"
+      },
+      {
+        "command": "npm run lint",
+        "exitCode": 0,
+        "durationSeconds": 12.76,
+        "sha256": "d5303a5e0047dc8073b80bd0698abea047718339317b1f46f8f2fe8e2fa8b790"
+      },
+      {
+        "command": "npm run test",
+        "exitCode": 1,
+        "durationSeconds": 53.54,
+        "sha256": "589d661831d0639d4cee6e6bafc8e2767915530e3a71bda75ee42e7f85f3aa4b"
+      },
+      {
+        "command": "npm run check:api-schutz",
+        "exitCode": 0,
+        "durationSeconds": 0.16,
+        "sha256": "68521a53655070c33953244451145b33fc6bda961bc3dd65b93c5e4ed72b9f79"
+      },
+      {
+        "command": "npm run check:schema-bezug",
+        "exitCode": 0,
+        "durationSeconds": 0.27,
+        "sha256": "2ad501d7ca052708110bd99edb7c8723c5162a9654fe4d00a65ff9fa8c5bd954"
+      },
+      {
+        "command": "npm run check:dead",
+        "exitCode": 0,
+        "durationSeconds": 0.25,
+        "sha256": "88ce4eb25e27474d6bc458f07087e278258f8e395116bf3c10dfe92da07d2295"
+      },
+      {
+        "command": "npm run check:exports",
+        "exitCode": 0,
+        "durationSeconds": 2.89,
+        "sha256": "3d88e84183ede21fc7d2a08c9931aa073c018326818dd5364b26aab0523d28a8"
+      },
+      {
+        "command": "npm run check:deps",
+        "exitCode": 0,
+        "durationSeconds": 0.2,
+        "sha256": "b0045c5119b0db679d23c0bde2efa30e4987390d9f38107eb7b2c446542bba7d"
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 1,
+        "durationSeconds": 0.23,
+        "sha256": "aae01d87b9d391b1ce905a93bd1be9ffef82ce55fc88286eb2218e19ca46c162"
+      }
+    ],
+    "originalEvidenceDigests": [
+      {
+        "evidence": "dependency_install",
+        "sha256": "874e25e02a834318c86ccf7683f6478a65bf663be1f6aaee2a9e9cd0008e4f88"
+      },
+      {
+        "evidence": "focused_regressions",
+        "sha256": "39115d033b66732e4d31cd445264c96fc73d068d120ccc32c7243f4d451d2da3"
+      },
+      {
+        "evidence": "original_import_guard_failure",
+        "sha256": "7acd0515261de660d7cbdc059efc39bbf8ad83b116abf9a9a399c79552b0bccf"
+      },
+      {
+        "evidence": "private_synthetic_reproduction_script",
+        "sha256": "6ab4c8b3e04bf376d528368db0d798f55284283831713efa0e965a092551eaea"
+      },
+      {
+        "evidence": "synthetic_reproduction_output",
+        "sha256": "7405e6b730db494c473b6f1b637a32b0867fc6dfdc2de27b52cde31c25e727dd"
+      }
+    ],
+    "limitations": [
+      "Full new coordinator and query-intent acceptance not implemented",
+      "Local setup CI and build prebuild stopped at sandbox IPC EPERM; Next production build did not run",
+      "Ten native PostgreSQL failures remain failed; no hosted fallback or new database tooling",
+      "Local gates used seed runtime; delivered-head CI/Auth is separate",
+      "No physical network denial proof for a new module because no module was delivered",
+      "No user-facing UI exists for this slice; no interactive Preview acceptance"
+    ]
+  }
 }
