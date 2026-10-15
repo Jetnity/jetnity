@@ -1,0 +1,307 @@
+{
+  "upstreamTag": "v16.4.1",
+  "upstreamCommit": "7217011ac0d689026884dd28536a0c7f3c98ba77",
+  "transportPatch": "a4cea6aec5da89d116b8960e113189cf51745d2f",
+  "files": [
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.browser.development.js",
+      "blob": "28f655ee874782597a0fa11cc9200a92e64177dd",
+      "installedBlob": "28f655ee874782597a0fa11cc9200a92e64177dd",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.browser.production.js",
+      "blob": "8e18e719f19ba26113d917795fd106240d62c8e1",
+      "installedBlob": "8e18e719f19ba26113d917795fd106240d62c8e1",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.edge.development.js",
+      "blob": "8c2931eb749a66926f4821e35313f195deba603a",
+      "installedBlob": "8c2931eb749a66926f4821e35313f195deba603a",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.edge.production.js",
+      "blob": "17ba752e748c1ba0fc819faba573236425ac8dbf",
+      "installedBlob": "17ba752e748c1ba0fc819faba573236425ac8dbf",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.node.development.js",
+      "blob": "0791bf2b7e06ac05ef06f0958ddb4552fad4b8f4",
+      "installedBlob": "0791bf2b7e06ac05ef06f0958ddb4552fad4b8f4",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-client.node.production.js",
+      "blob": "ec34716b9d213ffa9b55771f3435e09d6a46af2a",
+      "installedBlob": "ec34716b9d213ffa9b55771f3435e09d6a46af2a",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.browser.development.js",
+      "blob": "c3e171290a00ef174cd94e626261d1bb1d17f68b",
+      "installedBlob": "c3e171290a00ef174cd94e626261d1bb1d17f68b",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.browser.production.js",
+      "blob": "5d12a969802437fc418229dac0c0683c8c4bc83f",
+      "installedBlob": "5d12a969802437fc418229dac0c0683c8c4bc83f",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.edge.development.js",
+      "blob": "3fe571b7d907d31e93a18d97396ef6fc9b1ee5bd",
+      "installedBlob": "3fe571b7d907d31e93a18d97396ef6fc9b1ee5bd",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.edge.production.js",
+      "blob": "f750b3ad345f76344e53f91b5ba105f57e21bf33",
+      "installedBlob": "f750b3ad345f76344e53f91b5ba105f57e21bf33",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.node.development.js",
+      "blob": "3c52741d9355caf226d90105b4cb8669559ad4b0",
+      "installedBlob": "3c52741d9355caf226d90105b4cb8669559ad4b0",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack-experimental/cjs/react-server-dom-turbopack-server.node.production.js",
+      "blob": "a24588cd3d945426fd66c2f6ca6fc6c43e312bc4",
+      "installedBlob": "a24588cd3d945426fd66c2f6ca6fc6c43e312bc4",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.browser.development.js",
+      "blob": "f44072a15b42bfb98352783beaa202a46588848a",
+      "installedBlob": "f44072a15b42bfb98352783beaa202a46588848a",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.browser.production.js",
+      "blob": "ecc08f5b6bca40d33c1247cd73ee03447f60eb6f",
+      "installedBlob": "ecc08f5b6bca40d33c1247cd73ee03447f60eb6f",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.edge.development.js",
+      "blob": "8e7ea334e6cf0da4cf7959d4f47b01e6ea5f3df5",
+      "installedBlob": "8e7ea334e6cf0da4cf7959d4f47b01e6ea5f3df5",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.edge.production.js",
+      "blob": "1dffc63946ff14621843cbb32627685888093a5f",
+      "installedBlob": "1dffc63946ff14621843cbb32627685888093a5f",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.node.development.js",
+      "blob": "a4b29012ef955583f102b8698914930866a6b38f",
+      "installedBlob": "a4b29012ef955583f102b8698914930866a6b38f",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.node.production.js",
+      "blob": "690f67bbc104e637cd6b5c67d4dc4b941f2c9bb6",
+      "installedBlob": "690f67bbc104e637cd6b5c67d4dc4b941f2c9bb6",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.browser.development.js",
+      "blob": "8867c8a717af4e82821ffbd7b29da8cd41e040cf",
+      "installedBlob": "8867c8a717af4e82821ffbd7b29da8cd41e040cf",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.browser.production.js",
+      "blob": "c8986e7a1fc1346f8c2ecd797f7ebcd1e74c6bf7",
+      "installedBlob": "c8986e7a1fc1346f8c2ecd797f7ebcd1e74c6bf7",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.edge.development.js",
+      "blob": "c9ac3b281157fa38ccec318e1cdd45a68f76c926",
+      "installedBlob": "c9ac3b281157fa38ccec318e1cdd45a68f76c926",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.edge.production.js",
+      "blob": "7aeb164ee0689c3eebfe449d4c6e78647d4f6dce",
+      "installedBlob": "7aeb164ee0689c3eebfe449d4c6e78647d4f6dce",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.node.development.js",
+      "blob": "13ac1ab3e539367cb9354f8355af97eb69215a47",
+      "installedBlob": "13ac1ab3e539367cb9354f8355af97eb69215a47",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-server.node.production.js",
+      "blob": "4a451425c944fd7b77c30b08ca7e0404654b3ffb",
+      "installedBlob": "4a451425c944fd7b77c30b08ca7e0404654b3ffb",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.browser.development.js",
+      "blob": "d7eea0d8cf3bb57c40d5602f025e01063ca1b890",
+      "installedBlob": "d7eea0d8cf3bb57c40d5602f025e01063ca1b890",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.browser.production.js",
+      "blob": "29f4ee84bdd8e5f7a54ae6c62d1a18c9983ca5bc",
+      "installedBlob": "29f4ee84bdd8e5f7a54ae6c62d1a18c9983ca5bc",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.edge.development.js",
+      "blob": "51c1fb3557fd49b75ca506bf2590cbd8a94f936c",
+      "installedBlob": "51c1fb3557fd49b75ca506bf2590cbd8a94f936c",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.edge.production.js",
+      "blob": "b1940b1caab64f624f3031cac15a8182220d8715",
+      "installedBlob": "b1940b1caab64f624f3031cac15a8182220d8715",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.node.development.js",
+      "blob": "1ffac3458af9549550982716233aadfbc5503354",
+      "installedBlob": "1ffac3458af9549550982716233aadfbc5503354",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-client.node.production.js",
+      "blob": "e7ddaef6252c20240dd00c8a48c33393e5bad884",
+      "installedBlob": "e7ddaef6252c20240dd00c8a48c33393e5bad884",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-plugin.js",
+      "blob": "30aa8b4754c50bedf82b7eebaa45bbcb191672e5",
+      "installedBlob": "30aa8b4754c50bedf82b7eebaa45bbcb191672e5",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.browser.development.js",
+      "blob": "5033f0733034ea13b83ce6346e55473144213743",
+      "installedBlob": "5033f0733034ea13b83ce6346e55473144213743",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.browser.production.js",
+      "blob": "767b337392c858a980094f417a105e8680d9aca1",
+      "installedBlob": "767b337392c858a980094f417a105e8680d9aca1",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.edge.development.js",
+      "blob": "9bfab9d8702b1712a0f9a61c8ffd1fd636b5630a",
+      "installedBlob": "9bfab9d8702b1712a0f9a61c8ffd1fd636b5630a",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.edge.production.js",
+      "blob": "d437e52a322fc86ee035fb4c167d94ff5bc3864e",
+      "installedBlob": "d437e52a322fc86ee035fb4c167d94ff5bc3864e",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.node.development.js",
+      "blob": "5744ea5998996f7c934c9b96d2f6c86edecbf39c",
+      "installedBlob": "5744ea5998996f7c934c9b96d2f6c86edecbf39c",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack-experimental/cjs/react-server-dom-webpack-server.node.production.js",
+      "blob": "a1ee73f72c2c6ac27b77fc3a30cf831ea480fb83",
+      "installedBlob": "a1ee73f72c2c6ac27b77fc3a30cf831ea480fb83",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+      "blob": "1e443d2f2a7e5c6dacc1809370ef39d51d3f3dd6",
+      "installedBlob": "1e443d2f2a7e5c6dacc1809370ef39d51d3f3dd6",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.production.js",
+      "blob": "1078013cb386e947bc71a71d3b4df5f2d5780578",
+      "installedBlob": "1078013cb386e947bc71a71d3b4df5f2d5780578",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.edge.development.js",
+      "blob": "fa1abacc0a662e782dace2c2d5cb47a98293b9d6",
+      "installedBlob": "fa1abacc0a662e782dace2c2d5cb47a98293b9d6",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.edge.production.js",
+      "blob": "bb29fc6e6c0e1ccab9f28da521c3a0dc630cf24d",
+      "installedBlob": "bb29fc6e6c0e1ccab9f28da521c3a0dc630cf24d",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.node.development.js",
+      "blob": "d6325d9bf67ff171626d5358423333b26067582c",
+      "installedBlob": "d6325d9bf67ff171626d5358423333b26067582c",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.node.production.js",
+      "blob": "7ba22a7817cedbd6daad9c94f4bba30abd35a696",
+      "installedBlob": "7ba22a7817cedbd6daad9c94f4bba30abd35a696",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-plugin.js",
+      "blob": "30aa8b4754c50bedf82b7eebaa45bbcb191672e5",
+      "installedBlob": "30aa8b4754c50bedf82b7eebaa45bbcb191672e5",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.browser.development.js",
+      "blob": "3d40ceb89251929aeb6e9af5fecfef5fcf0ba0e4",
+      "installedBlob": "3d40ceb89251929aeb6e9af5fecfef5fcf0ba0e4",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.browser.production.js",
+      "blob": "568be38a281f86603a65d29a9be00cf424a0d163",
+      "installedBlob": "568be38a281f86603a65d29a9be00cf424a0d163",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.edge.development.js",
+      "blob": "c3330360a22332c9db395a3c623c84f7813792bf",
+      "installedBlob": "c3330360a22332c9db395a3c623c84f7813792bf",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.edge.production.js",
+      "blob": "47c294130dc79d3d0747db7d3a285e77367b9cbb",
+      "installedBlob": "47c294130dc79d3d0747db7d3a285e77367b9cbb",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.node.development.js",
+      "blob": "fdc7a3d1b83732ea0c87e0e2e85a008700492b88",
+      "installedBlob": "fdc7a3d1b83732ea0c87e0e2e85a008700492b88",
+      "matches": true
+    },
+    {
+      "source": "packages/next/src/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-server.node.production.js",
+      "blob": "9536f42320c9d86ff70e722bcdf8095c5c354c47",
+      "installedBlob": "9536f42320c9d86ff70e722bcdf8095c5c354c47",
+      "matches": true
+    }
+  ]
+}

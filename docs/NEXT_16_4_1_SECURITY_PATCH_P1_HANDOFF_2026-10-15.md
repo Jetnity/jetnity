@@ -1,0 +1,15 @@
+# Next.js 16.4.1 P1 security patch — handoff protocol and local receipt
+
+Author: Jetnity Next.js 16.4.1 P1 Security Patch 1 — Codex Generation 1, original session `01a13fa3-1333-7fb1-ba4c-8219f37507de`.
+
+Repository Jetnity/jetnity, Issue #950, existing Draft [PR #951](https://github.com/Jetnity/jetnity/pull/951), branch `security/next-16-4-1-emergency-p1`. Baseline main `10fdee40c3e4fcc7dffb6515dda5acf1db391aed`; seed/parent `7948f0688425bfceae4fc14f8603abc3997825d5`, tree `fa094683ab581f69dc30b0f9d5a60ac13347d11d`. TASK blob `f2459159d5bb64e7c64d19b8abf36c8d917eeb0c` remains immutable. Binding two-test amendment: [6197089734](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6197089734).
+
+Delivered code: exact Next/eslint-config-next 16.4.1, Sharp/native bindings 0.35.5, separate native libvips packages 1.3.4; deterministic narrow lock changes; current read-only audit; two narrowly updated existing contract tests; 38 controlled audit cases. Historic audit unchanged. Runtime/config/security mechanisms unchanged. REPORT, SELF_REVIEW and sanitized evidence in `docs/evidence/next-16-4-1-security-patch-p1/` describe the results and remaining limitations.
+
+Local receipt: npm ci/setup/typecheck/lint/API/schema/dead/exports/deps/build pass; original full tests 6,745 pass / 10 native-PG failures / 1 existing conditional skip, total 6,756. Final focused contracts 8/8 and audit cases 38/38 pass. Initial default mode check fails for missing local main ref; use the existing CI base/head variables on the committed head. 145 lint warnings and 18 npm audit findings remain. No raw log publication, skipped-check substitution or dependency audit fix.
+
+This committed document cannot contain its own commit/tree identity or results of CI that has not yet run. The **complete final author handoff is published as a Conversation comment in #951 after the commit/push and live checks**, with exact HEAD/tree/parent, every changed file/blob and immutable complete-diff link, local original failure evidence, actual CI Verify/Auth job and step results (including non-skipped 55/243), automatic Preview exact SHA/state, self-review and remaining risks. A failure is recorded as failure and stops the author. No baseline CI/Preview is accepted as material-patch proof.
+
+Historical blocked attempts remain in [initial handoff](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6192744062), [one failed network retry](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6193729755) and [R3 test-scope blocker](https://github.com/Jetnity/jetnity/pull/951#issuecomment-6197000056). Network restoration and the narrow TL amendment supersede the corresponding blockers, not their evidence or other safety gates.
+
+After final publication: **STOP for independent Technical Lead. DO NOT MARK READY. DO NOT MERGE. DO NOT DEPLOY. DO NOT START A FOLLOW-UP SLICE.** Temporary Full Access must be returned by the Owner to `Für mich genehmigen`; no permission-setting change is performed by these repository scripts. Production remains outside this author task and P1 is not declared closed.
