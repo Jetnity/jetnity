@@ -1,0 +1,5122 @@
+{
+  "schema": "shared-responsive-layout-p2-1-author-evidence-v1",
+  "baseline": "current seed, not historical R18 A/B",
+  "baselineRuntime": "next dev",
+  "finalRuntime": "next build + next start; VERCEL_ENV=development, audit flag1",
+  "sourceReportSHA256": {
+    "before": "fbbe8b6be613f389d582388eabf7c291942cd07fac07ca69e234b20a9a4d0783",
+    "after": "9b11635600a8631761c228d73b6afd46644eac8b3556283bb052a34670e8f341"
+  },
+  "before": {
+    "date": "2026-10-16T13:23:24.738Z",
+    "browser": "155.0.8059.82",
+    "method": "CSS zoom; synthetic Guest; no real account; no native zoom/device claim",
+    "records": [
+      {
+        "width": 320,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 295,
+            "width": 270,
+            "height": 90.5,
+            "scrollWidth": 270,
+            "clientWidth": 270
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [
+          "document overflows",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 320,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 350,
+          "clientWidth": 320
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 344,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 40,
+            "right": 328,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 349.859375,
+            "width": 325.859375,
+            "height": 120,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer img": {
+            "left": 48,
+            "right": 325.859375,
+            "width": 277.859375,
+            "height": 96,
+            "scrollWidth": 139,
+            "clientWidth": 139
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 326.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 387.953125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [
+          "document overflows",
+          "Jetnity Startseite: outside viewport",
+          ": outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped horizontally by UL",
+          "Flugstrecke noch offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped text",
+          "Reisende Person: clipped text",
+          "Offizielle Prüfung noch nicht möglich: clipped text",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "info@jetnity.ch: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "Datenschutzerklärung: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Datenschutzerklärung: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport",
+          "logo artwork distorted"
+        ],
+        "openViolations": [
+          "document overflows",
+          "Jetnity Startseite: outside viewport",
+          ": outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped horizontally by UL",
+          "Flugstrecke noch offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped text",
+          "Reisende Person: clipped text",
+          "Offizielle Prüfung noch nicht möglich: clipped text",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "info@jetnity.ch: outside viewport",
+          "Produkt: outside viewport",
+          "Reise planen: target below 44px",
+          "Meine Reisen: target below 44px",
+          "Entdecken: target below 44px",
+          "Jetnity Pro: target below 44px",
+          "Jetnity: outside viewport",
+          "Datenschutzerklärung: outside viewport",
+          "Datenschutzerklärung: target below 44px",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Nutzungsbedingungen / AGB: target below 44px",
+          "Impressum: target below 44px",
+          "Datenschutzerklärung: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport",
+          "logo artwork distorted"
+        ],
+        "longTextViolations": [
+          "document overflows",
+          "Jetnity Startseite: outside viewport",
+          ": outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped horizontally by UL",
+          "Flugstrecke noch offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped text",
+          "Reisende Person: clipped text",
+          "Offizielle Prüfung noch nicht möglich: clipped text",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Reise planen: target below 44px",
+          "Meine Reisen: target below 44px",
+          "Entdecken: target below 44px",
+          "Jetnity Pro: target below 44px",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: target below 44px",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Nutzungsbedingungen / AGB: target below 44px",
+          "Impressum: target below 44px",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 360,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 335,
+            "width": 310,
+            "height": 66.5,
+            "scrollWidth": 310,
+            "clientWidth": 310
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [
+          "document overflows",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 360,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 344,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 40,
+            "right": 328,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 349.859375,
+            "width": 325.859375,
+            "height": 120,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer img": {
+            "left": 48,
+            "right": 325.859375,
+            "width": 277.859375,
+            "height": 96,
+            "scrollWidth": 139,
+            "clientWidth": 139
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 326.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 387.953125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "logo artwork distorted"
+        ],
+        "openViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "logo artwork distorted"
+        ],
+        "longTextViolations": [
+          "document overflows",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 375,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 375,
+          "clientWidth": 375
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 350,
+            "width": 325,
+            "height": 66.5,
+            "scrollWidth": 325,
+            "clientWidth": 325
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [
+          "document overflows",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 375,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 375,
+          "clientWidth": 375
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 344,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 40,
+            "right": 328,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 351,
+            "width": 327,
+            "height": 120,
+            "scrollWidth": 164,
+            "clientWidth": 164
+          },
+          "footer img": {
+            "left": 48,
+            "right": 327,
+            "width": 279,
+            "height": 96,
+            "scrollWidth": 140,
+            "clientWidth": 140
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 326.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 387.953125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "logo artwork distorted"
+        ],
+        "openViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "logo artwork distorted"
+        ],
+        "longTextViolations": [
+          "document overflows",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 390,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 390,
+          "clientWidth": 390
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 365,
+            "width": 340,
+            "height": 66.5,
+            "scrollWidth": 340,
+            "clientWidth": 340
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 390,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 390,
+          "clientWidth": 390
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 344,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 40,
+            "right": 328,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 360,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 48,
+            "right": 336,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 326.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 387.953125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION"
+        ],
+        "openViolations": [
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION"
+        ],
+        "longTextViolations": [
+          "document overflows",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 768,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 768,
+          "clientWidth": 768
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 128,
+            "width": 104,
+            "height": 44,
+            "scrollWidth": 104,
+            "clientWidth": 104
+          },
+          "header img": {
+            "left": 28,
+            "right": 124,
+            "width": 96,
+            "height": 32,
+            "scrollWidth": 96,
+            "clientWidth": 96
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 32,
+            "right": 174.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 41,
+            "right": 727,
+            "width": 686,
+            "height": 66.5,
+            "scrollWidth": 686,
+            "clientWidth": 686
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 768,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 768,
+          "clientWidth": 768
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 256,
+            "width": 208,
+            "height": 88,
+            "scrollWidth": 104,
+            "clientWidth": 104
+          },
+          "header img": {
+            "left": 56,
+            "right": 248,
+            "width": 192,
+            "height": 64,
+            "scrollWidth": 96,
+            "clientWidth": 96
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 384,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 72,
+            "right": 360,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 350.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 64,
+            "right": 348.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 82,
+            "right": 686,
+            "width": 604,
+            "height": 133,
+            "scrollWidth": 302,
+            "clientWidth": 302
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1024,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 1024,
+          "clientWidth": 1024
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 184,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 32,
+            "right": 176,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 792.609375,
+            "right": 935.046875,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 288.125,
+            "right": 983,
+            "width": 694.875,
+            "height": 66.5,
+            "scrollWidth": 695,
+            "clientWidth": 695
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1024,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 1024,
+          "clientWidth": 1024
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 368,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 64,
+            "right": 352,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 373.359375,
+            "width": 325.359375,
+            "height": 120,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer img": {
+            "left": 72,
+            "right": 349.359375,
+            "width": 277.359375,
+            "height": 96,
+            "scrollWidth": 139,
+            "clientWidth": 139
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 373.359375,
+            "width": 325.359375,
+            "height": 88,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 698.625,
+            "right": 983.5,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 530,
+            "right": 942,
+            "width": 412,
+            "height": 181,
+            "scrollWidth": 206,
+            "clientWidth": 206
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [
+          "logo artwork distorted"
+        ],
+        "openViolations": [],
+        "longTextViolations": [
+          "document overflows",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Impressum: outside viewport",
+          "Jetnity: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport",
+          "Impressum: text outside viewport"
+        ],
+        "errors": []
+      },
+      {
+        "width": 1280,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 1280,
+          "clientWidth": 1280
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 184,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 32,
+            "right": 176,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 989.53125,
+            "right": 1131.96875,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 353.078125,
+            "right": 1238.984375,
+            "width": 885.90625,
+            "height": 66.5,
+            "scrollWidth": 886,
+            "clientWidth": 886
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1280,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 1280,
+          "clientWidth": 1280
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 368,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 64,
+            "right": 352,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 384,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 72,
+            "right": 360,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 373.359375,
+            "width": 325.359375,
+            "height": 88,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 922.140625,
+            "right": 1207.015625,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 530,
+            "right": 1198,
+            "width": 668,
+            "height": 133,
+            "scrollWidth": 334,
+            "clientWidth": 334
+          }
+        },
+        "pointer": "not separately recorded in baseline",
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [
+          "document overflows",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ],
+        "errors": []
+      }
+    ],
+    "critical320Zoom2": {
+      "width": 320,
+      "zoom": 2,
+      "closed": {
+        "document": {
+          "scrollWidth": 350,
+          "clientWidth": 320
+        },
+        "zoom": "2",
+        "boxes": {
+          "header.sticky": {
+            "tag": "HEADER",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 234,
+            "width": 320,
+            "height": 234,
+            "scrollWidth": 172,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header.sticky > div": {
+            "tag": "DIV",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 232,
+            "width": 320,
+            "height": 232,
+            "scrollWidth": 172,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 344,
+            "top": 16,
+            "bottom": 112,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 40,
+            "right": 328,
+            "top": 16,
+            "bottom": 112,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer": {
+            "tag": "FOOTER",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+            "left": 0,
+            "right": 320,
+            "top": 6187.3125,
+            "bottom": 8271.3125,
+            "width": 320,
+            "height": 2084,
+            "scrollWidth": 175,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum",
+            "left": 40,
+            "right": 280,
+            "top": 6299.3125,
+            "bottom": 7813.3125,
+            "width": 240,
+            "height": 1514,
+            "scrollWidth": 155,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "146.93px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.ch",
+            "left": 40,
+            "right": 333.859375,
+            "top": 6299.3125,
+            "bottom": 6819.3125,
+            "width": 293.859375,
+            "height": 520,
+            "scrollWidth": 155,
+            "clientWidth": 147,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 349.859375,
+            "top": 6299.3125,
+            "bottom": 6419.3125,
+            "width": 325.859375,
+            "height": 120,
+            "scrollWidth": 163,
+            "clientWidth": 163,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 48,
+            "right": 325.859375,
+            "top": 6311.3125,
+            "bottom": 6407.3125,
+            "width": 277.859375,
+            "height": 96,
+            "scrollWidth": 139,
+            "clientWidth": 139,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "tag": "A",
+            "label": "info@jetnity.ch",
+            "left": 24,
+            "right": 326.078125,
+            "top": 6731.3125,
+            "bottom": 6819.3125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href=\"/privacy\"]": {
+            "tag": "A",
+            "label": "Datenschutzerklärung",
+            "left": 40,
+            "right": 324.875,
+            "top": 7531.3125,
+            "bottom": 7619.3125,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"]": {
+            "tag": "SECTION",
+            "label": "Jetzt wichtig",
+            "left": 24,
+            "right": 296,
+            "top": 2463.3125,
+            "bottom": 3931.3125,
+            "width": 272,
+            "height": 1468,
+            "scrollWidth": 134,
+            "clientWidth": 134,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul": {
+            "tag": "UL",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+            "left": 50,
+            "right": 270,
+            "top": 2851.3125,
+            "bottom": 3761.3125,
+            "width": 220,
+            "height": 910,
+            "scrollWidth": 169,
+            "clientWidth": 110,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "168.977px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+            "tag": "LI",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 387.953125,
+            "top": 2851.3125,
+            "bottom": 3161.3125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "list-item",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "tag": "BUTTON",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 387.953125,
+            "top": 2851.3125,
+            "bottom": 3161.3125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          }
+        },
+        "images": [
+          {
+            "left": 40,
+            "right": 328,
+            "top": 16,
+            "bottom": 112,
+            "width": 288,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "fill",
+            "filter": "none"
+          },
+          {
+            "left": 48,
+            "right": 325.859375,
+            "top": 6311.3125,
+            "bottom": 6407.3125,
+            "width": 277.859375,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "fill",
+            "filter": "brightness(0) invert(1)"
+          }
+        ],
+        "footerLinks": [
+          {
+            "href": "/",
+            "text": ""
+          },
+          {
+            "href": "mailto:info@jetnity.ch",
+            "text": "info@jetnity.ch"
+          },
+          {
+            "href": "/planen",
+            "text": "Reise planen"
+          },
+          {
+            "href": "/reisen",
+            "text": "Meine Reisen"
+          },
+          {
+            "href": "/entdecken",
+            "text": "Entdecken"
+          },
+          {
+            "href": "/#pro",
+            "text": "Jetnity Pro"
+          },
+          {
+            "href": "/privacy",
+            "text": "Datenschutzerklärung"
+          },
+          {
+            "href": "/terms",
+            "text": "Nutzungsbedingungen / AGB"
+          },
+          {
+            "href": "/impressum",
+            "text": "Impressum"
+          },
+          {
+            "href": "https://www.geonames.org/",
+            "text": "GeoNames"
+          }
+        ],
+        "violations": [
+          "document overflows",
+          "Jetnity Startseite: outside viewport",
+          ": outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped horizontally by UL",
+          "Flugstrecke noch offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped text",
+          "Reisende Person: clipped text",
+          "Offizielle Prüfung noch nicht möglich: clipped text",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "info@jetnity.ch: outside viewport",
+          "Produkt: outside viewport",
+          "Jetnity: outside viewport",
+          "Datenschutzerklärung: outside viewport",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Datenschutzerklärung: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport",
+          "logo artwork distorted"
+        ]
+      },
+      "menu": {
+        "focus": {
+          "visible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        "open": {
+          "document": {
+            "scrollWidth": 350,
+            "clientWidth": 320
+          },
+          "zoom": "2",
+          "boxes": {
+            "header.sticky": {
+              "tag": "HEADER",
+              "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+              "left": 0,
+              "right": 320,
+              "top": 0,
+              "bottom": 726,
+              "width": 320,
+              "height": 726,
+              "scrollWidth": 172,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header.sticky > div": {
+              "tag": "DIV",
+              "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+              "left": 0,
+              "right": 320,
+              "top": 0,
+              "bottom": 232,
+              "width": 320,
+              "height": 232,
+              "scrollWidth": 172,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header a[aria-label=\"Jetnity Startseite\"]": {
+              "tag": "A",
+              "label": "Jetnity Startseite",
+              "left": 24,
+              "right": 344,
+              "top": 16,
+              "bottom": 112,
+              "width": 320,
+              "height": 96,
+              "scrollWidth": 160,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header img": {
+              "tag": "IMG",
+              "label": "",
+              "left": 40,
+              "right": 328,
+              "top": 16,
+              "bottom": 112,
+              "width": 288,
+              "height": 96,
+              "scrollWidth": 144,
+              "clientWidth": 144,
+              "overflowX": "clip",
+              "overflowY": "clip",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer": {
+              "tag": "FOOTER",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+              "left": 0,
+              "right": 320,
+              "top": 3481.3125,
+              "bottom": 5401.3125,
+              "width": 320,
+              "height": 1920,
+              "scrollWidth": 175,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer > div > div:first-child": {
+              "tag": "DIV",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum",
+              "left": 40,
+              "right": 280,
+              "top": 3593.3125,
+              "bottom": 4943.3125,
+              "width": 240,
+              "height": 1350,
+              "scrollWidth": 155,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "146.93px",
+              "objectFit": "fill",
+              "display": "grid",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer > div > div:first-child > div:first-child": {
+              "tag": "DIV",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.ch",
+              "left": 40,
+              "right": 333.859375,
+              "top": 3593.3125,
+              "bottom": 4113.3125,
+              "width": 293.859375,
+              "height": 520,
+              "scrollWidth": 155,
+              "clientWidth": 147,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[aria-label=\"Jetnity Startseite\"]": {
+              "tag": "A",
+              "label": "Jetnity Startseite",
+              "left": 24,
+              "right": 349.859375,
+              "top": 3593.3125,
+              "bottom": 3713.3125,
+              "width": 325.859375,
+              "height": 120,
+              "scrollWidth": 163,
+              "clientWidth": 163,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer img": {
+              "tag": "IMG",
+              "label": "",
+              "left": 48,
+              "right": 325.859375,
+              "top": 3605.3125,
+              "bottom": 3701.3125,
+              "width": 277.859375,
+              "height": 96,
+              "scrollWidth": 139,
+              "clientWidth": 139,
+              "overflowX": "clip",
+              "overflowY": "clip",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[href^=\"mailto:\"]": {
+              "tag": "A",
+              "label": "info@jetnity.ch",
+              "left": 24,
+              "right": 326.078125,
+              "top": 4025.3125,
+              "bottom": 4113.3125,
+              "width": 302.078125,
+              "height": 88,
+              "scrollWidth": 151,
+              "clientWidth": 151,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[href=\"/privacy\"]": {
+              "tag": "A",
+              "label": "Datenschutzerklärung",
+              "left": 40,
+              "right": 324.875,
+              "top": 4719.3125,
+              "bottom": 4759.3125,
+              "width": 284.875,
+              "height": 40,
+              "scrollWidth": 142,
+              "clientWidth": 142,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"]": {
+              "tag": "SECTION",
+              "label": "Jetzt wichtig",
+              "left": 24,
+              "right": 296,
+              "top": -242.6875,
+              "bottom": 1225.3125,
+              "width": 272,
+              "height": 1468,
+              "scrollWidth": 134,
+              "clientWidth": 134,
+              "overflowX": "hidden",
+              "overflowY": "hidden",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul": {
+              "tag": "UL",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+              "left": 50,
+              "right": 270,
+              "top": 145.3125,
+              "bottom": 1055.3125,
+              "width": 220,
+              "height": 910,
+              "scrollWidth": 169,
+              "clientWidth": 110,
+              "overflowX": "hidden",
+              "overflowY": "hidden",
+              "minWidth": "0px",
+              "gridTemplateColumns": "168.977px",
+              "objectFit": "fill",
+              "display": "grid",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+              "tag": "LI",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+              "left": 50,
+              "right": 387.953125,
+              "top": 145.3125,
+              "bottom": 455.3125,
+              "width": 337.953125,
+              "height": 310,
+              "scrollWidth": 169,
+              "clientWidth": 169,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "list-item",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+              "tag": "BUTTON",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+              "left": 50,
+              "right": 387.953125,
+              "top": 145.3125,
+              "bottom": 455.3125,
+              "width": 337.953125,
+              "height": 310,
+              "scrollWidth": 169,
+              "clientWidth": 169,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            }
+          },
+          "images": [
+            {
+              "left": 40,
+              "right": 328,
+              "top": 16,
+              "bottom": 112,
+              "width": 288,
+              "height": 96,
+              "complete": true,
+              "naturalWidth": 384,
+              "naturalHeight": 128,
+              "objectFit": "fill",
+              "filter": "none"
+            },
+            {
+              "left": 48,
+              "right": 325.859375,
+              "top": 3605.3125,
+              "bottom": 3701.3125,
+              "width": 277.859375,
+              "height": 96,
+              "complete": true,
+              "naturalWidth": 384,
+              "naturalHeight": 128,
+              "objectFit": "fill",
+              "filter": "brightness(0) invert(1)"
+            }
+          ],
+          "footerLinks": [
+            {
+              "href": "/",
+              "text": ""
+            },
+            {
+              "href": "mailto:info@jetnity.ch",
+              "text": "info@jetnity.ch"
+            },
+            {
+              "href": "/planen",
+              "text": "Reise planen"
+            },
+            {
+              "href": "/reisen",
+              "text": "Meine Reisen"
+            },
+            {
+              "href": "/entdecken",
+              "text": "Entdecken"
+            },
+            {
+              "href": "/#pro",
+              "text": "Jetnity Pro"
+            },
+            {
+              "href": "/privacy",
+              "text": "Datenschutzerklärung"
+            },
+            {
+              "href": "/terms",
+              "text": "Nutzungsbedingungen / AGB"
+            },
+            {
+              "href": "/impressum",
+              "text": "Impressum"
+            },
+            {
+              "href": "https://www.geonames.org/",
+              "text": "GeoNames"
+            }
+          ],
+          "violations": [
+            "document overflows",
+            "Jetnity Startseite: outside viewport",
+            ": outside viewport",
+            "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+            "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+            "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+            "Flugstrecke noch offen: clipped horizontally by UL",
+            "Flugstrecke noch offen: clipped horizontally by SECTION",
+            "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+            "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+            "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+            "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+            "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+            "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+            "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+            "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+            "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+            "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+            "Flugstrecke noch offen: clipped text",
+            "Reisende Person: clipped text",
+            "Offizielle Prüfung noch nicht möglich: clipped text",
+            "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+            "info@jetnity.ch: outside viewport",
+            "Produkt: outside viewport",
+            "Reise planen: target below 44px",
+            "Meine Reisen: target below 44px",
+            "Entdecken: target below 44px",
+            "Jetnity Pro: target below 44px",
+            "Jetnity: outside viewport",
+            "Datenschutzerklärung: outside viewport",
+            "Datenschutzerklärung: target below 44px",
+            "Nutzungsbedingungen / AGB: outside viewport",
+            "Nutzungsbedingungen / AGB: target below 44px",
+            "Impressum: target below 44px",
+            "Datenschutzerklärung: text outside viewport",
+            "Nutzungsbedingungen / AGB: text outside viewport",
+            "logo artwork distorted"
+          ]
+        }
+      },
+      "longText": {
+        "document": {
+          "scrollWidth": 710,
+          "clientWidth": 320
+        },
+        "zoom": "2",
+        "boxes": {
+          "header.sticky": {
+            "tag": "HEADER",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 234,
+            "width": 320,
+            "height": 234,
+            "scrollWidth": 172,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header.sticky > div": {
+            "tag": "DIV",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 232,
+            "width": 320,
+            "height": 232,
+            "scrollWidth": 172,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 344,
+            "top": 16,
+            "bottom": 112,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 40,
+            "right": 328,
+            "top": 16,
+            "bottom": 112,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer": {
+            "tag": "FOOTER",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalidProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungMitZusätzlichenInformationenNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+            "left": 0,
+            "right": 320,
+            "top": 4021.3125,
+            "bottom": 5759.3125,
+            "width": 320,
+            "height": 1738,
+            "scrollWidth": 355,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalidProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungMitZusätzlichenInformationenNutzungsbedingungen / AGBImpressum",
+            "left": 40,
+            "right": 280,
+            "top": 4133.3125,
+            "bottom": 5301.3125,
+            "width": 240,
+            "height": 1168,
+            "scrollWidth": 335,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "334.836px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalid",
+            "left": 40,
+            "right": 709.671875,
+            "top": 4133.3125,
+            "bottom": 4509.3125,
+            "width": 669.671875,
+            "height": 376,
+            "scrollWidth": 335,
+            "clientWidth": 335,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 360,
+            "top": 4133.3125,
+            "bottom": 4253.3125,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 48,
+            "right": 336,
+            "top": 4145.3125,
+            "bottom": 4241.3125,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "tag": "A",
+            "label": "synthetischer.layoutkontakt@example.invalid",
+            "left": 24,
+            "right": 696.203125,
+            "top": 4421.3125,
+            "bottom": 4509.3125,
+            "width": 672.203125,
+            "height": 88,
+            "scrollWidth": 336,
+            "clientWidth": 336,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href=\"/privacy\"]": {
+            "tag": "A",
+            "label": "DatenschutzerklärungMitZusätzlichenInformationen",
+            "left": 40,
+            "right": 709.671875,
+            "top": 5115.3125,
+            "bottom": 5155.3125,
+            "width": 669.671875,
+            "height": 40,
+            "scrollWidth": 335,
+            "clientWidth": 335,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"]": {
+            "tag": "SECTION",
+            "label": "Jetzt wichtig",
+            "left": 24,
+            "right": 296,
+            "top": 297.3125,
+            "bottom": 1765.3125,
+            "width": 272,
+            "height": 1468,
+            "scrollWidth": 134,
+            "clientWidth": 134,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul": {
+            "tag": "UL",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+            "left": 50,
+            "right": 270,
+            "top": 685.3125,
+            "bottom": 1595.3125,
+            "width": 220,
+            "height": 910,
+            "scrollWidth": 169,
+            "clientWidth": 110,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "168.977px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+            "tag": "LI",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 387.953125,
+            "top": 685.3125,
+            "bottom": 995.3125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "list-item",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "tag": "BUTTON",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 387.953125,
+            "top": 685.3125,
+            "bottom": 995.3125,
+            "width": 337.953125,
+            "height": 310,
+            "scrollWidth": 169,
+            "clientWidth": 169,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          }
+        },
+        "images": [
+          {
+            "left": 40,
+            "right": 328,
+            "top": 16,
+            "bottom": 112,
+            "width": 288,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "fill",
+            "filter": "none"
+          },
+          {
+            "left": 48,
+            "right": 336,
+            "top": 4145.3125,
+            "bottom": 4241.3125,
+            "width": 288,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "fill",
+            "filter": "brightness(0) invert(1)"
+          }
+        ],
+        "footerLinks": [
+          {
+            "href": "/",
+            "text": ""
+          },
+          {
+            "href": "mailto:info@jetnity.ch",
+            "text": "synthetischer.layoutkontakt@example.invalid"
+          },
+          {
+            "href": "/planen",
+            "text": "Reise planen"
+          },
+          {
+            "href": "/reisen",
+            "text": "Meine Reisen"
+          },
+          {
+            "href": "/entdecken",
+            "text": "Entdecken"
+          },
+          {
+            "href": "/#pro",
+            "text": "Jetnity Pro"
+          },
+          {
+            "href": "/privacy",
+            "text": "DatenschutzerklärungMitZusätzlichenInformationen"
+          },
+          {
+            "href": "/terms",
+            "text": "Nutzungsbedingungen / AGB"
+          },
+          {
+            "href": "/impressum",
+            "text": "Impressum"
+          },
+          {
+            "href": "https://www.geonames.org/",
+            "text": "GeoNames"
+          }
+        ],
+        "violations": [
+          "document overflows",
+          "Jetnity Startseite: outside viewport",
+          ": outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped horizontally by UL",
+          "Flugstrecke noch offen: clipped horizontally by SECTION",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+          "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+          "Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+          "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+          "Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+          "Flugstrecke noch offen: clipped text",
+          "Reisende Person: clipped text",
+          "Offizielle Prüfung noch nicht möglich: clipped text",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: outside viewport",
+          "Produkt: outside viewport",
+          "Reise planen: target below 44px",
+          "Meine Reisen: target below 44px",
+          "Entdecken: target below 44px",
+          "Jetnity Pro: target below 44px",
+          "Jetnity: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: target below 44px",
+          "Nutzungsbedingungen / AGB: outside viewport",
+          "Nutzungsbedingungen / AGB: target below 44px",
+          "Impressum: target below 44px",
+          "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+          "synthetischer.layoutkontakt@example.invalid: text outside viewport",
+          "DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+          "Nutzungsbedingungen / AGB: text outside viewport"
+        ]
+      },
+      "errors": []
+    },
+    "failures": [
+      "320-zoom1 long: document overflows",
+      "320-zoom1 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "320-zoom1 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "320-zoom1 long: Produkt: outside viewport",
+      "320-zoom1 long: Jetnity: outside viewport",
+      "320-zoom1 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "320-zoom1 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "320-zoom1 long: synthetischer.layoutkontakt@example.invalid: text outside viewport",
+      "320-zoom1 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "320-zoom2: document overflows",
+      "320-zoom2: Jetnity Startseite: outside viewport",
+      "320-zoom2: : outside viewport",
+      "320-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "320-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "320-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2: Flugstrecke noch offen: clipped horizontally by UL",
+      "320-zoom2: Flugstrecke noch offen: clipped horizontally by SECTION",
+      "320-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "320-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "320-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2: Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+      "320-zoom2: Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+      "320-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "320-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "320-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "320-zoom2: Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+      "320-zoom2: Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+      "320-zoom2: Flugstrecke noch offen: clipped text",
+      "320-zoom2: Reisende Person: clipped text",
+      "320-zoom2: Offizielle Prüfung noch nicht möglich: clipped text",
+      "320-zoom2: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "320-zoom2: info@jetnity.ch: outside viewport",
+      "320-zoom2: Produkt: outside viewport",
+      "320-zoom2: Jetnity: outside viewport",
+      "320-zoom2: Datenschutzerklärung: outside viewport",
+      "320-zoom2: Nutzungsbedingungen / AGB: outside viewport",
+      "320-zoom2: Datenschutzerklärung: text outside viewport",
+      "320-zoom2: Nutzungsbedingungen / AGB: text outside viewport",
+      "320-zoom2: logo artwork distorted",
+      "320-zoom2 open: document overflows",
+      "320-zoom2 open: Jetnity Startseite: outside viewport",
+      "320-zoom2 open: : outside viewport",
+      "320-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "320-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "320-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2 open: Flugstrecke noch offen: clipped horizontally by UL",
+      "320-zoom2 open: Flugstrecke noch offen: clipped horizontally by SECTION",
+      "320-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "320-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "320-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2 open: Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+      "320-zoom2 open: Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+      "320-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "320-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "320-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "320-zoom2 open: Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+      "320-zoom2 open: Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+      "320-zoom2 open: Flugstrecke noch offen: clipped text",
+      "320-zoom2 open: Reisende Person: clipped text",
+      "320-zoom2 open: Offizielle Prüfung noch nicht möglich: clipped text",
+      "320-zoom2 open: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "320-zoom2 open: info@jetnity.ch: outside viewport",
+      "320-zoom2 open: Produkt: outside viewport",
+      "320-zoom2 open: Reise planen: target below 44px",
+      "320-zoom2 open: Meine Reisen: target below 44px",
+      "320-zoom2 open: Entdecken: target below 44px",
+      "320-zoom2 open: Jetnity Pro: target below 44px",
+      "320-zoom2 open: Jetnity: outside viewport",
+      "320-zoom2 open: Datenschutzerklärung: outside viewport",
+      "320-zoom2 open: Datenschutzerklärung: target below 44px",
+      "320-zoom2 open: Nutzungsbedingungen / AGB: outside viewport",
+      "320-zoom2 open: Nutzungsbedingungen / AGB: target below 44px",
+      "320-zoom2 open: Impressum: target below 44px",
+      "320-zoom2 open: Datenschutzerklärung: text outside viewport",
+      "320-zoom2 open: Nutzungsbedingungen / AGB: text outside viewport",
+      "320-zoom2 open: logo artwork distorted",
+      "320-zoom2 long: document overflows",
+      "320-zoom2 long: Jetnity Startseite: outside viewport",
+      "320-zoom2 long: : outside viewport",
+      "320-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "320-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "320-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2 long: Flugstrecke noch offen: clipped horizontally by UL",
+      "320-zoom2 long: Flugstrecke noch offen: clipped horizontally by SECTION",
+      "320-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "320-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "320-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "320-zoom2 long: Unterkunftsnächte fehlen noch: clipped horizontally by UL",
+      "320-zoom2 long: Unterkunftsnächte fehlen noch: clipped horizontally by SECTION",
+      "320-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "320-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "320-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "320-zoom2 long: Offizielle Prüfung noch nicht möglich: clipped horizontally by UL",
+      "320-zoom2 long: Offizielle Prüfung noch nicht möglich: clipped horizontally by SECTION",
+      "320-zoom2 long: Flugstrecke noch offen: clipped text",
+      "320-zoom2 long: Reisende Person: clipped text",
+      "320-zoom2 long: Offizielle Prüfung noch nicht möglich: clipped text",
+      "320-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "320-zoom2 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "320-zoom2 long: Produkt: outside viewport",
+      "320-zoom2 long: Reise planen: target below 44px",
+      "320-zoom2 long: Meine Reisen: target below 44px",
+      "320-zoom2 long: Entdecken: target below 44px",
+      "320-zoom2 long: Jetnity Pro: target below 44px",
+      "320-zoom2 long: Jetnity: outside viewport",
+      "320-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "320-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: target below 44px",
+      "320-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "320-zoom2 long: Nutzungsbedingungen / AGB: target below 44px",
+      "320-zoom2 long: Impressum: target below 44px",
+      "320-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "320-zoom2 long: synthetischer.layoutkontakt@example.invalid: text outside viewport",
+      "320-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "320-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport",
+      "360-zoom1 long: document overflows",
+      "360-zoom1 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "360-zoom1 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "360-zoom1 long: Produkt: outside viewport",
+      "360-zoom1 long: Jetnity: outside viewport",
+      "360-zoom1 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "360-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "360-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "360-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "360-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "360-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "360-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "360-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "360-zoom2: logo artwork distorted",
+      "360-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "360-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "360-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "360-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "360-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "360-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "360-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "360-zoom2 open: logo artwork distorted",
+      "360-zoom2 long: document overflows",
+      "360-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "360-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "360-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "360-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "360-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "360-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "360-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "360-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "360-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "360-zoom2 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "360-zoom2 long: Produkt: outside viewport",
+      "360-zoom2 long: Jetnity: outside viewport",
+      "360-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "360-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "360-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "360-zoom2 long: synthetischer.layoutkontakt@example.invalid: text outside viewport",
+      "360-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "360-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport",
+      "375-zoom1 long: document overflows",
+      "375-zoom1 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "375-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "375-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "375-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "375-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "375-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "375-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "375-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "375-zoom2: logo artwork distorted",
+      "375-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "375-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "375-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "375-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "375-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "375-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "375-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "375-zoom2 open: logo artwork distorted",
+      "375-zoom2 long: document overflows",
+      "375-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: outside viewport",
+      "375-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "375-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: outside viewport",
+      "375-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "375-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "375-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: outside viewport",
+      "375-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "375-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "375-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "375-zoom2 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "375-zoom2 long: Produkt: outside viewport",
+      "375-zoom2 long: Jetnity: outside viewport",
+      "375-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "375-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "375-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "375-zoom2 long: synthetischer.layoutkontakt@example.invalid: text outside viewport",
+      "375-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "375-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport",
+      "390-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "390-zoom2: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "390-zoom2: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "390-zoom2: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "390-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "390-zoom2 open: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "390-zoom2 open: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "390-zoom2 open: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "390-zoom2 long: document overflows",
+      "390-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by UL",
+      "390-zoom2 long: Diese ReiseFlugstrecke noch offenIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by UL",
+      "390-zoom2 long: Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen: clipped horizontally by SECTION",
+      "390-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by UL",
+      "390-zoom2 long: Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen: clipped horizontally by SECTION",
+      "390-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: outside viewport",
+      "390-zoom2 long: synthetischer.layoutkontakt@example.invalid: outside viewport",
+      "390-zoom2 long: Produkt: outside viewport",
+      "390-zoom2 long: Jetnity: outside viewport",
+      "390-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "390-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "390-zoom2 long: Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.: text outside viewport",
+      "390-zoom2 long: synthetischer.layoutkontakt@example.invalid: text outside viewport",
+      "390-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "390-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport",
+      "1024-zoom2: logo artwork distorted",
+      "1024-zoom2 long: document overflows",
+      "1024-zoom2 long: Jetnity: outside viewport",
+      "1024-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "1024-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "1024-zoom2 long: Impressum: outside viewport",
+      "1024-zoom2 long: Jetnity: text outside viewport",
+      "1024-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "1024-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport",
+      "1024-zoom2 long: Impressum: text outside viewport",
+      "1280-zoom2 long: document overflows",
+      "1280-zoom2 long: Jetnity: outside viewport",
+      "1280-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: outside viewport",
+      "1280-zoom2 long: Nutzungsbedingungen / AGB: outside viewport",
+      "1280-zoom2 long: DatenschutzerklärungMitZusätzlichenInformationen: text outside viewport",
+      "1280-zoom2 long: Nutzungsbedingungen / AGB: text outside viewport"
+    ]
+  },
+  "after": {
+    "date": "2026-10-16T13:39:59.146Z",
+    "browser": "155.0.8059.82",
+    "method": "CSS zoom; synthetic Guest; no real account; no native zoom/device claim",
+    "records": [
+      {
+        "width": 320,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 295,
+            "width": 270,
+            "height": 90.5,
+            "scrollWidth": 270,
+            "clientWidth": 270
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 320,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 264,
+            "width": 240,
+            "height": 96,
+            "scrollWidth": 120,
+            "clientWidth": 120
+          },
+          "header img": {
+            "left": 40,
+            "right": 248,
+            "width": 208,
+            "height": 96,
+            "scrollWidth": 104,
+            "clientWidth": 104
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 264,
+            "width": 240,
+            "height": 120,
+            "scrollWidth": 120,
+            "clientWidth": 120
+          },
+          "footer img": {
+            "left": 48,
+            "right": 240,
+            "width": 192,
+            "height": 96,
+            "scrollWidth": 96,
+            "clientWidth": 96
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 264,
+            "width": 240,
+            "height": 88,
+            "scrollWidth": 120,
+            "clientWidth": 120
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 280,
+            "width": 240,
+            "height": 88,
+            "scrollWidth": 120,
+            "clientWidth": 120
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 270,
+            "width": 220,
+            "height": 389,
+            "scrollWidth": 110,
+            "clientWidth": 110
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 360,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 335,
+            "width": 310,
+            "height": 66.5,
+            "scrollWidth": 310,
+            "clientWidth": 310
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 360,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 304,
+            "width": 280,
+            "height": 96,
+            "scrollWidth": 140,
+            "clientWidth": 140
+          },
+          "header img": {
+            "left": 40,
+            "right": 288,
+            "width": 248,
+            "height": 96,
+            "scrollWidth": 124,
+            "clientWidth": 124
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 304,
+            "width": 280,
+            "height": 120,
+            "scrollWidth": 140,
+            "clientWidth": 140
+          },
+          "footer img": {
+            "left": 48,
+            "right": 280,
+            "width": 232,
+            "height": 96,
+            "scrollWidth": 116,
+            "clientWidth": 116
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 304,
+            "width": 280,
+            "height": 88,
+            "scrollWidth": 140,
+            "clientWidth": 140
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 320,
+            "width": 280,
+            "height": 88,
+            "scrollWidth": 140,
+            "clientWidth": 140
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 310,
+            "width": 260,
+            "height": 341,
+            "scrollWidth": 130,
+            "clientWidth": 130
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 375,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 375,
+          "clientWidth": 375
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 350,
+            "width": 325,
+            "height": 66.5,
+            "scrollWidth": 325,
+            "clientWidth": 325
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 375,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 375,
+          "clientWidth": 375
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 319,
+            "width": 295,
+            "height": 96,
+            "scrollWidth": 148,
+            "clientWidth": 148
+          },
+          "header img": {
+            "left": 40,
+            "right": 303,
+            "width": 263,
+            "height": 96,
+            "scrollWidth": 132,
+            "clientWidth": 132
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 319,
+            "width": 295,
+            "height": 120,
+            "scrollWidth": 148,
+            "clientWidth": 148
+          },
+          "footer img": {
+            "left": 48,
+            "right": 295,
+            "width": 247,
+            "height": 96,
+            "scrollWidth": 124,
+            "clientWidth": 124
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 319,
+            "width": 295,
+            "height": 88,
+            "scrollWidth": 148,
+            "clientWidth": 148
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 325,
+            "width": 275,
+            "height": 341,
+            "scrollWidth": 138,
+            "clientWidth": 138
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 390,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 390,
+          "clientWidth": 390
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 172,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 20,
+            "right": 164,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 12,
+            "right": 180,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 24,
+            "right": 168,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 12,
+            "right": 174.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 20,
+            "right": 162.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 25,
+            "right": 365,
+            "width": 340,
+            "height": 66.5,
+            "scrollWidth": 340,
+            "clientWidth": 340
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 390,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 390,
+          "clientWidth": 390
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 334,
+            "width": 310,
+            "height": 96,
+            "scrollWidth": 155,
+            "clientWidth": 155
+          },
+          "header img": {
+            "left": 40,
+            "right": 318,
+            "width": 278,
+            "height": 96,
+            "scrollWidth": 139,
+            "clientWidth": 139
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 334,
+            "width": 310,
+            "height": 120,
+            "scrollWidth": 155,
+            "clientWidth": 155
+          },
+          "footer img": {
+            "left": 48,
+            "right": 310,
+            "width": 262,
+            "height": 96,
+            "scrollWidth": 131,
+            "clientWidth": 131
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 326.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 40,
+            "right": 324.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 50,
+            "right": 340,
+            "width": 290,
+            "height": 341,
+            "scrollWidth": 145,
+            "clientWidth": 145
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 768,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 768,
+          "clientWidth": 768
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 128,
+            "width": 104,
+            "height": 44,
+            "scrollWidth": 104,
+            "clientWidth": 104
+          },
+          "header img": {
+            "left": 28,
+            "right": 124,
+            "width": 96,
+            "height": 32,
+            "scrollWidth": 96,
+            "clientWidth": 96
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 32,
+            "right": 174.4375,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 41,
+            "right": 727,
+            "width": 686,
+            "height": 66.5,
+            "scrollWidth": 686,
+            "clientWidth": 686
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 768,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 768,
+          "clientWidth": 768
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 256,
+            "width": 208,
+            "height": 88,
+            "scrollWidth": 104,
+            "clientWidth": 104
+          },
+          "header img": {
+            "left": 56,
+            "right": 248,
+            "width": 192,
+            "height": 64,
+            "scrollWidth": 96,
+            "clientWidth": 96
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 384,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 72,
+            "right": 360,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 350.078125,
+            "width": 302.078125,
+            "height": 88,
+            "scrollWidth": 151,
+            "clientWidth": 151
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 64,
+            "right": 348.875,
+            "width": 284.875,
+            "height": 88,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 82,
+            "right": 686,
+            "width": 604,
+            "height": 133,
+            "scrollWidth": 302,
+            "clientWidth": 302
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1024,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 1024,
+          "clientWidth": 1024
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 184,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 32,
+            "right": 176,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 792.609375,
+            "right": 935.046875,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 288.125,
+            "right": 983,
+            "width": 694.875,
+            "height": 66.5,
+            "scrollWidth": 695,
+            "clientWidth": 695
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1024,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 1024,
+          "clientWidth": 1024
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 368,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 64,
+            "right": 352,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 384,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 72,
+            "right": 360,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 373.359375,
+            "width": 325.359375,
+            "height": 88,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 797.53125,
+            "right": 960,
+            "width": 162.46875,
+            "height": 88,
+            "scrollWidth": 81,
+            "clientWidth": 81
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 530,
+            "right": 942,
+            "width": 412,
+            "height": 237,
+            "scrollWidth": 206,
+            "clientWidth": 206
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1280,
+        "zoom": 1,
+        "document": {
+          "scrollWidth": 1280,
+          "clientWidth": 1280
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 184,
+            "width": 160,
+            "height": 48,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 32,
+            "right": 176,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 24,
+            "right": 192,
+            "width": 168,
+            "height": 60,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 36,
+            "right": 180,
+            "width": 144,
+            "height": 48,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 24,
+            "right": 186.6875,
+            "width": 162.6875,
+            "height": 44,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 989.53125,
+            "right": 1131.96875,
+            "width": 142.4375,
+            "height": 44,
+            "scrollWidth": 142,
+            "clientWidth": 142
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 353.078125,
+            "right": 1238.984375,
+            "width": 885.90625,
+            "height": 66.5,
+            "scrollWidth": 886,
+            "clientWidth": 886
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      },
+      {
+        "width": 1280,
+        "zoom": 2,
+        "document": {
+          "scrollWidth": 1280,
+          "clientWidth": 1280
+        },
+        "bounds": {
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 368,
+            "width": 320,
+            "height": 96,
+            "scrollWidth": 160,
+            "clientWidth": 160
+          },
+          "header img": {
+            "left": 64,
+            "right": 352,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "left": 48,
+            "right": 384,
+            "width": 336,
+            "height": 120,
+            "scrollWidth": 168,
+            "clientWidth": 168
+          },
+          "footer img": {
+            "left": 72,
+            "right": 360,
+            "width": 288,
+            "height": 96,
+            "scrollWidth": 144,
+            "clientWidth": 144
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "left": 48,
+            "right": 373.359375,
+            "width": 325.359375,
+            "height": 88,
+            "scrollWidth": 163,
+            "clientWidth": 163
+          },
+          "footer a[href=\"/privacy\"]": {
+            "left": 994.453125,
+            "right": 1216,
+            "width": 221.546875,
+            "height": 88,
+            "scrollWidth": 111,
+            "clientWidth": 111
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "left": 530,
+            "right": 1198,
+            "width": 668,
+            "height": 133,
+            "scrollWidth": 334,
+            "clientWidth": 334
+          }
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "closedViolations": [],
+        "openViolations": [],
+        "longTextViolations": [],
+        "errors": []
+      }
+    ],
+    "critical320Zoom2": {
+      "width": 320,
+      "zoom": 2,
+      "closed": {
+        "document": {
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "zoom": "2",
+        "boxes": {
+          "header.sticky": {
+            "tag": "HEADER",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 234,
+            "width": 320,
+            "height": 234,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header.sticky > div": {
+            "tag": "DIV",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 232,
+            "width": 320,
+            "height": 232,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 264,
+            "top": 16,
+            "bottom": 112,
+            "width": 240,
+            "height": 96,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 40,
+            "right": 248,
+            "top": 16,
+            "bottom": 112,
+            "width": 208,
+            "height": 96,
+            "scrollWidth": 104,
+            "clientWidth": 104,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "contain",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer": {
+            "tag": "FOOTER",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+            "left": 0,
+            "right": 320,
+            "top": 6433.3125,
+            "bottom": 8671.3125,
+            "width": 320,
+            "height": 2238,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum",
+            "left": 40,
+            "right": 280,
+            "top": 6545.3125,
+            "bottom": 8157.3125,
+            "width": 240,
+            "height": 1612,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "120px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.ch",
+            "left": 40,
+            "right": 280,
+            "top": 6545.3125,
+            "bottom": 7161.3125,
+            "width": 240,
+            "height": 616,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 264,
+            "top": 6545.3125,
+            "bottom": 6665.3125,
+            "width": 240,
+            "height": 120,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 48,
+            "right": 240,
+            "top": 6557.3125,
+            "bottom": 6653.3125,
+            "width": 192,
+            "height": 96,
+            "scrollWidth": 96,
+            "clientWidth": 96,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "contain",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "tag": "A",
+            "label": "info@jetnity.ch",
+            "left": 24,
+            "right": 264,
+            "top": 7073.3125,
+            "bottom": 7161.3125,
+            "width": 240,
+            "height": 88,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href=\"/privacy\"]": {
+            "tag": "A",
+            "label": "Datenschutzerklärung",
+            "left": 40,
+            "right": 280,
+            "top": 7875.3125,
+            "bottom": 7963.3125,
+            "width": 240,
+            "height": 88,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"]": {
+            "tag": "SECTION",
+            "label": "Jetzt wichtig",
+            "left": 24,
+            "right": 296,
+            "top": 2463.3125,
+            "bottom": 4177.3125,
+            "width": 272,
+            "height": 1714,
+            "scrollWidth": 134,
+            "clientWidth": 134,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul": {
+            "tag": "UL",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+            "left": 50,
+            "right": 270,
+            "top": 2851.3125,
+            "bottom": 4007.3125,
+            "width": 220,
+            "height": 1156,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "110px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+            "tag": "LI",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 270,
+            "top": 2851.3125,
+            "bottom": 3240.3125,
+            "width": 220,
+            "height": 389,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "list-item",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "tag": "BUTTON",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 270,
+            "top": 2851.3125,
+            "bottom": 3240.3125,
+            "width": 220,
+            "height": 389,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          }
+        },
+        "images": [
+          {
+            "left": 40,
+            "right": 248,
+            "top": 16,
+            "bottom": 112,
+            "width": 208,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "contain",
+            "filter": "none"
+          },
+          {
+            "left": 48,
+            "right": 240,
+            "top": 6557.3125,
+            "bottom": 6653.3125,
+            "width": 192,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "contain",
+            "filter": "brightness(0) invert(1)"
+          }
+        ],
+        "footerLinks": [
+          {
+            "href": "/",
+            "text": ""
+          },
+          {
+            "href": "mailto:info@jetnity.ch",
+            "text": "info@jetnity.ch"
+          },
+          {
+            "href": "/planen",
+            "text": "Reise planen"
+          },
+          {
+            "href": "/reisen",
+            "text": "Meine Reisen"
+          },
+          {
+            "href": "/entdecken",
+            "text": "Entdecken"
+          },
+          {
+            "href": "/#pro",
+            "text": "Jetnity Pro"
+          },
+          {
+            "href": "/privacy",
+            "text": "Datenschutzerklärung"
+          },
+          {
+            "href": "/terms",
+            "text": "Nutzungsbedingungen / AGB"
+          },
+          {
+            "href": "/impressum",
+            "text": "Impressum"
+          },
+          {
+            "href": "https://www.geonames.org/",
+            "text": "GeoNames"
+          }
+        ],
+        "violations": []
+      },
+      "menu": {
+        "focus": {
+          "visible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        "open": {
+          "document": {
+            "scrollWidth": 320,
+            "clientWidth": 320
+          },
+          "pointer": {
+            "coarse": true,
+            "fine": false,
+            "touchPoints": 1
+          },
+          "zoom": "2",
+          "boxes": {
+            "header.sticky": {
+              "tag": "HEADER",
+              "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+              "left": 0,
+              "right": 320,
+              "top": 0,
+              "bottom": 726,
+              "width": 320,
+              "height": 726,
+              "scrollWidth": 160,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header.sticky > div": {
+              "tag": "DIV",
+              "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+              "left": 0,
+              "right": 320,
+              "top": 0,
+              "bottom": 232,
+              "width": 320,
+              "height": 232,
+              "scrollWidth": 160,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header a[aria-label=\"Jetnity Startseite\"]": {
+              "tag": "A",
+              "label": "Jetnity Startseite",
+              "left": 24,
+              "right": 264,
+              "top": 16,
+              "bottom": 112,
+              "width": 240,
+              "height": 96,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "header img": {
+              "tag": "IMG",
+              "label": "",
+              "left": 40,
+              "right": 248,
+              "top": 16,
+              "bottom": 112,
+              "width": 208,
+              "height": 96,
+              "scrollWidth": 104,
+              "clientWidth": 104,
+              "overflowX": "clip",
+              "overflowY": "clip",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "contain",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer": {
+              "tag": "FOOTER",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+              "left": 0,
+              "right": 320,
+              "top": 6925.3125,
+              "bottom": 9163.3125,
+              "width": 320,
+              "height": 2238,
+              "scrollWidth": 160,
+              "clientWidth": 160,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer > div > div:first-child": {
+              "tag": "DIV",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutzungsbedingungen / AGBImpressum",
+              "left": 40,
+              "right": 280,
+              "top": 7037.3125,
+              "bottom": 8649.3125,
+              "width": 240,
+              "height": 1612,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "120px",
+              "objectFit": "fill",
+              "display": "grid",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer > div > div:first-child > div:first-child": {
+              "tag": "DIV",
+              "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.ch",
+              "left": 40,
+              "right": 280,
+              "top": 7037.3125,
+              "bottom": 7653.3125,
+              "width": 240,
+              "height": 616,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[aria-label=\"Jetnity Startseite\"]": {
+              "tag": "A",
+              "label": "Jetnity Startseite",
+              "left": 24,
+              "right": 264,
+              "top": 7037.3125,
+              "bottom": 7157.3125,
+              "width": 240,
+              "height": 120,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer img": {
+              "tag": "IMG",
+              "label": "",
+              "left": 48,
+              "right": 240,
+              "top": 7049.3125,
+              "bottom": 7145.3125,
+              "width": 192,
+              "height": 96,
+              "scrollWidth": 96,
+              "clientWidth": 96,
+              "overflowX": "clip",
+              "overflowY": "clip",
+              "minWidth": "auto",
+              "gridTemplateColumns": "none",
+              "objectFit": "contain",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[href^=\"mailto:\"]": {
+              "tag": "A",
+              "label": "info@jetnity.ch",
+              "left": 24,
+              "right": 264,
+              "top": 7565.3125,
+              "bottom": 7653.3125,
+              "width": 240,
+              "height": 88,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "footer a[href=\"/privacy\"]": {
+              "tag": "A",
+              "label": "Datenschutzerklärung",
+              "left": 40,
+              "right": 280,
+              "top": 8367.3125,
+              "bottom": 8455.3125,
+              "width": 240,
+              "height": 88,
+              "scrollWidth": 120,
+              "clientWidth": 120,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "inline-flex",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"]": {
+              "tag": "SECTION",
+              "label": "Jetzt wichtig",
+              "left": 24,
+              "right": 296,
+              "top": 2955.3125,
+              "bottom": 4669.3125,
+              "width": 272,
+              "height": 1714,
+              "scrollWidth": 134,
+              "clientWidth": 134,
+              "overflowX": "hidden",
+              "overflowY": "hidden",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "block",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul": {
+              "tag": "UL",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+              "left": 50,
+              "right": 270,
+              "top": 3343.3125,
+              "bottom": 4499.3125,
+              "width": 220,
+              "height": 1156,
+              "scrollWidth": 110,
+              "clientWidth": 110,
+              "overflowX": "hidden",
+              "overflowY": "hidden",
+              "minWidth": "0px",
+              "gridTemplateColumns": "110px",
+              "objectFit": "fill",
+              "display": "grid",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+              "tag": "LI",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+              "left": 50,
+              "right": 270,
+              "top": 3343.3125,
+              "bottom": 3732.3125,
+              "width": 220,
+              "height": 389,
+              "scrollWidth": 110,
+              "clientWidth": 110,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "list-item",
+              "visibility": "visible",
+              "opacity": "1"
+            },
+            "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+              "tag": "BUTTON",
+              "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+              "left": 50,
+              "right": 270,
+              "top": 3343.3125,
+              "bottom": 3732.3125,
+              "width": 220,
+              "height": 389,
+              "scrollWidth": 110,
+              "clientWidth": 110,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "minWidth": "0px",
+              "gridTemplateColumns": "none",
+              "objectFit": "fill",
+              "display": "flex",
+              "visibility": "visible",
+              "opacity": "1"
+            }
+          },
+          "images": [
+            {
+              "left": 40,
+              "right": 248,
+              "top": 16,
+              "bottom": 112,
+              "width": 208,
+              "height": 96,
+              "complete": true,
+              "naturalWidth": 384,
+              "naturalHeight": 128,
+              "objectFit": "contain",
+              "filter": "none"
+            },
+            {
+              "left": 48,
+              "right": 240,
+              "top": 7049.3125,
+              "bottom": 7145.3125,
+              "width": 192,
+              "height": 96,
+              "complete": true,
+              "naturalWidth": 384,
+              "naturalHeight": 128,
+              "objectFit": "contain",
+              "filter": "brightness(0) invert(1)"
+            }
+          ],
+          "footerLinks": [
+            {
+              "href": "/",
+              "text": ""
+            },
+            {
+              "href": "mailto:info@jetnity.ch",
+              "text": "info@jetnity.ch"
+            },
+            {
+              "href": "/planen",
+              "text": "Reise planen"
+            },
+            {
+              "href": "/reisen",
+              "text": "Meine Reisen"
+            },
+            {
+              "href": "/entdecken",
+              "text": "Entdecken"
+            },
+            {
+              "href": "/#pro",
+              "text": "Jetnity Pro"
+            },
+            {
+              "href": "/privacy",
+              "text": "Datenschutzerklärung"
+            },
+            {
+              "href": "/terms",
+              "text": "Nutzungsbedingungen / AGB"
+            },
+            {
+              "href": "/impressum",
+              "text": "Impressum"
+            },
+            {
+              "href": "https://www.geonames.org/",
+              "text": "GeoNames"
+            }
+          ],
+          "violations": []
+        }
+      },
+      "targets": [
+        {
+          "text": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+          "hit": "STRONG",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px inset, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px inset, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen",
+          "hit": "STRONG",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px inset, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px inset, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+          "hit": "STRONG",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px inset, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px inset, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "2 weitere Hinweisgruppen anzeigen",
+          "hit": "BUTTON",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "",
+          "hit": "IMG",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "info@jetnity.ch",
+          "hit": "SPAN",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Reise planen",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.130014px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Meine Reisen",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Entdecken",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.130014px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Jetnity Pro",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Datenschutzerklärung",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Nutzungsbedingungen / AGB",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "Impressum",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(255, 255, 255, 0.008) 0px 0px 0px 0.130014px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "text": "GeoNames",
+          "hit": "A",
+          "hitLabel": null,
+          "reachable": true,
+          "focusVisible": true,
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        }
+      ],
+      "longText": {
+        "document": {
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "pointer": {
+          "coarse": true,
+          "fine": false,
+          "touchPoints": 1
+        },
+        "zoom": "2",
+        "boxes": {
+          "header.sticky": {
+            "tag": "HEADER",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planenEntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 234,
+            "width": 320,
+            "height": 234,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header.sticky > div": {
+            "tag": "DIV",
+            "label": "EntdeckenMeine ReisenJetnity ProReise planen",
+            "left": 0,
+            "right": 320,
+            "top": 0,
+            "bottom": 232,
+            "width": 320,
+            "height": 232,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 264,
+            "top": 16,
+            "bottom": 112,
+            "width": 240,
+            "height": 96,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "header img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 40,
+            "right": 248,
+            "top": 16,
+            "bottom": 112,
+            "width": 208,
+            "height": 96,
+            "scrollWidth": 104,
+            "clientWidth": 104,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "contain",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer": {
+            "tag": "FOOTER",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalidProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungMitZusätzlichenInformationenNutzungsbedingungen / AGBImpressum© 2026 Jetnity. Alle Rechte vorbehalten.Ortsdaten: GeoNames (CC BY 4.0)",
+            "left": 0,
+            "right": 320,
+            "top": -1585.6875,
+            "bottom": 800.3125,
+            "width": 320,
+            "height": 2386,
+            "scrollWidth": 160,
+            "clientWidth": 160,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalidProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungMitZusätzlichenInformationenNutzungsbedingungen / AGBImpressum",
+            "left": 40,
+            "right": 280,
+            "top": -1473.6875,
+            "bottom": 286.3125,
+            "width": 240,
+            "height": 1760,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "120px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer > div > div:first-child > div:first-child": {
+            "tag": "DIV",
+            "label": "Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.synthetischer.layoutkontakt@example.invalid",
+            "left": 40,
+            "right": 280,
+            "top": -1473.6875,
+            "bottom": -745.6875,
+            "width": 240,
+            "height": 728,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[aria-label=\"Jetnity Startseite\"]": {
+            "tag": "A",
+            "label": "Jetnity Startseite",
+            "left": 24,
+            "right": 264,
+            "top": -1473.6875,
+            "bottom": -1353.6875,
+            "width": 240,
+            "height": 120,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer img": {
+            "tag": "IMG",
+            "label": "",
+            "left": 48,
+            "right": 240,
+            "top": -1461.6875,
+            "bottom": -1365.6875,
+            "width": 192,
+            "height": 96,
+            "scrollWidth": 96,
+            "clientWidth": 96,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "minWidth": "auto",
+            "gridTemplateColumns": "none",
+            "objectFit": "contain",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href^=\"mailto:\"]": {
+            "tag": "A",
+            "label": "synthetischer.layoutkontakt@example.invalid",
+            "left": 24,
+            "right": 264,
+            "top": -945.6875,
+            "bottom": -745.6875,
+            "width": 240,
+            "height": 200,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "footer a[href=\"/privacy\"]": {
+            "tag": "A",
+            "label": "DatenschutzerklärungMitZusätzlichenInformationen",
+            "left": 40,
+            "right": 280,
+            "top": -27.6875,
+            "bottom": 92.3125,
+            "width": 240,
+            "height": 120,
+            "scrollWidth": 120,
+            "clientWidth": 120,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "inline-flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"]": {
+            "tag": "SECTION",
+            "label": "Jetzt wichtig",
+            "left": 24,
+            "right": 296,
+            "top": -5555.6875,
+            "bottom": -3841.6875,
+            "width": 272,
+            "height": 1714,
+            "scrollWidth": 134,
+            "clientWidth": 134,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul": {
+            "tag": "UL",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offenDiese ReiseUnterkunftsnächte fehlen nochIm Plan offenReisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+            "left": 50,
+            "right": 270,
+            "top": -5167.6875,
+            "bottom": -4011.6875,
+            "width": 220,
+            "height": 1156,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "minWidth": "0px",
+            "gridTemplateColumns": "110px",
+            "objectFit": "fill",
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li": {
+            "tag": "LI",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 270,
+            "top": -5167.6875,
+            "bottom": -4778.6875,
+            "width": 220,
+            "height": 389,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "list-item",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "section[aria-label=\"Jetzt wichtig\"] ul > li button": {
+            "tag": "BUTTON",
+            "label": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+            "left": 50,
+            "right": 270,
+            "top": -5167.6875,
+            "bottom": -4778.6875,
+            "width": 220,
+            "height": 389,
+            "scrollWidth": 110,
+            "clientWidth": 110,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "minWidth": "0px",
+            "gridTemplateColumns": "none",
+            "objectFit": "fill",
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          }
+        },
+        "images": [
+          {
+            "left": 40,
+            "right": 248,
+            "top": 16,
+            "bottom": 112,
+            "width": 208,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "contain",
+            "filter": "none"
+          },
+          {
+            "left": 48,
+            "right": 240,
+            "top": -1461.6875,
+            "bottom": -1365.6875,
+            "width": 192,
+            "height": 96,
+            "complete": true,
+            "naturalWidth": 384,
+            "naturalHeight": 128,
+            "objectFit": "contain",
+            "filter": "brightness(0) invert(1)"
+          }
+        ],
+        "footerLinks": [
+          {
+            "href": "/",
+            "text": ""
+          },
+          {
+            "href": "mailto:info@jetnity.ch",
+            "text": "synthetischer.layoutkontakt@example.invalid"
+          },
+          {
+            "href": "/planen",
+            "text": "Reise planen"
+          },
+          {
+            "href": "/reisen",
+            "text": "Meine Reisen"
+          },
+          {
+            "href": "/entdecken",
+            "text": "Entdecken"
+          },
+          {
+            "href": "/#pro",
+            "text": "Jetnity Pro"
+          },
+          {
+            "href": "/privacy",
+            "text": "DatenschutzerklärungMitZusätzlichenInformationen"
+          },
+          {
+            "href": "/terms",
+            "text": "Nutzungsbedingungen / AGB"
+          },
+          {
+            "href": "/impressum",
+            "text": "Impressum"
+          },
+          {
+            "href": "https://www.geonames.org/",
+            "text": "GeoNames"
+          }
+        ],
+        "violations": []
+      },
+      "errors": []
+    },
+    "failures": []
+  }
+}

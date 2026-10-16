@@ -152,7 +152,7 @@ export default function PublicNavbar() {
           href="/"
           aria-label="Jetnity Startseite"
           className={cn(
-            '-mx-2 inline-flex min-h-11 shrink-0 items-center px-2 md:px-1 lg:px-2',
+            '-mx-2 inline-flex min-h-11 min-w-0 max-w-full items-center px-2 md:px-1 lg:px-2',
             FOKUS_RING,
           )}
         >
@@ -166,7 +166,7 @@ export default function PublicNavbar() {
             priority
             unoptimized
             sizes="(min-width: 1024px) 144px, (min-width: 768px) 96px, 144px"
-            className="h-[48px] w-auto md:h-[32px] lg:h-[48px]"
+            className="h-[48px] w-auto md:h-[32px] lg:h-[48px] max-w-full object-contain"
             style={{ width: 'auto' }}
           />
         </Link>
@@ -227,7 +227,7 @@ export default function PublicNavbar() {
         aria-label="Mobile Navigation"
         hidden={!mobileOpen}
         inert={!mobileOpen}
-        className="min-h-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
+        className="min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 [overflow-wrap:anywhere] md:hidden"
       >
         <div className="grid gap-1">
           {HAUPTNAVIGATION.map((item) => (
@@ -237,7 +237,7 @@ export default function PublicNavbar() {
               aria-current={isActive(item.href) ? 'page' : undefined}
               onClick={closeMobile}
               className={cn(
-                'inline-flex min-h-11 items-center rounded-2xl px-4 text-sm font-semibold',
+                'inline-flex min-h-11 items-center rounded-2xl min-w-0 max-w-full px-4 text-sm font-semibold',
                 FOKUS_RING,
                 item.href === '/entdecken' && isActive(item.href)
                   ? 'bg-surface-100 text-brand-800'
