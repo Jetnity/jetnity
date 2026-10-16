@@ -1,4 +1,49 @@
-# Trip Audit V1 — TL R1 HANDOFF / STOP
+# Trip Audit V1 — TL R2 review-fix HANDOFF / STOP
+
+**BLOCKED: normal Git DNS failure before required main integration. Local review fix preserved, uncommitted and unpublished.**
+
+Author/session unchanged: Jetnity Trip Audit V1 — Codex Generation 1 / `01a141ad-1220-7462-bced-c75469dab1d3`. Existing issue #954, Draft PR #955 and branch `feat/trip-audit-v1-readonly`. R1 comment 6204499241 and R2 comment 6204596934 read in full. Effective workspace-write/restricted-network permissions confirmed; expired Full Access was not reused.
+
+## Exact identity and work state
+
+- Prior local/published HEAD: `7672373f6420aabb82d2625068bbb4ac4cb6bcb1`.
+- Prior committed tree: `8fd93ecb24c7fb06be435510a22ee2bc28036b32`; parent `8871abc10cf733f005ec40915a81eea7ab155e49`.
+- Live main read: `69a182ea4b7f9dbd934abf314266b7d8f59a5d73`; NORMAL; #751 comment 6204608990; no new #748 MATERIAL after 6198868156.
+- Main merge NOT performed. Old merge-base remains `9847b2c9e1bf9840c5557a71663a0f56c8b9d50c`; R2 live comparison reports 2 ahead / 3 behind latest main. Do not interpret comparison to the older cached local main as current synchronization.
+- TASK blob unchanged: `c224d3fbddd031d030d825b6895d1423a5586f67`.
+- No new SHA/tree claimed for uncommitted edits. A sanitized PR STOP receipt supplies the final working-tree inventory/diff fingerprint. No existing commit was discarded or rewritten.
+
+## Review correction / exact edited inventory
+
+1. `lib/trips/trip-audit-v1/audit.ts`: bounded current-snapshot display fields on retained findings; refs/evidence and state logic unchanged.
+2. `components/trips/TripAuditV1Panel.tsx`: render known names/dates/times or explicit unknown, never raw reference IDs.
+3. `lib/trips/trip-audit-v1/audit.test.ts`: four new synthetic tests; extend proven/possible and limit assertions; use actual finding markup.
+4. `docs/JETNITY_TRIP_AUDIT_V1_PLAN_2026-10-16.md`.
+5. `docs/JETNITY_TRIP_AUDIT_V1_REPORT_2026-10-16.md`.
+6. `docs/JETNITY_TRIP_AUDIT_V1_SELF_REVIEW_2026-10-16.md`.
+7. This task-owned HANDOFF.
+
+No other paths changed in this correction. Existing Workspace wiring and ui.test.ts are unchanged. No change to #953, canonical readers/types, dependencies/workflows/Auth/DB/RLS/provider/Production; zero new services/cost.
+
+## Verified and remaining gates
+
+- Final code Typecheck/Lint PASS (0 errors / 145 existing warnings), including static checking of ui.test.ts.
+- Focused suite: **149 PASS / 0 FAIL / 0 SKIP** (20 audit + 129 canonical).
+- Full unchanged npm test: **6,807 tests; 6,795 PASS / 10 FAIL / 2 SKIP**, exit 1. Native PostgreSQL16 failures remain honest failures; opt-in browser test remains skipped.
+- Original Mode/API/schema/dead/exports/deps each PASS; diff whitespace check PASS.
+- Historical local tsx listen EPERM and local build not rerun/bypassed; no fresh local build PASS.
+- Real Guest/authenticated Account/live open-panel editing/keyboard/focus/320px/200%/physical-device acceptance NOT VERIFIED. No browser installation, privileged runner or provider used.
+- Old-head CI/Auth/Preview PASS is historical only; no corrected-head remote gates exist.
+
+## Blocker and next TL action
+
+Exactly one ordinary `git fetch origin main` failed exit 128 with `Could not resolve host: github.com`. No retry, normal merge, commit or push after that failure. No automatic escalation, new credential, auth/config change, proxy/mirror or API code upload. In accordance with the integration prerequisite, the correction remains local rather than being committed/published as if current main were integrated.
+
+**STOP.** Technical Lead must decide the supported normal Git-connectivity continuation. On explicit resume: re-read live state and preserve these edits, integrate origin/main normally without conflict/force/history rewrite, re-run integrated-tree checks, commit only permitted correction files, publish only #955, and obtain new exact-HEAD full CI/Auth/Preview/review-thread evidence. Independently obtain actual T09 evidence before acceptance. No Ready, PR merge, Production or next slice.
+
+## Historical R1 handoff (publication status superseded)
+
+# Trip Audit V1 — historical TL R1 HANDOFF / STOP
 
 **BLOCKED AT EXISTING GIT PUSH AUTHENTICATION / LOCAL AUTHOR COMMIT PRESERVED / ZERO PUSH ATTEMPTS / NO IMPLEMENTATION PUBLICATION.**
 

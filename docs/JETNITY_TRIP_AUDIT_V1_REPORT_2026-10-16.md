@@ -1,4 +1,46 @@
-# Trip Audit V1 — REPORT / TL R1
+# Trip Audit V1 — REPORT / TL R2 review fix
+
+**BLOCKED AT NORMAL GIT FETCH / DNS. Review correction is local and uncommitted; main integration and publication were not performed.**
+
+Same author/session `Jetnity Trip Audit V1 — Codex Generation 1` / `01a141ad-1220-7462-bced-c75469dab1d3`, existing branch `feat/trip-audit-v1-readonly`, Draft #955. Both complete TL reviews [R1](https://github.com/Jetnity/jetnity/pull/955#issuecomment-6204499241) and [R2](https://github.com/Jetnity/jetnity/pull/955#issuecomment-6204596934) were read. Actual execution is workspace-write with restricted network, not the expired Full Access grant. No escalation requested.
+
+## Current correction
+
+Before: the finding card printed internal `refs.itemIds` under Planpunkte. After: retained findings carry only copied title/start/end date/time presentation fields from the same validated bounded inventory. The card renders actual names and saved values, with explicit Bezeichnung/Datum/Uhrzeit unbekannt for missing values. An ID-only title is also unknown. Internal IDs, canonical evidence, finding IDs/order and conflict classifications remain unchanged. No booking, time zone, date from placement or additional truth is inferred.
+
+The extra data is transient per invocation, not a registry or cache. Lookup runs only for the existing maximum 200 retained findings; item count and text lengths remain bounded by the unchanged input/schema guards. Invalid missing-title snapshots still fail closed through the original schema; the display fallback does not relax validation. React renders names as escaped text. No persistence or external action was added.
+
+## Actual final-code checks
+
+| Check | Result |
+|---|---|
+| Typecheck, including the existing browser test file | PASS, exit 0 |
+| Lint | PASS, exit 0; 0 errors / 145 existing warnings |
+| Ordinary focused tests | 149 PASS / 0 FAIL / 0 SKIP: 20 audit + 129 canonical |
+| Full unchanged npm test | FAIL, exit 1: 6,807 tests / 6,795 PASS / 10 FAIL / 2 SKIP |
+| Operating Mode, API protection, schema, dead code, exports, dependencies | Each original command PASS, exit 0 |
+| git diff --check | PASS |
+| Local setup / Production build | NOT VERIFIED for correction; historical tsx listen EPERM not retried or bypassed |
+| Real browser / Guest / authenticated Account / live edits / focus / 320px / 200% | NOT VERIFIED; no Chromium installation, browser or alternate runner |
+| Corrected exact-head Actions / Auth / Preview | NOT AVAILABLE; correction was not published |
+
+The ten full-suite failures are the same missing native PostgreSQL16 proof families; they are not counted as PASS. One additional skip versus the earliest local run is the opt-in ui.test.ts browser test. The four new focused tests exercise real finding markup with synthetic names/UUIDs, exact known values, unknown labels, same-revision selected-inventory changes and escaped/bounded text. Existing proven-versus-possible mapping and output-limit tests were extended. Static markup is not interactive browser evidence.
+
+## Live state and transport STOP
+
+Live main read through GitHub: `69a182ea4b7f9dbd934abf314266b7d8f59a5d73`, mode NORMAL. #751 latest comment 6204608990 confirms R2 and the #953 merge; no newer #748 MATERIAL after 6198868156. Local/published prior HEAD remains `7672373f6420aabb82d2625068bbb4ac4cb6bcb1`, committed tree `8fd93ecb24c7fb06be435510a22ee2bc28036b32`. This tree does **not** contain the uncommitted correction. TASK remains byte-identical at `c224d3fbddd031d030d825b6895d1423a5586f67`.
+
+After local checks, one ordinary `git fetch origin main` failed with exit 128: `Could not resolve host: github.com`. No retry, alternate transport, credential change, escalation, branch merge or push followed. Because the requested main-integration prerequisite was not met, no new correction commit was made; all existing commits and local edited files remain intact. The stopped-work PR receipt records the final local inventory and identity.
+
+Old-head CI 38822997407 and old-head Preview passed as confirmed by TL R2; neither qualifies these local changes. Independent review and real T09 evidence remain required. Only the three audit source/test files and four task-owned documents changed; no Workspace wiring, #953 code, canonical module, package, lockfile, workflow, DB/Auth/provider/Production change or new cost.
+
+**STOP for TL: resolve supported normal Git connectivity or give a separate explicit continuation. Then integrate current origin/main by conflict-free normal merge, recheck the integrated tree, commit/push only #955 and obtain fresh exact-head gates. No Ready/Merge/Production/follow-up slice.**
+
+## Historical R1 report (superseded by current status above)
+
+The original commit below was subsequently published under the separate one-time PO authorization; current transport and review-fix status is recorded above.
+
+# Trip Audit V1 — historical REPORT / TL R1
 
 **BLOCKED AT EXISTING GIT PUSH AUTHENTICATION. Local candidate preserved; no implementation publication; no TL PASS.**
 

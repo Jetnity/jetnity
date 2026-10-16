@@ -1,4 +1,23 @@
-# Trip Audit V1 — SELF_REVIEW
+# Trip Audit V1 — SELF_REVIEW / TL R2 review fix
+
+**Author correction locally checked; BLOCKED before main integration/publication by normal Git DNS failure. Not independent TL approval.**
+
+Both R1/R2 reviews were read. Only the raw-ID presentation defect was corrected within existing ownership:
+
+- `AuditFinding.items` contains copied display data only. Existing refs/evidence remain internal and unchanged. Lookup uses exactly the validated planned items and workspace-selected unplanned inventory; no parallel persistent registry, cache or title-based identity matching.
+- Only retained findings are enriched. Existing 200-result, input, pair-work and schema bounds are unchanged. The title length remains bounded by canonical validation. Unknown/partial/limit signals are not suppressed.
+- The actual finding component renders stored names and separate known start/end dates/times as escaped text. It never renders refs/evidence IDs as labels. Missing or ID-only names use Bezeichnung unbekannt; absent dates/times stay explicitly unknown. Invalid title-bearing snapshots still fail closed instead of weakening canonical validation.
+- Labels cannot change a pair state. Real canonical Trip fixtures remain possible/not-evaluable; the separate mathematical-kernel test covers proven-conflict presentation without asserting live UTC capability. No new booking/timezone/transfer claims.
+- New tests prove visible real synthetic names, absent opaque IDs, unknown fallback, exact known times, selected inventory, same-revision renames, frozen-input nonmutation and escaped hostile text. Existing source guards still prohibit network/persistence/secret clients; real browser request assertions remain unexecuted.
+- The exported finding component is the same component used by the live panel, permitting a static render regression test without adding an alternative renderer or browser. Closed-panel behavior and click gating are unchanged. Index keys identify stateless display rows only; internal refs are not emitted as DOM attributes.
+
+Final corrected code: 149 focused PASS; Typecheck/Lint PASS including ui.test.ts (145 existing warnings, no errors); original operating-mode/API/schema/dead/export/dependency checks PASS. Full npm test: 6,795 PASS / 10 native-PG failures / 2 SKIP out of 6,807, exit 1. Historical local setup IPC and unrun local build remain unverified. Real Guest/authenticated Account, live open-panel edits, focus/320px/200% and devices remain NOT VERIFIED. Static rendering cannot satisfy T09.
+
+Normal `git fetch origin main` failed exit 128, DNS resolution of github.com unavailable. No retry/escalation or alternative code transport. No new commit: corrected files remain in the working tree, existing HEAD `7672373f6420aabb82d2625068bbb4ac4cb6bcb1` is preserved. New-main merge, corrected-head CI/Auth/Preview and independent full review remain open. TASK and all shared contracts unchanged; no costs or activated services. STOP for TL.
+
+## Historical R1 self-review (publication status superseded)
+
+# Trip Audit V1 — historical SELF_REVIEW
 
 **TL R1: BLOCKED AT EXISTING GIT PUSH AUTHENTICATION. Author review only; no independent Technical-Lead PASS.**
 

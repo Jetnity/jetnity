@@ -3,14 +3,14 @@ import test from 'node:test'
 import { readFileSync } from 'node:fs'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import TripAuditV1Panel from '@/components/trips/TripAuditV1Panel'
+import TripAuditV1Panel, { TripAuditFinding } from '@/components/trips/TripAuditV1Panel'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ungeplantePunkteLesen } from '@/lib/trips/arbeitsbereich'
 import { tripZeitpruefung, zeitereignissePruefen, type Zeitereignis } from '@/lib/trips/trip-timeline-temporal-review-1'
-import { connectionFindingState, temporalFinding, tripAuditV1 } from './audit'
+import { connectionFindingState, storedItemDetails, temporalFinding, tripAuditV1 } from './audit'
 import { AUDIT_LIMITS, boundedSnapshot } from './limits'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -65,6 +65,14 @@ test('T02/T03: proven/no_proven mapping uses the existing mathematical kernel; n
   assert.equal(proven.state, 'proven_conflict')
   assert.deepEqual(temporalFinding(proven, ['day-1'])?.evidence, proven)
   assert.equal(temporalFinding(proven, ['day-1'])?.state, 'proven_conflict')
+  const provenFinding = temporalFinding(proven, ['day-1'])!
+  const provenHtml = renderToStaticMarkup(createElement(TripAuditFinding, { finding: {
+    ...provenFinding, items: [storedItemDetails(item('a', { title: 'Museumsbesuch' })), storedItemDetails(item('b', { title: 'Stadtführung' }))],
+  } }))
+  assert.match(provenHtml, /Belegter Konflikt/)
+  assert.match(provenHtml, /Museumsbesuch/)
+  assert.match(provenHtml, /Stadtführung/)
+  assert.doesNotMatch(provenHtml, /Möglicher Konflikt/)
   const separate = zeitereignissePruefen([event('a', '10:00', '11:00'), event('b', '12:00', '13:00')], 'complete').pairs[0]
   assert.equal(separate.state, 'no_proven_conflict')
   assert.equal(temporalFinding(separate, ['day-1']), null)
@@ -195,6 +203,87 @@ test('T08: output and canonical pair work limits are explicit, with correct reta
   assert(report.limitReasons.includes('output_limit'))
   assert(report.limitReasons.includes('temporal_work_limit'))
   assert.deepEqual(report.time?.coverage, tripZeitpruefung(input).coverage)
+  assert(report.findings.filter(f => f.domain === 'time').every(f => f.items?.length === 2))
+})
+
+test('R1: real finding markup identifies saved items with exact known dates/times, never opaque refs', () => {
+  const ids = ['31ffec60-7421-4c40-9187-45cd0224dd6f', 'a26b4ab4-2d31-4326-a50e-7b86d775c727']
+  const input = trip([
+    item(ids[0], { title: 'Zug zum Flughafen', startsAt: '10:00', endsAt: '11:00' }),
+    item(ids[1], { title: 'Altstadtführung', startsAt: '10:30', endsAt: '11:30' }),
+  ])
+  const before = structuredClone(input)
+  freeze(input)
+  const report = tripAuditV1(input)
+  const finding = report.findings.find(f => f.domain === 'time')!
+  assert.deepEqual(finding.evidence, tripZeitpruefung(input).pairs[0])
+  assert.deepEqual(new Set(finding.refs.itemIds), new Set(ids))
+  assert.deepEqual(finding.items, finding.refs.itemIds!.map(id => storedItemDetails(input.days[0].items.find(i => i.id === id))))
+  const html = renderToStaticMarkup(createElement(TripAuditFinding, { finding }))
+  for (const name of ['Zug zum Flughafen', 'Altstadtführung', '2026-09-12', '10:00', '11:00', '10:30', '11:30']) assert(html.includes(name))
+  for (const id of [...ids, input.id, input.days[0].id]) assert(!html.includes(id))
+  assert.match(html, /Möglicher Konflikt/)
+  assert.doesNotMatch(html, /Belegter Konflikt|bestätigt gebucht|UTC|00:00/)
+  assert.deepEqual(input, before)
+})
+
+test('R1: missing and ID-only labels remain unknown, with no invented dates or clocks', () => {
+  const opaque = 'cb55749d-01f4-4fc8-a9cb-1d88024bb104'
+  const blank = item(opaque, { title: '   ', startsOn: null, startsAt: null, endsOn: null, endsAt: null })
+  const unknown = { title: null, startsOn: null, startsAt: null, endsOn: null, endsAt: null }
+  assert.deepEqual(storedItemDetails(undefined), unknown)
+  assert.deepEqual(storedItemDetails(blank), unknown)
+  // ID-only names are valid schema strings, but are not useful display labels.
+  const input = trip([item(opaque, { title: opaque, startsAt: null }), item('other', { title: 'Bahnhofbesuch' })])
+  const finding = tripAuditV1(input).findings.find(f => f.domain === 'time')!
+  assert.equal(finding.items!.find(i => i.title === null)?.startsAt, null)
+  assert.equal(finding.state, 'not_evaluable')
+  const html = renderToStaticMarkup(createElement(TripAuditFinding, { finding }))
+  assert.match(html, /Bezeichnung unbekannt/)
+  assert.match(html, /Uhrzeit unbekannt/)
+  assert.doesNotMatch(html, /cb55749d|00:00|Belegter Konflikt|bestätigt gebucht/)
+  const missingHtml = renderToStaticMarkup(createElement(TripAuditFinding, { finding: { ...finding, items: [storedItemDetails(blank)] } }))
+  assert.match(missingHtml, /Datum unbekannt/)
+  assert.doesNotMatch(missingHtml, /2026-09-12|10:00|11:00/)
+  // Do not relax canonical schema validation to accept an invalid missing title.
+  const invalid = trip([blank])
+  assert.equal(tripAuditV1(invalid).evaluation, 'incomplete')
+  assert.equal(tripAuditV1(invalid).findings.length, 0)
+})
+
+test('R1: display labels use the selected snapshot and reflect same-revision edits without persistence', () => {
+  const input = trip([item('planned', { title: 'Ankunft am Bahnhof' })])
+  input.ohneTag = [item('obsolete', { dayId: null, title: 'Veraltete Bezeichnung' })]
+  const selected = [item('current', { dayId: null, title: 'Fahrt zum Hotel' })]
+  const before = structuredClone({ input, selected })
+  const first = tripAuditV1(input, selected)
+  const firstHtml = first.findings.map(finding => renderToStaticMarkup(createElement(TripAuditFinding, { finding }))).join('')
+  assert.match(firstHtml, /Ankunft am Bahnhof/)
+  assert.match(firstHtml, /Fahrt zum Hotel/)
+  assert.doesNotMatch(firstHtml, /Veraltete Bezeichnung|obsolete|current|planned/)
+  assert.deepEqual({ input, selected }, before)
+  const revision = input.revision
+  selected[0].title = 'Fahrt zur Unterkunft'
+  const second = tripAuditV1(input, selected)
+  const secondHtml = second.findings.map(finding => renderToStaticMarkup(createElement(TripAuditFinding, { finding }))).join('')
+  assert.match(secondHtml, /Fahrt zur Unterkunft/)
+  assert.doesNotMatch(secondHtml, /Fahrt zum Hotel/)
+  assert.match(firstHtml, /Fahrt zum Hotel/)
+  assert.equal(input.revision, revision)
+  assert.deepEqual(first.findings.map(f => [f.id, f.state, f.evidence]), second.findings.map(f => [f.id, f.state, f.evidence]))
+})
+
+test('R1: saved titles are bounded escaped text, not HTML or external actions', () => {
+  const title = '<img src="https://example.invalid/pixel" onerror="alert(1)">'
+  const input = trip([item('opaque-one', { title }), item('opaque-two', { title: 'A'.repeat(120) })])
+  const finding = tripAuditV1(input).findings.find(f => f.domain === 'time')!
+  const html = renderToStaticMarkup(createElement(TripAuditFinding, { finding }))
+  assert.match(html, /&lt;img/)
+  assert.doesNotMatch(html, /<img|<script|<a |opaque-one|opaque-two/)
+  assert(finding.items!.every(i => i.title === null || i.title.length <= 120))
+  const oversized = trip([item('opaque-one', { title: 'x'.repeat(AUDIT_LIMITS.stringLength + 1) })])
+  assert.equal(tripAuditV1(oversized).evaluation, 'incomplete')
+  assert.equal(tripAuditV1(oversized).findings.length, 0)
 })
 
 test('T08: malformed, cyclic, duplicate and oversized inputs fail closed without raw errors', () => {

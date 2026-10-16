@@ -11,6 +11,9 @@ type Source = 'unterkunftAbdeckung' | 'tripZeitpruefung' | 'flugAbdeckung' | 'mo
 type State = 'known_gap' | 'proven_conflict' | 'possible_conflict' | 'not_evaluable' | 'unknown'
 type Coverage = 'complete' | 'partial' | 'unavailable' | 'error' | 'not_run'
 type Pair = Zeitpruefung['pairs'][number]
+export type AuditItemDetails = Pick<TripItem, 'startsOn' | 'startsAt' | 'endsOn' | 'endsAt'> & {
+  title: string | null
+}
 export type AuditFinding = {
   id: string
   domain: AuditDomain
@@ -19,6 +22,7 @@ export type AuditFinding = {
   detail: string
   source: Source
   refs: { stageId?: string; itemIds?: string[]; dayIds?: string[]; sectionId?: string }
+  items?: AuditItemDetails[]
   evidence: UnterkunftLuecke | Pair | { status: string; date?: string | null; reasons?: string[] }
 }
 export type AuditSection = {
@@ -59,6 +63,18 @@ const NOT_CHECKED = [
 ] as const
 const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
 const id = (domain: AuditDomain, key: unknown) => JSON.stringify(['trip-audit/v1', domain, key])
+
+/** Display only, from the validated bounded snapshot. Never use identity as a
+ * missing name, infer a date from placement, or derive booking/timezone facts.
+ */
+export function storedItemDetails(item?: TripItem): AuditItemDetails {
+  const title = item?.title?.trim()
+  return {
+    title: title && title !== item?.id ? title : null,
+    startsOn: item?.startsOn ?? null, startsAt: item?.startsAt ?? null,
+    endsOn: item?.endsOn ?? null, endsAt: item?.endsAt ?? null,
+  }
+}
 
 /** Status mapping only; the caller supplies canonical determinations. In
  * particular covered_by_flight can never become a missing ground transfer.
@@ -114,9 +130,15 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
     return unavailable('invalid_snapshot')
   }
 
+  // One local view of the already bounded inventory, not another item registry.
+  const items = [...view.days.flatMap(day => day.items), ...view.ohneTag]
   function add(finding: AuditFinding) {
     report.findingCount++
-    if (report.findings.length < AUDIT_LIMITS.findings) report.findings.push(finding)
+    if (report.findings.length < AUDIT_LIMITS.findings) report.findings.push({
+      ...finding,
+      // Enrich retained output only, in the exact existing reference order.
+      items: finding.refs.itemIds?.map(itemId => storedItemDetails(items.find(item => item.id === itemId))),
+    })
     else report.omittedFindings++
   }
   function section(domain: AuditDomain, source: Source, run: () => Omit<AuditSection, 'domain' | 'source'>) {

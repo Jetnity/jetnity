@@ -10,14 +10,27 @@ const STATE = { known_gap: 'Planungslücke', proven_conflict: 'Belegter Konflikt
 const BUTTON = 'min-h-11 rounded-full border border-brand-800 px-4 py-2 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800'
 const PAGE_SIZE = 6
 
-function Finding({ finding }: { finding: AuditFinding }) {
+export function TripAuditFinding({ finding }: { finding: AuditFinding }) {
   const pair = 'comparisonBasis' in finding.evidence ? finding.evidence : null
   return (
     <li className="min-w-0 rounded-xl border border-line-200 p-3">
       <p className="text-xs font-semibold text-ink-700">{STATE[finding.state]}</p>
       <h5 className="mt-1 text-sm font-semibold text-brand-800">{finding.title}</h5>
       <p className="mt-1 text-sm leading-6 text-ink-800">{finding.detail}</p>
-      {finding.refs.itemIds?.length ? <p className="mt-2 text-xs leading-5 text-ink-700">Planpunkte: {finding.refs.itemIds.join(', ')}</p> : null}
+      {finding.items?.length ? (
+        <div className="mt-2 text-xs leading-5 text-ink-700">
+          <p className="font-semibold">Gespeicherte Planpunkte:</p>
+          <ul className="mt-1 space-y-2">
+            {finding.items.map((item, index) => (
+              <li key={index}>
+                <p className="font-semibold">{item.title ?? 'Bezeichnung unbekannt'}</p>
+                <p>Beginn: {item.startsOn ?? 'Datum unbekannt'} · {item.startsAt ?? 'Uhrzeit unbekannt'}</p>
+                <p>Ende: {item.endsOn ?? 'Datum unbekannt'} · {item.endsAt ?? 'Uhrzeit unbekannt'}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {pair ? (
         <p className="mt-2 text-xs leading-5 text-ink-700">
           Vergleichsgrundlage: {{ instant: 'Zeitpunkte', civil_only: 'Ortszeiten ohne bestätigte Zeitzone', estimate: 'Schätzung', none: 'nicht ausreichend' }[pair.comparisonBasis]}.
@@ -51,7 +64,7 @@ function Results({ report }: { report: TripAuditReport }) {
           <p className="mt-1 text-sm leading-6 text-ink-800">{section.detail}</p>
           {shown.some(finding => finding.domain === section.domain) ? (
             <ul className="mt-3 grid min-w-0 gap-2">
-              {shown.filter(finding => finding.domain === section.domain).map(finding => <Finding key={finding.id} finding={finding} />)}
+              {shown.filter(finding => finding.domain === section.domain).map(finding => <TripAuditFinding key={finding.id} finding={finding} />)}
             </ul>
           ) : null}
         </section>
