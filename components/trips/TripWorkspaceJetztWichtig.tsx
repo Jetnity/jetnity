@@ -73,7 +73,7 @@ export default function TripWorkspaceJetztWichtig({
           ) : null}
 
           {sichtbare.length > 0 && (
-            <ul className={cn('grid gap-px overflow-hidden rounded-2xl bg-line-100', attention.leerstand ? 'mt-3' : undefined)}>
+            <ul className={cn('grid min-w-0 grid-cols-1 gap-px overflow-hidden rounded-2xl bg-line-100', attention.leerstand ? 'mt-3' : undefined)}>
               {sichtbare.map((eintrag, index) => (
                 <AttentionZeile
                   key={eintrag.punkt.id}
@@ -126,7 +126,7 @@ function AttentionZeile({
       >
         <Symbol className="h-4 w-4" aria-hidden="true" />
       </span>
-      <span className="min-w-0 flex-1">
+      <span className="min-w-0 max-w-full flex-1 basis-32 [overflow-wrap:anywhere]">
         <span className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-600">
           {EBENE_TEXT[punkt.ebene]}
         </span>
@@ -151,13 +151,13 @@ function AttentionZeile({
 
   if (punkt.aktion) {
     return (
-      <li>
+      <li className="min-w-0">
         <button
           type="button"
           data-attention-punkt={punkt.id}
           data-attention-lage={punkt.lage}
           onClick={() => onAktion(punkt.aktion!)}
-          className="flex min-h-11 w-full items-center gap-3 bg-white px-3 py-3 text-left hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          className="flex min-h-11 w-full min-w-0 max-w-full flex-wrap items-center gap-3 bg-white px-3 py-3 text-left hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-brand-600/15"
         >
           {inhalt}
         </button>
@@ -169,7 +169,7 @@ function AttentionZeile({
     <li
       data-attention-punkt={punkt.id}
       data-attention-lage={punkt.lage}
-      className="flex min-h-11 items-center gap-3 bg-white px-3 py-3"
+      className="flex min-h-11 min-w-0 max-w-full flex-wrap items-center gap-3 bg-white px-3 py-3"
     >
       {inhalt}
     </li>
