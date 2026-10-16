@@ -1,0 +1,6 @@
+{
+  "runtime": "next start",
+  "VERCEL_ENV": "production",
+  "JETNITY_UI_AUDIT": "1",
+  "auditHTTPStatus": 404
+}

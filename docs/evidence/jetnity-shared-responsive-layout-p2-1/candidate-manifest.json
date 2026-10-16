@@ -1,0 +1,26 @@
+{
+  "state": "UNCOMMITTED LOCAL CANDIDATE; no implementation HEAD or Git tree",
+  "seedHead": "e9d92afd3200387ebd5a985f767fbb0a1b8d1140",
+  "files": {
+    "components/layout/PublicNavbar.tsx": {
+      "gitBlob": "5127f49f8ed14f05b73ce0fdcd6a206e38d2ef2e",
+      "sha256": "44a24d7ff999c5d443bc386c53c9cd14e65d0f8852873825c0b9d9f26872994b"
+    },
+    "components/layout/Footer.tsx": {
+      "gitBlob": "f745defc5e515a6ee1648999c6dae2854f491a09",
+      "sha256": "ac8930f43a9e84b0d97cc39b7607882efd9edfb31b37a0d12a856a1bf38b1eb8"
+    },
+    "components/trips/TripWorkspaceJetztWichtig.tsx": {
+      "gitBlob": "9e1ceca2092b1a23b1b334ad0b5c880db65d958a",
+      "sha256": "4102d2d79c1df7aa59fb15f6f09bfc9782ae36c31b843c5f28b68b686ca56823"
+    },
+    "lib/ui-audit/shared-responsive-layout-p2-1/browser.test.ts": {
+      "gitBlob": "ae8ceafbf9fe7137a5298511df67f36446dd43bd",
+      "sha256": "4d95f4f5758187170720ab53ba8208383198c114451e1a5d235bb41c71bd9e59"
+    }
+  },
+  "screenshots": {
+    "before": "next dev element captures; visible development/sticky overlays; horizontal clipping evidence only",
+    "after": "seven actual 320x800 viewport captures at CSS zoom2; coarse pointer asserted before and after every capture; natural vertical cropping, no product CSS overrides"
+  }
+}
