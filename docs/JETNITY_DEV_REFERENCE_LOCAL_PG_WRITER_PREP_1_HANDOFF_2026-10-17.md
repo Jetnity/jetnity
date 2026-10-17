@@ -1,7 +1,15 @@
 # JETNITY — Local Development Reference Import Transport Preparation 1 — HANDOFF
 
 **Date:** 17 October 2026
-**State:** **STOP FOR INDEPENDENT TECHNICAL LEAD R68.** Draft only. No Ready, no merge, no follow-up slice, no live import.
+**State:** **STOP FOR INDEPENDENT TECHNICAL LEAD R70.** Draft only. No Ready, no merge, no follow-up slice, no live import.
+
+## R69 update (native local PostgreSQL protocol proof)
+
+- Task: `docs/JETNITY_DEV_REFERENCE_LOCAL_PG_NATIVE_PROTOCOL_R69_TASK_2026-10-17.md` (blob `e4b25000…`, unchanged). Start head `91d446d0`. Code commit `97e155eb` (tree `69d2deb0…`), then this docs-only commit.
+- New, test-only: `scripts/dev-reference-local-pg-prep-1/nativ.test.ts` and `nativ-psql-umleitung.mjs`. No product source, importer, `package.json`, workflow, migration or old task changed. `SCHREIBEN_FREIGEGEBEN = false` unchanged.
+- Local Mac: no PostgreSQL server binaries, so the native suite is skipped with a `NOT VERIFIED` reason. Direct suite: 116 pass, 0 fail, plus the native suite and the CI-only test skipped. `npm test`: 6,966 tests, 6,953 pass, the same **10 fail** (existing native proofs, missing `initdb`), 3 skipped. **Not a full PASS.** typecheck, lint (0 errors / 146 pre-existing warnings), operating-mode and the five hygiene checks exit 0.
+- GitHub CI run `39075727433` on `97e155eb` (author-observed, **TL R70 verifies independently**): success. 7,052 tests, 7,051 pass, 0 fail, 1 skip (the existing layout audit). The R69 suite ran 13/13 on real psql/postgres 16.15, and the "CI without binaries fails" test passed.
+- Details, design and remaining unverified layers: report §11. Self-check: self-review "R69 self-check".
 
 ## R68 update (CI test gate)
 
@@ -58,6 +66,8 @@ The sections below describe the R66 correction state and remain valid except whe
 ## Exact next step
 
 Independent Technical-Lead R66 R2 review of the exact PR #962 head. Nothing else is started by this writer.
+
+**R69:** superseded by: independent Technical-Lead R70 review of the exact PR #962 head published in the R69 evidence comment. Nothing else is started by this writer.
 
 ## Read order for a new agent
 

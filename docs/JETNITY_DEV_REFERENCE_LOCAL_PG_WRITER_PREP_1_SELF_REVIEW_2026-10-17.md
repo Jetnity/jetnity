@@ -27,6 +27,17 @@
 
 **R68 self-check (not a PASS):** the diff to `package.json` is one line, appending one quoted glob; the two existing globs are unchanged. Counts prove inclusion without loss: +116 tests, +10 suites, +116 passes, same 10 failures. A risk I checked for Linux CI: the trust tests build their fake Cellar inside a fresh temp dir, and the owner/writability walk stops at that fake root, so the sticky, world-writable `/tmp` is never inspected. The tests use injected uids/version readers and never run a real psql. Not checked: the actual CI run.
 
+**R69 self-check (not a PASS):**
+- **Scope:** the diff is two new test-only files plus these three docs. The production writer, `psql.ts`/`sql.ts`/`ablauf.ts`, the importers, `package.json`, workflows and migrations are byte-identical to `91d446d0`.
+- **Weak points I see:**
+  - the TLS field substitution is a deliberate gap, bounded by the native TLS-stop test;
+  - the launcher's argv equality ties the test to `psqlArgumente`, which is intended: a changed production argv fails the test (exit 97) instead of being silently rewritten;
+  - the hand-copied schema can drift (report §11.4);
+  - `before()` failures in CI surface as a suite failure, not a skip.
+- **Not done:** mutation runs against the native suite.
+- **Observed but not independently verified:** the CI result on `97e155eb`.
+- **No hosted contact:** no hosted host, credential, `.env*` or certificate was touched. The only real psql/postgres runs were against the throwaway local cluster in CI.
+
 ## Findings on my own code (for R66 to weigh)
 
 - **F1 (P2) — new tests are outside `npm test`/CI.** They must be run explicitly until the TL decides on the test glob (= R66-F5).

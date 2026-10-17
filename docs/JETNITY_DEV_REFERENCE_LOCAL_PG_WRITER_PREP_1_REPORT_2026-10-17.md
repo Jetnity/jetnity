@@ -278,3 +278,51 @@ Note: `npm test` only globs `lib/**/*.test.ts` and the operating-mode guard test
 - New recurring cost: none. New dependency/service: none.
 - Database: no migration, no schema change, no RLS change. The code expects the existing schema from `20260820110000_airports_referenz.sql` and `20260820120000_places_referenz.sql` and verifies the columns at preflight.
 - Secrets: none read, none added. No `.env*` accessed.
+
+## 11. R69 — native local PostgreSQL protocol proof
+
+Task: `docs/JETNITY_DEV_REFERENCE_LOCAL_PG_NATIVE_PROTOCOL_R69_TASK_2026-10-17.md` (unchanged). Code commit `97e155eb`. Test-only. No product source, importer, `package.json`, workflow, migration, RLS or old task changed. `SCHREIBEN_FREIGEGEBEN = false`.
+
+### 11.1 Design
+
+- **Cluster:** reuses `startLocalProofCluster()` / `findLocalPgBins()` from `scripts/db/official-truth-integrated-pilot-1/local-cluster.ts`, unchanged. That gives its own `mkdtemp` root, a 0700 Unix socket, `listen_addresses=''`, `--auth-host=reject`, trust only on the local socket, and `stop()` that removes only its own root, and only after a verified stop.
+- **Production path under test, unchanged:** `sitzungStarten` (psql stdin, `\echo` markers, status-line filter, `sqlZulassen`), every SQL constant and Zod schema in `sql.ts`, and `ablaufen` (lock, preflight, anon gate, confirmations, batches, read-back binding, final anon check).
+- **Test-only launcher** `nativ-psql-umleitung.mjs`, behind a generated 0700 `/bin/sh` wrapper that is handed over as the "trusted psql":
+  - it exits 97 unless argv equals the production `psqlArgumente(CA)` exactly;
+  - it then replaces only `--dbname=` (with the cluster socket) and drops `--password` (trust auth; the prompt would need `/dev/tty`);
+  - it refuses if any connection-override env name is present, or if the resulting argv names supabase, sslrootcert, hostaddr or a URL;
+  - it logs argv and env key names for the test to assert.
+
+  The writer target and TLS are not overridable in product code.
+- **TLS:** over a Unix socket `pg_stat_ssl.ssl` is always false, and TCP is forbidden. The full-run tests wrap the session and replace only the `ssl` field of the preflight answer, after asserting that the native value is `false` (`ersetzt = 1`). A separate test runs without the substitution and proves the real TLS stop: nothing written, no confirmation.
+- **Schema:** `public.airports` and `public.places` are created in the throwaway cluster from the columns, checks, unique indexes, RLS, policies and grants of the two reference migrations. They are hand-copied, without the trgm indexes and the `trips` foreign keys (see 11.4). The roles `anon`, `authenticated` and `postgres` are synthetic.
+- **Data:** 320 synthetic airports (the 11 required codes plus `Q..` codes; ZRH as Zurich/CH) and 310 synthetic GeoNames places (Japan, Zürich, then `Ort i`). Nothing comes from the real sources.
+
+### 11.2 Scenarios (13 subtests)
+
+| Area | Scenarios |
+|---|---|
+| Isolation | Real versions ≥ 16; no TCP (`listen_addresses` empty, `inet_server_addr()` null); private 0700 root and socket. |
+| Protocol | Advisory lock (a second session is refused); Zod schemas on real JSON; status-tag noise; `sqlZulassen` rejection; idempotent upsert; ICAO release; launcher argv/env assertions. |
+| TLS gate | Without the substitution, the run stops at TLS. |
+| Full run | Combined run with 3 airport and 5 Places batches; row counts; full JSON equality; Japan, Zürich and ZRH; airports written before Places (`updated_at` order); lock freed afterwards. |
+| Anon gate | Stops before any confirmation when the select grant is missing, the anon policy is missing, or RLS is off. Anon probe: a missing grant gives psql exit code 3 with a public-safe message; a missing policy gives a silent 0. |
+| Batch errors | A constraint error in Places batch 2 or airport batch 2 rolls back only that batch. No retry, public-safe journal. |
+| Foreign writer | An extra row, or the same count with a different code, after the airport batches stops the run before Places. |
+| Cleanup | The cluster's own postmaster is stopped (ESRCH) and the root is removed. |
+
+### 11.3 Results
+
+- **Local Mac:** no server binaries, so the suite is skipped with a `NOT VERIFIED` reason. A CI-only test (`CI without binaries fails instead of skipping`) is skipped locally.
+  - Direct suite: 116 pass, 0 fail, plus those 2 skips.
+  - `npm test`: 6,966 tests, 6,953 pass, 10 fail (the same existing native proofs, missing `initdb`), 3 skipped. **Not a full PASS.**
+  - typecheck, lint, operating-mode and the five hygiene checks: exit 0.
+- **GitHub CI run `39075727433`** on `97e155eb` (`ubuntu-latest`, psql/postgres 16.15; author-observed, independent verification is TL R70): success. 7,052 tests, 7,051 pass, 0 fail, 1 skip (the existing layout audit). R69: 13/13, plus the CI-only test passing. Compared with R68 CI that is +14 tests and no new skip.
+
+### 11.4 Still NOT VERIFIED
+
+- TLS `verify-full` against the official CA, and the masked password prompt on `/dev/tty`.
+- The real Supabase server: version, roles, `pg_stat_ssl`, pooler behaviour and the real migration-built schema with the trgm indexes and `trips` foreign keys.
+- The Owner's client: CI proves the protocol with psql 16.15; the procedure uses Homebrew libpq 18.x psql.
+- Real scale (≈125k rows, ≈850 batches) against the 120 s statement and idle timeouts.
+- Proactive finding **P3:** the test schema is a hand copy and can drift from the migrations. Possible follow-up: build it from the migration files (which needs `pg_trgm` and a `trips` stub). TL decision; not done here.
