@@ -166,6 +166,8 @@ No psql is on `PATH` here. A keg-only Homebrew `libpq` 18.6 exists at `/opt/home
 
 ### 6.0 Required gate command (R66-F5)
 
+**R68 update:** under the supplemental task `docs/JETNITY_DEV_REFERENCE_LOCAL_PG_CI_GATES_R68_TASK_2026-10-17.md`, the `package.json` `test` script now also globs `"scripts/dev-reference-local-pg-prep-1/*.test.ts"`, so `npm test` and the unchanged CI workflow run these tests. Local `npm test`: 6,965 tests, 6,953 pass, 10 fail (the same existing native-PostgreSQL proofs), 2 skipped — not a full PASS. The exact-head GitHub CI result is for the TL to verify. The text below describes the state before R68; the direct command remains valid for running the suite on its own.
+
 These tests are **not** run by `npm test` or CI (`package.json`/CI unchanged by task rule). The R66 R2 gate must run, from the repo root at the exact review head with Node 22 and `npm ci` done:
 
 ```bash

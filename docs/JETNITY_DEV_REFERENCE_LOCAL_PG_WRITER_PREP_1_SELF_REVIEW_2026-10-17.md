@@ -23,7 +23,9 @@
 | R66-F2 | Libpq-Cellar realpath + owner + writability + version gate; branded type; fake only via explicit harness cast; negative tests prove untrusted paths are never executed. | Trust anchor is the Owner's account (report §4.3a); no binary hash pin. |
 | R66-F3 | Basenames + SHA-256; `meldung` public-safe; exact key set enforced by a test with private/secret markers. | The private terminal still shows stderr on failure; procedure says not to paste it. |
 | R66-F4 | Read-only anon catalog check + anon smoke read before the first confirmation; 7 denial variants → 0 batches. Final anon check kept. | Empty-table smoke read cannot prove a row-filtering policy; the final check still covers that, after the writes. |
-| R66-F5 | Documented: required command + expected summary (report §6.0). | Still outside `npm test`/CI. |
+| R66-F5 | Documented: required command + expected summary (report §6.0). **R68:** added to the `npm test` glob (only that script string changed). | Exact-head GitHub CI not verified by the author. |
+
+**R68 self-check (not a PASS):** the diff to `package.json` is one line, appending one quoted glob; the two existing globs are unchanged. Counts prove inclusion without loss: +116 tests, +10 suites, +116 passes, same 10 failures. A risk I checked for Linux CI: the trust tests build their fake Cellar inside a fresh temp dir, and the owner/writability walk stops at that fake root, so the sticky, world-writable `/tmp` is never inspected. The tests use injected uids/version readers and never run a real psql. Not checked: the actual CI run.
 
 ## Findings on my own code (for R66 to weigh)
 

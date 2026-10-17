@@ -1,7 +1,18 @@
 # JETNITY — Local Development Reference Import Transport Preparation 1 — HANDOFF
 
 **Date:** 17 October 2026
-**State:** **STOP FOR INDEPENDENT TECHNICAL LEAD R66 R2.** Draft only. No Ready, no merge, no follow-up slice, no live import.
+**State:** **STOP FOR INDEPENDENT TECHNICAL LEAD R68.** Draft only. No Ready, no merge, no follow-up slice, no live import.
+
+## R68 update (CI test gate)
+
+- Task: `docs/JETNITY_DEV_REFERENCE_LOCAL_PG_CI_GATES_R68_TASK_2026-10-17.md` (TL-seeded on this branch; unchanged). R67 code-only signoff and R66 thread resolution are recorded there.
+- Only change in code/config: the existing `package.json` `scripts.test` string gains `"scripts/dev-reference-local-pg-prep-1/*.test.ts"` after the unchanged `"lib/**/*.test.ts"` and `"scripts/operating-mode-guard.test.mjs"`. No other script, dependency, lockfile, workflow, guard or source file changed.
+- Local Mac (offline): direct suite 116/0. `npm test` 6,965 tests / 831 suites: 6,953 pass, **10 fail**, 2 skipped; that is exactly the previous 6,849 / 821 plus the 116 tests in 10 suites, and the same 10 existing native-PostgreSQL proofs that fail on the missing Linux `initdb` path. **Not a full PASS.** typecheck exit 0; lint 0 errors / 146 pre-existing warnings; `check:operating-mode`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` exit 0; `git diff --check` clean.
+- `.github/workflows/ci.yml` (unchanged) runs `npm test` on `ubuntu-latest` / Node 22, so CI now runs the 116 tests. **Exact-head GitHub CI result: NOT VERIFIED by the author;** TL R68 checks it.
+- R66-F5 is closed by this change if the exact-head CI passes.
+- `SCHREIBEN_FREIGEGEBEN = false` unchanged. No DB connection, no SQL, no import, no secrets.
+
+The sections below describe the R66 correction state and remain valid except where this R68 update supersedes them.
 **Writer:** `Jetnity Local Development Reference Import Transport Prep 1 — Cursor Generation 1` (Owner's local native Cursor IDE; model Claude Opus 5.5, "High" as selected by the Owner). The R66 correction was made by this same logical writer/session.
 
 ## Where things stand
