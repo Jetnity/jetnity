@@ -1,0 +1,44 @@
+{
+  "schema": "jetnity-dev-places-search-qa-unblock-1/d0-bounded-get/v1",
+  "recordedAt": "2026-10-17T09:48:00Z",
+  "author": "Jetnity Development Places Search QA Unblock 1 — Cursor Generation 1",
+  "session": "bc-284c2472-d0a5-4d4c-adb6-167661010453",
+  "model": "claude-opus-5-5-high",
+  "codeHead": "40220e9ab10db8dae00717c4b4be655a165ee127",
+  "server": {
+    "kind": "fresh isolated next dev, detached git worktree at codeHead",
+    "bind": "127.0.0.1:3107",
+    "processEnvNames": ["HOME", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_TELEMETRY_DISABLED", "PATH"],
+    "absentFromProcessEnv": ["SUPABASE_ACCESS_TOKEN", "SUPABASE_PROJECT_REF", "SUPABASE_SERVICE_ROLE_KEY", "any .env file"],
+    "supabaseTarget": "NEXT_PUBLIC_SUPABASE_URL host ref equals VM secret SUPABASE_PROJECT_REF, documented in ARCHITECTURE.md as the Development branch; ref value not recorded",
+    "databaseRole": "anon (no cookies, route handler anon client)"
+  },
+  "requests": [
+    {
+      "case": "ziel-Japan",
+      "request": "GET /api/search/places?q=Japan&rolle=ziel",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "bodyBytes": 2,
+      "isArray": true,
+      "optionCount": 0,
+      "errorFlag": false,
+      "postgrestReadsInRoute": ["name prefix", "country exact alias", "keyword substring"]
+    },
+    {
+      "case": "abreise-Zuerich",
+      "request": "GET /api/search/places?q=Z%C3%BCrich&rolle=abreise",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "bodyBytes": 2,
+      "isArray": true,
+      "optionCount": 0,
+      "errorFlag": false,
+      "postgrestReadsInRoute": ["name prefix", "airport name prefix", "keyword substring"]
+    }
+  ],
+  "notCaptured": ["response headers beyond the three listed", "server logs", "tokens", "personal data", "any other query"],
+  "interpretation": "Every hosted read in the route chain succeeded and returned zero rows visible to anon. This does not prove the whole table is empty."
+}
