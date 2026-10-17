@@ -8,7 +8,7 @@
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { createReadStream, existsSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import { createInterface } from 'node:readline'
 import type { Readable } from 'node:stream'
 
@@ -22,12 +22,17 @@ import {
   type GeoNamesZeile,
 } from '@/lib/places/importieren'
 
+// Nur Dateiname und Prüfsumme: das Journal darf keine lokalen Pfade tragen.
 export type Herkunft = { datei: string; sha256: string }
 
 async function pruefsumme(pfad: string): Promise<string> {
   const hash = createHash('sha256')
   for await (const teil of createReadStream(pfad)) hash.update(teil as Buffer)
   return hash.digest('hex')
+}
+
+async function herkunft(pfad: string): Promise<Herkunft> {
+  return { datei: basename(pfad), sha256: await pruefsumme(pfad) }
 }
 
 export async function flughaefenLesen(verzeichnis: string): Promise<{
@@ -46,8 +51,7 @@ export async function flughaefenLesen(verzeichnis: string): Promise<{
     countriesCsv: countriesCsv ?? '',
     regionsCsv: regionsCsv ?? '',
   })
-  const herkunft = await Promise.all(pfade.map(async (datei) => ({ datei, sha256: await pruefsumme(datei) })))
-  return { zeilen, verworfen, herkunft }
+  return { zeilen, verworfen, herkunft: await Promise.all(pfade.map(herkunft)) }
 }
 
 async function relevanteZeilen(strom: Readable): Promise<GeoNamesZeile[]> {
@@ -91,8 +95,5 @@ export async function orteLesen(verzeichnis: string): Promise<{
   const zeilen = zip ? await ausZip(zipPfad) : await relevanteZeilen(createReadStream(txtPfad))
   const laender = laenderAusCountryInfo(readFileSync(landPfad, 'utf8'))
   const { orte, verworfen } = orteAusGeoNames({ zeilen, laender })
-  const herkunft = await Promise.all(
-    [landPfad, quelle].map(async (datei) => ({ datei, sha256: await pruefsumme(datei) })),
-  )
-  return { orte, verworfen, herkunft }
+  return { orte, verworfen, herkunft: await Promise.all([landPfad, quelle].map(herkunft)) }
 }

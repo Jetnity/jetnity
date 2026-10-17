@@ -1,5 +1,7 @@
 // Test-Double für psql. Öffnet keine Verbindung und keinen Socket.
 // Aufruf über einen Wrapper: node fake-psql.mjs <config.json> <psql-argv...>
+// Nur für Offline-Tests, die sitzungStarten direkt injizieren. psqlPfadPruefen
+// lässt weder diese Datei noch einen Wrapper darum zu.
 //
 // Protokolliert argv, Umgebung und jeden SQL-Block nach config.log und
 // antwortet nach dem Kennungskommentar "-- jetnity:<art>".
@@ -30,18 +32,28 @@ function antworten(sql) {
   log({ ereignis: 'sql', art, sql })
 
   if (config.muellBei === art) return ['das ist kein json']
+  if (config.fehlerBeiArt === art) {
+    process.stderr.write(`psql:<stdin>: ERROR:  ${config.stderrText ?? `simulierter Fehler bei ${art}`}\n`)
+    process.exit(3)
+  }
 
   switch (art) {
     case 'sitzung':
       return [JSON.stringify({ sperre: config.sperre ?? true })]
     case 'vorpruefung':
       return [JSON.stringify(config.vorpruefung)]
+    case 'anon-rechte':
+      return [JSON.stringify({ anonSelect: true, rls: true, anonPolicy: true, ...(config.anonRechte ?? {}) })]
+    case 'anon-leseprobe':
+      return [JSON.stringify({ rolle: 'anon', orte: 0, ...(config.anonLeseprobe ?? {}) })]
     case 'stapel': {
       const ziel = kopf[2]
       const nummer = Number(kopf[3])
       const n = Number(kopf[4])
       if (config.fehlerBei && config.fehlerBei.art === ziel && config.fehlerBei.nummer === nummer) {
-        process.stderr.write(`psql:<stdin>:${nummer}: ERROR:  simulierter Fehler in Stapel ${nummer}\n`)
+        process.stderr.write(
+          `psql:<stdin>:${nummer}: ERROR:  ${config.stderrText ?? `simulierter Fehler in Stapel ${nummer}`}\n`,
+        )
         process.exit(3)
       }
       if (config.lugeBei && config.lugeBei.art === ziel && config.lugeBei.nummer === nummer) {

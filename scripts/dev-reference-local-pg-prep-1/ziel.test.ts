@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { chmodSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { chmodSync, mkdirSync, mkdtempSync, realpathSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { describe, test } from 'node:test'
@@ -7,6 +7,7 @@ import { describe, test } from 'node:test'
 import { psqlArgumente, psqlUmgebung, verbindungsText } from './psql'
 import {
   PRODUCTION_REF,
+  PSQL_VERTRAUEN,
   ZIEL,
   argumenteLesen,
   caPfadPruefen,
@@ -16,6 +17,7 @@ import {
   terminalPruefen,
   umgebungPruefen,
   zielIstFest,
+  type PsqlVertrauen,
   type SchreibAuftrag,
   type Terminal,
   type Ziel,
@@ -141,6 +143,20 @@ describe('Argumente', () => {
     assert.throws(() => argumenteLesen(conninfo), /conninfo/)
   })
 
+  for (const stufe of ['orte', 'flughaefen', 'ORTE', 'alles']) {
+    test(`getrennte oder unbekannte Stufe abgelehnt: ${stufe}`, () => {
+      const args = schreibArgs().map((a) => (a === 'beide' ? stufe : a))
+      assert.throws(() => argumenteLesen(args), /--stufe muss beide sein/)
+    })
+  }
+
+  test('verbundener Lauf braucht beide Quellen', () => {
+    const ohneFlug = schreibArgs().filter((_, i, a) => a[i] !== '--quelle-flughaefen' && a[i - 1] !== '--quelle-flughaefen')
+    assert.throws(() => argumenteLesen(ohneFlug), /--quelle-flughaefen fehlt/)
+    const ohneOrte = schreibArgs().filter((_, i, a) => a[i] !== '--quelle-orte' && a[i - 1] !== '--quelle-orte')
+    assert.throws(() => argumenteLesen(ohneOrte), /--quelle-orte fehlt/)
+  })
+
   test('unbekannter Modus und fehlende Pflichtwerte schlagen fehl', () => {
     assert.throws(() => argumenteLesen(['--modus', 'produktion']), /kennt nur/)
     assert.throws(() => argumenteLesen(['--modus', 'schreiben-entwicklung-psql', '--stufe', 'beide']), /--psql/)
@@ -201,27 +217,130 @@ describe('Dateien', () => {
     assert.equal(caPfadPruefen(gut), gut)
   })
 
-  test('psql aus dem Repository oder nicht ausführbar wird abgelehnt', () => {
-    const imRepo = join(REPO, 'scripts', 'dev-reference-local-pg-prep-1', 'fake-psql.mjs')
-    assert.throws(() => psqlPfadPruefen(imRepo, REPO), /ausführbare Datei|Repository/)
-    const dir = tmp()
-    const datei = join(dir, 'psql')
-    writeFileSync(datei, '#!/bin/sh\n')
-    assert.throws(() => psqlPfadPruefen(datei, REPO), /ausführbare Datei/)
-    chmodSync(datei, 0o755)
-    assert.ok(psqlPfadPruefen(datei, REPO).endsWith('/psql'))
-    assert.throws(() => psqlPfadPruefen(join(dir, 'nicht-da'), REPO), /existiert nicht/)
-    assert.throws(() => psqlPfadPruefen(datei, dir), /nicht aus dem Repository/)
-  })
-
   test('Journal im Repository wird abgelehnt', () => {
     assert.throws(() => journalPfadPruefen(join(REPO, 'journal.json'), REPO), /nicht im Repository/)
     assert.equal(journalPfadPruefen('/Users/owner/j.json', REPO), '/Users/owner/j.json')
+  })
+
+  test('schreibauftragPruefen lehnt im echten Modus ein Test-Double ab, auch mit sauberer Umgebung und TTY', () => {
+    const dir = tmp()
+    const wrapper = join(dir, 'psql')
+    writeFileSync(wrapper, `#!/bin/sh\nexec node ${join(REPO, 'scripts/dev-reference-local-pg-prep-1/fake-psql.mjs')} "$@"\n`)
+    chmodSync(wrapper, 0o755)
+    const ca = join(dir, 'ca.crt')
+    writeFileSync(ca, ZERTIFIKAT)
+    const auftrag = { ...(argumenteLesen(schreibArgs()) as SchreibAuftrag), psql: wrapper, ca, journal: join(dir, 'j.json') }
+    assert.throws(() => schreibauftragPruefen(auftrag, ['HOME', 'PATH'], TTY, REPO), /kein vertrauenswürdiges Homebrew-libpq-psql/)
   })
 
   test('schreibauftragPruefen prüft Umgebung und TTY vor jeder Datei', () => {
     const auftrag = argumenteLesen(schreibArgs()) as SchreibAuftrag
     assert.throws(() => schreibauftragPruefen(auftrag, ['PGPASSFILE'], TTY, REPO), /PGPASSFILE/)
     assert.throws(() => schreibauftragPruefen(auftrag, [], { ...TTY, stdinTty: false }, REPO), /interaktives/)
+  })
+})
+
+describe('vertrauenswürdiges psql (nur Homebrew libpq)', () => {
+  const UID = process.getuid?.() ?? 0
+
+  function cellar(version = '18.6', formel = 'libpq') {
+    const basis = realpathSync(tmp())
+    const wurzel = join(basis, 'Cellar', 'libpq')
+    const bin = join(basis, 'Cellar', formel, version, 'bin')
+    mkdirSync(bin, { recursive: true, mode: 0o755 })
+    const psql = join(bin, 'psql')
+    writeFileSync(psql, '#!/bin/sh\necho nie ausgeführt\n')
+    chmodSync(psql, 0o555)
+    const versionsAufrufe: string[] = []
+    const vertrauen: PsqlVertrauen = {
+      libpqWurzeln: [wurzel],
+      erlaubteUids: [UID],
+      versionLesen: (pfad) => {
+        versionsAufrufe.push(pfad)
+        return `psql (PostgreSQL) ${version.split('_')[0]}`
+      },
+    }
+    return { basis, wurzel, bin, psql, vertrauen, versionsAufrufe }
+  }
+
+  test('Standard-Vertrauen ist exakt das Homebrew-libpq-Cellar und eingefroren', () => {
+    assert.deepEqual([...PSQL_VERTRAUEN.libpqWurzeln], ['/opt/homebrew/Cellar/libpq', '/usr/local/Cellar/libpq'])
+    assert.ok(Object.isFrozen(PSQL_VERTRAUEN) && Object.isFrozen(PSQL_VERTRAUEN.libpqWurzeln))
+    assert.ok(PSQL_VERTRAUEN.erlaubteUids.every((uid) => uid === UID || uid === 0))
+  })
+
+  test('Cellar-Binary unter libpq mit passender Version wird angenommen, auch über einen opt-Symlink', () => {
+    const c = cellar('18.6_1')
+    assert.equal(psqlPfadPruefen(c.psql, REPO, c.vertrauen), c.psql)
+    const opt = join(c.basis, 'opt-libpq-psql')
+    symlinkSync(c.psql, opt)
+    assert.equal(psqlPfadPruefen(opt, REPO, c.vertrauen), c.psql)
+  })
+
+  test('Standard-Vertrauen lehnt beliebige Pfade ab: /tmp-Wrapper, Fake im Repo, nachgebautes Cellar', () => {
+    const dir = tmp()
+    const wrapper = join(dir, 'psql')
+    writeFileSync(wrapper, '#!/bin/sh\n')
+    chmodSync(wrapper, 0o755)
+    assert.throws(() => psqlPfadPruefen(wrapper, REPO), /kein vertrauenswürdiges Homebrew-libpq-psql/)
+    const fake = join(REPO, 'scripts/dev-reference-local-pg-prep-1/fake-psql.mjs')
+    assert.throws(() => psqlPfadPruefen(fake, REPO), /Repository/)
+    const c = cellar()
+    assert.throws(() => psqlPfadPruefen(c.psql, REPO), /kein vertrauenswürdiges/, 'Cellar-Nachbau ausserhalb /opt/homebrew')
+    const nachbau = join(c.basis, 'opt', 'homebrew', 'Cellar', 'libpq', '18.6', 'bin')
+    mkdirSync(nachbau, { recursive: true })
+    writeFileSync(join(nachbau, 'psql'), '#!/bin/sh\n')
+    chmodSync(join(nachbau, 'psql'), 0o555)
+    assert.throws(() => psqlPfadPruefen(join(nachbau, 'psql'), REPO), /kein vertrauenswürdiges/, 'Präfix ist verankert')
+
+    const ausgefuehrt: string[] = []
+    const spion: PsqlVertrauen = { ...PSQL_VERTRAUEN, versionLesen: (pfad) => (ausgefuehrt.push(pfad), '') }
+    for (const pfad of [wrapper, c.psql, join(nachbau, 'psql')]) {
+      assert.throws(() => psqlPfadPruefen(pfad, REPO, spion), /kein vertrauenswürdiges/)
+    }
+    assert.deepEqual(ausgefuehrt, [], 'ein nicht vertrauenswürdiges Binary wird nie ausgeführt')
+  })
+
+  test('postgresql@18-Formel oder Datei neben bin wird nicht als libpq angenommen', () => {
+    const c = cellar('18.6', 'postgresql@18')
+    assert.throws(() => psqlPfadPruefen(c.psql, REPO, c.vertrauen), /kein vertrauenswürdiges/)
+    const d = cellar()
+    const daneben = join(d.wurzel, '18.6', 'psql')
+    writeFileSync(daneben, '#!/bin/sh\n')
+    chmodSync(daneben, 0o555)
+    assert.throws(() => psqlPfadPruefen(daneben, REPO, d.vertrauen), /kein vertrauenswürdiges/)
+  })
+
+  test('für Gruppe/andere beschreibbare Datei oder Verzeichnis wird abgelehnt', () => {
+    const datei = cellar()
+    chmodSync(datei.psql, 0o575)
+    assert.throws(() => psqlPfadPruefen(datei.psql, REPO, datei.vertrauen), /beschreibbar/)
+    const verzeichnis = cellar()
+    chmodSync(join(verzeichnis.wurzel, '18.6'), 0o777)
+    assert.throws(() => psqlPfadPruefen(verzeichnis.psql, REPO, verzeichnis.vertrauen), /beschreibbar/)
+    assert.equal(verzeichnis.versionsAufrufe.length, 0)
+  })
+
+  test('fremder Eigentümer, nicht ausführbar, falsche oder zu alte Version werden abgelehnt', () => {
+    const fremd = cellar()
+    assert.throws(
+      () => psqlPfadPruefen(fremd.psql, REPO, { ...fremd.vertrauen, erlaubteUids: [UID + 4242] }),
+      /weder dir noch root/,
+    )
+    const starr = cellar()
+    chmodSync(starr.psql, 0o444)
+    assert.throws(() => psqlPfadPruefen(starr.psql, REPO, starr.vertrauen), /keine ausführbare Datei/)
+    const anders = cellar()
+    assert.throws(
+      () => psqlPfadPruefen(anders.psql, REPO, { ...anders.vertrauen, versionLesen: () => 'psql (PostgreSQL) 17.2' }),
+      /passt nicht/,
+    )
+    const unklar = cellar()
+    assert.throws(
+      () => psqlPfadPruefen(unklar.psql, REPO, { ...unklar.vertrauen, versionLesen: () => 'evil 1.0' }),
+      /keine erkennbare Version/,
+    )
+    const alt = cellar('15.8')
+    assert.throws(() => psqlPfadPruefen(alt.psql, REPO, alt.vertrauen), /älter als 16/)
   })
 })

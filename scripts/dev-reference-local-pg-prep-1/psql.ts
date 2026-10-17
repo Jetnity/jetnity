@@ -20,7 +20,7 @@ import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 
 import { sqlZulassen } from './sql'
-import { ZIEL, zielIstFest, type Ziel } from './ziel'
+import { ZIEL, zielIstFest, type VertrauenswuerdigesPsql, type Ziel } from './ziel'
 
 export const ANWENDUNG = 'jetnity_dev_reference_import_prep_1'
 
@@ -72,10 +72,13 @@ export type Sitzung = {
   beenden(): Promise<number | null>
 }
 
+// message geht nur an das private lokale Terminal und darf einen stderr-Auszug
+// tragen. oeffentlich ist ohne stderr und ohne Pfade und allein fürs Journal.
 export class SitzungsFehler extends Error {
   constructor(
     meldung: string,
     readonly exitCode: number | null,
+    readonly oeffentlich: string = meldung,
   ) {
     super(meldung)
   }
@@ -92,7 +95,7 @@ function stderrAuszug(zeilen: string[]): string {
     .join(' | ')
 }
 
-export function sitzungStarten(psqlPfad: string, caPfad: string): Sitzung {
+export function sitzungStarten(psqlPfad: VertrauenswuerdigesPsql, caPfad: string): Sitzung {
   const leeresHome = mkdtempSync(join(tmpdir(), 'jetnity-devref-psql-'))
   const marke = `__JETNITY_DEVREF_${randomBytes(12).toString('hex')}__`
   const kind: ChildProcessWithoutNullStreams = spawn(psqlPfad, psqlArgumente(caPfad), {
@@ -117,7 +120,11 @@ export function sitzungStarten(psqlPfad: string, caPfad: string): Sitzung {
       rmSync(leeresHome, { recursive: true, force: true })
       if (wartend) {
         wartend.fehler(
-          new SitzungsFehler(`psql beendet (Code ${code}). ${stderrAuszug(stderr)}`.trim(), code),
+          new SitzungsFehler(
+            `psql beendet (Code ${code}). ${stderrAuszug(stderr)}`.trim(),
+            code,
+            `psql beendet (Code ${code}).`,
+          ),
         )
         wartend = null
       }
@@ -125,7 +132,7 @@ export function sitzungStarten(psqlPfad: string, caPfad: string): Sitzung {
     })
     kind.on('error', (err) => {
       if (wartend) {
-        wartend.fehler(new SitzungsFehler(`psql nicht startbar: ${err.message}`, null))
+        wartend.fehler(new SitzungsFehler(`psql nicht startbar: ${err.message}`, null, 'psql nicht startbar.'))
         wartend = null
       }
     })

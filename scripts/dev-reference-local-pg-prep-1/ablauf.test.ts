@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { chmodSync, copyFileSync, existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { describe, test } from 'node:test'
@@ -8,10 +8,11 @@ import { describe, test } from 'node:test'
 import type { FlughafenImportZeile } from '@/lib/airports/importieren'
 import type { Ort } from '@/lib/places/domain'
 
-import { ablaufen, type Eingaben, type Grenzen } from './ablauf'
-import { psqlArgumente, sitzungStarten } from './psql'
+import { ablaufen, oeffentlicheMeldung, type Eingaben, type Grenzen } from './ablauf'
+import { SitzungsFehler, psqlArgumente, sitzungStarten } from './psql'
+import { flughaefenLesen, orteLesen } from './quelle'
 import { FLUGHAFEN_BEISPIELE, FLUGHAFEN_SPALTEN, ORT_SPALTEN, STAPEL } from './sql'
-import { ZIEL } from './ziel'
+import { ZIEL, type VertrauenswuerdigesPsql } from './ziel'
 
 const REPO = resolve(process.cwd())
 const HIER = join(REPO, 'scripts/dev-reference-local-pg-prep-1')
@@ -78,7 +79,8 @@ function aufbau(config: FakeConfig = {}) {
       existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n').filter(Boolean).map((z) => JSON.parse(z) as LogEintrag) : [],
     journalLesen: () => JSON.parse(readFileSync(journal, 'utf8')) as Record<string, unknown> & { stapelFertig: { flughaefen: number; orte: number } },
     abh: (antworten: string[] = [ZIEL.projektRef, 'ORTE']) => ({
-      sitzungStarten: () => sitzungStarten(psql, ca),
+      // Nur hier: das Test-Double wird direkt injiziert, nie über psqlPfadPruefen.
+      sitzungStarten: () => sitzungStarten(psql as VertrauenswuerdigesPsql, ca),
       bestaetigen: async (frage: string) => {
         fragen.push(frage)
         return antworten.shift() ?? ''
@@ -90,8 +92,8 @@ function aufbau(config: FakeConfig = {}) {
   }
 }
 
-function eingaben(stufe: Eingaben['stufe'], f = 20, o = 20): Eingaben {
-  return { stufe, flughaefen: stufe === 'orte' ? null : flughaefen(f), geonamesOrte: stufe === 'flughaefen' ? null : geonames(o), herkunft: [] }
+function eingaben(f = 20, o = 20): Eingaben {
+  return { flughaefen: flughaefen(f), geonamesOrte: geonames(o), herkunft: [] }
 }
 
 function stapelSql(eintraege: LogEintrag[], art?: 'flughaefen' | 'orte'): LogEintrag[] {
@@ -102,7 +104,7 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
   test('erfolgreicher Lauf: Flughäfen zuerst, dann Orte, genau ein psql-Start mit festem argv', async () => {
     const f = flughaefen(320)
     const t = aufbau({ flughaefen: flughafenAusDb(f) })
-    const e = { ...eingaben('beide'), flughaefen: f, geonamesOrte: geonames(310) }
+    const e = { ...eingaben(), flughaefen: f, geonamesOrte: geonames(310) }
     await ablaufen(e, t.abh())
 
     const log = t.eintraege()
@@ -116,7 +118,8 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
     const ersterOrt = log.findIndex((x) => x.sql?.startsWith('-- jetnity:stapel orte '))
     const letzterFlughafen = log.findLastIndex((x) => x.sql?.startsWith('-- jetnity:stapel flughaefen '))
     assert.ok(letzterFlughafen < ersterOrt, 'Flughäfen vollständig vor dem ersten Ort')
-    assert.deepEqual(arten.slice(0, 2), ['sitzung', 'vorpruefung'])
+    assert.deepEqual(arten.slice(0, 5), ['sitzung', 'vorpruefung', 'anon-rechte', 'anon-leseprobe', 'stapel'])
+    assert.ok(arten.indexOf('flughaefen-lesen') < log.findIndex((x) => x.sql?.startsWith('-- jetnity:stapel orte ')))
     assert.ok(arten.indexOf('flughaefen-pruefen') < arten.indexOf('flughaefen-lesen'))
     assert.equal(arten.at(-1), 'orte-pruefen')
     assert.equal(stapelSql(log, 'flughaefen').length, Math.ceil(320 / STAPEL))
@@ -136,7 +139,7 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
 
   test('Advisory Lock nicht erhalten (paralleler Writer): STOP vor jeder Vorprüfung', async () => {
     const t = aufbau({ sperre: false })
-    await assert.rejects(ablaufen(eingaben('beide'), t.abh()), /Advisory Lock/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /Advisory Lock/)
     assert.deepEqual(t.eintraege().filter((x) => x.ereignis === 'sql').map((x) => x.art), ['sitzung'])
     assert.equal(t.journalLesen().status, 'abgebrochen')
   })
@@ -152,7 +155,7 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
   ] as const) {
     test(`Vorprüfung stoppt: ${name} – kein Stapel gesendet, keine Bestätigung gefragt`, async () => {
       const t = aufbau({ vorpruefung: { ...VORPRUEFUNG, ...abweichung } })
-      await assert.rejects(ablaufen(eingaben('beide'), t.abh()), muster)
+      await assert.rejects(ablaufen(eingaben(), t.abh()), muster)
       assert.equal(stapelSql(t.eintraege()).length, 0)
       assert.equal(t.fragen.length, 0)
     })
@@ -160,26 +163,26 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
 
   test('Vorprüfung mit zusätzlichem Feld (unerwartete Ausgabe) wird abgelehnt', async () => {
     const t = aufbau({ vorpruefung: { ...VORPRUEFUNG, extra: 1 } })
-    await assert.rejects(ablaufen(eingaben('beide'), t.abh()), /erwartete Form/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /erwartete Form/)
     assert.equal(stapelSql(t.eintraege()).length, 0)
   })
 
   test('fehlende Owner-Bestätigung: nichts geschrieben', async () => {
     const t = aufbau()
-    await assert.rejects(ablaufen(eingaben('beide'), t.abh(['yes'])), /Owner-Bestätigung fehlt/)
+    await assert.rejects(ablaufen(eingaben(), t.abh(['yes'])), /Owner-Bestätigung fehlt/)
     assert.equal(stapelSql(t.eintraege()).length, 0)
     assert.equal(t.journalLesen().status, 'abgebrochen')
   })
 
   test('Bestätigung mit Production-Ref statt Development-Ref: nichts geschrieben', async () => {
     const t = aufbau()
-    await assert.rejects(ablaufen(eingaben('beide'), t.abh(['qscbgcdmivbbnzrcyegn'])), /Owner-Bestätigung/)
+    await assert.rejects(ablaufen(eingaben(), t.abh(['qscbgcdmivbbnzrcyegn'])), /Owner-Bestätigung/)
     assert.equal(stapelSql(t.eintraege()).length, 0)
   })
 
   test('kaputte Stapelausgabe: STOP, Journal nennt Stufe und fertige Stapel', async () => {
     const t = aufbau({ muellBei: 'stapel' })
-    await assert.rejects(ablaufen(eingaben('flughaefen'), t.abh()), /kein JSON/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /kein JSON/)
     const journal = t.journalLesen()
     assert.equal(journal.status, 'abgebrochen')
     assert.equal(journal.aktuelleStufe, 'flughaefen')
@@ -188,7 +191,7 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
 
   test('falsche gemeldete Zeilenzahl in Stapel 2: STOP nach Stapel 2, kein Stapel 3', async () => {
     const t = aufbau({ lugeBei: { art: 'flughaefen', nummer: 2, n: 7 } })
-    await assert.rejects(ablaufen(eingaben('flughaefen', 400), t.abh()), /Stapel 2: 7 statt 150/)
+    await assert.rejects(ablaufen(eingaben(400), t.abh()), /Stapel 2: 7 statt 150/)
     assert.equal(stapelSql(t.eintraege(), 'flughaefen').length, 2)
     assert.equal(t.journalLesen().stapelFertig.flughaefen, 1)
   })
@@ -197,7 +200,7 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
     const f = flughaefen(20)
     const t = aufbau({ flughaefen: flughafenAusDb(f), fehlerBei: { art: 'orte', nummer: 2 } })
     await assert.rejects(
-      ablaufen({ ...eingaben('beide'), flughaefen: f, geonamesOrte: geonames(400) }, t.abh()),
+      ablaufen({ ...eingaben(), flughaefen: f, geonamesOrte: geonames(400) }, t.abh()),
       /psql beendet \(Code 3\).*simulierter Fehler in Stapel 2/,
     )
     const log = t.eintraege()
@@ -208,55 +211,152 @@ describe('Ablauf gegen ein psql-Test-Double (keine Datenbank, kein Netzwerk)', (
     assert.equal(journal.status, 'abgebrochen')
     assert.equal(journal.aktuelleStufe, 'orte')
     assert.deepEqual(journal.stapelFertig, { flughaefen: 1, orte: 1 })
+    assert.equal(journal.meldung, 'psql beendet (Code 3).', 'kein stderr im Journal')
   })
 
   test('erneuter Lauf mit demselben Journal (automatischer Neuversuch) wird vor psql abgelehnt', async () => {
     const t = aufbau({ fehlerBei: { art: 'flughaefen', nummer: 1 } })
-    await assert.rejects(ablaufen(eingaben('flughaefen'), t.abh()), /psql beendet/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /psql beendet/)
     const vorher = t.eintraege().filter((x) => x.ereignis === 'start').length
-    await assert.rejects(ablaufen(eingaben('flughaefen'), t.abh()), /Journal existiert bereits/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /Journal existiert bereits/)
     assert.equal(t.eintraege().filter((x) => x.ereignis === 'start').length, vorher, 'kein zweiter psql-Start')
   })
 
   test('Verbindungsfehler (psql endet sofort): STOP mit Code, kein zweiter Versuch', async () => {
     const t = aufbau({ sofortBeenden: true })
-    await assert.rejects(ablaufen(eingaben('flughaefen'), t.abh()), /psql beendet \(Code 2\)/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /psql beendet \(Code 2\)/)
     assert.equal(t.eintraege().filter((x) => x.ereignis === 'start').length, 1)
   })
 
   test('Nachprüfung findet weniger Flughäfen als geplant: STOP vor der Orts-Stufe', async () => {
     const t = aufbau({ beispiele: ['ZRH'] })
-    await assert.rejects(ablaufen(eingaben('beide'), t.abh()), /Nach dem Schreiben fehlen: GVA/)
+    await assert.rejects(ablaufen(eingaben(), t.abh()), /Nach dem Schreiben fehlen: GVA/)
     assert.equal(stapelSql(t.eintraege(), 'orte').length, 0)
   })
 
   test('Orts-Nachprüfung als anon ohne ZRH oder mit falscher Rolle: STOP', async () => {
     const f = flughaefen(20)
     const ohneZrh = aufbau({ flughaefen: flughafenAusDb(f), ortePruefen: { zrh: false } })
-    await assert.rejects(ablaufen({ ...eingaben('beide'), flughaefen: f }, ohneZrh.abh()), /ZRH fehlt für anon/)
+    await assert.rejects(ablaufen({ ...eingaben(), flughaefen: f }, ohneZrh.abh()), /ZRH fehlt für anon/)
     const rolle = aufbau({ flughaefen: flughafenAusDb(f), ortePruefen: { rolle: 'postgres' } })
-    await assert.rejects(ablaufen({ ...eingaben('beide'), flughaefen: f }, rolle.abh()), /nicht als anon/)
+    await assert.rejects(ablaufen({ ...eingaben(), flughaefen: f }, rolle.abh()), /nicht als anon/)
   })
 
-  test('Orts-Stufe allein braucht bestehende Flughäfen in der Datenbank', async () => {
-    const t = aufbau()
-    await assert.rejects(ablaufen(eingaben('orte'), t.abh()), /braucht die Flughafen-Stufe zuerst/)
-    const f = flughaefen(20)
-    const ok = aufbau({ vorpruefung: { ...VORPRUEFUNG, flughaefen: 20 }, flughaefen: flughafenAusDb(f) })
-    await ablaufen(eingaben('orte'), ok.abh(['ORTE']))
-    assert.equal(ok.journalLesen().status, 'abgeschlossen')
-    assert.equal(stapelSql(ok.eintraege(), 'flughaefen').length, 0)
+  test('R66-F1: Teilbestand von 3.001 Flughäfen mit neuem Journal → null Orts-Stapel, keine Owner-Bestätigung', async () => {
+    const teil = flughaefen(3_001)
+    const t = aufbau({ vorpruefung: { ...VORPRUEFUNG, flughaefen: 3_001 }, flughaefen: flughafenAusDb(teil) })
+    await assert.rejects(
+      ablaufen(eingaben(), { ...t.abh([ZIEL.projektRef, 'ORTE']), grenzen: { ...GRENZEN, maxFlughaefen: 20_000 } }),
+      /public\.airports enthält bereits 3001 Zeilen/,
+    )
+    assert.equal(stapelSql(t.eintraege(), 'orte').length, 0)
+    assert.equal(stapelSql(t.eintraege()).length, 0)
+    assert.equal(t.fragen.length, 0)
+    assert.equal(t.journalLesen().aktuelleStufe, 'vorpruefung')
+  })
+
+  type DbFlughafen = ReturnType<typeof flughafenAusDb>
+  for (const [name, abweichen] of [
+    ['ein Flughafen fehlt', (z: DbFlughafen) => z.slice(0, -1)],
+    ['gleiche Anzahl, anderer Code', (z: DbFlughafen) => [...z.slice(0, -1), { ...z.at(-1)!, iata: 'XQZ' }]],
+    ['zusätzlicher fremder Flughafen', (z: DbFlughafen) => [...z, { ...z[0]!, iata: 'XQY' }]],
+    ['doppelter Code statt eines fehlenden', (z: DbFlughafen) => [...z.slice(0, -1), z[0]!]],
+  ] as const) {
+    test(`R66-F1: zurückgelesener Flughafenbestand ≠ Quelle (${name}) → null Orts-Stapel, keine ORTE-Bestätigung`, async () => {
+      const f = flughaefen(20)
+      const t = aufbau({ flughaefen: abweichen(flughafenAusDb(f)) })
+      await assert.rejects(ablaufen({ ...eingaben(), flughaefen: f }, t.abh()), /Keine Orte geschrieben/)
+      assert.equal(stapelSql(t.eintraege(), 'orte').length, 0)
+      assert.equal(t.fragen.length, 1, 'nur die Start-Bestätigung, keine ORTE-Bestätigung')
+      assert.equal(t.journalLesen().stapelFertig.orte, 0)
+    })
+  }
+
+  for (const [name, config, muster] of [
+    ['kein SELECT-Grant', { anonRechte: { anonSelect: false } }, /kein SELECT/],
+    ['RLS aus', { anonRechte: { rls: false } }, /RLS ist auf public\.places nicht aktiv/],
+    ['keine anon-Policy', { anonRechte: { anonPolicy: false } }, /keine SELECT-Policy/],
+    ['Leseprobe nicht als anon', { anonLeseprobe: { rolle: 'postgres' } }, /nicht als anon/],
+    ['anon sieht bereits Zeilen', { anonLeseprobe: { orte: 3 } }, /unerwartete Zeilen/],
+    ['Leseprobe verweigert', { fehlerBeiArt: 'anon-leseprobe', stderrText: 'permission denied for table places' }, /psql beendet \(Code 3\)/],
+    ['unerwartete Form', { anonRechte: { extra: 1 } }, /erwartete Form/],
+  ] as const) {
+    test(`R66-F4: anon-Lesecheck vor dem ersten Schreiben stoppt (${name}) – kein Stapel, keine Bestätigung`, async () => {
+      const t = aufbau(config)
+      await assert.rejects(ablaufen(eingaben(), t.abh()), muster)
+      assert.equal(stapelSql(t.eintraege()).length, 0)
+      assert.equal(t.fragen.length, 0)
+      assert.deepEqual(t.journalLesen().stapelFertig, { flughaefen: 0, orte: 0 })
+    })
+  }
+
+  test('R66-F3: Journal enthält weder private Pfade noch rohes stderr, nur Basenames und SHA-256', async () => {
+    const MARKER = 'PRIVATMARKER_sasa_7f3a'
+    const GEHEIM = 'GEHEIMMARKER_9c1d'
+    const privat = mkdtempSync(join(tmpdir(), `${MARKER}-`))
+    const flugDir = join(privat, `flug-${MARKER}`)
+    const ortDir = join(privat, `orte-${MARKER}`)
+    mkdirSync(flugDir)
+    mkdirSync(ortDir)
+    copyFileSync(join(REPO, 'lib/airports/fixtures/airports.csv'), join(flugDir, 'airports.csv'))
+    copyFileSync(join(REPO, 'lib/airports/fixtures/countries.csv'), join(flugDir, 'countries.csv'))
+    copyFileSync(join(REPO, 'lib/airports/fixtures/regions.csv'), join(flugDir, 'regions.csv'))
+    copyFileSync(join(REPO, 'lib/places/fixtures/geonames.tsv'), join(ortDir, 'allCountries.txt'))
+    copyFileSync(join(REPO, 'lib/places/fixtures/countries.txt'), join(ortDir, 'countryInfo.txt'))
+    const quelleF = await flughaefenLesen(flugDir)
+    const quelleO = await orteLesen(ortDir)
+    const herkunft = [...quelleF.herkunft, ...quelleO.herkunft, { datei: `${privat}/x.csv`, sha256: 'a'.repeat(64) }]
+
+    const stderrText = `${GEHEIM} could not open ${flugDir}/airports.csv password=${GEHEIM} host=10.0.0.1`
+    const t = aufbau({ fehlerBei: { art: 'flughaefen', nummer: 1 }, stderrText })
+    const fehler = await ablaufen({ flughaefen: quelleF.zeilen, geonamesOrte: quelleO.orte, herkunft }, t.abh()).then(
+      () => assert.fail('muss abbrechen'),
+      (err: unknown) => err,
+    )
+    assert.ok(fehler instanceof SitzungsFehler)
+    assert.match(fehler.message, new RegExp(GEHEIM), 'privates Terminal behält die Diagnose')
+
+    const roh = readFileSync(t.journal, 'utf8')
+    for (const verboten of [MARKER, GEHEIM, privat, t.dir, tmpdir(), '/Users/', '/private/', 'password', '10.0.0.1']) {
+      assert.ok(!roh.includes(verboten), `Journal enthält ${verboten}`)
+    }
+    const journal = JSON.parse(roh) as Record<string, unknown>
+    assert.deepEqual(Object.keys(journal).sort(), [
+      'ablauf', 'aktualisiert', 'aktuelleStufe', 'geplant', 'herkunft', 'meldung', 'stapelFertig', 'status', 'vorher', 'ziel',
+    ])
+    assert.equal(journal.meldung, 'psql beendet (Code 3).')
+    assert.equal(journal.ziel, `${ZIEL.host}:${ZIEL.port}/${ZIEL.datenbank}`)
+    const eintraege = journal.herkunft as { datei: string; sha256: string }[]
+    assert.deepEqual(eintraege.map((e) => e.datei).sort(), ['airports.csv', 'allCountries.txt', 'countries.csv', 'countryInfo.txt', 'regions.csv', 'x.csv'])
+    for (const e of eintraege) {
+      assert.deepEqual(Object.keys(e).sort(), ['datei', 'sha256'])
+      assert.match(e.sha256, /^[0-9a-f]{64}$/)
+      assert.doesNotMatch(e.datei, /\//)
+    }
+  })
+
+  test('R66-F3: öffentliche Meldung ersetzt Pfade und kürzt', () => {
+    assert.equal(
+      oeffentlicheMeldung(new Error('Abgebrochen: Quelldatei fehlt: /Users/sasa/privat/a.csv (siehe /tmp/x)')),
+      'Abgebrochen: Quelldatei fehlt: <pfad> (siehe <pfad>)',
+    )
+    assert.equal(
+      oeffentlicheMeldung(new SitzungsFehler('psql beendet (Code 2). FATAL: /secret', 2, 'psql beendet (Code 2).')),
+      'psql beendet (Code 2).',
+    )
+    assert.equal(oeffentlicheMeldung('kein Error'), 'unbekannter Fehler')
+    assert.ok(oeffentlicheMeldung(new Error('x'.repeat(1_000))).length <= 300)
   })
 
   test('zu viele Zeilen (Statement-Grenze) oder fehlende Pflichtcodes: Abbruch vor Journal und psql', async () => {
     const t = aufbau()
-    await assert.rejects(ablaufen(eingaben('flughaefen', 1_200), t.abh()), /ausserhalb/)
+    await assert.rejects(ablaufen(eingaben(1_200), t.abh()), /ausserhalb/)
     await assert.rejects(
-      ablaufen({ ...eingaben('flughaefen'), flughaefen: flughaefen(20).filter((z) => z.iata !== 'ZRH') }, t.abh()),
+      ablaufen({ ...eingaben(), flughaefen: flughaefen(20).filter((z) => z.iata !== 'ZRH') }, t.abh()),
       /Pflichtcodes fehlen nach dem Filter: ZRH/,
     )
     await assert.rejects(
-      ablaufen({ ...eingaben('orte'), geonamesOrte: geonames(20).filter((o) => o.name !== 'Japan') }, t.abh()),
+      ablaufen({ ...eingaben(), geonamesOrte: geonames(20).filter((o) => o.name !== 'Japan') }, t.abh()),
       /Japan/,
     )
     assert.equal(t.eintraege().length, 0)
@@ -278,13 +378,31 @@ describe('CLI', () => {
   test('Schreibmodus ist in diesem Stand gesperrt: kein psql-Start, kein Journal', () => {
     const t = aufbau()
     const ergebnis = aufrufen([
-      '--modus', 'schreiben-entwicklung-psql', '--stufe', 'flughaefen', '--psql', t.psql, '--ca', t.ca,
+      '--modus', 'schreiben-entwicklung-psql', '--stufe', 'beide', '--psql', t.psql, '--ca', t.ca,
       '--journal', t.journal, '--quelle-flughaefen', join(REPO, 'lib/airports/fixtures'),
+      '--quelle-orte', join(REPO, 'lib/places/fixtures'),
     ])
     assert.equal(ergebnis.status, 1)
     assert.match(ergebnis.stderr, /gesperrt \(R65, nur Vorbereitung\)/)
     assert.equal(t.eintraege().length, 0)
     assert.ok(!existsSync(t.journal))
+  })
+
+  test('SCHREIBEN_FREIGEGEBEN bleibt im Quelltext false', () => {
+    const quelle = readFileSync(cli, 'utf8')
+    assert.equal(quelle.match(/SCHREIBEN_FREIGEGEBEN\s*=/g)?.length, 1)
+    assert.match(quelle, /^const SCHREIBEN_FREIGEGEBEN = false as boolean$/m)
+  })
+
+  test('getrennte Orts-Stufe ist auch über die CLI gesperrt', () => {
+    const t = aufbau()
+    const ergebnis = aufrufen([
+      '--modus', 'schreiben-entwicklung-psql', '--stufe', 'orte', '--psql', t.psql, '--ca', t.ca,
+      '--journal', t.journal, '--quelle-orte', join(REPO, 'lib/places/fixtures'),
+    ])
+    assert.equal(ergebnis.status, 1)
+    assert.match(ergebnis.stderr, /--stufe muss beide sein/)
+    assert.equal(t.eintraege().length, 0)
   })
 
   test('Plan-Modus mit synthetischen Fixtures: zählt, startet kein psql', () => {

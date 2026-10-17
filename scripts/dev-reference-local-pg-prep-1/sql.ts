@@ -191,6 +191,36 @@ export const vorpruefungSchema = z
 
 export type Vorpruefung = z.infer<typeof vorpruefungSchema>
 
+// Vor dem ersten Schreiben: darf anon public.places lesen? Erst Katalog
+// (als postgres, read only), dann ein echter Lesezugriff als anon.
+export const ANON_RECHTE_SQL = `${KENNUNG}anon-rechte
+begin transaction read only;
+select jsonb_build_object(
+  'anonSelect', has_table_privilege('anon', 'public.places', 'SELECT'),
+  'rls', (select relrowsecurity from pg_class where oid = 'public.places'::regclass),
+  'anonPolicy', exists(
+    select 1 from pg_policies
+     where schemaname = 'public' and tablename = 'places'
+       and cmd in ('SELECT', 'ALL')
+       and roles && array['anon', 'public']::name[]
+  )
+)::text;
+rollback;`
+
+export const anonRechteSchema = z
+  .object({ anonSelect: z.boolean(), rls: z.boolean(), anonPolicy: z.boolean() })
+  .strict()
+
+export const ANON_LESEPROBE_SQL = `${KENNUNG}anon-leseprobe
+begin transaction read only;
+set local role anon;
+select jsonb_build_object('rolle', current_user, 'orte', (select count(*) from public.places))::text;
+rollback;`
+
+export const anonLeseprobeSchema = z
+  .object({ rolle: z.string(), orte: z.number().int().nonnegative() })
+  .strict()
+
 export const FLUGHAEFEN_PRUEFEN_SQL = `${KENNUNG}flughaefen-pruefen
 select jsonb_build_object(
   'anzahl', (select count(*) from public.airports),

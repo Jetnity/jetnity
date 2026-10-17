@@ -9,6 +9,8 @@ import type { Ort } from '@/lib/places/domain'
 
 import { flughaefenLesen, orteLesen } from './quelle'
 import {
+  ANON_LESEPROBE_SQL,
+  ANON_RECHTE_SQL,
   FLUGHAEFEN_LESEN_SQL,
   FLUGHAEFEN_PRUEFEN_SQL,
   FLUGHAFEN_BEISPIELE,
@@ -120,9 +122,17 @@ describe('Drift-Schutz gegen die Original-Importer', () => {
 
 describe('SQL-Schutz', () => {
   test('alle festen Anfragen und Stapel passieren die Schutzprüfung', () => {
-    for (const sql of [SITZUNG_SQL, VORPRUEFUNG_SQL, FLUGHAEFEN_PRUEFEN_SQL, FLUGHAEFEN_LESEN_SQL, ORTE_PRUEFEN_SQL]) {
+    for (const sql of [
+      SITZUNG_SQL, VORPRUEFUNG_SQL, ANON_RECHTE_SQL, ANON_LESEPROBE_SQL,
+      FLUGHAEFEN_PRUEFEN_SQL, FLUGHAEFEN_LESEN_SQL, ORTE_PRUEFEN_SQL,
+    ]) {
       assert.doesNotThrow(() => sqlZulassen(sql))
     }
+    for (const sql of [ANON_RECHTE_SQL, ANON_LESEPROBE_SQL]) {
+      assert.match(sql, /begin transaction read only;[\s\S]*rollback;/, 'anon-Prüfungen schreiben nie')
+      assert.doesNotMatch(sql, /\b(insert|update|commit)\b/i)
+    }
+    assert.match(ANON_LESEPROBE_SQL, /set local role anon;/)
     const boese = flughafen('ZRH', { name: "x'); drop table public.airports; --", keywords: '\\! rm -rf / :geheim' })
     const stapel = flughafenStapel([boese], 1).sql
     assert.doesNotThrow(() => sqlZulassen(stapel), 'Daten in Literalen sind keine Anweisungen')
@@ -183,6 +193,7 @@ describe('Quellseite mit synthetischen Fixtures (lib-Parser unverändert)', () =
     assert.equal(zrh?.city, 'Zurich')
     assert.equal(herkunft.length, 3)
     assert.ok(herkunft.every((h) => /^[0-9a-f]{64}$/.test(h.sha256)))
+    assert.deepEqual(herkunft.map((h) => h.datei), ['airports.csv', 'countries.csv', 'regions.csv'], 'nur Basenames')
 
     const ausDb = zeilen.map(({ iata, name, city, region, country, countryCode, lat, lon, keywords }) => ({
       iata, name, city, region, country, countryCode, lat, lon, keywords,

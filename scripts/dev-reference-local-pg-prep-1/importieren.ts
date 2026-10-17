@@ -84,15 +84,14 @@ async function main(): Promise<void> {
     process.cwd(),
   )
 
-  const flughaefen = auftrag.quelleFlughaefen && auftrag.stufe !== 'orte' ? await flughaefenLesen(auftrag.quelleFlughaefen) : null
-  const orte = auftrag.quelleOrte && auftrag.stufe !== 'flughaefen' ? await orteLesen(auftrag.quelleOrte) : null
+  const flughaefen = await flughaefenLesen(auftrag.quelleFlughaefen)
+  const orte = await orteLesen(auftrag.quelleOrte)
 
   await ablaufen(
     {
-      stufe: auftrag.stufe,
-      flughaefen: flughaefen?.zeilen ?? null,
-      geonamesOrte: orte?.orte ?? null,
-      herkunft: [...(flughaefen?.herkunft ?? []), ...(orte?.herkunft ?? [])],
+      flughaefen: flughaefen.zeilen,
+      geonamesOrte: orte.orte,
+      herkunft: [...flughaefen.herkunft, ...orte.herkunft],
     },
     {
       sitzungStarten: () => sitzungStarten(geprueft.psql, geprueft.ca),
@@ -109,9 +108,10 @@ async function main(): Promise<void> {
       grenzen: GRENZEN,
     },
   )
-  console.log('Fertig. Journal:', geprueft.journal)
+  console.log('Fertig. Journal liegt lokal und bleibt privat bis zur geprüften Freigabe.')
 }
 
+// Nur privates lokales Terminal: darf einen psql-stderr-Auszug zeigen, nie öffentlich einfügen.
 main().catch((err: unknown) => {
   console.error(err instanceof Error ? err.message : 'Abgebrochen.')
   process.exit(1)

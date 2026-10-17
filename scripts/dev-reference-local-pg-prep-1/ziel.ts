@@ -7,9 +7,13 @@
 // Umgebungsvariablen werden nur nach ihrem Namen geprüft, ihr Wert wird
 // nie gelesen. Passwörter gehen ausschliesslich über die maskierte
 // /dev/tty-Abfrage von psql selbst.
+//
+// psql: nur das Homebrew-libpq-Binary. Ein anderes Programm könnte argv,
+// Ziel und TLS ignorieren; deshalb hängt jede andere Sicherung hiervon ab.
 
+import { spawnSync } from 'node:child_process'
 import { lstatSync, readFileSync, realpathSync } from 'node:fs'
-import { isAbsolute, relative, resolve } from 'node:path'
+import { dirname, isAbsolute, relative, resolve } from 'node:path'
 
 export const ZIEL = Object.freeze({
   projektRef: 'yfvbxvijcorffwxbxahl',
@@ -26,7 +30,9 @@ export const PRODUCTION_REF = 'qscbgcdmivbbnzrcyegn'
 
 export const SCHREIBMODUS = 'schreiben-entwicklung-psql'
 
-export type Stufe = 'flughaefen' | 'orte' | 'beide'
+// Nur der verbundene Lauf. Eine eigenständige Orts-Stufe könnte auf einem
+// unvollständigen Flughafenbestand aufsetzen.
+export type Stufe = 'beide'
 
 export type PlanAuftrag = {
   modus: 'plan'
@@ -40,8 +46,8 @@ export type SchreibAuftrag = {
   psql: string
   ca: string
   journal: string
-  quelleFlughaefen: string | null
-  quelleOrte: string | null
+  quelleFlughaefen: string
+  quelleOrte: string
 }
 
 export type Auftrag = PlanAuftrag | SchreibAuftrag
@@ -110,19 +116,16 @@ export function argumenteLesen(argv: readonly string[]): Auftrag {
     if (!SCHREIB_FLAGS.has(name)) fehler(`--${name} ist nicht erlaubt.`)
   }
 
-  const stufe = werte.get('stufe')
-  if (stufe !== 'flughaefen' && stufe !== 'orte' && stufe !== 'beide') {
-    fehler('--stufe muss flughaefen, orte oder beide sein.')
+  if (werte.get('stufe') !== 'beide') {
+    fehler('--stufe muss beide sein. Getrennte Flughafen- oder Orts-Läufe sind gesperrt.')
   }
   const psql = werte.get('psql') ?? fehler('--psql <absoluter Pfad> fehlt.')
   const ca = werte.get('ca') ?? fehler('--ca <absoluter Pfad zum offiziellen CA-Zertifikat> fehlt.')
   const journal = werte.get('journal') ?? fehler('--journal <absoluter Pfad> fehlt.')
-  const quelleFlughaefen = werte.get('quelle-flughaefen') ?? null
-  const quelleOrte = werte.get('quelle-orte') ?? null
-  if (stufe !== 'orte' && !quelleFlughaefen) fehler('--quelle-flughaefen fehlt.')
-  if (stufe !== 'flughaefen' && !quelleOrte) fehler('--quelle-orte fehlt.')
+  const quelleFlughaefen = werte.get('quelle-flughaefen') ?? fehler('--quelle-flughaefen fehlt.')
+  const quelleOrte = werte.get('quelle-orte') ?? fehler('--quelle-orte fehlt.')
 
-  return { modus: SCHREIBMODUS, stufe, psql, ca, journal, quelleFlughaefen, quelleOrte }
+  return { modus: SCHREIBMODUS, stufe: 'beide', psql, ca, journal, quelleFlughaefen, quelleOrte }
 }
 
 export function umgebungPruefen(namen: readonly string[]): void {
@@ -163,7 +166,46 @@ function sichererAbsoluterPfad(name: string, pfad: string): string {
   return pfad
 }
 
-export function psqlPfadPruefen(pfad: string, repoWurzel: string): string {
+// Nur über psqlPfadPruefen erzeugbar. Offline-Tests casten bewusst und sichtbar.
+export type VertrauenswuerdigesPsql = string & { readonly __vertrauenswuerdigesPsql: true }
+
+export type PsqlVertrauen = {
+  libpqWurzeln: readonly string[]
+  erlaubteUids: readonly number[]
+  versionLesen: (pfad: string) => string
+}
+
+function versionAusBinary(pfad: string): string {
+  const ergebnis = spawnSync(pfad, ['--version'], {
+    env: { PATH: '/usr/bin:/bin', LC_ALL: 'C' } as Record<string, string> as NodeJS.ProcessEnv,
+    encoding: 'utf8',
+    timeout: 5_000,
+    shell: false,
+  })
+  if (ergebnis.status !== 0) fehler('psql --version schlug fehl.')
+  return ergebnis.stdout.trim()
+}
+
+export const PSQL_VERTRAUEN: PsqlVertrauen = Object.freeze({
+  libpqWurzeln: Object.freeze(['/opt/homebrew/Cellar/libpq', '/usr/local/Cellar/libpq']),
+  erlaubteUids: Object.freeze([process.getuid?.() ?? -1, 0]),
+  versionLesen: versionAusBinary,
+})
+
+const PSQL_MINDEST_MAJOR = 16
+
+function nichtFremdBeschreibbar(pfad: string, vertrauen: PsqlVertrauen): void {
+  const info = lstatSync(pfad)
+  if (info.isSymbolicLink()) fehler('psql-Pfad enthält einen symbolischen Link nach der Auflösung.')
+  if (!vertrauen.erlaubteUids.includes(info.uid)) fehler('psql-Pfad gehört weder dir noch root.')
+  if ((info.mode & 0o022) !== 0) fehler('psql-Pfad ist für Gruppe oder andere beschreibbar.')
+}
+
+export function psqlPfadPruefen(
+  pfad: string,
+  repoWurzel: string,
+  vertrauen: PsqlVertrauen = PSQL_VERTRAUEN,
+): VertrauenswuerdigesPsql {
   sichererAbsoluterPfad('--psql', pfad)
   let echt: string
   try {
@@ -171,12 +213,42 @@ export function psqlPfadPruefen(pfad: string, repoWurzel: string): string {
   } catch {
     fehler('--psql existiert nicht.')
   }
-  const info = lstatSync(echt)
-  if (!info.isFile() || (info.mode & 0o111) === 0) fehler('--psql ist keine ausführbare Datei.')
   if (innerhalb(realpathSync(repoWurzel), echt)) {
     fehler('--psql darf nicht aus dem Repository kommen. Nur ein lokal installiertes psql.')
   }
-  return echt
+
+  let wurzel: string | null = null
+  let cellarVersion: string | null = null
+  for (const kandidat of vertrauen.libpqWurzeln) {
+    const treffer = new RegExp(
+      `^${kandidat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/(\\d+\\.\\d+(?:\\.\\d+)?(?:_\\d+)?)/bin/psql$`,
+    ).exec(echt)
+    if (treffer) {
+      wurzel = kandidat
+      cellarVersion = treffer[1] ?? null
+      break
+    }
+  }
+  if (!wurzel || !cellarVersion) {
+    fehler('--psql ist kein vertrauenswürdiges Homebrew-libpq-psql (…/Cellar/libpq/<Version>/bin/psql).')
+  }
+
+  const datei = lstatSync(echt)
+  if (!datei.isFile() || (datei.mode & 0o111) === 0) fehler('--psql ist keine ausführbare Datei.')
+  for (let teil = echt; ; teil = dirname(teil)) {
+    nichtFremdBeschreibbar(teil, vertrauen)
+    if (teil === wurzel) break
+    if (teil === dirname(teil)) fehler('psql liegt nicht unter der libpq-Wurzel.')
+  }
+
+  const version = /^psql \(PostgreSQL\) (\d+)\.(\d+)\b/.exec(vertrauen.versionLesen(echt))
+  const [cellarMajor, cellarMinor] = cellarVersion.split(/[._]/)
+  if (!version) fehler('psql meldet keine erkennbare Version.')
+  if (Number(version[1]) < PSQL_MINDEST_MAJOR) fehler(`psql ist älter als ${PSQL_MINDEST_MAJOR}.`)
+  if (version[1] !== cellarMajor || version[2] !== cellarMinor) {
+    fehler('psql-Version passt nicht zum Homebrew-Verzeichnis.')
+  }
+  return echt as VertrauenswuerdigesPsql
 }
 
 export function caPfadPruefen(pfad: string): string {
@@ -210,11 +282,12 @@ export function schreibauftragPruefen(
   umgebungsNamen: readonly string[],
   terminal: Terminal,
   repoWurzel: string,
-): { psql: string; ca: string; journal: string } {
+  vertrauen: PsqlVertrauen = PSQL_VERTRAUEN,
+): { psql: VertrauenswuerdigesPsql; ca: string; journal: string } {
   umgebungPruefen(umgebungsNamen)
   terminalPruefen(terminal)
   return {
-    psql: psqlPfadPruefen(auftrag.psql, repoWurzel),
+    psql: psqlPfadPruefen(auftrag.psql, repoWurzel, vertrauen),
     ca: caPfadPruefen(auftrag.ca),
     journal: journalPfadPruefen(auftrag.journal, repoWurzel),
   }
