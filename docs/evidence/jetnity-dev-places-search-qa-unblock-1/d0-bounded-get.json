@@ -11,6 +11,7 @@
     "processEnvNames": ["HOME", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_TELEMETRY_DISABLED", "PATH"],
     "absentFromProcessEnv": ["SUPABASE_ACCESS_TOKEN", "SUPABASE_PROJECT_REF", "SUPABASE_SERVICE_ROLE_KEY", "any .env file"],
     "supabaseTarget": "NEXT_PUBLIC_SUPABASE_URL host ref equals VM secret SUPABASE_PROJECT_REF, documented in ARCHITECTURE.md as the Development branch; ref value not recorded",
+    "developmentAttributionR48F3": "MATCH — offline, same Cursor session, NEXT_PUBLIC_SUPABASE_URL host ref compared in-process to the approved nondefault Development branch ref named in TL R48 (also the only ref in the immutable TASK); only the result was printed; no request made",
     "databaseRole": "anon (no cookies, route handler anon client)"
   },
   "requests": [
@@ -24,7 +25,7 @@
       "isArray": true,
       "optionCount": 0,
       "errorFlag": false,
-      "postgrestReadsInRoute": ["name prefix", "country exact alias", "keyword substring"]
+      "postgrestReadsExpectedByCodePath": ["name prefix", "country exact alias", "keyword substring"]
     },
     {
       "case": "abreise-Zuerich",
@@ -36,9 +37,18 @@
       "isArray": true,
       "optionCount": 0,
       "errorFlag": false,
-      "postgrestReadsInRoute": ["name prefix", "airport name prefix", "keyword substring"]
+      "postgrestReadsExpectedByCodePath": ["name prefix", "airport name prefix", "keyword substring"]
     }
   ],
-  "notCaptured": ["response headers beyond the three listed", "server logs", "tokens", "personal data", "any other query"],
-  "interpretation": "Every hosted read in the route chain succeeded and returned zero rows visible to anon. This does not prove the whole table is empty."
+  "notCaptured": ["response headers beyond the three listed", "server logs", "tokens", "personal data", "any other query", "per-subquery row counts"],
+  "interpretation": "Corrected after TL R48-F1. Proven only: the route returned 200 with zero final options twice, and no classified read error propagated to the route. Not proven: that each PostgREST subquery returned zero rows (rows can be dropped without error by mapping, role filter or ranking), that public.places is empty, data volume, or RLS/grant state. No source defect reproduced with bounded synthetic fixtures; hosted root cause not independently established.",
+  "r46Separation": "Corrected after TL R48-F2. These two GETs are this author's own observation. They are not evidence for R46's earlier UI screenshot; the R46 empty-state message alone does not prove a completed 200 [] because sucheLage can show empty before the response arrives.",
+  "cleanupR48F4": {
+    "taskOwnedTmuxSession": "places-qa-dev stopped",
+    "taskOwnedProcesses": "next dev -p 3107 and its next-server gone",
+    "port3107": "closed (connection refused)",
+    "tempWorktree": "removed via git worktree remove; worktree list pruned",
+    "tempHelperFiles": "removed",
+    "untouched": ["environment start-script next dev on :3000 (not task-owned)", "locally installed PostgreSQL 16 binaries (no service started)"]
+  }
 }

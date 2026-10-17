@@ -1,10 +1,16 @@
 # Development Places Search QA Unblock 1 — HANDOFF
 
-**Stand:** 17. Oktober 2026 · **Status:** STOP für unabhängigen ChatGPT Technical Lead R48. Draft bleibt Draft.
+**Stand:** 17. Oktober 2026, nach R48-Korrektur · **Status:** STOP für unabhängigen ChatGPT Technical Lead R49. Draft bleibt Draft.
 
 ## Lage in einem Satz
 
-`/planen` zeigt für `Japan` und `Zürich` keine Option, weil die anonyme Development-Lesesicht auf `public.places` für diese Begriffe null Zeilen liefert; Client, Route und Suchcode sind korrekt.
+Die bestehende Places-Route gab auf Development für `Japan` (`ziel`) und `Zürich` (`abreise`) je einmal `200 []` zurück. Mit begrenzten synthetischen Fixtures ist kein Source-Defekt reproduziert, und die Hosted-Root-Cause ist nicht unabhängig festgestellt: leerer Katalog, verborgene Zeilen oder durch Abbildung/Ranking verworfene Zeilen bleiben offen.
+
+## R48-Stand
+
+- F1/F2: Nachweisaussagen im REPORT §2 korrigiert. `200 []` belegt weder null Zeilen je Teilabfrage noch eine leere Tabelle; die R46-UI-Meldung belegt kein abgeschlossenes `200 []`.
+- F3: Development-Zuordnung offline geprüft: **MATCH** (REPORT §2a).
+- F4: eigener Testserver auf `127.0.0.1:3107` beendet, Worktree und Hilfsdateien entfernt (REPORT §8).
 
 ## Was ein neuer Agent lesen muss
 
