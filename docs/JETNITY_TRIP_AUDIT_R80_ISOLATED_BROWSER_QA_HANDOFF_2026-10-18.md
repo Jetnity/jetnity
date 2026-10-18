@@ -10,7 +10,8 @@ Session title returned by rename: `Jetnity Trip Audit Isolated Browser QA — Cu
 
 - QA branch: `test/trip-audit-r80-isolated-browser-qa`
 - Draft PR: #967. Do not merge.
-- Seed before this delivery: `9d25f627058a0dcfba8766204a52b0a64cd70947`, tree `aacaa5b1fc6663c3cd7d0a9b829ff00383daeca0`
+- Seed before the workflow commit: `9d25f627058a0dcfba8766204a52b0a64cd70947`, tree `aacaa5b1fc6663c3cd7d0a9b829ff00383daeca0`
+- Workflow commit that the hosted job ran: `d7a8263c99b89e820743245a90e46835e80dbea4`, tree `94ac284cca7dd380c61bb301c65ed32a6c98a77a`
 - Immutable task blob: `d1ceca53ec0b19cafdc1b56d41cfb00be81c3b77` (not modified)
 - Protected main at dispatch and at this preflight: `8c164718751d4fcfc5d064ecc7985231061594d8`
 - Mode: `NORMAL`
@@ -31,7 +32,8 @@ Session title returned by rename: `Jetnity Trip Audit Isolated Browser QA — Cu
 
 - Live git, #751, #748 P1 comments `6246287752` and `6247743478`, #954, #966, #955, #967 and R79 `6250723221` were read before writing.
 - P1 remains OPEN. No personal Chrome, CDP, profile, login, hosted Supabase, secret, provider or Production action was used.
-- Runner TAP evidence: **NOT YET OBSERVED.** See the report. A skipped or missing browser test must not be called PASS.
+- Hosted job [39136528389](https://github.com/Jetnity/jetnity/actions/runs/39136528389) / `117702043331` on `d7a8263c99b89e820743245a90e46835e80dbea4` checked out `fffc9e52e7345a96e276d926ff796a2c9feeb251` and logged TAP `# tests 1`, `# pass 1`, `# fail 0`, `# skipped 0`, with `ok 1` and no `# SKIP`.
+- The evidence docs commit is the child of that workflow commit. It does not change the workflow, so it does not start another browser run. The browser evidence stays the job above, not the docs tip.
 
 ## Remaining gates
 
@@ -39,4 +41,4 @@ Independent Technical Lead R81 reads the exact QA head, the workflow, and the or
 
 ## STOP
 
-No Ready. No merge. No follow-up slice. No change to #955. If the hosted job fails or never starts, record that failure and stop. Do not retarget the runner, bypass the skip, or edit the product test.
+Author stops here for independent Technical Lead R81. No Ready. No merge. No follow-up slice. No change to #955. R81 reads job `117702043331` on `d7a8263c99b89e820743245a90e46835e80dbea4` and the exact docs tip. Synthetic `quelle=account` is not authentication. Do not retarget the runner, bypass the skip, or edit the product test.

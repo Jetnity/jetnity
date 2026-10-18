@@ -32,4 +32,43 @@ No secrets are referenced. `.github/workflows/ci.yml`, package files, applicatio
 
 ## 4. Runner evidence
 
-**NOT YET OBSERVED.** No GitHub-hosted job has been recorded for this workflow at the time this section was written. Do not read this report as a browser PASS, a zero-skip result, or a Technical-Lead acceptance.
+Observed on workflow commit `d7a8263c99b89e820743245a90e46835e80dbea4`, tree `94ac284cca7dd380c61bb301c65ed32a6c98a77a`. The job is [Actions run 39136528389](https://github.com/Jetnity/jetnity/actions/runs/39136528389), job `117702043331`, conclusion `success`, started `2026-10-18T14:33:29Z`, completed `2026-10-18T14:34:47Z`. This paragraph was written after that log was read. It is author evidence for independent Technical Lead R81, not a Technical-Lead PASS.
+
+The runner was GitHub-hosted `ubuntu-24.04` image `20261012.334.1`, runner `2.337.0`, region `westus`. Job token permissions printed by the runner were `Contents: read` and `Metadata: read`. Checkout used `repository: Jetnity/jetnity`, `ref: fffc9e52e7345a96e276d926ff796a2c9feeb251`, `persist-credentials: false`. The fetch token was masked. After fetch, the checkout step logged `Removing auth` and unset `http.https://github.com/.extraheader`.
+
+Asserted checkout values from the job log:
+
+- `checked_out_sha=fffc9e52e7345a96e276d926ff796a2c9feeb251`
+- `checked_out_tree=961641af883a23126e4479849a78b0a27f042c1e`
+- `ui_test_blob=8db0e13c1feb42e47d5d53bde32bfab1bd06594b`
+- `event_sha=86ca6052975a6bc8c9282bae37445d45df7ef701`
+- `event_ref=refs/pull/967/merge`
+
+The event SHA is the pull-request merge ref and was not the checkout. `next_loaded_env_files=absent`. `npm ci` reported `added 532 packages, and audited 533 packages in 17s`. Playwright Chromium was absent, then `Chromium Headless Shell 140.0.7339.16` (Playwright build `v1187`) was downloaded to `/home/runner/.cache/ms-playwright/chromium_headless_shell-1187`. `playwright_chromium_launch=ok`. Loopback server pid `3354`. The audit route logged `audit_http=000`, then `audit_http=200`. The server stop step logged `dev_server_stopped=3354`. No artifact or screenshot upload step ran.
+
+Original TAP from that job:
+
+```
+TAP version 13
+# Subtest: T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout
+ok 1 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout
+  ---
+  duration_ms: 6372.337513
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7132.494151
+```
+
+The same step logged `test_exit=0`, `tap_tests=1`, `tap_pass=1`, `tap_fail=0`, `tap_skipped=0`, `tap_cancelled=0`, `tap_todo=0`, and `synthetic_browser_tap=1_pass_0_skip`. The `ok` line has no `# SKIP`. The TAP does not contain `NOT VERIFIED`.
+
+Same workflow commit also had ordinary CI [run 39136528354](https://github.com/Jetnity/jetnity/actions/runs/39136528354): Auth job `117702114650` and Typecheck, Lint & Build job `117702114344`, both `pass`. That ordinary suite was not re-counted here and is not this browser TAP. The Vercel check on the QA pull request was not used as the browser runner and is not a Production action.
+
+`quelle=account` in the executed test remains the synthetic `sessionStorage` fixture. This job does not complete T07, real signed-in T09, real T10, or hosted A/B write denials. Guardian P1 [#748/6247743478](https://github.com/Jetnity/jetnity/issues/748#issuecomment-6247743478) stays open. PR #955 stays draft and unmerged. This QA workflow is not for merge to `main`.
