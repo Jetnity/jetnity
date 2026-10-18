@@ -12,8 +12,14 @@
 - **Writer source:** the merged, disarmed writer has **no unsafe defect** that needs a separate fix before further gating (§3).
 - **The actual write is BLOCKED** until all of these hold:
   - P0-1 (recovery capability) is established;
-  - the P1 facts in §9 are closed or explicitly accepted by the TL/Product Owner;
+  - P0-2 (branch lifecycle and durability; `develop` is `persistent=false`) is resolved;
+  - the open P1 facts in §9 are closed or explicitly accepted by the TL/Product Owner;
   - the separate, explicit final Product Owner execution permission is given.
+
+**R72 R2 correction:** this packet now includes the facts the Technical Lead independently observed in the [R72 review](https://github.com/Jetnity/jetnity/pull/963#pullrequestreview-5560768059) at head `4604a07b`. Those facts are labelled **TL-verified (R72)**; none of them was run by this author. They are:
+- the branch is `persistent=false` (F1);
+- the owner, privilege, `BYPASSRLS` and membership facts (F2);
+- the 12 indexes, 0 triggers and session defaults (F3).
 
 ## 1. Identity and positions (author-observed, offline git)
 
@@ -42,6 +48,15 @@
   - the `trips.origin_place_id` and `trip_stages.place_id` foreign keys reference `places(id)`.
 
   Production `qscbgcdmivbbnzrcyegn` was not queried.
+- **TL-verified (R72) read-only, Development `yfvbxvijcorffwxbxahl` only** (cited from the R72 review; **not** run by this author, and not proof that a write is safe):
+  - **Branch:** `list_branches` reports `develop` with `is_default=false`, **`persistent=false`** and `preview_project_status=ACTIVE_HEALTHY`.
+  - **Server and rows:** PostgreSQL 17.6; `airports` 0 rows, `places` 0 rows.
+  - **Ownership and privileges:**
+    - **both tables are owned by `postgres`**;
+    - `postgres` has INSERT and UPDATE on both tables, `rolbypassrls=true` and `rolsuper=false`, and is a **member of `anon`**;
+    - `anon` has SELECT on both tables, and RLS is enabled on both.
+  - **Indexes and triggers:** **12 indexes** across both tables, and **0 non-internal triggers**.
+  - **Session defaults:** `statement_timeout=2min`, `lock_timeout=0`, idle timeouts 0. The writer sets its own stricter lock and idle limits.
 - **Owner-run, source only, earlier (R63/R64):** 5,332 airports and 119,833 GeoNames places, all 11 required codes present. Separately, a standalone native psql 18.6 connection to Development with the official CA, `verify-full`, a masked password prompt and `\conninfo` succeeded. That was **not** the writer's own child-process pathway.
 - **Synthetic CI history:**
   - R69 native suite: 13/13 on psql/postgres **16.15**, run [#39075727433](https://github.com/Jetnity/jetnity/actions/runs/39075727433).
@@ -60,7 +75,7 @@
 | Terminal and password | `ziel.ts:148-155`; `psql.ts:42-52`; `importieren.ts:27-34` | All three standard streams must be TTYs and `/dev/tty` must open. `--password` makes psql prompt on `/dev/tty`, so the parent process never sees the password. **OK. Never exercised against Development (P1-3).** |
 | psql trust | `ziel.ts:204-252` | The real path must be under the Homebrew libpq Cellar, not writable by others, owned by the user or root, at least major version 16, with the reported version equal to the Cellar version. **OK.** |
 | Lock and session | `sql.ts:149-155`; `ablauf.ts:221-227` | Session-level `pg_try_advisory_lock`. `statement_timeout` 120 s, `lock_timeout` 10 s, `idle_in_transaction_session_timeout` 120 s. **OK.** |
-| Preflight | `sql.ts:163-175`; `ablauf.ts:148-160` | Checks database and role, not a replica, TLS on, standard strings on, required column **names**, and 0/0 rows. It does **not** check column types, CHECK definitions, the unique indexes behind `ON CONFLICT`, write privileges, table owner or `BYPASSRLS` (P1-2, P3-1). |
+| Preflight | `sql.ts:163-175`; `ablauf.ts:148-160` | Checks database and role, not a replica, TLS on, standard strings on, required column **names**, and 0/0 rows. It does **not** check column types, CHECK definitions, the unique indexes behind `ON CONFLICT`, write privileges, table owner or `BYPASSRLS`. For the current state the Technical Lead verified these as metadata in R72 (§2, P1-2 closed); the writer itself still does not re-check them at run time. |
 | Anon gate | `sql.ts:196-222`; `ablauf.ts:172-180` | Checks the catalog (grant, RLS, policy) and then runs a read-only probe as anon. That probe needs `postgres` to be a member of `anon`; if not, the run stops before any write. **OK.** |
 | Stage order and binding | `ablauf.ts:236-283` | Confirm the project ref, write airports, check count and required codes, read back the exact IATA set, confirm `ORTE`, then write Places. **OK.** |
 | Batches | `sql.ts:87-140` | Fixed 150-row batches, each `begin … commit` on its own. Values are literal-quoted and `standard_conforming_strings` is verified. The ICAO release statement only touches `airports`. **OK.** |
@@ -83,13 +98,30 @@
 
   So the checked-in history implies `airports_pkey`, `airports_name_trgm`, `airports_city_trgm` and `airports_country_trgm` in addition to the TL-listed `airports_iata_unique`, `airports_icao_unique` and `airports_keywords_trgm`.
 
-  This is not a blocker; extra GIN indexes only slow airport inserts slightly. But the TL list does not prove that the hosted index set equals the migrations (P3-1).
+  **TL-verified (R72):** the hosted index set matches. There are 12 indexes across both tables:
+  - `airports_pkey`;
+  - `airports_{name,city,country,keywords}_trgm`;
+  - the unique IATA and ICAO indexes;
+  - five Places indexes.
+
+  So P3-1 is closed for index names. The extra GIN indexes only slow airport inserts slightly.
 - **Places** (`20260820120000_places_referenz.sql:15-63`): the CHECK constraints, unique `(source, source_id)`, two GIN trgm indexes, the `typ` index, RLS, the `places_lesen` policy and the grants match the TL list. The foreign keys from `trips` and `trip_stages` have **no `ON DELETE` clause**, so they default to `NO ACTION`, which matters for any later recovery (§6).
 
-  **The table owner is not visible in the checked-in SQL;** it is whichever role applied the migration (P1-2).
-- **No triggers** on either table in any checked-in migration.
+  The table owner is not visible in the checked-in SQL. **TL-verified (R72): both tables are owned by `postgres`** (P1-2 closed as metadata).
+- **No triggers** on either table in any checked-in migration. **TL-verified (R72): 0 non-internal triggers on both tables.**
 - Grants: `20260817100300_rechte.sql:30-50` revokes all and grants anon and authenticated SELECT only; `20260817100100_policies.sql:55-72` drops and recreates the SELECT-only policies.
 - **What column metadata and SELECT cannot prove:** CHECK definitions, the index set, owner and `BYPASSRLS`, role memberships, role-level settings, backup state, and the actual anon-visible rows after an import.
+
+  **After R72:** the Technical Lead verified the index set, triggers, owner, privileges, `BYPASSRLS`, `anon` membership and session defaults. **Still NOT VERIFIED:**
+  - backup, PITR and restore;
+  - branch lifecycle and retention;
+  - the real network and TLS path;
+  - per-row source validity;
+  - storage quota and compute;
+  - behaviour at the 125k-row scale;
+  - the actual anon-visible rows after an import.
+
+  None of these can be inferred from catalog structure.
 
 ## 5. Synthetic native PASS versus the real environment
 
@@ -105,8 +137,8 @@
   - TLS `verify-full` with the official CA;
   - the `/dev/tty` password prompt in the child-process setup;
   - the network path and hostname (P1-1);
-  - the real role, owner and privileges (P1-2);
-  - the hosted schema details (§4);
+  - the real role, owner and privileges: now **TL-verified (R72) as metadata only**, never exercised by an actual write;
+  - the hosted schema details (§4): index set and triggers now TL-verified (R72);
   - about 125k rows over a WAN against the timeouts (§7).
 
 ## 6. STOP and recovery
@@ -134,6 +166,15 @@
   - (c) a reviewed forward-completion mode that proves the existing rows are a subset of this source and upserts the rest. That is new code with its own review;
   - (d) knowingly leave the partial state on Development.
 - **Before any write, a recovery capability must be verified and agreed (P0-1).** Today it is **not established**, so the write is **BLOCKED**. No destructive workaround is proposed as authorised.
+- **Branch lifecycle (P0-2, UNVERIFIED, STOP), from the TL-verified (R72) fact `persistent=false`:**
+  - **Why it matters:** per the official [Supabase branching documentation](https://supabase.com/docs/guides/deployment/branching), non-persistent preview branches can be paused or deleted on inactivity, or when a linked PR is merged or closed. If that happened, the whole imported catalog could be lost through ordinary PR workflow, independently of any import failure.
+  - **What is not claimed:** this report does **not** claim that this branch will be deleted. Its actual GitHub linkage, retention and pause behaviour are **unverified**.
+  - **Required before any import:**
+    - the actual linkage confirmed;
+    - retention across merges and deployments confirmed;
+    - a verified durable environment and recovery plan.
+  - **Forbidden as part of this:** creating, changing, merging or resetting branches; paid persistence upgrades; and any backup/PITR claim without independent evidence.
+  - Path (a) above (restore from backup or PITR) is only available if that capability is verified for this branch.
 
 ## 7. Deadline and scale risk (assessment, not a PASS)
 
@@ -161,7 +202,8 @@
 ## 8. Future gates, in order (none executed here)
 
 1. Branch isolation reconfirmed: `develop` / `yfvbxvijcorffwxbxahl`, non-default, Production untouched. Merges or migrations on the linked branch frozen for the run window (P2-4).
-2. Expected reference schema, grants, indexes, owner/`BYPASSRLS`/memberships and exact 0/0 re-read by the TL just before the run (P1-2, P3-1).
+1a. **Branch lifecycle STOP gate (P0-2):** actual linkage, retention across merges and deployments, and a durable environment with a verified recovery plan, all confirmed. `persistent=false` is TL-verified (R72); everything else here is unverified.
+2. Expected reference schema, grants, indexes, owner/`BYPASSRLS`/memberships and exact 0/0. **TL-verified (R72) as current metadata**; to be re-read by the TL just before the run, because a new head or time gap expires it.
 3. Fresh public source files; offline plan mode with counts inside the `GRENZEN` limits, required codes, Japan/Zürich/ZRH, and recorded SHA-256 hashes (P2-2). Constraint pre-validation of every planned row (P1-4), or an explicit accepted risk.
 4. Owner-private client verification:
    - the trusted libpq psql;
@@ -183,26 +225,32 @@
 | ID | P | Missing fact | Who | Why it matters |
 |---|---|---|---|---|
 | P0-1 | P0 | Does `develop` have a verified backup/PITR or restore path, and which recovery path from §6 is pre-agreed? | Owner + TL | A stop after the first commit leaves partial data with no authorised cleanup. **Write BLOCKED until settled.** |
+| P0-2 | P0 (STOP) | Branch lifecycle. `persistent=false` is TL-verified (R72). Unverified: actual GitHub/PR linkage; retention across merges and deployments; pause/delete behaviour; durable environment and recovery plan. | Owner + TL | The whole imported catalog could be lost through ordinary PR workflow. **Write BLOCKED until settled**; no branch change or paid upgrade is implied. |
 | P1-1 | P1 | Is the direct host `db.yfvbxvijcorffwxbxahl.supabase.co:5432` reachable from the Owner Mac (direct hosts may be IPv6-only without the IPv4 add-on)? Did the earlier standalone test use exactly this host and user `postgres`, not the pooler? | Owner | The writer has no other target. A mismatch fails before any write, but the exact path is unproven. |
-| P1-2 | P1 | Owner of `public.places` (and `airports`); `rolbypassrls`, INSERT/UPDATE privilege for `postgres`; `postgres` member of `anon`. | TL, read-only catalog | If `places` is not writable by `postgres` because of RLS, **all airports commit and Places batch 1 fails**: a partial state. The preflight does not check this. |
+| P1-2 | ~~P1~~ **closed as metadata** | Table owners, `rolbypassrls`, INSERT/UPDATE privilege for `postgres`, and `postgres` membership in `anon`. | TL-verified (R72) | Both tables are owned by `postgres`; INSERT and UPDATE are allowed; `BYPASSRLS` is true; `postgres` is a member of `anon`. In R71 this author recorded it as unknown; the TL closed it in R72. Not proof that a write is safe; re-read before a run. |
 | P1-3 | P1 | The writer's real pathway (child psql 18.x, `/dev/tty` prompt, empty `HOME`, `verify-full`, marker protocol on server 17.6) has never run against Development. | TL decision | Optional fix: a separate reviewed **read-only preflight mode** (connect, lock, preflight, anon and privilege checks, exit with no writes), Owner-run with permission. |
 | P1-4 | P1 | No pre-write check of every planned row against the checked-in CHECK constraints (code-point lengths, regex, ranges, NUL). | TL decision | Moves every data-dependent failure (for example §3 `region`) from mid-run to before the first write. Needs a reviewed code change, or an accepted risk. |
-| P2-1 | P2 | Development compute size, disk headroom, role-level `statement_timeout`/`idle_session_timeout`. | TL metadata | Affects §7 deadline and disk risk. |
+| P2-1 | P2 | Development compute size and disk headroom or storage quota. Session defaults are now TL-verified (R72): `statement_timeout=2min`, `lock_timeout=0`, idle timeouts 0; the writer sets its own limits. | TL metadata | Affects §7 deadline and disk risk. |
 | P2-2 | P2 | Fresh source files and hashes close to execution (R63/R64 counts are from 17 October). | Owner, offline | Upstream data changes move the counts and the batch plan. |
 | P2-3 | P2 | Which Preview/app environment provably targets `develop` for gate 11. | TL | Prevents a false "search works" result against the wrong project. |
-| P2-4 | P2 | Which git branch is linked to Supabase `develop`, and whether automatic migrations could run during the window. | TL | A migration lock longer than 10 s leads to a partial STOP. |
-| P3-1 | P3 | Full hosted `pg_indexes` and CHECK definitions versus the migrations (see §4). | TL, read-only | Binds the hosted schema to the checked-in migrations beyond column names. |
+| P2-4 | P2 | Which git branch is linked to Supabase `develop`, and whether automatic migrations could run during the window. | TL | A migration lock longer than 10 s leads to a partial STOP. Linkage also feeds P0-2. |
+| P3-1 | ~~P3~~ **closed for indexes and triggers** | Hosted index set and triggers. | TL-verified (R72) | 12 indexes as listed in §4; 0 non-internal triggers. CHECK constraints and the trip foreign keys come from earlier TL source evidence. |
 | P3-2 | P3 | psql 18 client natively in CI (PGDG client package) or via P1-3. | TL | Client-version difference from the 16.15 proof. |
 | P3-3 | P3 | The 180 s client limit includes typing the password. | Owner | A timeout fails safely (nothing written) but uses up that journal path. |
 
-Already verified, not asked again: 0/0 rows, both migrations, `pg_trgm`, RLS, the basic anon grants and policies.
+Already verified, not asked again:
+- by the TL in R71: 0/0 rows, both migrations, `pg_trgm`, RLS, the basic anon grants and policies;
+- by the TL in R72: owners, privileges, `BYPASSRLS`, `anon` membership, 12 indexes, 0 triggers, session defaults.
+
+**Still open:** P0-1, P0-2, P1-1, P1-3, P1-4, P2-1 (compute and disk), P2-2, P2-3, P2-4, P3-2, P3-3.
 
 ## 10. Risk matrix
 
 | P | Risk | Consequence | Mitigation available |
 |---|---|---|---|
 | P0 | No verified recovery | Partial rows with no authorised path back | P0-1 decision before any write |
-| P1 | `places` not writable by `postgres` because of RLS | All airports committed, 0 Places | P1-2 catalog read |
+| P0 | Non-persistent branch (`persistent=false`, TL-verified R72) is paused or deleted after import | Whole imported catalog lost through ordinary PR workflow | P0-2 lifecycle STOP gate before any write |
+| ~~P1~~ resolved as metadata | `places` not writable by `postgres` because of RLS | All airports committed, 0 Places | Closed by the TL-verified (R72) owner, privilege and `BYPASSRLS` read; re-read before a run |
 | P1 | Data-dependent CHECK failure mid-stage | Partial Places | P1-4 pre-validation |
 | P1 | Unexercised TLS/TTY/psql-18 pathway | Fails before writing (safe), or unknown protocol behaviour | P1-3 read-only preflight mode |
 | P2 | Deadline, lock or network stop at scale | Partial state, journal ±1 batch | §7 synthetic scale test, window freeze, database counts |

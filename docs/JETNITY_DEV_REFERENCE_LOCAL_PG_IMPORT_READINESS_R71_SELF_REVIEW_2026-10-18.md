@@ -26,10 +26,22 @@
   - the time and size estimates in §7 are rough.
 - **Severity calls:**
   - the `region ?? city` mismatch is rated P3 because OurAirports practically always has `iso_region`; the general pre-validation gap is P1 because any mid-run failure has no authorised cleanup;
-  - `places` ownership is P1 because the preflight does not catch it and the failure would come after all airports are committed.
+  - `places` ownership is P1 because the preflight does not catch it and the failure would come after all airports are committed. (Superseded in R72 R2: closed as metadata by the TL-verified owner, privilege and `BYPASSRLS` read.)
 - **Not done:**
   - no tests were run (docs-only; exact `main` CI already green);
   - no source files were downloaded and nothing hosted was contacted.
+
+## R72 R2 correction self-check (not a PASS)
+
+- **What I missed in R71:**
+  - the branch-lifecycle risk (`persistent=false`, from the R72 review, F1), now P0-2;
+  - the report presented owner/privileges (F2) and the index set (F3) as currently open, and the TL has since verified them.
+- **The R71 rating of `places` ownership as P1** was right for the information available then; it is closed as metadata by the TL-verified (R72) read.
+- **Labelling:** every new fact is labelled TL-verified (R72); none is author-run.
+- **Still open:**
+  - backup/PITR, real TLS and network, source pre-validation, import reliability at scale and storage are unchanged;
+  - no GO FOR WRITE.
+- **Checked by me:** only the three R71 docs changed in this fix.
 
 ## Independence
 
