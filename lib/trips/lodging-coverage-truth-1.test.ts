@@ -291,38 +291,43 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.doesNotMatch(kurzText, BEKANNT)
   })
 
-  test('gebuchte ungültige oder umgekehrte Daten bleiben in der eigenen Zeile unklar', () => {
-    for (const fall of [
-      { id: 'stay-invalid', title: 'Ungültig gebucht', startsOn: '2026-02-29', endsOn: '2026-03-02' },
-      { id: 'stay-reversed', title: 'Umgekehrt gebucht', startsOn: '2026-09-10', endsOn: '2026-09-01' },
-    ]) {
-      const anzeige = zeitraumKurz(fall.startsOn, fall.endsOn)
-      assert.notEqual(anzeige, 'Zeitraum noch nicht bestimmbar', fall.id)
-      const trip = reise({ ohneTag: [
-        stay({ id: 'stay-full', title: 'Volle Abdeckung', startsOn: '2026-08-30', endsOn: '2026-09-13' }),
-        stay({ id: fall.id, title: fall.title, startsOn: fall.startsOn, endsOn: fall.endsOn, position: 2, ...gebuchteBuchung(JETZT) }),
-      ] })
-      const abdeckung = unterkunftAbdeckung(trip)
-      assert.equal(abdeckung.luecken.length, 0, fall.id)
-      assert.equal(abdeckung.zusammenfassung, 'Unterkunftsstand noch unklar', fall.id)
-      assert.equal(abdeckung.aufenthalte.find(item => item.item.id === fall.id)?.status, 'unknown', fall.id)
-      const text = html(trip)
-      assert.match(text, /Unterkunftsstand noch unklar/, fall.id)
-      assert.doesNotMatch(text, BEKANNT, fall.id)
-      assert.doesNotMatch(text, FEHLT, fall.id)
-      assert.doesNotMatch(text, VORLAEUFIG, fall.id)
-      assert.doesNotMatch(text, /Zeitraum ergänzen|Zeitraum ändern/, fall.id)
-      const volleZeile = zeile(text, 'Volle Abdeckung')
-      const unklareZeile = zeile(text, fall.title)
-      assert.doesNotMatch(volleZeile, ZEITRAUM_UNKLAR, fall.id)
-      assert.match(unklareZeile, new RegExp(anzeige.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), fall.id)
-      assert.match(unklareZeile, ZEITRAUM_UNKLAR, fall.id)
-      assert.match(unklareZeile, /Gebucht/, fall.id)
-      assert.match(unklareZeile, /Buchung korrigieren/, fall.id)
-      const ui = bedienung(trip)
-      ui.buttonFor(fall.title).props.onClick!()
-      assert.deepEqual(ui.calls, [[fall.id, false]])
-    }
+  function unklareGebuchteZeile(fall: { id: string; title: string; startsOn: string; endsOn: string }) {
+    const anzeige = zeitraumKurz(fall.startsOn, fall.endsOn)
+    assert.notEqual(anzeige, 'Zeitraum noch nicht bestimmbar', fall.id)
+    const trip = reise({ ohneTag: [
+      stay({ id: 'stay-full', title: 'Volle Abdeckung', startsOn: '2026-08-30', endsOn: '2026-09-13' }),
+      stay({ id: fall.id, title: fall.title, startsOn: fall.startsOn, endsOn: fall.endsOn, position: 2, ...gebuchteBuchung(JETZT) }),
+    ] })
+    const abdeckung = unterkunftAbdeckung(trip)
+    assert.equal(abdeckung.luecken.length, 0, fall.id)
+    assert.equal(abdeckung.zusammenfassung, 'Unterkunftsstand noch unklar', fall.id)
+    assert.equal(abdeckung.aufenthalte.find(item => item.item.id === fall.id)?.status, 'unknown', fall.id)
+    const text = html(trip)
+    assert.match(text, /Unterkunftsstand noch unklar/, fall.id)
+    assert.doesNotMatch(text, BEKANNT, fall.id)
+    assert.doesNotMatch(text, FEHLT, fall.id)
+    assert.doesNotMatch(text, VORLAEUFIG, fall.id)
+    assert.doesNotMatch(text, /Zeitraum ergänzen|Zeitraum ändern/, fall.id)
+    const volleZeile = zeile(text, 'Volle Abdeckung')
+    const unklareZeile = zeile(text, fall.title)
+    const falscheSpanne = new RegExp(anzeige.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    assert.match(volleZeile, /30\. Aug\./, fall.id)
+    assert.doesNotMatch(volleZeile, ZEITRAUM_UNKLAR, fall.id)
+    assert.doesNotMatch(unklareZeile, falscheSpanne, fall.id)
+    assert.match(unklareZeile, ZEITRAUM_UNKLAR, fall.id)
+    assert.match(unklareZeile, /Gebucht/, fall.id)
+    assert.match(unklareZeile, /Buchung korrigieren/, fall.id)
+    const ui = bedienung(trip)
+    ui.buttonFor(fall.title).props.onClick!()
+    assert.deepEqual(ui.calls, [[fall.id, false]])
+  }
+
+  test('gebuchte ungültige Daten bleiben in der eigenen Zeile unklar', () => {
+    unklareGebuchteZeile({ id: 'stay-invalid', title: 'Ungültig gebucht', startsOn: '2026-02-29', endsOn: '2026-03-02' })
+  })
+
+  test('gebuchte umgekehrte Daten bleiben in der eigenen Zeile unklar', () => {
+    unklareGebuchteZeile({ id: 'stay-reversed', title: 'Umgekehrt gebucht', startsOn: '2026-09-10', endsOn: '2026-09-01' })
   })
 
   test('volle datierte Abdeckung plus undatierter Aufenthalt bleibt unklar', async () => {

@@ -72,6 +72,8 @@ export default function UnterkunftBestand({
         <ul className="mt-5 grid gap-2">
           {abdeckung.aufenthalte.map((aufenthalt) => {
             const gebucht = istGebucht(aufenthalt.item)
+            const zeitraum = zeitraumKurz(aufenthalt.start, aufenthalt.end)
+            const scheinbarerZeitraum = aufenthalt.status === 'unknown' && zeitraum !== 'Zeitraum noch nicht bestimmbar'
             return (
             <li
               key={aufenthalt.item.id}
@@ -81,11 +83,15 @@ export default function UnterkunftBestand({
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-brand-800 break-words">{aufenthalt.item.title}</p>
                   <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                    {zeitraumKurz(aufenthalt.start, aufenthalt.end)}
-                    {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
-                    {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
+                    {scheinbarerZeitraum ? 'Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.' : (
+                      <>
+                        {zeitraum}
+                        {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+                        {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
+                      </>
+                    )}
                   </p>
-                  {aufenthalt.status === 'unknown' ? (
+                  {aufenthalt.status === 'unknown' && !scheinbarerZeitraum ? (
                     <p className="mt-0.5 text-xs leading-5 text-ink-800">
                       Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.
                     </p>

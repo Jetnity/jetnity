@@ -6,9 +6,9 @@
 
 The accommodation panel no longer replaces an unknown canonical summary with a numeric coverage heading. While any stay date is missing, invalid, or reversed, gap rows keep the canonical count but do not say those nights are missing. A stored booked stay, including one without dates, offers `Buchung korrigieren` and calls `(itemId, false)`.
 
-## B04 row clarification
+## R1 row correction
 
-On head `0dafbfca`, the focused case `gebuchte ungültige oder umgekehrte Daten bleiben in der eigenen Zeile unklar` failed: a provider stay with `2026-02-29` or reversed dates could show a normalized range and `Gebucht` without row-level uncertainty, and there was no gap row. The same case passes after the row sentence. `unterkunft-manuell.test.ts` still passes. Owned-file ESLint passes. Full typecheck, build, and CI belong to the new pushed head and are not copied forward from `0dafbfca`.
+Reviewed head `0dafbfca179c65347b03a83b3bbff5b77c0d6e71` against the two new row tests: exit 1, 0 pass / 2 fail. The invalid provider row contained `1. März – 2. März` and `Gebucht` with no uncertainty sentence. The reversed row contained `10. Sept. – 1. Sept.` The operator was `doesNotMatch`. `64f7c510` fails the same invalid-row assertion because it still renders `1. März – 2. März` beside the sentence. The repaired panel passes both tests. The full lodging file, `naechte-abdeckung.test.ts`, `buchung.test.ts`, and `direct-lodging-coverage-preview-1.test.ts` then passed together (32 tests). `unterkunft-manuell.test.ts` passed against this panel before the two tests were split. Owned-file ESLint passed. `tsc -p tsconfig.json --noEmit` passed. `npm run typecheck`, `npm run build`, and earlier hygiene checks are not re-copied from `0dafbfca`. CI and Preview for this head are not claimed green.
 
 ## Commands
 
@@ -26,7 +26,7 @@ Logs for the red and green regression runs are local author output, not CI. CI, 
 
 ## Boundaries
 
-No database, SQL, Auth, RLS, secret, account, personal browser, source admission, provider call, dependency, workflow, or configuration change. No traveller-document collection. No new recurring cost. TASK blob unchanged. `origin/main` at handoff remains `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de`.
+No database, SQL, Auth, RLS, secret, account, personal browser, source admission, provider call, dependency, workflow, or configuration change. No traveller-document collection. No new recurring cost. TASK blob unchanged: `5d424fd82ae5334aca79e999e3078101b8b4e44b`. `origin/main` re-read `be0a8b68765e25dc3216dc1f61bfd4620af3e134`. Merge-base `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de`. 5 ahead / 5 behind after this commit. Not synchronized with merged #984.
 
 ## Copy choice
 
