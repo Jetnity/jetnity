@@ -12,7 +12,7 @@ This plan is the task-owned implementation note required before code. TASK V1 bl
 ## Interfaces and files
 
 - `scripts/db/official-truth-current-version-lookup-1/lookup.ts` validates the request with the existing pin, scope, fact-kind and requirement-type readers, recomputes `ruleScopeKey` with `regelScopeAusEvidenceScope`, then calls one new SQL function on the caller’s open `READ COMMITTED` transaction. On exactly one remaining candidate it calls the existing `readCandidate`. It has no module-level cache and no fingerprint argument.
-- `scripts/db/official-truth-current-version-lookup-1/fixtures.ts` builds the existing calendar-adjusted `regulations.example` corpus and one second receipt version of the same cell/fact identity through the existing canonical codecs.
+- `scripts/db/official-truth-current-version-lookup-1/fixtures.ts` builds one second receipt version of the same cell/fact identity through the existing canonical codecs. The calendar adjustment of the admitted `regulations.example` corpus stays inside the focused test, the same place the custody proof keeps it, so no new non-test module imports the content-identity codec.
 - `lib/readiness/official-truth-current-version-lookup-1.test.ts` is the native PostgreSQL 16 proof.
 - `supabase/migrations/20261023153726_official_truth_current_version_lookup_1.sql` is the empty file created by Supabase CLI 2.48.3 `migration new`. The timestamp was not typed by hand. The file stays hosted-UNAPPLIED.
 
