@@ -7,7 +7,7 @@ Session: https://cursor.com/agents/bc-9b199fb1-5a2e-4e18-b939-632fd811b7e4
 `originalModelName=grok-4.7-high-fast`
 Immutable TASK blob: `8488a556a73cbdd5367da226170899ac7c2cb74e`
 
-Review-fix V1, same session, against delivery head `e1bb544f518949f17491202047b18432e871f850`. This packet is technical source mapping for Technical-Lead review. It is not legal advice, not a traveller result, not source activation, not an accepted Rule, and not Production approval.
+Review-fix V1, same session, against delivery head `e1bb544f518949f17491202047b18432e871f850`. Review-fix V2, same session, corrects D5 continuity only, against `c8fae045c0ddf58264280853de35fdd873109b9b`. Technical Lead evidence decisions D1–D4 in comment `6369439433` stand. This packet is technical source mapping for Technical-Lead review. It is not legal advice, not a traveller result, not source activation, not an accepted Rule, and not Production approval.
 
 ## Honest decision
 
@@ -237,7 +237,7 @@ The generic admin.ch notice, first window, remains on record and is not the Fedl
 | Extraction and derived claims | The hashed introduction asset describes machine use and authorises commercial and other reuse under the broadcasters conditions. PublV Art. 49 applies to exploitation of platform data, including unchanged content, visual separation, the mandatory notice, and letter (h) for paid redistribution. | Whether a future Jetnity display is “paid redistribution of platform data” under letter (h). This packet does not classify it. No extractor was built. Compliance with Art. 49 is not asserted. |
 | Reproduction of the original publication | Art. 49(c) and (e) require the non-official notice and forbid the impression of an official publication. The excerpts in this packet are review excerpts. PublG Art. 15(3) leaves the controlling treaty text to the treaty. | The broadcasters SPA body. Technical conditions present only there. |
 | Access and refresh | Public HTTPS reads succeeded for the pages in the table. `www.fedlex.admin.ch` robots allow `/`. `fedlex.data.admin.ch` robots disallow `/filestore/*`. The static asset is outside that path. No rate limit was stated in the read statute or in the index excerpt. | A refresh cadence. The treaty HTML was not fetched again. |
-| Jetnity internal storage | This packet keeps links, identifiers, HTTP metadata, hashes, and the excerpts. The bodies are not in the repository. | Original-byte retention. That is D5, the existing Product Owner gate, and it is independent of copyright. |
+| Jetnity internal storage | This packet keeps links, identifiers, HTTP metadata, hashes, and the excerpts. The bodies are not in the repository. | No real Fedlex original is retained. The storage direction is already decided. D5 records why this representation is still unapproved. That question is independent of copyright and is not the unsigned global D01–D12 packet. |
 
 Commercial and other reuse is evidenced on the conditional basis above. That evidence does not authorize Production activation, a live provider, or an accepted Rule. It does not assert that a later product already satisfies Art. 49. No individual permission letter is requested. The empty introduction shell is not a licence prohibition.
 
@@ -254,7 +254,7 @@ If a later versioned task separately authorizes one proof read, the dormant shap
 - One request, no redirect follow, no retry, timeout 15 seconds. The observed size was 371,444 bytes. That is above the existing 65,536-byte default and above the conditional 131,072-byte pin. A later adapter may carry its own ceiling for this URL, large enough for the observed body. Do not raise the global caps.
 - A non-production environment named in that later task. Not the application pilot, not Production, not a hosted database. This packet names no operator and no calendar window. The expired 15 October 2026 BP1 window is not reused.
 - Output of that later run: HTTP status, final URL, media type, byte count, SHA-256, and the boolean checks above. No raw body in git. `sourceQualified` stays false until a separate acceptance. No Evidence and no Rule.
-- Retention of any original bytes remains D5.
+- No real Fedlex original bytes are retained. D5 is the already decided source-original direction plus the still-open representation and hosting reviews. It is not a new preference question.
 - Refusal: any other URL, redirect, non-HTML, size above that task’s own ceiling, digest change without a pre-accepted new digest, missing SR or Stand date, missing article id, missing visa sentence, JavaScript shell, intranet host, or data-host filestore path.
 
 Later versioned implementation, change list only, no code in this PR:
@@ -270,13 +270,25 @@ The 371,444-byte size is a bounded implementation dependency for that later adap
 
 ## E. Decisions and findings
 
+### D5 continuity
+
+The broad source-original direction is already binding. `docs/OFFICIAL_TRUTH_SOURCE_ORIGINAL_RETENTION_TL_OWNER_DELEGATED_DIRECTION_2026-10-11.md`, blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420`, is the Owner-delegated decision: a separate private, encrypted, expiring full original when an exact representation’s eligibility permits, and otherwise ephemeral verification with no historical-original reproof. The opening of `docs/OFFICIAL_TRUTH_CH_DE_SOURCE_TO_WORKSPACE_V2_1_OWNER_PACKET_2026-10-11.md`, blob `de4b95c6ef521f040b44c3ed51e6e74172a890ec`, says not to ask that choice again. Older G2 text below that opening is historical. This packet does not ask it again, does not design a new store, and does not grant blanket retention.
+
+This Fedlex HTML representation is not approved for real retention. Still open for this representation are its content and privacy eligibility, purpose and duration, concrete secure hosting, key and access arrangements, residual-copy expiry across backup, PITR, WAL, replica and export, a disposal operation, and a durable independent lifecycle and restore witness. Those are the existing finite source and hosting reviews. Their absence does not mean the direction is unchosen.
+
+The existing implementation, `supabase/migrations/20261011111839_official_truth_original_custody_lifecycle_1.sql`, blob `36b525580509069039ca6787c25a0a5b94155986`, is local, code-only and synthetic. The header says it is an unapplied code-only candidate and stores no fact. `expires_at` and `freshness_until` must fall within 30 days after `captured_at` for every original. Update or delete of an original row raises `immutable_history`. An idempotent retry verifies the stored original and does not write a new expiry. That 30-day maximum, including originals that are still referenced, is the implemented default. The direction document’s 180-day absolute ceiling is a design ceiling, not this default. No hosted key management, deletion SLA or storage-cost approval follows from the migration. The M1–M4 contract records the same 30-day choice and leaves the durable production witness and backup inventory unimplemented.
+
+Global D01–D12, clarified in #865 comment `6108417968`, stays separately unsigned. That packet excludes raw government response bodies. It is not a substitute for the source-original direction, and this direction does not sign D01–D12. The 30-day diagnostic-report proposal in #944 is a different object. It is not original-body retention.
+
+Default for this packet: no real Fedlex original bytes are retained. Copyright evidence does not change that default. D1–D4 and the stops on the treaty HTML and the Copyright Act HTML are unchanged.
+
 | Id | Owner | Decision now before the Technical Lead |
 | --- | --- | --- |
 | D1 | Technical Lead, with legal-source review | The conditional reuse basis in section C is the decision record: URG Art. 5; PublG Arts. 19 and 19a; PublV Arts. 47 and 49 as read from the 1 July 2022 consolidation; and the hashed introduction asset authorising commercial and other reuse under the broadcasters conditions. Accepting D1 accepts that record. It does not mean Art. 49 has already been performed, and it does not activate a source. |
 | D2 | Technical Lead | The generic admin.ch prior-consent paragraph stays in the record and is not the Fedlex-specific basis. No permission letter, contact, terms acceptance, or contract is requested. |
 | D3 | Technical Lead, with legal-source review | At 23 October 2026 the newest evidenced Fedlex consolidation of this agreement is 15 December 2020. The provisional protocol signed 2 March 2026 is not in force. Art. 1 item 14 would replace Annex I only on entry into force under Art. 2. `validFrom` and `validUntil` stay unaccepted. The later refresh point is entry into force, or a definitive Fedlex publication or later consolidation. |
 | D4 | Technical Lead | No operator and no calendar window are named. The section D GET stays dormant. |
-| D5 | Product Owner, existing retention gate | Original-byte retention remains the existing unsigned retention decision. It is independent of copyright. Default in this packet: no original bytes retained. |
+| D5 | Direction already decided; this representation still unapproved | See “D5 continuity” above. No new broad preference question. No real Fedlex original bytes are retained. Global D01–D12 stays a separate unsigned provenance decision. |
 | D6 | Technical Lead and Product Owner, separate from ordinary research | The commercial-reuse evidence does not authorize Production activation, a live provider, or an accepted Rule. No new blanket Owner gate is added for ordinary bounded research. |
 
 | Priority | Finding |
@@ -293,13 +305,13 @@ The 371,444-byte size is a bounded implementation dependency for that later adap
 | P2 | This consolidation’s party list still names the United Kingdom. Out of cell. It is the 15 December 2020 list. |
 | P2 | Annex I Art. 1(2)’s five-year passport sentence is not a German entry rule. |
 | P2 | The Cellar guide PDF was retrieved and not text-extracted. Unused. The 7.20 MB EDA message PDF was not downloaded. |
-| P2 | `validFrom` and `validUntil` stay unaccepted. Original-byte retention stays on the existing unsigned Owner gate. Production activation stays unauthorized. |
+| P2 | `validFrom` and `validUntil` stay unaccepted. This Fedlex representation is not approved for real original retention; the storage direction itself is already decided. Production activation stays unauthorized. |
 | Implementation dependency | 371,444 bytes is above the current 65,536 and 131,072 retrieval ceilings. A later scoped adapter can carry its own ceiling. Global caps stay unchanged. |
 | P3 | The metadata graph does not contain an Annex I subdivision resource. The HTML does. The graph is not the provision. |
 | P3 | Shell `Last-Modified` 15 October 2026, file `Last-Modified` 31 July 2026, metadata timestamps, and the protocol signature date are different dates and are not `validFrom` or `validUntil`. |
 | P3 | The narrower ordinary, tourism, direct-route, and stay-end facts sit inside the broader nationality-plus-valid-passport rule. The canonical scope still does not encode them. Residence is not the legal key. |
 
-Finite gaps that remain after this correction: the unread SPA bodies; any technical condition present only there; the index citation of repealed Art. 48(2); the provisional protocol and the absent definitive Fedlex publication; unaccepted `validFrom` / `validUntil`; unsigned original-byte retention; and no Production authorization. The historical treaty and Copyright Act receipts were not repeated.
+Finite gaps that remain after this correction: the unread SPA bodies; any technical condition present only there; the index citation of repealed Art. 48(2); the provisional protocol and the absent definitive Fedlex publication; unaccepted `validFrom` / `validUntil`; this Fedlex representation’s still-open eligibility, hosting, key, residual-copy and witness reviews; and no Production authorization. The source-original direction is not one of those gaps. The historical treaty and Copyright Act receipts were not repeated.
 
 #748 newest material report `6268214902` (`COS-20261019-1521-016`) records the existing #968 Preview credential exposure. It is outside this slice. No credential was read or rotated. #751 comment `6368724786` records live main `8f64d5fdb819065791235879822b1074205899c0` after the #972 merge. Main was re-read immediately before this correction and was still that commit, mode NORMAL. This branch was not rebased.
 
