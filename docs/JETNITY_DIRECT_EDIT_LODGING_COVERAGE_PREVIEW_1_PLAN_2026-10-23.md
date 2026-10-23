@@ -42,3 +42,10 @@ Focused behavioral file plus existing direct-edit and canonical night-coverage r
 - Over-strict admission can hide coverage for a pathological but schema-shaped graph. Normal trip edits stay far under the ceiling.
 - The optional reader argument exists so tests can prove a rejected side never reaches the canonical function. Production callers omit it.
 - Requested model Claude Opus 5.5 High is not this run. Actual model is reported in the handoff. This plan does not switch models.
+
+## Review fix R101
+
+The Product Owner accepted the observed model `grok-4.7-high-fast` for this same session. That acceptance closes only the model STOP. The canonical evaluator stays unchanged.
+
+- A side with one or more stages is qualified only when every stage has a valid half-open interval. One incomplete stage, and several stages that are all incomplete, stay visibly unknown even when `unterkunftAbdeckung` returns numeric trip-date fallback coverage. A trip with no stages may still use that fallback.
+- The lodging lines no longer say that all accommodation data stay unchanged. An unconfirmed stay without price, provider, booking link or external reference moves with the existing date edit. The preview still says nothing is cancelled or rebooked automatically with a supplier.
