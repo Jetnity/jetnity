@@ -9,6 +9,30 @@ Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW. NOT READY. NOT MERGED. NO 
 
 Self-review in `docs/JETNITY_V1_SUPPORT_RUNBOOK_RECONCILIATION_1_SELF_REVIEW_2026-10-23.md` is not Technical-Lead PASS.
 
+## Integration V1 — current delivery record
+
+Technical Lead R101 authorised one ordinary merge of exact main `de169965f8318a46bdd350eb14df88b0682fc803`. Fetched `origin/main` matched that SHA and tree `997d34c515b5108ec0de2f90fcf85998ba6bb755`. Main’s parents are `8f64d5fdb819065791235879822b1074205899c0` and `56cbcf66eb85f47dd471fdeba68f51e379d32d3a`. No rebase, force-push, or cherry-pick. No path conflict.
+
+| Item | Value |
+| --- | --- |
+| Merge commit | `5f18f3dcb4859c7b51252cfc1abd9980aa6d749b` |
+| Merge parents | `36649eaee13c2299caed0a75291d39799a104d6c` and `de169965f8318a46bdd350eb14df88b0682fc803` |
+| Merge tree | `40ec493436909020d4cc85d92df9e1805767a4b5` |
+| Ahead / behind immediately after that merge | 4 / 0 against `de169965` |
+| Runbook versus reviewed `36649eae` | byte-identical |
+| Runbook source baseline inside the runbook | still `5269b9192a2300c6c03fc8659964583130d2d1d1`. This integration does not turn that baseline into a new Production mail, deletion, export, or legal-page test. |
+| Immutable TASK blob | `989457863f58bde5264e8974459780b95a615ac3` |
+| Current final head | The commit that adds this Integration V1 section. The PR comment records `git rev-parse HEAD` after push. There is no later commit whose only purpose is to paste that SHA. |
+| Old CI / Preview | Runs on `36649eaee13c2299caed0a75291d39799a104d6c` do not gate the integrated head. |
+
+`git diff --name-only origin/main...HEAD` after the merge remained the six task files. `git diff --check origin/main...HEAD` exits 2 because runbook lines 4 and 5 keep two trailing spaces each, the Markdown line breaks already present on reviewed `36649eae`. `git diff --check 36649eaee13c2299caed0a75291d39799a104d6c -- docs/V1_SUPPORT_PROCESS_RUNBOOK_2026-09-18.md` exits 0. Those spaces were not rewritten.
+
+Same session `bc-131cfc15-e947-42e6-be53-565205666604`. `originalModelName` on this run remains `grok-4.7-high-fast`. Owner acceptance of Grok 4.7 High Fast is recorded by Technical Lead R101. The historical requested/observed sentences below stay as first written.
+
+No new prose test. No live mail, Auth, deletion, export, database, provider, or personal-browser check. CI and Preview for the notes commit are recorded in the PR comment only after they are visible.
+
+The sections below are the pre-integration handoff. Their “final head” sentence means the content-reviewed head, not this integrated head.
+
 ## Exact git, re-read before this handoff
 
 Fresh `git fetch origin main` before the runbook commit, repeated as the parent of this evidence:

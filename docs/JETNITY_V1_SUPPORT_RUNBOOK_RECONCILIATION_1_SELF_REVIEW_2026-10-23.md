@@ -8,6 +8,12 @@ Observed model: `grok-4.7-high-fast` (`originalModelName`). Not Auto. Not Opus. 
 
 **This self-review is not Technical-Lead PASS.**
 
+## Integration V1
+
+Same session. `originalModelName` remains `grok-4.7-high-fast`. The Owner acceptance of Grok 4.7 High Fast does not rewrite the historical requested-model sentence below.
+
+Fetched main matched authorised `de169965f8318a46bdd350eb14df88b0682fc803`. One ordinary merge, commit `5f18f3dcb4859c7b51252cfc1abd9980aa6d749b`, parents `36649eaee13c2299caed0a75291d39799a104d6c` and that main. No conflict and no runbook byte change. TASK blob unchanged. `git diff --check` whitespace hits are the reviewed Markdown line breaks on runbook lines 4–5, not a new edit. No live runtime check. The notes commit after this merge is the head for re-gating. This note is not Technical-Lead PASS.
+
 ## Scope check
 
 - Immutable TASK blob `989457863f58bde5264e8974459780b95a615ac3` was not edited.

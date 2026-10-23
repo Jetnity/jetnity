@@ -9,6 +9,12 @@ Branch: `docs/v1-support-runbook-reconciliation-1`
 
 This file is point-in-time evidence. Agent self-review is not Technical-Lead PASS. A later commit invalidates this exact head.
 
+## Integration V1 — current delivery record
+
+Ordinary merge of fetched main `de169965f8318a46bdd350eb14df88b0682fc803` (tree `997d34c515b5108ec0de2f90fcf85998ba6bb755`) into this branch. Merge commit `5f18f3dcb4859c7b51252cfc1abd9980aa6d749b`, parents `36649eaee13c2299caed0a75291d39799a104d6c` and `de169965f8318a46bdd350eb14df88b0682fc803`, merge tree `40ec493436909020d4cc85d92df9e1805767a4b5`. No conflict. The runbook file is byte-identical to the reviewed head. Its internal source baseline stays `5269b9192a2300c6c03fc8659964583130d2d1d1` and is not a new Production test. TASK blob `989457863f58bde5264e8974459780b95a615ac3`.
+
+The commit that adds this section is the integrated delivery head. The PR comment states that SHA after push. CI and Preview on `36649eae` do not gate it. `git diff --check origin/main...HEAD` reports only the two pre-existing Markdown trailing spaces on runbook lines 4–5. `originalModelName` remains `grok-4.7-high-fast`. Historical model sentences below are unchanged.
+
 ## Identity
 
 | Item | Value |
