@@ -112,7 +112,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(definition[0]?.definer, 'true')
     assert.equal(definition[0]?.provolatile, 'v')
     assert.match(definition[0]?.config ?? '', /search_path=/)
-    assert.match(definition[0]?.config ?? '', /timezone=UTC/)
+    assert.match(definition[0]?.config ?? '', /TimeZone=UTC/)
     assert.match(definition[0]?.config ?? '', /statement_timeout=20s/)
     assert.equal(/\bLIMIT\b/.test(definition[0]?.body ?? ''), false)
     assert.equal(/decrypt_original/.test(definition[0]?.body ?? ''), false)
@@ -218,10 +218,14 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(ambiguous.matchCount, 2)
     assert.equal(JSON.stringify(ambiguous).includes(second.envelope.bundle.recordFingerprint), false)
     note('two active receipts for one identity stay ambiguous')
-    const refuseInTransaction = async (statement: string, params: ReturnType<typeof pgText>[] | undefined, reason: CurrentVersionLookupResult extends infer R ? R extends { status: 'refused'; reason: infer X } ? X : never : never) => {
+    const quoteFingerprint = (value: string) => {
+      assert.match(value, /^ot-provenance-v1:[a-f0-9]{64}$/)
+      return `'${value}'`
+    }
+    const refuseInTransaction = async (statement: string, reason: CurrentVersionLookupResult extends infer R ? R extends { status: 'refused'; reason: infer X } ? X : never : never) => {
       await owner.query('BEGIN')
       try {
-        await owner.query(statement, params)
+        await owner.query(statement)
         const seen = await cursor(owner)
         const result = await lookupCurrentVersion(cluster, owner, primaryRequest, key, seen)
         assert.equal(result.status, 'refused')
@@ -233,13 +237,13 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await refuseInTransaction(`DO $$ DECLARE c record; BEGIN
       FOR c IN SELECT conname FROM pg_constraint WHERE conrelid='official_provenance_private.receipts'::regclass AND contype='c' LOOP
         EXECUTE format('ALTER TABLE official_provenance_private.receipts DROP CONSTRAINT %I', c.conname);
-      END LOOP; END $$; ALTER TABLE official_provenance_private.receipts DISABLE TRIGGER USER; UPDATE official_provenance_private.receipts SET canonical_payload_bytes=convert_to('{}','UTF8') WHERE record_fingerprint=$1`, [pgText(second.envelope.bundle.recordFingerprint)], 'accepted_corpus_unclassifiable')
-    await refuseInTransaction(`SELECT official_original_private.append_event('accepted', $1)`, [pgText(first.envelope.bundle.recordFingerprint)], 'accepted_corpus_incomplete')
-    await refuseInTransaction(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) VALUES('ot-provenance-v1:'||repeat('ab',32),'review-packet:v3:'||repeat('cd',32),'[]'::jsonb); INSERT INTO official_original_private.rule_bindings(fingerprint,review_id) SELECT fingerprint,review_id FROM official_original_private.reviews WHERE fingerprint='ot-provenance-v1:'||repeat('ab',32)`, undefined, 'accepted_corpus_incomplete')
-    await refuseInTransaction(`SELECT official_original_private.append_event('accepted','ot-provenance-v1:'||repeat('ef',32))`, undefined, 'accepted_corpus_incomplete')
-    await refuseInTransaction(`SELECT official_original_private.append_event('accepted','not-a-fingerprint')`, undefined, 'accepted_corpus_incomplete')
+      END LOOP; END $$; ALTER TABLE official_provenance_private.receipts DISABLE TRIGGER USER; UPDATE official_provenance_private.receipts SET canonical_payload_bytes=convert_to('{}','UTF8') WHERE record_fingerprint=${quoteFingerprint(second.envelope.bundle.recordFingerprint)}`, 'accepted_corpus_unclassifiable')
+    await refuseInTransaction(`SELECT official_original_private.append_event('accepted', ${quoteFingerprint(first.envelope.bundle.recordFingerprint)})`, 'accepted_corpus_incomplete')
+    await refuseInTransaction(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) VALUES('ot-provenance-v1:'||repeat('ab',32),'review-packet:v3:'||repeat('cd',32),'[]'::jsonb); INSERT INTO official_original_private.rule_bindings(fingerprint,review_id) SELECT fingerprint,review_id FROM official_original_private.reviews WHERE fingerprint='ot-provenance-v1:'||repeat('ab',32)`, 'accepted_corpus_incomplete')
+    await refuseInTransaction(`SELECT official_original_private.append_event('accepted','ot-provenance-v1:'||repeat('ef',32))`, 'accepted_corpus_incomplete')
+    await refuseInTransaction(`SELECT official_original_private.append_event('accepted','not-a-fingerprint')`, 'accepted_corpus_incomplete')
     await owner.query('BEGIN')
-    await owner.query(`ALTER TABLE official_original_private.rule_bindings DISABLE TRIGGER USER; INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) VALUES('ot-provenance-v1:'||repeat('12',32),'review-packet:v3:'||repeat('34',32),'[]'::jsonb); UPDATE official_original_private.rule_bindings SET review_id=(SELECT review_id FROM official_original_private.reviews WHERE fingerprint='ot-provenance-v1:'||repeat('12',32)) WHERE fingerprint=$1`, [pgText(first.envelope.bundle.recordFingerprint)])
+    await owner.query(`ALTER TABLE official_original_private.rule_bindings DISABLE TRIGGER USER; INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) VALUES('ot-provenance-v1:'||repeat('12',32),'review-packet:v3:'||repeat('34',32),'[]'::jsonb); UPDATE official_original_private.rule_bindings SET review_id=(SELECT review_id FROM official_original_private.reviews WHERE fingerprint='ot-provenance-v1:'||repeat('12',32)) WHERE fingerprint=${quoteFingerprint(first.envelope.bundle.recordFingerprint)}`)
     const mismatched = await lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner))
     assert.equal(mismatched.status, 'refused')
     if (mismatched.status === 'refused') assert.equal(mismatched.reason, 'accepted_corpus_incomplete')
@@ -248,15 +252,15 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(stillAmbiguous.status, 'ambiguous')
     note('damaged, duplicate, orphan, missing and mismatched competitors refuse the whole lookup')
     await owner.query('BEGIN')
-    await owner.query(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) SELECT 'ot-provenance-v1:'||encode(sha256(('ceiling-'||g::text)::bytea),'hex'), 'review-packet:v3:'||encode(sha256(('packet-'||g::text)::bytea),'hex'), '[]'::jsonb FROM generate_series(1,(SELECT 1024-count(*) FROM official_original_private.reviews)) g`)
+    await owner.query(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) SELECT 'ot-provenance-v1:'||encode(sha256(convert_to('ceiling-'||g::text,'UTF8')),'hex'), 'review-packet:v3:'||encode(sha256(convert_to('packet-'||g::text,'UTF8')),'hex'), '[]'::jsonb FROM generate_series(1,(SELECT 1024-count(*) FROM official_original_private.reviews)) g`)
     assert.equal((await owner.query('SELECT count(*)::text AS n FROM official_original_private.reviews'))[0]?.n, '1024')
     const atCeiling = await lookupCurrentVersion(cluster, owner, primaryRequest, key, witness)
     assert.equal(atCeiling.status, 'ambiguous')
     await owner.query('ROLLBACK'); await align(witness)
-    await refuseInTransaction(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) SELECT 'ot-provenance-v1:'||encode(sha256(('overflow-'||g::text)::bytea),'hex'), 'review-packet:v3:'||encode(sha256(('packet-overflow-'||g::text)::bytea),'hex'), '[]'::jsonb FROM generate_series(1,(SELECT 1025-count(*) FROM official_original_private.reviews)) g`, undefined, 'lookup_budget_count')
+    await refuseInTransaction(`INSERT INTO official_original_private.reviews(fingerprint,packet_key,ordered_supports) SELECT 'ot-provenance-v1:'||encode(sha256(convert_to('overflow-'||g::text,'UTF8')),'hex'), 'review-packet:v3:'||encode(sha256(convert_to('packet-overflow-'||g::text,'UTF8')),'hex'), '[]'::jsonb FROM generate_series(1,(SELECT 1025-count(*) FROM official_original_private.reviews)) g`, 'lookup_budget_count')
     await refuseInTransaction(`DO $$ DECLARE n integer; i integer; BEGIN
       SELECT 1025-count(*) INTO n FROM official_original_private.events WHERE kind='accepted';
-      FOR i IN 1..n LOOP PERFORM official_original_private.append_event('accepted','budget-'||i::text); END LOOP; END $$`, undefined, 'lookup_budget_count')
+      FOR i IN 1..n LOOP PERFORM official_original_private.append_event('accepted','budget-'||i::text); END LOOP; END $$`, 'lookup_budget_count')
     await refuseInTransaction(`INSERT INTO official_provenance_private.receipts(record_fingerprint,canonical_payload_bytes,storage_contract_version,receipt_schema,receipt_schema_version,canonicalization)
       SELECT 'ot-provenance-v1:'||encode(sha256(convert_to('ot-provenance-v1'||chr(10),'UTF8')||payload),'hex'), payload, 2, 'official-truth-autonomous-provenance', 1, 'ot-provenance-json-v1'
       FROM (SELECT convert_to(lpad(g::text,10,'0'),'UTF8')||repeat('y',262134)::bytea AS payload FROM generate_series(1,33) g) q;
@@ -269,7 +273,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
       DO $$ DECLARE fp text; BEGIN
         FOR fp IN SELECT record_fingerprint FROM official_provenance_private.receipts WHERE octet_length(canonical_payload_bytes)=262144 ORDER BY 1 LOOP
           PERFORM official_original_private.append_event('accepted', fp);
-        END LOOP; END $$`, undefined, 'lookup_budget_bytes')
+        END LOOP; END $$`, 'lookup_budget_bytes')
     await refuseInTransaction(`DO $$ DECLARE c record; BEGIN FOR c IN SELECT conname FROM pg_constraint WHERE conrelid='official_provenance_private.receipts'::regclass AND contype='c' AND pg_get_constraintdef(oid) LIKE '%262144%' LOOP EXECUTE format('ALTER TABLE official_provenance_private.receipts DROP CONSTRAINT %I', c.conname); END LOOP; END $$;
       INSERT INTO official_provenance_private.receipts(record_fingerprint,canonical_payload_bytes,storage_contract_version,receipt_schema,receipt_schema_version,canonicalization)
       SELECT 'ot-provenance-v1:'||encode(sha256(convert_to('ot-provenance-v1'||chr(10),'UTF8')||payload),'hex'), payload, 2, 'official-truth-autonomous-provenance', 1, 'ot-provenance-json-v1'
@@ -280,7 +284,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
       INSERT INTO official_original_private.rule_bindings(fingerprint,review_id)
       SELECT r.fingerprint, r.review_id FROM official_original_private.reviews r
       WHERE r.packet_key='review-packet:v3:'||repeat('ab',32);
-      SELECT official_original_private.append_event('accepted', record_fingerprint) FROM official_provenance_private.receipts WHERE octet_length(canonical_payload_bytes)=262145`, undefined, 'lookup_budget_receipt')
+      SELECT official_original_private.append_event('accepted', record_fingerprint) FROM official_provenance_private.receipts WHERE octet_length(canonical_payload_bytes)=262145`, 'lookup_budget_receipt')
     assert.equal((await openLookup(primaryRequest)).status, 'ambiguous')
     note('count, aggregate and per-receipt bounds refuse without a truncated match')
     await lifecycle.query('BEGIN')
