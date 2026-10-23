@@ -225,8 +225,6 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       const bytes = await owner.query('SELECT encrypted_bytes::text FROM official_original_private.ciphertexts')
       assert.ok(!bytes[0]!.encrypted_bytes!.includes(Buffer.from(p.bodies[0]!).toString('hex')))
       await checkpoint()
-      const before = await counts(), retry = await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing')
-      assert.ok(retry.ok); assert.equal(retry.outcome, 'idempotent'); assert.deepEqual(await counts(), before)
       await assert.rejects(read(undefined, reader, witness, '0'.repeat(64)), code('39000'))
     })
     await check('composed ordered supports commit atomically with exact reviewer packet', async () => {
@@ -253,9 +251,21 @@ test('M1–M4 synthetic atomic custody, protected review, current reader and imm
       }
       try { assert.deepEqual(await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing'), { ok: false, reason: 'commit_outcome_unknown' }) }
       finally { LocalPgConnection.connect = originalConnect }
+      assert.equal(LocalPgConnection.connect, originalConnect)
       assert.deepEqual(await counts(), before)
       await checkpoint()
-      const resolved = await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing'); assert.ok(resolved.ok); assert.equal(resolved.outcome, 'idempotent')
+      const resolved = await persistCandidate(cluster, oids, p, review, key, witness, 'verify_existing')
+      assert.ok(resolved.ok)
+      assert.equal(resolved.outcome, 'idempotent')
+      assert.deepEqual(await counts(), before)
+      assert.equal(resolved.readback.recordFingerprint, p.envelope.bundle.recordFingerprint)
+      assert.equal(resolved.readback.status, 'synthetic_custody_verified')
+      assert.equal(resolved.readback.supports, 1)
+      assert.equal(resolved.readback.historicalOriginalsReproved, true)
+      assert.deepEqual(resolved.cursor, witness)
+      assert.deepEqual(resolved.readback.cursor, witness)
+      assert.equal(resolved.readback.productionAcceptedRead, 'NOT_AUTHORIZED')
+      assert.equal(resolved.readback.positiveVisaCells, 0)
     })
     await check('native quota backpressure enforces per-source/day, total items and total live bytes', async () => {
       const v = verifyLocalIntegratedPilotBundle(p.envelope); assert.ok(v.ok)
