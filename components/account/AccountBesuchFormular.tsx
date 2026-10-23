@@ -16,6 +16,7 @@ import LandFeld from '@/components/country/LandFeld'
 import OrtSuche from '@/components/places/OrtSuche'
 import { BESUCHE_COPY } from '@/lib/account/besuche-copy'
 import { BESUCH_JAHR_MINIMUM } from '@/lib/account/besuche-eingabe'
+import { besuchZeitfeldSetzen } from '@/lib/account/visit-date-precision-1/zeitfeld'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
 
 export type BesuchFormularWert = {
@@ -146,6 +147,9 @@ export default function AccountBesuchFormular({
           <legend className="text-sm font-medium text-brand-800">{BESUCHE_COPY.zeitTitel}</legend>
           <p className="text-xs leading-5 text-ink-700">{BESUCHE_COPY.zeitHinweis}</p>
           <div className={zeitNebeneinander ? 'grid min-w-0 gap-3 sm:grid-cols-3' : 'grid min-w-0 gap-3'}>
+            {/* Leeres Jahr oder leerer Monat nimmt die abhängigen Felder mit.
+                Ein gesperrter Restwert würde sonst mitgeschickt und vom Server
+                abgewiesen. Neu setzen stellt Verworfenes nicht wieder her. */}
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               {BESUCHE_COPY.jahrLabel}
               <input
@@ -157,7 +161,9 @@ export default function AccountBesuchFormular({
                 value={wert.jahr}
                 disabled={laeuft}
                 autoComplete="off"
-                onChange={(ereignis) => onWert({ ...wert, jahr: ereignis.target.value })}
+                onChange={(ereignis) =>
+                  onWert(besuchZeitfeldSetzen(wert, 'jahr', ereignis.target.value))
+                }
                 className={feldKlasse}
               />
             </label>
@@ -166,7 +172,9 @@ export default function AccountBesuchFormular({
               <select
                 value={wert.monat}
                 disabled={laeuft || !wert.jahr.trim()}
-                onChange={(ereignis) => onWert({ ...wert, monat: ereignis.target.value })}
+                onChange={(ereignis) =>
+                  onWert(besuchZeitfeldSetzen(wert, 'monat', ereignis.target.value))
+                }
                 className={feldKlasse}
               >
                 <option value="">{BESUCHE_COPY.monatOhneAngabe}</option>
@@ -188,7 +196,9 @@ export default function AccountBesuchFormular({
                 value={wert.tag}
                 disabled={laeuft || !wert.monat.trim()}
                 autoComplete="off"
-                onChange={(ereignis) => onWert({ ...wert, tag: ereignis.target.value })}
+                onChange={(ereignis) =>
+                  onWert(besuchZeitfeldSetzen(wert, 'tag', ereignis.target.value))
+                }
                 className={feldKlasse}
               />
             </label>
