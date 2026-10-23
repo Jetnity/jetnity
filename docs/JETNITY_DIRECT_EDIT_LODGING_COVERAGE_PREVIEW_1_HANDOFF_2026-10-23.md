@@ -11,17 +11,18 @@ R101: the Product Owner accepted Grok 4.7 High Fast for this same session. That 
 
 ## Exact refs
 
-Fresh `git fetch origin main` before this handoff:
+Fresh `git fetch origin main` before this handoff. Main was still the authorised commit.
 
-- main / merge-base: `5269b9192a2300c6c03fc8659964583130d2d1d1`
-- behind: 0
-- R100 reviewed head, not current: `3b383fc4ccec97e5c9a72d08ef305946f683cc21`, tree `56a578326c44411ea0b7e6e3969e6bbe1ba083e4`
-- review-fix commit: `d9d6460a9e992e81c0c4359aaac47ccf1c6779e4`
-- review-fix tree: `723dbd3748ea03c0d0aa99f8531acdc3af4d193b`
-- Review head: the branch tip after this documentation commit. The PR comment records that SHA and tree. Any later head invalidates this gate. `d9d6460a` is not the review head.
+- main: `8f64d5fdb819065791235879822b1074205899c0`
+- main tree: `73ee0a59570d2f92744e95605ec818296948f533`
+- ordinary merge: `da4db5cb40c7e4f21609ec25c8b59acfe9f6fb3c`
+- merge parents: `d494d143fae8c437936c61afc3c6619416b37b0b` and `8f64d5fdb819065791235879822b1074205899c0`
+- integrated tree before this documentation commit: `92dca4b171bc1a6363c1955b7cf7a1b140438dc6`
+- behind: 0 at that merge. Ahead of main by 7 before this documentation commit, and one further docs commit after it.
+- Review head: the branch tip after this documentation commit. The PR comment records that SHA and tree. Any later head invalidates this gate. `da4db5cb` is not the review head.
 - TASK blob `258bed9fc85ae8dbcc978ef1715132e9b0978e58` unchanged.
 - V2 blob `07d68779031b2fb2d8a88207be89738f9d1ab8e9` unchanged.
-- Ahead of main by the two task commits, the first implementation commit, the first handoff commit, the review-fix commit, and this documentation commit. No rebase, merge, or cherry-pick. Main did not move.
+- No rebase, no force-push, no second merge. The merge brought only the visit-date form, helper, test and task docs. Lodging behaviour was not edited again.
 
 ## Files changed for the implementation
 
@@ -43,13 +44,15 @@ Fresh `git fetch origin main` before this handoff:
 
 ## Evidence
 
-See the status file for commands and counts on `d9d6460a`. Focused preview tests: 14 pass. Those plus existing direct-edit and canonical night-coverage tests: 70 pass. Typecheck, lint (0 errors, 146 pre-existing warnings), build and hygiene checks passed. `npm ci` was not re-run.
+See the status file for commands and counts on merge `da4db5cb`. Focused preview, direct-edit, canonical night-coverage and merged visit-date tests: 79 pass. Typecheck, lint (0 errors, 146 pre-existing warnings), build and hygiene checks passed. `npm ci` was not re-run. `auth:pruefen` was not run locally; this integration does not change auth.
 
-`npm test` on that commit: 6990 pass, 10 fail, 5 skipped, 7005 total. Failures are pre-existing local PostgreSQL proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or missing local binaries with no hosted fallback). Skips are pre-existing native-PostgreSQL or loopback-layout gates. No database was contacted. This documentation commit does not change those results.
+`npm test` on that merge: 6999 pass, 10 fail, 5 skipped, 7014 total. Failures are pre-existing local PostgreSQL proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or missing local binaries with no hosted fallback). Skips are pre-existing native-PostgreSQL or loopback-layout gates. No database was contacted. This documentation commit does not change those results and is a later head.
 
-Static render of the existing component, inside the focused test, shows the new summary and the full row count for a case with more than 20 rows. The closed disclosure does not inline the gap lines. Styled desktop, mobile and keyboard operation of the manual editor were **not checked**. No account, no personal browser profile, no new hosted fixture, and no #955 re-audit.
+Static render of the existing component, inside the focused test, shows the new summary and the full row count for a case with more than 20 rows. The closed disclosure does not inline the gap lines. That is not a styled or keyboard pass.
 
-CI and Preview for this final head are not results yet at authoring. The earlier seed Preview does not bind this head.
+Styled desktop, mobile and keyboard operation were **not checked**. The existing `/ui-audit/trip-workspace` page does not mount the manual-edit preview, and it is 404 unless `JETNITY_UI_AUDIT` is set. This integration does not set that flag, does not add a route or fixture, and the workspace has no `.env`. No browser was opened. No account, no personal browser profile, no new hosted fixture, and no #955 re-audit.
+
+CI and Preview for this final documentation head are not results yet at authoring. Merge-head CI 39980980806 binds `da4db5cb` only and was in progress. The earlier success on `3b383fc4` and the cancelled runs on `d494d143` and `d9d6460a` do not bind this head. No Preview READY is claimed for the merge or for this documentation tip.
 
 ## Excluded
 
@@ -60,6 +63,6 @@ Production and Development databases, Supabase, Auth, RLS, secrets, providers, L
 - P0: none.
 - P1: none open. The observed model remains `grok-4.7-high-fast`. R101 records the Product Owner acceptance of that model. This handoff does not claim Claude.
 - P2: stricter admission can hide coverage for a very large finite graph. Local full test suite is not green for unrelated PostgreSQL proofs.
-- P3: optional reader argument; styled viewport and keyboard not checked. No isolated browser was used, and the Owner browser was not attached.
+- P3: optional reader argument; styled viewport and keyboard not checked. No isolated route mounts this preview without a flag this task does not set. No browser was opened, and the Owner browser was not attached.
 
 Next actor: Technical Lead, independent exact-head review of the final tip. Integration order remains #972, then #973, then #974, and is not this writer’s decision. Immediate review fixes stay with this same writer and session.

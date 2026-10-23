@@ -49,3 +49,7 @@ The Product Owner accepted the observed model `grok-4.7-high-fast` for this same
 
 - A side with one or more stages is qualified only when every stage has a valid half-open interval. One incomplete stage, and several stages that are all incomplete, stay visibly unknown even when `unterkunftAbdeckung` returns numeric trip-date fallback coverage. A trip with no stages may still use that fallback.
 - The lodging lines no longer say that all accommodation data stay unchanged. An unconfirmed stay without price, provider, booking link or external reference moves with the existing date edit. The preview still says nothing is cancelled or rebooked automatically with a supplier.
+
+## Integration R101 V2
+
+One ordinary merge of reviewed main `8f64d5fdb819065791235879822b1074205899c0` (tree `73ee0a59570d2f92744e95605ec818296948f533`) into this branch. That commit is the #972 visit-date form fix, its helper, test and task docs. No path overlap with the lodging files. No rebase and no second merge. No lodging behaviour change.
