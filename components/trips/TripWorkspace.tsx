@@ -912,6 +912,7 @@ export default function TripWorkspace({
             <FlaecheHuelle name="uebersicht" verborgen={false}>
               <TripWorkspaceUebersicht
                 reise={reise}
+                ungeplantePunkte={ungeplantePunkte}
                 uebersicht={uebersicht}
                 attention={attention}
                 destinationEssentials={destinationEssentials}
