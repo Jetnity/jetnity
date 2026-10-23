@@ -4,27 +4,32 @@ Date: 23 October 2026
 Writer: **Jetnity Official Truth Fedlex CH-DE Source Qualification 1 — Cursor Generation 1**
 Session: https://cursor.com/agents/bc-9b199fb1-5a2e-4e18-b939-632fd811b7e4
 
-This self-review is not a Technical-Lead PASS, not Ready, and not merge approval.
+Review-fix V1 against delivery head `e1bb544f518949f17491202047b18432e871f850`. This self-review is not a Technical-Lead PASS, not Ready, and not merge approval.
 
 ## Acceptance criteria
 
-| Criterion | Author result |
+| Criterion | Author result after the correction |
 | --- | --- |
-| A. Exact fact | Annex I Art. 1 was read in German from the current HTML manifestation. The visa sentence is tied to contracting-party nationality and a valid passport. Ordinary subclass, tourism, direct route, stay end, and residence are explicitly not established. Art. 24 and the service-provider 90-day wording were seen and not applied. Public-order Art. 5 is recorded. No 90/180 tourist limit was invented. |
-| B. Version | Work, German expression, consolidation `20201215`, manifestation `html-9`, and the observed SHA-256 are separated from publication, metadata, file, shell, and retrieval dates. `version=20260101` returned no triples. The 18-member consolidation set is complete under the limit. Post-2020-12-15 amendments outside that set remain D3. |
-| C. Use basis | URG Art. 5 was read from the 1 July 2025 consolidation. The Fedlex intro page was not readable. The admin.ch consent sentence was read and left unresolved for automated reproduction. Commercial use, refresh, and retention are not authorized. |
-| D. Next acquisition | One URL, one request, explicit byte ceiling, no operator, no window, refusal criteria, and a later change list that does not retarget BP1. Not executed. |
-| E. Decision | Sufficient for Technical-Lead review of that proposal. Not a qualified source and not a visa result. P0 empty. P1–P3 listed in the packet. |
+| A. Exact fact | Annex I Art. 1 was read in German from the historical HTML manifestation and was not re-fetched. A Swiss national producing a valid passport is inside the rule. The ordinary-passport, tourism, direct-route, and dated-stay subset is narrower and still inside that rule. The canonical scope still cannot encode those four predicates. That encoding gap is separate from coverage. Art. 5, Art. 24, and the service-provider 90-day wording stay limited as written in the packet. No 90/180, residency, working-rights, or entry-guarantee claim was added. |
+| B. Version | Work, German expression, consolidation `20201215`, manifestation `html-9`, and the historical SHA-256 stay separated from publication, metadata, file, shell, and retrieval dates. Zero triples at RDF `.../20260101` are limited to that resource. The UI parameter was not tested again. The provisional protocol of 2 March 2026 was read. It is signed and not in force. `validFrom` and `validUntil` stay null. |
+| C. Use basis | The conditional basis is URG Art. 5, PublG Arts. 19 and 19a, PublV Arts. 47 and 49 from the hashed 1 July 2022 consolidation, and the hashed introduction asset. Index text is labelled as index text. PublV Art. 48 is repealed in the consolidation that was read; the index still cites Art. 48(2). The admin.ch paragraph is not a waiver request. No permission letter is requested. Commercial-reuse evidence is not Production approval. The broadcasters SPA body remains unread. |
+| D. Next action | The immediate action is Technical-Lead review. The treaty GET is dormant and states what a later execution would and would not prove. No operator and no window. File size is an adapter-ceiling dependency. |
+| E. Decision | Sufficient for Technical-Lead review of D1–D6 as rewritten. Not a qualified source and not a visa result. P0 empty. Earlier P1 rows withdrawn. Remaining gaps are listed as P2, P3, and one implementation dependency. |
 
 ## Limits the author will not soften
 
-- The JavaScript shell is not a licence review.
+- A JavaScript shell is not a licence review and is not a licence prohibition.
+- Search-index text has no body hash. `lawbrary.ch` is not an official source.
 - The partial named-graph Turtle is not the agreement.
-- The Cellar PDF was not text-extracted and is unused.
+- The historical treaty HTML and Copyright Act HTML were not re-fetched after the Technical Lead’s tool could not open them.
+- The protocol PDF is provisional. Its replacement Annex I was not applied as the current rule.
+- A `dateDocument` query with zero bindings is not a certificate that nothing exists under another identifier.
+- The Cellar PDF was not text-extracted and is unused. The 7.20 MB message PDF was not downloaded.
 - `ld.admin.ch` robots disallow was discovered after the single TASK-named fetch. It was not repeated.
-- Main moved to `8f64d5fdb819065791235879822b1074205899c0` during the session. No rebase.
+- Local `pdftotext` is not a repository dependency.
+- Main was `8f64d5fdb819065791235879822b1074205899c0` immediately before this correction. No rebase.
 - No runtime, database, lint, or production-build run. Those checks would not prove this source packet. Do not read a later green Preview as semantic acceptance.
 
 ## Scope check
 
-New files only, under `docs/OFFICIAL_TRUTH_FEDLEX_CH_DE_SOURCE_QUALIFICATION_1_*`. TASK blob unchanged. No write to #973 or #976 paths.
+Edits only to the existing `PLAN`, `PACKET`, `STATUS`, `SELF_REVIEW`, and `HANDOFF`. TASK blob unchanged. No write to #973 or #976 paths. No acquisition and no follow-up slice.
