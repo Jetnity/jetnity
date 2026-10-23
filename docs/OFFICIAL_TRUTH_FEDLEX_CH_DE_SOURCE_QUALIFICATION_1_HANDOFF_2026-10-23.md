@@ -10,7 +10,7 @@ Branch: `docs/official-truth-fedlex-ch-de-source-qualification-1`
 - Writer: **Jetnity Official Truth Fedlex CH-DE Source Qualification 1 — Cursor Generation 1**
 - Session: https://cursor.com/agents/bc-9b199fb1-5a2e-4e18-b939-632fd811b7e4
 - `bcId`: `bc-9b199fb1-5a2e-4e18-b939-632fd811b7e4`
-- Model: `grok-4.7-high-fast` (`originalModelName` from this run). Dispatch requested Grok 4.7 High Fast. Confirmed again before review-fix V2. No fallback.
+- Model: `grok-4.7-high-fast` (`originalModelName` from this run). Dispatch requested Grok 4.7 High Fast. Confirmed again before Integration V1. No historical relabelling. No fallback.
 - Immutable TASK: `docs/OFFICIAL_TRUTH_FEDLEX_CH_DE_SOURCE_QUALIFICATION_1_TASK_2026-10-23.md`
 - TASK blob: `8488a556a73cbdd5367da226170899ac7c2cb74e`
 - Seed head: `0c48bd53475b30f851221aab957175e050cb1abf`
@@ -21,9 +21,13 @@ Branch: `docs/official-truth-fedlex-ch-de-source-qualification-1`
 - Review-fix V1 head, now superseded for the D5 sentence: `c8fae045c0ddf58264280853de35fdd873109b9b`, tree `5ab1736c4cdb637602e92f5ab9a2e3c42354d3c8`. D1–D4 in comment `6369439433` stand.
 - Re-read main immediately before review-fix V2: `de169965f8318a46bdd350eb14df88b0682fc803`, mode NORMAL
 - Merge-base: still `5269b9192a2300c6c03fc8659964583130d2d1d1`
-- Ahead / behind at that V2 re-read, before this commit: 3 ahead / 13 behind
-- No rebase, merge, cherry-pick, or force-push. Main integration is not this correction.
-- Review head and tree: the commit that adds review-fix V2. Record the SHA from git after the commit. Do not review `c8fae045` as current.
+- Ahead / behind at that V2 re-read: 3 ahead / 13 behind
+- Review-fix V2 did not rebase, merge, cherry-pick, or force-push.
+- Review-fix V2 head: `7f14f02fea4d06e97d21febfa04f5984567f71ba`, tree `85f61df21426aadb7d375789eebabd6adb864f99`. D1–D5 stand. Comment `6369618107` accepted the D5 correction.
+- Integration main, verified before the merge and still equal at merge time: `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd`, tree `e1965c7d5cbece75e093f38fb937a6487bcd88c0`, parents `de169965f8318a46bdd350eb14df88b0682fc803` and `63b4ff2f743a226b02bb6c8b5e8a553f00e49172`, mode NORMAL
+- Ordinary merge commit: `05d6298168981f592e3e4ec7cbc61b693d4b8d8e`, tree `61501abcf43a6c69c42ab29b28d98d4643fc50be`, parents `7f14f02fea4d06e97d21febfa04f5984567f71ba` and `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd`. No conflict. No rebase and no force-push.
+- After that merge, before this note: 5 ahead / 0 behind `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd`
+- Review head and tree: the commit that adds this integration note. Record that SHA in the pull-request handoff. Do not add another commit only to quote it. Do not review `7f14f02f` or `05d62981` as the final head.
 
 ## What the reviewer should read
 
@@ -38,7 +42,9 @@ Review-fix V1 keeps the historical German HTML receipt for SR 0.142.112.681, con
 ## Checks actually run
 
 - Run identity and `originalModelName` before the first retrieval, before review-fix V1, and before review-fix V2. Same `bcId`.
-- Operating mode `NORMAL` on current `origin/main` `de169965f8318a46bdd350eb14df88b0682fc803`.
+- Operating mode `NORMAL` on integration main `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd`.
+- `git diff --check` on the integration-note commit. The merge itself was clean. No new runtime, SQL, provider, or deployment command.
+- CI and Preview for the final head are reported in the pull-request handoff from their state after the push. An older Preview is not a pass of that head.
 - Read, without editing, the source-original direction blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420`, the owner-packet opening blob `de4b95c6ef521f040b44c3ed51e6e74172a890ec`, custody migration blob `36b525580509069039ca6787c25a0a5b94155986`, and #865 comment `6108417968`. Those blobs match both this branch and current main.
 - Public reads listed in the packet for the second window: PublG, PublV, the static introduction asset, the EDA page, the protocol PDF, the Parliament page, and a `dateDocument` `2026-03-02` SPARQL query with zero bindings. WebSearch supplied index text only.
 - The treaty `...-html-9.html` and the Copyright Act `...-html-7.html` were not re-fetched.
@@ -48,4 +54,4 @@ Review-fix V1 keeps the historical German HTML receipt for SR 0.142.112.681, con
 
 ## Stop
 
-Independent Technical-Lead review of the review-fix V2 commit. Cursor does not mark Ready, does not merge, does not rebase onto main, and does not start the dormant acquisition or any other follow-up.
+Independent Technical-Lead exact-head re-gating of the integration-note commit. Content review of `7f14f02f` is not a PASS of this integrated head. Cursor keeps the pull request Draft, does not mark Ready, does not merge the pull request, and does not start acquisition or any other follow-up. CI and Preview on the final head are reported from their actual state after the push.

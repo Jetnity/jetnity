@@ -28,10 +28,10 @@ Review-fix V1 against delivery head `e1bb544f518949f17491202047b18432e871f850`. 
 - The Cellar PDF was not text-extracted and is unused. The 7.20 MB message PDF was not downloaded.
 - `ld.admin.ch` robots disallow was discovered after the single TASK-named fetch. It was not repeated.
 - Local `pdftotext` is not a repository dependency.
-- Main was `8f64d5fdb819065791235879822b1074205899c0` immediately before review-fix V1. Immediately before review-fix V2 it was `de169965f8318a46bdd350eb14df88b0682fc803`. No rebase and no merge.
+- The `8f64d5fdb819065791235879822b1074205899c0` re-read is the REVIEW-FIX V1 observation. The REVIEW-FIX V2 observation was `de169965f8318a46bdd350eb14df88b0682fc803`. Integration V1 merged main `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd` in commit `05d6298168981f592e3e4ec7cbc61b693d4b8d8e`. No rebase. The qualification substance was not revised.
 - D5 does not reopen the broad retention choice and does not sign global D01–D12.
 - No runtime, database, lint, or production-build run. Those checks would not prove this source packet. Do not read a later green Preview as semantic acceptance.
 
 ## Scope check
 
-Edits only to the existing `PLAN`, `PACKET`, `STATUS`, `SELF_REVIEW`, and `HANDOFF`. TASK blob unchanged. No write to #973 or #976 paths. No acquisition and no follow-up slice.
+Integration-note edits only to the existing `PLAN`, `PACKET`, `STATUS`, `SELF_REVIEW`, and `HANDOFF`. The merge brought in the unrelated main files and was not hand-edited. TASK blob unchanged. No acquisition and no follow-up slice.

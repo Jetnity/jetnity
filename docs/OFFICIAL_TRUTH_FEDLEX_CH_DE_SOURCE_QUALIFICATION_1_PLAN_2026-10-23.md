@@ -25,7 +25,11 @@ Technical Lead R101 returned CHANGES REQUIRED on delivery head `e1bb544f518949f1
 
 ## Review-fix V2
 
-Technical Lead R101 accepted D1–D4 on `c8fae045c0ddf58264280853de35fdd873109b9b` and required one D5 continuity correction. The source-original direction in blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420` is already binding. This Fedlex representation is not approved for real retention. Global D01–D12 stays separately unsigned and is not that direction. No new retention system, SQL, source read, or main integration is part of this correction. Main moved to `de169965f8318a46bdd350eb14df88b0682fc803` and was not merged.
+Technical Lead R101 accepted D1–D4 on `c8fae045c0ddf58264280853de35fdd873109b9b` and required one D5 continuity correction. The source-original direction in blob `db9b62a0d2637e40eefe25ee49c0e7a08be3b420` is already binding. This Fedlex representation is not approved for real retention. Global D01–D12 stays separately unsigned and is not that direction. No new retention system, SQL, or source read is part of that correction. At that time main was `de169965f8318a46bdd350eb14df88b0682fc803` and was not merged.
+
+## Integration V1
+
+One ordinary merge of main `9b8eb056d421afbd9b3b2a4dbba1eaff9c6b8cfd` into this branch. Merge commit `05d6298168981f592e3e4ec7cbc61b693d4b8d8e`. No rebase, force-push, or cherry-pick. No conflict. The qualification text is unchanged apart from the historical main-label in the packet. Incoming #972, #973, and #974 files arrived only through that merge.
 
 ## Modules and files
 
