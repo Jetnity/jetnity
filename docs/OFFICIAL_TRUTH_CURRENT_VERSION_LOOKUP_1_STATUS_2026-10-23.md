@@ -1,9 +1,10 @@
 # Official Truth Current-Version Lookup 1 — STATUS
 
 Date: 23 October 2026 (Europe/Zurich)
-Issue: #975
-Draft PR: #976
-Branch: `feat/official-truth-current-version-lookup-1`
+Issue: #975, reopened after the post-merge failure
+Repair Draft PR: #979
+Historical merged PR: #976
+Branch: `fix/official-truth-current-version-lookup-1-postmerge-f4`
 Writer: **Jetnity Official Truth Current-Version Lookup 1 — Cursor Generation 1**
 Session: https://cursor.com/agents/bc-16e2789c-fc9b-4bbc-925b-ba43273b6cc3
 Actual model: `grok-4.7-high-fast`
@@ -22,6 +23,8 @@ Review-fix F2: job `120529859925` on `a1da094eeffab809e444790d81afa420ad45c9d1` 
 
 Review-fix F3: `storeAccepted` opens its own `ot_original_test_writer` connection, publishes and binds in that explicit transaction, commits, and closes the producer in `finally` before aligning the lifecycle witness and returning. The fresh-reader lookup, including a tainted caller fingerprint, starts only after that backend is gone. The publication race still uses a different long-lived writer. The reviewed SQL blob `609d10b9727e5fa4f91896d64086798e989ae50b` is unchanged.
 
+Post-merge repair F4: push CI `39997551343` on merge `76a30c5694bc7bd0dfb20544eb05a6c884c51576` timed this native test out at 300004.537475ms. No terminal diagnostic was emitted because phase timings were held until PASS. The repair logs each phase start and completion as it happens, and a thrown failure logs the SQLSTATE or error name with the checks and phases already finished. It does not log keys, originals, or paths. Two redundant full positives are gone. Source, profile, expiry, stale-witness and restored-head rollbacks now run against the first accepted receipt, before the second receipt exists. Their refusals are unchanged: `55000`, `55000`, `no_match`, `55000`, `55000`. The later fresh tainted-fingerprint read is the restored-positive control and the closed-producer proof. After the other-cell review faults roll back, the wrong-pin `no_match` stays, and one held full proof both matches the second receipt and starts the withdrawal race. `publishIntegratedBundle(..., 'verify_existing')` and publish-plus-bind in one transaction stay. The 300000ms limit, SQL blob `609d10b9727e5fa4f91896d64086798e989ae50b`, and lookup blob `d9a22eba073752a94bdc58616c70100d557b3f61` are unchanged. No unique cause of the timeout is claimed.
+
 The row is explicitly local and non-authoritative: `productionAcceptedRead = NOT_AUTHORIZED`, `positiveVisaCells = 0`, `reusablePositiveCache = false`. The fingerprint is fresh only for that witness and `read_at`. A later decision runs the proof again.
 
 ## What remains unimplemented
@@ -30,7 +33,9 @@ Real-source retrieval, government or provider calls, hosted Development/Producti
 
 ## Heads
 
-Re-read immediately before these documents, without rebase:
+The table below is the historical pre-merge record. The current repair follows it.
+
+Historical, re-read at the F3 delivery:
 
 | Ref | Value |
 | --- | --- |
@@ -47,7 +52,22 @@ Re-read immediately before these documents, without rebase:
 | TASK V3 blob | `2f304122b59bba6bdb5f0bbb86fba46b139d3add` |
 | SQL blob | `609d10b9727e5fa4f91896d64086798e989ae50b` |
 
-Ordinary merge of the authorised main. No rebase and no path overlap. The F3 test change and these notes are the single commit on top of that merge. That commit is the review head. If origin/main is still `8ec8e8ed8a63781fa88ece617b17f382340b6645`, the review head is 16 ahead and 0 behind. The PR records its SHA. Incoming main files do not transfer writer ownership.
+That ordinary merge is historical. Merged main is `76a30c5694bc7bd0dfb20544eb05a6c884c51576`, tree `6b37f099c7666cc4fab841fe2d4e1df2c21cb213`.
+
+Current repair, on top of seed `689686758f97575c5329e59c715df5dbbb4629bc`:
+
+| Ref | Value |
+| --- | --- |
+| Repair seed | `689686758f97575c5329e59c715df5dbbb4629bc` |
+| Seed tree | `f2b9091092c3750714a7940b2840122239ec6917` |
+| F4 task blob | `a93581f630fba4673e22a8ff6c306aa0ea6e1d43` |
+| Baseline main | `76a30c5694bc7bd0dfb20544eb05a6c884c51576` |
+| Ahead / behind at the seed | 1 ahead / 0 behind |
+| Baseline test blob | `505dc6bcd534937cd182ca2260d8bf1a6443d91d` |
+| Lookup blob | `d9a22eba073752a94bdc58616c70100d557b3f61` |
+| SQL blob | `609d10b9727e5fa4f91896d64086798e989ae50b` |
+
+The F4 test change and these notes are the commit on top of that seed. That commit is the repair review head. If main is still `76a30c5694bc7bd0dfb20544eb05a6c884c51576`, the review head is 2 ahead and 0 behind. Draft PR #979 records its SHA. The task file is not edited.
 
 ## Local proof
 
@@ -57,7 +77,7 @@ Command, with `SUPABASE_PROJECT_REF` removed from the process environment becaus
 
 Result on `e9f66adaa79a5c690303481decaa7341187633f7`: PASS, 119.9s uncontended and 119.1s pinned to one core, PostgreSQL 16.15, `hostedWrites: 0`. The same test inside the full suite took 120.7s. The diagnostic lists the same checks as before, including the damaged review packet key and ordered support list on another accepted cell, plus per-phase milliseconds. Both the real match and the otherwise empty request refuse with `accepted_corpus_incomplete`. After rollback, the untouched match succeeds and the empty request is `no_match` again. The pre-correction measurement of the same scenarios was 155.4s; the damaged-review phase fell from 31.3s to 13.1s. Those timings do not establish a unique cause of the older CI timeout.
 
-Result on the integrated F3 tree, before this documentation text was committed and with the same test file this commit contains: PASS, 120236.681862ms, PostgreSQL 16.15, `hostedWrites: 0`. The diagnostic has the previous checks plus `that fresh lookup starts only after the accepted-store producer is closed`. `productionAcceptedRead` is `NOT_AUTHORIZED` and `positiveVisaCells` is 0. No second local full suite was run for this connection change. The earlier full suite remains evidence for `e9f66ada` only.
+Result on the integrated F3 tree: PASS, 120236.681862ms, PostgreSQL 16.15, `hostedWrites: 0`. The same scenarios on the repaired test, before this documentation text was committed: PASS, 101564.501414ms, diagnostic `durationMs` 101386, PostgreSQL 16.15, `hostedWrites: 0`. All 19 check names remain. The source/profile/expiry/stale/head phase times are 2953, 2898, 1484, 3 and 4 milliseconds. The withdrawal phase is 4800ms. The same block on the F3 tree was 18151ms and the withdrawal phase was 13986ms. `productionAcceptedRead` is `NOT_AUTHORIZED` and `positiveVisaCells` is 0. This local reduction does not prove the GitHub runner finishes under 300000ms. No second local full suite was run.
 
 ## Other checks on this work
 
@@ -66,4 +86,4 @@ Result on the integrated F3 tree, before this documentation text was committed a
 
 ## Not checked
 
-Hosted migration apply, hosted database access, real source calls, #917 readback, browser UI, and Production. CI and Preview for the integrated review head are pending until GitHub reports them after the push. They are not an implementation PASS.
+Hosted migration apply, hosted database access, real source calls, #917 readback, browser UI, and Production. CI and Preview for the F4 repair head are pending until GitHub reports them after the push. The historical PR CI success and the failed post-merge run do not bind this head. They are not an implementation PASS.

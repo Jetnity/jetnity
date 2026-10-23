@@ -2,7 +2,9 @@
 
 Date: 23 October 2026 (Europe/Zurich)
 Issue: #975
-Branch: `feat/official-truth-current-version-lookup-1`
+Branch: `fix/official-truth-current-version-lookup-1-postmerge-f4`
+Repair Draft PR: #979
+Historical branch: `feat/official-truth-current-version-lookup-1`
 Writer: **Jetnity Official Truth Current-Version Lookup 1 — Cursor Generation 1**
 Session: https://cursor.com/agents/bc-16e2789c-fc9b-4bbc-925b-ba43273b6cc3
 Actual model: `grok-4.7-high-fast` (`originalModelName` from this run). UI title rename verified.
@@ -54,3 +56,5 @@ Outcomes `no_match`, `ambiguous`, and `refused` are distinct. A verified row car
 ## Tests
 
 One disposable PostgreSQL 16 cluster, synthetic `https://regulations.example/rules/{primary_rule|composed_effect|composed_mode}` only. Cases: empty corpus, review-only, unbound receipt, exact match, wrong pin/scope/fact/requirement, persistence on a new connection, V2 ambiguity, explicit supersession to V2, corrupt/missing/duplicate/orphan/malformed competitors, source/profile/expiry/witness/restore/isolation failures, budgets, ACL, and lock ordering for publication and withdrawal.
+
+Post-merge repair F4, task blob `a93581f630fba4673e22a8ff6c306aa0ea6e1d43`, does not change this plan's lookup or SQL. It only changes the focused test's phase logging and removes two full positives that repeated a proof already required by a later assertion. Lookup blob `d9a22eba073752a94bdc58616c70100d557b3f61` and SQL blob `609d10b9727e5fa4f91896d64086798e989ae50b` stay frozen.

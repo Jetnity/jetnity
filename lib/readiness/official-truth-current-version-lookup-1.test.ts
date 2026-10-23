@@ -107,10 +107,16 @@ test('current-version lookup resolves one retained synthetic receipt on native P
   const startedAt = performance.now()
   let markedAt = startedAt
   const phases: { name: string; ms: number }[] = []
+  const checks: string[] = []
   const phase = (name: string) => {
     const now = performance.now()
-    phases.push({ name, ms: Math.round(now - markedAt) })
+    const ms = Math.round(now - markedAt)
+    phases.push({ name, ms })
     markedAt = now
+    t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', event: 'phase', name, ms, elapsedMs: Math.round(now - startedAt), checks: checks.length }))
+  }
+  const beginPhase = (name: string) => {
+    t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', event: 'phase-start', name, elapsedMs: Math.round(performance.now() - startedAt), checks: checks.length }))
   }
   const lookupMigrations = readdirSync(new URL('../../supabase/migrations/', import.meta.url)).filter(name => name.endsWith('_official_truth_current_version_lookup_1.sql')).sort()
   assert.deepEqual(lookupMigrations, ['20261023153726_official_truth_current_version_lookup_1.sql'])
@@ -147,7 +153,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
   assert.equal(primaryRequest.factKind, secondIdentity.factKind)
   assert.equal(primaryRequest.requirementType, secondIdentity.requirementType)
   assert.notEqual(primaryRequest.definition && (primaryRequest.definition as { digest: string }).digest, (otherRequest.definition as { digest: string }).digest)
-  const cluster = startLocalProofCluster(), connections: LocalPgConnection[] = [], checks: string[] = []
+  const cluster = startLocalProofCluster(), connections: LocalPgConnection[] = []
   const connect = async (role?: string) => { const connection = await LocalPgConnection.connect(cluster, role); connections.push(connection); return connection }
   const owner = await connect()
   const key = randomBytes(32).toString('hex')
@@ -275,6 +281,36 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     phase('before first store')
     await storeAccepted(first, review)
     phase('first store')
+    beginPhase('source withdrawal')
+    await owner.query('BEGIN')
+    await owner.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('source_withdrawn'), pgText('synthetic-pilot-authority'), pgText(witness.sequence, 20), pgText(witness.eventHash)])
+    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner)), code('55000'))
+    await owner.query('ROLLBACK'); await align(witness)
+    phase('source withdrawal')
+    beginPhase('profile withdrawal')
+    await owner.query('BEGIN')
+    await owner.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('profile_withdrawn'), pgText('synthetic-pilot-whole-response:1'), pgText(witness.sequence, 20), pgText(witness.eventHash)])
+    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner)), code('55000'))
+    await owner.query('ROLLBACK'); await align(witness)
+    phase('profile withdrawal')
+    beginPhase('expiry')
+    await owner.query('BEGIN')
+    await owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER USER; UPDATE official_original_private.originals SET expires_at=captured_at+interval '1 second'`)
+    await owner.query('SELECT official_original_api.expire($1::bigint,$2::text)', [pgText(witness.sequence, 20), pgText(witness.eventHash)])
+    const expired = await lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner))
+    assert.equal(expired.status, 'no_match')
+    await owner.query('ROLLBACK'); await align(witness)
+    phase('expiry')
+    beginPhase('stale witness')
+    await assert.rejects(openLookup(primaryRequest, { sequence: '0', eventHash: '0'.repeat(64) }), code('55000'))
+    phase('stale witness')
+    beginPhase('restored head')
+    await owner.query('BEGIN')
+    await owner.query(`UPDATE official_original_private.head SET sequence=0, event_hash=repeat('0',64), checked_at=clock_timestamp()`)
+    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, witness), code('55000'))
+    await owner.query('ROLLBACK'); await align(witness)
+    phase('restored head')
+    note('source, profile, expiry, stale witness and restored head do not yield a fresh positive')
     const wrongPin = { ...primaryRequest, definition: { ...(primaryRequest.definition as { id: string; version: number; digest: string }), digest: (primaryRequest.definition as { digest: string }).digest.endsWith('a') ? `${(primaryRequest.definition as { digest: string }).digest.slice(0, -1)}b` : `${(primaryRequest.definition as { digest: string }).digest.slice(0, -1)}a` } }
     const wrongScopeValue = structuredClone(primaryRequest.scope) as { destinationCountryCode: string | null; transitCountryCode: string | null }
     if (wrongScopeValue.destinationCountryCode) wrongScopeValue.destinationCountryCode = wrongScopeValue.destinationCountryCode === 'DE' ? 'FR' : 'DE'
@@ -399,27 +435,6 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await assert.rejects(readCandidate(cluster, reader, first.envelope.bundle.recordFingerprint, key, witness), code('55000'))
     await reader.query('ROLLBACK')
     note('explicit supersession leaves the second receipt as the only current version')
-    await owner.query('BEGIN')
-    await owner.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('source_withdrawn'), pgText('synthetic-pilot-authority'), pgText(witness.sequence, 20), pgText(witness.eventHash)])
-    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner)), code('55000'))
-    await owner.query('ROLLBACK'); await align(witness)
-    await owner.query('BEGIN')
-    await owner.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('profile_withdrawn'), pgText('synthetic-pilot-whole-response:1'), pgText(witness.sequence, 20), pgText(witness.eventHash)])
-    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner)), code('55000'))
-    await owner.query('ROLLBACK'); await align(witness)
-    await owner.query('BEGIN')
-    await owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER USER; UPDATE official_original_private.originals SET expires_at=captured_at+interval '1 second'`)
-    await owner.query('SELECT official_original_api.expire($1::bigint,$2::text)', [pgText(witness.sequence, 20), pgText(witness.eventHash)])
-    const expired = await lookupCurrentVersion(cluster, owner, primaryRequest, key, await cursor(owner))
-    assert.equal(expired.status, 'no_match')
-    await owner.query('ROLLBACK'); await align(witness)
-    assert.equal((await openLookup(primaryRequest)).status, 'synthetic_current_version_verified')
-    await assert.rejects(openLookup(primaryRequest, { sequence: '0', eventHash: '0'.repeat(64) }), code('55000'))
-    await owner.query('BEGIN')
-    await owner.query(`UPDATE official_original_private.head SET sequence=0, event_hash=repeat('0',64), checked_at=clock_timestamp()`)
-    await assert.rejects(lookupCurrentVersion(cluster, owner, primaryRequest, key, witness), code('55000'))
-    await owner.query('ROLLBACK'); await align(witness)
-    note('source, profile, expiry, stale witness and restored head do not yield a fresh positive')
     const reviewOther = await reviewCandidate(reviewer, other)
     await writer.query('BEGIN ISOLATION LEVEL READ COMMITTED')
     assert.equal(await publishIntegratedBundle(writer, oids, other.envelope, 'verify_existing'), 'idempotent')
@@ -460,15 +475,21 @@ test('current-version lookup resolves one retained synthetic receipt on native P
       await align(witness)
     }
     const otherFingerprint = quoteFingerprint(other.envelope.bundle.recordFingerprint)
+    beginPhase('other-cell packet key')
     await corruptOtherReview(`UPDATE official_original_private.reviews SET packet_key='review-packet:v3:'||repeat('ab',32) WHERE fingerprint=${otherFingerprint}`)
+    phase('other-cell packet key')
+    beginPhase('other-cell ordered support')
     await corruptOtherReview(`UPDATE official_original_private.reviews SET ordered_supports=pg_catalog.jsonb_set(ordered_supports,'{0,rawDigest}',to_jsonb(repeat('0',64))) WHERE fingerprint=${otherFingerprint}`)
-    assert.equal((await openLookup(primaryRequest)).status, 'synthetic_current_version_verified')
+    phase('other-cell ordered support')
     assert.equal((await openLookup(wrongPin)).status, 'no_match')
-    note('a damaged review on another accepted cell refuses both a real match and an otherwise empty request')
     await reader.query('BEGIN ISOLATION LEVEL READ COMMITTED')
     const held = await lookupCurrentVersion(cluster, reader, primaryRequest, key, witness)
     assert.equal(held.status, 'synthetic_current_version_verified')
     if (held.status !== 'synthetic_current_version_verified') throw new Error('held_required')
+    assert.equal(held.recordFingerprint, second.envelope.bundle.recordFingerprint)
+    assert.equal(held.proof.productionAcceptedRead, 'NOT_AUTHORIZED')
+    assert.equal(held.proof.positiveVisaCells, 0)
+    note('a damaged review on another accepted cell refuses both a real match and an otherwise empty request')
     const withdrawal = lifecycle.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('withdrawn'), pgText(second.envelope.bundle.recordFingerprint), pgText(witness.sequence, 20), pgText(witness.eventHash)]).then(value => ({ ok: true as const, value }), error => ({ ok: false as const, error }))
     let withdrawalWaiting = false
     for (let attempt = 0; attempt < 100; attempt++) {
@@ -489,6 +510,10 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.deepEqual(Object.values(legacy[0]!), ['0', '0'])
     note('legacy accepted-claim tables stay empty')
     t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', status: 'PASS', postgres: cluster.version, checks, phases, durationMs: Math.round(performance.now() - startedAt), productionAcceptedRead: 'NOT_AUTHORIZED', positiveVisaCells: 0, hostedWrites: 0 }))
+  } catch (error) {
+    const failure = error instanceof LocalPgError ? error.code : error instanceof Error ? error.name : 'unknown'
+    t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', status: 'FAIL', failure, checks, phases, elapsedMs: Math.round(performance.now() - startedAt), hostedWrites: 0 }))
+    throw error
   } finally {
     for (const connection of connections) connection.close()
     cluster.stop()
