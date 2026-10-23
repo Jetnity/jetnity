@@ -174,6 +174,12 @@ function qualifiziert(wert: UnterkunftAbdeckung): boolean {
     && wert.zusammenfassung !== 'Unterkunftsstand noch unklar'
 }
 
+/** No stages may use the trip-date fallback. Any present stage needs its own valid interval; the canonical reader still falls back to trip dates for one incomplete stage and for several stages that are all incomplete. */
+function etappenDatenVollstaendig(reise: Trip): boolean {
+  if (reise.stages.length === 0) return true
+  return reise.stages.every(etappe => spanne(etappe.arrivalDate, etappe.departureDate) > 0)
+}
+
 function seiteLesen(reise: Trip, erlaubt: boolean, lesen: UnterkunftLeser): Seite {
   if (!erlaubt) return { art: 'nicht_verfuegbar' }
   try {
@@ -181,7 +187,7 @@ function seiteLesen(reise: Trip, erlaubt: boolean, lesen: UnterkunftLeser): Seit
     if (!wert || typeof wert.bekannt !== 'boolean' || !Array.isArray(wert.luecken) || !Array.isArray(wert.aufenthalte)) {
       return { art: 'nicht_verfuegbar' }
     }
-    return qualifiziert(wert) ? { art: 'plan', wert } : { art: 'unklar' }
+    return qualifiziert(wert) && etappenDatenVollstaendig(reise) ? { art: 'plan', wert } : { art: 'unklar' }
   } catch {
     return { art: 'nicht_verfuegbar' }
   }
@@ -210,7 +216,7 @@ function planZeilen(id: string, label: string, wert: UnterkunftAbdeckung, vergle
   const ohneTag = wert.aufenthalte.filter(aufenthalt => aufenthalt.item.dayId === null).length
   zeilen.push({
     id: `${id}-unterkuenfte`,
-    text: `${label}: ${wert.aufenthalte.length} aufgezeichnete Unterkünfte, davon ${ohneTag} ohne Tag, jede davon genau einmal gezählt. Unterkunftsdaten bleiben unverändert; nichts wird automatisch storniert oder umgebucht.`,
+    text: `${label}: ${wert.aufenthalte.length} aufgezeichnete Unterkünfte, davon ${ohneTag} ohne Tag, jede davon genau einmal gezählt. Nichts wird automatisch beim Anbieter storniert oder umgebucht.`,
   })
   return zeilen
 }

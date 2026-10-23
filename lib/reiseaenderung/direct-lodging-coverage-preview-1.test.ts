@@ -40,6 +40,28 @@ function spiegelt(text: string, label: string, wert: UnterkunftAbdeckung) {
   }
   const ohneTag = wert.aufenthalte.filter(aufenthalt => aufenthalt.item.dayId === null).length
   assert.ok(text.includes(`${label}: ${wert.aufenthalte.length} aufgezeichnete Unterkünfte, davon ${ohneTag} ohne Tag, jede davon genau einmal gezählt`))
+  assert.match(text, /Nichts wird automatisch beim Anbieter storniert oder umgebucht/)
+  assert.doesNotMatch(text, /Unterkunftsdaten bleiben unverändert/)
+}
+
+function etappenOhneDaten(anzahl: 1 | 2): Trip {
+  const reise = fixture()
+  const stay = reise.days[3].items[0]
+  stay.startsOn = '2026-10-07'
+  stay.endsOn = '2026-10-10'
+  if (anzahl === 1) {
+    reise.stages = [{ ...reise.stages[0], arrivalDate: null, departureDate: null }]
+    for (const tag of reise.days) {
+      tag.stageId = 'stage-1'
+      for (const punkt of tag.items) punkt.stageId = 'stage-1'
+    }
+  } else {
+    for (const etappe of reise.stages) {
+      etappe.arrivalDate = null
+      etappe.departureDate = null
+    }
+  }
+  return reise
 }
 
 function aufenthalt(basis: TripItem, teil: Partial<TripItem> & Pick<TripItem, 'id' | 'startsOn' | 'endsOn'>): TripItem {
@@ -152,6 +174,78 @@ test('incomplete stage dates and unknown stay dates stay unknown, without a conc
   assert.doesNotMatch(unknownText, /\d+ von \d+ Nächten/)
   assert.match(unterkunftAbdeckung(unknown).zusammenfassung, /unklar/)
   assert.notEqual(unterkunftAbdeckung(unknown).naechteGesamt, null)
+})
+
+test('one incomplete stage and several incomplete stages stay unknown despite the trip-date fallback', () => {
+  for (const anzahl of [1, 2] as const) {
+    const before = etappenOhneDaten(anzahl)
+    const after = vorschlag(before, { startDate: '2026-10-09' })
+    assert.equal(after.stages.length, anzahl)
+    assert.ok(after.stages.every(etappe => etappe.arrivalDate === null && etappe.departureDate === null))
+    const stay = [...after.days.flatMap(tag => tag.items), ...after.ohneTag].find(punkt => punkt.id === 'item-4')
+    assert.deepEqual(stay && { startsOn: stay.startsOn, endsOn: stay.endsOn }, { startsOn: '2026-10-07', endsOn: '2026-10-10' })
+    const links = unterkunftAbdeckung(before)
+    const rechts = unterkunftAbdeckung(after)
+    assert.equal(links.bekannt, true)
+    assert.equal(rechts.bekannt, true)
+    assert.deepEqual([links.naechteAbgedeckt, links.naechteGesamt], [3, 3])
+    assert.deepEqual([rechts.naechteAbgedeckt, rechts.naechteGesamt], [1, 3])
+    const text = textVon(before, after)
+    assert.match(text, /Bisheriger gespeicherter Plan: Unterkunftsstand noch unklar/)
+    assert.match(text, /Vorschau nach deiner Änderung: Unterkunftsstand noch unklar/)
+    assert.match(text, /Ein Vergleich der beiden Seiten ist nicht möglich\. Jede Seite gilt nur für sich\./)
+    assert.doesNotMatch(text, /\d+ von \d+ Nächten/)
+  }
+
+  const known = fixture()
+  const shiftedIncomplete = vorschlag(etappenOhneDaten(1), { startDate: '2026-10-09' })
+  assert.equal(unterkunftAbdeckung(shiftedIncomplete).bekannt, true)
+  const oneSide = textVon(known, shiftedIncomplete)
+  spiegelt(oneSide, 'Bisheriger gespeicherter Plan', unterkunftAbdeckung(known))
+  assert.match(oneSide, /Vorschau nach deiner Änderung: Unterkunftsstand noch unklar/)
+  assert.match(oneSide, /Ein Vergleich der beiden Seiten ist nicht möglich/)
+  assert.doesNotMatch(oneSide, /Vorschau nach deiner Änderung: \d+ von \d+ Nächten/)
+
+  const withoutStages = fixture()
+  withoutStages.stages = []
+  for (const tag of withoutStages.days) {
+    tag.stageId = null
+    for (const punkt of tag.items) punkt.stageId = null
+  }
+  const shiftedTrip = vorschlag(withoutStages, { startDate: '2026-10-09' })
+  assert.equal(shiftedTrip.stages.length, 0)
+  const tripText = textVon(withoutStages, shiftedTrip)
+  spiegelt(tripText, 'Bisheriger gespeicherter Plan', unterkunftAbdeckung(withoutStages))
+  spiegelt(tripText, 'Vorschau nach deiner Änderung', unterkunftAbdeckung(shiftedTrip))
+  assert.doesNotMatch(tripText, /Unterkunftsstand noch unklar/)
+})
+
+test('an unconfirmed unpriced stay shifts with the date edit and the preview does not claim every lodging field stayed put', () => {
+  const before = fixture()
+  before.ohneTag.push(aufenthalt(before.days[3].items[0], {
+    id: 'stay-unpriced',
+    startsOn: '2026-10-07',
+    endsOn: '2026-10-10',
+    bookingStatus: 'unconfirmed',
+  }))
+  const protectedBefore = before.days[3].items[0]
+  const after = vorschlag(before, { startDate: '2026-10-09' })
+  const moved = after.ohneTag.find(punkt => punkt.id === 'stay-unpriced')
+  assert.deepEqual(moved && { startsOn: moved.startsOn, endsOn: moved.endsOn, priceAmount: moved.priceAmount, provider: moved.provider, bookingUrl: moved.bookingUrl, externalRef: moved.externalRef, bookingStatus: moved.bookingStatus }, {
+    startsOn: '2026-10-09', endsOn: '2026-10-12', priceAmount: null, provider: null, bookingUrl: null, externalRef: null, bookingStatus: 'unconfirmed',
+  })
+  const protectedAfter = [...after.days.flatMap(tag => tag.items), ...after.ohneTag].find(punkt => punkt.id === protectedBefore.id)
+  assert.equal(protectedAfter?.startsOn, protectedBefore.startsOn)
+  assert.equal(protectedAfter?.endsOn, protectedBefore.endsOn)
+  const nachher = unterkunftAbdeckung(after)
+  assert.equal(nachher.aufenthalte.find(eintrag => eintrag.item.id === 'stay-unpriced')?.start, '2026-10-09')
+  assert.equal(nachher.aufenthalte.find(eintrag => eintrag.item.id === 'stay-unpriced')?.end, '2026-10-12')
+  const text = textVon(before, after)
+  spiegelt(text, 'Bisheriger gespeicherter Plan', unterkunftAbdeckung(before))
+  spiegelt(text, 'Vorschau nach deiner Änderung', nachher)
+  assert.match(text, /Nichts wird automatisch beim Anbieter storniert oder umgebucht/)
+  assert.doesNotMatch(text, /Unterkunftsdaten bleiben unverändert/)
+  assert.doesNotMatch(text, /bleiben unverändert/)
 })
 
 test('repeated stage names stay distinguished by stage id', () => {
