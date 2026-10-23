@@ -6,6 +6,10 @@
 
 The accommodation panel no longer replaces an unknown canonical summary with a numeric coverage heading. While any stay date is missing, invalid, or reversed, gap rows keep the canonical count but do not say those nights are missing. A stored booked stay, including one without dates, offers `Buchung korrigieren` and calls `(itemId, false)`.
 
+## B04 row clarification
+
+On head `0dafbfca`, the focused case `gebuchte ungültige oder umgekehrte Daten bleiben in der eigenen Zeile unklar` failed: a provider stay with `2026-02-29` or reversed dates could show a normalized range and `Gebucht` without row-level uncertainty, and there was no gap row. The same case passes after the row sentence. `unterkunft-manuell.test.ts` still passes. Owned-file ESLint passes. Full typecheck, build, and CI belong to the new pushed head and are not copied forward from `0dafbfca`.
+
 ## Commands
 
 | Command | Result |

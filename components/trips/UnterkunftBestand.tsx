@@ -85,6 +85,11 @@ export default function UnterkunftBestand({
                     {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
                     {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
                   </p>
+                  {aufenthalt.status === 'unknown' ? (
+                    <p className="mt-0.5 text-xs leading-5 text-ink-800">
+                      Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
                   <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} />

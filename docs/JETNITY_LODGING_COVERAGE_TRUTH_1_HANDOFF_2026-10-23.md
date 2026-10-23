@@ -22,6 +22,10 @@ Stop here for independent Technical-Lead review of the exact pushed head. Same s
 
 Read-only and untouched: `naechte-abdeckung.ts`, `buchung.ts`, schema, actions, types, and the other R102 lanes.
 
+## B04 row clarification
+
+Applied in this same session. A fully covering stay plus a booked provider stay with invalid or reversed dates has no gap and no editor. That second row still says the period is missing or invalid, and its button calls `(id, false)`. Review the new pushed head, not `0dafbfca`.
+
 ## Next step for the Technical Lead
 
 Review this head independently. Integration order remains lodging UI, then the interval evaluator, then whole-source, only after this head is accepted. Those lanes must not be synchronized by this author. Fresh CI, Auth, and Preview on this exact head are required before any integration. This self-review is not that gate.

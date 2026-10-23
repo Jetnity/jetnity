@@ -29,6 +29,10 @@ Status: **implemented, stopped for independent Technical-Lead review.** Not Read
 - Setup check warned that no `.env` / `.env.local` is present. No secret-gated check was treated as a pass.
 - No hosted database, Auth, provider, secret, personal browser, or real-device run. Render tests are not browser evidence.
 
+## B04 row clarification
+
+Same session, after the Technical Lead plan receipt. A known trip with one fully covering stay and a second booked provider stay whose dates are invalid or reversed has no gap row and no date editor. The row now shows `Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.` beside `Gebucht`, even when `zeitraumKurz` renders a plausible range. The new rendered case failed on `0dafbfca` and passes on this head. The booking callback is `(id, false)`.
+
 ## Risks
 
 P0: none. P1: #968 and the #748 privacy residual remain open and outside this lane. P2: the evaluator still returns numeric totals beside the unknown summary; the panel now prefers the summary. Provisional gaps still show the canonical date span, with a qualified count. P3: exact-head CI, Auth, and Preview belong to the pushed tip and are not claimed green here.
