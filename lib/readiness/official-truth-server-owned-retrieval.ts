@@ -686,14 +686,26 @@ async function* bytesAusAntwort(antwort: IncomingMessage): AsyncGenerator<Uint8A
 
 const EINDEUTIGE_ROHKOPFZEILEN = new Set(['content-type', 'content-length', 'content-encoding', 'transfer-encoding'])
 
+function normalisierteKopfzeilen(antwort: IncomingMessage): { get(name: string): string | null } {
+  return {
+    get(name: string) {
+      const header = antwort.headers[name.toLowerCase()]
+      if (Array.isArray(header)) return header.join(', ')
+      return header ?? null
+    },
+  }
+}
+
 /**
  * Protocol 3 reads the adapter's raw header pairs. Node's normalized map keeps
  * one Content-Type and one Content-Length, so a duplicate would otherwise look
  * like a clean response. A second relevant pair, or a pair that is not own
- * data, is refused before the body is read.
+ * data, is refused before the body is read. A response object with no raw list
+ * keeps the normalized map, which is the previous adapter behavior.
  */
 function rohKopfzeilen(antwort: IncomingMessage): { get(name: string): string | null } | null {
   const raw = antwort.rawHeaders
+  if (raw == null) return normalisierteKopfzeilen(antwort)
   if (!Array.isArray(raw) || raw.length % 2 !== 0) return null
   const eindeutig = new Map<string, string>()
   for (let index = 0; index < raw.length; index += 2) {
