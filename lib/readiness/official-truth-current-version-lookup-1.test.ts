@@ -246,15 +246,30 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await reader.query('ROLLBACK')
     note('invalid identity and non-current snapshots refuse before a result')
     const storeAccepted = async (prepared: typeof first, reviewId: string) => {
-      await writer.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+      const producer = await LocalPgConnection.connect(cluster, 'ot_original_test_writer')
+      const producerPid = (await producer.query('SELECT pg_backend_pid()::text AS pid'))[0]?.pid
+      assert.ok(producerPid)
+      assert.notEqual(producerPid, writerPid)
       try {
-        assert.equal(await publishIntegratedBundle(writer, oids, prepared.envelope), 'inserted')
-        assert.equal(await bindCandidate(writer, prepared, reviewId, key, witness, 'create_or_verify'), 'inserted')
-        await writer.query('COMMIT')
-      } catch (error) {
-        try { await writer.query('ROLLBACK') } catch { /* The failed write still has to end. */ }
-        throw error
+        await producer.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+        try {
+          assert.equal(await publishIntegratedBundle(producer, oids, prepared.envelope), 'inserted')
+          assert.equal(await bindCandidate(producer, prepared, reviewId, key, witness, 'create_or_verify'), 'inserted')
+          await producer.query('COMMIT')
+        } catch (error) {
+          try { await producer.query('ROLLBACK') } catch { /* The failed write still has to end. */ }
+          throw error
+        }
+      } finally {
+        producer.close()
       }
+      let closed = false
+      for (let attempt = 0; attempt < 50 && !closed; attempt += 1) {
+        const open = (await owner.query('SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text', [pgText(producerPid)]))[0]?.n
+        closed = open === '0'
+        if (!closed) await new Promise((resolve) => setTimeout(resolve, 20))
+      }
+      assert.equal(closed, true)
       witness = await align(await cursor(reader))
     }
     phase('before first store')
@@ -291,6 +306,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(JSON.stringify(persistedRead).includes('original_bytes'), false)
     assert.equal(JSON.stringify(persistedRead).includes(key), false)
     note('exact cell and fact match survives a new connection; wrong identity is no_match')
+    note('that fresh lookup starts only after the accepted-store producer is closed')
     const reviewTwo = await reviewCandidate(reviewer, second)
     phase('before second store')
     await storeAccepted(second, reviewTwo)

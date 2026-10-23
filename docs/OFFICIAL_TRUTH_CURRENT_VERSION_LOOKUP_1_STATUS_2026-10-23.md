@@ -18,7 +18,9 @@ A caller with an exact canonical cell definition, scope, fact kind and requireme
 
 Review-fix F1: before any terminal or cell/fact filter, and before `verify_retained_v2`, every accepted receipt must have its protected review packet key equal to `proof.reviewPacketKey`, and its ordered supports equal to the stored original version id and raw digest in position order, with the same version id on the receipt support. That comparison uses review and original metadata. It does not decrypt originals and does not copy `readCandidate`. A damaged review refuses the whole lookup without hashing an already incomplete corpus. A corpus that passes the review pass still gets `verify_retained_v2` on every accepted receipt before a match is counted. A damaged review on a different cell refuses both a real match and a request that would otherwise be `no_match`.
 
-Review-fix F2: job `120529859925` on `a1da094eeffab809e444790d81afa420ad45c9d1` timed out this test at 300000ms (`testTimeoutFailure`) before the later docs commit cancelled the job. The same scenarios on this machine took 155.4s uncontended, and pinning the corrected proof to one core did not change its time, so the cost was repeated work rather than a stuck lock. The corrected proof stores each accepted receipt once, keeps one full custody read for the first identity, and records phase timings in the diagnostic. The test timeout stays 300000ms. SQL statement, lock and witness limits are unchanged.
+Review-fix F2: job `120529859925` on `a1da094eeffab809e444790d81afa420ad45c9d1` timed out this test at 300000ms (`testTimeoutFailure`) before the later docs commit cancelled the job. The same scenarios on this machine took 155.4s uncontended. Pinning the corrected proof to one core did not change its time. The measurements show reduced repeated proof work and are consistent with the broader runner slowdown: the unchanged R3 native proof took 393666ms on that run and 219296ms on the later successful run, ratio 1.80. No reproduced deadlock; exact old-run cause not established. The corrected proof stores each accepted receipt once, keeps one full custody read for the first identity, and records phase timings in the diagnostic. The test timeout stays 300000ms. SQL statement, lock and witness limits are unchanged.
+
+Review-fix F3: `storeAccepted` opens its own `ot_original_test_writer` connection, publishes and binds in that explicit transaction, commits, and closes the producer in `finally` before aligning the lifecycle witness and returning. The fresh-reader lookup, including a tainted caller fingerprint, starts only after that backend is gone. The publication race still uses a different long-lived writer. The reviewed SQL blob `609d10b9727e5fa4f91896d64086798e989ae50b` is unchanged.
 
 The row is explicitly local and non-authoritative: `productionAcceptedRead = NOT_AUTHORIZED`, `positiveVisaCells = 0`, `reusablePositiveCache = false`. The fingerprint is fresh only for that witness and `read_at`. A later decision runs the proof again.
 
@@ -32,17 +34,20 @@ Re-read immediately before these documents, without rebase:
 
 | Ref | Value |
 | --- | --- |
-| F2 implementation head before these documents | `e9f66adaa79a5c690303481decaa7341187633f7` |
-| Tree of that head | `681d89dbf2f35551fd1dd336b2d553a40b5254ea` |
-| Dispatch baseline / merge-base with current origin/main | `5269b9192a2300c6c03fc8659964583130d2d1d1` |
-| Current origin/main | `8ec8e8ed8a63781fa88ece617b17f382340b6645` |
-| Ahead / behind origin/main at that implementation head | 13 ahead / 26 behind |
+| F2 implementation head | `e9f66adaa79a5c690303481decaa7341187633f7` |
+| Integration merge | `90d120bf3fc29c2bff694176000f62176bdef8b2` |
+| Merge parents | `2e251c853d87e700b65ccb29590229d9992e23d4` and `8ec8e8ed8a63781fa88ece617b17f382340b6645` |
+| Integrated main tree | `5c583d65df5e087baf9131e5d56d515e06c43544` |
+| Dispatch baseline | `5269b9192a2300c6c03fc8659964583130d2d1d1` |
+| Integrated origin/main | `8ec8e8ed8a63781fa88ece617b17f382340b6645` |
+| Ahead / behind at the merge, before the F3 commit | 15 ahead / 0 behind |
 | Operating mode | `NORMAL` |
 | TASK V1 blob | `d74d6f3e88eec0fe807cc57a71913235dfc572bd` |
 | TASK V2 blob | `2e20181849d5575b440fcec004b521e562775751` |
 | TASK V3 blob | `2f304122b59bba6bdb5f0bbb86fba46b139d3add` |
+| SQL blob | `609d10b9727e5fa4f91896d64086798e989ae50b` |
 
-The Technical Lead cited main `8f64d5fdb819065791235879822b1074205899c0`. Current origin/main is `8ec8e8ed8a63781fa88ece617b17f382340b6645`, which contains that commit and the later merges of #972, #973, #974 and #978. The path sets are disjoint. This branch was not rebased and main was not merged in. The documentation commit that updates this file is the review head. If origin/main is still `8ec8e8ed8a63781fa88ece617b17f382340b6645`, that review head is 14 ahead and 26 behind. The PR records the review SHA.
+Ordinary merge of the authorised main. No rebase and no path overlap. The F3 test change and these notes are the single commit on top of that merge. That commit is the review head. If origin/main is still `8ec8e8ed8a63781fa88ece617b17f382340b6645`, the review head is 16 ahead and 0 behind. The PR records its SHA. Incoming main files do not transfer writer ownership.
 
 ## Local proof
 
@@ -50,21 +55,15 @@ Command, with `SUPABASE_PROJECT_REF` removed from the process environment becaus
 
 `env -u SUPABASE_PROJECT_REF node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-current-version-lookup-1.test.ts`
 
-Result on `e9f66adaa79a5c690303481decaa7341187633f7`: PASS, 119.9s uncontended and 119.1s pinned to one core, PostgreSQL 16.15, `hostedWrites: 0`. The same test inside the full suite took 120.7s. The diagnostic lists the same checks as before, including the damaged review packet key and ordered support list on another accepted cell, plus per-phase milliseconds. Both the real match and the otherwise empty request refuse with `accepted_corpus_incomplete`. After rollback, the untouched match succeeds and the empty request is `no_match` again. The pre-correction measurement of the same scenarios was 155.4s; the damaged-review phase fell from 31.3s to 13.1s.
+Result on `e9f66adaa79a5c690303481decaa7341187633f7`: PASS, 119.9s uncontended and 119.1s pinned to one core, PostgreSQL 16.15, `hostedWrites: 0`. The same test inside the full suite took 120.7s. The diagnostic lists the same checks as before, including the damaged review packet key and ordered support list on another accepted cell, plus per-phase milliseconds. Both the real match and the otherwise empty request refuse with `accepted_corpus_incomplete`. After rollback, the untouched match succeeds and the empty request is `no_match` again. The pre-correction measurement of the same scenarios was 155.4s; the damaged-review phase fell from 31.3s to 13.1s. Those timings do not establish a unique cause of the older CI timeout.
 
-Full suite on the same head, same environment removal:
-
-`env -u SUPABASE_PROJECT_REF npm test`
-
-Result: 7098 tests, 7094 pass, 0 fail, 4 skipped, exit 0, about 586s. The four skips are pre-existing layout-audit and CI-without-PostgreSQL cases, not this lookup.
+Result on the integrated F3 tree, before this documentation text was committed and with the same test file this commit contains: PASS, 120236.681862ms, PostgreSQL 16.15, `hostedWrites: 0`. The diagnostic has the previous checks plus `that fresh lookup starts only after the accepted-store producer is closed`. `productionAcceptedRead` is `NOT_AUTHORIZED` and `positiveVisaCells` is 0. No second local full suite was run for this connection change. The earlier full suite remains evidence for `e9f66ada` only.
 
 ## Other checks on this work
 
-- `npx tsc --noEmit` PASS on the tree committed as `e9f66adaa79a5c690303481decaa7341187633f7`
-- `npm run build` was not re-run on that head. The diff does not change application runtime. The previous build PASS was on `a1da094eeffab809e444790d81afa420ad45c9d1`.
-- `npm run lint` was not re-run on that head. The previous full lint, on `a1da094eeffab809e444790d81afa420ad45c9d1`, was 0 errors and 146 pre-existing warnings.
-- Hygiene checks were not re-run on that head. They passed on `a1da094eeffab809e444790d81afa420ad45c9d1`. This lookup is still not a Supabase `.rpc()` call.
+- `npx tsc --noEmit` PASS on the tree committed as `e9f66adaa79a5c690303481decaa7341187633f7`. It was not re-run for this fixture-connection change. The focused proof executed the changed test under `tsx`.
+- `npm run build`, `npm run lint` and the hygiene checks were not re-run on the integrated head. The previous build, lint (0 errors, 146 pre-existing warnings) and hygiene PASS were on `a1da094eeffab809e444790d81afa420ad45c9d1`. This lookup is still not a Supabase `.rpc()` call. Final-head CI is the gate for typecheck, lint, build and the full suite.
 
 ## Not checked
 
-Hosted migration apply, hosted database access, real source calls, #917 readback, browser UI, and Production. CI and Preview for the final head are outside this local proof and are reported in the handoff as whatever GitHub shows after the push. They are not an implementation PASS.
+Hosted migration apply, hosted database access, real source calls, #917 readback, browser UI, and Production. CI and Preview for the integrated review head are pending until GitHub reports them after the push. They are not an implementation PASS.
