@@ -394,6 +394,7 @@ export async function akzeptierteEvidenceSpeichern(
     katalogAbhaengigkeit(abhaengigkeiten),
   )
   if (angenommen.status !== 'accepted_evidence') return { ok: false, reason: angenommen.reason }
+  if (officialTruthProtocol3MarkerPresent(angenommen)) return { ok: false, reason: 'store_failed' }
   const evidence = angenommen.evidence
   const scope = regelScopeAusEvidenceScope(evidence.scope)
   if (!scope.ok) return { ok: false, reason: scope.reason }
@@ -441,6 +442,7 @@ export async function akzeptierteRegelClaimSpeichern(
   }
   const angenommen = regelKandidatAkzeptieren(eingabe)
   if (!angenommen.ok) return { ok: false, reason: angenommen.reason }
+  if (officialTruthProtocol3MarkerPresent(angenommen)) return { ok: false, reason: 'store_failed' }
   const claim = persistierbarenClaim(angenommen.claim)
   if (!claim) return { ok: false, reason: 'applicability_not_persistable' }
   const transport = transportAus(abhaengigkeiten)

@@ -13,6 +13,7 @@
 import { contentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
+  OFFICIAL_TRUTH_REVIEW_UNHASHED_SUPPORT_KEYS,
   officialTruthRegelReviewPacket,
   type OfficialTruthRegelReviewPacketErgebnis,
   type OfficialTruthRegelReviewPacketSperrgrund,
@@ -195,19 +196,89 @@ export function officialTruthReviewIdentityV3(
   return { ok: true, digest, canonical: kanonisch, preimage: form.wert, ruleScopeKey, supportVersionIds }
 }
 
+const SUPPORT_PFLICHT = [
+  'sourceId', 'contentItemId', 'contentItemVersion', 'representationId', 'representationVersion',
+  'identityProfileId', 'identityProfileVersion', 'identitySchema', 'sourceFingerprintProtocol',
+  'contentType', 'versionId', 'canonicalUrl', 'retrievedAt', 'sourceContentHash', 'validFrom', 'validUntil',
+] as const
+const KANDIDAT_PFLICHT = ['scope', 'key', 'factKind', 'evidenceQuality', 'supportVersionIds', 'proposal'] as const
+
+/** Copies own data without calling getters. Accessors, symbols and foreign prototypes fail. */
+function datenKopie(wert: unknown, tiefe: number): { ok: true; wert: unknown } | { ok: false } {
+  if (tiefe > 12) return { ok: false }
+  if (wert === null || typeof wert === 'string' || typeof wert === 'boolean') return { ok: true, wert }
+  if (typeof wert === 'number') return Number.isFinite(wert) ? { ok: true, wert } : { ok: false }
+  if (typeof wert !== 'object') return { ok: false }
+  const prototyp = Object.getPrototypeOf(wert)
+  if (Array.isArray(wert)) {
+    if (prototyp !== Array.prototype) return { ok: false }
+    const laenge = Object.getOwnPropertyDescriptor(wert, 'length')
+    if (!laenge || !('value' in laenge) || typeof laenge.value !== 'number') return { ok: false }
+    for (const key of Reflect.ownKeys(wert)) {
+      if (key === 'length') continue
+      if (typeof key !== 'string' || !/^\d+$/.test(key) || Number(key) >= laenge.value) return { ok: false }
+    }
+    const liste: unknown[] = []
+    for (let index = 0; index < laenge.value; index += 1) {
+      const descriptor = Object.getOwnPropertyDescriptor(wert, String(index))
+      if (!descriptor || !('value' in descriptor)) return { ok: false }
+      const kind = datenKopie(descriptor.value, tiefe + 1)
+      if (!kind.ok) return kind
+      liste.push(kind.wert)
+    }
+    return { ok: true, wert: liste }
+  }
+  if (prototyp !== Object.prototype) return { ok: false }
+  const aus: Record<string, unknown> = {}
+  for (const key of Reflect.ownKeys(wert)) {
+    if (typeof key !== 'string') return { ok: false }
+    const descriptor = Object.getOwnPropertyDescriptor(wert, key)
+    if (!descriptor || !('value' in descriptor)) return { ok: false }
+    const kind = datenKopie(descriptor.value, tiefe + 1)
+    if (!kind.ok) return kind
+    aus[key] = kind.wert
+  }
+  return { ok: true, wert: aus }
+}
+
+function geschlosseneSchluessel(satz: Record<string, unknown>, pflicht: readonly string[], optional: readonly string[]): boolean {
+  const namen = Object.keys(satz)
+  if (namen.some((name) => !pflicht.includes(name) && !optional.includes(name))) return false
+  return pflicht.every((name) => Object.hasOwn(satz, name))
+}
+
 function provenienzAktuell(support: OfficialTruthCompactReviewProvenance): OfficialTruthCompactReviewProvenance | null {
-  if (support.sourceFingerprintProtocol !== 3) return null
-  const versionId = text(support.versionId)
-  const sourceId = text(support.sourceId)
-  const canonicalUrl = text(support.canonicalUrl)
-  const retrievedAt = text(support.retrievedAt)
-  const sourceContentHash = text(support.sourceContentHash)
-  const validFrom = fenster(support.validFrom)
-  const validUntil = fenster(support.validUntil)
-  if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
+  const kopie = datenKopie(support, 0)
+  if (!kopie.ok || !kopie.wert || typeof kopie.wert !== 'object' || Array.isArray(kopie.wert)) return null
+  const satz = kopie.wert as Record<string, unknown>
+  if (!geschlosseneSchluessel(satz, SUPPORT_PFLICHT, OFFICIAL_TRUTH_REVIEW_UNHASHED_SUPPORT_KEYS)) return null
+  if (satz.identitySchema !== 2 || satz.sourceFingerprintProtocol !== 3) return null
+  if (OFFICIAL_TRUTH_REVIEW_UNHASHED_SUPPORT_KEYS.some((name) => name in satz && typeof satz[name] !== 'string')) return null
+  const versionId = text(satz.versionId)
+  const sourceId = text(satz.sourceId)
+  const canonicalUrl = text(satz.canonicalUrl)
+  const retrievedAt = text(satz.retrievedAt)
+  const sourceContentHash = text(satz.sourceContentHash)
+  const contentType = text(satz.contentType)
+  const validFrom = fenster(satz.validFrom)
+  const validUntil = fenster(satz.validUntil)
+  if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash || !contentType) return null
   if (validFrom === undefined || validUntil === undefined) return null
-  return { ...contentIdentityBinding(support), identitySchema: 2, sourceFingerprintProtocol: 3,
-    contentType: support.contentType, versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
+  const binding = contentIdentityBinding(satz as OfficialTruthCompactReviewProvenance)
+  if (Object.values(binding).some((feld) => typeof feld !== 'string' && typeof feld !== 'number')) return null
+  return {
+    ...binding,
+    identitySchema: 2,
+    sourceFingerprintProtocol: 3,
+    contentType,
+    versionId,
+    sourceId,
+    canonicalUrl,
+    retrievedAt,
+    sourceContentHash,
+    validFrom,
+    validUntil,
+  }
 }
 
 /**
@@ -220,12 +291,23 @@ export function officialTruthReviewIdentityCurrentRequest(
   supports: readonly OfficialTruthCompactReviewProvenance[],
 ): Identitaet {
   if (supports.length !== 1) return { ok: false, reason: 'invalid_support' }
-  const ruleScopeKey = text(kandidat.key)
-  if (!ruleScopeKey) return { ok: false, reason: 'invalid_scope' }
-  if (!Array.isArray(kandidat.supportVersionIds) || kandidat.supportVersionIds.length !== 1) {
+  const kopie = datenKopie(kandidat, 0)
+  if (!kopie.ok || !kopie.wert || typeof kopie.wert !== 'object' || Array.isArray(kopie.wert)) {
     return { ok: false, reason: 'invalid_support' }
   }
-  const supportVersionIds = [...kandidat.supportVersionIds]
+  const satz = kopie.wert as Record<string, unknown>
+  if (!geschlosseneSchluessel(satz, KANDIDAT_PFLICHT, ['lifecycle', 'validationState'])) {
+    return { ok: false, reason: 'invalid_support' }
+  }
+  if ('lifecycle' in satz && satz.lifecycle !== 'candidate') return { ok: false, reason: 'invalid_support' }
+  if ('validationState' in satz && satz.validationState !== 'pending') return { ok: false, reason: 'invalid_support' }
+  if (satz.evidenceQuality !== 'explicit_primary_statement') return { ok: false, reason: 'invalid_support' }
+  const ruleScopeKey = text(satz.key)
+  if (!ruleScopeKey) return { ok: false, reason: 'invalid_scope' }
+  if (!Array.isArray(satz.supportVersionIds) || satz.supportVersionIds.length !== 1) {
+    return { ok: false, reason: 'invalid_support' }
+  }
+  const supportVersionIds = [...satz.supportVersionIds]
   if (supportVersionIds.some((id) => !text(id))) return { ok: false, reason: 'invalid_support' }
   const eintrag = provenienzAktuell(supports[0]!)
   if (!eintrag || eintrag.versionId !== supportVersionIds[0]) return { ok: false, reason: 'invalid_support' }
@@ -234,12 +316,12 @@ export function officialTruthReviewIdentityCurrentRequest(
     usage: 'current_request_only',
     sourceFingerprintProtocol: 3,
     candidate: {
-      scope: kandidat.scope,
+      scope: satz.scope,
       key: ruleScopeKey,
-      factKind: kandidat.factKind,
-      evidenceQuality: kandidat.evidenceQuality,
+      factKind: satz.factKind,
+      evidenceQuality: satz.evidenceQuality,
       supportVersionIds,
-      proposal: kandidat.proposal,
+      proposal: satz.proposal,
     },
     supports: [eintrag],
   })
@@ -273,6 +355,7 @@ export function officialTruthRegelReviewPacketFingerprint(eingabe: unknown): Off
   const markers = ergebnis.supports.map((support) => support.sourceFingerprintProtocol)
   if (markers.some((marker) => marker === 3)) {
     if (ergebnis.supports.length !== 1 || markers.some((marker) => marker !== 3)) return sperre('invalid_support')
+    if (ergebnis.kandidat.evidenceQuality !== 'explicit_primary_statement') return sperre('invalid_support')
     const aktuell = officialTruthReviewIdentityCurrentRequest(ergebnis.kandidat, ergebnis.supports)
     if (!aktuell.ok) return sperre(aktuell.reason)
     return Object.freeze({

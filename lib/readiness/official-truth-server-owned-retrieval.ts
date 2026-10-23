@@ -684,6 +684,38 @@ async function* bytesAusAntwort(antwort: IncomingMessage): AsyncGenerator<Uint8A
   }
 }
 
+const EINDEUTIGE_ROHKOPFZEILEN = new Set(['content-type', 'content-length', 'content-encoding', 'transfer-encoding'])
+
+/**
+ * Protocol 3 reads the adapter's raw header pairs. Node's normalized map keeps
+ * one Content-Type and one Content-Length, so a duplicate would otherwise look
+ * like a clean response. A second relevant pair, or a pair that is not own
+ * data, is refused before the body is read.
+ */
+function rohKopfzeilen(antwort: IncomingMessage): { get(name: string): string | null } | null {
+  const raw = antwort.rawHeaders
+  if (!Array.isArray(raw) || raw.length % 2 !== 0) return null
+  const eindeutig = new Map<string, string>()
+  for (let index = 0; index < raw.length; index += 2) {
+    const name = raw[index]
+    const value = raw[index + 1]
+    if (typeof name !== 'string' || typeof value !== 'string' || name.length === 0) return null
+    const key = name.toLowerCase()
+    if (!EINDEUTIGE_ROHKOPFZEILEN.has(key)) continue
+    if (eindeutig.has(key)) return null
+    eindeutig.set(key, value)
+  }
+  return {
+    get(name: string) {
+      const key = name.toLowerCase()
+      if (EINDEUTIGE_ROHKOPFZEILEN.has(key)) return eindeutig.get(key) ?? null
+      const header = antwort.headers[key]
+      if (Array.isArray(header)) return header.join(', ')
+      return header ?? null
+    },
+  }
+}
+
 function serverHttp(anfrage: {
   url: string
   lookup: OfficialTruthServerOwnedRetrievalLookup
@@ -723,16 +755,17 @@ function serverHttp(anfrage: {
         agent,
       },
       (antwort) => {
+        const headers = rohKopfzeilen(antwort)
+        if (!headers) {
+          antwort.destroy()
+          req.destroy()
+          fertig({ ok: false, reason: 'http_failed' })
+          return
+        }
         fertig({
           ok: true,
           status: antwort.statusCode ?? 0,
-          headers: {
-            get(name: string) {
-              const header = antwort.headers[name.toLowerCase()]
-              if (Array.isArray(header)) return header.join(', ')
-              return header ?? null
-            },
-          },
+          headers,
           body: bytesAusAntwort(antwort),
           framingComplete: () => antwort.complete,
           cancel: () => {
@@ -893,7 +926,8 @@ async function decideServerOwnedRetrieval(
   if (!item || matches.length !== 1) return blockiert('identity_profile_unavailable')
   const profile = matches[0]!
   const approvedProfile = officialTruthWholeSourceCurrentRequestProfile(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY)
-  const currentRequest = approvedProfile != null && profile === approvedProfile
+  const privilegedEntry = authorization === LIVE_PRIVILEGED_TRANSPORT && abhaengigkeiten.catalog == null
+  const currentRequest = privilegedEntry && approvedProfile != null && profile === approvedProfile
     && officialTruthWholeSourceCurrentRequestAllowed({
       serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
       identity,

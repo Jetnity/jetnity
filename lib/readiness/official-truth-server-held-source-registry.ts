@@ -255,7 +255,9 @@ export async function officialTruthServerHeldMaterialPruefen(
   if (!gelesen.ok) return blockiert(gelesen.reason)
   const katalog = await registryLaden(abhaengigkeiten)
   if (!katalog.ok) return blockiert(katalog.reason)
-  return officialTruthAbgerufenMaterialPruefen(umschlagMitRegistry(gelesen.satz, katalog.registry), uhr)
+  const erzeugt = officialTruthAbgerufenMaterialPruefen(umschlagMitRegistry(gelesen.satz, katalog.registry), uhr)
+  if (officialTruthProtocol3MarkerPresent(erzeugt)) return blockiert('invalid_source_snapshot')
+  return erzeugt
 }
 
 /**
@@ -281,11 +283,13 @@ export async function officialTruthServerHeldEvidenceAnnehmen(
   if (hatAutoritaet(datensatz(extraktion))) return blockiert('caller_authority_forbidden')
   const katalog = await registryLaden(abhaengigkeiten)
   if (!katalog.ok) return blockiert(katalog.reason)
-  return officialTruthAkzeptierteEvidenceAusAbruf(
+  const erzeugt = officialTruthAkzeptierteEvidenceAusAbruf(
     umschlagMitRegistry(gelesen.satz, katalog.registry),
     uhr,
     extraktion,
   )
+  if (officialTruthProtocol3MarkerPresent(erzeugt)) return blockiert('invalid_source_snapshot')
+  return erzeugt
 }
 
 type ReviewBereit =
@@ -348,7 +352,9 @@ export async function officialTruthServerHeldReviewPacket(
     uhr: bund.uhr,
     extraktion: bund.extraktion,
   }))
-  return officialTruthRegelReviewPacket({ supports, metadata: gelesen.metadata })
+  const paket = officialTruthRegelReviewPacket({ supports, metadata: gelesen.metadata })
+  if (officialTruthProtocol3MarkerPresent(paket)) return blockiert('invalid_source_snapshot')
+  return paket
 }
 
 function idVergleich(links: string, rechts: string): number {
@@ -543,5 +549,7 @@ export async function officialTruthServerHeldRegelKandidat(
   if (hatAutoritaet(datensatz(metadata))) return { ok: false, reason: 'caller_authority_forbidden' }
   const katalog = await registryLaden(abhaengigkeiten)
   if (!katalog.ok) return { ok: false, reason: katalog.reason }
-  return officialTruthRegelKandidatAusEvidence(evidenceVersions, katalog.registry, metadata)
+  const erzeugt = officialTruthRegelKandidatAusEvidence(evidenceVersions, katalog.registry, metadata)
+  if (officialTruthProtocol3MarkerPresent(erzeugt)) return { ok: false, reason: 'invalid_support' }
+  return erzeugt
 }

@@ -83,6 +83,9 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
  * angenommenen Evidence. Die freie Extraktionsnotiz wird nicht übernommen.
  * Nichts davon ist eine Entscheidung.
  */
+/** Support text the packet keeps and the review digest must not hash. */
+export const OFFICIAL_TRUTH_REVIEW_UNHASHED_SUPPORT_KEYS = ['sourceSnapshot'] as const
+
 export type OfficialTruthRegelReviewSupport = ContentIdentityBinding & {
   readonly identitySchema: 2
   readonly sourceFingerprintProtocol?: 2 | 3

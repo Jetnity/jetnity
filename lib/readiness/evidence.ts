@@ -84,6 +84,7 @@ export type EvidenceQuellenmaterial = {
   canonicalUrl: string
   retrievedAt: string
   sourceSnapshot: string
+  sourceFingerprintProtocol?: 2 | 3
 }
 
 export type EvidenceRahmenFehler =
@@ -770,6 +771,8 @@ export function evidenceKandidatAusAktuellemMaterial(
   const hülle = material && typeof material === 'object' && !Array.isArray(material) ? material : null
   const snapshot = hülle ? hülle.sourceSnapshot : null
   if (typeof snapshot !== 'string' || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
+  const marker = Object.getOwnPropertyDescriptor(hülle, 'sourceFingerprintProtocol')
+  if (!marker || !('value' in marker) || marker.value !== 3) return { ok: false, reason: 'invalid_source_snapshot' }
   const satz = datensatz(modell)
   if (!satz) return { ok: false, reason: 'invalid_context' }
   const url = quellenUrlAufloesen(registry, hülle.canonicalUrl)

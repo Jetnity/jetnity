@@ -96,7 +96,8 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     const packetInput = { supports: [{ umschlag: { request: research.request, registry: catalog.registry,
       descriptors: [{ source, coverage: contract.source.coverage }], sourceId: source.sourceId,
       material: { canonicalUrl: retrieval.canonicalUrl, contentType: retrieval.contentType,
-        sourceSnapshot: retrieval.sourceSnapshot, retrievedAt: retrieval.retrievedAt } },
+        sourceSnapshot: retrieval.sourceSnapshot, retrievedAt: retrieval.retrievedAt,
+        ...(retrieval.sourceFingerprintProtocol === 3 ? { sourceFingerprintProtocol: 3 as const } : {}) } },
       uhr: () => new Date(), extraktion: { ...validity, extractionNote: null } }],
       metadata: { factKind: 'requirement_effect', evidenceQuality: 'explicit_primary_statement', proposal: null } }
     const packet = officialTruthRegelReviewBelege(packetInput)
