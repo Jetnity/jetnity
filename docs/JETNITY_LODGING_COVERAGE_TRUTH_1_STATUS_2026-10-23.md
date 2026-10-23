@@ -12,20 +12,22 @@ Status: **implemented, stopped for independent Technical-Lead review.** Not Read
 - UI title renamed with the supported chat-title tool to the exact logical name.
 - Branch `fix/lodging-coverage-truth-1`. PR #983. Issue #980. Lane B only.
 - Immutable TASK blob `5d424fd82ae5334aca79e999e3078101b8b4e44b`, unchanged.
-- `origin/main` re-read after the ordinary merge: `be0a8b68765e25dc3216dc1f61bfd4620af3e134`, tree `84ace80a3a474b125ef7a0bbc60330d53067f7ef`. Parents `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de` and `0d52570500dea5c314c28235250a812676f7799e`. It had not moved past that pinned SHA. Merge-base is that main SHA. After this evidence commit the branch is 8 ahead and 0 behind. No rebase, force-push, or cherry-pick.
+- `origin/main` re-read in this turn: `be0a8b68765e25dc3216dc1f61bfd4620af3e134`, tree `84ace80a3a474b125ef7a0bbc60330d53067f7ef`. Parents `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de` and `0d52570500dea5c314c28235250a812676f7799e`. It still equals the pinned SHA. Merge-base is that main SHA. No rebase, force-push, or cherry-pick. Ahead/behind and the pushed head are in the PR comment.
 - Exact implementation head is the branch tip after the commit that adds this file. The PR comment carries that SHA. This file does not quote its own commit.
 
 ## What changed
 
 `UnterkunftBestand` keeps the canonical summary whenever any stay has coverage status `unknown`, qualifies provisional gap counts, and uses `istGebucht(item)` for the seal and the booking callback. R1 also keeps every canonical-unknown stay row from showing a normalized date span. A missing endpoint still says `Zeitraum noch nicht bestimmbar` and `Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.` An invalid or reversed pair does not show the `zeitraumKurz` span; that line is only the uncertainty sentence. Dated, empty, full, partial, and out-of-period presentation is unchanged. No evaluator, formatter, booking helper, schema, action, type, or persistence edit.
 
-## Verification already run
+## Historical verification, before the pinned merge
 
-- Final regression on the seed panel: 7 tests, 5 failed, 2 passed. The failures are the unknown-heading, unqualified-gap, and stored-booking cases.
-- Same regression on the repaired panel: 7 passed, 0 failed.
-- Existing `unterkunft-manuell`, `naechte-abdeckung`, `buchung`, and `direct-lodging-coverage-preview-1` tests passed.
+These results belong to the first repair, including head `0dafbfca179c65347b03a83b3bbff5b77c0d6e71`. They are not evidence for the integrated head.
+
+- Seed panel: 7 tests, 5 failed, 2 passed. The failures were the unknown heading, unqualified gaps, and the stored-booking action.
+- Repaired panel at that stage: 7 passed, 0 failed.
+- `unterkunft-manuell`, `naechte-abdeckung`, `buchung`, and `direct-lodging-coverage-preview-1` passed against that older evaluator.
 - `npm run typecheck` passed. `npm run build` passed (Next.js 16.4.1). Owned-file ESLint passed.
-- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, and `check:operating-mode` passed. Schema check still lists the pre-existing LOCAL/UNAPPLIED RPCs; this lane did not add one.
+- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, and `check:operating-mode` passed. Schema check still listed the pre-existing LOCAL/UNAPPLIED RPCs.
 - Setup check warned that no `.env` / `.env.local` is present. No secret-gated check was treated as a pass.
 - No hosted database, Auth, provider, secret, personal browser, or real-device run. Render tests are not browser evidence.
 
@@ -35,7 +37,7 @@ Same session, Technical-Lead review of `0dafbfca179c65347b03a83b3bbff5b77c0d6e71
 
 ## I1 pinned merge
 
-R1 was already on the remote at `9840d965cac3ca43e87c02862acfdc1fc18a7188` before this merge. The booked-row test now reads the rendered `Gebucht` badge span. The stay titles contain lowercase `gebucht` and are not that badge. Ordinary merge commit parents are the badge-test commit and pinned main `be0a8b68765e25dc3216dc1f61bfd4620af3e134`. No conflict. `naechte-abdeckung.ts` arrived only from that merge and was not edited. The row regressions, manual-stay tests, coverage tests, preview test, and the merged interval tests then passed together: 76 passed, 0 failed. `tsc -p tsconfig.json --noEmit` passed on the merged tree.
+Scheduling is #984, then this pull request, then #985. The ordinary merge of pinned main was already on the branch when this reconciliation started. `naechte-abdeckung.ts`, `lodging-interval-evaluation-1.test.ts`, and the interval-evaluation docs match that main byte for byte. The booked-row test reads the rendered `Gebucht` badge span. The stay titles contain lowercase `gebucht` and are not that badge. Integrated commands and results are in the REPORT. `npm run build` and the hygiene checks above stay historical.
 
 ## Risks
 
