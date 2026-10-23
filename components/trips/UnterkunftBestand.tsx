@@ -4,7 +4,7 @@ import * as React from 'react'
 import { BedDouble } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
-import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
@@ -28,6 +28,7 @@ export default function UnterkunftBestand({
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const abdeckung = unterkunftAbdeckung(reise, ohneTag)
+  const datumUnbekannt = abdeckung.aufenthalte.some((aufenthalt) => aufenthalt.status === 'unknown')
 
   const setzen = async (itemId: string, gebucht: boolean) => {
     if (!onBuchungsstatus || laeuft) return
@@ -38,8 +39,9 @@ export default function UnterkunftBestand({
     if (fehler) setMeldung(fehler)
   }
 
-  const kopf =
-    abdeckung.bekannt && abdeckung.naechteGesamt !== null && abdeckung.naechteAbgedeckt !== null
+  const kopf = datumUnbekannt
+    ? abdeckung.zusammenfassung
+    : abdeckung.bekannt && abdeckung.naechteGesamt !== null && abdeckung.naechteAbgedeckt !== null
       ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten abgedeckt`
       : abdeckung.zusammenfassung
 
@@ -68,7 +70,11 @@ export default function UnterkunftBestand({
         </p>
       ) : (
         <ul className="mt-5 grid gap-2">
-          {abdeckung.aufenthalte.map((aufenthalt) => (
+          {abdeckung.aufenthalte.map((aufenthalt) => {
+            const gebucht = istGebucht(aufenthalt.item)
+            const zeitraum = zeitraumKurz(aufenthalt.start, aufenthalt.end)
+            const scheinbarerZeitraum = aufenthalt.status === 'unknown' && zeitraum !== 'Zeitraum noch nicht bestimmbar'
+            return (
             <li
               key={aufenthalt.item.id}
               className="grid min-w-0 gap-3 rounded-2xl border border-line-200 px-3 py-3"
@@ -77,21 +83,30 @@ export default function UnterkunftBestand({
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-brand-800 break-words">{aufenthalt.item.title}</p>
                   <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                    {zeitraumKurz(aufenthalt.start, aufenthalt.end)}
-                    {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
-                    {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
+                    {scheinbarerZeitraum ? 'Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.' : (
+                      <>
+                        {zeitraum}
+                        {aufenthalt.naechte ? ` · ${aufenthalt.naechte} ${aufenthalt.naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+                        {aufenthalt.ausserhalb ? ' · ausserhalb des Reisezeitraums' : ''}
+                      </>
+                    )}
                   </p>
+                  {aufenthalt.status === 'unknown' && !scheinbarerZeitraum ? (
+                    <p className="mt-0.5 text-xs leading-5 text-ink-800">
+                      Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={aufenthalt.status} />
+                  <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} />
                   {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
                     <button
                       type="button"
                       disabled={laeuft === aufenthalt.item.id}
-                      onClick={() => void setzen(aufenthalt.item.id, aufenthalt.status !== 'booked')}
+                      onClick={() => void setzen(aufenthalt.item.id, !gebucht)}
                       className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
                     >
-                      {aufenthalt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -100,7 +115,8 @@ export default function UnterkunftBestand({
                 <UnterkunftZeitraum item={aufenthalt.item} onSpeichern={onUnterkunftZeitraum} />
               ) : null}
             </li>
-          ))}
+            )
+          })}
           {abdeckung.luecken.map((luecke) => (
             <li
               key={`${luecke.start}:${luecke.end}:${luecke.stageId ?? 'reise'}`}
@@ -112,10 +128,12 @@ export default function UnterkunftBestand({
                   {luecke.stageName ? ` · ${luecke.stageName}` : ''}
                 </p>
                 <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                  {luecke.naechte} {luecke.naechte === 1 ? 'Nacht fehlt' : 'Nächte fehlen'}
+                  {datumUnbekannt
+                    ? `${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht' : 'Nächte'} noch nicht als fehlend bestimmbar`
+                    : `${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht fehlt' : 'Nächte fehlen'}`}
                 </p>
               </div>
-              <BuchungsSiegel status="open" />
+              <BuchungsSiegel status={datumUnbekannt ? 'unknown' : 'open'} />
             </li>
           ))}
         </ul>
