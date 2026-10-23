@@ -81,7 +81,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await owner.query('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions; CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;')
     await installLocalProofSchema(owner)
     for (const name of priorMigrations) await owner.query(readFileSync(new URL(`../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
-    const relations = async () => (await owner.query(`SELECT n.nspname||'.'||c.relname||':'||c.relkind AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname LIKE 'official_%' AND c.relkind IN ('r','p','v','m') ORDER BY 1`)).map(row => row.name)
+    const relations = async () => (await owner.query(`SELECT n.nspname||'.'||c.relname||':'||c.relkind::text AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname LIKE 'official_%' AND c.relkind IN ('r','p','v','m') ORDER BY 1`)).map(row => row.name)
     const roles = async () => (await owner.query(`SELECT rolname FROM pg_roles WHERE rolname LIKE 'ot_%' OR rolname IN ('anon','authenticated','service_role') ORDER BY 1`)).map(row => row.rolname)
     const beforeRelations = await relations(), beforeRoles = await roles()
     await owner.query(lookupSql)
