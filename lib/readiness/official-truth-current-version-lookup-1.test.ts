@@ -325,7 +325,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(await publishIntegratedBundle(writer, oids, other.envelope, 'verify_existing'), 'idempotent')
     await bindCandidate(writer, other, reviewOther, key, witness, 'create_or_verify')
     await reader.query('BEGIN ISOLATION LEVEL READ COMMITTED')
-    const blockedLookup = lookupCurrentVersion(cluster, reader, otherRequest, key, witness)
+    const blockedLookup = lookupCurrentVersion(cluster, reader, otherRequest, key, witness).then(value => ({ ok: true as const, value }), error => ({ ok: false as const, error }))
     let publicationWaiting = false
     for (let attempt = 0; attempt < 100; attempt++) {
       publicationWaiting = (await owner.query(`SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE usename='ot_original_test_reader' AND wait_event_type='Lock')::text AS waiting`))[0]?.waiting === 'true'
@@ -334,7 +334,9 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     }
     assert.equal(publicationWaiting, true)
     await writer.query('COMMIT')
-    await assert.rejects(blockedLookup, code('55000'))
+    const blocked = await blockedLookup
+    assert.equal(blocked.ok, false)
+    if (!blocked.ok) assert.ok(code('55000')(blocked.error))
     await reader.query('ROLLBACK')
     witness = await align(await cursor(lifecycle))
     const published = await openLookup(otherRequest)
@@ -345,7 +347,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     const held = await lookupCurrentVersion(cluster, reader, primaryRequest, key, witness)
     assert.equal(held.status, 'synthetic_current_version_verified')
     if (held.status !== 'synthetic_current_version_verified') throw new Error('held_required')
-    const withdrawal = lifecycle.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('withdrawn'), pgText(second.envelope.bundle.recordFingerprint), pgText(witness.sequence, 20), pgText(witness.eventHash)])
+    const withdrawal = lifecycle.query('SELECT official_original_api.lifecycle($1::text,$2::text,$3::bigint,$4::text)', [pgText('withdrawn'), pgText(second.envelope.bundle.recordFingerprint), pgText(witness.sequence, 20), pgText(witness.eventHash)]).then(value => ({ ok: true as const, value }), error => ({ ok: false as const, error }))
     let withdrawalWaiting = false
     for (let attempt = 0; attempt < 100; attempt++) {
       withdrawalWaiting = (await owner.query(`SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE usename='ot_original_test_lifecycle' AND wait_event_type='Lock')::text AS waiting`))[0]?.waiting === 'true'
@@ -354,7 +356,8 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     }
     assert.equal(withdrawalWaiting, true)
     await reader.query('COMMIT')
-    await withdrawal
+    const withdrawn = await withdrawal
+    assert.equal(withdrawn.ok, true)
     const afterWithdrawal = await align(await cursor(reader))
     const gone = await openLookup(primaryRequest, afterWithdrawal)
     assert.equal(gone.status, 'no_match')
