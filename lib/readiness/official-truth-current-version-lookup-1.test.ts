@@ -7,7 +7,7 @@ import { LocalPgConnection, LocalPgError, pgBytes, pgText } from '../../scripts/
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../../scripts/db/official-truth-integrated-pilot-1/storage'
 import { runControlledSyntheticPilot } from '../../scripts/official-truth-integrated-pilot-1/controlled-runtime'
 import { pilotBody, type PilotItem } from '../../scripts/official-truth-integrated-pilot-1/corpus'
-import { bindCandidate, cursor, persistCandidate, prepareOriginals, readCandidate, reviewCandidate, type Cursor } from '../../scripts/db/official-truth-original-custody-1/storage'
+import { bindCandidate, cursor, prepareOriginals, readCandidate, reviewCandidate, type Cursor } from '../../scripts/db/official-truth-original-custody-1/storage'
 import { rewriteIntegratedFixture } from '../../scripts/db/official-truth-integrated-pilot-1/integrated-proof'
 import { alternateSameIdentityReceipt } from '../../scripts/db/official-truth-current-version-lookup-1/fixtures'
 import { lookupCurrentVersion, type CurrentVersionLookupResult, type CurrentVersionRequest } from '../../scripts/db/official-truth-current-version-lookup-1/lookup'
@@ -104,6 +104,14 @@ function requestFrom(envelope: LocalIntegratedPilotEnvelope): CurrentVersionRequ
 }
 
 test('current-version lookup resolves one retained synthetic receipt on native PostgreSQL 16', { timeout: 300_000 }, async t => {
+  const startedAt = performance.now()
+  let markedAt = startedAt
+  const phases: { name: string; ms: number }[] = []
+  const phase = (name: string) => {
+    const now = performance.now()
+    phases.push({ name, ms: Math.round(now - markedAt) })
+    markedAt = now
+  }
   const lookupMigrations = readdirSync(new URL('../../supabase/migrations/', import.meta.url)).filter(name => name.endsWith('_official_truth_current_version_lookup_1.sql')).sort()
   assert.deepEqual(lookupMigrations, ['20261023153726_official_truth_current_version_lookup_1.sql'])
   const lookupSql = readFileSync(new URL(`../../supabase/migrations/${lookupMigrations[0]}`, import.meta.url), 'utf8')
@@ -116,6 +124,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
   const provider = readFileSync(new URL('./provider.ts', import.meta.url), 'utf8')
   assert.match(provider, /export function requirementsProviderAus\(\)[\s\S]*return null/)
   const primary = await runControlledSyntheticPilot('primary'), composed = await runControlledSyntheticPilot('composed')
+  phase('synthetic pilots')
   assert.equal(primary.status, 'synthetic_bundle_verified')
   assert.equal(composed.status, 'synthetic_bundle_verified')
   const origin = Math.floor((Date.now() - 120_000) / 1000) * 1000
@@ -128,7 +137,9 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.ok(verified.ok)
     return prepareOriginals(envelope, verified.value.receipt.payload.supports.map(support => Buffer.from(pilotBody((support.binding as { contentItemId: PilotItem }).contentItemId))))
   }
+  phase('calendar fixtures')
   const first = originals(primaryEnvelope), second = originals(versionTwoEnvelope), other = originals(composedEnvelope)
+  phase('prepare originals')
   const primaryRequest = requestFrom(first.envelope), secondIdentity = requestFrom(second.envelope), otherRequest = requestFrom(other.envelope)
   assert.equal(primaryRequest.factKind, 'requirement_effect')
   assert.equal(primaryRequest.requirementType, 'visa')
@@ -140,12 +151,14 @@ test('current-version lookup resolves one retained synthetic receipt on native P
   const connect = async (role?: string) => { const connection = await LocalPgConnection.connect(cluster, role); connections.push(connection); return connection }
   const owner = await connect()
   const key = randomBytes(32).toString('hex')
-  const note = (name: string) => { checks.push(name) }
+    const note = (name: string) => { checks.push(name); phase(name) }
   try {
     assert.match(cluster.version, /^postgres \(PostgreSQL\) 16\./)
     await owner.query('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions; CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;')
     await installLocalProofSchema(owner)
+    phase('install proof schema')
     for (const name of priorMigrations) await owner.query(readFileSync(new URL(`../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
+    phase('prior migrations')
     const relations = async () => (await owner.query(`SELECT n.nspname||'.'||c.relname||':'||c.relkind::text AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname LIKE 'official_%' AND c.relkind IN ('r','p','v','m') ORDER BY 1`)).map(row => row.name)
     const roles = async () => (await owner.query(`SELECT rolname FROM pg_roles WHERE rolname LIKE 'ot_%' OR rolname IN ('anon','authenticated','service_role') ORDER BY 1`)).map(row => row.rolname)
     const beforeRelations = await relations(), beforeRoles = await roles()
@@ -232,24 +245,21 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await assert.rejects(lookupCurrentVersion(cluster, reader, primaryRequest, key, witness), code('25000'))
     await reader.query('ROLLBACK')
     note('invalid identity and non-current snapshots refuse before a result')
-    const persisted = await persistCandidate(cluster, oids, first, review, key, witness)
-    assert.equal(persisted.ok, true)
-    if (!persisted.ok) throw new Error('persist_failed')
-    witness = await align(persisted.cursor)
-    const matched = await openLookup(primaryRequest)
-    assert.equal(matched.status, 'synthetic_current_version_verified')
-    if (matched.status !== 'synthetic_current_version_verified') throw new Error('match_required')
-    assert.equal(matched.recordFingerprint, first.envelope.bundle.recordFingerprint)
-    assert.equal(matched.proof.status, 'synthetic_custody_verified')
-    assert.equal(matched.proof.productionAcceptedRead, 'NOT_AUTHORIZED')
-    assert.equal(matched.proof.positiveVisaCells, 0)
-    assert.equal(matched.matchCount, 1)
-    assert.equal(JSON.stringify(matched).includes('original_bytes'), false)
-    assert.equal(JSON.stringify(matched).includes(key), false)
-    const tainted = { ...primaryRequest, fingerprint: `ot-provenance-v1:${'ab'.repeat(32)}` }
-    const ignored = await openLookup(tainted)
-    assert.equal(ignored.status, 'synthetic_current_version_verified')
-    if (ignored.status === 'synthetic_current_version_verified') assert.notEqual(ignored.recordFingerprint, tainted.fingerprint)
+    const storeAccepted = async (prepared: typeof first, reviewId: string) => {
+      await writer.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+      try {
+        assert.equal(await publishIntegratedBundle(writer, oids, prepared.envelope), 'inserted')
+        assert.equal(await bindCandidate(writer, prepared, reviewId, key, witness, 'create_or_verify'), 'inserted')
+        await writer.query('COMMIT')
+      } catch (error) {
+        try { await writer.query('ROLLBACK') } catch { /* The failed write still has to end. */ }
+        throw error
+      }
+      witness = await align(await cursor(reader))
+    }
+    phase('before first store')
+    await storeAccepted(first, review)
+    phase('first store')
     const wrongPin = { ...primaryRequest, definition: { ...(primaryRequest.definition as { id: string; version: number; digest: string }), digest: (primaryRequest.definition as { digest: string }).digest.endsWith('a') ? `${(primaryRequest.definition as { digest: string }).digest.slice(0, -1)}b` : `${(primaryRequest.definition as { digest: string }).digest.slice(0, -1)}a` } }
     const wrongScopeValue = structuredClone(primaryRequest.scope) as { destinationCountryCode: string | null; transitCountryCode: string | null }
     if (wrongScopeValue.destinationCountryCode) wrongScopeValue.destinationCountryCode = wrongScopeValue.destinationCountryCode === 'DE' ? 'FR' : 'DE'
@@ -268,15 +278,23 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     }
     const fresh = await connect('ot_original_test_reader')
     assert.notEqual((await fresh.query('SELECT pg_backend_pid()::text AS pid'))[0]?.pid, readerPid)
-    const persistedRead = await openLookup(primaryRequest, witness, fresh)
+    const tainted = { ...primaryRequest, fingerprint: `ot-provenance-v1:${'ab'.repeat(32)}` }
+    const persistedRead = await openLookup(tainted, witness, fresh)
     assert.equal(persistedRead.status, 'synthetic_current_version_verified')
-    if (persistedRead.status === 'synthetic_current_version_verified') assert.equal(persistedRead.recordFingerprint, first.envelope.bundle.recordFingerprint)
+    if (persistedRead.status !== 'synthetic_current_version_verified') throw new Error('match_required')
+    assert.equal(persistedRead.recordFingerprint, first.envelope.bundle.recordFingerprint)
+    assert.notEqual(persistedRead.recordFingerprint, tainted.fingerprint)
+    assert.equal(persistedRead.proof.status, 'synthetic_custody_verified')
+    assert.equal(persistedRead.proof.productionAcceptedRead, 'NOT_AUTHORIZED')
+    assert.equal(persistedRead.proof.positiveVisaCells, 0)
+    assert.equal(persistedRead.matchCount, 1)
+    assert.equal(JSON.stringify(persistedRead).includes('original_bytes'), false)
+    assert.equal(JSON.stringify(persistedRead).includes(key), false)
     note('exact cell and fact match survives a new connection; wrong identity is no_match')
     const reviewTwo = await reviewCandidate(reviewer, second)
-    const persistedTwo = await persistCandidate(cluster, oids, second, reviewTwo, key, witness)
-    assert.equal(persistedTwo.ok, true)
-    if (!persistedTwo.ok) throw new Error('persist_v2_failed')
-    witness = await align(persistedTwo.cursor)
+    phase('before second store')
+    await storeAccepted(second, reviewTwo)
+    phase('second store')
     const ambiguous = await openLookup(primaryRequest)
     assert.equal(ambiguous.status, 'ambiguous')
     if (ambiguous.status !== 'ambiguous') throw new Error('ambiguity_required')
@@ -326,6 +344,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     await refuseInTransaction(`DO $$ DECLARE n integer; i integer; BEGIN
       SELECT 1025-count(*) INTO n FROM official_original_private.events WHERE kind='accepted';
       FOR i IN 1..n LOOP PERFORM official_original_private.append_event('accepted','budget-'||i::text); END LOOP; END $$`, 'lookup_budget_count')
+    phase('before byte ceiling')
     await refuseInTransaction(`INSERT INTO official_provenance_private.receipts(record_fingerprint,canonical_payload_bytes,storage_contract_version,receipt_schema,receipt_schema_version,canonicalization)
       SELECT 'ot-provenance-v1:'||encode(sha256(convert_to('ot-provenance-v1'||chr(10),'UTF8')||payload),'hex'), payload, 2, 'official-truth-autonomous-provenance', 1, 'ot-provenance-json-v1'
       FROM (SELECT convert_to(lpad(g::text,10,'0'),'UTF8')||repeat('y',262134)::bytea AS payload FROM generate_series(1,33) g) q;
@@ -453,7 +472,7 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     const legacy = await owner.query('SELECT (SELECT count(*) FROM private.official_evidence_versions)::text AS evidence,(SELECT count(*) FROM private.official_rule_claims)::text AS rules')
     assert.deepEqual(Object.values(legacy[0]!), ['0', '0'])
     note('legacy accepted-claim tables stay empty')
-    t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', status: 'PASS', postgres: cluster.version, checks, productionAcceptedRead: 'NOT_AUTHORIZED', positiveVisaCells: 0, hostedWrites: 0 }))
+    t.diagnostic(JSON.stringify({ schema: 'official-truth-current-version-lookup-1', status: 'PASS', postgres: cluster.version, checks, phases, durationMs: Math.round(performance.now() - startedAt), productionAcceptedRead: 'NOT_AUTHORIZED', positiveVisaCells: 0, hostedWrites: 0 }))
   } finally {
     for (const connection of connections) connection.close()
     cluster.stop()

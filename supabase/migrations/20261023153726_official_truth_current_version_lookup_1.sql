@@ -50,6 +50,9 @@ DECLARE
  ordered jsonb;
  terminal boolean;
  identity_match boolean;
+ targets text[] := '{}';
+ decoded jsonb[] := '{}';
+ slot_index integer;
 BEGIN
  IF definition_id_ IS NULL OR definition_version_ IS NULL OR definition_digest_ IS NULL OR scope_bytes IS NULL
  OR fact_kind_ IS NULL OR requirement_type_ IS NULL OR sequence_ IS NULL OR hash_ IS NULL THEN
@@ -127,9 +130,13 @@ BEGIN
   END IF;
  END LOOP;
  match_count:=0;
+ -- Review identity for every accepted receipt before provenance hashing or a
+ -- cell/fact filter. A damaged packet key or ordered support refuses here, so
+ -- the closure walk does not run on an already incomplete corpus. Originals
+ -- stay encrypted. A corpus that passes this pass still gets verify_retained_v2
+ -- on every accepted receipt before any match is counted.
  FOR ev IN SELECT e.target FROM official_original_private.events e WHERE e.kind='accepted' ORDER BY e.sequence LOOP
   BEGIN
-   PERFORM official_provenance_private.verify_retained_v2(ev.target);
    SELECT r.canonical_payload_bytes INTO STRICT raw FROM official_provenance_private.receipts r WHERE r.record_fingerprint=ev.target;
    receipt:=official_provenance_private.decode(raw,262144);
    PERFORM official_provenance_private.typed(receipt,'receipt');
@@ -138,9 +145,6 @@ BEGIN
    OR receipt#>>'{candidate,factKind}' IS NULL THEN
     outcome:='refused'; reason:='accepted_corpus_unclassifiable'; record_fingerprint:=NULL; match_count:=NULL; RETURN NEXT; RETURN;
    END IF;
-   -- Review identity is part of accepted-corpus completeness. Provenance verification
-   -- does not read the protected review. Prove it for every accepted receipt before
-   -- any terminal or cell/fact filter. Original bodies stay encrypted.
    SELECT v.packet_key, v.ordered_supports INTO STRICT review_packet, ordered
    FROM official_original_private.rule_bindings b
    JOIN official_original_private.reviews v ON v.review_id=b.review_id AND v.fingerprint=b.fingerprint
@@ -161,9 +165,20 @@ BEGIN
    ) THEN
     outcome:='refused'; reason:='accepted_corpus_incomplete'; record_fingerprint:=NULL; match_count:=NULL; RETURN NEXT; RETURN;
    END IF;
+   targets:=targets||ev.target;
+   decoded:=decoded||receipt;
+  EXCEPTION WHEN OTHERS THEN
+   IF SQLSTATE IN ('57014','55P03','57000','40001','40P01','25000','25P02') THEN RAISE; END IF;
+   outcome:='refused'; reason:='accepted_corpus_unclassifiable'; record_fingerprint:=NULL; match_count:=NULL; RETURN NEXT; RETURN;
+  END;
+ END LOOP;
+ FOR slot_index IN 1..coalesce(pg_catalog.array_length(targets,1),0) LOOP
+  BEGIN
+   PERFORM official_provenance_private.verify_retained_v2(targets[slot_index]);
+   receipt:=decoded[slot_index];
    terminal:=EXISTS(
     SELECT 1 FROM official_original_private.events t
-    WHERE t.target=ev.target AND t.kind IN ('withdrawn','conflicted','superseded','expired')
+    WHERE t.target=targets[slot_index] AND t.kind IN ('withdrawn','conflicted','superseded','expired')
    );
    identity_match:=receipt#>>'{globalCell,definition,id}'=definition_id_
     AND (receipt#>>'{globalCell,definition,version}')::bigint=definition_version_
@@ -174,7 +189,7 @@ BEGIN
     AND receipt#>>'{candidate,requirementType}'=requirement_type_;
    IF identity_match AND NOT terminal THEN
     match_count:=match_count+1;
-    IF match_count=1 THEN record_fingerprint:=ev.target; ELSE record_fingerprint:=NULL; END IF;
+    IF match_count=1 THEN record_fingerprint:=targets[slot_index]; ELSE record_fingerprint:=NULL; END IF;
    END IF;
   EXCEPTION WHEN OTHERS THEN
    IF SQLSTATE IN ('57014','55P03','57000','40001','40P01','25000','25P02') THEN RAISE; END IF;
