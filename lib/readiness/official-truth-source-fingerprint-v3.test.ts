@@ -86,18 +86,19 @@ describe('officialTruthSourceFingerprintV3', () => {
     assert.match(officialTruthSourceFingerprintV2('a'.repeat(131_072), BINDING) ?? '', /^[a-f0-9]{64}$/)
     assert.equal(officialTruthSourceFingerprintV2('a'.repeat(131_073), BINDING), null)
     const signal = new AbortController().signal
-    const one = (async function* () { yield Buffer.from('a') })()
+    const oneByte = Buffer.alloc(1, 0x61)
+    const one = (async function* () { yield oneByte })()
     assert.equal((await officialTruthBoundedResponseBody(one, signal, 131_073)).ok, false)
-    const accepted = await officialTruthBoundedResponseBody((async function* () { yield Buffer.from('a') })(), signal, 131_072)
+    const accepted = await officialTruthBoundedResponseBody((async function* () { yield Buffer.alloc(1, 0x61) })(), signal, 131_072)
     assert.equal(accepted.ok && accepted.bytes.byteLength, 1)
     let cancelled = false
     const overflow = await officialTruthCurrentRequestBoundedResponseBody((async function* () {
-      yield Buffer.from('a'.repeat(393_217))
+      yield Buffer.alloc(393_217, 0x61)
     })(), signal, () => { cancelled = true })
     assert.equal(overflow.ok, false)
     assert.equal(cancelled, true)
     const exact = await officialTruthCurrentRequestBoundedResponseBody((async function* () {
-      yield Buffer.from('a'.repeat(393_216))
+      yield Buffer.alloc(393_216, 0x61)
     })(), signal)
     assert.equal(exact.ok && exact.bytes.byteLength, 393_216)
   })

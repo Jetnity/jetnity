@@ -27,14 +27,22 @@ import {
 } from '@/lib/readiness/official-truth-server-held-source-registry'
 import { akzeptierteEvidenceSpeichern, akzeptierteRegelClaimSpeichern } from '@/lib/readiness/official-truth-store-server'
 import { prepareOriginals, bindCandidate, reviewCandidate, persistCandidate, readCandidate } from '../../scripts/db/official-truth-original-custody-1/storage'
-
-function marker(large: boolean): { sourceFingerprintProtocol: 3; sourceSnapshot?: string } {
-  return large ? { sourceFingerprintProtocol: 3, sourceSnapshot: 'synthetic-history-'.repeat(80) } : { sourceFingerprintProtocol: 3 }
-}
+import { SYNTHETIC_PREFIX, observePilot } from '@/lib/readiness/fixtures/whole-source-current-request-1/harness.test'
 
 test('store, bundle, custody, reproof, autonomous and composition paths refuse protocol 3 before transport', async () => {
-  for (const large of [false, true]) {
-    const body = marker(large)
+  const artifacts: unknown[] = []
+  for (const bytes of [SYNTHETIC_PREFIX.length, 371_444, 393_216]) {
+    const observed = await observePilot(bytes)
+    if (!observed.retrieval || observed.retrieval.status !== 'server_owned_official_retrieval') {
+      throw new Error(`retrieval ${bytes}`)
+    }
+    assert.equal(observed.retrieval.sourceFingerprintProtocol, 3)
+    assert.equal(Buffer.byteLength(observed.retrieval.sourceSnapshot), bytes)
+    artifacts.push(observed.retrieval, observed.packet)
+  }
+  const real = artifacts[0] as { sourceSnapshot: string; sourceFingerprintProtocol: 3 }
+  artifacts.push({ ...real, sourceSnapshot: 'x' })
+  for (const body of artifacts) {
     let calls = 0
     const transport = { aufrufen: async () => { calls += 1; return { ok: false as const } } }
     const catalog = { transport }
