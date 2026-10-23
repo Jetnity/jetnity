@@ -11,9 +11,9 @@ Date: 23 October 2026. Stop for independent Technical-Lead review of Draft PR #9
 - Task blob: `b1371993e1e7f5b09ceebd4462325c1b94c3faba` (not edited)
 - Session: `bc-45700535-8356-442d-aba6-1ed8373578fc`
 - Model: `grok-4.7-high-fast`
-- Fresh `origin/main`: `be0a8b68765e25dc3216dc1f61bfd4620af3e134`
+- Fresh `origin/main`: `e372f4d830c35a74a235d345c2baaf08ab615e6c`
 - Merge-base: `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de`
-- Behind that main by the five lodging-interval commits of PR #984. No allowlist overlap. This branch was not rebased.
+- 5 ahead and 15 behind that main. The extra main commits are lodging PRs #984 and #983. No allowlist overlap. This branch was not rebased.
 
 The exact final head and tree are in the PR comment on the commit that contains this file.
 
@@ -23,8 +23,9 @@ The exact final head and tree are in the PR comment on the commit that contains 
 2. Re-run the three new test files and the existing application, retrieval, identity, review, extractor, and history suites on this head.
 3. Treat local PostgreSQL `initdb ENOENT` and `local_proof_connection_override_forbidden` as environment limits unless a database is intentionally provided. They are not a license to change the custody proof guard.
 4. Read CI and Preview for this head only. An older preview does not cover it.
-5. Decide whether `http_failed` is acceptable for protocol-3 framing and Content-Length mismatch, or whether the bridge report enum should be amended in a later task.
-6. Integrate or leave the five main commits. Do not treat this handoff as that integration.
+5. R1 accepted `http_failed` for protocol-3 framing, Content-Length mismatch, and duplicate raw header metadata. The bridge report enum was not amended.
+6. Re-review the R1 head, not `385a621e70a4f15622dad9312a96ee79717a6f59`. That earlier head is invalidated.
+7. Integrate or leave the five main commits. Do not treat this handoff as that integration. Main synchronization was not authorized by R1.
 
 ## Product boundary
 

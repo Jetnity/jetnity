@@ -7,9 +7,10 @@ Date: 23 October 2026. Issue #982, parent #917, Draft PR #985. Immutable TASK un
 ## Protocol
 
 - Discriminator: `sourceFingerprintProtocol: 3`.
-- Selection is the code-owned policy only. Body size, hostname, caller `maxBytes`, caller protocol, headers, environment, catalog fields, and a profile clone do not select it.
-- A small body selected by that policy stays protocol 3.
-- Missing, unknown, mixed, and downgraded markers are refused. They are not inferred.
+- Selection is the code-owned policy only, and only on the genuine server-owned entry (`loadOfficialTruthServerOwnedRetrieval`, unexported privileged symbol, `catalog == null`). Body size, hostname, caller `maxBytes`, caller protocol, headers, environment, catalog fields, a profile clone, and the exact compiled profile object inside an injected catalog do not select it.
+- A small body selected by that privileged policy stays protocol 3.
+- The marker is own data carried on the new material, Evidence, review, extractor, and application projections. Missing, unknown, mixed, and downgraded markers are refused. They are not inferred or rebuilt from the policy. An ineligible tuple that still carries a marker is refused rather than stored as legacy 1 or 2.
+- Historical consumers refuse an explicit marker before catalog, client, RPC, or storage. If a producer result still contains 3, the store and server-held boundaries refuse it again before transport or a downgraded return.
 - Caps, both inclusive: 393216 raw UTF-8 bytes and 393216 UTF-16 code units.
 - Raw UTF-8 length is the original text, before CRLF/CR to LF normalization.
 - Rejected: empty text, BOM, lone surrogates, invalid UTF-8, overflow. No prefix hash, trimming, or Unicode/HTML normalization.
@@ -42,7 +43,7 @@ Policy `fedlex-fza-current-request-384k-v1`, version 1, usage `current_request_o
 - sole request URL and expected final URL: `https://www.fedlex.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2002/243/20201215/de/html/fedlex-data-admin-ch-eli-cc-2002-243-20201215-de-html-9.html`
 - media `text/html`, redirect allowance 0, max 393216
 
-These identifiers are not an admitted source. Production `OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY` has no matching profile. Selection requires the unique current item and representation and reference equality with the single current profile object inside the registry array the server actually holds. `catalog.identityProfiles` is not that array.
+These identifiers are not an admitted source. Production `OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY` has no matching profile. Selection requires the unique current item and representation, reference equality with the single current profile object inside the registry array the server actually holds, and the privileged entry with no injected catalog. `catalog.identityProfiles` is not that array and cannot enlarge the transport.
 
 ## Evidence and review
 
@@ -63,7 +64,7 @@ Optional contract fields `sourceProtocol`, `policyId`, and `policyVersion` bind 
 
 Protocol 3 uses the existing HTTP engine, the 10-second retrieval deadline, and the 15-second pilot deadline. It requires `framingComplete() === true` and, when Content-Length is declared, exact equality with the bytes read. Absent Content-Length is accepted only with that affirmative framing proof. A redirect on this path returns `redirect_rejected` and is not followed.
 
-Framing failure and Content-Length mismatch on the shared retrieval result use the existing reason `http_failed`. New public reason strings were not added. The read-only bridge report enum assigns `retrieval.reason` directly, and extending that enum is outside this write allowlist. The Bern research outcome keeps its own `framing_unverified` reason. Over-cap remains `response_too_large` and cancels before the body is pulled.
+Framing failure and Content-Length mismatch on the shared retrieval result use the existing reason `http_failed`. Review R1 accepted that reason. Duplicate or malformed raw `Content-Type`, `Content-Length`, `Content-Encoding`, or `Transfer-Encoding` pairs are also `http_failed` at the native adapter, before the normalized header map can hide them. The Bern research outcome keeps its own `framing_unverified` reason. Declared over-cap remains `response_too_large` and cancels before the body is pulled. A stream that grows past 393216 cancels with the same reason.
 
 ## What stays closed
 

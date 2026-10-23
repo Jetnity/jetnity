@@ -18,7 +18,7 @@ Synthetic 371444 and 393216 bodies passed the transpiled existing pipeline. Boun
 
 ## Build
 
-`npm run typecheck` exit 0. `npm run lint` exit 0 with 146 warnings and 0 errors. `npm run build` exit 0. Dead-code, export, dependency, API-protection, schema-reference, and operating-mode checks passed.
+R1 re-ran `npm run typecheck` (exit 0), `npm run lint` (exit 0, 0 errors, 146 warnings), and `npm run build` (exit 0). Dead-code, export, dependency, API-protection, and operating-mode checks passed. `check:schema-bezug` exits 0 after `Buffer.from('a')` and `Buffer.from('x')` were rewritten to `Buffer.alloc` of the same bytes. On head `385a621e` those literals matched the schema scanner as unknown tables, so the earlier exit-0 claim for that head was wrong. The scanner script was not edited.
 
 ## Security
 
@@ -38,8 +38,8 @@ No new running cost. No provider call.
 
 ## Remaining risk
 
-Real source access, #917 readback, legal qualification, and retention stay open. Public framing and length mismatches share the reason `http_failed` so the read-only bridge enum did not have to change. `origin/main` is five lodging commits ahead with no file overlap; this branch was not rebased. CI and Preview on the final head were not yet observed at the time of the local build.
+Real source access, #917 readback, legal qualification, and retention stay open. R1 accepted `http_failed` for framing, length mismatch, and duplicate raw headers. The response buffer is 393216 bytes. The hash preimage of 393216 NUL characters is about 2.36MB, so this is not a 384KiB total-memory claim. `lib/readiness/official-truth-autonomous-review-material-server.ts` stays read-only and has no protocol field. Fresh `origin/main` is `e372f4d830c35a74a235d345c2baaf08ab615e6c`. This branch is 5 ahead and 15 behind, merge-base `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de`. The extra main commits are lodging PRs #984 and #983. No allowlist overlap. This branch was not rebased. CI and Preview on head `385a621e` do not cover the R1 head.
 
 ## Next step
 
-Independent Technical-Lead review of the exact head in the PR comment. Do not mark Ready. Do not merge. Do not start a follow-up.
+Independent Technical-Lead re-review of the R1 head in the PR comment. Every new head invalidates earlier gates. Do not mark Ready. Do not merge. Do not start a follow-up.
