@@ -29,6 +29,7 @@ The accepted set is every `accepted` event. Before any cell/fact comparison the 
 - accepted-event count and review count are within the ceilings below;
 - each accepted target occurs once;
 - each accepted target has exactly one rule binding, one review with the same fingerprint and review id, and one retained receipt;
+- that review's packet key equals the receipt proof packet key, and its ordered supports equal the stored original version id and raw digest in position order, and the same version id on the receipt support; this is metadata, not decryption;
 - each rule binding has exactly one accepted event;
 - receipt bytes are measured in full, with no `LIMIT`.
 

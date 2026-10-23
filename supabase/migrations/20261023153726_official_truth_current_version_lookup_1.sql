@@ -46,6 +46,8 @@ DECLARE
  byte_len integer;
  total_bytes bigint := 0;
  receipt jsonb;
+ review_packet text;
+ ordered jsonb;
  terminal boolean;
  identity_match boolean;
 BEGIN
@@ -135,6 +137,29 @@ BEGIN
    OR receipt#>>'{candidate,requirementType}' IS DISTINCT FROM receipt#>>'{globalCell,scope,requirementType}'
    OR receipt#>>'{candidate,factKind}' IS NULL THEN
     outcome:='refused'; reason:='accepted_corpus_unclassifiable'; record_fingerprint:=NULL; match_count:=NULL; RETURN NEXT; RETURN;
+   END IF;
+   -- Review identity is part of accepted-corpus completeness. Provenance verification
+   -- does not read the protected review. Prove it for every accepted receipt before
+   -- any terminal or cell/fact filter. Original bodies stay encrypted.
+   SELECT v.packet_key, v.ordered_supports INTO STRICT review_packet, ordered
+   FROM official_original_private.rule_bindings b
+   JOIN official_original_private.reviews v ON v.review_id=b.review_id AND v.fingerprint=b.fingerprint
+   WHERE b.fingerprint=ev.target;
+   IF review_packet IS DISTINCT FROM receipt#>>'{proof,reviewPacketKey}'
+   OR pg_catalog.jsonb_typeof(ordered) IS DISTINCT FROM 'array'
+   OR pg_catalog.jsonb_array_length(ordered) IS DISTINCT FROM pg_catalog.jsonb_array_length(receipt->'supports')
+   OR (SELECT count(*) FROM official_original_private.supports s WHERE s.fingerprint=ev.target) IS DISTINCT FROM pg_catalog.jsonb_array_length(ordered)
+   OR EXISTS (
+    SELECT 1 FROM pg_catalog.generate_series(0, pg_catalog.jsonb_array_length(ordered)-1) AS slot(position)
+    WHERE (ordered->slot.position) IS DISTINCT FROM (
+     SELECT pg_catalog.jsonb_build_object('versionId', o.evidence_version, 'rawDigest', o.raw_digest)
+     FROM official_original_private.supports s
+     JOIN official_original_private.originals o ON o.original_pin=s.original_pin AND o.evidence_version=s.evidence_version
+     WHERE s.fingerprint=ev.target AND s.position=slot.position
+    )
+    OR (ordered->slot.position)->>'versionId' IS DISTINCT FROM receipt#>>ARRAY['supports', slot.position::text, 'versionId']
+   ) THEN
+    outcome:='refused'; reason:='accepted_corpus_incomplete'; record_fingerprint:=NULL; match_count:=NULL; RETURN NEXT; RETURN;
    END IF;
    terminal:=EXISTS(
     SELECT 1 FROM official_original_private.events t

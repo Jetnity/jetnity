@@ -408,6 +408,28 @@ test('current-version lookup resolves one retained synthetic receipt on native P
     assert.equal(published.status, 'synthetic_current_version_verified')
     if (published.status === 'synthetic_current_version_verified') assert.equal(published.recordFingerprint, other.envelope.bundle.recordFingerprint)
     note('publication waits for the lifecycle lock and a stale witness cannot observe it as current')
+    const corruptOtherReview = async (statement: string) => {
+      await owner.query('BEGIN')
+      try {
+        await owner.query(`ALTER TABLE official_original_private.reviews DISABLE TRIGGER USER; ${statement}`)
+        const seen = await cursor(owner)
+        const requested = await lookupCurrentVersion(cluster, owner, primaryRequest, key, seen)
+        const absent = await lookupCurrentVersion(cluster, owner, wrongPin, key, seen)
+        assert.equal(requested.status, 'refused')
+        assert.equal(absent.status, 'refused')
+        if (requested.status === 'refused') assert.equal(requested.reason, 'accepted_corpus_incomplete')
+        if (absent.status === 'refused') assert.equal(absent.reason, 'accepted_corpus_incomplete')
+        assert.equal(JSON.stringify(requested).includes(second.envelope.bundle.recordFingerprint), false)
+        assert.equal(JSON.stringify(absent).includes(other.envelope.bundle.recordFingerprint), false)
+      } finally { await owner.query('ROLLBACK') }
+      await align(witness)
+    }
+    const otherFingerprint = quoteFingerprint(other.envelope.bundle.recordFingerprint)
+    await corruptOtherReview(`UPDATE official_original_private.reviews SET packet_key='review-packet:v3:'||repeat('ab',32) WHERE fingerprint=${otherFingerprint}`)
+    await corruptOtherReview(`UPDATE official_original_private.reviews SET ordered_supports=pg_catalog.jsonb_set(ordered_supports,'{0,rawDigest}',to_jsonb(repeat('0',64))) WHERE fingerprint=${otherFingerprint}`)
+    assert.equal((await openLookup(primaryRequest)).status, 'synthetic_current_version_verified')
+    assert.equal((await openLookup(wrongPin)).status, 'no_match')
+    note('a damaged review on another accepted cell refuses both a real match and an otherwise empty request')
     await reader.query('BEGIN ISOLATION LEVEL READ COMMITTED')
     const held = await lookupCurrentVersion(cluster, reader, primaryRequest, key, witness)
     assert.equal(held.status, 'synthetic_current_version_verified')
