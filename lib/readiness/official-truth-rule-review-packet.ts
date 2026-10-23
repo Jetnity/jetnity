@@ -85,7 +85,7 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
  */
 export type OfficialTruthRegelReviewSupport = ContentIdentityBinding & {
   readonly identitySchema: 2
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -183,7 +183,11 @@ function stuetzEintrag(belegt: Belegt): OfficialTruthRegelReviewSupport {
   return Object.freeze({
     ...contentIdentityBinding(belegt.evidence),
     identitySchema: 2,
-    ...(belegt.evidence.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+    ...(belegt.evidence.sourceFingerprintProtocol === 2
+      ? { sourceFingerprintProtocol: 2 as const }
+      : belegt.evidence.sourceFingerprintProtocol === 3
+        ? { sourceFingerprintProtocol: 3 as const }
+        : {}),
     contentType: belegt.evidence.contentType,
     versionId: belegt.evidence.versionId,
     sourceId: belegt.evidence.sourceId,

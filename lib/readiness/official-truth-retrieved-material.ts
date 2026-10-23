@@ -12,9 +12,12 @@ import { evidenceQuellenFingerprint, type EvidenceQuellenmaterial } from '@/lib/
 import {
   contentIdentityBinding,
   contentRepresentationFromRegistry,
+  OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
   type ContentIdentityBinding,
 } from '@/lib/readiness/official-truth-content-identity'
 import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
+import { officialTruthWholeSourceCurrentRequestAllowed } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { officialTruthRechercheQuellenRouten } from '@/lib/readiness/official-truth-research-source-routing'
@@ -119,7 +122,7 @@ export type OfficialTruthAbgerufenBeleg = ContentIdentityBinding & {
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly material: EvidenceQuellenmaterial
 }
 
@@ -300,17 +303,37 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
   if (!representation.ok || url.canonicalUrl !== representation.value.expectedFinalUrl
     || material.contentType !== representation.value.expectedMediaType) return sperre('content_identity_mismatch')
   const identity = contentIdentityBinding(representation.value)
-  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
-  if (!sourceFingerprintProtocol) return sperre('invalid_source_snapshot')
-  const sourceContentHash = sourceFingerprintProtocol === 2
-    ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
-      ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {
-        ...identity,
-        canonicalUrl: url.canonicalUrl,
-        contentType: material.contentType,
-      })
-      : null
-    : evidenceQuellenFingerprint(material.sourceSnapshot)
+  const currentRequest = officialTruthWholeSourceCurrentRequestAllowed({
+    serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+    identity,
+    canonicalUrl: url.canonicalUrl,
+    contentType: representation.value.expectedMediaType,
+    requestUrl: url.canonicalUrl,
+    graph: registry.contentIdentity,
+  })
+  let sourceFingerprintProtocol: 1 | 2 | 3
+  let sourceContentHash: string | null
+  if (currentRequest) {
+    sourceFingerprintProtocol = 3
+    sourceContentHash = officialTruthSourceFingerprintV3(material.sourceSnapshot, {
+      ...identity,
+      canonicalUrl: url.canonicalUrl,
+      contentType: representation.value.expectedMediaType,
+    })
+  } else {
+    const derived = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
+    if (!derived) return sperre('invalid_source_snapshot')
+    sourceFingerprintProtocol = derived
+    sourceContentHash = sourceFingerprintProtocol === 2
+      ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
+        ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {
+          ...identity,
+          canonicalUrl: url.canonicalUrl,
+          contentType: material.contentType,
+        })
+        : null
+      : evidenceQuellenFingerprint(material.sourceSnapshot)
+  }
   if (!sourceContentHash) return sperre('invalid_source_snapshot')
   const belegMaterial: EvidenceQuellenmaterial = Object.freeze({
     contentType: representation.value.expectedMediaType,
@@ -329,7 +352,11 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
     sourceContentHash,
-    ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+    ...(sourceFingerprintProtocol === 2
+      ? { sourceFingerprintProtocol: 2 as const }
+      : sourceFingerprintProtocol === 3
+        ? { sourceFingerprintProtocol: 3 as const }
+        : {}),
     material: belegMaterial,
   })
 }

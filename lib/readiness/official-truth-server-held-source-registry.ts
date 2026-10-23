@@ -11,6 +11,7 @@
 
 import 'server-only'
 
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { contentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import {
   officialTruthAkzeptierteEvidenceAusAbruf,
@@ -247,6 +248,9 @@ export async function officialTruthServerHeldMaterialPruefen(
   uhr: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
 ): Promise<OfficialTruthServerHeldAbrufErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(umschlag) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   const gelesen = abrufLesen(umschlag)
   if (!gelesen.ok) return blockiert(gelesen.reason)
   const katalog = await registryLaden(abhaengigkeiten)
@@ -265,6 +269,13 @@ export async function officialTruthServerHeldEvidenceAnnehmen(
   extraktion: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
 ): Promise<OfficialTruthServerHeldEvidenceErgebnis> {
+  if (
+    officialTruthProtocol3MarkerPresent(umschlag) ||
+    officialTruthProtocol3MarkerPresent(extraktion) ||
+    officialTruthProtocol3MarkerPresent(abhaengigkeiten)
+  ) {
+    return blockiert('invalid_source_snapshot')
+  }
   const gelesen = abrufLesen(umschlag)
   if (!gelesen.ok) return blockiert(gelesen.reason)
   if (hatAutoritaet(datensatz(extraktion))) return blockiert('caller_authority_forbidden')
@@ -325,6 +336,9 @@ export async function officialTruthServerHeldReviewPacket(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
 ): Promise<OfficialTruthServerHeldReviewErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   const gelesen = reviewLesen(eingabe)
   if (!gelesen.ok) return blockiert(gelesen.reason)
   const katalog = await registryLaden(abhaengigkeiten)
@@ -423,6 +437,9 @@ export async function officialTruthServerHeldSameRequestMaterial(
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
   serverUhr?: () => Date,
 ): Promise<OfficialTruthServerHeldSameRequestMaterialErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   const gelesen = reviewLesen(eingabe)
   if (!gelesen.ok) return blockiert(gelesen.reason)
   const pruefuhr = serverPruefuhr(serverUhr)
@@ -443,6 +460,7 @@ export async function officialTruthServerHeldSameRequestMaterial(
   if (finger.status !== 'rule_review_packet_fingerprint') return blockiert(finger.reason)
   if (!finger.reviewPacketKey.startsWith('review-packet:v3:')) return blockiert('invalid_fact')
   if (finger.ruleScopeKey !== belegt.kandidat.key) return blockiert('scope_mismatch')
+  if (officialTruthProtocol3MarkerPresent(belegt)) return blockiert('invalid_source_snapshot')
   const versionsIds = belegt.evidenceVersions.map((version) => version.versionId)
   const stuetzIds = belegt.supports.map((support) => support.versionId)
   if (
@@ -486,6 +504,9 @@ export async function officialTruthServerHeldReviewReproof(
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
   serverUhr?: () => Date,
 ): Promise<OfficialTruthServerHeldReviewReproofErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   const material = await officialTruthServerHeldSameRequestMaterial(eingabe, abhaengigkeiten, serverUhr)
   if (material.status !== 'server_held_same_request_material') return material
   return Object.freeze({
@@ -509,6 +530,13 @@ export async function officialTruthServerHeldRegelKandidat(
   metadata: unknown,
   abhaengigkeiten?: OfficialTruthSourceCatalogAbhaengigkeiten,
 ): Promise<OfficialTruthServerHeldRegelErgebnis> {
+  if (
+    officialTruthProtocol3MarkerPresent(evidenceVersions) ||
+    officialTruthProtocol3MarkerPresent(metadata) ||
+    officialTruthProtocol3MarkerPresent(abhaengigkeiten)
+  ) {
+    return { ok: false, reason: 'invalid_support' }
+  }
   if (!Array.isArray(evidenceVersions) && hatAutoritaet(datensatz(evidenceVersions))) {
     return { ok: false, reason: 'caller_authority_forbidden' }
   }

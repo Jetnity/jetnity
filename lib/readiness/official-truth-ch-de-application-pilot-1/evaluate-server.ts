@@ -6,6 +6,7 @@ import { loadOfficialTruthServerOwnedRetrieval } from '@/lib/readiness/official-
 import { quellenKatalogLesen } from '@/lib/readiness/official-truth-source-catalog-server'
 import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry } from '@/lib/readiness/official-truth-content-identity'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V3_MAX_BYTES, officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
 import { regelKandidatAkzeptieren, regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 import { officialTruthRechercheEntscheiden } from '@/lib/readiness/official-truth-research-request'
 import { officialTruthRegelReviewBelege } from '@/lib/readiness/official-truth-rule-review-packet'
@@ -17,7 +18,7 @@ import type { RequirementsProvider } from '@/lib/readiness/provider'
 import { reiseLaden } from '@/lib/trips/daten'
 import { pilotContextFingerprint } from './context'
 import { pilotScope } from './scope-server'
-import { applicationContract, applicationPilotEnabled } from './contract-server'
+import { applicationContract, applicationContractExpectsCurrentRequest, applicationCurrentRequestContractDigest, applicationPilotEnabled } from './contract-server'
 import { pilotGrant } from './database-server'
 import type { PilotResult, PilotStatus } from './result'
 import { withinDeadline } from './deadline-server'
@@ -69,8 +70,23 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     // Leave the unchanged protected retrieval its complete 10-second budget.
     if (expired() || Date.now()-started>5_000) return empty('unavailable')
     const retrieval = await loadOfficialTruthServerOwnedRetrieval({ sourceId: source.sourceId, url: contract.source.url })
-    if (retrieval.status !== 'server_owned_official_retrieval' || expired()
-      || Buffer.byteLength(retrieval.sourceSnapshot,'utf8')>65_536
+    if (retrieval.status !== 'server_owned_official_retrieval' || expired()) return empty('unavailable')
+    if (contract.sourceProtocol != null || contract.policyId != null || contract.policyVersion != null) {
+      const currentDigest = applicationCurrentRequestContractDigest(contract)
+      if (!applicationContractExpectsCurrentRequest(contract) || !currentDigest || contract.digest !== currentDigest) {
+        return empty('source_not_admitted')
+      }
+      const fingerprintBinding = {
+        ...contentIdentityBinding(retrieval), canonicalUrl: retrieval.canonicalUrl, contentType: retrieval.contentType,
+      }
+      if (retrieval.sourceFingerprintProtocol !== 3 || retrieval.redirectCount !== 0
+        || Buffer.byteLength(retrieval.sourceSnapshot, 'utf8') > OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V3_MAX_BYTES
+        || retrieval.sourceSnapshot.length > OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V3_MAX_BYTES
+        || retrieval.sourceContentHash !== officialTruthSourceFingerprintV3(retrieval.sourceSnapshot, fingerprintBinding)
+        || !contentIdentityMatches(retrieval, contract.source.binding)
+        || retrieval.requestUrl !== contract.source.url || retrieval.canonicalUrl !== representation.value.expectedFinalUrl
+        || Date.parse(retrieval.retrievedAt) < started || Date.parse(retrieval.retrievedAt) > Date.now()) return empty('unavailable')
+    } else if (Buffer.byteLength(retrieval.sourceSnapshot,'utf8')>65_536
       || retrieval.sourceContentHash !== evidenceQuellenFingerprint(retrieval.sourceSnapshot)
       || !contentIdentityMatches(retrieval, contract.source.binding)
       || retrieval.requestUrl !== contract.source.url || retrieval.canonicalUrl !== representation.value.expectedFinalUrl
@@ -97,6 +113,7 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
           canonicalUrl: retrieval.canonicalUrl, retrievedAt: retrieval.retrievedAt,
           contentType: retrieval.contentType, sourceSnapshot: retrieval.sourceSnapshot,
           sourceContentHash: retrieval.sourceContentHash, redirectCount: retrieval.redirectCount,
+          ...(retrieval.sourceFingerprintProtocol === 3 ? { sourceFingerprintProtocol: 3 as const } : {}),
         } }], policy: null, registry: catalog.registry }
     const extracted = officialTruthTrustedFactExtrahieren(input)
     const execution = consumeOfficialTruthTrustedFactExecutionContext(extracted, input)

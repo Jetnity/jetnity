@@ -35,7 +35,7 @@ const PROVENIENZ_FELDER = [
 
 export type OfficialTruthCompactReviewProvenance = ContentIdentityBinding & {
   readonly identitySchema: 2
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -195,6 +195,67 @@ export function officialTruthReviewIdentityV3(
   return { ok: true, digest, canonical: kanonisch, preimage: form.wert, ruleScopeKey, supportVersionIds }
 }
 
+function provenienzAktuell(support: OfficialTruthCompactReviewProvenance): OfficialTruthCompactReviewProvenance | null {
+  if (support.sourceFingerprintProtocol !== 3) return null
+  const versionId = text(support.versionId)
+  const sourceId = text(support.sourceId)
+  const canonicalUrl = text(support.canonicalUrl)
+  const retrievedAt = text(support.retrievedAt)
+  const sourceContentHash = text(support.sourceContentHash)
+  const validFrom = fenster(support.validFrom)
+  const validUntil = fenster(support.validUntil)
+  if (!versionId || !sourceId || !canonicalUrl || !retrievedAt || !sourceContentHash) return null
+  if (validFrom === undefined || validUntil === undefined) return null
+  return { ...contentIdentityBinding(support), identitySchema: 2, sourceFingerprintProtocol: 3,
+    contentType: support.contentType, versionId, sourceId, canonicalUrl, retrievedAt, sourceContentHash, validFrom, validUntil }
+}
+
+/**
+ * Checksum for exactly one Protocol 3 current-request support.
+ * Review structure stays v3. The preimage adds usage and the source marker.
+ * The key prefix stays `review-packet:v3:`; the digest is not an old alias.
+ */
+export function officialTruthReviewIdentityCurrentRequest(
+  kandidat: Pick<RegelReviewPacket['kandidat'], 'scope' | 'key' | 'factKind' | 'evidenceQuality' | 'supportVersionIds' | 'proposal'>,
+  supports: readonly OfficialTruthCompactReviewProvenance[],
+): Identitaet {
+  if (supports.length !== 1) return { ok: false, reason: 'invalid_support' }
+  const ruleScopeKey = text(kandidat.key)
+  if (!ruleScopeKey) return { ok: false, reason: 'invalid_scope' }
+  if (!Array.isArray(kandidat.supportVersionIds) || kandidat.supportVersionIds.length !== 1) {
+    return { ok: false, reason: 'invalid_support' }
+  }
+  const supportVersionIds = [...kandidat.supportVersionIds]
+  if (supportVersionIds.some((id) => !text(id))) return { ok: false, reason: 'invalid_support' }
+  const eintrag = provenienzAktuell(supports[0]!)
+  if (!eintrag || eintrag.versionId !== supportVersionIds[0]) return { ok: false, reason: 'invalid_support' }
+  const form = kanonisieren({
+    v: 3,
+    usage: 'current_request_only',
+    sourceFingerprintProtocol: 3,
+    candidate: {
+      scope: kandidat.scope,
+      key: ruleScopeKey,
+      factKind: kandidat.factKind,
+      evidenceQuality: kandidat.evidenceQuality,
+      supportVersionIds,
+      proposal: kandidat.proposal,
+    },
+    supports: [eintrag],
+  })
+  if (!form.ok) return { ok: false, reason: 'invalid_fact' }
+  let kanonisch: string
+  try {
+    kanonisch = JSON.stringify(form.wert)
+  } catch {
+    return { ok: false, reason: 'invalid_fact' }
+  }
+  if (!kanonisch) return { ok: false, reason: 'invalid_fact' }
+  const digest = sha256Hex(kanonisch)
+  if (!HEX64.test(digest)) return { ok: false, reason: 'invalid_fact' }
+  return { ok: true, digest, canonical: kanonisch, preimage: form.wert, ruleScopeKey, supportVersionIds }
+}
+
 /**
  * Bildet die Identität eines Prüfpakets.
  * Die Eingabe ist dieselbe Hülle wie bei `officialTruthRegelReviewPacket`:
@@ -209,6 +270,18 @@ export function officialTruthReviewIdentityV3(
 export function officialTruthRegelReviewPacketFingerprint(eingabe: unknown): OfficialTruthRegelReviewFingerprintErgebnis {
   const ergebnis = officialTruthRegelReviewPacket(eingabe)
   if (ergebnis.status !== 'rule_review_packet') return ergebnis
+  const markers = ergebnis.supports.map((support) => support.sourceFingerprintProtocol)
+  if (markers.some((marker) => marker === 3)) {
+    if (ergebnis.supports.length !== 1 || markers.some((marker) => marker !== 3)) return sperre('invalid_support')
+    const aktuell = officialTruthReviewIdentityCurrentRequest(ergebnis.kandidat, ergebnis.supports)
+    if (!aktuell.ok) return sperre(aktuell.reason)
+    return Object.freeze({
+      status: 'rule_review_packet_fingerprint',
+      reviewPacketKey: `${PRAEFIX}${aktuell.digest}`,
+      ruleScopeKey: aktuell.ruleScopeKey,
+      supportVersionIds: Object.freeze(aktuell.supportVersionIds),
+    })
+  }
   const gebaut = officialTruthReviewIdentityV3(ergebnis.kandidat, ergebnis.supports)
   if (!gebaut.ok) return sperre(gebaut.reason)
   return Object.freeze({

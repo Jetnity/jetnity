@@ -13,9 +13,11 @@ import 'server-only'
 
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
-import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, readContentIdentityBinding, readContentItemRef, readDistinctContentItemRefs, type ContentItemRef, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, readContentIdentityBinding, readContentItemRef, readDistinctContentItemRefs, type ContentItemRef, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { quelleUrlLesen } from '@/lib/readiness/official'
 import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
+import { officialTruthWholeSourceCurrentRequestAllowed } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import {
   REGEL_EVIDENCE_QUALITAETEN,
   REGEL_FAKT_ARTEN,
@@ -271,7 +273,7 @@ export type OfficialTruthExtractorPolitik = {
 }
 
 export type OfficialTruthExtractorStuetze = ContentIdentityBinding & {
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -324,7 +326,7 @@ export type OfficialTruthExtractorBeobachtung = ContentItemRef & {
 }
 
 export type OfficialTruthExtractorHerkunft = ContentIdentityBinding & {
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly fieldPath: string
   readonly extractorId: string
   readonly extractorVersion: number
@@ -415,7 +417,7 @@ export const OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY: readonly OfficialTr
   Object.freeze([])
 
 type GesperrteStuetze = ContentIdentityBinding & {
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly versionId: string
   readonly sourceId: string
   readonly canonicalUrl: string
@@ -714,11 +716,33 @@ function stuetzeBinden(
   ) {
     return { ok: false, reason: 'unexpected_fields' }
   }
-  if (Object.hasOwn(retrieval, 'sourceFingerprintProtocol') && retrieval.sourceFingerprintProtocol !== 2) {
+  if (Object.hasOwn(retrieval, 'sourceFingerprintProtocol') && retrieval.sourceFingerprintProtocol !== 2 && retrieval.sourceFingerprintProtocol !== 3) {
     return { ok: false, reason: 'snapshot_hash_mismatch' }
   }
   let fingerprint: string | null
-  if (retrieval.sourceFingerprintProtocol === 2) {
+  if (retrieval.sourceFingerprintProtocol === 3) {
+    const contentType = medientyp(retrieval.contentType)
+    const identity = readContentIdentityBinding({ sourceId: retrieval.sourceId, contentItemId: retrieval.contentItemId, contentItemVersion: retrieval.contentItemVersion, representationId: retrieval.representationId, representationVersion: retrieval.representationVersion, identityProfileId: retrieval.identityProfileId, identityProfileVersion: retrieval.identityProfileVersion })
+    const rep = contentRepresentationFromRegistry(registry, retrieval.canonicalUrl)
+    if (!contentType || retrieval.contentType !== contentType || retrieval.identitySchema !== 2 ||
+      !identity.ok || !rep.ok || !contentIdentityMatches(rep.value, identity.value) ||
+      rep.value.expectedFinalUrl !== retrieval.canonicalUrl || rep.value.expectedMediaType !== contentType ||
+      !officialTruthWholeSourceCurrentRequestAllowed({
+        serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+        identity: identity.value,
+        canonicalUrl: retrieval.canonicalUrl,
+        contentType,
+        requestUrl: retrieval.canonicalUrl,
+        graph: registry.contentIdentity,
+      })) {
+      return { ok: false, reason: 'representation_not_eligible' }
+    }
+    fingerprint = officialTruthSourceFingerprintV3(retrieval.sourceSnapshot, {
+      ...identity.value,
+      canonicalUrl: retrieval.canonicalUrl,
+      contentType,
+    })
+  } else if (retrieval.sourceFingerprintProtocol === 2) {
     const contentType = medientyp(retrieval.contentType)
     const identity = readContentIdentityBinding({ sourceId: retrieval.sourceId, contentItemId: retrieval.contentItemId, contentItemVersion: retrieval.contentItemVersion, representationId: retrieval.representationId, representationVersion: retrieval.representationVersion, identityProfileId: retrieval.identityProfileId, identityProfileVersion: retrieval.identityProfileVersion })
     const rep = contentRepresentationFromRegistry(registry, retrieval.canonicalUrl)
@@ -757,7 +781,11 @@ function stuetzeBinden(
     ok: true,
     stuetze: {
       ...identity.value,
-      ...(retrieval.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+      ...(retrieval.sourceFingerprintProtocol === 2
+        ? { sourceFingerprintProtocol: 2 as const }
+        : retrieval.sourceFingerprintProtocol === 3
+          ? { sourceFingerprintProtocol: 3 as const }
+          : {}),
       versionId: satz.versionId,
       sourceId: satz.sourceId,
       canonicalUrl: retrieval.canonicalUrl,
@@ -933,7 +961,11 @@ function herkunftFuer(
       extractorId: definition.extractorId,
       extractorVersion: definition.extractorVersion,
       ...contentIdentityBinding(stuetze),
-      ...(stuetze.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+      ...(stuetze.sourceFingerprintProtocol === 2
+        ? { sourceFingerprintProtocol: 2 as const }
+        : stuetze.sourceFingerprintProtocol === 3
+          ? { sourceFingerprintProtocol: 3 as const }
+          : {}),
       versionId: stuetze.versionId,
       policyId: null,
       policyVersion: null,
@@ -948,7 +980,11 @@ function herkunftFuer(
       extractorId: definition.extractorId,
       extractorVersion: definition.extractorVersion,
       ...contentIdentityBinding(stuetze),
-      ...(stuetze.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+      ...(stuetze.sourceFingerprintProtocol === 2
+        ? { sourceFingerprintProtocol: 2 as const }
+        : stuetze.sourceFingerprintProtocol === 3
+          ? { sourceFingerprintProtocol: 3 as const }
+          : {}),
       versionId: stuetze.versionId,
       policyId: definition.policyId,
       policyVersion: definition.policyVersion,
@@ -996,6 +1032,10 @@ function ausfuehren(
     if (versionsIds.has(gebunden.stuetze.versionId)) return sperre('invalid_support')
     versionsIds.add(gebunden.stuetze.versionId)
     stuetzen.push(gebunden.stuetze)
+  }
+  if (stuetzen.some((support) => support.sourceFingerprintProtocol === 3)
+    && (stuetzen.length !== 1 || satz.evidenceQuality !== 'explicit_primary_statement')) {
+    return sperre('ambiguous_structure')
   }
   stuetzen.sort((links, rechts) => (links.versionId < rechts.versionId ? -1 : links.versionId > rechts.versionId ? 1 : 0))
 
@@ -1180,6 +1220,9 @@ export function officialTruthExtractorEingefroreneAusfuehrung(input: {
     if (versionsIds.has(gebunden.stuetze.versionId)) return { ok: false, reason: 'invalid_support' }
     versionsIds.add(gebunden.stuetze.versionId)
     stuetzen.push(gebunden.stuetze)
+  }
+  if (stuetzen.some((support) => support.sourceFingerprintProtocol === 3)) {
+    return { ok: false, reason: 'representation_not_eligible' }
   }
   stuetzen.sort((links, rechts) => (links.versionId < rechts.versionId ? -1 : links.versionId > rechts.versionId ? 1 : 0))
 

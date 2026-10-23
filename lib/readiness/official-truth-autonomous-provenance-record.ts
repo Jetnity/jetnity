@@ -1,5 +1,6 @@
 // Historical values only. These codecs do not certify origin, freshness or live custody.
 import { z } from 'zod'
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { officialFrische } from '@/lib/readiness/official'
 import { officialTruthReviewIdentityV3 } from '@/lib/readiness/official-truth-rule-review-fingerprint'
 import { contentEvidenceVersionV2, readContentIdentityBinding, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
@@ -123,6 +124,7 @@ export type SafeReviewPreimage = z.infer<typeof safePreimage>
 
 /** Detach only AFTER structural validation, then apply an exact closed semantic codec. */
 function parse<T>(schema: z.ZodType<T>, input: unknown): HistoricalResult<T> {
+  if (officialTruthProtocol3MarkerPresent(input)) return refused('schema_incompatible')
   const bytes = provenanceCanonical(input)
   if (bytes === null) return refused('schema_incompatible')
   try {
@@ -134,6 +136,7 @@ function parse<T>(schema: z.ZodType<T>, input: unknown): HistoricalResult<T> {
 export function readGlobalCellDefinition(input: unknown): HistoricalResult<GlobalCellDefinitionV1> { return parse(cellDefinition, input) }
 export function readSafeReviewPreimage(input: unknown): HistoricalResult<SafeReviewPreimage> { return parse(safePreimage, input) }
 export function readHistoricalArtifact<K extends HistoricalArtifactKind>(expectedKind: K, input: unknown): HistoricalResult<HistoricalArtifact<K>> {
+  if (officialTruthProtocol3MarkerPresent(input)) return refused('schema_incompatible')
   try {
     if (!Object.hasOwn(codecs, expectedKind) || provenanceCanonical(input) === null) return refused('schema_incompatible')
     const row = ownRecord(input, ['kind', 'schemaVersion', 'value'])

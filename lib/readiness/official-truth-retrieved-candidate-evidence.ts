@@ -10,6 +10,7 @@
 
 import { contentIdentityMatches } from '@/lib/readiness/official-truth-content-identity'
 import {
+  evidenceKandidatAusAktuellemMaterial,
   evidenceKandidatAusModell,
   type EvidenceKandidatErgebnis,
   type EvidenceVersion,
@@ -213,25 +214,24 @@ export function officialTruthKandidatEvidenceAusAbruf(
   if (!zelle.ok || zelle.key !== beleg.ruleScopeKey) return sperre('scope_mismatch')
   if (!satz || !datensatz(satz.registry)) return sperre('invalid_source_plan')
 
-  const erzeugt = evidenceKandidatAusModell(
-    {
-      scope: {
-        destinationCountryCode: zelle.scope.destinationCountryCode,
-        transitCountryCode: zelle.scope.transitCountryCode,
-        citizenship: zelle.scope.citizenship,
-        credentialOption: zelle.scope.credentialOption,
-        residence: zelle.scope.residence,
-        requirementType: zelle.scope.requirementType,
-        validity: zelle.scope.validity,
-        sourceId: beleg.sourceId,
-      },
-      validFrom: meta.validFrom,
-      validUntil: meta.validUntil,
-      extractionNote: meta.extractionNote,
+  const modell = {
+    scope: {
+      destinationCountryCode: zelle.scope.destinationCountryCode,
+      transitCountryCode: zelle.scope.transitCountryCode,
+      citizenship: zelle.scope.citizenship,
+      credentialOption: zelle.scope.credentialOption,
+      residence: zelle.scope.residence,
+      requirementType: zelle.scope.requirementType,
+      validity: zelle.scope.validity,
+      sourceId: beleg.sourceId,
     },
-    beleg.material,
-    satz.registry as QuellenRegistry,
-  )
+    validFrom: meta.validFrom,
+    validUntil: meta.validUntil,
+    extractionNote: meta.extractionNote,
+  }
+  const erzeugt = beleg.sourceFingerprintProtocol === 3
+    ? evidenceKandidatAusAktuellemMaterial(modell, beleg.material, satz.registry as QuellenRegistry)
+    : evidenceKandidatAusModell(modell, beleg.material, satz.registry as QuellenRegistry)
   if (!erzeugt.ok) return sperre(erzeugt.reason)
 
   const erneut = regelScopeAusEvidenceScope(erzeugt.evidence.scope)

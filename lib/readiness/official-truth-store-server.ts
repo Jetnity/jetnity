@@ -11,6 +11,7 @@
 // nach Beweis.
 
 import 'server-only'
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 
 import { createClient } from '@supabase/supabase-js'
 
@@ -380,6 +381,9 @@ export async function akzeptierteEvidenceSpeichern(
   extraktion: unknown,
   abhaengigkeiten?: OfficialTruthEvidenceStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(umschlag) || officialTruthProtocol3MarkerPresent(extraktion) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return { ok: false, reason: 'store_failed' }
+  }
   if (hatAutoritaet(datensatz(abhaengigkeiten)) || hatAutoritaet(datensatz(abhaengigkeiten?.katalog))) {
     return { ok: false, reason: 'caller_authority_forbidden' }
   }
@@ -425,6 +429,9 @@ export async function akzeptierteRegelClaimSpeichern(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return { ok: false, reason: 'store_failed' }
+  }
   // Jeder v2-Carrier ist in diesem Slice bedingungslos nicht speicherbar.
   // Vor Acceptance, Payload, Dependencies/Env, Client, Uhr und jeglichem RPC.
   const trusted = eigenesDatenfeld(eingabe, 'trustedRuleFact')

@@ -6,9 +6,11 @@
 // Die Requirements-/Official-Truth-Engine bleibt die einzige Auswertung.
 
 import { sha256Hex } from '@/lib/readiness/digest'
-import { contentEvidenceLookupV3, contentEvidenceVersionV2, contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentEvidenceIdentity, type RepresentationRef } from '@/lib/readiness/official-truth-content-identity'
+import { contentEvidenceLookupV3, contentEvidenceVersionCurrentRequest, contentEvidenceVersionV2, contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, type ContentEvidenceIdentity, type RepresentationRef } from '@/lib/readiness/official-truth-content-identity'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
+import { officialTruthWholeSourceCurrentRequestAllowed } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -622,6 +624,13 @@ function gueltigkeitsfenster(satz: Record<string, unknown>): { ok: true; validFr
 
 /** Rebuild ev2 without trusting any supplied version id or extra fields. */
 function versionIdFuer(value: ContentEvidenceIdentity): string | null {
+  if (value.sourceFingerprintProtocol === 3) {
+    const current = contentEvidenceVersionCurrentRequest({ ...contentIdentityBinding(value), identitySchema: value.identitySchema,
+      lookupKey: value.lookupKey, canonicalUrl: value.canonicalUrl, contentType: value.contentType,
+      sourceContentHash: value.sourceContentHash, retrievedAt: value.retrievedAt,
+      validFrom: value.validFrom, validUntil: value.validUntil, sourceFingerprintProtocol: 3 })
+    return current.ok && current.value.versionId.startsWith(VERSION_PREFIX) ? current.value.versionId : null
+  }
   const built = contentEvidenceVersionV2({ ...contentIdentityBinding(value), identitySchema: value.identitySchema,
     lookupKey: value.lookupKey, canonicalUrl: value.canonicalUrl, contentType: value.contentType,
     sourceContentHash: value.sourceContentHash, retrievedAt: value.retrievedAt,
@@ -636,6 +645,15 @@ function identitaetPasst(value: EvidenceVersion, registry: QuellenRegistry): boo
     && value.canonicalUrl === rep.value.expectedFinalUrl && value.contentType === rep.value.expectedMediaType
     && (value.sourceFingerprintProtocol !== 2
       || officialTruthChDeSourceFingerprintV2Allowed(registry, value, value.canonicalUrl, value.contentType))
+    && (value.sourceFingerprintProtocol !== 3
+      || officialTruthWholeSourceCurrentRequestAllowed({
+        serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+        identity: value,
+        canonicalUrl: value.canonicalUrl,
+        contentType: value.contentType,
+        requestUrl: value.canonicalUrl,
+        graph: registry.contentIdentity,
+      }))
     && versionIdFuer(value) === value.versionId
 }
 
@@ -709,6 +727,90 @@ export function evidenceKandidatAusModell(
     canonicalUrl: url.canonicalUrl, contentType: hülle.contentType, sourceContentHash, retrievedAt,
     validFrom: fenster.validFrom, validUntil: fenster.validUntil,
     ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}) }
+  const versionId = versionIdFuer(observation)
+  if (!versionId) return { ok: false, reason: 'content_identity_mismatch' }
+  const evidence: EvidenceVersion = {
+    ...observation,
+    versionId,
+    previousVersionId: null,
+    lifecycle: 'candidate',
+    validationState: 'pending',
+    sourceId: url.source.sourceId,
+    sourceClass: url.source.sourceClass,
+    authorityName: url.source.authorityName,
+    publisherName: url.source.publisherName,
+    canonicalUrl: url.canonicalUrl,
+    retrievedAt,
+    sourceContentHash,
+    validFrom: fenster.validFrom,
+    validUntil: fenster.validUntil,
+    scope: schluessel.scope,
+    lookupKey: schluessel.key,
+    extractionNote: note.note,
+  }
+  return { ok: true, evidence }
+}
+
+/**
+ * Current-request candidate. Protocol 3 and its source hash are mandatory.
+ * The legacy constructor is not used, so a small body cannot fall back to it.
+ */
+export function evidenceKandidatAusAktuellemMaterial(
+  modell: unknown,
+  material: EvidenceQuellenmaterial,
+  registry: QuellenRegistry,
+): EvidenceKandidatErgebnis {
+  if (personenkennung(modell)) return { ok: false, reason: 'personal_identifier_forbidden' }
+  const felder = entscheidungsfelder(modell)
+  if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
+  const provenienz = provenienzOverride(modell)
+  if (provenienz.length > 0) return { ok: false, reason: 'provenance_override_forbidden', fields: provenienz }
+  const override = fingerprintOverride(modell)
+  if (override.length > 0) return { ok: false, reason: 'source_fingerprint_override_forbidden', fields: override }
+  const hülle = material && typeof material === 'object' && !Array.isArray(material) ? material : null
+  const snapshot = hülle ? hülle.sourceSnapshot : null
+  if (typeof snapshot !== 'string' || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
+  const satz = datensatz(modell)
+  if (!satz) return { ok: false, reason: 'invalid_context' }
+  const url = quellenUrlAufloesen(registry, hülle.canonicalUrl)
+  if (!url.ok) return url
+  const representation = contentRepresentationFromRegistry(registry, hülle.canonicalUrl)
+  if (!representation.ok || hülle.canonicalUrl !== representation.value.expectedFinalUrl
+    || hülle.contentType !== representation.value.expectedMediaType) return { ok: false, reason: 'content_identity_mismatch' }
+  const identity = contentIdentityBinding(representation.value)
+  if (!officialTruthWholeSourceCurrentRequestAllowed({
+    serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+    identity,
+    canonicalUrl: url.canonicalUrl,
+    contentType: hülle.contentType,
+    requestUrl: url.canonicalUrl,
+    graph: registry.contentIdentity,
+  })) return { ok: false, reason: 'invalid_source_snapshot' }
+  const sourceContentHash = officialTruthSourceFingerprintV3(snapshot, {
+    ...identity,
+    canonicalUrl: url.canonicalUrl,
+    contentType: hülle.contentType,
+  })
+  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
+  const schluessel = evidenceSuchschluessel(satz.scope ?? satz, { sourceId: identity.sourceId,
+    contentItemId: identity.contentItemId, representationId: identity.representationId })
+  if (!schluessel.ok) return schluessel
+  if (url.source.sourceId !== schluessel.scope.sourceId) return { ok: false, reason: 'source_mismatch' }
+  const retrievedAt = checkedAtLesen(hülle.retrievedAt)
+  if (!retrievedAt) return { ok: false, reason: 'invalid_retrieval_time' }
+  const fenster = gueltigkeitsfenster(satz)
+  if (!fenster.ok) return fenster
+  const note = notizLesen(satz.extractionNote)
+  if (!note.ok) return note
+  if (url.source.sourceClass === 'licensed_evidence_provider' && url.source.authorityName !== null) {
+    return { ok: false, reason: 'provider_is_not_authority' }
+  }
+  if (url.source.sourceClass === 'official_authority' && !url.source.authorityName) {
+    return { ok: false, reason: 'authority_required' }
+  }
+  const observation: ContentEvidenceIdentity = { ...identity, identitySchema: 2, lookupKey: schluessel.key,
+    canonicalUrl: url.canonicalUrl, contentType: hülle.contentType, sourceContentHash, retrievedAt,
+    validFrom: fenster.validFrom, validUntil: fenster.validUntil, sourceFingerprintProtocol: 3 }
   const versionId = versionIdFuer(observation)
   if (!versionId) return { ok: false, reason: 'content_identity_mismatch' }
   const evidence: EvidenceVersion = {
