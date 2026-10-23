@@ -106,6 +106,10 @@ function manuell(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
 
 const ZEITRAUM_UNKLAR = /Der Zeitraum fehlt oder ist unvollständig bzw\. ungültig/
 
+function siegeltexte(markup: string): string[] {
+  return [...markup.matchAll(/<span class="inline-flex min-h-8 items-center rounded-full px-2\.5 text-xs font-semibold[^"]*">([^<]*)<\/span>/g)].map(treffer => treffer[1])
+}
+
 function zeile(markup: string, titel: string) {
   const row = (markup.match(/<li\b[\s\S]*?<\/li>/g) ?? []).find(item => item.includes(titel))
   assert.ok(row, titel)
@@ -301,7 +305,9 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     const abdeckung = unterkunftAbdeckung(trip)
     assert.equal(abdeckung.luecken.length, 0, fall.id)
     assert.equal(abdeckung.zusammenfassung, 'Unterkunftsstand noch unklar', fall.id)
-    assert.equal(abdeckung.aufenthalte.find(item => item.item.id === fall.id)?.status, 'unknown', fall.id)
+    const unbekannt = abdeckung.aufenthalte.find(item => item.item.id === fall.id)
+    assert.equal(unbekannt?.status, 'unknown', fall.id)
+    assert.equal(unbekannt?.item.provider, 'test', fall.id)
     const text = html(trip)
     assert.match(text, /Unterkunftsstand noch unklar/, fall.id)
     assert.doesNotMatch(text, BEKANNT, fall.id)
@@ -315,9 +321,15 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.doesNotMatch(volleZeile, ZEITRAUM_UNKLAR, fall.id)
     assert.doesNotMatch(unklareZeile, falscheSpanne, fall.id)
     assert.match(unklareZeile, ZEITRAUM_UNKLAR, fall.id)
-    assert.match(unklareZeile, /Gebucht/, fall.id)
+    assert.doesNotMatch(fall.title, /Gebucht/, fall.id)
+    assert.deepEqual(siegeltexte(unklareZeile), ['Gebucht'], fall.id)
+    assert.deepEqual(siegeltexte(volleZeile), ['Ausgewählt'], fall.id)
     assert.match(unklareZeile, /Buchung korrigieren/, fall.id)
     const ui = bedienung(trip)
+    const zeileElement = elements(ui.render(), el => el.type === 'li').find(li => textOf(li).includes(fall.title))
+    assert.ok(zeileElement, fall.id)
+    assert.equal(elements(zeileElement, el => el.type === 'p' && el.props.children === fall.title).length, 1, fall.id)
+    assert.equal(ui.buttonFor(fall.title).props.children, 'Buchung korrigieren', fall.id)
     ui.buttonFor(fall.title).props.onClick!()
     assert.deepEqual(ui.calls, [[fall.id, false]])
   }
