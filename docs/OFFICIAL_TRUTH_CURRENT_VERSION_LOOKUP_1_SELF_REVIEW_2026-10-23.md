@@ -25,6 +25,8 @@ Review-fix F3 restores the closed-producer condition. `storeAccepted` no longer 
 
 Post-merge repair F4 changes only the focused test and these delivery notes. The one-receipt rollback cases keep the same function calls and refusal assertions. The fresh tainted read still requires the first fingerprint, a different backend, and a closed producer, and it is the positive control that used to run immediately after the expiry rollback. The held lookup still commits only after the lifecycle backend is observed waiting, and it now also requires the second fingerprint. The separate committed positive between the review-fault rollbacks and that held lookup is removed because both saw the same three-receipt corpus and witness. The publication transaction still calls `publishIntegratedBundle` with `verify_existing` and then `bindCandidate` before commit. Lookup and SQL bytes are untouched. The 19 check names remain; the rollback check moves ahead of the fresh-reader check.
 
+CI repair F5 changes only `lib/readiness/official-truth-original-custody.test.ts` and these notes. Stage 4's successful `verify_existing` is removed. Its complete `counts()` equality, including head sequence, is asserted on stage 6's existing uninjected retry, together with the primary fingerprint, one support, synthetic custody status, historical-original reproof, an unchanged held cursor, and `NOT_AUTHORIZED` / `positiveVisaCells` 0. That retry is a real `persistCandidate` readback on a fresh reader, after the composed receipt exists. The lost-ack attempt still cannot return success, and the normal connection hook is asserted restored before the retry. Stage 4's closed-producer positive read and wrong-key `39000` refusal stay. All 12 custody names stay. The F4 lookup test is not edited.
+
 The second synthetic receipt is a proof-time shift of the admitted `regulations.example` primary cell. It does not invent a source, profile, or domain. Supersession is an explicit lifecycle event, not an inference from the newer receipt.
 
 The calendar adjustment calls `contentEvidenceVersionV2` from the focused test. A non-test importer would fail the existing content-identity allowlist. No allowlist amendment was required.
@@ -36,8 +38,8 @@ The calendar adjustment calls `contentEvidenceVersionV2` from the focused test. 
 | P0 | None observed in the local proof. |
 | P1 | None against baseline main `76a30c5694bc7bd0dfb20544eb05a6c884c51576`. The repair seed is that main plus the immutable F4 task. A later main move is not part of this delivery. |
 | P2 | The migration is hosted-UNAPPLIED. Applying it, or treating the returned fingerprint as a reusable positive cache, would cross the task boundary. |
-| P2 | Post-merge CI `39997551343` timed the native proof out at 300004.537475ms. The repaired local proof is 101564.501414ms, against 120236.681862ms for the same scenarios before this test edit. No reproduced deadlock; exact old-run cause not established. That does not prove the repair-head runner finishes under 300000ms. The timeout was not raised. Repair-head CI is pending. |
-| P3 | Full `eslint .` was not re-run after `e9f66ada`. The previous run, on `a1da094e`, reported 146 pre-existing warnings and 0 errors. Four pre-existing suite skips remain. |
+| P2 | F4 CI `40002295282` passed the current-version proof in 228091ms and failed the custody parent at 240003.457393ms. The F5 local custody proof is 93552.077094ms. No unique cause is established. That does not prove the F5 runner finishes under 240000ms. Neither parent limit was raised. F5 CI is pending. |
+| P3 | Full `eslint .` was not re-run after `e9f66ada`. That run reported 146 warnings and 0 errors. Its 4 skips are historical local-suite evidence. Hosted F4 CI reported 7121 tests, 2 skips and 2 cancelled tests. This head has no new full-suite count. |
 
 ## Residual risk
 

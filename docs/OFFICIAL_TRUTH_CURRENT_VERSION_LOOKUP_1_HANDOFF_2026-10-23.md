@@ -49,26 +49,28 @@ Current repair:
 - SQL blob `609d10b9727e5fa4f91896d64086798e989ae50b`
 - Baseline test blob `505dc6bcd534937cd182ca2260d8bf1a6443d91d`
 
-The repair review head is the F4 commit on that seed. Draft PR #979 records its SHA and tree. Every later head invalidates this gate.
+The F4 review head `1e7459b79d92131a2d9aa89131e33ba4a2493131` is historical. F5 seed `e126621f7c902b2af8fe251d127f1d0e5459200b`, tree `3a68781ad83727e45539493b2ad49bf9336db507`, task blob `05e5f9a7c2606a648cd185a0560cb841954c6f7c`. That seed is 4 ahead and 0 behind main. The F5 commit is one more, so 5 ahead and 0 behind if main is unchanged. Draft PR #979 records the review SHA and tree. The current-version test blob `a4b058c21f894ab64f044063f45b1d31845ace82` and custody storage blob `e9798d606309fa121cf4fb21a28cf15e191fd27d` stay frozen. Every later head invalidates this gate.
 
 ## Evidence
 
-CI job `120529859925` on `a1da094e` reported `not ok` for this native test after 300002ms, `testTimeoutFailure`, before the docs commit cancelled the job. The corrected proof on `e9f66ada` passes in 119.9s, in 119.1s on one core, and in 120.7s inside the full suite. PostgreSQL 16.15, `hostedWrites: 0`. Those measurements show less repeated proof work and match the broader runner slowdown. No reproduced deadlock; exact old-run cause not established. The diagnostic still contains the damaged-review check: both the real match and the otherwise empty request refuse with `accepted_corpus_incomplete`, and the untouched corpus succeeds after rollback. Full `npm test` on `e9f66ada`: 7098 tests, 7094 pass, 0 fail, 4 pre-existing skips, exit 0. `tsc --noEmit` PASS on that head. Build, lint and hygiene were not re-run there.
+CI job `120529859925` on `a1da094e` reported `not ok` for this native test after 300002ms, `testTimeoutFailure`, before the docs commit cancelled the job. The corrected proof on `e9f66ada` passes in 119.9s, in 119.1s on one core, and in 120.7s inside the full suite. PostgreSQL 16.15, `hostedWrites: 0`. Those measurements show less repeated proof work and match the broader runner slowdown. No reproduced deadlock; exact old-run cause not established. The diagnostic still contains the damaged-review check: both the real match and the otherwise empty request refuse with `accepted_corpus_incomplete`, and the untouched corpus succeeds after rollback. Historical local `npm test` on `e9f66ada`: 7098 tests, 7094 pass, 0 fail, 4 skips, exit 0. That local skip count is not the hosted count. Hosted CI on F4 head `1e7459b7`, run `40002295282`, was 7121 tests, 7117 pass, 0 assertion failures, 2 cancelled, 2 skips. `tsc --noEmit` PASS on that head. Build, lint and hygiene were not re-run there.
 
 Focused native proof of the integrated F3 test: PASS, 120236.681862ms, PostgreSQL 16.15, `hostedWrites: 0`. Historical PR CI `39994517447` later passed the same test in 273762.711987ms. Post-merge CI `39997551343` timed out at 300004.537475ms with no terminal diagnostic. Those runs do not bind the repair head. No reproduced deadlock; exact old-run cause not established.
 
-Focused native proof of the F4 test: PASS, 101564.501414ms, diagnostic `durationMs` 101386, PostgreSQL 16.15, `hostedWrites: 0`, 19 checks. The check order now records the one-receipt rollback scenarios before the fresh-reader check. The names are unchanged. No second local full suite. Repair-head CI and Preview are pending. The test timeout was not raised. SQL and lookup blobs are unchanged.
+Focused native proof of the F4 test: PASS, 101564.501414ms locally and 228091ms in CI `40002295282`. That same run failed the unchanged custody parent at 240003.457393ms. Those results do not bind the F5 head. No unique custody-timeout cause is claimed.
+
+Focused native custody proof of the F5 test: PASS, 93552.077094ms, PostgreSQL 16.15, `hostedWrites: 0`, all 12 named checks. Stage 4 no longer has a second publish/bind success. Stage 6's final retry is the idempotent proof and keeps one current read and one archive read. The 240000ms and 300000ms limits were not raised. F5 CI and Preview are pending. No local full suite and no second F4 lookup run.
 
 Commands and the non-authoritative diagnostic are in `docs/OFFICIAL_TRUTH_CURRENT_VERSION_LOOKUP_1_STATUS_2026-10-23.md`.
 
 ## P0–P3
 
-- P0: none observed in the local F4 proof.
+- P0: none observed in the local F5 custody proof.
 - P1: none against baseline main `76a30c5694bc7bd0dfb20544eb05a6c884c51576`. A later main move is new drift and is not integrated here.
-- P2: hosted migration remains UNAPPLIED; the fingerprint must not be cached as a positive decision.
-- P2: repair-head CI and Preview are pending. The local drop from 120236.681862ms to 101564.501414ms does not prove the runner finishes under 300000ms.
-- P2: the post-merge timeout has no established single cause. The 300000ms test limit was not raised.
-- P3: pre-existing lint warnings and suite skips were not re-measured on this head.
+- P2: hosted migration remains UNAPPLIED.
+- P2: F5 CI and Preview are pending. Local custody time 93552.077094ms does not prove the runner finishes under 240000ms. Earlier hosted custody runs had only about 6–8 seconds of headroom, and one exceeded 240000ms.
+- P2: no unique cause of that timeout is established. Neither native parent limit was raised.
+- P3: historical local suite evidence had 4 skips. Hosted F4 CI had 2 skips and 2 cancelled tests. This head has no new full-suite count. Lint was not re-run.
 
 ## Next actor
 
