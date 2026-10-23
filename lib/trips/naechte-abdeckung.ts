@@ -6,10 +6,12 @@
 // Überlappende Stays werden vereinigt, nicht doppelt gezählt. Fehlende Daten
 // werden nicht erfunden: unbekannte Abdeckung ist unbekannt, nicht `0/14`.
 //
+// `unterkunftAbdeckung` rechnet mit Intervallgrenzen. Die Nächte zwischen zwei
+// Daten werden nicht aufgezählt. `naechteHalboffen` bleibt die öffentliche Liste.
+//
 // Frei von React, Next und Providern.
 
 import { istGebucht } from '@/lib/trips/buchung'
-import { datumVerschieben } from '@/lib/trips/tage'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
 function allePunkte(reise: Trip, ohneTag: readonly TripItem[]): TripItem[] {
@@ -122,48 +124,227 @@ function benoetigteZeitraeume(reise: Trip): { bekannt: boolean; zeitraeume: Unte
   return { bekannt: false, zeitraeume: [] }
 }
 
-function nachtMenge(zeitraeume: readonly UnterkunftZeitraum[]): Set<string> {
-  const naechte = new Set<string>()
-  for (const zeitraum of zeitraeume) {
-    for (const nacht of naechteHalboffen(zeitraum.start, zeitraum.end)) naechte.add(nacht)
-  }
-  return naechte
+/** Halboffene Nachtspanne in UTC-Tagesindizes: `[start, end)`. */
+type NachtSpanne = {
+  start: number
+  end: number
 }
 
-function lueckenAus(naechte: readonly string[], stageByNight: Map<string, UnterkunftZeitraum>): UnterkunftLuecke[] {
-  if (naechte.length === 0) return []
-  const geordnet = [...naechte].sort()
-  const luecken: UnterkunftLuecke[] = []
-  let start = geordnet[0]
-  let vorher = geordnet[0]
+type NachtBesitz = NachtSpanne & {
+  stageId: string | null
+  stageName: string | null
+}
 
-  const schliessen = (von: string, letzte: string) => {
-    const end = datumVerschieben(letzte, 1)
-    if (!end) return
-    const zuordnung = stageByNight.get(von)
-    luecken.push({
-      start: von,
-      end,
-      naechte: naechteHalboffen(von, end).length,
-      stageId: zuordnung?.stageId ?? null,
-      stageName: zuordnung?.stageName ?? null,
-    })
+/**
+ * Tagesindex nur für Daten, die `datumGueltig` schon angenommen hat.
+ * `Date.UTC` bildet die Jahre 0–99 auf 1900+ ab; solche Daten scheitern
+ * vorher an der bestehenden Prüfung und werden hier nicht repariert.
+ */
+function tagZahl(iso: string): number {
+  const [jahr, monat, tag] = iso.split('-').map(Number)
+  return Date.UTC(jahr, monat - 1, tag) / EIN_TAG
+}
+
+/** Merkt Quelltexte an ihren Tagesindizes. Grenzen bleiben die Originalstrings. */
+function isoMerker() {
+  const tage: number[] = []
+  const texte: string[] = []
+  return {
+    merken(iso: string): number {
+      const tag = tagZahl(iso)
+      for (let i = 0; i < tage.length; i += 1) {
+        if (tage[i] === tag) return tag
+      }
+      tage.push(tag)
+      texte.push(iso)
+      return tag
+    },
+    text(tag: number): string {
+      for (let i = 0; i < tage.length; i += 1) {
+        if (tage[i] === tag) return texte[i]
+      }
+      throw new Error('Unterkunftsgrenze ohne Quelldatum')
+    },
+  }
+}
+
+function spannenVereinigen(roh: readonly NachtSpanne[]): NachtSpanne[] {
+  if (roh.length === 0) return []
+  const sortiert = [...roh].sort((a, b) => a.start - b.start || a.end - b.end)
+  const aus: NachtSpanne[] = [{ start: sortiert[0].start, end: sortiert[0].end }]
+  for (let i = 1; i < sortiert.length; i += 1) {
+    const naechste = sortiert[i]
+    const letzte = aus[aus.length - 1]
+    if (naechste.start <= letzte.end) letzte.end = Math.max(letzte.end, naechste.end)
+    else aus.push({ start: naechste.start, end: naechste.end })
+  }
+  return aus
+}
+
+function spannenMass(spannen: readonly NachtSpanne[]): number {
+  let summe = 0
+  for (const spanne of spannen) summe += spanne.end - spanne.start
+  return summe
+}
+
+/** Beide Seiten werden vereinigt. Das Ergebnis ist sortiert und überlappungsfrei. */
+function spannenSchneiden(links: readonly NachtSpanne[], rechts: readonly NachtSpanne[]): NachtSpanne[] {
+  const a = spannenVereinigen(links)
+  const b = spannenVereinigen(rechts)
+  const aus: NachtSpanne[] = []
+  let j = 0
+  for (const teil of a) {
+    while (j < b.length && b[j].end <= teil.start) j += 1
+    let k = j
+    while (k < b.length && b[k].start < teil.end) {
+      const start = teil.start > b[k].start ? teil.start : b[k].start
+      const end = teil.end < b[k].end ? teil.end : b[k].end
+      if (start < end) aus.push({ start, end })
+      k += 1
+    }
+  }
+  return aus
+}
+
+/** `abzug` wird von der vereinigten Basis abgezogen. */
+function spannenDifferenz(basis: readonly NachtSpanne[], abzug: readonly NachtSpanne[]): NachtSpanne[] {
+  const a = spannenVereinigen(basis)
+  const b = spannenVereinigen(abzug)
+  const aus: NachtSpanne[] = []
+  let j = 0
+  for (const teil of a) {
+    let cursor = teil.start
+    while (j < b.length && b[j].end <= cursor) j += 1
+    let k = j
+    while (k < b.length && b[k].start < teil.end) {
+      if (b[k].start > cursor) {
+        aus.push({ start: cursor, end: b[k].start < teil.end ? b[k].start : teil.end })
+      }
+      cursor = Math.max(cursor, b[k].end)
+      k += 1
+      if (cursor >= teil.end) break
+    }
+    if (cursor < teil.end) aus.push({ start: cursor, end: teil.end })
+  }
+  return aus
+}
+
+/**
+ * Zerteilt die Vereinigung an den Intervallgrenzen.
+ * Jede Atomspanne gehört zum ersten Intervall in der ursprünglichen Reihenfolge.
+ * Aneinanderliegende Stücke mit demselben Etappennamen bleiben ein Besitz;
+ * unterschiedliche Namen bleiben getrennt, damit der Lückenname am Lückenanfang steht.
+ */
+function besitzSegmente(
+  zeitraeume: readonly UnterkunftZeitraum[],
+  merken: (iso: string) => number,
+): NachtBesitz[] {
+  const intervalle = zeitraeume.map((zeitraum) => ({
+    start: merken(zeitraum.start),
+    end: merken(zeitraum.end),
+    stageId: zeitraum.stageId,
+    stageName: zeitraum.stageName,
+  }))
+  const grenzen: number[] = []
+  for (const intervall of intervalle) grenzen.push(intervall.start, intervall.end)
+  grenzen.sort((a, b) => a - b)
+  const punkte: number[] = []
+  for (const wert of grenzen) {
+    if (punkte.length === 0 || punkte[punkte.length - 1] !== wert) punkte.push(wert)
   }
 
-  for (let i = 1; i < geordnet.length; i += 1) {
-    const aktuell = geordnet[i]
-    const erwartet = datumVerschieben(vorher, 1)
-    const gleicheEtappe = stageByNight.get(start)?.stageId === stageByNight.get(aktuell)?.stageId
-    if (erwartet === aktuell && gleicheEtappe) {
-      vorher = aktuell
+  const roh: NachtBesitz[] = []
+  for (let i = 0; i < punkte.length - 1; i += 1) {
+    const start = punkte[i]
+    const end = punkte[i + 1]
+    let besitzer: (typeof intervalle)[number] | undefined
+    for (const intervall of intervalle) {
+      if (intervall.start <= start && end <= intervall.end) {
+        besitzer = intervall
+        break
+      }
+    }
+    if (!besitzer) continue
+    const letzte = roh[roh.length - 1]
+    if (
+      letzte &&
+      letzte.end === start &&
+      letzte.stageId === besitzer.stageId &&
+      letzte.stageName === besitzer.stageName
+    ) {
+      letzte.end = end
       continue
     }
-    schliessen(start, vorher)
-    start = aktuell
-    vorher = aktuell
+    roh.push({
+      start,
+      end,
+      stageId: besitzer.stageId,
+      stageName: besitzer.stageName,
+    })
   }
-  schliessen(start, vorher)
-  return luecken
+  return roh
+}
+
+/** Offene Besitzstücke nach Abzug der abgedeckten Vereinigung. */
+function besitzOhneDeckung(besitz: readonly NachtBesitz[], abgedeckt: readonly NachtSpanne[]): NachtBesitz[] {
+  const block = spannenVereinigen(abgedeckt)
+  const aus: NachtBesitz[] = []
+  let j = 0
+  for (const teil of besitz) {
+    let cursor = teil.start
+    while (j < block.length && block[j].end <= cursor) j += 1
+    let k = j
+    while (k < block.length && block[k].start < teil.end) {
+      if (block[k].start > cursor) {
+        aus.push({
+          start: cursor,
+          end: block[k].start < teil.end ? block[k].start : teil.end,
+          stageId: teil.stageId,
+          stageName: teil.stageName,
+        })
+      }
+      cursor = Math.max(cursor, block[k].end)
+      k += 1
+      if (cursor >= teil.end) break
+    }
+    if (cursor < teil.end) {
+      aus.push({
+        start: cursor,
+        end: teil.end,
+        stageId: teil.stageId,
+        stageName: teil.stageName,
+      })
+    }
+  }
+  return aus
+}
+
+/**
+ * Chronologische Lücken. Aneinanderliegende Stücke derselben `stageId` werden
+ * eine Lücke, auch wenn der Name wechselt. Der Name bleibt der am Lückenanfang.
+ */
+function lueckenVerbinden(stuecke: readonly NachtBesitz[], text: (tag: number) => string): UnterkunftLuecke[] {
+  const verbunden: NachtBesitz[] = []
+  for (const stueck of stuecke) {
+    const letzte = verbunden[verbunden.length - 1]
+    if (letzte && letzte.end === stueck.start && letzte.stageId === stueck.stageId) {
+      letzte.end = stueck.end
+      continue
+    }
+    verbunden.push({
+      start: stueck.start,
+      end: stueck.end,
+      stageId: stueck.stageId,
+      stageName: stueck.stageName,
+    })
+  }
+  return verbunden.map((stueck) => ({
+    start: text(stueck.start),
+    end: text(stueck.end),
+    naechte: stueck.end - stueck.start,
+    stageId: stueck.stageId,
+    stageName: stueck.stageName,
+  }))
 }
 
 function zusammenfassungAus(abdeckung: Omit<UnterkunftAbdeckung, 'zusammenfassung'>): string {
@@ -186,16 +367,18 @@ function zusammenfassungAus(abdeckung: Omit<UnterkunftAbdeckung, 'zusammenfassun
 
 export function unterkunftAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = []): UnterkunftAbdeckung {
   const { bekannt, zeitraeume } = benoetigteZeitraeume(reise)
-  const benoetigt = nachtMenge(zeitraeume)
-  const stageByNight = new Map<string, UnterkunftZeitraum>()
-  for (const zeitraum of zeitraeume) {
-    for (const nacht of naechteHalboffen(zeitraum.start, zeitraum.end)) {
-      if (!stageByNight.has(nacht)) stageByNight.set(nacht, zeitraum)
-    }
-  }
+  const merker = isoMerker()
+  const bedarf = zeitraeume.map((zeitraum) => ({
+    start: merker.merken(zeitraum.start),
+    end: merker.merken(zeitraum.end),
+  }))
+  const bedarfVereinigt = spannenVereinigen(bedarf)
+  const bedarfMass = spannenMass(bedarfVereinigt)
+  const besitz = besitzSegmente(zeitraeume, (iso) => merker.merken(iso))
 
   const stays = allePunkte(reise, ohneTag).filter((punkt) => punkt.kind === 'stay')
-  const deckung = new Map<string, 'booked' | 'selected'>()
+  const gebucht: NachtSpanne[] = []
+  const gewaehlt: NachtSpanne[] = []
   const aufenthalte: UnterkunftAufenthalt[] = stays.map((item) => {
     const zeitraum = stayZeitraum(item)
     if (!zeitraum) {
@@ -209,32 +392,30 @@ export function unterkunftAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = 
       }
     }
 
-    const stayNights = naechteHalboffen(zeitraum.start, zeitraum.end)
-    const imZeitraum = stayNights.filter((nacht) => benoetigt.has(nacht))
+    const start = merker.merken(zeitraum.start)
+    const end = merker.merken(zeitraum.end)
+    const imZeitraum = spannenSchneiden([{ start, end }], bedarfVereinigt)
     const status = istGebucht(item) ? 'booked' : 'selected'
-    for (const nacht of imZeitraum) {
-      if (status === 'booked' || deckung.get(nacht) !== 'booked') deckung.set(nacht, status)
-    }
+    if (status === 'booked') gebucht.push({ start, end })
+    else gewaehlt.push({ start, end })
 
     return {
       item,
       start: zeitraum.start,
       end: zeitraum.end,
-      naechte: stayNights.length,
+      naechte: end - start,
       status,
-      ausserhalb: benoetigt.size > 0 && imZeitraum.length === 0,
+      ausserhalb: bedarfMass > 0 && spannenMass(imZeitraum) === 0,
     }
   })
 
-  const offeneNaechte = [...benoetigt].filter((nacht) => !deckung.has(nacht)).sort()
-  const naechteGesamt = bekannt ? benoetigt.size : null
-  const naechteAbgedeckt = bekannt ? deckung.size : null
-  const naechteGebucht = bekannt
-    ? [...deckung.values()].filter((status) => status === 'booked').length
-    : null
-  const naechteAusgewaehlt = bekannt
-    ? [...deckung.values()].filter((status) => status === 'selected').length
-    : null
+  const gebuchtImBedarf = spannenSchneiden(gebucht, bedarfVereinigt)
+  const gewaehltImBedarf = spannenDifferenz(spannenSchneiden(gewaehlt, bedarfVereinigt), gebuchtImBedarf)
+  const abgedeckt = spannenVereinigen([...gebuchtImBedarf, ...gewaehltImBedarf])
+  const naechteGesamt = bekannt ? bedarfMass : null
+  const naechteAbgedeckt = bekannt ? spannenMass(abgedeckt) : null
+  const naechteGebucht = bekannt ? spannenMass(gebuchtImBedarf) : null
+  const naechteAusgewaehlt = bekannt ? spannenMass(gewaehltImBedarf) : null
 
   const ergebnis: Omit<UnterkunftAbdeckung, 'zusammenfassung'> = {
     bekannt,
@@ -243,7 +424,7 @@ export function unterkunftAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = 
     naechteGebucht,
     naechteAusgewaehlt,
     zeitraeume,
-    luecken: bekannt ? lueckenAus(offeneNaechte, stageByNight) : [],
+    luecken: bekannt ? lueckenVerbinden(besitzOhneDeckung(besitz, abgedeckt), (tag) => merker.text(tag)) : [],
     aufenthalte,
   }
 
