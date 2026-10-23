@@ -1,6 +1,8 @@
 # Jetnity – V1 Support Process Runbook
 
 Stand: 18. September 2026  
+Reconciled: 23 October 2026  
+Source baseline: `main` `5269b9192a2300c6c03fc8659964583130d2d1d1` (repository read; not a fresh Production mail, export, deletion, PrivacyBee or inbox test)  
 Status: **DOCS-ONLY SUPPORT OPERATIONS / NO TICKET SYSTEM / NO SLA / NO PRODUCTION SUPPORT TOOLING**
 
 Issue: #467  
@@ -12,7 +14,13 @@ Escalation dependency: `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md` (merged 
 
 This document is the canonical support-operations runbook for **today**. It describes how an authorized operator handles mail that already reaches the public `info@jetnity.ch` address, using mechanisms Jetnity already has.
 
-It does **not** create a ticket system. It does **not** configure a mailbox provider. It does **not** authorize user contact beyond answering mail that a person already sent. It does **not** invent 24/7 coverage, an SLA, dedicated support staff, a legal desk, automated error correlation or Production support tooling.
+It does **not** create a ticket system. It does **not** grant mailbox access or authorize a new reply. It does **not** authorize user contact beyond answering mail that a person already sent. It does **not** invent 24/7 coverage, an SLA, dedicated support staff, a legal desk, automated error correlation or Production support tooling.
+
+Evidence classes in this edition:
+
+- **Implemented in current source** means the path is in the baseline tree above. It does not prove a live click, delivery or deletion today.
+- **Accepted runtime evidence** means a dated closure, only in the scope that closure recorded.
+- **Not checked / remaining** means unknown, still open, or not retested here.
 
 ---
 
@@ -33,24 +41,36 @@ An authorized operator should be able to answer:
 - when to escalate into the merged incident runbook;
 - how to close a request without inventing a resolution that Jetnity cannot perform.
 
-### 0.2 This slice does not close
+### 0.2 This runbook still does not close
 
-- mailbox / SMTP / provider configuration or a proven live monitoring rota;
+- a proven live monitoring rota or named owner for `info@jetnity.ch`;
 - a ticket queue, helpdesk vendor, chatbot or in-product support form;
 - a runtime support, help, FAQ or contact page;
-- surfacing `info@jetnity.ch` on auth forms (error surfaces now include the factual mailto);
+- surfacing `info@jetnity.ch` on auth forms (public, account and admin error surfaces include the factual mailto; auth forms do not);
 - operator-side `Fehler-ID` correlation (finding 4.3 correlation/tooling half, still open under 5.5);
 - user-facing incident / status communication (finding 4.5);
-- data export / DSAR fulfillment (finding 2.1);
-- account erasure (finding 2.2);
+- support-executed or legally complete DSAR fulfillment (the signed-in export in §8.6 is not that);
+- support-executed account erasure, populated-account erasure, or verified-MFA erasure (the signed-in path and the empty-account proof are in §8.6; [#626](https://github.com/Jetnity/jetnity/issues/626) stays blocked and is not repeated);
 - consumer MFA recovery (finding 3.4 consumer half);
-- legal text, privacy notice, terms, controller identity or statutory deadlines;
+- comprehensive legal compliance, a proven controller role for `info@jetnity.ch`, statutory deadlines, or the open PrivacyBee Infomaniak wording in [#585](https://github.com/Jetnity/jetnity/issues/585);
+- today’s Auth-mail delivery (dated SMTP evidence is in §8.1; this reconciliation did not send or read mail);
 - Production Auth / RLS / data mutation as a support action;
 - any invented response time.
 
 Unknown or unavailable remains unknown or unavailable. It is never PASS.
 
-### 0.3 Related procedures, not substitutes
+### 0.3 Later implementations this edition records
+
+These exist after the 18 September 2026 process slice. They do not add support authority.
+
+| Topic | Where the truth is recorded |
+| --- | --- |
+| Authenticated JSON export | Implemented in current source. §1 and §8.6. Merged [PR #476](https://github.com/Jetnity/jetnity/pull/476). |
+| Signed-in account deletion | Implemented in current source. Accepted empty-account Production flow on 28 September 2026. §8.6. |
+| `/privacy`, `/terms`, `/impressum` | Implemented in current source. Dated live checks are cited in §1.1. `/datenschutz` has no app page. |
+| Own Auth SMTP | Accepted 27 September 2026 configuration and delivery. Sender `no-reply@jetnity.com`. Not retested today. §8.1. |
+
+### 0.4 Related procedures, not substitutes
 
 | Situation | Canonical document |
 | --- | --- |
@@ -64,7 +84,7 @@ Admin MFA recovery does **not** recover consumer MFA. The incident runbook does 
 
 ## 1. Current support entry point
 
-Verified against current `main` / this branch at implementation. Stale audit line numbers were not copied as current evidence.
+Verified against source baseline `main` `5269b9192a2300c6c03fc8659964583130d2d1d1` on 23 October 2026. The 18 September 2026 process text is kept where it is still true. Stale audit line numbers were not copied as current evidence.
 
 ### 1.1 VERIFIED CURRENT CHANNEL
 
@@ -73,15 +93,18 @@ Verified against current `main` / this branch at implementation. Stale audit lin
 | Public address | `info@jetnity.ch` |
 | Product surface | Footer `mailto:info@jetnity.ch` in `components/layout/Footer.tsx`, plus the same factual mailto on the public, account and admin error boundaries. Current Footer has **no** “Kontakt” heading; the address sits under the product sentence. |
 | Where the Footer renders | Public layout `app/(public)/layout.tsx` and account layout `app/account/layout.tsx`. |
-| Where it does not render | Admin layouts outside the admin error boundary. Auth forms. |
-| Other product entry points | None. No `app/support`, `help`, `hilfe`, `kontakt`, `contact` or `faq` route. Public navigation (`lib/auth/oeffentliche-navigation.ts`) is only Entdecken / Meine Reisen / Jetnity Pro. |
+| Where it does not render | Admin layouts outside the admin error boundary. Auth forms (`components/auth/` has no `info@jetnity.ch` mailto). |
+| Other product entry points | No `app/support`, `help`, `hilfe`, `kontakt`, `contact` or `faq` route. Public navigation (`lib/auth/oeffentliche-navigation.ts`) is Entdecken / Meine Reisen / Jetnity Pro, plus session entries. |
 | In-product ticket / form / chat | None. |
+| Signed-in account tools | `/account/settings` (`app/account/settings/page.tsx`) links `/account/security`, the JSON export, and deletion only when `loeschUmgebungErlaubt` is true. Limits and the support boundary are §8.6. Support does not run these tools. |
 | Helpdesk / Freshdesk / Intercom / Zendesk SDK | Absent from `package.json`. |
-| Legal / privacy / terms pages | No `app/(public)/privacy` or `app/(public)/terms` runtime page. `/impressum` and `/datenschutz` are also absent. Register may still link those routes; the pages 404. |
-| What the address is proven to be | A displayed footer contact. |
-| What the address is **not** proven to be | A responsible controller, a Datenschutzkontakt, a contractual business mailbox, or a monitored inbox with a known owner. See `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md` row 4 and DECISIONS.md ADR-style legal-input rule. |
+| Legal pages in current source | `app/(public)/privacy/page.tsx` → `/privacy`. `app/(public)/impressum/page.tsx` → `/impressum`. `app/(public)/terms/page.tsx` → `/terms` (CH-DE 1.0). Footer “Jetnity” column links all three. `components/auth/RegisterForm.tsx` links `/terms` and `/privacy`. `lib/legal/ap6a-gate0-vertrag.ts` keeps `AP6A_VERWANDTE_FEHLENDE_ROUTEN = ['/datenschutz']`: there is no `/datenschutz` app page and it is not an alias of `/privacy`. |
+| Legal pages are not | A comprehensive compliance certificate, a closed #585, or proof that `info@jetnity.ch` is a monitored controller inbox. Privacy and Impressum text is PrivacyBee-rendered (`components/legal/PrivacyBeeEinbettung.tsx`); this repository does not copy that vendor text. Terms text is the checked-in CH-DE 1.0 page. No consent persistence is claimed. |
+| Dated legal runtime evidence | `docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md` ([baseline](https://github.com/Jetnity/jetnity/blob/5269b9192a2300c6c03fc8659964583130d2d1d1/docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md)), 27 September 2026: live `/privacy` and `/impressum` widgets recorded ready on `jetnity.com`. `docs/TERMS_CH_DE_1_0_INTEGRATION_CLOSURE_2026-09-28.md` ([baseline](https://github.com/Jetnity/jetnity/blob/5269b9192a2300c6c03fc8659964583130d2d1d1/docs/TERMS_CH_DE_1_0_INTEGRATION_CLOSURE_2026-09-28.md)), 28 September 2026: `/terms`, `/privacy`, `/impressum` and `/register` recorded HTTP 200; [#587](https://github.com/Jetnity/jetnity/issues/587) closed. [#585](https://github.com/Jetnity/jetnity/issues/585) stayed open. Not rechecked in this reconciliation. |
+| What the address is proven to be | A displayed footer contact, also linked from the terms page and the error boundaries. |
+| What the address is **not** proven to be | A responsible controller, a Datenschutzkontakt, a contractual business mailbox, or a monitored inbox with a known owner. A dated Impressum widget is not that proof. See `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md` row 4. |
 
-`lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` only locks that the Footer source contains `mailto:info@jetnity.ch`. It does not prove mailbox ownership, delivery or reply.
+`lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` locks, in source, that `/privacy`, `/terms` and `/impressum` have app pages, that `/datenschutz` does not, that the Footer links those three routes and `mailto:info@jetnity.ch`, and that the public navbar does not link the legal routes. It does not prove mailbox ownership, delivery, reply, or legal completeness.
 
 ### 1.2 CURRENT LIMITATION / UNKNOWN
 
@@ -94,10 +117,11 @@ The following are **absent**. Do not imply them in a reply, chat, status or late
 - a documented named human who currently reads `info@jetnity.ch` (repository evidence: **unknown**);
 - operator-side search of `Fehler-ID` / Next.js `digest` against host logs;
 - a status page or in-product incident banner;
-- self-service data export or account deletion;
+- support staff who export or delete an account because a mail asked them to;
+- a legally complete DSAR, or deletion proof for a populated trip/traveller/visit/security/storage lifecycle or a verified MFA account;
 - consumer MFA backup codes, phone MFA, WebAuthn or lockout recovery;
 - Jetnity-taken payments or a live payment provider;
-- a legal desk or approved privacy/terms text.
+- a legal desk, comprehensive legal compliance, or a closed [#585](https://github.com/Jetnity/jetnity/issues/585). Signed-in export and deletion, the three legal routes, and the dated SMTP configuration are in §0.3, §1.1 and §8. They are not in this absence list.
 
 A mailbox that was not opened is **unknown**, not “no requests”. A request that was not answered is **unanswered**, not “resolved by silence”.
 
@@ -134,12 +158,12 @@ Classify every inbound message into **one primary** category. Add a secondary on
 
 | Category | Typical user wording | What Jetnity can do today | Default owner after intake |
 | --- | --- | --- | --- |
-| **account/auth** | Cannot sign in, confirm email, reset password, MFA prompt, session/logout | Point to existing self-service where it exists (`LoginForm` `resetPasswordForEmail` → `/auth/update-password`; `/account/security` for signed-in password/MFA). Do not reset credentials by support email. Consumer MFA loss has **no** recovery runbook. Admin TOTP loss uses the admin MFA runbook, not this process. Finding 3.8 (project-wide mail ceiling) may make confirmation/reset mail fail; that is a launch blocker, not a support workaround. | Technical Lead; Product Owner if any Auth/MFA/AAL change is requested |
+| **account/auth** | Cannot sign in, confirm email, reset password, MFA prompt, session/logout | Point to existing self-service where it exists (`LoginForm` `resetPasswordForEmail` → `/auth/update-password`; `/account/security` for signed-in password/MFA; `/account/settings` for the signed-in export and, when the environment guard shows it, deletion). Do not reset credentials, export, or delete by support email. Consumer MFA loss has **no** recovery runbook. Admin TOTP loss uses the admin MFA runbook, not this process. Historical finding 3.8 was the built-in mail ceiling before own SMTP. Dated delivery evidence is §8.1. Do not tell the user that mail works today, and do not bypass Auth. | Technical Lead; Product Owner if any Auth/MFA/AAL change is requested |
 | **trip/traveller** | Missing trip, cannot edit, traveller/document confusion, readiness/visa question | Help the user find `/reisen` or the account trip list if the session works. Distinguish empty, denied and error. Do not invent visa, transit, health, carrier or document rules. Do not collapse multiple citizenships/documents to one passport. Guest localStorage is not account truth. | Technical Lead |
 | **product/UX** | Layout, copy, “how do I plan a trip”, navigation | Product clarification only. No promise of a fix date. File a later bounded issue if a real defect is confirmed. | Technical Lead; Product Owner for product-direction changes |
 | **provider/commercial truth** | Flight/hotel/activity price, “book this”, affiliate link, official entry result | Production provider search is hard-off (`VERCEL_ENV=production`). Factories for hotel/activity/mobility/rental/requirements/safety/seasonal are `null`. `booking_url` is forced null. User-marked bookings are `bookingSource: 'user'`, not provider confirmation. Official Truth stays `unknown` when evidence is missing. Do not invent availability, price or `not_required`. | Technical Lead; escalate to incident runbook if official-truth or live-provider harm is possible |
 | **security/privacy** | Stolen account, leaked data, unexpected disclosure, suspicious admin | Treat as an incident immediately. Do not request secrets to “verify”. Do not paste payloads into the mailbox thread. | Technical Lead coordinates via incident runbook; Product Owner before any external notice |
-| **data-rights/legal request** | Access, export, deletion, rectification, objection, “GDPR/DSG request”, press/authority | Jetnity has **no** consumer export or identity-deletion path. Sub-object delete (trip / trip-traveller / registry traveller) is not account erasure. Archive is not deletion. Do not fulfill from Production by ad-hoc dump. Do not write legal text or a statutory deadline. | Product Owner + Legal. Technical Lead may record **internal** facts only: request class, environment, whether trips/travellers are involved (yes/no/unknown — no raw values) |
+| **data-rights/legal request** | Access, export, deletion, rectification, objection, “GDPR/DSG request”, press/authority | Describe the signed-in `/account/settings` export and deletion path generically (§8.6). Do not run it from this mail, do not confirm the account exists, and do not treat the mail as identity proof. Sub-object delete (trip / trip-traveller / registry traveller) is not account erasure. Archive is not deletion. The JSON export is not a complete legal DSAR. Do not fulfill from Production by ad-hoc dump. Do not write legal text, close #585, or invent a statutory deadline. | Product Owner + Legal for any externally binding or legal response. Technical Lead may record **internal** facts only: request class, environment, whether trips/travellers are involved (yes/no/unknown — no raw values) |
 | **billing/payment confusion** | Charge, invoice, refund, “I paid Jetnity” | No payment-provider SDK, no checkout, no webhook receiver. Admin `/admin/payments` is a local ledger of leftover/test rows, not user billing. Honest reply: Jetnity does not currently take card/provider payments. If the user paid a **third party** (airline, hotel, OTA), that party is the merchant — Jetnity cannot refund them. | Technical Lead for product truth; Product Owner if any money-movement or refund promise is requested |
 | **outage/incident** | Site down, 5xx, “nothing loads”, quoted `Fehler-ID` during a wider failure | Escalate to the incident runbook. Support does not declare Production healthy from a single READY badge or from “no other mails”. | Technical Lead via incident runbook |
 
@@ -247,7 +271,7 @@ Finding 4.3 is **user-facing/process half closed**. The correlation/tooling half
 Fail closed. Work this order when mail is actually opened.
 
 1. **Safety / security / sensitive data** — if the mail contains secrets or sensitive traveller/document data, redact first (§5). If compromise or disclosure is alleged, go to the incident runbook. Do not continue as normal product support.
-2. **Legal / data-rights** — do not answer with invented law. Hand to Product Owner + Legal. Technical Lead records the class only.
+2. **Legal / data-rights** — do not answer with invented law. The Technical Lead may describe the signed-in export/deletion path only as §8.6 allows, without confirming an account, and records the class. Any externally binding or legal response goes to Product Owner + Legal.
 3. **Outage / class failure** — more than one user, Production unusable, Auth down, or official-truth harm → incident runbook. Do not “reassure” from a Preview badge.
 4. **Auth / account lockout** — point to existing self-service. Do not offer to change password, delete factors, or disable MFA by email. Admin TOTP loss: admin MFA runbook, Product-Owner Auth gate still required for live `deleteFactor`.
 5. **Trip / traveller / official truth** — preserve `unknown`. No visa/carrier invention. No single-passport shortcut.
@@ -271,7 +295,10 @@ Every branch starts with §7. Record known vs unknown. STOP if the next step cro
    - scoped logout exists on `/account/security`; other sessions are `unsupported` to list;
    - verified MFA unenroll requires AAL2 step-up. A user without the authenticator cannot self-clear.
 3. Do **not**: send them a new password; ask for the current password, OTP, government ID or passport “to verify”; enroll or delete factors; change `profiles.status` / role as a “support unlock”; use `ADMIN_ALLOWED_EMAILS` break-glass for a consumer; tell them that an account exists, does not exist, is locked, banned, pending or MFA-enrolled.
-4. Honest limits: transactional mail may fail because Jetnity has no own SMTP and the Auth project is documented with a low built-in mail ceiling (finding 3.8). If they never received confirmation/reset mail, say that this path is currently fragile and is a known launch blocker — not that support can bypass Auth.
+4. Honest mail limits, in three layers:
+   - **Implemented in current source:** registration confirmation and password reset are still email-only product paths (`[auth.email] enable_confirmations = true` in `supabase/config.toml`). The commented `[auth.email.smtp]` example in that file is not enabled and is not the Production sender. SMTP credentials are not in the repository. This runbook cannot send or read mail.
+   - **Accepted runtime evidence, 27 September 2026:** [#581 closure](https://github.com/Jetnity/jetnity/issues/581#issuecomment-5855533718) set Production `site_url` to `https://jetnity.com` and the callback / update-password allow-list. At that closure, custom SMTP was still **off**. [#582 accepted delivery closure](https://github.com/Jetnity/jetnity/issues/582#issuecomment-5858252535) later recorded Production custom SMTP from **`no-reply@jetnity.com`** (not `no-reply@jetnity.ch`), Infomaniak `mail.infomaniak.com` port 587 / STARTTLS, delivered password-reset and signup mail, and a physical iPhone first-load callback pass after merged PR #583. `docs/AUTH.md` records the same dated update. That is not a fresh inbox or SMTP test.
+   - **Not checked / remaining:** whether Auth mail is delivered today; whether `info@jetnity.ch` is monitored; the open [#585](https://github.com/Jetnity/jetnity/issues/585) Infomaniak legal-basis wording. If the user never received confirmation or reset mail, say delivery was accepted on that date and is **not rechecked now**. Support cannot bypass Auth. Do not ask them to write to `no-reply@jetnity.com`.
 5. Consumer MFA loss: no in-product recovery. Do not apply the admin MFA runbook. A later Product-Owner-gated Auth slice would be required to add backup codes or a second factor. Until then the truthful answer is that Jetnity cannot restore that factor by email.
 
 ### 8.2 trip/traveller
@@ -279,7 +306,7 @@ Every branch starts with §7. Record known vs unknown. STOP if the next step cro
 1. If they can sign in, ask them to open `/reisen` and the specific trip. Empty list after a successful read is “no trips visible”, not “the database is empty”. A failed read is an error (`lese()` / `problemAus()`). Do not collapse those states.
 2. Guest trips live in localStorage (`jetnity:reise:v3`). They are not account rows. Do not “restore” them by writing Production data from a screenshot.
 3. Traveller / readiness questions: Route Truth stays traveller-neutral. Evaluate per traveller and per credential option. Missing official evidence → `unknown`. Do not ask for passport images.
-4. Trip delete / archive: owner-scoped trip delete and archive exist; archive is not erasure. Account deletion does not exist.
+4. Trip delete / archive: owner-scoped trip delete and archive exist; archive is not erasure. Account deletion is the separate signed-in path in §8.6. Support does not delete the account, a trip, or a traveller from this mail.
 
 ### 8.3 product/UX
 
@@ -304,9 +331,13 @@ Every branch starts with §7. Record known vs unknown. STOP if the next step cro
 1. Classify: access / export / deletion / rectification / other / unknown.
 2. Do not promise fulfillment, a deadline, or that `info@jetnity.ch` is the proven controller contact.
 3. Do not run ad-hoc Production SELECT dumps into email. That is uncontrolled Production data access (§11).
-4. Do **not** verify the requester’s identity by ordinary email, government ID, passport, OTP or password. Identity verification for data-rights / deletion / export remains Product Owner + Legal, or a later approved secure process. This runbook has no such process.
-5. Persist an **internal** note only: UTC received, request class, known/unknown, **no** raw documents, **no** user-facing existence/status statement.
-6. Product Owner + Legal decide the response. Technical Lead may later scope a gated export or deletion slice; this process does not start it.
+4. Do **not** verify the requester’s identity by ordinary email, government ID, passport, OTP or password. Identity verification for a support-executed data-rights action remains Product Owner + Legal, or a later approved secure process. This runbook has no such process. Ordinary email does not authorize export or deletion (§11.1).
+5. If the person may be signed in, describe the existing path **generically**. Do not confirm that this sender has an account:
+   - **Export, implemented in current source.** `app/account/settings/page.tsx` links `GET /api/account/export` (`app/api/account/export/route.ts`, `lib/account/datenexport.ts`). The route uses the session from `auth.getUser()`, existing RLS, and a `user_id` filter. It does not accept a user id from the caller and does not use the service role. The JSON schema is `jetnity.account-export.v1`, completeness `jetnity-owned-account-travel-rows`, attachment, `Cache-Control: no-store`. The route `maxDuration` is 10 seconds. The 13 tables are `profiles`, `account_travellers`, `account_traveller_citizenships`, `account_traveller_documents`, `account_visits`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `trip_travellers`, `trip_traveller_citizenships`, `trip_traveller_documents`, `trip_readiness_items`. A table over 20,000 rows fails the whole export. There is no cross-instance rate limit and no Storage archive. The settings copy says this is not a complete legal extract and not account deletion. Merged [PR #476](https://github.com/Jetnity/jetnity/pull/476) / [#474](https://github.com/Jetnity/jetnity/issues/474). Support does not download it for them.
+   - **Deletion, implemented in current source.** `components/account/KontoLoeschen.tsx` is shown only when `loeschUmgebungErlaubt` accepts the configured Supabase URL (`lib/account/kontoloeschung-vertrag.ts`): exact Production or Development HTTPS, or the listed local HTTP hosts. The signed-in user types `KONTO LÖSCHEN`, reauthenticates with the current password (freshness 300 seconds), and, when a verified factor requires it, a TOTP code at AAL2. OAuth-only identities are rejected (`oauth_nicht_unterstuetzt`). The orchestration in `lib/account/kontoloeschung-ausfuehrung.ts` is not atomic: storage, then security events, then the Auth user; a later failure can be `teilweise_entfernt`. Support does not type the confirmation, password or code, and does not call the function.
+6. **Accepted deletion evidence, 28 September 2026 only.** `docs/PRODUCTION_ACCOUNT_ERASURE_POST_MERGE_CLOSURE_2026-09-28.md` ([baseline](https://github.com/Jetnity/jetnity/blob/5269b9192a2300c6c03fc8659964583130d2d1d1/docs/PRODUCTION_ACCOUNT_ERASURE_POST_MERGE_CLOSURE_2026-09-28.md)): Production UI deletion of one disposable account that had no trip, traveller, visit, security-event or Storage rows and no verified MFA factor; redirect to `/konto-geloescht`; Auth and those row counts read back as 0. Edge Function `account-delete-v1` was recorded ACTIVE v1 that day. Runtime merge [PR #597](https://github.com/Jetnity/jetnity/pull/597). That closure did **not** prove deletion of a populated trip/traveller/visit/security/storage lifecycle or of a verified-MFA account. [#626](https://github.com/Jetnity/jetnity/issues/626) remains open and blocked. Do not repeat, reformulate, or route around it.
+7. **Not checked / remaining.** No export or deletion was run for this reconciliation. Legal completeness, rectification, objection, authority requests, and support-executed fulfillment remain Product Owner + Legal. [#585](https://github.com/Jetnity/jetnity/issues/585) stays open; do not edit privacy text. Pointing at `/privacy`, `/terms` or `/impressum` does not fulfill the request and does not close #585.
+8. Persist an **internal** note only: UTC received, request class, known/unknown, **no** raw documents, **no** user-facing existence/status statement. This process does not start a follow-up slice.
 
 ### 8.7 billing/payment confusion
 
@@ -356,7 +387,8 @@ Do **not** escalate ordinary UX copy, a single guest-trip misunderstanding, or a
 | Dispatch a later bounded engineering slice | Technical Lead, new versioned task |
 | Ready / merge | Technical Lead only. Agents never. |
 | Who may read or send as `info@jetnity.ch` | Product Owner |
-| Any reply that promises a date, refund, legal outcome, deletion, export, or compliance | Product Owner |
+| Any reply that promises a date, refund, legal outcome, that support has exported or deleted an account, or compliance | Product Owner |
+| Describing the existing signed-in export/deletion path without confirming account existence | Technical Lead, using §8.6 only |
 | Legal / data-rights wording; controller; statutory notice | Product Owner + Legal |
 | Production migration, restore, destructive data change | Product Owner special gate |
 | Auth / Session / MFA / AAL / factor deletion | Product Owner special gate (admin MFA runbook describes, does not execute) |
@@ -379,7 +411,7 @@ Support is not a reason to open the Production SQL editor, service-role client, 
 | --- | --- |
 | Read the user’s words and any redacted screenshot they sent | Production `SELECT` of trips, travellers, documents, `auth.users`, or `profiles` into email |
 | If already an authorized admin **and** AAL2 **and** `konten-verwalten`: look at `/admin/users` for `user_id`, email, display_name, role, status, created_at, last_seen_at — **internal technical triage only**. Never paste the row, and never turn the lookup into a user-facing existence or status statement (§11.1) | Dumping the admin table, changing role/status to “unblock”, using break-glass as support, or confirming/denying that an account exists |
-| Existing owner-scoped self-service the signed-in user can run themselves | Service-role writes, RLS bypass, factor delete, password set, identity delete |
+| Existing owner-scoped self-service the signed-in user runs: JSON export and, inside the environment guard, account deletion (§8.6) | Support-executed export or deletion, service-role writes, RLS bypass, factor delete, password set, identity delete from email |
 | Read-only host logs **after** incident escalation, by an operator who already has that access | New Production query “to be helpful” |
 
 `/admin/users` is a datensparse admin surface, not a support console and not a disclosure source. Empty vs error must stay distinct. Break-glass does not reach the database.
@@ -401,7 +433,7 @@ Therefore:
 - do not ask for government ID, passport, OTP, password or other secrets to “verify” the person;
 - data-rights / deletion / export identity verification remains Product Owner + Legal, or a later approved process — not ad-hoc email verification.
 
-Generic, existence-neutral replies remain allowed: how the public login reset path works, that Jetnity does not take payments, that export/deletion are not built, that a `Fehler-ID` cannot be looked up. Those statements do not say whether **this** sender has an account.
+Generic, existence-neutral replies remain allowed: how the public login reset path works, that Jetnity does not take payments, that a signed-in user can open `/account/settings` for the JSON export and the guarded deletion flow, that support will not run either flow from this mail, and that a `Fehler-ID` cannot be looked up. Those statements do not say whether **this** sender has an account. Do not say export or deletion “are not built”.
 
 ---
 
@@ -410,9 +442,9 @@ Generic, existence-neutral replies remain allowed: how the public login reset pa
 Honesty rules:
 
 1. State what is **known** from current repository or independently verified live evidence.
-2. State what is **unknown** (inbox not monitored, ID not correlatable, Production Auth config not re-read, legal role of the address not approved).
+2. State what is **unknown** (inbox not monitored, `Fehler-ID` not correlatable, live Production Auth dashboard not re-read in this reconciliation, legal role of `info@jetnity.ch` not approved). Dated #581/#582 closures in §8.1 are not a fresh dashboard read.
 3. Do not fill gaps with reassurance, invented policy, or “we are looking it up in the system”.
-4. Do not claim DSGVO/CH-DSG conformity, a privacy notice, or that a request has been fulfilled when no fulfillment path exists.
+4. Do not claim DSGVO/CH-DSG conformity. `/privacy`, `/terms` and `/impressum` exist (§1.1). Page existence is not compliance, and [#585](https://github.com/Jetnity/jetnity/issues/585) is not closed. Do not claim that an email request has been fulfilled. The signed-in export is not a complete legal extract.
 5. Do not claim a response SLA, 24/7, or dedicated staff.
 6. Do not confirm or deny account existence or status from ordinary email (§11.1).
 7. German product UI may receive a German reply; that is language matching, not a legal translation.
@@ -421,8 +453,8 @@ Suggested internal shape of a user reply (Product Owner sends anything externall
 
 - thank them for writing to `info@jetnity.ch`;
 - restate the understood category in one sentence;
-- say what Jetnity can do **today**, in generic product language;
-- say what is unknown or not built;
+- say what Jetnity can do **today**, in generic product language (signed-in settings path when that is the honest answer);
+- say what is unknown or not rechecked (inbox, today’s mail delivery, populated deletion, #585);
 - do not attach a ticket number (none exists);
 - do not quote secrets, document data, or `/admin/users` facts back;
 - do not say “we found / did not find your account”.
@@ -439,7 +471,7 @@ A support case may close only when **all** of the following are true:
 2. Secrets/sensitive data were redacted if they appeared.
 3. Any incident/legal/special-gate path was opened or explicitly recorded as not applicable.
 4. The user-facing statement, if any, stayed inside known current product truth and did **not** confirm or deny account existence or status (§11.1).
-5. Residual gaps are written (for example: “consumer MFA still unrestorable”; “export still missing”).
+5. Residual gaps are written (for example: “consumer MFA still unrestorable”; “email is not a deletion channel”; “populated and verified-MFA erasure not proven; #626 not repeated”; “Auth-mail delivery not rechecked”; “#585 still open”).
 
 Minimum internal evidence (GitHub issue comment or a slice note — **not** the global continuity files from this branch):
 
@@ -472,14 +504,14 @@ It does **not** satisfy, and must not be cited as satisfying:
 | Operator-side `Fehler-ID` correlation | Finding 4.3 user-facing/process half is closed. Correlation/tooling half remains open under 5.5 (hosted error tracking / log aggregation), Product-Owner-gated |
 | Account error boundary | Finding 4.2 closed via merged PR #471. This runbook must not claim the account boundary is missing. |
 | Status / incident user communication | Finding 4.5 |
-| DSAR export and account deletion | Findings 2.1 / 2.2; Legal + Product-Owner gates |
+| DSAR completeness and support-executed export/deletion | Signed-in JSON export and guarded deletion exist (§8.6). They are not a legal DSAR and not an email fulfillment path. Populated and verified-MFA erasure were not proven. [#626](https://github.com/Jetnity/jetnity/issues/626) stays blocked |
 | Consumer MFA recovery | Finding 3.4 consumer half; Auth special gate |
-| Own SMTP / reliable Auth mail | Finding 3.8; provider + secret |
-| Legal desk, privacy/terms, proven controller contact | AP-6a Legal inputs still required |
+| Auth-mail health today | Own SMTP was accepted on 27 September 2026 from `no-reply@jetnity.com` (§8.1). Delivery today is **not checked**. `info@jetnity.ch` monitoring is still unknown. [#585](https://github.com/Jetnity/jetnity/issues/585) is a separate wording residual, not an SMTP rollback |
+| Legal desk, controller proof, #585 | `/privacy`, `/terms` and `/impressum` exist. `/datenschutz` does not. Comprehensive compliance and a proven monitored controller contact are not established. Do not rewrite privacy text |
 | Payments support | No money movement exists |
 | Secure support identity verification | No approved channel. Default: do not disclose account existence/status. Product-Owner + Legal for data-rights identity. |
 
-Selecting Freshdesk, Intercom, Zendesk, Sentry or any equivalent remains a **Product-Owner-gated** new-provider / data-processor / possible-cost decision. Until later slices exist, Public V1 Launch remains blocked on the operational gaps above by the repository’s own release gate.
+Selecting Freshdesk, Intercom, Zendesk, Sentry or any equivalent remains a **Product-Owner-gated** new-provider / data-processor / possible-cost decision. This reconciliation does not close Public V1 Launch. The remaining rows above stay open. Do not cite export, deletion, the three legal routes, or the 27 September 2026 SMTP configuration as if they were still absent.
 
 ---
 
@@ -490,7 +522,8 @@ STOP and escalate to Technical Lead (and Product Owner if a special gate is in p
 - the next step needs Production SQL, service-role, Auth Admin, RLS change or a new secret;
 - the user sent passport/MRZ/health/payment secrets and someone wants them filed “for the record”;
 - someone wants to confirm or deny that a Jetnity account exists from ordinary email, or to “verify” the sender with government ID, passport, OTP or password;
-- the user asks for account deletion, export, refund or a legal letter;
+- the user asks support to export or delete an account, issue a refund, or write a legal letter — describe the signed-in path only as §8.6 allows; do not execute it;
+- someone wants to treat the 28 September 2026 empty-account deletion as proof for a populated or MFA account, or to rerun [#626](https://github.com/Jetnity/jetnity/issues/626);
 - compromise is suspected;
 - someone asks to promise a response time or 24/7;
 - someone asks to install a helpdesk or error-tracking vendor “so we can answer this mail”;
@@ -500,7 +533,8 @@ STOP and escalate to Technical Lead (and Product Owner if a special gate is in p
 Forbidden shortcuts:
 
 - marking Ready or merging from this runbook;
-- starting a legal-text, export, deletion, helpdesk or error-tracking tooling slice from this runbook;
+- starting a new legal-text, export, deletion, SMTP, helpdesk or error-tracking slice from this runbook;
+- telling a user that export, deletion, legal pages or own SMTP do not exist;
 - inventing a ticket ID, SLA or dedicated support hire;
 - claiming `Fehler-ID` is resolvable;
 - treating `/admin/users` as a disclosure source or using role/status writes as support;
