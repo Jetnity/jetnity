@@ -8,7 +8,9 @@ The accommodation panel no longer replaces an unknown canonical summary with a n
 
 ## R1 row correction
 
-Reviewed head `0dafbfca179c65347b03a83b3bbff5b77c0d6e71` against the two new row tests: exit 1, 0 pass / 2 fail. The invalid provider row contained `1. März – 2. März` and `Gebucht` with no uncertainty sentence. The reversed row contained `10. Sept. – 1. Sept.` The operator was `doesNotMatch`. `64f7c510` fails the same invalid-row assertion because it still renders `1. März – 2. März` beside the sentence. The repaired panel passes both tests. The full lodging file, `naechte-abdeckung.test.ts`, `buchung.test.ts`, and `direct-lodging-coverage-preview-1.test.ts` then passed together (32 tests). `unterkunft-manuell.test.ts` passed against this panel before the two tests were split. Owned-file ESLint passed. `tsc -p tsconfig.json --noEmit` passed. `npm run typecheck`, `npm run build`, and earlier hygiene checks are not re-copied from `0dafbfca`. CI and Preview for this head are not claimed green.
+Reviewed head `0dafbfca179c65347b03a83b3bbff5b77c0d6e71` against the two row tests: exit 1, 0 pass / 2 fail. The invalid provider row contained `1. März – 2. März`. The reversed row contained `10. Sept. – 1. Sept.` The operator was `doesNotMatch`. The same tests pass on the repaired panel. Each offending row's badge span is exactly `Gebucht`; the title is a separate paragraph and is not that word. The button calls `(id, false)`. There is a fully covering companion stay, no gap, no editor, and `provider` is `test`.
+
+After the ordinary merge of pinned main `be0a8b68765e25dc3216dc1f61bfd4620af3e134`, the same rendering tests plus `unterkunft-manuell.test.ts`, `naechte-abdeckung.test.ts`, `buchung.test.ts`, `direct-lodging-coverage-preview-1.test.ts`, and `lodging-interval-evaluation-1.test.ts` passed: 76 tests, 0 failed. `tsc -p tsconfig.json --noEmit` passed on that tree. `npm run build` and the hygiene checks are not re-copied from `0dafbfca`. CI and Preview for this head are not claimed green.
 
 ## Commands
 
@@ -26,7 +28,7 @@ Logs for the red and green regression runs are local author output, not CI. CI, 
 
 ## Boundaries
 
-No database, SQL, Auth, RLS, secret, account, personal browser, source admission, provider call, dependency, workflow, or configuration change. No traveller-document collection. No new recurring cost. TASK blob unchanged: `5d424fd82ae5334aca79e999e3078101b8b4e44b`. `origin/main` re-read `be0a8b68765e25dc3216dc1f61bfd4620af3e134`. Merge-base `ba0725d6dd2ce3d5e170eb1eab03cedef2def1de`. 5 ahead / 5 behind after this commit. Not synchronized with merged #984.
+No database, SQL, Auth, RLS, secret, account, personal browser, source admission, provider call, dependency, workflow, or configuration change. No traveller-document collection. No new recurring cost. TASK blob unchanged: `5d424fd82ae5334aca79e999e3078101b8b4e44b`. `origin/main` remains the pinned SHA `be0a8b68765e25dc3216dc1f61bfd4620af3e134`. Merge-base is that SHA. 8 ahead / 0 behind after this evidence commit. The evaluator was integrated by ordinary merge and not edited.
 
 ## Copy choice
 
