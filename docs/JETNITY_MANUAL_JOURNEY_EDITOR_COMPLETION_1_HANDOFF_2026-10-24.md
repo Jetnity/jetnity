@@ -24,10 +24,15 @@ Branch: `fix/manual-journey-editor-completion-1`
 | in-place V4 tree | `e4464eb4087361c0e25e8fbd3f946b85b9076fd1` |
 | preservation head | `961fa594792b5c07f2e8423b31690f433f858fab` |
 | preservation tree | `24a1a3a025853a8e8744a80f1820172157c21c40` |
-| CI repair head | the commit that adds this handoff |
+| CI repair | `1990ef0bc0398823b3cdea6a622f6d18bf4e2486` |
+| CI repair tree | `e7536d22277b4cb397af216d45442823cfd415a1` |
+| ADDENDUM V3 | `f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5` |
+| ADDENDUM V3 tree | `3d697269c8d9e9c9485a1e718a375c382e1ec20f` |
+| V6 evidence head | the commit that adds this handoff |
 | V4 archive | `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/` |
+| V6 node record | `docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/` |
 
-`origin/main` was fetched again before this preservation. It is still `43124e28`. The merge-base is that commit. `860b35d9` is **17 ahead / 0 behind**. `961fa594` is its child and was **18 ahead / 0 behind** after that push. This CI repair commit is the child of `961fa594`. No rebase and no sibling merge. Integration remains **A → C → B**. B was not touched.
+`origin/main` was fetched again before this evidence commit. It is still `43124e28`. The merge-base is that commit. `f522e3c8` is **20 ahead / 0 behind**. This evidence commit is its child. No rebase and no sibling merge. Integration remains **A → C → B**. B was not touched.
 
 ## What this head contains
 
@@ -50,7 +55,7 @@ The run below was executed once, at `b356fd9f`, and first stored in place by `86
 
 ## Limits
 
-Playwright Chromium did not launch. Native CI on `961fa594` is run `40135029902`: Auth passed, Vercel deployment completed, and Typecheck, Lint & Build failed. Eight lodging-coverage subtests threw because `bedienung` stubbed `useState` and then called the real `useRef` outside a renderer. This repair stubs a stable `useRef` and leaves the assertions unchanged. Local rerun: 9 pass / 0 fail. Native CI for this repair SHA is the GitHub check on that commit, not a result stored here. Preview, hosted account, screen reader, native zoom, and a physical device are not verified. `db:*` and `auth:pruefen` were not run. No product rerun was done to relocate the evidence.
+Playwright Chromium did not launch. Native CI on `961fa594` is run `40135029902` and stays a failure: Auth passed, the Vercel deployment completed, and Typecheck, Lint & Build failed with eight lodging-coverage subtests. Commit `1990ef0b` stubs a stable `useRef` in `bedienung`. ADDENDUM V3 on `f522e3c8` grants that slot. The test blob remains `60039f4a7b54c7efe9af332ddc6f31103cb25f98`. On `f522e3c8` the nine-test file exited 0 (9 pass / 0 fail) and the focused editor/helper command including that file exited 0 (113 pass / 0 fail). Those logs are `docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/`. Run `40136328790` on `f522e3c8` still had Auth and Typecheck, Lint & Build pending when this record was written; Vercel had completed. Native App/Auth/Vercel for this evidence commit starts on its push and is pending here. Preview beyond that Vercel deployment, a hosted account, a screen reader, native zoom, and a physical device are not verified. `db:*` and `auth:pruefen` were not run.
 
 ## Stop
 

@@ -51,6 +51,14 @@ The preservation SHA `961fa594` has a recorded CI result in the next section. A 
 
 ## Native CI on `961fa594`
 
-Run [40135029902](https://github.com/Jetnity/jetnity/actions/runs/40135029902) on preservation head `961fa594792b5c07f2e8423b31690f433f858fab` finished with Auth passed and the Vercel deployment completed. Typecheck, Lint & Build failed. The only failing suite was `lib/trips/lodging-coverage-truth-1.test.ts`: `bedienung` calls `UnterkunftBestand` as a function and had stubbed `useState` only. The parent `useRef` calls threw `Cannot read properties of null (reading 'useRef')`. Eight subtests failed. This commit adds a stable `useRef` slot in that stub and resets it with the state index. The assertions are unchanged. The local rerun of that file is 9 pass / 0 fail. Product files are unchanged from `b356fd9f`. Native CI for this repair commit starts on push and is not claimed green here.
+Run [40135029902](https://github.com/Jetnity/jetnity/actions/runs/40135029902) on preservation head `961fa594792b5c07f2e8423b31690f433f858fab` finished with Auth passed and the Vercel deployment completed. Typecheck, Lint & Build failed. The only failing suite was `lib/trips/lodging-coverage-truth-1.test.ts`: `bedienung` calls `UnterkunftBestand` as a function and had stubbed `useState` only. The parent `useRef` calls threw `Cannot read properties of null (reading 'useRef')`. Eight subtests failed. Commit `1990ef0bc0398823b3cdea6a622f6d18bf4e2486` adds a stable `useRef` slot in that stub and resets it with the state index. The assertions are unchanged. That local rerun of the file was 9 pass / 0 fail. Product files are unchanged from `b356fd9f`. Run `40135029902` stays a failure.
 
-Next actor: Technical Lead, exact-head review of the repair commit. The V4 proof to inspect remains `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`.
+## ADDENDUM V3 and the coverage-renderer record
+
+ADDENDUM V3 is the fast-forwarded TL commit `f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5`, tree `3d697269c8d9e9c9485a1e718a375c382e1ec20f`, blob `727bf0664e0856d5a8cb52dde88cd783f489314c`. Its parent is `1990ef0b`. The only new file is the addendum. `origin/main` was fetched again and is still `43124e28`. `f522e3c8` is **20 ahead / 0 behind**. This evidence commit is its child. No rebase.
+
+The lodging test blob stays `60039f4a7b54c7efe9af332ddc6f31103cb25f98`. On `f522e3c8` the nine-test file exited 0 with 9 pass / 0 fail. The focused editor/helper command, with that file included, exited 0 with 113 pass / 0 fail. The TAP logs and the command record are `docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/`. Prior C, R103, R104, and `v4-b356fd9f/` paths were not rewritten.
+
+On `f522e3c8`, run `40136328790` had a completed Vercel deployment while Auth and Typecheck, Lint & Build were still pending. That run is not this evidence commit. Native App/Auth/Vercel for this evidence commit starts on its push and stays pending here.
+
+Next actor: Technical Lead, exact-head review of the evidence commit. The V4 proof remains `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`.

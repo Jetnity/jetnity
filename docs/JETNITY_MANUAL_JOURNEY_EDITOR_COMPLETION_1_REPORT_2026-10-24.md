@@ -69,7 +69,21 @@ node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/trips/lodging-coverage-truth-1.test.ts
 ```
 
-Local result after the stub: 9 pass, 0 fail. Native CI for the repair commit starts on its push and is not recorded as green in this file.
+Local result after the stub, on `1990ef0b`: 9 pass, 0 fail. Run `40135029902` on `961fa594` stays a failure.
+
+ADDENDUM V3 commit `f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5`, blob `727bf0664e0856d5a8cb52dde88cd783f489314c`, was fast-forwarded. The lodging test blob on that commit is `60039f4a7b54c7efe9af332ddc6f31103cb25f98`. The same nine-test command on `f522e3c8` exited 0: 9 pass, 0 fail. The focused command below, with the lodging file added, exited 0: 113 pass, 0 fail, 13 suites.
+
+```
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/trips/flug-manuell.test.ts \
+  lib/trips/flug-route-form-validation.test.ts \
+  lib/trips/unterkunft-manuell.test.ts \
+  lib/trips/manual-journey-editor-completion-1.test.ts \
+  lib/trips/organisieren-action-recovery-1.test.ts \
+  lib/trips/lodging-coverage-truth-1.test.ts
+```
+
+Those outputs are `docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/`. They do not replace the V4 archive or the earlier C/R103/R104 paths. On `f522e3c8`, run `40136328790` had Vercel completed and Auth plus Typecheck, Lint & Build still pending. Native App/Auth/Vercel for this evidence commit starts on its push and is pending in this file.
 
 ## Security
 
@@ -85,4 +99,4 @@ No new dependency, provider, model call, or running cost.
 
 ## Dokumentation
 
-STATUS, REPORT, SELF_REVIEW, and HANDOFF describe this preservation. The V4 provenance that belongs to the `b356fd9f` run is `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/rerun-provenance.json`. The file at `docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json` is the restored `be2c4932` blob `3da8a04325cbac8b09f16b52c7cfaf10788dab5a`. TASK, PLAN, and both addenda were not edited.
+STATUS, REPORT, SELF_REVIEW, and HANDOFF describe this evidence commit. The V4 provenance that belongs to the `b356fd9f` run is `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/rerun-provenance.json`. The file at `docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json` is the restored `be2c4932` blob `3da8a04325cbac8b09f16b52c7cfaf10788dab5a`. The V6 node record is `docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/`. TASK, PLAN, and ADDENDA V1, V2, and V3 were not edited.
