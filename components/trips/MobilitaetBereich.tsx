@@ -397,13 +397,14 @@ export function ManuelleVerbindung({
         Das sind deine Angaben, keine geprüften Fahrpläne oder Preise.
       </p>
 
-      <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
+      <form className="mt-5 grid gap-3" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
         <OrganisierenFeldgruppe titel="Einordnung">
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               Art
               <select
                 value={mode}
+                disabled={laeuft}
                 onChange={(ereignis) => setMode(ereignis.target.value as MobilityMode)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               >
@@ -418,6 +419,7 @@ export function ManuelleVerbindung({
               Tag
               <select
                 value={dayId}
+                disabled={laeuft}
                 onChange={(ereignis) => setDayId(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               >
@@ -438,6 +440,7 @@ export function ManuelleVerbindung({
               Von
               <input
                 value={originName}
+                disabled={laeuft}
                 onChange={(ereignis) => setOriginName(ereignis.target.value)}
                 required
                 maxLength={120}
@@ -448,6 +451,7 @@ export function ManuelleVerbindung({
               Nach
               <input
                 value={destinationName}
+                disabled={laeuft}
                 onChange={(ereignis) => setDestinationName(ereignis.target.value)}
                 required
                 maxLength={120}
@@ -464,6 +468,7 @@ export function ManuelleVerbindung({
               <input
                 type="date"
                 value={startsOn}
+                disabled={laeuft}
                 onChange={(ereignis) => setStartsOn(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -473,6 +478,7 @@ export function ManuelleVerbindung({
               <input
                 type="time"
                 value={startsAt}
+                disabled={laeuft}
                 onChange={(ereignis) => setStartsAt(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -487,6 +493,7 @@ export function ManuelleVerbindung({
               <input
                 type="date"
                 value={endsOn}
+                disabled={laeuft}
                 onChange={(ereignis) => setEndsOn(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -496,6 +503,7 @@ export function ManuelleVerbindung({
               <input
                 type="time"
                 value={endsAt}
+                disabled={laeuft}
                 onChange={(ereignis) => setEndsAt(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -509,6 +517,7 @@ export function ManuelleVerbindung({
               Verbindungsnummer, falls bekannt
               <input
                 value={connectionRef}
+                disabled={laeuft}
                 onChange={(ereignis) => setConnectionRef(ereignis.target.value)}
                 maxLength={40}
                 className={ORGANISIEREN_EINGABE_KLASSE}
@@ -518,6 +527,7 @@ export function ManuelleVerbindung({
               Notiz
               <textarea
                 value={note}
+                disabled={laeuft}
                 onChange={(ereignis) => setNote(ereignis.target.value)}
                 maxLength={500}
                 rows={2}

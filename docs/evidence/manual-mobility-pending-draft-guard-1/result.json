@@ -1,0 +1,78 @@
+{
+  "author": "Jetnity Manual Mobility Pending Draft Guard 1 — Cursor Generation 1",
+  "session": "bc-529c718d-03e4-43f9-a8fa-7e555d3f4cbf",
+  "model": "grok-4.7-high-fast",
+  "component": "components/trips/MobilitaetBereich.tsx",
+  "exportedComponent": "ManuelleVerbindung",
+  "sourceSha256": "652cd513e490813a09bcc5a3111a3d487b804a0ff4df6dcdb54d689853fd4db3",
+  "sourceBlob": "105c8a2a9a4d0b5b285395cfbf2951e411a6dc23",
+  "baselineBlob": "8560a106e4eb61a852b2f4ce27868ab30cf18cf0",
+  "viewports": [
+    {
+      "name": "narrow-320",
+      "width": 320,
+      "height": 720
+    },
+    {
+      "name": "narrow-390",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "wide-1280",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "scenarios": [
+    {
+      "viewport": "narrow-320",
+      "width": 320,
+      "height": 720,
+      "kind": "pending-success",
+      "status": "PASS",
+      "calls": 1,
+      "pendingLocked": true,
+      "duplicateCalls": 1
+    },
+    {
+      "viewport": "narrow-390",
+      "width": 390,
+      "height": 844,
+      "kind": "pending-success",
+      "status": "PASS",
+      "calls": 1,
+      "pendingLocked": true,
+      "duplicateCalls": 1
+    },
+    {
+      "viewport": "wide-1280",
+      "width": 1280,
+      "height": 900,
+      "kind": "pending-success",
+      "status": "PASS",
+      "calls": 1,
+      "pendingLocked": true,
+      "duplicateCalls": 1
+    },
+    {
+      "viewport": "narrow-390",
+      "width": 390,
+      "height": 844,
+      "kind": "prefill-error-retry-reject-unmount-duplicate",
+      "status": "PASS",
+      "duplicateBeforePaint": 1
+    }
+  ],
+  "blockedRequests": [],
+  "pageErrors": [],
+  "status": "PASS",
+  "failure": null,
+  "browser": {
+    "channel": "chrome",
+    "launchErrors": [
+      "Error: browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+    ],
+    "version": "148.0.7778.96"
+  }
+}
