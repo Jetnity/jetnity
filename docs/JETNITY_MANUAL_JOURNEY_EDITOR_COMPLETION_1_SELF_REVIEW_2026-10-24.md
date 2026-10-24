@@ -5,15 +5,15 @@ Author: **Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1**
 Session: `bc-02fbe98d-97ba-4c0b-a3b0-10857d784379`
 Model: `grok-4.7-high-fast`
 
-This is the author's review of the CODE REVIEW V3 repair. It is not a Technical-Lead PASS.
+This is the author's review of the CODE REVIEW V4 repair. It is not a Technical-Lead PASS.
 
 ## Scope check
 
-The product diff from `52779d7f` to `ecdaef7b` is `FlugBestand.tsx` and the V3 harness cases. `9b11323d` changes only the diagnostic accounting in `scripts/manual-journey-editor-completion-1/harness.mjs`. `components` and `lib` are unchanged from `ecdaef7b`. The evidence commit adds the rerun result and these four docs. TASK V1, addendum V1, and the accepted PLAN were not rewritten. Booking, rental, the connection alert, shared CSS, schemas, and `TripIntegratedDay` were not edited. No sibling branch was merged. Lint configuration was not weakened.
+The product diff in `b356fd9f` is `UnterkunftBestand.tsx`, `manual-journey-editor-completion-1.ts` and its test, and the lane harness/mount. ADDENDUM V2 was fast-forwarded and accepted main was merged. TASK V1, ADDENDUM V1, and the accepted PLAN blobs were not rewritten. Booking, rental, the connection alert, shared CSS, schemas, writers, and `TripIntegratedDay` were not edited. No sibling branch was merged. Lint configuration was not weakened. The completed P3 behavior/layout diagnostic split remains.
 
 ## Counting
 
-`behaviorCount` 20 is `evidence.scenarios.length`: 20 named groups. It is not 20 executions and not an assertion count. The three groups named `late-r1-success-domain-reject-r2-pending` each execute R1 as success, domain, and reject (9 executions) while R2 stays success. `flight-pending-a-newer-b-keeps-focus` is one group and executes 6 times. `layoutCount` 9 is the separate viewport measurements, including 320 at root 32px.
+`behaviorCount` 22 is `evidence.scenarios.length`. It is not 22 executions and not an assertion count. The three `late-r1-success-domain-reject-r2-pending` groups execute 9 times with R2 armed success. `flight-pending-a-newer-b-keeps-focus` executes 6 times. `stay-current-owner-focus` executes 3 times. `stay-pending-a-newer-b-keeps-focus` executes 6 times. `layoutCount` 9 is separate, including 320 at root 32px.
 
 ## Findings
 
@@ -27,29 +27,19 @@ None found in the local proof.
 
 ### P2
 
-- `result.json` records `headAtRun` `9b11323dccf844d850dd444b1b4d205bf754109c`. The evidence commit does not change `components`, `lib`, or `scripts`. Product files remain `ecdaef7b`.
-- The result on `00c09935` reported empty `pageErrors` and `blockedRequests` from layout contexts only. That was not a behavior-session check. This rerun asserts and stores the behavior arrays separately. Both behavior and layout lists are empty.
-- Browser proof used Chrome `148.0.7778.96` after Playwright Chromium `chromium_headless_shell-1187` failed to launch. It is not native zoom and not a device.
-- CI, Preview, hosted account, and a screen reader were not run for `ecdaef7b` or for the evidence commit.
-- Live `origin/main` is `43124e28`. This branch was not rebased. Merge-base remains `0c37d318`.
+- Playwright's bundled Chromium did not launch. Chrome `148.0.7778.96` ran the harness, R103, and R104.
+- Native App/Auth/Vercel for the evidence SHA is not inside this commit. A green check on `b356fd9f` does not cover the evidence commit.
+- Geometry is CSS viewport and root font-size. Native zoom and a physical device were not used.
 
 ### P3
 
-- Lint on the runtime tree is exit 0 with 144 warnings and 0 errors. `FlugBestand.tsx` has none of them.
-- `check:schema-bezug` prints pre-existing LOCAL/UNAPPLIED RPC notes.
-- `check:setup` warned that this VM has no `.env`. The production build still exited 0.
-- caniuse-lite is 13 months old.
-- R103 and R104 `result.json` author strings are inherited. Historical evidence stayed byte-identical (16 files). R103 `wide-1280-pending.png` changed by a few bytes.
-- The first harness launch after the commit timed out in `awaitSuspend` while the production build was still running. The isolated rerun passed. That timeout is not recorded as a product failure.
+- Repo lint remains 0 errors and 144 warnings. None are in the stay or flight editor files.
+- `check:schema-bezug` prints the pre-existing LOCAL/UNAPPLIED RPC notes.
+- caniuse-lite is 13 months old. This VM has no `.env`. `check:setup` warns and continues.
+- R103 and R104 `result.json` author and session strings are inherited.
+- R103 `wide-1280-pending.png` changed by a few bytes. Its `result.json` did not.
+- Stay ownership advances only when the event is inside a different `[data-aufenthalt-editor]`. A keystroke in the saving editor does not drop that editor's own error focus. That keeps the existing same-editor domain case, which focuses Check-in while the save is pending and then expects the alert.
 
-## Behavior the author rechecked in evidence
+## Author conclusion
 
-- Pending A, edit B, cancel B: focus is B's `Flugroute ändern` button. After A's success callback and after A's graph, that same button still has focus. The selection sentence is absent. Row A shows `11:30`.
-- The same pending-A sequence with B left open keeps focus on B's departure input and keeps `12:00`.
-- Domain and reject, with B open and with B closed, show the domain or throw text, keep A's `11:30` draft, and do not move focus onto A's alert.
-- Same-row newer draft, completed-A-then-open-B, and ordinary saved-graph readback remain passing groups.
-- At 320 CSS px and root 32px, page `scrollWidth` is 320.
-
-## Not a pass
-
-Author self-review does not authorize Ready or merge.
+The local runtime proof for `b356fd9f` matches the three V4 corrections and the retained flight and diagnostic cases. Author does not mark Ready, merge, or close #998.

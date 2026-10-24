@@ -10,25 +10,28 @@ Branch: `fix/manual-journey-editor-completion-1`
 
 ## State
 
-Review fixes for Technical-Lead CODE REVIEW V3 are in the runtime commit below. This is not a Technical-Lead PASS, not Ready, and not merged.
+CODE REVIEW V4 repairs are in the runtime commit below. This is not a Technical-Lead PASS, not Ready, and not merged.
 
-- Binding TASK V1 and addendum V1 are unchanged.
-- Accepted plan remains `e763caa51b0213bd3c0e71afe948b00ab402eb5d`, blob `09d936699a0ba16ba035ceea74d6c00bb530bebd`.
-- Reviewed evidence head `52779d7f5307b7de5389e76e982c2eb208aa04c6`, tree `886ef27c9fd48cdb08c3d9bd10c88112d46dd28b`, is the parent of the product fix.
-- Product runtime head: `ecdaef7b7ecb24b34b3bc482810ed646a405c807`, tree `2169a040ae2b25d19f8a0fdd77c875603a660687`. `components` and `lib` are unchanged after that commit.
-- Harness head / `headAtRun`: `9b11323dccf844d850dd444b1b4d205bf754109c`, tree `e612aec3d10878322e789d6f7b47220b093605c2`. It records the behavior context's page errors and blocked requests separately from the layout contexts and asserts both empty.
-- Merge-base with live `origin/main` is still `0c37d318c47a758f06634448d6e0de3856bbc6a6`. The harness commit is **12 ahead** of that merge-base.
-- Live `origin/main` fetched this turn is `43124e28f0c2ac366d25a86787f055b885b1fc00`. Against that main the harness commit is **12 ahead / 16 behind**. This branch was not rebased. The evidence commit that adds this file is the harness commit's child.
-- `sourceSha256` binds the four implementation files. Their flight blob is still the `ecdaef7b` file.
+- TASK V1 blob `abf6f8f6edc3448b519c9b5370724cfac9b38f10`, accepted PLAN blob `09d936699a0ba16ba035ceea74d6c00bb530bebd`, and ADDENDUM V1 blob `d0bcd55c7feea575f44dc39e176f11d5a0d2cc9a` are unchanged.
+- ADDENDUM V2 blob `7ef1b8a9883e841b25f1df4e2f3483b26f756ede` is the fast-forwarded TL commit `a0106b362eb837107f43d05f307cf59cb0611e43`.
+- Accepted main `43124e28f0c2ac366d25a86787f055b885b1fc00` was merged with a normal merge. It was re-fetched before this handoff and is still that SHA. Merge-base is that main. No unexpected main commit appeared.
+- Runtime / harness `headAtRun`: `b356fd9ff1215174511bd59a0eddc27206e47f69`, tree `de25e46694a26405d9e3b7635fc0caf578a14cb7`.
+- Before this evidence commit the branch is **16 ahead / 0 behind** that main. The evidence commit is its child.
+- `sourceSha256` in the harness result binds the four implementation files at `b356fd9f`.
 
 ## Review findings addressed
 
-- C-P2-CODE-02: a flight save captures the surface generation before its callback. Settlement cannot adopt a newer generation. The editor's success, domain, and rejection paths move focus only when that generation is still current. The parent graph readback uses the same captured generation. A newer row interaction, including one that has already closed, keeps its control. The saved route still updates when the graph is delivered. The ordinary current-operation success path still focuses and publishes the selected-flight status.
-- C-P2-PROOF-03 counting: `behaviorCount` is the number of named scenario groups. It is not an execution count and not an assertion count. This head has 20 groups. Three of those groups each run success, domain, and reject for late R1 (9 executions). `flight-pending-a-newer-b-keeps-focus` is one group with 6 executions: success, domain, and reject, each with B open and B closed. `layoutCount` is 9 separate measurements.
-- P3 evidence accounting: the result on `00c09935` left `pageErrors` and `blockedRequests` empty because only the layout contexts were copied. That did not prove the behavior session. `9b11323d` keeps the behavior context, copies its arrays before close, and asserts them empty. Layout contexts are asserted and stored separately. The concatenated arrays are labeled as a concatenation.
+- C-P2-CODE-04: a stay save captures the manual-stay surface generation before its callback. A later interaction in a different manual stay editor advances that generation, so the older success, domain, and rejection paths do not move focus. The same editor still receives its own success button focus and its own error alert. The draft and the real outcome remain. Escape, Abbrechen, and the toggle still focus the trigger of the editor being closed.
+- C-P2-PROOF-04: `suspendRenders` is read before `suspendConnection` and `suspendFlightTrip`. `awaitSuspend` waits for an increase from that baseline. The committed-context assertions are unchanged.
+- C-P3-CONTEXT-05: `vorgabeSchluessel` JSON-encodes the existing normalized tuple. Schema-accepted presets `origin a\u001fb` / stage `c` and `origin a` / stage `b\u001fc` now have different keys. Identical presets keep the same key. The trip schema and character policy are unchanged.
+- P3 diagnostic separation from `9b11323d` remains. Behavior and layout lists are still stored and asserted separately.
+
+## Counting
+
+`behaviorCount` 22 is named scenario groups. It is not an execution count and not an assertion count. Three late-R1 groups execute 9 times. `flight-pending-a-newer-b-keeps-focus` executes 6 times. `stay-current-owner-focus` executes 3 times. `stay-pending-a-newer-b-keeps-focus` executes 6 times. `layoutCount` 9 is separate.
 
 ## Not claimed
 
-CI, Preview, hosted account, screen reader, native zoom, and a physical device are not verified for this head. Native CI `40106541141` is `c2220a1a` only. No database, provider, payment, or new cost. Author does not Ready, merge, close #998, rebase onto #999, or start a follow-up.
+Native App/Auth/Vercel for the evidence SHA starts when this commit is pushed. This file does not record that run. CI, Preview, a hosted account, a screen reader, native zoom, and a physical device are not a PASS inside this commit. No database, provider, payment, or new cost. Author does not Ready, merge, close #998, or start a follow-up.
 
 Next actor: Technical Lead, exact-head review of the evidence commit.

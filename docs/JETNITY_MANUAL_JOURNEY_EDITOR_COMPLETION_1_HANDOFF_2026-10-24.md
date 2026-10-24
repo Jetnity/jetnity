@@ -14,41 +14,35 @@ Branch: `fix/manual-journey-editor-completion-1`
 | | SHA |
 | --- | --- |
 | live `origin/main` | `43124e28f0c2ac366d25a86787f055b885b1fc00` |
-| merge-base | `0c37d318c47a758f06634448d6e0de3856bbc6a6` |
+| merge-base | `43124e28f0c2ac366d25a86787f055b885b1fc00` |
 | accepted plan | `e763caa51b0213bd3c0e71afe948b00ab402eb5d` |
-| CODE REVIEW V3 head | `52779d7f5307b7de5389e76e982c2eb208aa04c6` |
-| product runtime | `ecdaef7b7ecb24b34b3bc482810ed646a405c807` |
-| product tree | `2169a040ae2b25d19f8a0fdd77c875603a660687` |
-| harness / `headAtRun` | `9b11323dccf844d850dd444b1b4d205bf754109c` |
-| harness tree | `e612aec3d10878322e789d6f7b47220b093605c2` |
+| ADDENDUM V2 | `a0106b362eb837107f43d05f307cf59cb0611e43` |
+| CODE REVIEW V4 input | `be2c4932fc58d0bdca78e91cc7837a666201715f` |
+| runtime / `headAtRun` | `b356fd9ff1215174511bd59a0eddc27206e47f69` |
+| runtime tree | `de25e46694a26405d9e3b7635fc0caf578a14cb7` |
 | evidence head | the commit that adds this handoff |
 
-Fetched `origin/main` this turn. It is still `43124e28`. Merge-base is `0c37d318`. The harness commit is **12 ahead / 16 behind** live main and **12 ahead / 0 behind** the merge-base. Expected after the evidence commit: **13 ahead / 16 behind** live main. This branch was not rebased.
-
-Integration remains **A → C → B**. A is on main. B was not touched. Wait for an explicit Technical-Lead instruction before rebasing onto `43124e28`.
+`origin/main` was fetched again before this handoff. It is still `43124e28`. The merge-base is that commit. Before this evidence commit the branch is **16 ahead / 0 behind**. No rebase and no sibling merge. Integration remains **A → C → B**. B was not touched.
 
 ## What this head contains
 
-A pending flight save keeps the surface generation it had before its callback. The editor does not move focus for that save's success, domain error, or rejection when a newer flight-row interaction owns the surface. The graph readback uses the same captured generation. Ordinary current-operation success still focuses and selects. The connection alert is unchanged.
+A pending stay save keeps the surface generation it had before its callback. A different manual stay editor can take focus ownership. The same editor still receives success and error focus. Preset keys encode the normalized tuple. The suspend baseline is captured before the transition starts. The connection alert is unchanged.
 
 Connection hash: `75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a`.
 
+Unterkunft blob `72fb6146d72bb30cf796687620894a26a57dd25e`. Flight blob `a0d356466e9a28f31ae0249e42670bd099887b85`. Mobilitaet blob `a3b1fbac4494001daa3aef7da2b21c4106d3ceec`. Helper blob `4c141abbff7ce365167dd2df31bb1d59f3092757`.
+
 ## Proof executed
 
-- Focused node tests: 103 pass, 0 fail, on the runtime tree before `ecdaef7b`.
-- Harness: PASS, 20 named behavior groups, 9 layout measurements, Chrome 148.0.7778.96, port 37175, `headAtRun` `9b11323d`. The new group executes 6 times. The three late-R1 groups execute 9 times. Those counts are executions inside groups, not extra groups.
-- Behavior context: `behaviorPageErrors` and `behaviorBlockedRequests` asserted empty before close. Layout contexts: `layoutPageErrors` and `layoutBlockedRequests` asserted empty. The concatenated fields are not a behavior-only claim. The `00c09935` result did not record the behavior context.
-- R103 and R104 were not re-run for this accounting change. Their flight blob still matches `ecdaef7b`. Historical evidence was not rewritten.
-- On `ecdaef7b`: typecheck, lint (0 errors, 144 warnings), five hygiene guards, and production build exit 0. Those gates were not re-run for `9b11323d` and do not cover it. The evidence commit does not change `components`, `lib`, or `scripts`.
+- Focused node tests on `b356fd9f`: **104 pass / 0 fail**.
+- Harness: PASS, 22 named groups, 9 layout measurements, Chrome 148.0.7778.96, port 39311, `headAtRun` `b356fd9f`. Behavior and layout diagnostic arrays are empty.
+- R103 and R104: PASS under the lane evidence directories. Historical 16 files sha256-identical.
+- On `b356fd9f`: typecheck 0, lint 0 with 144 warnings, five guards 0, production build 0.
 
-## Not verified
+## Limits
 
-CI App/Auth/Vercel and Preview for this head. Hosted account, screen reader, native zoom, physical device, `db:*`, `auth:pruefen`. Playwright Chromium did not launch. Native CI `40106541141` is `c2220a1a` only. This branch is not synchronized with live main `43124e28`.
+Playwright Chromium did not launch. Native CI for the evidence SHA is the GitHub check on that commit, not a result stored here. Preview, hosted account, screen reader, native zoom, and a physical device are not verified. `db:*` and `auth:pruefen` were not run.
 
-## Findings
+## Stop
 
-P0 none. P1 none. P2: Chrome channel; CI/Preview/device/screen reader are not verified; live main has moved and this branch was not rebased. P3: repo lint warnings, schema-bezug notes, stale caniuse-lite, missing `.env`, inherited R103/R104 author strings, a few-byte R103 screenshot change, and one harness timeout while the build was running. The isolated harness rerun passed.
-
-## Next actor
-
-Technical Lead. Independent exact-head review of the evidence commit. Author does not Ready, merge, close #998, rebase, or start a follow-up.
+Author does not Ready, merge, close #998, or start a follow-up. Next actor is the Technical Lead.
