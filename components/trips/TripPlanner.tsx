@@ -17,7 +17,11 @@
 //
 // `clientRef` entsteht beim ersten Absenden und bleibt, bis das Formular
 // verlassen wird. Dadurch ist ein zweiter Anlauf nach einem Netzwerkabbruch
-// derselbe Vorgang und keine zweite Reise.
+// derselbe Vorgang und keine zweite Reise. Ein abgelehnter Aufruf ersetzt
+// die Kennung nicht.
+//
+// Solange der Versuch läuft, bleibt der abgeschickte Entwurf stehen. Ein
+// schon an das Konto gesendeter Aufruf wird nicht als abgebrochen behandelt.
 
 import * as React from 'react'
 import type { Route } from 'next'
@@ -76,6 +80,10 @@ import {
 } from '@/lib/trips/gastspeicher'
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
+import { usePlanningCreationLifecycle } from '@/components/trips/usePlanningCreationLifecycle'
+
+const TRANSPORT =
+  'Die Reise konnte gerade nicht erstellt werden. Deine Angaben bleiben hier. Bitte versuche es erneut.'
 
 type ZusaetzlichesZiel = {
   key: string
@@ -152,6 +160,8 @@ export default function TripPlanner({
   initialWeitereZiele = [],
 }: TripPlannerProps) {
   const router = useRouter()
+  const lifecycle = usePlanningCreationLifecycle()
+  const { laeuft } = lifecycle
   const handoff = tripPlannerRouteVorbelegen({
     destinationId: initialDestinationId,
     destination: initialDestination,
@@ -173,7 +183,6 @@ export default function TripPlanner({
   const [meldung, setMeldung] = React.useState('')
   const [feldfehler, setFeldfehler] = React.useState<Feldfehler<string>>({})
   const [bestehendeReise, setBestehendeReise] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState(false)
   const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | null>>>({})
   const zusaetzlicheFelder = React.useRef<Record<string, HTMLInputElement | null>>({})
   const anvisiert = React.useRef<string | null>(null)
@@ -210,6 +219,7 @@ export default function TripPlanner({
   }
 
   const extraHinzufuegen = () => {
+    if (lifecycle.gesperrt()) return
     if (!destinationOrt) return
     if (zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1) return
     const key = String(naechsterExtraKey.current)
@@ -218,12 +228,14 @@ export default function TripPlanner({
   }
 
   const extraEntfernen = (key: string) => {
+    if (lifecycle.gesperrt()) return
     setZusaetzlicheZiele((bisher) => bisher.filter((ziel) => ziel.key !== key))
     setFeldfehler((bisher) => feldfehlerLoeschen(bisher, zusaetzlichesZielFeld(key)))
     delete zusaetzlicheFelder.current[zusaetzlichesZielFeld(key)]
   }
 
   const extraNachOben = (index: number, fokus: 'mitgenommen' | 'zurueckgelassen' = 'mitgenommen') => {
+    if (lifecycle.gesperrt()) return
     if (index === 0) {
       const extra = zusaetzlicheZiele[0]
       if (!extra) return
@@ -266,6 +278,7 @@ export default function TripPlanner({
   }
 
   const extraNachUnten = (index: number) => {
+    if (lifecycle.gesperrt()) return
     if (index < 0 || index >= zusaetzlicheZiele.length - 1) return
     setZusaetzlicheZiele((bisher) => {
       const naechste = [...bisher]
@@ -282,7 +295,7 @@ export default function TripPlanner({
 
   const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    if (laeuft) return
+    if (lifecycle.gesperrt()) return
 
     const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
@@ -370,87 +383,102 @@ export default function TripPlanner({
       return
     }
 
-    setLaeuft(true)
-
-    const orte = await reiseorteBestaetigen({
-      zielId: geprueft.data.destinationPlaceId,
-      abreiseId: geprueft.data.originPlaceId,
-      weitereZielIds: geprueft.data.weitereDestinationPlaceIds,
-    })
-    if (!orte.ok) {
-      const extra =
-        orte.feld === 'destination' && typeof orte.zielIndex === 'number' && orte.zielIndex > 0
-          ? zusaetzlicheZiele[orte.zielIndex - 1]
-          : null
-      const amFeld: Feldfehler<string> = extra
-        ? { [zusaetzlichesZielFeld(extra.key)]: orte.meldung }
-        : orte.feld === 'origin' ||
-            orte.meldung === ORT_MELDUNG.abreiseFehlt ||
-            orte.meldung === ORT_MELDUNG.abreiseUnbekannt
-          ? { origin: orte.meldung }
-          : orte.feld === 'destination' ||
-              orte.meldung === ORT_MELDUNG.zielFehlt ||
-              orte.meldung === ORT_MELDUNG.zielUnbekannt
-            ? { destination: orte.meldung }
-            : {}
-      if (Object.keys(amFeld).length > 0) {
-        anvisiert.current = extra
-          ? zusaetzlichesZielFeld(extra.key)
-          : erstesFehlerfeld(amFeld, REISE_FORMULAR_FELDER)
-        setFeldfehler(amFeld)
-      } else {
-        setMeldung(orte.meldung)
-      }
-      setLaeuft(false)
-      return
-    }
-
-    if (angemeldet) {
-      const ergebnis = await reiseAnlegen({
-        ...geprueft.data,
-        title: orte.ziel.name,
-        destination: orte.ziel.name,
-        destinationPlaceId: orte.ziel.id,
-        weitereDestinationPlaceIds: orte.weitereZiele.map((ziel) => ziel.id),
-        origin: orte.abreise.name,
-        originPlaceId: orte.abreise.id,
-      })
-      if (!ergebnis.ok) {
-        setMeldung(ergebnis.meldung)
-        setLaeuft(false)
-        return
-      }
-      router.push(`/reisen/${ergebnis.wert}` as Route)
-      return
-    }
+    const lauf = lifecycle.beginnen()
+    if (lauf === null) return
+    const entwurf = geprueft.data
 
     try {
-      const reise = gastreiseAnlegen(geprueft.data, orte)
-      router.push(`/reisen/${reise.id}` as Route)
-    } catch (fehler) {
-      setLaeuft(false)
-      if (fehler instanceof GastreiseBestehtFehler) {
-        setBestehendeReise(fehler.bestehendeId)
-        setMeldung(fehler.message)
-        return
-      }
-      if (
-        fehler instanceof GastreiseUnbrauchbarFehler ||
-        fehler instanceof GastspeicherUnlesbarFehler ||
-        fehler instanceof GastreiseBelegtOhneKennungFehler
-      ) {
-        setBestehendeReise('')
-        setMeldung(fehler.message)
+      const orte = await reiseorteBestaetigen({
+        zielId: entwurf.destinationPlaceId,
+        abreiseId: entwurf.originPlaceId,
+        weitereZielIds: entwurf.weitereDestinationPlaceIds,
+      })
+      if (!lifecycle.aktuell(lauf)) return
+      if (!orte.ok) {
+        const extra =
+          orte.feld === 'destination' && typeof orte.zielIndex === 'number' && orte.zielIndex > 0
+            ? zusaetzlicheZiele[orte.zielIndex - 1]
+            : null
+        const amFeld: Feldfehler<string> = extra
+          ? { [zusaetzlichesZielFeld(extra.key)]: orte.meldung }
+          : orte.feld === 'origin' ||
+              orte.meldung === ORT_MELDUNG.abreiseFehlt ||
+              orte.meldung === ORT_MELDUNG.abreiseUnbekannt
+            ? { origin: orte.meldung }
+            : orte.feld === 'destination' ||
+                orte.meldung === ORT_MELDUNG.zielFehlt ||
+                orte.meldung === ORT_MELDUNG.zielUnbekannt
+              ? { destination: orte.meldung }
+              : {}
+        if (Object.keys(amFeld).length > 0) {
+          anvisiert.current = extra
+            ? zusaetzlichesZielFeld(extra.key)
+            : erstesFehlerfeld(amFeld, REISE_FORMULAR_FELDER)
+          setFeldfehler(amFeld)
+        } else {
+          setMeldung(orte.meldung)
+        }
+        lifecycle.beenden(lauf)
         return
       }
 
-      // Auch der Speicherfehler bleibt hier stehen: Kein `router.push` in einen
-      // Arbeitsbereich, dessen Reise nirgends liegt.
-      setMeldung(
-        fehler instanceof SpeicherFehler
-          ? fehler.message
-          : 'Die Reise konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
-      )
+      if (angemeldet) {
+        const ergebnis = await reiseAnlegen({
+          ...entwurf,
+          title: orte.ziel.name,
+          destination: orte.ziel.name,
+          destinationPlaceId: orte.ziel.id,
+          weitereDestinationPlaceIds: orte.weitereZiele.map((ziel) => ziel.id),
+          origin: orte.abreise.name,
+          originPlaceId: orte.abreise.id,
+        })
+        // Der Konto-Aufruf ist bereits unterwegs. Diese Oberfläche kann ihn
+        // nicht zurücknehmen; sie wendet nur noch ein lebendes Ergebnis an.
+        if (!lifecycle.aktuell(lauf)) return
+        if (!ergebnis.ok) {
+          setMeldung(ergebnis.meldung)
+          lifecycle.beenden(lauf)
+          return
+        }
+        router.push(`/reisen/${ergebnis.wert}` as Route)
+        return
+      }
+
+      if (!lifecycle.aktuell(lauf)) return
+      try {
+        const reise = gastreiseAnlegen(entwurf, orte)
+        if (!lifecycle.aktuell(lauf)) return
+        router.push(`/reisen/${reise.id}` as Route)
+      } catch (fehler) {
+        if (!lifecycle.aktuell(lauf)) return
+        lifecycle.beenden(lauf)
+        if (fehler instanceof GastreiseBestehtFehler) {
+          setBestehendeReise(fehler.bestehendeId)
+          setMeldung(fehler.message)
+          return
+        }
+        if (
+          fehler instanceof GastreiseUnbrauchbarFehler ||
+          fehler instanceof GastspeicherUnlesbarFehler ||
+          fehler instanceof GastreiseBelegtOhneKennungFehler
+        ) {
+          setBestehendeReise('')
+          setMeldung(fehler.message)
+          return
+        }
+
+        // Auch der Speicherfehler bleibt hier stehen: Kein `router.push` in einen
+        // Arbeitsbereich, dessen Reise nirgends liegt.
+        setMeldung(
+          fehler instanceof SpeicherFehler
+            ? fehler.message
+            : 'Die Reise konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
+        )
+      }
+    } catch {
+      if (!lifecycle.aktuell(lauf)) return
+      setMeldung(TRANSPORT)
+      lifecycle.beenden(lauf)
     }
   }
 
@@ -458,6 +486,7 @@ export default function TripPlanner({
     <div className="grid w-full min-w-0 grid-cols-1 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
       <form
         noValidate
+        aria-busy={laeuft}
         onSubmit={absenden}
         className="min-w-0 max-w-full rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
@@ -499,12 +528,14 @@ export default function TripPlanner({
                 value={destinationOrt}
                 initialText={destination}
                 inputId="feld-ziel"
+                disabled={laeuft}
                 ungueltig={Boolean(feldfehler.destination)}
                 describedBy={feldfehler.destination ? feldFehlerId('feld-ziel') : undefined}
                 inputRef={(el) => {
                   felder.current.destination = el
                 }}
                 onChange={(wert, roh) => {
+                  if (lifecycle.gesperrt()) return
                   setDestinationOrt(wert)
                   setDestination(wert?.name ?? roh)
                   if (wert) feldKorrigieren('destination')
@@ -519,8 +550,9 @@ export default function TripPlanner({
                 ref={primaerRunter}
                 id="ziel-reihenfolge-1-runter"
                 onClick={primaerNachUnten}
+                disabled={laeuft}
                 aria-label={`${destinationOrt?.name || destination || 'Reiseziel'}, Ziel 1, nach unten`}
-                className="inline-flex min-h-11 w-fit items-center justify-center gap-1 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="inline-flex min-h-11 w-fit items-center justify-center gap-1 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-40"
               >
                 <ChevronDown className="h-4 w-4" aria-hidden="true" />
                 Nach unten
@@ -540,12 +572,14 @@ export default function TripPlanner({
               variante="field"
               value={originOrt}
               inputId="feld-abreiseort"
+              disabled={laeuft}
               ungueltig={Boolean(feldfehler.origin)}
               describedBy={feldfehler.origin ? feldFehlerId('feld-abreiseort') : undefined}
               inputRef={(el) => {
                 felder.current.origin = el
               }}
               onChange={(wert, roh) => {
+                if (lifecycle.gesperrt()) return
                 setOriginOrt(wert)
                 setOrigin(wert?.name ?? roh)
                 if (wert) feldKorrigieren('origin')
@@ -577,12 +611,14 @@ export default function TripPlanner({
                       value={ziel.ort}
                       initialText={ziel.text}
                       inputId={`feld-ziel-${ziel.key}`}
+                      disabled={laeuft}
                       ungueltig={Boolean(fehler)}
                       describedBy={fehler ? feldFehlerId(`feld-ziel-${ziel.key}`) : undefined}
                       inputRef={(el) => {
                         zusaetzlicheFelder.current[feld] = el
                       }}
                       onChange={(wert, roh) => {
+                        if (lifecycle.gesperrt()) return
                         setZusaetzlicheZiele((bisher) =>
                           bisher.map((eintrag) =>
                             eintrag.key === ziel.key
@@ -602,8 +638,9 @@ export default function TripPlanner({
                       ref={index === 0 ? extraHoch : undefined}
                       id={index === 0 ? 'ziel-reihenfolge-2-hoch' : undefined}
                       onClick={() => extraNachOben(index)}
+                      disabled={laeuft}
                       aria-label={`${ziel.ort?.name || ziel.text || `Weiteres Ziel ${nummer}`}, Ziel ${nummer + 1}, nach oben`}
-                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-40"
                     >
                       <ChevronUp className="h-4 w-4" aria-hidden="true" />
                       Nach oben
@@ -611,7 +648,7 @@ export default function TripPlanner({
                     <button
                       type="button"
                       onClick={() => extraNachUnten(index)}
-                      disabled={index >= zusaetzlicheZiele.length - 1}
+                      disabled={laeuft || index >= zusaetzlicheZiele.length - 1}
                       aria-label={`${ziel.ort?.name || ziel.text || `Weiteres Ziel ${nummer}`}, Ziel ${nummer + 1}, nach unten`}
                       className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-40"
                     >
@@ -621,8 +658,9 @@ export default function TripPlanner({
                     <button
                       type="button"
                       onClick={() => extraEntfernen(ziel.key)}
+                      disabled={laeuft}
                       aria-label={`Weiteres Ziel ${nummer} entfernen`}
-                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-40"
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                       Entfernen
@@ -636,7 +674,7 @@ export default function TripPlanner({
               <button
                 type="button"
                 onClick={extraHinzufuegen}
-                disabled={!destinationOrt || zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1}
+                disabled={laeuft || !destinationOrt || zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1}
                 aria-describedby="weitere-ziele-hinweis"
                 className="inline-flex min-h-11 w-fit items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-50"
               >
@@ -672,7 +710,9 @@ export default function TripPlanner({
               aria-invalid={Boolean(feldfehler.startDate) || undefined}
               aria-describedby={feldfehler.startDate ? feldFehlerId('feld-start') : undefined}
               aria-required="true"
+              disabled={laeuft}
               onChange={(ereignis) => {
+                if (lifecycle.gesperrt()) return
                 setStartDate(ereignis.target.value)
                 feldKorrigieren('startDate')
                 if (endDate && ereignis.target.value > endDate) {
@@ -704,7 +744,9 @@ export default function TripPlanner({
               aria-invalid={Boolean(feldfehler.endDate) || undefined}
               aria-describedby={feldfehler.endDate ? feldFehlerId('feld-ende') : undefined}
               aria-required="true"
+              disabled={laeuft}
               onChange={(ereignis) => {
+                if (lifecycle.gesperrt()) return
                 setEndDate(ereignis.target.value)
                 feldKorrigieren('endDate')
               }}
@@ -736,7 +778,9 @@ export default function TripPlanner({
               aria-invalid={Boolean(feldfehler.travellers) || undefined}
               aria-describedby={feldfehler.travellers ? feldFehlerId('feld-reisende') : undefined}
               aria-required="true"
+              disabled={laeuft}
               onChange={(ereignis) => {
+                if (lifecycle.gesperrt()) return
                 const roh = ereignis.target.value
                 if (roh === '') {
                   setTravellers('')
@@ -769,7 +813,9 @@ export default function TripPlanner({
               value={budget}
               aria-invalid={Boolean(feldfehler.budget) || undefined}
               aria-describedby={feldfehler.budget ? feldFehlerId('feld-budget') : undefined}
+              disabled={laeuft}
               onChange={(ereignis) => {
+                if (lifecycle.gesperrt()) return
                 setBudget(ereignis.target.value)
                 feldKorrigieren('budget')
               }}
@@ -785,7 +831,11 @@ export default function TripPlanner({
           Was ist dir bei dieser Reise besonders wichtig?
           <textarea
             value={travelWish}
-            onChange={(ereignis) => setTravelWish(ereignis.target.value)}
+            disabled={laeuft}
+            onChange={(ereignis) => {
+              if (lifecycle.gesperrt()) return
+              setTravelWish(ereignis.target.value)
+            }}
             rows={4}
             maxLength={GRENZEN.reisewunsch}
             placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."

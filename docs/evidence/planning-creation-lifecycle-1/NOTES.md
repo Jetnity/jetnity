@@ -1,0 +1,20 @@
+# Planning Creation Lifecycle 1 — proof notes
+
+Executed at proof head `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`.
+`result.json` sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`.
+25 mounted cases, `failed: 0`, `pageErrors: []`.
+
+Command: `PLANNING_CREATION_CHROMIUM=<Chromium executable> node scripts/planning-creation-lifecycle-1/run.mjs`.
+This run supplied Playwright Chromium 140.0.7339.16 (build v1187). `PLANNING_CREATION_ARTIFACT_DIR` was not set. `outputs.artifactCopy` is `not-requested`. Evidence defaulted to `docs/evidence/planning-creation-lifecycle-1`. Scratch was `node:os.tmpdir`.
+
+Without `PLANNING_CREATION_CHROMIUM` the same command exits 1 and does not read or rewrite `result.json`. That is a failed proof, not a skip. `npm test` does not launch this runner.
+
+The runner mounts the real `TripPlanner` and `Reiseidee` with compiled `styles/globals.css`. Guest `gastreiseAnlegen`, `gastreiseAblegen` and `vorschlagAlsReise` run. These boundaries are stubs:
+
+- `next/navigation` and `next/link`
+- `reiseorteBestaetigen`
+- `reiseAnlegen`
+- `vorschlagErzeugen`, `vorschlagUebernehmen`, `vorschlagOrteAufloesen`
+- same-origin synthetic `GET /api/search/places`
+
+No hosted account, personal browser profile, model call or Production write. Screenshots are the filled manual form at 320, 390, 1280 and 320 with a 32px root font, plus the proposal preview at 320 and 1280. Measured horizontal overflow is 0 in `result.json`.
