@@ -16,9 +16,10 @@ This report is not Technical-Lead PASS.
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
 | Addendum V2 | `83c64c7c093b3024c4da13aa72502f39872d688e`, blob `8cff61c42d3b341aeee67ec4cb48bfa2999b4271` (unchanged) |
-| Superseded review head | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` |
-| Ahead / behind after this delivery, including R1 and the V2 facade | 8 / 0 |
-| Final head | Commit that contains CHANGES REQUIRED R1 and addendum V2. PR comment records `git rev-parse HEAD` after push. |
+| Addendum V3 | `2dcc1e5475fb4a70b9b3c89fed2497ab79e1acc3`, blob `e7d6fb1ff65c45238d7d74c752b5e65c8184ac9f` (unchanged) |
+| Superseded review heads | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `f2d8f7e4d94c0a9659652c025b7852862e0b4953` |
+| Ahead / behind after this R2 delivery | 10 / 0 |
+| Final head | Adapter commit after addendum V3. PR comment records `git rev-parse HEAD` after push. f2 App CI is the failure, not a gate. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` (unchanged) |
 | Node | v22.23.4 |
 | Mode | `NORMAL` |
@@ -132,6 +133,14 @@ Performance: an invalid observation is one occupancy read of the active key plus
 ## Database, cost, documentation
 
 No migration, RLS, or generated type change. No new running cost. Documentation added is this slice's PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF, and the evidence notes. Global current-state files stay untouched.
+
+## R2 adapter correction
+
+No runtime change. The guest half of the two wiring tests now supplies five settled slots and an import-level no-op for `useGastLeseFokus`. It asserts `workspace.type` is the loaded `TripWorkspace` default export before reading `onFlugRouteManuell` or `onUnterkunftZeitraum`. The existing payload, persisted-graph, failure-message, one-write, account refresh, invalidation, and source-forwarding assertions are still in those tests. `laden()` and the account `laden` calls are untouched.
+
+Combined command on this tree: the two full files plus `guest-trip-read-recovery-1.test.ts`, `gastspeicher.test.ts`, `guest-active-draft-preservation.test.ts`, `create-entry.test.ts`, and `gast-reisen-cta.test.ts`. Result: 267 tests, 39 suites, 0 fail.
+
+The mounted proof is the f2 harness. First execution failed one focus assertion (`BODY`, unreadable copy already visible). Immediate rerun: PASS 12/12, empty page errors, empty external requests. Evidence bytes were not updated for the local port or screenshot drift.
 
 ## Facade scope
 

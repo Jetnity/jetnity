@@ -18,9 +18,10 @@ Branch: `fix/guest-trip-read-recovery-1`
 - Seed: `de51604c832061ffd18f5742766d5da83cd7caae`
 - Plan commit: `de65696cc4233beb4dab02f04fefb31f7c1d8973`
 - Addendum V2: `83c64c7c093b3024c4da13aa72502f39872d688e`, blob `8cff61c42d3b341aeee67ec4cb48bfa2999b4271`. Not edited.
-- Superseded review head: `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`. Intermediate `8f954a46475fc4666593d6fd2667d3ef979f88e9` stopped before the loader and dropped the queue.
-- Ahead/behind after this delivery, including the R1 commits and the V2 facade: 8 / 0
-- Final head: the commit that contains addendum V2 plus the R1 corrections. The PR comment records `git rev-parse HEAD` after push.
+- Addendum V3: `2dcc1e5475fb4a70b9b3c89fed2497ab79e1acc3`, blob `e7d6fb1ff65c45238d7d74c752b5e65c8184ac9f`. Not edited. Parent is `f2d8f7e4d94c0a9659652c025b7852862e0b4953`.
+- Superseded review heads: `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `f2d8f7e4d94c0a9659652c025b7852862e0b4953`. App CI on f2 failed the two workspace-wiring adapters.
+- Ahead/behind after this R2 delivery: 10 / 0
+- Final head: the commit that adapts the two guest workspace tests. The PR comment records `git rev-parse HEAD` after push. f2 does not gate this head.
 - TASK V1 blob, unchanged: `9a089b26a6892ede8f235692b92f72dc225df147`
 - Mode: `NORMAL`. This slice does not cross a special Product-Owner gate.
 - Lane B of the finite R104 batch. Integration remains B → A → C. Lanes A and C are already active on their own branches. This lane does not integrate them. `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, and #751 are not edited.
@@ -37,7 +38,9 @@ The guest list and the first workspace read no longer treat every empty loader r
 
 ## Verified locally on this tree
 
-Focused storage regressions 192/192, including 22 tests in the new file. Mounted proof PASS 12/12, `pageErrors` empty, `externalRequests` empty. `npm run typecheck` exit 0. Targeted eslint `--max-warnings 0` exit 0 on the slice files other than `gastspeicher.ts`. That file reports four pre-existing unused-parameter warnings outside the additive wrapper; those lines are unchanged. Production build, full eslint, and hygiene checks were not repeated on this head. Full `npm test`, exact-head CI, and Preview of this head are not verified.
+The two full wiring files plus the previous focused set: 267 tests, 0 fail. `npm run typecheck` exit 0. Eslint `--max-warnings 0` exit 0 on the two adapter files. The unchanged mounted proof passed 12/12 on the second run, with empty `pageErrors` and `externalRequests`. The first run of that same proof failed one unchanged-error focus assertion while the button was already back and focus was still on `BODY`; no production file changed between the runs. Production build, full eslint, and hygiene checks were not repeated. Full `npm test` was not run locally. Exact-head CI and Preview of this head are not verified.
+
+R2 changes only the guest adapters in `lib/trips/flug-manuell.test.ts` and `lib/trips/unterkunft-manuell.test.ts`. Runtime files are unchanged from f2.
 
 ## Not verified here
 

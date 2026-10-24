@@ -48,9 +48,13 @@ Failure stays on the device: recheck reads again, and the tests that forbid writ
 
 `npm run build` and full `npx eslint .` were not repeated on this head. On superseded `7e7a2e4b`, the build exited 0 and full eslint exited 0 with 144 warnings and 0 errors. Full `npm test` remains not run. `gastspeicher.ts` has four pre-existing unused-parameter warnings outside the wrapper.
 
+## R2 scope
+
+App CI on `f2d8f7e4` failed two guest adapters, not the runtime. This correction changes only those adapters. The focus hook seam is a no-op at the `GastReiseLesefehler` import. It does not stub React globally and does not claim to prove focus. The five state values are the settled matching trip. The callback is taken from the child only after `workspace.type` equals the loaded `TripWorkspace`. Account assertions, `laden()`, and production files are unchanged. The combined run is 267/267. One mounted focus assertion failed and the rerun passed 12/12; I did not change the harness to hide that.
+
 ## Git at this review
 
-Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. Addendum V2 `83c64c7c093b3024c4da13aa72502f39872d688e`. Reviewed head `7e7a2e4b` is superseded. After this delivery the branch is 8 ahead / 0 behind. The PR comment has the exact SHA after push. R104 lanes A and C are already active; this lane does not integrate them. Order remains B → A → C.
+Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. Addendum V2 `83c64c7c093b3024c4da13aa72502f39872d688e`. Addendum V3 `2dcc1e5475fb4a70b9b3c89fed2497ab79e1acc3`. Heads `7e7a2e4b` and `f2d8f7e4` are superseded. After this R2 delivery the branch is 10 ahead / 0 behind. The PR comment has the exact SHA after push. R104 lanes A and C are already active; this lane does not integrate them. Order remains B → A → C.
 
 ## Stop
 

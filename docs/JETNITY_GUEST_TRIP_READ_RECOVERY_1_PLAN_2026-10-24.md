@@ -106,3 +106,11 @@ Technical Lead addendum `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_TASK_ADDENDUM_V
 The early stop before `gastspeicherLaden()` stays. One new export, `gastspeicherWarteschlangeLesen()`, returns the existing private `bestandWarteschlange()` and nothing else. It does not read the active or legacy key, and it does not call the loader, migrate, set, remove, clear, or adopt. Invalid occupancy uses that wrapper, so the list and workspace show the accepted queue beside the invalid-active error, with no create permission and no fabricated continuation. Unreadable occupancy does not call the wrapper and is not shown as absence. A later explicit recheck may observe a new state, including migration when the active key is then absent.
 
 The private reader, every previous export, the parser, keys, formats, limits, occupancy, loader, legacy migration, and every mutation function stay textually unchanged apart from this additive function.
+
+## Addendum V3 after 2dcc1e54
+
+Technical Lead addendum `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_TASK_ADDENDUM_V3_2026-10-24.md`, blob `e7d6fb1ff65c45238d7d74c752b5e65c8184ac9f`, commit `2dcc1e5475fb4a70b9b3c89fed2497ab79e1acc3`. This file is not edited. It does not change runtime.
+
+App CI on `f2d8f7e4` failed because the two existing workspace-wiring tests evaluate `GastArbeitsbereich` with a parent-only React substitute. `useGastLeseFokus` then calls real `useRef` with no renderer. The guest state fixture was still three values, and the callback was read from the focus wrapper.
+
+The correction stays inside the guest adapters of `lib/trips/flug-manuell.test.ts` and `lib/trips/unterkunft-manuell.test.ts`. The import seam replaces only `useGastLeseFokus` with a no-op for those two tests. The five state slots are the matching trip, a `passend` reading of that same id, the requested id, the recheck counter, and the storage message. The test checks that the single child is the actual `TripWorkspace` before it calls that child's callback. Account adapters, `laden()`, and production modules stay as they were.

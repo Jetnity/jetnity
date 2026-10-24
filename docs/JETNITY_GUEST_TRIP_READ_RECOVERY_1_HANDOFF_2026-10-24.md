@@ -20,9 +20,10 @@ The self-review is not Technical-Lead PASS.
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
 | Addendum V2 | `83c64c7c093b3024c4da13aa72502f39872d688e`, blob `8cff61c42d3b341aeee67ec4cb48bfa2999b4271`, not edited |
-| Superseded review head | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` |
-| Ahead / behind after this delivery | 8 / 0 |
-| Final head | The commit that contains CHANGES REQUIRED R1 and addendum V2. The PR comment records `git rev-parse HEAD` after push. Do not treat `7e7a2e4b`, `8f954a46`, `de65696c`, or an older Preview as the gate for this head. |
+| Addendum V3 | `2dcc1e5475fb4a70b9b3c89fed2497ab79e1acc3`, blob `e7d6fb1ff65c45238d7d74c752b5e65c8184ac9f`, not edited |
+| Superseded review heads | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `f2d8f7e4d94c0a9659652c025b7852862e0b4953` |
+| Ahead / behind after this R2 delivery | 10 / 0 |
+| Final head | The adapter commit after addendum V3. The PR comment records `git rev-parse HEAD` after push. Do not treat `f2d8f7e4`, `7e7a2e4b`, `8f954a46`, or an older Preview as the gate for this head. App CI on f2 is the failure this head answers, not a pass. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` |
 | `gastspeicher.ts` blob | `39b75a606c5ae68f64dbd6c3968198d6c0ec3929` (baseline `1964cfc9b78f7361e23ff6fb9ccd64dbd3491399` plus the wrapper only) |
 | `create-entry.ts` blob | `eac2e408a74bf9b8174b6e3d5b74c5da80c02651` (unchanged) |
@@ -46,6 +47,10 @@ If `origin/main` moves before review, do not silent-rebase. Technical Lead direc
 - `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_REPORT_2026-10-24.md`
 - `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_SELF_REVIEW_2026-10-24.md`
 - `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_HANDOFF_2026-10-24.md`
+- `lib/trips/flug-manuell.test.ts` — guest adapter only
+- `lib/trips/unterkunft-manuell.test.ts` — guest adapter only
+
+R2 does not change production, `laden()`, the account adapters, or the mounted harness.
 
 ## What the Technical Lead is reviewing
 
@@ -55,7 +60,19 @@ Acceptance matrix, failure modes, and the truth/privacy/security/accessibility/p
 
 ## Executed versus not verified
 
-Executed on this tree before the commit: 22 storage tests in the new file, inside a 192/192 focused regression; mounted proof PASS 12/12, Chrome 148.0.7778.96, including the queued draft beside the invalid-active list error, unchanged-error keyboard focus for both surfaces, Enter and Space, invalid and unreadable, plus recovery and a deliberate focus move. `pageErrors` empty. Unexpected requests outside the local origin are aborted, recorded, and fail the proof; this run recorded none. `npm run typecheck` exit 0. Targeted eslint `--max-warnings 0` exit 0 on the changed slice files other than `lib/trips/gastspeicher.ts`.
+App CI on f2, run 40087269667 job 120852780101: 7173 tests, 7169 pass, 2 fail, 2 existing skips. Both failures are the guest adapters in the two wiring files (`useRef` of `null` inside `useGastLeseFokus`).
+
+Executed on this tree before the R2 commit:
+
+```
+node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/flug-manuell.test.ts lib/trips/unterkunft-manuell.test.ts lib/trips/guest-trip-read-recovery-1.test.ts lib/trips/gastspeicher.test.ts lib/trips/guest-active-draft-preservation.test.ts lib/trips/create-entry.test.ts lib/trips/gast-reisen-cta.test.ts
+```
+
+267 tests, 39 suites, 0 fail. That includes both complete wiring files, not only the two previously failing tests.
+
+`npm run typecheck` exit 0. `npx eslint --max-warnings 0 lib/trips/flug-manuell.test.ts lib/trips/unterkunft-manuell.test.ts` exit 0.
+
+Unchanged mounted proof `node scripts/guest-trip-read-recovery-1/run.mjs`: the first run failed `tastatur-fokus-nach-pruefung` once, with focus still on `BODY` while the unreadable copy and the recheck button were already present. The immediate rerun passed 12/12. Both runs used the same production tree as f2. The passing run recorded empty `pageErrors` and empty `externalRequests`. Evidence files were left at the f2 proof: the only result delta was the ephemeral local port, plus two screenshot byte drifts. Those were not committed.
 
 `npx eslint lib/trips/gastspeicher.ts` reports four pre-existing `@typescript-eslint/no-unused-vars` warnings at lines 935 and 990–992. The diff does not touch those lines. They were not rewritten, because addendum V2 keeps every existing function textually unchanged.
 
@@ -73,6 +90,7 @@ No-hosted / no-provider boundary: synthetic local Playwright and in-memory `loca
 - P2: full local `npm test` was not run.
 - P3: caniuse-lite age warning during the proof CSS compile. No dependency edit.
 - P3: keyboard and reflow evidence is desktop Chrome, not a device or a screen reader.
+- P3: one unchanged-error focus assertion in the mounted proof observed `BODY` before the restore effect. The rerun passed. These two unit adapters do not prove that focus behavior.
 
 ## Boundaries kept
 
