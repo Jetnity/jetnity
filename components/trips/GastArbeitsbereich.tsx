@@ -5,9 +5,14 @@
 // Der Arbeitsbereich einer Gastreise.
 //
 // Die Reise liegt im `localStorage`, und der `localStorage` existiert erst im
-// Browser: Diese Komponente lädt sie deshalb im Effekt und nicht beim Rendern.
+// Browser: Diese Komponente liest sie deshalb im Effekt und nicht beim Rendern.
 // Der Ladezustand ist echt und keine Verzierung – ohne ihn zeigte der erste
 // Rahmen „Diese Reise gibt es nicht“, bevor er sie gefunden hat.
+//
+// Unlesbare oder ungültige Bytes sind kein leerer Entwurf. Eine andere gültige
+// Reise wird nicht eingesetzt. Wechselt die angeforderte Kennung, fällt der
+// vorherige Entwurf vor dem nächsten Bild weg. Die Änderungsfunktionen darunter
+// bleiben unverändert.
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -22,6 +27,16 @@ import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
+  GastReiseAndere,
+  GastReiseLesefehler,
+  GastReiseLeseWarte,
+} from '@/components/trips/GastReiseLesefehler'
+import {
+  gastArbeitsbereichBeobachten,
+  gastArbeitsbereichDarfErstellen,
+  type GastArbeitsbereichLesung,
+} from '@/components/trips/gast-reise-lesezustand'
+import {
   gastAktivitaetUebernehmen,
   gastBuchungsstatusSetzen,
   gastFlugRouteManuellSetzen,
@@ -33,7 +48,6 @@ import {
   gastPlanpunktEntfernen,
   gastUnterkunftZeitraumSetzen,
   gastreiseEntfernen,
-  gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
@@ -49,12 +63,39 @@ import type { Trip } from '@/types/trips'
 export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const router = useRouter()
   const [reise, setReise] = React.useState<Trip | null>(null)
-  const [geladen, setGeladen] = React.useState(false)
+  const [lese, setLese] = React.useState<GastArbeitsbereichLesung>({ art: 'nicht_beobachtet' })
+  const [bezogen, setBezogen] = React.useState(tripId)
+  const [pruefung, setPruefung] = React.useState(0)
   const [speicherfehler, setSpeicherfehler] = React.useState('')
+
+  if (bezogen !== tripId) {
+    setBezogen(tripId)
+    setLese({ art: 'nicht_beobachtet' })
+    setReise(null)
+    setSpeicherfehler('')
+  }
+
   React.useEffect(() => {
-    setReise(gastreiseLadenNach(tripId))
-    setGeladen(true)
-  }, [tripId])
+    let lebend = true
+    const ergebnis = gastArbeitsbereichBeobachten(tripId)
+    if (lebend) {
+      // Same browser read as the list. A valid legacy migration may write once,
+      // so this cannot move into render or into a pure snapshot.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLese(ergebnis)
+      setReise(ergebnis.art === 'passend' ? ergebnis.reise : null)
+    }
+    return () => {
+      lebend = false
+    }
+  }, [tripId, pruefung])
+
+  const erneut = () => {
+    setLese({ art: 'nicht_beobachtet' })
+    setReise(null)
+    setSpeicherfehler('')
+    setPruefung((wert) => wert + 1)
+  }
 
   const anlegen = async (tagId: string, eingabe: PlanpunktFormular) => {
     if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
@@ -107,45 +148,77 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
     router.replace('/reisen')
   }
 
-  if (!geladen) {
+  if (lese.art === 'nicht_beobachtet' || (lese.art === 'passend' && !reise)) {
     return (
-      <div aria-busy="true" className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <div className="h-48 animate-pulse rounded-[30px] bg-white/70" />
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <div className="h-96 animate-pulse rounded-[26px] bg-white/70" />
-          <div className="h-96 animate-pulse rounded-[26px] bg-white/70" />
+      <GastReiseLeseWarte className="mx-auto min-w-0 max-w-7xl px-4 py-10 sm:px-6" />
+    )
+  }
+
+  if (lese.art === 'andere_reise') {
+    return (
+      <div className="mx-auto min-w-0 max-w-2xl px-4 py-16 sm:px-6">
+        <GastReiseAndere id={lese.id} titelText={lese.titel} />
+      </div>
+    )
+  }
+
+  if (lese.art === 'fehlend') {
+    return (
+      <div
+        data-gast-leseart="fehlend"
+        className="mx-auto min-w-0 max-w-2xl px-4 py-20 text-center sm:px-6"
+      >
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+          <MapPin className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <h1 className="mt-5 min-w-0 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 [overflow-wrap:anywhere]">
+          Diese Reise ist auf diesem Gerät nicht verfügbar.
+        </h1>
+        <p className="mt-3 break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
+          Ohne Konto liegt ein Reiseentwurf nur im Browser, in dem er entstanden ist. Melde dich an, um
+          deine Reisen auf jedem Gerät zu sehen.
+        </p>
+        <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <Link
+            href="/reisen"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-300 bg-white px-5 text-center text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
+          >
+            Meine Reisen
+          </Link>
+          {gastArbeitsbereichDarfErstellen(lese) ? (
+            <GastCreateLink
+              createHref="/planen"
+              createLabel="Reise erstellen"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-brand-800 px-5 text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
+            />
+          ) : null}
         </div>
+      </div>
+    )
+  }
+
+  if (
+    lese.art === 'speicher_unlesbar' ||
+    lese.art === 'ungueltig' ||
+    lese.art === 'abweichend' ||
+    lese.art === 'belegt_ohne_kennung'
+  ) {
+    return (
+      <div className="mx-auto min-w-0 max-w-2xl px-4 py-16 sm:px-6">
+        <GastReiseLesefehler
+          art={lese.art}
+          ebene="h1"
+          listenLink
+          onPruefen={erneut}
+          warteschlange={lese.art === 'ungueltig' ? lese.warteschlange : []}
+        />
       </div>
     )
   }
 
   if (!reise) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-          <MapPin className="h-5 w-5" />
-        </span>
-        <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-brand-800">
-          Diese Reise ist auf diesem Gerät nicht verfügbar.
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-ink-700">
-          Ohne Konto liegt ein Reiseentwurf nur im Browser, in dem er entstanden ist. Melde dich an, um
-          deine Reisen auf jedem Gerät zu sehen.
-        </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/reisen"
-            className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-5 text-sm font-semibold text-brand-800"
-          >
-            Meine Reisen
-          </Link>
-          <GastCreateLink
-            createHref="/planen"
-            createLabel="Reise erstellen"
-            className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white"
-          />
-        </div>
-      </div>
+      <GastReiseLeseWarte className="mx-auto min-w-0 max-w-7xl px-4 py-10 sm:px-6" />
     )
   }
 

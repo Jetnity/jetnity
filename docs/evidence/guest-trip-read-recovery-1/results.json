@@ -1,0 +1,147 @@
+{
+  "author": "Jetnity Guest Trip Read Recovery 1 — Cursor Generation 1",
+  "session": "bc-2806475d-7ee4-40d0-980e-1d26bcb5b270",
+  "model": "grok-4.7-high-fast",
+  "origin": "http://127.0.0.1:36111",
+  "boundary": "Synthetic isolated local Playwright. Real GastReisen and GastArbeitsbereich with real gastspeicher and create-entry. next/link, next/navigation, next/dynamic, next/cache, next/headers and server-only are harness shims so the components mount outside Next. No hosted account, personal browser, provider, or model call.",
+  "sources": {
+    "components/trips/GastReisen.tsx": {
+      "sha256": "93a5148bad24c23e677f9026ba61f0f75d1bf327ec27ddecb1ffd92e1b8d29dc",
+      "blob": "90b8302841283b8b1f7c48d0dd017a00ee9598c5"
+    },
+    "components/trips/GastArbeitsbereich.tsx": {
+      "sha256": "65e8656d7620e8704b5ce34a80fb023c7da830d4124cff2b34153be81fd4dac7",
+      "blob": "dd2580806ead3b786f5e62cf7f3b1243532d0f48"
+    },
+    "components/trips/gast-reise-lesezustand.ts": {
+      "sha256": "b737bcf584ca6774b84468970281fbd0587c59d6619709f2d300b92764b3fe6f",
+      "blob": "77fef997ee3ca26f947a2e5278f4984a06f4d76e"
+    },
+    "components/trips/GastReiseLesefehler.tsx": {
+      "sha256": "4c2d7cce2f4ddb8a03f478d44e3f458a173bf71b6748acfef8dd7c1f6c4c1ba5",
+      "blob": "ce899f1c4209d3db6476e2df2399e23aa5c3e381"
+    },
+    "lib/trips/gastspeicher.ts": {
+      "sha256": "de8ed749e69170ee902fa1042be26b05e80313da22afda2a5de65b8160e9c980",
+      "blob": "1964cfc9b78f7361e23ff6fb9ccd64dbd3491399"
+    },
+    "lib/trips/create-entry.ts": {
+      "sha256": "23eefbdc445a94041c149da4debd78462315aa4a6a74e15c8564a6f3748c2d85",
+      "blob": "eac2e408a74bf9b8174b6e3d5b74c5da80c02651"
+    }
+  },
+  "scenarios": [
+    {
+      "name": "liste-abwesend-nach-laden",
+      "pass": true,
+      "detail": {
+        "art": "fehlend",
+        "loadingFrames": 1
+      }
+    },
+    {
+      "name": "liste-ungueltig-ohne-erste-reise",
+      "pass": true,
+      "detail": {
+        "writes": 0,
+        "overflow": {
+          "scroll": 320,
+          "client": 320,
+          "knopf": {
+            "width": 270,
+            "height": 44,
+            "left": 25,
+            "right": 295
+          }
+        }
+      }
+    },
+    {
+      "name": "liste-unlesbar-und-erneut",
+      "pass": true,
+      "detail": {
+        "writes": 0
+      }
+    },
+    {
+      "name": "liste-ungueltig-zu-gueltig-und-abwesend",
+      "pass": true,
+      "detail": {
+        "writesValid": 0,
+        "writesAbsent": 0
+      }
+    },
+    {
+      "name": "liste-warteschlange-und-legacy",
+      "pass": true,
+      "detail": {
+        "queueWrites": 0,
+        "legacyWrites": 3
+      }
+    },
+    {
+      "name": "tastatur-erneut-pruefen",
+      "pass": true,
+      "detail": {
+        "text": "Erneut prüfen",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "name": "arbeitsbereich-andere-und-passend",
+      "pass": true,
+      "detail": {
+        "writes": 0
+      }
+    },
+    {
+      "name": "arbeitsbereich-tripwechsel-ohne-alten-titel",
+      "pass": true,
+      "detail": {
+        "frames": 5,
+        "loadingWithoutPrevious": 2
+      }
+    },
+    {
+      "name": "arbeitsbereich-ungueltig-und-abwesend",
+      "pass": true,
+      "detail": {
+        "writes": 0
+      }
+    },
+    {
+      "name": "reflow-200",
+      "pass": true,
+      "detail": {
+        "narrow": {
+          "scroll": 320,
+          "client": 320,
+          "knopf": {
+            "width": 222,
+            "height": 88,
+            "left": 49,
+            "right": 271
+          }
+        },
+        "wide": {
+          "scroll": 1280,
+          "client": 1280,
+          "knopf": {
+            "width": 276,
+            "height": 88,
+            "left": 502,
+            "right": 778
+          }
+        }
+      }
+    }
+  ],
+  "pageErrors": [],
+  "browser": {
+    "channel": "chrome",
+    "version": "148.0.7778.96"
+  },
+  "status": "PASS",
+  "passed": 10,
+  "failed": 0
+}
