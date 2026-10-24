@@ -91,3 +91,10 @@ Focused `guest-trip-read-recovery-1` tests, guest storage/create-entry regressio
 ## Boundaries
 
 Do not mark Ready. Do not merge. Do not close #991. Do not start a follow-up slice. Do not sync `main` or edit #751. #985/#982 scoped HOLD, #917 denied hosted readback, #968 cleanup PAUSE, and #748 personal-browser suspension stay untouched. Self-review is not Technical-Lead PASS. A new head invalidates earlier gates.
+
+## Review correction after de65696c
+
+Technical Lead review of this plan, same session, two acceptance points. The steps above stay as the pre-code proposal. The implementation follows the correction:
+
+1. Invalid and unreadable occupancy does not call `gastspeicherLaden()`. That loader can migrate if the key changes before its own preflight, and a later error cannot undo the write. The queue beside an invalid draft is only returned from inside that loader. No readonly contract returns it, so the error screen does not list that queue. The raw queue bytes stay. A later observation whose occupancy confirms an empty active slot still lists the queue through the ordinary loader path.
+2. A legacy draft that already has a stored id stays a usable trip when the migration write fails. Post-occupancy remains valid for that same id, and the legacy bytes stay. A legacy draft without a stored id, whose migration write fails, stays occupied-without-id and gets no continue link.

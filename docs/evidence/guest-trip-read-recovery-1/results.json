@@ -2,7 +2,7 @@
   "author": "Jetnity Guest Trip Read Recovery 1 — Cursor Generation 1",
   "session": "bc-2806475d-7ee4-40d0-980e-1d26bcb5b270",
   "model": "grok-4.7-high-fast",
-  "origin": "http://127.0.0.1:36111",
+  "origin": "http://127.0.0.1:46273",
   "boundary": "Synthetic isolated local Playwright. Real GastReisen and GastArbeitsbereich with real gastspeicher and create-entry. next/link, next/navigation, next/dynamic, next/cache, next/headers and server-only are harness shims so the components mount outside Next. No hosted account, personal browser, provider, or model call.",
   "sources": {
     "components/trips/GastReisen.tsx": {
@@ -14,8 +14,8 @@
       "blob": "dd2580806ead3b786f5e62cf7f3b1243532d0f48"
     },
     "components/trips/gast-reise-lesezustand.ts": {
-      "sha256": "b737bcf584ca6774b84468970281fbd0587c59d6619709f2d300b92764b3fe6f",
-      "blob": "77fef997ee3ca26f947a2e5278f4984a06f4d76e"
+      "sha256": "2de5144d2c724bc446dd4efb37b13be2f356549fad72bbe247617b508cc0ccbe",
+      "blob": "84079393c0af05052b8d21dd70646306c649caaa"
     },
     "components/trips/GastReiseLesefehler.tsx": {
       "sha256": "4c2d7cce2f4ddb8a03f478d44e3f458a173bf71b6748acfef8dd7c1f6c4c1ba5",

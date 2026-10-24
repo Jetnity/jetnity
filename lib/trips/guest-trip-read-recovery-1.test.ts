@@ -31,10 +31,15 @@ function speicherStellen() {
   const werfendeSchluessel = new Set<string>()
   let aktiveLesungen = 0
   let nachErsterAktiv: string | null | undefined
+  let verbleibendeWuerfe = 0
   const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
 
   const localStorage = {
     getItem: (schluessel: string) => {
+      if (verbleibendeWuerfe > 0) {
+        verbleibendeWuerfe -= 1
+        throw new Error('SecurityError')
+      }
       if (lesenWirft || werfendeSchluessel.has(schluessel)) throw new Error('SecurityError')
       if (schluessel === SCHLUESSEL.aktiv) {
         aktiveLesungen += 1
@@ -72,6 +77,9 @@ function speicherStellen() {
     werfenFuer: (schluessel: string) => werfendeSchluessel.add(schluessel),
     nachErsterAktivLesen: (wert: string | null) => {
       nachErsterAktiv = wert
+    },
+    einmalWerfen: (anzahl = 1) => {
+      verbleibendeWuerfe = anzahl
     },
     roh: (schluessel: string) => ablage.get(schluessel) ?? null,
     setzen: (schluessel: string, wert: unknown) => {
@@ -265,17 +273,38 @@ describe('Gastliste liest ehrlich', () => {
     assert.equal(gastListeDarfErstellen(lese), true)
   })
 
-  test('ein Wechsel zwischen Vorprüfung und Laden ist kein leerer Entwurf', () => {
+  test('eine ungültige Belegung betritt den migrationsfähigen Loader nicht', () => {
     speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
     speicher.nachErsterAktivLesen(null)
+    const vorher = rohStand()
+    speicher.leerenZaehler()
+
+    const lese = gastListeBeobachten()
+
+    assert.equal(lese.art, 'ungueltig')
+    if (lese.art !== 'ungueltig') return
+    assert.deepEqual(lese.warteschlange, [])
+    assert.equal(lese.schrieb, false)
+    assert.equal(gastListeDarfErstellen(lese), false)
+    assert.deepEqual(speicher.schreibvorgaenge, [])
+    assert.deepEqual(rohStand(), vorher)
+    assert.equal(vorher.aktiv, '{kein JSON')
+    assert.match(vorher.legacy ?? '', /trip-alt-1/)
+  })
+
+  test('eine unlesbare Belegung betritt den migrationsfähigen Loader nicht', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+    speicher.einmalWerfen()
     const vorher = rohStand()
 
     const lese = gastListeBeobachten()
 
-    assert.equal(lese.art, 'abweichend')
+    assert.equal(lese.art, 'speicher_unlesbar')
+    assert.equal(lese.schrieb, false)
     assert.equal(gastListeDarfErstellen(lese), false)
     assert.deepEqual(speicher.schreibvorgaenge, [])
-    assert.equal(vorher.aktiv, '{kein JSON')
+    assert.deepEqual(rohStand(), vorher)
   })
 
   test('eine gültige Legacy-Reise wird übernommen und der Schreibvorgang gemeldet', () => {
@@ -294,6 +323,29 @@ describe('Gastliste liest ehrlich', () => {
     assert.notEqual(vorher.legacy, speicher.roh(SCHLUESSEL.legacy))
     assert.ok(speicher.schreibvorgaenge.length > 0)
     assert.equal(gastArbeitsbereichBeobachten('trip-alt-1').art, 'passend')
+  })
+
+  test('eine Legacy-Reise mit gespeicherter Kennung bleibt nutzbar, wenn die Übernahme nicht schreiben kann', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+    speicher.sperren()
+    const vorher = rohStand()
+    speicher.leerenZaehler()
+
+    const lese = gastListeBeobachten()
+    const arbeitsbereich = gastArbeitsbereichBeobachten('trip-alt-1')
+
+    assert.equal(lese.art, 'gueltig')
+    if (lese.art !== 'gueltig') return
+    assert.equal(lese.reise.id, 'trip-alt-1')
+    assert.equal(lese.reise.title, 'Barcelona')
+    assert.equal(lese.schrieb, false)
+    assert.equal(arbeitsbereich.art, 'passend')
+    if (arbeitsbereich.art === 'passend') assert.equal(arbeitsbereich.reise.id, 'trip-alt-1')
+    assert.deepEqual(rohStand(), vorher)
+    assert.ok(speicher.schreibvorgaenge.length > 0)
+    assert.equal(gastListeDarfErstellen(lese), false)
+    assert.equal(gastArbeitsbereichDarfErstellen(arbeitsbereich), false)
+    assert.equal(gastArbeitsbereichBeobachten('andere-kennung').art, 'andere_reise')
   })
 
   test('eine Legacy-Reise ohne Kennung erfindet bei fehlgeschlagenem Schreiben keinen Fortsetzen-Link', () => {
@@ -338,7 +390,7 @@ describe('Gastliste liest ehrlich', () => {
     assert.equal(gastArbeitsbereichDarfErstellen(gastArbeitsbereichBeobachten(reise.id)), true)
   })
 
-  test('ungültige aktive Bytes verdecken eine gültige Warteschlange nicht und schreiben nicht', () => {
+  test('ungültige aktive Bytes lassen eine Warteschlange liegen, ohne den Loader zu betreten', () => {
     const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-queue', title: 'Wartende Reise' }))
     const roh = speicher.roh(SCHLUESSEL.aktiv)
     speicher.loeschen(SCHLUESSEL.aktiv)
@@ -351,12 +403,22 @@ describe('Gastliste liest ehrlich', () => {
 
     assert.equal(lese.art, 'ungueltig')
     if (lese.art !== 'ungueltig') return
-    assert.equal(lese.warteschlange[0]?.id, reise.id)
-    assert.equal(lese.warteschlange[0]?.title, 'Wartende Reise')
+    assert.deepEqual(lese.warteschlange, [])
     assert.equal(lese.schrieb, false)
     assert.deepEqual(rohStand(), vorher)
     assert.deepEqual(speicher.schreibvorgaenge, [])
     assert.equal(gastListeDarfErstellen(lese), false)
+
+    speicher.loeschen(SCHLUESSEL.aktiv)
+    speicher.leerenZaehler()
+    const danach = gastListeBeobachten()
+    assert.equal(danach.art, 'nur_warteschlange')
+    if (danach.art !== 'nur_warteschlange') return
+    assert.equal(danach.warteschlange[0]?.id, reise.id)
+    assert.equal(danach.warteschlange[0]?.title, 'Wartende Reise')
+    assert.equal(danach.schrieb, false)
+    assert.deepEqual(speicher.schreibvorgaenge, [])
+    assert.equal(gastListeDarfErstellen(danach), true)
   })
 })
 

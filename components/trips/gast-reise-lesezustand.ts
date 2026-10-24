@@ -4,8 +4,10 @@
 //
 // The compatible loader still returns an empty active trip for unreadable,
 // invalid, and genuinely absent storage. This module reads the existing
-// create occupancy first, loads once, then reads occupancy again. A mismatch
-// stays recoverable. It does not delete, reset, adopt, or invent an id.
+// create occupancy first. A failed occupancy stops there: the loader can
+// migrate if storage changes before its own preflight, and that write cannot
+// be undone. Absence, a valid draft, and a legacy draft still load once.
+// A mismatch stays recoverable. It does not delete, reset, adopt, or invent an id.
 
 import {
   gastCreateBelegungLesen,
@@ -145,10 +147,21 @@ export function gastListeAusBeobachtung(
   return { art: 'abweichend', schrieb }
 }
 
-/** Fresh list observation. One loader call, no delete and no second writer. */
+/**
+ * Fresh list observation.
+ *
+ * Invalid and unreadable occupancy does not enter `gastspeicherLaden()`.
+ * That loader migrates legacy drafts, and a later disagreement cannot undo
+ * a write if the key changes between the two reads. No readonly contract
+ * returns the queue without that loader, so an invalid draft does not list
+ * a queue. A confirmed-empty active slot still loads, which is the ordinary
+ * queue and legacy path.
+ */
 export function gastListeBeobachten(): GastListeLesung {
   const belegt = gastCreateBelegungLesen()
   if (belegt.art === 'nicht_beobachtet') return { art: 'nicht_beobachtet' }
+  if (belegt.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar', schrieb: false }
+  if (belegt.art === 'ungueltig') return { art: 'ungueltig', warteschlange: [], schrieb: false }
 
   const davor = rohSchnappschuss()
   let ladung: Gastspeicher
@@ -160,9 +173,7 @@ export function gastListeBeobachten(): GastListeLesung {
   const nachher = rohSchnappschuss()
   const danach = gastCreateBelegungLesen()
   if (!davor.ok || !nachher.ok) {
-    if (danach.art === 'speicher_unlesbar' || belegt.art === 'speicher_unlesbar') {
-      return { art: 'speicher_unlesbar', schrieb: false }
-    }
+    if (danach.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar', schrieb: false }
     return { art: 'abweichend', schrieb: false }
   }
 

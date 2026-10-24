@@ -17,15 +17,16 @@ Branch: `fix/guest-trip-read-recovery-1`
 - Merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`
 - Seed: `de51604c832061ffd18f5742766d5da83cd7caae`
 - Plan commit: `de65696cc4233beb4dab02f04fefb31f7c1d8973`
-- Ahead/behind before the implementation commit: 2 / 0
-- Final head: the commit that adds this status with the implementation. The PR comment records `git rev-parse HEAD` after push. There is no later commit whose only job is to paste that SHA.
+- First implementation head, superseded by this review correction: `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`
+- Ahead/behind after this correction commit: 4 / 0
+- Final head: the commit that contains this correction. The PR comment records `git rev-parse HEAD` after push. Do not review `7e7a2e4b`.
 - TASK V1 blob, unchanged: `9a089b26a6892ede8f235692b92f72dc225df147`
 - Mode: `NORMAL`. This slice does not cross a special Product-Owner gate.
 - Lane B of R104. Integration remains B → A → C. No sibling branch is integrated. `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, and #751 are not edited.
 
 ## What this branch now does
 
-The guest list and the first workspace read no longer treat every empty loader result as a missing trip. They reconcile the existing readonly occupancy with one `gastspeicherLaden()` call. Not-yet-observed, absent, valid, a different valid trip, invalid bytes, unreadable storage, a failed legacy migration, and a preflight/load disagreement are different states. "Erneut prüfen" observes again and does not delete or reset. Create stays available only when the active slot is confirmed empty (list: absence or queue-only; workspace: absence only).
+The guest list and the first workspace read no longer treat every empty loader result as a missing trip. Invalid and unreadable occupancy stops before `gastspeicherLaden()`, so that observation cannot migrate. Absence, a valid draft, and legacy still use one loader call. A legacy draft with a stored id stays usable when the migration write fails. A legacy draft without an id does not gain a continue link. "Erneut prüfen" observes again and does not delete or reset. Create stays available only when the active slot is confirmed empty (list: absence or queue-only; workspace: absence only). The error screen does not list a queue: no readonly contract returns one without the loader.
 
 ## Still open for the Technical Lead
 
@@ -35,7 +36,7 @@ The guest list and the first workspace read no longer treat every empty loader r
 
 ## Verified locally on this tree
 
-Focused storage regressions 185/185, mounted proof 10/10, typecheck, full eslint (144 warnings, 0 errors, none in this slice), production build, and the local hygiene checks named in the REPORT.
+This correction: focused storage regressions 187/187, mounted proof 10/10, typecheck, and targeted eslint. The previous head's production build, full eslint (144 warnings, 0 errors), and hygiene checks were not repeated.
 
 ## Not verified here
 

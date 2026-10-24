@@ -20,7 +20,7 @@ No hosted account, personal browser, provider, model call, or Production data.
 2. Invalid active bytes show "Dieser Entwurf ist nicht lesbar." and "Erneut prüfen", with no first-trip create link, at 320px, and zero writes.
 3. A throwing read stays unreadable with the bytes unchanged. After reads work again, recheck shows the stored trip.
 4. Recheck turns invalid bytes into a valid trip, then into confirmed absence, without deleting the previous bytes first. Writes stay zero on those controlled replacements.
-5. A valid queue stays listed with zero writes. A valid legacy draft migrates through the existing loader and is shown.
+5. A valid queue stays listed with zero writes. A valid legacy draft migrates through the existing loader and is shown. An invalid active key does not enter that loader, so a queue beside it is not listed in the same observation. The node tests cover that boundary.
 6. Keyboard: Tab reaches "Erneut prüfen" and Enter activates it.
 7. A different valid trip is a status with "Reise fortsetzen", not a storage alert and not a create link. The matching id then shows the workspace.
 8. Changing `tripId` on the same mounted workspace clears the previous title before the next trip paints. A loading frame exists without the previous title.

@@ -19,8 +19,9 @@ The self-review is not Technical-Lead PASS.
 | Merge-base | `913cf9353fd33491d2bd3130b3c430cc88990200` |
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
-| Ahead / behind before this delivery commit | 2 / 0 |
-| Final head | The commit that adds STATUS, REPORT, SELF_REVIEW, and this HANDOFF together with the implementation. The PR comment records `git rev-parse HEAD` after push. Do not treat `de65696c` or the seed Preview as the gate for this head. |
+| Superseded implementation head | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` |
+| Ahead / behind after this correction commit | 4 / 0 |
+| Final head | The commit that contains this review correction. The PR comment records `git rev-parse HEAD` after push. Do not treat `7e7a2e4b`, `de65696c`, or the seed Preview as the gate for this head. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` |
 | Mode | `NORMAL` |
 | Integration | Lane B. Order stays B → A → C. No sibling code is in this branch. |
@@ -44,13 +45,15 @@ If `origin/main` moves before review, do not silent-rebase. Technical Lead direc
 
 ## What the Technical Lead is reviewing
 
-Honest guest list and workspace reads. The compatible loader is unchanged. Consumers distinguish loading, absence, a matching trip, a different trip, invalid bytes, and unreadable storage. Recheck does not delete. Create is withheld while the active slot is unknown, invalid, unreadable, inconsistent, or already another trip. A different trip links to its stored id.
+Honest guest list and workspace reads. The compatible loader is unchanged. Invalid and unreadable occupancy does not call it. A legacy draft with a stored id stays usable when the migration write fails; a legacy draft without an id does not get a continue link. Recheck does not delete. Create is withheld while the active slot is unknown, invalid, unreadable, inconsistent, or already another trip. A different trip links to its stored id.
+
+Reported boundary: the error screen does not list a queue that sits beside invalid active bytes. That list exists only inside the migration-capable loader. The bytes stay, and the next confirmed-empty observation lists the queue.
 
 Acceptance matrix, failure modes, and the truth/privacy/security/accessibility/performance notes are in the REPORT. Evidence notes: `docs/evidence/guest-trip-read-recovery-1/NOTES.md`.
 
 ## Executed versus not verified
 
-Executed: 15 new storage tests inside a 185/185 focused regression; mounted proof PASS 10/10 on Chrome 148.0.7778.96 with empty `pageErrors`; `npm run typecheck` exit 0; targeted eslint `--max-warnings 0` exit 0; `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode`, and `check:schema-bezug` exit 0. Schema output still lists pre-existing LOCAL/UNAPPLIED RPCs.
+Executed on this correction: 17 storage tests in the new file, inside a 187/187 focused regression; mounted proof PASS 10/10 on Chrome 148.0.7778.96 with empty `pageErrors`; `npm run typecheck` exit 0; targeted eslint `--max-warnings 0` exit 0. The earlier hygiene checks (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode`, `check:schema-bezug`) and `npm run build` were run on the previous implementation head and were not repeated for this read-path correction. Schema output on that run still listed pre-existing LOCAL/UNAPPLIED RPCs. Full `npx eslint .` on that previous head was 144 warnings and 0 errors.
 
 `npm run build` exited 0. `npx eslint .` exited 0 with 144 warnings and 0 errors; none are in this slice.
 
