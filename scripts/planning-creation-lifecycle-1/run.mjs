@@ -217,7 +217,19 @@ async function seite(viewport) {
   return { context, page, fehler }
 }
 
+async function generation(page) {
+  return page.evaluate(() => document.querySelector('[data-ready="1"]')?.getAttribute('data-generation') ?? 'keine')
+}
+
+async function aufNeueGeneration(page, alt) {
+  await page.waitForFunction((vorher) => {
+    const knoten = document.querySelector('[data-ready="1"]')
+    return Boolean(knoten) && knoten.getAttribute('data-generation') !== vorher
+  }, alt)
+}
+
 async function neu(page, next = {}) {
+  const alt = await generation(page)
   await page.evaluate((extra) => {
     window.fixture.calls.length = 0
     window.fixture.pushes.length = 0
@@ -228,7 +240,7 @@ async function neu(page, next = {}) {
     }
     window.fixture.steuerung.wieder(extra)
   }, next)
-  await page.waitForSelector('[data-ready="1"]')
+  await aufNeueGeneration(page, alt)
 }
 
 async function zeitraum(page) {
@@ -329,13 +341,14 @@ try {
 
     await fall('existing guest draft blocks a second create without overwrite', async () => {
       const bytes = (await stand(page)).aktiv
+      const alt = await generation(page)
       await page.evaluate(() => {
         window.fixture.calls.length = 0
         window.fixture.pushes.length = 0
         window.fixture.uuids.length = 0
         window.fixture.steuerung.wieder({ ansicht: 'manual', konto: false })
       })
-      await page.waitForSelector('[data-ready="1"]')
+      await aufNeueGeneration(page, alt)
       await ausfuellen(page, false)
       await page.getByRole('button', { name: 'Reise erstellen' }).click()
       await page.getByRole('status').waitFor()
@@ -379,6 +392,7 @@ try {
       await page.getByRole('button', { name: 'Reise erstellen' }).click()
       await page.waitForFunction(() => window.fixture.pushes.length === 1)
       const bytes = (await stand(page)).aktiv
+      const alt = await generation(page)
       await page.evaluate(() => {
         window.fixture.calls.length = 0
         window.fixture.pushes.length = 0
@@ -386,7 +400,7 @@ try {
         window.fixture.arm('anlegen', 'domain')
         window.fixture.steuerung.wieder({ ansicht: 'manual', konto: true })
       })
-      await page.waitForSelector('[data-ready="1"]')
+      await aufNeueGeneration(page, alt)
       await ausfuellen(page, false)
       await page.getByRole('button', { name: 'Reise erstellen' }).click()
       await page.getByText((await stand(page)).texte.konto).waitFor()
@@ -767,6 +781,31 @@ try {
       const daten = await stand(page)
       assert.equal(daten.calls.filter((eintrag) => eintrag.name === 'uebernehmen').length, 1)
       assert.equal(daten.pushes.length, 0)
+    })
+
+    await fall('late completion after remount does not update the newer form', async () => {
+      await neu(page, { ansicht: 'manual', konto: false })
+      await ausfuellen(page, false)
+      await page.evaluate(() => {
+        window.fixture.arm('orte', 'hold', 'ok')
+        document.querySelector('form').requestSubmit()
+      })
+      await page.waitForFunction(() => window.fixture.calls.length === 1)
+      await page.evaluate(() => window.fixture.steuerung.weg())
+      await page.waitForSelector('[data-unmounted="1"]')
+      const alt = await generation(page)
+      await page.evaluate(() => {
+        window.fixture.steuerung.wieder({ ansicht: 'manual', konto: false })
+      })
+      await aufNeueGeneration(page, alt)
+      await page.evaluate(() => window.fixture.los('orte'))
+      await page.waitForTimeout(150)
+      const daten = await stand(page)
+      assert.equal(daten.pushes.length, 0)
+      assert.equal(daten.aktiv, null)
+      assert.equal(daten.calls.filter((eintrag) => eintrag.name === 'orte').length, 1)
+      assert.equal(await page.getByRole('button', { name: 'Reise erstellen' }).isEnabled(), true)
+      assert.equal(await page.getByText(daten.texte.transportManuell).count(), 0)
     })
 
     assert.deepEqual(fehler, [])

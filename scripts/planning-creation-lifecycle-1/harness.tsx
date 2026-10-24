@@ -101,7 +101,7 @@ const uuids: string[] = []
 const release: Record<string, () => void> = {}
 const auftrag: Record<string, Auftrag> = {}
 
-const props: Props = {
+const ANFANG: Props = {
   ansicht: 'manual',
   konto: false,
   destination: 'Japan',
@@ -130,7 +130,7 @@ window.fixture = {
   calls,
   pushes,
   uuids,
-  props,
+  props: ANFANG,
   texte: {
     zielUnbekannt: ORT_MELDUNG.zielUnbekannt,
     ortFrei: ORT_FREI,
@@ -172,13 +172,14 @@ crypto.randomUUID = () => {
 function Shell() {
   const [sichtbar, setSichtbar] = useState(true)
   const [n, setN] = useState(0)
-  const [stand, setStand] = useState<Props>(props)
+  const [stand, setStand] = useState<Props>(ANFANG)
 
   useEffect(() => {
     window.fixture.steuerung = {
       wieder(next?: Partial<Props>) {
-        if (next) Object.assign(props, next)
-        setStand({ ...props, weitere: props.weitere.map((ziel) => ({ ...ziel })) })
+        const basis = { ...ANFANG, ...next }
+        const weitere = next?.weitere ?? ANFANG.weitere
+        setStand({ ...basis, weitere: weitere.map((ziel) => ({ ...ziel })) })
         setN((wert) => wert + 1)
         setSichtbar(true)
       },
@@ -193,13 +194,13 @@ function Shell() {
   const key = `${stand.ansicht}-${stand.konto}-${n}`
   if (stand.ansicht === 'idea') {
     return (
-      <div data-ready="1">
+      <div data-ready="1" data-generation={n}>
         <Reiseidee key={key} angemeldet={stand.konto} initialIdee={stand.idee} />
       </div>
     )
   }
   return (
-    <div data-ready="1">
+    <div data-ready="1" data-generation={n}>
       <TripPlanner
         key={key}
         angemeldet={stand.konto}
