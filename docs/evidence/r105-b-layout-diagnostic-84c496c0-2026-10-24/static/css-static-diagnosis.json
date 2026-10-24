@@ -1,0 +1,141 @@
+{
+  "kind": "READ_ONLY_STATIC_CSS_AND_FONT_DIAGNOSIS",
+  "createdAtUtc": "2026-10-24T23:12:09.187690+00:00",
+  "head": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "tree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "repo": "/tmp/jetnity-r105-b-v3-review-84c496c037cf",
+  "rootRun": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/result.json",
+  "rootRunSha256": "0c586de67f6f7a3548ec1d11d206bd05c73968cbc07087207c8c5755accc9084",
+  "rootObservedFailure": "liste 320 Überlauf 37",
+  "rootRunSourcesUnchanged": true,
+  "cssPath": "/tmp/jetnity-r105-b-css-84c496c0-20261024-2302z/jetnity-b-postcss-84c496c037cf.css",
+  "cssSha256": "6ea356ae1284e432eae27e9511923cf43550a4f80b34ac63c7235424e1f22af8",
+  "CSSClass": "LOCAL_PROJECT_POSTCSS_COMPILATION",
+  "originalCSSContract": "Recursively concatenate all .css files in cwd-relative .next/static; no per-route CSS selection.",
+  "adapterCSSContract": "Read the separately compiled styles/globals.css through the exact configured nesting/tailwind/autoprefixer pipeline; no Next CSS equivalence claim.",
+  "relevantTrackedOwnCSSFiles": [
+    "styles/globals.css"
+  ],
+  "rootLayoutImportsGlobals": true,
+  "compiledRulesPresent": {
+    "text-3xl": "font-size:1.875rem;line-height:2.25rem",
+    "font-semibold": "font-weight:600",
+    "tracking[-0.04em]": "letter-spacing:-0.04em",
+    "min-w-0": "min-width:0px",
+    "w-full": "width:100%",
+    "globalControls": "input, select, textarea {min-width:0}",
+    "preflight": "box-sizing:border-box",
+    "globalFont": "system-ui, ui-sans-serif, Segoe UI, Roboto, Helvetica, Arial, emoji, sans-serif"
+  },
+  "unchangedHarnessRootFontAt320": "32px",
+  "derivedH1": {
+    "text": "Bestätigte Buchungen",
+    "fontSizePx": 60,
+    "lineHeightPx": 72,
+    "fontWeight": 600,
+    "letterSpacingPx": -2.4,
+    "breakWordsClassPresent": false
+  },
+  "fontconfigReadOnlyResults": {
+    "system-ui": "DejaVu Sans Book /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "system-ui:weight=demibold": "DejaVu Sans Bold /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+  },
+  "staticFontMetrics": [
+    {
+      "fontPath": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+      "fontSha256": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+      "word": "Bestätigte",
+      "unitsPerEm": 2048,
+      "advanceUnits": 10525,
+      "kernUnits": 0,
+      "fontSizePx": 60,
+      "letterSpacingPx": -2.4,
+      "glyphCount": 10,
+      "modeledAdvancePx": 284.349609375,
+      "browserMeasurement": false
+    },
+    {
+      "fontPath": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+      "fontSha256": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+      "word": "Buchungen",
+      "unitsPerEm": 2048,
+      "advanceUnits": 11581,
+      "kernUnits": 0,
+      "fontSizePx": 60,
+      "letterSpacingPx": -2.4,
+      "glyphCount": 9,
+      "modeledAdvancePx": 317.687109375,
+      "browserMeasurement": false
+    },
+    {
+      "fontPath": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+      "fontSha256": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+      "word": "Bestätigte",
+      "unitsPerEm": 2048,
+      "advanceUnits": 12045,
+      "kernUnits": 0,
+      "fontSizePx": 60,
+      "letterSpacingPx": -2.4,
+      "glyphCount": 10,
+      "modeledAdvancePx": 328.880859375,
+      "browserMeasurement": false
+    },
+    {
+      "fontPath": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+      "fontSha256": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+      "word": "Buchungen",
+      "unitsPerEm": 2048,
+      "advanceUnits": 12920,
+      "kernUnits": 0,
+      "fontSizePx": 60,
+      "letterSpacingPx": -2.4,
+      "glyphCount": 9,
+      "modeledAdvancePx": 356.915625,
+      "browserMeasurement": false
+    }
+  ],
+  "hypothesis": "The unbreakable h1 word Buchungen uses local DejaVu Sans Bold; 356.915625 modeled pixels rounds to357, explaining37px overflow at320. Requires Root DOM/range and resolved-font confirmation; source-author font metrics not yet bound.",
+  "classification": "Strong static causal match; not alone an actual Next production reproduction or final product-defect conclusion.",
+  "sources": {
+    "components/account/AccountBuchungen.tsx": {
+      "gitBlob": "22bb8c991e414f0aede63531c9b5bef2be0cb0bc",
+      "sha256": "e5fc562b20a3ad2772f7fa954cb54b62fba21aaf5fee81b7d9c2dee8f6ddc8fd"
+    },
+    "components/account/BuchungenFilter.tsx": {
+      "gitBlob": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+      "sha256": "806f00ac952ccbbd79bb08224c381a0f789d98cba24025dc07a3ee866938cbb3"
+    },
+    "lib/account/buchungen.ts": {
+      "gitBlob": "2a15645baedd10100496c71de702b15eec8543cc",
+      "sha256": "d89ccbe95fc2966ad5a124505fe07d811f3bd226bfe51b46cc1e1a048a38cad4"
+    },
+    "styles/globals.css": {
+      "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+    },
+    "postcss.config.js": {
+      "gitBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715"
+    },
+    "tailwind.config.js": {
+      "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+    },
+    "app/layout.tsx": {
+      "gitBlob": "9940897bb328bf63cd1cbac60ccc81a27d5d447b",
+      "sha256": "a36f16d4e86dd64d4a6c9cc227b5d8a98c562189e5ae34c2a0b54cef7cf588de"
+    },
+    "scripts/account-booking-folder-completion-1/montage.ts": {
+      "gitBlob": "74403a630872e624908fa84565bcab7d7a2bd0e1",
+      "sha256": "22be351095a5096c5dbf02e33ca95eedc257411b8499669c7530cfd5e5e932e3"
+    }
+  },
+  "executionsByThisAgent": {
+    "Node": false,
+    "browser": false,
+    "tests": false,
+    "build": false,
+    "remoteWrites": false
+  },
+  "changesByThisAgent": "Only this new temporary diagnostic artifact; no source or frozen-wrapper changes."
+}

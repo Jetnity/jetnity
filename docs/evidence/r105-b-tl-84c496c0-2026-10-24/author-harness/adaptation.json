@@ -1,0 +1,108 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "head": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "tree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "originalLocalOriginMain": "07016ada86dcfc79d5c7c3efa9ba1d62336a1f60",
+  "scripts": {
+    "ablauf.ts": {
+      "source": "scripts/account-booking-folder-completion-1/ablauf.ts",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "originalSha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "adaptedSha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "reverseAdaptedSha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "protectedSourceSha256": "3c913c35f3f4d438a53950bc53a55a0d16fe2725b72ea971c77f5638b85812d9",
+      "reverseEqualsOriginal": true,
+      "changes": [
+        {
+          "label": "isolated Chromium executable",
+          "old": "chromium.launch()",
+          "new": "chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })",
+          "count": 2,
+          "category": "environment"
+        },
+        {
+          "label": "actual-main metadata, no shared ref mutation",
+          "old": "git(['rev-parse', 'origin/main'])",
+          "new": "git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1'])",
+          "count": 1,
+          "category": "provenance"
+        }
+      ]
+    },
+    "montage.ts": {
+      "source": "scripts/account-booking-folder-completion-1/montage.ts",
+      "gitBlob": "74403a630872e624908fa84565bcab7d7a2bd0e1",
+      "originalSha256": "22be351095a5096c5dbf02e33ca95eedc257411b8499669c7530cfd5e5e932e3",
+      "adaptedSha256": "ca76794668f593fbd3a86fe4489f9ae301583d56ff736dee033166cb8ed0fbe7",
+      "reverseAdaptedSha256": "22be351095a5096c5dbf02e33ca95eedc257411b8499669c7530cfd5e5e932e3",
+      "protectedSourceSha256": "331f6099ab97c9e3117eff45de661630b8bffc4344e04dba9cfb0531b5c9904a",
+      "reverseEqualsOriginal": true,
+      "changes": [
+        {
+          "label": "isolated Chromium executable",
+          "old": "chromium.launch()",
+          "new": "chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })",
+          "count": 1,
+          "category": "environment"
+        },
+        {
+          "label": "actual-main metadata, no shared ref mutation",
+          "old": "git(['rev-parse', 'origin/main'])",
+          "new": "git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1'])",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "truthful CSS source comment",
+          "old": "// CSS kommt aus dem Production-Build. Das ist keine Geräte-, Zoom- oder Screenreader-Prüfung.",
+          "new": "// CSS kommt aus lokaler Projekt-PostCSS-Kompilierung, nicht aus einem Next-Build. Keine Geräte-, Zoom- oder Screenreader-Prüfung.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "external verified PostCSS input",
+          "old": "function cssLesen(): string {\n  const dateien = cssDateien(join('.next', 'static'))\n  if (dateien.length === 0) throw new Error('Production-CSS fehlt. Zuerst den Build ausführen.')\n  return dateien.map((pfad) => readFileSync(pfad, 'utf8')).join('\\n')\n}",
+          "new": "function cssLesen(): string {\n  const pfad = process.env.JETNITY_REVIEW_CSS_PATH\n  if (!pfad) throw new Error('Verifizierte lokale Projekt-PostCSS-Datei fehlt.')\n  return readFileSync(pfad, 'utf8')\n}",
+          "count": 1,
+          "category": "environment"
+        },
+        {
+          "label": "truthful CSS finding provenance",
+          "old": "CSS und Root-Font aus dem lokalen Production-Build in headless Chromium. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto.",
+          "new": "LOCAL_PROJECT_POSTCSS_COMPILATION: CSS aus der unveränderten Projekt-PostCSS-Pipeline in headless Chromium. Kein Next-Build-CSS-Nachweis, kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "truthful CSS scope provenance",
+          "old": "Statisches Markup mit CSS aus dem lokalen Production-Build. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.",
+          "new": "Statisches Markup mit LOCAL_PROJECT_POSTCSS_COMPILATION aus der unveränderten Projekt-PostCSS-Pipeline. Kein Next-Build-CSS-Nachweis, keine Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "passive observer declaration",
+          "old": "const bilder = join(ausgabe, 'screens')",
+          "new": "const bilder = join(ausgabe, 'screens')\n// Root-only passive observer; no routing, interception, fixture or navigation changes.\nconst rootDiagnostik = {\n  pageerror: [] as string[],\n  consoleError: [] as string[],\n  unexpectedRequests: [] as string[],\n  requestFailed: [] as string[],\n}",
+          "count": 1,
+          "category": "observer-only"
+        },
+        {
+          "label": "passive per-page listeners",
+          "old": "    const seite = await browser.newPage()",
+          "new": "    const seite = await browser.newPage()\n    seite.on('pageerror', (problem) => rootDiagnostik.pageerror.push(problem.message))\n    seite.on('console', (meldung) => {\n      if (meldung.type() === 'error') rootDiagnostik.consoleError.push(meldung.text())\n    })\n    seite.on('request', (anfrage) => {\n      const url = anfrage.url()\n      if (!url.startsWith('data:') && !url.startsWith('blob:') && url !== 'about:blank') {\n        rootDiagnostik.unexpectedRequests.push(url)\n      }\n    })\n    seite.on('requestfailed', (anfrage) => {\n      rootDiagnostik.requestFailed.push(anfrage.url() + ' ' + (anfrage.failure()?.errorText ?? 'unknown'))\n    })",
+          "count": 1,
+          "category": "observer-only"
+        },
+        {
+          "label": "separate observer artifact after browser close",
+          "old": "} finally {\n  await browser.close()\n}",
+          "new": "} finally {\n  await browser.close()\n  writeFileSync(join(ausgabe, 'montage-root-observer.json'), `${JSON.stringify({\n    kind: 'ROOT_ADDED_PASSIVE_MONTAGE_OBSERVER',\n    diagnostics: rootDiagnostik,\n  }, null, 2)}\\n`)\n}",
+          "count": 1,
+          "category": "observer-only"
+        }
+      ]
+    }
+  }
+}

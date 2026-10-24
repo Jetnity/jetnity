@@ -1,0 +1,72 @@
+{
+  "herkunft": {
+    "autor": "Jetnity Account Booking Folder Completion 1 — Cursor Generation 1",
+    "session": "bc-a34030c7-4c19-4c9f-863f-193cfdfa34da",
+    "modell": "grok-4.7-high-fast",
+    "kopf": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+    "baum": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+    "main": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+    "quellen": {
+      "scripts/account-booking-folder-completion-1/ablauf.ts": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "scripts/account-booking-folder-completion-1/flaeche.tsx": "3f57401088c6e66247ddebe48032eae770418350",
+      "scripts/account-booking-folder-completion-1/crypto-browser-stub.ts": "583b5c1e1283a30ccbf74e5da8554990bd815873",
+      "components/account/AccountBuchungen.tsx": "22bb8c991e414f0aede63531c9b5bef2be0cb0bc",
+      "components/account/BuchungenFilter.tsx": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+      "lib/account/buchungen-abfrage.ts": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+      "lib/account/buchungen-daten.ts": "b4335793a73a5d0af16a03d2e07f5e932fa996d2",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_TASK_V1_2026-10-24.md": "754fc2e0d87ba0755713c174acf60723ab3d1f13",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_PLAN_2026-10-24.md": "b29a5195c57c797f6252dc5863fc6c7b9f0ebac2"
+    },
+    "befehl": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/jetnity-r105-b-harness-final-proof-frao2ze2/copies/ablauf.ts --ausgabe /tmp/jetnity-r105-b-harness-final-proof-frao2ze2/ablauf",
+    "node": "v24.22.1"
+  },
+  "bundle": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/tmp/buchungen-flaeche-Wlksh0/flaeche.js",
+  "grenze": "Echter Lader und echte Oberfläche. Der Zuschnitt liest die gesendete PostgREST-URL. Titelvergleich ist String.includes, nicht PostgreSQL-~*. Archiv aktiv muss trips.status=in.(draft,planned,booked) sein. History speichert href im State desselben about:blank-Dokuments und stellt keine Browser-Route und keinen Next-Router wieder her. Kein gehostetes RLS.",
+  "lader": {
+    "leer": "leer",
+    "kombiniert": 1,
+    "fortsetzungLeer": "fortsetzungLeer",
+    "gesehen": 211
+  },
+  "flaeche": {
+    "browser": "140.0.7339.16",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "schrift": "16px",
+    "ort": "about:blank",
+    "suche": {
+      "titel": "Alpha",
+      "karten": [
+        {
+          "punkt": "00000000-0000-4000-8000-000000000001",
+          "titel": "Alpha Zürich"
+        }
+      ]
+    },
+    "enter": {
+      "zustand": "keine",
+      "submitEnthaeltWeiter": false
+    },
+    "reset": {
+      "titel": "",
+      "art": "",
+      "archiv": "alle",
+      "karten": 50
+    },
+    "zurueck": {
+      "historie": "/account/bookings",
+      "wiederholenHref": "/account/bookings",
+      "karten": 50
+    },
+    "retry": {
+      "gleich": true,
+      "titel": "Flug 1",
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "leer": "leer",
+    "ende": "fortsetzungLeer",
+    "plan": "/reisen/00000000-0000-4000-8000-00000000004d?ansicht=plan&punkt=00000000-0000-4000-8000-000000000007"
+  }
+}

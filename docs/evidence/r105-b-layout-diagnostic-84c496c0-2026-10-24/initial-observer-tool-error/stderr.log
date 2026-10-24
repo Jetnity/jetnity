@@ -1,0 +1,5 @@
+page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:1088)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at montage (/tmp/jetnity-r105-b-overflow-diagnostic-9xhyh1jx/diagnostic-montage.ts:276:36)

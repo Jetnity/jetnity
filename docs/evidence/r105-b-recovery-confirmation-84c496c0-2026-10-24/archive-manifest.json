@@ -1,0 +1,149 @@
+{
+  "kind": "technical-lead-recovery-failure-confirmation-archive",
+  "archivalRelocation": true,
+  "notANewExecutionAtArchivedPaths": true,
+  "archivalHelperExecutedTestsBrowserOrNetwork": false,
+  "executedHead": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "executedTree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "disposition": "P2_OPEN_CODE_REVIEW_V4",
+  "reviewComment": "https://github.com/Jetnity/jetnity/pull/1000#issuecomment-6391078811",
+  "escalationProvenance": "Root reports supported approved execution escalation between original invocations; approval receipt is in tool execution history, not synthesized here",
+  "currentScreenshotVisualInspectionClaim": false,
+  "priorScreenshotInspectedByRoot": "23:11 historical capture in the separate earlier layout-diagnostic archive",
+  "controllerHashTiming": "Archival read; process records did not separately hash controller at runtime",
+  "controllerReconstructionVerifiedWithoutExecution": true,
+  "diagnosticScriptsByteIdentical": true,
+  "originalArtifactCount": 12,
+  "executions": [
+    {
+      "label": "sandbox-attempt-233344Z",
+      "disposition": "SANDBOX_BROWSER_START_FAILURE",
+      "originalOutputDirectory": "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq",
+      "startedAtUtc": "2026-10-24T23:33:44.859752+00:00",
+      "finishedAtUtc": "2026-10-24T23:33:46.510222+00:00",
+      "exitCode": 1,
+      "originalResult": {
+        "bytes": 5528,
+        "sha256": "989f7aa12bb966a190032c8c81dca9ec50724eac5873325463b894ab87af9b35",
+        "gitBlob": "3f3b848bb8c584bce0ac69a07ba9658373396c09"
+      }
+    },
+    {
+      "label": "confirmed-failure-233405Z",
+      "disposition": "EXPECTED_LAYOUT_FAILURE_REPRODUCED",
+      "originalOutputDirectory": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7",
+      "startedAtUtc": "2026-10-24T23:34:05.431691+00:00",
+      "finishedAtUtc": "2026-10-24T23:34:08.145650+00:00",
+      "exitCode": 1,
+      "originalResult": {
+        "bytes": 1480,
+        "sha256": "0ca7b5206f88072daf26ec0dd920f4c5ed9e732631d463f35f84c3ec39720863",
+        "gitBlob": "d558876d49f368cb185276eb338de3adc4559fd7"
+      }
+    }
+  ],
+  "notArchived": [
+    "node_modules/dependencies",
+    "browser cache/profile/crash files",
+    "tsx caches"
+  ],
+  "priorArchivesModified": false,
+  "files": [
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/controller/diagnostic-run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-run.py",
+      "role": "Current Root controller preserved at archival read; generated-script equivalence independently checked without executing it",
+      "bytes": 5308,
+      "sha256": "7b617abc943459a00de12cb1a8b734d70111216916410efb88f3474bfba05dca",
+      "gitBlob": "9ad43b5d281146c8af1f7dac2926e5923adcda45"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/sandbox-attempt-233344Z/diagnostic-montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts",
+      "role": "Original SANDBOX_BROWSER_START_FAILURE artifact",
+      "bytes": 15642,
+      "sha256": "2a2392c1df6454114567fb198b07920cd419d1cae923b6d6cd59c2551d799e43",
+      "gitBlob": "31175ee4a21aa7a78c1f25ca12ac891d0277d48d"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/sandbox-attempt-233344Z/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/result.json",
+      "role": "Original SANDBOX_BROWSER_START_FAILURE artifact",
+      "bytes": 5528,
+      "sha256": "989f7aa12bb966a190032c8c81dca9ec50724eac5873325463b894ab87af9b35",
+      "gitBlob": "3f3b848bb8c584bce0ac69a07ba9658373396c09"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/sandbox-attempt-233344Z/stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/stdout.log",
+      "role": "Original SANDBOX_BROWSER_START_FAILURE artifact",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/sandbox-attempt-233344Z/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/stderr.log",
+      "role": "Original SANDBOX_BROWSER_START_FAILURE artifact",
+      "bytes": 4156,
+      "sha256": "67073229e79b03c212a5201ce09d362938f3465c065b546795f8759c05463a52",
+      "gitBlob": "63321b1efdaabc03cabea4889754ce9c5c4f76bb"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/diagnostic-montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/diagnostic-montage.ts",
+      "role": "Original EXPECTED_LAYOUT_FAILURE_REPRODUCED artifact",
+      "bytes": 15642,
+      "sha256": "2a2392c1df6454114567fb198b07920cd419d1cae923b6d6cd59c2551d799e43",
+      "gitBlob": "31175ee4a21aa7a78c1f25ca12ac891d0277d48d"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/result.json",
+      "role": "Original EXPECTED_LAYOUT_FAILURE_REPRODUCED artifact",
+      "bytes": 1480,
+      "sha256": "0ca7b5206f88072daf26ec0dd920f4c5ed9e732631d463f35f84c3ec39720863",
+      "gitBlob": "d558876d49f368cb185276eb338de3adc4559fd7"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/stdout.log",
+      "role": "Original EXPECTED_LAYOUT_FAILURE_REPRODUCED artifact",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/stderr.log",
+      "role": "Original EXPECTED_LAYOUT_FAILURE_REPRODUCED artifact",
+      "bytes": 125,
+      "sha256": "5d8db6ce827745e33f475b1287c2de3c957593ba085aa9a20f1f1f0e8be8880b",
+      "gitBlob": "218bb14332b245611b217670378a0579e559b432"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/capture/montage-root-observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/capture/montage-root-observer.json",
+      "role": "Original completed diagnostic capture; layout assertion remains failed",
+      "bytes": 175,
+      "sha256": "59a868881772e4558df340dfcdb0fe169d47313dca9e88efc56aeba47b5527c6",
+      "gitBlob": "85c7f579b43e505b8ce33015ed3dec0587603ac2"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/capture/overflow-diagnostic.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/capture/overflow-diagnostic.json",
+      "role": "Original completed diagnostic capture; layout assertion remains failed",
+      "bytes": 629613,
+      "sha256": "2e588d09a90a80d7206ae7f5094dcc9a03101a48c4abaccfccfca8500619c78b",
+      "gitBlob": "390a618e65324b4f30c3fab9d9c0388d10bbe9c6"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-recovery-confirmation-84c496c0-2026-10-24/confirmed-failure-233405Z/capture/overflow-320.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hzudtel7/capture/overflow-320.png",
+      "role": "Original completed diagnostic capture; layout assertion remains failed",
+      "bytes": 193438,
+      "sha256": "e38b5200588fd7f172aec7ff31368b8b67d27bbf5e630aabf8767b2af607180d",
+      "gitBlob": "1af4f9245cb3626f683e292c1adcd11091d8885e"
+    }
+  ]
+}

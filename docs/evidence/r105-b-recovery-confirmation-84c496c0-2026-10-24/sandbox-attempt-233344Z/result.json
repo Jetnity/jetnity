@@ -1,0 +1,29 @@
+{
+  "kind": "TARGETED_LAYOUT_FAILURE_DIAGNOSTIC_NOT_ACCEPTANCE",
+  "head": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "tree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "sourceSha256": "ca76794668f593fbd3a86fe4489f9ae301583d56ff736dee033166cb8ed0fbe7",
+  "adaptedSha256": "2a2392c1df6454114567fb198b07920cd419d1cae923b6d6cd59c2551d799e43",
+  "cssSha256": "6ea356ae1284e432eae27e9511923cf43550a4f80b34ac63c7235424e1f22af8",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--import",
+    "./scripts/server-only-test-register.mjs",
+    "--import",
+    "tsx",
+    "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts",
+    "--ausgabe",
+    "/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/capture"
+  ],
+  "cwd": "/tmp/jetnity-r105-b-v3-review-84c496c037cf",
+  "startedAtUtc": "2026-10-24T23:33:44.859752+00:00",
+  "onlyChange": "Capture failing DOM/computed styles and viewport screenshot immediately before unchanged overflow assertion. No assertion removed; execution stops on the same failure.",
+  "exitCode": 1,
+  "stderr": "browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/tmp/playwright_chromiumdev_profile-Govx0B --remote-debugging-pipe --no-startup-window\n<launched> pid=58\n[pid=58][err] [58:58:1024/233346.451957:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:45] setsockopt: Operation not permitted (1)\nCall log:\n  - <launching> /tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/tmp/playwright_chromiumdev_profile-Govx0B --remote-debugging-pipe --no-startup-window\n  - <launched> pid=58\n  - [pid=58][err] [58:58:1024/233346.451957:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:45] setsockopt: Operation not permitted (1)\n  - [pid=58] <gracefully close start>\n  - [pid=58] <kill>\n  - [pid=58] <will force kill>\n  - [pid=58] <process did exit: exitCode=null, signal=SIGTRAP>\n  - [pid=58] starting temporary directories cleanup\n  - [pid=58] finished temporary directories cleanup\n  - [pid=58] <gracefully close end>\n\n    at montage (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:229:32)\n    at AccountBuchungen (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:355:1)\n    at Object.<anonymous> (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:358:2)\n    at Object.transformer (/tmp/jetnity-r104-review/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)\n    at async node:internal/modules/esm/loader:647:26\n",
+  "finishedAtUtc": "2026-10-24T23:33:46.510222+00:00",
+  "cleanAfter": true,
+  "headAfter": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "treeAfter": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "sourceUnchanged": true,
+  "cssUnchanged": true
+}
