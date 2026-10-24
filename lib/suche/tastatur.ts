@@ -1,6 +1,7 @@
 // lib/suche/tastatur.ts
 //
-// Pfeiltasten für Orts- und Flughafen-Comboboxen. Keine DOM-Bindung.
+// Pfeiltasten und sichtbarer Aktivindex für Orts- und Flughafen-Comboboxen.
+// Keine DOM-Bindung.
 
 export function sucheListeIndex(
   bisher: number,
@@ -18,4 +19,11 @@ export function sucheListeSchliesst(taste: string): boolean {
 
 export function sucheListeWaehlt(taste: string, aktiv: number): boolean {
   return taste === 'Enter' && aktiv >= 0
+}
+
+/** Index nur, wenn er eine aktuell gerenderte Option benennt. */
+export function sucheAktiveOption(aktiv: number, anzahl: number): number {
+  if (!Number.isInteger(aktiv) || !Number.isInteger(anzahl)) return -1
+  if (aktiv < 0 || anzahl <= 0 || aktiv >= anzahl) return -1
+  return aktiv
 }

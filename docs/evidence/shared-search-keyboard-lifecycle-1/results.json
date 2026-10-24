@@ -1,0 +1,137 @@
+{
+  "author": "Jetnity Shared Search Keyboard Lifecycle 1 — Cursor Generation 1",
+  "session": "bc-f17cfe4a-c64f-420f-980c-59c8d82cb19e",
+  "model": "grok-4.7-high-fast",
+  "origin": "http://127.0.0.1:46569",
+  "sources": {
+    "components/places/OrtSuche.tsx": {
+      "sha256": "501e628a606a9f4e173d4a46c97f83d149b3201d8757af23fe62c2d45e38d7c0",
+      "blob": "59928c45db0c5bd9bc6733a50f876f619b9ee8bd"
+    },
+    "components/airports/FlughafenSuche.tsx": {
+      "sha256": "a2f3a489e702886fdd0e111bb688421f62325e7ed09d689634e0b26ffa0de355",
+      "blob": "2f7b01464794cfd2f5bee9cc9aaf4f0138f2d06a"
+    },
+    "lib/suche/tastatur.ts": {
+      "sha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394",
+      "blob": "3c4953419af69132fe094ee26100fc87cd13bf69"
+    },
+    "components/suche/Suchliste.tsx": {
+      "sha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352",
+      "blob": "d69781e62dae73acde6590bde03f3533c8388b77"
+    }
+  },
+  "scenarios": [
+    {
+      "name": "ort/keyboard/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/pointer/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/responses/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/parent/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/keyboard/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/pointer/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/responses/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/parent/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/rolle/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/touch/390/touch",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/keyboard/390/touch",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/touch/390/touch",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "pass": true
+    },
+    {
+      "name": "flughafen/keyboard/390/touch",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "pass": true
+    }
+  ],
+  "aborted": [],
+  "pageErrors": [],
+  "browser": {
+    "channel": "chrome",
+    "version": "148.0.7778.96"
+  },
+  "pass": true
+}

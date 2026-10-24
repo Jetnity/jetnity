@@ -13,7 +13,12 @@ import type { OrtOption, OrtRolle } from '@/lib/places/domain'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
 import { sucheAnfrageDarfSchreiben, sucheAnfrageStarten } from '@/lib/suche/anfrage'
 import { sucheLage, sucheListeSichtbar } from '@/lib/suche/lage'
-import { sucheListeIndex, sucheListeSchliesst, sucheListeWaehlt } from '@/lib/suche/tastatur'
+import {
+  sucheAktiveOption,
+  sucheListeIndex,
+  sucheListeSchliesst,
+  sucheListeWaehlt,
+} from '@/lib/suche/tastatur'
 import { cn } from '@/lib/utils'
 
 const DEBOUNCE_MS = 280
@@ -90,6 +95,17 @@ export default function OrtSuche({
   const anfrage = React.useRef({ aktuell: 0 })
   const listeId = React.useId()
   const letzterSamen = React.useRef(initialText)
+  const zeigerWahl = React.useRef(false)
+  const elternErsatz = value?.name && value.name !== text
+    ? value.name
+    : !value?.name && initialText !== undefined && initialText !== text
+      ? initialText
+      : null
+  const [aktivResetFuer, setAktivResetFuer] = React.useState<string | null>(null)
+  if (elternErsatz && elternErsatz !== aktivResetFuer) {
+    setAktivResetFuer(elternErsatz)
+    setAktiv(-1)
+  }
 
   React.useEffect(() => {
     const abgleich = ortSucheAnzeigetextAbstimmen({
@@ -166,10 +182,43 @@ export default function OrtSuche({
 
   React.useEffect(() => {
     const schliessen = (ereignis: MouseEvent) => {
-      if (!wurzel.current?.contains(ereignis.target as Node)) setOffen(false)
+      if (!wurzel.current?.contains(ereignis.target as Node)) {
+        setOffen(false)
+        setAktiv(-1)
+      }
     }
     document.addEventListener('mousedown', schliessen)
     return () => document.removeEventListener('mousedown', schliessen)
+  }, [])
+
+  React.useEffect(() => {
+    const knoten = wurzel.current
+    if (!knoten) return
+    let timer = 0
+    const starten = (ereignis: PointerEvent) => {
+      const ziel = ereignis.target
+      if (ziel instanceof Element && ziel.closest('[role="option"]')) zeigerWahl.current = true
+    }
+    const loesen = () => {
+      if (!zeigerWahl.current) return
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => {
+        zeigerWahl.current = false
+        const fokus = document.activeElement
+        if (fokus instanceof Node && knoten.contains(fokus)) return
+        setOffen(false)
+        setAktiv(-1)
+      }, 0)
+    }
+    knoten.addEventListener('pointerdown', starten)
+    window.addEventListener('pointerup', loesen)
+    window.addEventListener('pointercancel', loesen)
+    return () => {
+      window.clearTimeout(timer)
+      knoten.removeEventListener('pointerdown', starten)
+      window.removeEventListener('pointerup', loesen)
+      window.removeEventListener('pointercancel', loesen)
+    }
   }, [])
 
   const waehlen = (option: OrtOption) => {
@@ -187,21 +236,12 @@ export default function OrtSuche({
     if (!value || wert.trim() !== value.name) onChange(null, wert)
   }
 
-  const taste = (ereignis: React.KeyboardEvent<HTMLInputElement>) => {
-    if (sucheListeSchliesst(ereignis.key)) {
-      setOffen(false)
-      return
-    }
-    if (!offen || treffer.length === 0) return
-    if (ereignis.key === 'ArrowDown' || ereignis.key === 'ArrowUp') {
-      ereignis.preventDefault()
-      const pfeil = ereignis.key
-      setAktiv((bisher) => sucheListeIndex(bisher, treffer.length, pfeil))
-    }
-    if (sucheListeWaehlt(ereignis.key, aktiv) && treffer[aktiv]) {
-      ereignis.preventDefault()
-      waehlen(treffer[aktiv]!)
-    }
+  const fokusVerlassen = (ereignis: React.FocusEvent<HTMLInputElement>) => {
+    const ziel = ereignis.relatedTarget
+    if (zeigerWahl.current) return
+    if (ziel instanceof Node && wurzel.current?.contains(ziel)) return
+    setOffen(false)
+    setAktiv(-1)
   }
 
   const lage = sucheLage({
@@ -215,6 +255,26 @@ export default function OrtSuche({
     ungueltig,
   })
   const listeSichtbar = sucheListeSichtbar(lage)
+  const optionAnzahl = lage === 'results' ? treffer.length : 0
+  const aktiverIndex = sucheAktiveOption(aktiv, optionAnzahl)
+
+  const taste = (ereignis: React.KeyboardEvent<HTMLInputElement>) => {
+    if (sucheListeSchliesst(ereignis.key)) {
+      setOffen(false)
+      setAktiv(-1)
+      return
+    }
+    if (!offen || optionAnzahl === 0) return
+    if (ereignis.key === 'ArrowDown' || ereignis.key === 'ArrowUp') {
+      ereignis.preventDefault()
+      const pfeil = ereignis.key
+      setAktiv(sucheListeIndex(aktiverIndex, optionAnzahl, pfeil))
+    }
+    if (sucheListeWaehlt(ereignis.key, aktiverIndex) && treffer[aktiverIndex]) {
+      ereignis.preventDefault()
+      waehlen(treffer[aktiverIndex]!)
+    }
+  }
 
   return (
     <div ref={wurzel} className="relative min-w-0">
@@ -224,6 +284,7 @@ export default function OrtSuche({
         value={text}
         onChange={(ereignis) => tippen(ereignis.target.value)}
         onFocus={() => setOffen(true)}
+        onBlur={fokusVerlassen}
         onKeyDown={taste}
         placeholder={placeholder}
         autoComplete="off"
@@ -233,7 +294,7 @@ export default function OrtSuche({
         aria-expanded={Boolean(listeSichtbar)}
         aria-controls={listeId}
         aria-autocomplete="list"
-        aria-activedescendant={aktiv >= 0 ? `${listeId}-${aktiv}` : undefined}
+        aria-activedescendant={aktiverIndex >= 0 ? `${listeId}-${aktiverIndex}` : undefined}
         aria-invalid={ungueltig || undefined}
         aria-describedby={ariaBeschrieben(describedBy)}
         disabled={disabled}
@@ -260,7 +321,7 @@ export default function OrtSuche({
             ariaLabel: option.ariaLabel ?? `${option.label}, ${typText(option.typ)}`,
             betont: option.landAliasMatch === true,
           }))}
-          aktiv={aktiv}
+          aktiv={aktiverIndex}
           onWaehlen={(index) => {
             const option = treffer[index]
             if (option) waehlen(option)
