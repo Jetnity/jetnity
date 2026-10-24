@@ -14,8 +14,9 @@ Status: implementation and local mounted proof are complete on the runtime head 
 
 ## Runtime head
 
-Mounted proof ran at `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`.
-Merge-base with the assigned main `913cf9353fd33491d2bd3130b3c430cc88990200` is that same main commit. Ahead 6, behind 0, before this docs/evidence commit.
+Mounted proof ran at `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`.
+Component sources are unchanged from `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`.
+Merge-base with the assigned main `913cf9353fd33491d2bd3130b3c430cc88990200` is that same main commit. Ahead 8, behind 0, before this docs/evidence commit.
 TripPlanner blob `2ed2471f5d999b1990972e4f97a56b83e8c03f8f`, SHA-256 `5bfb221ff7f63a00c7ee020d235b4085e52229785abdf11624589d7a2a6eefd8`.
 Reiseidee blob `78b18e878df302991bf4f74b304c4fec6a5abab5`, SHA-256 `60d17acccd3aa4458285636a830350c8cd6c444e7fd9382b827df93307172b7f`.
 `usePlanningCreationLifecycle` blob `5e97d5a90de8251b94b162c4e6c5fb832dd92868`, SHA-256 `7418ae18e3a3d27f00fdd2cc6d1b18d2c49660af91b3a50acebdc9c393970525`.
@@ -29,10 +30,11 @@ Manual and proposal creation now share one small UI lifecycle. A second submit i
 
 ## Proof
 
-`node scripts/planning-creation-lifecycle-1/run.mjs` exit 0. This runner is not started by `npm test`.
-25 cases, failed 0, sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`.
-The ordinary test executes the sync guard directly: 3 tests, 0 fail. It does not skip when no browser is installed.
-Playwright Chromium headless shell 140.0.7339.16 (build v1187). Node v22.23.4.
+`PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` exit 0. `npm test` does not start this runner. No `PLANNING_CREATION_ARTIFACT_DIR`.
+25 cases, failed 0, sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`. `outputs.artifactCopy` is `not-requested`.
+The same command without the browser variable exits 1 and leaves `result.json` untouched.
+The ordinary test executes the sync guard directly: 3 tests, 0 fail. It does not skip and does not read `result.json`.
+Node v22.23.4.
 Viewports 320, 390, 1280, and 320 at root font-size 32px. Overflow delta 0. No page errors.
 
 ## Local gates on the runtime head

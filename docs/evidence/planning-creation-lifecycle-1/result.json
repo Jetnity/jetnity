@@ -1,5 +1,5 @@
 {
-  "head": "9f78c85d686565fa0ebc81a9720bfe8e8485d4dd",
+  "head": "891c2dd13e121ee4dbfc27b07ce542acdab3fc1e",
   "failed": 0,
   "cases": [
     {
@@ -133,8 +133,15 @@
     "production database",
     "provider or model activation",
     "full App/Auth CI",
-    "Vercel Preview"
+    "Vercel Preview",
+    "workflow CI replay of this browser proof"
   ],
+  "outputs": {
+    "evidenceDir": "docs/evidence/planning-creation-lifecycle-1",
+    "scratch": "node:os.tmpdir",
+    "browserPrerequisite": "PLANNING_CREATION_CHROMIUM",
+    "artifactCopy": "not-requested"
+  },
   "layout": {
     "manual-320": {
       "delta": 0,

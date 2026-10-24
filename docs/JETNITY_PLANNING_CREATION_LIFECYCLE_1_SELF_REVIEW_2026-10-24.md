@@ -13,7 +13,7 @@ The shared hook is only the in-flight ref, the generation and the pending flag. 
 
 The sync guard is taken after the action-time gate and validation, immediately before the first await. An invalid submit does not lock and does not call an action. Manual `clientRef` is still minted on the first attempt that passes the opening gate, including a later validation failure, which matches the previous identity rule.
 
-Technical Lead noted that `ci.yml` runs `npm ci` then `npm test` and does not install a Playwright browser. The ordinary test no longer spawns the mounted runner. It calls `creationLifecycleBeginnen`, `creationLifecycleAktuell` and `creationLifecycleBeenden`, and the hook uses those same functions. There is no skip, no empty assertion, and no workflow, dependency or timeout change. The mounted proof was executed again at `9f78c85d` and remains outside `npm test`.
+CHANGES REQUIRED R1 was bound to `43896061`. At that head the ordinary test launched Playwright and the runner always created `/opt/cursor/artifacts`. The ordinary test has since called only `creationLifecycleBeginnen`, `creationLifecycleAktuell` and `creationLifecycleBeenden`. This correction makes the separate proof require `PLANNING_CREATION_CHROMIUM`, write to the repository evidence directory or `PLANNING_CREATION_EVIDENCE_DIR`, and use `node:os.tmpdir` or `PLANNING_CREATION_SCRATCH_DIR` for the bundle. `PLANNING_CREATION_ARTIFACT_DIR` is optional. The executed proof did not set it. A missing browser exits 1 and does not treat an older `result.json` as success. No workflow, dependency, timeout, or skip was added. The mounted proof was executed again at `891c2dd1`.
 
 ## What I would not call proven
 
@@ -29,8 +29,8 @@ Full `npm test`, GitHub App/Auth CI and the Vercel Preview for the final head we
 
 - P0: none.
 - P1: none. The lock does not change who may write, and it does not abort an account request that already left the page.
-- P2: none in this lane.
-- P3: same-turn OrtSuche query text remains outside the parent guard until the disabled paint. Synthetic place search is not the production ranking. One pre-existing `react-hooks/set-state-in-effect` warning remains on the proposal waiting clock. Workflow CI does not install a Playwright browser, so it will not replay the mounted proof. The ordinary test covers the sync guard only. Full lint and the production build do not replace exact-head CI or Preview.
+- P2: R1 portability is addressed at `891c2dd1`. The mounted proof is outside `npm test` and no longer depends on `/opt/cursor/artifacts`.
+- P3: same-turn OrtSuche query text remains outside the parent guard until the disabled paint. Synthetic place search is not the production ranking. One pre-existing `react-hooks/set-state-in-effect` warning remains on the proposal waiting clock. Workflow CI does not install a Playwright browser, so it will not replay the mounted proof. That limit is reported, not skipped. Full lint and the production build on the earlier component head do not replace exact-head CI or Preview.
 
 ## Boundaries left untouched
 

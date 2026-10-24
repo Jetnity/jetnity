@@ -1,10 +1,13 @@
 # Planning Creation Lifecycle 1 — proof notes
 
-Executed at runtime head `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`.
-`result.json` sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`.
+Executed at proof head `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`.
+`result.json` sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`.
 25 mounted cases, `failed: 0`, `pageErrors: []`.
 
-`npm test` does not launch this runner. Workflow CI runs `npm ci` and `npm test` and does not install a Playwright browser. The ordinary test in `lib/trips/planning-creation-lifecycle-1.test.ts` executes the same sync guard the hook uses. This script is the separate mounted proof. It is not a skipped CI test.
+Command: `PLANNING_CREATION_CHROMIUM=<Chromium executable> node scripts/planning-creation-lifecycle-1/run.mjs`.
+This run supplied Playwright Chromium 140.0.7339.16 (build v1187). `PLANNING_CREATION_ARTIFACT_DIR` was not set. `outputs.artifactCopy` is `not-requested`. Evidence defaulted to `docs/evidence/planning-creation-lifecycle-1`. Scratch was `node:os.tmpdir`.
+
+Without `PLANNING_CREATION_CHROMIUM` the same command exits 1 and does not read or rewrite `result.json`. That is a failed proof, not a skip. `npm test` does not launch this runner.
 
 The runner mounts the real `TripPlanner` and `Reiseidee` with compiled `styles/globals.css`. Guest `gastreiseAnlegen`, `gastreiseAblegen` and `vorschlagAlsReise` run. These boundaries are stubs:
 

@@ -13,8 +13,9 @@ UI title renamed in this session to the logical name above.
 - Main tree named by TASK V1: `d1b7250c68bad2cfe67135fed1d6e5969c864162`
 - Merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`
 - Behind that main: 0. No main sync and no sibling integration.
-- Runtime/component head used for the harness and local gates: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`
-- Ahead of that main before this docs/evidence commit: 6. This commit adds documentation and sanitized screenshots only.
+- Proof head: `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`
+- Component head inside that proof: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`. R1 changes the runner and the ordinary test comment, not TripPlanner, Reiseidee, or the hook body.
+- Ahead of that main before this docs/evidence commit: 8. This commit adds documentation and the fresh proof output only.
 - Exact final HEAD, including this docs commit, is recorded only in the PR comment so this file does not chase its own SHA.
 - TASK V1 blob: `d106810aa4c0138bd1191698a18aed3a1a5c2ba5`, unchanged.
 - Proved TripPlanner blob: `2ed2471f5d999b1990972e4f97a56b83e8c03f8f`
@@ -45,7 +46,8 @@ UI title renamed in this session to the logical name above.
 
 ## Commands
 
-- `node scripts/planning-creation-lifecycle-1/run.mjs` — exit 0, 25 cases, failed 0, sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`. Separate from `npm test`.
+- `PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` — exit 0, 25 cases, failed 0, sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`. `artifactCopy: not-requested`. Evidence default `docs/evidence/planning-creation-lifecycle-1`. Scratch `node:os.tmpdir`.
+- Same command without `PLANNING_CREATION_CHROMIUM` — exit 1. Does not read or rewrite `result.json`.
 - ordinary `lib/trips/planning-creation-lifecycle-1.test.ts` — exit 0, 3 tests, no browser launch and no skip
 - `npx tsc -p tsconfig.json --noEmit` — exit 0 on `9f78c85d`
 - focused source tests — exit 0, 78 pass
@@ -69,7 +71,7 @@ Not verified: physical device, screen reader, hosted account, Production databas
 
 - P0: none.
 - P1: none. Client pending lock does not change persistence or authorization. An already-sent account write is not cancelled.
-- P2: none in this lane.
+- P2: R1 is addressed. Ordinary `npm test` does not launch Playwright or read `result.json`. The mounted runner requires `PLANNING_CREATION_CHROMIUM` and writes to the repository evidence directory. `/opt/cursor/artifacts` is not created.
 - P3: OrtSuche same-turn query text is outside the readonly seam. Place search and the five action boundaries in the harness are synthetic. The proposal waiting-clock lint warning is pre-existing.
 
 ## First unfinished step

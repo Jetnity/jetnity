@@ -15,8 +15,9 @@ This report is author evidence. It is not Technical-Lead PASS.
 
 - Assigned main: `913cf9353fd33491d2bd3130b3c430cc88990200`
 - Merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`
-- Runtime/proof head: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`
-- Ahead / behind that main, before the docs commit: 6 / 0
+- Runtime/proof head: `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`
+- Component head inside it: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd` (TripPlanner, Reiseidee, hook unchanged by the runner fix)
+- Ahead / behind that main, before the docs commit: 8 / 0
 - TASK V1 blob: `d106810aa4c0138bd1191698a18aed3a1a5c2ba5`, unchanged
 - Mode: NORMAL
 - Node: v22.23.4
@@ -102,7 +103,8 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 
 | Command | Exit | Detail |
 | --- | --- | --- |
-| `node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases at `9f78c85d`, sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`. Not invoked by `npm test`. |
+| `PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases at `891c2dd1`, sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`. Evidence dir default. Artifact copy not requested. |
+| same command without `PLANNING_CREATION_CHROMIUM` | 1 | Failed proof. Did not read or rewrite `result.json`. Not a skip. |
 | `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/planning-creation-lifecycle-1.test.ts` | 0 | 3 tests. Sync guard only. No Playwright launch and no skip. |
 | focused `create-entry`, `planning-entry-premium-experience-7`, `mobile-accessibility-1`, `homepage-route-entry-1`, `homepage-natural-route-intent-1` | 0 | 78 tests, 0 fail |
 | `npx tsc -p tsconfig.json --noEmit` | 0 | On runtime head `9f78c85d`. Earlier `npm run typecheck` also exited 0 before the guard extraction. |
@@ -118,7 +120,7 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 
 ## Not verified
 
-Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this head. The mounted browser proof is local and exact-head. Workflow CI will not replay it, because `ci.yml` installs no Playwright browser and this lane does not change that workflow. The earlier seed Preview is not evidence for `9f78c85d`.
+Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this head. The mounted browser proof is local and exact-head. Workflow CI will not replay it, because `ci.yml` installs no Playwright browser and this lane does not change that workflow. The earlier seed Preview is not evidence for `891c2dd1`.
 
 ## Costs and database
 
