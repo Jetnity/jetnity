@@ -4,17 +4,34 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { basename, isAbsolute, join, relative } from 'node:path'
 
 import { chromium } from 'playwright'
 
 const wurzel = process.cwd()
-const nachweis = join(wurzel, 'docs/evidence/planning-creation-lifecycle-1')
-const artefakte = '/opt/cursor/artifacts'
+const nachweisStandard = join(wurzel, 'docs/evidence/planning-creation-lifecycle-1')
+const nachweisVorgabe = process.env.PLANNING_CREATION_EVIDENCE_DIR
+const nachweis = nachweisVorgabe
+  ? (isAbsolute(nachweisVorgabe) ? nachweisVorgabe : join(wurzel, nachweisVorgabe))
+  : nachweisStandard
+const scratchVorgabe = process.env.PLANNING_CREATION_SCRATCH_DIR
+const scratchBasis = scratchVorgabe
+  ? (isAbsolute(scratchVorgabe) ? scratchVorgabe : join(wurzel, scratchVorgabe))
+  : tmpdir()
+const browserPfad = process.env.PLANNING_CREATION_CHROMIUM
+let artifactCopy = process.env.PLANNING_CREATION_ARTIFACT_DIR ? 'pending' : 'not-requested'
+
+if (!browserPfad || !existsSync(browserPfad)) {
+  console.error(
+    'Mounted proof failed: set PLANNING_CREATION_CHROMIUM to a Chromium executable. npm test does not run this proof. A missing browser is a failed proof, not a skip, and this script does not read an older result.json.',
+  )
+  process.exit(1)
+}
+
 const require = createRequire(import.meta.url)
 const tsxRequire = createRequire(require.resolve('tsx'))
 const { build } = tsxRequire('esbuild')
@@ -67,10 +84,30 @@ async function css() {
   return ergebnis.css
 }
 
-const temp = join(tmpdir(), `jetnity-planning-lifecycle-${process.pid}`)
+const temp = join(scratchBasis, `jetnity-planning-lifecycle-${process.pid}`)
 mkdirSync(temp, { recursive: true })
 mkdirSync(nachweis, { recursive: true })
-mkdirSync(artefakte, { recursive: true })
+const probe = join(nachweis, `.write-probe-${process.pid}`)
+writeFileSync(probe, 'ok')
+unlinkSync(probe)
+
+function optionaleKopie(datei) {
+  const roh = process.env.PLANNING_CREATION_ARTIFACT_DIR
+  if (!roh) return
+  try {
+    const ziel = isAbsolute(roh) ? roh : join(wurzel, roh)
+    mkdirSync(ziel, { recursive: true })
+    copyFileSync(datei, join(ziel, basename(datei)))
+    if (artifactCopy === 'pending') artifactCopy = 'copied'
+  } catch {
+    artifactCopy = 'skipped'
+  }
+}
+
+function relativ(pfad) {
+  const wert = relative(wurzel, pfad)
+  return wert.startsWith('..') ? pfad : wert
+}
 
 await build({
   entryPoints: [join(wurzel, 'scripts/planning-creation-lifecycle-1/harness.tsx')],
@@ -190,7 +227,14 @@ function schreiben(extra = {}) {
       'provider or model activation',
       'full App/Auth CI',
       'Vercel Preview',
+      'workflow CI replay of this browser proof',
     ],
+    outputs: {
+      evidenceDir: relativ(nachweis),
+      scratch: scratchVorgabe ? relativ(scratchBasis) : 'node:os.tmpdir',
+      browserPrerequisite: 'PLANNING_CREATION_CHROMIUM',
+      artifactCopy,
+    },
     ...extra,
   }
   writeFileSync(join(nachweis, 'result.json'), `${JSON.stringify(ergebnis, null, 2)}\n`)
@@ -198,6 +242,7 @@ function schreiben(extra = {}) {
 }
 
 const browser = await chromium.launch({
+  executablePath: browserPfad,
   headless: true,
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 })
@@ -833,7 +878,7 @@ try {
         })
         const datei = join(nachweis, `manual-${breite}.png`)
         await page.screenshot({ path: datei })
-        copyFileSync(datei, join(artefakte, `manual-${breite}.png`))
+        optionaleKopie(datei)
         layout[`manual-${breite}`] = mass
         assert.equal(mass.delta <= 1, true, JSON.stringify(mass))
       }
@@ -855,7 +900,7 @@ try {
       })
       const reflowDatei = join(nachweis, 'manual-320-200.png')
       await page.screenshot({ path: reflowDatei })
-      copyFileSync(reflowDatei, join(artefakte, 'manual-320-200.png'))
+      optionaleKopie(reflowDatei)
       layout['manual-320-200'] = reflow
       assert.equal(reflow.delta <= 1, true, JSON.stringify(reflow))
       await page.evaluate(() => {
@@ -868,14 +913,14 @@ try {
       const vorschlag = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
       const vorschlagDatei = join(nachweis, 'proposal-320.png')
       await page.screenshot({ path: vorschlagDatei, fullPage: true })
-      copyFileSync(vorschlagDatei, join(artefakte, 'proposal-320.png'))
+      optionaleKopie(vorschlagDatei)
       layout['proposal-320'] = vorschlag
       assert.equal(vorschlag <= 1, true)
       await page.setViewportSize({ width: 1280, height: 900 })
       const weit = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
       const weitDatei = join(nachweis, 'proposal-1280.png')
       await page.screenshot({ path: weitDatei })
-      copyFileSync(weitDatei, join(artefakte, 'proposal-1280.png'))
+      optionaleKopie(weitDatei)
       layout['proposal-1280'] = weit
       assert.equal(weit <= 1, true)
       const taste = await page.evaluate(() => {

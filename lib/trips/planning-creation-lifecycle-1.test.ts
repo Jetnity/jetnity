@@ -8,10 +8,9 @@ import {
   creationLifecycleBeginnen,
 } from '@/components/trips/usePlanningCreationLifecycle'
 
-// Gewöhnlicher CI-Test. `npm test` startet keinen Browser.
-// Die gemountete TripPlanner-/Reiseidee-Prüfung bleibt
-// `node scripts/planning-creation-lifecycle-1/run.mjs` und läuft getrennt,
-// weil die Workflow-CI kein Playwright-Browser-Binary installiert.
+// Gewöhnlicher CI-Test. `npm test` startet keinen Browser und liest kein result.json.
+// Der gemountete Beweis ist getrennt und bricht ohne Browser ab, statt ihn zu überspringen:
+// PLANNING_CREATION_CHROMIUM=/pfad/zu/chromium node scripts/planning-creation-lifecycle-1/run.mjs
 
 test('ein zweites Beginnen im selben Stand startet keine zweite Generation', () => {
   const erster = creationLifecycleBeginnen(creationLifecycleAnfang())
