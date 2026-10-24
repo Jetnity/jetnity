@@ -9,19 +9,21 @@ Issue #992. Draft PR #995. Branch `fix/organisieren-action-recovery-1`.
 ## Pins
 
 - Base / merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`. Behind: 0.
-- Runtime/proof commit: `f78f801048b8a39493f29215b3b70a38d078fbc2`
-- Runtime tree: `c4aca780a18e1f7f984653749d3e2886843a15f5`
+- Reviewed head that received CHANGES REQUIRED R1: `48fd52dad48583871948ce804aecb9063e7e2410`
+- Pre-R1 runtime/proof commit: `f78f801048b8a39493f29215b3b70a38d078fbc2`
+- R1 runtime/proof commit: `143b4976c221eab56a35a872ae0d54f32e69174d`
+- R1 runtime tree: `26e4a8ba2d2db56f0961d753a7dc9cb2f662641e`
 - Exact final HEAD is the branch tip after the docs commit and is stated in the PR comment.
 - TASK V1 unchanged, blob `6db7bbecc3eaecc744569bbe74951342ff7f778e`.
 - `ManuelleVerbindung` SHA-256 from `export function ManuelleVerbindung` through EOF: `10fe6c8f0ec2bb976a53678ac3df9b100bcafe55baa97a72f4081a22bb368360`.
 
-Component blobs at the runtime commit:
+Component blobs at the R1 runtime commit:
 
-- FlugBestand `25e32d07d8c07996bda7f9ee8b87a615667dac9d` (baseline `75cc47f93d8382e876310dfa250ef685069e8bc5`)
-- UnterkunftBestand `3dc596a8ed3673a372da98570274ea8a5f2a357a` (baseline `98f4b67049909d5aa972aece7ad4b8c14b12749b`)
-- MobilitaetBereich `748e8733b46abd78beae2ad5940d078365a37709` (baseline `105c8a2a9a4d0b5b285395cfbf2951e411a6dc23`)
-- MietwagenBereich `c3076320a8f5c146ffef4ea2b47ff523a6e5dd27` (baseline `08a7a68eebbcdd3ad5f1666db27f514561cc6f36`)
-- useBookingActionLifecycle `52cb9adde97616fc6c7d128ece69ca48eb5fbf13`
+- FlugBestand `32e7582cade127610a8d264c87733bd93bbf9b1c` (baseline `75cc47f93d8382e876310dfa250ef685069e8bc5`)
+- UnterkunftBestand `18e379f5b9b798ca65aa20b2a0629d51523cc085` (baseline `98f4b67049909d5aa972aece7ad4b8c14b12749b`)
+- MobilitaetBereich `eac9ae0cff6999d4167a1d1e151bbac9ba4a0ba6` (baseline `105c8a2a9a4d0b5b285395cfbf2951e411a6dc23`)
+- MietwagenBereich `67cc0cbbf25df52770a916b29c2728f177f356fa` (baseline `08a7a68eebbcdd3ad5f1666db27f514561cc6f36`)
+- useBookingActionLifecycle `f59a4a25014c9aa17505b4386fd39a45f54ee270`
 
 ## What changed
 
@@ -34,6 +36,16 @@ A changed trip id, or disappearance of the pending item, bumps the generation du
 Manual rental uses the same ownership idea for its own form. All ten controls and the submit button disable while that save is pending. Duplicate `requestSubmit` sends one payload. Errors and throws keep the typed values. Success resets only that form to the existing empty start values and shows “Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.” Place ids, prices, currency, day, and stage stay null. Names are not trimmed or turned into place ids. Focus returns to the rental submit button only when focus is already on the document body and the save is still the owned one. Booking completion does not move focus, so an open flight-route or stay-interval field keeps it.
 
 The mobility tab row now wraps inside the viewport at 200% text. That edit is above `ManuelleVerbindung`. The connection function itself is unchanged. Its regression still locks the draft, rejects a duplicate submit, keeps values on error and throw, and clears only the connection number and note on success.
+
+## R1 — booking-label containment
+
+Reviewed head `48fd52dad48583871948ce804aecb9063e7e2410` kept the button inside the viewport while the label painted past the button edge. `inline-flex` made the label a flex item, so `whitespace-normal` did not wrap it inside the 156px box.
+
+`BUCHUNG_AKTION_KLASSE` is `inline-block`, `min-w-0`, `max-w-full`, `whitespace-normal`, and `break-words`, with the existing focus ring, minimum height, and disabled opacity. All six booking buttons use it: flight section, unassigned flight, stay, connection edge, unassigned connection, and rental. `ManuelleVerbindung`, `ManuelleFlugRoute`, and `UnterkunftZeitraum` were not edited.
+
+Proof condition, recorded in the harness result: at 320 CSS px and `document.documentElement.style.fontSize = '32px'`, every booking-label DOM Range client rect must lie inside that button’s border box (excess ≤ 1px). The check also rejects button scroll, `overflow: hidden`, and `text-overflow: ellipsis`. States measured: idle, pending, recovered, and domain error, eight controls each, `maxExcess` 0. Existing 320/390/1280 lifecycle assertions still run. The mounted trip leaves flights and connections unassigned; those buttons and the stay and rental buttons are the ones on screen. The assigned branches use the same class string.
+
+Rental submit focus after rejection is still best-effort. This R1 makes no auto-refocus PASS claim.
 
 ## Acceptance
 
@@ -85,5 +97,6 @@ Stored booking status remains the seal. UI success does not invent a provider co
 
 - P0: none.
 - P1: none.
-- P2: at 320px and 200% root font-size, one input inside byte-identical `ManuelleVerbindung` has a box from x=82 to x=367 (`scrollWidth` 367). Owned surfaces do not overflow. Fixing that input would edit the R103 function or global CSS, which this lane must not do.
-- P3: bundled Playwright Chromium was missing; proof used installed Chrome. The active booking button uses `aria-disabled` rather than the `disabled` attribute so keyboard focus is not pushed to the next control. A second activation is refused by the synchronous claim.
+- P2 from R1, owned booking-label overflow: addressed. Range excess is 0 at 320px / root 32px for the measured labels.
+- P2, unchanged and out of scope: one input inside byte-identical `ManuelleVerbindung` still extends to x=367 at 320px and 200% root font-size. Compared with exact main by the Technical Lead; this lane does not edit it.
+- P3: bundled Playwright Chromium was missing; proof used installed Chrome. The active booking button uses `aria-disabled` rather than the `disabled` attribute so keyboard focus is not pushed to the next control. Rental auto-focus after rejection can leave `document.body`; retry stays keyboard-reachable. No auto-refocus PASS claim, and R1 does not change that behavior.

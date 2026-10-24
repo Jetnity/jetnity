@@ -24,6 +24,12 @@ The node suite drives the real component functions with a per-file React stand-i
 
 The 320/200% connection overflow is recorded in `docs/evidence/organisieren-action-recovery-1/result.json` and is not marked as an owned-surface failure. I do not treat that as a fix.
 
+## R1
+
+The reviewed finding was intra-button text, not viewport overflow. I changed only the shared booking-button class and the harness measurement. I did not touch the connection function, the route editor, the stay-interval editor, shared CSS, or the rental focus timeout.
+
+The new proof compares Range rects with the button border box at 320px and root font-size 32px. It passed with `maxExcess` 0 for idle, pending, recovered, and domain-error labels. I inspected the pending flight screenshot: “Wird gespeichert …” wraps on two lines inside the outline.
+
 ## What I would ask the Technical Lead to look at
 
 - The active booking control is focusable while `aria-disabled="true"`. Siblings are actually disabled. Both are visually dimmed.
