@@ -2,7 +2,29 @@
 
 Date: 2026-10-24. Writer: Jetnity Account Booking Folder Completion 1 — Cursor Generation 1. Session `bc-a34030c7-4c19-4c9f-863f-193cfdfa34da`. Model `grok-4.7-high-fast`.
 
-This note records commands run on the implementation tree. It is not a hosted RLS, PostgREST, or PostgreSQL match pass. The accepted PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` and TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` were not edited. Parent plan head: `2ceb9e3a689d9e64e2ed555833e8b302cd139116`. Reviewed implementation head `de836013e78827d66e02be501d353f3ae2cf225e` is superseded by the review-fix commit that contains this note. `origin/main` and merge-base at the fetch before this repair: `0c37d318c47a758f06634448d6e0de3856bbc6a6`. Mode `NORMAL`.
+Historical `ablauf.json` blob `cd93aeefab08db4a4599df9e1582b3e1ac334691` and `montage.json` blob `7a41748c2595fdb4f04e6d18b35cb3c4139dafab` stay byte-identical. The proof-04 run is only under `v2-proof04-2026-10-24/`. This note is not a hosted RLS, PostgREST, or PostgreSQL match pass. The accepted PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` and TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` were not edited. Parent plan head: `2ceb9e3a689d9e64e2ed555833e8b302cd139116`. Reviewed implementation head `de836013e78827d66e02be501d353f3ae2cf225e` is superseded by the review-fix commit that contains this note. `origin/main` and merge-base at the fetch before this repair: `0c37d318c47a758f06634448d6e0de3856bbc6a6`. Mode `NORMAL`.
+
+## B-P2-PROOF-04 and main integration
+
+Executed harness head `1574adcb802cc7c0039eb9724e0a8a11191d4ed8`, tree `3f5a46d6ccf1ad31acc68bf2edf086d8f2efb1f4`. `origin/main` at that run: `9092b29c2e187bd73d644a3d85670f3ac6436be1`, tree `bc39c3b74b5cbab7c15595500ddc70a72de8826b`. The normal merge of that main into this branch had no conflict. TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` and PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` are unchanged.
+
+The action harness now reaches a real second page, from the loader's own continuation link, before both the button search and Enter. It records the request count and a `useLayoutEffect` witness of the returned view, then waits for a new request and a later commit. `letzterSubmit`, `pushState`, and animation frames are not the oracle. Archive `aktiv` is accepted only as `trips.status=in.(draft,planned,booked)`. Card identity is the Planpunkt `punkt` value and the card `h2`, in order. Page 2 of the Alpha fixture is `Alpha Zürich`. Page 2 of the later generic fixture is exactly `Flug 1`. Back restores `history.state.href`, `wiederholenHref`, all three fields, and the 50 first-page cards. The document URL stays `about:blank`. Retry uses the filtered cursor for title `Flug`, kind `flight`, and archive `aktiv`. The 211-row loader walk still runs once.
+
+Fresh outputs, created only because the directories did not exist:
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| Focused booking tests, four files | 0 | 32 pass, 0 fail |
+| `ablauf.ts --ausgabe .../v2-proof04-2026-10-24/ablauf` | 0 | Chromium 140.0.7339.16, viewport 390×844, root font 16px. Bundle in a unique temp directory. |
+| `npm run typecheck` | 0 | |
+| `npm run lint` | 0 | 144 warnings, 0 errors |
+| `check:dead` | 0 | 845 starts, 1589 reachable, 0 orphaned |
+| `check:exports` | 0 | 1202 files, 0 unused exports |
+| `check:deps`, `check:api-schutz`, `check:schema-bezug` | 0 | Schema check still prints the existing LOCAL/UNAPPLIED RPC notes |
+| `npm run build` | 0 | Next.js 16.4.1. Compiled in 15.0s. `/account/bookings` dynamic |
+| `montage.ts --ausgabe .../v2-proof04-2026-10-24/montage` | 0 | 56 measurements, overflow max 0. Static markup and production CSS. Root font 32px only at width 320. |
+
+Local full `npm test` was not run on this head. Native CI for this head was not observed when this section was written. The action fixture is not hosted PostgreSQL, hosted RLS, or Next Router. The montage is not hydration or native zoom.
 
 ## Review repair — R105-B code review V1
 

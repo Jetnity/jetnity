@@ -24,17 +24,19 @@ The page reads `searchParams`, renders one list in query order, and keeps `noind
 
 ## Review repair
 
-Code review V1 on `de836013e78827d66e02be501d353f3ae2cf225e` required three repairs. The repeat sentinel is now a `Symbol`, so the literal title `wiederholt` is accepted, including as a one-element array. The filter form remounts from the applied retry address, so reset, next, and back replace a pending edit and a new search still omits `weiter`. Search, Enter, combined filters, a row past the old 200-cut, the 50th-row cursor, equal timestamps, the null transition, reset, back, a second-page error, retry of the same address, empty account versus empty continuation, and the plan link are exercised through `buchungenFuerParameter` and the rendered component. The store interprets the URL the installed client sent. Its title check is `String.includes`, not PostgreSQL `~*`. The browser history is one document, not the Next App Router. `buchungenSeitenLauf` is removed from the runtime.
+Code review V1 on `de836013e78827d66e02be501d353f3ae2cf225e` required three repairs. The repeat sentinel is a `Symbol`, so the literal title `wiederholt` is accepted, including as a one-element array. The filter form remounts from the applied retry address, so reset, next, and back replace a pending edit and a new search still omits `weiter`.
+
+## Main integration and B-P2-PROOF-04
+
+Accepted main `9092b29c2e187bd73d644a3d85670f3ac6436be1` merged cleanly. The action proof no longer treats a submit marker or `postgrest.at(-1)` as the completed request, and it no longer opens Enter from `weiter=seite-2`. Before the button search and before Enter, the harness follows the loader's real continuation and waits until that second page is committed. Each later action snapshots the request count and the commit sequence, then requires one new request and a newer `useLayoutEffect` witness. Rendered identity is the ordered Planpunkt `punkt` value and the card `h2`. The Alpha fixture's second page is `Alpha Zürich`. The generic fixture's second page is exactly `Flug 1`, cursor timestamp `2026-01-01T00:00:02.123456Z`, id of visible row 50. Back restores the applied address, all three fields, and the first-page cards inside `history.state` of the same `about:blank` document. Retry uses a second page of title `Flug`, kind `flight`, and archive `aktiv`, whose request status is `trips.status=in.(draft,planned,booked)`. The 211-row walk still runs once. New files are only under `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/`. Earlier evidence blobs were not rewritten.
 
 ## Tests and build
 
-Focused booking tests on this repair tree: 32 pass, 0 fail. The three removed tests were the in-memory walker. Details are in `docs/evidence/account-booking-folder-completion-1/NOTES.md`. `ablauf.json` is the action-flow evidence.
+On executed head `1574adcb802cc7c0039eb9724e0a8a11191d4ed8`: focused booking tests 32 pass, 0 fail. `npm run typecheck` exit 0. `npm run lint` exit 0 with 144 pre-existing warnings and 0 errors. The five hygiene guards exit 0. `check:dead` reports 845 starts and 1589 reachable modules. `npm run build` exit 0, Next.js 16.4.1, compiled in 15.0s, `/account/bookings` dynamic.
 
-`npm run typecheck` exit 0. `npm run lint` exit 0 with 144 pre-existing warnings and 0 errors. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` exit 0. `npm run build` exit 0. Next.js 16.4.1. `/account/bookings` stays dynamic.
+The action harness and the static montage both exit 0 and write only the new `v2-proof04-2026-10-24` directory. Chromium 140.0.7339.16. Action viewport 390×844, root font 16px. Montage overflow maximum 0 across 56 measurements; root font 32px only at width 320. Local full `npm test` was not run on this head. Details are in `docs/evidence/account-booking-folder-completion-1/NOTES.md`.
 
-`npm test` exit 1: 7092 tests, 7076 pass, 11 fail, 5 skipped. The 11 failures are the same pre-existing official-truth native PostgreSQL proofs. PostgreSQL 16 binaries are absent. Native CI `40106883570/1` was green for `de836013` and does not turn this local failure into a pass. It does not gate the repair head.
-
-Headless Chromium 140.0.7339.16. The static montage, re-run after the build, still has horizontal overflow 0 and does not click the controls. The action flow does click search, Enter, reset, next, back, retry, and the plan link inside one document.
+The earlier local full suite on `5a284965` was exit 1 with 11 pre-existing native PostgreSQL failures. That result stays a failure for that environment. Native CI `40120501254` was green for `5a284965` only and does not gate this head.
 
 ## Security, database, cost
 
@@ -48,6 +50,6 @@ Owned: this REPORT, STATUS, SELF_REVIEW, HANDOFF, and `docs/evidence/account-boo
 
 ## Remaining limits
 
-Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The synthetic store uses exact timestamp text and `String.includes`, not timestamptz normalization or PostgreSQL `~*`. The Chromium runs are not a device, native zoom, screen-reader, or Next App Router pass. CI and Preview for the repair head are not claimed in this report.
+Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The synthetic store uses exact timestamp text and `String.includes`. The action history is one `about:blank` document. The montage is static markup with production CSS, not hydration or native zoom. CI and Preview for the final head are not claimed in this report.
 
-Next actor: Technical Lead, same session, exact-head re-review of the commit that contains this report.
+Next actor: Technical Lead, same session. STOP / write freeze on the commit that contains this report.
