@@ -1,0 +1,212 @@
+{
+  "status": "PASS",
+  "browser": "148.0.7778.96",
+  "url": "http://127.0.0.1:34077/",
+  "viewports": [
+    {
+      "name": "280",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 655.5,
+        "left": 150.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 655.5,
+        "left": 33.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "320",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 655.5,
+        "left": 190.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 655.5,
+        "left": 73.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "320-root-32",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 204.6875,
+        "height": 88,
+        "top": 611.5,
+        "left": 65.3125,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 217.203125,
+        "height": 88,
+        "top": 507.5,
+        "left": 52.796875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "360",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 695.5,
+        "left": 230.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 695.5,
+        "left": 113.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "390",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 799.5,
+        "left": 260.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 799.5,
+        "left": 143.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "430",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 855.5,
+        "left": 300.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 855.5,
+        "left": 183.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "768",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 855.5,
+        "left": 613.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 855.5,
+        "left": 496.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "1280",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 855.5,
+        "left": 1125.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 855.5,
+        "left": 1008.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "landscape",
+      "breit": 0,
+      "speichern": {
+        "name": "Speichern",
+        "width": 103.34375,
+        "height": 44,
+        "top": 345.5,
+        "left": 689.65625,
+        "sichtbar": true
+      },
+      "abbrechen": {
+        "name": "Abbrechen",
+        "width": 109.609375,
+        "height": 44,
+        "top": 345.5,
+        "left": 572.046875,
+        "sichtbar": true
+      },
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    }
+  ],
+  "limits": [
+    "CSS viewport and root-font simulation only",
+    "not a physical device, screen reader, native zoom, hosted account, or Preview pass"
+  ],
+  "cases": 77,
+  "head": "545cbdf783e75ab82f8d23b5f1533b60e56f06a5",
+  "bundleSha256": "999c85f9dea09908b364c2e4c3c2ab35539e4ab419f90e2c669967e931017dd6"
+}
