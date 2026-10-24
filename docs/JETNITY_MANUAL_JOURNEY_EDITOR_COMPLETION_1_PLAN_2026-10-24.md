@@ -1,12 +1,13 @@
 # Manual Journey Editor Completion 1 — PLAN
 
 Date: 24 October 2026
-Status: plan before product code. Stop for Technical-Lead review.
+Status: revised plan after Technical-Lead plan review R1. Still before product code. Stop for exact-head re-review.
 Author: **Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1**
 Issue: #998
 Branch: `fix/manual-journey-editor-completion-1`
 Draft PR: #1001
 TASK: `docs/JETNITY_MANUAL_JOURNEY_EDITOR_COMPLETION_1_TASK_V1_2026-10-24.md` remains immutable.
+Addendum: `docs/JETNITY_MANUAL_JOURNEY_EDITOR_COMPLETION_1_TASK_ADDENDUM_V1_2026-10-24.md` is immutable and read before this correction.
 
 ## Session and model
 
@@ -22,7 +23,8 @@ TASK: `docs/JETNITY_MANUAL_JOURNEY_EDITOR_COMPLETION_1_TASK_V1_2026-10-24.md` re
 - Operating mode re-read this session: `NORMAL` in `.jetnity/operating-mode.json`. This assigned lane is ordinary bounded product work. Special Product-Owner gates stay in force. This editor lifecycle does not cross one.
 - Startup pointer: `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` still describe the 2 October continuity writer. Those dated paragraphs are historical. Live evidence wins.
 - #751 body re-read this session. Current accepted main in that index is **0c37d318c47a758f06634448d6e0de3856bbc6a6**, tree **5e7b61a111f94f16a27c80a8ec89e42ef7af62e8**, mode NORMAL. R105 V2 records three dispatches. This lane is C, state at that index **DISPATCHED_START_UNVERIFIED** until this plan. Protected #751 sections 3–5 were not edited.
-- `git fetch origin main` this session: `origin/main` **0c37d318c47a758f06634448d6e0de3856bbc6a6**, tree **5e7b61a111f94f16a27c80a8ec89e42ef7af62e8**. Merge-base with this branch is that same SHA. At the plan commit's parent the branch is **1 ahead / 0 behind**. The only parent commit is TASK V1 `285c2de6820d50f4ec75c822dd91759c450523c3`. After this plan commit the branch is 2 ahead / 0 behind and the diff against main is the TASK file plus this PLAN file. Node `v22.23.4`.
+- First plan head `a5159391fc1872d62e2599302bbf0cb62d521109` was 2 ahead / 0 behind and is superseded by this correction. Technical Lead committed addendum V1 at `1cc1eb973e1f87b61697536e49ab820ad179230f`, parent `a5159391`, one new document. This session fetched that branch and fast-forwarded to that exact SHA before editing the plan.
+- `origin/main` remains **0c37d318c47a758f06634448d6e0de3856bbc6a6**, tree **5e7b61a111f94f16a27c80a8ec89e42ef7af62e8**. Merge-base is that same SHA. At this correction's parent the branch is **3 ahead / 0 behind**. After this plan commit the diff against main is three documents: TASK V1, addendum V1, and this revised PLAN. Node `v22.23.4`.
 - R105 precheck: https://github.com/Jetnity/jetnity/issues/751#issuecomment-6385343244. Integration order is **A → C → B**. No sibling branch is integrated. A is #999 / #996. B is #1000 / #997. Their files stay untouched.
 - Binding Slice Precheck, Multi-Agent Operating System, Multi-Agent Slice Planning, Technical-Lead operating standard, and V1 build order §8 were read. This task completes three existing Organisieren editors. It does not start a provider, Official Truth, account, or Phase-2 program.
 - Standing stops preserved: #985/#982 HOLD, #917 denied hosted readback, #913/#911 block, #968 cleanup PAUSE, #748 personal-browser SUSPENDED, #626 STOP, Bern #934/#937 PAUSE, #944 no-autostart, #585 deferred. No hosted read or write, no credential, no migration, no provider or paid call.
@@ -62,7 +64,7 @@ Everything below is source inspection on the seed. It is not mounted behavior, n
 - `components/trips/TripIntegratedDay.tsx` already keys the same component with `${need.occurrence}:${dayId}` and passes `vorgabe`. That file is read-only. Its key does not include the trip id, so the component itself must treat a new `reise.id` as a target change.
 - Place ids are already cleared when the submitted text differs from `vorgabe` origin or destination. Price, currency, title, and `mobilityChanges` are already null. That payload stays.
 - Accepted R104 evidence `docs/evidence/organisieren-action-recovery-1/result.json` records one connection `INPUT` with right edge 367 and page `scrollWidth` 367 at viewport 320 and root font-size scale 2. Shared `ORGANISIEREN_EINGABE_KLASSE` is `w-full` without `min-w-0` or `max-w-full`. That shared class is outside this allowlist. The local control class list is the fix. Historical evidence files stay untouched.
-- The reject alert is exactly `Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.` The R104 harness asserts that alert's `innerText` by equality. This lane may change only the `VERBINDUNG_HASH` lines in that harness and in `lib/trips/organisieren-action-recovery-1.test.ts`. The alert sentence stays so that assertion still passes. A thrown or rejected transport is not proof the create did not persist. The plan adds a separate non-alert note for that case; see the boundary below.
+- The reject alert is exactly `Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.` That sentence states a failed write. A thrown or rejected create does not prove the connection was not stored. Addendum V1 requires that uncertainty in the one primary alert, and it opens the two expected-text constants named below. The first plan's separate non-alert note is withdrawn.
 
 ## Allowed paths
 
@@ -80,7 +82,9 @@ Proof and delivery, later, after plan approval:
 - `scripts/manual-journey-editor-completion-1/**`
 - `docs/evidence/manual-journey-editor-completion-1/**`
 - `docs/JETNITY_MANUAL_JOURNEY_EDITOR_COMPLETION_1_{STATUS,REPORT,SELF_REVIEW,HANDOFF}_2026-10-24.md`
-- Hash-only edits: `VERBINDUNG_HASH` in `lib/trips/organisieren-action-recovery-1.test.ts` and `scripts/organisieren-action-recovery-1/harness.mjs`. Lineage recorded in this lane's STATUS. Historical screens, manifests, and reports are not overwritten.
+- `VERBINDUNG_HASH` in `lib/trips/organisieren-action-recovery-1.test.ts` and `scripts/organisieren-action-recovery-1/harness.mjs`. The old hash stays named as R104 lineage in this lane's report.
+- Thrown-text constants only, bound to the new primary sentence, equality checks kept: `VERBINDUNG_ABGELEHNT` in `scripts/organisieren-action-recovery-1/harness.mjs` (baseline line 29, assertion near 548) and `THROWN` in `scripts/manual-mobility-pending-draft-guard-1/harness.mjs` (baseline line 24, assertion near 432). No other assertion, viewport, payload, pending, retry, or secret-redaction edit in those files.
+- EVIDENCE-path initialization only in those two harnesses: accept `JETNITY_R105_C_EVIDENCE_DIR` when it resolves inside `docs/evidence/manual-journey-editor-completion-1/`, and keep the historical folder when the variable is unset. `SCREENS` stays derived from the chosen directory.
 - `lib/trips/flug-manuell.test.ts`, `lib/trips/flug-route-form-validation.test.ts`, and `lib/trips/unterkunft-manuell.test.ts` only if the editor shape makes an existing adapter fail. Existing domain, validation, and behavior assertions stay. The stay adapter needs a no-op `useEffect` once the editor calls it, and functional `useState` updates if the editor uses them. The flight validation harness only accepts `querySelector` selectors `input` and `input[aria-invalid="true"]`; those selectors stay.
 
 No global current-state file, shared contract, CSS module, package, lockfile, workflow, schema, or config edit. No sibling merge. TASK V1 stays immutable.
@@ -120,7 +124,7 @@ Connection:
 
 - Generation increments on trip change and on a real preset-key change. Preset key covers mode, origin and destination text, place ids, day id, and start date from `vorgabe` or, when `vorgabe` is absent, from the current trip's origin, first stage, start date, and first day. It does not cover object identity.
 - Pending completion with a mismatched generation does not clear fields, set the status sentence, set the error, or focus.
-- Returned domain strings stay the alert text. A throw still sets the existing alert sentence, unchanged, and adds a separate paragraph that is not `role="alert"`: the outcome is unconfirmed, the typed draft remains, and a deliberate retry can create another connection. No automatic retry, no new idempotency key, no writer-contract field.
+- One `role="alert"` carries the outcome. A returned domain string stays that alert's text. A throw or rejection replaces the old definitive sentence with this primary text, and focus moves to that alert after render, only in the submitting generation: `Ob die Verbindung gespeichert wurde, konnten wir nicht bestätigen. Deine Eingabe bleibt erhalten. Prüfe deinen Reiseplan vor einem erneuten Versuch. Ein erneuter Versuch kann eine zweite Verbindung anlegen.` There is no second paragraph. The alert does not say the write failed or was rolled back. No automatic retry, no hidden idempotency key, no new writer field. Thrown details stay hidden.
 - Success keeps the sentence `Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.` and clears only the connection number and note in that generation.
 - Local classes on this form only: `min-w-0 max-w-full` composed onto the ten controls and their immediate wrappers, plus `min-w-0` on the form grid. Shared `ORGANISIEREN_*` and `ARBEITSFELD_SPALTEN_KLASSE` strings stay. No page or root `overflow-hidden`.
 
@@ -136,7 +140,11 @@ Synthetic and local only. No deployed test route, no personal browser, no hosted
   - Connection: pending lock on all ten controls, double submit, domain error and reject retaining the draft, explicit success clearing only number and note, same-mount trip change, preset and day change, late result, manually edited values not replaced, local geometry.
 - Keyboard and focus for the changed paths. `prefers-reduced-motion: reduce` recorded; this plan adds no animation.
 - Viewports 280, 320, 360, 390, 430, 768, 1280, plus a short landscape pass where the form is the subject. At minimum the mounted set includes 320, 390, 1280, and 320 with root font-size 32px. Evidence records bounding boxes. That setup is CSS viewport and root font-size, not native browser zoom and not a physical device.
-- R104 harness and node test still run. Their connection hash constant is updated to the new function bytes and the old hash is named as the R104 lineage. Booking, rental, and the connection payload assertions stay. Historical `docs/evidence/organisieren-action-recovery-1/**` stays.
+- R103 and R104 harnesses still run, with equality checks intact. `VERBINDUNG_ABGELEHNT` and `THROWN` become the primary sentence above. The connection hash constant becomes the new function bytes. Booking, rental, domain-string, success, payload, pending, retry, secret-redaction, and viewport assertions stay.
+- This lane runs those two harnesses only with `JETNITY_R105_C_EVIDENCE_DIR` set:
+  - R103: `docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard`
+  - R104: `docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery`
+- An override outside `docs/evidence/manual-journey-editor-completion-1/` is rejected. Unset, each harness still targets its historical folder. Historical `docs/evidence/organisieren-action-recovery-1/**` and `docs/evidence/manual-mobility-pending-draft-guard-1/**` stay byte-identical. New results name this head, the harness bytes, the override, and the cases. They are not labeled as the old accepted head.
 
 Every new evidence file names the exact head, command, exit, case count, browser version, viewport, root font-size, motion setting, stubs, and port. Callbacks are in-memory. No guest storage, account action, hosted write, provider, database, screen reader, or physical device is claimed.
 
@@ -153,10 +161,10 @@ On the later implementation head: focused node tests, mounted harness, TypeScrip
 ## Unknowns
 
 - The exact input that reaches x=367 is recorded as an `INPUT` in the historical result, not remeasured here. Implementation measures all ten controls and fixes the local overflow that is actually present. If a local `min-w-0` composition is not enough and the fix would require the shared class or global CSS, stop and report it.
-- The unconfirmed-transport sentence cannot replace the existing reject alert without editing an R104 assertion this allowlist does not open. The split note is the proposed boundary. If that split is not acceptable, implementation needs a named allowlist addendum for that one assertion.
+- C-P2-PLAN-01 and C-P2-PLAN-02 are incorporated above. The separate unconfirmed note is not the product behavior.
 - CI, Preview, hosted accounts, screen readers, native zoom, and physical devices are NOT VERIFIED in this plan.
 - No follow-up slice, Ready, or merge.
 
 ## Stop
 
-This commit is the PLAN gate. No runtime or test implementation is included. The next actor is the Technical Lead, reviewing this exact head in this same session.
+This commit is the revised PLAN gate after addendum V1. No runtime or test implementation is included. The next actor is the Technical Lead, re-reviewing this exact head in this same session. Implementation stays unauthorized until that acceptance.
