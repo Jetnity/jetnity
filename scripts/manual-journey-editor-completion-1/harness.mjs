@@ -169,6 +169,40 @@ async function active(page) {
   })
 }
 
+async function markOwned(page) {
+  return page.evaluate(() => {
+    const el = document.activeElement
+    const mark = `owned-${Math.random().toString(16).slice(2)}`
+    el?.setAttribute('data-owned-focus', mark)
+    const facts = {
+      tag: el?.tagName ?? '',
+      row: el?.closest('[data-flug-punkt]')?.getAttribute('data-flug-punkt') ?? '',
+      text: (el?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      expanded: el?.getAttribute('aria-expanded'),
+      label: (el?.labels?.[0]?.innerText || '').split('\n')[0].trim(),
+      mark,
+    }
+    return facts
+  })
+}
+
+async function ownedNow(page, mark) {
+  const facts = await page.evaluate((expected) => {
+    const el = document.activeElement
+    return {
+      tag: el?.tagName ?? '',
+      row: el?.closest('[data-flug-punkt]')?.getAttribute('data-flug-punkt') ?? '',
+      text: (el?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      expanded: el?.getAttribute('aria-expanded'),
+      label: (el?.labels?.[0]?.innerText || '').split('\n')[0].trim(),
+      mark: el?.getAttribute('data-owned-focus') ?? '',
+      same: el?.getAttribute('data-owned-focus') === expected,
+    }
+  }, mark)
+  assert.equal(facts.same, true, `focus left the marked control ${mark}`)
+  return facts
+}
+
 async function boxes(page) {
   return page.evaluate(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -955,6 +989,81 @@ try {
   assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
   assert.equal((await active(page)).label, 'Abflugzeit (optional)')
   evidence.scenarios.push('flight-other-row-readback-keeps-focus')
+
+  // One named group. Six executions: success/domain/reject × B open/closed.
+  // Not six scenario groups and not an assertion count.
+  await page.evaluate(() => window.fixture.setFlight('pair'))
+  for (const outcome of ['success', 'domain', 'reject']) {
+    for (const bState of ['closed', 'open']) {
+      await page.evaluate((id) => window.fixture.setFlightTrip(id), `trip-own-${outcome}-${bState}`)
+      const rowA = page.locator('[data-flug-punkt="flight-a"]')
+      const rowB = page.locator('[data-flug-punkt="flight-b"]')
+      await rowA.getByRole('button', { name: /Flugroute/ }).click()
+      await rowA.getByLabel('Abflugzeit (optional)').fill('11:30')
+      await arm(page, 'flight', outcome)
+      await rowA.getByRole('button', { name: 'Speichern' }).click()
+      await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+      const held = await page.evaluate(() => window.fixture.latest('flight'))
+      await rowB.getByRole('button', { name: /Flugroute/ }).click()
+      const departureB = rowB.getByLabel('Abflugzeit (optional)')
+      await departureB.fill('12:00')
+      let owned
+      if (bState === 'closed') {
+        await rowB.getByRole('button', { name: 'Abbrechen' }).click()
+        await painted(page)
+        assert.equal(await rowB.locator('form').count(), 0)
+        owned = await markOwned(page)
+        assert.equal(owned.tag, 'BUTTON')
+        assert.equal(owned.row, 'flight-b')
+        assert.equal(owned.text, 'Flugroute ändern')
+        assert.equal(owned.expanded, 'false')
+      } else {
+        await departureB.focus()
+        owned = await markOwned(page)
+        assert.equal(owned.tag, 'INPUT')
+        assert.equal(owned.row, 'flight-b')
+        assert.equal(owned.label, 'Abflugzeit (optional)')
+        assert.equal(await rowB.locator('form').count(), 1)
+        assert.equal(await departureB.inputValue(), '12:00')
+      }
+      await release(page, 'flight')
+      const afterCallback = await ownedNow(page, owned.mark)
+      assert.equal(afterCallback.tag, owned.tag)
+      assert.equal(afterCallback.row, 'flight-b')
+      assert.equal(afterCallback.text, owned.text)
+      assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
+      if (outcome === 'success') {
+        assert.equal(await rowA.locator('form').count(), 0)
+        await page.evaluate((id) => window.fixture.deliver('flight', id), held)
+        await painted(page)
+        const afterGraph = await ownedNow(page, owned.mark)
+        assert.equal(afterGraph.tag, owned.tag)
+        assert.equal(afterGraph.row, 'flight-b')
+        assert.equal(afterGraph.text, owned.text)
+        assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
+        await rowA.getByText('11:30').first().waitFor()
+        if (bState === 'open') {
+          assert.equal(await departureB.inputValue(), '12:00')
+          assert.equal(await rowB.locator('form').count(), 1)
+        } else {
+          assert.equal(await rowB.locator('form').count(), 0)
+          assert.equal(afterGraph.expanded, 'false')
+        }
+      } else {
+        const message = outcome === 'domain' ? 'Route abgelehnt.' : FLIGHT_THROW
+        await rowA.getByText(message).waitFor()
+        assert.equal(await rowA.getByLabel('Abflugzeit (optional)').inputValue(), '11:30')
+        assert.equal(await rowA.locator('form').count(), 1)
+        if (bState === 'open') {
+          assert.equal(await departureB.inputValue(), '12:00')
+          assert.equal(await rowB.locator('form').count(), 1)
+        } else {
+          assert.equal(await rowB.locator('form').count(), 0)
+        }
+      }
+    }
+  }
+  evidence.scenarios.push('flight-pending-a-newer-b-keeps-focus')
 
   await page.close()
 

@@ -49,10 +49,12 @@ function ManuelleFlugRoute({
   item,
   reiseId,
   onSpeichern,
+  oberflaeche,
 }: {
   item: TripItem
   reiseId: string
   onSpeichern: FlugRouteSpeichern
+  oberflaeche: { readonly current: number }
 }) {
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
@@ -149,11 +151,13 @@ function ManuelleFlugRoute({
     const zielReise = reiseFest.current
     const zielItem = zielFest.current
     const generationJetzt = generationFest.current
+    const besitzBeimStart = oberflaeche.current
     const segmente = geprueft.data.segments
     const passt = () => lebendig.current && generationFest.current === generationJetzt && gleicherEditorKontext(
       { reiseId: reiseFest.current, zielId: zielFest.current },
       { reiseId: zielReise, zielId: zielItem },
     )
+    const fokusGehoert = () => oberflaeche.current === besitzBeimStart
     setValidieren(false)
     schreibt.current = true
     setLaeuft(true)
@@ -163,15 +167,17 @@ function ManuelleFlugRoute({
       if (!passt()) return
       if (meldung) {
         setFehler(meldung)
-        setFokusVersuch((bisher) => bisher + 1)
+        if (fokusGehoert()) setFokusVersuch((bisher) => bisher + 1)
       } else {
-        schliessen()
+        setOffen(false)
+        setFehler('')
+        if (fokusGehoert()) knopf.current?.focus()
         setGespeichert(true)
       }
     } catch {
       if (!passt()) return
       setFehler('Die Flugroute konnte nicht gespeichert werden. Bitte versuche es erneut.')
-      setFokusVersuch((bisher) => bisher + 1)
+      if (fokusGehoert()) setFokusVersuch((bisher) => bisher + 1)
     } finally {
       if (passt()) {
         schreibt.current = false
@@ -325,10 +331,11 @@ export default function FlugBestand({
     const request = ++writeOrder.current
     const context = window.location.href
     const reiseId = reiseIdRef.current
+    const besitz = oberflaecheRef.current
     setSaveStatus('')
     const error = await onFlugRouteManuell(itemId, segments)
-    if (!error && request === writeOrder.current && window.location.href === context && reiseIdRef.current === reiseId) {
-      setSaved({ itemId, reiseId, segments, context, besitz: oberflaecheRef.current })
+    if (!error && request === writeOrder.current && window.location.href === context && reiseIdRef.current === reiseId && oberflaecheRef.current === besitz) {
+      setSaved({ itemId, reiseId, segments, context, besitz })
     }
     return error
   }
@@ -402,7 +409,7 @@ export default function FlugBestand({
                 </div>
               </div>
               {abschnitt.item && onFlugRouteManuell && istManuellerFlug(abschnitt.item) ? (
-                <ManuelleFlugRoute key={`${reise.id}:${abschnitt.item.id}`} reiseId={reise.id} item={abschnitt.item} onSpeichern={routeSpeichern} />
+                <ManuelleFlugRoute key={`${reise.id}:${abschnitt.item.id}`} reiseId={reise.id} item={abschnitt.item} onSpeichern={routeSpeichern} oberflaeche={oberflaecheRef} />
               ) : null}
             </li>
           ))}
@@ -438,7 +445,7 @@ export default function FlugBestand({
                 </div>
               </div>
               {onFlugRouteManuell && istManuellerFlug(item) ? (
-                <ManuelleFlugRoute key={`${reise.id}:${item.id}`} reiseId={reise.id} item={item} onSpeichern={routeSpeichern} />
+                <ManuelleFlugRoute key={`${reise.id}:${item.id}`} reiseId={reise.id} item={item} onSpeichern={routeSpeichern} oberflaeche={oberflaecheRef} />
               ) : null}
             </li>
           ))}
