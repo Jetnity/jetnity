@@ -303,11 +303,18 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
 
   assert.equal(invalidations, 2, 'success and failure both invalidate before the mutation')
   const gespeichert = { ...reise, revision: reise.revision + 1 }
-  const states = [reise, true, '']
+  // Five settled slots, in hook order: matching trip, passend reading of that
+  // same id, the requested id (no context reset), recheck counter, storage message.
+  // The focus hook is an import seam only. This adapter does not render React or
+  // prove keyboard focus; the mounted browser proof does. The real hook calls
+  // useRef and has no renderer here.
+  const states: unknown[] = [reise, { art: 'passend', reise }, TRIP, 0, '']
   const stateWrites: unknown[] = []
   const guestArgs: unknown[] = []
   let guestError = false
-  const guest = laden<{ default: (props: { tripId: string }) => WorkspaceElement }>('components/trips/GastArbeitsbereich.tsx', {
+  const lesefehler = require(resolve(root, 'components/trips/GastReiseLesefehler')) as Record<string, unknown>
+  const TripWorkspace = (require(resolve(root, 'components/trips/TripWorkspace')) as { default: unknown }).default
+  const guest = laden<{ default: (props: { tripId: string }) => React.ReactElement<{ children: WorkspaceElement; 'data-gast-fokus'?: string }> }>('components/trips/GastArbeitsbereich.tsx', {
     react: { ...React, useEffect: () => {}, useState: () => [states.shift(), (value: unknown) => stateWrites.push(value)] },
     'next/navigation': { useRouter: () => ({}) },
     '@/lib/trips/gastspeicher': { gastUnterkunftZeitraumSetzen: (...input: unknown[]) => {
@@ -315,8 +322,12 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
       if (guestError) throw new Error('Speicherfehler')
       return gespeichert
     } },
+    '@/components/trips/GastReiseLesefehler': { ...lesefehler, useGastLeseFokus: () => () => {} },
   })
-  const gastCallback = guest.default({ tripId: TRIP }).props.onUnterkunftZeitraum
+  const wurzel = guest.default({ tripId: TRIP })
+  const workspace = React.Children.only(wurzel.props.children)
+  assert.equal(workspace.type, TripWorkspace)
+  const gastCallback = workspace.props.onUnterkunftZeitraum
   assert.equal(await gastCallback(ITEM, zeitraum.startsOn, zeitraum.endsOn), null)
   assert.deepEqual(guestArgs, [[reise, ITEM, zeitraum.startsOn, zeitraum.endsOn]])
   assert.equal(stateWrites[0], gespeichert, 'genau der persistierte Graph geht in den Workspace')

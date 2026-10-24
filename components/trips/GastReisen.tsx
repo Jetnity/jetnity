@@ -10,56 +10,98 @@
 // nächste Login übernimmt sie vollständig ins Konto
 // (`lib/trips/gastspeicher.ts`).
 //
-// Sie stillschweigend zu verwerfen wäre der bequeme Weg gewesen. Wer den
-// Browser über Monate benutzt hat, hätte dabei Arbeit verloren, ohne es zu
-// erfahren.
+// Ein leerer Loader ist nicht automatisch „noch keine Reise“. Unlesbare
+// oder ungültige Bytes bleiben ein prüfbarer Lesefehler und schreiben nicht.
+// Eine gültige Übernahme darf weiterhin schreiben.
 
 import * as React from 'react'
 import type { Route } from 'next'
 import Link from 'next/link'
-import { Archive, MapPin, Plus } from 'lucide-react'
+import { MapPin, Plus } from 'lucide-react'
 
 import { gastReisenPrimaerCta } from '@/lib/trips/gast-reisen-cta'
-import { gastspeicherLaden, type Gastspeicher } from '@/lib/trips/gastspeicher'
+import {
+  gastListeBeobachten,
+  gastListeDarfErstellen,
+  type GastListeLesung,
+} from '@/components/trips/gast-reise-lesezustand'
+import {
+  GastReiseLesefehler,
+  GastReiseLeseWarte,
+  GastReiseWarteschlange,
+  useGastLeseFokus,
+} from '@/components/trips/GastReiseLesefehler'
 import { tripAlsUebersicht } from '@/lib/trips/reise-orte'
 import Reisekarte from '@/components/trips/Reisekarte'
 
+const primaerKlasse =
+  'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto'
+
 export default function GastReisen() {
-  const [speicher, setSpeicher] = React.useState<Gastspeicher | null>(null)
+  const [lese, setLese] = React.useState<GastListeLesung>({ art: 'nicht_beobachtet' })
+  const [pruefung, setPruefung] = React.useState(0)
+  const fokusVormerken = useGastLeseFokus(lese.art !== 'nicht_beobachtet')
 
   React.useEffect(() => {
-    setSpeicher(gastspeicherLaden())
-  }, [])
+    let lebend = true
+    const ergebnis = gastListeBeobachten()
+    // The compatible loader may migrate a valid legacy draft. That write stays
+    // in the effect, after paint, and must not run during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (lebend) setLese(ergebnis)
+    return () => {
+      lebend = false
+    }
+  }, [pruefung])
 
-  if (!speicher) {
+  const erneut = () => {
+    fokusVormerken()
+    setLese({ art: 'nicht_beobachtet' })
+    setPruefung((wert) => wert + 1)
+  }
+
+  if (lese.art === 'nicht_beobachtet') {
+    return <GastReiseLeseWarte />
+  }
+
+  if (
+    lese.art === 'speicher_unlesbar' ||
+    lese.art === 'ungueltig' ||
+    lese.art === 'abweichend' ||
+    lese.art === 'belegt_ohne_kennung'
+  ) {
     return (
-      <div aria-busy="true" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="h-52 animate-pulse rounded-[26px] bg-white/70" />
-        <div className="h-52 animate-pulse rounded-[26px] bg-white/70" />
-      </div>
+      <GastReiseLesefehler
+        art={lese.art}
+        onPruefen={erneut}
+        warteschlange={lese.art === 'ungueltig' ? lese.warteschlange : []}
+      />
     )
   }
 
-  const primaer = gastReisenPrimaerCta(speicher.aktiv)
+  const aktiv = lese.art === 'gueltig' ? lese.reise : null
+  const warteschlange = lese.art === 'fehlend' ? [] : lese.warteschlange
+  const primaer = gastReisenPrimaerCta(aktiv)
+  const erstellen = gastListeDarfErstellen(lese)
 
-  if (!speicher.aktiv && speicher.warteschlange.length === 0) {
+  if (lese.art === 'fehlend') {
     return (
-      <section className="rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10">
+      <section
+        data-gast-leseart="fehlend"
+        className="min-w-0 max-w-full rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10"
+      >
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-          <MapPin className="h-5 w-5" />
+          <MapPin className="h-5 w-5" aria-hidden="true" />
         </span>
-        <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">
+        <h2 className="mt-5 min-w-0 max-w-full break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">
           Deine erste Reise beginnt hier.
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">
+        <p className="mx-auto mt-3 max-w-md break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
           Erstelle kostenlos einen privaten Entwurf. Er bleibt zunächst auf diesem Gerät gespeichert und
           wandert bei einer Anmeldung in dein Konto.
         </p>
-        <Link
-          href={primaer.href as Route}
-          className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-        >
-          <Plus className="h-4 w-4" />
+        <Link href={primaer.href as Route} data-gast-fokus="weiter" className={`${primaerKlasse} mt-6`}>
+          <Plus className="h-4 w-4" aria-hidden="true" />
           {primaer.label}
         </Link>
       </section>
@@ -67,76 +109,26 @@ export default function GastReisen() {
   }
 
   return (
-    <div className="space-y-6">
-      {!speicher.aktiv ? (
-        <Link
-          href={primaer.href as Route}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-        >
-          <Plus className="h-4 w-4" />
+    <div data-gast-leseart={lese.art} className="min-w-0 max-w-full space-y-6">
+      {erstellen ? (
+        <Link href={primaer.href as Route} data-gast-fokus="weiter" className={primaerKlasse}>
+          <Plus className="h-4 w-4" aria-hidden="true" />
           {primaer.label}
         </Link>
       ) : null}
-      {speicher.aktiv && (
+      {aktiv ? (
         <div className="space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href={primaer.href as Route}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-            >
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row">
+            <Link href={primaer.href as Route} data-gast-fokus="weiter" className={primaerKlasse}>
               {primaer.label}
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            <Reisekarte
-              reise={tripAlsUebersicht(speicher.aktiv)}
-              href={`/reisen/${speicher.aktiv.id}` as Route}
-              quelle="guest"
-            />
+            <Reisekarte reise={tripAlsUebersicht(aktiv)} href={`/reisen/${aktiv.id}` as Route} quelle="guest" />
           </div>
         </div>
-      )}
-
-      {speicher.warteschlange.length > 0 && (
-        <section className="rounded-[26px] border border-line-200 bg-white p-5">
-          <p className="flex items-start gap-3 text-sm leading-6 text-ink-800">
-            <Archive className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-            <span>
-              Auf diesem Gerät liegen{' '}
-              <strong className="font-semibold text-brand-800">
-                {speicher.warteschlange.length} weitere{' '}
-                {speicher.warteschlange.length === 1 ? 'Entwurf' : 'Entwürfe'}
-              </strong>{' '}
-              aus einer früheren Fassung. Ohne Konto lässt sich eine Reise bearbeiten – bei deiner
-              Anmeldung werden alle Entwürfe vollständig in dein Konto übernommen.
-            </span>
-          </p>
-          <ul className="mt-4 space-y-2 border-t border-line-100 pt-4">
-            {speicher.warteschlange.map((reise) => (
-              <li key={reise.id} className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="min-w-0 truncate text-brand-800">{reise.title}</span>
-                <span className="shrink-0 text-xs text-ink-700">
-                  {reise.days.length} {reise.days.length === 1 ? 'Tag' : 'Tage'}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              href="/register"
-              className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-900"
-            >
-              Konto erstellen
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-5 text-sm font-semibold text-brand-800"
-            >
-              Anmelden
-            </Link>
-          </div>
-        </section>
-      )}
+      ) : null}
+      <GastReiseWarteschlange reisen={warteschlange} />
     </div>
   )
 }
