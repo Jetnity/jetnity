@@ -14,9 +14,9 @@ import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import type { Trip, TripItem } from '@/types/trips'
 
 type Aufruf =
-  | { art: 'edit'; original: TripItem; change: PlanAenderung }
-  | { art: 'delete'; tagId: string; punktId: string }
-  | { art: 'create' }
+  | { id: number; art: 'edit'; original: TripItem; change: PlanAenderung }
+  | { id: number; art: 'delete'; tagId: string; punktId: string }
+  | { id: number; art: 'create' }
 
 type Pending = {
   resolve: (wert: string | null) => void
@@ -24,8 +24,40 @@ type Pending = {
 }
 
 const aufrufe: Aufruf[] = []
-let pending: Pending | null = null
+const wartend = new Map<number, Pending>()
+let naechsteId = 0
+let aufgeloest = 0
 let gastLoeschen = false
+
+function neueId() {
+  naechsteId += 1
+  return naechsteId
+}
+
+function vormerken(id: number) {
+  return new Promise<string | null>((resolve, reject) => {
+    wartend.set(id, { resolve, reject })
+  })
+}
+
+function juengsteId() {
+  let letzte: number | null = null
+  for (const id of wartend.keys()) letzte = id
+  return letzte
+}
+
+function loesenId(id: number, wert: string | null) {
+  const eintrag = wartend.get(id)
+  if (!eintrag) return false
+  wartend.delete(id)
+  aufgeloest += 1
+  eintrag.resolve(wert)
+  return true
+}
+
+function allePunkte(reise: Trip) {
+  return [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
+}
 
 function eingabe(titel: string) {
   return {
@@ -90,7 +122,7 @@ function App() {
       leer() {
         window.localStorage.clear()
         aufrufe.length = 0
-        pending = null
+        wartend.clear()
         gastLoeschen = false
       },
       tagesreise(titel = 'Tagesreise') {
@@ -174,15 +206,27 @@ function App() {
       aufrufe() {
         return aufrufe
       },
-      loesen(wert: string | null) {
-        const aktuell = pending
-        pending = null
-        aktuell?.resolve(wert)
+      offen() {
+        return [...wartend.keys()]
       },
+      aufgeloest() {
+        return aufgeloest
+      },
+      loesen(wert: string | null) {
+        const id = juengsteId()
+        if (id == null) return false
+        return loesenId(id, wert)
+      },
+      loesenId,
       werfen(meldung: string) {
-        const aktuell = pending
-        pending = null
-        aktuell?.reject(new Error(meldung))
+        const id = juengsteId()
+        if (id == null) return false
+        const eintrag = wartend.get(id)
+        if (!eintrag) return false
+        wartend.delete(id)
+        aufgeloest += 1
+        eintrag.reject(new Error(meldung))
+        return true
       },
       erwartetesGraph(rowVersion?: string) {
         const letzter = [...aufrufe].reverse().find((aufruf) => aufruf.art === 'edit')
@@ -212,6 +256,26 @@ function App() {
         if (!letzter || letzter.art !== 'edit' || !stand) return null
         return { ...stand, ohneTag: [...stand.ohneTag, { ...letzter.original, dayId: null }] }
       },
+      inhaltFremd() {
+        const letzter = [...aufrufe].reverse().find((aufruf) => aufruf.art === 'edit')
+        const stand = reiseRef.current
+        if (!letzter || letzter.art !== 'edit' || !stand) return null
+        const ziel = allePunkte(stand).find((punkt) => punkt.id === letzter.original.id)
+        if (!ziel) return null
+        return punktAuf(stand, ziel.id, { ...ziel, title: `${ziel.title} · fremd` })
+      },
+      platzFremd() {
+        const letzter = [...aufrufe].reverse().find((aufruf) => aufruf.art === 'edit')
+        const stand = reiseRef.current
+        if (!letzter || letzter.art !== 'edit' || !stand) return null
+        const ziel = allePunkte(stand).find((punkt) => punkt.id === letzter.original.id)
+        if (!ziel || ziel.dayId == null) return null
+        return {
+          ...stand,
+          days: stand.days.map((tag) => ({ ...tag, items: tag.items.filter((punkt) => punkt.id !== ziel.id) })),
+          ohneTag: [...stand.ohneTag, { ...ziel, dayId: null }],
+        }
+      },
       speicher() {
         return window.localStorage.getItem(SCHLUESSEL.aktiv)
       },
@@ -232,24 +296,19 @@ function App() {
       onPunktAnlegen={async (tagId: string, eingabe: PlanpunktFormular) => {
         void tagId
         void eingabe
-        aufrufe.push({ art: 'create' })
-        return new Promise((resolve, reject) => {
-          pending = { resolve, reject }
-        })
+        const id = neueId()
+        aufrufe.push({ id, art: 'create' })
+        return vormerken(id)
       }}
       onPunktBearbeiten={async (original, change) => {
-        aufrufe.push({ art: 'edit', original, change })
-        return new Promise((resolve, reject) => {
-          pending = { resolve, reject }
-        })
+        const id = neueId()
+        aufrufe.push({ id, art: 'edit', original, change })
+        return vormerken(id)
       }}
       onPunktEntfernen={async (tagId, punktId) => {
-        aufrufe.push({ art: 'delete', tagId, punktId })
-        if (!gastLoeschen) {
-          return new Promise((resolve, reject) => {
-            pending = { resolve, reject }
-          })
-        }
+        const id = neueId()
+        aufrufe.push({ id, art: 'delete', tagId, punktId })
+        if (!gastLoeschen) return vormerken(id)
         const stand = reiseRef.current
         if (!stand) return 'Keine Reise'
         try {
@@ -276,12 +335,17 @@ declare global {
       unmount: () => void
       gastLoeschen: (an: boolean) => void
       aufrufe: () => Aufruf[]
-      loesen: (wert: string | null) => void
-      werfen: (meldung: string) => void
+      offen: () => number[]
+      aufgeloest: () => number
+      loesen: (wert: string | null) => boolean
+      loesenId: (id: number, wert: string | null) => boolean
+      werfen: (meldung: string) => boolean
       erwartetesGraph: (rowVersion?: string) => Trip | null
       versionNur: () => Trip | null
       ohneZiel: () => Trip | null
       duplikat: () => Trip | null
+      inhaltFremd: () => Trip | null
+      platzFremd: () => Trip | null
       speicher: () => string | null
       reise: () => Trip | null
     }

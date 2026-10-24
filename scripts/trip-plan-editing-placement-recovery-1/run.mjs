@@ -110,10 +110,31 @@ async function seite(viewport, schrift = 16) {
 
 async function ueberlauf(page) {
   return page.evaluate(() => {
+    const messen = (name) => {
+      const knopf = [...document.querySelectorAll('form button')].find((button) => button.textContent.trim() === name)
+      if (!knopf) return null
+      knopf.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      const kasten = knopf.getBoundingClientRect()
+      const sichtHoehe = Math.min(kasten.bottom, window.innerHeight) - Math.max(kasten.top, 0)
+      const sichtBreite = Math.min(kasten.right, window.innerWidth) - Math.max(kasten.left, 0)
+      return {
+        name,
+        width: kasten.width,
+        height: kasten.height,
+        top: kasten.top,
+        left: kasten.left,
+        sichtbar: kasten.width > 0 && kasten.height >= 40 && sichtHoehe >= 40 && sichtBreite > 0,
+      }
+    }
     const breit = document.documentElement.scrollWidth - document.documentElement.clientWidth
-    const knopf = document.querySelector('button')
-    const kasten = knopf?.getBoundingClientRect()
-    return { breit, erreichbar: Boolean(kasten && kasten.width > 0 && kasten.height >= 40) }
+    const speichern = messen('Speichern')
+    const abbrechen = messen('Abbrechen')
+    return {
+      breit,
+      speichern,
+      abbrechen,
+      erreichbar: Boolean(speichern?.sichtbar && abbrechen?.sichtbar),
+    }
   })
 }
 
@@ -246,9 +267,25 @@ try {
   await (await titel(page)).fill('Neuer Entwurf')
   await page.evaluate(() => window.__plan.loesen(null))
   merke('old completion keeps the newer draft', (await (await titel(page)).inputValue()) === 'Neuer Entwurf')
+
+  await page.evaluate(() => window.__plan.tagesreise())
+  await bearbeiten(page, 'Marktbesuch')
+  await (await titel(page)).fill('Hängt noch')
+  await speichern(page)
+  const haengend = await page.evaluate(() => window.__plan.offen().at(-1))
+  const aufgeloestVorher = await page.evaluate(() => window.__plan.aufgeloest())
   await page.evaluate(() => window.__plan.unmount())
-  await page.evaluate(() => window.__plan.loesen(null))
-  merke('unmount drops the old completion', await page.getByText('Planpunkt gespeichert.').count() === 0)
+  await page.getByText('Kein Plan').waitFor()
+  const seitenfehler = []
+  const aufSeite = (meldung) => seitenfehler.push(meldung)
+  page.on('pageerror', aufSeite)
+  const getroffen = await page.evaluate((id) => window.__plan.loesenId(id, null), haengend)
+  const aufgeloestNachher = await page.evaluate(() => window.__plan.aufgeloest())
+  const nochmal = await page.evaluate((id) => window.__plan.loesenId(id, null), haengend)
+  page.off('pageerror', aufSeite)
+  merke('unmount resolves the still-pending request', getroffen === true && aufgeloestNachher === aufgeloestVorher + 1 && nochmal === false)
+  merke('unmount drops the old completion', await page.getByText('Planpunkt gespeichert.').count() === 0 && await page.locator('[data-plan-leer-mount]').count() === 1)
+  merke('unmount completion raises no page error', seitenfehler.length === 0)
 
   async function neu(name = 'Marktbesuch') {
     await page.evaluate(() => window.__plan.tagesreise())
@@ -345,12 +382,141 @@ try {
   await konflikt('ohneZiel')
   await konflikt('duplikat')
 
+  async function gleicheFassung(art) {
+    await page.evaluate(() => window.__plan.tagesreise())
+    await bearbeiten(page, 'Marktbesuch')
+    await (await titel(page)).fill('Ersetzt')
+    await speichern(page)
+    const probe = await page.evaluate((welche) => {
+      const vorher = window.__plan.reise()
+      const letzter = window.__plan.aufrufe().at(-1)
+      const id = letzter.original.id
+      const finden = (reise) => [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag].filter((punkt) => punkt.id === id)
+      const alt = finden(vorher)
+      const naechste = window.__plan[welche]()
+      const neu = finden(naechste)
+      return {
+        naechste,
+        revision: naechste?.revision === vorher.revision,
+        updatedAt: naechste?.updatedAt === vorher.updatedAt,
+        rowVersion: neu.length === 1 && alt.length === 1 && neu[0].rowVersion === alt[0].rowVersion && neu[0].rowVersion === letzter.original.rowVersion,
+        geaendert: welche === 'inhaltFremd' ? neu[0]?.title !== alt[0]?.title : neu[0]?.dayId !== alt[0]?.dayId,
+      }
+    }, art)
+    merke(`${art} keeps revision, updatedAt and rowVersion`, probe.revision && probe.updatedAt && probe.rowVersion && probe.geaendert)
+    await page.evaluate((wert) => window.__plan.setReise(wert), probe.naechste)
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+    await page.evaluate(() => window.__plan.loesen(null))
+    await page.getByText(KONFLIKT).waitFor()
+    merke(`${art} null shows conflict`, (await (await titel(page)).inputValue()) === 'Ersetzt')
+    await page.getByRole('button', { name: 'Abbrechen', exact: true }).click()
+    await page.evaluate(() => window.__plan.tagesreise())
+    await bearbeiten(page, 'Marktbesuch')
+    await (await titel(page)).fill('Ersetzt')
+    await speichern(page)
+    const nochmal = await page.evaluate((welche) => window.__plan[welche](), art)
+    await page.evaluate((wert) => window.__plan.setReise(wert), nochmal)
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+    await page.evaluate(() => window.__plan.loesen('Schreiben unsicher'))
+    merke(`${art} error is classified`, (await page.getByRole('alert').innerText()).includes(KONFLIKT))
+  }
+  await gleicheFassung('inhaltFremd')
+  await gleicheFassung('platzFremd')
+
+  async function zweiAnfragen() {
+    await page.evaluate(() => window.__plan.tagesreise())
+    await bearbeiten(page, 'Marktbesuch')
+    await (await titel(page)).fill('Erste Anfrage')
+    await speichern(page)
+    const r1 = await page.evaluate(() => window.__plan.offen().at(-1))
+  await bearbeiten(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan')
+  await (await titel(page)).fill('Zweite Anfrage')
+  await speichern(page)
+    const offen = await page.evaluate(() => window.__plan.offen())
+    return { r1, r2: offen.at(-1), offen, fokusDavor }
+  }
+
+  async function r2Bleibt() {
+    await page.getByText('Planpunkt wird gespeichert …').waitFor()
+    return page.evaluate(() => {
+      const el = document.activeElement
+      const speichern = [...document.querySelectorAll('form button')].find((button) => button.textContent.trim() === 'Speichern …')
+      return {
+        titel: document.querySelector('form input')?.value ?? '',
+        status: document.body.innerText.includes('Planpunkt wird gespeichert …'),
+        planMeldung: document.querySelectorAll('[data-plan-meldung]').length,
+        meldungFokus: el?.hasAttribute?.('data-plan-meldung') === true,
+        imFormular: el?.closest?.('form') != null,
+        gesperrt: Boolean(speichern?.disabled),
+      }
+    })
+  }
+
+  const erfolg = await zweiAnfragen()
+  merke('R1 and R2 are both pending', erfolg.offen.length === 2 && erfolg.r1 !== erfolg.r2)
+  await page.evaluate((id) => window.__plan.loesenId(id, null), erfolg.r1)
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  const nachErfolg = await r2Bleibt()
+  merke('R1 late success leaves R2 locked', nachErfolg.status && nachErfolg.gesperrt && nachErfolg.titel === 'Zweite Anfrage' && nachErfolg.planMeldung === 0 && !nachErfolg.meldungFokus && nachErfolg.imFormular)
+  const zweite = await page.evaluate(() => window.__plan.erwartetesGraph())
+  await page.evaluate((naechste) => window.__plan.setReise(naechste), zweite)
+  await page.evaluate((id) => window.__plan.loesenId(id, null), erfolg.r2)
+  await page.getByText('Planpunkt gespeichert.').waitFor()
+  merke('only R2 completes', await page.getByRole('form').count() === 0)
+
+  const fehlerFall = await zweiAnfragen()
+  await page.evaluate((id) => window.__plan.loesenId(id, 'Erste Anfrage fehlgeschlagen'), fehlerFall.r1)
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  const nachFehler = await r2Bleibt()
+  const ersteSichtbar = (await page.locator('body').innerText()).includes('Erste Anfrage fehlgeschlagen')
+  merke('R1 late error leaves R2 locked', nachFehler.status && nachFehler.gesperrt && nachFehler.titel === 'Zweite Anfrage' && nachFehler.planMeldung === 0 && !nachFehler.meldungFokus && nachFehler.imFormular && !ersteSichtbar)
+  await page.evaluate((id) => window.__plan.loesenId(id, 'Zweite Anfrage fehlgeschlagen'), fehlerFall.r2)
+  await page.getByText('Zweite Anfrage fehlgeschlagen').waitFor()
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  const eigenerFehler = await page.evaluate(() => {
+    const el = document.activeElement
+    return {
+      imFormular: el?.closest?.('form') != null && el?.getAttribute?.('role') === 'alert',
+      planMeldung: document.querySelectorAll('[data-plan-meldung]').length,
+    }
+  })
+  merke('R2 error keeps its draft and its own alert', (await (await titel(page)).inputValue()) === 'Zweite Anfrage' && eigenerFehler.imFormular && eigenerFehler.planMeldung === 0)
+
   await page.evaluate(() => window.__plan.ohneTage())
   await page.evaluate(() => window.__plan.gastLoeschen(true))
+  const zielVorher = await page.evaluate(() => {
+    const reise = window.__plan.reise()
+    const roh = JSON.parse(window.__plan.speicher())
+    const alle = (graph) => [...(graph.days ?? []).flatMap((tag) => tag.items ?? []), ...(graph.ohneTag ?? [])]
+    const ziel = alle(reise).find((punkt) => punkt.title === 'Marktbesuch')
+    return {
+      id: ziel.id,
+      dom: document.querySelectorAll(`[data-plan-punkt="${CSS.escape(ziel.id)}"]`).length,
+      speicher: alle(roh).filter((punkt) => punkt.id === ziel.id).length,
+      revision: roh.revision,
+      ueberlebende: alle(roh).filter((punkt) => punkt.id !== ziel.id).map((punkt) => ({
+        id: punkt.id, title: punkt.title, note: punkt.note, kind: punkt.kind,
+      })),
+      deleteCalls: window.__plan.aufrufe().filter((aufruf) => aufruf.art === 'delete').length,
+    }
+  })
+  merke('guest target exists once before delete', zielVorher.dom === 1 && zielVorher.speicher === 1 && zielVorher.deleteCalls === 0)
   await einKnopf(page, 'Marktbesuch entfernen')
   await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
-  await page.waitForFunction(() => !document.body.textContent.includes('Marktbesuch entfernen'))
-  merke('real guest delete removes the item', true)
+  await page.waitForFunction((id) => document.querySelectorAll(`[data-plan-punkt="${CSS.escape(id)}"]`).length === 0, zielVorher.id)
+  const zielNachher = await page.evaluate((id) => {
+    const roh = JSON.parse(window.__plan.speicher())
+    const alle = [...(roh.days ?? []).flatMap((tag) => tag.items ?? []), ...(roh.ohneTag ?? [])]
+    return {
+      dom: document.querySelectorAll(`[data-plan-punkt="${CSS.escape(id)}"]`).length,
+      ziel: alle.filter((punkt) => punkt.id === id).length,
+      ueberlebende: alle.map((punkt) => ({ id: punkt.id, title: punkt.title, note: punkt.note, kind: punkt.kind })),
+      revision: roh.revision,
+      deleteCalls: window.__plan.aufrufe().filter((aufruf) => aufruf.art === 'delete').length,
+    }
+  }, zielVorher.id)
+  merke('real guest delete removes the target from the DOM and storage', zielNachher.dom === 0 && zielNachher.ziel === 0 && zielNachher.deleteCalls === 1)
+  merke('real guest delete keeps the other items and advances revision', JSON.stringify(zielNachher.ueberlebende) === JSON.stringify(zielVorher.ueberlebende) && zielNachher.revision === zielVorher.revision + 1)
   await page.evaluate(() => {
     const roh = JSON.parse(window.__plan.speicher())
     roh.title = 'Eine andere Fassung'
@@ -381,6 +547,30 @@ try {
   await page.waitForFunction(() => window.__plan.aufrufe().filter((aufruf) => aufruf.art === 'delete').length === 2)
   await page.evaluate(() => window.__plan.loesen(null))
   merke('newer delete is not left locked', true)
+
+  await page.evaluate(() => window.__plan.gastLoeschen(false))
+  await page.evaluate(() => window.__plan.ohneTage())
+  await einKnopf(page, 'Marktbesuch entfernen')
+  await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
+  await page.waitForFunction(() => window.__plan.offen().length === 1)
+  const alteLoeschung = await page.evaluate(() => window.__plan.offen()[0])
+  await bearbeiten(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan')
+  await (await titel(page)).fill('Fokus bleibt hier')
+  await page.waitForFunction(() => document.activeElement?.tagName === 'INPUT' && document.activeElement.closest('form') != null)
+  await page.evaluate((id) => window.__plan.loesenId(id, 'Der Planpunkt hat sich inzwischen geändert. Bitte lade die Reise neu; deine Eingabe bleibt erhalten.'), alteLoeschung)
+  await page.locator('[data-plan-meldung]').waitFor()
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  const fokusBleibt = await page.evaluate(() => {
+    const el = document.activeElement
+    return {
+      eingabe: el?.tagName === 'INPUT' && el.closest('form') != null && el.value === 'Fokus bleibt hier',
+      meldung: document.activeElement?.hasAttribute('data-plan-meldung') === true,
+      text: document.querySelector('[data-plan-meldung]')?.textContent ?? '',
+    }
+  })
+  merke('older delete error stays visible beside the newer editor', fokusBleibt.text.includes('inzwischen geändert') && (await (await titel(page)).inputValue()) === 'Fokus bleibt hier')
+  merke('older delete error does not take the editor focus', fokusBleibt.eingabe && !fokusBleibt.meldung)
+  await page.screenshot({ path: join(EVIDENCE, 'older-delete-keeps-editor-focus.png') })
 
   await page.evaluate(() => window.__plan.gastLoeschen(false))
   await bearbeiten(page, 'Marktbesuch')
