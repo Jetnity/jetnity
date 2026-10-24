@@ -1,0 +1,69 @@
+{
+  "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
+  "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
+  "model": "grok-4.7-high-fast",
+  "purpose": "R105-C review-fix rerun provenance. This file is owned by this lane. It is not written by the R103 or R104 harness.",
+  "implementationHead": "0ce2a3faf21baea965c8e9cbbdf35f3181079fcc",
+  "implementationTree": "fa09e196e22cffa554836efcb4c7206db89cbc00",
+  "main": "0c37d318c47a758f06634448d6e0de3856bbc6a6",
+  "mergeBase": "0c37d318c47a758f06634448d6e0de3856bbc6a6",
+  "node": "v22.23.4",
+  "browser": "Chrome 148.0.7778.96 via Playwright chrome channel. Playwright Chromium chromium_headless_shell-1187 did not launch.",
+  "inheritedMetadata": "R103 and R104 result.json author, session, and sessionUrl are the original harness strings. They are not this lane's author or session. This file is the rerun binding.",
+  "historicalEvidence": "sha256 of the 16 files under docs/evidence/manual-mobility-pending-draft-guard-1 and docs/evidence/organisieren-action-recovery-1 was identical before and after these reruns.",
+  "runs": [
+    {
+      "name": "manual-journey-editor-completion-1",
+      "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
+      "output": "docs/evidence/manual-journey-editor-completion-1/result.json",
+      "headAtRun": "0ce2a3faf21baea965c8e9cbbdf35f3181079fcc",
+      "harnessSha256": "eac07013a71b8ccc055d54d90cafe62f80d4f0426a653e1af0f6d9048887fa7e",
+      "mountSha256": "98c8d9e3aa51cf802958238b9cfd112e27072c1eb9fadaece8708bc912521dba",
+      "status": "PASS",
+      "behaviorCount": 18,
+      "layoutCount": 9,
+      "port": 44439,
+      "behaviorCases": [
+        "flight-valid-schema-domain-reject-retry",
+        "flight-add-remove-1-to-4",
+        "flight-multileg-and-over-four-refusal",
+        "flight-section-replacement-and-late-readback",
+        "stay-focus-validation-escape-replacement-unmount",
+        "connection-pending-domain-unconfirmed",
+        "connection-preset-trip-late-result",
+        "connection-r1-pending-r2-owns-lock",
+        "connection-aborted-transition-releases-lock",
+        "flight-saved-graph-readback",
+        "flight-saved-graph-changed-trip",
+        "flight-saved-graph-new-draft",
+        "flight-speculative-trip-keeps-readback",
+        "flight-r1-pending-r2-owns-lock",
+        "stay-saved-graph-readback",
+        "stay-saved-graph-changed-stay",
+        "stay-saved-graph-new-draft",
+        "stay-r1-pending-r2-owns-lock"
+      ]
+    },
+    {
+      "name": "r103-manual-mobility-pending-draft-guard",
+      "command": "JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard node scripts/manual-mobility-pending-draft-guard-1/harness.mjs",
+      "outputOverride": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard",
+      "harnessSha256": "2d0f9a2e71a557e353a4bde8504869964e1939d66424389db3d0d5b7daeea687",
+      "componentSha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+      "componentBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+      "status": "PASS",
+      "resultAuthorIsInherited": true
+    },
+    {
+      "name": "r104-organisieren-action-recovery",
+      "command": "JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery node scripts/organisieren-action-recovery-1/harness.mjs",
+      "outputOverride": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery",
+      "harnessSha256": "441cb0847727af39bb60a04059dbc8b77d469e01d4dcae1d58e5c9e6bd18e48d",
+      "connectionHash": "75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a",
+      "componentBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+      "flightBlob": "50c7e8f8e6f271ef8d2c2f6098a69794ae87ad02",
+      "status": "PASS",
+      "resultAuthorIsInherited": true
+    }
+  ]
+}

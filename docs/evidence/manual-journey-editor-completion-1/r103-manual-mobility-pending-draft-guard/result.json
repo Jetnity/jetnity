@@ -4,8 +4,8 @@
   "model": "grok-4.7-high-fast",
   "component": "components/trips/MobilitaetBereich.tsx",
   "exportedComponent": "ManuelleVerbindung",
-  "sourceSha256": "52d75eccfa4352b5d2d464db6b5e3dc01dde920961d97b8160bbb9b274c4b2d6",
-  "sourceBlob": "c9aaaaaf7b6fd399d3c58eb13ec8a60d51cdc624",
+  "sourceSha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+  "sourceBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
   "baselineBlob": "8560a106e4eb61a852b2f4ce27868ab30cf18cf0",
   "viewports": [
     {

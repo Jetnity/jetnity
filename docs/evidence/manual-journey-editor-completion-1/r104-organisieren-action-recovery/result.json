@@ -3,7 +3,7 @@
   "session": "bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
   "sessionUrl": "https://cursor.com/agents/bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
   "model": "grok-4.7-high-fast",
-  "connectionHash": "22979037efebac48a119551fe9825cb3dbf90dd991c9294ac317ca499cb252f8",
+  "connectionHash": "75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a",
   "stubBoundary": "In-memory callbacks only. Not an account, guest-storage, hosted, provider, physical-device, or screen-reader proof.",
   "viewports": [
     {
@@ -213,15 +213,15 @@
   "blobs": [
     {
       "file": "components/trips/FlugBestand.tsx",
-      "blob": "85a840f99990240d9b4b4d917b6bcb475315a44a"
+      "blob": "50c7e8f8e6f271ef8d2c2f6098a69794ae87ad02"
     },
     {
       "file": "components/trips/UnterkunftBestand.tsx",
-      "blob": "0aa3db6859d9afe9288e8dd76505b8051d7b56b1"
+      "blob": "7062f1d497a682cc3e98636a21e810f92c1ef597"
     },
     {
       "file": "components/trips/MobilitaetBereich.tsx",
-      "blob": "c9aaaaaf7b6fd399d3c58eb13ec8a60d51cdc624"
+      "blob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec"
     },
     {
       "file": "components/trips/MietwagenBereich.tsx",

@@ -2,12 +2,12 @@
   "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
   "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
   "model": "grok-4.7-high-fast",
-  "headAtRun": "e763caa51b0213bd3c0e71afe948b00ab402eb5d",
+  "headAtRun": "0ce2a3faf21baea965c8e9cbbdf35f3181079fcc",
   "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
   "sourceSha256": {
-    "components/trips/FlugBestand.tsx": "944bb4ae3201f95eecfd9bf6066782a35888225f312e156f4ffa82670d744e6c",
-    "components/trips/UnterkunftBestand.tsx": "4316fb46d4bbcb278b84f947c6f40dc60854d341d35a7d5c453c582b3eae1c00",
-    "components/trips/MobilitaetBereich.tsx": "52d75eccfa4352b5d2d464db6b5e3dc01dde920961d97b8160bbb9b274c4b2d6",
+    "components/trips/FlugBestand.tsx": "592aca0737c900e1536a52e9dcecfbf17f91760d08826627ad1f08ef7661ee16",
+    "components/trips/UnterkunftBestand.tsx": "ee6ef9d9ff55ba9e35d6bd7fce51252f15271483dda16cbfa15fcab617e80484",
+    "components/trips/MobilitaetBereich.tsx": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
     "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8"
   },
   "viewports": [
@@ -53,7 +53,7 @@
     }
   ],
   "geometryKind": "CSS viewport and root font-size, not native zoom and not a physical device",
-  "stubs": "in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; no guest storage, account, provider, or database",
+  "stubs": "in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; each request keeps its own payload and outcome. No guest storage, account, provider, or database.",
   "scenarios": [
     "flight-valid-schema-domain-reject-retry",
     "flight-add-remove-1-to-4",
@@ -61,7 +61,18 @@
     "flight-section-replacement-and-late-readback",
     "stay-focus-validation-escape-replacement-unmount",
     "connection-pending-domain-unconfirmed",
-    "connection-preset-trip-late-result"
+    "connection-preset-trip-late-result",
+    "connection-r1-pending-r2-owns-lock",
+    "connection-aborted-transition-releases-lock",
+    "flight-saved-graph-readback",
+    "flight-saved-graph-changed-trip",
+    "flight-saved-graph-new-draft",
+    "flight-speculative-trip-keeps-readback",
+    "flight-r1-pending-r2-owns-lock",
+    "stay-saved-graph-readback",
+    "stay-saved-graph-changed-stay",
+    "stay-saved-graph-new-draft",
+    "stay-r1-pending-r2-owns-lock"
   ],
   "layouts": [
     {
@@ -285,8 +296,9 @@
     ],
     "version": "148.0.7778.96"
   },
-  "caseCount": 16,
-  "port": 42653,
+  "behaviorCount": 18,
+  "layoutCount": 9,
+  "port": 44439,
   "notVerified": [
     "CI",
     "Preview",

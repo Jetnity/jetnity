@@ -15,52 +15,43 @@ Branch: `fix/manual-journey-editor-completion-1`
 | --- | --- |
 | main | `0c37d318c47a758f06634448d6e0de3856bbc6a6` |
 | merge-base | `0c37d318c47a758f06634448d6e0de3856bbc6a6` |
-| accepted plan / harness `headAtRun` | `e763caa51b0213bd3c0e71afe948b00ab402eb5d` |
-| delivery head | the commit that adds this handoff |
+| accepted plan | `e763caa51b0213bd3c0e71afe948b00ab402eb5d` |
+| reviewed code | `c2220a1a2677ab3d25f9701dbfbdb7f586f626a6` |
+| runtime / harness `headAtRun` | `0ce2a3faf21baea965c8e9cbbdf35f3181079fcc` |
+| evidence head | the commit that adds this handoff |
 
-Fetched `origin/main` this turn. It is still `0c37d318`. This branch was 4 ahead / 0 behind before the delivery commit. Expected after this commit: **5 ahead / 0 behind**. The PR comment records the resolved SHA. Do not treat an older plan head as this review head.
+Fetched `origin/main` this turn. It is still `0c37d318`. The runtime commit is **6 ahead / 0 behind**. Expected after the evidence commit: **7 ahead / 0 behind**. The PR comment records the resolved SHA.
 
 Integration remains **A → C → B**. A is #999 / #996. B is #1000 / #997. Their files were not touched. Main was not synchronized.
 
 ## What this head contains
 
-Three existing manual editors, target-bound:
+The three existing manual editors, with request identity bound to the committed render:
 
-- Flight route edit in `FlugBestand.tsx`, including the trip-id readback guard.
+- Flight route edit in `FlugBestand.tsx`, including a readback that yields to a later open draft and ignores another trip.
 - Stay interval edit in `UnterkunftBestand.tsx`.
-- Connection entry in `MobilitaetBereich.tsx`, with one honest unconfirmed alert.
-- Pure helper `lib/trips/manual-journey-editor-completion-1.ts`.
-- New mounted proof under `scripts/manual-journey-editor-completion-1/` and `docs/evidence/manual-journey-editor-completion-1/`.
-- R103 and R104 reruns only in `docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard` and `.../r104-organisieren-action-recovery`.
+- Connection entry in `MobilitaetBereich.tsx`, with the same honest unconfirmed alert.
+- Mounted proof under `scripts/manual-journey-editor-completion-1/` and `docs/evidence/manual-journey-editor-completion-1/`.
+- R103 and R104 reruns only in the two lane folders, plus `rerun-provenance.json`.
 
-Connection hash: `22979037efebac48a119551fe9825cb3dbf90dd991c9294ac317ca499cb252f8`.
+Connection hash: `75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a`.
 
 ## Proof executed
 
 - Focused node tests: 103 pass, 0 fail.
-- New harness: PASS, 16 cases, Chrome 148.0.7778.96, port 42653.
-- R103 and R104 with `JETNITY_R105_C_EVIDENCE_DIR`: PASS.
+- New harness: PASS, 18 behavior cases, 9 layout measurements, Chrome 148.0.7778.96, port 44439, `headAtRun` `0ce2a3fa`.
+- R103 and R104 with `JETNITY_R105_C_EVIDENCE_DIR`: PASS. Component blobs match `0ce2a3fa`.
 - Historical evidence: 16 files, sha256 identical.
-- `npm run typecheck`, `npm run lint` (0 errors, 144 warnings), five hygiene guards, `npm run build`: exit 0.
+- On runtime head `0ce2a3fa`: `npm run typecheck`, `npm run lint` (0 errors, 144 warnings), five hygiene guards, `npm run build`: exit 0. The evidence commit does not change those sources.
 
 ## Not verified
 
-CI App/Auth/Vercel, Preview for this head, hosted account, screen reader, native zoom, physical device, `db:*`, `auth:pruefen`. Playwright Chromium did not launch. No hosted read or write.
+CI App/Auth/Vercel and Preview for this head. Hosted account, screen reader, native zoom, physical device, `db:*`, `auth:pruefen`. Playwright Chromium did not launch. No hosted read or write. Native CI `40106541141` is `c2220a1a` only.
 
 ## Findings
 
-P0 none. P1 none. P2: immutability disable on the generation cell; `headAtRun` is the parent; Chrome channel rather than Playwright Chromium; CI/Preview/device not run. P3: pre-existing lint warnings, schema-bezug LOCAL/UNAPPLIED notes, missing `.env` in this VM, stale caniuse-lite. Detail is in the self-review.
-
-## Database, production, provider, cost
-
-No migration, RLS, auth, provider, secret, payment, or new cost. Special Product-Owner gates were not crossed. Operating mode re-read: NORMAL.
-
-## Proposed global reconciliation
-
-Do not edit from this lane. If the Technical Lead accepts this head, a later TL-owned pass can point `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` at #1001 / #998 and leave #751 sections 3–5 to the Technical Lead. This author did not edit those files.
+P0 none. P1 none. P2: proof browser is Chrome channel, and CI/Preview/device/screen reader are not verified for this head. P3: repo lint warnings, schema-bezug notes, stale caniuse-lite, missing `.env` in this VM, inherited R103/R104 author strings.
 
 ## Next actor
 
-Technical Lead. Independent exact-head review of the delivery commit. Author stops.
-
-Do not Ready, merge, close #998, or start a follow-up. A new head invalidates this gate. Standing holds remain, including #985/#982, #917, #968, and #748.
+Technical Lead. Independent exact-head review of the evidence commit. Author does not Ready, merge, close #998, or start a follow-up.
