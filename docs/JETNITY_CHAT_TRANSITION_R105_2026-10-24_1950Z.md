@@ -325,3 +325,9 @@ Nach Wiederaufnahme:
 - Bei erneuter Toolunterbrechung tatsächliche Mutationsergebnisse abfragen. Ein vorbereiteter/abgebrochener Aufruf ist kein Vollzug. Bei echtem Policy-/Approval-STOP keine Umgehung.
 
 **Dieser Chatwechsel verliert keine erteilte normale Autorisierung und eröffnet keinen neuen Product-Owner-Entscheidungsbedarf. Er beendet auch keine offene Arbeit durch Behauptung.**
+
+## 9. Gesicherte Begleitdateien dieses Übergangs
+
+Der vorbereitete, noch nicht ausgeführte unabhängige C-Prüflauf wird in diesem Übergabe-Branch zusätzlich unter **docs/evidence/r105-chat-transition-2026-10-24_1950Z/prepared-c-v3/** mit run.mjs, mount.tsx und README.md bytegleich gesichert. Er bleibt ausdrücklich UNEXECUTED. Der README-Aufruf verwendet den ursprünglichen lokalen Pfad; nach einem Umgebungswechsel zuerst die in run.mjs dokumentierten lokalen Dependency-/Browserpfade prüfen und nur den Test-Runner an die neue Umgebung anpassen, niemals Produktcode zur Erfüllung eines Tests verändern.
+
+Der Übergabe-Branch **docs/r105-chat-transition-2026-10-24-1950z** enthält zusätzlich datierte Pointer am Anfang von JETNITY_START_HERE.md und docs/ACTIVE_WORK_STATUS.md. Hauptbranch main wird durch dieses reine Sichern nicht geändert. Seine schon vorhandenen dauerhaften Pointer auf #751 führen zum neuen Checkpoint. Ein gegebenenfalls erstellter Draft-PR dient ausschließlich der auffindbaren Dokumentationsübergabe; er ist kein vierter Produkt-Slice und keine Produktfreigabe.
