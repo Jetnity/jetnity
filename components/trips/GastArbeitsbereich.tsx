@@ -30,6 +30,7 @@ import {
   GastReiseAndere,
   GastReiseLesefehler,
   GastReiseLeseWarte,
+  useGastLeseFokus,
 } from '@/components/trips/GastReiseLesefehler'
 import {
   gastArbeitsbereichBeobachten,
@@ -67,6 +68,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const [bezogen, setBezogen] = React.useState(tripId)
   const [pruefung, setPruefung] = React.useState(0)
   const [speicherfehler, setSpeicherfehler] = React.useState('')
+  const fokusVormerken = useGastLeseFokus(lese.art !== 'nicht_beobachtet')
 
   if (bezogen !== tripId) {
     setBezogen(tripId)
@@ -91,6 +93,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   }, [tripId, pruefung])
 
   const erneut = () => {
+    fokusVormerken()
     setLese({ art: 'nicht_beobachtet' })
     setReise(null)
     setSpeicherfehler('')
@@ -181,6 +184,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <Link
             href="/reisen"
+            data-gast-fokus="weiter"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-300 bg-white px-5 text-center text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
           >
             Meine Reisen
@@ -223,6 +227,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   }
 
   return (
+    <div data-gast-fokus="weiter" tabIndex={-1} className="min-w-0 max-w-full outline-none">
     <TripWorkspace
       reise={reise}
       quelle="guest"
@@ -429,5 +434,6 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         </p>
       }
     />
+    </div>
   )
 }

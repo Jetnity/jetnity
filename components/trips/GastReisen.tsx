@@ -10,9 +10,9 @@
 // nächste Login übernimmt sie vollständig ins Konto
 // (`lib/trips/gastspeicher.ts`).
 //
-// Ein leerer Loader ist nicht automatisch „noch keine Reise“. Unlesbare,
-// ungültige oder widersprüchliche Bytes bleiben ein prüfbarer Lesefehler.
-// Nichts wird dabei gelöscht.
+// Ein leerer Loader ist nicht automatisch „noch keine Reise“. Unlesbare
+// oder ungültige Bytes bleiben ein prüfbarer Lesefehler und schreiben nicht.
+// Eine gültige Übernahme darf weiterhin schreiben.
 
 import * as React from 'react'
 import type { Route } from 'next'
@@ -29,6 +29,7 @@ import {
   GastReiseLesefehler,
   GastReiseLeseWarte,
   GastReiseWarteschlange,
+  useGastLeseFokus,
 } from '@/components/trips/GastReiseLesefehler'
 import { tripAlsUebersicht } from '@/lib/trips/reise-orte'
 import Reisekarte from '@/components/trips/Reisekarte'
@@ -39,6 +40,7 @@ const primaerKlasse =
 export default function GastReisen() {
   const [lese, setLese] = React.useState<GastListeLesung>({ art: 'nicht_beobachtet' })
   const [pruefung, setPruefung] = React.useState(0)
+  const fokusVormerken = useGastLeseFokus(lese.art !== 'nicht_beobachtet')
 
   React.useEffect(() => {
     let lebend = true
@@ -53,6 +55,7 @@ export default function GastReisen() {
   }, [pruefung])
 
   const erneut = () => {
+    fokusVormerken()
     setLese({ art: 'nicht_beobachtet' })
     setPruefung((wert) => wert + 1)
   }
@@ -97,7 +100,7 @@ export default function GastReisen() {
           Erstelle kostenlos einen privaten Entwurf. Er bleibt zunächst auf diesem Gerät gespeichert und
           wandert bei einer Anmeldung in dein Konto.
         </p>
-        <Link href={primaer.href as Route} className={`${primaerKlasse} mt-6`}>
+        <Link href={primaer.href as Route} data-gast-fokus="weiter" className={`${primaerKlasse} mt-6`}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           {primaer.label}
         </Link>
@@ -108,7 +111,7 @@ export default function GastReisen() {
   return (
     <div data-gast-leseart={lese.art} className="min-w-0 max-w-full space-y-6">
       {erstellen ? (
-        <Link href={primaer.href as Route} className={primaerKlasse}>
+        <Link href={primaer.href as Route} data-gast-fokus="weiter" className={primaerKlasse}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           {primaer.label}
         </Link>
@@ -116,7 +119,7 @@ export default function GastReisen() {
       {aktiv ? (
         <div className="space-y-4">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row">
-            <Link href={primaer.href as Route} className={primaerKlasse}>
+            <Link href={primaer.href as Route} data-gast-fokus="weiter" className={primaerKlasse}>
               {primaer.label}
             </Link>
           </div>

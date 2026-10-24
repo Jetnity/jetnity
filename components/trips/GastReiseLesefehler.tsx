@@ -5,6 +5,7 @@
 // Shared presentation for a guest read that is not yet known, failed, or
 // belongs to a different stored draft. No create link and no raw bytes.
 
+import * as React from 'react'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { Archive, MapPin } from 'lucide-react'
@@ -29,6 +30,35 @@ const sekundaerKlasse =
   'inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-300 bg-white px-5 text-center text-sm font-semibold leading-tight text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto'
 
 type FehlerArt = 'speicher_unlesbar' | 'ungueltig' | 'abweichend' | 'belegt_ohne_kennung'
+
+/**
+ * Remember a keyboard recheck, then restore focus after the fresh observation.
+ *
+ * Loading unmounts the button. Focus returns to the settled recheck control,
+ * or to the recovered primary control, only while it would otherwise sit on
+ * the document body. A move the user made in between is left alone.
+ */
+export function useGastLeseFokus(beobachtet: boolean) {
+  const merken = React.useRef(false)
+
+  const vormerken = React.useCallback(() => {
+    const aktiv = document.activeElement
+    merken.current = aktiv instanceof HTMLElement && aktiv.getAttribute('data-gast-fokus') === 'erneut'
+  }, [])
+
+  React.useEffect(() => {
+    if (!beobachtet || !merken.current) return
+    merken.current = false
+    const aktiv = document.activeElement
+    if (aktiv instanceof HTMLElement && aktiv !== document.body && aktiv !== document.documentElement) return
+    const ziel = document.querySelector<HTMLElement>('[data-gast-fokus="erneut"], [data-gast-fokus="weiter"]')
+    if (!ziel) return
+    const setzen = ziel.focus as (optionen?: { focusVisible?: boolean }) => void
+    setzen.call(ziel, { focusVisible: true })
+  }, [beobachtet])
+
+  return vormerken
+}
 
 function titel(ebene: 'h1' | 'h2', text: string) {
   const Klasse = ebene === 'h1' ? 'h1' : 'h2'
@@ -123,7 +153,7 @@ export function GastReiseLesefehler({
         ? gastCreateGateMeldung({ erlaubt: false, grund: 'speicher_unlesbar' })
         : art === 'belegt_ohne_kennung'
           ? gastCreateGateMeldung({ erlaubt: false, grund: 'belegt_ohne_kennung' })
-          : 'Die Prüfung und das Laden haben nicht denselben Stand ergeben. Es wurde nichts gelöscht oder ersetzt.'
+          : 'Die Prüfung und das Laden haben nicht denselben Stand ergeben. Bitte prüfe den Speicher erneut.'
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
@@ -134,7 +164,7 @@ export function GastReiseLesefehler({
         {titel(ebene, haupt)}
         <p className={nebenKlasse}>{neben}</p>
         <div className={aktionenKlasse}>
-          <button type="button" onClick={onPruefen} className={primaerKlasse}>
+          <button type="button" data-gast-fokus="erneut" onClick={onPruefen} className={primaerKlasse}>
             {GAST_CREATE_ERHALTUNG_TEXTE.erneut}
           </button>
           {listenLink ? (
@@ -169,7 +199,7 @@ export function GastReiseAndere({
         {titelText ? ` Auf diesem Gerät liegt „${titelText}“.` : ''}
       </p>
       <div className={aktionenKlasse}>
-        <Link href={`/reisen/${id}` as Route} className={primaerKlasse}>
+        <Link href={`/reisen/${id}` as Route} data-gast-fokus="weiter" className={primaerKlasse}>
           Reise fortsetzen
         </Link>
         <Link href="/reisen" className={sekundaerKlasse}>

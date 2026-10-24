@@ -12,7 +12,7 @@ Isolated local Playwright (Chrome channel recorded in `results.json`). The page 
 
 Harness shims, and only those, stand in for `next/link`, `next/navigation`, `next/dynamic`, `next/image`, `next/cache`, `next/headers`, `next/server`, `server-only`, `node:*`, and `@opentelemetry/api`. They exist so the client components can mount outside Next. They are not a stub of guest storage. Import-time server work is not executed on the read-failure paths. The matching-trip scenario still renders the real `TripWorkspace` client surface.
 
-No hosted account, personal browser, provider, model call, or Production data.
+No hosted account, personal browser, provider, model call, or Production data. The runner allows only its own local origin. Any other request is aborted, recorded on `externalRequests`, and fails the proof.
 
 ## What the ten scenarios show
 
@@ -21,7 +21,7 @@ No hosted account, personal browser, provider, model call, or Production data.
 3. A throwing read stays unreadable with the bytes unchanged. After reads work again, recheck shows the stored trip.
 4. Recheck turns invalid bytes into a valid trip, then into confirmed absence, without deleting the previous bytes first. Writes stay zero on those controlled replacements.
 5. A valid queue stays listed with zero writes. A valid legacy draft migrates through the existing loader and is shown. An invalid active key does not enter that loader, so a queue beside it is not listed in the same observation. The node tests cover that boundary.
-6. Keyboard: Tab reaches "Erneut prüfen" and Enter activates it.
+6. Keyboard: Tab reaches "Erneut prüfen". Enter and Space on an unchanged invalid or unreadable error, on both the list and the workspace, leave focus on that button after the loading frame. A recovered list focuses "Reise erstellen". A recovered workspace focuses its region. If focus moves to another control during loading, it stays there. The disagreement copy does not claim that nothing was deleted.
 7. A different valid trip is a status with "Reise fortsetzen", not a storage alert and not a create link. The matching id then shows the workspace.
 8. Changing `tripId` on the same mounted workspace clears the previous title before the next trip paints. A loading frame exists without the previous title.
 9. Invalid workspace bytes and a later confirmed absence do not write.

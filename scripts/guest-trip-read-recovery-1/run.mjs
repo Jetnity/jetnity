@@ -134,6 +134,7 @@ const ergebnis = {
   sources: Object.fromEntries(quellen.map((datei) => [datei, { sha256: sha(datei), blob: blob(datei) }])),
   scenarios: [],
   pageErrors: [],
+  externalRequests: [],
 }
 
 let browser
@@ -181,6 +182,20 @@ async function seite(viewport, fontPx = 16) {
   page.on('pageerror', (error) => {
     errors.push(kurz(error && error.message ? error.message : error))
     ergebnis.pageErrors.push({ viewport, fontPx, message: errors.at(-1) })
+  })
+  await page.route('**/*', (route) => {
+    const url = route.request().url()
+    let erlaubt = false
+    try {
+      erlaubt = new URL(url).origin === new URL(origin).origin
+    } catch {
+      erlaubt = false
+    }
+    if (!erlaubt) {
+      ergebnis.externalRequests.push({ url, method: route.request().method() })
+      return route.abort('blockedbyclient')
+    }
+    return route.continue()
   })
   await page.goto(origin, { waitUntil: 'domcontentloaded' })
   await page.evaluate((px) => {
@@ -432,6 +447,147 @@ try {
     return { queueWrites, legacyWrites: legacy.writes.length }
   })
 
+  async function fokusStand(page) {
+    return page.evaluate(() => {
+      const aktiv = document.activeElement
+      return {
+        tag: aktiv ? aktiv.tagName : '',
+        id: aktiv && 'id' in aktiv ? aktiv.id : '',
+        text: (aktiv && aktiv.textContent ? aktiv.textContent : '').replace(/\s+/g, ' ').trim().slice(0, 80),
+        fokus: aktiv instanceof Element ? aktiv.getAttribute('data-gast-fokus') : '',
+      }
+    })
+  }
+
+  async function tasteAufPruefen(page, taste) {
+    await page.locator('#davor').focus()
+    await page.keyboard.press('Tab')
+    const vorher = await fokusStand(page)
+    assert.match(vorher.text, /Erneut prüfen/)
+    await beobachter(page)
+    await page.keyboard.press(taste)
+    return { vorher }
+  }
+
+  await szenario('tastatur-fokus-nach-pruefung', async () => {
+    const { page, errors } = await seite({ width: 390, height: 800 })
+    const faelle = []
+    const matrix = [
+      ['liste', 'ungueltig', 'Enter'],
+      ['liste', 'ungueltig', 'Space'],
+      ['liste', 'unlesbar', 'Enter'],
+      ['liste', 'unlesbar', 'Space'],
+      ['bereich', 'ungueltig', 'Enter'],
+      ['bereich', 'ungueltig', 'Space'],
+      ['bereich', 'unlesbar', 'Enter'],
+      ['bereich', 'unlesbar', 'Space'],
+    ]
+    for (const [flaeche, art, taste] of matrix) {
+      await page.evaluate(() => {
+        window.gastNachweis.leeren()
+        window.gastNachweis.werfen(false)
+        window.gastNachweis.werfenFuer(null)
+      })
+      if (art === 'ungueltig') {
+        await page.evaluate(() => window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, '{kein JSON'))
+      } else {
+        await page.evaluate(() => window.gastNachweis.werfen(true))
+      }
+      if (flaeche === 'liste') await page.evaluate(() => window.gastNachweis.renderListe())
+      else await page.evaluate(() => window.gastNachweis.renderBereich('trip-fest'))
+      await warten(
+        page,
+        () => ({ ok: document.querySelector('[data-gast-fokus="erneut"]') instanceof HTMLElement }),
+        `${flaeche} ${art} button`,
+      )
+      await tasteAufPruefen(page, taste)
+      await warten(
+        page,
+        () => ({
+          ok:
+            document.querySelector('[data-gast-fokus="erneut"]') instanceof HTMLElement &&
+            !document.body.innerText.includes('Der Browserspeicher wird geprüft'),
+        }),
+        `${flaeche} ${art} ${taste} settled`,
+      )
+      const rahmen = await gesehen(page)
+      const nachher = await fokusStand(page)
+      assert.ok(rahmen.some((text) => text.includes('Der Browserspeicher wird geprüft')), JSON.stringify(rahmen))
+      assert.equal(nachher.fokus, 'erneut', JSON.stringify(nachher))
+      assert.notEqual(nachher.tag, 'BODY')
+      faelle.push({ flaeche, art, taste, fokus: nachher.fokus })
+    }
+
+    await page.evaluate(() => {
+      window.gastNachweis.leeren()
+      window.gastNachweis.werfen(false)
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, '{kein JSON')
+      window.gastNachweis.renderListe()
+    })
+    await warten(page, () => ({ ok: document.querySelector('[data-gast-fokus="erneut"]') instanceof HTMLElement }), 'list recovery button')
+    await page.locator('#davor').focus()
+    await page.keyboard.press('Tab')
+    await beobachter(page)
+    await page.evaluate(() => window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, null))
+    await page.keyboard.press('Enter')
+    await warten(page, () => ({ ok: document.body.innerText.includes('Deine erste Reise beginnt hier') }), 'list recovered')
+    const listeFokus = await fokusStand(page)
+    assert.equal(listeFokus.fokus, 'weiter', JSON.stringify(listeFokus))
+    assert.match(listeFokus.text, /Reise erstellen/)
+
+    const fokusId = await page.evaluate(() => window.gastNachweis.anlegen('trip-fokus', 'Fokus Reise'))
+    await page.evaluate((id) => {
+      const roh = window.gastNachweis.roh().aktiv
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, '{kein JSON')
+      window.gastNachweis.renderBereich(id)
+      window.__fokusRoh = roh
+    }, fokusId)
+    await warten(page, () => ({ ok: document.querySelector('[data-gast-fokus="erneut"]') instanceof HTMLElement }), 'workspace recovery button')
+    await page.locator('#davor').focus()
+    await page.keyboard.press('Tab')
+    await beobachter(page)
+    await page.evaluate(() => window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, window.__fokusRoh))
+    await page.keyboard.press('Enter')
+    await warten(page, () => ({ ok: document.body.innerText.includes('Fokus Reise') }), 'workspace recovered')
+    const bereichFokus = await fokusStand(page)
+    assert.equal(bereichFokus.fokus, 'weiter', JSON.stringify(bereichFokus))
+    assert.notEqual(bereichFokus.tag, 'BODY')
+
+    await page.evaluate(() => {
+      window.gastNachweis.leeren()
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, '{kein JSON')
+      window.gastNachweis.renderListe()
+    })
+    await warten(page, () => ({ ok: document.querySelector('[data-gast-fokus="erneut"]') instanceof HTMLElement }), 'movement button')
+    await page.locator('#davor').focus()
+    await page.keyboard.press('Tab')
+    await page.evaluate(() => {
+      const obs = new MutationObserver(() => {
+        if (document.body.innerText.includes('Der Browserspeicher wird geprüft')) {
+          document.getElementById('davor')?.focus()
+          obs.disconnect()
+        }
+      })
+      obs.observe(document.body, { childList: true, subtree: true, characterData: true })
+    })
+    await page.keyboard.press('Enter')
+    await warten(
+      page,
+      () => ({
+        ok:
+          document.querySelector('[data-gast-leseart="ungueltig"]') instanceof HTMLElement &&
+          !document.body.innerText.includes('Der Browserspeicher wird geprüft'),
+      }),
+      'movement settled',
+    )
+    const bewegt = await fokusStand(page)
+    assert.equal(bewegt.id, 'davor', JSON.stringify(bewegt))
+
+    assert.equal(errors.length, 0)
+    await page.close()
+    return { unchanged: faelle.length, listRecovery: listeFokus.fokus, workspaceRecovery: bereichFokus.fokus, moved: bewegt.id }
+  })
+
   await szenario('tastatur-erneut-pruefen', async () => {
     const { page, errors } = await seite({ width: 1280, height: 900 })
     await liste(page, () => {
@@ -591,7 +747,10 @@ try {
 }
 
 const failed = ergebnis.scenarios.filter((eintrag) => !eintrag.pass)
-ergebnis.status = failed.length === 0 && ergebnis.pageErrors.length === 0 ? 'PASS' : 'FAIL'
+ergebnis.status =
+  failed.length === 0 && ergebnis.pageErrors.length === 0 && ergebnis.externalRequests.length === 0
+    ? 'PASS'
+    : 'FAIL'
 ergebnis.passed = ergebnis.scenarios.filter((eintrag) => eintrag.pass).length
 ergebnis.failed = failed.length
 writeFileSync(join(EVIDENCE, 'results.json'), `${JSON.stringify(ergebnis, null, 2)}\n`)

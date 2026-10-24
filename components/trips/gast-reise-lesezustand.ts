@@ -40,36 +40,45 @@ export type GastArbeitsbereichLesung =
   | { art: 'andere_reise'; id: string; titel: string }
   | { art: 'passend'; reise: Trip }
 
+type SchlusselBlick = { art: 'gelesen'; wert: string | null } | { art: 'unlesbar' }
+
 type Roh = {
-  aktiv: string | null
-  warteschlange: string | null
-  legacy: string | null
+  aktiv: SchlusselBlick
+  warteschlange: SchlusselBlick
+  legacy: SchlusselBlick
 }
 
-function rohSchnappschuss(): { ok: true; werte: Roh } | { ok: false } {
+function schluesselBlick(schluessel: string): SchlusselBlick {
   try {
-    if (typeof window === 'undefined') return { ok: false }
+    if (typeof window === 'undefined') return { art: 'unlesbar' }
     const speicher = window.localStorage
-    if (!speicher || typeof speicher.getItem !== 'function') return { ok: false }
-    return {
-      ok: true,
-      werte: {
-        aktiv: speicher.getItem(SCHLUESSEL.aktiv),
-        warteschlange: speicher.getItem(SCHLUESSEL.warteschlange),
-        legacy: speicher.getItem(SCHLUESSEL.legacy),
-      },
-    }
+    if (!speicher || typeof speicher.getItem !== 'function') return { art: 'unlesbar' }
+    return { art: 'gelesen', wert: speicher.getItem(schluessel) }
   } catch {
-    return { ok: false }
+    return { art: 'unlesbar' }
   }
 }
 
-function gleich(links: Roh, rechts: Roh): boolean {
-  return (
-    links.aktiv === rechts.aktiv &&
-    links.warteschlange === rechts.warteschlange &&
-    links.legacy === rechts.legacy
-  )
+function rohSchnappschuss(): Roh {
+  return {
+    aktiv: schluesselBlick(SCHLUESSEL.aktiv),
+    warteschlange: schluesselBlick(SCHLUESSEL.warteschlange),
+    legacy: schluesselBlick(SCHLUESSEL.legacy),
+  }
+}
+
+/**
+ * A diagnostic key that cannot be read does not count as a write and does not
+ * hide a trip the occupancy and the loader already agree on.
+ */
+function diagnostikSchrieb(links: Roh, rechts: Roh): boolean {
+  const namen = ['aktiv', 'warteschlange', 'legacy'] as const
+  return namen.some((name) => {
+    const vorher = links[name]
+    const nachher = rechts[name]
+    if (vorher.art !== 'gelesen' || nachher.art !== 'gelesen') return false
+    return vorher.wert !== nachher.wert
+  })
 }
 
 /** Create is only honest once the active slot is confirmed empty. */
@@ -84,7 +93,7 @@ export function gastArbeitsbereichDarfErstellen(lese: GastArbeitsbereichLesung):
 
 /**
  * Pure join of one pre-load occupancy, one loader result, and one post-load
- * occupancy. `schrieb` reports whether the loader changed the three known keys.
+ * occupancy. `schrieb` is true only when a key both snapshots could read changed.
  */
 export function gastListeAusBeobachtung(
   belegt: GastCreateBelegung,
@@ -172,12 +181,7 @@ export function gastListeBeobachten(): GastListeLesung {
   }
   const nachher = rohSchnappschuss()
   const danach = gastCreateBelegungLesen()
-  if (!davor.ok || !nachher.ok) {
-    if (danach.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar', schrieb: false }
-    return { art: 'abweichend', schrieb: false }
-  }
-
-  const schrieb = !gleich(davor.werte, nachher.werte)
+  const schrieb = diagnostikSchrieb(davor, nachher)
   return gastListeAusBeobachtung(belegt, ladung, danach, schrieb)
 }
 

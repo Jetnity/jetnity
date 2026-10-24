@@ -2,24 +2,24 @@
   "author": "Jetnity Guest Trip Read Recovery 1 — Cursor Generation 1",
   "session": "bc-2806475d-7ee4-40d0-980e-1d26bcb5b270",
   "model": "grok-4.7-high-fast",
-  "origin": "http://127.0.0.1:46273",
+  "origin": "http://127.0.0.1:39059",
   "boundary": "Synthetic isolated local Playwright. Real GastReisen and GastArbeitsbereich with real gastspeicher and create-entry. next/link, next/navigation, next/dynamic, next/cache, next/headers and server-only are harness shims so the components mount outside Next. No hosted account, personal browser, provider, or model call.",
   "sources": {
     "components/trips/GastReisen.tsx": {
-      "sha256": "93a5148bad24c23e677f9026ba61f0f75d1bf327ec27ddecb1ffd92e1b8d29dc",
-      "blob": "90b8302841283b8b1f7c48d0dd017a00ee9598c5"
+      "sha256": "7fd8690d131f7dd816c40f4bad5ef9d7b97e36790c42a5fc8430244d2080d9d3",
+      "blob": "55a9019b66b23da67e496797b4456f6b9dd1a3f4"
     },
     "components/trips/GastArbeitsbereich.tsx": {
-      "sha256": "65e8656d7620e8704b5ce34a80fb023c7da830d4124cff2b34153be81fd4dac7",
-      "blob": "dd2580806ead3b786f5e62cf7f3b1243532d0f48"
+      "sha256": "3881f9bfebb5d0550b8ea39a49418eec920ecab58e5409be6a4ce4d36fbee735",
+      "blob": "6a0a6027f01b9315b59cebd80038b37449fb02d4"
     },
     "components/trips/gast-reise-lesezustand.ts": {
-      "sha256": "2de5144d2c724bc446dd4efb37b13be2f356549fad72bbe247617b508cc0ccbe",
-      "blob": "84079393c0af05052b8d21dd70646306c649caaa"
+      "sha256": "924d2a979a9aa3e35484c68ac3c15ec5796a7b1910e46754efba39a04aae46af",
+      "blob": "62417eb8ed3d050ce8efb57b26c5eca406b1f7c7"
     },
     "components/trips/GastReiseLesefehler.tsx": {
-      "sha256": "4c2d7cce2f4ddb8a03f478d44e3f458a173bf71b6748acfef8dd7c1f6c4c1ba5",
-      "blob": "ce899f1c4209d3db6476e2df2399e23aa5c3e381"
+      "sha256": "f3521d09014cbf666a626c3bdf226bfe45e71e97511f9141ae021763bd0e6cb7",
+      "blob": "3f307c205f3075ecbbe0e4a4d9325112ca32e1a0"
     },
     "lib/trips/gastspeicher.ts": {
       "sha256": "de8ed749e69170ee902fa1042be26b05e80313da22afda2a5de65b8160e9c980",
@@ -80,6 +80,16 @@
       }
     },
     {
+      "name": "tastatur-fokus-nach-pruefung",
+      "pass": true,
+      "detail": {
+        "unchanged": 8,
+        "listRecovery": "weiter",
+        "workspaceRecovery": "weiter",
+        "moved": "davor"
+      }
+    },
+    {
       "name": "tastatur-erneut-pruefen",
       "pass": true,
       "detail": {
@@ -137,11 +147,12 @@
     }
   ],
   "pageErrors": [],
+  "externalRequests": [],
   "browser": {
     "channel": "chrome",
     "version": "148.0.7778.96"
   },
   "status": "PASS",
-  "passed": 10,
+  "passed": 11,
   "failed": 0
 }

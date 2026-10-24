@@ -19,9 +19,9 @@ The self-review is not Technical-Lead PASS.
 | Merge-base | `913cf9353fd33491d2bd3130b3c430cc88990200` |
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
-| Superseded implementation head | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` |
-| Ahead / behind after this correction commit | 4 / 0 |
-| Final head | The commit that contains this review correction. The PR comment records `git rev-parse HEAD` after push. Do not treat `7e7a2e4b`, `de65696c`, or the seed Preview as the gate for this head. |
+| Superseded heads | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `8f954a46475fc4666593d6fd2667d3ef979f88e9` |
+| Ahead / behind after this R1 correction commit | 5 / 0 |
+| Final head | The commit that contains CHANGES REQUIRED R1. The PR comment records `git rev-parse HEAD` after push. Do not treat `8f954a46`, `7e7a2e4b`, `de65696c`, or an older Preview as the gate for this head. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` |
 | Mode | `NORMAL` |
 | Integration | Lane B. Order stays B → A → C. No sibling code is in this branch. |
@@ -53,7 +53,9 @@ Acceptance matrix, failure modes, and the truth/privacy/security/accessibility/p
 
 ## Executed versus not verified
 
-Executed on this correction: 17 storage tests in the new file, inside a 187/187 focused regression; mounted proof PASS 10/10 on Chrome 148.0.7778.96 with empty `pageErrors`; `npm run typecheck` exit 0; targeted eslint `--max-warnings 0` exit 0. The earlier hygiene checks (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode`, `check:schema-bezug`) and `npm run build` were run on the previous implementation head and were not repeated for this read-path correction. Schema output on that run still listed pre-existing LOCAL/UNAPPLIED RPCs. Full `npx eslint .` on that previous head was 144 warnings and 0 errors.
+Executed on this R1 head: 21 storage tests in the new file, inside a 191/191 focused regression; mounted proof PASS 11/11, including unchanged-error keyboard focus for both surfaces, Enter and Space, invalid and unreadable, plus recovery and a deliberate focus move. `pageErrors` empty. Unexpected requests outside the local origin are aborted, recorded, and fail the proof; this run recorded none. `npm run typecheck` exit 0. Targeted eslint `--max-warnings 0` exit 0.
+
+Not repeated on this head: full `npm test`, `npm run build`, full `npx eslint .`, exact-head App/Auth CI, and Vercel Preview. The production build and full eslint (144 warnings, 0 errors) were on `7e7a2e4b` only.
 
 `npm run build` exited 0. `npx eslint .` exited 0 with 144 warnings and 0 errors; none are in this slice.
 
@@ -76,6 +78,8 @@ No-hosted / no-provider boundary: synthetic local Playwright and in-memory `loca
 
 ## Exact next step
 
-Technical Lead reviews this pushed head independently, including the changed files, the mounted behavior, and fresh exact-head CI and Preview. Only the Technical Lead decides Ready and merge. After an ordinary merge, actual-main CI / Production / domain acceptance is separate. Lane A and lane C stay unstarted.
+Technical Lead reviews this pushed head independently, including the changed files, the mounted behavior, and fresh exact-head CI and Preview. Only the Technical Lead decides Ready and merge. After an ordinary merge, actual-main CI / Production / domain acceptance is separate.
+
+R104 is a finite three-lane batch. Integration order stays B → A → C. Lanes A and C are already active on their own branches. This lane does not integrate them and does not start a follow-up.
 
 Immediate CHANGES REQUIRED stay with this logical author and this session. Every changed head needs full re-gating.

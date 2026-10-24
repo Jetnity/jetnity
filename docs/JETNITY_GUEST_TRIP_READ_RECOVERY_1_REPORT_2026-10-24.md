@@ -15,9 +15,9 @@ This report is not Technical-Lead PASS.
 | Merge-base | `913cf9353fd33491d2bd3130b3c430cc88990200` |
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
-| Superseded implementation head | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` |
-| Ahead / behind after this correction commit | 4 / 0 |
-| Final head | Commit that contains this correction. PR comment records `git rev-parse HEAD` after push. |
+| Superseded heads | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `8f954a46475fc4666593d6fd2667d3ef979f88e9` |
+| Ahead / behind after the R1 correction commit | 5 / 0 |
+| Final head | Commit that contains CHANGES REQUIRED R1. PR comment records `git rev-parse HEAD` after push. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` (unchanged) |
 | Node | v22.23.4 |
 | Mode | `NORMAL` |
@@ -49,7 +49,7 @@ Observation starts with occupancy (`gastCreateBelegungLesen()`).
 
 Invalid and unreadable occupancy stops there. Those observations do not call `gastspeicherLaden()`, do not write, and do not list a queue. The queue beside an invalid draft is only available inside that migration-capable loader. No readonly contract returns it. The raw queue bytes stay. "Erneut prüfen" can list them later, once occupancy confirms the active slot is empty. That later read is the ordinary queue path.
 
-Every other occupancy continues: snapshot of the three known keys, one `gastspeicherLaden()`, second snapshot, occupancy again. `schrieb` is byte inequality around that one loader call.
+Every other occupancy continues: one snapshot per known key, one `gastspeicherLaden()`, a second per-key snapshot, then occupancy again. `schrieb` is true only when a key both snapshots could read actually changed. A throw from the legacy key or the queue key does not hide a valid active trip that occupancy and the loader still agree on.
 
 Classification after a loader call:
 
@@ -81,7 +81,7 @@ Create is rendered only for list `fehlend` or `nur_warteschlange`, and for works
 | 7 | No stale trip across `tripId`. No callback signature change. | Met. Mounted trip change has a loading frame without the previous title, and no frame contains both titles. Mutation handlers under a matching trip are the previous functions. |
 | 8 | Status/alert semantics, keyboard, loading copy, 320/390/1280 and 200% reflow with real styles. No create while unknown. | Met in the synthetic browser. Screen reader and a physical device are not verified. |
 | 9 | Real-component proof with real storage, raw bytes and write counts. | Met. 15 node tests plus 10 mounted scenarios. |
-| 10 | Existing preservation, create-entry, storage, and route tests stay intact. | Met. Focused suite 187/187. No loader assertion was weakened. |
+| 10 | Existing preservation, create-entry, storage, and route tests stay intact. | Met. Focused suite 191/191. No loader assertion was weakened. |
 | 11 | Synthetic proof is separate from hosted, device, and screen-reader proof. | Stated here and in the evidence notes. |
 
 ## Failure modes
@@ -110,22 +110,18 @@ Performance: each observation is local and does two occupancy reads plus one loa
 
 | Command | Result |
 | --- | --- |
-| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/guest-trip-read-recovery-1.test.ts lib/trips/gastspeicher.test.ts lib/trips/guest-active-draft-preservation.test.ts lib/trips/create-entry.test.ts lib/trips/gast-reisen-cta.test.ts` | 187 tests, 31 suites, 0 fail. The new file contributes 17 tests. |
-| `node scripts/guest-trip-read-recovery-1/run.mjs` | PASS 10/10. `pageErrors` empty. Chrome 148.0.7778.96. Evidence `docs/evidence/guest-trip-read-recovery-1/`. |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/guest-trip-read-recovery-1.test.ts lib/trips/gastspeicher.test.ts lib/trips/guest-active-draft-preservation.test.ts lib/trips/create-entry.test.ts lib/trips/gast-reisen-cta.test.ts` | 191 tests, 31 suites, 0 fail. The new file contributes 21 tests. |
+| `node scripts/guest-trip-read-recovery-1/run.mjs` | PASS 11/11 on this R1 tree. `pageErrors` empty. `externalRequests` empty. Evidence `docs/evidence/guest-trip-read-recovery-1/`. |
 | `npm run typecheck` | exit 0 |
 | `npx eslint` on the four runtime files, the new test, and `scripts/guest-trip-read-recovery-1` with `--max-warnings 0` | exit 0 |
-| `npm run check:dead` | 0 orphans, exit 0 |
-| `npm run check:exports` | 0 unexplained exports, exit 0 |
-| `npm run check:deps` | 0 unused checked packages, exit 0 |
-| `npm run check:api-schutz` | 12 admin routes, exit 0 |
-| `npm run check:operating-mode` | PASS |
-| `npm run check:schema-bezug` | exit 0. Pre-existing LOCAL/UNAPPLIED RPC notes. Not this slice. |
-| `npm run build` (`prebuild` runs `check:setup`, then `next build`) | exit 0. Compiled successfully in 16.7s. |
-| `npx eslint .` | exit 0. 144 warnings, 0 errors. None of the warnings are in this slice's files. Historical main baseline cited 146 warnings; this run is not claimed as a cleanup of those. |
+| `npm run check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode`, `check:schema-bezug` | Exit 0 on `7e7a2e4b` only. Not repeated on this R1 head. Schema output listed pre-existing LOCAL/UNAPPLIED RPCs. |
+| `npm run build` | Exit 0 on `7e7a2e4b` only. Not repeated on this R1 head. |
+| `npx eslint .` | Exit 0 on `7e7a2e4b`: 144 warnings, 0 errors, none in this slice. Not repeated on this R1 head. |
 
 ## Not verified
 
 - Full `npm test` (historical main baseline 7,151 tests / 7,149 pass / 2 opt-in browser skips). Exact-head App CI is the gate.
+- Production build, full `npx eslint .`, and the hygiene checks on this R1 head. They passed on superseded `7e7a2e4b`.
 - Exact-head Auth CI and Vercel Preview. Not available until this head is pushed. Seed Preview does not count.
 - Hosted account, physical device, screen reader, Production, provider, and model behavior.
 - #985 / #982 held review, #917 hosted readback, #968 cleanup, #748 personal browser. Not investigated.

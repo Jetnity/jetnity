@@ -20,7 +20,8 @@ I treat all eleven acceptance criteria as met inside the synthetic boundary desc
 
 - Storage tests record raw key bytes and write/remove counts for absence, valid match, invalid bytes, throwing reads, unreadable legacy, restored access, invalid→valid, invalid→absent, mid-read disagreement, persisted legacy, failed legacy without an id, queue-only, and invalid-plus-queue.
 - The mounted runner records a loading frame before the empty state, keyboard activation of "Erneut prüfen", a tripId change that does not paint the previous title, and 320/390/1280 plus 200% reflow without horizontal overflow.
-- Focused regressions of storage, active-draft preservation, create-entry, and the guest CTA stay green (187/187).
+- Focused regressions of storage, active-draft preservation, create-entry, and the guest CTA stay green (191/191).
+- CHANGES REQUIRED R1: a failed occupancy does not enter the loader on either surface; a legacy or queue read failure does not hide a valid active trip; keyboard recheck restores focus unless the user has moved it. Disagreement copy no longer claims that nothing was deleted. The mounted runner aborts non-local requests.
 
 I do not treat that as hosted-account, physical-device, screen-reader, Preview, or Production proof.
 
@@ -49,7 +50,7 @@ Failure stays on the device: recheck reads again, and the tests that forbid writ
 
 ## Git at this review
 
-Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. The first implementation head `7e7a2e4b1f2733bc970673acd7582fde4eaac83d` is superseded by this correction. After this commit the branch is 4 ahead / 0 behind. The PR comment has the exact SHA after push.
+Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. Heads `7e7a2e4b` and `8f954a46` are superseded by this R1 commit. After this commit the branch is 5 ahead / 0 behind. The PR comment has the exact SHA after push. R104 lanes A and C are already active; this lane does not integrate them. Order remains B → A → C.
 
 ## Stop
 
