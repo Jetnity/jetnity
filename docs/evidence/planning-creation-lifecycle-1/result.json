@@ -1,0 +1,166 @@
+{
+  "head": "ffa789b2ce9b7dd75951c2571cfb9071ecf4069d",
+  "failed": 0,
+  "cases": [
+    {
+      "name": "manual validation keeps focus path and does not call actions",
+      "ok": true
+    },
+    {
+      "name": "manual guest success uses confirmed route, stable ref and real storage",
+      "ok": true
+    },
+    {
+      "name": "existing guest draft blocks a second create without overwrite",
+      "ok": true
+    },
+    {
+      "name": "invalid active bytes stay untouched",
+      "ok": true
+    },
+    {
+      "name": "valid legacy slot blocks create and is not overwritten",
+      "ok": true
+    },
+    {
+      "name": "account create ignores guest storage and keeps clientRef",
+      "ok": true
+    },
+    {
+      "name": "place domain error stays on the field and retry keeps the draft",
+      "ok": true
+    },
+    {
+      "name": "place rejection and throw recover without a new identity",
+      "ok": true
+    },
+    {
+      "name": "account rejection recovers and retries the same clientRef",
+      "ok": true
+    },
+    {
+      "name": "rapid double submit invokes place confirmation once",
+      "ok": true
+    },
+    {
+      "name": "pending manual controls keep the submitted draft",
+      "ok": true
+    },
+    {
+      "name": "reorder before submit changes the confirmed route order",
+      "ok": true
+    },
+    {
+      "name": "guest storage fault stays recoverable and does not navigate",
+      "ok": true
+    },
+    {
+      "name": "unmount before guest write does not store or navigate",
+      "ok": true
+    },
+    {
+      "name": "unmount after account send does not navigate and does not cancel the call",
+      "ok": true
+    },
+    {
+      "name": "keyboard submits and retries the manual form",
+      "ok": true
+    },
+    {
+      "name": "proposal generation handles domain, rejection and a locked draft",
+      "ok": true
+    },
+    {
+      "name": "proposal rejection keeps the text for an explicit retry",
+      "ok": true
+    },
+    {
+      "name": "guest adoption keeps warnings and storage errors, then retries",
+      "ok": true
+    },
+    {
+      "name": "account adoption failure keeps proposal, warning and clientRef",
+      "ok": true
+    },
+    {
+      "name": "pending adoption ignores change and discard until failure",
+      "ok": true
+    },
+    {
+      "name": "unmount during guest adoption does not start the guest write",
+      "ok": true
+    },
+    {
+      "name": "unmount after account adoption does not navigate",
+      "ok": true
+    },
+    {
+      "name": "late completion after remount does not update the newer form",
+      "ok": true
+    },
+    {
+      "name": "layout 320 390 1280 and 200 percent reflow",
+      "ok": true
+    }
+  ],
+  "stubs": {
+    "hosted": false,
+    "personalBrowser": false,
+    "modelCall": false,
+    "accountWrite": false,
+    "boundaries": [
+      "next/navigation",
+      "next/link",
+      "@/lib/places/aktionen#reiseorteBestaetigen",
+      "@/lib/trips/aktionen#reiseAnlegen",
+      "@/lib/reisevorschlag/aktionen#vorschlagErzeugen",
+      "@/lib/reisevorschlag/aktionen#vorschlagUebernehmen",
+      "@/lib/reisevorschlag/aktionen#vorschlagOrteAufloesen"
+    ],
+    "real": [
+      "TripPlanner validation and route controls",
+      "Reiseidee mounted proposal preview",
+      "guest localStorage via gastreiseAnlegen and gastreiseAblegen",
+      "vorschlagAlsReise",
+      "compiled styles/globals.css"
+    ],
+    "placeSearch": "same-origin synthetic /api/search/places"
+  },
+  "notVerified": [
+    "physical device",
+    "screen reader",
+    "hosted account",
+    "production database",
+    "provider or model activation",
+    "full App/Auth CI",
+    "Vercel Preview",
+    "workflow CI replay of this browser proof"
+  ],
+  "outputs": {
+    "evidenceDir": "docs/evidence/planning-creation-lifecycle-1",
+    "scratch": "node:os.tmpdir",
+    "browserPrerequisite": "PLANNING_CREATION_CHROMIUM",
+    "artifactCopy": "not-requested"
+  },
+  "layout": {
+    "manual-320": {
+      "delta": 0,
+      "treffer": []
+    },
+    "manual-390": {
+      "delta": 0,
+      "treffer": []
+    },
+    "manual-1280": {
+      "delta": 0,
+      "treffer": []
+    },
+    "manual-320-200": {
+      "delta": 0,
+      "treffer": []
+    },
+    "proposal-320": 0,
+    "proposal-1280": 0
+  },
+  "pageErrors": []
+}

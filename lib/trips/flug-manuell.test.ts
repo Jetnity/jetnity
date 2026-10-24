@@ -548,14 +548,28 @@ test('narrow Workspace wiring refreshes account on success and uses persisted gu
   assert.equal(await callback(ITEM, segments), null); assert.deepEqual(args, [eingabe]); assert.equal(refreshes, 1)
   fail = true; assert.equal(await callback(ITEM, segments), 'Abgelehnt'); assert.equal(refreshes, 1)
   assert.equal(invalidations, 2, 'success and failure both invalidate before the mutation')
-  const saved = { ...reise, revision: reise.revision + 1 }; const states = [reise, true, '']; const writes: unknown[] = []; const guestArgs: unknown[] = []
+  const saved = { ...reise, revision: reise.revision + 1 }
+  // Five settled slots, in hook order: matching trip, passend reading of that
+  // same id, the requested id (no context reset), recheck counter, storage message.
+  // The focus hook is an import seam only. This adapter does not render React or
+  // prove keyboard focus; the mounted browser proof does. The real hook calls
+  // useRef and has no renderer here.
+  const states: unknown[] = [reise, { art: 'passend', reise }, TRIP, 0, '']
+  const writes: unknown[] = []
+  const guestArgs: unknown[] = []
   let guestFail = false
-  const guest = laden<{ default: (props: { tripId: string }) => WorkspaceElement }>('components/trips/GastArbeitsbereich.tsx', {
+  const lesefehler = require(resolve(root, 'components/trips/GastReiseLesefehler')) as Record<string, unknown>
+  const TripWorkspace = (require(resolve(root, 'components/trips/TripWorkspace')) as { default: unknown }).default
+  const guest = laden<{ default: (props: { tripId: string }) => React.ReactElement<{ children: WorkspaceElement; 'data-gast-fokus'?: string }> }>('components/trips/GastArbeitsbereich.tsx', {
     react: { ...React, useEffect: () => {}, useState: () => [states.shift(), (value: unknown) => writes.push(value)] },
     'next/navigation': { useRouter: () => ({}) },
     '@/lib/trips/gastspeicher': { gastFlugRouteManuellSetzen: (...input: unknown[]) => { guestArgs.push(input); if (guestFail) throw new Error('Speicherfehler'); return saved } },
+    '@/components/trips/GastReiseLesefehler': { ...lesefehler, useGastLeseFokus: () => () => {} },
   })
-  const guestCallback = guest.default({ tripId: TRIP }).props.onFlugRouteManuell
+  const wurzel = guest.default({ tripId: TRIP })
+  const workspace = React.Children.only(wurzel.props.children)
+  assert.equal(workspace.type, TripWorkspace)
+  const guestCallback = workspace.props.onFlugRouteManuell
   assert.equal(await guestCallback(ITEM, segments), null); assert.deepEqual(guestArgs, [[reise, ITEM, segments]]); assert.equal(writes[0], saved)
   guestFail = true; assert.equal(await guestCallback(ITEM, segments), 'Speicherfehler'); assert.equal(writes.length, 1)
   assert.match(readFileSync(resolve(root, 'components/trips/TripWorkspace.tsx'), 'utf8'), /<FlugBestand[^>]*onFlugRouteManuell=\{onFlugRouteManuell\}/)

@@ -30,7 +30,9 @@
 // Grund, warum Doppelklick, Reload und ein erneuter Anlauf nach einem
 // Netzwerkabbruch dieselbe Reise ergeben und nicht drei: Im Konto über
 // `unique (user_id, client_ref)`, im Browser über die Kennungsprüfung in
-// `gastreiseAblegen()`.
+// `gastreiseAblegen()`. Ein fehlgeschlagener Übernahmeversuch ersetzt sie nicht.
+//
+// Ein schon an das Konto gesendeter Aufruf wird nicht als abgebrochen behandelt.
 //
 // ---------------------------------------------------------------------------
 // Ein Fehler löscht keinen Vorschlag
@@ -52,6 +54,7 @@ import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import { usePlanningCreationLifecycle } from '@/components/trips/usePlanningCreationLifecycle'
 import { gastCreateGateMeldung, gastCreateJetztPruefen } from '@/lib/trips/create-entry'
 import {
   GastreiseBelegtOhneKennungFehler,
@@ -69,6 +72,12 @@ type ReiseideeProps = {
   initialIdee?: string
 }
 
+const ENTWURF_TRANSPORT =
+  'Der Entwurf konnte gerade nicht erstellt werden. Deine Beschreibung bleibt hier. Bitte versuche es erneut.'
+
+const UEBERNAHME_TRANSPORT =
+  'Dieser Vorschlag konnte gerade nicht übernommen werden. Er bleibt hier. Bitte versuche es erneut.'
+
 const BEISPIELE = [
   '7 Tage Thailand ab Zürich, zwei Personen, maximal CHF 3’000, Strand, gutes Essen und nicht zu stressig.',
   'Zehn Tage Portugal im Mai, Lissabon und Algarve, Kultur und Küche, entspanntes Tempo.',
@@ -77,21 +86,18 @@ const BEISPIELE = [
 
 export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideeProps) {
   const router = useRouter()
+  const lifecycle = usePlanningCreationLifecycle()
+  const { laeuft } = lifecycle
   const [freitext, setFreitext] = React.useState(initialIdee)
   const [vorschlag, setVorschlag] = React.useState<Reisevorschlag | null>(null)
   const [warnungen, setWarnungen] = React.useState<string[]>([])
   const [meldung, setMeldung] = React.useState('')
   const [bestehendeReise, setBestehendeReise] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState(false)
   const [warteMs, setWarteMs] = React.useState(0)
 
-  // Eine Kennung je Vorschlag. Sie entsteht erst beim Übernehmen und bleibt
-  // danach: Ein zweiter Anlauf mit demselben Vorschlag ist derselbe Vorgang.
+  // Eine Kennung je Vorschlag. Sie entsteht erst, wenn ein Entwurf da ist,
+  // und bleibt für jeden erneuten Übernahmeversuch desselben Vorschlags.
   const clientRef = React.useRef('')
-
-  // Nur die Antwort auf den letzten Anlauf zählt. Ohne diesen Vergleich könnte
-  // eine langsame erste Antwort eine schnellere zweite überschreiben.
-  const anlauf = React.useRef(0)
 
   const plant = laeuft && !vorschlag
 
@@ -107,7 +113,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
   const erzeugen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    if (laeuft) return
+    if (lifecycle.gesperrt()) return
 
     const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
@@ -118,30 +124,36 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
       return
     }
 
+    const text = freitext
     setMeldung('')
     setBestehendeReise('')
     setVorschlag(null)
     setWarnungen([])
-    setLaeuft(true)
+    const lauf = lifecycle.beginnen()
+    if (lauf === null) return
 
-    const eigener = ++anlauf.current
-    const ergebnis = await vorschlagErzeugen(freitext)
-    if (eigener !== anlauf.current) return
+    try {
+      const ergebnis = await vorschlagErzeugen(text)
+      if (!lifecycle.aktuell(lauf)) return
+      lifecycle.beenden(lauf)
 
-    setLaeuft(false)
+      if (!ergebnis.ok) {
+        setMeldung(ergebnis.meldung)
+        return
+      }
 
-    if (!ergebnis.ok) {
-      setMeldung(ergebnis.meldung)
-      return
+      clientRef.current = kennungErzeugen('trip')
+      setVorschlag(ergebnis.vorschlag)
+      setWarnungen(ergebnis.warnungen)
+    } catch {
+      if (!lifecycle.aktuell(lauf)) return
+      setMeldung(ENTWURF_TRANSPORT)
+      lifecycle.beenden(lauf)
     }
-
-    clientRef.current = kennungErzeugen('trip')
-    setVorschlag(ergebnis.vorschlag)
-    setWarnungen(ergebnis.warnungen)
   }
 
   const uebernehmen = async () => {
-    if (!vorschlag || laeuft) return
+    if (!vorschlag || lifecycle.gesperrt()) return
 
     const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
@@ -150,50 +162,64 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
       return
     }
 
+    const snapshot = vorschlag
+    const ref = clientRef.current
     setMeldung('')
     setBestehendeReise('')
-    setLaeuft(true)
-
-    if (angemeldet) {
-      const ergebnis = await vorschlagUebernehmen({ clientRef: clientRef.current, vorschlag })
-      if (!ergebnis.ok) {
-        setMeldung(ergebnis.meldung)
-        setLaeuft(false)
-        return
-      }
-      router.push(`/reisen/${ergebnis.wert}` as Route)
-      return
-    }
+    const lauf = lifecycle.beginnen()
+    if (lauf === null) return
 
     try {
-      const orte = await vorschlagOrteAufloesen(vorschlag)
-      const reise = gastreiseAblegen(
-        vorschlagAlsReise(vorschlag, clientRef.current, kennungErzeugen, new Date().toISOString(), orte),
-      )
-      router.push(`/reisen/${reise.id}` as Route)
-    } catch (fehler) {
-      setLaeuft(false)
-
-      if (fehler instanceof GastreiseBestehtFehler) {
-        setBestehendeReise(fehler.bestehendeId)
-        setMeldung(fehler.message)
-        return
-      }
-      if (
-        fehler instanceof GastreiseUnbrauchbarFehler ||
-        fehler instanceof GastspeicherUnlesbarFehler ||
-        fehler instanceof GastreiseBelegtOhneKennungFehler
-      ) {
-        setBestehendeReise('')
-        setMeldung(fehler.message)
+      if (angemeldet) {
+        const ergebnis = await vorschlagUebernehmen({ clientRef: ref, vorschlag: snapshot })
+        // Der Konto-Aufruf ist bereits unterwegs und wird hier nicht zurückgenommen.
+        if (!lifecycle.aktuell(lauf)) return
+        if (!ergebnis.ok) {
+          setMeldung(ergebnis.meldung)
+          lifecycle.beenden(lauf)
+          return
+        }
+        router.push(`/reisen/${ergebnis.wert}` as Route)
         return
       }
 
-      setMeldung(
-        fehler instanceof SpeicherFehler
-          ? fehler.message
-          : 'Dieser Vorschlag konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
-      )
+      const orte = await vorschlagOrteAufloesen(snapshot)
+      if (!lifecycle.aktuell(lauf)) return
+      try {
+        const reise = gastreiseAblegen(
+          vorschlagAlsReise(snapshot, ref, kennungErzeugen, new Date().toISOString(), orte),
+        )
+        if (!lifecycle.aktuell(lauf)) return
+        router.push(`/reisen/${reise.id}` as Route)
+      } catch (fehler) {
+        if (!lifecycle.aktuell(lauf)) return
+        lifecycle.beenden(lauf)
+
+        if (fehler instanceof GastreiseBestehtFehler) {
+          setBestehendeReise(fehler.bestehendeId)
+          setMeldung(fehler.message)
+          return
+        }
+        if (
+          fehler instanceof GastreiseUnbrauchbarFehler ||
+          fehler instanceof GastspeicherUnlesbarFehler ||
+          fehler instanceof GastreiseBelegtOhneKennungFehler
+        ) {
+          setBestehendeReise('')
+          setMeldung(fehler.message)
+          return
+        }
+
+        setMeldung(
+          fehler instanceof SpeicherFehler
+            ? fehler.message
+            : 'Dieser Vorschlag konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
+        )
+      }
+    } catch {
+      if (!lifecycle.aktuell(lauf)) return
+      setMeldung(UEBERNAHME_TRANSPORT)
+      lifecycle.beenden(lauf)
     }
   }
 
@@ -201,6 +227,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     <div className="grid min-w-0 max-w-full gap-6">
       <form
         onSubmit={erzeugen}
+        aria-busy={laeuft}
         className="min-w-0 max-w-full rounded-[28px] border border-black/5 border-t-[3px] border-t-citrus-400 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -225,7 +252,11 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
           Deine Reise in eigenen Worten
           <textarea
             value={freitext}
-            onChange={(ereignis) => setFreitext(ereignis.target.value)}
+            disabled={laeuft}
+            onChange={(ereignis) => {
+              if (lifecycle.gesperrt()) return
+              setFreitext(ereignis.target.value)
+            }}
             rows={4}
             maxLength={VORSCHLAG_GRENZEN.freitextMaximum}
             placeholder={BEISPIELE[0]}
@@ -241,8 +272,12 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             <button
               key={beispiel}
               type="button"
-              onClick={() => setFreitext(beispiel)}
-              className="inline-flex min-h-11 max-w-full items-center rounded-full border border-line-200 px-4 text-left text-xs font-medium text-ink-900 transition hover:border-line-500"
+              disabled={laeuft}
+              onClick={() => {
+                if (lifecycle.gesperrt()) return
+                setFreitext(beispiel)
+              }}
+              className="inline-flex min-h-11 max-w-full items-center rounded-full border border-line-200 px-4 text-left text-xs font-medium text-ink-900 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-60"
             >
               <span className="truncate">{['Thailand', 'Portugal', 'Südtirol'][stelle]}</span>
             </button>
@@ -310,12 +345,14 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             angemeldet={angemeldet}
             onUebernehmen={uebernehmen}
             onAendern={() => {
+              if (lifecycle.gesperrt()) return
               setVorschlag(null)
               setWarnungen([])
               setMeldung('')
               setBestehendeReise('')
             }}
             onVerwerfen={() => {
+              if (lifecycle.gesperrt()) return
               setVorschlag(null)
               setWarnungen([])
               setFreitext('')
