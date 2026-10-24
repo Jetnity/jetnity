@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "browser": "148.0.7778.96",
+  "url": "http://127.0.0.1:41685/",
+  "viewports": [
+    {
+      "name": "280",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "320",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "320-root-32",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "360",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "390",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "430",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "768",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "1280",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    },
+    {
+      "name": "landscape",
+      "breit": 0,
+      "erreichbar": true,
+      "simulation": "css-viewport-root-font"
+    }
+  ],
+  "limits": [
+    "CSS viewport and root-font simulation only",
+    "not a physical device, screen reader, native zoom, hosted account, or Preview pass"
+  ],
+  "cases": 60,
+  "head": "aa594b18a0d827b9dcae1b607bfefa4b45764d06",
+  "bundleSha256": "b934e73523a61a362d756cab288f206d3954623bf4c0eb9d118c5568ee97efa8"
+}
