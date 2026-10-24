@@ -5,6 +5,13 @@ import { BedDouble } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import {
+  BUCHUNG_WIRD_GESPEICHERT,
+  bookingItemDisappeared,
+  bookingTripChanged,
+  createBookingMemory,
+  startBookingAction,
+} from '@/components/trips/useBookingActionLifecycle'
 import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
@@ -25,18 +32,26 @@ export default function UnterkunftBestand({
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   onUnterkunftZeitraum?: ZeitraumSpeichern
 }) {
-  const [meldung, setMeldung] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const abdeckung = unterkunftAbdeckung(reise, ohneTag)
   const datumUnbekannt = abdeckung.aufenthalte.some((aufenthalt) => aufenthalt.status === 'unknown')
-
-  const setzen = async (itemId: string, gebucht: boolean) => {
-    if (!onBuchungsstatus || laeuft) return
+  const aktionIds = abdeckung.aufenthalte.map((aufenthalt) => aufenthalt.item.id)
+  const [memory] = React.useState(createBookingMemory())
+  const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const [meldung, setMeldung] = React.useState('')
+  const [seenTripId, setSeenTripId] = React.useState(reise.id)
+  if (bookingTripChanged(memory, seenTripId, reise.id)) {
+    setSeenTripId(reise.id)
+    setPendingId(null)
     setMeldung('')
-    setLaeuft(itemId)
-    const fehler = await onBuchungsstatus(itemId, gebucht)
-    setLaeuft(null)
-    if (fehler) setMeldung(fehler)
+  }
+  if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
+
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+    if (!onBuchungsstatus) return
+    startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
+      setPendingId(nextPending)
+      setMeldung(nextMessage)
+    })
   }
 
   const kopf = datumUnbekannt
@@ -48,6 +63,7 @@ export default function UnterkunftBestand({
   return (
     <section
       aria-label="Deine Unterkunft"
+      aria-busy={pendingId !== null}
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
     >
@@ -102,11 +118,12 @@ export default function UnterkunftBestand({
                   {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === aufenthalt.item.id}
-                      onClick={() => void setzen(aufenthalt.item.id, !gebucht)}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== aufenthalt.item.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null)}
+                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === aufenthalt.item.id ? 'Wird gespeichert …' : gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -139,6 +156,7 @@ export default function UnterkunftBestand({
         </ul>
       )}
 
+      {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
       {meldung ? (
         <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {meldung}

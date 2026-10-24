@@ -1,0 +1,142 @@
+{
+  "author": "Jetnity Organisieren Action Recovery 1 — Cursor Generation 1",
+  "session": "bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
+  "sessionUrl": "https://cursor.com/agents/bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
+  "model": "grok-4.7-high-fast",
+  "connectionHash": "10fe6c8f0ec2bb976a53678ac3df9b100bcafe55baa97a72f4081a22bb368360",
+  "stubBoundary": "In-memory callbacks only. Not an account, guest-storage, hosted, provider, physical-device, or screen-reader proof.",
+  "viewports": [
+    {
+      "name": "narrow-320",
+      "width": 320,
+      "height": 720
+    },
+    {
+      "name": "narrow-390",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "wide-1280",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "scenarios": [
+    {
+      "viewport": "narrow-320",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "narrow-390",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "wide-1280",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "wide-1280",
+      "kind": "failure-retry-context-rental-connection-focus",
+      "status": "PASS"
+    }
+  ],
+  "layouts": [
+    {
+      "viewport": "narrow-320",
+      "scale": 1,
+      "scrollWidth": 320,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "narrow-390",
+      "scale": 1,
+      "scrollWidth": 390,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 1,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 2,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "narrow-320",
+      "scale": 2,
+      "fresh": true,
+      "scrollWidth": 367,
+      "overflow": true,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": [
+        {
+          "tag": "INPUT",
+          "text": "",
+          "left": 82,
+          "right": 367,
+          "region": "Manuelle Verbindung"
+        }
+      ]
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 2,
+      "fresh": true,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    }
+  ],
+  "blockedRequests": [],
+  "pageErrors": [],
+  "status": "PASS",
+  "failure": null,
+  "browser": {
+    "channel": "chrome",
+    "launchErrors": [
+      "Error: browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+    ],
+    "version": "148.0.7778.96"
+  },
+  "blobs": [
+    {
+      "file": "components/trips/FlugBestand.tsx",
+      "blob": "25e32d07d8c07996bda7f9ee8b87a615667dac9d"
+    },
+    {
+      "file": "components/trips/UnterkunftBestand.tsx",
+      "blob": "3dc596a8ed3673a372da98570274ea8a5f2a357a"
+    },
+    {
+      "file": "components/trips/MobilitaetBereich.tsx",
+      "blob": "748e8733b46abd78beae2ad5940d078365a37709"
+    },
+    {
+      "file": "components/trips/MietwagenBereich.tsx",
+      "blob": "c3076320a8f5c146ffef4ea2b47ff523a6e5dd27"
+    }
+  ]
+}

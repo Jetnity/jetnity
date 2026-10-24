@@ -10,6 +10,13 @@ import { istManuellerFlug } from '@/lib/trips/flug-manuell'
 import { ersteMeldung, flugRouteManuellSchema, type FlugSegmentManuell } from '@/lib/trips/schema'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import {
+  BUCHUNG_WIRD_GESPEICHERT,
+  bookingItemDisappeared,
+  bookingTripChanged,
+  createBookingMemory,
+  startBookingAction,
+} from '@/components/trips/useBookingActionLifecycle'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
@@ -204,9 +211,21 @@ export default function FlugBestand({
   ohneTag?: readonly TripItem[]
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
 }) {
-  const [meldung, setMeldung] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const abdeckung = flugAbdeckung(reise, ohneTag)
+  const aktionIds = [
+    ...abdeckung.abschnitte.flatMap((abschnitt) => (abschnitt.item ? [abschnitt.item.id] : [])),
+    ...abdeckung.unzugeordnet.map((item) => item.id),
+  ]
+  const [memory] = React.useState(createBookingMemory())
+  const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const [meldung, setMeldung] = React.useState('')
+  const [seenTripId, setSeenTripId] = React.useState(reise.id)
+  if (bookingTripChanged(memory, seenTripId, reise.id)) {
+    setSeenTripId(reise.id)
+    setPendingId(null)
+    setMeldung('')
+  }
+  if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
   const [saved, setSaved] = React.useState<{ itemId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
   const [saveStatus, setSaveStatus] = React.useState('')
   const root = React.useRef<HTMLElement>(null)
@@ -235,19 +254,19 @@ export default function FlugBestand({
     return error
   }
 
-  const setzen = async (itemId: string, gebucht: boolean) => {
-    if (!onBuchungsstatus || laeuft) return
-    setMeldung('')
-    setLaeuft(itemId)
-    const fehler = await onBuchungsstatus(itemId, gebucht)
-    setLaeuft(null)
-    if (fehler) setMeldung(fehler)
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+    if (!onBuchungsstatus) return
+    startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
+      setPendingId(nextPending)
+      setMeldung(nextMessage)
+    })
   }
 
   return (
     <section
       ref={root}
       aria-label="Deine Flüge"
+      aria-busy={pendingId !== null}
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
     >
@@ -290,11 +309,12 @@ export default function FlugBestand({
                   {abschnitt.item && kannBuchungMarkieren(abschnitt.item) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === abschnitt.item.id}
-                      onClick={() => void setzen(abschnitt.item!.id, abschnitt.status !== 'booked')}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== abschnitt.item.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(abschnitt.item!.id, abschnitt.status !== 'booked', event?.currentTarget ?? null)}
+                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {abschnitt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === abschnitt.item.id ? 'Wird gespeichert …' : abschnitt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -325,11 +345,12 @@ export default function FlugBestand({
                   {kannBuchungMarkieren(item) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === item.id}
-                      onClick={() => void setzen(item.id, item.bookingStatus !== 'booked')}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== item.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === item.id ? 'Wird gespeichert …' : item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -343,6 +364,7 @@ export default function FlugBestand({
       )}
 
       {saveStatus ? <p role="status" className="mt-3 text-sm text-brand-700">{saveStatus}</p> : null}
+      {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
       {meldung ? (
         <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {meldung}
