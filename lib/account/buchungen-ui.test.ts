@@ -16,6 +16,8 @@ const RUNTIME = [
   '../../lib/account/buchungen.ts',
   '../../lib/account/buchungen-daten.ts',
   '../../components/account/AccountBuchungen.tsx',
+  '../../components/account/BuchungenFilter.tsx',
+  '../../lib/account/buchungen-abfrage.ts',
   '../../app/account/bookings/page.tsx',
   '../../app/account/bookings/loading.tsx',
   '../../components/account/AccountUebersicht.tsx',
@@ -34,7 +36,7 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
   test('Route existiert und bleibt hinter der Account-Auth', () => {
     const seite = quelle('../../app/account/bookings/page.tsx')
     const proxy = quelle('../../proxy.ts')
-    assert.match(seite, /buchungenLaden/)
+    assert.match(seite, /buchungenFuerParameter/)
     assert.match(seite, /AccountBuchungen/)
     assert.match(seite, /force-dynamic/)
     assert.match(proxy, /pathname\.startsWith\('\/account'\)/)
@@ -45,16 +47,22 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
 
   test('liest owner-scoped über authenticated RLS und nicht über Service Role', () => {
     const laden = quelle('../../lib/account/buchungen-daten.ts')
+    const abfrage = quelle('../../lib/account/buchungen-abfrage.ts')
     assert.match(laden, /import 'server-only'/)
     assert.match(laden, /createServerComponentClient/)
     assert.match(laden, /problemAus/)
     assert.match(laden, /booking_status/)
-    assert.match(laden, /trips!inner\(id, title, status\)/)
+    assert.match(abfrage, /trips!inner\(id, title, status\)/)
+    assert.match(abfrage, /booking_confirmed_at/)
     assert.match(laden, /order\('booking_confirmed_at', \{ ascending: false, nullsFirst: false \}\)/)
     assert.match(laden, /order\('id', \{ ascending: true \}\)/)
+    assert.match(laden, /\.limit\(abfrage\.limit\)/)
     const ordnung = laden.indexOf("order('booking_confirmed_at'")
     const grenze = laden.indexOf('.limit(')
     assert.equal(ordnung >= 0 && grenze > ordnung, true)
+    assert.equal(laden.includes("count: 'exact'"), false)
+    assert.equal(abfrage.includes('ilike'), false)
+    assert.equal(abfrage.includes('like('), false)
     assert.equal(laden.includes("eq('user_id'"), false)
     assert.equal(laden.includes('createServiceRole'), false)
     assert.equal(laden.includes('SERVICE_ROLE'), false)
@@ -69,10 +77,16 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
 
   test('Empty und Error bleiben in der Oberfläche getrennt', () => {
     const ui = quelle('../../components/account/AccountBuchungen.tsx')
-    assert.match(ui, /role="alert"/)
+    assert.match(ui, /role=\{rolle\}/)
+    assert.match(ui, /rolle === 'alert'/)
     assert.match(ui, /BUCHUNGEN_COPY.fehlerTitel/)
     assert.match(ui, /BUCHUNGEN_COPY.leerTitel/)
-    assert.match(ui, /buchungReisePfad/)
+    assert.match(ui, /buchungPlanpunktPfad/)
+    assert.match(ui, /BUCHUNGEN_COPY.planpunktOeffnen/)
+    assert.match(ui, /BUCHUNGEN_COPY.keineTrefferTitel/)
+    assert.match(ui, /BUCHUNGEN_COPY.fortsetzungEndeTitel/)
+    assert.match(ui, /BUCHUNGEN_COPY.ungueltigTitel/)
+    assert.equal(ui.includes('overflow-hidden'), false)
     assert.match(ui, /archivKennzeichen/)
     assert.equal(ui.includes('Keine Buchungen konnten nicht'), false)
     assert.doesNotMatch(ui, /priceAmount|price_amount|CHF |Affiliate|booking_url|bookingUrl/)

@@ -11,9 +11,10 @@ import { istArchiviert } from '@/lib/account/reise-archiv'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { ART_BEZEICHNUNG, STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
+import { modusUrl } from '@/lib/trips/workspace-mode'
 import { TRIP_ITEM_KINDS, TRIP_STATUSES, type TripItemKind, type TripStatus } from '@/types/trips'
 
-export const BUCHUNGEN_LISTE_GRENZE = 200
+const BUCHUNGS_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 export const BUCHUNGEN_COPY = {
   seitenEyebrow: 'Konto',
@@ -31,13 +32,33 @@ export const BUCHUNGEN_COPY = {
   archivGruppe: 'Aus archivierten Reisen',
   archivHinweis: 'Archiviert bedeutet nicht gelöscht und nicht ungültig.',
   archivKennzeichen: STATUS_BEZEICHNUNG.archived,
-  reiseOeffnen: 'Reise öffnen',
+  planpunktOeffnen: 'Planpunkt öffnen',
   reiseBezug: 'Reise',
   einstieg: 'Bestätigte Buchungen ansehen',
   einstiegHinweis: 'Nur ausdrücklich in Jetnity bestätigte Buchungen – ohne Beträge und ohne Partnerbestätigung.',
-  abgeschnittenTitel: 'Diese Übersicht ist unvollständig.',
-  abgeschnittenText:
-    'Es gibt mehr bestätigte Buchungen, als hier gerade angezeigt werden können. Gezeigt wird die zuletzt ausdrücklich bestätigte Teilmenge. Nichts wurde still verworfen.',
+  ordnungHinweis:
+    'Sortiert nach deiner eigenen Bestätigung, die neueste zuerst. Ein späterer Seitenaufruf ist keine Momentaufnahme.',
+  keineTrefferTitel: 'Keine Buchung passt zu dieser Suche.',
+  keineTrefferText: 'Ändere Titel, Art oder Archiv, oder setze die Filter zurück.',
+  fortsetzungEndeTitel: 'In diesem Stand gibt es hier keine weitere Buchung.',
+  fortsetzungEndeText:
+    'Das Konto ist deshalb nicht leer, und die Suche ist nicht insgesamt ohne Treffer. Seit der vorigen Seite können Buchungen weggefallen oder aus dem Filter gerutscht sein. Das ist keine Momentaufnahme. Mit Zurück im Browser erreichst du die vorige Seite.',
+  ersteSeite: 'Erste Seite dieser Filter',
+  weitere: 'Weitere Buchungen',
+  ungueltigTitel: 'Diese Adresse lässt sich nicht lesen.',
+  ungueltigText: 'Filter oder Fortsetzung sind ungültig. Es wurde nichts abgefragt.',
+  wiederholen: 'Erneut versuchen',
+  filterLegende: 'Buchungen eingrenzen',
+  titelLabel: 'Titel',
+  artLabel: 'Art',
+  archivLabel: 'Archiv',
+  artAlle: 'Alle Arten',
+  archivAktiv: 'Aktive Reisen',
+  archivArchiviert: 'Archivierte Reisen',
+  archivAlle: 'Alle Reisen',
+  suchen: 'Suchen',
+  zuruecksetzen: 'Filter zurücksetzen',
+  seitenEnde: 'Das sind alle Buchungen dieser Ansicht.',
   ladenTitel: 'Buchungen werden geladen.',
   ladenText: 'Einen Moment, wir lesen die bestätigten Buchungen deines Kontos.',
 } as const
@@ -145,19 +166,6 @@ export function buchungAusZeile(zeile: RoheBuchungszeile): KontoBuchung | 'ausla
   }
 }
 
-function vergleich(a: KontoBuchung, b: KontoBuchung): number {
-  if (a.tripArchived !== b.tripArchived) return a.tripArchived ? 1 : -1
-  const startA = a.startsOn ?? '9999-12-31'
-  const startB = b.startsOn ?? '9999-12-31'
-  if (startA !== startB) return startA.localeCompare(startB)
-  const zeitA = a.startsAt ?? '99:99'
-  const zeitB = b.startsAt ?? '99:99'
-  if (zeitA !== zeitB) return zeitA.localeCompare(zeitB)
-  if (a.title !== b.title) return a.title.localeCompare(b.title, 'de')
-  if (a.tripTitle !== b.tripTitle) return a.tripTitle.localeCompare(b.tripTitle, 'de')
-  return a.id.localeCompare(b.id)
-}
-
 export function buchungenAusZeilen(zeilen: readonly RoheBuchungszeile[]): BuchungenAbbildung {
   const buchungen: KontoBuchung[] = []
   for (const zeile of zeilen) {
@@ -165,7 +173,6 @@ export function buchungenAusZeilen(zeilen: readonly RoheBuchungszeile[]): Buchun
     if (gelesen === 'unvollstaendig') return { ok: false, grund: 'unvollstaendig' }
     if (gelesen !== 'auslassen') buchungen.push(gelesen)
   }
-  buchungen.sort(vergleich)
   return { ok: true, buchungen }
 }
 
@@ -185,9 +192,9 @@ export type BuchungenSchnittSchluessel = {
 }
 
 /**
- * Schnitt-Ordnung vor dem Limit: neueste ausdrückliche Bestätigung zuerst,
+ * Sichtbare Ordnung und Fortsetzung: neueste ausdrückliche Bestätigung zuerst,
  * fehlende Bestätigungszeit zuletzt, danach stabile `id`.
- * Das bestimmt die gelesene Teilmenge, nicht die sichtbare Kartenreihenfolge.
+ * Archiv und Reisedatum sortieren diese Seite nicht um.
  */
 export function buchungenSchnittVergleich(
   a: BuchungenSchnittSchluessel,
@@ -199,15 +206,6 @@ export function buchungenSchnittVergleich(
   if (zeitA && !zeitB) return -1
   if (!zeitA && zeitB) return 1
   return a.id.localeCompare(b.id)
-}
-
-export function buchungenAbgeschnitten(
-  gelesen: number,
-  gesamt: number | null | undefined,
-  grenze: number = BUCHUNGEN_LISTE_GRENZE,
-): boolean {
-  if (typeof gesamt === 'number') return gesamt > gelesen
-  return gelesen >= grenze
 }
 
 /**
@@ -227,6 +225,15 @@ export function buchungZeittext(buchung: Pick<KontoBuchung, 'startsOn' | 'starts
   return uhr
 }
 
-export function buchungReisePfad(tripId: string): `/reisen/${string}` {
-  return `/reisen/${tripId}`
+export function istBuchungsUuid(wert: string): boolean {
+  return BUCHUNGS_UUID.test(wert)
+}
+
+/**
+ * Öffnet den bestehenden Planpunkt. Nur kanonische Kleinbuchstaben-UUIDs.
+ * Alles andere bleibt ohne Link, statt eine Adresse zu raten.
+ */
+export function buchungPlanpunktPfad(tripId: string, itemId: string): string | null {
+  if (!istBuchungsUuid(tripId) || !istBuchungsUuid(itemId)) return null
+  return modusUrl(`/reisen/${tripId}`, { ansicht: 'plan', bereich: null, itemId })
 }

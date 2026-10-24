@@ -1,0 +1,527 @@
+{
+  "browser": "140.0.7339.16",
+  "zustaende": {
+    "liste": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      }
+    ],
+    "fortsetzung": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "liste"
+      }
+    ],
+    "leer": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "leer"
+      }
+    ],
+    "keine": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "keine"
+      }
+    ],
+    "fehler": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fehler"
+      }
+    ],
+    "ungueltig": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "ungueltig"
+      }
+    ],
+    "fortsetzungLeer": [
+      {
+        "name": "280",
+        "width": 280,
+        "height": 700,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "320",
+        "width": 320,
+        "height": 700,
+        "schrift": "32px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "360",
+        "width": 360,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "390",
+        "width": 390,
+        "height": 844,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "430",
+        "width": 430,
+        "height": 900,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "768",
+        "width": 768,
+        "height": 1024,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "1280",
+        "width": 1280,
+        "height": 800,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      },
+      {
+        "name": "844x390",
+        "width": 844,
+        "height": 390,
+        "schrift": "16px",
+        "ueberlauf": 0,
+        "zustand": "fortsetzungLeer"
+      }
+    ]
+  },
+  "tastatur": {
+    "liste": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen",
+      "A:Planpunkt öffnen",
+      "A:Weitere Buchungen"
+    ],
+    "fortsetzung": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen",
+      "A:Planpunkt öffnen",
+      "A:Erste Seite dieser Filter"
+    ],
+    "leer": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen"
+    ],
+    "keine": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen"
+    ],
+    "fehler": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen",
+      "A:Erneut versuchen"
+    ],
+    "ungueltig": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen",
+      "A:Erste Seite dieser Filter",
+      "A:Erneut versuchen"
+    ],
+    "fortsetzungLeer": [
+      "INPUT:titel",
+      "SELECT:art",
+      "SELECT:archiv",
+      "BUTTON:Suchen",
+      "A:Filter zurücksetzen",
+      "A:Erste Seite dieser Filter"
+    ]
+  },
+  "bewegung": "reduce",
+  "hinweis": "CSS und Root-Font aus dem lokalen Production-Build in headless Chromium. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto."
+}

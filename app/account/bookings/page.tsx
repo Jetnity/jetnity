@@ -1,13 +1,15 @@
 // app/account/bookings/page.tsx
 //
-// AP-10-S1: kontoweite, read-only Übersicht ausdrücklich bestätigter Buchungen.
+// Kontoweite, read-only Übersicht ausdrücklich bestätigter Buchungen.
 // Geschützt über die bestehende Account-Shell und den `/account`-Proxy.
-// Kein Write-Pfad, keine Preise, keine Provider-Bestätigung.
+// Filter und Fortsetzung stehen in der Adresse. Kein Write-Pfad.
 
 import type { Metadata } from 'next'
 
 import AccountBuchungen from '@/components/account/AccountBuchungen'
-import { buchungenLaden } from '@/lib/account/buchungen-daten'
+import { buchungenAnsichtAus, type BuchungenRohQuery } from '@/lib/account/buchungen-abfrage'
+import { buchungenFuerParameter } from '@/lib/account/buchungen-daten'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 
 export const metadata: Metadata = {
   title: 'Bestätigte Buchungen',
@@ -17,13 +19,19 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-export default async function AccountBuchungenSeite() {
-  const { zeilen, problem, abgeschnitten } = await buchungenLaden()
+export default async function AccountBuchungenSeite({
+  searchParams,
+}: {
+  searchParams?: PageRequestParam<BuchungenRohQuery>
+}) {
+  const roh = (await leseOptionalRequestParam(searchParams)) ?? {}
+  const ergebnis = await buchungenFuerParameter(roh)
+  const ansicht = buchungenAnsichtAus(ergebnis)
 
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-3xl">
-        <AccountBuchungen problem={problem} buchungen={zeilen} abgeschnitten={abgeschnitten} />
+    <main className="min-w-0 px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto min-w-0 max-w-3xl">
+        <AccountBuchungen ansicht={ansicht} />
       </div>
     </main>
   )
