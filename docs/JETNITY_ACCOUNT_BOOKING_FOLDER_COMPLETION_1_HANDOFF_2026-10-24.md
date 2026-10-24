@@ -9,7 +9,7 @@ Issue: #997. Draft PR: #1000. Branch: `feat/account-booking-folder-completion-1`
 
 **STOP / WRITE FREEZE. NOT CODE PASS. NOT READY. NOT MERGED. ISSUE STAYS OPEN. NO FOLLOW-UP.**
 
-The self-review is not Technical-Lead PASS. A later CI or Preview finding is reported and waits. This session does not commit again unless the Technical Lead instructs it.
+The self-review is not Technical-Lead PASS. This preservation commit answers B-P2-PROOF-05. A later CI or Preview finding waits. This session does not commit again unless the Technical Lead instructs it.
 
 ## Exact git
 
@@ -23,23 +23,23 @@ The self-review is not Technical-Lead PASS. A later CI or Preview finding is rep
 | Superseded repair head | `5a28496521c66cb2407f1f897b6c79646df1ea94` |
 | Executed proof head | `1574adcb802cc7c0039eb9724e0a8a11191d4ed8` |
 | Executed proof tree | `3f5a46d6ccf1ad31acc68bf2edf086d8f2efb1f4` |
-| Review head | The commit that contains this HANDOFF. It adds evidence and these docs on the executed proof head. |
-| Ahead / behind before this docs commit | 8 / 0 against `9092b29` |
+| Reviewed head superseded by this preservation | `fe6cca376cf6b01ab3f29ccf881285bd7008aeff`, tree `efde73b48178bd673c4561c5294251bdc6683478` |
+| Historical NOTES blob, restored | `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` |
+| Archived fe6 NOTES blob | `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505` |
+| Review head | The commit that contains this HANDOFF. |
+| Ahead / behind before this preservation commit | 9 / 0 against `9092b29` |
 | Mode | `NORMAL` |
 | Integration | A → C → B. C is the merged main. No further sibling merge. |
 
 If `origin/main` moves after this push, do not silent-merge. A new head invalidates these gates.
 
-## What this correction owns
+## What this preservation commit owns
 
-- `scripts/account-booking-folder-completion-1/ablauf.ts`
-- `scripts/account-booking-folder-completion-1/flaeche.tsx`
-- `scripts/account-booking-folder-completion-1/montage.ts`
-- `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/`
-- `docs/evidence/account-booking-folder-completion-1/NOTES.md`
+- `docs/evidence/account-booking-folder-completion-1/NOTES.md`, restored to blob `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9`
+- `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`
 - the four owned STATUS, REPORT, SELF_REVIEW, and HANDOFF files
 
-Preserved byte-identical: `docs/evidence/account-booking-folder-completion-1/ablauf.json` blob `cd93aeefab08db4a4599df9e1582b3e1ac334691`, `montage.json` blob `7a41748c2595fdb4f04e6d18b35cb3c4139dafab`. The merge commit itself is the clean integration of main and does not resolve an ownership conflict. No booking product runtime file changed after `5a284965`.
+The harness files and the V2 JSON/screenshots stay at their `fe6cca37` blobs. `ablauf.json` blob `cd93aeefab08db4a4599df9e1582b3e1ac334691` and `montage.json` blob `7a41748c2595fdb4f04e6d18b35cb3c4139dafab` stay byte-identical. No component, library, app, script, TASK, or PLAN file is in this commit. No new Node, browser, or full-suite run belongs to this head. The `1574adcb` proof and native CI `40140352357` on `fe6cca37` are not gates for the preservation head.
 
 The branch delta against main remains the booking-folder delivery: page, account components, `lib/account/buchungen*`, the harness, TASK, PLAN, and these docs.
 

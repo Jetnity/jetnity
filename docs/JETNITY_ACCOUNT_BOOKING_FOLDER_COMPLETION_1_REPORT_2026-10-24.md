@@ -48,6 +48,10 @@ No new provider, model call, or monthly cost. One page is one limit-51 read. Ano
 
 Owned: this REPORT, STATUS, SELF_REVIEW, HANDOFF, and `docs/evidence/account-booking-folder-completion-1/`. TASK and PLAN were not edited. Global handoff, active status, roadmap, ADR, and mode files were not edited.
 
+## B-P2-PROOF-05
+
+`docs/evidence/account-booking-folder-completion-1/NOTES.md` is restored exactly to blob `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` from `5a284965`. The notes text that existed at `fe6cca37` is copied byte-for-byte to `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`. That archive records the already executed `1574adcb` proof. It is not a new run. The V2 JSON files and screenshots stay in place. No component, library, app, script, TASK, or PLAN blob changes in this preservation commit. The `1574` command results and native CI `40140352357` on `fe6cca37` are not relabeled as gates for the preservation head.
+
 ## Remaining limits
 
 Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The synthetic store uses exact timestamp text and `String.includes`. The action history is one `about:blank` document. The montage is static markup with production CSS, not hydration or native zoom. CI and Preview for the final head are not claimed in this report.

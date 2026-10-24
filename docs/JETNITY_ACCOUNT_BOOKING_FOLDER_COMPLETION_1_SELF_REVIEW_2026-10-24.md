@@ -50,6 +50,10 @@ Hosted PostgREST has not applied the raw `imatch` value or the quoted keyset `.o
 - The repository handoff block is still the historical 2 October Official-Truth entry. This correction does not edit it.
 - The account-audit fixture still mounts the old props and non-uuid item ids.
 
+## B-P2-PROOF-05
+
+The historical `NOTES.md` was rewritten at `fe6cca37` even though the V2 instruction required every existing evidence file to stay byte-identical. This preservation commit puts blob `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` back at `docs/evidence/account-booking-folder-completion-1/NOTES.md` and keeps the `fe6cca37` bytes, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`, at `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`. No new execution is attached to that archive. Runtime, script, TASK, and PLAN blobs are unchanged from `fe6cca37`.
+
 ## Ownership
 
-This correction edits the booking harness, the new evidence directory, NOTES, and these four docs. The merge brought the accepted C tree in unchanged. No sibling was rebased. No product runtime file changed in the proof commit.
+The proof commit edited the booking harness and the new evidence directory. This preservation commit edits only the restored NOTES path, the new archive file, and these four docs. The merge brought the accepted C tree in unchanged. No sibling was rebased. No product runtime file changed after `5a284965`.
