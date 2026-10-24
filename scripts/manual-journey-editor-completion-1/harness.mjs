@@ -312,8 +312,13 @@ const evidence = {
   stubs: 'in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; each request keeps its own payload and outcome. No guest storage, account, provider, or database.',
   scenarios: [],
   layouts: [],
+  behaviorBlockedRequests: [],
+  behaviorPageErrors: [],
+  layoutBlockedRequests: [],
+  layoutPageErrors: [],
   blockedRequests: [],
   pageErrors: [],
+  diagnosticNote: 'behaviorBlockedRequests and behaviorPageErrors come only from the behavior context. layoutBlockedRequests and layoutPageErrors come only from the viewport contexts. blockedRequests and pageErrors are the concatenation after both were asserted. An empty concatenation is not a behavior-only claim.',
   status: 'FAIL',
   failure: null,
   browser: null,
@@ -353,7 +358,8 @@ try {
   browser = launched.browser
   evidence.browser.version = browser.version()
 
-  const page = (await openContext(browser, VIEWPORTS[3], origin)).page
+  const behavior = await openContext(browser, VIEWPORTS[3], origin)
+  const page = behavior.page
   assert.equal(await page.getByText('Noch keinem Reiseabschnitt sicher zuordenbar').count(), 0)
   const flights = region(page, 'Deine Flüge')
   await openFlight(page)
@@ -1065,7 +1071,12 @@ try {
   }
   evidence.scenarios.push('flight-pending-a-newer-b-keeps-focus')
 
+  evidence.behaviorBlockedRequests = [...behavior.blocked]
+  evidence.behaviorPageErrors = [...behavior.errors]
+  assert.deepEqual(evidence.behaviorBlockedRequests, [], 'behavior blocked requests')
+  assert.deepEqual(evidence.behaviorPageErrors, [], 'behavior page errors')
   await page.close()
+  await behavior.context.close()
 
   for (const viewport of VIEWPORTS) {
     const opened = await openContext(browser, viewport, origin)
@@ -1089,8 +1100,10 @@ try {
     if (viewport.name === '320' || viewport.name === '390' || viewport.name === '1280' || viewport.name === 'landscape') {
       await opened.page.screenshot({ path: join(SCREENS, `${viewport.name}.png`), fullPage: false })
     }
-    evidence.blockedRequests.push(...opened.blocked)
-    evidence.pageErrors.push(...opened.errors)
+    assert.deepEqual(opened.blocked, [], `${viewport.name} blocked requests`)
+    assert.deepEqual(opened.errors, [], `${viewport.name} page errors`)
+    evidence.layoutBlockedRequests.push(...opened.blocked)
+    evidence.layoutPageErrors.push(...opened.errors)
     await opened.context.close()
   }
 
@@ -1117,8 +1130,12 @@ try {
     maxRight: Math.max(...scaledBoxes.controls.map((item) => item.right)),
   })
   await scaled.page.screenshot({ path: join(SCREENS, '320-root-32.png'), fullPage: false })
-  evidence.blockedRequests.push(...scaled.blocked)
-  evidence.pageErrors.push(...scaled.errors)
+  assert.deepEqual(scaled.blocked, [], '320 root 32px blocked requests')
+  assert.deepEqual(scaled.errors, [], '320 root 32px page errors')
+  evidence.layoutBlockedRequests.push(...scaled.blocked)
+  evidence.layoutPageErrors.push(...scaled.errors)
+  evidence.blockedRequests = [...evidence.behaviorBlockedRequests, ...evidence.layoutBlockedRequests]
+  evidence.pageErrors = [...evidence.behaviorPageErrors, ...evidence.layoutPageErrors]
   await scaled.context.close()
 
   evidence.behaviorCount = evidence.scenarios.length
