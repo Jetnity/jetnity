@@ -1,0 +1,15 @@
+{
+  "head": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "tree": "4c6315603edb46937eab1982e93748a4b6558614",
+  "sha256": {
+    "mount.tsx": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+    "run.mjs": "957ca8a3d825b90dac5ba50c4b209ff6536293b525e2e3646aed41c2ab1ed4d0",
+    "result.json": "59d33a477ed33d7ea451431cf0c222c2eecd004c48b7f3342a91a309ad28c238",
+    "success-B-open.png": "bcf8e1effd127aa06ff06ba116d6656dc5c82b8d94a9ccefcae20f462010ca77",
+    "success-B-closed.png": "da54d5f0e0c5b494ac26877e955ce1bce5bd30fecaa58a9e807ddef6b5f7169a",
+    "domain-B-open.png": "7e9e17ca935f37416629ffd5d3047ee5fa4d42416953e50d118bfa1fc1c49834",
+    "domain-B-closed.png": "4f6eaee3a291a5a15d6f8e4acf8fcf9ce8326e56c3272f5155e1bdd52c881f1d",
+    "reject-B-open.png": "54c3a7896d6ce09873be8ae634a67e67ba13ac8549b73fc4410efff93cb2d584",
+    "reject-B-closed.png": "f98523c6f78d89769e2cc095fa6a3380517609e20254aab813ee2b6ec58f3d50"
+  }
+}

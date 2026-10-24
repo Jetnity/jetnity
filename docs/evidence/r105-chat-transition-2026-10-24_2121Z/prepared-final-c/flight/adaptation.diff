@@ -1,0 +1,88 @@
+--- original-prepared-flight/run.mjs
++++ final-independent-flight/run.mjs
+@@ -1,18 +1,27 @@
+ import assert from 'node:assert/strict'
+ import { createRequire } from 'node:module'
+ import { createServer } from 'node:http'
+-import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
++import { readFileSync, writeFileSync, mkdtempSync, readdirSync } from 'node:fs'
+ import { createHash } from 'node:crypto'
+-import { execFileSync } from 'node:child_process'
++import { execFile } from 'node:child_process'
++import { promisify } from 'node:util'
++import { dirname } from 'node:path'
++import { fileURLToPath } from 'node:url'
+ 
+ const REPO = process.argv[2]
+ const EXPECTED_HEAD = process.argv[3]
++const EXPECTED_TREE = process.argv[4]
+ assert.match(REPO ?? '', /^\/tmp\/jetnity-[A-Za-z0-9._-]+$/)
+ assert.match(EXPECTED_HEAD ?? '', /^[0-9a-f]{40}$/)
+-const INPUT = '/tmp/jetnity-r105-c-v3-independent-runner'
+-const ACTUAL_HEAD = execFileSync('git', ['rev-parse','HEAD'], {cwd:REPO,encoding:'utf8'}).trim()
++assert.match(EXPECTED_TREE ?? '', /^[0-9a-f]{40}$/)
++const INPUT = dirname(fileURLToPath(import.meta.url))
++const execFileAsync = promisify(execFile)
++const git = async (...args) => (await execFileAsync('git', args, {cwd:REPO,encoding:'utf8'})).stdout.trim()
++const ACTUAL_HEAD = await git('rev-parse','HEAD')
+ assert.equal(ACTUAL_HEAD,EXPECTED_HEAD,'Exact review HEAD must match before any run')
+-const OUT = mkdtempSync('/tmp/jetnity-r105-c-v3-proof-')
++assert.equal(await git('rev-parse','HEAD^{tree}'),EXPECTED_TREE,'Exact review tree must match before any run')
++assert.equal(await git('status','--short'),'','Clean checkout required before test')
++const OUT = mkdtempSync('/tmp/jetnity-r105-c-flight-final-proof-')
+ for(const name of ['run.mjs','mount.tsx']) writeFileSync(`${OUT}/${name}`,readFileSync(`${INPUT}/${name}`),{flag:'wx'})
+ console.log(JSON.stringify({starting:true,head:ACTUAL_HEAD,output:OUT}))
+ const require = createRequire(`${REPO}/package.json`)
+@@ -23,13 +32,21 @@
+   'components/trips/UnterkunftBestand.tsx',
+   'components/trips/MobilitaetBereich.tsx',
+   'lib/trips/manual-journey-editor-completion-1.ts',
++  'lib/route/schema.ts',
++  'lib/trips/flug-abdeckung.ts',
++  'lib/trips/schema.ts',
++  'types/trips.ts',
+ ]
+ const sha = path => createHash('sha256').update(readFileSync(path)).digest('hex')
++for (const path of sourcePaths) {
++  const committed = (await execFileAsync('git',['show',`HEAD:${path}`],{cwd:REPO,encoding:'buffer'})).stdout
++  assert.deepEqual(readFileSync(`${REPO}/${path}`),committed,`Source bytes match HEAD: ${path}`)
++}
+ const result = {
+-  head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: REPO, encoding: 'utf8'}).trim(),
+-  tree: execFileSync('git', ['rev-parse', 'HEAD^{tree}'], {cwd: REPO, encoding: 'utf8'}).trim(),
+-  command: `node ${INPUT}/run.mjs ${REPO} ${EXPECTED_HEAD}`,
+-  expectedHead: EXPECTED_HEAD,
++  head: ACTUAL_HEAD,
++  tree: EXPECTED_TREE,
++  command: `node ${INPUT}/run.mjs ${REPO} ${EXPECTED_HEAD} ${EXPECTED_TREE}`,
++  expectedHead: EXPECTED_HEAD, expectedTree: EXPECTED_TREE, sourceVerifiedAgainstGit: true,
+   output: OUT,
+   createdAtUtc: new Date().toISOString(),
+   node: process.version,
+@@ -189,7 +206,8 @@
+       await late.close()
+     }
+   }
+-  result.status=result.cases.every(c=>c.passed) && result.pageErrors.length===0 && result.blockedRequests.length===0 ? 'THREE_CONTROLS_AND_SIX_OWNERSHIP_CASES_PASS' : 'SEE_CASES'
++  result.status=result.cases.length===9 && result.cases.every(c=>c.passed===true) && result.pageErrors.length===0 && result.blockedRequests.length===0 ? 'THREE_CONTROLS_AND_SIX_OWNERSHIP_CASES_PASS' : 'SEE_CASES'
++  if(result.status!=='THREE_CONTROLS_AND_SIX_OWNERSHIP_CASES_PASS') process.exitCode=1
+ } catch (error) {
+   result.status = 'REPRO_HARNESS_FAILURE'
+   result.failure = String(error.stack ?? error)
+@@ -197,7 +215,14 @@
+ } finally {
+   await browser.close()
+   await new Promise(resolve => server.close(resolve))
+-  result.productGitStatus = execFileSync('git', ['status', '--short'], {cwd: REPO, encoding: 'utf8'}).trim()
++  result.productGitStatus = await git('status','--short')
++  result.finalHead = await git('rev-parse','HEAD')
++  result.finalTree = await git('rev-parse','HEAD^{tree}')
++  result.finalSourceSha256 = Object.fromEntries(sourcePaths.map(p => [p, sha(`${REPO}/${p}`)]))
++  result.cleanExactSource = result.productGitStatus==='' && result.finalHead===EXPECTED_HEAD && result.finalTree===EXPECTED_TREE && JSON.stringify(result.finalSourceSha256)===JSON.stringify(result.sourceSha256)
++  if(!result.cleanExactSource) { result.status='SOURCE_CHANGED';process.exitCode=2 }
+   writeFileSync(`${OUT}/result.json`, JSON.stringify(result, null, 2)+'\n',{flag:'wx'})
+-  console.log(JSON.stringify(result, null, 2))
++  const artifactNames = ['run.mjs','mount.tsx','result.json',...readdirSync(OUT).filter(name=>name.endsWith('.png'))].sort()
++  writeFileSync(`${OUT}/manifest.json`,JSON.stringify({head:EXPECTED_HEAD,tree:EXPECTED_TREE,sha256:Object.fromEntries(artifactNames.map(name=>[name,sha(`${OUT}/${name}`)]))},null,2)+'\n',{flag:'wx'})
++  console.log(JSON.stringify({status:result.status,cases:result.cases.map(c=>({name:c.name,passed:c.passed})),pageErrors:result.pageErrors,blockedRequests:result.blockedRequests,cleanExactSource:result.cleanExactSource,output:OUT,resultSha256:sha(`${OUT}/result.json`),manifestSha256:sha(`${OUT}/manifest.json`)}, null, 2))
+ }

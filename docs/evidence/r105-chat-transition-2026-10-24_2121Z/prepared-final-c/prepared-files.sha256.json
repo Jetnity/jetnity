@@ -1,0 +1,22 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "files": {
+    "README.md": "f6c669c8676a4822257d644c6d64d71d89c49d2a1dc7795c1db74ff7e5af522d",
+    "flight/adaptation.diff": "ac21a47a3d7f00a08719297a9830493759c25b00c81be39e707f993744ed4066",
+    "flight/mount.tsx": "5038738a09c668e5ef8add7bd9151871798f4f1334e5e708e49e3e3000199996",
+    "flight/run.mjs": "b18d3b8b0174ae8ee8ec82ca0f31accf6c33d2238332af9b738e3d971685db3e",
+    "preset/entry.ts": "b840641e68e74b1ea8c0fc0a6f557a721af732f12a39b2e3b35a4a83bb87df4e",
+    "preset/run.mjs": "d18a97c61a55699b4143cf94fcc3370466c47da1358e56a5901152392f2d132c",
+    "stay/adaptation.diff": "f6a544ae2bd4471314c4fb51f694bb3003320d812a3d70fc3175254299e05205",
+    "stay/mount.tsx": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+    "stay/run.mjs": "45a70cc8561dd12e0685dc244ea56cf291b683eb40d1b1e3ce698159d738891f"
+  },
+  "originalUnchanged": {
+    "/tmp/jetnity-r105-c-v3-independent-runner/run.mjs": "2d080365e34815a618ddb47ff0e90d6da3c7780b89d4721a64daf2e8b9957bf5",
+    "/tmp/jetnity-r105-c-v3-independent-runner/mount.tsx": "5038738a09c668e5ef8add7bd9151871798f4f1334e5e708e49e3e3000199996",
+    "/tmp/jetnity-r105-c-stay-focus-ahsghe/run.mjs": "957ca8a3d825b90dac5ba50c4b209ff6536293b525e2e3646aed41c2ab1ed4d0",
+    "/tmp/jetnity-r105-c-stay-focus-ahsghe/mount.tsx": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+    "/tmp/jetnity-r105-c-stay-focus-ahsghe/result.json": "59d33a477ed33d7ea451431cf0c222c2eecd004c48b7f3342a91a309ad28c238",
+    "/tmp/jetnity-r105-c-stay-focus-ahsghe/manifest.json": "cc2cc06eb30e739bee9c511c2338fb5a00c631fca78898dd4f1dfe205792c5b7"
+  }
+}
