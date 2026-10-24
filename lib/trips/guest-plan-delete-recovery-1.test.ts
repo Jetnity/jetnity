@@ -198,12 +198,16 @@ describe('Gastlöschung prüft die gespeicherte Basis', () => {
       (kopie) => {
         kopie.party = [
           {
+            id: 'traveller-drift',
             clientRef: 'traveller:drift',
-            nationalityCountryCode: 'CH',
+            label: null,
+            residenceCountryCode: 'CH',
+            citizenships: [],
+            documents: [],
             createdAt: '2026-10-24T12:00:00.000Z',
             updatedAt: '2026-10-24T12:00:00.000Z',
           },
-        ] as Trip['party']
+        ]
       },
     ]
     for (const aendern of faelle) {
