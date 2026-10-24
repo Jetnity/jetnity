@@ -429,11 +429,11 @@ try {
     await (await titel(page)).fill('Erste Anfrage')
     await speichern(page)
     const r1 = await page.evaluate(() => window.__plan.offen().at(-1))
-  await bearbeiten(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan')
-  await (await titel(page)).fill('Zweite Anfrage')
-  await speichern(page)
+    await bearbeiten(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan')
+    await (await titel(page)).fill('Zweite Anfrage')
+    await speichern(page)
     const offen = await page.evaluate(() => window.__plan.offen())
-    return { r1, r2: offen.at(-1), offen, fokusDavor }
+    return { r1, r2: offen.at(-1), offen }
   }
 
   async function r2Bleibt() {
@@ -447,6 +447,7 @@ try {
         planMeldung: document.querySelectorAll('[data-plan-meldung]').length,
         meldungFokus: el?.hasAttribute?.('data-plan-meldung') === true,
         imFormular: el?.closest?.('form') != null,
+        tag: el?.tagName ?? '',
         gesperrt: Boolean(speichern?.disabled),
       }
     })
@@ -454,10 +455,15 @@ try {
 
   const erfolg = await zweiAnfragen()
   merke('R1 and R2 are both pending', erfolg.offen.length === 2 && erfolg.r1 !== erfolg.r2)
+  const fokusVorErfolg = await r2Bleibt()
   await page.evaluate((id) => window.__plan.loesenId(id, null), erfolg.r1)
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   const nachErfolg = await r2Bleibt()
-  merke('R1 late success leaves R2 locked', nachErfolg.status && nachErfolg.gesperrt && nachErfolg.titel === 'Zweite Anfrage' && nachErfolg.planMeldung === 0 && !nachErfolg.meldungFokus && nachErfolg.imFormular)
+  merke(
+    'R1 late success leaves R2 locked',
+    nachErfolg.status && nachErfolg.gesperrt && nachErfolg.titel === 'Zweite Anfrage' && nachErfolg.planMeldung === 0 && !nachErfolg.meldungFokus && nachErfolg.tag === fokusVorErfolg.tag && !fokusVorErfolg.meldungFokus,
+    JSON.stringify({ vorher: fokusVorErfolg.tag, nachher: nachErfolg.tag }),
+  )
   const zweite = await page.evaluate(() => window.__plan.erwartetesGraph())
   await page.evaluate((naechste) => window.__plan.setReise(naechste), zweite)
   await page.evaluate((id) => window.__plan.loesenId(id, null), erfolg.r2)
@@ -465,11 +471,15 @@ try {
   merke('only R2 completes', await page.getByRole('form').count() === 0)
 
   const fehlerFall = await zweiAnfragen()
+  const fokusVorFehler = await r2Bleibt()
   await page.evaluate((id) => window.__plan.loesenId(id, 'Erste Anfrage fehlgeschlagen'), fehlerFall.r1)
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   const nachFehler = await r2Bleibt()
   const ersteSichtbar = (await page.locator('body').innerText()).includes('Erste Anfrage fehlgeschlagen')
-  merke('R1 late error leaves R2 locked', nachFehler.status && nachFehler.gesperrt && nachFehler.titel === 'Zweite Anfrage' && nachFehler.planMeldung === 0 && !nachFehler.meldungFokus && nachFehler.imFormular && !ersteSichtbar)
+  merke(
+    'R1 late error leaves R2 locked',
+    nachFehler.status && nachFehler.gesperrt && nachFehler.titel === 'Zweite Anfrage' && nachFehler.planMeldung === 0 && !nachFehler.meldungFokus && nachFehler.tag === fokusVorFehler.tag && !ersteSichtbar,
+  )
   await page.evaluate((id) => window.__plan.loesenId(id, 'Zweite Anfrage fehlgeschlagen'), fehlerFall.r2)
   await page.getByText('Zweite Anfrage fehlgeschlagen').waitFor()
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
@@ -572,11 +582,14 @@ try {
   merke('older delete error does not take the editor focus', fokusBleibt.eingabe && !fokusBleibt.meldung)
   await page.screenshot({ path: join(EVIDENCE, 'older-delete-keeps-editor-focus.png') })
 
+  await page.evaluate(() => window.__plan.tagesreise())
   await page.evaluate(() => window.__plan.gastLoeschen(false))
   await bearbeiten(page, 'Marktbesuch')
   await speichern(page)
   await page.evaluate(() => window.__plan.loesen('Die Änderung wurde geschrieben, der aktuelle Stand konnte aber nicht bestätigt werden.'))
-  merke('account callback error stays an error', (await page.getByRole('alert').innerText()).includes('nicht bestätigt'))
+  const kontoFehler = page.locator('form [role="alert"]')
+  await kontoFehler.waitFor()
+  merke('account callback error stays an error', (await kontoFehler.innerText()).includes('nicht bestätigt'))
   merke('account callback error is not success', await page.getByText('Planpunkt gespeichert.').count() === 0)
 
   const groessen = [
