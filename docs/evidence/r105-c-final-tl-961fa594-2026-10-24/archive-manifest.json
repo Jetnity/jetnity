@@ -1,0 +1,279 @@
+{
+  "kind": "technical-lead-execution-archive",
+  "archivalRelocation": true,
+  "notANewExecutionAtArchivedPaths": true,
+  "executedHead": "961fa594792b5c07f2e8423b31690f433f858fab",
+  "executedTree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+  "statement": "These are byte-preserving copies of the root Technical Lead's actual local executions at the recorded original /tmp paths. Results, commands, author-origin metadata, browser versions, timestamps, and source hashes have not been rewritten. The author harness was executed by root; its original author/session/model fields identify harness provenance, not a new Cursor execution.",
+  "deliberatelyNotArchived": [
+    "author-harness/build/harness.js",
+    "author-harness/build/style.css"
+  ],
+  "omissionReason": "Generated build outputs are reproducible from the archived wrapper/fixture and exact Git-bound source; their actual hashes remain in wrapper-result.json. All execution results, diagnostics, runner sources, fixtures, and 23 screenshots are archived.",
+  "files": [
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/run.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/run.mjs",
+      "sha256": "b18d3b8b0174ae8ee8ec82ca0f31accf6c33d2238332af9b738e3d971685db3e",
+      "bytes": 16410
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/mount.tsx",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/mount.tsx",
+      "sha256": "5038738a09c668e5ef8add7bd9151871798f4f1334e5e708e49e3e3000199996",
+      "bytes": 10001
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/result.json",
+      "sha256": "bfaa95b435f6abffec2489183ba5aeac24b1b9a714a0a2b89494d8d1f486bd63",
+      "bytes": 10623
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/manifest.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/manifest.json",
+      "sha256": "8273c8cc3aed11c093396d6823564cf05f363151ce39d8034c0e1b2967380ae6",
+      "bytes": 1336
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/flight-A-readback-after-B-draft.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/flight-A-readback-after-B-draft.png",
+      "sha256": "d0eb0cb12f48e67accc40309d82d9044a50b0593bb5f5890dd83f53e637453ac",
+      "bytes": 84796
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/flight-current-normal-readback.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/flight-current-normal-readback.png",
+      "sha256": "f4355659a48e048482cadf65bc63e91946a24afb8f54ec5c8a4764ba294c0fe1",
+      "bytes": 41606
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/flight-readback-new-draft.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/flight-readback-new-draft.png",
+      "sha256": "4565e9ed0a3616ab3d3a76e8ac12648e57990bbd9d56f0e7aa5ba86c5a3ba8d1",
+      "bytes": 70663
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-domain-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-domain-B-closed.png",
+      "sha256": "a2beb04d089e9d4b260b840e416f923880a99b7096604f78d42b5783c3e65c65",
+      "bytes": 85091
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-domain-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-domain-B-open.png",
+      "sha256": "3d33e0c8249bdf2cad4f6c9ab211916bd52994b6fff49a4392e79e505e8c94af",
+      "bytes": 123433
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-reject-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-reject-B-closed.png",
+      "sha256": "cc14a56115acd8ab222bc7b845e6afc9ce51819a16bc9bcd7829d3a3e589b423",
+      "bytes": 88188
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-reject-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-reject-B-open.png",
+      "sha256": "4125a00e4fc9feafe1a7536349f8cbe2c4db072146a0727d44e1712714d2e465",
+      "bytes": 126580
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-success-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-success-B-closed.png",
+      "sha256": "b98d9a21bc968afad9866ccab7919e4693fdda9068cdaaa4c446372b873ffb09",
+      "bytes": 48109
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/flight/pending-A-success-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA/pending-A-success-B-open.png",
+      "sha256": "28f01773f5a8d6ce23e135f8a04a1e1f97d9dd87b9caf4ff1bb6c95a7ca2253e",
+      "bytes": 85201
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/run.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/run.mjs",
+      "sha256": "45a70cc8561dd12e0685dc244ea56cf291b683eb40d1b1e3ce698159d738891f",
+      "bytes": 14045
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/mount.tsx",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/mount.tsx",
+      "sha256": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+      "bytes": 2184
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/result.json",
+      "sha256": "815ca3d6857b6f6bc63bcbe79f3dc2e5b65c9a3d921362c319d0ee3df351a13a",
+      "bytes": 12045
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/manifest.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/manifest.json",
+      "sha256": "8a0977904df40a27a329c03343cd0e63e72b3d3e21779dbd7f83c58bd75cb203",
+      "bytes": 1239
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/current-A-domain.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/current-A-domain.png",
+      "sha256": "4f6eaee3a291a5a15d6f8e4acf8fcf9ce8326e56c3272f5155e1bdd52c881f1d",
+      "bytes": 48601
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/current-A-reject.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/current-A-reject.png",
+      "sha256": "f98523c6f78d89769e2cc095fa6a3380517609e20254aab813ee2b6ec58f3d50",
+      "bytes": 50895
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/current-A-success.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/current-A-success.png",
+      "sha256": "da54d5f0e0c5b494ac26877e955ce1bce5bd30fecaa58a9e807ddef6b5f7169a",
+      "bytes": 39933
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/domain-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/domain-B-closed.png",
+      "sha256": "7f013bdcaa75c3195f01e89c118f2ece6d531a37a32619c80953779456b8804b",
+      "bytes": 48616
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/domain-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/domain-B-open.png",
+      "sha256": "8daf9bb5775fff41fbe1947e0d3bbbfea7f5f9630be0dfe52ed8ec71e2b58b93",
+      "bytes": 55818
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/reject-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/reject-B-closed.png",
+      "sha256": "08f727563eb7439cb39ec3d705fc2f36e329b0c5896bfc924a08ff78e5d32620",
+      "bytes": 50911
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/reject-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/reject-B-open.png",
+      "sha256": "569a0e59b67696ec50d2b7b1dbd1537188d4227f250aeba8fe269d55b17f0dc4",
+      "bytes": 58123
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/success-B-closed.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/success-B-closed.png",
+      "sha256": "fadca119a2fdefd510080470ce8ead1c93120079baad7deec5e08a5f96d7e83f",
+      "bytes": 39937
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/stay/success-B-open.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-stay-final-proof-PBBDUL/success-B-open.png",
+      "sha256": "48e9477db56da6e9ada332376488c71995e6bb694d29ef724a35e76878a234c7",
+      "bytes": 47385
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/preset/run.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-preset-final-proof-N7p8eG/run.mjs",
+      "sha256": "d18a97c61a55699b4143cf94fcc3370466c47da1358e56a5901152392f2d132c",
+      "bytes": 5220
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/preset/entry.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-preset-final-proof-N7p8eG/entry.ts",
+      "sha256": "b840641e68e74b1ea8c0fc0a6f557a721af732f12a39b2e3b35a4a83bb87df4e",
+      "bytes": 106
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/preset/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-preset-final-proof-N7p8eG/result.json",
+      "sha256": "951d5ba419e793c64abb1b9118eafc55ebae1eb913b2daebbfbde048a2016a89",
+      "bytes": 2392
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/preset/manifest.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-preset-final-proof-N7p8eG/manifest.json",
+      "sha256": "3628ff82c9b27f11a69026e46e5e83555d19dd383979e326ee1726e52e0d9fcd",
+      "bytes": 383
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/wrapper-result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/wrapper-result.json",
+      "sha256": "c61c864dd9ada7efe5dbc3d8fd54fc757b3afd3416609842b2bbeeb41429e7bd",
+      "bytes": 9747
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/wrapper.run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/wrapper.run.py",
+      "sha256": "5150fbd29c4bb5421cf7736711ce94b5003127c371ed473a39b8044cc43c5385",
+      "bytes": 17004
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/adaptation.diff",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/adaptation.diff",
+      "sha256": "03f501f6af6e938a3df2bb3a982df74043dceaf26eb19e355c3518ba0c36a9c0",
+      "bytes": 1688
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/harness.original.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.original.mjs",
+      "sha256": "58009d9835a73101b51d272961e4a94f69ce2fcbc280809b56fb4165a700af8c",
+      "bytes": 64077
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/harness.adapted.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.adapted.mjs",
+      "sha256": "ae8c99255d99267e6296520d44c4134a8f0a21309e924f1a6327e194e1959b56",
+      "bytes": 63972
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/mount.original.tsx",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/mount.original.tsx",
+      "sha256": "bd27771ce8c5d12b0fd3571f26a09f8ce6339729d9782f1ee1de656980ff0fc7",
+      "bytes": 18658
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/harness.stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/harness.stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.stderr.log",
+      "sha256": "c2de0e537eb69082e5fb2bda5f3173303a71ab9b0eb1013820a4a090a6af033a",
+      "bytes": 192
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/result.json",
+      "sha256": "eabc9f31202b223a0e0d976f9e6afbd1c604294d7bf4f06e26739587f51acb17",
+      "bytes": 8189
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/screens/1280.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/screens/1280.png",
+      "sha256": "49752f157a60beac17e11cbb223e21fc79b6a73b9531983fdcf05fb94e932258",
+      "bytes": 265483
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/screens/320-root-32.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/screens/320-root-32.png",
+      "sha256": "d32f6e3bba846ea6e889704491966b868857fd1a02f9c0125be8ef9f218dc2d5",
+      "bytes": 181484
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/screens/320.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/screens/320.png",
+      "sha256": "eda7d5496b3655dbf854c6962e7b6ede2e8f2b9beda70df1551c0d4abb05eae9",
+      "bytes": 183786
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/screens/390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/screens/390.png",
+      "sha256": "f8c7900b0e72c36292b4f156c481b620032905e02b843d4dd1d23b77df388edc",
+      "bytes": 232830
+    },
+    {
+      "preservedPath": "docs/evidence/r105-c-final-tl-961fa594-2026-10-24/author-harness/author-evidence/screens/landscape.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-c-author-harness-gg8p97y1/author-evidence/screens/landscape.png",
+      "sha256": "8d6ec737343360bc091057f379a7d3a2f268199cfed6eb54e651be3d8f6bafaf",
+      "bytes": 104859
+    }
+  ]
+}
