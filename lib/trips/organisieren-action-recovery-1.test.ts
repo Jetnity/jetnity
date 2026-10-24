@@ -28,7 +28,7 @@ import type { Trip, TripItem } from '@/types/trips'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const require = createRequire(import.meta.url)
 const JETZT = '2026-10-24T00:00:00.000Z'
-const VERBINDUNG_HASH = '10fe6c8f0ec2bb976a53678ac3df9b100bcafe55baa97a72f4081a22bb368360'
+const VERBINDUNG_HASH = '75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a'
 const MIETWAGEN_GESPEICHERT = 'Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.'
 const MIETWAGEN_ABGELEHNT = 'Der Mietwagen konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.'
 
@@ -505,7 +505,7 @@ describe('manual rental entry keeps the submitted draft', () => {
   })
 })
 
-test('accepted manual connection function stays byte-identical', () => {
+test('manual connection function matches the named completion hash', () => {
   const source = readFileSync(resolve(root, 'components/trips/MobilitaetBereich.tsx'), 'utf8')
   const start = source.indexOf('export function ManuelleVerbindung')
   assert.ok(start > 0)

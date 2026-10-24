@@ -32,6 +32,11 @@ import {
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import {
+  feldFolgtVorgabe,
+  verbindungsVorgabeAus,
+  vorgabeSchluessel,
+} from '@/lib/trips/manual-journey-editor-completion-1'
+import {
   ORGANISIEREN_EINGABE_KLASSE,
   ORGANISIEREN_FLAECHE_KLASSE,
   ORGANISIEREN_PRIMAR_KLASSE,
@@ -331,7 +336,7 @@ export default function MobilitaetBereich({
         </button>
       </section>
 
-      {onManuellAnlegen ? <ManuelleVerbindung reise={reise} onAnlegen={onManuellAnlegen} /> : null}
+      {onManuellAnlegen ? <ManuelleVerbindung key={reise.id} reise={reise} onAnlegen={onManuellAnlegen} /> : null}
       </div>
     </div>
   )
@@ -346,33 +351,93 @@ export function ManuelleVerbindung({
   onAnlegen: (eingabe: MobilityManuellEingabe) => Promise<string | null>
   vorgabe?: Partial<MobilityManuellEingabe>
 }) {
-  const [mode, setMode] = React.useState<MobilityMode>(vorgabe?.mode ?? 'rail')
-  const [originName, setOriginName] = React.useState(vorgabe?.originName ?? reise.origin ?? '')
-  const [destinationName, setDestinationName] = React.useState(vorgabe?.destinationName ?? reise.stages[0]?.name ?? '')
-  const [startsOn, setStartsOn] = React.useState(vorgabe ? vorgabe.startsOn ?? '' : reise.startDate ?? '')
+  const VERBINDUNG_UNBEKANNT = 'Ob die Verbindung gespeichert wurde, konnten wir nicht bestätigen. Deine Eingabe bleibt erhalten. Prüfe deinen Reiseplan vor einem erneuten Versuch. Ein erneuter Versuch kann eine zweite Verbindung anlegen.'
+  const VERBINDUNG_FELD = `${ORGANISIEREN_EINGABE_KLASSE} mt-1 min-w-0 max-w-full`
+  const VERBINDUNG_NOTIZ = `${ORGANISIEREN_TEXTAREA_KLASSE} mt-1 min-w-0 max-w-full`
+  const VERBINDUNG_SPALTEN = `${ARBEITSFELD_SPALTEN_KLASSE} min-w-0 max-w-full`
+  const VERBINDUNG_LABEL = 'block min-w-0 max-w-full break-words text-sm font-medium text-brand-800'
+  const anfang = verbindungsVorgabeAus(reise, vorgabe)
+  const anfangSchluessel = vorgabeSchluessel(anfang)
+  const lebendig = React.useRef(true)
+  const meldungRef = React.useRef<HTMLParagraphElement>(null)
+  const schreibt = React.useRef(false)
+  const generationFest = React.useRef(0)
+  const reiseFest = React.useRef(reise.id)
+  const [generation, setGeneration] = React.useState(0)
+  const [gesehenReise, setGesehenReise] = React.useState(reise.id)
+  const [gesehenSchluessel, setGesehenSchluessel] = React.useState(anfangSchluessel)
+  const [angewendet, setAngewendet] = React.useState(anfang)
+  const [mode, setMode] = React.useState<MobilityMode>(anfang.mode)
+  const [originName, setOriginName] = React.useState(anfang.originName)
+  const [destinationName, setDestinationName] = React.useState(anfang.destinationName)
+  const [startsOn, setStartsOn] = React.useState(anfang.startsOn)
   const [startsAt, setStartsAt] = React.useState('')
   const [endsOn, setEndsOn] = React.useState('')
   const [endsAt, setEndsAt] = React.useState('')
   const [connectionRef, setConnectionRef] = React.useState('')
   const [note, setNote] = React.useState('')
-  const [dayId, setDayId] = React.useState(vorgabe ? vorgabe.dayId ?? '' : reise.days[0]?.id ?? '')
+  const [dayId, setDayId] = React.useState(anfang.dayId)
   const [laeuft, setLaeuft] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [hinweis, setHinweis] = React.useState('')
+  const [fokus, setFokus] = React.useState(0)
+  const naechste = verbindungsVorgabeAus(reise, vorgabe)
+  const naechsterSchluessel = vorgabeSchluessel(naechste)
+  if (gesehenReise !== reise.id) {
+    setGesehenReise(reise.id)
+    setGesehenSchluessel(naechsterSchluessel)
+    setGeneration((bisher) => bisher + 1)
+    setAngewendet(naechste)
+    setMode(naechste.mode)
+    setOriginName(naechste.originName)
+    setDestinationName(naechste.destinationName)
+    setStartsOn(naechste.startsOn)
+    setStartsAt('')
+    setEndsOn('')
+    setEndsAt('')
+    setConnectionRef('')
+    setNote('')
+    setDayId(naechste.dayId)
+    setLaeuft(false)
+    setMeldung('')
+    setHinweis('')
+  } else if (gesehenSchluessel !== naechsterSchluessel) {
+    setGesehenSchluessel(naechsterSchluessel)
+    setGeneration((bisher) => bisher + 1)
+    setLaeuft(false)
+    if (feldFolgtVorgabe(mode, angewendet.mode)) setMode(naechste.mode)
+    if (feldFolgtVorgabe(originName, angewendet.originName)) setOriginName(naechste.originName)
+    if (feldFolgtVorgabe(destinationName, angewendet.destinationName)) setDestinationName(naechste.destinationName)
+    if (feldFolgtVorgabe(startsOn, angewendet.startsOn)) setStartsOn(naechste.startsOn)
+    if (feldFolgtVorgabe(dayId, angewendet.dayId)) setDayId(naechste.dayId)
+    setAngewendet(naechste)
+    setMeldung('')
+    setHinweis('')
+  }
 
-  const lebendig = React.useRef(true)
-  const schreibt = React.useRef(false)
-  React.useEffect(() => { lebendig.current = true; return () => { lebendig.current = false } }, [])
+  React.useLayoutEffect(() => {
+    const gewechselt = generationFest.current !== generation || reiseFest.current !== reise.id
+    generationFest.current = generation
+    reiseFest.current = reise.id
+    if (gewechselt) schreibt.current = false
+  }, [generation, reise.id])
+
+  React.useEffect(() => {
+    lebendig.current = true
+    return () => { lebendig.current = false }
+  }, [])
+
+  React.useEffect(() => {
+    if (fokus === 0) return
+    meldungRef.current?.focus()
+  }, [fokus])
 
   const speichern = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
     if (schreibt.current) return
-    schreibt.current = true
-    setMeldung('')
-    setHinweis('')
-    setLaeuft(true)
-    try {
-    const fehler = await onAnlegen({
+    const zielReise = reiseFest.current
+    const generationJetzt = generationFest.current
+    const eingabe: MobilityManuellEingabe = {
       mode,
       title: null,
       originName,
@@ -390,20 +455,32 @@ export function ManuelleVerbindung({
       note: note || null,
       dayId: dayId || null,
       stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? null,
-    })
-    if (!lebendig.current) return
-    if (fehler) {
-      setMeldung(fehler)
-      return
     }
-    setHinweis('Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
-    setConnectionRef('')
-    setNote('')
+    const passt = () => lebendig.current && generationFest.current === generationJetzt && reiseFest.current === zielReise
+    schreibt.current = true
+    setMeldung('')
+    setHinweis('')
+    setLaeuft(true)
+    try {
+      const fehler = await onAnlegen(eingabe)
+      if (!passt()) return
+      if (fehler) {
+        setMeldung(fehler)
+        setFokus((bisher) => bisher + 1)
+        return
+      }
+      setHinweis('Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
+      setConnectionRef('')
+      setNote('')
     } catch {
-      if (lebendig.current) setMeldung('Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
+      if (!passt()) return
+      setMeldung(VERBINDUNG_UNBEKANNT)
+      setFokus((bisher) => bisher + 1)
     } finally {
-      schreibt.current = false
-      if (lebendig.current) setLaeuft(false)
+      if (passt()) {
+        schreibt.current = false
+        setLaeuft(false)
+      }
     }
   }
 
@@ -421,16 +498,16 @@ export function ManuelleVerbindung({
         Das sind deine Angaben, keine geprüften Fahrpläne oder Preise.
       </p>
 
-      <form className="mt-5 grid gap-3" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
+      <form className="mt-5 grid min-w-0 max-w-full gap-3" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
         <OrganisierenFeldgruppe titel="Einordnung">
-          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+          <div className={VERBINDUNG_SPALTEN}>
+            <label className={VERBINDUNG_LABEL}>
               Art
               <select
                 value={mode}
                 disabled={laeuft}
                 onChange={(ereignis) => setMode(ereignis.target.value as MobilityMode)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               >
                 {MODI.map((wert) => (
                   <option key={wert} value={wert}>
@@ -439,13 +516,13 @@ export function ManuelleVerbindung({
                 ))}
               </select>
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+            <label className={VERBINDUNG_LABEL}>
               Tag
               <select
                 value={dayId}
                 disabled={laeuft}
                 onChange={(ereignis) => setDayId(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               >
                 <option value="">Noch nicht eingeplant</option>
                 {reise.days.map((tag) => (
@@ -459,8 +536,8 @@ export function ManuelleVerbindung({
         </OrganisierenFeldgruppe>
 
         <OrganisierenFeldgruppe titel="Route">
-          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+          <div className={VERBINDUNG_SPALTEN}>
+            <label className={VERBINDUNG_LABEL}>
               Von
               <input
                 value={originName}
@@ -468,10 +545,10 @@ export function ManuelleVerbindung({
                 onChange={(ereignis) => setOriginName(ereignis.target.value)}
                 required
                 maxLength={120}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+            <label className={VERBINDUNG_LABEL}>
               Nach
               <input
                 value={destinationName}
@@ -479,75 +556,75 @@ export function ManuelleVerbindung({
                 onChange={(ereignis) => setDestinationName(ereignis.target.value)}
                 required
                 maxLength={120}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
           </div>
         </OrganisierenFeldgruppe>
 
         <OrganisierenFeldgruppe titel="Abfahrt">
-          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+          <div className={VERBINDUNG_SPALTEN}>
+            <label className={VERBINDUNG_LABEL}>
               Abfahrt
               <input
                 type="date"
                 value={startsOn}
                 disabled={laeuft}
                 onChange={(ereignis) => setStartsOn(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+            <label className={VERBINDUNG_LABEL}>
               Uhrzeit
               <input
                 type="time"
                 value={startsAt}
                 disabled={laeuft}
                 onChange={(ereignis) => setStartsAt(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
           </div>
         </OrganisierenFeldgruppe>
 
         <OrganisierenFeldgruppe titel="Ankunft">
-          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+          <div className={VERBINDUNG_SPALTEN}>
+            <label className={VERBINDUNG_LABEL}>
               Ankunft
               <input
                 type="date"
                 value={endsOn}
                 disabled={laeuft}
                 onChange={(ereignis) => setEndsOn(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+            <label className={VERBINDUNG_LABEL}>
               Uhrzeit
               <input
                 type="time"
                 value={endsAt}
                 disabled={laeuft}
                 onChange={(ereignis) => setEndsAt(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
           </div>
         </OrganisierenFeldgruppe>
 
         <OrganisierenFeldgruppe titel="Angaben">
-          <div className="grid min-w-0 gap-3">
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+          <div className="grid min-w-0 max-w-full gap-3">
+            <label className={VERBINDUNG_LABEL}>
               Verbindungsnummer, falls bekannt
               <input
                 value={connectionRef}
                 disabled={laeuft}
                 onChange={(ereignis) => setConnectionRef(ereignis.target.value)}
                 maxLength={40}
-                className={ORGANISIEREN_EINGABE_KLASSE}
+                className={VERBINDUNG_FELD}
               />
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+            <label className={VERBINDUNG_LABEL}>
               Notiz
               <textarea
                 value={note}
@@ -555,19 +632,19 @@ export function ManuelleVerbindung({
                 onChange={(ereignis) => setNote(ereignis.target.value)}
                 maxLength={500}
                 rows={2}
-                className={ORGANISIEREN_TEXTAREA_KLASSE}
+                className={VERBINDUNG_NOTIZ}
               />
             </label>
           </div>
         </OrganisierenFeldgruppe>
 
-        <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
+        <button type="submit" disabled={laeuft} className={`${ORGANISIEREN_PRIMAR_KLASSE} min-w-0 max-w-full`}>
           {laeuft ? 'Wird gespeichert …' : 'Verbindung speichern'}
         </button>
       </form>
 
       {meldung ? (
-        <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p ref={meldungRef} role="alert" tabIndex={-1} className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 focus:outline-none focus:ring-4 focus:ring-brand-600/15">
           {meldung}
         </p>
       ) : null}

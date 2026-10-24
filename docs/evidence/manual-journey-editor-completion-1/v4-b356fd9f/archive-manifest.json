@@ -1,0 +1,218 @@
+{
+  "kind": "archival-relocation",
+  "notANewExecution": true,
+  "statement": "This directory is a byte copy of the V4 run already executed at head b356fd9ff1215174511bd59a0eddc27206e47f69 and first stored in place by 860b35d93819aa551c98a7b810648bde54db1df8. Commands, headAtRun, ports, browser, timestamps, and result text inside the copied files were not rewritten. Those strings still name the original execution paths.",
+  "executedHead": "b356fd9ff1215174511bd59a0eddc27206e47f69",
+  "executedTree": "de25e46694a26405d9e3b7635fc0caf578a14cb7",
+  "storedInPlaceBy": "860b35d93819aa551c98a7b810648bde54db1df8",
+  "reviewedPriorEvidence": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "restoredFrom": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "restoredPaths": [
+    {
+      "path": "docs/evidence/manual-journey-editor-completion-1/result.json",
+      "restoredBlob": "bc054afb87c390cf76c77709a5428097c80f7ce6",
+      "restoredFrom": "be2c4932fc58d0bdca78e91cc7837a666201715f"
+    },
+    {
+      "path": "docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json",
+      "restoredBlob": "3da8a04325cbac8b09f16b52c7cfaf10788dab5a",
+      "restoredFrom": "be2c4932fc58d0bdca78e91cc7837a666201715f"
+    },
+    {
+      "path": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/result.json",
+      "restoredBlob": "4dd2d75f4c0a7b7a18c983c277084089cdb13be0",
+      "restoredFrom": "be2c4932fc58d0bdca78e91cc7837a666201715f"
+    },
+    {
+      "path": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/screens/wide-1280-pending.png",
+      "restoredBlob": "1a3f6f6e60d0532ee73f121094273a87e018e1e8",
+      "restoredFrom": "be2c4932fc58d0bdca78e91cc7837a666201715f"
+    }
+  ],
+  "files": [
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/result.json",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r103-manual-mobility-pending-draft-guard/result.json",
+      "gitBlob": "ec999469a7118c7d3a2a573d345372d467fa38a9",
+      "sha256": "39e4c749d209c3616b88887f77cb683753af70f23109472205baa0dbb41c7a55",
+      "bytes": 2907,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/screens/narrow-320-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r103-manual-mobility-pending-draft-guard/screens/narrow-320-pending.png",
+      "gitBlob": "33ac0f204bb28aff6fc80fd7318912b6300ed8d4",
+      "sha256": "2aa81aee2269792594c2deafc269c5c30318c42db509c78b001b2ac71eea22f9",
+      "bytes": 196196,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/screens/narrow-390-error-then-retry.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r103-manual-mobility-pending-draft-guard/screens/narrow-390-error-then-retry.png",
+      "gitBlob": "de4b5b9e1312db0957dc5f5226bb4615667a330a",
+      "sha256": "7441a8e67aa52730974b060f9d85572f324ce942ce2b2fd2fbf04b0e567208a0",
+      "bytes": 229461,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/screens/narrow-390-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r103-manual-mobility-pending-draft-guard/screens/narrow-390-pending.png",
+      "gitBlob": "3bbac8f0afce3785df38fcac45bf712f3e9b8faf",
+      "sha256": "8ca06ced3bccb9ae4f1e9b3ae7351539c62d1497c3d150664cf676e7989faf08",
+      "bytes": 224756,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/screens/wide-1280-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r103-manual-mobility-pending-draft-guard/screens/wide-1280-pending.png",
+      "gitBlob": "c40449fa2e3e4b107e85c531111e51bc213d2c9e",
+      "sha256": "e3b43c17218c0ea779ef35e492b3abb57fcf088e83f0bbcb9dda29a1df83d8e1",
+      "bytes": 261687,
+      "replacedInPlaceAt860b35d9": true
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/result.json",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/result.json",
+      "gitBlob": "ab5bf98ac306438aaede439e4bb25796aea2a5f2",
+      "sha256": "36cc16f49b92b6185417e329026555c080a75a289ee4dddcb46b069fd7506577",
+      "bytes": 6603,
+      "replacedInPlaceAt860b35d9": true
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/narrow-320-200-flight-error-text.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/narrow-320-200-flight-error-text.png",
+      "gitBlob": "71ee0dc133d8ed82d5f5a6ed8def80eea3e1ce76",
+      "sha256": "7f6e162ddb5fe3483459340134ddbb333917f5ccab0558e2c13de089963101d9",
+      "bytes": 235718,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/narrow-320-200-flight-pending-text.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/narrow-320-200-flight-pending-text.png",
+      "gitBlob": "2cc4050846026c205c80b8985b0d24ef99d30053",
+      "sha256": "ffac3ea19200760031f287f198c80ffd8cfc3430d6c5b6dfc12d31e5120415df",
+      "bytes": 246851,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/narrow-320-200.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/narrow-320-200.png",
+      "gitBlob": "ca4c28a73af0dc641cc3b96b0929e0b84a036e58",
+      "sha256": "9a1061d37cfdb6fd8563d112749e294939128d01457f06c3276451c875e1c7b5",
+      "bytes": 177098,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/narrow-320-flight-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/narrow-320-flight-pending.png",
+      "gitBlob": "2bed2531c6b8e201275c3e2676d04034731e2a37",
+      "sha256": "2bc36501c93b58a97dcc3ec68dfe516d337bfa925436f305ad6dad406bee8b38",
+      "bytes": 189182,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/narrow-390-flight-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/narrow-390-flight-pending.png",
+      "gitBlob": "1589d96e24bcf0925651a3cfb1e53cd95d5fb289",
+      "sha256": "c5a0bd8a398a8c8ed2306c214380736f8b15851d58ccddf8703c2c6164fdf453",
+      "bytes": 168577,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/wide-1280-200.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/wide-1280-200.png",
+      "gitBlob": "85651528f9cbab318d1f8ef71a65a9c36e3a0c6e",
+      "sha256": "c4195533edfae1285cc2f7a61bea57cd46121bcea8425e2b8bdad133206ab8d1",
+      "bytes": 326810,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/wide-1280-flight-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/wide-1280-flight-pending.png",
+      "gitBlob": "84598d6b4a8d44c4ff966ccaf2456544150b5863",
+      "sha256": "5a84b7ba2f96781d9e7bb6dec428bf891bbeeafda682930a15aab10ae154031b",
+      "bytes": 169805,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/wide-1280-rental-domain-error.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/wide-1280-rental-domain-error.png",
+      "gitBlob": "285770391dd2154e0195693a64387544205ad459",
+      "sha256": "f88dcb89bd90a5ddc0c45063cc5e8d0ab418156d1ba8b661eb5add915676a88b",
+      "bytes": 255815,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/wide-1280-rental-pending.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/wide-1280-rental-pending.png",
+      "gitBlob": "36d7283674a180d25ad3562ca3eb1352d860988d",
+      "sha256": "6e814f8cd6c7e02251bd1427220c1c0312c6a02c2f9c87cc534a2852145292b8",
+      "bytes": 299725,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/screens/wide-1280-rental-saved.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/r104-organisieren-action-recovery/screens/wide-1280-rental-saved.png",
+      "gitBlob": "24e2adcd4de855b5a8071a8a20cb5edda05ed1cb",
+      "sha256": "0d794a69756bc01eb096c5b873db16e06a3821315390ada34dbf4d3b15f53392",
+      "bytes": 297990,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/rerun-provenance.json",
+      "gitBlob": "8d319a07da41b470a7adbaae05b260d569a50ec1",
+      "sha256": "e5fbe7b6c4d3b282714516846d3a98d8f9a6fcbc88fb567be348c30e60dfe1b5",
+      "bytes": 4480,
+      "replacedInPlaceAt860b35d9": true
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/result.json",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/result.json",
+      "gitBlob": "f56befddfa0d65f9ec39bb24c57e014ebef83e4d",
+      "sha256": "a6ed944942ff4154570c7239613a0c124b10d94cb0b7315128e3fa5b74659e89",
+      "bytes": 9275,
+      "replacedInPlaceAt860b35d9": true
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/screens/1280.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/screens/1280.png",
+      "gitBlob": "22dfc876e7c4b5339424782d44ae679551cc1028",
+      "sha256": "c26e9107e7f0fc0e418130978d55cb17519442d012b4f44150255b5b7ee9af41",
+      "bytes": 261221,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/screens/320-root-32.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/screens/320-root-32.png",
+      "gitBlob": "d2495fd7a860af7b631da83e04413c9c9c8f69d1",
+      "sha256": "cc7225888f067c38456e256d7f4e4d9c22fef223d89effcd41f8a1bf8d542f96",
+      "bytes": 179949,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/screens/320.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/screens/320.png",
+      "gitBlob": "5676ffa397e9dc16a54e7f7c5d91822bbc6a5886",
+      "sha256": "00a29c28b6e6a296b6de60a232ba4143187d5fbb97c9e31369af497da65dcfb8",
+      "bytes": 182545,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/screens/390.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/screens/390.png",
+      "gitBlob": "0b08b6bf25b5d1602277a7e279d1ea7b70410847",
+      "sha256": "75bfdeea0cf2959cc7381e7ad90c75d266766392dced66129e3fa7a3ef5a94cd",
+      "bytes": 230988,
+      "replacedInPlaceAt860b35d9": false
+    },
+    {
+      "originalExecutionPath": "docs/evidence/manual-journey-editor-completion-1/screens/landscape.png",
+      "preservedPath": "docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/screens/landscape.png",
+      "gitBlob": "6ad692901dd03af8e2a07bd46d3cb398b886fbb2",
+      "sha256": "6346e7a715a22ed23df53c1fbf707e2b950027f6f2e4771a6be02d01028f2105",
+      "bytes": 103225,
+      "replacedInPlaceAt860b35d9": false
+    }
+  ]
+}

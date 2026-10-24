@@ -1,0 +1,779 @@
+TAP version 13
+# Subtest: Manual flight eligibility and strict input
+    # Subtest: manual-only, including booked user flight; non-null identities fail closed
+    ok 1 - manual-only, including booked user flight; non-null identities fail closed
+      ---
+      duration_ms: 0.909614
+      type: 'test'
+      ...
+    # Subtest: direct, contiguous, four segments, trim/uppercase, optional times, leap day
+    ok 2 - direct, contiguous, four segments, trim/uppercase, optional times, leap day
+      ---
+      duration_ms: 3.00201
+      type: 'test'
+      ...
+    # Subtest: malformed values, same-airport reversal, discontinuity, bounds and all extra keys rejected
+    ok 3 - malformed values, same-airport reversal, discontinuity, bounds and all extra keys rejected
+      ---
+      duration_ms: 2.194879
+      type: 'test'
+      ...
+    1..3
+ok 1 - Manual flight eligibility and strict input
+  ---
+  duration_ms: 6.713938
+  type: 'suite'
+  ...
+# Subtest: Account: actual action and actual server airport resolver
+    # Subtest: exact pre-read, unique IATAs, server facts, only five update fields, guards and retained metadata
+    ok 1 - exact pre-read, unique IATAs, server facts, only five update fields, guards and retained metadata
+      ---
+      duration_ms: 143.310024
+      type: 'test'
+      ...
+    # Subtest: missing: no airport query, no write, no revalidate
+    ok 2 - missing: no airport query, no write, no revalidate
+      ---
+      duration_ms: 76.470376
+      type: 'test'
+      ...
+    # Subtest: foreign: no airport query, no write, no revalidate
+    ok 3 - foreign: no airport query, no write, no revalidate
+      ---
+      duration_ms: 53.538021
+      type: 'test'
+      ...
+    # Subtest: wrongItem: no airport query, no write, no revalidate
+    ok 4 - wrongItem: no airport query, no write, no revalidate
+      ---
+      duration_ms: 43.947833
+      type: 'test'
+      ...
+    # Subtest: nonFlight: no airport query, no write, no revalidate
+    ok 5 - nonFlight: no airport query, no write, no revalidate
+      ---
+      duration_ms: 29.676726
+      type: 'test'
+      ...
+    # Subtest: provider: no airport query, no write, no revalidate
+    ok 6 - provider: no airport query, no write, no revalidate
+      ---
+      duration_ms: 22.766484
+      type: 'test'
+      ...
+    # Subtest: externalRef: no airport query, no write, no revalidate
+    ok 7 - externalRef: no airport query, no write, no revalidate
+      ---
+      duration_ms: 36.031528
+      type: 'test'
+      ...
+    # Subtest: bookingUrl: no airport query, no write, no revalidate
+    ok 8 - bookingUrl: no airport query, no write, no revalidate
+      ---
+      duration_ms: 17.605009
+      type: 'test'
+      ...
+    # Subtest: emptyIdentity: no airport query, no write, no revalidate
+    ok 9 - emptyIdentity: no airport query, no write, no revalidate
+      ---
+      duration_ms: 22.610621
+      type: 'test'
+      ...
+    # Subtest: unauthenticated: no airport query, no write, no revalidate
+    ok 10 - unauthenticated: no airport query, no write, no revalidate
+      ---
+      duration_ms: 16.453696
+      type: 'test'
+      ...
+    # Subtest: unknown airport at any position and failed airport read: no write
+    ok 11 - unknown airport at any position and failed airport read: no write
+      ---
+      duration_ms: 72.895858
+      type: 'test'
+      ...
+    # Subtest: invalid payload and nested/top-level injection rejected before authentication
+    ok 12 - invalid payload and nested/top-level injection rejected before authentication
+      ---
+      duration_ms: 19.0107
+      type: 'test'
+      ...
+    # Subtest: all DB codes, including stored-function errors, and transport exceptions sanitized
+    ok 13 - all DB codes, including stored-function errors, and transport exceptions sanitized
+      ---
+      duration_ms: 174.842747
+      type: 'test'
+      ...
+    # Subtest: race "deleted": no success without matching update row
+    ok 14 - race "deleted": no success without matching update row
+      ---
+      duration_ms: 9.569394
+      type: 'test'
+      ...
+    # Subtest: race {"kind":"stay"}: no success without matching update row
+    ok 15 - race {"kind":"stay"}: no success without matching update row
+      ---
+      duration_ms: 8.906266
+      type: 'test'
+      ...
+    # Subtest: race {"provider":"new"}: no success without matching update row
+    ok 16 - race {"provider":"new"}: no success without matching update row
+      ---
+      duration_ms: 11.165099
+      type: 'test'
+      ...
+    # Subtest: race {"external_ref":"new"}: no success without matching update row
+    ok 17 - race {"external_ref":"new"}: no success without matching update row
+      ---
+      duration_ms: 13.325301
+      type: 'test'
+      ...
+    # Subtest: race {"booking_url":"https://example.test"}: no success without matching update row
+    ok 18 - race {"booking_url":"https://example.test"}: no success without matching update row
+      ---
+      duration_ms: 9.734732
+      type: 'test'
+      ...
+    # Subtest: race {"metadata":{"newKey":"retain"}}: no success without matching update row
+    ok 19 - race {"metadata":{"newKey":"retain"}}: no success without matching update row
+      ---
+      duration_ms: 17.340959
+      type: 'test'
+      ...
+    # Subtest: omitted times explicitly clear stale item times
+    ok 20 - omitted times explicitly clear stale item times
+      ---
+      duration_ms: 9.830688
+      type: 'test'
+      ...
+    1..20
+ok 2 - Account: actual action and actual server airport resolver
+  ---
+  duration_ms: 809.744398
+  type: 'suite'
+  ...
+# Subtest: Guest: narrow persisted route update
+    # Subtest: day item: exact patch, no country truth, siblings unchanged
+    ok 1 - day item: exact patch, no country truth, siblings unchanged
+      ---
+      duration_ms: 5.829165
+      type: 'test'
+      ...
+    # Subtest: ohneTag: exact patch, no country truth, siblings unchanged
+    ok 2 - ohneTag: exact patch, no country truth, siblings unchanged
+      ---
+      duration_ms: 1.852523
+      type: 'test'
+      ...
+    # Subtest: missing/duplicate targets, invalid segments and protected items never write
+    ok 3 - missing/duplicate targets, invalid segments and protected items never write
+      ---
+      duration_ms: 2.35328
+      type: 'test'
+      ...
+    # Subtest: invalid graph and failed storage do not report success; unknown IATA stays IATA-only
+    ok 4 - invalid graph and failed storage do not report success; unknown IATA stays IATA-only
+      ---
+      duration_ms: 2.063993
+      type: 'test'
+      ...
+    1..4
+ok 3 - Guest: narrow persisted route update
+  ---
+  duration_ms: 12.261505
+  type: 'suite'
+  ...
+# Subtest: route facts after account save; unchanged ambiguity remains fail-closed
+ok 4 - route facts after account save; unchanged ambiguity remains fail-closed
+  ---
+  duration_ms: 19.464435
+  type: 'test'
+  ...
+# Subtest: P2 correction: local airport times and legacy summary representability
+    # Subtest: Date Line: earlier local arrival date: schema, pure projection, account and guest
+    ok 1 - Date Line: earlier local arrival date: schema, pure projection, account and guest
+      ---
+      duration_ms: 11.266224
+      type: 'test'
+      ...
+    # Subtest: same date: earlier arrival clock at different airport: schema, pure projection, account and guest
+    ok 2 - same date: earlier arrival clock at different airport: schema, pure projection, account and guest
+      ---
+      duration_ms: 16.697184
+      type: 'test'
+      ...
+    # Subtest: same date: arrival clock without departure clock: schema, pure projection, account and guest
+    ok 3 - same date: arrival clock without departure clock: schema, pure projection, account and guest
+      ---
+      duration_ms: 10.52459
+      type: 'test'
+      ...
+    # Subtest: later date: arrival clock without departure clock: schema, pure projection, account and guest
+    ok 4 - later date: arrival clock without departure clock: schema, pure projection, account and guest
+      ---
+      duration_ms: 18.740001
+      type: 'test'
+      ...
+    # Subtest: later date: earlier clock is representable with departure clock: schema, pure projection, account and guest
+    ok 5 - later date: earlier clock is representable with departure clock: schema, pure projection, account and guest
+      ---
+      duration_ms: 9.980968
+      type: 'test'
+      ...
+    # Subtest: same date: equal clocks are representable: schema, pure projection, account and guest
+    ok 6 - same date: equal clocks are representable: schema, pure projection, account and guest
+      ---
+      duration_ms: 12.657544
+      type: 'test'
+      ...
+    # Subtest: missing arrival clock remains null: schema, pure projection, account and guest
+    ok 7 - missing arrival clock remains null: schema, pure projection, account and guest
+      ---
+      duration_ms: 14.895057
+      type: 'test'
+      ...
+    # Subtest: normal direct flight: schema, pure projection, account and guest
+    ok 8 - normal direct flight: schema, pure projection, account and guest
+      ---
+      duration_ms: 13.779761
+      type: 'test'
+      ...
+    # Subtest: normal connecting route: schema, pure projection, account and guest
+    ok 9 - normal connecting route: schema, pure projection, account and guest
+      ---
+      duration_ms: 10.431576
+      type: 'test'
+      ...
+    # Subtest: Date Line route envelope retains both segments: schema, pure projection, account and guest
+    ok 10 - Date Line route envelope retains both segments: schema, pure projection, account and guest
+      ---
+      duration_ms: 16.141812
+      type: 'test'
+      ...
+    # Subtest: same-date route envelope with missing connection clocks: schema, pure projection, account and guest
+    ok 11 - same-date route envelope with missing connection clocks: schema, pure projection, account and guest
+      ---
+      duration_ms: 10.120024
+      type: 'test'
+      ...
+    # Subtest: same-airport reversed connection clock/date fails before auth or guest persistence
+    ok 12 - same-airport reversed connection clock/date fails before auth or guest persistence
+      ---
+      duration_ms: 31.913202
+      type: 'test'
+      ...
+    # Subtest: same-airport missing optional clock remains unknown; equal clock and later date pass
+    ok 13 - same-airport missing optional clock remains unknown; equal clock and later date pass
+      ---
+      duration_ms: 0.275103
+      type: 'test'
+      ...
+    # Subtest: existing FlugRoute details show exact local Date-Line and earlier-clock values, never degraded summary
+    ok 14 - existing FlugRoute details show exact local Date-Line and earlier-clock values, never degraded summary
+      ---
+      duration_ms: 10.083788
+      type: 'test'
+      ...
+    # Subtest: editor accepts and prefills the exact local route rather than its degraded summary
+    ok 15 - editor accepts and prefills the exact local route rather than its degraded summary
+      ---
+      duration_ms: 159.65296
+      type: 'test'
+      ...
+    1..15
+ok 5 - P2 correction: local airport times and legacy summary representability
+  ---
+  duration_ms: 347.649467
+  type: 'suite'
+  ...
+# Subtest: Flight editor: actual render and event paths
+    # Subtest: add/change affordance, manual booked allowed, provider/ref/url not editable, booking separate
+    ok 1 - add/change affordance, manual booked allowed, provider/ref/url not editable, booking separate
+      ---
+      duration_ms: 51.940025
+      type: 'test'
+      ...
+    # Subtest: empty fields are not inferred; saved route prefill, labelled date/time inputs
+    ok 2 - empty fields are not inferred; saved route prefill, labelled date/time inputs
+      ---
+      duration_ms: 58.707212
+      type: 'test'
+      ...
+    # Subtest: explicit add/remove; 1–4 bound; removing middle does not silently repair continuity
+    ok 3 - explicit add/remove; 1–4 bound; removing middle does not silently repair continuity
+      ---
+      duration_ms: 42.488085
+      type: 'test'
+      ...
+    # Subtest: invalid submit no callback; no autosave; exact normalized payload; success closes
+    ok 4 - invalid submit no callback; no autosave; exact normalized payload; success closes
+      ---
+      duration_ms: 39.812972
+      type: 'test'
+      ...
+    # Subtest: failure keeps input; thrown details sanitized; cancel writes nothing
+    ok 5 - failure keeps input; thrown details sanitized; cancel writes nothing
+      ---
+      duration_ms: 92.785146
+      type: 'test'
+      ...
+    # Subtest: in-flight duplicate submit blocked
+    ok 6 - in-flight duplicate submit blocked
+      ---
+      duration_ms: 35.636828
+      type: 'test'
+      ...
+    # Subtest: legacy multi-leg and >4 segment routes are never silently truncated or rewritten
+    ok 7 - legacy multi-leg and >4 segment routes are never silently truncated or rewritten
+      ---
+      duration_ms: 70.561901
+      type: 'test'
+      ...
+    1..7
+ok 6 - Flight editor: actual render and event paths
+  ---
+  duration_ms: 392.181301
+  type: 'suite'
+  ...
+# Subtest: narrow Workspace wiring refreshes account on success and uses persisted guest graph
+ok 7 - narrow Workspace wiring refreshes account on success and uses persisted guest graph
+  ---
+  duration_ms: 212.583108
+  type: 'test'
+  ...
+# Subtest: Manual flight validation recovery — actual issue paths, events and committed focus
+    # Subtest: one missing IATA among four segments marks/focuses only that input; no write or repair
+    ok 1 - one missing IATA among four segments marks/focuses only that input; no write or repair
+      ---
+      duration_ms: 246.009695
+      type: 'test'
+      ...
+    # Subtest: correction clears error immediately without focus theft, normalization or autosave
+    ok 2 - correction clears error immediately without focus theft, normalization or autosave
+      ---
+      duration_ms: 84.969113
+      type: 'test'
+      ...
+    # Subtest: first error follows DOM order even when Zod emits an earlier field issue last
+    ok 3 - first error follows DOM order even when Zod emits an earlier field issue last
+      ---
+      duration_ms: 84.261753
+      type: 'test'
+      ...
+    # Subtest: actual origin issue has its own accessible message and label
+    ok 4 - actual origin issue has its own accessible message and label
+      ---
+      duration_ms: 37.582149
+      type: 'test'
+      ...
+    # Subtest: actual destination issue has its own accessible message and label
+    ok 5 - actual destination issue has its own accessible message and label
+      ---
+      duration_ms: 61.49152
+      type: 'test'
+      ...
+    # Subtest: actual departureDate issue has its own accessible message and label
+    ok 6 - actual departureDate issue has its own accessible message and label
+      ---
+      duration_ms: 39.045087
+      type: 'test'
+      ...
+    # Subtest: actual departureTime issue has its own accessible message and label
+    ok 7 - actual departureTime issue has its own accessible message and label
+      ---
+      duration_ms: 42.240152
+      type: 'test'
+      ...
+    # Subtest: actual arrivalDate issue has its own accessible message and label
+    ok 8 - actual arrivalDate issue has its own accessible message and label
+      ---
+      duration_ms: 26.41791
+      type: 'test'
+      ...
+    # Subtest: actual arrivalTime issue has its own accessible message and label
+    ok 9 - actual arrivalTime issue has its own accessible message and label
+      ---
+      duration_ms: 51.234034
+      type: 'test'
+      ...
+    # Subtest: continuity points only to the schema-addressed origin; upstream correction recomputes it
+    ok 10 - continuity points only to the schema-addressed origin; upstream correction recomputes it
+      ---
+      duration_ms: 45.587495
+      type: 'test'
+      ...
+    # Subtest: connection chronology uses only its actual departureDate path
+    ok 11 - connection chronology uses only its actual departureDate path
+      ---
+      duration_ms: 45.671219
+      type: 'test'
+      ...
+    # Subtest: root-level Zod error focuses/announces summary, never innocent fields
+    ok 12 - root-level Zod error focuses/announces summary, never innocent fields
+      ---
+      duration_ms: 44.237895
+      type: 'test'
+      ...
+    # Subtest: array-level Zod error focuses/announces summary, never innocent fields
+    ok 13 - array-level Zod error focuses/announces summary, never innocent fields
+      ---
+      duration_ms: 32.704662
+      type: 'test'
+      ...
+    # Subtest: add/remove maintains 1–4 bounds, updates shifted errors and never repairs continuity
+    ok 14 - add/remove maintains 1–4 bounds, updates shifted errors and never repairs continuity
+      ---
+      duration_ms: 47.196306
+      type: 'test'
+      ...
+    # Subtest: valid four-segment submit once; duplicate/escape guard holds during write
+    ok 15 - valid four-segment submit once; duplicate/escape guard holds during write
+      ---
+      duration_ms: 28.909863
+      type: 'test'
+      ...
+    # Subtest: Escape and reopen reset validation, preserve trigger/initial focus and write nothing
+    ok 16 - Escape and reopen reset validation, preserve trigger/initial focus and write nothing
+      ---
+      duration_ms: 17.453707
+      type: 'test'
+      ...
+    1..16
+ok 8 - Manual flight validation recovery — actual issue paths, events and committed focus
+  ---
+  duration_ms: 936.225854
+  type: 'suite'
+  ...
+# Subtest: Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buchung
+    # Subtest: gebuchte Unterkunft ohne Daten zeigt die kanonische Unklarheit und korrigiert diese Buchung
+    ok 1 - gebuchte Unterkunft ohne Daten zeigt die kanonische Unklarheit und korrigiert diese Buchung
+      ---
+      duration_ms: 117.749863
+      type: 'test'
+      ...
+    # Subtest: unbestätigte Unterkunft ohne Daten markiert genau diese Buchung
+    ok 2 - unbestätigte Unterkunft ohne Daten markiert genau diese Buchung
+      ---
+      duration_ms: 30.980728
+      type: 'test'
+      ...
+    # Subtest: fehlende, ungültige und umgekehrte Daten bleiben unklar
+    ok 3 - fehlende, ungültige und umgekehrte Daten bleiben unklar
+      ---
+      duration_ms: 4.742238
+      type: 'test'
+      ...
+    # Subtest: gemischte und einzelne unbestimmte Nächte werden nicht als fehlend behauptet
+    ok 4 - gemischte und einzelne unbestimmte Nächte werden nicht als fehlend behauptet
+      ---
+      duration_ms: 70.006514
+      type: 'test'
+      ...
+    # Subtest: gebuchte ungültige Daten bleiben in der eigenen Zeile unklar
+    ok 5 - gebuchte ungültige Daten bleiben in der eigenen Zeile unklar
+      ---
+      duration_ms: 47.202002
+      type: 'test'
+      ...
+    # Subtest: gebuchte umgekehrte Daten bleiben in der eigenen Zeile unklar
+    ok 6 - gebuchte umgekehrte Daten bleiben in der eigenen Zeile unklar
+      ---
+      duration_ms: 28.773112
+      type: 'test'
+      ...
+    # Subtest: volle datierte Abdeckung plus undatierter Aufenthalt bleibt unklar
+    ok 7 - volle datierte Abdeckung plus undatierter Aufenthalt bleibt unklar
+      ---
+      duration_ms: 34.816851
+      type: 'test'
+      ...
+    # Subtest: bekannte Lücken, leerer Bestand, volle Abdeckung und Aufenthalte ausserhalb bleiben bestimmt
+    ok 8 - bekannte Lücken, leerer Bestand, volle Abdeckung und Aufenthalte ausserhalb bleiben bestimmt
+      ---
+      duration_ms: 147.442958
+      type: 'test'
+      ...
+    # Subtest: eine zurückgewiesene Buchung bleibt als Fehler sichtbar
+    ok 9 - eine zurückgewiesene Buchung bleibt als Fehler sichtbar
+      ---
+      duration_ms: 37.521418
+      type: 'test'
+      ...
+    1..9
+ok 9 - Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buchung
+  ---
+  duration_ms: 520.399031
+  type: 'suite'
+  ...
+# Subtest: editor context is trip plus target
+ok 10 - editor context is trip plus target
+  ---
+  duration_ms: 0.502457
+  type: 'test'
+  ...
+# Subtest: absent preset uses the trip, and an explicit preset does not borrow the trip date or day
+ok 11 - absent preset uses the trip, and an explicit preset does not borrow the trip date or day
+  ---
+  duration_ms: 0.18417
+  type: 'test'
+  ...
+# Subtest: accepted presets that only differ inside a field do not share a key
+ok 12 - accepted presets that only differ inside a field do not share a key
+  ---
+  duration_ms: 2.613723
+  type: 'test'
+  ...
+# Subtest: a clean field follows the preset and a changed field does not
+ok 13 - a clean field follows the preset and a changed field does not
+  ---
+  duration_ms: 0.083204
+  type: 'test'
+  ...
+# Subtest: booking action ownership
+    # Subtest: a late completion does not publish after ownership is dropped
+    ok 1 - a late completion does not publish after ownership is dropped
+      ---
+      duration_ms: 0.458013
+      type: 'test'
+      ...
+    1..1
+ok 14 - booking action ownership
+  ---
+  duration_ms: 1.062532
+  type: 'suite'
+  ...
+# Subtest: mounted inventory booking actions through the real components
+    # Subtest: flight: both directions, sibling lock, domain error, reject, throw, retry, late context
+    ok 1 - flight: both directions, sibling lock, domain error, reject, throw, retry, late context
+      ---
+      duration_ms: 19.889604
+      type: 'test'
+      ...
+    # Subtest: stay: both directions, sibling lock, domain error, reject, throw, retry, late context
+    ok 2 - stay: both directions, sibling lock, domain error, reject, throw, retry, late context
+      ---
+      duration_ms: 20.296684
+      type: 'test'
+      ...
+    # Subtest: transfer: both directions, sibling lock, domain error, reject, throw, retry, late context
+    ok 3 - transfer: both directions, sibling lock, domain error, reject, throw, retry, late context
+      ---
+      duration_ms: 27.280435
+      type: 'test'
+      ...
+    # Subtest: rental_car: both directions, sibling lock, domain error, reject, throw, retry, late context
+    ok 4 - rental_car: both directions, sibling lock, domain error, reject, throw, retry, late context
+      ---
+      duration_ms: 27.080855
+      type: 'test'
+      ...
+    # Subtest: static markup keeps stored booking truth and does not invent a provider confirmation
+    ok 5 - static markup keeps stored booking truth and does not invent a provider confirmation
+      ---
+      duration_ms: 7.031631
+      type: 'test'
+      ...
+    1..5
+ok 15 - mounted inventory booking actions through the real components
+  ---
+  duration_ms: 101.958308
+  type: 'suite'
+  ...
+# Subtest: manual rental entry keeps the submitted draft
+    # Subtest: ten fields stay stable, errors keep values, success resets only the owned form
+    ok 1 - ten fields stay stable, errors keep values, success resets only the owned form
+      ---
+      duration_ms: 28.658613
+      type: 'test'
+      ...
+    # Subtest: empty optional fields and an impossible date stay explicit nulls or the typed value
+    ok 2 - empty optional fields and an impossible date stay explicit nulls or the typed value
+      ---
+      duration_ms: 10.029071
+      type: 'test'
+      ...
+    1..2
+ok 16 - manual rental entry keeps the submitted draft
+  ---
+  duration_ms: 38.908376
+  type: 'suite'
+  ...
+# Subtest: manual connection function matches the named completion hash
+ok 17 - manual connection function matches the named completion hash
+  ---
+  duration_ms: 0.319595
+  type: 'test'
+  ...
+# Subtest: Manuelle Unterkunft: gemeinsame Grenze und Datumsvertrag
+    # Subtest: nur fehlende Identität; Booking, Preis und Notiz schliessen manuelle Stays nicht aus
+    ok 1 - nur fehlende Identität; Booking, Preis und Notiz schliessen manuelle Stays nicht aus
+      ---
+      duration_ms: 0.914005
+      type: 'test'
+      ...
+    # Subtest: exakte ISO-Kalendertage und streng positives Intervall
+    ok 2 - exakte ISO-Kalendertage und streng positives Intervall
+      ---
+      duration_ms: 2.606335
+      type: 'test'
+      ...
+    1..2
+ok 18 - Manuelle Unterkunft: gemeinsame Grenze und Datumsvertrag
+  ---
+  duration_ms: 4.114881
+  type: 'suite'
+  ...
+# Subtest: Account: reale Server Action mit begrenztem Transport
+    # Subtest: exakter Trip+Item-Read, genau ein guarded UPDATE mit nur zwei Datumsfeldern
+    ok 1 - exakter Trip+Item-Read, genau ein guarded UPDATE mit nur zwei Datumsfeldern
+      ---
+      duration_ms: 121.294822
+      type: 'test'
+      ...
+    # Subtest: missing: kein Update, keine Revalidierung
+    ok 2 - missing: kein Update, keine Revalidierung
+      ---
+      duration_ms: 34.042891
+      type: 'test'
+      ...
+    # Subtest: foreign: kein Update, keine Revalidierung
+    ok 3 - foreign: kein Update, keine Revalidierung
+      ---
+      duration_ms: 19.478409
+      type: 'test'
+      ...
+    # Subtest: wrongItem: kein Update, keine Revalidierung
+    ok 4 - wrongItem: kein Update, keine Revalidierung
+      ---
+      duration_ms: 16.938008
+      type: 'test'
+      ...
+    # Subtest: nonStay: kein Update, keine Revalidierung
+    ok 5 - nonStay: kein Update, keine Revalidierung
+      ---
+      duration_ms: 17.646009
+      type: 'test'
+      ...
+    # Subtest: provider: kein Update, keine Revalidierung
+    ok 6 - provider: kein Update, keine Revalidierung
+      ---
+      duration_ms: 18.976214
+      type: 'test'
+      ...
+    # Subtest: externalRef: kein Update, keine Revalidierung
+    ok 7 - externalRef: kein Update, keine Revalidierung
+      ---
+      duration_ms: 12.492712
+      type: 'test'
+      ...
+    # Subtest: bookingUrl: kein Update, keine Revalidierung
+    ok 8 - bookingUrl: kein Update, keine Revalidierung
+      ---
+      duration_ms: 11.675312
+      type: 'test'
+      ...
+    # Subtest: emptyIdentity: kein Update, keine Revalidierung
+    ok 9 - emptyIdentity: kein Update, keine Revalidierung
+      ---
+      duration_ms: 21.630144
+      type: 'test'
+      ...
+    # Subtest: unauthenticated: kein Update, keine Revalidierung
+    ok 10 - unauthenticated: kein Update, keine Revalidierung
+      ---
+      duration_ms: 15.416435
+      type: 'test'
+      ...
+    # Subtest: untrusted invalid input scheitert vor Auth/DB
+    ok 11 - untrusted invalid input scheitert vor Auth/DB
+      ---
+      duration_ms: 11.758685
+      type: 'test'
+      ...
+    # Subtest: DB-Fehler werden mit dem bestehenden Sanitizer übersetzt
+    ok 12 - DB-Fehler werden mit dem bestehenden Sanitizer übersetzt
+      ---
+      duration_ms: 22.672064
+      type: 'test'
+      ...
+    # Subtest: konkurrierende Änderung "deleted": kein Erfolg ohne geschriebene Zeile
+    ok 13 - konkurrierende Änderung "deleted": kein Erfolg ohne geschriebene Zeile
+      ---
+      duration_ms: 8.971147
+      type: 'test'
+      ...
+    # Subtest: konkurrierende Änderung {"kind":"flight"}: kein Erfolg ohne geschriebene Zeile
+    ok 14 - konkurrierende Änderung {"kind":"flight"}: kein Erfolg ohne geschriebene Zeile
+      ---
+      duration_ms: 16.61957
+      type: 'test'
+      ...
+    # Subtest: konkurrierende Änderung {"provider":"new"}: kein Erfolg ohne geschriebene Zeile
+    ok 15 - konkurrierende Änderung {"provider":"new"}: kein Erfolg ohne geschriebene Zeile
+      ---
+      duration_ms: 9.61896
+      type: 'test'
+      ...
+    # Subtest: konkurrierende Änderung {"external_ref":"new"}: kein Erfolg ohne geschriebene Zeile
+    ok 16 - konkurrierende Änderung {"external_ref":"new"}: kein Erfolg ohne geschriebene Zeile
+      ---
+      duration_ms: 13.19469
+      type: 'test'
+      ...
+    # Subtest: konkurrierende Änderung {"booking_url":"https://example.test"}: kein Erfolg ohne geschriebene Zeile
+    ok 17 - konkurrierende Änderung {"booking_url":"https://example.test"}: kein Erfolg ohne geschriebene Zeile
+      ---
+      duration_ms: 8.624711
+      type: 'test'
+      ...
+    1..17
+ok 19 - Account: reale Server Action mit begrenztem Transport
+  ---
+  duration_ms: 381.682803
+  type: 'suite'
+  ...
+# Subtest: Unterkunft UI: echte Render- und Submit-Pfade
+    # Subtest: fehlend/ungültig vs vollständig, Provider/Ref/URL und optionaler Callback
+    ok 1 - fehlend/ungültig vs vollständig, Provider/Ref/URL und optionaler Callback
+      ---
+      duration_ms: 28.887827
+      type: 'test'
+      ...
+    # Subtest: vorhandene Werte werden vorgefüllt, fehlende bleiben leer; native Inputs haben Labels
+    ok 2 - vorhandene Werte werden vorgefüllt, fehlende bleiben leer; native Inputs haben Labels
+      ---
+      duration_ms: 64.018291
+      type: 'test'
+      ...
+    # Subtest: ungültige Submits rufen nichts auf; Speichern sendet exakt ID/Check-in/Check-out und schliesst
+    ok 3 - ungültige Submits rufen nichts auf; Speichern sendet exakt ID/Check-in/Check-out und schliesst
+      ---
+      duration_ms: 27.149891
+      type: 'test'
+      ...
+    # Subtest: Fehler behält Eingaben, thrown error bleibt begrenzt; Abbrechen schreibt nicht
+    ok 4 - Fehler behält Eingaben, thrown error bleibt begrenzt; Abbrechen schreibt nicht
+      ---
+      duration_ms: 24.656477
+      type: 'test'
+      ...
+    1..4
+ok 20 - Unterkunft UI: echte Render- und Submit-Pfade
+  ---
+  duration_ms: 144.867337
+  type: 'suite'
+  ...
+# Subtest: Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gespeichertem Gastgraph
+ok 21 - Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gespeichertem Gastgraph
+  ---
+  duration_ms: 212.804942
+  type: 'test'
+  ...
+1..21
+# tests 113
+# suites 13
+# pass 113
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2822.324884

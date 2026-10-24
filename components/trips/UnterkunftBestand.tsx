@@ -15,6 +15,7 @@ import {
 } from '@/components/trips/useBookingActionLifecycle'
 import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
+import { gleicherEditorKontext } from '@/lib/trips/manual-journey-editor-completion-1'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { ersteMeldung, unterkunftZeitraumSchema } from '@/lib/trips/schema'
 import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
@@ -46,6 +47,19 @@ export default function UnterkunftBestand({
     setMeldung('')
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
+  const aufenthaltBesitz = React.useRef(0)
+  const aufenthaltEditor = React.useRef('')
+  // Ein anderer manueller Zeitraum-Editor entzieht den Fokus. Dieselbe Eingabe behält ihn.
+  const editorBeruehrt = (event: React.SyntheticEvent) => {
+    const ziel = event.target
+    if (!(ziel instanceof Element)) return
+    const editor = ziel.closest('[data-aufenthalt-editor]')
+    if (!editor) return
+    const id = editor.getAttribute('data-aufenthalt-editor') ?? ''
+    if (id === aufenthaltEditor.current) return
+    aufenthaltEditor.current = id
+    aufenthaltBesitz.current += 1
+  }
 
   const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
     if (!onBuchungsstatus) return
@@ -67,6 +81,9 @@ export default function UnterkunftBestand({
       aria-busy={pendingId !== null}
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
+      onClickCapture={editorBeruehrt}
+      onChangeCapture={editorBeruehrt}
+      onKeyDownCapture={editorBeruehrt}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -130,7 +147,13 @@ export default function UnterkunftBestand({
                 </div>
               </div>
               {onUnterkunftZeitraum && istManuelleUnterkunft(aufenthalt.item) ? (
-                <UnterkunftZeitraum item={aufenthalt.item} onSpeichern={onUnterkunftZeitraum} />
+                <UnterkunftZeitraum
+                  key={`${reise.id}:${aufenthalt.item.id}`}
+                  reiseId={reise.id}
+                  item={aufenthalt.item}
+                  onSpeichern={onUnterkunftZeitraum}
+                  oberflaeche={aufenthaltBesitz}
+                />
               ) : null}
             </li>
             )
@@ -167,18 +190,86 @@ export default function UnterkunftBestand({
   )
 }
 
-function UnterkunftZeitraum({ item, onSpeichern }: { item: TripItem; onSpeichern: ZeitraumSpeichern }) {
+function UnterkunftZeitraum({
+  item,
+  reiseId,
+  onSpeichern,
+  oberflaeche,
+}: {
+  item: TripItem
+  reiseId: string
+  onSpeichern: ZeitraumSpeichern
+  oberflaeche: { readonly current: number }
+}) {
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
+  const checkIn = React.useRef<HTMLInputElement>(null)
+  const checkOut = React.useRef<HTMLInputElement>(null)
+  const zusammenfassung = React.useRef<HTMLParagraphElement>(null)
+  const lebendig = React.useRef(true)
   const schreibt = React.useRef(false)
+  const generationFest = React.useRef(0)
+  const reiseFest = React.useRef(reiseId)
+  const zielFest = React.useRef(item.id)
+  const [generation, setGeneration] = React.useState(0)
+  const [gesehen, setGesehen] = React.useState({ reiseId, itemId: item.id })
   const [offen, setOffen] = React.useState(false)
   const [startsOn, setStartsOn] = React.useState('')
   const [endsOn, setEndsOn] = React.useState('')
   const [fehler, setFehler] = React.useState('')
-  const [feldfehler, setFeldfehler] = React.useState(false)
+  const [validieren, setValidieren] = React.useState(false)
+  const [fokus, setFokus] = React.useState(0)
   const [laeuft, setLaeuft] = React.useState(false)
   const [gespeichert, setGespeichert] = React.useState(false)
+  if (!gleicherEditorKontext(
+    { reiseId: gesehen.reiseId, zielId: gesehen.itemId },
+    { reiseId, zielId: item.id },
+  )) {
+    setGesehen({ reiseId, itemId: item.id })
+    setGeneration((bisher) => bisher + 1)
+    setOffen(false)
+    setStartsOn('')
+    setEndsOn('')
+    setFehler('')
+    setValidieren(false)
+    setGespeichert(false)
+    setLaeuft(false)
+  }
   const vollstaendig = unterkunftZeitraumSchema.safeParse(item).success
+  const pruefung = validieren ? unterkunftZeitraumSchema.safeParse({ startsOn, endsOn }) : null
+  const schemaFehler = pruefung && !pruefung.success ? pruefung.error : null
+  const meldung = schemaFehler ? ersteMeldung(schemaFehler) : fehler
+  const feldUngueltig = (name: 'startsOn' | 'endsOn') =>
+    Boolean(schemaFehler?.issues.some((issue) => issue.path[0] === name))
+
+  React.useLayoutEffect(() => {
+    const gewechselt = generationFest.current !== generation
+      || reiseFest.current !== reiseId
+      || zielFest.current !== item.id
+    generationFest.current = generation
+    reiseFest.current = reiseId
+    zielFest.current = item.id
+    if (gewechselt) schreibt.current = false
+  }, [generation, reiseId, item.id])
+
+  React.useEffect(() => {
+    lebendig.current = true
+    return () => { lebendig.current = false }
+  }, [])
+
+  React.useEffect(() => {
+    if (offen) checkIn.current?.focus()
+  }, [offen])
+
+  React.useEffect(() => {
+    if (fokus === 0) return
+    const ziel = checkIn.current?.getAttribute('aria-invalid') === 'true'
+      ? checkIn.current
+      : checkOut.current?.getAttribute('aria-invalid') === 'true'
+        ? checkOut.current
+        : zusammenfassung.current
+    ziel?.focus()
+  }, [fokus])
 
   const schliessen = () => {
     setOffen(false)
@@ -190,31 +281,56 @@ function UnterkunftZeitraum({ item, onSpeichern }: { item: TripItem; onSpeichern
     event.preventDefault()
     if (schreibt.current) return
     const zeitraum = unterkunftZeitraumSchema.safeParse({ startsOn, endsOn })
-    setFeldfehler(!zeitraum.success)
     if (!zeitraum.success) {
-      setFehler(ersteMeldung(zeitraum.error))
+      setFehler('')
+      setValidieren(true)
+      setFokus((bisher) => bisher + 1)
       return
     }
+    const zielReise = reiseFest.current
+    const zielItem = zielFest.current
+    const generationJetzt = generationFest.current
+    const besitzBeimStart = oberflaeche.current
+    const passt = () => lebendig.current && generationFest.current === generationJetzt && gleicherEditorKontext(
+      { reiseId: reiseFest.current, zielId: zielFest.current },
+      { reiseId: zielReise, zielId: zielItem },
+    )
+    const fokusGehoert = () => oberflaeche.current === besitzBeimStart
+    setValidieren(false)
     schreibt.current = true
     setLaeuft(true)
     setFehler('')
     try {
-      const meldung = await onSpeichern(item.id, zeitraum.data.startsOn, zeitraum.data.endsOn)
-      if (meldung) setFehler(meldung)
-      else {
-        schliessen()
+      const ergebnis = await onSpeichern(zielItem, zeitraum.data.startsOn, zeitraum.data.endsOn)
+      if (!passt()) return
+      if (ergebnis) {
+        setFehler(ergebnis)
+        if (fokusGehoert()) setFokus((bisher) => bisher + 1)
+      } else {
+        setOffen(false)
+        setFehler('')
+        if (fokusGehoert()) knopf.current?.focus()
         setGespeichert(true)
       }
     } catch {
+      if (!passt()) return
       setFehler('Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.')
+      if (fokusGehoert()) setFokus((bisher) => bisher + 1)
     } finally {
-      schreibt.current = false
-      setLaeuft(false)
+      if (passt()) {
+        schreibt.current = false
+        setLaeuft(false)
+      }
     }
   }
 
   return (
-    <div className="min-w-0 border-t border-line-100 pt-3">
+    <div className="min-w-0 border-t border-line-100 pt-3" data-aufenthalt-editor={item.id} onKeyDown={(event) => {
+      if (event.key !== 'Escape' || !offen) return
+      event.preventDefault()
+      event.stopPropagation()
+      if (!schreibt.current) schliessen()
+    }}>
       <p className="text-xs leading-5 text-ink-800 break-words">
         Check-in: {item.startsOn ?? 'offen'} · Check-out: {item.endsOn ?? 'offen'}
       </p>
@@ -232,7 +348,7 @@ function UnterkunftZeitraum({ item, onSpeichern }: { item: TripItem; onSpeichern
             setStartsOn(item.startsOn ?? '')
             setEndsOn(item.endsOn ?? '')
             setFehler('')
-            setFeldfehler(false)
+            setValidieren(false)
             setGespeichert(false)
             setOffen(true)
           }
@@ -242,29 +358,29 @@ function UnterkunftZeitraum({ item, onSpeichern }: { item: TripItem; onSpeichern
         {vollstaendig ? 'Zeitraum ändern' : 'Zeitraum ergänzen'}
       </button>
       {offen ? (
-        <form id={`${id}-formular`} aria-label={`Zeitraum für ${item.title}`} noValidate onSubmit={speichern} className="mt-3 grid min-w-0 gap-3" aria-busy={laeuft}>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-in`}>
+        <form id={`${id}-formular`} aria-label={`Zeitraum für ${item.title}`} noValidate onSubmit={speichern} className="mt-3 grid min-w-0 max-w-full gap-3" aria-busy={laeuft}>
+          <div className="grid min-w-0 max-w-full gap-3 sm:grid-cols-2">
+            <label className="grid min-w-0 max-w-full gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-in`}>
               Check-in
-              <input id={`${id}-check-in`} type="date" required value={startsOn} disabled={laeuft}
-                onChange={(event) => setStartsOn(event.target.value)}
-                aria-invalid={feldfehler || undefined} aria-describedby={fehler ? `${id}-fehler` : undefined}
+              <input ref={checkIn} id={`${id}-check-in`} type="date" required value={startsOn} disabled={laeuft}
+                onChange={(event) => { setStartsOn(event.target.value); setFehler('') }}
+                aria-invalid={feldUngueltig('startsOn') || undefined} aria-describedby={meldung ? `${id}-fehler` : undefined}
                 className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
             </label>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-out`}>
+            <label className="grid min-w-0 max-w-full gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-out`}>
               Check-out
-              <input id={`${id}-check-out`} type="date" required value={endsOn} disabled={laeuft}
-                onChange={(event) => setEndsOn(event.target.value)}
-                aria-invalid={feldfehler || undefined} aria-describedby={fehler ? `${id}-fehler` : undefined}
+              <input ref={checkOut} id={`${id}-check-out`} type="date" required value={endsOn} disabled={laeuft}
+                onChange={(event) => { setEndsOn(event.target.value); setFehler('') }}
+                aria-invalid={feldUngueltig('endsOn') || undefined} aria-describedby={meldung ? `${id}-fehler` : undefined}
                 className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
             </label>
           </div>
-          {fehler ? <p id={`${id}-fehler`} role="alert" className="break-words text-sm text-danger-600">{fehler}</p> : null}
+          {meldung ? <p ref={zusammenfassung} id={`${id}-fehler`} role="alert" tabIndex={-1} className="break-words rounded text-sm text-danger-600 focus:outline-none focus:ring-4 focus:ring-brand-600/15">{meldung}</p> : null}
           <div className="flex flex-wrap gap-2">
-            <button type="submit" disabled={laeuft} className="min-h-11 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-50">
+            <button type="submit" disabled={laeuft} className="min-h-11 max-w-full rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-50">
               {laeuft ? 'Wird gespeichert …' : 'Zeitraum speichern'}
             </button>
-            <button type="button" disabled={laeuft} onClick={schliessen} className="min-h-11 rounded-full border border-line-300 px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50">
+            <button type="button" disabled={laeuft} onClick={schliessen} className="min-h-11 max-w-full rounded-full border border-line-300 px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50">
               Abbrechen
             </button>
           </div>
