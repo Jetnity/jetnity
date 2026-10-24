@@ -5,8 +5,55 @@
 // Gemeinsame Oberfläche für den einen laufenden Create-Versuch.
 // Kein Mutationsrahmen: keine Action, kein Speicher, kein Router.
 // TripPlanner und Reiseidee bleiben die Aufrufer.
+//
+// Die Übergänge sind reine Werte. Der Hook hält sie in einer Ref, damit
+// der Schutz schon vor dem nächsten Render gilt. Dieselben Übergänge
+// prüft der gewöhnliche Node-Test, ohne Browser.
 
 import * as React from 'react'
+
+export type CreationLifecycleStand = {
+  belegt: boolean
+  generation: number
+  montiert: boolean
+}
+
+export function creationLifecycleAnfang(): CreationLifecycleStand {
+  return { belegt: false, generation: 0, montiert: true }
+}
+
+/**
+ * Zweiter Aufruf, solange der erste noch belegt ist, bleibt ohne neue Generation.
+ * Ein schon gesendeter Konto-Aufruf wird hier nicht abgebrochen.
+ */
+export function creationLifecycleBeginnen(stand: CreationLifecycleStand): {
+  stand: CreationLifecycleStand
+  lauf: number | null
+} {
+  if (stand.belegt) return { stand, lauf: null }
+  const lauf = stand.generation + 1
+  return {
+    stand: { belegt: true, generation: lauf, montiert: stand.montiert },
+    lauf,
+  }
+}
+
+/** Nur diese Instanz und genau diese Generation dürfen ein Ergebnis anwenden. */
+export function creationLifecycleAktuell(stand: CreationLifecycleStand, lauf: number): boolean {
+  return stand.montiert && stand.generation === lauf
+}
+
+/**
+ * Hebt die Belegung nur für die laufende Generation auf.
+ * Eine ältere Generation lässt die neuere Belegung stehen.
+ */
+export function creationLifecycleBeenden(
+  stand: CreationLifecycleStand,
+  lauf: number,
+): CreationLifecycleStand {
+  if (stand.generation !== lauf) return stand
+  return { ...stand, belegt: false }
+}
 
 /**
  * Synchroner Schreibschutz plus Instanz-Generation.
@@ -20,34 +67,31 @@ import * as React from 'react'
  */
 export function usePlanningCreationLifecycle() {
   const [laeuft, setLaeuft] = React.useState(false)
-  const belegt = React.useRef(false)
-  const generation = React.useRef(0)
-  const montiert = React.useRef(true)
+  const stand = React.useRef<CreationLifecycleStand>(creationLifecycleAnfang())
 
   React.useEffect(() => {
-    montiert.current = true
+    stand.current = { ...stand.current, montiert: true }
     return () => {
-      montiert.current = false
+      stand.current = { ...stand.current, montiert: false }
     }
   }, [])
 
-  const gesperrt = () => belegt.current
+  const gesperrt = () => stand.current.belegt
 
   const beginnen = (): number | null => {
-    if (belegt.current) return null
-    belegt.current = true
-    const lauf = generation.current + 1
-    generation.current = lauf
-    setLaeuft(true)
-    return lauf
+    const ergebnis = creationLifecycleBeginnen(stand.current)
+    stand.current = ergebnis.stand
+    if (ergebnis.lauf !== null) setLaeuft(true)
+    return ergebnis.lauf
   }
 
-  const aktuell = (lauf: number) => montiert.current && generation.current === lauf
+  const aktuell = (lauf: number) => creationLifecycleAktuell(stand.current, lauf)
 
   const beenden = (lauf: number) => {
-    if (generation.current !== lauf) return
-    belegt.current = false
-    if (montiert.current) setLaeuft(false)
+    const vorher = stand.current
+    const naechste = creationLifecycleBeenden(vorher, lauf)
+    stand.current = naechste
+    if (naechste !== vorher && naechste.montiert) setLaeuft(false)
   }
 
   return { laeuft, gesperrt, beginnen, aktuell, beenden }
