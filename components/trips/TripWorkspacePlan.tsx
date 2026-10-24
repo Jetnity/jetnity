@@ -7,6 +7,7 @@ import { buchungstext, vorbereitungenFuerPunkt } from '@/lib/trips/trip-plan-int
 import type { ReadinessViewItem } from '@/lib/readiness/domain'
 import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
 import PlanpunktEditor from '@/components/trips/PlanpunktEditor'
+import { planFokusZurueck, usePlanEditorLifecycle } from '@/components/trips/usePlanEditorLifecycle'
 import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripTimelineZeitpruefung from '@/components/trips/TripTimelineZeitpruefung'
 import {
@@ -159,18 +160,42 @@ export default function TripWorkspacePlan({
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)
-  const editorOwner = React.useRef(0)
-  const [editorGeneration, setEditorGeneration] = React.useState(0)
-  React.useLayoutEffect(() => { editorOwner.current++ }, [aktiverTag])
+  const meldungRef = React.useRef<HTMLParagraphElement>(null)
+  const meldungOp = React.useRef<number | null>(null)
+  const meldungFokus = React.useRef<number | null>(null)
+  const leben = usePlanEditorLifecycle(aktiverTag)
+  const tripIdRef = React.useRef(reise.id)
+  const [geseheneReise, setGeseheneReise] = React.useState(reise.id)
   const [formularTag, setFormularTag] = React.useState(aktiverTag)
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [bearbeiten, setBearbeiten] = React.useState<TripItem | undefined>()
   const [meldung, setMeldung] = React.useState('')
   const [erfolg, setErfolg] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState(false)
+  if (geseheneReise !== reise.id) {
+    setGeseheneReise(reise.id)
+    leben.fremdeReise()
+    setFormularTag(aktiverTag)
+    setFormularOffen(false)
+    setBearbeiten(undefined)
+    setMeldung('')
+    setErfolg('')
+  }
   if (formularTag !== aktiverTag) {
     setFormularTag(aktiverTag); setFormularOffen(false); setBearbeiten(undefined); setMeldung(''); setErfolg('')
   }
+  const loeschungAktuellRef = React.useRef(leben.loeschungAktuell)
+  const fokusAktuellRef = React.useRef(leben.fokusAktuell)
+  React.useLayoutEffect(() => {
+    tripIdRef.current = reise.id
+    loeschungAktuellRef.current = leben.loeschungAktuell
+    fokusAktuellRef.current = leben.fokusAktuell
+  }, [reise.id, leben.loeschungAktuell, leben.fokusAktuell])
+  React.useEffect(() => {
+    if (!meldung || meldungOp.current == null || meldungFokus.current == null) return
+    if (!loeschungAktuellRef.current(meldungOp.current)) return
+    if (!fokusAktuellRef.current(meldungFokus.current)) return
+    meldungRef.current?.focus({ preventScroll: true })
+  }, [meldung])
 
   const timeline = timelineAbleiten(reise, ohneTag, aktiverTag)
   const tag = timeline.gewaehlterTag
@@ -183,27 +208,64 @@ export default function TripWorkspacePlan({
     gewaehltenTagSichtbarHalten(timeline.gewaehlterTagId)
   }, [timeline.gewaehlterTagId])
 
-  const zurueck = () => {
-    setFormularOffen(false); setBearbeiten(undefined)
-    requestAnimationFrame(() => {
-      const target = editorTrigger.current?.isConnected && editorTrigger.current.getClientRects().length
-        ? editorTrigger.current : root.current?.querySelector<HTMLElement>('[data-plan-hinzufuegen]')
-      target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'center', behavior: 'instant' })
-    })
+  const zurueck = (punktId: string | null) => {
+    const fokusId = leben.editorFokus()
+    setFormularOffen(false)
+    setBearbeiten(undefined)
+    planFokusZurueck(root.current, editorTrigger.current, punktId, () => leben.fokusAktuell(fokusId))
+  }
+
+  const gespeichert = (punktId: string | null) => {
+    if (!leben.generationPasst(leben.editorGeneration)) return
+    setErfolg('Planpunkt gespeichert.')
+    zurueck(punktId)
   }
 
   const entfernen = async (tagId: string, punktId: string) => {
-    if (laeuft) return
+    const op = leben.loeschungBeginnen()
+    if (op == null) return
+    const fokusId = leben.loeschFokus()
+    const tripId = reise.id
+    meldungOp.current = null
+    meldungFokus.current = null
     setMeldung('')
-    setLaeuft(true)
-    const context = window.location.href
     try {
       const fehler = await onPunktEntfernen(tagId, punktId)
-      if (window.location.href === context && fehler) setMeldung(fehler)
+      if (!leben.loeschungAktuell(op) || tripIdRef.current !== tripId) return
+      if (fehler) {
+        meldungOp.current = op
+        meldungFokus.current = fokusId
+        setMeldung(fehler)
+      }
     } catch {
-      if (window.location.href === context) setMeldung('Der Punkt konnte nicht entfernt werden. Bitte versuche es erneut.')
-    } finally { setLaeuft(false) }
+      if (leben.loeschungAktuell(op) && tripIdRef.current === tripId) {
+        meldungOp.current = op
+        meldungFokus.current = fokusId
+        setMeldung('Der Punkt konnte nicht entfernt werden. Bitte versuche es erneut.')
+      }
+    } finally {
+      leben.loeschungBeenden(op)
+    }
   }
+
+  const editorProps = {
+    reise,
+    generation: leben.editorGeneration,
+    onAnlegen: onPunktAnlegen,
+    onBearbeiten: onPunktBearbeiten,
+    operationBeginnen: leben.editorBeginnen,
+    operationAktuell: leben.editorAktuell,
+  }
+  const bestehenderEditor = formularOffen && bearbeiten ? (
+    <PlanpunktEditor
+      key={`${reise.id}:${bearbeiten.id}:${bearbeiten.dayId == null ? 'ohne' : (tag?.id ?? 'ohne')}:${leben.editorGeneration}`}
+      {...editorProps}
+      tagId={bearbeiten.dayId ?? ''}
+      item={bearbeiten}
+      onAbbrechen={() => zurueck(bearbeiten.id)}
+      onFertig={() => gespeichert(bearbeiten.id)}
+    />
+  ) : null
 
   const tagesKopf = tag && (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -223,7 +285,7 @@ export default function TripWorkspacePlan({
       <button
         type="button"
         data-plan-hinzufuegen
-        onClick={(event) => { setEditorGeneration(++editorOwner.current); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
+        onClick={(event) => { leben.oeffnen(); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
         aria-expanded={formularOffen}
         className={cn(
           'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 sm:w-auto',
@@ -238,16 +300,16 @@ export default function TripWorkspacePlan({
 
   const tagesFelder = tag && (
     <>
-      {formularOffen && <PlanpunktEditor key={`${reise.id}:${tag.id}:${bearbeiten?.id ?? 'new'}`}
-        reise={reise} tagId={tag.id} item={bearbeiten} onAnlegen={onPunktAnlegen} onBearbeiten={onPunktBearbeiten}
-        onAbbrechen={zurueck} onFertig={() => { if (editorGeneration !== editorOwner.current) return; setErfolg('Planpunkt gespeichert.'); zurueck() }} />}
-      {erfolg && <p role="status" className="mt-3 text-sm text-brand-800">{erfolg}</p>}
-
-      {meldung && (
-        <p role="alert" className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm text-danger-600">
-          {meldung}
-        </p>
+      {formularOffen && !bearbeiten && (
+        <PlanpunktEditor
+          key={`${reise.id}:${tag.id}:new:${leben.editorGeneration}`}
+          {...editorProps}
+          tagId={tag.id}
+          onAbbrechen={() => zurueck(null)}
+          onFertig={() => gespeichert(null)}
+        />
       )}
+      {bearbeiten?.dayId === tag.id ? bestehenderEditor : null}
 
       {tag.items.length === 0 ? (
         <p data-plan-leer className="mt-3 text-sm leading-6 text-ink-700">
@@ -274,10 +336,10 @@ export default function TripWorkspacePlan({
                     hinweis={vorbereitungenFuerPunkt(punkt.id,readinessItems)[0]}
                     onPreparation={onPreparation}
                     zeit={zeit}
-                    gesperrt={laeuft}
+                    gesperrt={leben.loescht}
                     gewaehlt={gewaehlterPunktId === punkt.id}
                     onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-                    onBearbeiten={onPunktBearbeiten ? () => { setEditorGeneration(++editorOwner.current); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
+                    onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                     onEntfernen={() => entfernen(tag.id, punkt.id)}
                   />
                 ))}
@@ -292,11 +354,13 @@ export default function TripWorkspacePlan({
   return (
     <section ref={root}
       aria-label="Tagesplan"
+      tabIndex={-1}
       data-tagesplan-modul="ein"
       data-plan-premium="4"
       data-plan-kompakt={kompakt ? 'ja' : 'nein'}
       className={cn(
         'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
+        fokusRing,
         eingebettet ? 'mt-1' : 'mt-5',
       )}
     >
@@ -304,9 +368,15 @@ export default function TripWorkspacePlan({
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
         <p className="mt-1 text-sm text-ink-900">{timeline.planText}</p>
       </div>
+      {erfolg && <p role="status" data-plan-erfolg className="mt-3 text-sm text-brand-800">{erfolg}</p>}
+      {meldung && (
+        <p ref={meldungRef} role="alert" tabIndex={-1} data-plan-meldung className={cn('mt-3 rounded-2xl bg-white px-4 py-3 text-sm text-danger-600', fokusRing)}>
+          {meldung}
+        </p>
+      )}
 
       {!timeline.hatTage ? (
-        <p className="mt-4 text-sm leading-6 text-ink-700">
+        <p tabIndex={-1} data-plan-keine-tage className={cn('mt-4 rounded text-sm leading-6 text-ink-700', fokusRing)}>
           Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
         </p>
       ) : (
@@ -329,7 +399,7 @@ export default function TripWorkspacePlan({
                   type="button"
                   data-plan-tag-vorher
                   aria-label="Vorheriger Tag"
-                  disabled={!navigator.vorherId || laeuft}
+                  disabled={!navigator.vorherId || leben.loescht}
                   onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)}
                   className={cn(
                     'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
@@ -342,7 +412,7 @@ export default function TripWorkspacePlan({
                   type="button"
                   data-plan-tag-naechster
                   aria-label="Nächster Tag"
-                  disabled={!navigator.naechsterId || laeuft}
+                  disabled={!navigator.naechsterId || leben.loescht}
                   onClick={() => navigator.naechsterId && onTagWechseln(navigator.naechsterId)}
                   className={cn(
                     'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
@@ -446,13 +516,13 @@ export default function TripWorkspacePlan({
           {tag ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt))}
             selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
           {tag ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id}
-            onPunktOeffnen={onPunktOeffnen} gesperrt={laeuft} /> : null}
+            onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} /> : null}
         </>
       )}
 
-      {timeline.ungeplante.length > 0 && (
+      {(timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
         <div className="mt-5 border-t border-line-200 pt-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
+          <p tabIndex={-1} data-plan-ungeplant className={cn('rounded text-xs font-semibold uppercase tracking-[0.16em] text-ink-700', fokusRing)}>
             Noch nicht eingeplant
           </p>
           <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
@@ -461,14 +531,15 @@ export default function TripWorkspacePlan({
                 key={punkt.id}
                 punkt={punkt}
                 zeit={lokalePlanzeit(punkt.startsAt)}
-                gesperrt={laeuft}
+                gesperrt={leben.loescht}
                 gewaehlt={gewaehlterPunktId === punkt.id}
                 onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-                onBearbeiten={onPunktBearbeiten ? () => { setEditorGeneration(++editorOwner.current); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
+                onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                 onEntfernen={() => entfernen('', punkt.id)}
               />
             ))}
           </ol>
+          {bearbeiten?.dayId == null ? bestehenderEditor : null}
         </div>
       )}
     </section>

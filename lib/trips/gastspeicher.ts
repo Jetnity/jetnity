@@ -78,6 +78,7 @@ import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment
 import { createZieleGraph } from '@/lib/trips/create-stages'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
+import { gastLoeschBasisGleich } from '@/lib/trips/trip-plan-editing-placement-recovery-1'
 import type { Ort } from '@/lib/places/domain'
 import { reiseMitKanonischenOrten, type KanonischeOrte } from '@/lib/places/kanon'
 import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
@@ -1078,16 +1079,53 @@ export function gastAktivitaetUebernehmen(
 
 /** Nimmt einen Planpunkt aus der aktiven Gastreise. */
 export function gastPlanpunktEntfernen(reise: Trip, punktId: string): Trip {
+  const roh = aktiveSchluesselRohLesen()
+  if (roh.art === 'nicht_im_browser' || roh.art === 'speicher_unlesbar') {
+    throw new GastspeicherUnlesbarFehler()
+  }
+  if (roh.art === 'fehlend') {
+    throw new Error('Es liegt keine aktive Gastreise vor. Es wurde nichts gelöscht.')
+  }
+
+  let geparst: unknown
+  try {
+    geparst = JSON.parse(roh.bytes) as unknown
+  } catch {
+    throw new Error('Die gespeicherte Reise lässt sich nicht lesen. Es wurde nichts gelöscht.')
+  }
+
+  const aktuell = reiseLesen(geparst)
+  if (!aktuell) {
+    throw new Error('Die gespeicherte Reise ist ungültig. Es wurde nichts gelöscht.')
+  }
+  const erwartet = reiseLesen(reise)
+  if (!erwartet) {
+    throw new Error('Die vorgelegte Reise ist ungültig. Es wurde nichts gelöscht.')
+  }
+  if (erwartet.id !== aktuell.id || erwartet.revision !== aktuell.revision) {
+    throw new VeralteteFassungFehler()
+  }
+  if (!gastLoeschBasisGleich(erwartet, aktuell)) {
+    throw new VeralteteFassungFehler()
+  }
+
+  const anzahl = [...aktuell.days.flatMap((tag) => tag.items), ...aktuell.ohneTag].filter(
+    (punkt) => punkt.id === punktId,
+  ).length
+  if (anzahl !== 1) {
+    throw new Error('Dieser Planpunkt ist nicht genau einmal vorhanden und wurde nicht entfernt.')
+  }
+
   return gastreiseSpeichern({
-    ...reise,
-    revision: reise.revision + 1,
-    days: reise.days.map((tag) => ({
+    ...aktuell,
+    revision: aktuell.revision + 1,
+    days: aktuell.days.map((tag) => ({
       ...tag,
       items: tag.items
         .filter((punkt) => punkt.id !== punktId)
         .map((punkt, stelle) => ({ ...punkt, position: stelle + 1 })),
     })),
-    ohneTag: reise.ohneTag.filter((punkt) => punkt.id !== punktId),
+    ohneTag: aktuell.ohneTag.filter((punkt) => punkt.id !== punktId),
   })
 }
 
