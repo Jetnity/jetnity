@@ -37,23 +37,23 @@ function ansichtAusAlt(alt: BuchungenAlt): BuchungenAnsicht {
 }
 
 const textLink =
-  'inline-flex min-h-11 items-center justify-center rounded-full px-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2'
+  'inline-flex min-h-11 w-full min-w-0 max-w-full flex-wrap items-center justify-center gap-2 whitespace-normal rounded-full px-5 text-center text-sm font-semibold [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto'
 
 function BuchungsKarte({ buchung }: { buchung: KontoBuchung }) {
   const zeit = buchungZeittext(buchung)
   const planpunkt = buchungPlanpunktPfad(buchung.tripId, buchung.id)
 
   return (
-    <article className="min-w-0 rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">{buchung.artBezeichnung}</p>
+    <article className="min-w-0 max-w-full rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] [overflow-wrap:anywhere] sm:p-6">
+      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+        <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 [overflow-wrap:anywhere]">{buchung.artBezeichnung}</p>
         {buchung.tripArchived ? (
           <p className="rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
             {BUCHUNGEN_COPY.archivKennzeichen}
           </p>
         ) : null}
       </div>
-      <h2 className="mt-3 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800">{buchung.title}</h2>
+      <h2 className="mt-3 min-w-0 max-w-full break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">{buchung.title}</h2>
       {zeit ? <p className="mt-2 text-sm text-ink-800">{zeit}</p> : null}
       {buchung.tripTitle ? (
         <p className="mt-2 break-words text-sm text-ink-700">
@@ -66,7 +66,7 @@ function BuchungsKarte({ buchung }: { buchung: KontoBuchung }) {
           className={`${textLink} mt-5 gap-2 bg-brand-800 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
         >
           {BUCHUNGEN_COPY.planpunktOeffnen}
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
         </Link>
       ) : null}
     </article>
@@ -91,8 +91,8 @@ function Hinweis({
       role={rolle}
       className={
         rolle === 'alert'
-          ? 'mt-8 rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center sm:px-10'
-          : 'mt-8 rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-10 text-center sm:px-10'
+          ? 'mt-8 min-w-0 max-w-full rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
+          : 'mt-8 min-w-0 max-w-full rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
       }
     >
       {rolle === 'alert' ? (
@@ -104,10 +104,10 @@ function Hinweis({
           <Ticket className="h-5 w-5" aria-hidden="true" />
         </span>
       )}
-      <h2 className={`mt-5 text-xl font-semibold tracking-[-0.03em] ${rolle === 'alert' ? 'text-red-800' : 'text-brand-800'}`}>
+      <h2 className={`mt-5 min-w-0 max-w-full break-words text-xl font-semibold tracking-[-0.03em] [overflow-wrap:anywhere] ${rolle === 'alert' ? 'text-red-800' : 'text-brand-800'}`}>
         {titel}
       </h2>
-      <p className={`mx-auto mt-3 max-w-md text-sm leading-6 ${rolle === 'alert' ? 'text-red-700' : 'text-ink-700'}`}>
+      <p className={`mx-auto mt-3 min-w-0 max-w-full break-words text-sm leading-6 [overflow-wrap:anywhere] sm:max-w-md ${rolle === 'alert' ? 'text-red-700' : 'text-ink-700'}`}>
         {text}
       </p>
       {href && aktion ? (
@@ -124,12 +124,12 @@ export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | 
   const fehlerText = ansicht.fehlerStatus === 503 ? BUCHUNGEN_COPY.fehler503 : BUCHUNGEN_COPY.fehler500
 
   return (
-    <div className="min-w-0" data-buchungen={ansicht.zustand}>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">{BUCHUNGEN_COPY.seitenEyebrow}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">{BUCHUNGEN_COPY.seitenTitel}</h1>
-      <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.seitenLead}</p>
-      <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.hinweis}</p>
-      <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.ordnungHinweis}</p>
+    <div className="min-w-0 max-w-full [overflow-wrap:anywhere]" data-buchungen={ansicht.zustand}>
+      <p className="max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 [overflow-wrap:anywhere]">{BUCHUNGEN_COPY.seitenEyebrow}</p>
+      <h1 className="mt-2 min-w-0 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 [overflow-wrap:anywhere] sm:text-5xl">{BUCHUNGEN_COPY.seitenTitel}</h1>
+      <p className="mt-3 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.seitenLead}</p>
+      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.hinweis}</p>
+      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.ordnungHinweis}</p>
 
       <BuchungenFilter
         titel={ansicht.titel}

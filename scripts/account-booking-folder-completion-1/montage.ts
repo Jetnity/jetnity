@@ -2,6 +2,7 @@
 // CSS kommt aus dem Production-Build. Das ist keine Geräte-, Zoom- oder Screenreader-Prüfung.
 
 import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createElement } from 'react'
@@ -139,10 +140,89 @@ function cssDateien(ordner: string, treffer: string[] = []): string[] {
   return treffer
 }
 
-function cssLesen(): string {
-  const dateien = cssDateien(join('.next', 'static'))
+function sha256(inhalt: Buffer | string): string {
+  return createHash('sha256').update(inhalt).digest('hex')
+}
+
+function cssLesen(): { text: string; sha256: string; dateien: { pfad: string; sha256: string; bytes: number }[] } {
+  const dateien = cssDateien(join('.next', 'static')).sort()
   if (dateien.length === 0) throw new Error('Production-CSS fehlt. Zuerst den Build ausführen.')
-  return dateien.map((pfad) => readFileSync(pfad, 'utf8')).join('\n')
+  const eintraege = dateien.map((pfad) => {
+    const inhalt = readFileSync(pfad)
+    return { pfad, sha256: sha256(inhalt), bytes: inhalt.length, text: inhalt.toString('utf8') }
+  })
+  const text = eintraege.map((eintrag) => eintrag.text).join('\n')
+  return {
+    text,
+    sha256: sha256(text),
+    dateien: eintraege.map(({ pfad, sha256: summe, bytes }) => ({ pfad, sha256: summe, bytes })),
+  }
+}
+
+type Gemessen = {
+  clientWidth: number
+  scrollWidth: number
+  ueberlauf: number
+  schrift: string
+  zustand: string | null
+  h1: {
+    fontSize: string
+    lineHeight: string
+    letterSpacing: string
+    fontWeight: string
+    overflowWrap: string
+  } | null
+  link: {
+    text: string
+    fontSize: string
+    backgroundColor: string
+    display: string
+    overflowWrap: string
+    rechts: number
+    breite: number
+  } | null
+}
+
+function zahl(wert: string): number {
+  const n = Number.parseFloat(wert)
+  if (!Number.isFinite(n)) throw new Error(`Keine Zahl: ${wert}`)
+  return n
+}
+
+function stilePruefen(breite: number, schrift: string, mass: Gemessen): void {
+  if (mass.schrift !== schrift) throw new Error(`Root-Schrift ${mass.schrift} statt ${schrift}`)
+  if (!mass.h1) throw new Error('H1 fehlt. Die Überschrift wurde nicht gerendert.')
+  const wurzel = zahl(schrift)
+  const h1 = zahl(mass.h1.fontSize)
+  const erwartet = (breite >= 640 ? 3 : 1.875) * wurzel
+  if (Math.abs(h1 - erwartet) > 0.6) {
+    throw new Error(
+      `H1 ${mass.h1.fontSize} statt ${erwartet}px bei Root ${schrift} und Breite ${breite}. text-3xl/text-5xl ist nicht wirksam.`,
+    )
+  }
+  if (mass.h1.fontWeight !== '600') throw new Error(`H1-Gewicht ${mass.h1.fontWeight} statt 600`)
+  if (mass.h1.overflowWrap !== 'anywhere') throw new Error(`H1 overflow-wrap ${mass.h1.overflowWrap}`)
+  const abstand = zahl(mass.h1.letterSpacing)
+  if (Math.abs(abstand - -0.04 * h1) > 0.25) {
+    throw new Error(`H1-Laufweite ${mass.h1.letterSpacing} statt ${-0.04 * h1}px`)
+  }
+  if (schrift === '32px' && breite === 320) {
+    const zeile = zahl(mass.h1.lineHeight)
+    if (Math.abs(zeile - 72) > 0.6) throw new Error(`H1-Zeilenhöhe ${mass.h1.lineHeight} statt 72px`)
+  }
+  if (!mass.link) return
+  if (mass.link.backgroundColor === 'rgba(0, 0, 0, 0)' || mass.link.backgroundColor === 'transparent') {
+    throw new Error('Aktionslink ohne Hintergrund. Production-CSS ist nicht wirksam.')
+  }
+  if (mass.link.display !== 'inline-flex') throw new Error(`Link-Display ${mass.link.display}`)
+  if (mass.link.overflowWrap !== 'anywhere') throw new Error(`Link overflow-wrap ${mass.link.overflowWrap}`)
+  const linkSchrift = zahl(mass.link.fontSize)
+  if (Math.abs(linkSchrift - 0.875 * wurzel) > 0.6) {
+    throw new Error(`Link-Schrift ${mass.link.fontSize} statt ${0.875 * wurzel}px`)
+  }
+  if (mass.link.rechts > mass.clientWidth + 1) {
+    throw new Error(`Link ragt über den Viewport: ${mass.link.rechts} > ${mass.clientWidth}`)
+  }
 }
 
 function dokument(markup: string, css: string): string {
@@ -219,6 +299,10 @@ const ausgabe = neueAusgabe()
 const bilder = join(ausgabe, 'screens')
 mkdirSync(bilder, { recursive: true })
 const css = cssLesen()
+const quellenCss = ['styles/globals.css', 'tailwind.config.js', 'postcss.config.js'].map((pfad) => {
+  const inhalt = readFileSync(pfad)
+  return { pfad, sha256: sha256(inhalt), bytes: inhalt.length, git: git(['hash-object', pfad]) }
+})
 const browser = await chromium.launch()
 const befund: {
   browser: string
@@ -232,7 +316,7 @@ const befund: {
   tastatur: {},
   bewegung: 'reduce',
   hinweis:
-    'CSS und Root-Font aus dem lokalen Production-Build in headless Chromium. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto.',
+    'CSS aus dem lokalen Next-Production-Build, injiziert als zusammengefügtes style-Element. Berechnete H1-, Link- und Root-Stile werden mitgeschrieben und gegen die Utilities geprüft. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Die frühere Montage mit Überlauf 0 hat die berechnete H1-Schrift nicht festgehalten; sie wird hier nicht umgedeutet.',
 }
 
 try {
@@ -242,21 +326,52 @@ try {
     const messungen = []
     for (const breite of breiten) {
       await seite.setViewportSize({ width: breite.width, height: breite.height })
-      await seite.setContent(dokument(markup, css), { waitUntil: 'domcontentloaded' })
+      await seite.setContent(dokument(markup, css.text), { waitUntil: 'domcontentloaded' })
       const schrift = breite.name === '320' ? '32px' : '16px'
       await seite.evaluate((groesse) => {
         document.documentElement.style.fontSize = groesse
       }, schrift)
-      const mass = await seite.evaluate(() => ({
-        zustand: document.querySelector('[data-buchungen]')?.getAttribute('data-buchungen'),
-        ueberlauf: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        schrift: getComputedStyle(document.documentElement).fontSize,
-      }))
+      const mass = await seite.evaluate((): Gemessen => {
+        const h1 = document.querySelector('h1')
+        const h1Stil = h1 ? getComputedStyle(h1) : null
+        const link = [...document.querySelectorAll('a')].find((anker) => (anker.textContent ?? '').includes('Planpunkt öffnen'))
+          ?? [...document.querySelectorAll('a')].find((anker) => (anker.textContent ?? '').trim().length > 0)
+        const linkStil = link ? getComputedStyle(link) : null
+        const linkBereich = link?.getBoundingClientRect()
+        return {
+          clientWidth: document.documentElement.clientWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+          ueberlauf: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          schrift: getComputedStyle(document.documentElement).fontSize,
+          zustand: document.querySelector('[data-buchungen]')?.getAttribute('data-buchungen') ?? null,
+          h1: h1Stil
+            ? {
+                fontSize: h1Stil.fontSize,
+                lineHeight: h1Stil.lineHeight,
+                letterSpacing: h1Stil.letterSpacing,
+                fontWeight: h1Stil.fontWeight,
+                overflowWrap: h1Stil.overflowWrap,
+              }
+            : null,
+          link: link && linkStil && linkBereich
+            ? {
+                text: (link.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 80),
+                fontSize: linkStil.fontSize,
+                backgroundColor: linkStil.backgroundColor,
+                display: linkStil.display,
+                overflowWrap: linkStil.overflowWrap,
+                rechts: linkBereich.right,
+                breite: linkBereich.width,
+              }
+            : null,
+        }
+      })
       if (mass.ueberlauf > 1) throw new Error(`${zustand} ${breite.name} Überlauf ${mass.ueberlauf}`)
-      messungen.push({ ...breite, schrift, ueberlauf: mass.ueberlauf, zustand: mass.zustand })
+      stilePruefen(breite.width, schrift, mass)
+      messungen.push({ ...breite, schrift, ueberlauf: mass.ueberlauf, zustand: mass.zustand, h1: mass.h1, link: mass.link })
     }
     await seite.setViewportSize({ width: 390, height: 844 })
-    await seite.setContent(dokument(markup, css), { waitUntil: 'domcontentloaded' })
+    await seite.setContent(dokument(markup, css.text), { waitUntil: 'domcontentloaded' })
     const weg = tastaturZiele[zustand]
     const gesehen = await tabWeg(seite, weg.ziele, weg.grenze)
     befund.tastatur[zustand] = gesehen.filter((name, index, alle) => alle.indexOf(name) === index)
@@ -300,11 +415,17 @@ try {
       baum: git(['rev-parse', 'HEAD^{tree}']),
       main: git(['rev-parse', 'origin/main']),
       quellen: hashes,
+      css: {
+        herkunft: 'Zusammengeführte Dateien unter .next/static mit Endung .css aus dem lokalen next build. Das ist nicht die unabhängige PostCSS-Kompilation der Prüfung.',
+        sha256: css.sha256,
+        dateien: css.dateien,
+        quellen: quellenCss,
+      },
       befehl: process.argv.join(' '),
       node: process.version,
     },
     grenze:
-      'Statisches Markup mit CSS aus dem lokalen Production-Build. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.',
+      'Statisches Markup mit CSS aus dem lokalen Production-Build. Die berechnete H1-Schrift muss text-3xl (60px bei Root 32px, 30px bei Root 16px) oder ab 640px text-5xl sein; sonst bricht die Montage ab. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px. Die Montage von 1574adcb mit Überlauf 0 bleibt unverändert und ist kein Beleg für diese Schrift.',
     befund,
   }
   writeFileSync(join(ausgabe, 'montage.json'), `${JSON.stringify(bericht, null, 2)}\n`)
