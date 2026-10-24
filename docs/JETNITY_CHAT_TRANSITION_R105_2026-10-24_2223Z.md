@@ -21,7 +21,7 @@ Do not rerun already passed C candidate proofs without a concrete remaining risk
 
 ## C source, proof and original author
 
-Original author **Jetnity Manual Journey Editor Completion 1 — Cursor Generation1**, session **bc-02fbe98d-97ba-4c0b-a3b0-10857d784379**, actual modelgrok-4.7-high-fast, [STOP6390045540](https://github.com/Jetnity/jetnity/pull/1001#issuecomment-6390045540). Explicit write freeze; later CI findings wait for TL instruction.
+Original author **Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1**, session **bc-02fbe98d-97ba-4c0b-a3b0-10857d784379**, actual modelgrok-4.7-high-fast, [STOP6390045540](https://github.com/Jetnity/jetnity/pull/1001#issuecomment-6390045540). Explicit write freeze; later CI findings wait for TL instruction.
 
 All named source/proof findings are independently closed at9d1. Runtime stays identical to correctedb356. V6 changes only five stable-useRef adapter lines inside the existing lodging test fixture; all9 test bodies and107 assertion sites unchanged. The candidate1990-before-extra-grant chronology remains explicitly documented by ADDENDUM V3/f522. No retrospective authorization claim.
 
@@ -39,7 +39,7 @@ Durable original archives:
 
 PR#1000/#997, branch feat/account-booking-folder-completion-1, exacthead **5a28496521c66cb2407f1f897b6c79646df1ea94**,tree **9711fcf35161873792d713064203e5a49892b7b5**. Actual merge-base remains0c37d318c47a758f06634448d6e0de3856bbc6a6; against live9092 **6ahead/38behind**. Last original STOP6387889144; previous CODE REVIEW V1 was6387691781. Next is **CODE REVIEW V2**, not V4.
 
-Original only author **Jetnity Account Booking Folder Completion1 — Cursor Generation1**, session **bc-a34030c7-4c19-4c9f-863f-193cfdfa34da**, actual modelgrok-4.7-high-fast. TASKblob754fc2e0d87ba0755713c174acf60723ab3d1f13; PLANblobb29a5195c57c797f6252dc5863fc6c7b9f0ebac2, accepted2ceb9e3a689d9e64e2ed555833e8b302cd139116; immutable.
+Original only author **Jetnity Account Booking Folder Completion 1 — Cursor Generation 1**, session **bc-a34030c7-4c19-4c9f-863f-193cfdfa34da**, actual modelgrok-4.7-high-fast. TASKblob754fc2e0d87ba0755713c174acf60723ab3d1f13; PLANblobb29a5195c57c797f6252dc5863fc6c7b9f0ebac2, accepted2ceb9e3a689d9e64e2ed555833e8b302cd139116; immutable.
 
 Root/helper complete baseline review found no additional product-code blocker. Keep Symbol sentinel, applied-address form key and real-loader V1 fixes. B-P2-PROOF-04 is concrete: ablauf.ts sets letzterSubmit before async request/commit; then reads possibly stale postgrest.at(-1). Fake weiter=seite-2 is not genuine continuation. includesFlug1 also matches first-page10–19; Back only checks cleared title.
 
