@@ -20,6 +20,22 @@ import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import {
+  BUCHUNG_AKTION_KLASSE,
+  BUCHUNG_WIRD_GESPEICHERT,
+  bookingItemDisappeared,
+  bookingTripChanged,
+  beginRentalSave,
+  createBookingMemory,
+  createRentalMemory,
+  endRentalSave,
+  rememberRentalSubmit,
+  rentalFocusCurrent,
+  rentalStillOwned,
+  rentalTripChanged,
+  restoreOwnedFocus,
+  startBookingAction,
+} from '@/components/trips/useBookingActionLifecycle'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import {
   ORGANISIEREN_EINGABE_KLASSE,
@@ -47,23 +63,32 @@ export default function MietwagenBereich({
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   onManuellAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
 }) {
-  const [meldung, setMeldung] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const bestand = mietwagenBestand(reise, ohneTag)
-
-  const setzen = async (itemId: string, gebucht: boolean) => {
-    if (!onBuchungsstatus || laeuft) return
+  const aktionIds = bestand.items.map((punkt) => punkt.id)
+  const [memory] = React.useState(createBookingMemory())
+  const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const [meldung, setMeldung] = React.useState('')
+  const [seenTripId, setSeenTripId] = React.useState(reise.id)
+  if (bookingTripChanged(memory, seenTripId, reise.id)) {
+    setSeenTripId(reise.id)
+    setPendingId(null)
     setMeldung('')
-    setLaeuft(itemId)
-    const fehler = await onBuchungsstatus(itemId, gebucht)
-    setLaeuft(null)
-    if (fehler) setMeldung(fehler)
+  }
+  if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
+
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+    if (!onBuchungsstatus) return
+    startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
+      setPendingId(nextPending)
+      setMeldung(nextMessage)
+    })
   }
 
   return (
     <div className="grid gap-6">
       <section
         aria-label="Dein Mietwagen"
+        aria-busy={pendingId !== null}
         data-organisieren-flaeche="bestand"
         className={ORGANISIEREN_FLAECHE_KLASSE}
       >
@@ -105,11 +130,12 @@ export default function MietwagenBereich({
                   {kannBuchungMarkieren(punkt) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === punkt.id}
-                      onClick={() => void setzen(punkt.id, punkt.bookingStatus !== 'booked')}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== punkt.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {punkt.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === punkt.id ? 'Wird gespeichert …' : punkt.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -118,6 +144,7 @@ export default function MietwagenBereich({
           </ul>
         )}
 
+        {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
         {meldung ? (
           <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
             {meldung}
@@ -169,49 +196,76 @@ function ManuellerMietwagen({
   const [laeuft, setLaeuft] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [hinweis, setHinweis] = React.useState('')
+  const [memory] = React.useState(createRentalMemory())
+  const [seenTripId, setSeenTripId] = React.useState(reise.id)
+  if (rentalTripChanged(memory, seenTripId, reise.id)) {
+    setSeenTripId(reise.id)
+    setLaeuft(false)
+    setMeldung('')
+    setHinweis('')
+  }
 
   const speichern = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
-    if (laeuft) return
+    const claimed = beginRentalSave(memory)
+    if (!claimed) return
+    const { token, serial } = claimed
     setMeldung('')
     setHinweis('')
     setLaeuft(true)
-    const fehler = await onAnlegen({
-      title: null,
-      pickupName,
-      dropoffName,
-      pickupPlaceId: null,
-      dropoffPlaceId: null,
-      pickupOn: pickupOn || null,
-      pickupAt: pickupAt || null,
-      dropoffOn: dropoffOn || null,
-      dropoffAt: dropoffAt || null,
-      rentalSupplier: rentalSupplier || null,
-      vehicleClass: vehicleClass || null,
-      transmission: transmission || null,
-      priceAmount: null,
-      priceCurrency: null,
-      note: note || null,
-      dayId: null,
-      stageId: null,
-    })
-    setLaeuft(false)
-    if (fehler) {
-      setMeldung(fehler)
-      return
+    let fehler: string | null = null
+    let abgelehnt = false
+    try {
+      fehler = await onAnlegen({
+        title: null,
+        pickupName,
+        dropoffName,
+        pickupPlaceId: null,
+        dropoffPlaceId: null,
+        pickupOn: pickupOn || null,
+        pickupAt: pickupAt || null,
+        dropoffOn: dropoffOn || null,
+        dropoffAt: dropoffAt || null,
+        rentalSupplier: rentalSupplier || null,
+        vehicleClass: vehicleClass || null,
+        transmission: transmission || null,
+        priceAmount: null,
+        priceCurrency: null,
+        note: note || null,
+        dayId: null,
+        stageId: null,
+      })
+    } catch {
+      abgelehnt = true
     }
-    setHinweis('Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
-    const leer = rentalManuellStartwerte()
-    setPickupName(leer.pickupName)
-    setDropoffName(leer.dropoffName)
-    setPickupOn(leer.pickupOn)
-    setPickupAt(leer.pickupAt)
-    setDropoffOn(leer.dropoffOn)
-    setDropoffAt(leer.dropoffAt)
-    setRentalSupplier('')
-    setVehicleClass('')
-    setTransmission('')
-    setNote('')
+    if (!rentalStillOwned(memory, token)) return
+    endRentalSave(memory)
+    setLaeuft(false)
+    if (abgelehnt) {
+      setMeldung('Der Mietwagen konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
+    } else if (fehler) {
+      setMeldung(fehler)
+    } else {
+      setHinweis('Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
+      const leer = rentalManuellStartwerte()
+      setPickupName(leer.pickupName)
+      setDropoffName(leer.dropoffName)
+      setPickupOn(leer.pickupOn)
+      setPickupAt(leer.pickupAt)
+      setDropoffOn(leer.dropoffOn)
+      setDropoffAt(leer.dropoffAt)
+      setRentalSupplier('')
+      setVehicleClass('')
+      setTransmission('')
+      setNote('')
+    }
+    const submit = memory.submit
+    if (typeof window !== 'undefined') {
+      window.setTimeout(() => {
+        if (!rentalFocusCurrent(memory, serial)) return
+        restoreOwnedFocus(submit)
+      }, 0)
+    }
   }
 
   return (
@@ -230,13 +284,14 @@ function ManuellerMietwagen({
         Mietbedingungen.
       </p>
 
-      <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
+      <form className="mt-5 grid gap-3" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
         <OrganisierenFeldgruppe titel="Orte">
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               Abholung
               <input
                 value={pickupName}
+                disabled={laeuft}
                 onChange={(ereignis) => setPickupName(ereignis.target.value)}
                 placeholder={hinweise.pickupName}
                 required
@@ -248,6 +303,7 @@ function ManuellerMietwagen({
               Rückgabe
               <input
                 value={dropoffName}
+                disabled={laeuft}
                 onChange={(ereignis) => setDropoffName(ereignis.target.value)}
                 placeholder={hinweise.dropoffName}
                 required
@@ -265,6 +321,7 @@ function ManuellerMietwagen({
               <input
                 type="date"
                 value={pickupOn}
+                disabled={laeuft}
                 onChange={(ereignis) => setPickupOn(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -274,6 +331,7 @@ function ManuellerMietwagen({
               <input
                 type="time"
                 value={pickupAt}
+                disabled={laeuft}
                 onChange={(ereignis) => setPickupAt(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -288,6 +346,7 @@ function ManuellerMietwagen({
               <input
                 type="date"
                 value={dropoffOn}
+                disabled={laeuft}
                 onChange={(ereignis) => setDropoffOn(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -297,6 +356,7 @@ function ManuellerMietwagen({
               <input
                 type="time"
                 value={dropoffAt}
+                disabled={laeuft}
                 onChange={(ereignis) => setDropoffAt(ereignis.target.value)}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               />
@@ -310,6 +370,7 @@ function ManuellerMietwagen({
               Fahrzeugklasse, falls bekannt
               <select
                 value={vehicleClass}
+                disabled={laeuft}
                 onChange={(ereignis) => setVehicleClass(ereignis.target.value as VehicleClass | '')}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               >
@@ -325,6 +386,7 @@ function ManuellerMietwagen({
               Getriebe, falls bekannt
               <select
                 value={transmission}
+                disabled={laeuft}
                 onChange={(ereignis) => setTransmission(ereignis.target.value as Transmission | '')}
                 className={ORGANISIEREN_EINGABE_KLASSE}
               >
@@ -345,6 +407,7 @@ function ManuellerMietwagen({
               Vermieter, falls bekannt
               <input
                 value={rentalSupplier}
+                disabled={laeuft}
                 onChange={(ereignis) => setRentalSupplier(ereignis.target.value)}
                 maxLength={120}
                 className={ORGANISIEREN_EINGABE_KLASSE}
@@ -354,6 +417,7 @@ function ManuellerMietwagen({
               Notiz
               <textarea
                 value={note}
+                disabled={laeuft}
                 onChange={(ereignis) => setNote(ereignis.target.value)}
                 maxLength={500}
                 rows={2}
@@ -363,11 +427,17 @@ function ManuellerMietwagen({
           </div>
         </OrganisierenFeldgruppe>
 
-        <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
+        <button
+          ref={(node) => { rememberRentalSubmit(memory, node) }}
+          type="submit"
+          disabled={laeuft}
+          className={ORGANISIEREN_PRIMAR_KLASSE}
+        >
           {laeuft ? 'Wird gespeichert …' : 'Mietwagen speichern'}
         </button>
       </form>
 
+      {laeuft ? <p role="status" className="mt-4 text-sm text-ink-800">Der Mietwagen wird gespeichert.</p> : null}
       {meldung ? (
         <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {meldung}
