@@ -1,7 +1,7 @@
 # Jetnity — Trip Plan Editing and Placement Recovery 1 — PLAN
 
 Date: 24 October 2026
-Status: plan revised after Technical Lead review of `13ccf37a1846b787112cf75918cbf827707fb4c2`; still plan only; Draft only; not Technical-Lead PASS
+Status: plan revised after Technical Lead re-review of `b3f5af898cc2daf7f917d74fa0dbf10223529c97`; A-P1-PLAN-01 kept; A-P2-PLAN-02 incorporated; still plan only; Draft only; not Technical-Lead PASS
 Author: **Jetnity Trip Plan Editing and Placement Recovery 1 — Cursor Generation 1**
 Issue: #996
 Branch: `fix/trip-plan-editing-placement-recovery-1`
@@ -113,17 +113,21 @@ Delete completion identity:
 - target item id
 - delete `operationId`
 
-`revision`, `updatedAt`, and the placement select's `dayId` are not part of either completion identity. The placement select is draft state. It is disabled while that editor operation is in flight, and the submitted `PlanAenderung` already closed over the selected `dayId`.
+`revision`, `updatedAt`, and the placement select's `dayId` are not part of either completion identity and are not part of the React key. The placement select is draft state. It is disabled while that editor operation is in flight, and the submitted `PlanAenderung` already closed over the selected `dayId`. A same-id graph update does not by itself remount the form.
 
-A late editor response may close, clear, unlock, focus, or show its own error only while all four editor fields still match and the editor is still mounted. These changes make the late response a UI no-op. They do not cancel an already-sent write:
+Those four editor fields are necessary and not sufficient. Finding A-P2-PLAN-02. A late save is classified by the visible target item, not by the item id alone.
 
-- the trip id changes
-- the open target id changes
-- `editorGeneration` changes
-- a newer `operationId` is current
-- the editor unmounts
+At submit, before `onBearbeiten`, the editor runs the existing read-only `punktAendern` on a graph whose single matching item is the captured `original`. The expected item is that result's single item with the same id. The call uses the same function that will reject a stale original, and it does not write. If it throws, the editor shows that error, keeps the draft, and does not start the callback. The captured `original` stays the object from open. It is never replaced from a later prop.
 
-Ordinary same-target save readback is not one of those changes. The parent may replace the `reise` prop with the same trip id and the same open item id, including a newer `revision` and `updatedAt`. The form stays mounted. The typed draft stays. The `original` captured in `useState` when the editor opened stays the conflict baseline. This operation's own success may still close and focus this same form, and its own domain or thrown error may still render on the preserved draft. `punktAendern` still receives that captured `original`, not an item copied from the refreshed prop. A second, older `operationId` must not report on the form even when the trip and item ids still match.
+When this operation is still current, the visible target is `allePlanpunkte(reise)` filtered to that id. `JSON.stringify` is the comparison `punktAendern` already uses. No field is removed from either item. `rowVersion` is not predicted and is not ignored.
+
+- Unchanged target: exactly one item, and its JSON equals the captured `original`. Trip-level edits such as `readinessItems`, `party`, title, `revision`, or `updatedAt` do not change this result. The form stays mounted and keeps the draft. A late error from this operation may show on that draft. A late `null` may not close, clear, or focus. Keeping the id is not evidence that this `PlanAenderung` landed.
+- Expected own readback: exactly one item, and its JSON equals the expected item. A late `null` from this same operation may then close and move focus. A late error does not close or clear the form.
+- Not attributable: no item, more than one item, or one item whose JSON equals neither the captured `original` nor the expected item. This includes a same-id content or placement change while `revision` and `updatedAt` stay identical. The old success and the old error do not close, clear, focus, or unlock. The draft and the captured `original` stay. The form shows the existing conflict text from `KONFLIKT`. That state belongs to this mounted form. A newer `operationId` does not receive it.
+
+A newer operation, another trip, another target id, another `editorGeneration`, or an unmount makes the old response a UI no-op. The already-sent callback is not cancelled. The old response also does not set the conflict state on that newer form.
+
+Account edit stays the existing callback. `planpunktBearbeiten` returns a graph only after its own reload, and it already returns an error when that reload's `rowVersion` does not match the written row. `null` from the workspace callback is still not a refreshed-graph confirmation. This editor does not invent a server `rowVersion` and does not treat `null` as the expected item. Success closes only when the visible item matches the expected item. The unconfirmed-write error, when the callback returns it, stays an error on the preserved draft.
 
 A late delete result may set the visible alert and move focus only while its trip id, target item id, and delete `operationId` still match. A revision-only refresh of the same trip does not retarget that alert. A different trip id or a newer delete operation drops it.
 
@@ -144,7 +148,7 @@ The raw path is one capture inside `gastPlanpunktEntfernen`. It does not call `g
 3. `const aktuell = reiseLesen(parsed)` once. `null` is an invalid current graph, fails closed, and does not write. `aktuell` is the only write base.
 4. `const erwartet = reiseLesen(reise)` once. `null` is an invalid caller, fails closed, and does not write. The caller object is not mutated.
 5. Explicit checks on those two validated graphs: `erwartet.id === aktuell.id`, then `erwartet.revision === aktuell.revision`. Either mismatch throws `VeralteteFassungFehler` and does not write.
-6. Pure comparison, only after those checks, in `gastLoeschBasisGleich(erwartet, aktuell)` in the owned helper. The helper calls the existing pure `tageEtappenZuordnen` on each validated graph separately. That function returns a new trip when it fills missing `stageId` values and does not mutate its argument. The helper then compares `stableStringify` of both projected values. `stableStringify` sorts object keys at every level, preserves array order, and drops no field: `id`, `revision`, `updatedAt`, `createdAt`, title, `travelWish`, stages, days, items, `ohneTag`, placement, notes, booking, price, provider, and traveller fields all remain. It does not ignore `stageId`. It does not delete metadata. Neither input is written back.
+6. Pure comparison, only after those checks, in `gastLoeschBasisGleich(erwartet, aktuell)` in the owned helper. The helper calls the existing pure `tageEtappenZuordnen` on each validated graph separately. That function returns a new trip when it fills missing `stageId` values and does not mutate its argument. The helper then compares `stableStringify` of both projected values. `stableStringify` sorts object keys at every level, preserves array order, and drops no field: `id`, `revision`, `updatedAt`, `createdAt`, title, `travelWish`, `readinessItems`, `party`, stages, days, items, `ohneTag`, placement, notes, booking, price, provider, and traveller fields all remain. It does not ignore `stageId`. It does not delete metadata. Neither input is written back.
 7. A semantic mismatch throws `VeralteteFassungFehler` and does not write, including when id and revision already matched.
 8. Count the id in `aktuell.days[].items` and `aktuell.ohneTag`. The count uses the unprojected write base. Anything other than exactly one match throws, does not increment `revision`, and does not write.
 9. On success, build the next graph from `aktuell` only. Remove that one item, renumber `position` inside every day list the way lines 1084–1088 do today, and filter `ohneTag` without inventing a new `ohneTag` renumber. Set `revision` from `aktuell.revision + 1`. Do not copy fields from `erwartet` or from either projected copy. Then call the existing `gastreiseSpeichern`, which sets `updatedAt` and readback-checks.
@@ -153,7 +157,7 @@ The raw path is one capture inside `gastPlanpunktEntfernen`. It does not call `g
 
 Legitimate load-only success: the stored graph is `single_destination` with one stage and null `stageId` on the day and items. The caller is that same validated graph after `tageEtappenZuordnen`, so the nulls are filled with that one stage id, while id, revision, `updatedAt`, title, `travelWish`, notes, and placement are unchanged. Projecting the raw graph fills the same nulls. Projecting the caller keeps the fills it already has. The canonical strings match. The write still starts from the raw `aktuell`, so the survivor's stored `stageId` stays null. The comparison projection is not persisted.
 
-Same-revision drift, each with equal id and revision, is a mismatch and causes zero writes: a different title, a different `travelWish`, a different note on an item that is not the delete target, a different target placement (`dayId` or day list versus `ohneTag`), a different `updatedAt` or other metadata, or a caller `stageId` that is not the value `tageEtappenZuordnen` would fill from the raw graph. Modes that do not fill still reject a different explicit `stageId`.
+Same-revision drift, each with equal id and revision, is a mismatch and causes zero writes: a different title, a different `travelWish`, a different note on an item that is not the delete target, a different target placement (`dayId` or day list versus `ohneTag`), a different `updatedAt` or other metadata, or a caller `stageId` that is not the value `tageEtappenZuordnen` would fill from the raw graph. Modes that do not fill still reject a different explicit `stageId`. `readinessItems` and `party` are included with the same id, the same revision, and the same `updatedAt`, because their existing writers can change those fields without bumping revision. Those writers are not edited.
 
 The frozen `gastreiseSpeichern` does not compare again. A store that changes after the captured read and before the set remains a non-atomic residual. This plan does not edit the setter and does not claim a lock. `SpeicherFehler` is a failure. If `setItem` ran and the readback did not match, there is no second repair write and no claim that the previous bytes were restored.
 
@@ -170,6 +174,7 @@ Node tests call the real `gastPlanpunktEntfernen` against an in-memory `localSto
 - fresh valid delete, then readback and reload through the real loader; the target is gone; day positions are contiguous; one unrelated item and its stage, time, route, booking, price, provider, and traveller fields stay
 - legitimate projected caller: stored `single_destination` graph with null `stageId` values; caller is `tageEtappenZuordnen` of that graph and otherwise equal, including `updatedAt`. Delete succeeds. Raw readback keeps null `stageId` on the surviving day and item. Title, `travelWish`, and the survivor note stay. The projection is not stored
 - same-revision drift, one field at a time, with the same id and revision: title, `travelWish`, survivor note, target placement, `updatedAt`, and a caller `stageId` that the projection would not produce. Each call throws, and the active bytes stay identical
+- `readinessItems` drift and `party` drift, each with the same id, the same revision, and the same `updatedAt`: throw, active bytes identical, and no call into those writers
 - different active trip, and a newer stored revision with an older caller: active, legacy, and queue bytes identical
 - missing key, malformed JSON, schema-invalid JSON, invalid caller, throwing `getItem`: no `setItem` and no `removeItem` on the active, legacy, or queue key
 - absent id and duplicate id: no revision bump, bytes identical
@@ -185,7 +190,11 @@ Mounted cases:
 - day A → day B, day → unassigned, unassigned → a real day, with null times and a long label; the callback receives the captured original and the requested `dayId`; an unknown day and an original-version mismatch stay on the draft and show the existing error text
 - double-click calls the writer once
 - replaced context: a late resolution after a new trip id, a new item id, a new `editorGeneration`, or unmount does not close, clear, unlock, or focus the replacement form. The replacement keeps its own draft
-- same-target readback: a newer `revision` and `updatedAt` on the same trip id and the same open item id do not remount the form, do not wipe the typed draft, and do not replace the captured `original`. That same operation may still report on this form. An older `operationId` may not
+- (a) own readback: the callback resolves `null` and the visible single item equals the `punktAendern` result for this submission. The form may close and focus. The draft is not compared by id alone
+- (b) unrelated graph change: `readinessItems`, `party`, or another item changes while the open target's JSON still equals the captured original. The form does not remount. The draft and `original` stay. A late error may show. A late `null` does not close
+- (c) same-id replacement: while the request is pending, the only item with that id changes content or placement, and `revision` and `updatedAt` stay the same. Late `null` and late error neither close, clear, focus, nor unlock. The draft and `original` stay. The conflict text is visible
+- (d) removed or duplicated target while pending: the same non-effects as (c), for both a late `null` and a late error
+- an older `operationId` does not apply any of those effects, including the conflict text, to a newer form
 - delete error on a zero-day list is a visible alert and receives focus; a late delete error does not alert a newer trip
 - account fixture: the same plan component shows the callback error and does not claim a refreshed account graph
 
@@ -212,4 +221,4 @@ No new dependency, hosted service, provider call, model call, or recurring cost.
 
 ## Stop
 
-STOP for Technical Lead exact-head re-review of this revised plan. No product or test implementation in this delivery.
+STOP for Technical Lead exact-head re-review of this plan. A-P1-PLAN-01 stays as accepted. A-P2-PLAN-02 is the only new correction. No product or test implementation in this delivery.
