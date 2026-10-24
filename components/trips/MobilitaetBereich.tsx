@@ -21,6 +21,14 @@ import { mobilitySucheStartetAutomatisch } from '@/lib/mobility/suche-ausloeser'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import {
+  BUCHUNG_AKTION_KLASSE,
+  BUCHUNG_WIRD_GESPEICHERT,
+  bookingItemDisappeared,
+  bookingTripChanged,
+  createBookingMemory,
+  startBookingAction,
+} from '@/components/trips/useBookingActionLifecycle'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import {
@@ -59,8 +67,6 @@ export default function MobilitaetBereich({
   onManuellAnlegen?: (eingabe: MobilityManuellEingabe) => Promise<string | null>
   onMietwagenAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
 }) {
-  const [meldung, setMeldung] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const [suche, setSuche] = React.useState<MobilitySucheAntwort | null>(null)
   const [sucht, setSucht] = React.useState(false)
   const abdeckung = mobilitaetsAbdeckung(reise, ohneTag)
@@ -77,13 +83,27 @@ export default function MobilitaetBereich({
       abdeckung.unzugeordnet.length === 0,
   )
 
-  const setzen = async (itemId: string, gebucht: boolean) => {
-    if (!onBuchungsstatus || laeuft) return
+  const abdeckungIds = [
+    ...abdeckung.kanten.flatMap((kante) => (kante.mobilityItem ? [kante.mobilityItem.id] : [])),
+    ...abdeckung.unzugeordnet.map((item) => item.id),
+  ]
+  const [memory] = React.useState(createBookingMemory())
+  const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const [meldung, setMeldung] = React.useState('')
+  const [seenTripId, setSeenTripId] = React.useState(reise.id)
+  if (bookingTripChanged(memory, seenTripId, reise.id)) {
+    setSeenTripId(reise.id)
+    setPendingId(null)
     setMeldung('')
-    setLaeuft(itemId)
-    const fehler = await onBuchungsstatus(itemId, gebucht)
-    setLaeuft(null)
-    if (fehler) setMeldung(fehler)
+  }
+  if (bookingItemDisappeared(memory, abdeckungIds)) setPendingId(null)
+
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+    if (!onBuchungsstatus) return
+    startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
+      setPendingId(nextPending)
+      setMeldung(nextMessage)
+    })
   }
 
   const sucheStarten = () => {
@@ -132,14 +152,14 @@ export default function MobilitaetBereich({
       <div
         role="tablist"
         aria-label="Mobilitätsbereiche"
-        className="flex min-h-11 gap-2 overflow-x-auto"
+        className="flex min-h-11 min-w-0 max-w-full flex-wrap gap-2"
       >
         <button
           type="button"
           role="tab"
           aria-selected={unterbereich === 'verbindungen'}
           onClick={() => setUnterbereich('verbindungen')}
-          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+          className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full px-4 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
             unterbereich === 'verbindungen'
               ? 'bg-brand-800 text-white'
               : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
@@ -155,7 +175,7 @@ export default function MobilitaetBereich({
             setUnterbereich('mietwagen')
             setMietwagenBesucht(true)
           }}
-          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+          className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full px-4 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
             unterbereich === 'mietwagen'
               ? 'bg-brand-800 text-white'
               : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
@@ -182,6 +202,7 @@ export default function MobilitaetBereich({
       <div hidden={unterbereich !== 'verbindungen'} className={unterbereich === 'verbindungen' ? 'grid gap-6' : 'hidden'}>
       <section
         aria-label="Deine Verbindungen"
+        aria-busy={pendingId !== null}
         data-organisieren-flaeche="bestand"
         className={ORGANISIEREN_FLAECHE_KLASSE}
       >
@@ -230,11 +251,12 @@ export default function MobilitaetBereich({
                   {kante.mobilityItem && kannBuchungMarkieren(kante.mobilityItem) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === kante.mobilityItem.id}
-                      onClick={() => void setzen(kante.mobilityItem!.id, kante.status !== 'booked')}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== kante.mobilityItem.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(kante.mobilityItem!.id, kante.status !== 'booked', event?.currentTarget ?? null)}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {kante.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === kante.mobilityItem.id ? 'Wird gespeichert …' : kante.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -256,11 +278,12 @@ export default function MobilitaetBereich({
                   {kannBuchungMarkieren(item) && onBuchungsstatus ? (
                     <button
                       type="button"
-                      disabled={laeuft === item.id}
-                      onClick={() => void setzen(item.id, item.bookingStatus !== 'booked')}
-                      className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+                      disabled={pendingId !== null && pendingId !== item.id}
+                      aria-disabled={pendingId !== null}
+                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
-                      {item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
+                      {pendingId === item.id ? 'Wird gespeichert …' : item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
                   ) : null}
                 </div>
@@ -269,6 +292,7 @@ export default function MobilitaetBereich({
           </ul>
         )}
 
+        {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
         {meldung ? (
           <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
             {meldung}
