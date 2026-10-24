@@ -50,7 +50,7 @@ Failure stays on the device: recheck reads again, and the tests that forbid writ
 
 ## Git at this review
 
-Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. Heads `7e7a2e4b` and `8f954a46` are superseded by this R1 commit. After this commit the branch is 5 ahead / 0 behind. The PR comment has the exact SHA after push. R104 lanes A and C are already active; this lane does not integrate them. Order remains B → A → C.
+Base and merge-base `913cf9353fd33491d2bd3130b3c430cc88990200`. Plan `de65696cc4233beb4dab02f04fefb31f7c1d8973`. Heads `7e7a2e4b` and `8f954a46` are superseded by this R1 commit. After this delivery, including the proof screenshots, the branch is 6 ahead / 0 behind. The PR comment has the exact SHA after push. R104 lanes A and C are already active; this lane does not integrate them. Order remains B → A → C.
 
 ## Stop
 

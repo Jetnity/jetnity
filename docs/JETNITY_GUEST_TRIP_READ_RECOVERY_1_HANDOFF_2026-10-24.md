@@ -20,7 +20,7 @@ The self-review is not Technical-Lead PASS.
 | Seed | `de51604c832061ffd18f5742766d5da83cd7caae` |
 | Plan | `de65696cc4233beb4dab02f04fefb31f7c1d8973` |
 | Superseded heads | `7e7a2e4b1f2733bc970673acd7582fde4eaac83d`, `8f954a46475fc4666593d6fd2667d3ef979f88e9` |
-| Ahead / behind after this R1 correction commit | 5 / 0 |
+| Ahead / behind after this R1 delivery, including the proof screenshots | 6 / 0 |
 | Final head | The commit that contains CHANGES REQUIRED R1. The PR comment records `git rev-parse HEAD` after push. Do not treat `8f954a46`, `7e7a2e4b`, `de65696c`, or an older Preview as the gate for this head. |
 | TASK V1 blob | `9a089b26a6892ede8f235692b92f72dc225df147` |
 | Mode | `NORMAL` |
