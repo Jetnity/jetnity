@@ -62,7 +62,14 @@ Playwright Chromium `chromium_headless_shell-1187` did not launch. The Chrome ch
 
 On `b356fd9f`: `npm run typecheck` exit 0. `npm run lint` exit 0, **0 errors, 144 warnings**. No warning is in `UnterkunftBestand.tsx` or `FlugBestand.tsx`. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` exit 0. Schema-bezug prints the pre-existing LOCAL/UNAPPLIED RPC notes. `npm run build` exit 0. Next.js 16.4.1 compiled successfully. `check:setup` warned that this VM has no `.env`. caniuse-lite is 13 months old and was not updated.
 
-`db:*` and `auth:pruefen` were not run. The typecheck, lint, guards, and build above were run on `b356fd9f` and were not repeated for this preservation commit. `git diff b356fd9f -- components lib scripts` is empty. Native App/Auth/Vercel for the preservation commit is a separate exact-head run started by the push. A green check on `b356fd9f` or `860b35d9` does not cover it. It is not recorded as green in this file.
+`db:*` and `auth:pruefen` were not run. The typecheck, lint, guards, and build above were run on `b356fd9f`. `git diff b356fd9f -- components lib scripts` is empty through the preservation commit. Native CI run `40135029902` on `961fa594` then failed in `lib/trips/lodging-coverage-truth-1.test.ts`: the function-call renderer stubbed `useState` only, and the parent `useRef` threw outside a renderer. Eight subtests failed. Auth passed and the Vercel deployment completed. The repair adds a stable `useRef` in that stub. Assertions are unchanged.
+
+```
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/trips/lodging-coverage-truth-1.test.ts
+```
+
+Local result after the stub: 9 pass, 0 fail. Native CI for the repair commit starts on its push and is not recorded as green in this file.
 
 ## Security
 

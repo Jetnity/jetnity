@@ -25,7 +25,7 @@ None found in the local proof.
 
 ### P1
 
-None found in the local proof.
+Native CI on `961fa594` failed in `lib/trips/lodging-coverage-truth-1.test.ts`. `bedienung` rendered `UnterkunftBestand` by calling it as a function. Its React stand-in stubbed `useState` and left `useRef` as the real hook, so the parent surface refs threw `Cannot read properties of null (reading 'useRef')`. Eight subtests failed. Auth and the Vercel deployment on that same run passed. The repair gives that stand-in the same stable `useRef` slot the other manual-editor function-call tests already use. Assertions and product code are unchanged. Local rerun of the file: 9 pass / 0 fail. The repair commit's own native CI is not yet a result.
 
 ### P2
 
@@ -44,4 +44,4 @@ None found in the local proof.
 
 ## Author conclusion
 
-The local runtime proof for `b356fd9f` matches the three V4 corrections and the retained flight and diagnostic cases. That proof now lives at `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`, and the four prior paths match `be2c4932`. This preservation did not re-run the product. Author does not mark Ready, merge, or close #998.
+The local runtime proof for `b356fd9f` matches the three V4 corrections and the retained flight and diagnostic cases. That proof now lives at `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`, and the four prior paths match `be2c4932`. This preservation did not re-run the product. Native CI on `961fa594` failed in the lodging-coverage function-call renderer; the repair stubs `useRef` there and leaves the assertions unchanged. Author does not mark Ready, merge, or close #998.

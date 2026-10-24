@@ -22,10 +22,12 @@ Branch: `fix/manual-journey-editor-completion-1`
 | runtime tree | `de25e46694a26405d9e3b7635fc0caf578a14cb7` |
 | in-place V4 evidence | `860b35d93819aa551c98a7b810648bde54db1df8` |
 | in-place V4 tree | `e4464eb4087361c0e25e8fbd3f946b85b9076fd1` |
-| preservation head | the commit that adds this handoff |
+| preservation head | `961fa594792b5c07f2e8423b31690f433f858fab` |
+| preservation tree | `24a1a3a025853a8e8744a80f1820172157c21c40` |
+| CI repair head | the commit that adds this handoff |
 | V4 archive | `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/` |
 
-`origin/main` was fetched again before this preservation. It is still `43124e28`. The merge-base is that commit. `860b35d9` is **17 ahead / 0 behind**. This preservation commit is its child. No rebase and no sibling merge. Integration remains **A → C → B**. B was not touched.
+`origin/main` was fetched again before this preservation. It is still `43124e28`. The merge-base is that commit. `860b35d9` is **17 ahead / 0 behind**. `961fa594` is its child and was **18 ahead / 0 behind** after that push. This CI repair commit is the child of `961fa594`. No rebase and no sibling merge. Integration remains **A → C → B**. B was not touched.
 
 ## What this head contains
 
@@ -48,7 +50,7 @@ The run below was executed once, at `b356fd9f`, and first stored in place by `86
 
 ## Limits
 
-Playwright Chromium did not launch. Native CI for the preservation SHA is the GitHub check on that commit, not a result stored here. A green check on `b356fd9f` or `860b35d9` does not cover it. Preview, hosted account, screen reader, native zoom, and a physical device are not verified. `db:*` and `auth:pruefen` were not run. No product rerun was done to relocate the evidence.
+Playwright Chromium did not launch. Native CI on `961fa594` is run `40135029902`: Auth passed, Vercel deployment completed, and Typecheck, Lint & Build failed. Eight lodging-coverage subtests threw because `bedienung` stubbed `useState` and then called the real `useRef` outside a renderer. This repair stubs a stable `useRef` and leaves the assertions unchanged. Local rerun: 9 pass / 0 fail. Native CI for this repair SHA is the GitHub check on that commit, not a result stored here. Preview, hosted account, screen reader, native zoom, and a physical device are not verified. `db:*` and `auth:pruefen` were not run. No product rerun was done to relocate the evidence.
 
 ## Stop
 

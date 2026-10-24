@@ -47,6 +47,10 @@ Every other evidence path outside `v4-b356fd9f/` matches `be2c4932`. `git diff b
 
 ## Not claimed
 
-Native App/Auth/Vercel for the preservation SHA starts when this commit is pushed. This file does not record that run. A green check on `b356fd9f` or `860b35d9` does not cover it. CI, Preview, a hosted account, a screen reader, native zoom, and a physical device are not a PASS inside this commit. No database, provider, payment, or new cost. Author does not Ready, merge, close #998, or start a follow-up.
+The preservation SHA `961fa594` has a recorded CI result in the next section. A green check on `b356fd9f` or `860b35d9` does not cover it. Preview, a hosted account, a screen reader, native zoom, and a physical device are not a PASS inside this commit. No database, provider, payment, or new cost. Author does not Ready, merge, close #998, or start a follow-up.
 
-Next actor: Technical Lead, exact-head review of the preservation commit. The V4 proof to inspect is `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`.
+## Native CI on `961fa594`
+
+Run [40135029902](https://github.com/Jetnity/jetnity/actions/runs/40135029902) on preservation head `961fa594792b5c07f2e8423b31690f433f858fab` finished with Auth passed and the Vercel deployment completed. Typecheck, Lint & Build failed. The only failing suite was `lib/trips/lodging-coverage-truth-1.test.ts`: `bedienung` calls `UnterkunftBestand` as a function and had stubbed `useState` only. The parent `useRef` calls threw `Cannot read properties of null (reading 'useRef')`. Eight subtests failed. This commit adds a stable `useRef` slot in that stub and resets it with the state index. The assertions are unchanged. The local rerun of that file is 9 pass / 0 fail. Product files are unchanged from `b356fd9f`. Native CI for this repair commit starts on push and is not claimed green here.
+
+Next actor: Technical Lead, exact-head review of the repair commit. The V4 proof to inspect remains `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/`.
