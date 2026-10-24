@@ -1,6 +1,7 @@
 // Lokale Montage der gerenderten Buchungsseite.
 // CSS kommt aus dem Production-Build. Das ist keine Geräte-, Zoom- oder Screenreader-Prüfung.
 
+import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createElement } from 'react'
@@ -11,8 +12,22 @@ import AccountBuchungen from '@/components/account/AccountBuchungen'
 import type { RoheBuchungszeile } from '@/lib/account/buchungen'
 import { buchungenAnsichtAus, buchungenSeiteAusZeilen, type BuchungenFilter } from '@/lib/account/buchungen-abfrage'
 
-const EVIDENZ = 'docs/evidence/account-booking-folder-completion-1'
 const FILTER: BuchungenFilter = { titel: 'Zürich', art: 'flight', archiv: 'aktiv' }
+
+function neueAusgabe(): string {
+  const index = process.argv.indexOf('--ausgabe')
+  const ziel = index >= 0 ? process.argv[index + 1] : ''
+  if (!ziel) throw new Error('Aufruf braucht --ausgabe <neues Verzeichnis>')
+  if (existsSync(ziel)) throw new Error(`Ausgabe existiert bereits und wird nicht überschrieben: ${ziel}`)
+  mkdirSync(ziel, { recursive: true })
+  return ziel
+}
+
+function git(args: string[]): string {
+  const ergebnis = spawnSync('git', args, { encoding: 'utf8' })
+  if (ergebnis.status !== 0) throw new Error(ergebnis.stderr || ergebnis.stdout)
+  return ergebnis.stdout.trim()
+}
 
 function uuid(n: number): string {
   return `00000000-0000-4000-8000-${n.toString(16).padStart(12, '0')}`
@@ -200,7 +215,9 @@ async function tabWeg(
 }
 
 async function montage(): Promise<void> {
-mkdirSync(EVIDENZ, { recursive: true })
+const ausgabe = neueAusgabe()
+const bilder = join(ausgabe, 'screens')
+mkdirSync(bilder, { recursive: true })
 const css = cssLesen()
 const browser = await chromium.launch()
 const befund: {
@@ -247,27 +264,51 @@ try {
       const reset = await seite.getByRole('link', { name: 'Filter zurücksetzen' }).count()
       if (reset !== 0) throw new Error('Die leere erste Seite ohne Filter bietet Zurücksetzen an.')
     }
-    if (existsSync('/opt/cursor/artifacts')) {
-      if (zustand === 'liste' || zustand === 'leer' || zustand === 'keine' || zustand === 'fehler' || zustand === 'fortsetzungLeer') {
-        await seite.setViewportSize({ width: 390, height: 844 })
-        await seite.screenshot({
-          path: `/opt/cursor/artifacts/bookings-${zustand}-390.png`,
-          fullPage: true,
-        })
-      }
-      if (zustand === 'liste') {
-        await seite.setViewportSize({ width: 320, height: 700 })
-        await seite.evaluate(() => {
-          document.documentElement.style.fontSize = '32px'
-        })
-        await seite.screenshot({ path: '/opt/cursor/artifacts/bookings-liste-320-32px.png', fullPage: true })
-      }
+    if (zustand === 'liste' || zustand === 'leer' || zustand === 'keine' || zustand === 'fehler' || zustand === 'fortsetzungLeer') {
+      await seite.setViewportSize({ width: 390, height: 844 })
+      await seite.screenshot({
+        path: join(bilder, `bookings-${zustand}-390.png`),
+        fullPage: true,
+      })
+    }
+    if (zustand === 'liste') {
+      await seite.setViewportSize({ width: 320, height: 700 })
+      await seite.evaluate(() => {
+        document.documentElement.style.fontSize = '32px'
+      })
+      await seite.screenshot({ path: join(bilder, 'bookings-liste-320-32px.png'), fullPage: true })
     }
     await seite.close()
     befund.zustaende[zustand] = messungen
   }
-  writeFileSync(join(EVIDENZ, 'montage.json'), JSON.stringify(befund, null, 2))
-  console.log(JSON.stringify({ browser: befund.browser, tastatur: befund.tastatur, zustaende: Object.keys(befund.zustaende) }))
+  const quellen = [
+    'scripts/account-booking-folder-completion-1/montage.ts',
+    'components/account/AccountBuchungen.tsx',
+    'components/account/BuchungenFilter.tsx',
+    'lib/account/buchungen-abfrage.ts',
+    'docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_TASK_V1_2026-10-24.md',
+    'docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_PLAN_2026-10-24.md',
+  ]
+  const hashes: Record<string, string> = {}
+  for (const pfad of quellen) hashes[pfad] = git(['hash-object', pfad])
+  const bericht = {
+    herkunft: {
+      autor: 'Jetnity Account Booking Folder Completion 1 — Cursor Generation 1',
+      session: 'bc-a34030c7-4c19-4c9f-863f-193cfdfa34da',
+      modell: 'grok-4.7-high-fast',
+      kopf: git(['rev-parse', 'HEAD']),
+      baum: git(['rev-parse', 'HEAD^{tree}']),
+      main: git(['rev-parse', 'origin/main']),
+      quellen: hashes,
+      befehl: process.argv.join(' '),
+      node: process.version,
+    },
+    grenze:
+      'Statisches Markup mit CSS aus dem lokalen Production-Build. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.',
+    befund,
+  }
+  writeFileSync(join(ausgabe, 'montage.json'), `${JSON.stringify(bericht, null, 2)}\n`)
+  console.log(JSON.stringify({ ausgabe, browser: befund.browser, tastatur: befund.tastatur, zustaende: Object.keys(befund.zustaende) }))
 } finally {
   await browser.close()
 }
