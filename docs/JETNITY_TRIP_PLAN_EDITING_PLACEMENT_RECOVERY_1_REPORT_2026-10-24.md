@@ -12,7 +12,7 @@ This report is author evidence. It is not Technical-Lead PASS, Ready, or merge.
 
 Existing items with null, one, or several days can be edited. Explicit placement sends the captured original and the selected `dayId`, including `null` for unassigned. A zero-day trip opens the editor. Protected flights stay placement-only. New-item creation still requires a real day and stays inside `#plan-tag-kontext`.
 
-Delete errors render on the plan section as `[data-plan-meldung]`, outside `#plan-tag-kontext`, so the premium-4 locator for the new-item validation alert is unchanged. Focus moves to that alert only while the delete trip, item, and operation still match. A later trip does not keep the alert, and a late resolution does not alert or lock the newer trip.
+Delete errors render on the plan section as `[data-plan-meldung]`, outside `#plan-tag-kontext`, so the premium-4 locator for the new-item validation alert is unchanged. The alert stays visible for the current trip and delete operation. Focus moves to it only when the focus token captured at delete start is still current. A newer editor open, a newer save, a day change, or a trip change advances that token. The scheduled return after save or cancel uses the same check. A later trip does not keep the alert, and a late resolution does not alert or lock the newer trip. The editor's own error alert still receives focus for the operation that owns the form.
 
 Guest `gastPlanpunktEntfernen` keeps its signature. It captures `aktiveSchluesselRohLesen()` once, parses those bytes once, validates the stored graph and the caller with `reiseLesen`, checks id and revision, then compares `gastLoeschBasisGleich`. That helper projects each side with `tageEtappenZuordnen` and compares a key-sorted stringify that drops no field. The write base is the unprojected stored graph. The target must occur exactly once. Day positions are renumbered. `ohneTag` is filtered and not renumbered. `gastreiseSpeichern` is unchanged.
 
@@ -36,24 +36,25 @@ TASK V1 is byte-identical (`42b124f5f68172aaa51365b028bb22772d362dcc`). Account 
 
 ## Commands
 
-Runtime tree for the mounted evidence: `aa594b18a0d827b9dcae1b607bfefa4b45764d06`. `origin/main` and merge-base `0c37d318c47a758f06634448d6e0de3856bbc6a6`. Ahead/behind 10/0 before the docs commit. Node v22.23.4. That head only drops an unused harness import from `7b0bcc3b49844d6244d5c98e4de8bae174031475`.
+Repair evidence head: `545cbdf783e75ab82f8d23b5f1533b60e56f06a5`. `origin/main` and merge-base `0c37d318c47a758f06634448d6e0de3856bbc6a6`. Ahead/behind 14/0 before this docs commit. Node v22.23.4. Reviewed head `8d4fe188025515ab3b9b1168b3281f2f0bde39a1` remains the head of CI run 40107587054. That CI result is not a gate for this repair.
 
 | Command | Result |
 | --- | --- |
-| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/guest-plan-delete-recovery-1.test.ts lib/trips/gastspeicher.test.ts lib/trips/trip-plan-premium-experience-4.test.ts` | 106 pass, 0 fail. Includes "nach dem Entfernen sind die Reihenfolgen wieder lückenlos" and the premium-4 source contract. |
-| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/guest-plan-delete-recovery-1.test.ts` on `7b0bcc3b` | 11 pass, 0 fail. That file is unchanged in `aa594b18`. |
-| `node scripts/trip-plan-editing-placement-recovery-1/run.mjs` | PASS, 60 cases. Chromium 148.0.7778.96. Evidence head `aa594b18a0d827b9dcae1b607bfefa4b45764d06`. |
-| `npm run check:dead && npm run check:exports && npm run check:deps && npm run check:api-schutz && npm run check:schema-bezug` | exit 0. 0 unreferenced files, 0 unexplained exports. Schema check still prints the existing LOCAL/UNAPPLIED RPC notes and exits 0. |
-| `npm run typecheck` | exit 0 after the party fixture used a real `TripTraveller`. |
-| `npm run lint` on `aa594b18` | exit 0. 144 warnings, 0 errors. None are in the owned files. |
-| `npm run build` | exit 0. Production output compiled. Later commits are the test fixture and the unused harness import. |
-| `npm test` on `7b0bcc3b` | exit 1. 7090 tests, 7074 pass, 11 fail, 5 skipped. The 11 failures are native PostgreSQL proofs, listed in the handoff. |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/guest-plan-delete-recovery-1.test.ts lib/trips/gastspeicher.test.ts lib/trips/trip-plan-premium-experience-4.test.ts` on `545cbdf7` | 106 pass, 0 fail. Includes "nach dem Entfernen sind die Reihenfolgen wieder lückenlos" and the premium-4 source contract. |
+| `node scripts/trip-plan-editing-placement-recovery-1/run.mjs` | PASS, 77 cases. Chromium 148.0.7778.96. Evidence head `545cbdf783e75ab82f8d23b5f1533b60e56f06a5`. |
+| `npm run check:dead && npm run check:exports && npm run check:deps && npm run check:api-schutz && npm run check:schema-bezug` on `545cbdf7` | exit 0. 0 unreferenced files, 0 unexplained exports. Schema check still prints the existing LOCAL/UNAPPLIED RPC notes and exits 0. |
+| `npm run typecheck` on `545cbdf7` | exit 0. |
+| `npm run lint` on `545cbdf7` | exit 0. 144 warnings, 0 errors. None are in the owned files. The four `gastspeicher.ts` warnings are the pre-existing unused bindings. |
+| `npm run build` on `545cbdf7` | exit 0. Production output compiled. |
+| `npm test` on `545cbdf7` | exit 1. 7090 tests, 7074 pass, 11 fail, 5 skipped, about 100s. The 11 failures are the same native PostgreSQL proofs listed in the handoff. This is not a pass. |
+
+Historical, not relabeled: on `7b0bcc3b` the same `npm test` count was exit 1, 7074 pass, 11 fail, 5 skipped. The guest delete file on that head was 11 pass. Native CI 40107587054/1 on `8d4fe188` was 7196 tests, 7194 pass, 0 fail, 2 skip, build successful. That run does not cover `545cbdf7`.
 
 ## Mounted cases that passed
 
-Zero-day edit with null date and time, domain error, thrown error, cancel focus, protected flight, Escape, day move, unassigned move, double submit, old completion, unmount, both Account callback orders with a changed `rowVersion`, guest no-op with the same version, domain no-op with a new version, no further graph, draft edits after recovery, unrelated graph, version-only null and error, removed and duplicated target, real `gastPlanpunktEntfernen`, visible stale-delete alert and focus, alert cleared on a new trip, pending delete error not applied to the newer trip, newer delete not left locked, and the unconfirmed-write callback kept as an error. Viewports 280, 320, 360, 390, 430, 768, 1280, landscape 844×390, and 320 at root 32px had no horizontal overflow and a reachable control.
+The earlier 60 cases still pass. Added for this repair: a pending save is unmounted before that exact request resolves, and the resolver counter increases by one with no page error and no success text; same-id content and placement changes keep revision, `updatedAt`, and `rowVersion` and show the conflict for both `null` and error; R1 stays pending while R2 is submitted, and R1 late success or error leaves R2 locked until R2 itself completes; the older Marktbesuch delete error stays visible while the newer title input keeps focus and its draft; guest delete removes the target from the DOM and from storage, keeps the other items, and advances revision by one. Save and Cancel were scrolled into view and measured at 280, 320, 360, 390, 430, 768, 1280, landscape 844×390, and 320 at root 32px. Horizontal overflow was 0. Both buttons were at least 44px tall and inside the viewport after that scroll. While R2 is saving, the disabled submit button leaves focus on `body`; R1 does not move it and does not focus the plan alert.
 
-Screenshots: `docs/evidence/trip-plan-editing-placement-recovery-1/zero-day-closed.png`, `zero-day-delete-error.png`, `editor-390.png`.
+Screenshots: `docs/evidence/trip-plan-editing-placement-recovery-1/zero-day-closed.png`, `zero-day-delete-error.png`, `editor-390.png`, `older-delete-keeps-editor-focus.png`.
 
 ## Database, security, cost
 
