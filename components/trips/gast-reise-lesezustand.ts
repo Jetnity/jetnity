@@ -16,6 +16,7 @@ import {
 import {
   SCHLUESSEL,
   gastspeicherLaden,
+  gastspeicherWarteschlangeLesen,
   type Gastspeicher,
 } from '@/lib/trips/gastspeicher'
 import type { Trip } from '@/types/trips'
@@ -161,16 +162,19 @@ export function gastListeAusBeobachtung(
  *
  * Invalid and unreadable occupancy does not enter `gastspeicherLaden()`.
  * That loader migrates legacy drafts, and a later disagreement cannot undo
- * a write if the key changes between the two reads. No readonly contract
- * returns the queue without that loader, so an invalid draft does not list
- * a queue. A confirmed-empty active slot still loads, which is the ordinary
- * queue and legacy path.
+ * a write if the key changes between the two reads. An invalid active draft
+ * lists the queue through `gastspeicherWarteschlangeLesen()`, which only
+ * returns the existing private queue reader. An unreadable observation does
+ * not read the queue and is not shown as absence. A confirmed-empty active
+ * slot still loads, which is the ordinary queue and legacy path.
  */
 export function gastListeBeobachten(): GastListeLesung {
   const belegt = gastCreateBelegungLesen()
   if (belegt.art === 'nicht_beobachtet') return { art: 'nicht_beobachtet' }
   if (belegt.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar', schrieb: false }
-  if (belegt.art === 'ungueltig') return { art: 'ungueltig', warteschlange: [], schrieb: false }
+  if (belegt.art === 'ungueltig') {
+    return { art: 'ungueltig', warteschlange: gastspeicherWarteschlangeLesen(), schrieb: false }
+  }
 
   const davor = rohSchnappschuss()
   let ladung: Gastspeicher

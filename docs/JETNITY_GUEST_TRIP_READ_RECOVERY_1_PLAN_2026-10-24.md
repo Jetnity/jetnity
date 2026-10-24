@@ -53,7 +53,7 @@ Proof and delivery:
 - `docs/evidence/guest-trip-read-recovery-1/**`
 - this plan, plus STATUS, REPORT, SELF_REVIEW, and HANDOFF for this slice.
 
-Readonly, not edited: `lib/trips/gastspeicher.ts`, `lib/trips/create-entry.ts`, `PlanenCreateGate.tsx`, `GastCreateLink.tsx`, workspace mutation callbacks, traveller/readiness/commercial wiring, adoption, account workspace, server/Auth/DB, dependencies, workflows, config, and global styles. Lane A owns creation forms. Lane C owns inventory actions. TASK V1 stays immutable.
+Readonly at plan time: `lib/trips/gastspeicher.ts`, `lib/trips/create-entry.ts`, `PlanenCreateGate.tsx`, `GastCreateLink.tsx`, workspace mutation callbacks, traveller/readiness/commercial wiring, adoption, account workspace, server/Auth/DB, dependencies, workflows, config, and global styles. Addendum V2 later permits one additive readonly wrapper in `gastspeicher.ts`; see the section below. Lane A owns creation forms. Lane C owns inventory actions. TASK V1 and the addendum file stay immutable.
 
 ## Implementation
 
@@ -98,3 +98,11 @@ Technical Lead review of this plan, same session, two acceptance points. The ste
 
 1. Invalid and unreadable occupancy does not call `gastspeicherLaden()`. That loader can migrate if the key changes before its own preflight, and a later error cannot undo the write. The queue beside an invalid draft is only returned from inside that loader. No readonly contract returns it, so the error screen does not list that queue. The raw queue bytes stay. A later observation whose occupancy confirms an empty active slot still lists the queue through the ordinary loader path.
 2. A legacy draft that already has a stored id stays a usable trip when the migration write fails. Post-occupancy remains valid for that same id, and the legacy bytes stay. A legacy draft without a stored id, whose migration write fails, stays occupied-without-id and gets no continue link.
+
+## Addendum V2 after 83c64c7c
+
+Technical Lead addendum `docs/JETNITY_GUEST_TRIP_READ_RECOVERY_1_TASK_ADDENDUM_V2_2026-10-24.md`, blob `8cff61c42d3b341aeee67ec4cb48bfa2999b4271`, commit `83c64c7c093b3024c4da13aa72502f39872d688e`. This file is not edited. It supersedes the sentence in the review correction above that said the error screen does not list a queue beside invalid active bytes.
+
+The early stop before `gastspeicherLaden()` stays. One new export, `gastspeicherWarteschlangeLesen()`, returns the existing private `bestandWarteschlange()` and nothing else. It does not read the active or legacy key, and it does not call the loader, migrate, set, remove, clear, or adopt. Invalid occupancy uses that wrapper, so the list and workspace show the accepted queue beside the invalid-active error, with no create permission and no fabricated continuation. Unreadable occupancy does not call the wrapper and is not shown as absence. A later explicit recheck may observe a new state, including migration when the active key is then absent.
+
+The private reader, every previous export, the parser, keys, formats, limits, occupancy, loader, legacy migration, and every mutation function stay textually unchanged apart from this additive function.

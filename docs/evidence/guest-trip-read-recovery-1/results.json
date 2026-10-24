@@ -2,7 +2,7 @@
   "author": "Jetnity Guest Trip Read Recovery 1 — Cursor Generation 1",
   "session": "bc-2806475d-7ee4-40d0-980e-1d26bcb5b270",
   "model": "grok-4.7-high-fast",
-  "origin": "http://127.0.0.1:39059",
+  "origin": "http://127.0.0.1:45765",
   "boundary": "Synthetic isolated local Playwright. Real GastReisen and GastArbeitsbereich with real gastspeicher and create-entry. next/link, next/navigation, next/dynamic, next/cache, next/headers and server-only are harness shims so the components mount outside Next. No hosted account, personal browser, provider, or model call.",
   "sources": {
     "components/trips/GastReisen.tsx": {
@@ -14,16 +14,16 @@
       "blob": "6a0a6027f01b9315b59cebd80038b37449fb02d4"
     },
     "components/trips/gast-reise-lesezustand.ts": {
-      "sha256": "924d2a979a9aa3e35484c68ac3c15ec5796a7b1910e46754efba39a04aae46af",
-      "blob": "62417eb8ed3d050ce8efb57b26c5eca406b1f7c7"
+      "sha256": "7fb66f99784e91c9145646d5e36d4ce2fc954cbe4f8829328dfa81a5b82a2706",
+      "blob": "d1990189a881aa81d25f1486651e70602c9483c5"
     },
     "components/trips/GastReiseLesefehler.tsx": {
       "sha256": "f3521d09014cbf666a626c3bdf226bfe45e71e97511f9141ae021763bd0e6cb7",
       "blob": "3f307c205f3075ecbbe0e4a4d9325112ca32e1a0"
     },
     "lib/trips/gastspeicher.ts": {
-      "sha256": "de8ed749e69170ee902fa1042be26b05e80313da22afda2a5de65b8160e9c980",
-      "blob": "1964cfc9b78f7361e23ff6fb9ccd64dbd3491399"
+      "sha256": "eba43ddafdeef9a749790bf22d22f9a87cf91dc81f9176c52d7ce5d056dac2c4",
+      "blob": "39b75a606c5ae68f64dbd6c3968198d6c0ec3929"
     },
     "lib/trips/create-entry.ts": {
       "sha256": "23eefbdc445a94041c149da4debd78462315aa4a6a74e15c8564a6f3748c2d85",
@@ -54,6 +54,14 @@
             "right": 295
           }
         }
+      }
+    },
+    {
+      "name": "liste-ungueltig-mit-warteschlange",
+      "pass": true,
+      "detail": {
+        "writes": 0,
+        "art": "ungueltig"
       }
     },
     {
@@ -153,6 +161,6 @@
     "version": "148.0.7778.96"
   },
   "status": "PASS",
-  "passed": 11,
+  "passed": 12,
   "failed": 0
 }

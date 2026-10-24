@@ -315,6 +315,47 @@ try {
     return { writes: nachher.writes, overflow: mass }
   })
 
+  await szenario('liste-ungueltig-mit-warteschlange', async () => {
+    const { page, errors } = await seite({ width: 390, height: 900 })
+    const vorher = await liste(page, () => {
+      const id = window.gastNachweis.anlegen('trip-queue', 'Wartende Reise')
+      const roh = window.gastNachweis.roh().aktiv
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, null)
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.warteschlange, JSON.stringify([JSON.parse(roh)]))
+      window.gastNachweis.setzen(window.gastNachweis.schluessel.aktiv, '{kein JSON')
+      window.gastNachweis.__queue = id
+    })
+    const stand = await warten(
+      page,
+      () => {
+        const art = document.querySelector('[data-gast-leseart]')?.getAttribute('data-gast-leseart')
+        const text = document.body.innerText
+        return {
+          ok: art === 'ungueltig' && text.includes('Wartende Reise') && text.includes('Dieser Entwurf ist nicht lesbar'),
+          art,
+          text: text.slice(0, 700),
+        }
+      },
+      'invalid list with queue',
+    )
+    assert.equal(keineErstellung(stand.text), true)
+    assert.equal(stand.text.includes('Reise fortsetzen'), false)
+    assert.match(stand.text, /Erneut prüfen/)
+    assert.match(stand.text, /1 weitere Entwurf/)
+    const nachher = await page.evaluate(() => ({
+      roh: window.gastNachweis.roh(),
+      writes: window.gastNachweis.vorgaenge.length,
+    }))
+    assert.equal(nachher.roh.aktiv, '{kein JSON')
+    assert.match(nachher.roh.warteschlange, /Wartende Reise/)
+    assert.deepEqual(nachher.roh, vorher.davor)
+    assert.equal(nachher.writes, 0)
+    assert.equal(errors.length, 0)
+    await page.locator('#root').screenshot({ path: join(SCREENS, 'liste-ungueltig-warteschlange-390.png') })
+    await page.close()
+    return { writes: nachher.writes, art: stand.art }
+  })
+
   await szenario('liste-unlesbar-und-erneut', async () => {
     const { page, errors } = await seite({ width: 390, height: 844 })
     await liste(page, () => {

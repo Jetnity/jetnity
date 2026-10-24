@@ -17,6 +17,7 @@ import {
 } from '@/components/trips/gast-reise-lesezustand'
 import {
   SCHLUESSEL,
+  gastspeicherWarteschlangeLesen,
   gastreiseAnlegen,
   kennungErzeugen,
   type Gastspeicher,
@@ -34,10 +35,12 @@ function speicherStellen() {
   let aktivNachErsterLesungEntfernen = false
   let verbleibendeWuerfe = 0
   const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
+  const gelesen: string[] = []
   const extern: Array<{ art: 'remove'; schluessel: string }> = []
 
   const localStorage = {
     getItem: (schluessel: string) => {
+      gelesen.push(schluessel)
       if (verbleibendeWuerfe > 0) {
         verbleibendeWuerfe -= 1
         throw new Error('SecurityError')
@@ -72,6 +75,7 @@ function speicherStellen() {
     ablage,
     schreibvorgaenge,
     extern,
+    gelesen,
     sperren: () => {
       gesperrt = true
     },
@@ -338,33 +342,47 @@ describe('Gastliste liest ehrlich', () => {
     speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
     speicher.nachErsterAktivEntfernen()
     speicher.leseZaehlerZurueck()
+    speicher.gelesen.length = 0
     speicher.leerenZaehler()
 
     const lese = gastListeBeobachten()
 
     assert.equal(lese.art, 'ungueltig')
     if (lese.art !== 'ungueltig') return
-    assert.deepEqual(lese.warteschlange, [])
+    assert.equal(lese.warteschlange.length, 1)
+    assert.equal(lese.warteschlange[0]?.id, reise.id)
+    assert.equal(lese.warteschlange[0]?.title, 'Wartende Reise')
     assert.equal(lese.schrieb, false)
     assert.equal(gastListeDarfErstellen(lese), false)
     assert.deepEqual(speicher.schreibvorgaenge, [])
     assert.deepEqual(speicher.extern, [])
+    assert.deepEqual(speicher.gelesen, [SCHLUESSEL.aktiv, SCHLUESSEL.warteschlange])
     assert.equal(speicher.roh(SCHLUESSEL.aktiv), '{kein JSON')
     assert.match(speicher.roh(SCHLUESSEL.legacy) ?? '', /trip-alt-1/)
     assert.match(speicher.roh(SCHLUESSEL.warteschlange) ?? '', new RegExp(reise.id))
   })
 
   test('der Arbeitsbereich betritt nach einer ungültigen Belegung den Loader nicht', () => {
+    const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-queue', title: 'Wartende Reise' }))
+    const roh = speicher.roh(SCHLUESSEL.aktiv)
+    speicher.loeschen(SCHLUESSEL.aktiv)
+    speicher.setzen(SCHLUESSEL.warteschlange, [JSON.parse(roh ?? 'null') as Trip])
     speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
     speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
     speicher.nachErsterAktivEntfernen()
+    speicher.leseZaehlerZurueck()
+    speicher.gelesen.length = 0
     speicher.leerenZaehler()
 
     const lese = gastArbeitsbereichBeobachten('trip-alt-1')
 
     assert.equal(lese.art, 'ungueltig')
+    if (lese.art !== 'ungueltig') return
+    assert.equal(lese.warteschlange[0]?.id, reise.id)
+    assert.equal(lese.warteschlange[0]?.title, 'Wartende Reise')
     assert.deepEqual(speicher.schreibvorgaenge, [])
     assert.deepEqual(speicher.extern, [])
+    assert.deepEqual(speicher.gelesen, [SCHLUESSEL.aktiv, SCHLUESSEL.warteschlange])
     assert.equal(speicher.roh(SCHLUESSEL.aktiv), '{kein JSON')
     assert.match(speicher.roh(SCHLUESSEL.legacy) ?? '', /trip-alt-1/)
     assert.equal(gastArbeitsbereichDarfErstellen(lese), false)
@@ -484,7 +502,25 @@ describe('Gastliste liest ehrlich', () => {
     assert.equal(gastArbeitsbereichDarfErstellen(gastArbeitsbereichBeobachten(reise.id)), true)
   })
 
-  test('ungültige aktive Bytes lassen eine Warteschlange liegen, ohne den Loader zu betreten', () => {
+  test('die Warteschlangen-Fassade liest nur den Warteschlangen-Schlüssel', () => {
+    const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-queue', title: 'Wartende Reise' }))
+    const roh = speicher.roh(SCHLUESSEL.aktiv)
+    speicher.setzen(SCHLUESSEL.warteschlange, [JSON.parse(roh ?? 'null'), { titel: 'kein Entwurf' }])
+    speicher.setzen(SCHLUESSEL.legacy, [legacyEntwurf()])
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.gelesen.length = 0
+    speicher.leerenZaehler()
+
+    const liste = gastspeicherWarteschlangeLesen()
+
+    assert.deepEqual(speicher.gelesen, [SCHLUESSEL.warteschlange])
+    assert.deepEqual(speicher.schreibvorgaenge, [])
+    assert.equal(liste.length, 1)
+    assert.equal(liste[0]?.id, reise.id)
+    assert.equal(liste[0]?.title, 'Wartende Reise')
+  })
+
+  test('ungültige aktive Bytes zeigen die Warteschlange, ohne den Loader zu betreten', () => {
     const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-queue', title: 'Wartende Reise' }))
     const roh = speicher.roh(SCHLUESSEL.aktiv)
     speicher.loeschen(SCHLUESSEL.aktiv)
@@ -493,14 +529,18 @@ describe('Gastliste liest ehrlich', () => {
     const vorher = rohStand()
     speicher.leerenZaehler()
 
+    speicher.gelesen.length = 0
     const lese = gastListeBeobachten()
 
     assert.equal(lese.art, 'ungueltig')
     if (lese.art !== 'ungueltig') return
-    assert.deepEqual(lese.warteschlange, [])
+    assert.equal(lese.warteschlange.length, 1)
+    assert.equal(lese.warteschlange[0]?.id, reise.id)
+    assert.equal(lese.warteschlange[0]?.title, 'Wartende Reise')
     assert.equal(lese.schrieb, false)
     assert.deepEqual(rohStand(), vorher)
     assert.deepEqual(speicher.schreibvorgaenge, [])
+    assert.deepEqual(speicher.gelesen, [SCHLUESSEL.aktiv, SCHLUESSEL.warteschlange])
     assert.equal(gastListeDarfErstellen(lese), false)
 
     speicher.loeschen(SCHLUESSEL.aktiv)

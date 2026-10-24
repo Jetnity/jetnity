@@ -661,6 +661,16 @@ function bestandWarteschlange(): Trip[] {
     .slice(0, WARTESCHLANGE_MAXIMUM)
 }
 
+/**
+ * Nur-Lese-Warteschlange für einen Aufrufer, der den migrationsfähigen
+ * Loader nicht betreten darf. Dieselbe Zerlegung, Filterung, Normalisierung
+ * und Obergrenze wie `bestandWarteschlange()`. Kein aktiver Schlüssel, kein
+ * Legacy-Schlüssel, kein Schreiben.
+ */
+export function gastspeicherWarteschlangeLesen(): Trip[] {
+  return bestandWarteschlange()
+}
+
 // ---------------------------------------------------------------------------
 // Lesen und Schreiben
 // ---------------------------------------------------------------------------
