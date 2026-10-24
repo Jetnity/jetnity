@@ -1,7 +1,7 @@
 # Planning Creation Lifecycle 1 — proof notes
 
-Executed at proof head `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`.
-`result.json` sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`.
+Executed after merging accepted main `76c4b06ede1f46000efc5a671866d25440c3d644` at proof head `ffa789b2ce9b7dd75951c2571cfb9071ecf4069d`.
+`result.json` sha256 `cece4ea1c3113de499df881c2f62e1de5417f6fe171c64cf006456d1b374fa48`.
 25 mounted cases, `failed: 0`, `pageErrors: []`.
 
 Command: `PLANNING_CREATION_CHROMIUM=<Chromium executable> node scripts/planning-creation-lifecycle-1/run.mjs`.

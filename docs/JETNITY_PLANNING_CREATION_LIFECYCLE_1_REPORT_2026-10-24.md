@@ -13,11 +13,12 @@ This report is author evidence. It is not Technical-Lead PASS.
 
 ## Pins
 
-- Assigned main: `913cf9353fd33491d2bd3130b3c430cc88990200`
-- Merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`
-- Runtime/proof head: `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`
-- Component head inside it: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd` (TripPlanner, Reiseidee, hook unchanged by the runner fix)
-- Ahead / behind that main, before the docs commit: 8 / 0
+- Original task base: `913cf9353fd33491d2bd3130b3c430cc88990200`
+- Accepted main: `76c4b06ede1f46000efc5a671866d25440c3d644`
+- Merge-base: `76c4b06ede1f46000efc5a671866d25440c3d644`
+- Proof head: `ffa789b2ce9b7dd75951c2571cfb9071ecf4069d`
+- Ahead / behind that main, before the docs commit: 10 / 0
+- Reviewed runtime blobs unchanged: TripPlanner `2ed2471f5d999b1990972e4f97a56b83e8c03f8f`, Reiseidee `78b18e878df302991bf4f74b304c4fec6a5abab5`, helper `5e97d5a90de8251b94b162c4e6c5fb832dd92868`
 - TASK V1 blob: `d106810aa4c0138bd1191698a18aed3a1a5c2ba5`, unchanged
 - Mode: NORMAL
 - Node: v22.23.4
@@ -103,11 +104,12 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 
 | Command | Exit | Detail |
 | --- | --- | --- |
-| `PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases at `891c2dd1`, sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`. Evidence dir default. Artifact copy not requested. |
+| `PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases at `ffa789b2`, sha256 `cece4ea1c3113de499df881c2f62e1de5417f6fe171c64cf006456d1b374fa48`. Evidence dir default. Artifact copy not requested. Real guest storage from accepted main. |
 | same command without `PLANNING_CREATION_CHROMIUM` | 1 | Failed proof. Did not read or rewrite `result.json`. Not a skip. |
 | `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/planning-creation-lifecycle-1.test.ts` | 0 | 3 tests. Sync guard only. No Playwright launch and no skip. |
 | focused `create-entry`, `planning-entry-premium-experience-7`, `mobile-accessibility-1`, `homepage-route-entry-1`, `homepage-natural-route-intent-1` | 0 | 78 tests, 0 fail |
-| `npx tsc -p tsconfig.json --noEmit` | 0 | On runtime head `9f78c85d`. Earlier `npm run typecheck` also exited 0 before the guard extraction. |
+| focused node tests including `gastspeicher`, `create-entry`, guest-read recovery, `flug-manuell`, `unterkunft-manuell` | 0 | 267 pass, 0 fail, on `ffa789b2` |
+| `npx tsc -p tsconfig.json --noEmit` | 0 | On integrated head `ffa789b2` |
 | eslint on the touched TS/TSX files | 0 | 1 warning, pre-existing `setWarteMs` effect in `Reiseidee.tsx` |
 | `npm run check:operating-mode` | 0 | PASS |
 | `npm run check:api-schutz` | 0 | 12 admin routes |
@@ -115,12 +117,15 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 | `npm run check:dead` | 0 | 0 orphans, 819 entry points |
 | `npm run check:exports` | 0 | 0 unused exports |
 | `npm run check:deps` | 0 | 0 unused packages |
-| `npm run lint` | 0 | Re-run on `9f78c85d`. 146 warnings, 0 errors. |
-| `npm run build` | 0 | Re-run on `9f78c85d`. `check:setup` warning: no `.env` / `.env.local`. Next.js 16.4.1 compiled. |
+| touched eslint | 0 | 5 warnings, 0 errors |
+| `npm run lint` | 0 | 144 warnings, 0 errors |
+| `npm run build` | 0 | On `ffa789b2`. `check:setup` warning: no `.env` / `.env.local`. Next.js 16.4.1 compiled. |
 
 ## Not verified
 
-Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this head. The mounted browser proof is local and exact-head. Workflow CI will not replay it, because `ci.yml` installs no Playwright browser and this lane does not change that workflow. The earlier seed Preview is not evidence for `891c2dd1`.
+Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this integrated head. The mounted browser proof is local. Workflow CI will not replay it. An account or adoption call that has already been sent cannot be cancelled by this page. Disabling the submit control does not move focus to a recovery control.
+
+The earlier seed Preview is not evidence for `ffa789b2`.
 
 ## Costs and database
 

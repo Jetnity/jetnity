@@ -14,9 +14,9 @@ Status: implementation and local mounted proof are complete on the runtime head 
 
 ## Runtime head
 
-Mounted proof ran at `891c2dd13e121ee4dbfc27b07ce542acdab3fc1e`.
-Component sources are unchanged from `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`.
-Merge-base with the assigned main `913cf9353fd33491d2bd3130b3c430cc88990200` is that same main commit. Ahead 8, behind 0, before this docs/evidence commit.
+Integration I1 merged accepted main `76c4b06ede1f46000efc5a671866d25440c3d644` with no conflict. Proof head `ffa789b2ce9b7dd75951c2571cfb9071ecf4069d`.
+Merge-base with that main is `76c4b06ede1f46000efc5a671866d25440c3d644`. Ahead 10, behind 0, before this docs/evidence commit.
+Reviewed runtime blobs are unchanged: TripPlanner `2ed2471f5d999b1990972e4f97a56b83e8c03f8f`, Reiseidee `78b18e878df302991bf4f74b304c4fec6a5abab5`, lifecycle helper `5e97d5a90de8251b94b162c4e6c5fb832dd92868`.
 TripPlanner blob `2ed2471f5d999b1990972e4f97a56b83e8c03f8f`, SHA-256 `5bfb221ff7f63a00c7ee020d235b4085e52229785abdf11624589d7a2a6eefd8`.
 Reiseidee blob `78b18e878df302991bf4f74b304c4fec6a5abab5`, SHA-256 `60d17acccd3aa4458285636a830350c8cd6c444e7fd9382b827df93307172b7f`.
 `usePlanningCreationLifecycle` blob `5e97d5a90de8251b94b162c4e6c5fb832dd92868`, SHA-256 `7418ae18e3a3d27f00fdd2cc6d1b18d2c49660af91b3a50acebdc9c393970525`.
@@ -30,8 +30,9 @@ Manual and proposal creation now share one small UI lifecycle. A second submit i
 
 ## Proof
 
-`PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` exit 0. `npm test` does not start this runner. No `PLANNING_CREATION_ARTIFACT_DIR`.
-25 cases, failed 0, sha256 `2ce81f246d59e86db489b099962622c1f0780975c3f648673305a11cf5a85e08`. `outputs.artifactCopy` is `not-requested`.
+`PLANNING_CREATION_CHROMIUM=<Chromium 140.0.7339.16> node scripts/planning-creation-lifecycle-1/run.mjs` exit 0 on the integrated tree. `npm test` does not start this runner. No `PLANNING_CREATION_ARTIFACT_DIR`.
+25 cases, failed 0, sha256 `cece4ea1c3113de499df881c2f62e1de5417f6fe171c64cf006456d1b374fa48`. `outputs.artifactCopy` is `not-requested`.
+Focused node tests, including real `gastspeicher`, create-entry, the accepted guest-read tests and both repaired callback adapters: 267 pass, 0 fail.
 The same command without the browser variable exits 1 and leaves `result.json` untouched.
 The ordinary test executes the sync guard directly: 3 tests, 0 fail. It does not skip and does not read `result.json`.
 Node v22.23.4.
@@ -52,8 +53,11 @@ Viewports 320, 390, 1280, and 320 at root font-size 32px. Overflow delta 0. No p
 | `check:dead` | 0 orphans |
 | `check:exports` | 0 |
 | `check:deps` | 0 unused |
-| `npm run lint` | exit 0 on `9f78c85d`, 146 warnings, 0 errors |
-| `npm run build` | exit 0 on `9f78c85d`. `check:setup` warning: no `.env` / `.env.local` |
+| focused node tests on integrated tree | 267 pass, 0 fail |
+| `npx tsc -p tsconfig.json --noEmit` | exit 0 on `ffa789b2` |
+| touched eslint | 0 errors, 5 warnings |
+| `npm run lint` | exit 0, 144 warnings, 0 errors |
+| `npm run build` | exit 0. `check:setup` warning: no `.env` / `.env.local` |
 | full `npm test` | NOT RUN |
 | App/Auth CI and Vercel Preview | NOT VERIFIED, Technical-Lead gates |
 
