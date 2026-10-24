@@ -1,7 +1,12 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { sucheListeIndex, sucheListeSchliesst, sucheListeWaehlt } from '@/lib/suche/tastatur'
+import {
+  sucheAktiveOption,
+  sucheListeIndex,
+  sucheListeSchliesst,
+  sucheListeWaehlt,
+} from '@/lib/suche/tastatur'
 
 describe('Suchlisten-Tastatur', () => {
   test('ArrowDown und ArrowUp rotieren, Enter wählt, Escape schliesst', () => {
@@ -14,5 +19,17 @@ describe('Suchlisten-Tastatur', () => {
     assert.equal(sucheListeWaehlt('Enter', -1), false)
     assert.equal(sucheListeSchliesst('Escape'), true)
     assert.equal(sucheListeSchliesst('Enter'), false)
+  })
+
+  test('der Aktivindex benennt nur eine aktuell gerenderte Option', () => {
+    assert.equal(sucheAktiveOption(0, 3), 0)
+    assert.equal(sucheAktiveOption(2, 3), 2)
+    assert.equal(sucheAktiveOption(-1, 3), -1)
+    assert.equal(sucheAktiveOption(2, 2), -1)
+    assert.equal(sucheAktiveOption(1, 1), -1)
+    assert.equal(sucheAktiveOption(0, 0), -1)
+    assert.equal(sucheAktiveOption(1, 0), -1)
+    assert.equal(sucheAktiveOption(1.5, 3), -1)
+    assert.equal(sucheAktiveOption(1, 2.5), -1)
   })
 })
