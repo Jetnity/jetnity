@@ -2,7 +2,7 @@
   "author": "Jetnity Shared Search Keyboard Lifecycle 1 — Cursor Generation 1",
   "session": "bc-f17cfe4a-c64f-420f-980c-59c8d82cb19e",
   "model": "grok-4.7-high-fast",
-  "origin": "http://127.0.0.1:40977",
+  "origin": "http://127.0.0.1:35229",
   "sources": {
     "components/places/OrtSuche.tsx": {
       "sha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb",
