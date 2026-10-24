@@ -162,6 +162,7 @@ export default function TripWorkspacePlan({
   const editorTrigger = React.useRef<HTMLElement | null>(null)
   const meldungRef = React.useRef<HTMLParagraphElement>(null)
   const meldungOp = React.useRef<number | null>(null)
+  const meldungFokus = React.useRef<number | null>(null)
   const leben = usePlanEditorLifecycle(aktiverTag)
   const tripIdRef = React.useRef(reise.id)
   const [geseheneReise, setGeseheneReise] = React.useState(reise.id)
@@ -183,13 +184,16 @@ export default function TripWorkspacePlan({
     setFormularTag(aktiverTag); setFormularOffen(false); setBearbeiten(undefined); setMeldung(''); setErfolg('')
   }
   const loeschungAktuellRef = React.useRef(leben.loeschungAktuell)
+  const fokusAktuellRef = React.useRef(leben.fokusAktuell)
   React.useLayoutEffect(() => {
     tripIdRef.current = reise.id
     loeschungAktuellRef.current = leben.loeschungAktuell
-  }, [reise.id, leben.loeschungAktuell])
+    fokusAktuellRef.current = leben.fokusAktuell
+  }, [reise.id, leben.loeschungAktuell, leben.fokusAktuell])
   React.useEffect(() => {
-    if (!meldung || meldungOp.current == null) return
+    if (!meldung || meldungOp.current == null || meldungFokus.current == null) return
     if (!loeschungAktuellRef.current(meldungOp.current)) return
+    if (!fokusAktuellRef.current(meldungFokus.current)) return
     meldungRef.current?.focus({ preventScroll: true })
   }, [meldung])
 
@@ -205,9 +209,10 @@ export default function TripWorkspacePlan({
   }, [timeline.gewaehlterTagId])
 
   const zurueck = (punktId: string | null) => {
+    const fokusId = leben.editorFokus()
     setFormularOffen(false)
     setBearbeiten(undefined)
-    planFokusZurueck(root.current, editorTrigger.current, punktId)
+    planFokusZurueck(root.current, editorTrigger.current, punktId, () => leben.fokusAktuell(fokusId))
   }
 
   const gespeichert = (punktId: string | null) => {
@@ -219,19 +224,23 @@ export default function TripWorkspacePlan({
   const entfernen = async (tagId: string, punktId: string) => {
     const op = leben.loeschungBeginnen()
     if (op == null) return
+    const fokusId = leben.loeschFokus()
     const tripId = reise.id
     meldungOp.current = null
+    meldungFokus.current = null
     setMeldung('')
     try {
       const fehler = await onPunktEntfernen(tagId, punktId)
       if (!leben.loeschungAktuell(op) || tripIdRef.current !== tripId) return
       if (fehler) {
         meldungOp.current = op
+        meldungFokus.current = fokusId
         setMeldung(fehler)
       }
     } catch {
       if (leben.loeschungAktuell(op) && tripIdRef.current === tripId) {
         meldungOp.current = op
+        meldungFokus.current = fokusId
         setMeldung('Der Punkt konnte nicht entfernt werden. Bitte versuche es erneut.')
       }
     } finally {

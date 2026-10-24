@@ -11,13 +11,22 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
   const [editorGeneration, setEditorGeneration] = React.useState(0)
   const editorOp = React.useRef(0)
   const deleteOp = React.useRef(0)
+  const fokus = React.useRef(0)
+  const editorFokusId = React.useRef(0)
+  const loeschFokusId = React.useRef(0)
   const loeschtRef = React.useRef(false)
   const [loescht, setLoescht] = React.useState(false)
   const [reiseEpoch, setReiseEpoch] = React.useState(0)
   const epochAngewandt = React.useRef(0)
 
+  const fokusNehmen = React.useCallback(() => {
+    fokus.current += 1
+    return fokus.current
+  }, [])
+
   React.useLayoutEffect(() => {
     owner.current += 1
+    fokus.current += 1
   }, [aktiverTag])
 
   React.useLayoutEffect(() => {
@@ -26,6 +35,7 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
     owner.current += 1
     editorOp.current += 1
     deleteOp.current += 1
+    fokus.current += 1
     loeschtRef.current = false
     setEditorGeneration(owner.current)
     setLoescht(false)
@@ -33,15 +43,17 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
 
   const oeffnen = React.useCallback(() => {
     owner.current += 1
+    editorFokusId.current = fokusNehmen()
     setEditorGeneration(owner.current)
-  }, [])
+  }, [fokusNehmen])
 
   const generationPasst = React.useCallback((generation: number) => generation === owner.current, [])
 
   const editorBeginnen = React.useCallback(() => {
     editorOp.current += 1
+    editorFokusId.current = fokusNehmen()
     return editorOp.current
-  }, [])
+  }, [fokusNehmen])
 
   const editorAktuell = React.useCallback((id: number) => editorOp.current === id, [])
 
@@ -49,9 +61,10 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
     if (loeschtRef.current) return null
     loeschtRef.current = true
     deleteOp.current += 1
+    loeschFokusId.current = fokusNehmen()
     setLoescht(true)
     return deleteOp.current
-  }, [])
+  }, [fokusNehmen])
 
   const loeschungAktuell = React.useCallback((id: number) => deleteOp.current === id, [])
 
@@ -65,6 +78,10 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
     setReiseEpoch((wert) => wert + 1)
   }, [])
 
+  const fokusAktuell = React.useCallback((id: number) => fokus.current === id, [])
+  const editorFokus = React.useCallback(() => editorFokusId.current, [])
+  const loeschFokus = React.useCallback(() => loeschFokusId.current, [])
+
   return {
     editorGeneration,
     loescht,
@@ -76,12 +93,21 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
     loeschungAktuell,
     loeschungBeenden,
     fremdeReise,
+    fokusAktuell,
+    editorFokus,
+    loeschFokus,
   }
 }
 
 /** Trigger, then the item's control, then the unassigned heading, then the zero-day text or the plan section. */
-export function planFokusZurueck(root: HTMLElement | null, trigger: HTMLElement | null, punktId: string | null) {
+export function planFokusZurueck(
+  root: HTMLElement | null,
+  trigger: HTMLElement | null,
+  punktId: string | null,
+  nochAktuell: () => boolean,
+) {
   requestAnimationFrame(() => {
+    if (!nochAktuell()) return
     if (trigger?.isConnected && trigger.getClientRects().length > 0) {
       trigger.focus({ preventScroll: true })
       trigger.scrollIntoView({ block: 'center', behavior: 'instant' })
