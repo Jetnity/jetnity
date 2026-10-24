@@ -22,15 +22,19 @@ The page reads `searchParams`, renders one list in query order, and keeps `noind
 
 `AccountAuditClient` is outside the allowlist and still passes the old props. The owned component accepts that shape so typecheck stays green. `abgeschnitten` is accepted and not shown. Audit fixture item ids that are not uuids do not get a plan link. The real page mapper rejects those rows before display.
 
+## Review repair
+
+Code review V1 on `de836013e78827d66e02be501d353f3ae2cf225e` required three repairs. The repeat sentinel is now a `Symbol`, so the literal title `wiederholt` is accepted, including as a one-element array. The filter form remounts from the applied retry address, so reset, next, and back replace a pending edit and a new search still omits `weiter`. Search, Enter, combined filters, a row past the old 200-cut, the 50th-row cursor, equal timestamps, the null transition, reset, back, a second-page error, retry of the same address, empty account versus empty continuation, and the plan link are exercised through `buchungenFuerParameter` and the rendered component. The store interprets the URL the installed client sent. Its title check is `String.includes`, not PostgreSQL `~*`. The browser history is one document, not the Next App Router. `buchungenSeitenLauf` is removed from the runtime.
+
 ## Tests and build
 
-Focused booking tests: 35 pass, 0 fail. Details, the full-suite failures, and the Chromium measurements are in `docs/evidence/account-booking-folder-completion-1/NOTES.md`.
+Focused booking tests on this repair tree: 32 pass, 0 fail. The three removed tests were the in-memory walker. Details are in `docs/evidence/account-booking-folder-completion-1/NOTES.md`. `ablauf.json` is the action-flow evidence.
 
 `npm run typecheck` exit 0. `npm run lint` exit 0 with 144 pre-existing warnings and 0 errors. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` exit 0. `npm run build` exit 0. Next.js 16.4.1. `/account/bookings` stays dynamic.
 
-`npm test` exit 1: 7095 tests, 7079 pass, 11 fail, 5 skipped. The 11 failures are pre-existing official-truth native PostgreSQL proofs. PostgreSQL 16 binaries are absent. They were not installed and are not a booking regression.
+`npm test` exit 1: 7092 tests, 7076 pass, 11 fail, 5 skipped. The 11 failures are the same pre-existing official-truth native PostgreSQL proofs. PostgreSQL 16 binaries are absent. Native CI `40106883570/1` was green for `de836013` and does not turn this local failure into a pass. It does not gate the repair head.
 
-Headless Chromium 140.0.7339.16, reduced motion, viewports 280 through 1280 plus landscape 844×390, and 320 at root 32px: horizontal overflow 0. Tab order reaches search, submit, clear, the plan link, next, first page, and retry on the states that show them.
+Headless Chromium 140.0.7339.16. The static montage, re-run after the build, still has horizontal overflow 0 and does not click the controls. The action flow does click search, Enter, reset, next, back, retry, and the plan link inside one document.
 
 ## Security, database, cost
 
@@ -44,6 +48,6 @@ Owned: this REPORT, STATUS, SELF_REVIEW, HANDOFF, and `docs/evidence/account-boo
 
 ## Remaining limits
 
-Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The in-memory walker uses exact timestamp text, not timestamptz normalization. The Chromium run is not a device, native zoom, or screen-reader pass. CI and Preview for this head are not claimed in this report.
+Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The synthetic store uses exact timestamp text and `String.includes`, not timestamptz normalization or PostgreSQL `~*`. The Chromium runs are not a device, native zoom, screen-reader, or Next App Router pass. CI and Preview for the repair head are not claimed in this report.
 
-Next actor: Technical Lead, same session, exact-head code review.
+Next actor: Technical Lead, same session, exact-head re-review of the commit that contains this report.

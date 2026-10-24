@@ -2,7 +2,50 @@
 
 Date: 2026-10-24. Writer: Jetnity Account Booking Folder Completion 1 — Cursor Generation 1. Session `bc-a34030c7-4c19-4c9f-863f-193cfdfa34da`. Model `grok-4.7-high-fast`.
 
-This note records commands run on the implementation tree before the delivery commit. It is not a hosted RLS, PostgREST, or PostgreSQL match pass. The accepted PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` and TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` were not edited. Parent plan head: `2ceb9e3a689d9e64e2ed555833e8b302cd139116`. `origin/main` and merge-base at the last fetch before these notes: `0c37d318c47a758f06634448d6e0de3856bbc6a6`.
+This note records commands run on the implementation tree. It is not a hosted RLS, PostgREST, or PostgreSQL match pass. The accepted PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` and TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` were not edited. Parent plan head: `2ceb9e3a689d9e64e2ed555833e8b302cd139116`. Reviewed implementation head `de836013e78827d66e02be501d353f3ae2cf225e` is superseded by the review-fix commit that contains this note. `origin/main` and merge-base at the fetch before this repair: `0c37d318c47a758f06634448d6e0de3856bbc6a6`. Mode `NORMAL`.
+
+## Review repair — R105-B code review V1
+
+Reviewed head `de836013e78827d66e02be501d353f3ae2cf225e`. Native App/Auth run `40106883570/1` was green for that head only (7201 tests, 7199 pass, 0 fail, 2 skip). That run does not make the local `npm test` failure on that head a pass, and it does not gate the repair head.
+
+### B-P2-CODE-01
+
+`rohWert` returns `Symbol('buchungen-parameter-wiederholt')` only when an owned parameter arrives as an array whose length is not 1. The string `wiederholt` and the single-element array `["wiederholt"]` are ordinary titles. `["Zürich","Bern"]` still fails before a query. `buchungen-abfrage.test.ts` asserts `titelMuster === '***=wiederholt'`.
+
+### B-P2-CODE-02
+
+`BuchungenFilter` remounts the GET form with a key of the applied `wiederholenHref` plus the applied title, kind, and archive. Reset, next, and back change that address, so a pending edit is discarded. A key of only the filter fields would miss next and back. The form still omits `weiter`. This browser proof is one document and the History API. It is not a Next App Router or RSC navigation.
+
+### B-P2-PROOF-03
+
+`buchungenSeitenLauf` is no longer in the runtime. Continuation is `buchungenFuerParameter` plus a synthetic interpreter of the URL that supabase-js 2.57.2 actually sent. Title matching in that store is case-sensitive `String.includes` of the decoded `imatch.***=` suffix. It is not PostgreSQL `~*`. Order and the keyset use exact timestamp text via `buchungenSchnittVergleich`. The browser bundle is the real `AccountBuchungen`. `window.buchungenSetzen` is assigned in an effect. The harness waits until that function exists.
+
+`ablauf.json` records: search by button `titel=Alpha` drops the prior cursor; Enter `titel=Bern` sends no `or=` and no `id=gt.`; reset after an unsent Bern/flight/aktiv edit returns empty title, empty kind, and `alle`; next page shows `Flug 1` with an empty title field; back does not keep an unsent Bern edit; a second-page HTTP 500 keeps the same retry href and the retry shows `Flug 1`; an empty first page says `Noch keine bestätigten Buchungen`; a cursor of the only remaining row says `keine weitere Buchung`; the plan link is `/reisen/{trip}?ansicht=plan&punkt={item}`. The loader walk sees 211 rows, one combined title/kind/archive match past the old 200-row cut, a 51-row page whose cursor id is the 50th visible row, equal timestamps, and the null transition, with no duplicate ids. Chromium `140.0.7339.16`. No external request and no page error in that run.
+
+### Repair commands
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| Focused booking tests, four files | 0 | 32 tests: abfrage 9, daten 5, mapping 11, ui 7. 0 fail. |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx scripts/account-booking-folder-completion-1/ablauf.ts` | 0 | Loader and rendered actions above. Evidence `ablauf.json` blob `cd93aeefab08db4a4599df9e1582b3e1ac334691`. |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx scripts/account-booking-folder-completion-1/montage.ts` | 0 | Re-executed after the production build. Overflow 0 on every recorded viewport and state. JSON blob unchanged `7a41748c2595fdb4f04e6d18b35cb3c4139dafab`. Static `setContent` and tab order. It does not click Search, Reset, next, or retry. |
+| `npm run typecheck` | 0 | `next typegen && tsc -p tsconfig.json --noEmit` |
+| `npm run lint` | 0 | 144 problems, 0 errors, 144 warnings. No warning names a booking file or the new harness. |
+| `npm run check:dead` | 0 | 838 starts, 1579 reachable, 0 orphaned |
+| `npm run check:exports` | 0 | 1197 files, 0 unused exports. `BUCHUNGEN_SEITE` is file-local. |
+| `npm run check:deps` | 0 | 0 unused dependencies |
+| `npm run check:api-schutz` | 0 | 12 admin routes use `requireAdminApi()` |
+| `npm run check:schema-bezug` | 0 | Same pre-existing LOCAL/UNAPPLIED RPC notes. No new RPC. |
+| `npm run build` | 0 | Next.js 16.4.1. Compiled in 7.3s. `/account/bookings` is dynamic. |
+| `npm test` | 1 | 7092 tests, 845 suites, 7076 pass, 11 fail, 5 skipped, duration_ms 108367.870401. Three fewer tests than the `de836013` local run because the in-memory walker tests were removed. The 11 failures are the same pre-existing native PostgreSQL proofs listed below. |
+
+Node `v22.23.4`. The repair source blobs are `AccountBuchungen.tsx` `22bb8c991e414f0aede63531c9b5bef2be0cb0bc`, `BuchungenFilter.tsx` `02e51e09b3b8dd20758eb3ed6f5c2a857852f74d`, `buchungen-abfrage.ts` `493a39b75b5bf0ca6378d903b81d0d2cf55c2caa`, `buchungen-abfrage.test.ts` `81bee03b8e906763f3ba4e04e2ee5cf48cd847ec`, `buchungen-ui.test.ts` `197fbaf518a0702d80756482bc09deaaac16d149`, `ablauf.ts` `bac00b8058a0cc1ed33df13d349aef0b18226b4c`, `flaeche.tsx` `68f0293447de0084d97f788a0f6392597fbc41c2`, `crypto-browser-stub.ts` `583b5c1e1283a30ccbf74e5da8554990bd815873`. Page, daten, mapping test, and `montage.ts` blobs are unchanged from the table below.
+
+CI and Preview for the repair head were not observed when this section was written.
+
+## Prior implementation head `de836013`
+
+The table and proof classes below are the delivery evidence for `de836013e78827d66e02be501d353f3ae2cf225e`. They are not re-labeled as the repair result. The local `npm test` exit 1 on that head stays a failure.
 
 ## Source blobs at note time
 
@@ -43,7 +86,7 @@ Node `v22.23.4`. Installed `@supabase/supabase-js` 2.57.2 and `@supabase/postgre
 
 ## Proof classes
 
-1. Synthetic continuation, executed. Rows 0, 1, 50, 51, and 201 are each returned once. Equal timestamps, the step onto null timestamps, and a null-only sequence are in `buchungen-abfrage.test.ts`. On a 51-row window the next address ends with the 50th id and does not contain the 51st. The walker compares exact timestamp text. It is not a PostgreSQL execution.
+1. Synthetic continuation, executed on `de836013` by `buchungenSeitenLauf`. Rows 0, 1, 50, 51, and 201 are each returned once. Equal timestamps, the step onto null timestamps, and a null-only sequence were in `buchungen-abfrage.test.ts` on that head. The repair removes that walker from the runtime and covers the same cases through `ablauf.ts`. On a 51-row window the next address uses the 50th id and does not use the 51st. The comparison is exact timestamp text. It is not a PostgreSQL execution.
 2. Documented `imatch` / `***=` semantics remain a citation in the accepted PLAN. Not re-executed here.
 3. Installed-client serialization, executed. A recording `fetch` against `http://127.0.0.1:9` intercepts the request. No server is listening. For `*`, `%`, `_`, `\`, `"`, `'`, `a,b(c)`, `.*`, `(a|b)`, and `Zürich`, the decoded `title` parameter is `imatch.***=` plus that exact text, with no added quotes. `getAll('kind')` is one value: `in.(flight,stay,transfer,rental_car)` without `art`, and `eq.stay` with `art=stay`. The title pattern is absent from `or`. There is no `count=exact`, no `like`/`ilike`, order `booking_confirmed_at.desc.nullslast,id.asc`, and `limit=51`. These are client bytes, not a database match.
 4. Local `value ~* pattern` is NOT-RUN. `psql` is absent. No JavaScript matcher is substituted.

@@ -16,14 +16,17 @@ export default function BuchungenFilter({
   art,
   archiv,
   zurueckHref,
+  standHref,
 }: {
   titel: string
   art: string
   archiv: BuchungenArchiv
   zurueckHref: string | null
+  standHref: string
 }) {
+  const stand = `${String(standHref.length)}:${standHref}\n${String(titel.length)}:${titel}\n${art}\n${archiv}`
   return (
-    <form method="get" action="/account/bookings" className="mt-8">
+    <form key={stand} method="get" action="/account/bookings" className="mt-8">
       <fieldset className="min-w-0 rounded-[26px] border border-black/5 bg-white p-4 sm:p-5">
         <legend className="px-1 text-sm font-semibold text-brand-800">{BUCHUNGEN_COPY.filterLegende}</legend>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">

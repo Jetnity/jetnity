@@ -1,0 +1,23 @@
+{
+  "grenze": "Echter Lader und echte Oberfläche, synthetischer Zuschnitt der gesendeten PostgREST-URL. Kein PostgreSQL-~*, kein gehostetes RLS, kein Next-App-Router. Zurück ist die Browser-History desselben Dokuments.",
+  "lader": {
+    "leer": "leer",
+    "kombiniert": 1,
+    "fortsetzungLeer": "fortsetzungLeer",
+    "gesehen": 211
+  },
+  "flaeche": {
+    "browser": "140.0.7339.16",
+    "suche": "/account/bookings?titel=Alpha&art=&archiv=alle",
+    "enter": "/account/bookings?titel=Bern&art=&archiv=alle",
+    "reset": {
+      "titel": "",
+      "art": "",
+      "archiv": "alle",
+      "zustand": "liste"
+    },
+    "naechste": "liste",
+    "retry": "/account/bookings?weiter=v1%7Cae7455b19d84011767095d4af52faa822bd0f7f8f16631c78970b3f10e1b1e44%7C2026-01-01T00%3A00%3A02.123456Z%7C00000000-0000-4000-8000-000000000002",
+    "plan": "/reisen/00000000-0000-4000-8000-00000000004d?ansicht=plan&punkt=00000000-0000-4000-8000-000000000007"
+  }
+}

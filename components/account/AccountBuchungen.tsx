@@ -131,7 +131,13 @@ export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | 
       <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.hinweis}</p>
       <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.ordnungHinweis}</p>
 
-      <BuchungenFilter titel={ansicht.titel} art={ansicht.art} archiv={ansicht.archiv} zurueckHref={ansicht.zurueckHref} />
+      <BuchungenFilter
+        titel={ansicht.titel}
+        art={ansicht.art}
+        archiv={ansicht.archiv}
+        zurueckHref={ansicht.zurueckHref}
+        standHref={ansicht.wiederholenHref}
+      />
 
       {ansicht.zustand === 'ungueltig' ? (
         <Hinweis

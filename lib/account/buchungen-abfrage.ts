@@ -12,16 +12,14 @@ import { createHash } from 'node:crypto'
 import {
   buchungAusZeile,
   buchungPlanpunktPfad,
-  buchungenSchnittVergleich,
   istBuchungsUuid,
-  type BuchungenSchnittSchluessel,
   type KontoBuchung,
   type RoheBuchungszeile,
 } from '@/lib/account/buchungen'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { TRIP_ITEM_KINDS, TRIP_STATUSES, type TripItemKind, type TripStatus } from '@/types/trips'
 
-export const BUCHUNGEN_SEITE = 50
+const BUCHUNGEN_SEITE = 50
 export const BUCHUNGEN_LIMIT = BUCHUNGEN_SEITE + 1
 export const BUCHUNGEN_TITEL_MAX = 120
 const BUCHUNGEN_CURSOR_MAX = 512
@@ -238,10 +236,12 @@ export function buchungenCursorLesen(text: string, filter: BuchungenFilter): Buc
   return { zeit: zeitTeil, id }
 }
 
-function rohWert(roh: BuchungenRohQuery, key: string): string | null | 'wiederholt' {
+const wiederholt = Symbol('buchungen-parameter-wiederholt')
+
+function rohWert(roh: BuchungenRohQuery, key: string): string | null | typeof wiederholt {
   const wert = roh[key]
   if (wert === undefined) return null
-  if (Array.isArray(wert)) return wert.length === 1 ? wert[0] : 'wiederholt'
+  if (Array.isArray(wert)) return wert.length === 1 ? wert[0] : wiederholt
   return wert
 }
 
@@ -249,7 +249,7 @@ function filterAus(roh: BuchungenRohQuery): BuchungenFilter | null {
   const titelRoh = rohWert(roh, 'titel')
   const artRoh = rohWert(roh, 'art')
   const archivRoh = rohWert(roh, 'archiv')
-  if (titelRoh === 'wiederholt' || artRoh === 'wiederholt' || archivRoh === 'wiederholt') return null
+  if (titelRoh === wiederholt || artRoh === wiederholt || archivRoh === wiederholt) return null
 
   let titel: string | null = null
   if (titelRoh !== null) {
@@ -282,7 +282,7 @@ export function buchungenAnfrageAus(roh: BuchungenRohQuery): BuchungenAnfrage {
   }
   const ersteSeite = buchungenAdresse(filter)
   const weiterRoh = rohWert(roh, 'weiter')
-  if (weiterRoh === 'wiederholt') {
+  if (weiterRoh === wiederholt) {
     return { ok: false, grund: 'parameter', filter: null, ersteSeite: '/account/bookings', wiederholen }
   }
   if (weiterRoh === null || weiterRoh === '') {
@@ -359,36 +359,3 @@ export function buchungenSeiteAusZeilen(
   return { ok: true, buchungen, weiter }
 }
 
-function liegtNach(zeile: BuchungenSchnittSchluessel, cursor: BuchungenCursor): boolean {
-  return buchungenSchnittVergleich(zeile, { id: cursor.id, bookingConfirmedAt: cursor.zeit }) > 0
-}
-
-export function buchungenSeitenLauf(
-  zeilen: readonly BuchungenSchnittSchluessel[],
-  filter: BuchungenFilter = LEERER_FILTER,
-): { ids: string[]; seiten: string[][]; cursor: string[] } {
-  const sortiert = [...zeilen].sort(buchungenSchnittVergleich)
-  const seiten: string[][] = []
-  const cursor: string[] = []
-  const ids: string[] = []
-  let stand: BuchungenCursor | null = null
-  for (let schritt = 0; schritt <= sortiert.length; schritt += 1) {
-    const fenster = (stand ? sortiert.filter((zeile) => liegtNach(zeile, stand as BuchungenCursor)) : sortiert).slice(
-      0,
-      BUCHUNGEN_LIMIT,
-    )
-    const sichtbar = fenster.slice(0, BUCHUNGEN_SEITE)
-    seiten.push(sichtbar.map((zeile) => zeile.id))
-    ids.push(...sichtbar.map((zeile) => zeile.id))
-    if (fenster.length <= BUCHUNGEN_SEITE) break
-    const letzte = sichtbar[BUCHUNGEN_SEITE - 1]
-    if (!letzte) break
-    const token = buchungenCursorSchreiben(filter, letzte.bookingConfirmedAt, letzte.id)
-    if (!token) break
-    const weiter = buchungenCursorLesen(token, filter)
-    if (!weiter) break
-    cursor.push(token)
-    stand = weiter
-  }
-  return { ids, seiten, cursor }
-}

@@ -11,7 +11,6 @@ import {
 } from '@/lib/account/buchungen'
 import {
   BUCHUNGEN_LIMIT,
-  BUCHUNGEN_SEITE,
   aktiveBuchungsStati,
   buchbareBuchungsarten,
   buchungenAbfrageBauen,
@@ -21,7 +20,6 @@ import {
   buchungenCursorLesen,
   buchungenCursorSchreiben,
   buchungenSeiteAusZeilen,
-  buchungenSeitenLauf,
   buchungenTitelMuster,
   buchungenZeitGueltig,
   type BuchungenFilter,
@@ -38,13 +36,6 @@ function zeit(n: number): string {
   const minute = Math.floor(n / 60) % 60
   const stunde = Math.floor(n / 3600)
   return `2026-01-01T${String(stunde).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(sekunde).padStart(2, '0')}.123456Z`
-}
-
-function schnitt(anzahl: number, optionen: { zeit?: (n: number) => string | null } = {}) {
-  return Array.from({ length: anzahl }, (_, index) => ({
-    id: uuid(index + 1),
-    bookingConfirmedAt: optionen.zeit ? optionen.zeit(index) : zeit(anzahl - index),
-  }))
 }
 
 function zeile(teil: Partial<RoheBuchungszeile> & { booking_confirmed_at?: unknown } = {}) {
@@ -112,6 +103,23 @@ describe('Buchungsabfrage', () => {
     if (!leer.ok) return
     assert.equal(leer.filter.titel, null)
     assert.equal(leer.cursor, null)
+    const wort = buchungenAnfrageAus({ titel: 'wiederholt' })
+    assert.equal(wort.ok, true)
+    if (!wort.ok) return
+    assert.equal(wort.filter.titel, 'wiederholt')
+    assert.equal(buchungenAbfrageBauen(wort.filter, null).titelMuster, '***=wiederholt')
+    const einzeln = buchungenAnfrageAus({ titel: ['wiederholt'] })
+    assert.equal(einzeln.ok, true)
+    if (!einzeln.ok) return
+    assert.equal(einzeln.filter.titel, 'wiederholt')
+    const satz = buchungenAnfrageAus({ titel: 'wiederholt gebucht' })
+    assert.equal(satz.ok, true)
+    if (!satz.ok) return
+    assert.equal(satz.filter.titel, 'wiederholt gebucht')
+    const doppelt = buchungenAnfrageAus({ titel: ['Zürich', 'Bern'] })
+    assert.equal(doppelt.ok, false)
+    if (doppelt.ok) return
+    assert.equal(doppelt.grund, 'parameter')
     const fremd = buchungenAnfrageAus({ titel: 'Rom', unbekannt: 'x' })
     assert.equal(fremd.ok, true)
     if (!fremd.ok) return
@@ -146,60 +154,6 @@ describe('Buchungsabfrage', () => {
     const archiv = buchungenAbfrageBauen({ ...FILTER, archiv: 'archiviert' }, { zeit: null, id: uuid(2) })
     assert.deepEqual(archiv.archiv, { op: 'eq', wert: 'archived' })
     assert.deepEqual(archiv.keyset, { op: 'null', id: uuid(2) })
-  })
-
-  test('Seiten 0, 1, 50, 51 und über 200 erreichen jede Zeile einmal', () => {
-    for (const anzahl of [0, 1, 50, 51, 201]) {
-      const lauf = buchungenSeitenLauf(schnitt(anzahl))
-      assert.equal(lauf.ids.length, anzahl)
-      assert.equal(new Set(lauf.ids).size, anzahl)
-      assert.deepEqual(lauf.seiten.flat(), lauf.ids)
-      for (const seite of lauf.seiten.slice(0, -1)) assert.equal(seite.length, BUCHUNGEN_SEITE)
-      const letzte = lauf.seiten.at(-1) ?? []
-      assert.equal(letzte.length <= BUCHUNGEN_SEITE, true)
-    }
-  })
-
-  test('der Cursor kommt aus Zeile 50, nicht aus der Sentinel-Zeile', () => {
-    const zeilen = schnitt(51)
-    const lauf = buchungenSeitenLauf(zeilen)
-    assert.equal(lauf.seiten[0]?.[0], uuid(1))
-    assert.equal(lauf.seiten[0]?.[49], uuid(50))
-    assert.equal(lauf.seiten[1]?.[0], uuid(51))
-    const cursor = lauf.cursor[0] ?? ''
-    assert.equal(cursor.includes(uuid(50)), true)
-    assert.equal(cursor.includes(uuid(51)), false)
-    assert.equal(
-      buchungenCursorLesen(cursor, FILTER)?.zeit,
-      zeilen.find((zeile) => zeile.id === uuid(50))?.bookingConfirmedAt,
-    )
-  })
-
-  test('gleiche Zeit, Übergang auf null und nur null setzen fort', () => {
-    const gleich = Array.from({ length: 60 }, (_, index) => ({
-      id: uuid(index + 1),
-      bookingConfirmedAt: '2026-08-30T12:00:00.123456Z',
-    }))
-    const gleichLauf = buchungenSeitenLauf(gleich)
-    assert.equal(gleichLauf.seiten[0]?.[49], uuid(50))
-    assert.equal(gleichLauf.seiten[1]?.[0], uuid(51))
-    assert.equal(gleichLauf.cursor[0]?.includes('2026-08-30T12:00:00.123456Z'), true)
-
-    const gemischt = [
-      ...schnitt(40),
-      ...Array.from({ length: 20 }, (_, index) => ({ id: uuid(100 + index), bookingConfirmedAt: null })),
-    ]
-    const gemischtLauf = buchungenSeitenLauf(gemischt)
-    assert.equal(gemischtLauf.ids.length, 60)
-    assert.equal(new Set(gemischtLauf.ids).size, 60)
-    assert.equal(gemischtLauf.cursor[0]?.includes('|null|'), true)
-
-    const nurNull = buchungenSeitenLauf(
-      Array.from({ length: 51 }, (_, index) => ({ id: uuid(index + 1), bookingConfirmedAt: null })),
-    )
-    assert.equal(nurNull.seiten[0]?.length, 50)
-    assert.equal(nurNull.seiten[1]?.length, 1)
-    assert.equal(nurNull.cursor[0]?.includes('|null|'), true)
   })
 
   test('eine spätere leere Seite ist nicht das leere Konto', () => {

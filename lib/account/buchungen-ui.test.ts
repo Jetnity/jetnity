@@ -86,6 +86,8 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
     assert.match(ui, /BUCHUNGEN_COPY.keineTrefferTitel/)
     assert.match(ui, /BUCHUNGEN_COPY.fortsetzungEndeTitel/)
     assert.match(ui, /BUCHUNGEN_COPY.ungueltigTitel/)
+    assert.match(ui, /standHref=\{ansicht\.wiederholenHref\}/)
+    assert.match(quelle('../../components/account/BuchungenFilter.tsx'), /key=\{stand\}/)
     assert.equal(ui.includes('overflow-hidden'), false)
     assert.match(ui, /archivKennzeichen/)
     assert.equal(ui.includes('Keine Buchungen konnten nicht'), false)
