@@ -43,7 +43,18 @@ JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r10
   node scripts/organisieren-action-recovery-1/harness.mjs
 ```
 
-Historical 16 files stayed sha256-identical. R103 `sourceBlob` `a3b1fbac4494001daa3aef7da2b21c4106d3ceec` matches Mobilitaet. Its `result.json` did not change. `wide-1280-pending.png` changed by a few bytes. R104 flight blob `a0d356466e9a28f31ae0249e42670bd099887b85` matches FlugBestand. Unterkunft blob `72fb6146d72bb30cf796687620894a26a57dd25e` matches this runtime. Connection hash `75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a`. R103 and R104 author strings are inherited.
+Historical 16 files stayed sha256-identical. R103 `sourceBlob` `a3b1fbac4494001daa3aef7da2b21c4106d3ceec` matches Mobilitaet. Its `result.json` did not change. The V4 `wide-1280-pending.png` differed by a few bytes from the prior screenshot. R104 flight blob `a0d356466e9a28f31ae0249e42670bd099887b85` matches FlugBestand. Unterkunft blob `72fb6146d72bb30cf796687620894a26a57dd25e` matches this runtime. Connection hash `75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a`. R103 and R104 author strings are inherited.
+
+Those commands wrote the lane directories named above. Commit `860b35d9` stored that output in place and replaced four pre-V4 files. CODE REVIEW V5 copies the complete executed set, 23 files, to `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/` without rewriting the command, path, `headAtRun` `b356fd9f`, port `39311`, browser, or timestamp strings inside them. `archive-manifest.json` records the relocation. The four original paths are restored from `be2c4932`:
+
+| Path | Restored blob | Archived V4 blob |
+| --- | --- | --- |
+| `result.json` | `bc054afb87c390cf76c77709a5428097c80f7ce6` | `f56befddfa0d65f9ec39bb24c57e014ebef83e4d` |
+| `rerun-provenance.json` | `3da8a04325cbac8b09f16b52c7cfaf10788dab5a` | `8d319a07da41b470a7adbaae05b260d569a50ec1` |
+| `r104-organisieren-action-recovery/result.json` | `4dd2d75f4c0a7b7a18c983c277084089cdb13be0` | `ab5bf98ac306438aaede439e4bb25796aea2a5f2` |
+| `r103-manual-mobility-pending-draft-guard/screens/wide-1280-pending.png` | `1a3f6f6e60d0532ee73f121094273a87e018e1e8` | `c40449fa2e3e4b107e85c531111e51bc213d2c9e` |
+
+This preservation is not a new harness, R103, or R104 run.
 
 Playwright Chromium `chromium_headless_shell-1187` did not launch. The Chrome channel was used.
 
@@ -51,7 +62,7 @@ Playwright Chromium `chromium_headless_shell-1187` did not launch. The Chrome ch
 
 On `b356fd9f`: `npm run typecheck` exit 0. `npm run lint` exit 0, **0 errors, 144 warnings**. No warning is in `UnterkunftBestand.tsx` or `FlugBestand.tsx`. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` exit 0. Schema-bezug prints the pre-existing LOCAL/UNAPPLIED RPC notes. `npm run build` exit 0. Next.js 16.4.1 compiled successfully. `check:setup` warned that this VM has no `.env`. caniuse-lite is 13 months old and was not updated.
 
-`db:*` and `auth:pruefen` were not run. Native App/Auth/Vercel for the evidence commit is a separate exact-head run started by the push. It is not recorded as green in this file.
+`db:*` and `auth:pruefen` were not run. The typecheck, lint, guards, and build above were run on `b356fd9f` and were not repeated for this preservation commit. `git diff b356fd9f -- components lib scripts` is empty. Native App/Auth/Vercel for the preservation commit is a separate exact-head run started by the push. A green check on `b356fd9f` or `860b35d9` does not cover it. It is not recorded as green in this file.
 
 ## Security
 
@@ -67,4 +78,4 @@ No new dependency, provider, model call, or running cost.
 
 ## Dokumentation
 
-STATUS, REPORT, SELF_REVIEW, HANDOFF, and `docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json` describe this head. TASK, PLAN, and both addenda were not edited.
+STATUS, REPORT, SELF_REVIEW, and HANDOFF describe this preservation. The V4 provenance that belongs to the `b356fd9f` run is `docs/evidence/manual-journey-editor-completion-1/v4-b356fd9f/rerun-provenance.json`. The file at `docs/evidence/manual-journey-editor-completion-1/rerun-provenance.json` is the restored `be2c4932` blob `3da8a04325cbac8b09f16b52c7cfaf10788dab5a`. TASK, PLAN, and both addenda were not edited.

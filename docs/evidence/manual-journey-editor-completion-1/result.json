@@ -2,13 +2,13 @@
   "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
   "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
   "model": "grok-4.7-high-fast",
-  "headAtRun": "b356fd9ff1215174511bd59a0eddc27206e47f69",
+  "headAtRun": "9b11323dccf844d850dd444b1b4d205bf754109c",
   "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
   "sourceSha256": {
     "components/trips/FlugBestand.tsx": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
-    "components/trips/UnterkunftBestand.tsx": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+    "components/trips/UnterkunftBestand.tsx": "ee6ef9d9ff55ba9e35d6bd7fce51252f15271483dda16cbfa15fcab617e80484",
     "components/trips/MobilitaetBereich.tsx": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
-    "lib/trips/manual-journey-editor-completion-1.ts": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa"
+    "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8"
   },
   "viewports": [
     {
@@ -74,9 +74,7 @@
     "stay-saved-graph-new-draft",
     "stay-late-r1-success-domain-reject-r2-pending",
     "flight-other-row-readback-keeps-focus",
-    "flight-pending-a-newer-b-keeps-focus",
-    "stay-current-owner-focus",
-    "stay-pending-a-newer-b-keeps-focus"
+    "flight-pending-a-newer-b-keeps-focus"
   ],
   "layouts": [
     {
@@ -305,9 +303,9 @@
     ],
     "version": "148.0.7778.96"
   },
-  "behaviorCount": 22,
+  "behaviorCount": 20,
   "layoutCount": 9,
-  "port": 39311,
+  "port": 37175,
   "notVerified": [
     "CI",
     "Preview",
