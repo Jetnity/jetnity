@@ -92,6 +92,16 @@ function antwort(art, url) {
       return { status: 200, body: [ort('geonames:1', 'Alpha')] }
     }
     if (q === 'aaa') return { status: 200, body: drei }
+    if (q === 'probe') {
+      return {
+        status: 200,
+        body: [
+          ort('geonames:1000001', 'Probe Alpha'),
+          ort('geonames:1000002', 'Probe Beta'),
+          ort('geonames:1000003', 'Probe Gamma'),
+        ],
+      }
+    }
     return { status: 200, body: [ort('geonames:4', q)] }
   }
   const drei = [
@@ -378,6 +388,29 @@ async function eltern(page, feld) {
   }, 'Elternwechsel ohne Listenauswahl')
 }
 
+async function leererSamen(page) {
+  await bereit(page, 'ort')
+  const feld = page.getByRole('combobox')
+  await feld.focus()
+  await page.evaluate(() => window.__steuerung.ortSetzen(null, 'Probe'))
+  await optionen(page, 3)
+  await feld.press('ArrowDown')
+  await feld.press('ArrowDown')
+  await warten(async () => (await nachkomme(page)).text?.includes('Probe Beta') === true, 'Beta aktiv')
+  await page.evaluate(() => window.__steuerung.ortSetzen(null, ''))
+  await warten(async () => {
+    const jetzt = await zustand(page)
+    return jetzt.text === '' && jetzt.expanded === 'false' && jetzt.liste === 0 && jetzt.nachkomme.id === null
+  }, 'leerer Samen')
+  await page.evaluate(() => window.__steuerung.ortSetzen(null, 'Probe'))
+  await optionen(page, 3)
+  const wieder = await nachkomme(page)
+  assert.equal(wieder.id, null)
+  await feld.press('Enter')
+  assert.equal(kanonisch(await ereignisse(page)).length, 0)
+  assert.equal(await feld.inputValue(), 'Probe')
+}
+
 async function rolleKuerzt(page) {
   await bereit(page, 'ort')
   await tippen(page, 'aaa')
@@ -433,6 +466,7 @@ async function lauf(viewport, touch, felder, namen) {
         else if (name === 'responses') await antworten(page, feld)
         else if (name === 'parent') await eltern(page, feld)
         else if (name === 'rolle') await rolleKuerzt(page)
+        else if (name === 'empty-seed') await leererSamen(page)
         else throw new Error(name)
       })
     }
@@ -441,7 +475,7 @@ async function lauf(viewport, touch, felder, namen) {
 }
 
 await lauf({ width: 1280, height: 800 }, false, ['ort', 'flughafen'], ['keyboard', 'pointer', 'responses', 'parent'])
-await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle'])
+await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle', 'empty-seed'])
 await lauf({ width: 390, height: 844 }, true, ['ort', 'flughafen'], ['touch', 'keyboard'])
 
 ergebnis.aborted = abgebrochen

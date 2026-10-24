@@ -101,11 +101,7 @@ export default function OrtSuche({
     : !value?.name && initialText !== undefined && initialText !== text
       ? initialText
       : null
-  const [aktivResetFuer, setAktivResetFuer] = React.useState<string | null>(null)
-  if (elternErsatz && elternErsatz !== aktivResetFuer) {
-    setAktivResetFuer(elternErsatz)
-    setAktiv(-1)
-  }
+  if (elternErsatz !== null && aktiv !== -1) setAktiv(-1)
 
   React.useEffect(() => {
     const abgleich = ortSucheAnzeigetextAbstimmen({
