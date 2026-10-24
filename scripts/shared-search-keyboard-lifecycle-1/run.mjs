@@ -96,7 +96,7 @@ function antwort(art, url) {
       return {
         status: 200,
         body: [
-          ort('geonames:1000001', 'Probe Alpha'),
+          ort('geonames:1000001', 'Probe'),
           ort('geonames:1000002', 'Probe Beta'),
           ort('geonames:1000003', 'Probe Gamma'),
         ],
@@ -443,6 +443,31 @@ async function festerSamen(page) {
   assert.equal(await page.evaluate(() => window.__steuerung.samen()), 'Original')
 }
 
+async function kanonischerWert(page) {
+  await bereit(page, 'ort')
+  await page.evaluate(() => window.__steuerung.ohneSamen())
+  const feld = page.getByRole('combobox')
+  await feld.waitFor()
+  assert.equal(await page.evaluate(() => window.__steuerung.samen()), null)
+  await feld.fill('Probe')
+  await optionen(page, 3)
+  await feld.press('ArrowDown')
+  await feld.press('ArrowDown')
+  await warten(async () => (await nachkomme(page)).text?.includes('Probe Beta') === true, 'Beta vor Wert')
+  await page.evaluate(() => window.__steuerung.ortSetzen({ id: 'geonames:1000001', name: 'Probe' }))
+  await warten(async () => {
+    const jetzt = await zustand(page)
+    return jetzt.text === 'Probe' && jetzt.expanded === 'false' && jetzt.liste === 0 && jetzt.nachkomme.id === null
+  }, 'kanonischer Wert schliesst')
+  assert.equal(await page.evaluate(() => window.__steuerung.samen()), null)
+  await page.evaluate(() => window.__steuerung.ortSetzen(null))
+  await optionen(page, 3)
+  assert.equal((await nachkomme(page)).id, null)
+  await feld.press('Enter')
+  assert.equal(kanonisch(await ereignisse(page)).length, 0)
+  assert.equal(await feld.inputValue(), 'Probe')
+}
+
 async function rolleKuerzt(page) {
   await bereit(page, 'ort')
   await tippen(page, 'aaa')
@@ -500,6 +525,7 @@ async function lauf(viewport, touch, felder, namen) {
         else if (name === 'rolle') await rolleKuerzt(page)
         else if (name === 'empty-seed') await leererSamen(page)
         else if (name === 'fixed-seed') await festerSamen(page)
+        else if (name === 'value-clear') await kanonischerWert(page)
         else throw new Error(name)
       })
     }
@@ -508,7 +534,7 @@ async function lauf(viewport, touch, felder, namen) {
 }
 
 await lauf({ width: 1280, height: 800 }, false, ['ort', 'flughafen'], ['keyboard', 'pointer', 'responses', 'parent'])
-await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle', 'empty-seed', 'fixed-seed'])
+await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle', 'empty-seed', 'fixed-seed', 'value-clear'])
 await lauf({ width: 390, height: 844 }, true, ['ort', 'flughafen'], ['touch', 'keyboard'])
 
 ergebnis.aborted = abgebrochen

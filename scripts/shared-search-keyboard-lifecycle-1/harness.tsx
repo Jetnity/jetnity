@@ -21,7 +21,8 @@ declare global {
       rolle: (rolle: OrtRolle) => void
       ortSetzen: (wert: OrtAuswahl | null, text?: string) => void
       samenFest: (text: string) => void
-      samen: () => string
+      ohneSamen: () => void
+      samen: () => string | null
       flugSetzen: (wert: FlughafenAuswahl | null) => void
       ereignisse: () => Ereignis[]
     }
@@ -34,10 +35,12 @@ function Harness() {
   const [rolle, setRolle] = React.useState<OrtRolle>('ziel')
   const [ort, setOrt] = React.useState<OrtAuswahl | null>(null)
   const [ortText, setOrtText] = React.useState('')
+  const [samenSichtbar, setSamenSichtbar] = React.useState(true)
   const [flug, setFlug] = React.useState<FlughafenAuswahl | null>(null)
   const ereignisse = React.useRef<Ereignis[]>([])
   const echo = React.useRef(true)
   const samenRef = React.useRef('')
+  const samenSichtbarRef = React.useRef(true)
 
   React.useEffect(() => {
     const samenSetzen = (text: string) => {
@@ -48,6 +51,8 @@ function Harness() {
       neu: (naechstes) => {
         ereignisse.current = []
         echo.current = true
+        samenSichtbarRef.current = true
+        setSamenSichtbar(true)
         setFeld(naechstes)
         setRolle('ziel')
         setOrt(null)
@@ -62,10 +67,19 @@ function Harness() {
       },
       samenFest: (text) => {
         echo.current = false
+        samenSichtbarRef.current = true
+        setSamenSichtbar(true)
         setOrt(null)
         samenSetzen(text)
       },
-      samen: () => samenRef.current,
+      ohneSamen: () => {
+        echo.current = false
+        samenSichtbarRef.current = false
+        setSamenSichtbar(false)
+        setOrt(null)
+        setGeneration((bisher) => bisher + 1)
+      },
+      samen: () => (samenSichtbarRef.current ? samenRef.current : null),
       flugSetzen: (wert) => setFlug(wert),
       ereignisse: () => ereignisse.current.map((eintrag) => ({ ...eintrag, wert: eintrag.wert ? { ...eintrag.wert } : null })),
     }
@@ -93,7 +107,7 @@ function Harness() {
       rolle={rolle}
       variante="field"
       value={ort}
-      initialText={ortText}
+      initialText={samenSichtbar ? ortText : undefined}
       onChange={(wert, text) => {
         ereignisse.current.push({ feld: 'ort', wert, text })
         setOrt(wert)

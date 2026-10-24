@@ -96,17 +96,24 @@ export default function OrtSuche({
   const listeId = React.useId()
   const letzterSamen = React.useRef(initialText)
   const zeigerWahl = React.useRef(false)
+  const wertSchluessel = value ? `${value.id}\0${value.name}` : ''
   const [gesehenerSamen, setGesehenerSamen] = React.useState(initialText)
-  const [gesehenerWert, setGesehenerWert] = React.useState(value?.name)
-  if (initialText !== gesehenerSamen || value?.name !== gesehenerWert) {
+  const [gesehenerWert, setGesehenerWert] = React.useState(wertSchluessel)
+  if (initialText !== gesehenerSamen || wertSchluessel !== gesehenerWert) {
     const uebernahme = ortSucheAnzeigetextAbstimmen({
       valueName: value?.name,
       initialText,
       letzterSamen: gesehenerSamen,
     })
+    const wertWechsel = wertSchluessel !== gesehenerWert
     setGesehenerSamen(initialText)
-    setGesehenerWert(value?.name)
-    if (uebernahme.uebernehmen !== null && uebernahme.uebernehmen !== text && aktiv !== -1) {
+    setGesehenerWert(wertSchluessel)
+    // Gleicher sichtbarer Text ist bei einem neuen oder entfernten kanonischen
+    // Wert trotzdem eine neue Navigation. Ein unveränderter Samen nicht.
+    if (
+      aktiv !== -1 &&
+      (wertWechsel || (uebernahme.uebernehmen !== null && uebernahme.uebernehmen !== text))
+    ) {
       setAktiv(-1)
     }
   }
