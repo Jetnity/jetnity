@@ -102,6 +102,16 @@ function antwort(art, url) {
         ],
       }
     }
+    if (q === 'edited') {
+      return {
+        status: 200,
+        body: [
+          ort('geonames:2000001', 'Edited Alpha'),
+          ort('geonames:2000002', 'Edited Beta'),
+          ort('geonames:2000003', 'Edited Gamma'),
+        ],
+      }
+    }
     return { status: 200, body: [ort('geonames:4', q)] }
   }
   const drei = [
@@ -411,6 +421,28 @@ async function leererSamen(page) {
   assert.equal(await feld.inputValue(), 'Probe')
 }
 
+async function festerSamen(page) {
+  await bereit(page, 'ort')
+  const feld = page.getByRole('combobox')
+  await page.evaluate(() => window.__steuerung.samenFest('Original'))
+  await warten(async () => (await feld.inputValue()) === 'Original', 'Samen Original')
+  await feld.fill('Edited')
+  await warten(async () => {
+    const samen = await page.evaluate(() => window.__steuerung.samen())
+    return samen === 'Original' && (await feld.inputValue()) === 'Edited'
+  }, 'Samen bleibt Original')
+  await optionen(page, 3)
+  await feld.press('ArrowDown')
+  await warten(async () => (await nachkomme(page)).text?.includes('Edited Alpha') === true, 'Edited Alpha aktiv')
+  await feld.press('Enter')
+  await warten(async () => kanonisch(await ereignisse(page)).length === 1, 'fester Samen wählt')
+  const gewaehlt = kanonisch(await ereignisse(page))
+  assert.equal(gewaehlt.length, 1)
+  assert.equal(gewaehlt[0].wert.id, 'geonames:2000001')
+  assert.equal(gewaehlt[0].wert.name, 'Edited Alpha')
+  assert.equal(await page.evaluate(() => window.__steuerung.samen()), 'Original')
+}
+
 async function rolleKuerzt(page) {
   await bereit(page, 'ort')
   await tippen(page, 'aaa')
@@ -467,6 +499,7 @@ async function lauf(viewport, touch, felder, namen) {
         else if (name === 'parent') await eltern(page, feld)
         else if (name === 'rolle') await rolleKuerzt(page)
         else if (name === 'empty-seed') await leererSamen(page)
+        else if (name === 'fixed-seed') await festerSamen(page)
         else throw new Error(name)
       })
     }
@@ -475,7 +508,7 @@ async function lauf(viewport, touch, felder, namen) {
 }
 
 await lauf({ width: 1280, height: 800 }, false, ['ort', 'flughafen'], ['keyboard', 'pointer', 'responses', 'parent'])
-await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle', 'empty-seed'])
+await lauf({ width: 1280, height: 800 }, false, ['ort'], ['rolle', 'empty-seed', 'fixed-seed'])
 await lauf({ width: 390, height: 844 }, true, ['ort', 'flughafen'], ['touch', 'keyboard'])
 
 ergebnis.aborted = abgebrochen

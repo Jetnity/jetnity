@@ -2,11 +2,11 @@
   "author": "Jetnity Shared Search Keyboard Lifecycle 1 — Cursor Generation 1",
   "session": "bc-f17cfe4a-c64f-420f-980c-59c8d82cb19e",
   "model": "grok-4.7-high-fast",
-  "origin": "http://127.0.0.1:34101",
+  "origin": "http://127.0.0.1:42609",
   "sources": {
     "components/places/OrtSuche.tsx": {
-      "sha256": "8cdb9ee471c27828adb42e23999c446b25408eb9767598996b95a7a1763ab336",
-      "blob": "a7a803a521fce45836f120c9c074e35530cebe9c"
+      "sha256": "a2dd2b12177b3452ca3502dd653582d5c7e13466b21b786727fe1a9bca37bb21",
+      "blob": "62ef14d272e7516075033ef74beeb9c78fbc8c75"
     },
     "components/airports/FlughafenSuche.tsx": {
       "sha256": "a2f3a489e702886fdd0e111bb688421f62325e7ed09d689634e0b26ffa0de355",
@@ -96,6 +96,14 @@
     },
     {
       "name": "ort/empty-seed/1280",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "pass": true
+    },
+    {
+      "name": "ort/fixed-seed/1280",
       "viewport": {
         "width": 1280,
         "height": 800

@@ -20,6 +20,8 @@ declare global {
       neu: (feld: Feld) => void
       rolle: (rolle: OrtRolle) => void
       ortSetzen: (wert: OrtAuswahl | null, text?: string) => void
+      samenFest: (text: string) => void
+      samen: () => string
       flugSetzen: (wert: FlughafenAuswahl | null) => void
       ereignisse: () => Ereignis[]
     }
@@ -34,23 +36,36 @@ function Harness() {
   const [ortText, setOrtText] = React.useState('')
   const [flug, setFlug] = React.useState<FlughafenAuswahl | null>(null)
   const ereignisse = React.useRef<Ereignis[]>([])
+  const echo = React.useRef(true)
+  const samenRef = React.useRef('')
 
   React.useEffect(() => {
+    const samenSetzen = (text: string) => {
+      samenRef.current = text
+      setOrtText(text)
+    }
     window.__steuerung = {
       neu: (naechstes) => {
         ereignisse.current = []
+        echo.current = true
         setFeld(naechstes)
         setRolle('ziel')
         setOrt(null)
-        setOrtText('')
+        samenSetzen('')
         setFlug(null)
         setGeneration((bisher) => bisher + 1)
       },
       rolle: (naechstes) => setRolle(naechstes),
       ortSetzen: (wert, text) => {
         setOrt(wert)
-        if (typeof text === 'string') setOrtText(text)
+        if (typeof text === 'string') samenSetzen(text)
       },
+      samenFest: (text) => {
+        echo.current = false
+        setOrt(null)
+        samenSetzen(text)
+      },
+      samen: () => samenRef.current,
       flugSetzen: (wert) => setFlug(wert),
       ereignisse: () => ereignisse.current.map((eintrag) => ({ ...eintrag, wert: eintrag.wert ? { ...eintrag.wert } : null })),
     }
@@ -82,7 +97,10 @@ function Harness() {
       onChange={(wert, text) => {
         ereignisse.current.push({ feld: 'ort', wert, text })
         setOrt(wert)
-        setOrtText(text)
+        if (echo.current) {
+          samenRef.current = text
+          setOrtText(text)
+        }
       }}
       placeholder="Ort"
       inputId="ort-suche"

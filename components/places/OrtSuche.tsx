@@ -96,12 +96,20 @@ export default function OrtSuche({
   const listeId = React.useId()
   const letzterSamen = React.useRef(initialText)
   const zeigerWahl = React.useRef(false)
-  const elternErsatz = value?.name && value.name !== text
-    ? value.name
-    : !value?.name && initialText !== undefined && initialText !== text
-      ? initialText
-      : null
-  if (elternErsatz !== null && aktiv !== -1) setAktiv(-1)
+  const [gesehenerSamen, setGesehenerSamen] = React.useState(initialText)
+  const [gesehenerWert, setGesehenerWert] = React.useState(value?.name)
+  if (initialText !== gesehenerSamen || value?.name !== gesehenerWert) {
+    const uebernahme = ortSucheAnzeigetextAbstimmen({
+      valueName: value?.name,
+      initialText,
+      letzterSamen: gesehenerSamen,
+    })
+    setGesehenerSamen(initialText)
+    setGesehenerWert(value?.name)
+    if (uebernahme.uebernehmen !== null && uebernahme.uebernehmen !== text && aktiv !== -1) {
+      setAktiv(-1)
+    }
+  }
 
   React.useEffect(() => {
     const abgleich = ortSucheAnzeigetextAbstimmen({
