@@ -6,6 +6,7 @@ import { BedDouble } from 'lucide-react'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
+  BUCHUNG_AKTION_KLASSE,
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
@@ -121,7 +122,7 @@ export default function UnterkunftBestand({
                       disabled={pendingId !== null && pendingId !== aufenthalt.item.id}
                       aria-disabled={pendingId !== null}
                       onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null)}
-                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === aufenthalt.item.id ? 'Wird gespeichert …' : gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>

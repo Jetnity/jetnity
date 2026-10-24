@@ -21,6 +21,7 @@ import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
+  BUCHUNG_AKTION_KLASSE,
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
@@ -132,7 +133,7 @@ export default function MietwagenBereich({
                       disabled={pendingId !== null && pendingId !== punkt.id}
                       aria-disabled={pendingId !== null}
                       onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null)}
-                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === punkt.id ? 'Wird gespeichert …' : punkt.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>

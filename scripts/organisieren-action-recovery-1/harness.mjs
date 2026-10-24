@@ -131,6 +131,71 @@ function assertOwnedFits(name, snapshot) {
   assert.equal(snapshot.otherOverflow.length, 0, `${name}: unexpected overflow ${JSON.stringify(snapshot.otherOverflow)}`)
 }
 
+const BOOKING_LABEL = /^(Wird gespeichert …|Buchung korrigieren|Als gebucht markieren)$/
+
+async function bookingTextBounds(page) {
+  return page.evaluate((patternSource) => {
+    const pattern = new RegExp(patternSource)
+    const names = ['Deine Flüge', 'Deine Unterkunft', 'Deine Verbindungen', 'Dein Mietwagen']
+    const controls = []
+    for (const name of names) {
+      const region = document.querySelector(`[aria-label="${name}"]`)
+      if (!region) continue
+      for (const button of region.querySelectorAll('button')) {
+        const text = (button.textContent || '').replace(/\s+/g, ' ').trim()
+        if (!pattern.test(text)) continue
+        const box = button.getBoundingClientRect()
+        const range = document.createRange()
+        range.selectNodeContents(button)
+        const rects = [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0)
+        const maxExcess = rects.reduce((max, rect) => Math.max(
+          max,
+          rect.right - box.right,
+          box.left - rect.left,
+          box.top - rect.top,
+          rect.bottom - box.bottom,
+        ), 0)
+        const style = getComputedStyle(button)
+        controls.push({
+          region: name,
+          text,
+          disabled: button.disabled,
+          ariaDisabled: button.getAttribute('aria-disabled'),
+          width: Math.round(box.width * 100) / 100,
+          height: Math.round(box.height * 100) / 100,
+          lines: rects.length,
+          maxExcess: Math.round(maxExcess * 100) / 100,
+          scrollOverflow: button.scrollWidth - button.clientWidth,
+          clips: style.overflowX === 'hidden' || style.overflowY === 'hidden' || style.textOverflow === 'ellipsis',
+          focusRing: button.className.includes('focus-visible:ring-4'),
+        })
+      }
+    }
+    return {
+      condition: 'DOM Range client rects against the booking button border box',
+      fontSize: getComputedStyle(document.documentElement).fontSize,
+      viewport: window.innerWidth,
+      controls,
+    }
+  }, BOOKING_LABEL.source)
+}
+
+function assertTextContained(stage, report) {
+  assert.equal(report.fontSize, '32px', `${stage}: root font`)
+  assert.equal(report.viewport, 320, `${stage}: viewport`)
+  assert.ok(report.controls.length >= 8, `${stage}: expected eight booking controls, got ${report.controls.length}`)
+  const labels = new Set(report.controls.map((control) => control.text))
+  for (const control of report.controls) {
+    assert.ok(control.maxExcess <= 1, `${stage}: ${control.region} "${control.text}" exceeds its button by ${control.maxExcess}px`)
+    assert.ok(control.scrollOverflow <= 1, `${stage}: ${control.region} "${control.text}" scrolls inside the button`)
+    assert.equal(control.clips, false, `${stage}: ${control.region} clips its label`)
+    assert.equal(control.focusRing, true, `${stage}: focus ring class missing`)
+    assert.ok(control.width > 0 && control.height >= 44, `${stage}: ${control.text} is not a usable target`)
+    assert.ok(control.lines >= 1, `${stage}: ${control.text} has no text line`)
+  }
+  return { stage, labels: [...labels], controls: report.controls.length, maxExcess: Math.max(...report.controls.map((control) => control.maxExcess)) }
+}
+
 async function arm(page, channel, outcome) {
   await page.evaluate(({ channel: nextChannel, outcome: next }) => window.fixture.arm(nextChannel, next), { channel, outcome })
 }
@@ -259,6 +324,8 @@ const evidence = {
   layouts: [],
   blockedRequests: [],
   pageErrors: [],
+  bookingText: [],
+  bookingTextCondition: 'At 320 CSS px and root font-size 32px, every booking-label Range rect must sit inside its button border box. Also rejects button scroll, overflow hidden, and text-overflow ellipsis. States: idle, pending, recovered, domain error.',
   status: 'FAIL',
   failure: null,
   browser: null,
@@ -593,6 +660,36 @@ try {
       connectionOverflow: snapshot.connectionOverflow,
     })
     await opened.page.screenshot({ path: join(SCREENS, `${viewport.name}-200.png`), fullPage: false })
+    if (viewport.width === 320) {
+      const idle = assertTextContained('idle', await bookingTextBounds(opened.page))
+      evidence.bookingText.push(idle)
+      const regions = ['Deine Flüge', 'Deine Unterkunft', 'Deine Verbindungen', 'Dein Mietwagen']
+      for (const name of regions) {
+        await arm(opened.page, 'booking', 'success')
+        await clickBooking(opened.page, name, 'Als gebucht markieren')
+        await opened.page.waitForFunction(() => window.fixture.held.booking === true)
+        const pending = assertTextContained(`${name} pending`, await bookingTextBounds(opened.page))
+        evidence.bookingText.push(pending)
+        if (name === 'Deine Flüge') {
+          await region(opened.page, name).screenshot({ path: join(SCREENS, 'narrow-320-200-flight-pending-text.png') })
+        }
+        await release(opened.page, 'booking')
+        await opened.page.waitForFunction((regionName) => {
+          const scope = document.querySelector(`[aria-label="${regionName}"]`)
+          return scope && ![...scope.querySelectorAll('button')].some((button) => (button.textContent || '').includes('Wird gespeichert'))
+        }, name)
+        const recovered = assertTextContained(`${name} recovered`, await bookingTextBounds(opened.page))
+        evidence.bookingText.push(recovered)
+      }
+      await arm(opened.page, 'booking', 'error')
+      await clickBooking(opened.page, 'Deine Flüge', 'Buchung korrigieren')
+      await opened.page.waitForFunction(() => window.fixture.held.booking === true)
+      await release(opened.page, 'booking')
+      await region(opened.page, 'Deine Flüge').getByRole('alert').waitFor()
+      const errored = assertTextContained('domain-error', await bookingTextBounds(opened.page))
+      evidence.bookingText.push(errored)
+      await region(opened.page, 'Deine Flüge').screenshot({ path: join(SCREENS, 'narrow-320-200-flight-error-text.png') })
+    }
     evidence.blockedRequests.push(...opened.blocked)
     evidence.pageErrors.push(...opened.errors)
     await opened.context.close()

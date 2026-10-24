@@ -10,6 +10,11 @@ export const BUCHUNG_WIRD_GESPEICHERT = 'Buchungsstatus wird gespeichert.'
 export const BUCHUNG_ABGELEHNT =
   'Der Buchungsstatus konnte nicht gespeichert werden. Du kannst es erneut versuchen.'
 
+// Block, not flex: a flex item's min-content width paints the label outside the button.
+// The text wraps inside the control and the control grows downward.
+export const BUCHUNG_AKTION_KLASSE =
+  'inline-block min-h-11 min-w-0 max-w-full whitespace-normal break-words rounded-full border border-line-300 bg-white px-3 py-2 text-left align-middle text-sm font-semibold leading-5 text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50'
+
 export type BookingMemory = {
   generation: number
   pendingId: string | null

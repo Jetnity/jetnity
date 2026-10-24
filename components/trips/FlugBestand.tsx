@@ -11,6 +11,7 @@ import { ersteMeldung, flugRouteManuellSchema, type FlugSegmentManuell } from '@
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
+  BUCHUNG_AKTION_KLASSE,
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
@@ -312,7 +313,7 @@ export default function FlugBestand({
                       disabled={pendingId !== null && pendingId !== abschnitt.item.id}
                       aria-disabled={pendingId !== null}
                       onClick={(event) => setzen(abschnitt.item!.id, abschnitt.status !== 'booked', event?.currentTarget ?? null)}
-                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === abschnitt.item.id ? 'Wird gespeichert …' : abschnitt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>
@@ -348,7 +349,7 @@ export default function FlugBestand({
                       disabled={pendingId !== null && pendingId !== item.id}
                       aria-disabled={pendingId !== null}
                       onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null)}
-                      className={`inline-flex min-h-11 max-w-full items-center whitespace-normal rounded-full border border-line-300 bg-white px-3 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50${pendingId !== null ? ' opacity-50' : ''}`}
+                      className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === item.id ? 'Wird gespeichert …' : item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
                     </button>

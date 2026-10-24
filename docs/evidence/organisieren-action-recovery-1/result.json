@@ -112,6 +112,103 @@
   ],
   "blockedRequests": [],
   "pageErrors": [],
+  "bookingText": [
+    {
+      "stage": "idle",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Flüge pending",
+      "labels": [
+        "Wird gespeichert …",
+        "Buchung korrigieren",
+        "Als gebucht markieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Flüge recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Unterkunft pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Unterkunft recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Verbindungen pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Verbindungen recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Dein Mietwagen pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Dein Mietwagen recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "domain-error",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    }
+  ],
+  "bookingTextCondition": "At 320 CSS px and root font-size 32px, every booking-label Range rect must sit inside its button border box. Also rejects button scroll, overflow hidden, and text-overflow ellipsis. States: idle, pending, recovered, domain error.",
   "status": "PASS",
   "failure": null,
   "browser": {
@@ -124,19 +221,19 @@
   "blobs": [
     {
       "file": "components/trips/FlugBestand.tsx",
-      "blob": "25e32d07d8c07996bda7f9ee8b87a615667dac9d"
+      "blob": "32e7582cade127610a8d264c87733bd93bbf9b1c"
     },
     {
       "file": "components/trips/UnterkunftBestand.tsx",
-      "blob": "3dc596a8ed3673a372da98570274ea8a5f2a357a"
+      "blob": "18e379f5b9b798ca65aa20b2a0629d51523cc085"
     },
     {
       "file": "components/trips/MobilitaetBereich.tsx",
-      "blob": "748e8733b46abd78beae2ad5940d078365a37709"
+      "blob": "eac9ae0cff6999d4167a1d1e151bbac9ba4a0ba6"
     },
     {
       "file": "components/trips/MietwagenBereich.tsx",
-      "blob": "c3076320a8f5c146ffef4ea2b47ff523a6e5dd27"
+      "blob": "67cc0cbbf25df52770a916b29c2728f177f356fa"
     }
   ]
 }
