@@ -1,0 +1,40 @@
+{
+  "schema": "bern_app_custody_2_synthetic_v1",
+  "syntheticOnly": true,
+  "realCredentialAccess": false,
+  "productionInvocationEnabled": false,
+  "networkUsed": false,
+  "operationalCustodyAccepted": false,
+  "backupPolicyChanged": false,
+  "checks": {
+    "defaultBuildCannotLookupKey": true,
+    "stagedPemRemovedAfterImport": true,
+    "searchListUnchanged": true,
+    "independentSignatureAndFixedClaims": true,
+    "wrongPublicKeyAndTamperedSignatureRejected": true,
+    "authorizedPrivateExportDenied": true,
+    "sameIdentifierDifferentBinaryDenied": true,
+    "suppliedInputsRejected": true,
+    "changedExecutableIdentityRejected": true,
+    "lockedVaultDeniedWithoutPrompt": true,
+    "wrongKeyRejected": true,
+    "missingKeyRejected": true,
+    "failedImportRedactedAndFileRemoved": true,
+    "searchListUnchangedAfterCleanup": true
+  },
+  "timeMachine": "included",
+  "signerSourceSha256": "ae4cfdc9f8c564ca0c773906660144f5f240dd6f5a7900e8da8c5423fda4ff73",
+  "signerBinarySha256": "b1b98096c5fd43194da27eb0682fa784e0197cd08f8078c43fafa948ffcc60f7",
+  "signerIdentifier": "org.jetnity.bern-executor-app-1.signer.synthetic.v1",
+  "signerCDHash": "2fd009f875e83e52786d96509650cfb8900bea1e",
+  "foreignAccess": {
+    "signDenied": true,
+    "exportDenied": true,
+    "signCode": -25293,
+    "exportCode": -25316
+  },
+  "status": "SYNTHETIC_REHEARSAL_PASS",
+  "keychainDeleted": true,
+  "filesRemoved": true,
+  "candidateEmpty": true
+}
