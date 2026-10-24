@@ -8,7 +8,9 @@ Issue #992. Draft PR #995. Branch `fix/organisieren-action-recovery-1`.
 
 ## Pins
 
-- Base / merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`. Behind: 0.
+- Accepted main / current merge-base: `07016ada86dcfc79d5c7c3efa9ba1d62336a1f60`. Behind: 0. Ahead before this docs commit: 7.
+- I1 merge commit: `84e7fae065da1abc6765828049ec2b9d8273597f`. Merge tree before this docs commit: `09d3daf91b13fb6848d7ebcd0c54c102361b98ad`.
+- Historical lane base: `913cf9353fd33491d2bd3130b3c430cc88990200`.
 - Reviewed head that received CHANGES REQUIRED R1: `48fd52dad48583871948ce804aecb9063e7e2410`
 - Pre-R1 runtime/proof commit: `f78f801048b8a39493f29215b3b70a38d078fbc2`
 - R1 runtime/proof commit: `143b4976c221eab56a35a872ae0d54f32e69174d`
@@ -47,6 +49,33 @@ Proof condition, recorded in the harness result: at 320 CSS px and `document.doc
 
 Rental submit focus after rejection is still best-effort. This R1 makes no auto-refocus PASS claim.
 
+## I1 — accepted main integration
+
+Identity re-attested before the merge: logical name **Jetnity Organisieren Action Recovery 1 — Cursor Generation 1**, session `bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa`, model `grok-4.7-high-fast`. Local HEAD was the reviewed head `d27dee9a3796cb1d7a3eb7fc7ea846946e442ed5`. Fetched `origin/main` was `07016ada86dcfc79d5c7c3efa9ba1d62336a1f60`. Mode remained NORMAL. TASK V1 blob remained `6db7bbecc3eaecc744569bbe74951342ff7f778e`. Live #751 V14 names this integration as the next C step after A’s actual-main acceptance.
+
+`git merge --no-ff origin/main` completed with the ort strategy and no conflict. Parents are `d27dee9a3796cb1d7a3eb7fc7ea846946e442ed5` and `07016ada86dcfc79d5c7c3efa9ba1d62336a1f60`. The five reviewed C runtime blobs are unchanged. Accepted A/B files, including `lib/trips/flug-manuell.test.ts` and `lib/trips/unterkunft-manuell.test.ts`, are the merged main versions. No C refactor and no test-predicate edit.
+
+Protected function SHA-256, rechecked on the integrated tree:
+
+- `function ManuelleFlugRoute` through its closing brace and the following blank line: `c3fb5c1f7cf8d82d0a5a4efbff10a329557040a741139d375728f8ba19047498`. The function bytes also match exact main `07016ada` and historical base `913cf935`.
+- `function UnterkunftZeitraum` through EOF: `17a670b3a1d4a2a8f57e6194387111c9f331360c916374915925a371e133e094`.
+- `export function ManuelleVerbindung` through EOF: `10fe6c8f0ec2bb976a53678ac3df9b100bcafe55baa97a72f4081a22bb368360`.
+
+Integrated commands, Node v22.23.4, on the merge tree:
+
+- `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/organisieren-action-recovery-1.test.ts lib/trips/flug-manuell.test.ts lib/trips/flug-route-form-validation.test.ts lib/trips/unterkunft-manuell.test.ts lib/trips/lodging-coverage-truth-1.test.ts` — exit 0. Actual count: 109 tests, 13 suites, 109 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo. Duration 5147 ms.
+- `node scripts/organisieren-action-recovery-1/harness.mjs` — exit 0, status PASS, Chrome 148.0.7778.96. Four scenario groups PASS. Ten text-bound stages, eight controls each, `maxExcess` 0. `pageErrors` and `blockedRequests` empty. The result file stayed byte-identical to the reviewed R1 evidence.
+- `npx tsc -p tsconfig.json --noEmit` — exit 0.
+- `npm run lint` — exit 0, 144 warnings, 0 errors. The owned `UNTERBEREICHE` warning remains. This count is the integrated tree.
+- `npm run check:setup` — exit 0, warning: no `.env` / `.env.local`.
+- `npm run check:operating-mode` — PASS.
+- `npm run check:api-schutz` — PASS.
+- `npm run check:schema-bezug` — exit 0, with the same pre-existing LOCAL/UNAPPLIED RPC notes.
+- `npm run check:dead` — 0 orphans.
+- `npm run check:exports` — 0 unexplained exports.
+- `npm run check:deps` — 0 unused.
+- `npm run build` — exit 0.
+
 ## Acceptance
 
 1. Both directions for flight, stay, connection, and rental use the existing `itemId` / boolean callback. The seal stays “Ausgewählt” until `commitBooking` supplies stored `booked`. No provider confirmation string.
@@ -63,7 +92,7 @@ Rental submit focus after rejection is still best-effort. This R1 makes no auto-
 
 ## Commands
 
-Executed on the runtime tree unless noted:
+The list below is the pre-integration R1 run. The integrated counts are in the I1 section.
 
 - `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/organisieren-action-recovery-1.test.ts lib/trips/flug-manuell.test.ts lib/trips/flug-route-form-validation.test.ts lib/trips/unterkunft-manuell.test.ts lib/trips/lodging-coverage-truth-1.test.ts` — 109 pass, 0 fail.
 - `node scripts/organisieren-action-recovery-1/harness.mjs` — exit 0, evidence status PASS. Chrome 148.0.7778.96. Playwright’s bundled Chromium was absent (`chromium_headless_shell-1187`), so the harness used the Chrome channel. No blocked requests. No page errors.
@@ -80,8 +109,8 @@ Executed on the runtime tree unless noted:
 
 ## NOT VERIFIED
 
-- Full `npm test` (the whole `lib/**/*.test.ts` script). Not run this session.
-- Exact-head App/Auth CI and Vercel Preview for this head. The earlier seed Preview is not evidence for this head.
+- Full `npm test` (the whole `lib/**/*.test.ts` script). Not run on the integrated head.
+- Exact-head App/Auth CI and Vercel Preview for the integrated head. Earlier previews, including the reviewed R1 preview, are not this head.
 - Hosted account, guest storage, provider calls, physical devices, and screen readers.
 - Personal browser. #748 stays suspended. The browser proof is headless Chrome on an isolated local page.
 

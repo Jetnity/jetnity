@@ -30,6 +30,10 @@ The reviewed finding was intra-button text, not viewport overflow. I changed onl
 
 The new proof compares Range rects with the button border box at 320px and root font-size 32px. It passed with `maxExcess` 0 for idle, pending, recovered, and domain-error labels. I inspected the pending flight screenshot: “Wird gespeichert …” wraps on two lines inside the outline.
 
+## I1
+
+I merged accepted main `07016ada` with `--no-ff` and did not edit the reviewed runtime. The five C blobs and the three protected function hashes match the pins. The fresh five-file run is 109/109 with 0 skips, and the mounted harness PASS left `result.json` unchanged. I did not rerun full `npm test`, CI, or Preview, and I do not treat the earlier R1 gates as approval of this head.
+
 ## What I would ask the Technical Lead to look at
 
 - The active booking control is focusable while `aria-disabled="true"`. Siblings are actually disabled. Both are visually dimmed.
