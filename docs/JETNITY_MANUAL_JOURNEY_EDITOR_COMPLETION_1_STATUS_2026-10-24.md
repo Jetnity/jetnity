@@ -10,22 +10,20 @@ Branch: `fix/manual-journey-editor-completion-1`
 
 ## State
 
-Review fixes for Technical-Lead CODE REVIEW V2 are in the runtime commit below. This is not a Technical-Lead PASS, not Ready, and not merged.
+Review fixes for Technical-Lead CODE REVIEW V3 are in the runtime commit below. This is not a Technical-Lead PASS, not Ready, and not merged.
 
 - Binding TASK V1 and addendum V1 are unchanged.
 - Accepted plan remains `e763caa51b0213bd3c0e71afe948b00ab402eb5d`, blob `09d936699a0ba16ba035ceea74d6c00bb530bebd`.
-- Reviewed evidence head `9c80c8ffa95589d8be4922ca1eb55ecdf627df7f`, tree `933511932b486d848e75f5a510aa812ce49f9158`, is the parent of this runtime fix. CODE REVIEW V1 parent remains `c2220a1a2677ab3d25f9701dbfbdb7f586f626a6`.
-- Runtime head: `fc0999815fe1b002f3b56978842d8653966466d8`, tree `7374d03f43d12e5ce7f026a58bf837d2b86ddbb3`.
-- Merge-base with live `origin/main` is still `0c37d318c47a758f06634448d6e0de3856bbc6a6`. The runtime commit is **8 ahead** of that merge-base.
-- Live `origin/main` fetched this turn is `43124e28f0c2ac366d25a86787f055b885b1fc00` (merge of #999, lane A). Against that main the runtime commit is **8 ahead / 16 behind**. This branch was not rebased and was not synchronized. The evidence commit that adds this file is the runtime commit's child.
+- Reviewed evidence head `52779d7f5307b7de5389e76e982c2eb208aa04c6`, tree `886ef27c9fd48cdb08c3d9bd10c88112d46dd28b`, is the parent of this runtime fix.
+- Runtime head: `ecdaef7b7ecb24b34b3bc482810ed646a405c807`, tree `2169a040ae2b25d19f8a0fdd77c875603a660687`.
+- Merge-base with live `origin/main` is still `0c37d318c47a758f06634448d6e0de3856bbc6a6`. The runtime commit is **10 ahead** of that merge-base.
+- Live `origin/main` fetched this turn is `43124e28f0c2ac366d25a86787f055b885b1fc00`. Against that main the runtime commit is **10 ahead / 16 behind**. This branch was not rebased. The evidence commit that adds this file is the runtime commit's child.
 - Harness `headAtRun` is the runtime head. `sourceSha256` binds the four implementation files in that commit.
 
 ## Review findings addressed
 
-- C-P2-CODE-02: delayed flight readback focus and status follow the flight-surface generation. A newer interaction inside any flight editor, including another row, clears the older entitlement. A matching closed editor with the same generation still receives the saved-graph focus and status. Graph truth stays on the parent trip.
-- C-P2-PROOF-03: connection, flight, and stay each run late R1 as success, then domain, then reject, while R2 stays pending and then completes as success alone. The aborted transition waits for a fixture-only suspend witness before abandon or resolve. The two-row A→B readback case is a separate behavior case. Behavior count is 19. Layout count is 9.
-- The `9c80c8ff` report called those R1/R2 cases late R1 success/domain/reject. That harness armed R1 as success and varied R2. This report does not repeat that claim.
-- C-P2-CODE-01 stays the committed-generation repair from `0ce2a3fa`. This turn does not reopen it.
+- C-P2-CODE-02: a flight save captures the surface generation before its callback. Settlement cannot adopt a newer generation. The editor's success, domain, and rejection paths move focus only when that generation is still current. The parent graph readback uses the same captured generation. A newer row interaction, including one that has already closed, keeps its control. The saved route still updates when the graph is delivered. The ordinary current-operation success path still focuses and publishes the selected-flight status.
+- C-P2-PROOF-03 counting: `behaviorCount` is the number of named scenario groups. It is not an execution count and not an assertion count. This head has 20 groups. Three of those groups each run success, domain, and reject for late R1 (9 executions). `flight-pending-a-newer-b-keeps-focus` is one group with 6 executions: success, domain, and reject, each with B open and B closed. `layoutCount` is 9 separate measurements.
 
 ## Not claimed
 

@@ -2,10 +2,10 @@
   "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
   "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
   "model": "grok-4.7-high-fast",
-  "headAtRun": "fc0999815fe1b002f3b56978842d8653966466d8",
+  "headAtRun": "ecdaef7b7ecb24b34b3bc482810ed646a405c807",
   "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
   "sourceSha256": {
-    "components/trips/FlugBestand.tsx": "f6a1b8acc2228480354ea80dcae2228267851d5d22c87e97c0408cd2a4106753",
+    "components/trips/FlugBestand.tsx": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
     "components/trips/UnterkunftBestand.tsx": "ee6ef9d9ff55ba9e35d6bd7fce51252f15271483dda16cbfa15fcab617e80484",
     "components/trips/MobilitaetBereich.tsx": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
     "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8"
@@ -73,7 +73,8 @@
     "stay-saved-graph-changed-stay",
     "stay-saved-graph-new-draft",
     "stay-late-r1-success-domain-reject-r2-pending",
-    "flight-other-row-readback-keeps-focus"
+    "flight-other-row-readback-keeps-focus",
+    "flight-pending-a-newer-b-keeps-focus"
   ],
   "layouts": [
     {
@@ -297,9 +298,9 @@
     ],
     "version": "148.0.7778.96"
   },
-  "behaviorCount": 19,
+  "behaviorCount": 20,
   "layoutCount": 9,
-  "port": 46145,
+  "port": 41287,
   "notVerified": [
     "CI",
     "Preview",
