@@ -15,7 +15,7 @@ import type { Trip, TripItem } from '@/types/trips'
 
 type Outcome = 'success' | 'domain' | 'reject'
 type Channel = 'flight' | 'stay' | 'connection'
-type FlightKind = 'a' | 'b' | 'multi' | 'over'
+type FlightKind = 'a' | 'b' | 'multi' | 'over' | 'pair'
 type Vorgabe = Partial<MobilityManuellEingabe>
 
 declare global {
@@ -32,6 +32,8 @@ declare global {
       suspendConnection: (next: Vorgabe) => void
       suspendFlightTrip: (tripId: string) => void
       abandonTransition: () => void
+      suspendRenders: () => number
+      committed: () => { suspend: boolean; flightTripId: string; vorgabeOrigin: string | null; linkTripId: string }
       setFlight: (kind: FlightKind) => void
       setFlightTrip: (tripId: string) => void
       setStay: (id: string) => void
@@ -111,7 +113,27 @@ function routeFromSegments(segments: FlugSegmentManuell[]): FlugRouteItinerary {
   })))
 }
 
-function flightItem(kind: FlightKind, override: FlugSegmentManuell[] | null = null): TripItem {
+function returnItem(override: FlugSegmentManuell[] | null): TripItem {
+  return punkt({
+    id: 'flight-b',
+    kind: 'flight',
+    title: 'flight-b',
+    startsOn: '2026-09-13',
+    startsAt: '10:00',
+    endsOn: '2026-09-13',
+    endsAt: '18:00',
+    routeItinerary: override ? routeFromSegments(override) : itinerary([{
+      origin: flughafenPunkt('BKK', TEST_FLUGHAFEN_REFS),
+      destination: flughafenPunkt('ZRH', TEST_FLUGHAFEN_REFS),
+      departureDate: '2026-09-13',
+      departureTime: '10:00',
+      arrivalDate: '2026-09-13',
+      arrivalTime: '18:00',
+    }]),
+  })
+}
+
+function flightItem(kind: Exclude<FlightKind, 'pair'>, override: FlugSegmentManuell[] | null = null): TripItem {
   if (kind === 'multi') {
     return punkt({
       id: 'flight-multi',
@@ -265,6 +287,7 @@ type Model = {
   flightKind: FlightKind
   flightTripId: string
   flightSegments: FlugSegmentManuell[] | null
+  returnSegments: FlugSegmentManuell[] | null
   stayId: string
   stayTripId: string
   stayDates: { startsOn: string; endsOn: string } | null
@@ -280,6 +303,7 @@ function initialModel(): Model {
     flightKind: 'a',
     flightTripId: 'trip-flight',
     flightSegments: null,
+    returnSegments: null,
     stayId: 'stay-a',
     stayTripId: 'trip-stay',
     stayDates: null,
@@ -321,6 +345,7 @@ const held: Record<Channel, boolean> = { flight: false, stay: false, connection:
 const outcome: Record<Channel, Outcome> = { flight: 'success', stay: 'success', connection: 'success' }
 const requests: RequestRecord[] = []
 let nextRequest = 1
+let suspendRenders = 0
 
 function syncHeld() {
   for (const channel of ['flight', 'stay', 'connection'] as const) {
@@ -367,6 +392,7 @@ function commit(update: (prev: Model) => Model) {
 }
 
 function Never() {
+  suspendRenders += 1
   throw new Promise(() => {})
 }
 
@@ -376,15 +402,21 @@ function HarnessApp() {
     snapshot = model
     setModelRef = setModel
   }, [model, setModel])
-  const flight = flightItem(model.flightKind, model.flightSegments)
-  if ((model.flightKind === 'a' || model.flightKind === 'b') && !assignedOutbound(flight, model.flightTripId)) {
+  const flight = model.flightKind === 'pair' ? null : flightItem(model.flightKind, model.flightSegments)
+  if (flight && (model.flightKind === 'a' || model.flightKind === 'b') && !assignedOutbound(flight, model.flightTripId)) {
     throw new Error(`flight ${flight.id} is not the outbound section`)
   }
+  const flugReise = flight
+    ? flightTrip(flight, model.flightTripId)
+    : {
+      ...flightTrip(flightItem('a', model.flightSegments), model.flightTripId),
+      ohneTag: [flightItem('a', model.flightSegments), returnItem(model.returnSegments)],
+    }
   return (
     <Suspense fallback={<p data-transition-fallback="">Übergang</p>}>
       <div className="grid min-w-0 gap-4 p-0">
         <FlugBestand
-          reise={flightTrip(flight, model.flightTripId)}
+          reise={flugReise}
           onFlugRouteManuell={(itemId, segments: FlugSegmentManuell[]) => hold('flight', { itemId, segments })}
         />
         {model.stayVisible ? (
@@ -427,13 +459,26 @@ window.fixture = {
     if (!entry) throw new Error(`no ${channel} request`)
     return entry.id
   },
+  suspendRenders() {
+    return suspendRenders
+  },
+  committed() {
+    return {
+      suspend: snapshot.suspend,
+      flightTripId: snapshot.flightTripId,
+      vorgabeOrigin: snapshot.vorgabe?.originName ?? null,
+      linkTripId: snapshot.linkTripId,
+    }
+  },
   deliver(channel: Channel, id: number) {
     const entry = requests.find((item) => item.id === id && item.channel === channel)
     if (!entry) throw new Error(`missing ${channel} request ${id}`)
     commit((prev) => {
       if (channel === 'flight') {
         if (prev.flightTripId !== entry.context.flightTripId || prev.flightKind !== entry.context.flightKind) return prev
-        return { ...prev, flightSegments: (entry.payload as { segments: FlugSegmentManuell[] }).segments }
+        const payload = entry.payload as { itemId: string; segments: FlugSegmentManuell[] }
+        if (prev.flightKind === 'pair' && payload.itemId === 'flight-b') return { ...prev, returnSegments: payload.segments }
+        return { ...prev, flightSegments: payload.segments }
       }
       if (channel === 'stay') {
         if (prev.stayId !== entry.context.stayId || prev.stayTripId !== entry.context.stayTripId) return prev
@@ -471,7 +516,7 @@ window.fixture = {
     }))
   },
   setFlight(kind: FlightKind) {
-    commit((prev) => ({ ...prev, flightKind: kind, flightSegments: null, suspend: false }))
+    commit((prev) => ({ ...prev, flightKind: kind, flightSegments: null, returnSegments: null, suspend: false }))
   },
   setFlightTrip(tripId: string) {
     commit((prev) => ({

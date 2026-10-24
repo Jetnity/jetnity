@@ -181,7 +181,7 @@ function ManuelleFlugRoute({
   }
 
   return (
-    <div className="min-w-0 border-t border-line-100 pt-3" onKeyDown={(event) => {
+    <div className="min-w-0 border-t border-line-100 pt-3" data-flug-editor="" onKeyDown={(event) => {
       if (event.key !== 'Escape' || !offen) return
       event.preventDefault()
       event.stopPropagation()
@@ -285,18 +285,26 @@ export default function FlugBestand({
     setMeldung('')
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
-  const [saved, setSaved] = React.useState<{ itemId: string; reiseId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
+  const [saved, setSaved] = React.useState<{ itemId: string; reiseId: string; segments: FlugSegmentManuell[]; context: string; besitz: number } | null>(null)
   const [saveStatus, setSaveStatus] = React.useState('')
-  if (saved && saved.reiseId !== reise.id) setSaved(null)
+  const [oberflaeche, setOberflaeche] = React.useState(0)
+  const oberflaecheRef = React.useRef(0)
+  if (saved && (saved.reiseId !== reise.id || saved.besitz !== oberflaeche)) setSaved(null)
   const root = React.useRef<HTMLElement>(null)
   const writeOrder = React.useRef(0)
   const reiseIdRef = React.useRef(reise.id)
+  const editorBeruehrt = (event: React.SyntheticEvent) => {
+    const ziel = event.target
+    if (!(ziel instanceof Element) || !ziel.closest('[data-flug-editor]')) return
+    oberflaecheRef.current += 1
+    setOberflaeche(oberflaecheRef.current)
+  }
   React.useLayoutEffect(() => {
     reiseIdRef.current = reise.id
-    if (!saved || saved.reiseId !== reise.id) return
+    if (!saved || saved.reiseId !== reise.id || saved.besitz !== oberflaecheRef.current) return
     if (window.location.href !== saved.context || root.current?.closest('[hidden], [inert]')) return
     const row = root.current?.querySelector<HTMLElement>(`[data-flug-punkt="${CSS.escape(saved.itemId)}"]`)
-    if (row?.querySelector('[aria-expanded="true"]')) {
+    if (root.current?.querySelector('[data-flug-editor] [aria-expanded="true"]')) {
       setSaved(null)
       return
     }
@@ -320,7 +328,7 @@ export default function FlugBestand({
     setSaveStatus('')
     const error = await onFlugRouteManuell(itemId, segments)
     if (!error && request === writeOrder.current && window.location.href === context && reiseIdRef.current === reiseId) {
-      setSaved({ itemId, reiseId, segments, context })
+      setSaved({ itemId, reiseId, segments, context, besitz: oberflaecheRef.current })
     }
     return error
   }
@@ -340,6 +348,9 @@ export default function FlugBestand({
       aria-busy={pendingId !== null}
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
+      onClickCapture={editorBeruehrt}
+      onChangeCapture={editorBeruehrt}
+      onKeyDownCapture={editorBeruehrt}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
