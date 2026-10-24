@@ -1,0 +1,207 @@
+{
+  "executionClass": "ROOT_EXECUTED_EXISTING_FOCUSED_TESTS",
+  "startedAtUtc": "2026-10-24T22:00:51.533803+00:00",
+  "output": "/tmp/jetnity-r105-c-focused-final-proof-nbu5k6n1",
+  "repo": "/tmp/jetnity-r105-c-v6-review-9d1b93f371d5",
+  "expectedTests": 113,
+  "expectedSuites": 13,
+  "node": "v24.22.1",
+  "permissionNote": "Normal process-isolated node:test invocation; executed with approved local subprocess permission. No single-process diagnostic fallback.",
+  "environment": "explicit non-secret PATH/LANG/LC_ALL/TZ only",
+  "before": {
+    "head": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+    "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+    "gitStatus": "",
+    "sources": {
+      "lib/trips/flug-manuell.test.ts": {
+        "gitBlob": "09937066b34c70b62225dae27ad6832268f755cf",
+        "sha256": "46684b5584c38941a5b61781836fa2c61924d76e660a87834afe1771954e84df",
+        "bytes": 42810
+      },
+      "lib/trips/flug-route-form-validation.test.ts": {
+        "gitBlob": "e0f7507ffae0aaf382c88dde627ec0a89227db4b",
+        "sha256": "0a1fc62aef64acbb9d09a521539f3bc38d7556948cdf8b21e17cb8241f9cdce6",
+        "bytes": 16318
+      },
+      "lib/trips/unterkunft-manuell.test.ts": {
+        "gitBlob": "5eea96cd3769fa85ac7e3290a90b71b27875d849",
+        "sha256": "7edd45c224eec83373d754d4de93b7d0ef3f0c0ba960eea2db2ae10f46a5266a",
+        "bytes": 19428
+      },
+      "lib/trips/manual-journey-editor-completion-1.test.ts": {
+        "gitBlob": "de7f7714a4245378ea2cbe7c6525f8d83b5ba77e",
+        "sha256": "e87991b36cc0047355e42eb3d4a157cf016ed665bf42a7860fdfeb11a1f8a788",
+        "bytes": 3262
+      },
+      "lib/trips/organisieren-action-recovery-1.test.ts": {
+        "gitBlob": "e860f3c01ca7a0178937d8f41d45c8b6099f9ee1",
+        "sha256": "cfa6cd8523d4ec1d1a213a1594336bb378905cbc672f792ca34c2356508aeb84",
+        "bytes": 21664
+      },
+      "lib/trips/lodging-coverage-truth-1.test.ts": {
+        "gitBlob": "60039f4a7b54c7efe9af332ddc6f31103cb25f98",
+        "sha256": "022ef06f8e25310442ea9555ce29431e975aa069a33575f3be0ef52bd530c62a",
+        "bytes": 19208
+      },
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+        "bytes": 23439
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+        "bytes": 17650
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+        "bytes": 26535
+      },
+      "lib/trips/manual-journey-editor-completion-1.ts": {
+        "gitBlob": "4c141abbff7ce365167dd2df31bb1d59f3092757",
+        "sha256": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+        "bytes": 2238
+      },
+      "scripts/server-only-test-register.mjs": {
+        "gitBlob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+        "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+        "bytes": 508
+      },
+      "scripts/server-only-test-loader.mjs": {
+        "gitBlob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+        "sha256": "9249fc5a0d1327724687ec13796ca0b1322280455e2efb9f15eada09383ce8a7",
+        "bytes": 401
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "command": [
+    "node",
+    "--import",
+    "./scripts/server-only-test-register.mjs",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-reporter=tap",
+    "lib/trips/flug-manuell.test.ts",
+    "lib/trips/flug-route-form-validation.test.ts",
+    "lib/trips/unterkunft-manuell.test.ts",
+    "lib/trips/manual-journey-editor-completion-1.test.ts",
+    "lib/trips/organisieren-action-recovery-1.test.ts",
+    "lib/trips/lodging-coverage-truth-1.test.ts"
+  ],
+  "exitCode": 0,
+  "counts": {
+    "tests": 113,
+    "suites": 13,
+    "pass": 113,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "after": {
+    "head": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+    "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+    "gitStatus": "",
+    "sources": {
+      "lib/trips/flug-manuell.test.ts": {
+        "gitBlob": "09937066b34c70b62225dae27ad6832268f755cf",
+        "sha256": "46684b5584c38941a5b61781836fa2c61924d76e660a87834afe1771954e84df",
+        "bytes": 42810
+      },
+      "lib/trips/flug-route-form-validation.test.ts": {
+        "gitBlob": "e0f7507ffae0aaf382c88dde627ec0a89227db4b",
+        "sha256": "0a1fc62aef64acbb9d09a521539f3bc38d7556948cdf8b21e17cb8241f9cdce6",
+        "bytes": 16318
+      },
+      "lib/trips/unterkunft-manuell.test.ts": {
+        "gitBlob": "5eea96cd3769fa85ac7e3290a90b71b27875d849",
+        "sha256": "7edd45c224eec83373d754d4de93b7d0ef3f0c0ba960eea2db2ae10f46a5266a",
+        "bytes": 19428
+      },
+      "lib/trips/manual-journey-editor-completion-1.test.ts": {
+        "gitBlob": "de7f7714a4245378ea2cbe7c6525f8d83b5ba77e",
+        "sha256": "e87991b36cc0047355e42eb3d4a157cf016ed665bf42a7860fdfeb11a1f8a788",
+        "bytes": 3262
+      },
+      "lib/trips/organisieren-action-recovery-1.test.ts": {
+        "gitBlob": "e860f3c01ca7a0178937d8f41d45c8b6099f9ee1",
+        "sha256": "cfa6cd8523d4ec1d1a213a1594336bb378905cbc672f792ca34c2356508aeb84",
+        "bytes": 21664
+      },
+      "lib/trips/lodging-coverage-truth-1.test.ts": {
+        "gitBlob": "60039f4a7b54c7efe9af332ddc6f31103cb25f98",
+        "sha256": "022ef06f8e25310442ea9555ce29431e975aa069a33575f3be0ef52bd530c62a",
+        "bytes": 19208
+      },
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+        "bytes": 23439
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+        "bytes": 17650
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+        "bytes": 26535
+      },
+      "lib/trips/manual-journey-editor-completion-1.ts": {
+        "gitBlob": "4c141abbff7ce365167dd2df31bb1d59f3092757",
+        "sha256": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+        "bytes": 2238
+      },
+      "scripts/server-only-test-register.mjs": {
+        "gitBlob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+        "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+        "bytes": 508
+      },
+      "scripts/server-only-test-loader.mjs": {
+        "gitBlob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+        "sha256": "9249fc5a0d1327724687ec13796ca0b1322280455e2efb9f15eada09383ce8a7",
+        "bytes": 401
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "status": "PASS",
+  "sourceBindingsUnchanged": true,
+  "finishedAtUtc": "2026-10-24T22:01:00.695844+00:00",
+  "artifacts": {
+    "stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "focused.tap": {
+      "sha256": "5edfc0c3329c8e02b78eef219e4f6c8fc55891d08f599947c3146b11e3183f68",
+      "bytes": 29377
+    },
+    "run.py": {
+      "sha256": "2e4e45686df1fbfd9e20638a719133cbe4e17d03cd370d1159565d74fdb21f67",
+      "bytes": 4028
+    }
+  }
+}
