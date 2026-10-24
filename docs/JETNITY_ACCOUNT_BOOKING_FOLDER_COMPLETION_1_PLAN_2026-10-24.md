@@ -1,6 +1,6 @@
 # Jetnity Account Booking Folder Completion 1 — PLAN
 
-Date: 2026-10-24. Pre-code plan for immutable TASK V1. This file is the only planned change at this gate. No runtime, test, schema, or workflow edit is included. Implementation waits for Technical-Lead authorization in this same session.
+Date: 2026-10-24. Pre-code plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review R105-B V1 ([comment 6385531307](https://github.com/Jetnity/jetnity/pull/1000#issuecomment-6385531307)) on exact head `e13858e7849738b24d98af6c237acceeeb0c48ab`. This revision answers B-P2-PLAN-01, B-P2-PLAN-02, and the paging and startup clarifications. The TASK file stays unchanged. No runtime, test, schema, or workflow edit is included. Implementation waits for an exact-head re-review that accepts this plan.
 
 ## 1. Identity
 
@@ -37,7 +37,30 @@ The plan commit head, merge-base, and ahead/behind after this file lands are in 
 
 Live index [issue #751](https://github.com/Jetnity/jetnity/issues/751) top section, re-read this session, is R105 V2 with PLAN evidence pending and the same main/tree. [R105 precheck 6385343244](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6385343244) names this logical author, this branch, and integration A → C → B. Issue #997 is open, status dispatched, PLAN first. `ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` still point at the 2 October continuity snapshot. Those paragraphs are historical. Live main, live mode, #751, and the precheck supersede them. This plan does not edit those TL-owned files.
 
-Startup read for this gate: operating mode, `JETNITY_START_HERE.md` pointer, `AGENTS.md`, `docs/ACTIVE_WORK_STATUS.md` pointer, TASK V1, the precheck, #751 and #997, AP-10 in `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` lines 393–413, and the assigned account-booking source and tests named below. Vision, architecture, decisions, design, product-quality, and continuity standards were not re-litigated: AP-10 already permits this read-only aggregation, and the TASK forbids a new booking truth.
+Startup reads are attested in section 2a. Reading them applies the existing boundaries. It does not reopen the product decision: AP-10 already permits this read-only aggregation, and the TASK forbids a new booking truth.
+
+## 2a. Startup reads for this correction
+
+These reads bind the existing rules. They do not add a product decision.
+
+| Document | What applies here |
+| --- | --- |
+| `.jetnity/operating-mode.json` | `mode` is `NORMAL`. Re-read for this correction. |
+| `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md` | The 2 October blocks are historical pointers. Live main, live mode, and #751 win. Not edited. |
+| `AGENTS.md` | Account booking work stays inside the trip graph, with server-side sensitive reads, empty distinct from error, and no new provider. |
+| `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` Phase G | This is the same author and session. The correction stays inside the review. The old head's plan gate ends when this commit lands. |
+| `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §8 | One writer on this branch. |
+| `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md` §1–2 | The precheck already fixed three disjoint writers and integration A → C → B. This correction does not reopen that split. |
+| `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md` §1 | Live evidence wins. The precheck and #751 were re-read with this review. |
+| `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md` §§8, 9, 11 | §§8–9 do not assign this folder. §11 requires the core journey to stay coherent. The precheck already placed this read-only folder in that journey. No build-order change. |
+| `JETNITY_VISION.md` §§6 and 10 | Priorities 1–2 are create and edit a trip. The account may remember bookings without collecting extra personal data. |
+| `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` AP-10, lines 393–413 | Read-only aggregation of existing booking status. No new booking model and no Product-Owner gate while it stays read-only. |
+| `docs/PRODUCT_QUALITY_STANDARD.md` §§4–6 | Back and first-page recovery stay visible. Empty, no-match, continuation end, and load error stay separate. No fake rows. |
+| `docs/LOGIC_STANDARD.md` §§4 and 6 | `booked` stays the existing user confirmation. Travel dates stay stored dates. Confirmation time is the page order and stays off the card. Missing facts are not invented. |
+| `docs/CONTINUITY_STANDARD.md` §11 | This plan records the correction, the proof classes, and the stop. It is not a completed implementation report. |
+| `DESIGN_SYSTEM.md` §1 | The filter uses the existing account controls and tokens. No new brand color or visual system. |
+| `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` | Not applicable. This read does not collect citizenship, residence, or documents. |
+| Assigned source | `buchungen-daten.ts`, `buchungen.ts`, `AccountBuchungen.tsx`, the bookings page and loading file, the two booking tests, `buchung.ts`, `reise-archiv.ts`, `workspace-mode.ts`, and the booking migrations named in section 4. |
 
 ## 3. Evidence class for this delivery
 
@@ -61,8 +84,8 @@ Related contract facts, read-only:
 - Bookable kinds come from `kannBuchungMarkieren` (`lib/trips/buchung.ts` lines 33–58): `flight`, `stay`, `transfer`, `rental_car`. `activity` and `note` are excluded. The current DB check `trip_items_booking_nur_kommerziell` in `supabase/migrations/20260821200000_trip_items_rental_car.sql` allows `booked` only for those same four kinds. The query will derive the set from `kannBuchungMarkieren` applied to `TRIP_ITEM_KINDS`, not from a second handwritten list.
 - `istArchiviert` is `status === 'archived'` (`lib/account/reise-archiv.ts` lines 45–47). Known trip statuses are `draft`, `planned`, `booked`, `archived`.
 - `trip_items.id` is `uuid`. `title` is text with `char_length(btrim(title))` between 1 and 120. `booking_confirmed_at` is `timestamptz`. The consistency check requires a non-null confirmation time when `booking_status = booked`. The existing reader still orders nulls last, and the TASK requires null-timestamp continuation. The new query keeps `NULLS LAST` and proves the null transition with synthetic rows. A constrained database would reject a booked row with a null time; that constraint is not treated as a reason to drop the null branch.
-- Installed client, from `node_modules` this session: `@supabase/supabase-js` 2.57.2 and `@supabase/postgrest-js` 1.21.3. `package.json` allows `^2.50.2`. No dependency upgrade.
-- `ilike` in this postgrest-js writes `ilike.${pattern}` with no reserved-character quoting (`PostgrestFilterBuilder.js` `ilike`). `.or()` appends the caller string unchanged and documents that the caller must sanitize it. `.in()` quotes values only when they contain `,()` . `.order()` serializes `column.desc.nullslast` when `nullsFirst: false`. Official references used for this plan: [order](https://supabase.com/docs/reference/javascript/order), [ilike](https://supabase.com/docs/reference/javascript/ilike), [or](https://supabase.com/docs/reference/javascript/or). The 12 October changelog TLS note authorizes no infrastructure work.
+- Installed client, from `node_modules` this session: `@supabase/supabase-js` 2.57.2 and `@supabase/postgrest-js` 1.21.3. `package.json` allows `^2.50.2`. No dependency upgrade. This client has no `imatch` method. `.filter(column, operator, value)` writes `operator.value` unchanged (`PostgrestFilterBuilder.js`). `.match({ ... })` on this version is an equality shorthand, not PostgreSQL `~`. `.ilike` writes `ilike.${pattern}` with no quoting. `.or()` appends the caller string unchanged. `.order()` serializes `column.desc.nullslast` when `nullsFirst: false`.
+- Title search does not use `like` or `ilike`. PostgREST v12 documents `*` as an alias of `%` for those two operators only. `imatch` is `~*`. See section 5.
 
 ## 5. Proposed behavior
 
@@ -72,11 +95,24 @@ Account → confirmed bookings → filter by title, bookable kind, and archive �
 
 Visible order is the continuation order: newest `booking_confirmed_at`, null confirmation times last, then `id` ascending. Travel dates stay on the card as stored dates. They are not the page order. Archive stays a badge and a filter. The current two-group re-sort is superseded for this page, because it reorders a page away from the keyset. A short visible note states that the list follows the user's own confirmation sequence. The confirmation timestamp stays off the card, as it does today. The note does not claim a snapshot across requests.
 
-Page size is 50 visible rows plus at most one sentinel. The database limit is 51. A 51st row sets continuation and is not shown. The last page has no sentinel and an end-of-results note. There is no fetch-all loop and no caller-selected page size. `count: 'exact'` is removed. The UI does not show a total, a remaining-after-cursor count, or a page length as an account total.
+Page size is 50 visible rows plus at most one sentinel. The database limit is 51. There is no fetch-all loop and no caller-selected page size. `count: 'exact'` is removed. The UI does not show a total, a remaining-after-cursor count, or a page length as an account total.
 
-Filters apply in the database before the limit:
+The next cursor comes from the last visible row. When the read returns 51 rows, the page shows the first 50 and builds the next cursor only from that 50th row: its exact `booking_confirmed_at` text and its id. The 51st row is the sentinel. It is not rendered and it is never the cursor. When the read returns 50 or fewer rows, every returned row is visible and there is no next cursor.
 
-- Title: optional contains-match on `trip_items.title` only, case-insensitive `ilike`, maximum 120 characters after trim. Empty or whitespace-only search removes the title predicate and restores the unfiltered title set. `%`, `_`, and `\` are escaped as ILIKE literals. The pattern is then wrapped as a double-quoted PostgREST value so comma, period, colon, parentheses, apostrophe, umlauts, and other punctuation cannot become filter grammar. No trip-title search, no full-text, no fuzzy search, no cross-table `.or()`.
+Filters apply in the database before the limit. Title matching is not applied again in the browser after the page cut.
+
+- Title: optional literal contains-match on `trip_items.title` only, maximum 120 characters after trim. Empty or whitespace-only search removes the title predicate. The predicate is PostgREST `imatch` (`~*`) with PostgreSQL's literal-string director `***=`. No trip-title search, no full-text, no fuzzy search, no cross-table `.or()`, and no `like` or `ilike`.
+
+### 5a. Literal title predicate (B-P2-PLAN-01)
+
+`like` and `ilike` are the wrong operator. The [PostgREST v12 operator table](https://docs.postgrest.org/en/v12/references/api/tables_views.html#operators) says `*` is an alias of the percent sign for `like` and `ilike` only. Escaping `%`, `_`, and `\` and then adding double quotes does not make a star literal under those operators. The installed client only transports the string it is given. URL encoding is not a server match.
+
+Chosen predicate, two separate layers:
+
+1. PostgreSQL pattern. The pattern is `***=` followed by the exact accepted title. [PostgreSQL pattern matching](https://www.postgresql.org/docs/current/functions-matching.html) says an RE that begins with `***=` takes the rest as a literal string, with every character ordinary (section 9.7.3.4). The same page says a regular expression matches anywhere in the string unless it is anchored, and gives `'abcd' ~ 'bc'` as true (section 9.7.3.1). `imatch` is `~*`, so this is a case-insensitive literal contains match. The user text is not escaped as a regular expression and is not wrapped in `%` or `.*`. `^`, `$`, `*`, `.`, `(`, `)`, `|`, `%`, `_`, `\`, quotes, apostrophes, and commas stay ordinary because they sit after the director. The embedded option `(?q)` is the same whole-rest literal mode and may appear only at the start, so it was not used. `\Q...\E` is not used: the fetched PostgreSQL page does not document it, and an undefined backslash escape is illegal in an ARE.
+2. PostgREST value. After the pattern exists, it is always wrapped in double quotes. Inside those quotes, `\` and `"` are each prefixed with `\`. Commas, periods, colons, and parentheses stay inside the quotes. This quoting is transport for the filter grammar. It does not change the literal director. The call is `.filter('title', 'imatch', quotedPattern)`.
+
+Case folding is the documented behavior of `~*`. It is not a fuzzy search. Whether PostgreSQL folds `ß` and `ss`, or an umlaut, is not a hosted pass and is not claimed from a JavaScript comparison. Umlauts are carried as ordinary characters.
 - Kind: absent means all kinds `kannBuchungMarkieren` accepts. A present value must be one of those kinds. `activity`, `note`, and unknown values fail before the query.
 - Archive: absent means `alle`. `aktiv` filters the inner `trips` relation to the known non-archived statuses `draft`, `planned`, `booked`. `archiviert` filters `trips.status = archived`. Any other value fails before the query.
 
@@ -105,12 +141,14 @@ Result states stay separate:
 
 | State | What the page shows |
 | --- | --- |
-| Empty account | Successful read, no active title/kind/archive narrowing, zero rows. Existing empty copy. |
-| No matches | Successful read, at least one active filter, zero rows. Different title and text. |
+| Empty account | Successful read of the first page only: no valid `weiter`. No active title, kind, or archive narrowing. Zero rows. Existing empty copy. |
+| No matches | Successful read of the first page only: no valid `weiter`. At least one active filter. Zero rows. Different title and text. |
+| No more current results | Successful read of a later page: a valid `weiter` was applied, and this request returned zero rows. End copy, a link to the first page of the same filters, and browser back. This state does not say the account is empty and does not say the whole filtered set has no bookings. |
+| Changed between requests | The same screen as no more current results. Rows can be deleted or can stop matching after the previous page was shown. The copy says this read is not a snapshot of the earlier page. A short later page is the same truth, not a new error. |
 | Load error | Thrown read, `error`, `data: null`, or a malformed row. Existing error copy, plus an explicit retry link. 503 copy stays on status 503. |
 | Invalid address | Bad or stale cursor, repeated or oversized parameters, unknown kind or archive. No query. Own copy and a first-page link. |
-| End of results | Successful page with no sentinel. End note. No next link. |
-| Continuation | Sentinel present. Link `Weitere Buchungen`. |
+| End of a non-empty page | Successful page with at least one row and no sentinel. End note. No next link. |
+| Continuation | Sentinel present. The next link carries the cursor of the 50th visible row. Link `Weitere Buchungen`. |
 
 Search, filter submit, clear, next page, and retry are native links or a native form, so they are keyboard operable. Controls use the existing minimum 44px target and visible focus ring. No request runs on each keystroke. New transitions follow the existing `motion-reduce` pattern. Card titles wrap. The page root does not gain overflow masking. `loading.tsx` keeps the current generic loading copy. That boundary cannot know the filters, so it does not claim empty, no-match, or error. Page metadata keeps `noindex, nofollow` and `force-dynamic`.
 
@@ -124,7 +162,7 @@ Owned query description, built in `lib/account/buchungen-abfrage.ts` with no Sup
 - `eq('booking_status', 'booked')`
 - `in('kind', derivedBookableKinds)`
 - archive predicate on `trips.status` when the filter is not `alle`
-- quoted literal `ilike` on `title` when a title is present, via `.filter('title', 'ilike', quotedPattern)` so this client version does not concatenate an unquoted pattern
+- when a title is present, `.filter('title', 'imatch', quotedPattern)` as specified in section 5a. The pattern PostgreSQL sees begins with `***=` and then the raw title. No title predicate is applied in JavaScript after the limit.
 - `order('booking_confirmed_at', { ascending: false, nullsFirst: false })` then `order('id', { ascending: true })`
 - `limit(51)`
 - no `count`
@@ -176,14 +214,16 @@ Global `START_HERE`, handoff, `ACTIVE_WORK_STATUS`, roadmap, ADR, build order, o
 
 Local and synthetic. Not a hosted RLS or database pass.
 
-1. Pure continuation over synthetic rows for 0, 1, 50, 51, and more than 200 rows. Every unchanged row is returned once. Equal timestamps, the step from a timestamp onto null timestamps, a null-only sequence, and a short last page are included. Microsecond ties use the exact timestamp string.
-2. Real installed supabase-js client against a recording `fetch`. Assert the serialized URL and the absence of `Prefer: count=exact`: booked predicate, derived kind list, archive predicate, quoted literal title pattern for `%`, `_`, apostrophe, umlaut, comma, period, and parentheses, keyset `.or()` or null continuation, order `booking_confirmed_at.desc.nullslast,id.asc`, and `limit=51`. A mock that only checks the description object is not this proof.
-3. Invalid cursor, repeated parameters, oversized title, unknown kind, and a cursor from another filter do not call the recorder.
-4. Mapping cases already listed, plus `data: null`, a thrown read, a next-page error, and a malformed joined row. Each stays an error. None renders the empty-account copy.
-5. `renderToStaticMarkup` of the real result component for empty, no-match, error, invalid address, continuation, and end. Item href is the `modusUrl` plan target. Existing auth and read-only source assertions stay in `buchungen-ui.test.ts`.
-6. Local Playwright harness under `scripts/account-booking-folder-completion-1/`, mounting that rendered page in headless Chromium. Keyboard path through search, submit, clear, next, and retry. Viewports 320, 390, and 1280, plus 320 with root font-size 32px. Record browser version, viewport, and root-font setting in new evidence. This is CSS and root-font simulation. It is not a physical device, screen reader, hosted account, or native zoom pass. Also inspect 280, 360, 430, 768, and landscape where the harness can do so without claiming a device lab. No overflow masking.
-7. After implementation: focused owned tests, then TypeScript, lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, and the production build. Full existing `npm test` if the focused set is green. Existing warnings and the two optional browser skips stay disclosed. A skip is not a pass. Workflows, dependencies, and gate logic stay unchanged.
-8. Full diff review for writes, privileged clients, new auth, and schema surface. Query serialization remains labeled as client-shape evidence.
+1. Pure continuation over synthetic rows for 0, 1, 50, 51, and more than 200 rows. Every unchanged row is returned once. Equal timestamps, the step from a timestamp onto null timestamps, a null-only sequence, and a short last page are included. Microsecond ties use the exact timestamp string. On a 51-row window the emitted cursor equals row 50, and row 51 is absent from the cursor and from the visible ids.
+2. Documented title semantics, cited in section 5a. This citation is not an execution pass.
+3. Installed-client serialization. The real supabase-js 2.57.2 / postgrest-js 1.21.3 client runs against a recording `fetch`. Assert no `Prefer: count=exact`, the booked predicate, the derived kind list, the archive predicate, order `booking_confirmed_at.desc.nullslast,id.asc`, and `limit=51`. For each title below, the decoded `title` parameter uses the operator `imatch` and the double-quoted `***=` pattern. The recording does not contain `like` or `ilike` for the title. A search for `*` is sent as the quoted director plus that star, not as `ilike.*` or `ilike.%`. Cases: `*`, `%`, `_`, `\`, `"`, `'`, `a,b(c)`, `.*`, `(a|b)`, and `Zürich`. This proves the bytes the client sends. It does not prove that PostgREST or PostgreSQL matched them.
+4. Local PostgreSQL matching, only after authorization and only on a local server with no hosted credentials. The statement is `value ~* pattern` with the `***=` pattern from section 5a. Positive and negative pairs: `*` matches `a*b` and does not match `abc`; `%` matches `100%` and does not match `100`; `_` matches `a_b` and does not match `ab`; `\` matches `a\b`; `"` matches `a"b`; `'` matches `O'Brien`; `a,b(c)` matches `xa,b(c)y`; `.*` matches `a.*b` and does not match `abc`; `(a|b)` matches `x(a|b)y` and does not match `a`; `Zürich` matches `Flug Zürich`. At this plan correction `psql` is not installed, so this class is NOT-RUN. A JavaScript string or regular-expression check may assert the pattern we construct. It is not labeled a PostgreSQL or PostgREST pass, and it does not fill this class.
+5. Invalid cursor, repeated parameters, oversized title, unknown kind, and a cursor from another filter do not call the recorder.
+6. Mapping cases already listed, plus `data: null`, a thrown read, a next-page error, and a malformed joined row. Each stays an error. A zero-row first page with no filter renders the empty-account copy. A zero-row first page with a filter renders no-match. A zero-row later page renders no-more-current-results and the first-page link, and it does not render the empty-account or no-match copy.
+7. `renderToStaticMarkup` of the real result component for empty, no-match, no-more-current-results, error, invalid address, continuation, and end. The continuation fixture's next href carries the 50th row, not the sentinel. Item href is the `modusUrl` plan target. Existing auth and read-only source assertions stay in `buchungen-ui.test.ts`.
+8. Local Playwright harness under `scripts/account-booking-folder-completion-1/`, mounting that rendered page in headless Chromium. Keyboard path through search, submit, clear, next, first page, and retry. Viewports 320, 390, and 1280, plus 320 with root font-size 32px. Record browser version, viewport, and root-font setting in new evidence. This is CSS and root-font simulation. It is not a physical device, screen reader, hosted account, or native zoom pass. Also inspect 280, 360, 430, 768, and landscape where the harness can do so without claiming a device lab. No overflow masking.
+9. After implementation: focused owned tests, then TypeScript, lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, and the production build. Full existing `npm test` if the focused set is green. Existing warnings and the two optional browser skips stay disclosed. A skip is not a pass. Workflows, dependencies, and gate logic stay unchanged.
+10. Full diff review for writes, privileged clients, new auth, and schema surface. Query serialization remains client-shape evidence. Hosted PostgREST and hosted RLS remain unverified.
 
 CI and Vercel for a future implementation head are hosted/CI truth only after that head is pushed. This plan does not pre-claim them.
 
@@ -195,8 +235,8 @@ The read stays on the authenticated server client and existing RLS. The cursor i
 
 ## 10. Unknowns
 
-- PostgreSQL `ILIKE` case folding and locale behavior for `ß` / `ss` and umlauts are not verified against a database. The proof shows the escaped pattern in the real client URL.
-- PostgREST's actual application of the quoted `.or()` keyset is not verified against a server. The proof shows the sanitized token and an in-memory predicate that mirrors it.
+- PostgreSQL `~*` case folding for `ß` / `ss` and umlauts is not verified. The serialization proof shows the `***=` pattern. A local `~*` run is NOT-RUN while `psql` is absent. Neither one is a hosted match pass.
+- PostgREST's actual application of quoted `imatch` and of the quoted `.or()` keyset is not verified against a server. The proof shows the sanitized token and an in-memory keyset predicate that mirrors the cursor rule. The in-memory predicate is not a title-match pass.
 - Whether any real account has more than 200 booked rows, null confirmation times, or microsecond ties is unknown. No hosted account is inspected.
 - The 12 October Supabase TLS changelog was not re-fetched. It is out of scope.
 - Sibling lanes A and C are not integrated. After main moves, this branch waits for a Technical-Lead synchronization instruction. No sibling merge.
@@ -209,4 +249,4 @@ Cursor does not mark Ready, merge, close #997, change `main`, or start a follow-
 
 ## 12. Stop
 
-This is the PLAN gate. Next actor: Technical Lead, same session, to accept or correct this plan. Implementation starts only after that authorization.
+This is the corrected PLAN gate for review head `e13858e7849738b24d98af6c237acceeeb0c48ab`. Next actor: Technical Lead, same session, for an exact-head re-review of the new plan commit. Implementation starts only after that re-review accepts the plan.
