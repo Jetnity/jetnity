@@ -1,0 +1,64 @@
+{
+  "kind": "node-test-record",
+  "notAHarnessRerun": true,
+  "notARelabelOfFailedCi": true,
+  "statement": "These two node:test commands ran on f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5 after the fast-forward of ADDENDUM V3. They do not rerun the manual-journey harness or R103/R104. They do not rewrite the failed CI run 40135029902 on 961fa594. The lodging test file was not edited in this record; its blob stayed 60039f4a7b54c7efe9af332ddc6f31103cb25f98.",
+  "executedHead": "f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5",
+  "executedTree": "3d697269c8d9e9c9485a1e718a375c382e1ec20f",
+  "originMain": "43124e28f0c2ac366d25a86787f055b885b1fc00",
+  "mergeBase": "43124e28f0c2ac366d25a86787f055b885b1fc00",
+  "ahead": 20,
+  "behind": 0,
+  "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
+  "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
+  "model": "grok-4.7-high-fast",
+  "node": "v22.23.4",
+  "addendumV3Blob": "727bf0664e0856d5a8cb52dde88cd783f489314c",
+  "lodgingTestBlob": "60039f4a7b54c7efe9af332ddc6f31103cb25f98",
+  "lodgingTestSha256": "022ef06f8e25310442ea9555ce29431e975aa069a33575f3be0ef52bd530c62a",
+  "sourceBlobs": {
+    "components/trips/UnterkunftBestand.tsx": "72fb6146d72bb30cf796687620894a26a57dd25e",
+    "components/trips/FlugBestand.tsx": "a0d356466e9a28f31ae0249e42670bd099887b85",
+    "components/trips/MobilitaetBereich.tsx": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+    "lib/trips/manual-journey-editor-completion-1.ts": "4c141abbff7ce365167dd2df31bb1d59f3092757"
+  },
+  "failedCiPreserved": {
+    "run": "40135029902",
+    "job": "120994876886",
+    "head": "961fa594792b5c07f2e8423b31690f433f858fab",
+    "conclusion": "failure",
+    "recordedByAddendumV3": "7200 tests, 846 suites, 7190 pass, 8 fail, 2 explicit skips. All eight failures were in lib/trips/lodging-coverage-truth-1.test.ts. Typecheck and lint passed. Five guards and the build were skipped. Auth job 120994876790 passed."
+  },
+  "checksOnExecutedHeadAtRecord": {
+    "run": "40136328790",
+    "vercel": "pass",
+    "vercelPreviewComments": "pass",
+    "auth": "pending",
+    "typecheckLintBuild": "pending",
+    "note": "This is not the evidence commit and not a final-head App/Auth/Vercel result. Pending stays pending."
+  },
+  "commands": [
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/lodging-coverage-truth-1.test.ts",
+      "exit": 0,
+      "tests": 9,
+      "suites": 1,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "output": "docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/lodging-9.tap"
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/flug-manuell.test.ts lib/trips/flug-route-form-validation.test.ts lib/trips/unterkunft-manuell.test.ts lib/trips/manual-journey-editor-completion-1.test.ts lib/trips/organisieren-action-recovery-1.test.ts lib/trips/lodging-coverage-truth-1.test.ts",
+      "exit": 0,
+      "tests": 113,
+      "suites": 13,
+      "pass": 113,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "output": "docs/evidence/manual-journey-editor-completion-1/v6-f522e3c8-coverage-renderer/focused.tap"
+    }
+  ]
+}

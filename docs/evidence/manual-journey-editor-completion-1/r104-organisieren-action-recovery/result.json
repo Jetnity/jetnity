@@ -1,0 +1,231 @@
+{
+  "author": "Jetnity Organisieren Action Recovery 1 — Cursor Generation 1",
+  "session": "bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
+  "sessionUrl": "https://cursor.com/agents/bc-9156e555-e2b3-4e47-9b8a-1bfa65fc2bfa",
+  "model": "grok-4.7-high-fast",
+  "connectionHash": "75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a",
+  "stubBoundary": "In-memory callbacks only. Not an account, guest-storage, hosted, provider, physical-device, or screen-reader proof.",
+  "viewports": [
+    {
+      "name": "narrow-320",
+      "width": 320,
+      "height": 720
+    },
+    {
+      "name": "narrow-390",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "wide-1280",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "scenarios": [
+    {
+      "viewport": "narrow-320",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "narrow-390",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "wide-1280",
+      "kind": "flight-pending-keyboard-sibling-other-inventory",
+      "status": "PASS"
+    },
+    {
+      "viewport": "wide-1280",
+      "kind": "failure-retry-context-rental-connection-focus",
+      "status": "PASS"
+    }
+  ],
+  "layouts": [
+    {
+      "viewport": "narrow-320",
+      "scale": 1,
+      "scrollWidth": 320,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "narrow-390",
+      "scale": 1,
+      "scrollWidth": 390,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 1,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 2,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "narrow-320",
+      "scale": 2,
+      "fresh": true,
+      "scrollWidth": 320,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    },
+    {
+      "viewport": "wide-1280",
+      "scale": 2,
+      "fresh": true,
+      "scrollWidth": 1280,
+      "overflow": false,
+      "ownedOverflow": [],
+      "otherOverflow": [],
+      "connectionOverflow": []
+    }
+  ],
+  "blockedRequests": [],
+  "pageErrors": [],
+  "bookingText": [
+    {
+      "stage": "idle",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Flüge pending",
+      "labels": [
+        "Wird gespeichert …",
+        "Buchung korrigieren",
+        "Als gebucht markieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Flüge recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Unterkunft pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Unterkunft recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Verbindungen pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Deine Verbindungen recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Dein Mietwagen pending",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren",
+        "Wird gespeichert …"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "Dein Mietwagen recovered",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    },
+    {
+      "stage": "domain-error",
+      "labels": [
+        "Als gebucht markieren",
+        "Buchung korrigieren"
+      ],
+      "controls": 8,
+      "maxExcess": 0
+    }
+  ],
+  "bookingTextCondition": "At 320 CSS px and root font-size 32px, every booking-label Range rect must sit inside its button border box. Also rejects button scroll, overflow hidden, and text-overflow ellipsis. States: idle, pending, recovered, domain error.",
+  "status": "PASS",
+  "failure": null,
+  "browser": {
+    "channel": "chrome",
+    "launchErrors": [
+      "Error: browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+    ],
+    "version": "148.0.7778.96"
+  },
+  "blobs": [
+    {
+      "file": "components/trips/FlugBestand.tsx",
+      "blob": "a0d356466e9a28f31ae0249e42670bd099887b85"
+    },
+    {
+      "file": "components/trips/UnterkunftBestand.tsx",
+      "blob": "7062f1d497a682cc3e98636a21e810f92c1ef597"
+    },
+    {
+      "file": "components/trips/MobilitaetBereich.tsx",
+      "blob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec"
+    },
+    {
+      "file": "components/trips/MietwagenBereich.tsx",
+      "blob": "67cc0cbbf25df52770a916b29c2728f177f356fa"
+    }
+  ]
+}

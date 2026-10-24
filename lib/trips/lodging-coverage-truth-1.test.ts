@@ -158,7 +158,9 @@ function laden<T>(path: string, dependencies: Record<string, unknown>): T {
 
 function bedienung(trip: Trip, outcome: string | null = null) {
   const states: unknown[] = []
+  const refs: Array<{ current: unknown }> = []
   let index = 0
+  let refIndex = 0
   const calls: Array<[string, boolean]> = []
   const ui = laden<{ default: typeof UnterkunftBestand }>('components/trips/UnterkunftBestand.tsx', {
     react: {
@@ -170,6 +172,8 @@ function bedienung(trip: Trip, outcome: string | null = null) {
           states[slot] = typeof value === 'function' ? (value as (current: unknown) => unknown)(states[slot]) : value
         }]
       },
+      // The parent keeps its surface generation in refs. This call is not inside a renderer.
+      useRef: (initial: unknown) => refs[refIndex++] ?? (refs[refIndex - 1] = { current: initial }),
     },
   })
   const onBuchungsstatus = async (itemId: string, gebucht: boolean) => {
@@ -178,6 +182,7 @@ function bedienung(trip: Trip, outcome: string | null = null) {
   }
   const render = () => {
     index = 0
+    refIndex = 0
     return ui.default({ reise: trip, onBuchungsstatus })
   }
   const buttonFor = (titel: string) => {

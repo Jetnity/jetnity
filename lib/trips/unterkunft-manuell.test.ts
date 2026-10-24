@@ -193,11 +193,15 @@ function editor(item = stay(), outcome: string | null | Error = null) {
   const calls: unknown[][] = []
   const ui = laden<{ default: typeof UnterkunftBestand }>('components/trips/UnterkunftBestand.tsx', {
     react: { ...React, useId: () => 'date-editor',
+      useEffect: () => {},
+      useLayoutEffect: () => {},
       useRef: (initial: unknown) => refs[refIndex++] ?? (refs[refIndex - 1] = { current: initial }),
       useState: (initial: unknown) => {
         const slot = index++
-        if (!(slot in states)) states[slot] = initial
-        return [states[slot], (value: unknown) => { states[slot] = value }]
+        if (!(slot in states)) states[slot] = typeof initial === 'function' ? (initial as () => unknown)() : initial
+        return [states[slot], (value: unknown) => {
+          states[slot] = typeof value === 'function' ? (value as (prev: unknown) => unknown)(states[slot]) : value
+        }]
       },
     },
   })
