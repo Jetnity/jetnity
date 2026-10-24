@@ -15,8 +15,8 @@ This report is author evidence. It is not Technical-Lead PASS.
 
 - Assigned main: `913cf9353fd33491d2bd3130b3c430cc88990200`
 - Merge-base: `913cf9353fd33491d2bd3130b3c430cc88990200`
-- Runtime/proof head: `dc7fc828e68993b5900c694d61a884d5dc1d3491`
-- Ahead / behind that main, before the docs commit: 4 / 0
+- Runtime/proof head: `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`
+- Ahead / behind that main, before the docs commit: 6 / 0
 - TASK V1 blob: `d106810aa4c0138bd1191698a18aed3a1a5c2ba5`, unchanged
 - Mode: NORMAL
 - Node: v22.23.4
@@ -61,7 +61,7 @@ Proposal generation checks the guest gate, captures the text, then calls `vorsch
 | 7 | Unmount, remount, no stale guest write | PASS. Unmount before `gastreiseAnlegen` and before `gastreiseAblegen` left storage empty and did not navigate. Remount after a held place confirmation ignored the late success. |
 | 8 | Action-time guest gate, legacy and existing draft | PASS. Existing active draft, invalid `{` bytes and a valid legacy slot blocked create with no action call and no overwrite. Account create left the guest bytes unchanged. |
 | 9 | Navigation, change/discard, focus, plain language | PASS. Enter submitted and retried. After a failed adoption, “Beschreibung ändern” cleared the preview and kept the text. Recovery copy does not name hooks, refs or HTTP. |
-| 10 | Real components, disclosed stubs | PASS. See stubs below. The node test executes the browser runner. It does not assert source text. |
+| 10 | Real components, disclosed stubs | PASS. See stubs below. The mounted runner executed the real components. The ordinary test does not launch that runner and does not assert source text. |
 | 11 | 320 / 390 / 1280, keyboard, 200% reflow | PASS. Overflow delta 0 on the compiled styles. Keyboard Enter on travellers and on the retry button. Not a physical device or screen reader. |
 
 ## Failure modes covered
@@ -102,10 +102,10 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 
 | Command | Exit | Detail |
 | --- | --- | --- |
-| `node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases, sha256 `ac88a4c4bcd0b0d774e4e530e70a3a4c771b3be9e956cfec59048115d204fa55` |
-| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/planning-creation-lifecycle-1.test.ts` | 0 | 1 test, re-ran the harness at head `dc7fc828` |
+| `node scripts/planning-creation-lifecycle-1/run.mjs` | 0 | 25 cases at `9f78c85d`, sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`. Not invoked by `npm test`. |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/planning-creation-lifecycle-1.test.ts` | 0 | 3 tests. Sync guard only. No Playwright launch and no skip. |
 | focused `create-entry`, `planning-entry-premium-experience-7`, `mobile-accessibility-1`, `homepage-route-entry-1`, `homepage-natural-route-intent-1` | 0 | 78 tests, 0 fail |
-| `npm run typecheck` | 0 | `next typegen` and `tsc --noEmit` |
+| `npx tsc -p tsconfig.json --noEmit` | 0 | On runtime head `9f78c85d`. Earlier `npm run typecheck` also exited 0 before the guard extraction. |
 | eslint on the touched TS/TSX files | 0 | 1 warning, pre-existing `setWarteMs` effect in `Reiseidee.tsx` |
 | `npm run check:operating-mode` | 0 | PASS |
 | `npm run check:api-schutz` | 0 | 12 admin routes |
@@ -113,12 +113,12 @@ The guard is a ref plus one boolean. It adds no request and no storage read beyo
 | `npm run check:dead` | 0 | 0 orphans, 819 entry points |
 | `npm run check:exports` | 0 | 0 unused exports |
 | `npm run check:deps` | 0 | 0 unused packages |
-| `npm run lint` | 0 | 146 warnings, 0 errors. Same historical warning count. |
-| `npm run build` | 0 | `check:setup` warning: no `.env` / `.env.local`. Next.js 16.4.1 compiled and typechecked. |
+| `npm run lint` | 0 | Re-run on `9f78c85d`. 146 warnings, 0 errors. |
+| `npm run build` | 0 | Re-run on `9f78c85d`. `check:setup` warning: no `.env` / `.env.local`. Next.js 16.4.1 compiled. |
 
 ## Not verified
 
-Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this head. The earlier seed Preview is not evidence for `dc7fc828`.
+Physical device, screen reader, hosted account, Production database, provider or model activation, full `npm test`, full App/Auth CI, and Vercel Preview for this head. The mounted browser proof is local and exact-head. Workflow CI will not replay it, because `ci.yml` installs no Playwright browser and this lane does not change that workflow. The earlier seed Preview is not evidence for `9f78c85d`.
 
 ## Costs and database
 

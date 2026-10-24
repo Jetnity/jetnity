@@ -1,8 +1,10 @@
 # Planning Creation Lifecycle 1 — proof notes
 
-Executed at runtime head `dc7fc828e68993b5900c694d61a884d5dc1d3491`.
-`result.json` sha256 `ac88a4c4bcd0b0d774e4e530e70a3a4c771b3be9e956cfec59048115d204fa55`.
+Executed at runtime head `9f78c85d686565fa0ebc81a9720bfe8e8485d4dd`.
+`result.json` sha256 `0a7d683cd2a3d19db09ce550038b9f3478ad567366bf039dc0261b8b9454ef32`.
 25 mounted cases, `failed: 0`, `pageErrors: []`.
+
+`npm test` does not launch this runner. Workflow CI runs `npm ci` and `npm test` and does not install a Playwright browser. The ordinary test in `lib/trips/planning-creation-lifecycle-1.test.ts` executes the same sync guard the hook uses. This script is the separate mounted proof. It is not a skipped CI test.
 
 The runner mounts the real `TripPlanner` and `Reiseidee` with compiled `styles/globals.css`. Guest `gastreiseAnlegen`, `gastreiseAblegen` and `vorschlagAlsReise` run. These boundaries are stubs:
 

@@ -13,6 +13,8 @@ The shared hook is only the in-flight ref, the generation and the pending flag. 
 
 The sync guard is taken after the action-time gate and validation, immediately before the first await. An invalid submit does not lock and does not call an action. Manual `clientRef` is still minted on the first attempt that passes the opening gate, including a later validation failure, which matches the previous identity rule.
 
+Technical Lead noted that `ci.yml` runs `npm ci` then `npm test` and does not install a Playwright browser. The ordinary test no longer spawns the mounted runner. It calls `creationLifecycleBeginnen`, `creationLifecycleAktuell` and `creationLifecycleBeenden`, and the hook uses those same functions. There is no skip, no empty assertion, and no workflow, dependency or timeout change. The mounted proof was executed again at `9f78c85d` and remains outside `npm test`.
+
 ## What I would not call proven
 
 The harness stubs place confirmation, account create, proposal generation, proposal adoption and place resolution. Green cases show how this UI treats those controlled outcomes. They do not show Supabase, Auth or idempotent server persistence. Guest writes in the harness are the real localStorage functions, with quota simulated by throwing from `setItem`.
@@ -21,14 +23,14 @@ The harness stubs place confirmation, account create, proposal generation, propo
 
 The 200% check sets `documentElement.style.fontSize` to 32px inside the harness. It is not a hosted browser zoom and not a physical device. Overflow delta was 0 with the compiled Tailwind stylesheet.
 
-Full `npm test`, GitHub App/Auth CI and the Vercel Preview for the final head were not used as acceptance.
+Full `npm test`, GitHub App/Auth CI and the Vercel Preview for the final head were not used as acceptance. The mounted proof is local evidence only. CI will not replay it unless a later workflow change installs a browser. This lane does not make that change.
 
 ## P0–P3
 
 - P0: none.
 - P1: none. The lock does not change who may write, and it does not abort an account request that already left the page.
 - P2: none in this lane.
-- P3: same-turn OrtSuche query text remains outside the parent guard until the disabled paint. Synthetic place search is not the production ranking. One pre-existing `react-hooks/set-state-in-effect` warning remains on the proposal waiting clock. Full `npm run lint` stayed at 146 warnings and 0 errors. `npm run build` exited 0. Neither replaces exact-head CI or Preview.
+- P3: same-turn OrtSuche query text remains outside the parent guard until the disabled paint. Synthetic place search is not the production ranking. One pre-existing `react-hooks/set-state-in-effect` warning remains on the proposal waiting clock. Workflow CI does not install a Playwright browser, so it will not replay the mounted proof. The ordinary test covers the sync guard only. Full lint and the production build do not replace exact-head CI or Preview.
 
 ## Boundaries left untouched
 
