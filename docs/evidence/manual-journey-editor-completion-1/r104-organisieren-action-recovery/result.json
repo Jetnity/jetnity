@@ -213,7 +213,7 @@
   "blobs": [
     {
       "file": "components/trips/FlugBestand.tsx",
-      "blob": "50c7e8f8e6f271ef8d2c2f6098a69794ae87ad02"
+      "blob": "969a224aaa5f11f782f94806d9d635bafeff4476"
     },
     {
       "file": "components/trips/UnterkunftBestand.tsx",
