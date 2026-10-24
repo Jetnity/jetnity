@@ -115,8 +115,13 @@ async function arm(page, channel, outcome) {
 }
 
 async function release(page, channel) {
+  const before = await page.evaluate((next) => window.fixture.pending(next).length, channel)
   await page.evaluate((next) => window.fixture.release(next), channel)
-  await page.waitForFunction((next) => window.fixture.held[next] === false, channel)
+  await page.waitForFunction(
+    ({ next, count }) => window.fixture.pending(next).length === count,
+    { next: channel, count: Math.max(0, before - 1) },
+  )
+  await painted(page)
 }
 
 async function calls(page, channel) {
@@ -220,7 +225,8 @@ function assertFits(name, snapshot) {
 
 async function openFlight(page) {
   const scope = region(page, 'Deine Flüge')
-  await scope.getByRole('button', { name: /Flugroute/ }).click()
+  const button = scope.getByRole('button', { name: /Flugroute/ })
+  if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click()
   return scope
 }
 
@@ -249,7 +255,8 @@ async function fillFlight(page, segments = 1) {
 
 async function openStay(page) {
   const scope = region(page, 'Deine Unterkunft')
-  await scope.getByRole('button', { name: /Zeitraum/ }).click()
+  const button = scope.getByRole('button', { name: /Zeitraum/ })
+  if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click()
   return scope
 }
 
@@ -262,7 +269,7 @@ const evidence = {
   sourceSha256,
   viewports: VIEWPORTS,
   geometryKind: 'CSS viewport and root font-size, not native zoom and not a physical device',
-  stubs: 'in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; no guest storage, account, provider, or database',
+  stubs: 'in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; each request keeps its own payload and outcome. No guest storage, account, provider, or database.',
   scenarios: [],
   layouts: [],
   blockedRequests: [],
@@ -270,7 +277,8 @@ const evidence = {
   status: 'FAIL',
   failure: null,
   browser: null,
-  caseCount: 0,
+  behaviorCount: 0,
+  layoutCount: 0,
 }
 
 let server
@@ -619,6 +627,273 @@ try {
   assert.equal(await links.getByRole('alert').count(), 0)
   evidence.scenarios.push('connection-preset-trip-late-result')
 
+  const presetA = {
+    mode: 'rail',
+    originName: 'Zürich HB',
+    originPlaceId: 'station:zurich',
+    destinationName: 'Bern',
+    destinationPlaceId: 'station:bern',
+    startsOn: '2026-11-02',
+    dayId: 'day-1',
+  }
+  const presetB = {
+    ...presetA,
+    originName: 'Basel',
+    originPlaceId: 'station:basel',
+    startsOn: '2026-11-03',
+    dayId: 'day-2',
+  }
+  for (const outcome of ['success', 'domain', 'reject']) {
+    await page.evaluate((next) => window.fixture.setConnection({ tripId: 'trip-link', origin: 'Zürich', vorgabe: next }), presetA)
+    await links.getByLabel('Von').waitFor()
+    assert.equal(await links.getByLabel('Von').inputValue(), 'Zürich HB')
+    await links.getByLabel('Notiz').fill('R1 Notiz')
+    await arm(page, 'connection', 'success')
+    await links.getByRole('button', { name: 'Verbindung speichern' }).click()
+    await page.waitForFunction(() => window.fixture.pending('connection').length === 1)
+    await page.evaluate((next) => window.fixture.setConnection({ vorgabe: next }), presetB)
+    await painted(page)
+    assert.equal(await links.getByLabel('Von').inputValue(), 'Basel')
+    assert.equal(await links.locator('form').getAttribute('aria-busy'), 'false')
+    await links.getByLabel('Notiz').fill(`R2 ${outcome}`)
+    await links.getByLabel('Verbindungsnummer, falls bekannt').fill('IC 2')
+    await arm(page, 'connection', outcome)
+    await links.getByRole('button', { name: 'Verbindung speichern' }).click()
+    await page.waitForFunction(() => window.fixture.pending('connection').length === 2)
+    const during = await active(page)
+    await release(page, 'connection')
+    assert.equal(await links.locator('form').getAttribute('aria-busy'), 'true')
+    assert.equal(await links.getByLabel('Notiz').inputValue(), `R2 ${outcome}`)
+    assert.equal(await links.getByLabel('Verbindungsnummer, falls bekannt').inputValue(), 'IC 2')
+    assert.equal(await links.getByLabel('Von').inputValue(), 'Basel')
+    assert.equal(await links.getByRole('status').count(), 0)
+    assert.equal((await active(page)).id, during.id)
+    await release(page, 'connection')
+    if (outcome === 'success') {
+      await links.getByText(CONNECTION_SAVED).waitFor()
+      assert.equal(await links.getByLabel('Notiz').inputValue(), '')
+      assert.equal(await links.getByLabel('Verbindungsnummer, falls bekannt').inputValue(), '')
+    } else if (outcome === 'domain') {
+      assert.equal(await links.getByRole('alert').innerText(), 'Synthetischer Speicherfehler. Die Eingabe bleibt erhalten.')
+      assert.equal(await links.getByLabel('Notiz').inputValue(), `R2 ${outcome}`)
+    } else {
+      assert.equal(await links.getByRole('alert').innerText(), CONNECTION_UNKNOWN)
+      assert.equal((await links.getByRole('alert').innerText()).includes('secret'), false)
+      assert.equal(await links.getByLabel('Notiz').inputValue(), `R2 ${outcome}`)
+    }
+    assert.equal(await links.locator('form').getAttribute('aria-busy'), 'false')
+    assert.equal(await links.getByLabel('Von').inputValue(), 'Basel')
+  }
+  evidence.scenarios.push('connection-r1-pending-r2-owns-lock')
+
+  await page.evaluate((next) => window.fixture.setConnection({ vorgabe: next }), presetA)
+  await links.getByLabel('Von').waitFor()
+  assert.equal(await links.getByLabel('Von').inputValue(), 'Zürich HB')
+  await links.getByLabel('Notiz').fill('Offen A')
+  await arm(page, 'connection', 'success')
+  await links.getByRole('button', { name: 'Verbindung speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('connection').length === 1)
+  await page.evaluate((next) => window.fixture.suspendConnection(next), {
+    ...presetA,
+    originName: 'Luzern',
+    originPlaceId: 'station:luzern',
+  })
+  await painted(page)
+  assert.equal(await page.locator('[data-transition-fallback]').count(), 0)
+  assert.equal(await links.getByLabel('Von').inputValue(), 'Zürich HB')
+  assert.equal(await links.getByLabel('Notiz').inputValue(), 'Offen A')
+  assert.equal(await links.locator('form').getAttribute('aria-busy'), 'true')
+  await page.evaluate(() => window.fixture.abandonTransition())
+  await painted(page)
+  assert.equal(await page.locator('[data-transition-fallback]').count(), 0)
+  assert.equal(await links.getByLabel('Von').inputValue(), 'Zürich HB')
+  assert.equal(await links.getByLabel('Notiz').inputValue(), 'Offen A')
+  assert.equal(await links.locator('form').getAttribute('aria-busy'), 'true')
+  await release(page, 'connection')
+  await links.getByText(CONNECTION_SAVED).waitFor()
+  assert.equal(await links.locator('form').getAttribute('aria-busy'), 'false')
+  assert.equal(await links.getByLabel('Von').inputValue(), 'Zürich HB')
+  assert.equal(await links.getByLabel('Notiz').inputValue(), '')
+  assert.equal(await links.getByRole('button', { name: 'Verbindung speichern' }).isDisabled(), false)
+  evidence.scenarios.push('connection-aborted-transition-releases-lock')
+
+  await page.evaluate(() => window.fixture.setFlight('a'))
+  await page.evaluate(() => window.fixture.setFlightTrip('trip-flight'))
+  await openFlight(page)
+  await flights.getByLabel('Abflugzeit (optional)').fill('11:30')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+  const savedFlight = await page.evaluate(() => window.fixture.latest('flight'))
+  await release(page, 'flight')
+  await flights.getByText('Flugroute gespeichert.').waitFor()
+  assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
+  await page.evaluate((id) => window.fixture.deliver('flight', id), savedFlight)
+  await painted(page)
+  await flights.getByText('Der gespeicherte Flug ist ausgewählt.').waitFor()
+  assert.match((await active(page)).text, /Flugroute/)
+  assert.equal(await flights.locator('form').count(), 0)
+  evidence.scenarios.push('flight-saved-graph-readback')
+
+  await openFlight(page)
+  await flights.getByLabel('Abflugzeit (optional)').fill('11:45')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+  const otherTripFlight = await page.evaluate(() => window.fixture.latest('flight'))
+  await release(page, 'flight')
+  await page.evaluate(() => window.fixture.setFlightTrip('trip-flight-other'))
+  await page.evaluate((id) => window.fixture.deliver('flight', id), otherTripFlight)
+  await painted(page)
+  assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
+  await openFlight(page)
+  assert.equal(await flights.getByLabel('Abflugzeit (optional)').inputValue(), '10:00')
+  evidence.scenarios.push('flight-saved-graph-changed-trip')
+
+  await page.evaluate(() => window.fixture.setFlight('a'))
+  await page.evaluate(() => window.fixture.setFlightTrip('trip-flight'))
+  await openFlight(page)
+  await flights.getByLabel('Abflugzeit (optional)').fill('11:30')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+  const draftFlight = await page.evaluate(() => window.fixture.latest('flight'))
+  await release(page, 'flight')
+  await openFlight(page)
+  const departure = flights.getByLabel('Abflugzeit (optional)')
+  await departure.fill('12:00')
+  await departure.focus()
+  await page.evaluate((id) => window.fixture.deliver('flight', id), draftFlight)
+  await painted(page)
+  assert.equal(await departure.inputValue(), '12:00')
+  assert.equal(await flights.locator('form').count(), 1)
+  assert.equal(await flights.getByText('Der gespeicherte Flug ist ausgewählt.').count(), 0)
+  assert.equal((await active(page)).label, 'Abflugzeit (optional)')
+  evidence.scenarios.push('flight-saved-graph-new-draft')
+
+  await page.evaluate(() => window.fixture.setFlight('a'))
+  await openFlight(page)
+  await flights.getByLabel('Abflugzeit (optional)').fill('11:30')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+  const mirrorFlight = await page.evaluate(() => window.fixture.latest('flight'))
+  await page.evaluate(() => window.fixture.suspendFlightTrip('trip-speculative'))
+  await painted(page)
+  assert.equal(await page.locator('[data-transition-fallback]').count(), 0)
+  assert.equal(await flights.locator('form').getAttribute('aria-busy'), 'true')
+  await release(page, 'flight')
+  await page.evaluate(() => window.fixture.abandonTransition())
+  await painted(page)
+  await page.evaluate((id) => window.fixture.deliver('flight', id), mirrorFlight)
+  await painted(page)
+  await flights.getByText('Der gespeicherte Flug ist ausgewählt.').waitFor()
+  evidence.scenarios.push('flight-speculative-trip-keeps-readback')
+
+  await page.evaluate(() => window.fixture.setFlight('a'))
+  await openFlight(page)
+  await flights.getByLabel('Abflugflughafen (IATA)').fill('FRA')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
+  await page.evaluate(() => window.fixture.setFlight('b'))
+  await painted(page)
+  assert.equal(await flights.locator('form').count(), 0)
+  await openFlight(page)
+  await flights.getByLabel('Abflugzeit (optional)').fill('12:15')
+  await arm(page, 'flight', 'success')
+  await flights.getByRole('button', { name: 'Speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('flight').length === 2)
+  await release(page, 'flight')
+  assert.equal(await flights.locator('form').getAttribute('aria-busy'), 'true')
+  assert.equal(await flights.getByLabel('Abflugzeit (optional)').inputValue(), '12:15')
+  assert.equal(await flights.getByText('Flugroute gespeichert.').count(), 0)
+  await release(page, 'flight')
+  await flights.getByText('Flugroute gespeichert.').waitFor()
+  assert.equal(await flights.locator('form').count(), 0)
+  evidence.scenarios.push('flight-r1-pending-r2-owns-lock')
+
+  await page.evaluate(() => window.fixture.setStay('stay-a'))
+  await page.evaluate(() => window.fixture.setStayTrip('trip-stay'))
+  await openStay(page)
+  await stays.getByLabel('Check-in').fill('2026-11-03')
+  await stays.getByLabel('Check-out').fill('2026-11-09')
+  await arm(page, 'stay', 'success')
+  await stays.getByRole('button', { name: 'Zeitraum speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+  const staySaved = await page.evaluate(() => window.fixture.latest('stay'))
+  await release(page, 'stay')
+  await stays.getByText('Zeitraum gespeichert.').waitFor()
+  assert.equal(await stays.getByText('Check-in: 2026-11-03 · Check-out: 2026-11-09').count(), 0)
+  await page.evaluate((id) => window.fixture.deliver('stay', id), staySaved)
+  await painted(page)
+  await stays.getByText('Check-in: 2026-11-03 · Check-out: 2026-11-09').waitFor()
+  assert.equal(await stays.locator('form').count(), 0)
+  assert.match((await active(page)).text, /Zeitraum/)
+  await openStay(page)
+  assert.equal(await stays.getByLabel('Check-in').inputValue(), '2026-11-03')
+  assert.equal(await stays.getByLabel('Check-out').inputValue(), '2026-11-09')
+  await stays.getByRole('button', { name: 'Abbrechen' }).click()
+  evidence.scenarios.push('stay-saved-graph-readback')
+
+  await openStay(page)
+  await stays.getByLabel('Check-in').fill('2026-11-04')
+  await stays.getByLabel('Check-out').fill('2026-11-08')
+  await arm(page, 'stay', 'success')
+  await stays.getByRole('button', { name: 'Zeitraum speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+  const otherStay = await page.evaluate(() => window.fixture.latest('stay'))
+  await release(page, 'stay')
+  await page.evaluate(() => window.fixture.setStay('stay-b'))
+  await page.evaluate((id) => window.fixture.deliver('stay', id), otherStay)
+  await painted(page)
+  await stays.getByText('Check-in: 2026-11-02 · Check-out: 2026-11-06').waitFor()
+  assert.equal(await stays.getByText('Check-in: 2026-11-04 · Check-out: 2026-11-08').count(), 0)
+  evidence.scenarios.push('stay-saved-graph-changed-stay')
+
+  await page.evaluate(() => window.fixture.setStay('stay-a'))
+  await page.evaluate(() => window.fixture.setStayTrip('trip-stay'))
+  await openStay(page)
+  await stays.getByLabel('Check-in').fill('2026-11-03')
+  await stays.getByLabel('Check-out').fill('2026-11-09')
+  await arm(page, 'stay', 'success')
+  await stays.getByRole('button', { name: 'Zeitraum speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+  const stayGraph = await page.evaluate(() => window.fixture.latest('stay'))
+  await release(page, 'stay')
+  await openStay(page)
+  await stays.getByLabel('Check-in').fill('2026-12-01')
+  await stays.getByLabel('Check-out').fill('2026-12-04')
+  await stays.getByLabel('Check-in').focus()
+  await page.evaluate((id) => window.fixture.deliver('stay', id), stayGraph)
+  await painted(page)
+  assert.equal(await stays.getByLabel('Check-in').inputValue(), '2026-12-01')
+  assert.equal(await stays.getByLabel('Check-out').inputValue(), '2026-12-04')
+  assert.equal((await active(page)).label, 'Check-in')
+  evidence.scenarios.push('stay-saved-graph-new-draft')
+
+  await stays.getByLabel('Check-in').fill('2026-12-02')
+  await stays.getByLabel('Check-out').fill('2026-12-06')
+  await arm(page, 'stay', 'success')
+  await stays.getByRole('button', { name: 'Zeitraum speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+  await page.evaluate(() => window.fixture.setStay('stay-b'))
+  await painted(page)
+  assert.equal(await stays.locator('form').count(), 0)
+  await openStay(page)
+  await stays.getByLabel('Check-in').fill('2027-01-02')
+  await stays.getByLabel('Check-out').fill('2027-01-05')
+  await arm(page, 'stay', 'success')
+  await stays.getByRole('button', { name: 'Zeitraum speichern' }).click()
+  await page.waitForFunction(() => window.fixture.pending('stay').length === 2)
+  await release(page, 'stay')
+  assert.equal(await stays.getByLabel('Check-in').inputValue(), '2027-01-02')
+  assert.equal(await stays.locator('form').getAttribute('aria-busy'), 'true')
+  assert.equal(await stays.getByText('Zeitraum gespeichert.').count(), 0)
+  await release(page, 'stay')
+  await stays.getByText('Zeitraum gespeichert.').waitFor()
+  evidence.scenarios.push('stay-r1-pending-r2-owns-lock')
+
   await page.close()
 
   for (const viewport of VIEWPORTS) {
@@ -675,7 +950,8 @@ try {
   evidence.pageErrors.push(...scaled.errors)
   await scaled.context.close()
 
-  evidence.caseCount = evidence.scenarios.length + evidence.layouts.length
+  evidence.behaviorCount = evidence.scenarios.length
+  evidence.layoutCount = evidence.layouts.length
   evidence.status = 'PASS'
   evidence.notVerified = [
     'CI',

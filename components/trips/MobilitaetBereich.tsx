@@ -351,21 +351,21 @@ export function ManuelleVerbindung({
   onAnlegen: (eingabe: MobilityManuellEingabe) => Promise<string | null>
   vorgabe?: Partial<MobilityManuellEingabe>
 }) {
-  // Generation lives on a stable object so an in-flight completion sees a trip
-  // or preset change from this render, before effects. A state setter is stale
-  // in that closure, and a ref write during render trips react-hooks/refs.
-  /* eslint-disable react-hooks/immutability */
   const VERBINDUNG_UNBEKANNT = 'Ob die Verbindung gespeichert wurde, konnten wir nicht bestätigen. Deine Eingabe bleibt erhalten. Prüfe deinen Reiseplan vor einem erneuten Versuch. Ein erneuter Versuch kann eine zweite Verbindung anlegen.'
   const VERBINDUNG_FELD = `${ORGANISIEREN_EINGABE_KLASSE} mt-1 min-w-0 max-w-full`
   const VERBINDUNG_NOTIZ = `${ORGANISIEREN_TEXTAREA_KLASSE} mt-1 min-w-0 max-w-full`
   const VERBINDUNG_SPALTEN = `${ARBEITSFELD_SPALTEN_KLASSE} min-w-0 max-w-full`
   const VERBINDUNG_LABEL = 'block min-w-0 max-w-full break-words text-sm font-medium text-brand-800'
   const anfang = verbindungsVorgabeAus(reise, vorgabe)
+  const anfangSchluessel = vorgabeSchluessel(anfang)
   const lebendig = React.useRef(true)
   const meldungRef = React.useRef<HTMLParagraphElement>(null)
-  // Stable cell, not a ref: the generation must move in this render, before effects,
-  // so a completion already in flight cannot clear or unlock the new trip.
-  const [spur] = React.useState({ generation: 0, schreibt: false, reiseId: reise.id })
+  const schreibt = React.useRef(false)
+  const generationFest = React.useRef(0)
+  const reiseFest = React.useRef(reise.id)
+  const [generation, setGeneration] = React.useState(0)
+  const [gesehenReise, setGesehenReise] = React.useState(reise.id)
+  const [gesehenSchluessel, setGesehenSchluessel] = React.useState(anfangSchluessel)
   const [angewendet, setAngewendet] = React.useState(anfang)
   const [mode, setMode] = React.useState<MobilityMode>(anfang.mode)
   const [originName, setOriginName] = React.useState(anfang.originName)
@@ -382,10 +382,11 @@ export function ManuelleVerbindung({
   const [hinweis, setHinweis] = React.useState('')
   const [fokus, setFokus] = React.useState(0)
   const naechste = verbindungsVorgabeAus(reise, vorgabe)
-  if (spur.reiseId !== reise.id) {
-    spur.generation += 1
-    spur.schreibt = false
-    spur.reiseId = reise.id
+  const naechsterSchluessel = vorgabeSchluessel(naechste)
+  if (gesehenReise !== reise.id) {
+    setGesehenReise(reise.id)
+    setGesehenSchluessel(naechsterSchluessel)
+    setGeneration((bisher) => bisher + 1)
     setAngewendet(naechste)
     setMode(naechste.mode)
     setOriginName(naechste.originName)
@@ -400,9 +401,9 @@ export function ManuelleVerbindung({
     setLaeuft(false)
     setMeldung('')
     setHinweis('')
-  } else if (vorgabeSchluessel(angewendet) !== vorgabeSchluessel(naechste)) {
-    spur.generation += 1
-    spur.schreibt = false
+  } else if (gesehenSchluessel !== naechsterSchluessel) {
+    setGesehenSchluessel(naechsterSchluessel)
+    setGeneration((bisher) => bisher + 1)
     setLaeuft(false)
     if (feldFolgtVorgabe(mode, angewendet.mode)) setMode(naechste.mode)
     if (feldFolgtVorgabe(originName, angewendet.originName)) setOriginName(naechste.originName)
@@ -413,6 +414,13 @@ export function ManuelleVerbindung({
     setMeldung('')
     setHinweis('')
   }
+
+  React.useLayoutEffect(() => {
+    const gewechselt = generationFest.current !== generation || reiseFest.current !== reise.id
+    generationFest.current = generation
+    reiseFest.current = reise.id
+    if (gewechselt) schreibt.current = false
+  }, [generation, reise.id])
 
   React.useEffect(() => {
     lebendig.current = true
@@ -426,9 +434,9 @@ export function ManuelleVerbindung({
 
   const speichern = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
-    if (spur.schreibt) return
-    const zielReise = reise.id
-    const generationJetzt = spur.generation
+    if (schreibt.current) return
+    const zielReise = reiseFest.current
+    const generationJetzt = generationFest.current
     const eingabe: MobilityManuellEingabe = {
       mode,
       title: null,
@@ -448,8 +456,8 @@ export function ManuelleVerbindung({
       dayId: dayId || null,
       stageId: reise.days.find((tag) => tag.id === dayId)?.stageId ?? null,
     }
-    const passt = () => lebendig.current && spur.generation === generationJetzt && spur.reiseId === zielReise
-    spur.schreibt = true
+    const passt = () => lebendig.current && generationFest.current === generationJetzt && reiseFest.current === zielReise
+    schreibt.current = true
     setMeldung('')
     setHinweis('')
     setLaeuft(true)
@@ -470,7 +478,7 @@ export function ManuelleVerbindung({
       setFokus((bisher) => bisher + 1)
     } finally {
       if (passt()) {
-        spur.schreibt = false
+        schreibt.current = false
         setLaeuft(false)
       }
     }
@@ -647,5 +655,4 @@ export function ManuelleVerbindung({
       ) : null}
     </section>
   )
-  /* eslint-enable react-hooks/immutability */
 }

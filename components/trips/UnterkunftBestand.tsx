@@ -182,19 +182,18 @@ function UnterkunftZeitraum({
   reiseId: string
   onSpeichern: ZeitraumSpeichern
 }) {
-  // Generation lives on a stable object so an in-flight completion sees a target
-  // change from this render, before effects. A state setter is stale in that
-  // closure, and a ref write during render trips react-hooks/refs.
-  /* eslint-disable react-hooks/immutability */
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
   const checkIn = React.useRef<HTMLInputElement>(null)
   const checkOut = React.useRef<HTMLInputElement>(null)
   const zusammenfassung = React.useRef<HTMLParagraphElement>(null)
   const lebendig = React.useRef(true)
-  // Stable cell, not a ref: the generation must move in this render, before effects,
-  // so a completion already in flight cannot close or unlock the new target.
-  const [spur] = React.useState({ generation: 0, schreibt: false, reiseId, itemId: item.id })
+  const schreibt = React.useRef(false)
+  const generationFest = React.useRef(0)
+  const reiseFest = React.useRef(reiseId)
+  const zielFest = React.useRef(item.id)
+  const [generation, setGeneration] = React.useState(0)
+  const [gesehen, setGesehen] = React.useState({ reiseId, itemId: item.id })
   const [offen, setOffen] = React.useState(false)
   const [startsOn, setStartsOn] = React.useState('')
   const [endsOn, setEndsOn] = React.useState('')
@@ -204,13 +203,11 @@ function UnterkunftZeitraum({
   const [laeuft, setLaeuft] = React.useState(false)
   const [gespeichert, setGespeichert] = React.useState(false)
   if (!gleicherEditorKontext(
-    { reiseId: spur.reiseId, zielId: spur.itemId },
+    { reiseId: gesehen.reiseId, zielId: gesehen.itemId },
     { reiseId, zielId: item.id },
   )) {
-    spur.generation += 1
-    spur.schreibt = false
-    spur.reiseId = reiseId
-    spur.itemId = item.id
+    setGesehen({ reiseId, itemId: item.id })
+    setGeneration((bisher) => bisher + 1)
     setOffen(false)
     setStartsOn('')
     setEndsOn('')
@@ -225,6 +222,16 @@ function UnterkunftZeitraum({
   const meldung = schemaFehler ? ersteMeldung(schemaFehler) : fehler
   const feldUngueltig = (name: 'startsOn' | 'endsOn') =>
     Boolean(schemaFehler?.issues.some((issue) => issue.path[0] === name))
+
+  React.useLayoutEffect(() => {
+    const gewechselt = generationFest.current !== generation
+      || reiseFest.current !== reiseId
+      || zielFest.current !== item.id
+    generationFest.current = generation
+    reiseFest.current = reiseId
+    zielFest.current = item.id
+    if (gewechselt) schreibt.current = false
+  }, [generation, reiseId, item.id])
 
   React.useEffect(() => {
     lebendig.current = true
@@ -253,7 +260,7 @@ function UnterkunftZeitraum({
 
   const speichern = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (spur.schreibt) return
+    if (schreibt.current) return
     const zeitraum = unterkunftZeitraumSchema.safeParse({ startsOn, endsOn })
     if (!zeitraum.success) {
       setFehler('')
@@ -261,15 +268,15 @@ function UnterkunftZeitraum({
       setFokus((bisher) => bisher + 1)
       return
     }
-    const zielReise = reiseId
-    const zielItem = item.id
-    const generationJetzt = spur.generation
-    const passt = () => lebendig.current && spur.generation === generationJetzt && gleicherEditorKontext(
-      { reiseId: spur.reiseId, zielId: spur.itemId },
+    const zielReise = reiseFest.current
+    const zielItem = zielFest.current
+    const generationJetzt = generationFest.current
+    const passt = () => lebendig.current && generationFest.current === generationJetzt && gleicherEditorKontext(
+      { reiseId: reiseFest.current, zielId: zielFest.current },
       { reiseId: zielReise, zielId: zielItem },
     )
     setValidieren(false)
-    spur.schreibt = true
+    schreibt.current = true
     setLaeuft(true)
     setFehler('')
     try {
@@ -288,7 +295,7 @@ function UnterkunftZeitraum({
       setFokus((bisher) => bisher + 1)
     } finally {
       if (passt()) {
-        spur.schreibt = false
+        schreibt.current = false
         setLaeuft(false)
       }
     }
@@ -299,7 +306,7 @@ function UnterkunftZeitraum({
       if (event.key !== 'Escape' || !offen) return
       event.preventDefault()
       event.stopPropagation()
-      if (!spur.schreibt) schliessen()
+      if (!schreibt.current) schliessen()
     }}>
       <p className="text-xs leading-5 text-ink-800 break-words">
         Check-in: {item.startsOn ?? 'offen'} · Check-out: {item.endsOn ?? 'offen'}
@@ -312,7 +319,7 @@ function UnterkunftZeitraum({
         aria-controls={offen ? `${id}-formular` : undefined}
         aria-disabled={laeuft}
         onClick={() => {
-          if (spur.schreibt) return
+          if (schreibt.current) return
           if (offen) schliessen()
           else {
             setStartsOn(item.startsOn ?? '')
@@ -359,5 +366,4 @@ function UnterkunftZeitraum({
       {gespeichert ? <p role="status" className="mt-2 text-sm text-brand-700">Zeitraum gespeichert.</p> : null}
     </div>
   )
-  /* eslint-enable react-hooks/immutability */
 }

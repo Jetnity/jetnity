@@ -54,19 +54,18 @@ function ManuelleFlugRoute({
   reiseId: string
   onSpeichern: FlugRouteSpeichern
 }) {
-  // Generation lives on a stable object so an in-flight completion sees a target
-  // change from this render, before effects. A state setter is stale in that
-  // closure, and a ref write during render trips react-hooks/refs.
-  /* eslint-disable react-hooks/immutability */
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
   const formular = React.useRef<HTMLFormElement>(null)
   const fehlerZusammenfassung = React.useRef<HTMLParagraphElement>(null)
   const hinzufuegen = React.useRef<HTMLButtonElement>(null)
   const lebendig = React.useRef(true)
-  // Stable cell, not a ref: the generation must move in this render, before effects,
-  // so a completion already in flight cannot close or unlock the new target.
-  const [spur] = React.useState({ generation: 0, schreibt: false, reiseId, itemId: item.id })
+  const schreibt = React.useRef(false)
+  const generationFest = React.useRef(0)
+  const reiseFest = React.useRef(reiseId)
+  const zielFest = React.useRef(item.id)
+  const [generation, setGeneration] = React.useState(0)
+  const [gesehen, setGesehen] = React.useState({ reiseId, itemId: item.id })
   const [offen, setOffen] = React.useState(false)
   const [segments, setSegments] = React.useState<FlugSegmentManuell[]>([])
   const [fehler, setFehler] = React.useState('')
@@ -75,13 +74,11 @@ function ManuelleFlugRoute({
   const [laeuft, setLaeuft] = React.useState(false)
   const [gespeichert, setGespeichert] = React.useState(false)
   if (!gleicherEditorKontext(
-    { reiseId: spur.reiseId, zielId: spur.itemId },
+    { reiseId: gesehen.reiseId, zielId: gesehen.itemId },
     { reiseId, zielId: item.id },
   )) {
-    spur.generation += 1
-    spur.schreibt = false
-    spur.reiseId = reiseId
-    spur.itemId = item.id
+    setGesehen({ reiseId, itemId: item.id })
+    setGeneration((bisher) => bisher + 1)
     setOffen(false)
     setSegments([])
     setFehler('')
@@ -107,6 +104,16 @@ function ManuelleFlugRoute({
     if (!feldfehler.has(schluessel)) feldfehler.set(schluessel, issue.message)
   }
 
+  React.useLayoutEffect(() => {
+    const gewechselt = generationFest.current !== generation
+      || reiseFest.current !== reiseId
+      || zielFest.current !== item.id
+    generationFest.current = generation
+    reiseFest.current = reiseId
+    zielFest.current = item.id
+    if (gewechselt) schreibt.current = false
+  }, [generation, reiseId, item.id])
+
   React.useEffect(() => {
     lebendig.current = true
     return () => { lebendig.current = false }
@@ -131,7 +138,7 @@ function ManuelleFlugRoute({
   }
   const speichern = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (spur.schreibt || zuGross) return
+    if (schreibt.current || zuGross) return
     const geprueft = flugRouteManuellSchema.safeParse({ segments })
     if (!geprueft.success) {
       setFehler('')
@@ -139,16 +146,16 @@ function ManuelleFlugRoute({
       setFokusVersuch((bisher) => bisher + 1)
       return
     }
-    const zielReise = reiseId
-    const zielItem = item.id
-    const generationJetzt = spur.generation
+    const zielReise = reiseFest.current
+    const zielItem = zielFest.current
+    const generationJetzt = generationFest.current
     const segmente = geprueft.data.segments
-    const passt = () => lebendig.current && spur.generation === generationJetzt && gleicherEditorKontext(
-      { reiseId: spur.reiseId, zielId: spur.itemId },
+    const passt = () => lebendig.current && generationFest.current === generationJetzt && gleicherEditorKontext(
+      { reiseId: reiseFest.current, zielId: zielFest.current },
       { reiseId: zielReise, zielId: zielItem },
     )
     setValidieren(false)
-    spur.schreibt = true
+    schreibt.current = true
     setLaeuft(true)
     setFehler('')
     try {
@@ -167,7 +174,7 @@ function ManuelleFlugRoute({
       setFokusVersuch((bisher) => bisher + 1)
     } finally {
       if (passt()) {
-        spur.schreibt = false
+        schreibt.current = false
         setLaeuft(false)
       }
     }
@@ -178,11 +185,11 @@ function ManuelleFlugRoute({
       if (event.key !== 'Escape' || !offen) return
       event.preventDefault()
       event.stopPropagation()
-      if (!spur.schreibt) schliessen()
+      if (!schreibt.current) schliessen()
     }}>
       <button ref={knopf} type="button" aria-expanded={offen} aria-controls={offen ? `${id}-formular` : undefined}
         aria-disabled={laeuft} className={ROUTE_KNOPF} onClick={() => {
-          if (spur.schreibt) return
+          if (schreibt.current) return
           if (offen) { schliessen(); return }
           setSegments(route && !zuGross ? route.legs[0]!.segments.map((segment) => ({
             origin: segment.origin.airportCode ?? '', destination: segment.destination.airportCode ?? '',
@@ -250,7 +257,6 @@ function ManuelleFlugRoute({
       {gespeichert ? <p role="status" className="mt-2 text-sm text-brand-700">Flugroute gespeichert.</p> : null}
     </div>
   )
-  /* eslint-enable react-hooks/immutability */
 }
 
 export default function FlugBestand({
@@ -281,20 +287,24 @@ export default function FlugBestand({
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
   const [saved, setSaved] = React.useState<{ itemId: string; reiseId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
   const [saveStatus, setSaveStatus] = React.useState('')
+  if (saved && saved.reiseId !== reise.id) setSaved(null)
   const root = React.useRef<HTMLElement>(null)
   const writeOrder = React.useRef(0)
-  const [reiseSpiegel] = React.useState({ id: reise.id })
-  // Same synchronous cell as the editors: the late readback must compare the
-  // trip id from this render, before effects, not a stale closure.
-  // eslint-disable-next-line react-hooks/immutability
-  reiseSpiegel.id = reise.id
+  const reiseIdRef = React.useRef(reise.id)
   React.useLayoutEffect(() => {
-    if (!saved || window.location.href !== saved.context || saved.reiseId !== reise.id || root.current?.closest('[hidden], [inert]')) return
+    reiseIdRef.current = reise.id
+    if (!saved || saved.reiseId !== reise.id) return
+    if (window.location.href !== saved.context || root.current?.closest('[hidden], [inert]')) return
+    const row = root.current?.querySelector<HTMLElement>(`[data-flug-punkt="${CSS.escape(saved.itemId)}"]`)
+    if (row?.querySelector('[aria-expanded="true"]')) {
+      setSaved(null)
+      return
+    }
     const item = [...reise.days.flatMap(day => day.items), ...ohneTag, ...reise.ohneTag].find(p => p.id === saved.itemId)
     const segments = flugRouteItineraryLesen(item?.routeItinerary)?.legs[0]?.segments
     if (!segments || JSON.stringify(segments.map(segment => ({ origin: segment.origin.airportCode, destination: segment.destination.airportCode,
       departureDate: segment.departureDate, departureTime: segment.departureTime, arrivalDate: segment.arrivalDate, arrivalTime: segment.arrivalTime }))) !== JSON.stringify(saved.segments)) return
-    const target = root.current?.querySelector<HTMLElement>(`[data-flug-punkt="${CSS.escape(saved.itemId)}"] button`)
+    const target = row?.querySelector<HTMLElement>('button')
     if (target) {
       target.focus({ preventScroll: true })
       target.scrollIntoView({ block: 'center', behavior: 'instant' })
@@ -306,10 +316,10 @@ export default function FlugBestand({
     if (!onFlugRouteManuell) return 'Die Flugroute kann hier nicht gespeichert werden.'
     const request = ++writeOrder.current
     const context = window.location.href
-    const reiseId = reise.id
+    const reiseId = reiseIdRef.current
     setSaveStatus('')
     const error = await onFlugRouteManuell(itemId, segments)
-    if (!error && request === writeOrder.current && window.location.href === context && reiseSpiegel.id === reiseId) {
+    if (!error && request === writeOrder.current && window.location.href === context && reiseIdRef.current === reiseId) {
       setSaved({ itemId, reiseId, segments, context })
     }
     return error

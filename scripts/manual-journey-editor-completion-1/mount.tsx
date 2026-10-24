@@ -1,3 +1,5 @@
+import { Suspense, startTransition, useLayoutEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot, type Root } from 'react-dom/client'
 
 import FlugBestand from '@/components/trips/FlugBestand'
@@ -24,6 +26,12 @@ declare global {
       domain: Record<Channel, string>
       arm: (channel: Channel, next: Outcome) => void
       release: (channel: Channel) => void
+      pending: (channel: Channel) => Array<{ id: number; outcome: Outcome }>
+      latest: (channel: Channel) => number
+      deliver: (channel: Channel, id: number) => void
+      suspendConnection: (next: Vorgabe) => void
+      suspendFlightTrip: (tripId: string) => void
+      abandonTransition: () => void
       setFlight: (kind: FlightKind) => void
       setFlightTrip: (tripId: string) => void
       setStay: (id: string) => void
@@ -92,7 +100,18 @@ function itinerary(segments: RouteSegment[]): FlugRouteItinerary {
   return { v: 1, type: 'flight_route_itinerary', legs: [{ segments }] }
 }
 
-function flightItem(kind: FlightKind): TripItem {
+function routeFromSegments(segments: FlugSegmentManuell[]): FlugRouteItinerary {
+  return itinerary(segments.map((eintrag) => ({
+    origin: flughafenPunkt(eintrag.origin, TEST_FLUGHAFEN_REFS),
+    destination: flughafenPunkt(eintrag.destination, TEST_FLUGHAFEN_REFS),
+    departureDate: eintrag.departureDate,
+    departureTime: eintrag.departureTime,
+    arrivalDate: eintrag.arrivalDate,
+    arrivalTime: eintrag.arrivalTime,
+  })))
+}
+
+function flightItem(kind: FlightKind, override: FlugSegmentManuell[] | null = null): TripItem {
   if (kind === 'multi') {
     return punkt({
       id: 'flight-multi',
@@ -133,7 +152,7 @@ function flightItem(kind: FlightKind): TripItem {
     startsAt: '10:00',
     endsOn: '2026-08-30',
     endsAt: '18:00',
-    routeItinerary: itinerary([segment('ZRH', 'BKK')]),
+    routeItinerary: override ? routeFromSegments(override) : itinerary([segment('ZRH', 'BKK')]),
   })
 }
 
@@ -171,13 +190,13 @@ function flightTrip(item: TripItem, tripId: string): Trip {
   } as Trip
 }
 
-function stayItem(id: string): TripItem {
+function stayItem(id: string, dates: { startsOn: string; endsOn: string } | null = null): TripItem {
   return punkt({
     id,
     kind: 'stay',
     title: id,
-    startsOn: '2026-11-02',
-    endsOn: '2026-11-06',
+    startsOn: dates?.startsOn ?? '2026-11-02',
+    endsOn: dates?.endsOn ?? '2026-11-06',
   })
 }
 
@@ -242,39 +261,97 @@ function connectionTrip(tripId: string, origin = 'Zürich'): Trip {
   } as Trip
 }
 
+type Model = {
+  flightKind: FlightKind
+  flightTripId: string
+  flightSegments: FlugSegmentManuell[] | null
+  stayId: string
+  stayTripId: string
+  stayDates: { startsOn: string; endsOn: string } | null
+  stayVisible: boolean
+  linkTripId: string
+  linkOrigin: string
+  vorgabe: Vorgabe | undefined
+  suspend: boolean
+}
+
+function initialModel(): Model {
+  return {
+    flightKind: 'a',
+    flightTripId: 'trip-flight',
+    flightSegments: null,
+    stayId: 'stay-a',
+    stayTripId: 'trip-stay',
+    stayDates: null,
+    stayVisible: true,
+    linkTripId: 'trip-link',
+    linkOrigin: 'Zürich',
+    vorgabe: undefined,
+    suspend: false,
+  }
+}
+
+type RequestContext = {
+  flightTripId: string
+  flightKind: FlightKind
+  stayId: string
+  stayTripId: string
+}
+
+type RequestRecord = {
+  id: number
+  channel: Channel
+  payload: unknown
+  outcome: Outcome
+  context: RequestContext
+  done: boolean
+  resolve: (value: string | null) => void
+  reject: (error: Error) => void
+}
+
 const host = document.getElementById('root')
 if (!host) throw new Error('missing root')
 let root: Root = createRoot(host)
 let mounted = true
-let stayVisible = true
-
-let flightKind: FlightKind = 'a'
-let flightTripId = 'trip-flight'
-let stayId = 'stay-a'
-let stayTripId = 'trip-stay'
-let linkTripId = 'trip-link'
-let linkOrigin = 'Zürich'
-let vorgabe: Vorgabe | undefined
+let snapshot = initialModel()
+let setModelRef: ((update: (prev: Model) => Model) => void) | null = null
 
 const calls: Record<Channel, unknown[]> = { flight: [], stay: [], connection: [] }
 const held: Record<Channel, boolean> = { flight: false, stay: false, connection: false }
 const outcome: Record<Channel, Outcome> = { flight: 'success', stay: 'success', connection: 'success' }
-const release: Record<Channel, () => void> = { flight() {}, stay() {}, connection() {} }
+const requests: RequestRecord[] = []
+let nextRequest = 1
+
+function syncHeld() {
+  for (const channel of ['flight', 'stay', 'connection'] as const) {
+    held[channel] = requests.some((entry) => entry.channel === channel && !entry.done)
+  }
+  window.fixture.held = { ...held }
+}
 
 function hold(channel: Channel, payload: unknown): Promise<string | null> {
+  const captured = outcome[channel]
+  const id = nextRequest++
+  const context: RequestContext = {
+    flightTripId: snapshot.flightTripId,
+    flightKind: snapshot.flightKind,
+    stayId: snapshot.stayId,
+    stayTripId: snapshot.stayTripId,
+  }
   calls[channel].push(payload)
-  held[channel] = true
-  window.fixture.held = { ...held }
   return new Promise((resolve, reject) => {
-    release[channel] = () => {
-      held[channel] = false
-      window.fixture.held = { ...held }
-      const next = outcome[channel]
-      if (next === 'reject') reject(new Error('secret boom'))
-      else if (next === 'domain') resolve(DOMAIN[channel])
-      else resolve(null)
-    }
+    requests.push({ id, channel, payload, outcome: captured, context, done: false, resolve, reject })
+    syncHeld()
   })
+}
+
+function settle(entry: RequestRecord) {
+  if (entry.done) return
+  entry.done = true
+  syncHeld()
+  if (entry.outcome === 'reject') entry.reject(new Error('secret boom'))
+  else if (entry.outcome === 'domain') entry.resolve(DOMAIN[entry.channel])
+  else entry.resolve(null)
 }
 
 function assignedOutbound(item: TripItem, tripId: string) {
@@ -283,31 +360,52 @@ function assignedOutbound(item: TripItem, tripId: string) {
   return Boolean(outbound?.item && outbound.item.id === item.id && coverage.unzugeordnet.length === 0)
 }
 
-function paint() {
-  if (!mounted) return
-  const flight = flightItem(flightKind)
-  if ((flightKind === 'a' || flightKind === 'b') && !assignedOutbound(flight, flightTripId)) {
+function commit(update: (prev: Model) => Model) {
+  const setModel = setModelRef
+  if (!setModel) throw new Error('fixture is not mounted')
+  flushSync(() => setModel(update))
+}
+
+function Never() {
+  throw new Promise(() => {})
+}
+
+function HarnessApp() {
+  const [model, setModel] = useState(snapshot)
+  useLayoutEffect(() => {
+    snapshot = model
+    setModelRef = setModel
+  }, [model, setModel])
+  const flight = flightItem(model.flightKind, model.flightSegments)
+  if ((model.flightKind === 'a' || model.flightKind === 'b') && !assignedOutbound(flight, model.flightTripId)) {
     throw new Error(`flight ${flight.id} is not the outbound section`)
   }
-  root.render(
-    <div className="grid min-w-0 gap-4 p-0">
-      <FlugBestand
-        reise={flightTrip(flight, flightTripId)}
-        onFlugRouteManuell={(itemId, segments: FlugSegmentManuell[]) => hold('flight', { itemId, segments })}
-      />
-      {stayVisible ? (
-        <UnterkunftBestand
-          reise={stayTrip(stayItem(stayId), stayTripId)}
-          onUnterkunftZeitraum={(itemId, startsOn, endsOn) => hold('stay', { itemId, startsOn, endsOn })}
+  return (
+    <Suspense fallback={<p data-transition-fallback="">Übergang</p>}>
+      <div className="grid min-w-0 gap-4 p-0">
+        <FlugBestand
+          reise={flightTrip(flight, model.flightTripId)}
+          onFlugRouteManuell={(itemId, segments: FlugSegmentManuell[]) => hold('flight', { itemId, segments })}
         />
-      ) : null}
-      <ManuelleVerbindung
-        reise={connectionTrip(linkTripId, linkOrigin)}
-        vorgabe={vorgabe}
-        onAnlegen={(eingabe) => hold('connection', eingabe)}
-      />
-    </div>,
+        {model.stayVisible ? (
+          <UnterkunftBestand
+            reise={stayTrip(stayItem(model.stayId, model.stayDates), model.stayTripId)}
+            onUnterkunftZeitraum={(itemId, startsOn, endsOn) => hold('stay', { itemId, startsOn, endsOn })}
+          />
+        ) : null}
+        <ManuelleVerbindung
+          reise={connectionTrip(model.linkTripId, model.linkOrigin)}
+          vorgabe={model.vorgabe}
+          onAnlegen={(eingabe) => hold('connection', eingabe)}
+        />
+        {model.suspend ? <Never /> : null}
+      </div>
+    </Suspense>
   )
+}
+
+function openRequests(channel: Channel) {
+  return requests.filter((entry) => entry.channel === channel && !entry.done)
 }
 
 window.fixture = {
@@ -318,48 +416,108 @@ window.fixture = {
     outcome[channel] = next
   },
   release(channel: Channel) {
-    release[channel]()
+    const entry = openRequests(channel)[0]
+    if (entry) settle(entry)
+  },
+  pending(channel: Channel) {
+    return openRequests(channel).map((entry) => ({ id: entry.id, outcome: entry.outcome }))
+  },
+  latest(channel: Channel) {
+    const entry = [...requests].reverse().find((item) => item.channel === channel)
+    if (!entry) throw new Error(`no ${channel} request`)
+    return entry.id
+  },
+  deliver(channel: Channel, id: number) {
+    const entry = requests.find((item) => item.id === id && item.channel === channel)
+    if (!entry) throw new Error(`missing ${channel} request ${id}`)
+    commit((prev) => {
+      if (channel === 'flight') {
+        if (prev.flightTripId !== entry.context.flightTripId || prev.flightKind !== entry.context.flightKind) return prev
+        return { ...prev, flightSegments: (entry.payload as { segments: FlugSegmentManuell[] }).segments }
+      }
+      if (channel === 'stay') {
+        if (prev.stayId !== entry.context.stayId || prev.stayTripId !== entry.context.stayTripId) return prev
+        const payload = entry.payload as { startsOn: string; endsOn: string }
+        return { ...prev, stayDates: { startsOn: payload.startsOn, endsOn: payload.endsOn } }
+      }
+      return prev
+    })
+  },
+  suspendConnection(next: Vorgabe) {
+    const setModel = setModelRef
+    if (!setModel) throw new Error('fixture is not mounted')
+    startTransition(() => {
+      setModel((prev) => ({ ...prev, vorgabe: next, suspend: true }))
+    })
+  },
+  suspendFlightTrip(tripId: string) {
+    const setModel = setModelRef
+    if (!setModel) throw new Error('fixture is not mounted')
+    startTransition(() => {
+      setModel((prev) => ({ ...prev, flightTripId: tripId, suspend: true }))
+    })
+  },
+  abandonTransition() {
+    const restore = snapshot
+    commit((prev) => ({
+      ...prev,
+      suspend: false,
+      vorgabe: restore.vorgabe,
+      flightTripId: restore.flightTripId,
+      flightKind: restore.flightKind,
+      stayId: restore.stayId,
+      linkTripId: restore.linkTripId,
+      linkOrigin: restore.linkOrigin,
+    }))
   },
   setFlight(kind: FlightKind) {
-    flightKind = kind
-    paint()
+    commit((prev) => ({ ...prev, flightKind: kind, flightSegments: null, suspend: false }))
   },
   setFlightTrip(tripId: string) {
-    flightTripId = tripId
-    paint()
+    commit((prev) => ({
+      ...prev,
+      flightTripId: tripId,
+      flightSegments: prev.flightTripId === tripId ? prev.flightSegments : null,
+      suspend: false,
+    }))
   },
   setStay(id: string) {
-    stayId = id
-    paint()
+    commit((prev) => ({ ...prev, stayId: id, stayDates: null, suspend: false }))
   },
   setStayTrip(tripId: string) {
-    stayTripId = tripId
-    paint()
+    commit((prev) => ({
+      ...prev,
+      stayTripId: tripId,
+      stayDates: prev.stayTripId === tripId ? prev.stayDates : null,
+      suspend: false,
+    }))
   },
   showStay(next: boolean) {
-    stayVisible = next
-    paint()
+    commit((prev) => ({ ...prev, stayVisible: next }))
   },
   setConnection(next: { tripId?: string; origin?: string; vorgabe?: Vorgabe | null }) {
-    if (next.tripId) linkTripId = next.tripId
-    if (next.origin) linkOrigin = next.origin
-    if (next.vorgabe === null) vorgabe = undefined
-    else if (next.vorgabe) vorgabe = next.vorgabe
-    paint()
+    commit((prev) => ({
+      ...prev,
+      linkTripId: next.tripId ?? prev.linkTripId,
+      linkOrigin: next.origin ?? prev.linkOrigin,
+      vorgabe: next.vorgabe === null ? undefined : next.vorgabe ?? prev.vorgabe,
+      suspend: false,
+    }))
   },
   unmount() {
     root.unmount()
     mounted = false
+    setModelRef = null
   },
   remount() {
     if (mounted) root.unmount()
     root = createRoot(host)
     mounted = true
-    stayVisible = true
-    paint()
+    snapshot = { ...snapshot, stayVisible: true, suspend: false }
+    root.render(<HarnessApp />)
   },
 }
 
-paint()
+root.render(<HarnessApp />)
 
 export {}

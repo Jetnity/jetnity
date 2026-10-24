@@ -28,7 +28,7 @@ import type { Trip, TripItem } from '@/types/trips'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const require = createRequire(import.meta.url)
 const JETZT = '2026-10-24T00:00:00.000Z'
-const VERBINDUNG_HASH = '22979037efebac48a119551fe9825cb3dbf90dd991c9294ac317ca499cb252f8'
+const VERBINDUNG_HASH = '75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a'
 const MIETWAGEN_GESPEICHERT = 'Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.'
 const MIETWAGEN_ABGELEHNT = 'Der Mietwagen konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.'
 
