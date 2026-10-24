@@ -3,19 +3,49 @@
 import * as React from 'react'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
-import { manuellBearbeitbar, manuellerInhaltSchema, punktAendern, type PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
+import { KONFLIKT, allePlanpunkte, manuellBearbeitbar, manuellerInhaltSchema, punktAendern, type PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import { aenderungsAuswirkung, planSnapshot } from '@/lib/trips/trip-plan-integrated/day'
+import { sichtbaresZielUrteil } from '@/lib/trips/trip-plan-editing-placement-recovery-1'
 import { TRIP_ITEM_KINDS, type Trip, type TripItem, type TripItemKind } from '@/types/trips'
 
 const feld = 'min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 bg-white px-3 py-2 text-base focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-600/10'
 const knopf = 'min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere] min-h-11 rounded-full border border-line-300 px-4 py-2 text-sm font-semibold text-brand-800 focus-visible:ring-4 focus-visible:ring-brand-600/15'
 
-/** Mounted per trip/day/editor. A late response cannot close another form. */
-export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearbeiten, onFertig, onAbbrechen }: {
-  reise: Trip; tagId: string; item?: TripItem
+function entwurfLesen(werte: {
+  title: string
+  note: string
+  startsOn: string
+  startsAt: string
+  endsOn: string
+  endsAt: string
+  dayId: string
+}) {
+  return JSON.stringify(werte)
+}
+
+/** Mounted per trip/item/day/editor generation. A late response cannot close another form. */
+export default function PlanpunktEditor({
+  reise,
+  tagId,
+  item,
+  generation,
+  onAnlegen,
+  onBearbeiten,
+  onFertig,
+  onAbbrechen,
+  operationBeginnen,
+  operationAktuell,
+}: {
+  reise: Trip
+  tagId: string
+  item?: TripItem
+  generation: number
   onAnlegen: (tagId: string, values: PlanpunktFormular) => Promise<string | null>
   onBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
-  onFertig: () => void; onAbbrechen: () => void
+  onFertig: () => void
+  onAbbrechen: () => void
+  operationBeginnen: () => number
+  operationAktuell: (id: number) => boolean
 }) {
   const [original] = React.useState(item)
   const [clientRef] = React.useState(() => crypto.randomUUID())
@@ -29,15 +59,95 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
   const [endsAt, setEndsAt] = React.useState(item?.endsAt ?? '')
   const [dayId, setDayId] = React.useState(item ? item.dayId ?? '' : tagId)
   const [fehler, setFehler] = React.useState('')
-  const [laeuft, setLaeuft] = React.useState(false)
+  const [phase, setPhaseState] = React.useState<'bereit' | 'speichert' | 'warteAufBestaetigung' | 'beobachte'>('bereit')
+  const phaseRef = React.useRef(phase)
   const lebendig = React.useRef(true)
   const schreibt = React.useRef(false)
+  const gemeldet = React.useRef(false)
+  const operationRef = React.useRef(0)
+  const entwurfBeiSubmit = React.useRef<string | null>(null)
+  const erwartetRef = React.useRef<TripItem | null>(null)
+  const reiseRef = React.useRef(reise)
+  const generationRef = React.useRef(generation)
+  const onFertigRef = React.useRef(onFertig)
+  const operationAktuellRef = React.useRef(operationAktuell)
   const formular = React.useRef<HTMLFormElement>(null)
-  React.useEffect(() => { lebendig.current = true; formular.current?.querySelector<HTMLElement>('input,select')?.focus(); return () => { lebendig.current = false } }, [])
-  React.useEffect(() => { if (fehler) formular.current?.querySelector<HTMLElement>('[role="alert"]')?.focus() }, [fehler])
+  reiseRef.current = reise
+  generationRef.current = generation
+  onFertigRef.current = onFertig
+  operationAktuellRef.current = operationAktuell
+  const laeuft = phase === 'speichert' || phase === 'warteAufBestaetigung'
+  const setPhase = (naechste: typeof phase) => {
+    phaseRef.current = naechste
+    setPhaseState(naechste)
+  }
+  const entwurfJetzt = () => entwurfLesen({ title, note, startsOn, startsAt, endsOn, endsAt, dayId })
+  const entwurfGleich = () => entwurfBeiSubmit.current !== null && entwurfBeiSubmit.current === entwurfJetzt()
+  const besitzt = (operationId: number) =>
+    lebendig.current && operationAktuellRef.current(operationId) && generationRef.current === generation && operationRef.current === operationId
+  const urteil = () => {
+    if (!original || !erwartetRef.current) return 'fremd' as const
+    return sichtbaresZielUrteil(
+      allePlanpunkte(reiseRef.current).filter((punkt) => punkt.id === original.id),
+      original,
+      erwartetRef.current,
+    )
+  }
+  const fertig = () => {
+    if (gemeldet.current) return
+    gemeldet.current = true
+    onFertigRef.current()
+  }
+  const freigeben = () => {
+    schreibt.current = false
+    setPhase('beobachte')
+  }
+
+  React.useEffect(() => {
+    lebendig.current = true
+    formular.current?.querySelector<HTMLElement>('input,select')?.focus()
+    return () => { lebendig.current = false }
+  }, [])
+  React.useEffect(() => {
+    if (fehler) formular.current?.querySelector<HTMLElement>('[role="alert"]')?.focus()
+  }, [fehler])
+  React.useEffect(() => {
+    if (phase !== 'warteAufBestaetigung' || !original) return
+    if (!besitzt(operationRef.current)) return
+    const stand = urteil()
+    if (stand === 'erwartet' && entwurfGleich()) {
+      fertig()
+      return
+    }
+    if (stand === 'original') {
+      freigeben()
+      return
+    }
+    setFehler(KONFLIKT)
+    freigeben()
+  }, [phase, reise, original, title, note, startsOn, startsAt, endsOn, endsAt, dayId, generation])
+  React.useEffect(() => {
+    if (phase !== 'beobachte' || !original) return
+    if (!besitzt(operationRef.current)) return
+    if (!entwurfGleich()) {
+      setPhase('bereit')
+      return
+    }
+    const stand = urteil()
+    if (stand === 'erwartet') fertig()
+    else if (stand === 'version' || stand === 'fremd') setFehler(KONFLIKT)
+  }, [phase, reise, original, title, note, startsOn, startsAt, endsOn, endsAt, dayId, generation])
+
   const inhaltErlaubt = original ? manuellBearbeitbar(original) : kind === 'activity' || kind === 'note'
-  const values = { kind, title, note: note || null, startsOn: inhaltErlaubt ? startsOn || null : null,
-    startsAt: inhaltErlaubt ? startsAt || null : null, endsOn: inhaltErlaubt ? endsOn || null : null, endsAt: inhaltErlaubt ? endsAt || null : null }
+  const values = {
+    kind,
+    title,
+    note: note || null,
+    startsOn: inhaltErlaubt ? startsOn || null : null,
+    startsAt: inhaltErlaubt ? startsAt || null : null,
+    endsOn: inhaltErlaubt ? endsOn || null : null,
+    endsAt: inhaltErlaubt ? endsAt || null : null,
+  }
   let preview: ReturnType<typeof aenderungsAuswirkung> = null
   if (original) {
     try {
@@ -51,22 +161,80 @@ export default function PlanpunktEditor({ reise, tagId, item, onAnlegen, onBearb
     event.preventDefault()
     if (schreibt.current) return
     const parsed = (inhaltErlaubt ? manuellerInhaltSchema : planpunktFormularSchema).safeParse(values)
-    if (!parsed.success) { setFehler(parsed.error.issues[0]?.message ?? 'Bitte prüfe deine Angaben.'); return }
-    schreibt.current = true; setLaeuft(true); setFehler('')
+    if (!parsed.success) {
+      setFehler(parsed.error.issues[0]?.message ?? 'Bitte prüfe deine Angaben.')
+      return
+    }
+    const operationId = operationBeginnen()
+    operationRef.current = operationId
+    entwurfBeiSubmit.current = entwurfJetzt()
+    gemeldet.current = false
+    schreibt.current = true
+    setPhase('speichert')
+    setFehler('')
     try {
       let error: string | null
       if (original) {
-        if (!onBearbeiten) return
+        if (!onBearbeiten) {
+          setPhase('bereit')
+          return
+        }
         const change: PlanAenderung = inhaltErlaubt
           ? { art: 'inhalt', inhalt: manuellerInhaltSchema.parse(values), dayId: dayId || null }
           : { art: 'platzierung', dayId: dayId || null }
+        let erwartet: TripItem
+        try {
+          const nachher = punktAendern(reiseRef.current, original, change)
+          const treffer = allePlanpunkte(nachher).filter((punkt) => punkt.id === original.id)
+          if (treffer.length !== 1) throw new Error(KONFLIKT)
+          erwartet = treffer[0]!
+        } catch (ursache) {
+          setFehler(ursache instanceof Error ? ursache.message : KONFLIKT)
+          setPhase('bereit')
+          return
+        }
+        erwartetRef.current = erwartet
         error = await onBearbeiten(original, change)
-      } else error = await onAnlegen(tagId, { ...parsed.data, clientRef })
-      if (!lebendig.current) return
-      if (error) setFehler(error)
-      else onFertig()
-    } catch { if (lebendig.current) setFehler('Der Punkt konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.') }
-    finally { schreibt.current = false; if (lebendig.current) setLaeuft(false) }
+      } else {
+        if (!tagId) {
+          setPhase('bereit')
+          return
+        }
+        error = await onAnlegen(tagId, { ...parsed.data, clientRef })
+      }
+      if (!besitzt(operationId)) return
+      if (!original) {
+        if (error) setFehler(error)
+        else fertig()
+        setPhase('bereit')
+        return
+      }
+      if (error) {
+        const stand = urteil()
+        setFehler(stand === 'fremd' ? KONFLIKT : error)
+        setPhase('bereit')
+        return
+      }
+      const stand = urteil()
+      if (stand === 'erwartet' && entwurfGleich()) {
+        fertig()
+        setPhase('bereit')
+        return
+      }
+      if (stand === 'original') {
+        setPhase('warteAufBestaetigung')
+        return
+      }
+      setFehler(KONFLIKT)
+      setPhase('beobachte')
+    } catch {
+      if (besitzt(operationId)) {
+        setFehler('Der Punkt konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
+        setPhase('bereit')
+      }
+    } finally {
+      if (phaseRef.current !== 'warteAufBestaetigung') schreibt.current = false
+    }
   }
   return <form ref={formular} aria-label={item ? `Punkt bearbeiten: ${item.title}` : 'Punkt hinzufügen'} aria-busy={laeuft}
     onSubmit={speichern} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); if (!laeuft) onAbbrechen() } }}

@@ -1,14 +1,14 @@
 # Jetnity — Trip Plan Editing and Placement Recovery 1 — PLAN
 
 Date: 24 October 2026
-Status: plan revised after Technical Lead review of `4e774689adbf224b2fc67a97001f5f65be28151a`; prior plan findings kept; A-P2-PLAN-04 incorporated; still plan only; Draft only; not Technical-Lead PASS
+Status: accepted plan head `a4fc53c20433d0c6214acf483ae81648390d1896` (blob `98e6d31842647176400b0ae4cfa9ed62b0c87a71`) plus the binding no-op clarification in this file; implementation is in this delivery; Draft only; not Technical-Lead code PASS
 Author: **Jetnity Trip Plan Editing and Placement Recovery 1 — Cursor Generation 1**
 Issue: #996
 Branch: `fix/trip-plan-editing-placement-recovery-1`
 PR: #999
 Lane: R105 A. Integration order remains A → C → B. No sibling branch is integrated.
 
-This commit is the PLAN gate only. TASK V1 is not edited. No runtime, test, script, or evidence file is added in this commit.
+The accepted plan stayed byte-identical through head `a4fc53c20433d0c6214acf483ae81648390d1896`. This delivery adds only the binding no-op clarification below. TASK V1 is not edited. Command results are in the implementation report.
 
 ## Session and model (before material code)
 
@@ -126,7 +126,9 @@ The visible target is `allePlanpunkte(reise)` filtered to that id. Domain compar
 - Not attributable: no item, more than one item, or one item whose non-version fields equal neither the captured `original` nor the expected item. This includes a same-id content or placement change while `revision` and `updatedAt` stay identical. The old success and the old error do not close, clear, focus, or unlock. The draft and the captured `original` stay. The form shows the existing conflict text from `KONFLIKT` and is editable again, including Abbrechen. That state belongs to this mounted form. A newer `operationId` does not receive it and is not unlocked by it.
 - Same original domain, newer version, submitted domain absent. Finding A-P2-PLAN-04. The captured item is domain A and version V1. The submitted change expects domain B, and B is not A. The visible item is still domain A, with a different version V2. That item is not the full original, not the expected domain, and not a domain that differs from both. For this still-current operation it is conflict/unconfirmed recovery, whether the callback resolved `null` or returned an error. The draft and the captured `original` stay. Abbrechen is available. The form is not left disabled. A newer operation receives neither the recovery text nor an unlock. A returned error is shown as that error. A `null` shows `KONFLIKT`, because the submitted domain is not visible.
 
-Precedence when the submitted change is a domain no-op: expected domain equals original domain A. A visible item whose domain is A is then the expected domain result, including when its version is V2. It is not left in the version-only recovery above, and it is not left permanently in `warteAufBestaetigung`. Close and focus still require this same operation's `null` callback and that this operation still owns the form. A no-op that is still the full original, version included, does not close on `null` alone.
+Precedence when the submitted change is a domain no-op: expected domain equals original domain A. A visible item whose domain is A is then the expected domain result, including when its version is V2 and including when its version is unchanged. It is not left in the version-only recovery above, and it is not left permanently in `warteAufBestaetigung`. Close and focus still require this same operation's `null` callback and that this operation still owns the form and the unchanged submit draft.
+
+Binding implementation clarification from the Technical Lead acceptance of plan head `a4fc53c20433d0c6214acf483ae81648390d1896`: if the expected domain equals the original domain, the single visible item matching that domain is an expected-domain match even when `rowVersion` is unchanged. This includes a genuine guest no-op. Completion still requires this operation's successful callback and unchanged operation and draft ownership. "Null alone" means a `null` callback without those matching and ownership checks. It does not add a requirement for a new `rowVersion`. No writer or callback expansion follows from this clarification.
 
 Success closes and moves focus only when this same operation's callback has resolved `null` and the visible item is an expected domain result under that precedence. A visible Account row with a new `rowVersion` and matching domain, seen before that `null`, is not a conflict and does not close yet. The saving state stays until `null` arrives. The unconfirmed-write error stays an error on the preserved draft. `null` without a visible domain match is not success.
 
@@ -168,11 +170,11 @@ The frozen `gastreiseSpeichern` does not compare again. A store that changes aft
 
 A repeated call with the pre-delete snapshot fails the revision check and leaves the post-delete bytes unchanged. A repeated call with the returned trip and the same id fails the exactly-one check and does not bump `revision` again.
 
-Technical Lead review of the unchanged baseline, reported with this finding, already reproduced the old function against isolated synthetic `localStorage`: a newer same-trip graph lost title, `travelWish`, and a survivor note, and revision regressed 7→4; another active trip was replaced by the stale caller; an absent target still reported success and bumped revision. That is review evidence, not author proof from this session, and it claims no hosted or Production damage. The implementation tests below have not been run.
+Technical Lead review of the unchanged baseline, reported with this finding, already reproduced the old function against isolated synthetic `localStorage`: a newer same-trip graph lost title, `travelWish`, and a survivor note, and revision regressed 7→4; another active trip was replaced by the stale caller; an absent target still reported success and bumped revision. That is review evidence, not author proof from this session, and it claims no hosted or Production damage. The implementation tests below are the required proof; their command results are in the implementation report.
 
 Account delete is unchanged. Mounted account proof uses a callback fixture. `null` from that callback is not treated as a stronger refreshed-graph confirmation than today's `router.refresh()`. The existing "written but refreshed state not confirmed" edit outcome stays an uncertain/error state inside the editor contract; this slice does not paint it as saved.
 
-## Synthetic proof (after authorization, not in this commit)
+## Synthetic proof
 
 Node tests call the real `gastPlanpunktEntfernen` against an in-memory `localStorage`, and the pure helper for the decision table:
 
@@ -201,6 +203,7 @@ Mounted cases:
 - (d) removed or duplicated target while pending: the same non-effects as (c), for both a late `null` and a late error
 - (e) original domain A with version V1, submitted domain B, visible domain A with version V2: both callback `null` and callback error enter conflict/unconfirmed recovery. The draft and `original` stay, Abbrechen works, and a newer operation is untouched
 - (f) domain no-op: expected domain equals the original domain, the visible item keeps that domain and has a new `rowVersion`, and this operation's callback is `null`. The form closes. It does not stay in `warteAufBestaetigung`
+- (f2) guest domain no-op with an unchanged item `rowVersion`: this operation's callback is `null`, the visible item is still domain A version V1, and the operation still owns the unchanged draft. The form closes. A new `rowVersion` is not required
 - (g) no newer `reise` arrives after the waiting-state commit: the form re-enables and does not claim success
 - (h) after recovery the draft is edited, then a graph matching the original submission arrives: that graph does not clear the edited draft
 - an older `operationId` does not apply any of those effects, including the conflict text, to a newer form
@@ -230,4 +233,4 @@ No new dependency, hosted service, provider call, model call, or recurring cost.
 
 ## Stop
 
-STOP for exact-head re-review of this plan. A-P2-PLAN-04 is the only new correction. Implementation stays gated. No product or test code is in this delivery.
+The accepted plan is implemented in this delivery. STOP for independent Technical-Lead code review. This is not code PASS, Ready, or merge.
