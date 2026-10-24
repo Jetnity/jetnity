@@ -1,7 +1,7 @@
 # Jetnity — Trip Plan Editing and Placement Recovery 1 — PLAN
 
 Date: 24 October 2026
-Status: plan before product code; Draft only; not Technical-Lead PASS
+Status: plan revised after Technical Lead review of `13ccf37a1846b787112cf75918cbf827707fb4c2`; still plan only; Draft only; not Technical-Lead PASS
 Author: **Jetnity Trip Plan Editing and Placement Recovery 1 — Cursor Generation 1**
 Issue: #996
 Branch: `fix/trip-plan-editing-placement-recovery-1`
@@ -63,8 +63,8 @@ Runtime, after authorization:
 
 - `components/trips/TripWorkspacePlan.tsx` — mount the existing-item editor and the success/error region without requiring a selected day; keep the new-item form and its `#plan-tag-kontext` placement; pending, focus, and generation guards. Preserve `timelineAbleiten(reise, ohneTag, aktiverTag)`, the data markers, and the navigation controls.
 - `components/trips/PlanpunktEditor.tsx` — existing-item edit with no selected day; draft, validation, pending, late completion, and focus stay bound to the operation context. New-item creation still requires a real day id and is still mounted only from the day add button.
-- `lib/trips/gastspeicher.ts` — **only** `gastPlanpunktEntfernen`, plus the import of the owned helper. Private `aktiveGastreiseVorpruefen`, `schluesselRohLesen` / `aktiveSchluesselRohLesen`, and `reiseLesen` may be called and are not edited. `gastreiseSpeichern` stays the setter because it already validates and readback-checks. `gastspeicherLaden`, `gastreiseLadenNach`, `legacyUebernehmen`, and every other function stay frozen.
-- `lib/trips/trip-plan-editing-placement-recovery-1.ts` — pure decision helper: given the raw preflight, the parsed current graph, the supplied trip, and the target id, return either the next graph or a failure. No storage, no migration, no repair.
+- `lib/trips/gastspeicher.ts` — **only** `gastPlanpunktEntfernen`, plus the import of the owned helper. The function calls the private `aktiveSchluesselRohLesen` once and the existing `reiseLesen`. It does not call `aktiveGastreiseVorpruefen`, `rohLesen`, or a migrations-capable loader. Those functions are not edited. `gastreiseSpeichern` stays the setter because it already validates and readback-checks. Every other function in the file stays frozen.
+- `lib/trips/trip-plan-editing-placement-recovery-1.ts` — pure `gastLoeschBasisGleich`: project two already validated trips with `tageEtappenZuordnen` and compare a complete stable stringify. It does not return a write graph, touch storage, migrate, or repair. The delete mutation stays on the unprojected `aktuell` inside `gastPlanpunktEntfernen`.
 - `components/trips/usePlanEditorLifecycle.ts` — local generation, in-flight operation id, and focus fallback for the plan editor and delete action. Not a shared framework.
 
 Proof and delivery, after authorization:
@@ -89,32 +89,77 @@ Readonly: `TripWorkspace.tsx`, `GastArbeitsbereich.tsx`, `KontoArbeitsbereich.ts
 ### Existing-item editor without a day
 
 1. Keep the day add button and the item-less `PlanpunktEditor` inside `#plan-tag-kontext`, still behind a selected day. That is the only new-item mount. The premium-4 audit path (add button, `#plan-tag-kontext form`, validation alert, cancel) stays on that mount.
-2. When `formularOffen && bearbeiten`, mount one existing-item editor outside the `tag &&` gate, beside the unassigned list when the item is unassigned and in the day section when the item belongs to the selected day. Do not mount a second copy. The key includes trip id, item id, current day id or `ohne`, and the editor generation. It does not include `revision`, so a failed save does not remount and wipe the draft.
+2. When `formularOffen && bearbeiten`, mount one existing-item editor outside the `tag &&` gate, beside the unassigned list when the item is unassigned and in the day section when the item belongs to the selected day. Do not mount a second copy. The React key is trip id, item id, the selected day id or `ohne`, and `editorGeneration`. It does not include `revision`, `updatedAt`, or a graph-refresh nonce. A same-target readback must not remount the form or wipe the unsaved draft.
 3. Pass `tagId` only for a new item. An existing item passes its own `dayId` or `''`. The editor must not derive a day, date, stage, or route from an empty `tagId` when `original` is set. A create submit with no real day id does not call `onAnlegen`.
 4. Render `erfolg` and `meldung` on the plan section, not only inside `tagesFelder`, so a zero-day delete error is visible. The editor's own `role="alert"` stays inside the form. Give the plan-level alert `tabIndex={-1}` and move focus to it only when that delete operation is still the current context.
 5. Placement continues through the existing `onBearbeiten(original, change)` callback. `original` remains the object captured when the editor opened. Do not copy a refreshed item into that object to skip `punktAendern`'s conflict check. Unassigned → day, day A → day B, and day → unassigned are the existing `dayId` values, including `null`.
 
 ### Focus and in-flight ownership
 
-1. `usePlanEditorLifecycle` owns one operation id per editor and one per delete action. A second submit on the same action returns while the first is in flight. Editor pending and delete pending are separate actions; a late delete must not close or clear the editor.
-2. At submit or delete click, capture trip id, item id, day id, editor generation, and the operation id. On completion, apply success, error, close, unlock, or focus only when all of those still match. A newer context's own effect may reset its own pending flag. The old completion handler must not unlock, clear, or focus that newer context.
-3. Unmount sets the editor dead, as today. The already-sent callback may still resolve. The handler then does not call `onFertig` and does not claim the write was cancelled.
-4. Focus order: the connected trigger if it still has a client rect; else a remaining control inside `[data-plan-punkt="<id>"]`; else the unassigned heading when that region is present; else the existing zero-day explanation or the plan section, with `tabIndex={-1}` and the existing focus ring. Do not invent an add button on a zero-day trip. Do not hide overflow on the page or root.
+`editorGeneration` increments only when the user opens or reopens the add or edit control, and when `aktiverTag` changes. The existing day switch still closes the open form. A change of `reise.revision` or `reise.updatedAt` alone does not increment it.
+
+The React key is the mount identity above. The completion identity is separate and smaller. It is captured when that submit or delete click starts.
+
+Editor completion identity:
+
+- `tripId`
+- open target id (`item.id`, or `new` for the day-scoped create form)
+- `editorGeneration`
+- `operationId`
+
+Delete completion identity:
+
+- `tripId`
+- target item id
+- delete `operationId`
+
+`revision`, `updatedAt`, and the placement select's `dayId` are not part of either completion identity. The placement select is draft state. It is disabled while that editor operation is in flight, and the submitted `PlanAenderung` already closed over the selected `dayId`.
+
+A late editor response may close, clear, unlock, focus, or show its own error only while all four editor fields still match and the editor is still mounted. These changes make the late response a UI no-op. They do not cancel an already-sent write:
+
+- the trip id changes
+- the open target id changes
+- `editorGeneration` changes
+- a newer `operationId` is current
+- the editor unmounts
+
+Ordinary same-target save readback is not one of those changes. The parent may replace the `reise` prop with the same trip id and the same open item id, including a newer `revision` and `updatedAt`. The form stays mounted. The typed draft stays. The `original` captured in `useState` when the editor opened stays the conflict baseline. This operation's own success may still close and focus this same form, and its own domain or thrown error may still render on the preserved draft. `punktAendern` still receives that captured `original`, not an item copied from the refreshed prop. A second, older `operationId` must not report on the form even when the trip and item ids still match.
+
+A late delete result may set the visible alert and move focus only while its trip id, target item id, and delete `operationId` still match. A revision-only refresh of the same trip does not retarget that alert. A different trip id or a newer delete operation drops it.
+
+`usePlanEditorLifecycle` owns one in-flight operation id per editor and one per delete action. A second submit on the same action returns while the first is in flight. Editor pending and delete pending stay separate; a late delete must not close or clear the editor. A newer context may reset its own pending flag. The old completion handler must not unlock, clear, or focus that newer context.
+
+Focus order: the connected trigger if it still has a client rect; else a remaining control inside `[data-plan-punkt="<id>"]`; else the unassigned heading when that region is present; else the existing zero-day explanation or the plan section, with `tabIndex={-1}` and the existing focus ring. Do not invent an add button on a zero-day trip. Do not hide overflow on the page or root.
 
 ### Guest delete
 
 `gastPlanpunktEntfernen(reise, punktId)` keeps that signature because `GastArbeitsbereich.tsx` is readonly and calls it with the in-memory trip.
 
-1. Read the active key with `aktiveGastreiseVorpruefen` and `aktiveSchluesselRohLesen`. Do not call `gastspeicherLaden`, `gastreiseLaden`, `gastreiseLadenNach`, or `legacyUebernehmen`. Do not read or write the queue key or the legacy key.
-2. `nicht_im_browser`, `speicher_unlesbar`, `fehlend`, and `ungueltig` throw before any set. Raw active bytes stay. A missing active key is not a reason to migrate a legacy draft.
-3. Parse the raw bytes and pass them through the existing `reiseLesen`. A parse failure or a null parse is an error and does not write. The parsed graph's `id` and `revision` must equal the supplied trip. Any other id, or any other revision, throws `VeralteteFassungFehler` and does not write. The supplied trip is not the write base.
-4. Count the id in `days[].items` and `ohneTag` on that parsed graph. Anything other than exactly one match throws, does not increment `revision`, and does not write. Do not report success for an absent id.
-5. On exactly one match, build the next graph from the parsed current graph: remove that one item, renumber `position` inside every day list the way lines 1084–1088 do today, and filter `ohneTag` without inventing a new `ohneTag` renumber. Set `revision` to the current revision plus one. Then call the existing `gastreiseSpeichern`, which sets `updatedAt` and readback-checks. Unrelated keys and unrelated item fields stay on that current graph.
-6. The in-memory trip may contain `tageEtappenZuordnen` stage fills from `gastspeicherLaden`. Those fills are not written back. The stored graph remains the write base. The next load projects again. This is deliberate: delete must not persist a display projection.
-7. `SpeicherFehler` from the setter is a failure. If `setItem` ran and the readback did not match, the function does not try a second repair write and does not claim the previous bytes were restored.
-8. A repeated call with the pre-delete snapshot fails the revision check and leaves the post-delete bytes unchanged. A repeated call with the returned trip and the same id fails the exactly-one check and does not bump `revision` again.
+This replaces the basis rule in the plan reviewed at `13ccf37a`. Identity plus revision is not a sufficient expected basis. Same-id, same-revision content drift fails closed with zero writes. Finding A-P1-PLAN-01.
 
-Basis choice, for Technical Lead review: identity plus `revision` is the check this signature can make. Deep equality against the caller trip would reject a normal loaded trip whenever `mitZuordnung` filled `stageId` in memory only. `gastreiseSpeichern` is frozen, so the read and the set are not one atomic compare-and-swap. A write that lands in that gap is reported as the residual race, not as a claimed lock.
+The raw path is one capture inside `gastPlanpunktEntfernen`. It does not call `gastspeicherLaden`, `gastreiseLaden`, `gastreiseLadenNach`, `legacyUebernehmen`, or `aktiveGastreiseVorpruefen`. The preflight helper reads and then discards the graph, so a second read could observe different bytes. The delete path also does not call `rohLesen`, which collapses a missing key, a parse failure, and an unreadable store into `null`. It does not read or write the queue key or the legacy key.
+
+1. Capture `const roh = aktiveSchluesselRohLesen()` once. `nicht_im_browser`, `speicher_unlesbar`, and `fehlend` throw before any set. Those raw bytes stay. A missing active key does not migrate a legacy draft.
+2. `JSON.parse` those captured bytes once. A parse throw fails closed and does not write.
+3. `const aktuell = reiseLesen(parsed)` once. `null` is an invalid current graph, fails closed, and does not write. `aktuell` is the only write base.
+4. `const erwartet = reiseLesen(reise)` once. `null` is an invalid caller, fails closed, and does not write. The caller object is not mutated.
+5. Explicit checks on those two validated graphs: `erwartet.id === aktuell.id`, then `erwartet.revision === aktuell.revision`. Either mismatch throws `VeralteteFassungFehler` and does not write.
+6. Pure comparison, only after those checks, in `gastLoeschBasisGleich(erwartet, aktuell)` in the owned helper. The helper calls the existing pure `tageEtappenZuordnen` on each validated graph separately. That function returns a new trip when it fills missing `stageId` values and does not mutate its argument. The helper then compares `stableStringify` of both projected values. `stableStringify` sorts object keys at every level, preserves array order, and drops no field: `id`, `revision`, `updatedAt`, `createdAt`, title, `travelWish`, stages, days, items, `ohneTag`, placement, notes, booking, price, provider, and traveller fields all remain. It does not ignore `stageId`. It does not delete metadata. Neither input is written back.
+7. A semantic mismatch throws `VeralteteFassungFehler` and does not write, including when id and revision already matched.
+8. Count the id in `aktuell.days[].items` and `aktuell.ohneTag`. The count uses the unprojected write base. Anything other than exactly one match throws, does not increment `revision`, and does not write.
+9. On success, build the next graph from `aktuell` only. Remove that one item, renumber `position` inside every day list the way lines 1084–1088 do today, and filter `ohneTag` without inventing a new `ohneTag` renumber. Set `revision` from `aktuell.revision + 1`. Do not copy fields from `erwartet` or from either projected copy. Then call the existing `gastreiseSpeichern`, which sets `updatedAt` and readback-checks.
+
+`tageEtappenZuordnen` fills a missing `stageId` only for `single_destination` with one stage, and for `legacy_fallback`. For `explicit`, `unassigned`, no stages, or `single_destination` with a stage count other than one, it returns the input unchanged. The compare still uses the full projected value in those modes. An existing `stageId` is kept on both sides, so a real stage difference remains a mismatch.
+
+Legitimate load-only success: the stored graph is `single_destination` with one stage and null `stageId` on the day and items. The caller is that same validated graph after `tageEtappenZuordnen`, so the nulls are filled with that one stage id, while id, revision, `updatedAt`, title, `travelWish`, notes, and placement are unchanged. Projecting the raw graph fills the same nulls. Projecting the caller keeps the fills it already has. The canonical strings match. The write still starts from the raw `aktuell`, so the survivor's stored `stageId` stays null. The comparison projection is not persisted.
+
+Same-revision drift, each with equal id and revision, is a mismatch and causes zero writes: a different title, a different `travelWish`, a different note on an item that is not the delete target, a different target placement (`dayId` or day list versus `ohneTag`), a different `updatedAt` or other metadata, or a caller `stageId` that is not the value `tageEtappenZuordnen` would fill from the raw graph. Modes that do not fill still reject a different explicit `stageId`.
+
+The frozen `gastreiseSpeichern` does not compare again. A store that changes after the captured read and before the set remains a non-atomic residual. This plan does not edit the setter and does not claim a lock. `SpeicherFehler` is a failure. If `setItem` ran and the readback did not match, there is no second repair write and no claim that the previous bytes were restored.
+
+A repeated call with the pre-delete snapshot fails the revision check and leaves the post-delete bytes unchanged. A repeated call with the returned trip and the same id fails the exactly-one check and does not bump `revision` again.
+
+Technical Lead review of the unchanged baseline, reported with this finding, already reproduced the old function against isolated synthetic `localStorage`: a newer same-trip graph lost title, `travelWish`, and a survivor note, and revision regressed 7→4; another active trip was replaced by the stale caller; an absent target still reported success and bumped revision. That is review evidence, not author proof from this session, and it claims no hosted or Production damage. The implementation tests below have not been run.
 
 Account delete is unchanged. Mounted account proof uses a callback fixture. `null` from that callback is not treated as a stronger refreshed-graph confirmation than today's `router.refresh()`. The existing "written but refreshed state not confirmed" edit outcome stays an uncertain/error state inside the editor contract; this slice does not paint it as saved.
 
@@ -123,11 +168,14 @@ Account delete is unchanged. Mounted account proof uses a callback fixture. `nul
 Node tests call the real `gastPlanpunktEntfernen` against an in-memory `localStorage`, and the pure helper for the decision table:
 
 - fresh valid delete, then readback and reload through the real loader; the target is gone; day positions are contiguous; one unrelated item and its stage, time, route, booking, price, provider, and traveller fields stay
-- stale same-trip snapshot and a different active trip: active bytes identical, legacy bytes identical, queue bytes identical
-- missing key, malformed JSON, schema-invalid JSON, throwing `getItem`: no `setItem` and no `removeItem` on the active, legacy, or queue key
+- legitimate projected caller: stored `single_destination` graph with null `stageId` values; caller is `tageEtappenZuordnen` of that graph and otherwise equal, including `updatedAt`. Delete succeeds. Raw readback keeps null `stageId` on the surviving day and item. Title, `travelWish`, and the survivor note stay. The projection is not stored
+- same-revision drift, one field at a time, with the same id and revision: title, `travelWish`, survivor note, target placement, `updatedAt`, and a caller `stageId` that the projection would not produce. Each call throws, and the active bytes stay identical
+- different active trip, and a newer stored revision with an older caller: active, legacy, and queue bytes identical
+- missing key, malformed JSON, schema-invalid JSON, invalid caller, throwing `getItem`: no `setItem` and no `removeItem` on the active, legacy, or queue key
 - absent id and duplicate id: no revision bump, bytes identical
 - setter throw and readback mismatch: the thrown error is the result; the test records the bytes left behind and does not call them a rollback
 - second delete with the old snapshot does not mutate again
+- the pure helper, without storage: projected copies compare equal; each drift case compares unequal; neither input object is mutated
 
 Mounted harness under `scripts/trip-plan-editing-placement-recovery-1/` bundles the real `TripWorkspacePlan` and `PlanpunktEditor` with esbuild and isolated local Playwright. Callbacks are the test double. Guest persistence cases call the real `gastPlanpunktEntfernen`, not a stub of it. No personal browser profile, no production storage, no hosted account.
 
@@ -135,7 +183,9 @@ Mounted cases:
 
 - zero-day existing activity, note, and protected flight: editor opens; protected flight shows placement only; null date and time stay empty; save, thrown error, and domain error keep the typed draft; cancel and Escape close and land on a visible fallback; no dialog remains
 - day A → day B, day → unassigned, unassigned → a real day, with null times and a long label; the callback receives the captured original and the requested `dayId`; an unknown day and an original-version mismatch stay on the draft and show the existing error text
-- double-click calls the writer once; a late resolution after trip, item, day, editor generation, graph revision, or unmount does not close, clear, or focus the replacement form
+- double-click calls the writer once
+- replaced context: a late resolution after a new trip id, a new item id, a new `editorGeneration`, or unmount does not close, clear, unlock, or focus the replacement form. The replacement keeps its own draft
+- same-target readback: a newer `revision` and `updatedAt` on the same trip id and the same open item id do not remount the form, do not wipe the typed draft, and do not replace the captured `original`. That same operation may still report on this form. An older `operationId` may not
 - delete error on a zero-day list is a visible alert and receives focus; a late delete error does not alert a newer trip
 - account fixture: the same plan component shows the callback error and does not claim a refreshed account graph
 
@@ -149,9 +199,8 @@ Local gates after implementation: the focused tests, the mounted harness, `gasts
 
 - Whether the mounted bundle pulls `server-only` through a workspace import. If it does, the harness aliases only that package throw. The report names the alias. Product files stay on the allowlist.
 - Exact-head CI, Auth, and Preview are not run for this plan head. They are Technical Lead gates after an implementation push.
-- `next-env.d.ts` is dirty in this environment: the two type imports point at `.next/dev/types` instead of `.next/types`. It is not part of the slice and is not committed.
-- The frozen `gastreiseSpeichern` leaves a gap between the fresh read and the set. This plan does not close that gap by editing the setter.
-- Identity plus revision can accept a same-revision content drift that some other frozen writer stored without bumping `revision`. The delete then edits the stored graph, not the caller snapshot. A stronger byte-equality basis needs a Technical Lead addendum, because the loaded guest trip is projection-adjusted and the caller signature cannot change inside this allowlist.
+- `next-env.d.ts` may be rewritten by the environment. It is not part of the slice and is not committed.
+- The frozen `gastreiseSpeichern` leaves a gap between the captured read and the set. This plan does not close that gap by editing the setter and does not claim the check is atomic.
 
 ## Boundaries
 
@@ -159,8 +208,8 @@ Do not mark Ready. Do not merge. Do not close #996. Do not start a follow-up sli
 
 ## Costs and security
 
-No new dependency, hosted service, provider call, model call, or recurring cost. The guest change touches only the active `localStorage` key, and only after the preflight succeeds. It does not broaden who can delete, and it does not change the account action. The integrity fix rejects a stale or foreign graph instead of storing it.
+No new dependency, hosted service, provider call, model call, or recurring cost. The guest change touches only the active `localStorage` key, and only after the captured basis matches. It does not broaden who can delete, and it does not change the account action. The integrity fix rejects a stale or foreign graph instead of storing it.
 
 ## Stop
 
-STOP for Technical Lead plan review. No product or test implementation in this delivery.
+STOP for Technical Lead exact-head re-review of this revised plan. No product or test implementation in this delivery.
