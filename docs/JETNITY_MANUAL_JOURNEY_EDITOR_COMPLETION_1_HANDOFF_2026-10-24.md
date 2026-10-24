@@ -17,11 +17,13 @@ Branch: `fix/manual-journey-editor-completion-1`
 | merge-base | `0c37d318c47a758f06634448d6e0de3856bbc6a6` |
 | accepted plan | `e763caa51b0213bd3c0e71afe948b00ab402eb5d` |
 | CODE REVIEW V3 head | `52779d7f5307b7de5389e76e982c2eb208aa04c6` |
-| runtime / harness `headAtRun` | `ecdaef7b7ecb24b34b3bc482810ed646a405c807` |
-| runtime tree | `2169a040ae2b25d19f8a0fdd77c875603a660687` |
+| product runtime | `ecdaef7b7ecb24b34b3bc482810ed646a405c807` |
+| product tree | `2169a040ae2b25d19f8a0fdd77c875603a660687` |
+| harness / `headAtRun` | `9b11323dccf844d850dd444b1b4d205bf754109c` |
+| harness tree | `e612aec3d10878322e789d6f7b47220b093605c2` |
 | evidence head | the commit that adds this handoff |
 
-Fetched `origin/main` this turn. It is still `43124e28`. Merge-base is `0c37d318`. The runtime commit is **10 ahead / 16 behind** live main and **10 ahead / 0 behind** the merge-base. Expected after the evidence commit: **11 ahead / 16 behind** live main. This branch was not rebased.
+Fetched `origin/main` this turn. It is still `43124e28`. Merge-base is `0c37d318`. The harness commit is **12 ahead / 16 behind** live main and **12 ahead / 0 behind** the merge-base. Expected after the evidence commit: **13 ahead / 16 behind** live main. This branch was not rebased.
 
 Integration remains **A → C → B**. A is on main. B was not touched. Wait for an explicit Technical-Lead instruction before rebasing onto `43124e28`.
 
@@ -34,10 +36,10 @@ Connection hash: `75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de11
 ## Proof executed
 
 - Focused node tests: 103 pass, 0 fail, on the runtime tree before `ecdaef7b`.
-- Harness: PASS, 20 named behavior groups, 9 layout measurements, Chrome 148.0.7778.96, port 41287, `headAtRun` `ecdaef7b`. The new group executes 6 times. The three late-R1 groups execute 9 times. Those counts are executions inside groups, not extra groups.
-- R103 and R104 with `JETNITY_R105_C_EVIDENCE_DIR`: PASS. Flight blob matches `ecdaef7b`.
-- Historical evidence: 16 files, sha256 identical.
-- On `ecdaef7b`: typecheck, lint (0 errors, 144 warnings), five hygiene guards, and production build exit 0. The evidence commit does not change those sources.
+- Harness: PASS, 20 named behavior groups, 9 layout measurements, Chrome 148.0.7778.96, port 37175, `headAtRun` `9b11323d`. The new group executes 6 times. The three late-R1 groups execute 9 times. Those counts are executions inside groups, not extra groups.
+- Behavior context: `behaviorPageErrors` and `behaviorBlockedRequests` asserted empty before close. Layout contexts: `layoutPageErrors` and `layoutBlockedRequests` asserted empty. The concatenated fields are not a behavior-only claim. The `00c09935` result did not record the behavior context.
+- R103 and R104 were not re-run for this accounting change. Their flight blob still matches `ecdaef7b`. Historical evidence was not rewritten.
+- On `ecdaef7b`: typecheck, lint (0 errors, 144 warnings), five hygiene guards, and production build exit 0. Those gates were not re-run for `9b11323d` and do not cover it. The evidence commit does not change `components`, `lib`, or `scripts`.
 
 ## Not verified
 

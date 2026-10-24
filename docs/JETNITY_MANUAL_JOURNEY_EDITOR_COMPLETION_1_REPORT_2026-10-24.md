@@ -19,11 +19,13 @@ Partially finished as an author review-fix delivery for CODE REVIEW V3. Local pr
 | accepted plan | `e763caa51b0213bd3c0e71afe948b00ab402eb5d` |
 | CODE REVIEW V3 head | `52779d7f5307b7de5389e76e982c2eb208aa04c6` |
 | CODE REVIEW V3 tree | `886ef27c9fd48cdb08c3d9bd10c88112d46dd28b` |
-| runtime / harness `headAtRun` | `ecdaef7b7ecb24b34b3bc482810ed646a405c807` |
-| runtime tree | `2169a040ae2b25d19f8a0fdd77c875603a660687` |
-| evidence and these docs | the commit that adds this report, parent `ecdaef7b` |
+| product runtime | `ecdaef7b7ecb24b34b3bc482810ed646a405c807` |
+| product tree | `2169a040ae2b25d19f8a0fdd77c875603a660687` |
+| harness / `headAtRun` | `9b11323dccf844d850dd444b1b4d205bf754109c` |
+| harness tree | `e612aec3d10878322e789d6f7b47220b093605c2` |
+| evidence and these docs | the commit that adds this report, parent `9b11323d` |
 
-`43124e28` is the merge of #999. This branch does not contain it. Against live main the runtime commit is **10 ahead / 16 behind**. Against the merge-base it is **10 ahead / 0 behind**. After this evidence commit the branch is **11 ahead** of the merge-base and **11 ahead / 16 behind** live main. No rebase and no main synchronization.
+`43124e28` is the merge of #999. This branch does not contain it. Against live main the harness commit is **12 ahead / 16 behind**. Against the merge-base it is **12 ahead / 0 behind**. After this evidence commit the branch is **13 ahead** of the merge-base and **13 ahead / 16 behind** live main. No rebase and no main synchronization. `git diff ecdaef7b 9b11323d -- components lib` is empty.
 
 ## Umgesetzt
 
@@ -53,13 +55,13 @@ node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/trips/organisieren-action-recovery-1.test.ts
 ```
 
-Mounted, exit 0, after `ecdaef7b`, Chrome `148.0.7778.96`, port `41287`, `headAtRun` `ecdaef7b7ecb24b34b3bc482810ed646a405c807`:
+Mounted, exit 0, after `9b11323d`, Chrome `148.0.7778.96`, port `37175`, `headAtRun` `9b11323dccf844d850dd444b1b4d205bf754109c`:
 
 ```
 node scripts/manual-journey-editor-completion-1/harness.mjs
 ```
 
-`behaviorCount` 20 named scenario groups. `layoutCount` 9 measurements. The new group `flight-pending-a-newer-b-keeps-focus` runs 6 times: success, domain, and reject, each with B open and with B cancelled. For the cancelled success path it marks B's `Flugroute ändern` button after cancel, then asserts that same element after A's callback and again after A's graph. The selection sentence stays absent. After the graph, row A shows `11:30`. Domain and reject keep A's `11:30` draft and show `Route abgelehnt.` or the flight throw sentence while focus stays on B's marked control. The earlier same-row draft, completed-A-then-open-B, current-operation readback, R1/R2, and suspend cases remain in the other groups. At 320 CSS px and root 32px, `scrollWidth` is 320 and connection `maxRight` is 296.88. `pageErrors` is empty.
+`behaviorCount` 20 named scenario groups. `layoutCount` 9 measurements. The new group `flight-pending-a-newer-b-keeps-focus` runs 6 times: success, domain, and reject, each with B open and with B cancelled. For the cancelled success path it marks B's `Flugroute ändern` button after cancel, then asserts that same element after A's callback and again after A's graph. The selection sentence stays absent. After the graph, row A shows `11:30`. Domain and reject keep A's `11:30` draft and show `Route abgelehnt.` or the flight throw sentence while focus stays on B's marked control. The earlier same-row draft, completed-A-then-open-B, current-operation readback, R1/R2, and suspend cases remain in the other groups. At 320 CSS px and root 32px, `scrollWidth` is 320 and connection `maxRight` is 296.88. The behavior context's `behaviorPageErrors` and `behaviorBlockedRequests` are both empty, and that emptiness is asserted before the context closes. The nine layout contexts are asserted separately; `layoutPageErrors` and `layoutBlockedRequests` are empty. `pageErrors` and `blockedRequests` are only the concatenation of those two pairs. The result on `00c09935` copied layout diagnostics only, so its empty arrays did not establish a clean behavior session.
 
 One earlier post-commit harness attempt timed out in `awaitSuspend` while `npm run build` was still running. The isolated rerun above passed, including that suspend witness. The pre-commit harness on the same source also passed.
 
@@ -74,11 +76,13 @@ JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r10
 
 Sha256 of the 16 historical files was identical before and after. R104 flight blob `a0d356466e9a28f31ae0249e42670bd099887b85` matches `HEAD:components/trips/FlugBestand.tsx`. R103 `sourceBlob` `a3b1fbac4494001daa3aef7da2b21c4106d3ceec` matches Mobilitaet. Their author strings are inherited. R103 `result.json` did not change. Its `wide-1280-pending.png` changed by a few bytes.
 
-Harness sha256 `ecc0f3d86bb77e45461aaea3b9896b9b03e3094f28b9cad43dab0cc210d75d54`. Mount sha256 `c37e1b3a9e96afcea9fa5080b3425ede530fd73d7d423466d91e980fc5570c37`. Playwright Chromium `chromium_headless_shell-1187` did not launch. The Chrome channel was used.
+Harness sha256 `3991929df8d76c7e096d663570d14f99745e2d9be8508f87d780deac48db578e`. Mount sha256 `c37e1b3a9e96afcea9fa5080b3425ede530fd73d7d423466d91e980fc5570c37`. Playwright Chromium `chromium_headless_shell-1187` did not launch. The Chrome channel was used.
+
+R103 and R104 were not re-run for this harness-only accounting change. Their recorded flight blob `a0d356466e9a28f31ae0249e42670bd099887b85` still matches `ecdaef7b:components/trips/FlugBestand.tsx`. Historical evidence files were not rewritten.
 
 ## Build
 
-Executed on runtime head `ecdaef7b` before this evidence commit. This evidence commit does not change `components`, `lib`, or `scripts`.
+Executed on product runtime `ecdaef7b` before the harness accounting commit. They were not re-run for `9b11323d`. That commit changes only `scripts/manual-journey-editor-completion-1/harness.mjs`. This evidence commit does not change `components`, `lib`, or `scripts`. The `ecdaef7b` gates do not cover `9b11323d`.
 
 `npm run typecheck` exit 0. `npm run lint` exit 0 with 0 errors and 144 warnings. No warning is in `FlugBestand.tsx`. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` exit 0. Schema-bezug prints the pre-existing LOCAL/UNAPPLIED RPC notes. `npm run build` exit 0. Next.js 16.4.1 compiled successfully. `check:setup` warned that this VM has no `.env`. caniuse-lite is 13 months old and was not updated.
 

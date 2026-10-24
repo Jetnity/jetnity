@@ -9,7 +9,7 @@ This is the author's review of the CODE REVIEW V3 repair. It is not a Technical-
 
 ## Scope check
 
-The runtime diff from `52779d7f` to `ecdaef7b` is `FlugBestand.tsx` and `scripts/manual-journey-editor-completion-1/harness.mjs`. The evidence commit adds proof and these four docs. TASK V1, addendum V1, and the accepted PLAN were not rewritten. Booking, rental, the connection alert, shared CSS, schemas, and `TripIntegratedDay` were not edited. No sibling branch was merged. Lint configuration was not weakened.
+The product diff from `52779d7f` to `ecdaef7b` is `FlugBestand.tsx` and the V3 harness cases. `9b11323d` changes only the diagnostic accounting in `scripts/manual-journey-editor-completion-1/harness.mjs`. `components` and `lib` are unchanged from `ecdaef7b`. The evidence commit adds the rerun result and these four docs. TASK V1, addendum V1, and the accepted PLAN were not rewritten. Booking, rental, the connection alert, shared CSS, schemas, and `TripIntegratedDay` were not edited. No sibling branch was merged. Lint configuration was not weakened.
 
 ## Counting
 
@@ -27,7 +27,8 @@ None found in the local proof.
 
 ### P2
 
-- `result.json` records `headAtRun` `ecdaef7b7ecb24b34b3bc482810ed646a405c807`. The evidence commit does not change `components`, `lib`, or `scripts`.
+- `result.json` records `headAtRun` `9b11323dccf844d850dd444b1b4d205bf754109c`. The evidence commit does not change `components`, `lib`, or `scripts`. Product files remain `ecdaef7b`.
+- The result on `00c09935` reported empty `pageErrors` and `blockedRequests` from layout contexts only. That was not a behavior-session check. This rerun asserts and stores the behavior arrays separately. Both behavior and layout lists are empty.
 - Browser proof used Chrome `148.0.7778.96` after Playwright Chromium `chromium_headless_shell-1187` failed to launch. It is not native zoom and not a device.
 - CI, Preview, hosted account, and a screen reader were not run for `ecdaef7b` or for the evidence commit.
 - Live `origin/main` is `43124e28`. This branch was not rebased. Merge-base remains `0c37d318`.

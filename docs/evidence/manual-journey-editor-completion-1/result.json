@@ -2,7 +2,7 @@
   "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
   "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
   "model": "grok-4.7-high-fast",
-  "headAtRun": "ecdaef7b7ecb24b34b3bc482810ed646a405c807",
+  "headAtRun": "9b11323dccf844d850dd444b1b4d205bf754109c",
   "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
   "sourceSha256": {
     "components/trips/FlugBestand.tsx": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
@@ -287,8 +287,13 @@
       "maxRight": 296.88
     }
   ],
+  "behaviorBlockedRequests": [],
+  "behaviorPageErrors": [],
+  "layoutBlockedRequests": [],
+  "layoutPageErrors": [],
   "blockedRequests": [],
   "pageErrors": [],
+  "diagnosticNote": "behaviorBlockedRequests and behaviorPageErrors come only from the behavior context. layoutBlockedRequests and layoutPageErrors come only from the viewport contexts. blockedRequests and pageErrors are the concatenation after both were asserted. An empty concatenation is not a behavior-only claim.",
   "status": "PASS",
   "failure": null,
   "browser": {
@@ -300,7 +305,7 @@
   },
   "behaviorCount": 20,
   "layoutCount": 9,
-  "port": 41287,
+  "port": 37175,
   "notVerified": [
     "CI",
     "Preview",
