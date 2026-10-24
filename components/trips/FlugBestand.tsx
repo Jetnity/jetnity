@@ -20,6 +20,7 @@ import {
 } from '@/components/trips/useBookingActionLifecycle'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
+import { gleicherEditorKontext } from '@/lib/trips/manual-journey-editor-completion-1'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -44,13 +45,28 @@ function leeresFlugsegment(): FlugSegmentManuell {
   return { origin: '', destination: '', departureDate: '', departureTime: null, arrivalDate: '', arrivalTime: null }
 }
 
-function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern: FlugRouteSpeichern }) {
+function ManuelleFlugRoute({
+  item,
+  reiseId,
+  onSpeichern,
+}: {
+  item: TripItem
+  reiseId: string
+  onSpeichern: FlugRouteSpeichern
+}) {
+  // Generation lives on a stable object so an in-flight completion sees a target
+  // change from this render, before effects. A state setter is stale in that
+  // closure, and a ref write during render trips react-hooks/refs.
+  /* eslint-disable react-hooks/immutability */
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
   const formular = React.useRef<HTMLFormElement>(null)
   const fehlerZusammenfassung = React.useRef<HTMLParagraphElement>(null)
   const hinzufuegen = React.useRef<HTMLButtonElement>(null)
-  const schreibt = React.useRef(false)
+  const lebendig = React.useRef(true)
+  // Stable cell, not a ref: the generation must move in this render, before effects,
+  // so a completion already in flight cannot close or unlock the new target.
+  const [spur] = React.useState({ generation: 0, schreibt: false, reiseId, itemId: item.id })
   const [offen, setOffen] = React.useState(false)
   const [segments, setSegments] = React.useState<FlugSegmentManuell[]>([])
   const [fehler, setFehler] = React.useState('')
@@ -58,6 +74,21 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
   const [fokusVersuch, setFokusVersuch] = React.useState(0)
   const [laeuft, setLaeuft] = React.useState(false)
   const [gespeichert, setGespeichert] = React.useState(false)
+  if (!gleicherEditorKontext(
+    { reiseId: spur.reiseId, zielId: spur.itemId },
+    { reiseId, zielId: item.id },
+  )) {
+    spur.generation += 1
+    spur.schreibt = false
+    spur.reiseId = reiseId
+    spur.itemId = item.id
+    setOffen(false)
+    setSegments([])
+    setFehler('')
+    setValidieren(false)
+    setGespeichert(false)
+    setLaeuft(false)
+  }
   const route = flugRouteItineraryLesen(item.routeItinerary)
   const hatRoute = route?.legs.some((leg) => leg.segments.some((segment) =>
     segment.origin.airportCode || segment.destination.airportCode))
@@ -75,6 +106,11 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
     const schluessel = `${index}-${feld}`
     if (!feldfehler.has(schluessel)) feldfehler.set(schluessel, issue.message)
   }
+
+  React.useEffect(() => {
+    lebendig.current = true
+    return () => { lebendig.current = false }
+  }, [])
 
   React.useEffect(() => {
     if (offen) formular.current?.querySelector('input')?.focus()
@@ -95,7 +131,7 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
   }
   const speichern = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (schreibt.current || zuGross) return
+    if (spur.schreibt || zuGross) return
     const geprueft = flugRouteManuellSchema.safeParse({ segments })
     if (!geprueft.success) {
       setFehler('')
@@ -103,22 +139,37 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
       setFokusVersuch((bisher) => bisher + 1)
       return
     }
+    const zielReise = reiseId
+    const zielItem = item.id
+    const generationJetzt = spur.generation
+    const segmente = geprueft.data.segments
+    const passt = () => lebendig.current && spur.generation === generationJetzt && gleicherEditorKontext(
+      { reiseId: spur.reiseId, zielId: spur.itemId },
+      { reiseId: zielReise, zielId: zielItem },
+    )
     setValidieren(false)
-    schreibt.current = true
+    spur.schreibt = true
     setLaeuft(true)
     setFehler('')
     try {
-      const meldung = await onSpeichern(item.id, geprueft.data.segments)
-      if (meldung) setFehler(meldung)
-      else {
+      const meldung = await onSpeichern(zielItem, segmente)
+      if (!passt()) return
+      if (meldung) {
+        setFehler(meldung)
+        setFokusVersuch((bisher) => bisher + 1)
+      } else {
         schliessen()
         setGespeichert(true)
       }
     } catch {
+      if (!passt()) return
       setFehler('Die Flugroute konnte nicht gespeichert werden. Bitte versuche es erneut.')
+      setFokusVersuch((bisher) => bisher + 1)
     } finally {
-      schreibt.current = false
-      setLaeuft(false)
+      if (passt()) {
+        spur.schreibt = false
+        setLaeuft(false)
+      }
     }
   }
 
@@ -127,11 +178,11 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
       if (event.key !== 'Escape' || !offen) return
       event.preventDefault()
       event.stopPropagation()
-      if (!schreibt.current) schliessen()
+      if (!spur.schreibt) schliessen()
     }}>
       <button ref={knopf} type="button" aria-expanded={offen} aria-controls={offen ? `${id}-formular` : undefined}
         aria-disabled={laeuft} className={ROUTE_KNOPF} onClick={() => {
-          if (schreibt.current) return
+          if (spur.schreibt) return
           if (offen) { schliessen(); return }
           setSegments(route && !zuGross ? route.legs[0]!.segments.map((segment) => ({
             origin: segment.origin.airportCode ?? '', destination: segment.destination.airportCode ?? '',
@@ -158,8 +209,8 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
                     const feldId = `${id}-${index}-${feld.name}`
                     const feldmeldung = feldfehler.get(`${index}-${feld.name}`)
                     return (
-                      <div key={feld.name} className="grid min-w-0 gap-1">
-                        <label htmlFor={feldId} className="text-sm font-medium text-brand-800">{feld.label}</label>
+                      <div key={feld.name} className="grid min-w-0 max-w-full grid-cols-[minmax(0,1fr)] gap-1">
+                        <label htmlFor={feldId} className="min-w-0 max-w-full break-words text-sm font-medium text-brand-800">{feld.label}</label>
                         <input id={feldId} type={feld.type} value={segment[feld.name] ?? ''}
                           required={feld.type !== 'time'} maxLength={feld.type === 'text' ? 3 : undefined}
                           autoCapitalize={feld.type === 'text' ? 'characters' : undefined} spellCheck={false}
@@ -199,6 +250,7 @@ function ManuelleFlugRoute({ item, onSpeichern }: { item: TripItem; onSpeichern:
       {gespeichert ? <p role="status" className="mt-2 text-sm text-brand-700">Flugroute gespeichert.</p> : null}
     </div>
   )
+  /* eslint-enable react-hooks/immutability */
 }
 
 export default function FlugBestand({
@@ -227,12 +279,17 @@ export default function FlugBestand({
     setMeldung('')
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
-  const [saved, setSaved] = React.useState<{ itemId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
+  const [saved, setSaved] = React.useState<{ itemId: string; reiseId: string; segments: FlugSegmentManuell[]; context: string } | null>(null)
   const [saveStatus, setSaveStatus] = React.useState('')
   const root = React.useRef<HTMLElement>(null)
   const writeOrder = React.useRef(0)
+  const [reiseSpiegel] = React.useState({ id: reise.id })
+  // Same synchronous cell as the editors: the late readback must compare the
+  // trip id from this render, before effects, not a stale closure.
+  // eslint-disable-next-line react-hooks/immutability
+  reiseSpiegel.id = reise.id
   React.useLayoutEffect(() => {
-    if (!saved || window.location.href !== saved.context || root.current?.closest('[hidden], [inert]')) return
+    if (!saved || window.location.href !== saved.context || saved.reiseId !== reise.id || root.current?.closest('[hidden], [inert]')) return
     const item = [...reise.days.flatMap(day => day.items), ...ohneTag, ...reise.ohneTag].find(p => p.id === saved.itemId)
     const segments = flugRouteItineraryLesen(item?.routeItinerary)?.legs[0]?.segments
     if (!segments || JSON.stringify(segments.map(segment => ({ origin: segment.origin.airportCode, destination: segment.destination.airportCode,
@@ -249,9 +306,12 @@ export default function FlugBestand({
     if (!onFlugRouteManuell) return 'Die Flugroute kann hier nicht gespeichert werden.'
     const request = ++writeOrder.current
     const context = window.location.href
+    const reiseId = reise.id
     setSaveStatus('')
     const error = await onFlugRouteManuell(itemId, segments)
-    if (!error && request === writeOrder.current && window.location.href === context) setSaved({ itemId, segments, context })
+    if (!error && request === writeOrder.current && window.location.href === context && reiseSpiegel.id === reiseId) {
+      setSaved({ itemId, reiseId, segments, context })
+    }
     return error
   }
 
@@ -321,7 +381,7 @@ export default function FlugBestand({
                 </div>
               </div>
               {abschnitt.item && onFlugRouteManuell && istManuellerFlug(abschnitt.item) ? (
-                <ManuelleFlugRoute item={abschnitt.item} onSpeichern={routeSpeichern} />
+                <ManuelleFlugRoute key={`${reise.id}:${abschnitt.item.id}`} reiseId={reise.id} item={abschnitt.item} onSpeichern={routeSpeichern} />
               ) : null}
             </li>
           ))}
@@ -357,7 +417,7 @@ export default function FlugBestand({
                 </div>
               </div>
               {onFlugRouteManuell && istManuellerFlug(item) ? (
-                <ManuelleFlugRoute item={item} onSpeichern={routeSpeichern} />
+                <ManuelleFlugRoute key={`${reise.id}:${item.id}`} reiseId={reise.id} item={item} onSpeichern={routeSpeichern} />
               ) : null}
             </li>
           ))}

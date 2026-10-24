@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { createServer } from 'node:http'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, isAbsolute, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import esbuild from 'esbuild'
@@ -16,17 +16,31 @@ import { chromium } from 'playwright'
 
 const require = createRequire(import.meta.url)
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const EVIDENCE = join(REPO, 'docs/evidence/organisieren-action-recovery-1')
+
+function evidenceDirectory(historical) {
+  const override = process.env.JETNITY_R105_C_EVIDENCE_DIR
+  if (!override) return join(REPO, historical)
+  if (isAbsolute(override)) throw new Error('JETNITY_R105_C_EVIDENCE_DIR must be a repo-relative path')
+  const resolved = join(REPO, override)
+  const root = join(REPO, 'docs/evidence/manual-journey-editor-completion-1')
+  const fromRoot = relative(root, resolved)
+  if (fromRoot.startsWith('..') || isAbsolute(fromRoot)) {
+    throw new Error('JETNITY_R105_C_EVIDENCE_DIR must stay inside docs/evidence/manual-journey-editor-completion-1')
+  }
+  return resolved
+}
+
+const EVIDENCE = evidenceDirectory('docs/evidence/organisieren-action-recovery-1')
 const SCREENS = join(EVIDENCE, 'screens')
 const OUT = join('/tmp', 'organisieren-action-recovery-1')
 const MOBILITY = join(REPO, 'components/trips/MobilitaetBereich.tsx')
-const VERBINDUNG_HASH = '10fe6c8f0ec2bb976a53678ac3df9b100bcafe55baa97a72f4081a22bb368360'
+const VERBINDUNG_HASH = '22979037efebac48a119551fe9825cb3dbf90dd991c9294ac317ca499cb252f8'
 const BUCHUNG_WIRD_GESPEICHERT = 'Buchungsstatus wird gespeichert.'
 const BUCHUNG_ABGELEHNT = 'Der Buchungsstatus konnte nicht gespeichert werden. Du kannst es erneut versuchen.'
 const MIETWAGEN_GESPEICHERT = 'Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.'
 const MIETWAGEN_ABGELEHNT = 'Der Mietwagen konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.'
 const VERBINDUNG_GESPEICHERT = 'Die Verbindung ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.'
-const VERBINDUNG_ABGELEHNT = 'Die Verbindung konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.'
+const VERBINDUNG_ABGELEHNT = 'Ob die Verbindung gespeichert wurde, konnten wir nicht bestätigen. Deine Eingabe bleibt erhalten. Prüfe deinen Reiseplan vor einem erneuten Versuch. Ein erneuter Versuch kann eine zweite Verbindung anlegen.'
 const OWNED_REGIONS = ['Deine Flüge', 'Deine Unterkunft', 'Deine Verbindungen', 'Dein Mietwagen', 'Manueller Mietwagen']
 const VIEWPORTS = [
   { name: 'narrow-320', width: 320, height: 720 },

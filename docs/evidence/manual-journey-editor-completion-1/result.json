@@ -1,0 +1,298 @@
+{
+  "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
+  "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
+  "model": "grok-4.7-high-fast",
+  "headAtRun": "e763caa51b0213bd3c0e71afe948b00ab402eb5d",
+  "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
+  "sourceSha256": {
+    "components/trips/FlugBestand.tsx": "944bb4ae3201f95eecfd9bf6066782a35888225f312e156f4ffa82670d744e6c",
+    "components/trips/UnterkunftBestand.tsx": "4316fb46d4bbcb278b84f947c6f40dc60854d341d35a7d5c453c582b3eae1c00",
+    "components/trips/MobilitaetBereich.tsx": "52d75eccfa4352b5d2d464db6b5e3dc01dde920961d97b8160bbb9b274c4b2d6",
+    "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8"
+  },
+  "viewports": [
+    {
+      "name": "280",
+      "width": 280,
+      "height": 720
+    },
+    {
+      "name": "320",
+      "width": 320,
+      "height": 720
+    },
+    {
+      "name": "360",
+      "width": 360,
+      "height": 740
+    },
+    {
+      "name": "390",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "430",
+      "width": 430,
+      "height": 900
+    },
+    {
+      "name": "768",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "name": "1280",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "name": "landscape",
+      "width": 844,
+      "height": 320
+    }
+  ],
+  "geometryKind": "CSS viewport and root font-size, not native zoom and not a physical device",
+  "stubs": "in-memory onSpeichern/onUnterkunftZeitraum/onAnlegen; no guest storage, account, provider, or database",
+  "scenarios": [
+    "flight-valid-schema-domain-reject-retry",
+    "flight-add-remove-1-to-4",
+    "flight-multileg-and-over-four-refusal",
+    "flight-section-replacement-and-late-readback",
+    "stay-focus-validation-escape-replacement-unmount",
+    "connection-pending-domain-unconfirmed",
+    "connection-preset-trip-late-result"
+  ],
+  "layouts": [
+    {
+      "viewport": "280",
+      "width": 280,
+      "height": 720,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 280,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 263
+    },
+    {
+      "viewport": "320",
+      "width": 320,
+      "height": 720,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 320,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 303
+    },
+    {
+      "viewport": "360",
+      "width": 360,
+      "height": 740,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 360,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 343
+    },
+    {
+      "viewport": "390",
+      "width": 390,
+      "height": 844,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 390,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 373
+    },
+    {
+      "viewport": "430",
+      "width": 430,
+      "height": 900,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 430,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 413
+    },
+    {
+      "viewport": "768",
+      "width": 768,
+      "height": 1024,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 768,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 747
+    },
+    {
+      "viewport": "1280",
+      "width": 1280,
+      "height": 800,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 1280,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 1259
+    },
+    {
+      "viewport": "landscape",
+      "width": 844,
+      "height": 320,
+      "scale": 1,
+      "fontSize": "16px",
+      "scrollWidth": 844,
+      "overflow": false,
+      "reducedMotion": true,
+      "controlCount": 27,
+      "maxRight": 823
+    },
+    {
+      "viewport": "320",
+      "width": 320,
+      "height": 720,
+      "scale": 2,
+      "fontSize": "32px",
+      "scrollWidth": 320,
+      "overflow": false,
+      "reducedMotion": true,
+      "connectionControls": [
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "SELECT",
+          "type": null,
+          "label": "Art",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "SELECT",
+          "type": null,
+          "label": "Tag",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": null,
+          "label": "Von",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": null,
+          "label": "Nach",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": "date",
+          "label": "Abfahrt",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": "time",
+          "label": "Uhrzeit",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": "date",
+          "label": "Ankunft",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": "time",
+          "label": "Uhrzeit",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "INPUT",
+          "type": null,
+          "label": "Verbindungsnummer, falls bekannt",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 88
+        },
+        {
+          "region": "Manuelle Verbindung",
+          "tag": "TEXTAREA",
+          "type": null,
+          "label": "Notiz",
+          "left": 58,
+          "right": 262,
+          "width": 204,
+          "height": 114
+        }
+      ],
+      "maxRight": 296.88
+    }
+  ],
+  "blockedRequests": [],
+  "pageErrors": [],
+  "status": "PASS",
+  "failure": null,
+  "browser": {
+    "channel": "chrome",
+    "launchErrors": [
+      "Error: browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+    ],
+    "version": "148.0.7778.96"
+  },
+  "caseCount": 16,
+  "port": 42653,
+  "notVerified": [
+    "CI",
+    "Preview",
+    "hosted account",
+    "screen reader",
+    "native browser zoom",
+    "physical device"
+  ]
+}
