@@ -1,6 +1,5 @@
 // Isolated mounted proof for the real plan editor and guest delete.
 // Local Playwright only. No hosted account, personal profile, or provider call.
-import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { createRequire } from 'node:module'
