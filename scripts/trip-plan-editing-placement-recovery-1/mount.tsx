@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
@@ -75,7 +75,9 @@ function App() {
   const [aktiv, setAktiv] = useState('')
   const [sichtbar, setSichtbar] = useState(true)
   const reiseRef = useRef(reise)
-  reiseRef.current = reise
+  useLayoutEffect(() => {
+    reiseRef.current = reise
+  }, [reise])
 
   const rootReise = (naechste: Trip) => {
     reiseRef.current = naechste
@@ -227,7 +229,9 @@ function App() {
       aktiverTag={aktiv}
       kompakt={false}
       onTagWechseln={setAktiv}
-      onPunktAnlegen={async (_tagId: string, _eingabe: PlanpunktFormular) => {
+      onPunktAnlegen={async (tagId: string, eingabe: PlanpunktFormular) => {
+        void tagId
+        void eingabe
         aufrufe.push({ art: 'create' })
         return new Promise((resolve, reject) => {
           pending = { resolve, reject }

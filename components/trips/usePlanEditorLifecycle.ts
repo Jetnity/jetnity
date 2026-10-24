@@ -13,10 +13,23 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
   const deleteOp = React.useRef(0)
   const loeschtRef = React.useRef(false)
   const [loescht, setLoescht] = React.useState(false)
+  const [reiseEpoch, setReiseEpoch] = React.useState(0)
+  const epochAngewandt = React.useRef(0)
 
   React.useLayoutEffect(() => {
     owner.current += 1
   }, [aktiverTag])
+
+  React.useLayoutEffect(() => {
+    if (epochAngewandt.current === reiseEpoch) return
+    epochAngewandt.current = reiseEpoch
+    owner.current += 1
+    editorOp.current += 1
+    deleteOp.current += 1
+    loeschtRef.current = false
+    setEditorGeneration(owner.current)
+    setLoescht(false)
+  }, [reiseEpoch])
 
   const oeffnen = React.useCallback(() => {
     owner.current += 1
@@ -49,12 +62,7 @@ export function usePlanEditorLifecycle(aktiverTag: string) {
   }, [])
 
   const fremdeReise = React.useCallback(() => {
-    owner.current += 1
-    editorOp.current += 1
-    deleteOp.current += 1
-    loeschtRef.current = false
-    setEditorGeneration(owner.current)
-    setLoescht(false)
+    setReiseEpoch((wert) => wert + 1)
   }, [])
 
   return {

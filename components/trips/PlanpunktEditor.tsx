@@ -60,6 +60,9 @@ export default function PlanpunktEditor({
   const [dayId, setDayId] = React.useState(item ? item.dayId ?? '' : tagId)
   const [fehler, setFehler] = React.useState('')
   const [phase, setPhaseState] = React.useState<'bereit' | 'speichert' | 'warteAufBestaetigung' | 'beobachte'>('bereit')
+  const [operationId, setOperationId] = React.useState(0)
+  const [eingefroren, setEingefroren] = React.useState<string | null>(null)
+  const [erwartet, setErwartet] = React.useState<TripItem | null>(null)
   const phaseRef = React.useRef(phase)
   const lebendig = React.useRef(true)
   const schreibt = React.useRef(false)
@@ -72,10 +75,14 @@ export default function PlanpunktEditor({
   const onFertigRef = React.useRef(onFertig)
   const operationAktuellRef = React.useRef(operationAktuell)
   const formular = React.useRef<HTMLFormElement>(null)
-  reiseRef.current = reise
-  generationRef.current = generation
-  onFertigRef.current = onFertig
-  operationAktuellRef.current = operationAktuell
+  React.useLayoutEffect(() => {
+    phaseRef.current = phase
+    if (phase !== 'speichert' && phase !== 'warteAufBestaetigung') schreibt.current = false
+    reiseRef.current = reise
+    generationRef.current = generation
+    onFertigRef.current = onFertig
+    operationAktuellRef.current = operationAktuell
+  }, [phase, reise, generation, onFertig, operationAktuell])
   const laeuft = phase === 'speichert' || phase === 'warteAufBestaetigung'
   const setPhase = (naechste: typeof phase) => {
     phaseRef.current = naechste
@@ -85,12 +92,12 @@ export default function PlanpunktEditor({
   const entwurfGleich = () => entwurfBeiSubmit.current !== null && entwurfBeiSubmit.current === entwurfJetzt()
   const besitzt = (operationId: number) =>
     lebendig.current && operationAktuellRef.current(operationId) && generationRef.current === generation && operationRef.current === operationId
-  const urteil = () => {
-    if (!original || !erwartetRef.current) return 'fremd' as const
+  const urteil = (graph: Trip, ziel: TripItem | null) => {
+    if (!original || !ziel) return 'fremd' as const
     return sichtbaresZielUrteil(
-      allePlanpunkte(reiseRef.current).filter((punkt) => punkt.id === original.id),
+      allePlanpunkte(graph).filter((punkt) => punkt.id === original.id),
       original,
-      erwartetRef.current,
+      ziel,
     )
   }
   const fertig = () => {
@@ -98,9 +105,18 @@ export default function PlanpunktEditor({
     gemeldet.current = true
     onFertigRef.current()
   }
-  const freigeben = () => {
-    schreibt.current = false
-    setPhase('beobachte')
+  const entwurfGleichState = eingefroren !== null && eingefroren === entwurfJetzt()
+  const eigene = original != null && operationId !== 0 && operationAktuell(operationId)
+  if (eigene && (phase === 'warteAufBestaetigung' || phase === 'beobachte')) {
+    const stand = urteil(reise, erwartet)
+    if (phase === 'warteAufBestaetigung' && !(stand === 'erwartet' && entwurfGleichState)) {
+      if (stand !== 'original') setFehler(KONFLIKT)
+      setPhaseState('beobachte')
+    } else if (phase === 'beobachte' && !entwurfGleichState) {
+      setPhaseState('bereit')
+    } else if (phase === 'beobachte' && (stand === 'version' || stand === 'fremd') && fehler !== KONFLIKT) {
+      setFehler(KONFLIKT)
+    }
   }
 
   React.useEffect(() => {
@@ -112,31 +128,18 @@ export default function PlanpunktEditor({
     if (fehler) formular.current?.querySelector<HTMLElement>('[role="alert"]')?.focus()
   }, [fehler])
   React.useEffect(() => {
-    if (phase !== 'warteAufBestaetigung' || !original) return
-    if (!besitzt(operationRef.current)) return
-    const stand = urteil()
-    if (stand === 'erwartet' && entwurfGleich()) {
-      fertig()
-      return
-    }
-    if (stand === 'original') {
-      freigeben()
-      return
-    }
-    setFehler(KONFLIKT)
-    freigeben()
-  }, [phase, reise, original, title, note, startsOn, startsAt, endsOn, endsAt, dayId, generation])
-  React.useEffect(() => {
-    if (phase !== 'beobachte' || !original) return
-    if (!besitzt(operationRef.current)) return
-    if (!entwurfGleich()) {
-      setPhase('bereit')
-      return
-    }
-    const stand = urteil()
-    if (stand === 'erwartet') fertig()
-    else if (stand === 'version' || stand === 'fremd') setFehler(KONFLIKT)
-  }, [phase, reise, original, title, note, startsOn, startsAt, endsOn, endsAt, dayId, generation])
+    if (!eigene || !entwurfGleichState || !original || !erwartet) return
+    if (phase !== 'warteAufBestaetigung' && phase !== 'beobachte') return
+    const stand = sichtbaresZielUrteil(
+      allePlanpunkte(reise).filter((punkt) => punkt.id === original.id),
+      original,
+      erwartet,
+    )
+    if (stand !== 'erwartet') return
+    if (gemeldet.current) return
+    gemeldet.current = true
+    onFertigRef.current()
+  }, [eigene, entwurfGleichState, phase, reise, erwartet, original])
 
   const inhaltErlaubt = original ? manuellBearbeitbar(original) : kind === 'activity' || kind === 'note'
   const values = {
@@ -165,9 +168,12 @@ export default function PlanpunktEditor({
       setFehler(parsed.error.issues[0]?.message ?? 'Bitte prüfe deine Angaben.')
       return
     }
-    const operationId = operationBeginnen()
-    operationRef.current = operationId
-    entwurfBeiSubmit.current = entwurfJetzt()
+    const naechsteOperation = operationBeginnen()
+    operationRef.current = naechsteOperation
+    setOperationId(naechsteOperation)
+    const snapshot = entwurfJetzt()
+    entwurfBeiSubmit.current = snapshot
+    setEingefroren(snapshot)
     gemeldet.current = false
     schreibt.current = true
     setPhase('speichert')
@@ -194,6 +200,7 @@ export default function PlanpunktEditor({
           return
         }
         erwartetRef.current = erwartet
+        setErwartet(erwartet)
         error = await onBearbeiten(original, change)
       } else {
         if (!tagId) {
@@ -202,7 +209,7 @@ export default function PlanpunktEditor({
         }
         error = await onAnlegen(tagId, { ...parsed.data, clientRef })
       }
-      if (!besitzt(operationId)) return
+      if (!besitzt(naechsteOperation)) return
       if (!original) {
         if (error) setFehler(error)
         else fertig()
@@ -210,12 +217,12 @@ export default function PlanpunktEditor({
         return
       }
       if (error) {
-        const stand = urteil()
+        const stand = urteil(reiseRef.current, erwartetRef.current)
         setFehler(stand === 'fremd' ? KONFLIKT : error)
         setPhase('bereit')
         return
       }
-      const stand = urteil()
+      const stand = urteil(reiseRef.current, erwartetRef.current)
       if (stand === 'erwartet' && entwurfGleich()) {
         fertig()
         setPhase('bereit')
@@ -228,7 +235,7 @@ export default function PlanpunktEditor({
       setFehler(KONFLIKT)
       setPhase('beobachte')
     } catch {
-      if (besitzt(operationId)) {
+      if (besitzt(naechsteOperation)) {
         setFehler('Der Punkt konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.')
         setPhase('bereit')
       }

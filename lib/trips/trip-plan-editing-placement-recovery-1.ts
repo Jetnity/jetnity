@@ -27,7 +27,8 @@ export type SichtbaresZielUrteil = 'erwartet' | 'original' | 'version' | 'fremd'
 
 /** Domain equality drops only `rowVersion`. Every other item field stays. */
 function itemDomaene(item: TripItem): string {
-  const { rowVersion: _version, ...rest } = item
+  const rest: Partial<TripItem> = { ...item }
+  delete rest.rowVersion
   return JSON.stringify(rest)
 }
 

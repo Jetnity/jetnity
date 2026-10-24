@@ -127,7 +127,7 @@ describe('Gastlöschung prüft die gespeicherte Basis', () => {
   })
 
   test('eine projizierte Aufrufer-Fassung löscht, ohne die Projektion zu speichern', () => {
-    const reise = reiseMitZweiPunkten()
+    reiseMitZweiPunkten()
     const roh = JSON.parse(bytes()!) as Trip
     for (const tag of roh.days) {
       tag.stageId = null
@@ -333,7 +333,7 @@ describe('Gastlöschung prüft die gespeicherte Basis', () => {
 
 describe('gastLoeschBasisGleich', () => {
   test('projizierte Kopien sind gleich, Drift nicht, und die Eingaben bleiben', () => {
-    const reise = reiseMitZweiPunkten()
+    reiseMitZweiPunkten()
     const roh = JSON.parse(bytes()!) as Trip
     for (const tag of roh.days) {
       tag.stageId = null

@@ -164,15 +164,14 @@ export default function TripWorkspacePlan({
   const meldungOp = React.useRef<number | null>(null)
   const leben = usePlanEditorLifecycle(aktiverTag)
   const tripIdRef = React.useRef(reise.id)
-  const tripGesehen = React.useRef(reise.id)
-  tripIdRef.current = reise.id
+  const [geseheneReise, setGeseheneReise] = React.useState(reise.id)
   const [formularTag, setFormularTag] = React.useState(aktiverTag)
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [bearbeiten, setBearbeiten] = React.useState<TripItem | undefined>()
   const [meldung, setMeldung] = React.useState('')
   const [erfolg, setErfolg] = React.useState('')
-  if (tripGesehen.current !== reise.id) {
-    tripGesehen.current = reise.id
+  if (geseheneReise !== reise.id) {
+    setGeseheneReise(reise.id)
     leben.fremdeReise()
     setFormularTag(aktiverTag)
     setFormularOffen(false)
@@ -184,7 +183,10 @@ export default function TripWorkspacePlan({
     setFormularTag(aktiverTag); setFormularOffen(false); setBearbeiten(undefined); setMeldung(''); setErfolg('')
   }
   const loeschungAktuellRef = React.useRef(leben.loeschungAktuell)
-  loeschungAktuellRef.current = leben.loeschungAktuell
+  React.useLayoutEffect(() => {
+    tripIdRef.current = reise.id
+    loeschungAktuellRef.current = leben.loeschungAktuell
+  }, [reise.id, leben.loeschungAktuell])
   React.useEffect(() => {
     if (!meldung || meldungOp.current == null) return
     if (!loeschungAktuellRef.current(meldungOp.current)) return
