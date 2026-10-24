@@ -110,8 +110,7 @@ async function painted(page) {
   }))
 }
 
-async function awaitSuspend(page) {
-  const before = await page.evaluate(() => window.fixture.suspendRenders())
+async function awaitSuspend(page, before) {
   await page.waitForFunction((count) => window.fixture.suspendRenders() > count, before)
   return page.evaluate(() => window.fixture.committed())
 }
@@ -169,36 +168,36 @@ async function active(page) {
   })
 }
 
-async function markOwned(page) {
-  return page.evaluate(() => {
+async function markOwned(page, attribute = 'data-flug-punkt') {
+  return page.evaluate((name) => {
     const el = document.activeElement
     const mark = `owned-${Math.random().toString(16).slice(2)}`
     el?.setAttribute('data-owned-focus', mark)
     const facts = {
       tag: el?.tagName ?? '',
-      row: el?.closest('[data-flug-punkt]')?.getAttribute('data-flug-punkt') ?? '',
+      row: el?.closest(`[${name}]`)?.getAttribute(name) ?? '',
       text: (el?.textContent ?? '').replace(/\s+/g, ' ').trim(),
       expanded: el?.getAttribute('aria-expanded'),
       label: (el?.labels?.[0]?.innerText || '').split('\n')[0].trim(),
       mark,
     }
     return facts
-  })
+  }, attribute)
 }
 
-async function ownedNow(page, mark) {
-  const facts = await page.evaluate((expected) => {
+async function ownedNow(page, mark, attribute = 'data-flug-punkt') {
+  const facts = await page.evaluate(({ expected, name }) => {
     const el = document.activeElement
     return {
       tag: el?.tagName ?? '',
-      row: el?.closest('[data-flug-punkt]')?.getAttribute('data-flug-punkt') ?? '',
+      row: el?.closest(`[${name}]`)?.getAttribute(name) ?? '',
       text: (el?.textContent ?? '').replace(/\s+/g, ' ').trim(),
       expanded: el?.getAttribute('aria-expanded'),
       label: (el?.labels?.[0]?.innerText || '').split('\n')[0].trim(),
       mark: el?.getAttribute('data-owned-focus') ?? '',
       same: el?.getAttribute('data-owned-focus') === expected,
     }
-  }, mark)
+  }, { expected: mark, name: attribute })
   assert.equal(facts.same, true, `focus left the marked control ${mark}`)
   return facts
 }
@@ -739,12 +738,13 @@ try {
   await arm(page, 'connection', 'success')
   await links.getByRole('button', { name: 'Verbindung speichern' }).click()
   await page.waitForFunction(() => window.fixture.pending('connection').length === 1)
+  const connectionSuspendBaseline = await page.evaluate(() => window.fixture.suspendRenders())
   await page.evaluate((next) => window.fixture.suspendConnection(next), {
     ...presetA,
     originName: 'Luzern',
     originPlaceId: 'station:luzern',
   })
-  const suspendedConnection = await awaitSuspend(page)
+  const suspendedConnection = await awaitSuspend(page, connectionSuspendBaseline)
   assert.equal(suspendedConnection.suspend, false)
   assert.equal(suspendedConnection.vorgabeOrigin, 'Zürich HB')
   assert.equal(await page.locator('[data-transition-fallback]').count(), 0)
@@ -826,8 +826,9 @@ try {
   await flights.getByRole('button', { name: 'Speichern' }).click()
   await page.waitForFunction(() => window.fixture.pending('flight').length === 1)
   const mirrorFlight = await page.evaluate(() => window.fixture.latest('flight'))
+  const flightSuspendBaseline = await page.evaluate(() => window.fixture.suspendRenders())
   await page.evaluate(() => window.fixture.suspendFlightTrip('trip-speculative'))
-  const suspendedFlight = await awaitSuspend(page)
+  const suspendedFlight = await awaitSuspend(page, flightSuspendBaseline)
   assert.equal(suspendedFlight.suspend, false)
   assert.equal(suspendedFlight.flightTripId, 'trip-flight')
   assert.equal(await page.locator('[data-transition-fallback]').count(), 0)
@@ -1070,6 +1071,122 @@ try {
     }
   }
   evidence.scenarios.push('flight-pending-a-newer-b-keeps-focus')
+
+  // One named group. Three executions: success, domain, and reject while B stays closed.
+  // Proves the current stay operation still takes its own focus.
+  await page.evaluate(() => window.fixture.setStay('pair'))
+  for (const outcome of ['success', 'domain', 'reject']) {
+    await page.evaluate((id) => window.fixture.setStayTrip(id), `trip-stay-owner-${outcome}`)
+    const rowA = page.locator('[data-aufenthalt-editor="stay-a"]')
+    const rowB = page.locator('[data-aufenthalt-editor="stay-b"]')
+    const before = (await calls(page, 'stay')).length
+    await rowA.getByRole('button', { name: 'Zeitraum ändern' }).click()
+    await rowA.getByLabel('Check-in').fill('2026-11-03')
+    await rowA.getByLabel('Check-out').fill('2026-11-09')
+    await arm(page, 'stay', outcome)
+    await rowA.getByRole('button', { name: 'Zeitraum speichern' }).click()
+    await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+    await release(page, 'stay')
+    assert.equal((await calls(page, 'stay')).length, before + 1)
+    assert.equal((await calls(page, 'stay')).at(-1).itemId, 'stay-a')
+    assert.equal(await rowB.locator('form').count(), 0)
+    if (outcome === 'success') {
+      await rowA.getByText('Zeitraum gespeichert.', { exact: true }).waitFor()
+      const owner = await active(page)
+      assert.equal(await rowA.locator('form').count(), 0)
+      assert.equal(owner.tag, 'BUTTON')
+      assert.match(owner.text, /Zeitraum/)
+      const marked = await markOwned(page, 'data-aufenthalt-editor')
+      assert.equal(marked.row, 'stay-a')
+      assert.equal(marked.expanded, 'false')
+    } else {
+      const message = outcome === 'domain' ? 'Zeitraum abgelehnt.' : STAY_THROW
+      await rowA.getByText(message).waitFor()
+      const owner = await active(page)
+      assert.equal(owner.role, 'alert')
+      assert.equal(owner.text, message)
+      assert.equal(await rowA.getByLabel('Check-in').inputValue(), '2026-11-03')
+      assert.equal(await rowA.getByLabel('Check-out').inputValue(), '2026-11-09')
+      assert.equal(await rowA.locator('form').count(), 1)
+      const marked = await markOwned(page, 'data-aufenthalt-editor')
+      assert.equal(marked.row, 'stay-a')
+      assert.equal(marked.tag, 'P')
+    }
+  }
+  evidence.scenarios.push('stay-current-owner-focus')
+
+  // One named group. Six executions: success/domain/reject × B open/closed.
+  await page.evaluate(() => window.fixture.setStay('pair'))
+  for (const outcome of ['success', 'domain', 'reject']) {
+    for (const bState of ['closed', 'open']) {
+      await page.evaluate((id) => window.fixture.setStayTrip(id), `trip-stay-own-${outcome}-${bState}`)
+      const rowA = page.locator('[data-aufenthalt-editor="stay-a"]')
+      const rowB = page.locator('[data-aufenthalt-editor="stay-b"]')
+      const before = (await calls(page, 'stay')).length
+      await rowA.getByRole('button', { name: 'Zeitraum ändern' }).click()
+      await rowA.getByLabel('Check-in').fill('2026-11-03')
+      await rowA.getByLabel('Check-out').fill('2026-11-09')
+      await arm(page, 'stay', outcome)
+      await rowA.getByRole('button', { name: 'Zeitraum speichern' }).click()
+      await page.waitForFunction(() => window.fixture.pending('stay').length === 1)
+      await rowB.getByRole('button', { name: 'Zeitraum ändern' }).click()
+      const checkInB = rowB.getByLabel('Check-in')
+      await checkInB.fill('2026-12-01')
+      await rowB.getByLabel('Check-out').fill('2026-12-05')
+      let owned
+      if (bState === 'closed') {
+        await rowB.getByRole('button', { name: 'Abbrechen' }).click()
+        await painted(page)
+        assert.equal(await rowB.locator('form').count(), 0)
+        owned = await markOwned(page, 'data-aufenthalt-editor')
+        assert.equal(owned.tag, 'BUTTON')
+        assert.equal(owned.row, 'stay-b')
+        assert.equal(owned.text, 'Zeitraum ändern')
+        assert.equal(owned.expanded, 'false')
+      } else {
+        await checkInB.focus()
+        owned = await markOwned(page, 'data-aufenthalt-editor')
+        assert.equal(owned.tag, 'INPUT')
+        assert.equal(owned.row, 'stay-b')
+        assert.equal(owned.label, 'Check-in')
+        assert.equal(await rowB.locator('form').count(), 1)
+        assert.equal(await checkInB.inputValue(), '2026-12-01')
+      }
+      await release(page, 'stay')
+      const afterCallback = await ownedNow(page, owned.mark, 'data-aufenthalt-editor')
+      assert.equal(afterCallback.tag, owned.tag)
+      assert.equal(afterCallback.row, 'stay-b')
+      assert.equal(afterCallback.text, owned.text)
+      assert.equal((await calls(page, 'stay')).length, before + 1)
+      assert.equal((await calls(page, 'stay')).at(-1).itemId, 'stay-a')
+      if (outcome === 'success') {
+        assert.equal(await rowA.locator('form').count(), 0)
+        assert.equal(await rowA.getByText('Zeitraum gespeichert.', { exact: true }).count(), 1)
+        if (bState === 'open') {
+          assert.equal(await checkInB.inputValue(), '2026-12-01')
+          assert.equal(await rowB.getByLabel('Check-out').inputValue(), '2026-12-05')
+          assert.equal(await rowB.locator('form').count(), 1)
+        } else {
+          assert.equal(await rowB.locator('form').count(), 0)
+          assert.equal(afterCallback.expanded, 'false')
+        }
+      } else {
+        const message = outcome === 'domain' ? 'Zeitraum abgelehnt.' : STAY_THROW
+        await rowA.getByText(message).waitFor()
+        assert.equal(await rowA.getByLabel('Check-in').inputValue(), '2026-11-03')
+        assert.equal(await rowA.getByLabel('Check-out').inputValue(), '2026-11-09')
+        assert.equal(await rowA.locator('form').count(), 1)
+        if (bState === 'open') {
+          assert.equal(await checkInB.inputValue(), '2026-12-01')
+          assert.equal(await rowB.getByLabel('Check-out').inputValue(), '2026-12-05')
+          assert.equal(await rowB.locator('form').count(), 1)
+        } else {
+          assert.equal(await rowB.locator('form').count(), 0)
+        }
+      }
+    }
+  }
+  evidence.scenarios.push('stay-pending-a-newer-b-keeps-focus')
 
   evidence.behaviorBlockedRequests = [...behavior.blocked]
   evidence.behaviorPageErrors = [...behavior.errors]

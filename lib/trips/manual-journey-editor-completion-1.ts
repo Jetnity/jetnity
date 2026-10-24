@@ -52,7 +52,7 @@ export function verbindungsVorgabeAus(reise: ReiseFuerVorgabe, vorgabe?: Verbind
 }
 
 export function vorgabeSchluessel(vorgabe: VerbindungsVorgabe): string {
-  return [
+  return JSON.stringify([
     vorgabe.mode,
     vorgabe.originName,
     vorgabe.destinationName,
@@ -60,7 +60,7 @@ export function vorgabeSchluessel(vorgabe: VerbindungsVorgabe): string {
     vorgabe.destinationPlaceId ?? '',
     vorgabe.dayId,
     vorgabe.startsOn,
-  ].join('\u001f')
+  ])
 }
 
 export function feldFolgtVorgabe(aktuell: string, angewendet: string): boolean {

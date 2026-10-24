@@ -283,14 +283,18 @@ function connectionTrip(tripId: string, origin = 'Zürich'): Trip {
   } as Trip
 }
 
+type StayKind = 'single' | 'pair'
+
 type Model = {
   flightKind: FlightKind
   flightTripId: string
   flightSegments: FlugSegmentManuell[] | null
   returnSegments: FlugSegmentManuell[] | null
+  stayKind: StayKind
   stayId: string
   stayTripId: string
   stayDates: { startsOn: string; endsOn: string } | null
+  stayDatesB: { startsOn: string; endsOn: string } | null
   stayVisible: boolean
   linkTripId: string
   linkOrigin: string
@@ -304,9 +308,11 @@ function initialModel(): Model {
     flightTripId: 'trip-flight',
     flightSegments: null,
     returnSegments: null,
+    stayKind: 'single',
     stayId: 'stay-a',
     stayTripId: 'trip-stay',
     stayDates: null,
+    stayDatesB: null,
     stayVisible: true,
     linkTripId: 'trip-link',
     linkOrigin: 'Zürich',
@@ -318,6 +324,7 @@ function initialModel(): Model {
 type RequestContext = {
   flightTripId: string
   flightKind: FlightKind
+  stayKind: StayKind
   stayId: string
   stayTripId: string
 }
@@ -360,6 +367,7 @@ function hold(channel: Channel, payload: unknown): Promise<string | null> {
   const context: RequestContext = {
     flightTripId: snapshot.flightTripId,
     flightKind: snapshot.flightKind,
+    stayKind: snapshot.stayKind,
     stayId: snapshot.stayId,
     stayTripId: snapshot.stayTripId,
   }
@@ -396,6 +404,15 @@ function Never() {
   throw new Promise(() => {})
 }
 
+function stayGraph(model: Model): Trip {
+  if (model.stayKind === 'pair') {
+    const first = stayItem('stay-a', model.stayDates)
+    const second = stayItem('stay-b', model.stayDatesB ?? { startsOn: '2026-11-06', endsOn: '2026-11-10' })
+    return { ...stayTrip(first, model.stayTripId), endDate: '2026-11-10', ohneTag: [first, second] }
+  }
+  return stayTrip(stayItem(model.stayId, model.stayDates), model.stayTripId)
+}
+
 function HarnessApp() {
   const [model, setModel] = useState(snapshot)
   useLayoutEffect(() => {
@@ -421,7 +438,7 @@ function HarnessApp() {
         />
         {model.stayVisible ? (
           <UnterkunftBestand
-            reise={stayTrip(stayItem(model.stayId, model.stayDates), model.stayTripId)}
+            reise={stayGraph(model)}
             onUnterkunftZeitraum={(itemId, startsOn, endsOn) => hold('stay', { itemId, startsOn, endsOn })}
           />
         ) : null}
@@ -481,9 +498,16 @@ window.fixture = {
         return { ...prev, flightSegments: payload.segments }
       }
       if (channel === 'stay') {
-        if (prev.stayId !== entry.context.stayId || prev.stayTripId !== entry.context.stayTripId) return prev
-        const payload = entry.payload as { startsOn: string; endsOn: string }
-        return { ...prev, stayDates: { startsOn: payload.startsOn, endsOn: payload.endsOn } }
+        if (prev.stayTripId !== entry.context.stayTripId || prev.stayKind !== entry.context.stayKind) return prev
+        const payload = entry.payload as { itemId: string; startsOn: string; endsOn: string }
+        const dates = { startsOn: payload.startsOn, endsOn: payload.endsOn }
+        if (prev.stayKind === 'pair') {
+          if (payload.itemId === 'stay-b') return { ...prev, stayDatesB: dates }
+          if (payload.itemId === 'stay-a') return { ...prev, stayDates: dates }
+          return prev
+        }
+        if (prev.stayId !== entry.context.stayId) return prev
+        return { ...prev, stayDates: dates }
       }
       return prev
     })
@@ -527,13 +551,32 @@ window.fixture = {
     }))
   },
   setStay(id: string) {
-    commit((prev) => ({ ...prev, stayId: id, stayDates: null, suspend: false }))
+    if (id === 'pair') {
+      commit((prev) => ({
+        ...prev,
+        stayKind: 'pair',
+        stayId: 'stay-a',
+        stayDates: null,
+        stayDatesB: null,
+        suspend: false,
+      }))
+      return
+    }
+    commit((prev) => ({
+      ...prev,
+      stayKind: 'single',
+      stayId: id,
+      stayDates: null,
+      stayDatesB: null,
+      suspend: false,
+    }))
   },
   setStayTrip(tripId: string) {
     commit((prev) => ({
       ...prev,
       stayTripId: tripId,
       stayDates: prev.stayTripId === tripId ? prev.stayDates : null,
+      stayDatesB: prev.stayTripId === tripId ? prev.stayDatesB : null,
       suspend: false,
     }))
   },

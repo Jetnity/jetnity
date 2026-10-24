@@ -47,6 +47,19 @@ export default function UnterkunftBestand({
     setMeldung('')
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
+  const aufenthaltBesitz = React.useRef(0)
+  const aufenthaltEditor = React.useRef('')
+  // Ein anderer manueller Zeitraum-Editor entzieht den Fokus. Dieselbe Eingabe behält ihn.
+  const editorBeruehrt = (event: React.SyntheticEvent) => {
+    const ziel = event.target
+    if (!(ziel instanceof Element)) return
+    const editor = ziel.closest('[data-aufenthalt-editor]')
+    if (!editor) return
+    const id = editor.getAttribute('data-aufenthalt-editor') ?? ''
+    if (id === aufenthaltEditor.current) return
+    aufenthaltEditor.current = id
+    aufenthaltBesitz.current += 1
+  }
 
   const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
     if (!onBuchungsstatus) return
@@ -68,6 +81,9 @@ export default function UnterkunftBestand({
       aria-busy={pendingId !== null}
       data-organisieren-flaeche="bestand"
       className={ORGANISIEREN_FLAECHE_KLASSE}
+      onClickCapture={editorBeruehrt}
+      onChangeCapture={editorBeruehrt}
+      onKeyDownCapture={editorBeruehrt}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -136,6 +152,7 @@ export default function UnterkunftBestand({
                   reiseId={reise.id}
                   item={aufenthalt.item}
                   onSpeichern={onUnterkunftZeitraum}
+                  oberflaeche={aufenthaltBesitz}
                 />
               ) : null}
             </li>
@@ -177,10 +194,12 @@ function UnterkunftZeitraum({
   item,
   reiseId,
   onSpeichern,
+  oberflaeche,
 }: {
   item: TripItem
   reiseId: string
   onSpeichern: ZeitraumSpeichern
+  oberflaeche: { readonly current: number }
 }) {
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
@@ -271,10 +290,12 @@ function UnterkunftZeitraum({
     const zielReise = reiseFest.current
     const zielItem = zielFest.current
     const generationJetzt = generationFest.current
+    const besitzBeimStart = oberflaeche.current
     const passt = () => lebendig.current && generationFest.current === generationJetzt && gleicherEditorKontext(
       { reiseId: reiseFest.current, zielId: zielFest.current },
       { reiseId: zielReise, zielId: zielItem },
     )
+    const fokusGehoert = () => oberflaeche.current === besitzBeimStart
     setValidieren(false)
     schreibt.current = true
     setLaeuft(true)
@@ -284,15 +305,17 @@ function UnterkunftZeitraum({
       if (!passt()) return
       if (ergebnis) {
         setFehler(ergebnis)
-        setFokus((bisher) => bisher + 1)
+        if (fokusGehoert()) setFokus((bisher) => bisher + 1)
       } else {
-        schliessen()
+        setOffen(false)
+        setFehler('')
+        if (fokusGehoert()) knopf.current?.focus()
         setGespeichert(true)
       }
     } catch {
       if (!passt()) return
       setFehler('Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.')
-      setFokus((bisher) => bisher + 1)
+      if (fokusGehoert()) setFokus((bisher) => bisher + 1)
     } finally {
       if (passt()) {
         schreibt.current = false
@@ -302,7 +325,7 @@ function UnterkunftZeitraum({
   }
 
   return (
-    <div className="min-w-0 border-t border-line-100 pt-3" onKeyDown={(event) => {
+    <div className="min-w-0 border-t border-line-100 pt-3" data-aufenthalt-editor={item.id} onKeyDown={(event) => {
       if (event.key !== 'Escape' || !offen) return
       event.preventDefault()
       event.stopPropagation()
