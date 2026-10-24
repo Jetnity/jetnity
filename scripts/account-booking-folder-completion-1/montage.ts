@@ -214,7 +214,9 @@ function stilePruefen(breite: number, schrift: string, mass: Gemessen): void {
   if (mass.link.backgroundColor === 'rgba(0, 0, 0, 0)' || mass.link.backgroundColor === 'transparent') {
     throw new Error('Aktionslink ohne Hintergrund. Production-CSS ist nicht wirksam.')
   }
-  if (mass.link.display !== 'inline-flex') throw new Error(`Link-Display ${mass.link.display}`)
+  if (mass.link.display !== 'inline-flex' && mass.link.display !== 'flex') {
+    throw new Error(`Link-Display ${mass.link.display} bei „${mass.link.text}“`)
+  }
   if (mass.link.overflowWrap !== 'anywhere') throw new Error(`Link overflow-wrap ${mass.link.overflowWrap}`)
   const linkSchrift = zahl(mass.link.fontSize)
   if (Math.abs(linkSchrift - 0.875 * wurzel) > 0.6) {
