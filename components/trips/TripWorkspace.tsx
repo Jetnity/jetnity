@@ -76,6 +76,10 @@ import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
 import { usePersonalPreparationLifecycle } from '@/components/trips/usePersonalPreparationLifecycle'
+import {
+  useTripTravellerSnapshotLifecycle,
+  type TripTravellerIntakeSteuerung,
+} from '@/components/trips/useTripTravellerSnapshotLifecycle'
 import type { ReadinessAktualisierung } from '@/lib/readiness/personal-preparation-workflow'
 import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
 import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
@@ -262,7 +266,7 @@ type TripWorkspaceProps = {
   }) => Promise<string | null>
   onReadinessEntfernen?: (clientRef: string) => Promise<string | null>
   onReadinessAktualisieren?: () => Promise<ReadinessAktualisierung>
-  /** Unveränderte Server-Reise. Nur die eigene Vorbereitung beobachtet sie. */
+  /** Unveränderte Server-Reise. Die eigene Vorbereitung und die Traveller-Karten beobachten sie. */
   readinessKanonischeReise?: Trip
   onTravellerSetzen?: (eingabe: {
     clientRef: string
@@ -280,6 +284,8 @@ type TripWorkspaceProps = {
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
   officialPilot?: React.ReactNode
   registryUebernahme?: React.ReactNode
+  registrySteuerung?: (steuerung: TripTravellerIntakeSteuerung) => React.ReactNode
+  onGuestGraphUebernehmen?: (reise: Trip) => void
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
   seasonalEvaluations?: SeasonalEvaluation[]
@@ -357,6 +363,8 @@ export default function TripWorkspace({
   onTravellerSetzen,
   onTravellerEntfernen,
   registryUebernahme,
+  registrySteuerung,
+  onGuestGraphUebernehmen,
   officialPilot,
   officialEvaluations,
   safetyEvaluations,
@@ -378,6 +386,24 @@ export default function TripWorkspace({
     onEntfernen: onReadinessEntfernen,
     onAktualisieren: onReadinessAktualisieren,
   })
+  const travellerSteuerung = useTripTravellerSnapshotLifecycle({
+    tripId: reise.id,
+    reise,
+    kanonisch: readinessKanonischeReise,
+    seam: quelle === 'account' ? 'account' : 'guest',
+    onSetzen: onTravellerSetzen,
+    onEntfernen: onTravellerEntfernen,
+    onAktualisieren: onReadinessAktualisieren,
+    onGuestGraphUebernehmen,
+  })
+  const registryKnoten = registrySteuerung
+    ? registrySteuerung(travellerSteuerung.intake)
+    : React.isValidElement(registryUebernahme)
+      ? React.cloneElement(registryUebernahme as React.ReactElement<{ steuerung?: TripTravellerIntakeSteuerung; tripId?: string }>, {
+          steuerung: travellerSteuerung.intake,
+          tripId: reise.id,
+        })
+      : registryUebernahme
 
   const [modus, setModus] = React.useState<WorkspaceModus>(() => modusAusAnfangsBereich(anfangsBereich))
   const [modusBereit, setModusBereit] = React.useState(false)
@@ -699,7 +725,8 @@ export default function TripWorkspace({
       onEntfernen={onReadinessEntfernen}
       onTravellerSetzen={onTravellerSetzen}
       onTravellerEntfernen={onTravellerEntfernen}
-      registryUebernahme={registryUebernahme}
+      travellerSteuerung={travellerSteuerung}
+      registryUebernahme={registryKnoten}
       officialPilot={officialPilot}
       offeneBereiche={offeneBereiche}
       onBereichOffen={bereichOffenSetzen}
