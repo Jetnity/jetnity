@@ -30,6 +30,8 @@ This is the PLAN-only gate. It is not implementation, not proof, and not a Techn
 
 No Auto fallback was used. This session does not Ready, merge, close #1006, write `main`, or start a follow-up.
 
+PLAN review V1 on head `68165b15a0caf9aa822dbbf295851633edb86672`, PLAN blob `9e84bddb17423ba1049bd5475f38e98dd655b215`, required three plan corrections. This revision applies T-PLAN-01, T-PLAN-02, and T-PLAN-03 in this file. The TASK blob stays `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`. Implementation remains unauthorized.
+
 ## 1. Source-confirmed gap
 
 The personal area already exists. It is not a second product. `preparationPersoenlichAufteilen` puts `kind === 'preparation'` into `eigene` and leaves ticket and other kinds in their own lists (`lib/readiness/preparation-premium-experience-5.ts`). `Reisevorbereitung` renders that list through the shared `Vorbereitungspunkt` and a create form (`components/trips/Reisevorbereitung.tsx`).
@@ -82,7 +84,7 @@ type ReadinessAktualisierung =
   | { art: 'wrong_trip' }
 ```
 
-Account returns `{ art: 'props' }` after `router.refresh()`. That resolution is not confirmation. Guest returns the accessor result and calls `setReise` only for `success`. Every other guest result leaves the current trip state untouched.
+Account returns `{ art: 'props' }` after `router.refresh()`. That return increments no observation generation and confirms nothing. Guest returns the accessor result and calls `setReise` only for `success` of the expected trip. `missing`, `invalid`, `unreadable`, and `wrong_trip` leave the current trip state and the draft untouched, and they enable no readiness writer.
 
 ## 3. Guest read accessor
 
@@ -113,7 +115,7 @@ Each intent stores `tripId`, `clientRef`, operation (`create`, `edit`, `status`,
 
 - The first deliberate submit of a composer generation allocates one `clientRef` with the existing `readinessClientRefErzeugen('preparation')` and stores it before the first `await`.
 - The lock is a `Set` in a ref. It is updated synchronously before any `await`. A second submit of that same intent in the same turn does not call the writer again.
-- The same unresolved intent, submitted again without a new composer generation, reuses the ref. That is the conscious retry. It is never automatic.
+- The same unresolved intent reuses its `clientRef` when a conscious retry is actually enabled. It is never automatic. On the guest seam a failed read keeps that retry disabled, as specified under guest read lock.
 - An edit of the field after a capture bumps the composer generation. The next submit is a new deliberate create and gets a new ref, including when the text is identical. This keeps the existing identity-test pairs: two typed submits produce two refs and two account rows.
 - Edit, status, and delete address `clientRef` only. The visible title is a label, not a key. Equal titles are two rows.
 
@@ -127,19 +129,43 @@ The UI does not grow a second business rule. The create and edit fields keep `ma
 
 ### Stale title edit
 
-Opening the title editor captures the row. If `currentness === 'stale'` and the stored status is `done` or `skipped`, the editor preselects `open` and shows:
+The editor reads currentness and context from the latest personal view item produced by the existing `readinessAnsicht`. That function already derives `currentness` through the existing fingerprint comparison. The workflow module stores no fingerprint and computes none. The readiness builder remains the only fingerprint writer.
+
+Opening a row whose latest `currentness` is `stale` and whose stored status is `done` or `skipped` preselects `open` and shows:
 
 "Dieser Stand ist erneut zu prüfen. Die bisherige Markierung Erledigt oder Nicht relevant gilt nicht mehr als aktuell. Offen ist vorausgewählt. Erledigt oder Nicht relevant werden nur gespeichert, wenn du sie in dieser Bearbeitung neu auswählst."
 
-Saving sends the status selected in the editor, not the stored status. A current row preselects its real status. The existing Offen / Erledigt / Nicht relevant buttons stay explicit clicks for a conscious status change; they are not the title-save path. No fingerprint is copied, forged, or sent. The existing builder remains the only fingerprint writer. Personal done does not write Official truth.
+The same reset runs while the editor is already open. Before every dispatch, and whenever the latest canonical view for that `clientRef` changes, the editor compares a context mark `(currentness, countryCode, tripItemId, travellerClientRef)` with the mark for which Done or Nicht relevant was last chosen. A current done or skipped row that becomes stale, and any further change of that mark after a status selection, invalidates the previous selection. The visible selection returns to Offen. Done and Nicht relevant can be sent only after a new deliberate selection made for that latest mark. The save payload takes `countryCode` and `tripItemId` from that latest view item. It does not resend the associations captured when the editor opened. `travellerClientRef` continues to survive through the existing builder fallback; the editor still tracks the latest value in the mark so a later change invalidates the status selection.
+
+A current row whose mark is unchanged keeps the status it already shows. The existing Offen / Erledigt / Nicht relevant buttons remain explicit clicks outside this editor. Personal done writes no Official truth.
+
+A title or status save is shown as confirming the recheck only when the canonical view matches the expected ref, normalized title, status, and latest associations, and the existing derived `currentness` is `current`. A canonical point that still derives `stale` stays unconfirmed and explained, including when its title and status already match the payload. The workflow does not treat that field match as a completed recheck.
 
 ### Transport versus observation
 
-`null` from the writer means the action was accepted. It does not confirm the row. Confirmation for create, edit, and status is a later observation whose canonical item has the same `clientRef`, kind `preparation`, the submitted status, the normalized title, and the same country code, trip item, and traveller ref. Delete is confirmed only by observed absence after an accepted delete. A rejected promise, a lost response, or an unclear result keeps the intent and the draft. The next step is one read, never another write, until the user deliberately retries. That retry reuses the ref and says that the earlier attempt may already have landed.
+`null` from the writer means the action was accepted. Acceptance and confirmation are separate. A still-pending promise confirms nothing, including when a matching canonical snapshot is already present. Delete is confirmed only by observed absence on a qualifying observation after an accepted delete.
 
-A matching read after an unclear result is shown as the current state agreeing with the input. The copy does not call that causal proof. A conflicting read keeps the newer draft and explains the conflict. It does not write the old payload back. Absence after an unclear result does not prove the original write can no longer land, and it does not by itself prove a delete.
+Each intent records `dispatchLieferung`, the canonical delivery generation at the moment the writer is called, and `responseLieferung`, filled when the promise settles. Confirmation of an accepted account action requires a delivery generation strictly greater than both of those values, plus a matching canonical item. The snapshot current at dispatch, a snapshot that arrives while the promise is pending, and a snapshot that arrived before acceptance do not become the certificate after the response. If acceptance is followed only by that older generation, the intent stays `awaiting_readback`.
 
-Account confirmation watches a `reise` render newer than the dispatch. `router.refresh()` finishing, including the refresh already inside the account writer, is not enough. Guest confirmation uses only `aktiveV3GastreiseLesen`. The trip object returned by `gastReadinessSetzen` is the write echo and does not confirm the row. Guest read failures (`missing`, `invalid`, `unreadable`, `wrong_trip`) keep the current graph and draft, show the specific failure, and leave retry disabled until that message is rendered. The user may then retry deliberately.
+#### Canonical delivery generation
+
+`KontoArbeitsbereich` owns a monotonic `kanonischeLieferung`. It increments only when the server `reise` prop entering that client boundary is a different snapshot from the last one applied there. The same prop reference rendered again, a personal-ledger update, a filter change, an editor update, and the resolution of `router.refresh()` leave the generation unchanged. `{ art: 'props' }` records that a refresh was requested. It is not a delivery and not a certificate. The refresh already inside the account writer is the same kind of request.
+
+The hook passes that generation through with the server snapshot. Guest confirmation does not use it.
+
+For an accepted account result, the qualifying snapshot shows the same `clientRef`, kind `preparation`, submitted status, normalized title, and the latest country code, trip item, and traveller association. A recheck save also needs the existing derived `currentness` to be `current`. A repeated render of the same snapshot, or a pre-existing row that already matched at `dispatchLieferung`, does not confirm.
+
+A rejected promise, a lost response, or any other unclear result keeps the intent and the draft. The following read is reconciliation. A match is described as the current state agreeing with the input, and the copy says that this does not prove which attempt wrote it. A conflict keeps the newer draft and does not write the old payload back. Absence does not prove the original write can no longer land, and it does not by itself prove a delete. A later conscious retry, once enabled, reuses the same ref and says that the earlier attempt may already have landed.
+
+#### Guest confirmation and read lock
+
+Guest confirmation is one successful `aktiveV3GastreiseLesen` result for the expected `tripId`, started after the writer promise has settled accepted, whose returned trip meets the same item and currentness rules. The object returned by `gastReadinessSetzen` is the write echo. A local `setReise` of that echo, and an accessor read that finished before acceptance, do not confirm the row.
+
+`missing`, `invalid` (`json` or `graph`), `unreadable`, and `wrong_trip` move the unresolved intent to `readback_blocked`. The draft and the in-memory graph stay. Storage bytes stay as they were: the accessor performs no write, `setReise` is not called, and no foreign trip is copied into React state. Rendering or acknowledging the failure does not enable a writer.
+
+While that intent is `readback_blocked`, this lane calls no readiness writer for that `tripId`. Create, edit, status, delete, and retry stay disabled. The existing guest writer saves a whole trip and has no compare-and-swap, so a retry that sent the in-memory graph while the active key held another trip could replace that other trip. The enabled actions are another "Stand neu lesen" and local abandonment or existing navigation. Abandonment drops the in-memory intent and calls no writer. The typed draft remains available locally. Navigation uses the existing workspace behavior and calls no readiness writer.
+
+A later accessor result of `success` for the expected trip replaces the blocked state with an explicit reading of that trip. The user can then make a conscious decision. Matching fields are agreement with the input, not proof the blocked attempt failed to run or proof that it caused the match. Absence or a conflict is not proof the attempt is still outstanding and not proof it can no longer land. The copy states that uncertainty. A retry chosen from that successful read reuses the same `clientRef` and passes the trip from that successful read into the existing writer. The cross-tab whole-trip race remains a real residual after that point, because the writer still has no compare-and-swap.
 
 Late success or failure of intent A does not clear, focus, or announce into draft B, a newer editor generation, another filter, a collapsed section, a hidden preparation mode, or another `tripId`. Updated props, a removed point, a filter change, closing the editor, and a trip switch are explicit boundaries. If `TripWorkspace` is still mounted and `reise.id` changes, old intents cannot affect the new trip. If the parent unmounts the workspace, the in-memory ledger ends with it.
 
@@ -159,7 +185,7 @@ Focus only a connected, visible element that still belongs to the active request
 - A confirmed status that no longer matches the active filter removes that row from the filter. Until confirmation, the pending row stays visible where the user acted.
 - Create stays "Punkt hinzufügen". Title edit is "Titel bearbeiten" and "Speichern".
 - Delete asks "Diesen Punkt entfernen: {title}?" and then "Endgültig entfernen" or "Abbrechen". The command carries `clientRef`. When another row has the same title, the question also includes the row's current status text so the name is not ambiguous. That text is not the identity.
-- Inline states, in the create or row region: pending, accepted but not reread, conflict, unclear result, and blocked read. The refresh control is "Stand neu lesen".
+- Inline states, in the create or row region: pending, accepted but not reread, conflict, unclear result, and blocked read. The refresh control is "Stand neu lesen". A blocked guest read keeps the retry and save controls disabled and offers "Versuch lokal verwerfen", which drops the intent locally and writes nothing.
 - Long titles wrap. They are not truncated below an accessible name.
 
 ## 6. Acceptance and proof matrix
@@ -168,13 +194,21 @@ Synthetic local proof only. It is not hosted Account, Next router, Supabase, RLS
 
 | Case | Where it is proved |
 | --- | --- |
-| Create, then canonical item, title edit, explicit status, named delete, then observed absence | Mounted guest seam through `gastReadinessSetzen` / `gastReadinessEntfernen` and `aktiveV3GastreiseLesen`. Account seam with a deferred writer and a controlled later `reise` prop |
+| Create, then canonical item, title edit, explicit status, named delete, then observed absence | Mounted guest seam through `gastReadinessSetzen` / `gastReadinessEntfernen` and a post-acceptance `aktiveV3GastreiseLesen` success. Account seam with a deferred writer and a later server snapshot that increments `kanonischeLieferung` |
 | Two equal titles, two refs; double activation does not double-dispatch; conscious retry keeps the ref; unclear transport is not auto-resent | Workflow tests plus the mounted submit path |
 | A pending while B changes; late A does not clear or focus B | Mounted workspace ledger |
 | Preparation mode away and back keeps pending / unknown | Mounted `TripWorkspace`, using the existing mode navigation, while a deferred writer is unresolved |
 | Trip switch and a rejected promise | Ledger ignores the old trip and does not write again after rejection |
+| Repeated renders and the same account props; desired values already present at dispatch; a matching snapshot arriving before the response; acceptance followed only by the old generation | Account observation tests. None of these confirm. `router.refresh()` resolving increments no generation |
+| Accepted account response, then a new server snapshot that matches, including `currentness: current` for a recheck save | Account observation test, and this is the confirming case |
+| Guest write echo, and an accessor success that finished before acceptance | Guest observation tests. Neither confirms. Confirmation is a post-acceptance accessor success for the expected trip |
 | Failed, stale, and conflicting readback | Readback tests. Refresh itself performs zero writes |
-| Stale done/skipped title edit saves `open` unless the editor selection changed; personal done leaves Official unknown | Workflow decision plus mounted Official section unchanged |
+| Mounted `wrong_trip` and mounted storage-unreadable | The retry, save, and delete controls stay disabled after the message is shown. No readiness writer runs. Foreign active bytes and unreadable bytes are unchanged. The draft remains |
+| Successful expected-trip read after a block, with absence or a conflict | The conscious decision states the uncertainty, keeps the same ref, and still does not call the earlier attempt non-execution |
+| Stale done/skipped title edit saves `open` unless a later deliberate selection was made for the latest context mark | Workflow decision plus mounted editor |
+| Current done/skipped becomes stale while the editor is open; a further context-mark change after Done or Nicht relevant was selected | Mounted editor. The visible selection returns to Offen. The captured old status is not dispatched |
+| Readback whose title and status match while the existing derived `currentness` is still `stale` | The recheck stays unconfirmed |
+| Personal done leaves Official unknown | Mounted Official section unchanged |
 | Existing context and null create context | Payload assertions against the real writers |
 | 80 and 81 characters, empty, whitespace, sensitive, link, HTML, 50 total including other kinds, edit at the limit | Existing identity assertions, still executed, plus the real schema and writers |
 | 0, 1, and 50 own points; every filter; search; no match; long and equal titles; status leaving the filter; delete of the last visible row | Mounted personal component |
@@ -213,4 +247,4 @@ A changed head invalidates this plan gate. Corrections before implementation sta
 
 ## 9. Stop
 
-The git delta at this gate is the immutable TASK plus this PLAN. No product or test implementation is included. The next actor is the Technical Lead for an independent exact-head plan review.
+The git delta at this gate is the immutable TASK plus this revised PLAN. No product, test, status, report, or handoff file is included. T-PLAN-01, T-PLAN-02, and T-PLAN-03 are incorporated above. The next actor is the Technical Lead for a full fresh-head plan re-review. Implementation stays unauthorized.
