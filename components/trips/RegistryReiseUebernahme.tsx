@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { AlertCircle, Users } from 'lucide-react'
-import { useState, useTransition } from 'react'
+import { useLayoutEffect, useState, useTransition } from 'react'
 
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import { landAnzeigeText } from '@/lib/country/darstellung'
@@ -12,6 +12,7 @@ import {
   type RegistryTripAnzeige,
 } from '@/lib/traveller/account-registry-trip'
 import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
+import type { TripTravellerIntakeSteuerung } from '@/components/trips/useTripTravellerSnapshotLifecycle'
 
 type Status = { art: 'erfolg' | 'fehler'; text: string } | null
 
@@ -21,16 +22,18 @@ const hauptAktion =
 const nebenAktion =
   'flex min-h-[44px] w-full max-w-full min-w-0 items-center justify-center break-words rounded-full border border-line-200 bg-white px-[16px] text-center text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60'
 
-export default function RegistryReiseUebernahme({
+function EigeneUebernahme({
   problem,
   travellers,
   voll,
+  tripId = '',
   onUebernehmen,
 }: {
   problem: Problem | null
   travellers: RegistryTripAnzeige[] | null
   voll: boolean
-  onUebernehmen: (registryTravellerId: string) => Promise<string | null>
+  tripId?: string
+  onUebernehmen: (paar: { tripId: string; registryTravellerId: string }) => Promise<string | null>
 }) {
   const [pending, startTransition] = useTransition()
   const [status, setStatus] = useState<Status>(null)
@@ -39,7 +42,7 @@ export default function RegistryReiseUebernahme({
   function uebernehmen(registryTravellerId: string) {
     startTransition(async () => {
       setStatus(null)
-      const fehler = await onUebernehmen(registryTravellerId)
+      const fehler = await onUebernehmen({ tripId, registryTravellerId })
       if (fehler) {
         setStatus({ art: 'fehler', text: fehler })
         return
@@ -197,4 +200,137 @@ export default function RegistryReiseUebernahme({
       )}
     </section>
   )
+}
+
+function GesteuerteUebernahme({
+  problem,
+  travellers,
+  voll,
+  onUebernehmen,
+  steuerung,
+}: {
+  problem: Problem | null
+  travellers: RegistryTripAnzeige[] | null
+  voll: boolean
+  onUebernehmen: (paar: { tripId: string; registryTravellerId: string }) => Promise<string | null>
+  steuerung: TripTravellerIntakeSteuerung
+}) {
+  useLayoutEffect(() => {
+    steuerung.writerRegistrieren(onUebernehmen)
+  }, [onUebernehmen, steuerung])
+  const ersteWarnung = travellers?.some((traveller) => steuerung.zustand(traveller.id).warnung) ?? false
+  return (
+    <section aria-labelledby="registry-reise-uebernahme-titel" className="w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-25 px-[12px] py-3">
+      <h5 id="registry-reise-uebernahme-titel" className="text-sm font-semibold text-brand-800">
+        {REGISTRY_TRIP_COPY.titel}
+      </h5>
+      <p className="mt-1 text-xs leading-5 text-ink-800">{REGISTRY_TRIP_COPY.hinweis}</p>
+      {ersteWarnung ? <p role="status" className="mt-3 text-sm text-ink-800">{REGISTRY_TRIP_COPY.erneut}</p> : null}
+      {travellers?.map((traveller) => {
+        const zustand = steuerung.zustand(traveller.id)
+        if (zustand.phase === 'idle' && !zustand.satz) return null
+        return (
+          <p key={traveller.id} role={zustand.phase === 'unproven' ? 'alert' : 'status'} className="mt-3 text-sm text-ink-800">
+            {zustand.phase === 'accepted' ? REGISTRY_TRIP_COPY.erfolg : zustand.satz || (zustand.phase === 'unproven' ? REGISTRY_TRIP_COPY.unbekannt : '')}
+            {zustand.phase === 'accepted' && zustand.satz === 'unklar' ? ` ${REGISTRY_TRIP_COPY.refreshUnklar}` : ''}
+            {zustand.phase === 'accepted' && zustand.satz !== 'unklar' ? ` ${REGISTRY_TRIP_COPY.warten}` : ''}
+          </p>
+        )
+      })}
+      {steuerung.pending ? <p role="status" className="mt-3 text-sm text-ink-800">{REGISTRY_TRIP_COPY.pending}</p> : null}
+      {voll ? <p role="status" className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-ink-800">{REGISTRY_TRIP_COPY.limit}</p> : null}
+      {problem ? (
+        <div role="alert" className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-3">
+          <p className="text-sm font-semibold text-red-800">{REGISTRY_TRIP_COPY.fehlerTitel}</p>
+          <p className="mt-1 text-xs leading-5 text-red-800">{problem.status === 503 ? REGISTRY_TRIP_COPY.fehler503 : REGISTRY_TRIP_COPY.fehler500}</p>
+        </div>
+      ) : travellers && travellers.length === 0 ? (
+        <div role="status" className="mt-3 rounded-xl bg-white px-3 py-3">
+          <p className="text-sm font-semibold text-brand-800">{REGISTRY_TRIP_COPY.leerTitel}</p>
+          <p className="mt-1 text-xs leading-5 text-ink-800">{REGISTRY_TRIP_COPY.leerText}</p>
+          <Link href="/account/travellers" className="mt-2 flex min-h-[44px] items-center text-sm font-semibold text-brand-800">{REGISTRY_TRIP_COPY.leerLink}</Link>
+        </div>
+      ) : travellers == null ? (
+        <div role="alert" className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-3">
+          <p className="text-sm font-semibold text-red-800">{REGISTRY_TRIP_COPY.fehlerTitel}</p>
+          <p className="mt-1 text-xs leading-5 text-red-800">{REGISTRY_TRIP_COPY.fehler500}</p>
+        </div>
+      ) : (
+        <ul className="mt-3 grid gap-2">
+          {travellers.map((traveller) => {
+            const zustand = steuerung.zustand(traveller.id)
+            const bestaetigt = zustand.phase === 'confirm'
+            return (
+              <li key={traveller.id} className="grid w-full min-w-0 grid-cols-1 gap-2 rounded-xl border border-line-200 bg-white px-[12px] py-2">
+                <p className="break-words text-sm font-semibold text-brand-800">{registryTripAnzeigeName(traveller.label)}</p>
+                <dl className="mt-1 grid gap-0.5 text-xs leading-5 text-ink-800">
+                  <div className="min-w-0 break-words">
+                    {traveller.residenceCountryCode ? (
+                      <>
+                        <dt className="inline font-medium">{REGISTRY_TRIP_COPY.wohnsitz}: </dt>
+                        <dd className="inline">{landAnzeigeText(traveller.residenceCountryCode)}</dd>
+                      </>
+                    ) : (
+                      <dd>{REGISTRY_TRIP_COPY.wohnsitzLeer}</dd>
+                    )}
+                  </div>
+                  <div className="min-w-0 break-words">
+                    <dt className="inline font-medium">{REGISTRY_TRIP_COPY.staatsbuergerschaften}: </dt>
+                    <dd className="inline">
+                      {traveller.citizenshipCountryCodes.length === 0
+                        ? 'keine hinterlegt'
+                        : traveller.citizenshipCountryCodes.map((code) => landAnzeigeText(code)).join(', ')}
+                    </dd>
+                  </div>
+                  <div className="min-w-0 break-words">
+                    <dt className="inline font-medium">{REGISTRY_TRIP_COPY.dokumente}: </dt>
+                    <dd className="inline">
+                      {traveller.documents.length === 0
+                        ? 'keine hinterlegt'
+                        : traveller.documents
+                            .map(
+                              (dokument) =>
+                                `${REGISTRY_DOKUMENT_TYP_LABEL[dokument.documentType]}${
+                                  dokument.issuingCountryCode ? ` · ${landAnzeigeText(dokument.issuingCountryCode)}` : ''
+                                }`,
+                            )
+                            .join('; ')}
+                    </dd>
+                  </div>
+                </dl>
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2">
+                  {bestaetigt ? (
+                    <>
+                      <button type="button" className={hauptAktion} disabled={steuerung.pending || voll} onClick={() => steuerung.bestaetigen(traveller.id)}>
+                        {REGISTRY_TRIP_COPY.bestaetigen}
+                      </button>
+                      <button type="button" className={nebenAktion} disabled={steuerung.pending} onClick={() => steuerung.abbrechen(traveller.id)}>
+                        {REGISTRY_TRIP_COPY.abbrechen}
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" className={nebenAktion} disabled={steuerung.pending || voll} onClick={() => steuerung.anfordern(traveller.id)}>
+                      {REGISTRY_TRIP_COPY.aktion}
+                    </button>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+export default function RegistryReiseUebernahme(props: {
+  problem: Problem | null
+  travellers: RegistryTripAnzeige[] | null
+  voll: boolean
+  tripId?: string
+  onUebernehmen: (paar: { tripId: string; registryTravellerId: string }) => Promise<string | null>
+  steuerung?: TripTravellerIntakeSteuerung
+}) {
+  if (props.steuerung) return <GesteuerteUebernahme {...props} steuerung={props.steuerung} />
+  return <EigeneUebernahme {...props} />
 }

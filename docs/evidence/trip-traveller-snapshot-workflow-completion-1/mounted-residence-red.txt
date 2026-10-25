@@ -1,0 +1,57 @@
+R107-T mounted residence-only UUID regression, RED, original editor bytes.
+
+command: node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts
+node: v22.23.4
+RED head: 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec
+RED tree: 8eb51910883d3b1a77ae5b6c11bb30a297c67881
+exit: 1
+
+The mounted TripWorkspace card was opened, only Wohnsitzland was changed to IT, and Angaben speichern was submitted with Enter. The assertion required citizenship clientRef a1111111-1111-4111-8111-111111111111 and the same passport relation. The original editor submitted citizenship:CH and citizenshipClientRef null.
+
+TAP version 13
+# Subtest: mounted TripWorkspace traveller residence-only identity
+    # Subtest: a residence-only save keeps the loaded citizenship UUID and its passport relation
+    not ok 1 - a residence-only save keeps the loaded citizenship UUID and its passport relation
+      ---
+      duration_ms: 429.439312
+      type: 'test'
+      location: '/workspace/scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts:2:5083'
+      failureType: 'testCodeFailure'
+      error: |-
+        {"clientRef":"traveller:1","label":"Reisende 1","residenceCountryCode":"IT","citizenships":[{"clientRef":"citizenship:CH","countryCode":"CH"}],"documents":[{"clientRef":"document:pass-1","documentType":"passport","issuingCountryCode":"CH","expiresOn":"2030-01-01","citizenshipClientRef":null}]}
+        + actual - expected
+        
+        + 'citizenship:CH'
+        - 'a1111111-1111-4111-8111-111111111111'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'a1111111-1111-4111-8111-111111111111'
+      actual: 'citizenship:CH'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts:154:14)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..1
+not ok 1 - mounted TripWorkspace traveller residence-only identity
+  ---
+  duration_ms: 635.012205
+  type: 'suite'
+  location: '/workspace/scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts:2:4744'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 1
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1031.62411

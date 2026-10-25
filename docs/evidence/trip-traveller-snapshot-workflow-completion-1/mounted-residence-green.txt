@@ -1,0 +1,36 @@
+R107-T mounted residence-only UUID regression, GREEN, after the editor and serializer fix.
+
+command: node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts
+node: v22.23.4
+playwright: 1.55.0
+fix head: 27102ebae649ceaaab5866a0df6db84f570c507a
+fix tree: e1d4076ff36498267e07bf2ea6578d1b8069c495
+exit: 0
+
+The same mounted TripWorkspace interaction as the RED run opened the real card, changed only Wohnsitzland to IT, and submitted Angaben speichern with Enter. The submitted payload kept citizenship clientRef a1111111-1111-4111-8111-111111111111 and the passport relation to that ref. The assertion was not weakened.
+
+TAP version 13
+# Subtest: mounted TripWorkspace traveller residence-only identity
+    # Subtest: a residence-only save keeps the loaded citizenship UUID and its passport relation
+    ok 1 - a residence-only save keeps the loaded citizenship UUID and its passport relation
+      ---
+      duration_ms: 471.903243
+      type: 'test'
+      ...
+    1..1
+ok 1 - mounted TripWorkspace traveller residence-only identity
+  ---
+  duration_ms: 679.453443
+  type: 'suite'
+  ...
+1..1
+# tests 1
+# suites 1
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1078.105949
+
+RED evidence for the original editor remains in mounted-residence-red.txt and names head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec.

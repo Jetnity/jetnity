@@ -224,13 +224,16 @@ describe('Request-API-Flächen bleiben produktwahr', () => {
     assert.match(datei, /Kein Zugriff/)
   })
 
-  test('Admin Users q/page bleiben nach Await dieselben Pagination-Werte', () => {
+  test('Admin Users q/page bleiben nach Await validiert, bevor die Abfrage läuft', () => {
     const datei = quelle('app/(admin)/admin/users/page.tsx')
     assert.match(datei, /const params = await leseOptionalRequestParam\(searchParams\)/)
-    assert.match(datei, /const q = \(params\?\.q \?\? ''\)\.trim\(\)/)
-    assert.match(datei, /const page = Math\.max\(1, Number\(params\?\.page \?\? 1\)\)/)
     assert.match(datei, /PAGE_SIZE = 20/)
     assert.match(datei, /\(await createServerComponentClient\(\)\) as any/)
+    const entscheidung = datei.indexOf('readUsersDirectory({')
+    const client = datei.indexOf('(await createServerComponentClient())')
+    assert.ok(entscheidung >= 0 && client > entscheidung)
+    assert.equal(/const q = \(params\?\.q \?\? ''\)\.trim\(\)/.test(datei), false)
+    assert.equal(/Math\.max\(1,\s*Number\(params\?\.page/.test(datei), false)
   })
 
   test('Request-URL-searchParams in Route Handlern bleiben unangetastet', () => {
