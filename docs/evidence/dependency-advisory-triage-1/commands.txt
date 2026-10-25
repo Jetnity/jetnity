@@ -79,3 +79,43 @@ stderr: empty
 stdout: EVIDENCE_VALID rows=42
 input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
 input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+CORRECTION_RERUN candidate review R2. No npm audit, no npm view, and no new advisory fetch.
+
+MATRIX_RERUN_R2
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 docs/evidence/dependency-advisory-triage-1/triage-matrix.json
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+FIXTURE_RERUN_R2
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+The fixture child calls validate-evidence.mjs with --during-fixture.
+exit: 0
+stderr: empty
+stdout:
+PASS directive after comment
+PASS directive without comment
+PASS directive not after code
+PASS clean evidence passes
+PASS empty rows fail
+PASS false version join fails
+PASS missing U floor fails
+PASS unsupported npm-view claim fails
+PASS missing expected row fails
+PASS raw lock version disagreement fails
+PASS deleted required fields fail
+PASS wrong-major retained candidate fails
+PASS deleted omit-dev rows fail
+FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED_R2
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+node: v22.23.4
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de

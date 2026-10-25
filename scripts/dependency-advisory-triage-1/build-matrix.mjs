@@ -123,6 +123,9 @@ for (const [packageName, vuln] of Object.entries(audit.vulnerabilities)) {
       candidates.sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority))
       const deciding = candidates[0]
       const primaryConfirmed = patched ? receiptFor(entry.canonicalName, patched) : null
+      const candidateDecision = chosen
+        ? matchingNpmRanges(chosen, payload.vulnerabilities, entry.canonicalName)
+        : null
       let fixText = patched
         ? (primaryConfirmed
           ? `Primary first patched version ${patched} has a retained npm-view receipt.`
@@ -168,9 +171,12 @@ for (const [packageName, vuln] of Object.entries(audit.vulnerabilities)) {
         proposedGroup: groupFor(entry.canonicalName, lockPath),
         laterFiles: entry.canonicalName === 'zod' ? ['package.json', 'package-lock.json'] : ['package-lock.json'],
         rangeState: 'RANGE_DECIDED',
-        retrievedAt: payload.published_at || null,
         primaryPublished: payload.published_at || null,
         primaryUpdated: payload.updated_at || null,
+        retrievedAt: null,
+        acquisitionState: 'UNAVAILABLE',
+        candidateMajorStatus: chosen ? 'same-major-as-primary-patch' : null,
+        candidateRangeState: candidateDecision ? candidateDecision.state : null,
         groupActivated: false,
       })
     }
@@ -182,8 +188,12 @@ const counts = {}
 for (const row of rows) counts[row.jetnityPriority] = (counts[row.jetnityPriority] || 0) + 1
 writeFileSync(outputPath, `${JSON.stringify({
   role: 'triage-matrix',
-  supersedesHead: '01f4f2b97b614c3b16048fa8585e1e635c93286f',
+  supersedesHead: 'b905f89eafa0a2c614ca125316497716db27eb91',
   impactPolicy: 'partial; vulnerable call NOT_ASSESSED; deployment unknown applies the U floor',
+  acquisition: {
+    state: 'UNAVAILABLE',
+    note: 'Retained GHSA payloads have published_at and updated_at. commands.txt records that each curl exited 0 and does not record a per-advisory acquisition time. Publication time is not retrieval time.',
+  },
   priorityCounts: counts,
   rows,
 }, null, 2)}\n`)

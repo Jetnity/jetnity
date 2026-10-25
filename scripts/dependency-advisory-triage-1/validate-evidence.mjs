@@ -60,6 +60,36 @@ for (const expected of [
 }
 const byPath = new Map(inventory.entries.map((entry) => [entry.path, entry]))
 
+const rawLock = JSON.parse(lockBytes.toString('utf8'))
+const fromLock = new Map()
+for (const [lockPath, entry] of Object.entries(rawLock.packages || {})) {
+  if (!lockPath) continue
+  const pathSuffix = lockPath.split('node_modules/').pop()
+  const canonicalName = entry.name || pathSuffix
+  fromLock.set(lockPath, {
+    path: lockPath,
+    pathSuffix,
+    canonicalName,
+    version: entry.version ?? null,
+    alias: pathSuffix !== canonicalName,
+  })
+}
+if (fromLock.size !== 611) fail(`raw lock entry count ${fromLock.size}`)
+const lockSuffixes = new Set([...fromLock.values()].map((entry) => entry.pathSuffix))
+const lockNames = new Set([...fromLock.values()].map((entry) => entry.canonicalName))
+if (lockSuffixes.size !== 565) fail(`raw lock path suffix count ${lockSuffixes.size}`)
+if (lockNames.size !== 562) fail(`raw lock canonical name count ${lockNames.size}`)
+if (inventory.entries.length !== fromLock.size) fail('inventory entry count disagrees with raw lock')
+for (const [lockPath, locked] of fromLock) {
+  const recorded = byPath.get(lockPath)
+  if (!recorded || recorded.canonicalName !== locked.canonicalName || recorded.version !== locked.version || recorded.pathSuffix !== locked.pathSuffix || Boolean(recorded.alias) !== locked.alias) {
+    fail(`inventory disagrees with raw lock ${lockPath}`)
+  }
+}
+const lockAliases = [...fromLock.values()].filter((entry) => entry.alias).map((entry) => entry.path).sort()
+const recordedAliases = (inventory.aliases || []).map((alias) => alias.path).sort()
+if (lockAliases.join() !== recordedAliases.join()) fail('alias set disagrees with raw lock')
+
 const commands = readFileSync(join(evidence, 'commands.txt'), 'utf8')
 const full = commands.split('OMIT_DEV_LOCK_GRAPH')[0]
 const omit = commands.split('OMIT_DEV_LOCK_GRAPH')[1] || ''
@@ -146,6 +176,20 @@ for (const row of rows || []) {
     const patched = want.decision.matches.map((match) => match.first_patched_version).filter(Boolean).sort(compareVersions).at(-1) || null
     if (row.primaryFirstPatched !== patched) fail(`primary patch ${key}`)
   }
+  const locked = fromLock.get(row.lockPath)
+  if (!locked || row.name !== locked.canonicalName || row.version !== locked.version) fail(`row disagrees with raw lock ${key}`)
+  if (!Object.hasOwn(row, 'retrievedAt') || !Object.hasOwn(row, 'impact') || !Object.hasOwn(row, 'uncertainty') || !Object.hasOwn(row, 'parentChain')) {
+    fail(`required field missing ${key}`)
+  }
+  if (!['concrete', 'partial', 'absent'].includes(row.impact)) fail(`impact ${key}`)
+  if (typeof row.uncertainty !== 'string' || row.uncertainty.trim() === '') fail(`uncertainty ${key}`)
+  if (typeof row.parentChain !== 'string' || row.parentChain.trim() === '') fail(`parent chain ${key}`)
+  if (row.acquisitionState === 'UNAVAILABLE') {
+    if (row.retrievedAt !== null) fail(`unavailable acquisition carries a time ${key}`)
+  } else if (row.acquisitionState === 'RETAINED') {
+    fail(`no retained per-advisory acquisition receipt ${key}`)
+  } else fail(`acquisition state ${key}`)
+  if (row.retrievedAt && row.primaryPublished && row.retrievedAt === row.primaryPublished) fail(`publication labeled as retrieval ${key}`)
   if (!row.canonicalUrl?.startsWith('https://')) fail(`url ${row.advisoryId}`)
   if (row.primarySource === 'osv') fail(`OSV labeled primary ${row.advisoryId}`)
   if (row.deploymentUnknown !== true || row.uFloor !== true) fail(`U floor not applied ${key}`)
@@ -169,7 +213,24 @@ for (const row of rows || []) {
     const present = (row.exposureClasses.includes('application-server') ? chains.server : []).concat(row.exposureClasses.includes('client-bundle') ? chains.client : [])
     if (!present.length) fail(`import class without chain ${key}`)
   }
-  if (row.chosenCandidate && !receipts.has(`${row.name}@${row.chosenCandidate}`)) fail(`unsupported candidate ${row.name}@${row.chosenCandidate}`)
+  if (row.chosenCandidate) {
+    if (!receipts.has(`${row.name}@${row.chosenCandidate}`)) fail(`unsupported candidate ${row.name}@${row.chosenCandidate}`)
+    const patched = row.primaryFirstPatched
+    const major = (version) => String(version || '').split('.')[0]
+    if (row.candidateMajorStatus === 'same-major-as-primary-patch') {
+      if (!patched || major(row.chosenCandidate) !== major(patched) || compareVersions(row.chosenCandidate, patched) < 0) {
+        fail(`candidate is not a same-major fix ${key}`)
+      }
+      if (want) {
+        const candidateDecision = matchingNpmRanges(row.chosenCandidate, want.payload.vulnerabilities, row.name)
+        if (candidateDecision.state === 'RANGE_UNPARSEABLE') {
+          if (row.candidateRangeState !== 'RANGE_UNPARSEABLE') fail(`candidate range unlabeled ${key}`)
+        } else if (candidateDecision.state !== 'UNAFFECTED') fail(`candidate still affected ${key}`)
+      }
+    } else if (row.candidateMajorStatus === 'separate-major-decision') {
+      if (typeof row.separateMajorReason !== 'string' || row.separateMajorReason.trim() === '') fail(`separate major without reason ${key}`)
+    } else fail(`candidate major status ${key}`)
+  }
   if (row.npmViewConfirmsPrimary && !receipts.has(`${row.name}@${row.primaryFirstPatched}`)) fail(`unsupported primary confirmation ${key}`)
   const claimed = `${row.fixedVersion || ''}`
   if (/confirmed by npm view/i.test(claimed)) fail(`unstructured npm-view claim ${key}`)
@@ -191,6 +252,29 @@ if (binding.reconciliation?.npmPackageCount !== npmPackageCount) fail('reconcili
 if (binding.reconciliation?.uniqueGhsaCount !== ghsaIds.size) fail('reconciliation GHSA count')
 if (!String(readFileSync(join(evidence, 'ci-baseline-40202059080.txt'), 'utf8')).includes('11 vulnerabilities')) fail('historical 11')
 if (binding.reconciliation?.historicalPackageCount !== 11) fail('historical reconciliation')
+
+const omitAudit = readJson(join(evidence, 'npm-audit-lockfile-omit-dev.json'))
+const omitNames = Object.keys(omitAudit.vulnerabilities || {}).sort()
+const productionClosure = ['source-map-js', 'ws', 'zod']
+if (omitNames.join() !== productionClosure.join()) fail(`omit-dev packages ${omitNames.join(',')}`)
+if ((omitAudit.metadata?.vulnerabilities?.high) !== 3 || (omitAudit.metadata?.vulnerabilities?.total) !== 3) fail('omit-dev severity census')
+if (binding.reconciliation?.omitDevPackageCount !== omitNames.length) fail('omit-dev binding disagrees with retained output')
+const omitIds = new Set()
+for (const [name, vuln] of Object.entries(omitAudit.vulnerabilities || {})) {
+  if (vuln.severity !== 'high') fail(`omit-dev severity ${name}`)
+  for (const lockPath of vuln.nodes || []) {
+    if (!fromLock.has(lockPath)) fail(`omit-dev path missing from raw lock ${lockPath}`)
+  }
+  for (const via of vuln.via || []) {
+    if (via && typeof via === 'object') {
+      const id = ghsaId(via.url)
+      if (id) omitIds.add(id)
+    }
+  }
+}
+for (const id of ['GHSA-mrhx-c7xc-m3w5', 'GHSA-96hv-2xvq-fx4p', 'GHSA-58qx-3vcg-4xpx', 'GHSA-68fv-2mgg-jv7q']) {
+  if (!omitIds.has(id)) fail(`omit-dev missing ${id}`)
+}
 
 const osv = readJson(join(evidence, 'osv-crosscheck.json'))
 if (osv.role !== 'aggregator') fail('OSV cross-check is not labeled aggregator')

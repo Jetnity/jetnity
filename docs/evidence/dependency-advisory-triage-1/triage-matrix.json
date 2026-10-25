@@ -1,7 +1,11 @@
 {
   "role": "triage-matrix",
-  "supersedesHead": "01f4f2b97b614c3b16048fa8585e1e635c93286f",
+  "supersedesHead": "b905f89eafa0a2c614ca125316497716db27eb91",
   "impactPolicy": "partial; vulnerable call NOT_ASSESSED; deployment unknown applies the U floor",
+  "acquisition": {
+    "state": "UNAVAILABLE",
+    "note": "Retained GHSA payloads have published_at and updated_at. commands.txt records that each curl exited 0 and does not record a per-advisory acquisition time. Publication time is not retrieval time."
+  },
   "priorityCounts": {
     "provisional P1": 40,
     "P2": 2
@@ -50,9 +54,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-02-26T22:07:15Z",
       "primaryPublished": "2026-02-26T22:07:15Z",
       "primaryUpdated": "2026-02-26T22:07:15Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -98,9 +105,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-07-20T20:51:09Z",
       "primaryPublished": "2026-07-20T20:51:09Z",
       "primaryUpdated": "2026-07-20T20:51:11Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -146,9 +156,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-02-18T22:38:11Z",
       "primaryPublished": "2026-02-18T22:38:11Z",
       "primaryUpdated": "2026-02-24T20:59:58Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -194,9 +207,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-25T21:13:39Z",
       "primaryPublished": "2026-03-25T21:13:39Z",
       "primaryUpdated": "2026-03-27T21:36:25Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -242,9 +258,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-25T21:13:39Z",
       "primaryPublished": "2026-03-25T21:13:39Z",
       "primaryUpdated": "2026-03-27T21:36:25Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -290,9 +309,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-25T20:08:24Z",
       "primaryPublished": "2026-03-25T20:08:24Z",
       "primaryUpdated": "2026-03-27T21:34:54Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -337,9 +359,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-05-18T19:02:40Z",
       "primaryPublished": "2026-05-18T19:02:40Z",
       "primaryUpdated": "2026-05-18T19:02:42Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -385,9 +410,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2025-11-17T17:38:56Z",
       "primaryPublished": "2025-11-17T17:38:56Z",
       "primaryUpdated": "2025-11-19T02:30:53Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -433,9 +461,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-18T18:31:44Z",
       "primaryPublished": "2026-09-18T18:31:44Z",
       "primaryUpdated": "2026-10-05T23:31:22Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -481,9 +512,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -529,9 +563,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -577,9 +614,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -625,9 +665,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -673,9 +716,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -721,9 +767,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:44:58Z",
       "primaryPublished": "2026-09-29T23:44:58Z",
       "primaryUpdated": "2026-09-29T23:44:59Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -769,9 +818,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-01T16:41:54Z",
       "primaryPublished": "2026-09-01T16:41:54Z",
       "primaryUpdated": "2026-09-01T16:41:55Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -817,9 +869,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2025-10-14T18:30:36Z",
       "primaryPublished": "2025-10-14T18:30:36Z",
       "primaryUpdated": "2025-10-24T20:05:50Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -865,9 +920,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-02-26T22:10:18Z",
       "primaryPublished": "2026-02-26T22:10:18Z",
       "primaryUpdated": "2026-02-26T22:10:20Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -912,9 +970,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-06-15T16:34:23Z",
       "primaryPublished": "2026-06-15T16:34:23Z",
       "primaryUpdated": "2026-07-13T15:31:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -960,9 +1021,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-25T21:12:07Z",
       "primaryPublished": "2026-03-25T21:12:07Z",
       "primaryUpdated": "2026-03-27T21:36:14Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1008,9 +1072,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-25T21:12:07Z",
       "primaryPublished": "2026-03-25T21:12:07Z",
       "primaryUpdated": "2026-03-27T21:36:14Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1056,9 +1123,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-01T16:42:13Z",
       "primaryPublished": "2026-09-01T16:42:13Z",
       "primaryUpdated": "2026-09-01T16:42:15Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1104,9 +1174,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-03-26T18:29:42Z",
       "primaryPublished": "2026-03-26T18:29:42Z",
       "primaryUpdated": "2026-03-27T21:38:55Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1152,9 +1225,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-07-24T21:53:14Z",
       "primaryPublished": "2026-07-24T21:53:14Z",
       "primaryUpdated": "2026-07-31T19:37:57Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1234,9 +1310,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-10-01T18:32:46Z",
       "primaryPublished": "2026-10-01T18:32:46Z",
       "primaryUpdated": "2026-10-23T18:26:52Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1282,9 +1361,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1330,9 +1412,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1378,9 +1463,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1426,9 +1514,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1474,9 +1565,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1522,9 +1616,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:39Z",
       "primaryPublished": "2026-09-29T23:45:39Z",
       "primaryUpdated": "2026-09-29T23:45:39Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1570,9 +1667,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1618,9 +1718,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1666,9 +1769,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1714,9 +1820,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1762,9 +1871,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1810,9 +1922,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-09-29T23:45:17Z",
       "primaryPublished": "2026-09-29T23:45:17Z",
       "primaryUpdated": "2026-09-29T23:45:19Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1858,9 +1973,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-08-03T16:35:32Z",
       "primaryPublished": "2026-08-03T16:35:32Z",
       "primaryUpdated": "2026-08-03T20:17:20Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1906,9 +2024,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-10-05T22:53:54Z",
       "primaryPublished": "2026-10-05T22:53:54Z",
       "primaryUpdated": "2026-10-05T22:53:57Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -1954,9 +2075,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-10-05T22:53:54Z",
       "primaryPublished": "2026-10-05T22:53:54Z",
       "primaryUpdated": "2026-10-05T22:53:57Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -2002,9 +2126,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-05-26T13:30:30Z",
       "primaryPublished": "2026-05-26T13:30:30Z",
       "primaryUpdated": "2026-09-01T15:45:57Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     },
     {
@@ -2050,9 +2177,12 @@
         "package-lock.json"
       ],
       "rangeState": "RANGE_DECIDED",
-      "retrievedAt": "2026-05-26T13:30:30Z",
       "primaryPublished": "2026-05-26T13:30:30Z",
       "primaryUpdated": "2026-09-01T15:45:57Z",
+      "retrievedAt": null,
+      "acquisitionState": "UNAVAILABLE",
+      "candidateMajorStatus": "same-major-as-primary-patch",
+      "candidateRangeState": "UNAFFECTED",
       "groupActivated": false
     }
   ]

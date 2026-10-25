@@ -14,8 +14,15 @@ Date: 2026-10-25. This is not a Technical-Lead PASS and not acceptance. It recor
 
 5. **Receipts and wording.** `commands.txt` keeps the original audit argv and adds the observed correction argv, stdout, and exit for inventory, the matrix rebuild, the fixture script, and the validator, with the two input SHA-256 values. Those lines were written from runs in this correction, not from an earlier unrecorded invocation. The report now says four advisory ids across three production-closure packages.
 
+## Candidate review R2
+
+6. **Retrieval provenance.** `retrievedAt` no longer copies `published_at`. Each row keeps `primaryPublished` and `primaryUpdated` from the retained payload. `retrievedAt` is null and `acquisitionState` is `UNAVAILABLE`, because the retained commands file records curl exit 0 and does not record a per-advisory acquisition time. No new clock time was written onto that old fetch. The `b905f89` retrieval values are withdrawn. This is not a new registry sweep.
+
+7. **Validator joins.** The validator parses `package-lock.json` and requires every inventory identity, alias, path, and version to match that raw lock. Matrix name and version must match the raw lock too, so changing inventory and the `ws` rows to `8.18.2` fails while the lock stays `8.18.3`. Missing `retrievedAt`, `impact`, `uncertainty`, or `parentChain` fails. A chosen candidate must have a receipt, be on the same major as the primary first-patched version, be at least that version, and fall outside the primary affected range, unless the row explicitly states a separate-major decision. Setting GHSA-3jxr's candidate to retained `brace-expansion@1.1.21` while the primary patch is `2.1.2` fails. The current matrix has no such wrong-major candidate; that was a validation gap, not a current assessment fact. The validator also reads `npm-audit-lockfile-omit-dev.json`. Deleting its vulnerability rows fails while the binding still says three production-closure packages: `source-map-js`, `ws`, and `zod`. No current assessment count changed.
+
 ## Checks I actually made
 
+- Candidate review R2, observed in this revision: `node --check` on the changed scripts; matrix rebuild exit 0 with `MATRIX rows=42 {"provisional P1":40,"P2":2}`; fixture script exit 0, including the four new negative cases and `FIXTURE_RESULT pass`. `npm test`, lint, typecheck, and `next build` were not run. `next build` rewrites `next-env.d.ts`.
 - `node --check` on the five scripts in `scripts/dependency-advisory-triage-1/`.
 - Inventory rerun, exit 0, empty stdout. Matrix rerun, exit 0, `MATRIX rows=42 {"provisional P1":40,"P2":2}`.
 - Fixture script, exit 0, nine PASS lines and `FIXTURE_RESULT pass`.

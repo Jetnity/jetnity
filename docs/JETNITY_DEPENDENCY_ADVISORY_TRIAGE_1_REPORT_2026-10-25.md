@@ -8,6 +8,8 @@ This is a corrected advisory assessment of lock blob `4c64e03d`. It is not an up
 
 The packet at `01f4f2b97b614c3b16048fa8585e1e635c93286f` reported 0 provisional P0, 28 provisional P1, 12 provisional P2, and 2 P3, and it declined bucket U. That numerical summary is withdrawn. The corrected counts below replace it.
 
+The packet at `b905f89eafa0a2c614ca125316497716db27eb91` kept those corrected counts and also stored each advisory's `published_at` in `retrievedAt`. That retrieval claim is withdrawn. Publication time is not acquisition time.
+
 ## Result
 
 The full lock graph has **11 npm package rows** (2 moderate, 9 high) and **23 unique GHSA ids**. The matrix has **42 rows**. Official severity stays in its own column. Jetnity priority uses the accepted table with impact `partial` and bucket U as a floor on every row, because deployment selection is unknown and the vulnerable call is `NOT_ASSESSED`.
@@ -101,7 +103,9 @@ A future fix slice, not this audit, would run typecheck, lint, the five hygiene 
 
 ## Matrix
 
-The machine-readable rows are `docs/evidence/dependency-advisory-triage-1/triage-matrix.json`. `npmViewConfirmsPrimary` is true only when the primary first-patched version itself has a retained receipt. Canonical URLs are also in the URL column. Retrieval timestamps and primary published/updated times are on each JSON row and in `docs/evidence/dependency-advisory-triage-1/advisories/`.
+The machine-readable rows are `docs/evidence/dependency-advisory-triage-1/triage-matrix.json`. `npmViewConfirmsPrimary` is true only when the primary first-patched version itself has a retained receipt. Canonical URLs are also in the URL column.
+
+Publication and update times are the `published_at` and `updated_at` fields in the retained primary JSON, copied to `primaryPublished` and `primaryUpdated`. Those fields are not retrieval times. The retained commands file says each of the 23 curls exited 0 and does not record when each payload was acquired. Every row therefore has `retrievedAt: null` and `acquisitionState: UNAVAILABLE`. No publication time was reused as a retrieval time, and no new clock time was stamped onto the old fetch. A chosen candidate is accepted only when it is on the same major as the primary first-patched version, is at least that version, and is outside the primary affected range. A receipt for another major is not treated as that fix. No current row needs a separate-major decision; `zod@4.6.6` is the primary patched version itself, and it remains outside the locked `^3.25.76` range.
 
 | Advisory | URL | Severity | Impact | Name | Version | Path | Edge | Parent chain | devExclusive | optional | peer | os | cpu | Classes | Bucket | Priority | Provisional | Lock-graph confidence | Execution confidence | Execution call | U floor | Uncertainty | Primary first patched | Chosen candidate with receipt | npm view confirms primary | Fix text | Group | Group activated | Later files |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
