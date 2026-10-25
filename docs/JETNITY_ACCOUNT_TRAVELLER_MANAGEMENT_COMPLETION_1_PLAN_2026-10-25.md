@@ -1,6 +1,6 @@
 # Jetnity Account Traveller Management Completion 1 — PLAN
 
-Date: 2026-10-25. Plan for immutable TASK V1. This commit adds this file only. No product, test, script, or evidence implementation is included. Implementation waits for an explicit head-bound Technical-Lead acceptance of this plan in this same session.
+Date: 2026-10-25. Plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review V1 ([comment 6392456358](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392456358)) on exact head `086028726f8ddd93c3a0a04ac7825c786effa16e`, plan blob `dc7d874149201611c1688884dc9781af6e25776d`. This revision answers A-PLAN-01, A-PLAN-02, A-PLAN-03, and A-PLAN-04. The eight-action parent-held design stays. TASK V1 stays byte-identical. This commit edits only this plan. No product, test, script, or evidence implementation is included. Implementation waits for a fresh head-bound Technical-Lead acceptance of this revised plan.
 
 ## 1. Identity
 
@@ -37,7 +37,7 @@ The requested model is the attested runtime model from this run's identity. This
 | Operating-mode blob | `1912bf56751a940acc56fad84e2bf9e6a174e0fa` |
 | Seed diff | `docs/JETNITY_ACCOUNT_TRAVELLER_MANAGEMENT_COMPLETION_1_TASK_V1_2026-10-25.md` only |
 
-The plan commit head, merge-base, and ahead/behind after this file lands are in the PR comment posted from that commit. A later head invalidates this gate. TASK V1 stays byte-identical.
+Reviewed plan head `086028726f8ddd93c3a0a04ac7825c786effa16e` was 2 ahead / 0 behind that same merge-base, diff TASK + PLAN only. The head after this revision, with merge-base and ahead/behind, is in the PR comment posted from the revision commit. That new head invalidates the V1 plan gate. TASK V1 stays byte-identical. `origin/main` was fetched again immediately before the revision and was still `500fbe40c8c8a70a0fe0d291782289f809d5d5b3`.
 
 Live index [#751](https://github.com/Jetnity/jetnity/issues/751) top section, re-read this session, is R106 V1. Lane A is TASK-only at the seed above. `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` still open on the R105 closure pointer. Those paragraphs are historical. Live main, live mode, #751, and the precheck supersede them. This plan does not edit those Technical-Lead-owned files.
 
@@ -108,7 +108,7 @@ Implementation, after plan acceptance, may change only:
 | `lib/traveller/account-registry-copy.ts` | German sentences for honest save, read, unknown outcome, conflict, and named delete. |
 | `lib/traveller/account-registry-workflow.ts` | New. Pure state machine. No React, router, or server action. |
 | `lib/traveller/account-registry-workflow.test.ts` | New. Pure cases, always in `npm test`. |
-| `lib/traveller/account-registry-workflow-ui.test.ts` | New. Source contract in `npm test`, mounted cases only under the harness env in section 10. |
+| `lib/traveller/account-registry-workflow-ui.test.ts` | New. Source contract in `npm test`, mounted cases only under the harness env in section 9. |
 | `lib/traveller/account-registry-ui.test.ts` | Only assertions that name the old call site, if the call moves into the hook. |
 | `lib/traveller/account-travellers-premium-registry-ux-1.test.ts` | Only the assertion that the action calls sit inside the card source after the panel marker. |
 | `scripts/account-traveller-management-completion-1/**` | Local synthetic mount. |
@@ -141,13 +141,18 @@ An attempt records:
 - local attempt id
 - one of the eight actions
 - surface id
-- draft generation captured at begin
+- context epoch captured at begin
 - target ids: traveller, citizenship, document, each null when that action has no such id
 - the payload captured at begin
 
-Draft generation for a surface starts at 1 when the surface opens. It increases when the user changes a field, cancels a sub-editor, closes or switches the panel, reopens a sub-editor, or explicitly adopts newer props. It does not increase when a clean editor receives props, or when a matching success applies its one reset.
+Dirtyness and context epoch are separate.
 
-The hook also keeps a `Set` ref of in-flight surface ids. The click handler adds the surface id before any `await` and before the next render. If the pure begin returns no attempt, the ref entry is removed immediately. `disabled={pending}` may stay as a visual hint. Correctness is the ref plus the pure refusal.
+- Dirty means the user changed a field away from the snapshot last taken for that editor. A clean editor may display newer canonical fields. A dirty editor keeps the typed fields and shows the conflict in section 6.6.
+- `kontextEpoche` is a monotone integer per editor. It starts at 1 when that editor opens. It increases when the user changes a field, cancels or reopens a sub-editor, closes or switches the panel, explicitly adopts stored props, or when any relevant canonical context is adopted, including a clean auto-adoption. A matching success reset does not by itself give the old attempt authority over the editor that exists after the reset.
+
+An attempt stores the epoch it captured at begin. Increasing the epoch never deletes a receipt and never authorizes a write. A newer epoch is not a certificate that the old server call failed to run.
+
+The hook also keeps a `Set` ref of in-flight surface ids. Every Save, Enter, confirm, and acknowledged repeat goes through `beginnen` before any `await`. The handler adds the surface id before the next render. If `beginnen` returns no attempt, the ref entry is removed immediately. `disabled={pending}` is only a visual hint. The refusal is the ref plus section 6.5.
 
 ### 6.2 Outcomes
 
@@ -158,13 +163,13 @@ Every action call is awaited inside `try/catch`.
 | Thrown or rejected | `unbestaetigt` | Preserved | No automatic call |
 | Any value other than the two shapes below | `unbestaetigt` | Preserved | No automatic call |
 | `{ ok: false, meldung: string }` | `abgewiesen` | Preserved | No automatic call |
-| `{ ok: true }` | `gespeichert` | Reset only when the captured generation is still current | No automatic second write |
+| `{ ok: true }` | `gespeichert` | Reset only while the captured context epoch is still current | No automatic second write |
 
 `wert` is ignored. `{ ok: true, wert: { id } }` is still only `gespeichert`. The id inside `wert` is not read, not selected, and not matched to a row.
 
 `abgewiesen` shows the server `meldung` and no extra sentence that nothing was stored. `REGISTRY_NICHT_GEFUNDEN` stays that sentence. The UI does not invent a rollback.
 
-`unbestaetigt` shows: `Es ist nicht bekannt, ob die Änderung gespeichert wurde. Es wird nichts automatisch erneut gesendet.`
+`unbestaetigt` shows, on that attempt's own receipt: `Es ist nicht bekannt, ob die Änderung gespeichert wurde.` Where the user can choose another write, the receipt also shows `Der vorherige Versuch kann bereits gespeichert sein.`
 
 A local citizenship check (empty country or duplicate country) is `lokal`. It stores the existing copy, creates no attempt, and does not call the action. Document type and the other fields stay server-validated, so an invalid document submit is a real attempt and, when the action returns, `abgewiesen`. The two classes use different attempt ids: `lokal` has none.
 
@@ -172,12 +177,14 @@ Closing the panel, switching traveller, or unmounting the page does not abort th
 
 ### 6.3 Where a completion may write
 
-`anwenden(stand, versuchId, ausgang)`:
+`anwenden(stand, versuchId, ausgang)` keeps the receipt in every branch. Settling a promise records the outcome. It does not delete an `unbestaetigt` receipt.
 
-- Unknown or already settled attempt id: no change.
-- Current generation differs from the captured generation: the attempt is settled, the draft fields stay, no status is written onto the current generation, and no focus is requested.
-- Generation still matches: the status is stored on that surface only. A create or citizenship or document success may then reset that surface's submitted editor. A traveller-edit success may close the edit form. A delete success may close that confirmation. A traveller-delete success does not remove the card locally.
-- The status region for a card is inside that card. The create status region is inside the create form. A settled stale attempt does not render in the other region. There is no page-level status slot shared by the cards.
+- Unknown attempt id: no change.
+- Already settled attempt id: no change, and the stored receipt stays.
+- Captured epoch differs from the editor's current epoch: record the outcome on that receipt, leave the current draft, request no focus, and do not reset, close, or announce inside the current editor. An `unbestaetigt` outcome stays on the receipt.
+- Captured epoch still matches: the receipt is updated. A create, citizenship, or document success may reset the submitted editor of that same epoch. A traveller-edit success may close that edit form. A delete success may close that confirmation. A traveller-delete success does not remove the card locally.
+
+Receipts render in `data-registry-beleg` on the surface that owns the attempt. Card A shows its receipt on card A, including when A's panel is closed. The create receipt stays with the add control when the create form is closed. A's text is not rendered inside B's open panel (`data-registry-verwaltung`). There is no page-level status slot that one card can overwrite with another's outcome. A late result from A therefore remains discoverable on A and has no announcement inside B's active editor. An independent attempt on B keeps its own id, target, payload, and receipt.
 
 Focus is a value on the state, not a call from the completion:
 
@@ -187,43 +194,81 @@ Focus is a value on the state, not a call from the completion:
 - Cancel citizenship or document subform: focus the button that opened it.
 - Escape with a confirmation open: close that confirmation only.
 - Escape with the panel open and no confirmation: focus that card's `Schließen` button and close the panel, as today.
-- A completion requests focus only when its generation is still current and that surface is still the open one. A late result from A does not focus B.
+- A completion requests focus only when its captured epoch is still current and that surface is still the open one. A late result from A does not focus B. A late result after a canonical adoption does not focus the adopted editor.
 
-When an observed list no longer contains a traveller id, that card's draft is dropped after any in-flight attempt for it has settled. If the last focused surface was that card and focus has fallen to `body`, focus moves to the add button. If the user has already focused another control, focus stays there. The ok response of delete does not move focus by itself. The card stays until the observed list drops the id. There is no optimistic row insert or delete.
+Absence is decided only from a valid list, section 6.4: `problem === null` and `travellers` is an array. When that array no longer contains a traveller id, the id has disappeared. The draft for that id is dropped after any in-flight attempt has settled, and the receipt is kept. If the last focused surface was that card and focus has fallen to `body`, focus moves to the add button. If the user has already focused another control, focus stays there. A 500, a 503, or an invalid prop pair does not mean the id disappeared and does not drop the draft or the receipt. The ok response of delete does not move focus by itself and does not remove the card locally. There is no optimistic row insert or delete.
 
 ### 6.4 Read observation
 
-A content stamp is a stable serialization of `problem.status` plus each traveller id, label, residence, citizenship id and country, and document id, type, issuer, citizenship id, and expiry, in prop order. Object identity is not the stamp.
+Props are classified before their content is compared.
 
-`router.refresh()` is a read. Its resolved promise is not an observation. The hook records the stamp at the call and starts a 4000 ms local deadline. The deadline is an injected clock in tests and `Date.now` / `setTimeout` in the browser. It is not a server timeout and it does not retry a write.
-
-| Later render | Read state |
+| Props | Class |
 | --- | --- |
-| Stamp differs before or after the deadline | `beobachtet` |
-| Deadline passes, stamp unchanged | `ausgeblieben` |
-| `refresh()` throws, stamp unchanged | `ausgeblieben` |
+| `problem === null` and `travellers` is an array, including `[]` | Valid canonical list |
+| `problem.status` is 500 or 503 | Failed read |
+| Any other pair, including `travellers === null` with `problem === null` | Invalid read |
 
-A stamp that changes after the deadline still becomes `beobachtet`. The deadline only changes the sentence from waiting to not-yet-loaded.
+A content stamp exists only for a valid list. It serializes each traveller id, label, residence, citizenship id and country, and document id, type, issuer, citizenship id, and expiry, in prop order. Object identity is not the stamp. `problem.status` is not part of the stamp, because a failed or invalid read is not a list observation.
 
-Automatic `refresh()` runs only after `gespeichert`. `abgewiesen` and `unbestaetigt` wait for the explicit read button. The button label is `Erneut lesen`. Its hint is `Liest den aktuellen Stand neu. Das wiederholt keine Speicherung.` While a read is open the button is disabled and the region is `aria-busy`. A second read is another explicit press.
+`router.refresh()` is a read. Its resolved or rejected promise is not an observation, and it is not evidence that a particular refresh completed after an unknown write. The frozen page has no read nonce. The hook records the valid-list stamp at the moment a receipt becomes `unbestaetigt`. If those props are not a valid list, the receipt has no valid baseline. The next valid list is then a new snapshot. Unchanged content means the same stamp as a stored valid baseline. The hook starts a 4000 ms local deadline when a read is requested, and classifies whatever props are current. The deadline uses an injected clock in tests and `Date.now` / `setTimeout` in the browser. It is not a server timeout and it does not retry a write.
 
-If the save was confirmed and the read is `ausgeblieben`, the surface shows `Die Speicherung wurde bestätigt.` and `Die aktuelle Liste ist hier noch nicht geladen.` If the read is `beobachtet`, it shows `Die angezeigte Liste ist der zuletzt gelesene Stand.` For a known-id update, when the observed row's fields equal the captured payload, it may add `Die gelesene Liste zeigt die gespeicherten Angaben dieses Eintrags.` For a known-id delete, when that id is absent, it may add `Dieser Eintrag ist in der gelesenen Liste nicht enthalten.` Both sentences describe the list. They do not say this attempt was the writer that produced it.
+| Latest props | Read state | Unlocks another write |
+| --- | --- | --- |
+| Valid list whose stamp differs from that receipt's baseline | Newly observed valid canonical snapshot | Only together with the acknowledgment in section 6.5 |
+| Valid list whose stamp is unchanged | Unconfirmed | No |
+| 500, 503, or invalid | Failed read, unconfirmed | No |
+| Deadline passes on an unchanged valid list, or `refresh()` throws and the list is unchanged | Unconfirmed | No |
 
-A create, including citizenship and document create, never selects a card and never treats an equal label as the created row. The observed-list sentence for create includes `Ein Eintrag wird nicht an der Bezeichnung erkannt und nicht automatisch ausgewählt.`
+A changed valid list is named only as a newly observed canonical snapshot. It does not say which `router.refresh()` produced it, and it does not say the read happened after the unknown server outcome. Several overlapping or delayed refreshes leave one current classification: the latest props. A delayed 500, 503, or invalid commit replaces a newer-looking snapshot for as long as those props are current. It withdraws the qualified observation, keeps every draft and receipt, and does not treat missing ids as deleted. A later valid list is classified again from its own stamp.
 
-Identical content produces an identical stamp. A successful read that changes nothing therefore stays `ausgeblieben`. That is the honest limit of a frozen page with no server nonce. The save sentence still stands. The user can press `Erneut lesen` again.
+The technical limit stays in the evidence and the handoff. The product surface does not explain stamps, ids, or label matching.
 
-The existing error panel stays when `problem` is a 500 or 503, with the current `fehler500` or `fehler503` sentence plus `Erneut lesen`. `travellers.length === 0` with `problem === null` stays `leerTitel` / `leerText` and does not show the error panel. `travellers === null` with `problem === null` is not an empty registry: the component shows `fehler500` and the read button. The loader does not produce that pair; the component still refuses to render it as empty.
+Automatic `refresh()` runs only after `gespeichert`. `abgewiesen` and `unbestaetigt` wait for the explicit read button. The button label is `Erneut lesen`. Its hint is `Liest den aktuellen Stand neu. Das sendet keine Änderung erneut.` While a read is open the button is disabled and the region is `aria-busy`. Every read path, including failure and a delayed refresh, leaves the action-call count unchanged.
 
-A read failure replaces the list, as it does today. Drafts remain in the parent hook. When a later observed list returns, a dirty surface reopens with its text.
+A confirmed save whose list is not yet a new valid snapshot shows the confirmation sentence and, separately, `Die aktuelle Liste ist hier noch nicht geladen.` A newly observed valid snapshot may show, separately, `Die angezeigte Liste ist ein neu gelesener Stand.` When a known id is absent from that valid list, the surface may add `Dieser Eintrag ist in der angezeigten Liste nicht enthalten.` Those sentences describe the snapshot. They do not name a cause.
 
-### 6.5 Repeat after an unknown outcome
+A create never selects a card. Equal labels stay equal labels on screen and are not used to resolve an attempt.
 
-The control `Erneut speichern` exists only for `unbestaetigt`. It stays disabled until a read started after that outcome has reached `beobachtet`. The visible hint, including while disabled, is `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` A read does not press it. Enabling it does not press it. The press creates a new attempt id and captures the current draft, not the old payload if the user edited afterwards. For a create, the same hint covers the possibility of a second row. An observed row with the same label does not clear the hint and does not mark the attempt succeeded.
+An unchanged valid list stays unconfirmed. The user can press `Erneut lesen` again. That press still sends no write. Until a valid list with a different stamp is current, section 6.5 does not allow another write for that receipt.
 
-### 6.6 Props and dirty drafts
+The error panel stays for 500 and 503, with `fehler500` or `fehler503` plus `Erneut lesen`. `travellers.length === 0` with `problem === null` stays `leerTitel` / `leerText`. `travellers === null` with `problem === null` is invalid, so the component shows `fehler500` and the read button, and it does not show the empty state. The loader does not produce that pair.
 
-Opening an editor snapshots the canonical fields for that generation. A clean editor (generation unchanged since open or since the last prop apply) takes the next props into its fields and updates the snapshot. A dirty editor keeps the typed fields. When the canonical snapshot differs, the surface shows `Der gespeicherte Stand hat sich geändert. Deine Eingabe bleibt stehen.` The button `Gespeicherten Stand übernehmen` replaces the fields from current props, clears the conflict, and increases the generation. It does not send a write. An in-flight completion from the previous generation cannot clear the adopted fields.
+A failed or invalid read may replace the visible list. It leaves parent-hook drafts and receipts in place. Disappearance is evaluated only after a later valid list. A dirty editor then reopens with its text.
+
+### 6.5 One guard for every write
+
+`beginnen` is the only way any of the eight actions is dispatched. Save, Enter, the delete confirm button, and the acknowledged repeat all call it. A local citizenship check does not.
+
+Receipt key, one unresolved `unbestaetigt` receipt per key:
+
+| Action | Key |
+| --- | --- |
+| Traveller create | `anlegen` |
+| Traveller edit | `reisender:<id>:aendern` |
+| Traveller delete | `reisender:<id>:loeschen` |
+| Citizenship create | `reisender:<id>:citizenship-anlegen` |
+| Citizenship delete | `citizenship:<id>:loeschen` |
+| Document create | `reisender:<id>:document-anlegen` |
+| Document edit | `document:<id>:aendern` |
+| Document delete | `document:<id>:loeschen` |
+
+`beginnen` returns no attempt when that surface is already in flight, or when that key still has an `unbestaetigt` receipt and this call does not carry an explicit acknowledgment. Reopening, editing, Enter, and a new context epoch do not set that acknowledgment. The ordinary controls stay refused, in the pure state and in the synchronous ref.
+
+The acknowledgment is the control `Trotzdem erneut speichern` on that receipt. It is enabled only while the latest props are a qualified valid snapshot for that receipt's baseline, section 6.4. Its visible text includes `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` Pressing it calls `beginnen` with `anerkennung: true`, creates a new attempt id, and captures the current draft. It promises neither exactly-once delivery nor a label match. A read does not press it. Enabling it does not press it.
+
+A different key is independent. It keeps its own attempt, target, and payload, including while another key on another card is `unbestaetigt`, provided its own surface is not in flight. The same key cannot slip through on a second button.
+
+The old `unbestaetigt` receipt remains after the new attempt starts. A later result for the old attempt updates that receipt and, when the epoch differs, applies no reset, focus, or current-editor announcement.
+
+### 6.6 Props, dirtyness, and context epoch
+
+Opening an editor snapshots the canonical fields and the epoch. Relevant context is the fields that editor can submit: traveller label and residence; the citizenship country set for an add; a document's type, issuer, citizenship id, expiry, and the citizenship ids offered in its select.
+
+When a valid list brings new relevant context into a clean editor, the editor displays those fields and increases `kontextEpoche`. The in-flight attempt keeps the old epoch, so a later success or rejection cannot reset, close, or focus the adopted editor. Its receipt stays.
+
+When a valid list brings new relevant context into a dirty editor, the typed fields stay, the epoch increases, and the surface shows `Der gespeicherte Stand hat sich geändert. Deine Eingabe bleibt stehen.` `Gespeicherten Stand übernehmen` copies the current valid props into the fields, clears dirty, and does not send a write. The epoch has already moved, so the old completion still has no UI authority.
+
+A failed or invalid read adopts nothing and increases no epoch, because it is not canonical context and it is not disappearance.
 
 ### 6.7 Deletes name their target
 
@@ -235,7 +280,7 @@ All three deletes ask before they dispatch. The confirmation stores the target i
 | Citizenship | That citizenship's country display name | Existing association sentence stays |
 | Document | That document's type label, plus issuer when present | Metadata-only hint stays |
 
-The confirm button sends the stored id, not a label lookup. If that id disappears from props, the dialog closes. Focus follows section 6.3. Cancel returns focus to the opener.
+The confirm button sends the stored id through `beginnen`, not a label lookup. If a valid list no longer contains that id, the dialog closes. A failed or invalid read does not. Focus follows section 6.3. Cancel returns focus to the opener. Confirm is refused while that delete key has an `unbestaetigt` receipt and the press is not the acknowledged new decision.
 
 This is a behavior change for citizenship and document delete: today those buttons dispatch immediately. It is inside the eight existing actions and the task's delete-confirmation requirement. It adds no data field.
 
@@ -259,13 +304,15 @@ Existing success sentences claim a visible result that this client cannot yet se
 
 | Key | Text |
 | --- | --- |
-| `erfolgAngelegt` | Die Anlage wurde gespeichert. |
-| `erfolgGeaendert` | Die Änderung wurde gespeichert. |
-| `erfolgGeloescht` | Der Löschaufruf wurde gespeichert. Vorhandene Reisen bleiben unverändert. |
-| `erfolgCitizenship` | Die Staatsbürgerschaft wurde gespeichert. |
+| `erfolgAngelegt` | Die Anlage wurde bestätigt. |
+| `erfolgGeaendert` | Die Änderung wurde bestätigt. |
+| `erfolgGeloescht` | Die Löschung wurde bestätigt. Vorhandene Reisen bleiben unverändert. |
+| `erfolgCitizenship` | Die Staatsbürgerschaft wurde bestätigt. |
 | `erfolgCitizenshipEntfernt` | Die Staatsbürgerschaft wurde entfernt. Zugeordnete Dokumente behalten ihre übrigen Angaben. |
-| `erfolgDokument` | Die Dokument-Metadaten wurden gespeichert. |
+| `erfolgDokument` | Die Dokument-Metadaten wurden bestätigt. |
 | `erfolgDokumentEntfernt` | Die Dokument-Metadaten wurden entfernt. |
+
+The list status stays a second sentence: `Die aktuelle Liste ist hier noch nicht geladen.` or `Die angezeigte Liste ist ein neu gelesener Stand.` Uncertainty about a possible earlier save appears on the receipt where the user decides whether to write again. The surface does not explain label or id matching. That correlation limit is recorded in the evidence and the handoff.
 
 Added sentences are those quoted in sections 6.2–6.6, plus a named delete title that includes the display name. `leerTitel`, `fehlerTitel`, `fehler500`, `fehler503`, `ladenTitel`, the dual-authority paragraphs, the limit sentences, and `dokumentKeineZuordnung` stay. Loading copy stays in the frozen loading file.
 
@@ -273,30 +320,33 @@ Added sentences are those quoted in sections 6.2–6.6, plus a named delete titl
 
 ## 8. Acceptance and proof matrix
 
-Reducer means `account-registry-workflow.test.ts` inside `npm test`. Mounted means the harness in section 10, fail-closed, with deferred promises and the real components.
+Reducer means `account-registry-workflow.test.ts` inside `npm test`. Mounted means the harness in section 9, fail-closed, with deferred promises and the real components. The mounted rows are executed by that command. They are not represented by a source-pattern test.
 
 | Case | Reducer | Mounted |
 | --- | --- | --- |
-| Each of the eight actions: in flight, `gespeichert`, `abgewiesen`, `unbestaetigt`, save plus observed read, save plus missing read | yes | yes, one representative path per action and the shared rules |
+| Each of the eight actions: in flight, `gespeichert`, `abgewiesen`, `unbestaetigt`, confirmed save plus a new valid snapshot, confirmed save while the list is not yet a new snapshot | yes | yes, one representative path per action and the shared rules |
 | Second begin on the same surface in one turn calls the action once | pure refusal | two clicks before the deferred promise resolves |
-| Success from surface A after the user edits B | stale apply changes nothing on B | typed text remains; A's alert is absent from B; focus stays out of B |
-| Rejection from A after switch to B | no status and no focus on B | same, on the mounted cards |
-| Close, reopen, and type during the request | new generation rejects the clear | same |
-| Target id gone from props | draft dropped; focus request only if that surface held focus | focus lands on the add button only in that case |
-| Props update on a dirty editor | fields kept, conflict set | conflict text and explicit adopt |
-| Props update on a clean editor | fields follow props | same |
-| Two travellers, one label | no label key | ok create does not focus or select either card; a new row with that label is not marked as this attempt |
-| Null document citizenship | payload `null` | select stays on `Keine Zuordnung` through a props refresh |
+| Success from surface A after the user edits B | receipt kept on A; no reset or focus on B | A's receipt stays on A; B's open panel has none of A's text; focus stays out of B |
+| Rejection from A after switch to B | `unbestaetigt` receipt kept on A; no announcement or focus on B | same, on the mounted cards |
+| Close, reopen, type, then Save or Enter after rejection | epoch change does not authorize a write; same key stays refused | action count stays one until the acknowledged control is pressed |
+| Acknowledged repeat after a new valid snapshot | new attempt id; old receipt kept; no label match | uncertainty text visible; one new write; no card selected by label |
+| Target id absent from a valid list | draft dropped only then; receipt kept; focus only if that surface held focus | focus lands on the add button only in that case |
+| Target id absent during 500, 503, or invalid props | draft and receipt kept; epoch unchanged | the card state returns with the draft; no delete focus move |
+| Valid list, then 500, then 503, then invalid, then a changed valid list | only the changed valid list qualifies; failures withdraw it | zero action calls on every read and failure, including a delayed failure after a newer snapshot and two overlapping refreshes |
+| Unchanged valid list | stays unconfirmed and does not qualify | not-yet-loaded sentence remains; Save, Enter, and the repeat control send no write |
+| Dirty editor receives new relevant context | fields kept, conflict set, epoch increased | late success and late rejection do not reset, close, or focus |
+| Clean editor receives new relevant context while awaiting | fields follow props, epoch increased, receipt kept | late success does not reset or focus the adopted editor; late rejection does not announce there |
+| Two travellers, one label | no label key | ok create does not focus or select either card |
+| Null document citizenship | payload `null` | select stays on `Keine Zuordnung` through a valid props refresh |
 | 8 citizenships | add begin refused by the limit gate the UI already hides | add control absent; edit and a citizenship delete confirmation still work |
 | 12 documents | same for document create | add absent; edit of an existing document still submits |
-| Empty list | stamp with `problem: null` and `[]` is empty | `leerTitel` visible, `fehlerTitel` absent, no error retry |
-| 500 and 503 | stamp carries the status | matching sentence, read button, drafts kept |
+| Empty valid list | `problem === null` and `[]` is a valid list, not a failure | `leerTitel` visible, `fehlerTitel` absent |
+| 500 and 503 | failed read, not a list observation | matching sentence, read button, drafts and receipts kept, zero writes |
 | Read retry | read transition creates no attempt | action-stub call count unchanged; `refresh` stub called |
-| `ok: false` | draft kept, meldung stored | meldung visible, no "nichts gespeichert" |
+| `ok: false` | draft kept, meldung stored, receipt kept | meldung visible, no claim that nothing was stored |
 | `wert` with an id | id not on the state | no card selected from it |
-| Unknown outcome then read | repeat stays disabled until `beobachtet` | read does not call the action; the repeat press is a new attempt and the hint is visible |
-| Delete confirmation | target id captured | dialog names the target; cancel restores focus; confirm sends that id |
-| Keyboard | — | Tab reaches the open controls; Escape follows section 6.3; Enter submits once |
+| Delete confirmation | target id captured | dialog names the target; cancel restores focus; confirm goes through `beginnen` |
+| Keyboard | — | Tab reaches the open controls; Escape follows section 6.3; Enter uses the same guard as Save |
 | 320, 360, 390, 768, 1280 | — | no root overflow hidden by a new overflow rule; `scrollWidth` within `clientWidth` |
 | 320 at root 32px | — | 200% root text via `font-size: 32px` on `documentElement` |
 | Reduced motion | — | `emulateMedia({ reducedMotion: 'reduce' })`; no new animation added |
@@ -304,7 +354,7 @@ Reducer means `account-registry-workflow.test.ts` inside `npm test`. Mounted mea
 
 The root-32 check is a font-size simulation. It is not native browser zoom, not a device, and not a screen reader. The evidence record says that. Existing `hover:-translate-y-0.5` on the add button stays; this lane adds no motion.
 
-Existing registry data, validation, persistence, and trip-separation tests stay in the regression run. They are not rewritten to make a new UI path pass. The two source tests in section 5 change only the call-site assertions that the move into the hook supersedes. Assertions for null association, limits, trip non-deletion, forbidden fields, and service-role absence stay.
+The mounted column is wiring proof only when the harness actually executes it. A source-pattern assertion is not that proof. Existing registry data, validation, persistence, and trip-separation tests stay in the regression run. They are not rewritten to make a new UI path pass. The two source tests in section 5 change only the call-site assertions that the move into the hook supersedes. Assertions for null association, limits, trip non-deletion, forbidden fields, and service-role absence stay.
 
 ## 9. Mount and CI boundary
 
@@ -312,7 +362,7 @@ Existing registry data, validation, persistence, and trip-separation tests stay 
 
 `account-registry-workflow.test.ts` always runs in `npm test`. It covers the reducer column.
 
-`account-registry-workflow-ui.test.ts` always runs in `npm test` for a source contract only: the two components reference the hook, they do not import the eight action functions, and the unconditional `setFormular(registryTravellerFormularAnfang())` / `setDokument(registryDokumentFormularAnfang())` success resets are gone. That contract is not mounted proof. The file registers the mounted cases only when `ACCOUNT_TRAVELLER_MANAGEMENT_BROWSER=1`. Unset, those cases are not registered and are not skips. Set, a missing browser fails the test.
+`account-registry-workflow-ui.test.ts` always runs in `npm test` for a source contract only: the two components reference the hook, they do not import the eight action functions, and the unconditional `setFormular(registryTravellerFormularAnfang())` / `setDokument(registryDokumentFormularAnfang())` success resets are gone. That contract is not wiring proof. The mounted matrix in section 8 is registered only when `ACCOUNT_TRAVELLER_MANAGEMENT_BROWSER=1`, and the harness runs that file with the variable set so those cases execute. Unset, the cases are absent from `npm test`. They are not passes and they are not skips. The implementation report gives the native pass, fail, and skip counts on one line, and the harness command, exit, and case count on a separate line. A native skip count never includes the unregistered mounted cases. Set, a missing browser fails the test.
 
 `scripts/account-traveller-management-completion-1/run.mjs` sets that variable and runs the UI test file. It bundles the production `AccountReisende` with the esbuild package already present in `node_modules`, the same way the existing local harnesses do. It does not add a dependency. Aliases replace only `lib/traveller/account-registry-aktionen.ts` and `next/navigation`. `LandFeld`, copy, limits, and the card markup stay real. The bundle is served to a local Playwright page with the project CSS. Unexpected origins are aborted. There is no deployed route, no account session, and no Supabase client. Synthetic labels are fixed strings such as `Synthetische Person A`. Evidence goes under `docs/evidence/account-traveller-management-completion-1/` and does not overwrite an older run.
 
@@ -339,7 +389,7 @@ On the implementation head, in this same session:
 - `npm run check:deps`
 - `npm run build`
 
-No dependency, lockfile, workflow, config, global style, timeout, gate, or suppression change. The current baseline cited by the task is 7213 tests, 2 explicit conditional browser skips, and 181 lint warnings. The implementation report states the actual counts. A skip is not a pass. Eleven npm advisories stay untriaged and out of scope.
+No dependency, lockfile, workflow, config, global style, timeout, gate, or suppression change. The current baseline cited by the task is 7213 tests, 2 explicit conditional browser skips, and 181 lint warnings. The implementation report states the actual native counts, including those skips, and separately states the harness result. The harness cases stay out of the native pass and skip totals. A skip is not a pass. Eleven npm advisories stay untriaged and out of scope.
 
 Native App, Auth, and Vercel CI on the exact head stay mandatory Technical-Lead gates. This plan does not claim them. Synthetic mounted evidence is not hosted Account, Next router, Supabase, RLS, Production, or launch proof.
 
@@ -357,7 +407,7 @@ Guest whole-trip and cross-tab limits stay as they are. Two account tabs can sti
 
 ## 12. Unknowns
 
-- Whether a production refresh that returns the same rows reuses the previous props. The stamp treats unchanged content as not yet observed. That is conservative and can show the not-yet-loaded sentence after a no-op read.
+- A changed valid list is a newly observed canonical snapshot. It does not identify which `router.refresh()` produced it, and it does not prove the read followed the unknown write. Unchanged content stays unconfirmed and does not unlock another write. A 500, 503, or invalid read is not disappearance. This limit is for the evidence and the handoff. The product copy stays the plain sentences in section 7.
 - `LandFeld` keyboard and portal behavior inside the harness. The mounted test targets the control the user actually reaches. If a portal escapes the card, the focus assertion follows the real control and the evidence says so.
 - Playwright availability on the evidence machine. A failed launch is NOT VERIFIED.
 - `npm test` and GitHub CI do not execute the mounted matrix. They remain required and they are not a substitute for the harness.
