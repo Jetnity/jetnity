@@ -4,6 +4,16 @@ Date: 2026-10-25. Lane R107-S. Logical agent: Jetnity Dependency Advisory Triage
 
 This is a corrected advisory assessment of lock blob `4c64e03d`. It is not an upgrade, not a security clearance, and not a Technical-Lead PASS. Exploitability was not demonstrated. No remediation group is activated.
 
+## Integration sync 1 — historical source census
+
+Verified main `60b8e75ece16a8640d21e460380f25d627bbe700` is merged into this branch with history preserved. Merge commit `354c0093a952552956b9f5007e0e9265bde692ac` has parents `70b609c745e1bb266f419efd722cb71690ee1a0e` and `60b8e75ece16a8640d21e460380f25d627bbe700`. The notes commit that contains this paragraph is a child of that merge and does not record its own hash.
+
+`input-binding.json` keeps `mainAtExecution` = `a74c443c6be3f064f150fcf021ab6154bda325e5`. That field is the main commit recorded at the original S execution. It is not a full source-snapshot hash, and this sync does not invent one.
+
+`lockfile-inventory.json` `literalImports` remains the historical source census from that a74-based S checkout: **45 server seeds, 126 client seeds, and 82 package names**. The Zod-only literal-import statement later in this report, the stored Zod chains, and the statements that `ws` and `source-map-js` have no literal import are historical pre-T observations from that checkout. T's main integration changes files represented in that census and adds source and proof imports. `inventory.mjs` was not run for this sync. Earlier inventory-rerun claims below describe the pre-integration checkout. This sync does not present those bytes as a current-main source census.
+
+Matrix rows and acquisition records are unchanged. `retrievedAt` stays null. `acquisitionState` stays `UNAVAILABLE`. Installed consistency and deployed selection stay unknown. The validator and matrix rebuild on this integration show retained-evidence and package consistency with the pinned inputs. They are not a new source traversal and not an installed or deployed execution proof. Package and lock counts stay bound to those unchanged inputs. No remediation group is activated.
+
 ## Superseded summary
 
 The packet at `01f4f2b97b614c3b16048fa8585e1e635c93286f` reported 0 provisional P0, 28 provisional P1, 12 provisional P2, and 2 P3, and it declined bucket U. That numerical summary is withdrawn. The corrected counts below replace it.

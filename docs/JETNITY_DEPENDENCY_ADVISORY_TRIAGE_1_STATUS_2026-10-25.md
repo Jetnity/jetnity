@@ -1,6 +1,20 @@
 # Jetnity Dependency Advisory Triage 1 — Status
 
-Date: 2026-10-25. Lane: R107-S. State: corrected audit packet ready for a new independent Technical-Lead candidate review. This is not candidate FINAL PASS, Ready, or merge.
+Date: 2026-10-25. Lane: R107-S. State: integration sync 1 delivered for independent root re-gating. This is not candidate FINAL PASS, Ready, or merge.
+
+## Integration sync 1
+
+Explicit root instruction merged verified main `60b8e75ece16a8640d21e460380f25d627bbe700` (tree `0bda1d7556dcbda64e77600a1658bf934b84b583`) into reviewed S head `70b609c745e1bb266f419efd722cb71690ee1a0e` (tree `d85dba80c45af47830858fe6b8e9876287ce3c94`). Merge commit `354c0093a952552956b9f5007e0e9265bde692ac`. Parents, in order: `70b609c745e1bb266f419efd722cb71690ee1a0e`, `60b8e75ece16a8640d21e460380f25d627bbe700`. History preserved. No rebase, no force-push, no cherry-pick, no sibling-branch merge. The delivery head is the notes commit on top of that merge. This file does not contain that notes hash.
+
+The merge brought the T traveller-snapshot files. It did not change S audit payloads, the matrix, TASK, PLAN, `package.json`, or `package-lock.json`.
+
+`input-binding.mainAtExecution` stays `a74c443c6be3f064f150fcf021ab6154bda325e5`. That value is the main commit at the original execution. It is not a full source-snapshot hash. `literalImports` stays the historical pre-T census from the a74-based S checkout: 45 server seeds, 126 client seeds, 82 package names. Zod literal-import chains, and the absence of literal `ws` and `source-map-js` imports, are historical observations from that checkout. `inventory.mjs` was not run. Retained acquisition stays `UNAVAILABLE` with `retrievedAt` null. Installed and deployed applicability stay unknown.
+
+On Node `v22.23.4`, before these notes, the existing matrix rebuild wrote `/tmp/r107-sync-matrix.json` with stdout `MATRIX rows=42 {"provisional P1":40,"P2":2}` and exit 0. Its SHA-256 matched the committed matrix: `dc7b201dc0b0f12c34c95fcd48eb3859a93982e3749dd9ec679dbc92a7d09d47`. The committed matrix was not rewritten. The 15 existing fixture assertions exited 0 with `FIXTURE_RESULT pass`. The validator exited 0 with `EVIDENCE_VALID rows=42`. `git diff --check` exited 0. The same three commands are recorded in `commands.txt` under `INTEGRATION_SYNC1`. That success is retained-evidence and package consistency. It is not a new source traversal and not installed or deployed execution proof.
+
+Priority counts stay 0 provisional P0, 40 provisional P1, and 2 P2. No S-FIX group is activated. Fresh App, Auth, and Vercel gates are required for the notes head. Native run 40219265005, App job 121247068711, Auth job 121247068533, and Preview `dpl_2M6Lsaux6QUNethN8Lzk6mLDJpa5` gate exact `70b609c` only. They do not gate this head. Native and Preview ids for the notes head are not assigned in this file.
+
+`next-env.d.ts` stayed at its pre-command dirty bytes and is not staged.
 
 ## Binding
 
