@@ -81,6 +81,8 @@ The mounted command on this tree exits 0 with 22 pass / 0 fail. Node v22.23.4, P
 
 The handoff at `736edb9f` stopped after the two card corrections. Registry uncertainty, T-EX2, the Konto one-refresh count, focus ownership, and the match-claim correction are in the current packet. This documentation commit does not change product code. The product tree is `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`.
 
+The 22-pass receipt was first stored at `b29ce47435b0f3997384869e56474f8c77ec0761`, blob `b0abac7e862c1202986757e6907c21aa39811b1d`. That run exercised tree `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`. The 21-pass receipt is historical and is stored at `268a579322ce35b0a1db380d1cbfe014f761db45`, blob `567badb1bab510c0a8b3bc51dc62126c72f9d057`; its run exercised tree `8975beab7ef622a18002692c3435527375b8c8b7`. The 20-pass receipt is stored at `a14d174ca1a543ceda93ff08917ca3740236b1c6`, blob `e3a60194546c173e1b5890987b8ded866bcf27cf`; its run exercised tree `55970376c0e8c08b0bc79610854fc4898355673a`. The 18-pass receipt is stored at `736edb9f900645137c6947f8de194171d3757c95`, blob `522d91926c6142b0bd4186d7fef6a20f3c1a43c1`; its run exercised tree `4f2165518fdea569afbb63d45efaef13409c276b`. The receipt commit and the runtime tree are different objects. The command lines above keep the pass counts of the runs they name.
+
 ## Boundaries
 
 No migration, RLS, Auth, provider, secret, payment, or new dependency. No passport number, MRZ, biometrics, health, or file field. USD 100 and noindex are unchanged. Frozen writers, `gastspeicher`, `dokument-formular.ts`, and `TripWorkspaceAuditClient.tsx` are unchanged versus `origin/main`.
