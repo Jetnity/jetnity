@@ -117,6 +117,33 @@ function bericht(board, patch) {
   return board === 'health' ? healthBericht(patch) : opsBericht(patch)
 }
 
+function boardPfad(board) {
+  return board === 'health' ? '/api/admin/system-health' : '/api/admin/provider-ops'
+}
+
+function ungueltigeKoerper(board) {
+  const basis = bericht(board, {})
+  const duplikat = structuredClone(basis)
+  duplikat.items[1] = { ...structuredClone(duplikat.items[0]), name: 'Kopie' }
+  const fehlt = structuredClone(basis)
+  fehlt.items = fehlt.items.slice(0, -1)
+  const falsch = structuredClone(basis)
+  falsch.items[0] = { ...falsch.items[0], id: 'fremd' }
+  const status = structuredClone(basis)
+  status.items[0] = { ...status.items[0], status: 'kaputt' }
+  const aktion = structuredClone(basis)
+  aktion.writeActions = ['POST']
+  const meta = structuredClone(basis)
+  meta.items[0] = { ...meta.items[0], metadata: { n: 1 } }
+  const zeit = structuredClone(basis)
+  zeit.checkedAt = 'nein'
+  const alter = structuredClone(basis)
+  alter.items[0] = { ...alter.items[0], freshness: { state: 'fresh', ageMs: -1, ttlMs: 60_000 } }
+  const ttl = structuredClone(basis)
+  ttl.items[0] = { ...ttl.items[0], freshness: { state: 'fresh', ageMs: 0, ttlMs: 9_999_999 } }
+  return [duplikat, fehlt, falsch, status, aktion, meta, zeit, alter, ttl, [], {}]
+}
+
 function markiert(board, name) {
   const wert = bericht(board, {})
   wert.items[0].checks[0].name = name
@@ -394,6 +421,265 @@ fall('zukunft-bleibt-nicht-gruen', beide, async ({ page, board }) => {
   if (await abrufe(page) !== 0) throw new Error('Zukunft hat abgerufen')
 })
 
+fall('endpunkt-aba-verwirft-alten-lauf', beide, async ({ page, board }) => {
+  await warte(page, (sel) => document.querySelector(sel), karteSel(board), 'Karte fehlt')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.click()
+  await page.evaluate(() => window.__setze({ endpunkt: '/api/admin/endpunkt-b' }))
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'historisch', null, 'B nicht historisch')
+  const abbruch = await page.evaluate(() => window.__abgebrochen)
+  if (abbruch < 1) throw new Error('Signal nicht abgebrochen')
+  await page.evaluate((pfad) => window.__setze({ endpunkt: pfad }), boardPfad(board))
+  if (await abrufe(page) !== 1) throw new Error('Rückkehr hat abgerufen')
+  await loese(page, { status: 200, koerper: markiert(board, 'ALTER-ERFOLG') })
+  await ruhen(page)
+  if ((await page.locator('body').innerText()).includes('ALTER-ERFOLG')) throw new Error('alter Erfolg hat geschrieben')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'historisch')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  if (await knopf.isDisabled()) throw new Error('Sperre blieb nach altem Erfolg')
+
+  await knopf.click()
+  await page.evaluate(() => window.__setze({ endpunkt: '/api/admin/endpunkt-b' }))
+  await gleich(page, '[data-operations-endpoint]', 'data-operations-endpoint', '/api/admin/endpunkt-b')
+  await page.evaluate((pfad) => window.__setze({ endpunkt: pfad }), boardPfad(board))
+  await gleich(page, '[data-operations-endpoint]', 'data-operations-endpoint', boardPfad(board))
+  await loese(page, { status: 403, kaputt: true })
+  await ruhen(page)
+  if (await page.locator(karteSel(board)).count() === 0) throw new Error('alte Verweigerung hat Karten gelöscht')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'historisch')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+
+  await knopf.click()
+  await page.evaluate(() => window.__setze({ endpunkt: '/api/admin/endpunkt-b' }))
+  await gleich(page, '[data-operations-endpoint]', 'data-operations-endpoint', '/api/admin/endpunkt-b')
+  await page.evaluate((pfad) => window.__setze({ endpunkt: pfad }), boardPfad(board))
+  await gleich(page, '[data-operations-endpoint]', 'data-operations-endpoint', boardPfad(board))
+  await loese(page, { netz: true })
+  await ruhen(page)
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'historisch')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  if (await abrufe(page) !== 3) throw new Error(`Umschaltung hat extra abgerufen: ${await abrufe(page)}`)
+
+  await knopf.click()
+  await loese(page, { status: 200, koerper: markiert(board, 'NEUER-ERFOLG') })
+  await warte(page, () => document.body.innerText.includes('NEUER-ERFOLG'), null, 'neuer Erfolg fehlt')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'aktuell')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+})
+
+fall('karten-zukunft', beide, async ({ page, board }) => {
+  const gruen = board === 'health' ? 'data-health-green' : 'data-ops-green'
+  await warte(page, (wert) => document.querySelector(wert.sel)?.getAttribute(wert.attr) === 'unknown', { sel: karteSel(board), attr: frischeAttr(board) }, 'Kartenzeit nicht unknown')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind der Zukunftskarte ist fresh')
+  if (await page.locator(kindSel(board)).getAttribute(gruen) !== 'false') throw new Error('Kind der Zukunftskarte ist grün')
+  await page.clock.setSystemTime(BASIS + 180_000)
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+  await page.clock.runFor(1_000)
+  if (await page.locator(karteSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kartenzeit wurde später fresh')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind wurde später fresh')
+  if (await abrufe(page) !== 0) throw new Error('Kartenzeit hat abgerufen')
+})
+
+fall('annahme-mono-unbrauchbar', beide, async ({ page, board }) => {
+  await warte(page, (wert) => document.querySelector(wert.sel)?.getAttribute(wert.attr) === 'unknown', { sel: karteSel(board), attr: frischeAttr(board) }, 'Mono-Annahme nicht unknown')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind bei Mono-Annahme fresh')
+  await page.evaluate(() => {
+    performance.now = () => 8_000
+    document.dispatchEvent(new Event('visibilitychange'))
+  })
+  await page.clock.runFor(2_000)
+  if (await page.locator(karteSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('spätere Mono-Uhr wurde fresh')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind wurde durch Mono-Uhr fresh')
+  if (await abrufe(page) !== 0) throw new Error('Mono-Annahme hat abgerufen')
+})
+
+fall('annahme-wand-unbrauchbar', beide, async ({ page, board }) => {
+  await warte(page, (wert) => document.querySelector(wert.sel)?.getAttribute(wert.attr) === 'unknown', { sel: karteSel(board), attr: frischeAttr(board) }, 'Wand-Annahme nicht unknown')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind bei Wand-Annahme fresh')
+  await page.evaluate((jetzt) => {
+    Date.now = () => jetzt
+    performance.now = () => 8_000
+    document.dispatchEvent(new Event('visibilitychange'))
+  }, BASIS + 8_000)
+  await page.clock.runFor(2_000)
+  if (await page.locator(karteSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('spätere Wanduhr wurde fresh')
+  if (await page.locator(kindSel(board)).getAttribute(frischeAttr(board)) === 'fresh') throw new Error('Kind wurde durch Wanduhr fresh')
+  if (await abrufe(page) !== 0) throw new Error('Wand-Annahme hat abgerufen')
+})
+
+fall('props-waehrend-erstem-get-erfolg', beide, async ({ page, board }) => {
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'prueft')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  if (await knopf.isDisabled()) throw new Error('Knopf während Prop-Prüfung gesperrt')
+  await knopf.click()
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'true')
+  await page.evaluate((wert) => window.__setze({ anfang: wert }), markiert(board, 'PROP-NEU'))
+  await propsFrei(page)
+  await loese(page, { status: 200, koerper: markiert(board, 'GET-BLEIBT') })
+  await warte(page, () => document.body.innerText.includes('GET-BLEIBT'), null, 'GET-Text fehlt')
+  if ((await page.locator('body').innerText()).includes('PROP-NEU')) throw new Error('neue Props haben das GET ersetzt')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  await page.clock.runFor(2_000)
+  await page.evaluate(() => {
+    document.dispatchEvent(new Event('visibilitychange'))
+    document.dispatchEvent(new Event('visibilitychange'))
+  })
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  if (await knopf.isDisabled()) throw new Error('Knopf bleibt gesperrt')
+  await knopf.click()
+  if (await abrufe(page) !== 2) throw new Error('zweiter Abruf fehlt')
+  await loese(page, { status: 200, koerper: markiert(board, 'ZWEITER') })
+  await warte(page, () => document.body.innerText.includes('ZWEITER'), null, 'zweiter GET fehlt')
+})
+
+fall('props-waehrend-erstem-get-fehler', beide, async ({ page, board }) => {
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'prueft')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.click()
+  await page.evaluate((wert) => window.__setze({ anfang: wert }), markiert(board, 'PROP-FEHLER'))
+  await propsFrei(page)
+  await loese(page, { status: 503, koerper: { message: 'Wartung' } })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'fehler', null, '503 nicht fehler')
+  if (await page.locator(karteSel(board)).count()) throw new Error('503 hat Karten aus Props gezeigt')
+  if ((await page.locator('body').innerText()).includes('PROP-FEHLER')) throw new Error('Props haben den 503 ersetzt')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: markiert(board, 'NACH-FEHLER') })
+  await warte(page, () => document.body.innerText.includes('NACH-FEHLER'), null, 'Refresh nach 503 fehlt')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+})
+
+fall('props-waehrend-erstem-get-verweigerung', beide, async ({ page, board }) => {
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'prueft')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.click()
+  await page.evaluate((wert) => window.__setze({ anfang: wert }), markiert(board, 'PROP-VERWEIGERT'))
+  await propsFrei(page)
+  await loese(page, { status: 403, kaputt: true })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'verweigert', null, '403 fehlt')
+  if (await page.locator(karteSel(board)).count()) throw new Error('Verweigerung zeigt Karten')
+  if ((await page.locator('body').innerText()).includes('PROP-VERWEIGERT')) throw new Error('Props haben die Verweigerung ersetzt')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: markiert(board, 'NACH-VERWEIGERUNG') })
+  await warte(page, () => document.body.innerText.includes('NACH-VERWEIGERUNG'), null, 'Refresh nach 403 fehlt')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'aktuell')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+})
+
+fall('tastatur-waehrend-prop-pruefung', beide, async ({ page, board }) => {
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'prueft')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.focus()
+  await page.keyboard.press('Enter')
+  if (await abrufe(page) !== 1) throw new Error('Tastatur während prüft hat nicht einmal abgerufen')
+  await propsFrei(page)
+  const propName = board === 'health' ? 'App-Prozess' : 'Flights'
+  if ((await page.locator('body').innerText()).includes(propName)) throw new Error('verspätete Props wurden sichtbar')
+  await loese(page, { status: 200, koerper: markiert(board, 'TASTATUR-HALT') })
+  await warte(page, () => document.body.innerText.includes('TASTATUR-HALT'), null, 'Tastatur-GET fehlt')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+})
+
+fall('ungueltige-anfangskoerper', beide, async ({ page, board }) => {
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'fehler', null, 'null nicht fehler')
+  if (await page.locator('[data-health-id],[data-ops-id]').count()) throw new Error('Karte bei null')
+  for (const koerper of ungueltigeKoerper(board)) {
+    await page.evaluate((wert) => window.__setze({ anfang: wert }), koerper)
+    await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'fehler', null, 'ungültiger Körper nicht fehler')
+    if (await page.locator('[data-health-id],[data-ops-id]').count()) throw new Error('Karte bei ungültigem Körper')
+    if ((await page.locator('[role="alert"]').innerText()).length === 0) throw new Error('keine Fehlermeldung')
+  }
+  if (await abrufe(page) !== 0) throw new Error('ungültige Körper haben abgerufen')
+})
+
+fall('historisch-altert-nach-fehler', beide, async ({ page, board }) => {
+  await warte(page, (sel) => document.querySelector(sel), karteSel(board), 'Karte fehlt')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.click()
+  await loese(page, { status: 503, koerper: { message: 'Wartung' } })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'historisch', null, '503 nicht historisch')
+  if ((await page.locator('body').innerText()).includes('Die angezeigte Prüfung ist historisch und unbestätigt.') === false) {
+    throw new Error('Historie-Satz fehlt')
+  }
+  if (await page.locator(karteSel(board)).count() === 0) throw new Error('503 hat die Karte entfernt')
+  const vorher = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
+  await page.clock.runFor(5_000)
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+  const nachher = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
+  if (!(nachher >= vorher + 5_000)) throw new Error(`historischer Stand altert nicht: ${vorher} -> ${nachher}`)
+  await knopf.click()
+  await loese(page, { netz: true })
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'historisch')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: { checkedAt: 'nein' } })
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'historisch')
+  if (await page.locator(karteSel(board)).count() === 0) throw new Error('ungültiges 200 hat die Karte entfernt')
+  if ((await page.locator('body').innerText()).includes('Für diese Ansicht fehlt die Berechtigung.')) throw new Error('Lesefehler wurde zur Verweigerung')
+  if (await abrufe(page) !== 3) throw new Error('historische Fehler haben extra abgerufen')
+})
+
+fall('ttl-alle-grenzen', beide, async ({ page, board }) => {
+  const probe = async (sel, zustand, label) => {
+    await warte(page, (wert) => document.querySelector(wert.sel)?.getAttribute(wert.attr) === wert.zustand, {
+      sel,
+      attr: frischeAttr(board),
+      zustand,
+    }, label)
+  }
+  const tick = async (ms) => {
+    await page.clock.runFor(ms)
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+  }
+  if (board === 'health') {
+    await probe('[data-health-id="app"]', 'fresh', 'App Start')
+    await tick(59_999)
+    await probe('[data-health-id="app"]', 'fresh', 'App vor 60s')
+    await probe('[data-health-id="vercel"]', 'fresh', 'Vercel vor 60s')
+    await probe('[data-health-id="github"]', 'fresh', 'GitHub vor 60s')
+    await probe('[data-health-check="github-lauf"]', 'fresh', 'GitHub-Kind vor 60s')
+    await tick(1)
+    await probe('[data-health-id="app"]', 'fresh', 'App bei 60s')
+    await tick(1)
+    await probe('[data-health-id="app"]', 'stale', 'App nach 60s')
+    await probe('[data-health-check="github-lauf"]', 'stale', 'GitHub-Kind nach 60s')
+    await probe('[data-health-id="github"]', 'fresh', 'GitHub nach 60s')
+    await probe('[data-health-id="vercel"]', 'fresh', 'Vercel nach 60s')
+    await tick(59_998)
+    await probe('[data-health-id="vercel"]', 'fresh', 'Vercel vor 120s')
+    await tick(1)
+    await probe('[data-health-id="vercel"]', 'fresh', 'Vercel bei 120s')
+    await tick(1)
+    await probe('[data-health-id="vercel"]', 'stale', 'Vercel nach 120s')
+    await probe('[data-health-id="github"]', 'fresh', 'GitHub nach 120s')
+    await tick(179_998)
+    await probe('[data-health-id="github"]', 'fresh', 'GitHub vor 300s')
+    await tick(1)
+    await probe('[data-health-id="github"]', 'fresh', 'GitHub bei 300s')
+    await tick(1)
+    await probe('[data-health-id="github"]', 'stale', 'GitHub nach 300s')
+  } else {
+    await probe('[data-ops-id="provider-ops"]', 'fresh', 'Provider Start')
+    await tick(59_999)
+    await probe('[data-ops-id="provider-ops"]', 'fresh', 'Provider vor 60s')
+    await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell vor 60s')
+    await tick(1)
+    await probe('[data-ops-id="provider-ops"]', 'fresh', 'Provider bei 60s')
+    await tick(1)
+    await probe('[data-ops-id="provider-ops"]', 'stale', 'Provider nach 60s')
+    await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell nach 60s')
+    await tick(59_998)
+    await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell vor 120s')
+    await tick(1)
+    await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell bei 120s')
+    await tick(1)
+    await probe('[data-ops-id="model-usage"]', 'stale', 'Modell nach 120s')
+  }
+  if (await abrufe(page) !== 0) throw new Error('TTL-Grenzen haben abgerufen')
+})
+
 fall('tab-zurueck-altert-ohne-abruf', beide, async ({ page, board }) => {
   await warte(page, (sel) => document.querySelector(sel), karteSel(board), 'Karte fehlt')
   const vorher = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
@@ -467,6 +753,12 @@ async function loeseErsten(page, spec) {
   if (!ok) throw new Error('kein erster Abruf')
 }
 
+async function ruhen(page) {
+  await page.evaluate(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  }))
+}
+
 async function propsFrei(page) {
   await page.evaluate(() => {
     const frei = window.__propsWarten.shift()
@@ -490,6 +782,41 @@ function anfangFuer(name, board) {
   if (name.endsWith('zukunft-bleibt-nicht-gruen')) {
     return bericht(board, { checkedAt: iso(BASIS + 120_000) })
   }
+  if (name.endsWith('karten-zukunft')) {
+    return bericht(board, {
+      checkedAt: iso(BASIS),
+      app: {
+        status: board === 'health' ? 'healthy' : 'foundation_only',
+        checkedAt: iso(BASIS + 120_000),
+      },
+      checks: [{
+        id: board === 'health' ? 'app-prozess' : 'domain-flights',
+        name: board === 'health' ? 'App-Prozess' : 'Flights',
+        status: board === 'health' ? 'healthy' : 'available',
+        source: 'mounted-fixture',
+        freshness: { state: 'fresh', ageMs: 0, ttlMs: 60_000 },
+        summary: 'Zukunftskind.',
+        proves: 'Nur diese Teilprüfung.',
+        doesNotProve: 'Keine spätere Uhr.',
+      }],
+    })
+  }
+  if (name.endsWith('ttl-alle-grenzen') && board === 'health') {
+    const wert = bericht(board, {})
+    const github = wert.items.find((item) => item.id === 'github')
+    github.checks = [{
+      id: 'github-lauf',
+      name: 'GitHub-Lauf',
+      status: 'not_configured',
+      source: 'mounted-fixture',
+      freshness: { state: 'fresh', ageMs: 0, ttlMs: 60_000 },
+      summary: 'Lauf geprüft.',
+      proves: 'Nur diesen Lauf.',
+      doesNotProve: 'Kein Deploy.',
+    }]
+    return wert
+  }
+  if (name.endsWith('ungueltige-anfangskoerper')) return null
   if (name.includes('ueberlauf') || name.includes('beleg')) {
     return bericht(board, { proves: LANG, summary: LANG, app: { metadata: { beleg: LANG } } })
   }
@@ -498,6 +825,8 @@ function anfangFuer(name, board) {
 
 function sperreFuer(name) {
   return name.includes('prueft-und-explizites-get')
+    || name.includes('props-waehrend-erstem-get')
+    || name.includes('tastatur-waehrend-prop-pruefung')
 }
 
 async function main() {
@@ -589,15 +918,28 @@ async function main() {
         reducedMotion: 'reduce',
       })
       await context.clock.install({ time: BASIS })
-      if (eintrag.name.endsWith('ttl-kind-und-ruecklauf')) await context.clock.pauseAt(BASIS)
+      if (eintrag.name.endsWith('ttl-kind-und-ruecklauf') || eintrag.name.endsWith('ttl-alle-grenzen')) {
+        await context.clock.pauseAt(BASIS)
+      }
       await context.addInitScript((wert) => {
         window.__FALL__ = wert.fall
         window.__abrufe = []
         window.__wartend = []
+        window.__abgebrochen = 0
         window.fetch = (url, init) => {
           window.__abrufe.push({ url: String(url), cache: init && init.cache })
           return new Promise((resolve, reject) => {
-            window.__wartend.push({ resolve, reject, url: String(url) })
+            const eintragAbruf = { resolve, reject, url: String(url), aborted: false }
+            window.__wartend.push(eintragAbruf)
+            const signal = init && init.signal
+            if (signal) {
+              const merken = () => {
+                eintragAbruf.aborted = true
+                window.__abgebrochen += 1
+              }
+              if (signal.aborted) merken()
+              else signal.addEventListener('abort', merken, { once: true })
+            }
           })
         }
         if (wert.sperre) {
@@ -616,6 +958,19 @@ async function main() {
         },
         sperre: sperreFuer(eintrag.name),
       })
+      if (eintrag.name.endsWith('annahme-mono-unbrauchbar')) {
+        await context.addInitScript(() => {
+          performance.now = () => Number.NaN
+        })
+      }
+      if (eintrag.name.endsWith('annahme-wand-unbrauchbar')) {
+        await context.addInitScript(() => {
+          performance.now = () => 40
+          Date.now = () => {
+            throw new Error('wand')
+          }
+        })
+      }
       const page = await context.newPage()
       const fehler = []
       page.on('pageerror', (error) => fehler.push(String(error)))

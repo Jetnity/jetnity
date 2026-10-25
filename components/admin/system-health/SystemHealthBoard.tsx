@@ -167,6 +167,7 @@ export default function SystemHealthBoard({
     <section
       className="min-w-0 space-y-4 break-words"
       data-operations-phase={phase}
+      data-operations-endpoint={endpunkt}
       data-operations-pending={pending ? 'true' : 'false'}
       aria-busy={pending}
     >

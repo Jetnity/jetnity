@@ -29,6 +29,7 @@ export type Hinweis = { state: FrischeZustand; ageMs: number | null } | null
 
 export type KartenAlter = {
   id: string
+  geprueftMs: number
   eltern: KnotenAlter
   anzeige: Anzeige
   checks: Array<{ id: string; knoten: KnotenAlter; anzeige: Anzeige }>
@@ -45,6 +46,7 @@ export type Lauf = {
   endpunkt: string
   epoche: number
   instanz: number
+  quelle: number
 }
 
 export type Stand<T> = {
@@ -53,6 +55,7 @@ export type Stand<T> = {
   naechsteId: number
   endpunkt: string
   epoche: number
+  quelle: number
   erlaubt: boolean
   getGesperrt: boolean
   latch: boolean
@@ -65,7 +68,12 @@ export type Stand<T> = {
 }
 
 type RohFrische = { state: FrischeZustand; ageMs: number | null; ttlMs: number }
-type RohKnoten = { id: string; freshness: RohFrische; checks?: Array<{ id: string; freshness: RohFrische }> | undefined }
+type RohKnoten = {
+  id: string
+  checkedAt: string
+  freshness: RohFrische
+  checks?: Array<{ id: string; freshness: RohFrische }> | undefined
+}
 type RohBericht = { checkedAt: string; items: RohKnoten[] }
 
 export function kappeMeldung(text: string): string {
@@ -186,19 +194,27 @@ export function alterFortschreiben(input: {
   let vergangenMs = input.anker.vergangenMs
   if (wandDelta !== null) vergangenMs = Math.max(vergangenMs, wandDelta)
   if (monoDelta !== null) vergangenMs = Math.max(vergangenMs, monoDelta)
-  const erzwingenUnknown = (wandDelta === null && monoDelta === null) || wandJetzt === null || input.anker.geprueftMs > wandJetzt
+  const ankerUnbrauchbar = input.anker.wand === null || input.anker.mono === null
+  const erzwingenUnknown = ankerUnbrauchbar
+    || (wandDelta === null && monoDelta === null)
+    || wandJetzt === null
+    || !Number.isFinite(input.anker.geprueftMs)
+    || (wandJetzt !== null && input.anker.geprueftMs > wandJetzt)
   const hinweisNachId = new Map((input.hinweise ?? []).map((eintrag) => [eintrag.id, eintrag]))
   return {
     anker: { ...input.anker, vergangenMs },
     karten: input.karten.map((karte) => {
       const hinweis = hinweisNachId.get(karte.id)
-      const eltern = anwenden(karte.eltern, vergangenMs, hinweis?.hinweis ?? null, erzwingenUnknown)
+      const karteUnbrauchbar = !Number.isFinite(karte.geprueftMs) || (wandJetzt !== null && karte.geprueftMs > wandJetzt)
+      const erzwingen = erzwingenUnknown || karteUnbrauchbar
+      const eltern = anwenden(karte.eltern, vergangenMs, hinweis?.hinweis ?? null, erzwingen)
       return {
         id: karte.id,
+        geprueftMs: karte.geprueftMs,
         eltern: eltern.knoten,
         anzeige: eltern.anzeige,
         checks: karte.checks.map((check, index) => {
-          const teil = anwenden(check.knoten, vergangenMs, hinweis?.checks?.[index] ?? null, erzwingenUnknown)
+          const teil = anwenden(check.knoten, vergangenMs, hinweis?.checks?.[index] ?? null, erzwingen)
           return { id: check.id, knoten: teil.knoten, anzeige: teil.anzeige }
         }),
       }
@@ -214,6 +230,7 @@ export function buchAusBericht<T extends RohBericht>(
   const anker = ankerAus(uhren.wand, uhren.mono, bericht.checkedAt)
   const karten: KartenAlter[] = bericht.items.map((item) => ({
     id: item.id,
+    geprueftMs: Date.parse(item.checkedAt),
     eltern: knotenAus(item.freshness.state, item.freshness.ageMs, item.freshness.ttlMs),
     anzeige: { state: item.freshness.state, ageMs: item.freshness.ageMs, ttlMs: item.freshness.ttlMs },
     checks: (item.checks ?? []).map((check) => ({
@@ -240,6 +257,7 @@ export function standAnfang<T>(instanz: number, endpunkt: string, erlaubt: boole
     naechsteId: 1,
     endpunkt,
     epoche: 1,
+    quelle: 1,
     erlaubt,
     getGesperrt: false,
     latch: false,
@@ -257,6 +275,7 @@ export function laufGueltig<T>(stand: Stand<T>, lauf: Lauf): boolean {
     && stand.instanz === lauf.instanz
     && stand.endpunkt === lauf.endpunkt
     && stand.epoche === lauf.epoche
+    && stand.quelle === lauf.quelle
     && lauf.id === stand.naechsteId - 1
 }
 
@@ -271,11 +290,13 @@ function neuerLauf<T>(stand: Stand<T>, art: Lauf['art']): { stand: Stand<T>; lau
     endpunkt: stand.endpunkt,
     epoche: stand.epoche,
     instanz: stand.instanz,
+    quelle: stand.quelle,
   }
   return { stand: { ...stand, naechsteId: stand.naechsteId + 1 }, lauf }
 }
 
-export function propsBeginnen<T>(stand: Stand<T>): { stand: Stand<T>; lauf: Lauf } {
+export function propsBeginnen<T>(stand: Stand<T>): { stand: Stand<T>; lauf: Lauf | null } {
+  if (stand.getGesperrt) return { stand, lauf: null }
   return neuerLauf(stand, 'props')
 }
 
@@ -370,7 +391,7 @@ export function abschluss<T>(stand: Stand<T>, lauf: Lauf): Stand<T> {
 
 export function endpunktSetzen<T>(stand: Stand<T>, endpunkt: string): Stand<T> {
   if (stand.endpunkt === endpunkt) return stand
-  const naechster: Stand<T> = { ...stand, endpunkt, getGesperrt: false }
+  const naechster: Stand<T> = { ...stand, endpunkt, getGesperrt: false, quelle: stand.quelle + 1 }
   if (!stand.latch && stand.bericht) return { ...naechster, phase: 'historisch' }
   return naechster
 }

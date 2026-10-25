@@ -28,7 +28,12 @@ import {
 export { HISTORISCHER_SATZ }
 
 type Frische = { state: 'fresh' | 'stale' | 'unknown'; ageMs: number | null; ttlMs: number }
-type Knoten = { id: string; freshness: Frische; checks?: Array<{ id: string; freshness: Frische }> | undefined }
+type Knoten = {
+  id: string
+  checkedAt: string
+  freshness: Frische
+  checks?: Array<{ id: string; freshness: Frische }> | undefined
+}
 type BerichtBasis = { checkedAt: string; items: Knoten[] }
 export type OperationsHinweis = {
   id: string
@@ -130,10 +135,12 @@ export function useOperationsReport<R extends BerichtBasis>(input: {
     let standJetzt = standRef.current
     if (standJetzt.endpunkt !== input.endpunkt) {
       standJetzt = endpunktSetzen(standJetzt, input.endpunkt)
+      standRef.current = standJetzt
+      if (standJetzt.montiert) setStand(standJetzt)
       controllerRef.current?.abort()
       controllerRef.current = null
     }
-    if (standJetzt.latch || standJetzt.bericht) {
+    if (standJetzt.getGesperrt || standJetzt.latch || standJetzt.bericht) {
       standRef.current = standJetzt
       if (standJetzt.montiert) setStand(standJetzt)
       return () => {
@@ -141,6 +148,13 @@ export function useOperationsReport<R extends BerichtBasis>(input: {
       }
     }
     const begonnen = propsBeginnen(standJetzt)
+    if (!begonnen.lauf) {
+      standRef.current = begonnen.stand
+      if (begonnen.stand.montiert) setStand(begonnen.stand)
+      return () => {
+        aktiv = false
+      }
+    }
     const lauf = begonnen.lauf
     standRef.current = begonnen.stand
     if (begonnen.stand.montiert) setStand(begonnen.stand)
