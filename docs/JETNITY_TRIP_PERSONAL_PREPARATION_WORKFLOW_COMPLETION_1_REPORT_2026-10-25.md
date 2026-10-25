@@ -20,14 +20,14 @@ The mounted list once failed 6 confirmation waits and passed 10. The unmodified 
 
 The first browser-lauf JSON that counted only the suite line was not found in session temp or committed R2 evidence. Both surviving `/tmp/personal-r2-browser*` JSON files already count the indented cases and name head `760afc59`. That miscount remains an author statement from the previous REPORT. It was not rewritten into a fake log.
 
-R2 proof on `760afc59` and the runner change on `4e66d894` stay historical. Those behavior logs were a pre-commit working tree, not a clean exact-head run of both. The R3 JSON names merge head `44e1a1c4` and hashes the runner and behavior files that were committed there.
+R2 proof on `760afc59` and the runner change on `4e66d894` stay historical. Those behavior logs were a pre-commit working tree, not a clean exact-head run of both. The R3 `unstyled/browser-lauf.json` records `kopf` `44e1a1c41d2e4939524d2b11996c7baa6a1b0056` and hashes 10 behavior and test source paths. It does not hash `browser-lauf.mjs`. `PROVENANCE.md` separately records runner blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903` as an author statement. That run did not record a machine-checked clean-tree before-and-after hash of the runner.
 
 ## Commands on `44e1a1c41d2e4939524d2b11996c7baa6a1b0056`
 
 Node v22.23.4. Chromium 140.0.7339.16.
 
 - `node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter tap lib/readiness/personal-preparation-workflow.test.ts lib/readiness/personal-preparation-workflow-wiring.test.ts lib/readiness/preparation-identity.test.ts scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts` — exit 0. 29 tests, 29 pass, 0 fail, 0 cancelled. This includes the workspace file and is not the CSS matrix.
-- Unstyled `browser-lauf.mjs --ausgabe .../2026-10-25-r3/unstyled` — exit 0. Custom list 19 tests, 19 pass, 18 mounted, 1 source comparison. Actual workspace 6 tests, 6 pass. Runner blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903`.
+- Unstyled `browser-lauf.mjs --ausgabe .../2026-10-25-r3/unstyled` — exit 0. Custom list 19 tests, 19 pass, 18 mounted, 1 source comparison. Actual workspace 6 tests, 6 pass. The JSON `quellen` object has those 10 behavior and test paths and no runner entry. Runner blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903` is the separate author note in `PROVENANCE.md`, not a field of that JSON and not a before-and-after clean-tree witness.
 - `npm run typecheck` — exit 0.
 - `npm run lint` — exit 0, 0 errors, 181 warnings.
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` — each exit 0. Schema check still prints the existing LOCAL/UNAPPLIED RPC notes.

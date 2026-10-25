@@ -18,8 +18,9 @@ Date: 2026-10-25. Writer: **Jetnity Trip Personal Preparation Workflow Completio
 - Accepted planning head: `f0ed49ee8cda6a5805ba2c1e803b2122d68cfae7`
 - TASK blob: `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`
 - PLAN blob: `e58f582669793ff3b7d86727ac9130afa89eef98`
-- Behind / ahead after the merge and before this docs commit: 0 / 13
-- This docs commit adds evidence and these four files. It does not change runtime or `browser-lauf.mjs`.
+- Behind / ahead after the merge and before evidence docs commit `19ac02ae34a05cf6e2636313e8fda316782959a2`: 0 / 13
+- Evidence docs commit `19ac02ae34a05cf6e2636313e8fda316782959a2` added the R3 evidence and the four continuity files. It does not change runtime or `browser-lauf.mjs`.
+- T-R3-D1 is a later wording commit. It corrects the REPORT claim that the R3 JSON hashed the runner. `browser-lauf.json` still records `kopf` `44e1a1c4` and 10 behavior and test hashes. Raw JSON, screenshots, the preserved TAP, and the `19ac02ae` delivery stay. This wording commit does not change runtime, tests, the runner, or evidence bytes other than `PROVENANCE.md`.
 - Mode `NORMAL`. Branch `feat/r106-trip-personal-preparation-workflow-1`.
 
 ## Ownership
@@ -28,7 +29,7 @@ R3 product paths: `lib/readiness/personal-preparation-workflow.ts`, `components/
 
 R3 tests: `lib/readiness/personal-preparation-workflow.test.ts`, `scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts`.
 
-Unchanged by R3: `TripWorkspace.tsx`, `KontoArbeitsbereich.tsx`, `GastArbeitsbereich.tsx`, `Reisevorbereitung.tsx`, `browser-lauf.mjs` blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903`, and the frozen guest writer. TASK and PLAN were not edited. `docs/ACTIVE_WORK_STATUS.md` was not edited.
+Unchanged by R3: `TripWorkspace.tsx`, `KontoArbeitsbereich.tsx`, `GastArbeitsbereich.tsx`, `Reisevorbereitung.tsx`, and the frozen guest writer. TASK and PLAN were not edited. `docs/ACTIVE_WORK_STATUS.md` was not edited. Author note, not a `browser-lauf.json` `quellen` entry and not a machine-recorded clean-tree before-and-after witness: `browser-lauf.mjs` blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903`.
 
 Inherited O/A files match accepted main `77ed41ad`. Frozen contracts were not rewritten.
 
