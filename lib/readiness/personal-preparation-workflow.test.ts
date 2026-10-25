@@ -27,6 +27,7 @@ import {
   PERSONAL_ZIEL_WEG,
   interaktion,
   preparationEpoch,
+  sichtMeldung,
   type PersonalIntent,
   type PersonalLedger,
 } from '@/lib/readiness/personal-preparation-workflow'
@@ -376,5 +377,25 @@ describe('personal preparation workflow', () => {
       if (vorher === undefined) delete (globalThis as { window?: unknown }).window
       else globalThis.window = vorher
     }
+  })
+
+  test('a later absence keeps the confirmed receipt but drops the current-visibility claim', () => {
+    const leer = beispielreise({ id: 'abwesend', readinessItems: [] })
+    const erzeugt = entscheiden(leerLedger(leer.id), { art: 'create', title: 'Adapter', filter: 'alle' }, leer, null)
+    const ref = erzeugt.auftrag!.clientRef
+    let ledger = annehmen(erzeugt.ledger, letzteId(erzeugt.ledger), 1).ledger
+    const da = beispielreise({ id: leer.id, readinessItems: [punkt(leer, ref, 'Adapter')] })
+    ledger = kontoBeobachten(ledger, da)
+    assert.equal(letzter(ledger).phase, 'confirmed')
+    assert.equal(sichtMeldung(letzter(ledger), ledger.beobachteteRefs), PERSONAL_BESTAETIGT)
+    assert.deepEqual(ledger.beobachteteRefs, [ref])
+    const weg = beispielreise({ id: leer.id, readinessItems: [] })
+    ledger = kontoBeobachten(ledger, weg)
+    assert.equal(letzter(ledger).phase, 'confirmed')
+    assert.equal(letzter(ledger).meldung, PERSONAL_BESTAETIGT)
+    assert.deepEqual(ledger.beobachteteRefs, [])
+    assert.equal(sichtMeldung(letzter(ledger), ledger.beobachteteRefs), PERSONAL_ZIEL_WEG)
+    const verworfen = entscheiden(ledger, { art: 'discard', intentId: 'fehlt' }, weg, null)
+    assert.equal(verworfen.ledger.beobachteteRefs?.length, 0)
   })
 })

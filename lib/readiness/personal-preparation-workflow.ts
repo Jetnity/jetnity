@@ -134,6 +134,11 @@ export type PersonalLedger = {
   revision: number
   /** Gleiche Kennung bleibt gesperrt, bis eine spätere Lesung gelesen gesetzt hat. */
   lesePflicht: Record<string, { seit: number; gelesen: number | null }>
+  /**
+   * Persönliche Kennungen der letzten qualifizierenden Lesung.
+   * null heißt, noch keine solche Lesung vorliegt. Die angezeigte Liste kann dahinterliegen.
+   */
+  beobachteteRefs: readonly string[] | null
 }
 
 export type PersonalAuftrag = {
@@ -216,7 +221,29 @@ export function leerLedger(tripId: string): PersonalLedger {
     fokusGeneration: 0,
     revision: 0,
     lesePflicht: {},
+    beobachteteRefs: null,
   }
+}
+
+function beobachteteVorbereitung(reise: Trip): string[] {
+  return persoenlich(reise).map((item) => item.clientRef)
+}
+
+/** Historischer Erfolg bleibt erhalten. Sichtbarkeit gilt nur für die letzte qualifizierende Lesung. */
+export function sichtMeldung(intent: PersonalIntent, beobachteteRefs: readonly string[] | null): string | null {
+  const behauptetSicht =
+    intent.meldung === PERSONAL_BESTAETIGT || intent.meldung === PERSONAL_ABGESTIMMT
+  const abgeschlossen = intent.phase === 'confirmed' || intent.phase === 'reconciled'
+  if (
+    abgeschlossen &&
+    intent.art !== 'delete' &&
+    behauptetSicht &&
+    beobachteteRefs != null &&
+    !beobachteteRefs.includes(intent.clientRef)
+  ) {
+    return PERSONAL_ZIEL_WEG
+  }
+  return intent.meldung
 }
 
 export function interaktion(ledger: PersonalLedger): PersonalLedger {
@@ -670,7 +697,13 @@ export function gastErgebnis(
   if (!intent || intent.lauf !== lauf) return ledger
   if (intent.phase !== 'awaiting' && intent.phase !== 'blocked') return ledger
   if (lesung.art === 'success' && lesung.reise.id === tripId) {
-    const basis = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1, barrier: false, hinweis: null })
+    const basis = pflichtAktualisieren({
+      ...ledger,
+      lieferung: ledger.lieferung + 1,
+      barrier: false,
+      hinweis: null,
+      beobachteteRefs: beobachteteVorbereitung(lesung.reise),
+    })
     return offeneLesen(basis, lesung.reise)
   }
   if (lesung.art === 'props') return ledger
@@ -682,14 +715,24 @@ export function gastErgebnis(
 
 export function kontoBeobachten(ledger: PersonalLedger, reise: Trip): PersonalLedger {
   if (reise.id !== ledger.tripId) return ledger
-  const next = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1 })
+  const next = pflichtAktualisieren({
+    ...ledger,
+    lieferung: ledger.lieferung + 1,
+    beobachteteRefs: beobachteteVorbereitung(reise),
+  })
   return offeneLesen(next, reise)
 }
 
 export function manuellLesen(ledger: PersonalLedger, lesung: ReadinessAktualisierung, tripId: string): PersonalLedger {
   if (lesung.art === 'props') return ledger
   if (lesung.art === 'success' && lesung.reise.id === tripId) {
-    const next = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1, barrier: false, hinweis: null })
+    const next = pflichtAktualisieren({
+      ...ledger,
+      lieferung: ledger.lieferung + 1,
+      barrier: false,
+      hinweis: null,
+      beobachteteRefs: beobachteteVorbereitung(lesung.reise),
+    })
     return offeneLesen(next, lesung.reise)
   }
   return { ...ledger, barrier: true, hinweis: PERSONAL_BARRIERE }

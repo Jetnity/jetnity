@@ -18,6 +18,7 @@ import {
   PERSONAL_ZIEL_WEG,
   preparationEpoch,
   persoenlicheEingabe,
+  sichtMeldung,
   zeileSichtbar,
   type PersonalFilter,
   type PersonalIntent,
@@ -100,6 +101,7 @@ export default function EigeneReisevorbereitung({
   }
 
   const interaktionRef = React.useRef(steuerung?.interaktion)
+  const programmFokus = React.useRef(false)
   React.useEffect(() => {
     interaktionRef.current = steuerung?.interaktion
   })
@@ -118,8 +120,17 @@ export default function EigeneReisevorbereitung({
     const details = ziel.closest('details')
     if (details && !details.open) return
     if (ziel.getClientRects().length === 0) return
+    programmFokus.current = true
     ziel.focus()
+    programmFokus.current = false
   }, [steuerung?.fokusIntentId])
+
+  const zeileFokus = (event: React.FocusEvent<HTMLElement>) => {
+    if (programmFokus.current) return
+    if (event.target !== event.currentTarget) return
+    if (!event.nativeEvent.isTrusted) return
+    steuerung?.interaktion()
+  }
 
   const letzteJeRef = new Map<string, PersonalIntent>()
   for (const intent of intents) letzteJeRef.set(intent.clientRef, intent)
@@ -263,6 +274,8 @@ export default function EigeneReisevorbereitung({
                 setLoeschen(null)
               }}
               onInteraktion={() => steuerung?.interaktion()}
+              onZeileFokus={zeileFokus}
+              beobachteteRefs={steuerung?.beobachteteRefs ?? null}
               onErneut={() => {
                 const intent = [...intents].reverse().find((eintrag) => eintrag.clientRef === item.clientRef)
                 if (intent) steuerung?.erneut(intent.id)
@@ -292,9 +305,10 @@ export default function EigeneReisevorbereitung({
               data-continuation-used={intent.continuationUsed ? 'true' : 'false'}
               tabIndex={-1}
               data-personal-focus={intent.fokussieren ? intent.id : undefined}
+              onFocus={zeileFokus}
             >
               <p className="break-words text-sm font-semibold text-brand-800">{intent.title}</p>
-              <Meldung intent={intent} />
+              <Meldung text={sichtMeldung(intent, steuerung?.beobachteteRefs ?? null)} />
               {intent.phase !== 'pending' && intent.phase !== 'awaiting' && intent.phase !== 'confirmed' ? (
                 <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
                   <button type="button" className={SEKUNDAER} onFocus={() => steuerung?.interaktion()} onClick={() => { steuerung?.interaktion(); steuerung?.erneut(intent.id) }}>Erneut versuchen</button>
@@ -321,7 +335,7 @@ export default function EigeneReisevorbereitung({
             />
           </label>
           <p className="break-words text-xs leading-5 text-ink-800">{SENSITIVE_HINWEIS}</p>
-          <button type="submit" className={PRIMAER} aria-disabled={steuerung?.barrier ? true : undefined}>
+          <button type="submit" className={PRIMAER} aria-disabled={steuerung?.barrier ? true : undefined} onFocus={() => steuerung?.interaktion()}>
             {erstellenLabel}
           </button>
         </form>
@@ -359,6 +373,8 @@ function Zeile({
   onVerwerfen,
   onAktualisieren,
   onInteraktion,
+  onZeileFokus,
+  beobachteteRefs,
 }: {
   item: ReadinessViewItem
   doppelt: boolean
@@ -377,6 +393,8 @@ function Zeile({
   onVerwerfen: () => void
   onAktualisieren: () => void
   onInteraktion: () => void
+  onZeileFokus: (event: React.FocusEvent<HTMLElement>) => void
+  beobachteteRefs: readonly string[] | null
 }) {
   const statusText = nutzerstandText(item.userStatus, item.currentness)
   const unterwegs = intent != null && (intent.phase === 'pending' || intent.phase === 'awaiting' || intent.phase === 'blocked')
@@ -391,13 +409,14 @@ function Zeile({
       data-continuation-used={intent?.continuationUsed ? 'true' : 'false'}
       tabIndex={-1}
       data-personal-focus={intent?.fokussieren ? intent.id : undefined}
+      onFocus={onZeileFokus}
     >
       <p className="break-words text-sm font-semibold text-brand-800">{item.title}</p>
       <p className="break-words text-xs leading-5 text-ink-800">{statusText}</p>
       {item.currentness === 'stale' ? (
         <p className="break-words text-xs leading-5 text-ink-800">{PERSONAL_STALE_ERKLAERUNG}</p>
       ) : null}
-      {intent ? <Meldung intent={intent} /> : null}
+      {intent ? <Meldung text={sichtMeldung(intent, beobachteteRefs)} /> : null}
       {editor ? (
         <div className="grid gap-2">
           <label className="grid gap-1 text-sm font-medium text-brand-800">
@@ -414,7 +433,7 @@ function Zeile({
           </button>
         </div>
       ) : (
-        <button type="button" className={SEKUNDAER} onClick={onOeffnen}>
+        <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onOeffnen}>
           Titel bearbeiten
         </button>
       )}
@@ -450,11 +469,11 @@ function Zeile({
   )
 }
 
-function Meldung({ intent }: { intent: PersonalIntent }) {
-  if (!intent.meldung) return null
+function Meldung({ text }: { text: string | null }) {
+  if (!text) return null
   return (
     <p role="status" className="break-words text-sm leading-6 text-brand-800">
-      {intent.meldung}
+      {text}
     </p>
   )
 }

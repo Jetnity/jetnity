@@ -34,6 +34,7 @@ export type PersonalSteuerung = {
   draft: string
   continuationUsed: boolean
   lieferung: number
+  beobachteteRefs: readonly string[] | null
   erstellen: (title: string, filter: PersonalFilter) => void
   entwurfGeaendert: () => void
   draftSetzen: (title: string) => void
@@ -180,6 +181,7 @@ export function usePersonalPreparationLifecycle({
     draft: anzeige.draft,
     continuationUsed: fortsetzung,
     lieferung: anzeige.lieferung,
+    beobachteteRefs: anzeige.beobachteteRefs,
     erstellen: (title, filter) => senden({ art: 'create', title, filter }),
     entwurfGeaendert: () => {
       const next = entwurfGeaendert(bestand.current)
