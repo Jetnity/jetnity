@@ -1,7 +1,7 @@
 # Jetnity Admin Operations Evidence Lifecycle Completion 1 — PLAN
 
 Date: 2026-10-25
-Status: PLAN R1 correction after TL PLAN REVIEW V1. Still plan only. No implementation authorization.
+Status: PLAN R2 correction after TL PLAN RE-REVIEW V2. Still plan only. No implementation authorization.
 Author: **Jetnity Admin Operations Evidence Lifecycle Completion 1 — Cursor Generation 1**
 Lane: R106 **O**. Tracking #1004. Finite batch #1003. Canonical index #751.
 Branch: `feat/r106-admin-operations-evidence-lifecycle-1`
@@ -22,7 +22,7 @@ Immutable TASK V1: `docs/JETNITY_ADMIN_OPERATIONS_EVIDENCE_LIFECYCLE_COMPLETION_
 - Operating mode re-read this session: `NORMAL` (`.jetnity/operating-mode.json`). This bounded admin read-only lifecycle is allowed. Special Product-Owner gates stay in force. This plan does not cross one.
 - Live `origin/main` fetched this session: **500fbe40c8c8a70a0fe0d291782289f809d5d5b3**. Merge-base with the reviewed head is that same SHA.
 - Seed HEAD **8f6ccf4b2da16795a9ad412c845bd4a1ec88e8b4** was 1 ahead / 0 behind, TASK only. Reviewed PLAN V1 head **83978aaf6cabafe7788bf91658016ca1d8401b22**, PLAN blob **da7f50885ce7bd2fde84c97967e4c4d6a5d67979**, was 2 ahead / 0 behind. TASK blob **e75d3010d861e4047a18f282e5fa03bd74f181dc** stays unchanged.
-- This revision answers TL PLAN REVIEW V1 (O-PLAN-01 through O-PLAN-05) on that exact head. It still does not authorize product or test code.
+- PLAN R1 head **51a4152be57b5c55ebeb3d4a00ff35415098b938**, PLAN blob **e30281277bcba4fdc772fc383e885fc7480fddb8**, was 3 ahead / 0 behind. This revision answers TL PLAN RE-REVIEW V2 (O-PLAN-06 and O-PLAN-07) on that exact head. It still does not authorize product or test code.
 - Board blobs match the task: `SystemHealthBoard.tsx` **bddb6b4fefbe1370ab9721e525a22dd8647049ec**, `ProviderOpsBoard.tsx` **4c16a0d57aaa387247575da8b69bfb49fd4e9360**.
 - #751 [TL precheck 6392318194](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6392318194) and #1003 assign this lane O, integration **O → A → T**, first delivery PLAN ONLY. R105 authors stay STOP. Older dated handoffs in `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` were read as history. They do not override #751, #1003, or this fetched main.
 - V1 binding build order §9 asks for Admin incident / provider / cost visibility and explicitly does not require full Admin D–K before V1. ADR-0159 and ADR-0162 keep both boards read-only and non-fake-green. This plan stays inside those decisions.
@@ -105,7 +105,7 @@ This matches the frozen producers. `bewerteSupabaseAppZugriff` sets `sourceUpdat
 
 Status and freshness stay independent. `unknown` status with `fresh` freshness remains valid. That is the current app parent shape.
 
-Initial props and a 200 body use the same interpreter. The hook passes props through `lade()` with a synthetic 200 response whose `json()` returns the same object, so an invalid prop uses the same unreadable sentence. That call is asynchronous. It gets its own run id and the same instance, endpoint, and permission epoch as a GET. Its success, failure, and `finally` write only while that run is still current. Until the current initial validation finishes, the board shows no cards and does not fetch.
+Initial props and a 200 body use the same interpreter. The hook passes props through `lade()` with a synthetic 200 response whose `json()` returns the same object, so an invalid prop uses the same unreadable sentence. That call is asynchronous. It gets its own run id and the same instance, endpoint, and permission epoch as a GET. Its success, failure, and `finally` write only while that run is still current. Until that validation finishes, the board shows no cards from the props. It does not start an automatic GET. Prop-validation pending is not the GET lock. When permission is true and no GET is in flight, the real refresh control can start one explicit GET during this wait. That GET is a newer run, so the initial validation's later success, error, and `finally` lose authority.
 
 ### Age
 
@@ -132,7 +132,8 @@ Non-fresh latches:
 - original `fresh` stays `fresh` only while it has not been latched and the display age is `<= ttlMs`
 - display age `> ttlMs` latches `stale`
 - an accepted hint of `stale` latches `stale`; an accepted hint of `unknown` latches `unknown`
-- an unusable accept-time anchor, or a tick where both deltas are unusable before any safe elapsed exists, latches `unknown` on nodes that were still `fresh`
+- an unusable accept-time anchor latches `unknown` on nodes that were still `fresh`
+- any later tick where both current deltas are unusable also latches `unknown` on nodes that are still `fresh`. A good earlier tick does not prove the duration of that later interval. This includes both clocks reading below their accept anchors after a positive tick, while the parent `checkedAt` is still before that later wall time, so the future-timestamp rule does not catch it. A later return to usable clocks does not clear the latch
 - validation already rejects an unparseable `checkedAt`. A parent `checkedAt` that parses later than a finite wall clock is untrustworthy, and so is a parent timestamp that cannot be compared because the wall clock is unusable. `Math.max(0, now - checkedAt)` is not used. That parent latches `unknown`. Every check on that parent latches non-fresh too: an originally fresh check latches `unknown`, and an originally stale or unknown check keeps its own state. Checks have no `checkedAt` that can rehabilitate the parent timestamp
 
 A latch never moves back to `fresh`. `unknown` stays `unknown`. `stale` stays `stale`. Clocks becoming finite again, a wall rollback that shrinks the hint, and wall time later passing a future `checkedAt` do not clear it. The reviewed failure is this: original fresh, age 0, `checkedAt` 120s ago, TTL 60s, hint age 120s latches `stale` and raises the floor to 120s; a rollback that makes the hint 10s and `originalAge + elapsed < 60s` still displays `stale` at an age of at least 120s.
@@ -160,7 +161,7 @@ Endpoint change invalidates runs started for the old endpoint. Their later succe
 
 `aktualisierenErlaubt === false` returns before the lock and before `fetch`. A run already in flight is superseded when permission drops. Turning permission back on shows the control again, does not fetch, and does not clear the latch.
 
-One allowed click sets the lock synchronously, then awaits one `fetch(endpunkt, { cache: 'no-store', signal })`. The click is allowed when the lock is free and `aktualisierenErlaubt` is true, including when the denial latch is set. That is the recovery GET. A second click in the same turn sees the lock and does not fetch. There is no timer fetch, no interval poll, and no second URL.
+One allowed click sets the GET lock synchronously, then awaits one `fetch(endpunkt, { cache: 'no-store', signal })`. The click is allowed when that lock is free and `aktualisierenErlaubt` is true. Prop-validation pending does not hold the lock, so the click is also allowed while the initial validation is still running. The denial latch does not block it either. That in-flight GET is the newer run: the initial validation's success, error, and `finally` then lose authority. A second click in the same turn sees the GET lock and does not fetch. Nothing else starts a GET. There is no mount fetch, no timer fetch, no interval poll, and no second URL.
 
 After every `await`, success, error, and `finally` write only when that run id is still current, the endpoint and permission epoch still match, and the instance is mounted. Abort is best effort and is not proof that a response cannot arrive.
 
@@ -189,9 +190,9 @@ Both boards keep their current card split, copy, `OperationsEvidence`, status cl
 - `data-health-age-ms` / `data-ops-age-ms`
 - `data-health-checked-at` / `data-ops-checked-at` with the raw ISO timestamp
 - `data-operations-phase` = `prueft`, `aktuell`, `historisch`, `verweigert`, or `fehler`
-- `data-operations-pending` = `true` or `false`
+- `data-operations-pending` = `true` or `false`, and this is the GET lock only. Prop-validation pending stays `prueft` with `data-operations-pending` false until a click starts a GET.
 
-The refresh control stays `type="button"`, minimum height 44px, hidden when permission is off, and disabled while the owned run is pending. Its accessible name stays "Erneut prüfen" / "Aktualisiert…". A polite live status repeats the pending sentence. The error and denial use `role="alert"`. The board region uses `aria-busy` while pending. Focus uses the existing outline utilities (`focus-visible:outline`, `focus-visible:outline-2`, `focus-visible:outline-offset-2`) and no new color. No new animation is added, so reduced motion has nothing new to disable.
+The refresh control stays `type="button"`, minimum height 44px, hidden when permission is off, and disabled only while the GET lock is held. It stays usable while prop validation is pending. Its accessible name stays "Erneut prüfen" / "Aktualisiert…". A polite live status repeats the pending sentence. The error and denial use `role="alert"`. The board region uses `aria-busy` while pending. Focus uses the existing outline utilities (`focus-visible:outline`, `focus-visible:outline-2`, `focus-visible:outline-offset-2`) and no new color. No new animation is added, so reduced motion has nothing new to disable.
 
 Long board-owned names and summaries, the card article, and the grid tracks get `min-w-0` and `break-words`. `overflow-wrap` inherits, so a wrapper around the frozen `OperationsEvidence` can wrap its opened text without editing that component and without `overflow: hidden`. The proof opens the existing disclosure ("Datenqualität & Nachweis") at 320, 360, 390, and 320 with root font 32px. Page `scrollWidth` must stay within 1px of `clientWidth`. A concrete overflow that those owned wrappers do not fix is not a pass and is not an accepted residual. Acceptance stays open and this lane asks the Technical Lead for a named addendum. Frozen ownership does not close that P2.
 
@@ -200,10 +201,12 @@ Truth copy stays in the two boards: separated process and deployment, separated 
 ## State transitions
 
 ```text
-mount                         -> prueft, no cards, no fetch
-initial validation still current, valid, latch unset, no GET yet
+mount                         -> prueft, no cards, no automatic GET
+click during prueft, permission true, GET lock free
+                              -> one explicit GET; initial success, error, and finally lose authority
+initial validation still current, valid, latch unset, no GET accepted
                               -> aktuell, first anchor
-initial validation still current, invalid, nothing accepted, latch unset
+initial validation still current, invalid, nothing accepted, latch unset, no GET accepted
                               -> fehler, no cards
 same / different / replayed / invalid props after accept or after latch
                               -> no replace, no age reset, no latch clear, no cards during latch
@@ -235,7 +238,8 @@ Lifecycle tests:
 - age before TTL, exactly TTL, and one millisecond after, for a parent and for an older child whose smaller hint age is ignored
 - unknown stays unknown when the hint would be fresh; stale stays stale when the hint would be fresh and when the original age is under the TTL
 - the reviewed rollback: fresh, age 0, checkedAt 120s ago, TTL 60s, hint age 120s, then a smaller hint and `originalAge + elapsed < 60`, floor stays at least 120s and state stays `stale`
-- unusable accept anchors and unusable deltas (`undefined` clock, throw, `NaN`, `Infinity`, negative delta) latch fresh nodes `unknown` and do not restore `fresh` when later samples are finite
+- unusable accept anchors (`undefined` clock, throw, `NaN`, `Infinity`) latch fresh nodes `unknown` and do not restore `fresh` when later samples are finite
+- after a usable accept sample and a positive tick that leaves the node fresh, a later sample where both clocks are below their accept anchors latches `unknown` even though the parent `checkedAt` is still before that later wall time. A following finite clock return does not restore `fresh`
 - future parent `checkedAt` latches the parent and its checks non-green; wall time passing that timestamp does not restore `fresh`
 - a forward jump and a visibility return raise the floor; they do not fetch
 - same-signature rerender, different props, replayed props, and invalid props do not replace a newer report, reset the floor, or clear the latch
@@ -261,8 +265,8 @@ Mounted script `scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs
 
 Mounted cases, each on both boards:
 
-- initial valid props after async validation; initial invalid props; no cards during `prueft`; zero fetches
-- delayed initial validation loses to a GET that finishes first; late prop success, failure, and `finally` do not write
+- initial valid props after async validation; initial invalid props; no cards during `prueft`; no automatic GET
+- while `prueft` is visible, permission is true, and `data-operations-pending` is false, the rendered refresh control starts one explicit GET by click and by keyboard. The control is not disabled by prop-validation pending. The delayed initial success, error, and `finally` do not write after that GET. This is the mounted control, not a pure-module call the board does not expose
 - same signature, different signature, replayed older props, and invalid props do not replace a report, reset age, or clear a denial
 - repeated renders do not fetch and do not move the anchor
 - endpoint change ignores the old run, marks a visible report `historisch`, and does not clear a denial
@@ -271,7 +275,8 @@ Mounted cases, each on both boards:
 - two clicks in one turn start one GET
 - newer denial beats older success; newer success beats older denial; older error and `finally` do not clear a newer pending flag
 - valid report, then 403, then 503, network, and invalid 200, still no cards; one explicit GET with permission true then a valid 200 restores cards and clears the latch; permission false blocks that GET
-- TTL before, equal, and one millisecond after; older child stays non-fresh; rollback and unusable clocks do not restore `fresh`; future parent keeps parent and checks non-green after the wall clock passes `checkedAt`; tab return ages and fetches nothing
+- TTL before, equal, and one millisecond after; older child stays non-fresh; rollback does not restore `fresh`
+- after a good tick, both clocks move below their accept anchors while the parent `checkedAt` is still before that wall time; fresh latches non-fresh and a later clock return does not restore it; future parent keeps parent and checks non-green after the wall clock passes `checkedAt`; tab return ages and starts no GET
 - screenshots and a result JSON under `docs/evidence/admin-operations-evidence-lifecycle-completion-1/`, including a new directory if a run fails; an older failure is not overwritten
 
 The result JSON records head SHA, source digests, command, exit, case count, the fetch stub boundary, browser and version, viewports, root font, and reduced-motion setting. It states that this is local component evidence, not hosted Account, Next-router, Supabase, RLS, Production, or launch proof.
@@ -284,7 +289,8 @@ No new dependency, workflow, provider, model call, secret, polling, or server ca
 
 Limits that remain even after a faithful implementation:
 
-- The frozen 30-second collector cache already runs `wendeEvidenceAlterAn` before the board sees a cache hit. A child age that the server has already replaced cannot be restored here.
+- Technical Lead accepted the post-initial prop policy for this manual-refresh interface. Later uncorrelated props cannot replace a report, reset its age, or clear a denial. The next accepted report is an explicit permitted validated GET. That acceptance is not support for adopting arbitrary new canonical RSC props, and it does not ask for an API or revision redesign. STATUS and HANDOFF must keep this limitation.
+- The frozen 30-second collector cache already runs `wendeEvidenceAlterAn` before the board sees a cache hit. A child age that the server has already replaced cannot be restored here. STATUS and HANDOFF must keep this collector limit too.
 - Synthetic mounted proof does not sign in, does not hit `/api/admin/*`, and does not prove RLS or Production.
 - Opened long-evidence layout is in the acceptance matrix. It is not pre-accepted as a residual. If owned wrappers leave a real overflow, the proof stays open for a named Technical-Lead addendum.
 - Audit-fixture `fresh` labels from 2026-08-24 latch `stale` on first paint, and a later clock change does not restore them. Product copy and green rules do not.
@@ -298,4 +304,4 @@ Limits that remain even after a faithful implementation:
 
 ## Stop
 
-This correction edits only this PLAN. TASK V1 stays byte-identical. No runtime, test, or other doc is included. The next action is a fresh independent head-bound Technical-Lead re-review. Implementation waits for that authorization in this same session. This author does not Ready, merge, close #1004, write `main`, or open a follow-up.
+This R2 correction edits only this PLAN. TASK V1 stays byte-identical. No runtime, test, or other doc is included. The next action is the Technical Lead's immediate re-review of the new exact PLAN head. Implementation waits for that authorization in this same session. This author does not Ready, merge, close #1004, write `main`, or open a follow-up.
