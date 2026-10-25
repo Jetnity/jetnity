@@ -79,6 +79,27 @@ async function text(page: Page): Promise<string> {
   return page.locator('body').innerText()
 }
 
+async function rahmen(page: Page, name: string) {
+  if (!screens) return
+  mkdirSync(screens, { recursive: true })
+  for (const breite of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width: breite, height: 900 })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    const mass = await page.evaluate(() => {
+      const ziel = document.querySelector('[data-besuch-verwaltung]') as HTMLElement
+      return {
+        verwaltung: ziel.scrollWidth - ziel.clientWidth,
+        dokument: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }
+    })
+    assert.ok(mass.verwaltung <= 1, `${name} Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
+    console.log(`css ${name} ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
+    if (breite === 320 || breite === 1440) {
+      await page.screenshot({ path: `${screens}/${name}-${breite}.png`, fullPage: false })
+    }
+  }
+}
+
 async function landWaehlen(page: Page) {
   await page.locator('[data-besuch-anlage="offen"] select').first().selectOption('PT')
 }
@@ -348,20 +369,28 @@ test('Prüfung, Fokus und Darstellung bleiben im Rahmen', async () => {
   await page.clock.fastForward(4500)
   assert.match(await text(page), /Die Prüfung ist beendet/)
   assert.equal((await text(page)).includes('neu gelesen'), false)
-  if (screens) {
-    mkdirSync(screens, { recursive: true })
-    const breiten = [320, 390, 768, 1440]
-    for (const breite of breiten) {
-      await page.setViewportSize({ width: breite, height: 900 })
-      await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-      const mass = await page.evaluate(() => {
-        const ziel = document.querySelector('[data-besuch-verwaltung]') as HTMLElement
-        return { verwaltung: ziel.scrollWidth - ziel.clientWidth, dokument: document.documentElement.scrollWidth - document.documentElement.clientWidth }
-      })
-      assert.ok(mass.verwaltung <= 1, `Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
-      console.log(`css ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
-      await page.screenshot({ path: `${screens}/verwaltung-${breite}.png`, fullPage: false })
-    }
-  }
+  await rahmen(page, 'lang')
   await page.close()
+})
+
+test('dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen', async () => {
+  const page = await seite()
+  await setzen(page, { problem: null, besuche: besuchVerwaltungDichteFixture(40), tripProblem: null })
+  const erste = await page.locator('[data-besuch]').first().getAttribute('data-besuch')
+  const zweite = await page.locator('[data-besuch]').nth(1).getAttribute('data-besuch')
+  await page.locator(`[data-besuch="${erste}"]`).getByRole('button', { name: BESUCHE_COPY.bearbeiten }).click()
+  await page.locator(`[data-besuch="${zweite}"]`).getByRole('button', { name: BESUCHE_COPY.widerrufen }).click()
+  await rahmen(page, 'dichte')
+  await setzen(page, { problem: { status: 503, message: 'synthetisch' }, besuche: [], tripProblem: null })
+  await rahmen(page, 'lesefehler')
+  await page.close()
+
+  const unklar = await seite()
+  await setzen(unklar, { problem: null, besuche: [], tripProblem: null })
+  await anlegen(unklar)
+  await unklar.evaluate(() => { window.__visitSofort = { ok: false, meldung: SCHREIBFEHLER } })
+  await unklar.locator('[data-besuch-anlage="offen"] button[type="submit"]').click()
+  assert.match(await text(unklar), /unklar/)
+  await rahmen(unklar, 'unbestaetigt')
+  await unklar.close()
 })
