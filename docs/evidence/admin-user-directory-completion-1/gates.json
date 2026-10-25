@@ -1,0 +1,136 @@
+{
+  "boundToProductCommit": "56bb915e78a55857132c5fe02384b8a64f2b81b8",
+  "commandsRanOnDirtyTreeBeforeThatCommit": true,
+  "node": "v22.23.4",
+  "next": "16.4.1",
+  "playwright": "1.55.0",
+  "notHostedSupabase": true,
+  "notRls": true,
+  "notProduction": true,
+  "commands": [
+    {
+      "command": "npx eslint on the directory page, table, query, presentation, navigation and the touched tests",
+      "exit": 0,
+      "errors": 0,
+      "note": "Warnings remain on the required client cast and the frozen mutation catch. They are inside the repo-wide 181."
+    },
+    {
+      "command": "npx tsc -p tsconfig.json --noEmit",
+      "exit": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exit": 0,
+      "note": "next typegen then tsc. next-env.d.ts was not left dirty."
+    },
+    {
+      "command": "node scripts/admin-user-directory-completion-1/verify.mjs",
+      "exit": 0,
+      "cases": 35,
+      "authoritativeRerunHead": "56bb915e78a55857132c5fe02384b8a64f2b81b8",
+      "note": "Synthetic UsersTable, router stub and project CSS. Not a signed-in Next router."
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test on the directory, navigation, profil-erstellt, request-api-compat and roles tests",
+      "exit": 0,
+      "tests": 68,
+      "pass": 68,
+      "fail": 0
+    },
+    {
+      "command": "npm test",
+      "exit": 1,
+      "tests": 7192,
+      "pass": 7176,
+      "fail": 11,
+      "skipped": 5,
+      "failuresAreLocalPostgresEnvironment": true
+    },
+    {
+      "command": "npm run lint",
+      "exit": 0,
+      "problems": 181,
+      "errors": 0,
+      "warnings": 181
+    },
+    {
+      "command": "npm run check:dead",
+      "exit": 0,
+      "orphans": 0
+    },
+    {
+      "command": "npm run check:exports",
+      "exit": 0,
+      "unreferencedExports": 0
+    },
+    {
+      "command": "npm run check:deps",
+      "exit": 0,
+      "unusedDependencies": 0
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exit": 0,
+      "adminRoutes": 12
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exit": 0,
+      "note": "Pre-existing LOCAL/UNAPPLIED RPC notes printed. Exit stayed 0. No schema edit in this lane."
+    },
+    {
+      "command": "npm run build",
+      "exit": 0,
+      "prebuild": "check:setup exit 0 with one warning: no .env or .env.local in this environment",
+      "compiled": "21.8s",
+      "adminUsersRoute": "dynamic"
+    }
+  ],
+  "npmTestFailures": [
+    {
+      "name": "catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "native PG16 proves why accepted-store rows cannot be projected through a bypass",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "current-version lookup resolves one retained synthetic receipt on native PostgreSQL 16",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "name": "actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "name": "R5 native legacy and typed SQL consumers preserve envelope admission boundaries",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "throwaway PostgreSQL proof for the source catalog gateway",
+      "error": "subtest spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "throwaway PostgreSQL proof for the trusted store gateway",
+      "error": "subtest spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    }
+  ],
+  "environmentCause": "PostgreSQL 16 binaries are absent. SUPABASE_PROJECT_REF is present and the local-proof guard treats that name as a forbidden connection override. No hosted fallback was used."
+}
