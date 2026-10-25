@@ -35,3 +35,19 @@ Do not Ready. Do not merge. Do not close #1014 or #1011. Do not write `main`. Do
 - `Reisekarte` can still prefetch a trip URL in the real app. Collection continuation does not.
 - Holds #985/#982, #917, #913/#911, #968, #748, #626, #937/#936, and Bern #934 stay as the TASK left them.
 - Live [#751](https://github.com/Jetnity/jetnity/issues/751) is R107 V7 at comment `2026-10-25T17:30:18Z`. [#1011](https://github.com/Jetnity/jetnity/issues/1011) `updated_at` is `2026-10-25T17:31:01Z` and points at that checkpoint. Both still name main `a74c443c6be3f064f150fcf021ab6154bda325e5`.
+
+## Main-sync1
+
+The sections above are the pre-sync record. They are not rewritten and they are not a fresh run.
+
+Parents of this history-preserving merge: branch `444a8c254e11688120f7f2b6e49193746932a865`, tree `93d4734c6a28abfa676d25540158fedb852f99bc`; authorized main `70b878a8fbe23f0dd455175a53de74175b2b976d`, tree `d732487b09c3245c9c22e38b38bb030c8aa181cf`. Fetched `origin/main` was that SHA. The pre-merge merge-base was `a74c443c6be3f064f150fcf021ab6154bda325e5`. No path in the M diff also changed on main. No rebase, squash, cherry-pick, force-push, or sibling merge. The resulting commit is reported in the session handoff comment, not guessed here.
+
+TASK blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777` and PLAN blob `7d4e5ce4f2e4e3715066c77d1204fa754677cbee` stay. The address helper blob stays `a33b7b873fa8542a10345eee66cb50e077dae403`. Runtime proof stays `96715e43f9c979a542a1b7bd5acc2b15ef494c5d`, tree `d734a39f5f97228f076a8d12e37e02b71257a0ae`. That tree is source-equivalent to `444a8c25` for the runtime and the proof. Older `7c997103` and `a8110299` records are not substituted.
+
+The 18 mounted groups are the clean `96715` run on Node `v22.23.4`. Root's 15 bounded observations on Node `24.22.1` and Chromium `140` stay a separate run. Root's direct empty-parameter probe recorded zero `from()` calls. Earlier query and pagination proof stays historical. The local full suite, lint, and hygiene on `7c997103`, including 11 environment failures and 5 skips, are not this integration run.
+
+`package.json`, `package-lock.json`, `tailwind.config.js`, `postcss.config.js`, and `styles/globals.css` have the same blobs on `a74c443c` and `70b878a8`. Incoming lanes still change files that Tailwind scans. The retained screenshots keep their original CSS execution. This packet has no compiled CSS hash. A later reconstruction is not that stylesheet.
+
+The collection sources named above match `444a8c25`. The whole route is not byte-identical, because guest transfer reaches four added strings in `lib/traveller/account-registry-trip-copy.ts`: `warten`, `refreshUnklar`, `unbekannt`, and `erneut`. The previous keys remain. `partyUebernehmen` does not read those four strings, and `GastreiseBruecke` does not import `REGISTRY_TRIP_COPY`.
+
+Tracking remains open pending root post-merge acceptance. Fresh Typecheck, Lint & Build, Auth-Konfiguration, and Preview belong to the pushed head. The native run on `444a8c25` does not transfer.

@@ -24,3 +24,7 @@ The visible navigation intent is state so render does not read a ref. A history 
 `router.refresh()` follows the live URL. The UI disables that control while the adopted result is a different address. A forced click returns before `refresh`. That is a client guard, not a server lock.
 
 `listenlieferung` is client provenance for the adopted props object. It is not a server receipt and it does not prove that a database read happened beyond the envelope's `ungueltig` and `problem` fields.
+
+## Main-sync1
+
+This self-review stays bound to `96715e43` / `d734a39f`. The later history-preserving merge with main `70b878a8fbe23f0dd455175a53de74175b2b976d` does not replace it and does not create a new mounted run. Collection sources in that merge match `444a8c25`. Tracking remains open pending root post-merge acceptance.

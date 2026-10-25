@@ -29,9 +29,14 @@ describe('Admin-Benutzer Erstellzeit', () => {
 
   test('die Tabelle zeigt fuer null Nicht verfügbar und formatiert echte Zeiten weiter de-CH', () => {
     const quelle = readFileSync(TABLE, 'utf8')
+    const format = readFileSync(new URL('./users-directory-presentation.ts', import.meta.url), 'utf8')
     assert.match(quelle, /created_at:\s*string\s*\|\s*null/)
-    assert.match(quelle, /u\.created_at\s*\?\s*dtf\.format\(new Date\(u\.created_at\)\)\s*:\s*'Nicht verfügbar'/)
-    assert.match(quelle, /new Intl\.DateTimeFormat\('de-CH', \{ dateStyle: 'medium', timeStyle: 'short' \}\)/)
-    assert.match(quelle, /u\.last_seen_at\s*\?\s*dtf\.format\(new Date\(u\.last_seen_at\)\)\s*:\s*'Nicht verfügbar'/)
+    assert.match(quelle, /formatUsersDirectoryTimestamp\(u\.created_at\)/)
+    assert.match(quelle, /formatUsersDirectoryTimestamp\(u\.last_seen_at\)/)
+    assert.equal(/dtf\.format\(new Date\(u\.created_at\)\)/.test(quelle), false)
+    assert.match(format, /new Intl\.DateTimeFormat\('de-CH', \{ dateStyle: 'medium', timeStyle: 'short' \}\)/)
+    assert.match(format, /Nicht verfügbar/)
+    assert.equal(format.includes('Date.now'), false)
+    assert.equal(format.includes('new Date()'), false)
   })
 })

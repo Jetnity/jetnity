@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "author": "Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-af293d35-d2af-43d8-b193-9fbaab7c351b",
+  "model": "grok-4.7-high-fast",
+  "commit": "82260869d6cb0070a020cc2efdcabb9de78cdfb4",
+  "tree": "fee479e65a5833311eed6743dced7caacb66247d",
+  "exit": 0,
+  "origin": "http://127.0.0.1:36449",
+  "aliasBoundary": "esbuild aliases replace only next/navigation and lib/account/besuche-aktionen.ts. AccountBesuche, the form, the hook, copy and project CSS stay real.",
+  "notClaimed": "This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot.",
+  "sources": {
+    "components/account/AccountBesuche.tsx": "a7b6fd0228082d552e27a76c533efaf1499b03b5ed3e1e896f4ee1d2bd16e2a0",
+    "components/account/AccountBesuchFormular.tsx": "6a68095f591a41cf51dd0f9fde30c374e0a23c4248143939ad3d6221fa682abc",
+    "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+    "lib/account/account-visit-workflow.ts": "e3cda338a436f148673bcac39629839b8792b4fa761d057bab276abb8837d8ae",
+    "lib/account/account-visit-workflow.test.ts": "77cb63f207f6cd0c1f98c9f7e607e4b45d730fae0c86ad7dab8260bff86c2634",
+    "lib/account/besuche-copy.ts": "b5730e51602c5ea4eed073c066186f82e02308b0e5fd94845dd2363293dde01c"
+  },
+  "stdoutTail": "TAP version 13\n# Subtest: eine lokale Lesepanne schickt nichts\nok 1 - eine lokale Lesepanne schickt nichts\n  ---\n  duration_ms: 360.697822\n  type: 'test'\n  ...\n# Subtest: dieselbe Runde bestätigt nur einmal\nok 2 - dieselbe Runde bestätigt nur einmal\n  ---\n  duration_ms: 251.454964\n  type: 'test'\n  ...\n# Subtest: zurückgegebene Absagen, Wurf und Bruch bleiben unbestätigt\nok 3 - zurückgegebene Absagen, Wurf und Bruch bleiben unbestätigt\n  ---\n  duration_ms: 1942.274371\n  type: 'test'\n  ...\n# Subtest: Annahme lässt die Liste offen und wählt keine Zeile\nok 4 - Annahme lässt die Liste offen und wählt keine Zeile\n  ---\n  duration_ms: 402.699908\n  type: 'test'\n  ...\n# Subtest: ein vorher gesehener Stempel wird nicht als neu bezeichnet\nok 5 - ein vorher gesehener Stempel wird nicht als neu bezeichnet\n  ---\n  duration_ms: 832.2655\n  type: 'test'\n  ...\n# Subtest: ein sauberer Editor übernimmt, ein schmutziger nicht\nok 6 - ein sauberer Editor übernimmt, ein schmutziger nicht\n  ---\n  duration_ms: 1171.789323\n  type: 'test'\n  ...\n# Subtest: Widerruf übernimmt geänderte Felder nicht\nok 7 - Widerruf übernimmt geänderte Felder nicht\n  ---\n  duration_ms: 422.404953\n  type: 'test'\n  ...\n# Subtest: Änderung und Widerruf unterwegs bleiben nach der Annahme offen\nok 8 - Änderung und Widerruf unterwegs bleiben nach der Annahme offen\n  ---\n  duration_ms: 2196.537616\n  type: 'test'\n  ...\n# Subtest: eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\nok 9 - eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\n  ---\n  duration_ms: 739.908861\n  type: 'test'\n  ...\n# Subtest: Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\nok 10 - Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\n  ---\n  duration_ms: 31757.510153\n  type: 'test'\n  ...\n# css lang 320 verwaltung=0 dokument=0\n# css lang 390 verwaltung=0 dokument=0\n# css lang 768 verwaltung=0 dokument=0\n# css lang 1440 verwaltung=0 dokument=0\n# Subtest: Prüfung, Fokus und Darstellung bleiben im Rahmen\nok 11 - Prüfung, Fokus und Darstellung bleiben im Rahmen\n  ---\n  duration_ms: 987.259747\n  type: 'test'\n  ...\n# css dichte 320 verwaltung=0 dokument=0\n# css dichte 390 verwaltung=0 dokument=0\n# css dichte 768 verwaltung=0 dokument=0\n# css dichte 1440 verwaltung=0 dokument=0\n# css lesefehler 320 verwaltung=0 dokument=0\n# css lesefehler 390 verwaltung=0 dokument=0\n# css lesefehler 768 verwaltung=0 dokument=0\n# css lesefehler 1440 verwaltung=0 dokument=0\n# css unbestaetigt 320 verwaltung=0 dokument=0\n# css unbestaetigt 390 verwaltung=0 dokument=0\n# css unbestaetigt 768 verwaltung=0 dokument=0\n# css unbestaetigt 1440 verwaltung=0 dokument=0\n# Subtest: dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\nok 12 - dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\n  ---\n  duration_ms: 1315.415069\n  type: 'test'\n  ...\n1..12\n# tests 12\n# suites 0\n# pass 12\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 42907.079202\n",
+  "stderrTail": ""
+}

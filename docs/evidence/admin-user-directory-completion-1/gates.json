@@ -1,0 +1,184 @@
+{
+  "boundToProductCommit": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+  "answersReview": "d29a621390bf1d760c3086bea8cb5f19e5160d25",
+  "commandsRanOnDirtyTreeBeforeThatCommit": true,
+  "node": "v22.23.4",
+  "next": "16.4.1",
+  "playwright": "1.55.0",
+  "notHostedSupabase": true,
+  "notRls": true,
+  "notProduction": true,
+  "commands": [
+    {
+      "command": "npx eslint on the directory page, table, query, presentation, navigation and the touched tests",
+      "exit": 0,
+      "errors": 0,
+      "note": "Warnings remain on the required client cast and the frozen mutation catch. They are inside the repo-wide 181."
+    },
+    {
+      "command": "npx tsc -p tsconfig.json --noEmit",
+      "exit": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exit": 0,
+      "note": "next typegen then tsc. next-env.d.ts was not left dirty."
+    },
+    {
+      "command": "node scripts/admin-user-directory-completion-1/verify.mjs",
+      "exit": 0,
+      "cases": 44,
+      "authoritativeRerunHead": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+      "dirtyAtCapture": "",
+      "note": "Synthetic UsersTable, router stub and project CSS. The authoritative rerun is on the clean correction commit. role-keeps-delayed-search-ownership and status-keeps-delayed-search-ownership commit the delayed anna replace before the newer filter. Tab and Enter remain real keyboard events. Not a signed-in Next router."
+    },
+    {
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test on the directory, navigation, profil-erstellt, request-api-compat and roles tests",
+      "exit": 0,
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "ranAfterProductCommit": true
+    },
+    {
+      "command": "npm test",
+      "exit": 1,
+      "tests": 7193,
+      "pass": 7177,
+      "fail": 11,
+      "skipped": 5,
+      "failuresAreLocalPostgresEnvironment": true
+    },
+    {
+      "command": "npm run lint",
+      "exit": 0,
+      "problems": 181,
+      "errors": 0,
+      "warnings": 181
+    },
+    {
+      "command": "npm run check:dead",
+      "exit": 0,
+      "orphans": 0
+    },
+    {
+      "command": "npm run check:exports",
+      "exit": 0,
+      "unreferencedExports": 0
+    },
+    {
+      "command": "npm run check:deps",
+      "exit": 0,
+      "unusedDependencies": 0
+    },
+    {
+      "command": "npm run check:api-schutz",
+      "exit": 0,
+      "adminRoutes": 12
+    },
+    {
+      "command": "npm run check:schema-bezug",
+      "exit": 0,
+      "note": "Pre-existing LOCAL/UNAPPLIED RPC notes printed. Exit stayed 0. No schema edit in this lane."
+    },
+    {
+      "command": "npm run build",
+      "exit": 0,
+      "prebuild": "check:setup exit 0 with one warning: no .env or .env.local in this environment",
+      "compiled": "4.2s",
+      "adminUsersRoute": "dynamic"
+    }
+  ],
+  "npmTestFailures": [
+    {
+      "name": "catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "native PG16 proves why accepted-store rows cannot be projected through a bypass",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races",
+      "error": "spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "current-version lookup resolves one retained synthetic receipt on native PostgreSQL 16",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "name": "actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof",
+      "error": "NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator"
+    },
+    {
+      "name": "R5 native legacy and typed SQL consumers preserve envelope admission boundaries",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16",
+      "error": "local_proof_connection_override_forbidden"
+    },
+    {
+      "name": "throwaway PostgreSQL proof for the source catalog gateway",
+      "error": "subtest spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    },
+    {
+      "name": "throwaway PostgreSQL proof for the trusted store gateway",
+      "error": "subtest spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
+    }
+  ],
+  "environmentCause": "PostgreSQL 16 binaries are absent. SUPABASE_PROJECT_REF is present and the local-proof guard treats that name as a forbidden connection override. No hosted fallback was used.",
+  "mainSync1": {
+    "kind": "history-preserving-merge",
+    "preSyncHead": "878212adf0384bba02cd1ce217041a673bfdaf84",
+    "preSyncTree": "b0e0fe9601404e0954c956b19c6bf437a32b9a1d",
+    "mergedMain": "747c909cccb2b18ac91b7976b5b671dc11347cf3",
+    "mergedMainTree": "63acafa9716450b6b5eadbddd25b6db693abefba",
+    "priorMergeBase": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+    "mergeCommit": "b83477489864ed357f27c7bd1bd8d8b5ee92484c",
+    "mergeParents": [
+      "878212adf0384bba02cd1ce217041a673bfdaf84",
+      "747c909cccb2b18ac91b7976b5b671dc11347cf3"
+    ],
+    "mergeTree": "4e9032f5c455ed54074eef379d491e349a33c0a0",
+    "incomingMainPaths": 99,
+    "lanePathsAgainstMain": 29,
+    "pathOverlap": 0,
+    "productTestRunnerHarnessScreenshotDependencyConfigChanged": false,
+    "usersTableBlob": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+    "usersActionsBlob": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+    "rolesBlob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+    "packageLockBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "mountedJsonBlob": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+    "mountedExecutionHeadUnchanged": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+    "mountedNotRerun": true,
+    "rootFiveCasePacketRemainsDistinct": "executed at 878212ad under Node 24.22.1; not this 44-case receipt",
+    "focused69NotInputIdentical": true,
+    "scannerVisibleIncomingTsTsx": [
+      "components/trips/GastArbeitsbereich.tsx",
+      "components/trips/KontoArbeitsbereich.tsx",
+      "components/trips/RegistryReiseUebernahme.tsx",
+      "components/trips/Reisevorbereitung.tsx",
+      "components/trips/TripWorkspace.tsx",
+      "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+      "lib/traveller/account-registry-trip-copy.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx"
+    ],
+    "historicalCommandsNotReexecuted": true,
+    "finalHeadReportedOutsideThisFile": true
+  }
+}

@@ -32,6 +32,10 @@ Hygiene on `7c997103`: `check:dead` 0 orphans; `check:deps` 0 unused; `check:api
 
 Mounted proof: `node scripts/my-trips-collection-archive-workflow-completion-1/run.mjs` on clean `96715e43`, exit 0, 18 cases, `dirty: ""`. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json`. The cases cover repeated-parameter adoption, empty `archiv=` and `cursor=` on a first paint and in place, a later valid `/reisen` envelope that does not remove the alert, an unread invalid envelope with late success and unknown settlement, same-id missing provenance, and the visible owner line for the retained search, a pending search, a continuation without the cursor token, and an invalid pending address. The fail-closed locator matches `der frühere Status`. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. The shim returns void and has no arrival generation. Screenshots are synthetic fixtures at 320, 390, 768, and 1440, with root font 32px.
 
+## Main-sync1
+
+The proof section above is the pre-sync record. Main-sync1 merges `444a8c254e11688120f7f2b6e49193746932a865` with `70b878a8fbe23f0dd455175a53de74175b2b976d` and does not rerun that proof. The address helper blob remains `a33b7b873fa8542a10345eee66cb50e077dae403`. Collection sources match `444a8c25`. Guest transfer reaches `warten`, `refreshUnklar`, `unbekannt`, and `erneut` in `lib/traveller/account-registry-trip-copy.ts`. `partyUebernehmen` does not read them. Package and Tailwind config blobs match the old main. Screenshot CSS provenance stays on the historical runs. This report has no compiled CSS hash. Tracking remains open pending root post-merge acceptance.
+
 ## Limits
 
 No hosted SQL, RLS, Auth, Production, native device, browser zoom, or screen reader run. A URL change or a new result object is an observation, not a receipt. The 8000ms lease only drops the spinner. Account home and World remain capped at 200. `Reisekarte` can still prefetch a trip URL in the real app. The harness has no app-router context, so those links do not prefetch there. Full route unmount drops archive records.

@@ -62,6 +62,19 @@ import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip } from '@/types/trips'
 
+// Der Schreibstand hängt an der Setter-Identität, nicht an einem Hook.
+// Die bestehenden Arbeitsbereich-Prüfungen rufen diese Funktion direkt auf
+// und ersetzen nur useState/useEffect; ein zusätzlicher Hook hätte dort keinen Dispatcher.
+const gastSchreibstand = new WeakMap<object, { tripId: string; basis: Trip | null; unaufgeloest: boolean }>()
+
+function schreibstand(setzen: (graph: Trip | null) => void, tripId: string) {
+  const vorhanden = gastSchreibstand.get(setzen)
+  if (vorhanden && vorhanden.tripId === tripId) return vorhanden
+  const neu = { tripId, basis: null as Trip | null, unaufgeloest: false }
+  gastSchreibstand.set(setzen, neu)
+  return neu
+}
+
 export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const router = useRouter()
   const [reise, setReise] = React.useState<Trip | null>(null)
@@ -71,7 +84,14 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const [speicherfehler, setSpeicherfehler] = React.useState('')
   const fokusVormerken = useGastLeseFokus(lese.art !== 'nicht_beobachtet')
 
+  function gleicheReiseUebernehmen(graph: Trip) {
+    const stand = schreibstand(setReise, tripId)
+    if (!stand.unaufgeloest && graph.id === tripId) stand.basis = graph
+    setReise(graph)
+  }
+
   if (bezogen !== tripId) {
+    schreibstand(setReise, tripId)
     setBezogen(tripId)
     setLese({ art: 'nicht_beobachtet' })
     setReise(null)
@@ -86,7 +106,11 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       // so this cannot move into render or into a pure snapshot.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLese(ergebnis)
-      setReise(ergebnis.art === 'passend' ? ergebnis.reise : null)
+      if (ergebnis.art === 'passend') {
+        const stand = schreibstand(setReise, tripId)
+        if (!stand.unaufgeloest && ergebnis.reise.id === tripId) stand.basis = ergebnis.reise
+        setReise(ergebnis.reise)
+      } else setReise(null)
     }
     return () => {
       lebend = false
@@ -104,7 +128,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const anlegen = async (tagId: string, eingabe: PlanpunktFormular) => {
     if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
     try {
-      setReise(gastPlanpunktAnlegen(reise, { ...eingabe, dayId: tagId }))
+      gleicheReiseUebernehmen(gastPlanpunktAnlegen(reise, { ...eingabe, dayId: tagId }))
       return null
     } catch (fehler) {
       return fehler instanceof Error ? fehler.message : 'Der Punkt konnte nicht gespeichert werden.'
@@ -114,7 +138,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const entfernen = async (_tagId: string, punktId: string) => {
     if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
     try {
-      setReise(gastPlanpunktEntfernen(reise, punktId))
+      gleicheReiseUebernehmen(gastPlanpunktEntfernen(reise, punktId))
       return null
     } catch (fehler) {
       return fehler instanceof Error ? fehler.message : 'Der Punkt konnte nicht entfernt werden.'
@@ -233,18 +257,18 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       reise={reise}
       quelle="guest"
       onVerbindungAnlegen={async values => {
-        try { setReise(gastMobilitaetAnlegen(reise, values)); return null }
+        try { gleicheReiseUebernehmen(gastMobilitaetAnlegen(reise, values)); return null }
         catch (error) { return error instanceof Error ? error.message : 'Die Verbindung konnte nicht gespeichert werden.' }
       }}
       onPunktAnlegen={anlegen}
       onPunktBearbeiten={async (original, aenderung) => {
-        try { setReise(gastPlanpunktBearbeiten(reise, original, aenderung)); return null }
+        try { gleicheReiseUebernehmen(gastPlanpunktBearbeiten(reise, original, aenderung)); return null }
         catch (error) { return error instanceof Error ? error.message : 'Der Punkt konnte nicht gespeichert werden.' }
       }}
       onPunktEntfernen={entfernen}
       onFlugRouteManuell={async (itemId, segments) => {
         try {
-          setReise(gastFlugRouteManuellSetzen(reise, itemId, segments))
+          gleicheReiseUebernehmen(gastFlugRouteManuellSetzen(reise, itemId, segments))
           return null
         } catch (fehler) {
           return fehler instanceof Error ? fehler.message : 'Die Flugroute konnte nicht gespeichert werden.'
@@ -252,7 +276,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       }}
       onUnterkunftZeitraum={async (itemId, startsOn, endsOn) => {
         try {
-          setReise(gastUnterkunftZeitraumSetzen(reise, itemId, startsOn, endsOn))
+          gleicheReiseUebernehmen(gastUnterkunftZeitraumSetzen(reise, itemId, startsOn, endsOn))
           return null
         } catch (fehler) {
           return fehler instanceof Error ? fehler.message : 'Der Zeitraum konnte nicht gespeichert werden.'
@@ -260,40 +284,59 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       }}
       onReadinessAktualisieren={async () => {
         const lesung = aktiveV3GastreiseLesen(tripId)
-        if (lesung.art === 'success') setReise(lesung.reise)
+        if (lesung.art === 'success') gleicheReiseUebernehmen(lesung.reise)
         return lesung
       }}
       onReadinessSetzen={async (eingabe) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
         try {
-          setReise(gastReadinessSetzen(reise, eingabe))
+          gleicheReiseUebernehmen(gastReadinessSetzen(reise, eingabe))
           return null
         } catch (fehler) {
           return fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht gespeichert werden.'
         }
       }}
+      onGuestGraphUebernehmen={(graph) => {
+        if (graph.id !== tripId) return
+        const stand = schreibstand(setReise, tripId)
+        stand.unaufgeloest = false
+        stand.basis = graph
+        setReise(graph)
+      }}
       onTravellerSetzen={async (eingabe) => {
-        if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        const stand = schreibstand(setReise, tripId)
+        if (stand.unaufgeloest) return 'Die gespeicherte Reise ist noch nicht geladen.'
+        const basis = stand.basis ?? (reise && reise.id === tripId ? reise : null)
+        if (!basis) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        if (!stand.basis) stand.basis = basis
         try {
-          setReise(gastTravellerSetzen(reise, eingabe))
+          const naechste = gastTravellerSetzen(basis, eingabe)
+          gleicheReiseUebernehmen(naechste)
           return null
         } catch (fehler) {
+          stand.unaufgeloest = true
           return fehler instanceof Error ? fehler.message : 'Die Reisendenangabe konnte nicht gespeichert werden.'
         }
       }}
       onTravellerEntfernen={async (clientRef) => {
-        if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        const stand = schreibstand(setReise, tripId)
+        if (stand.unaufgeloest) return 'Die gespeicherte Reise ist noch nicht geladen.'
+        const basis = stand.basis ?? (reise && reise.id === tripId ? reise : null)
+        if (!basis) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        if (!stand.basis) stand.basis = basis
         try {
-          setReise(gastTravellerEntfernen(reise, clientRef))
+          const naechste = gastTravellerEntfernen(basis, clientRef)
+          gleicheReiseUebernehmen(naechste)
           return null
         } catch (fehler) {
+          stand.unaufgeloest = true
           return fehler instanceof Error ? fehler.message : 'Die Reisendenangabe konnte nicht entfernt werden.'
         }
       }}
       onReadinessEntfernen={async (clientRef) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
         try {
-          setReise(gastReadinessEntfernen(reise, clientRef))
+          gleicheReiseUebernehmen(gastReadinessEntfernen(reise, clientRef))
           return null
         } catch (fehler) {
           return fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht entfernt werden.'
@@ -302,7 +345,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       onBuchungsstatus={async (itemId, gebucht) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
         try {
-          setReise(gastBuchungsstatusSetzen(reise, itemId, gebucht))
+          gleicheReiseUebernehmen(gastBuchungsstatusSetzen(reise, itemId, gebucht))
           return null
         } catch (fehler) {
           return fehler instanceof Error
@@ -314,7 +357,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         <ReiseAenderung
           reise={reise}
           quelle="guest"
-          onGespeichert={(aktualisiert) => aktualisiert && setReise(aktualisiert)}
+          onGespeichert={(aktualisiert) => aktualisiert && gleicheReiseUebernehmen(aktualisiert)}
         />
       }
       flugsuche={
@@ -333,7 +376,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
             const aufnahme = alsHotelMomentaufnahme(option, zeitraum)
             if (!aufnahme) return 'Diese Hoteloption ist unvollständig.'
             try {
-              setReise(gastHotelUebernehmen(reise, aufnahme, etappe.id, dayId))
+              gleicheReiseUebernehmen(gastHotelUebernehmen(reise, aufnahme, etappe.id, dayId))
               return null
             } catch (fehler) {
               return fehler instanceof Error
@@ -350,7 +393,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           onBuchungsstatus={async (itemId, gebucht) => {
             if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
             try {
-              setReise(gastBuchungsstatusSetzen(reise, itemId, gebucht))
+              gleicheReiseUebernehmen(gastBuchungsstatusSetzen(reise, itemId, gebucht))
               return null
             } catch (fehler) {
               return fehler instanceof Error
@@ -361,7 +404,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           onManuellAnlegen={async (eingabe) => {
             if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
             try {
-              setReise(gastMobilitaetAnlegen(reise, eingabe))
+              gleicheReiseUebernehmen(gastMobilitaetAnlegen(reise, eingabe))
               return null
             } catch (fehler) {
               return fehler instanceof Error
@@ -372,7 +415,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           onMietwagenAnlegen={async (eingabe) => {
             if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
             try {
-              setReise(gastMietwagenAnlegen(reise, eingabe))
+              gleicheReiseUebernehmen(gastMietwagenAnlegen(reise, eingabe))
               return null
             } catch (fehler) {
               return fehler instanceof Error
@@ -389,7 +432,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
             const aufnahme = alsActivityMomentaufnahme(option, tag.dayDate)
             if (!aufnahme) return 'Diese Aktivitätsoption ist unvollständig.'
             try {
-              setReise(gastAktivitaetUebernehmen(reise, aufnahme, etappe.id, tag.id))
+              gleicheReiseUebernehmen(gastAktivitaetUebernehmen(reise, aufnahme, etappe.id, tag.id))
               return null
             } catch (fehler) {
               return fehler instanceof Error

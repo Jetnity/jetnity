@@ -1,0 +1,4 @@
+Source: public GitHub Actions run 40202059080, transcribed from PLAN section 5. That section cited the Typecheck and Auth logs at 2026-10-25T14:24:43Z. This execution did not re-download the log. Only the summary lines named by the plan are repeated. They do not name advisory ids. The plan also recorded a stock npm audit fix hint; that hint is not re-quoted here.
+
+added 532 packages, and audited 533 packages
+11 vulnerabilities (2 moderate, 9 high)

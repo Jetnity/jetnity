@@ -51,6 +51,10 @@ Recorded on the previous runtime head `7c997103` and not repeated after the owne
 | `npx eslint .` | exit 0. 0 errors, 181 warnings. |
 | `check:dead`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | pass at that head. No migration. The owner line adds no route, dependency, or schema reference. |
 
+## Main-sync1
+
+The Git section above is the pre-sync record. This merge joins `444a8c254e11688120f7f2b6e49193746932a865` with authorized main `70b878a8fbe23f0dd455175a53de74175b2b976d`. No M source path also changed on main. TASK blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777`, PLAN blob `7d4e5ce4f2e4e3715066c77d1204fa754677cbee`, and address-helper blob `a33b7b873fa8542a10345eee66cb50e077dae403` stay. Runtime proof stays `96715e43` / `d734a39f`. The 18-case run, the root's separate 15 observations, and the `7c997103` local suite stay historical. Tailwind config, PostCSS config, packages, and `styles/globals.css` are unchanged blobs; scanned sources from the other lanes are not. Four added registry copy strings are on the guest-transfer path. `partyUebernehmen` does not read them. Tracking remains open pending root post-merge acceptance. The resulting commit is in the session handoff comment.
+
 ## Next action
 
-Independent Technical-Lead re-gating of the pushed head. No Ready, no merge, no tracking close, no write to `main`.
+Independent Technical-Lead review of the synced head. No Ready, no further merge, no tracking closure, no write to `main`.
