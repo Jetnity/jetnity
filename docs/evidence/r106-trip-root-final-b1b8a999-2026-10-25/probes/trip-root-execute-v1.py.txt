@@ -1,0 +1,136 @@
+"""Root-only local execution receipt for already reviewed R106 Trip sources.
+
+No product mutation or platform operation. Explicit head, fresh outputs, committed
+source manifest and tracked-clean before/after witnesses. Author runner identity
+fields remain original harness provenance, not the identity of this executor.
+"""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+from datetime import datetime, timezone
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--repo', required=True)
+ap.add_argument('--head', required=True)
+ap.add_argument('--out', required=True)
+ap.add_argument('--kind', choices=['functional', 'build', 'css'], required=True)
+args = ap.parse_args()
+repo = Path(args.repo).resolve()
+out = Path(args.out).resolve()
+assert re.fullmatch('[0-9a-f]{40}', args.head)
+assert args.head not in {'b218c33d9d00c19f3705aba8bd208cc455272659', '80006fdf1443ca9d75d8c481246821354da16000', '4e66d8948046423656feb6b95b8562e546e82b19'}
+assert repo not in out.parents and out != repo
+assert not out.exists(), 'Never overwrite earlier execution evidence'
+node = '/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node'
+review = Path('/tmp/r106-review-evidence')
+env = os.environ.copy()
+env['PATH'] = str(Path(node).parent) + os.pathsep + env.get('PATH', '')
+env['PLAYWRIGHT_BROWSERS_PATH'] = '/tmp/r106-review-browsers'
+
+def git(*argv):
+    return subprocess.check_output(['git', *argv], cwd=repo)
+
+def now():
+    return datetime.now(timezone.utc).isoformat()
+
+def sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+def blob(p):
+    b = Path(p).read_bytes()
+    return hashlib.sha1(f'blob {len(b)}\0'.encode() + b).hexdigest()
+
+assert git('rev-parse', 'HEAD').decode().strip() == args.head
+assert not git('status', '--porcelain', '--untracked-files=no').strip()
+files = {}
+for row in git('ls-tree', '-rz', args.head).split(b'\0'):
+    if not row:
+        continue
+    meta, path = row.split(b'\t', 1)
+    mode, kind, digest = meta.decode().split()
+    if kind == 'blob':
+        files[path.decode()] = digest
+
+primary = [p for p in files if p.startswith(('components/trips/', 'lib/readiness/', 'scripts/trip-personal-preparation-workflow-completion-1/'))]
+primary += ['package.json', 'package-lock.json', 'lib/trips/gastspeicher.ts', 'lib/reiseaenderung/fixtures/reise.ts', 'app/globals.css', 'tailwind.config.js', 'postcss.config.js', 'next.config.js']
+primary = sorted(set(p for p in primary if p in files))
+
+def witness():
+    assert git('rev-parse', 'HEAD').decode().strip() == args.head
+    assert not git('status', '--porcelain', '--untracked-files=no').strip()
+    entries = {p: {'gitBlob': blob(repo / p), 'sha256': sha(repo / p)} for p in primary}
+    assert all(v['gitBlob'] == files[p] for p, v in entries.items())
+    return {'at': now(), 'head': args.head, 'trackedStatus': '', 'files': entries}
+
+before = witness()
+out.mkdir(parents=True)
+(out / 'commands').mkdir()
+manifest = out / 'committed-source-manifest.json'
+manifest.write_text(json.dumps({'head': args.head, 'files': files}, indent=2) + '\n')
+receipt = {'executor': 'ChatGPT / root Technical Lead', 'kind': args.kind, 'head': args.head, 'cwd': str(repo), 'startedAt': now(), 'node': subprocess.check_output([node, '--version'], text=True).strip(), 'sourceWitnessBefore': before, 'commands': [], 'scope': 'Local synthetic execution only. No personal profile, hosted Account, full Next router, Supabase/RLS, Preview or Production claim. Embedded author/model/session fields in reviewed author outputs identify the harness author only.'}
+
+def run(name, argv):
+    started = now()
+    log = out / 'commands' / f'{name}.txt'
+    with log.open('xb') as f:
+        process = subprocess.run([str(a) for a in argv], cwd=repo, env=env, stdout=f, stderr=subprocess.STDOUT)
+    record = {'name': name, 'argv': [str(a) for a in argv], 'cwd': str(repo), 'startedAt': started, 'finishedAt': now(), 'exit': process.returncode, 'stdoutStderr': str(log.relative_to(out)), 'logSha256': sha(log)}
+    receipt['commands'].append(record)
+    print(json.dumps({'name': name, 'exit': process.returncode, 'log': str(log)}), flush=True)
+    return process.returncode
+
+def probe(name, script, mounted=False):
+    argv = [node, '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', review / script, '--repo', repo, '--head', args.head, '--sources', manifest, '--out', out / f'{name}.json']
+    if mounted:
+        argv += ['--bundle', out / 'host.bundle.js', '--bundle-info', out / 'host.bundle-info.json']
+    return run(name, argv)
+
+try:
+    if args.kind == 'functional':
+        probe('r1-pure', 'trip-pure-acceptance.ts')
+        probe('r2-same-ref', 'trip-r2-same-ref-acceptance.ts')
+        built = run('host-bundle', [node, review / 'trip-build-acceptance-bundle.mjs', '--repo', repo, '--head', args.head, '--sources', manifest, '--bundle', out / 'host.bundle.js', '--out', out / 'host.bundle-info.json'])
+        if built == 0:
+            probe('r1-mounted', 'trip-mounted-acceptance.ts', True)
+            probe('r2-controls', 'trip-r2-controls-acceptance.ts', True)
+            probe('r2-post-delete', 'trip-r2-post-delete-acceptance.ts', True)
+            probe('r3-residual', 'trip-r2-residual-acceptance-v3.ts', True)
+        prepared = run('workspace-manifest', [node, review / 'trip-workspace-r4-probe-v1/source-manifest.mjs', '--repo', repo, '--expected-head', args.head, '--output', out / 'workspace-primary-manifest.json'])
+        if prepared == 0:
+            run('workspace-r4', [node, review / 'trip-workspace-r4-probe-v1/run.mjs', '--repo', repo, '--expected-head', args.head, '--source-manifest', out / 'workspace-primary-manifest.json', '--output-dir', out / 'workspace'])
+        run('reviewed-author-suites', [node, 'scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs', '--ausgabe', out / 'reviewed-author-suites'])
+    elif args.kind == 'build':
+        run('production-build', ['npm', 'run', 'build'])
+    else:
+        run('reviewed-author-css', [node, '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', 'scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts', '--ausgabe', out / 'css'])
+        if (out / 'css/ablauf.json').exists():
+            data = json.loads((out / 'css/ablauf.json').read_text())
+            (out / 'css-assets').mkdir()
+            records = []
+            for i, asset in enumerate(data['css']['dateien']):
+                source = repo / asset['pfad']
+                assert sha(source) == asset['sha256']
+                target = out / 'css-assets' / f'{i:02d}-{source.name}'
+                target.write_bytes(source.read_bytes())
+                records.append({'original': asset['pfad'], 'retained': str(target.relative_to(out)), 'sha256': sha(target), 'bytes': target.stat().st_size})
+            receipt['retainedCssAssets'] = records
+except Exception as exc:
+    receipt['executorError'] = repr(exc)
+finally:
+    try:
+        receipt['sourceWitnessAfter'] = witness()
+        receipt['sourceWitnessesEqual'] = receipt['sourceWitnessBefore']['files'] == receipt['sourceWitnessAfter']['files']
+    except Exception as exc:
+        receipt['sourceWitnessError'] = repr(exc)
+    receipt['finishedAt'] = now()
+    receipt['allCommandsExitedZero'] = bool(receipt['commands']) and all(c['exit'] == 0 for c in receipt['commands'])
+    receipt['receiptSourceSha256'] = sha(__file__)
+    receipt['status'] = 'EXECUTED_LOCAL_COMMANDS_SUCCESSFULLY' if receipt['allCommandsExitedZero'] and receipt.get('sourceWitnessesEqual') and not receipt.get('executorError') else 'EXECUTION_REQUIRES_REVIEW'
+    (out / 'root-execution.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    print(json.dumps({'receipt': str(out / 'root-execution.json'), 'status': receipt['status'], 'commands': len(receipt['commands'])}), flush=True)
+sys.exit(0 if receipt['status'] == 'EXECUTED_LOCAL_COMMANDS_SUCCESSFULLY' else 1)

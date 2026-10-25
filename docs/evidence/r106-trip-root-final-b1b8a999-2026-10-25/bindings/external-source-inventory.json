@@ -1,0 +1,196 @@
+{
+  "kind": "ARCHIVAL_TIME_EXTERNAL_SOURCE_IDENTITIES",
+  "beforeAfterExecutionWitnessLimit": "Only the Workspace runner itself records nine external sources before and after; this broader inventory is archival-time verification, not a retrospective execution witness",
+  "referenceBase": "Archive root; replayRelativePath is beneath the external review-source directory",
+  "files": [
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-acceptance-common.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-common.mjs",
+      "replayRelativePath": "trip-acceptance-common.mjs",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 5271,
+      "sha256": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0",
+      "gitBlob": "e5bee1f134c22d0281b22bb70604ca71ddcd5fa9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-build-acceptance-bundle.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-build-acceptance-bundle.mjs",
+      "replayRelativePath": "trip-build-acceptance-bundle.mjs",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 2239,
+      "sha256": "b2a9fb64f6b7cd89fcdeaa95cd54c77efe5ed90154da172f115cd24a59183e12",
+      "gitBlob": "4d7a75a89de60ad3a96e49e8ced6558751b2cff9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-pure-acceptance.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-pure-acceptance.ts",
+      "replayRelativePath": "trip-pure-acceptance.ts",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 4591,
+      "sha256": "8a21fadb4ac39aa36f3df7ff6d19b26c1bf34461bdd84e8091430cd0f2e1da2d",
+      "gitBlob": "9b9960cb352f37cd527520c3306692b0f99e5706"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-mounted-acceptance.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-acceptance.ts",
+      "replayRelativePath": "trip-mounted-acceptance.ts",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 9952,
+      "sha256": "196b9081f3ff3cf47ef1f32bc4cd9a84cfe6add32712830c45f28b275f244448",
+      "gitBlob": "fc0f9cf6b2808b8bc79017e0d9e482158c4f21d4"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-same-ref-acceptance.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-same-ref-acceptance.ts",
+      "replayRelativePath": "trip-r2-same-ref-acceptance.ts",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 5286,
+      "sha256": "3748dd1bb2b8d6f7c45a5e47bb78ac7dd0873fe5008c7a9087a0a45255f8422c",
+      "gitBlob": "6ae53a16b9deac5bdbec1b059afdf87a8193a388"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-controls-acceptance.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-controls-acceptance.ts",
+      "replayRelativePath": "trip-r2-controls-acceptance.ts",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 11308,
+      "sha256": "4abd1607dc7ae943d5521bc7511a105ddb3772fbcc4b5fd901482d5d50e5923e",
+      "gitBlob": "2f8ec0f1bd3d07aaf0c66bcbea2f71d210516d16"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-post-delete-acceptance.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-post-delete-acceptance.ts",
+      "replayRelativePath": "trip-r2-post-delete-acceptance.ts",
+      "role": "UNCHANGED_SHARED_HOST_REPLAY_SOURCE",
+      "bytes": 10076,
+      "sha256": "3a1987a79dbd80606e4ef94bd17f5f607229e473e18e158cdac903eb7e05333b",
+      "gitBlob": "7d393695ccd33754175847170bfd09711bcff657"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/README.md.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/README.md",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/README.md",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 11806,
+      "sha256": "4266b2ceb09561af4433cd77c8e0b72379fa1f44976bec25c989c3dbdd9778c7",
+      "gitBlob": "7ee8a72cefe2f6de33b5d7a5f84a04cd3420c538"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/run.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/run.mjs",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/run.mjs",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 27889,
+      "sha256": "98336b5b6911c905fde22f512e9d9b8a0056d119fc29b7d2823372003290fefb",
+      "gitBlob": "85eccffb5d4eccf00c46a24fd046163ec8345b7e"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/provenance.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/provenance.mjs",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/provenance.mjs",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 4689,
+      "sha256": "1ed2b4a33d32881e9279ebc9858eb5ef084fb7421ddc0fd762358e431378eb5c",
+      "gitBlob": "6400fb9a86609daf93e4dfb992fa6c9de54319c1"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/source-manifest.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/source-manifest.mjs",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/source-manifest.mjs",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 1359,
+      "sha256": "0d8dad25740a76e0a7dfc82911c4be999874b0cd0e79c3ec322dc969190e32ea",
+      "gitBlob": "fd4bdedf4a38280211100099c7101e5bcdf59708"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/workspace.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/workspace.tsx",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/workspace.tsx",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 8788,
+      "sha256": "d22dc6159e6926b6be06de06be0c09d6de4b6c0fd426454a6593e773cc1f4ae8",
+      "gitBlob": "d4e0d315eef41ceab43a816b991eb28f39816b24"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/shims/dynamic.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/dynamic.tsx",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/shims/dynamic.tsx",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 232,
+      "sha256": "3431eb05985adc8b4203c15116ffcb41272ed0fd47c83f2c66cb8b053668a8af",
+      "gitBlob": "df1bce6d20da3e6989f573914b5916b67cf7c49b"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/shims/navigation.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/navigation.tsx",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/shims/navigation.tsx",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 374,
+      "sha256": "1e7f28a60cf5eda94efc69db624df669f3e886779bfd239886185521abd34fc7",
+      "gitBlob": "ff131138c1fd906d2b9a36206abb598bdbe93f36"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/shims/link.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/link.tsx",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/shims/link.tsx",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 114,
+      "sha256": "ba0acae76c4e555a388ff6935c3bcbaff1b0a8d3bca54459499f3af239e99e4a",
+      "gitBlob": "fde0b435172a88ce54182e9f2221bb4f58cd08c7"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/shims/image.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/image.tsx",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/shims/image.tsx",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 149,
+      "sha256": "64e636a3ce22eb0c05aa9921234767edf24bcecf41691bcc72cfc60ba3eac216",
+      "gitBlob": "5e89205e1d0b55a46a7e946983722831b58327fc"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/probe/shims/empty.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/empty.ts",
+      "replayRelativePath": "trip-workspace-r4-probe-v1/shims/empty.ts",
+      "role": "UNCHANGED_SHARED_WORKSPACE_REPLAY_SOURCE",
+      "bytes": 10,
+      "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249",
+      "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r3-findings-4e66d894-2026-10-25/v2/trip-r2-residual-acceptance-v2.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v2.ts",
+      "replayRelativePath": "trip-r2-residual-acceptance-v2.ts",
+      "role": "HISTORICAL_V2_PREDECESSOR_SOURCE_NOT_FINAL_EXECUTED_PROBE",
+      "bytes": 19954,
+      "sha256": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f",
+      "gitBlob": "6bc348bc55d307a1041da12dafcd982295a6f82c"
+    },
+    {
+      "archiveRelativePath": "probes/trip-root-execute-v1.py.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-root-execute-v1.py",
+      "replayRelativePath": "trip-root-execute-v1.py",
+      "role": "ACTUAL_ROOT_RECEIPT_WRAPPER_SOURCE",
+      "bytes": 7975,
+      "sha256": "1469d6bc709dcd722d731e96200c31d8c96a33e8a6bfb98224f8e6d58f810034",
+      "gitBlob": "0755a4d0ebdcdd365dfd4bbaa96378902519ed71"
+    },
+    {
+      "archiveRelativePath": "probes/trip-r2-residual-acceptance-v3.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v3.ts",
+      "replayRelativePath": "trip-r2-residual-acceptance-v3.ts",
+      "role": "V3_RESIDUAL_PROBE_SOURCE_EXECUTED_LATER",
+      "bytes": 20211,
+      "sha256": "f7cfc670d8055d7ce0f906c340131ee9905a96d3de7d233c03506ab47fc8a7d0",
+      "gitBlob": "2b2545488d077a88b08610257eeaf27746661ab5"
+    },
+    {
+      "archiveRelativePath": "probes/trip-r2-residual-v3-README.md.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-v3-README.md",
+      "replayRelativePath": "trip-r2-residual-v3-README.md",
+      "role": "ORIGINAL_V3_PREPARATION_README",
+      "bytes": 5661,
+      "sha256": "efc99488501a2990d4c01452c25a12efc960262337304ab65af9df2ff7a4f508",
+      "gitBlob": "11c11e216b3f43eb481da1c69f3122fc1c159448"
+    }
+  ]
+}

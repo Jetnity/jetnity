@@ -1,0 +1,99 @@
+{
+  "kind": "ARCHIVAL_CORRESPONDENCE_AND_CLASSIFICATION_NO_NEW_PRODUCT_EXECUTION",
+  "checkedAt": "2026-10-25T13:02:37.406342+00:00",
+  "repository": "Jetnity/jetnity",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "trackedCheckoutCleanAtRead": true,
+  "runsUseSame62RecordedSources": true,
+  "sourceBindingsEqualPriorArchivedR2Controls": true,
+  "allRecordedSourceBytesMatchCommittedHead": true,
+  "hostBundleSha256": "b3880f04d20f832d4fdd0d4003eeb33a0b045c17c9188f9be9153651532d6c40",
+  "hostBundleMetadataReference": "../r106-trip-root-r2-4e66d894-2026-10-25/bindings/trip-4e66d894-root1.bundle-info.json",
+  "probeExecutionAssociation": "Root contemporaneous execution record plus versioned setup provenance; raw result JSONs do not themselves record probe-source SHA.",
+  "sixSemicolonCorrection": {
+    "original": {
+      "bytes": 19948,
+      "sha256": "1ea683e1930ea23fe672d751bdb3d594e03a08515f67f406b057c5ddca7ea8d6",
+      "gitBlob": "69b7831547c99ffea465548cb242aa46ac8ba58a"
+    },
+    "corrected": {
+      "bytes": 19954,
+      "sha256": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f",
+      "gitBlob": "6bc348bc55d307a1041da12dafcd982295a6f82c"
+    },
+    "changedLines": [
+      83,
+      84,
+      98,
+      99,
+      204,
+      205
+    ],
+    "byteDelta": 6,
+    "allOtherSourceBytesAndAssertionsUnchanged": true,
+    "preservedDiffMatchesExactSourceDifference": true
+  },
+  "classification": {
+    "preparedTwoCase": {
+      "executed": false,
+      "attribution": "Explicit parent task and retained preparation history"
+    },
+    "run1": {
+      "rawReportSha256": "a7c1c306ddc88f5ed7aa4fdbd2ffb03e42a089301b3bd604c1fb9e561fe68dca",
+      "rawReporterFailObservations": 3,
+      "setupTypeErrorCaseNumbers": [
+        1,
+        3
+      ],
+      "actualProductAssertionFailureCaseNumbers": [
+        2
+      ]
+    },
+    "run2": {
+      "rawReportSha256": "98b6f573c0c30f7c2e89d1b44eeb0507bf122aa0a462af2cf324b11af64a8ebc",
+      "rawReporterFailObservations": 3,
+      "setupTypeErrorCaseNumbers": [],
+      "actualProductAssertionFailureCaseNumbers": [
+        1,
+        2,
+        3
+      ]
+    },
+    "findingFamilies": [
+      {
+        "priority": "P2",
+        "name": "Historical receipt falsely asserts current visibility after canonical absence or reconciled-delete discard",
+        "run2Cases": [
+          1,
+          3
+        ]
+      },
+      {
+        "priority": "P2",
+        "name": "Late A completion steals trusted pointer/Tab focus from unopened B edit control",
+        "run2Cases": [
+          2
+        ]
+      }
+    ],
+    "bothFocusRunsUseNaturalTrustedPointerTab": true,
+    "bothFocusRunsUseProgrammaticFallback": false,
+    "extraWritesOrDataRecreationClaimed": false
+  },
+  "rawExitFieldsAdded": false,
+  "exitAttestationLocation": "README only; root-observed exits are not reconstructed raw JSON fields.",
+  "priorWorkspaceEvidence": {
+    "distinctPassingCases": 3,
+    "sourcePaths": 198,
+    "scopeUnchanged": true,
+    "fullCentralRowGuardCoverage": false
+  },
+  "rootR3ActionAttribution": "Parent reports PR1009 comment6397931035; no platform read/write during archival.",
+  "preservedBaseline": {
+    "evidenceFiles": 110,
+    "stagingMapsAndManifests": 5,
+    "total": 115,
+    "identityMapSha256": "66b9e14e8db01b29186f9233834147df1e1cd533c602310961e34dd1faed46be"
+  }
+}

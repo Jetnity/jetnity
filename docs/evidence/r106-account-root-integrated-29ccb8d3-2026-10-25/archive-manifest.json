@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "status": "STAGED_APPEND_ONLY_NOT_UPLOADED_OR_COMMITTED",
+  "createdAt": "2026-10-25T11:37:53.816306+00:00",
+  "repository": "Jetnity/jetnity",
+  "accountPr": 1008,
+  "reviewedHead": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+  "reviewedTree": "29d75dd70c711b67c5c43826c8a0db05fa9037f6",
+  "normalMainBase": "41844878a8437256572da3de1374fbb36fd7a516",
+  "synchronizationCommit": "e761c47131bbdf0b508fa9afd6470514dca9530e",
+  "preintegrationHead": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+  "repositoryArchiveRoot": "docs/evidence/r106-account-root-integrated-29ccb8d3-2026-10-25",
+  "preintegrationArchiveRelativePath": "../r106-account-root-preintegration-e2db757d-2026-10-25",
+  "purpose": "Append direct root executions on exact synchronized final29, preserving prior e2 evidence without relabelling. Archival copying/static parsing only; no tests or platform calls performed by this helper.",
+  "gateSnapshot": {
+    "technicalLeadPass": false,
+    "finalNativeApp": "pending as reported by root at preparation",
+    "rootExecutionCheckpointId": 6397106872,
+    "source": "Parent Technical Lead message; checkpoint/platform state not independently polled for archival. These are preparation-time facts; later closure may record later decisions."
+  },
+  "executorAttribution": {
+    "actualExecutor": "root Technical Lead independently executing reviewed author runner",
+    "attestationArchivePath": "root-author-run-29/execution.json",
+    "authorResultFields": "Hardcoded author/session/model identify original Cursor harness provenance. The unmodified separate root execution record identifies this actual execution.",
+    "independentExecutionSource": "Parent TL reports direct final29 execution, supported by exact-head raw result and source bindings."
+  },
+  "runs": [
+    {
+      "role": "root_independent_final29",
+      "head": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "startedAt": "2026-10-25T11:28:55.284Z",
+      "endedAt": "2026-10-25T11:29:11.987Z",
+      "node": "v22.23.4",
+      "browser": "140.0.7339.16",
+      "pure": 4,
+      "mounted": 10,
+      "pass": 14,
+      "fail": 0,
+      "externalRequests": [],
+      "pageErrors": [],
+      "trackedCleanBefore": true,
+      "trackedCleanAfter": true,
+      "result": "BOUNDED_ALL_ACCEPTANCE_PASS",
+      "exitCodeReportedByParent": 0,
+      "numericExitEncodedInRawResult": false
+    },
+    {
+      "role": "root_reviewed_author_runner_final29",
+      "head": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "startedAt": "2026-10-25T11:28:57.642241+00:00",
+      "endedAt": "2026-10-25T11:29:40.196060+00:00",
+      "browser": "140.0.7339.16",
+      "mountedCases": 39,
+      "sourceContractCases": 2,
+      "nativeChildTests": 41,
+      "nativeChildPass": 41,
+      "nativeChildFail": 0,
+      "nativeChildCancelled": 0,
+      "nativeChildSkipped": 0,
+      "exitCode": 0,
+      "childDurationMs": 38075.642674,
+      "externalRequests": [],
+      "resultSha256": "9587277c7511430453371cc0e33d10d71de68d7c1fa7be24beac229054fc9521"
+    }
+  ],
+  "selectedOriginalArtifacts": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/account-acceptance-result.json",
+      "archiveRelativePath": "independent-29/account-acceptance-result.json",
+      "role": "root_independent_final_head_result",
+      "claimBoundary": "14 bounded cases on exact29. Result JSON has no numeric process exit field; parent TL separately reported exit0.",
+      "bytes": 18287,
+      "sha256": "f6c50185563855850f9d49c9e8cd21c7bb36d5b64f3c8ccefeec0b4fdbf294f0",
+      "gitBlobIfArchivedUnchanged": "5606a3c1291c782872faf0360462ae03ae35e8bc",
+      "binary": false
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-author-29ccb8d3-execution.json",
+      "archiveRelativePath": "root-author-run-29/execution.json",
+      "role": "root_execution_attestation",
+      "claimBoundary": "Identifies root executor, exact head, process-local Node child selection, actual start/end and exit0. Preserve original author attribution separately.",
+      "bytes": 867,
+      "sha256": "0d7432301b0a1decaa4f53d7110331d04cd81ea7a0eafc97a0209fe0fcf07a18",
+      "gitBlobIfArchivedUnchanged": "f56ceb80bf694344f8292242f5fcbb4f2d55ced0",
+      "binary": false
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-author-29ccb8d3-console.txt",
+      "archiveRelativePath": "root-author-run-29/console.txt",
+      "role": "root_captured_author_console",
+      "claimBoundary": "Unmodified captured console includes both contract tests, all39 mounted records and complete41-test TAP footer; begins with Browserslist warning.",
+      "bytes": 8079,
+      "sha256": "cd7a05ce2c26d7bb46903ac19c0494eb765289d533cc023e18af948eaa9de865",
+      "gitBlobIfArchivedUnchanged": "0db6ca0763981b2d339c7e1f42693427045237cd",
+      "binary": false
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/run-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8.json",
+      "archiveRelativePath": "root-author-run-29/run-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8.json",
+      "role": "root_execution_of_reviewed_author_runner",
+      "claimBoundary": "39 mounted records plus2 contract tests in retained TAP tail. Hardcoded author/session/model describe harness provenance, not actual executor.",
+      "bytes": 12871,
+      "sha256": "9587277c7511430453371cc0e33d10d71de68d7c1fa7be24beac229054fc9521",
+      "gitBlobIfArchivedUnchanged": "d408b6c3cf4979415f6f966fc364aa48d165abc1",
+      "binary": false
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/screens-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8/320.png",
+      "archiveRelativePath": "root-author-run-29/screens/320.png",
+      "role": "root_author_run_viewport_capture",
+      "claimBoundary": "Actual final29 viewport capture, not a full-page/control-gallery image. Retain all3 run references even where bytes happen to equal earlier capture.",
+      "bytes": 256193,
+      "sha256": "8f6011ec9f277ab2a353975351636b329e5e21edd3f5feb45fea9ec6ff28328e",
+      "gitBlobIfArchivedUnchanged": "312e1ba441b740e4f538698bc5c891ecb4d2ba5b",
+      "binary": true
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/screens-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8/320-root-32.png",
+      "archiveRelativePath": "root-author-run-29/screens/320-root-32.png",
+      "role": "root_author_run_viewport_capture",
+      "claimBoundary": "Actual final29 viewport capture, not a full-page/control-gallery image. Retain all3 run references even where bytes happen to equal earlier capture.",
+      "bytes": 256254,
+      "sha256": "3f3f0536625f37c44cdceacb5c5e5a0e379d0c3704a49776eedc427fb6510a6b",
+      "gitBlobIfArchivedUnchanged": "bad521716944ed28ddc849fb50a3b207a74666b0",
+      "binary": true
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/screens-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8/1280.png",
+      "archiveRelativePath": "root-author-run-29/screens/1280.png",
+      "role": "root_author_run_viewport_capture",
+      "claimBoundary": "Actual final29 viewport capture, not a full-page/control-gallery image. Retain all3 run references even where bytes happen to equal earlier capture.",
+      "bytes": 367063,
+      "sha256": "69e0a59bac18a50046fc10688f83c856e4a7e43e8209a34c46840006853fe83f",
+      "gitBlobIfArchivedUnchanged": "b15e20fcae98eae2dc2fa83f56415b7d0e234f22",
+      "binary": true
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/independent-mount.tsx",
+      "archiveRelativePath": "independent-29/helpers/independent-mount.tsx.txt",
+      "role": "unique_generated_mount_helper",
+      "claimBoundary": "The final29 action-helper absolute path differs from the earlier run. Frozen text snapshot; replay regenerates it and does not rewrite this copy.",
+      "bytes": 743,
+      "sha256": "3ee67be37537438913b752ca9fccff5a904f32fed33918ed28379dadf3912d96",
+      "gitBlobIfArchivedUnchanged": "ca9e1f08c22b142aed9583bdd6a0a5e27ed00c77",
+      "binary": false
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/production-styles.css",
+      "archiveRelativePath": "independent-29/production-styles.css.txt",
+      "role": "actual_final29_compiled_css",
+      "claimBoundary": "Actual129181-byte output served by the independent probe. Preserve separately from e2 base-only output; no Next Production CSS equivalence claim.",
+      "bytes": 129181,
+      "sha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+      "gitBlobIfArchivedUnchanged": "a556fc749df3d38e12b41ba7c783abf8ea16734e",
+      "binary": false
+    }
+  ],
+  "selectedOriginalArtifactCount": 9,
+  "selectedOriginalBytes": 1049538,
+  "reusedArtifacts": [
+    {
+      "id": "independent_probe_v2",
+      "archiveRelativePath": "../r106-account-root-preintegration-e2db757d-2026-10-25/probe/account-acceptance-v2.mjs.txt",
+      "currentExecutionSourcePath": "/tmp/r106-review-evidence/account-acceptance-v2.mjs",
+      "bytes": 37608,
+      "sha256": "117c5f881c222df8de4578a36352f9050a2d2c32b871c3f73468a6d8d7445dc6",
+      "gitBlob": "cadbf3b273b3837a4930c943b53519cf1af4ded4",
+      "reason": "Byte-identical to already staged preintegration artifact; link rather than duplicate."
+    },
+    {
+      "id": "generated_action_helper",
+      "archiveRelativePath": "../r106-account-root-preintegration-e2db757d-2026-10-25/probe/helpers/independent-actions.ts.txt",
+      "currentExecutionSourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/independent-actions.ts",
+      "bytes": 1577,
+      "sha256": "928389cdad5fbb15dbbcc8470e9b08961e4e2746c8136ca258390ee22c09c98d",
+      "gitBlob": "18fc25fd6977e861d0666632b9554f76f62e057b",
+      "reason": "Byte-identical to already staged preintegration artifact; link rather than duplicate."
+    },
+    {
+      "id": "generated_navigation_helper",
+      "archiveRelativePath": "../r106-account-root-preintegration-e2db757d-2026-10-25/probe/helpers/independent-navigation.ts.txt",
+      "currentExecutionSourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/independent-navigation.ts",
+      "bytes": 427,
+      "sha256": "7c276ddf8948b5d9ac4154848ed79bb083c5bd35c8a2d80701ea255605bc0861",
+      "gitBlob": "77efd280c1df8d230501667a7bd9780ea3574634",
+      "reason": "Byte-identical to already staged preintegration artifact; link rather than duplicate."
+    }
+  ],
+  "sourceBindingVerification": [
+    {
+      "group": "independent_initial",
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "pairsVerifiedAgainstGitObjects": 11,
+      "mismatches": []
+    },
+    {
+      "group": "independent_final",
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "pairsVerifiedAgainstGitObjects": 26,
+      "mismatches": []
+    },
+    {
+      "group": "root_author_runner",
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "pairsVerifiedAgainstGitObjects": 8,
+      "mismatches": []
+    }
+  ],
+  "pinnedExistingCodeReferencesDoNotDuplicate": [
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "scripts/account-traveller-management-completion-1/run.mjs",
+      "bytes": 7811,
+      "sha256": "6ce274852dc6559988aa4068f408d7cdc641477a4610d135b29d43046f4ae510",
+      "gitBlob": "51955cc0039aba2273bf820fd6dd4d9283423c23"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "scripts/account-traveller-management-completion-1/mounted.ts",
+      "bytes": 68363,
+      "sha256": "c13ce804fb4d8a4ac80fe8e5ec0d9d36795f2b3d8fcff0fa208f8e4e3cab4fe9",
+      "gitBlob": "3ec4218d4749f3151f6c4f928ccd16aded510b4e"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "scripts/account-traveller-management-completion-1/mount.tsx",
+      "bytes": 902,
+      "sha256": "07ea33352d3520236b65edbf229608ff95f701d257aa8e44ebc7d5bc898c7198",
+      "gitBlob": "528e7c771614472812ec29be99eeb593e0369322"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "scripts/account-traveller-management-completion-1/shims/aktionen.ts",
+      "bytes": 2446,
+      "sha256": "e9e089170c18f1d727bc8444b4dfa423c3d2754860740f799edc372e0ca434d6",
+      "gitBlob": "dae0aeac52186c3fda3bbb860b938072cfce84d9"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "scripts/account-traveller-management-completion-1/shims/navigation.ts",
+      "bytes": 1965,
+      "sha256": "7f3086ed509310000145a2411e366a2e31f6e3ab6645c395db8891f777686fa0",
+      "gitBlob": "de979fe1d6a2de0e2ec8e45e33de32217527ff8b"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "lib/traveller/account-registry-workflow-ui.test.ts",
+      "bytes": 2409,
+      "sha256": "2fa228529ab9b21b1acde7b6cd9971ec3b6cec9e0491797465c8d7b3685cc409",
+      "gitBlob": "0428c4b8788970df750ef40cd3bca7e2f6fad954"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "styles/globals.css",
+      "bytes": 11591,
+      "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+      "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "tailwind.config.js",
+      "bytes": 5217,
+      "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+      "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e"
+    },
+    {
+      "commit": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+      "path": "package-lock.json",
+      "bytes": 318748,
+      "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+      "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+    }
+  ],
+  "screenshotScope": {
+    "images": [
+      {
+        "filename": "320.png",
+        "width": 320,
+        "height": 900,
+        "rootFont": "16px",
+        "sameBytesAsPreintegrationCounterpart": true
+      },
+      {
+        "filename": "320-root-32.png",
+        "width": 320,
+        "height": 900,
+        "rootFont": "32px",
+        "sameBytesAsPreintegrationCounterpart": false
+      },
+      {
+        "filename": "1280.png",
+        "width": 1280,
+        "height": 900,
+        "rootFont": "16px",
+        "sameBytesAsPreintegrationCounterpart": false
+      }
+    ],
+    "viewportsMeasured": [
+      320,
+      360,
+      390,
+      768,
+      1280
+    ],
+    "root32MeasuredAt": 320,
+    "allRecordedScrollWidthsEqualClientWidths": true,
+    "captures": "Three viewport captures only. Root32 capture mostly shows enlarged explanatory text, not a full scroll-page/control gallery.",
+    "rootVisualInspectionAttribution": "Root reported viewing all3 images; this archive helper does not claim a new visual acceptance.",
+    "nativeZoomOrDeviceOrScreenreaderProof": false
+  },
+  "cssComparison": {
+    "preintegration": {
+      "bytes": 21425,
+      "sha256": "3eb7ce8f2102c2d2576b80dfb5ae8f1e293e87bc853c3e0ae29204bc9f9c7205",
+      "parsedRules": 64,
+      "atRules": 4,
+      "comments": 133,
+      "archiveRelativePath": "../r106-account-root-preintegration-e2db757d-2026-10-25/probe/production-styles.css.txt"
+    },
+    "final29": {
+      "bytes": 129181,
+      "sha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+      "parsedRules": 1348,
+      "atRules": 21,
+      "comments": 133,
+      "archiveRelativePath": "independent-29/production-styles.css.txt"
+    },
+    "unchangedOldSelectorDeclarationRecords": 64,
+    "addedSelectorDeclarationRecords": 1284,
+    "removedSelectorDeclarationRecords": 0,
+    "notMinification": true,
+    "oldUtilitiesAbsent": [
+      ".flex",
+      ".grid",
+      ".hidden",
+      ".min-w-0",
+      ".sr-only",
+      ".w-full"
+    ],
+    "facts": "Same v2 probe, source globals.css, tailwind.config.js and package-lock. Probe passes loaded config object to Tailwind and does not chdir. Config scans relative app/components/lib/content paths, excluding docs/scripts and external tmp evidence. Installed Tailwind3.4.17 content.js resolves such paths from cwd by default.",
+    "inference": "The base-only old output versus utility-rich final29 output indicates different content discovery. Historical execution outside checkout cwd is the strong explanation, but neither raw independent result records cwd, so exact old cwd cannot be proven from these JSONs alone. This is not explained by a few newly inherited Admin classes.",
+    "method": "Read existing CSS and statically parse with installed PostCSS; inspect existing probe/config/Tailwind resolver source. No compilation, test or browser rerun.",
+    "replayRequirement": "Set cwd to the exact checkout before invoking the unchanged probe; keep both actual CSS outputs. Do not claim either output is byte-equivalent to a Next Production asset."
+  },
+  "uniqueGeneratedHelper": "Only absolute action-helper import path differs in the new mount helper. Action/navigation helper bytes and v2 probe bytes are identical and referenced from prior archive.",
+  "excludedGeneratedArtifacts": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/mounted-production-source.js",
+      "bytes": 727942,
+      "sha256": "bf43082a46c55acf0786cac2b5f9a8abcc62055b2b5e766f19ce7a3e4b85ba6a",
+      "reason": "Generated compiled bundle; reproducible from pinned sources and unchanged v2 probe. No bundle/dependencies/browser files are copied."
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/pure-production-source.mjs",
+      "bytes": 40336,
+      "sha256": "02400ba8e1395a95441e3267f66ba7dc35e0412c293430419d0432248bc069d8",
+      "reason": "Generated compiled bundle; reproducible from pinned sources and unchanged v2 probe. No bundle/dependencies/browser files are copied."
+    }
+  ],
+  "preservation": {
+    "originalBytesRetained": true,
+    "originalAbsolutePathsUnmodified": true,
+    "preexistingArchiveFilesProtected": 75,
+    "uploadTrackingFilesProtected": 2,
+    "protectedBeforeSha256Aggregate": "4b44bf4b0c9efbe2c1f9464216211dc4224a4304bad8f3d33205b5723aa59266",
+    "noExistingArchiveOrTrackingFileWritten": true,
+    "protectedAfterSha256Aggregate": "4b44bf4b0c9efbe2c1f9464216211dc4224a4304bad8f3d33205b5723aa59266"
+  },
+  "limitations": [
+    "Bounded local pure/mounted production functions/components with synthetic deferred action and router boundaries.",
+    "No hosted Account/full Next Router/Supabase/RLS/native CI/Preview/Production/launch claim.",
+    "Independent refresh returns undefined; props change only when the probe supplies them. Author harness uses its separately recorded synthetic refresh boundary.",
+    "Root font32 is a CSS simulation; viewport screenshots are not full-page/control-gallery or native zoom/device/screen-reader proof.",
+    "Final29 records are new actual executions, not relabelled e2 or author e761 results.",
+    "This snapshot is not a Technical-Lead PASS. Final native CI and any subsequent merge/post-merge acceptance remain separate."
+  ]
+}

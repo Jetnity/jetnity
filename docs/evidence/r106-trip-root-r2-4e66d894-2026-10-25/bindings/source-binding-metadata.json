@@ -1,0 +1,112 @@
+{
+  "kind": "ARCHIVAL_SOURCE_CORRESPONDENCE_ONLY_NO_NEW_BEHAVIOR_EXECUTION",
+  "verifiedAt": "2026-10-25T12:57:58.132943+00:00",
+  "repository": "Jetnity/jetnity",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "trackedCheckoutCleanAtRead": true,
+  "workspace": {
+    "rawResultRelativePath": "workspace/workspace-r4-result.json",
+    "rawResult": {
+      "bytes": 112735,
+      "sha256": "2177d7b73db805c2545ed22e97bd07cb94f708ce4fd9f396eb2f804659aa8851",
+      "gitBlob": "74a8127ddecf6a7ba457d9a2c6b1ef60dee4c173"
+    },
+    "inputManifestPathCount": 22,
+    "compiledAndFinalManifestPathCount": 198,
+    "beforeAfterSourceIdentitiesEqual": true,
+    "allRecordedSourceBytesMatchExactCommittedTree": true,
+    "probeSourceCountInRun": 9,
+    "probeBeforeAfterAndArchivedSourcesEqual": true,
+    "copiedOriginalPreparationDocumentAlso": "workspace/probe/README.md.txt",
+    "generatedBundleRetained": false,
+    "generatedBundle": {
+      "bytes": 1754461,
+      "sha256": "a2a727e1a01da857347caf9cec2129c27ba5a3f09c46c8441b5880aff735bc9b",
+      "gitBlob": "b412419ba735f02c1eb4c4e14c982f12f88cad1b"
+    },
+    "dependencyInputCount": 1639,
+    "fullCentralRowGuardCoverage": false,
+    "sourceManifestPathCountIncludesPrimaryPinnedFiles": true
+  },
+  "syntheticHost": {
+    "bundleMetadataRelativePath": "bindings/trip-4e66d894-root1.bundle-info.json",
+    "bundleSourceCount": 61,
+    "uniqueResultVerifiedSources": 62,
+    "allRecordedSourceBytesMatchExactCommittedTree": true,
+    "generatedBundleRetained": false,
+    "generatedBundle": {
+      "bytes": 923528,
+      "sha256": "b3880f04d20f832d4fdd0d4003eeb33a0b045c17c9188f9be9153651532d6c40",
+      "gitBlob": "559f9ce5edfbed654005c5205851b1fcea9ddbff"
+    },
+    "entry": "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx",
+    "scope": "Actual production list/hook in deferred synthetic flaeche Host. Distinct from actual Workspace guest-storage fixture."
+  },
+  "sharedReplaySourceReferences": [
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-acceptance-common.mjs.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-acceptance-common.mjs",
+      "replayRelativePath": "host/trip-acceptance-common.mjs",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 5271,
+      "sha256": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0",
+      "gitBlob": "e5bee1f134c22d0281b22bb70604ca71ddcd5fa9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-build-acceptance-bundle.mjs.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-build-acceptance-bundle.mjs",
+      "replayRelativePath": "host/trip-build-acceptance-bundle.mjs",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 2239,
+      "sha256": "b2a9fb64f6b7cd89fcdeaa95cd54c77efe5ed90154da172f115cd24a59183e12",
+      "gitBlob": "4d7a75a89de60ad3a96e49e8ced6558751b2cff9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-same-ref-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-same-ref-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-same-ref-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 5286,
+      "sha256": "3748dd1bb2b8d6f7c45a5e47bb78ac7dd0873fe5008c7a9087a0a45255f8422c",
+      "gitBlob": "6ae53a16b9deac5bdbec1b059afdf87a8193a388"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-controls-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-controls-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-controls-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 11308,
+      "sha256": "4abd1607dc7ae943d5521bc7511a105ddb3772fbcc4b5fd901482d5d50e5923e",
+      "gitBlob": "2f8ec0f1bd3d07aaf0c66bcbea2f71d210516d16"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-post-delete-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-post-delete-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-post-delete-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 10076,
+      "sha256": "3a1987a79dbd80606e4ef94bd17f5f607229e473e18e158cdac903eb7e05333b",
+      "gitBlob": "7d393695ccd33754175847170bfd09711bcff657"
+    }
+  ],
+  "excludedFullHostGitManifest": {
+    "sourcePath": "/tmp/r106-review-evidence/trip-sources-4e66d894.json",
+    "bytes": 847505,
+    "sha256": "dbfa357266a17d6df4da790ced773dafaf5e7cdef78ffb41a56276579e0ba950",
+    "gitBlob": "f71f0df8206b9e005cad00c0fc68c2af4f790ab1",
+    "head": "4e66d8948046423656feb6b95b8562e546e82b19",
+    "paths": 7147,
+    "allEntriesMatchCommittedGitTree": true,
+    "reason": "Reproducible from git ls-tree of exact head; all actually used source bindings are retained in raw results and separate Host bundle metadata."
+  },
+  "executionRecordLimit": "Raw result JSONs have no process-exit field. Root-attested exit 0 is recorded separately in README only; raw bytes are unchanged.",
+  "excludedResidualProbe": "Not ready at archival selection time; no residual source or result included.",
+  "preservedBaseline": {
+    "existingEvidenceFiles": 86,
+    "existingUploadMapFiles": 4,
+    "total": 90,
+    "identityMapSha256": "f2fc52fb5784b56171d34dd4cb14f7bb822cb7c6c8b0f1eaa1ba716cdcc1348d",
+    "noChangesAuthorizedToExistingFiles": true
+  }
+}

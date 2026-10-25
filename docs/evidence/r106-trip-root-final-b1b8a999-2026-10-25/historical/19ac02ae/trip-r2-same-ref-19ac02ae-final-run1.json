@@ -1,0 +1,34 @@
+{
+  "purpose": "Independent correct-behavior assertion for R1 same-ref history/read ordering; not a TL PASS",
+  "expectedHead": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+  "node": "v22.23.4",
+  "generatedAt": "2026-10-25T13:17:04.121Z",
+  "observations": [
+    {
+      "name": "Re-reading old unresolved A must preserve newer pending B lock on the same ref",
+      "result": "PASS",
+      "detail": {
+        "clientRef": "preparation-tl-same-ref",
+        "oldIntent": "personal-1",
+        "newerIntent": "personal-2",
+        "oldPhaseAfterRead": "conflict",
+        "newerPhaseAfterRead": "pending",
+        "lockBeforeLaterRead": true,
+        "lockAfterLaterRead": true,
+        "deliveredGeneration": 3,
+        "concurrentDeleteOrder": null,
+        "actualWriterCalls": 0
+      }
+    }
+  ],
+  "verdict": "BOUNDED_ASSERTIONS_PASSED",
+  "head": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+  "verifiedSources": {
+    "package.json": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+    "package-lock.json": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "lib/readiness/personal-preparation-workflow.ts": "c295637b18d4b356ce14739e211871179cbf38f7",
+    "lib/readiness/bauen.ts": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+    "lib/reiseaenderung/fixtures/reise.ts": "7533df1f2de0a9972810278b64aa9839033342f8"
+  },
+  "scope": "Actual production pure workflow and existing builder, synthetic data only. Returned write orders are measured; no writer, storage, browser or network call is made."
+}

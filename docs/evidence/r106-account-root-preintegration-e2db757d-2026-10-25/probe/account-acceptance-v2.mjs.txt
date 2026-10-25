@@ -1,0 +1,608 @@
+/**
+ * Independent, bounded acceptance probes for Account PR #1008 R1, version 2.
+ * Uses installed playwright/test and chromium.launch({ headless: true }) only.
+ * Review scratch only. Does not mutate the checkout or contact hosted services.
+ * Requires the explicitly named NEW checkout head; never treats the defect head as acceptance.
+ */
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { createServer } from 'node:http'
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+
+const DEFECT_HEAD = 'c7613bd6754b6fc2f0f62f8339dc58294e5f130c'
+const HELP = `Usage (Node 22):
+  node account-acceptance-v2.mjs --repo /absolute/checkout --expected-head <40-hex-new-head> --output-dir /absolute/fresh/external-directory [--only all|pure|mounted]
+
+The output directory must not exist. The tracked checkout must be clean.
+Mounted probes require the checkout's installed dependencies and local Playwright Chromium.
+Set PLAYWRIGHT_BROWSERS_PATH when Chromium is installed outside Playwright's default cache.
+Only local synthetic action/router boundaries are used; refresh returns void.
+No tracked files, GitHub, Supabase, Vercel, or hosted data are changed.
+PASS means only these bounded acceptance probes, never Technical-Lead acceptance.
+`
+if (process.argv.slice(2).includes('--help')) {
+  console.log(HELP)
+  process.exit(0)
+}
+function parseOptions() {
+  const args = process.argv.slice(2)
+  assert.equal(args.length % 2, 0, 'Every option requires a value')
+  const options = { only: 'all' }
+  const seen = new Set()
+  for (let index = 0; index < args.length; index += 2) {
+    const name = args[index]
+    assert.ok(['--repo', '--expected-head', '--output-dir', '--only'].includes(name), `Unknown option ${name}`)
+    assert.ok(!seen.has(name), `Duplicate option ${name}`)
+    seen.add(name)
+    options[name.slice(2)] = args[index + 1]
+  }
+  for (const key of ['repo', 'expected-head', 'output-dir']) assert.ok(options[key], `Required --${key}`)
+  assert.match(options['expected-head'], /^[a-f0-9]{40}$/, 'An exact lowercase 40-hex expected head is required')
+  assert.notEqual(options['expected-head'], DEFECT_HEAD, 'REFUSED: this is the independently demonstrated defective head, not an acceptance candidate')
+  assert.ok(['all', 'pure', 'mounted'].includes(options.only), 'Invalid --only value')
+  assert.equal(process.versions.node.split('.')[0], '22', 'Use the repository Node 22 runtime')
+  assert.ok(isAbsolute(options.repo) && isAbsolute(options['output-dir']), 'Use absolute paths')
+  options.repo = realpathSync(options.repo)
+  options['output-dir'] = resolve(options['output-dir'])
+  assert.ok(!existsSync(options['output-dir']), 'Refusing to overwrite earlier evidence')
+  const rel = relative(options.repo, options['output-dir'])
+  assert.ok(rel.startsWith(`..${sep}`) || isAbsolute(rel), 'Evidence must remain outside the checkout')
+  return options
+}
+
+const options = parseOptions()
+const repo = options.repo
+const out = options['output-dir']
+const expectedHead = options['expected-head']
+const require = createRequire(join(repo, 'package.json'))
+const sourcePaths = new Set([
+  'package.json', 'package-lock.json', 'tsconfig.json', 'tailwind.config.js', 'styles/globals.css',
+  'components/account/AccountReisende.tsx',
+  'components/account/AccountReisendeKarte.tsx',
+  'components/account/useAccountRegistryWorkflow.ts',
+  'lib/traveller/account-registry-workflow.ts',
+  'lib/traveller/account-registry-copy.ts',
+  'lib/traveller/account-registry-eingabe.ts',
+])
+function git(...args) {
+  return execFileSync('git', ['-C', repo, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
+}
+function hashFile(path, algorithm = 'sha256') {
+  return createHash(algorithm).update(readFileSync(path)).digest('hex')
+}
+function gitBlob(path) {
+  const bytes = readFileSync(path)
+  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+}
+function provenance() {
+  assert.equal(realpathSync(git('rev-parse', '--show-toplevel')), repo, 'The supplied path must be the checkout root')
+  const head = git('rev-parse', 'HEAD')
+  assert.equal(head, expectedHead, 'Checkout HEAD differs from the explicitly expected head')
+  assert.equal(git('status', '--porcelain', '--untracked-files=no'), '', 'Tracked files/index must be clean')
+  const files = {}
+  for (const path of [...sourcePaths].sort()) {
+    const committed = git('rev-parse', `${expectedHead}:${path}`)
+    assert.match(committed, /^[a-f0-9]{40}$/, `Missing committed blob: ${path}`)
+    const actual = gitBlob(join(repo, path))
+    assert.equal(actual, committed, `Source bytes are not the expected committed blob: ${path}`)
+    files[path] = { gitBlob: actual, sha256: hashFile(join(repo, path)) }
+  }
+  return { head, trackedCheckoutClean: true, files, checkedAt: new Date().toISOString() }
+}
+const initialProvenance = provenance()
+mkdirSync(out, { recursive: false })
+const report = {
+  evidenceClass: 'Independent bounded local acceptance: real production functions/components/CSS with synthetic deferred action and void router.refresh boundaries',
+  expectedHead, repo, node: process.version, only: options.only,
+  probeSha256: hashFile(fileURLToPath(import.meta.url)),
+  startedAt: new Date().toISOString(), initialProvenance,
+  notTechnicalLeadPass: true,
+  limitations: [
+    'No hosted account, complete Next Router, Supabase, RLS, deployment, or production evidence.',
+    'Does not replace complete diff/scope review, all eight action guards, CI/Auth, or the required layout matrix.',
+    'Author evidence path relocation and corrected screenshot provenance require separate review.',
+  ],
+  cases: [], externalRequests: [], pageErrors: [],
+}
+async function check(name, operation) {
+  const startedAt = new Date().toISOString()
+  try {
+    const evidence = await operation()
+    report.cases.push({ name, result: 'PASS', startedAt, evidence })
+  } catch (error) {
+    report.cases.push({ name, result: 'FAIL', startedAt, error: String(error?.stack ?? error) })
+  }
+}
+function recordBundleSources(build) {
+  for (const path of Object.keys(build.metafile.inputs)) {
+    if (path.startsWith('<')) continue
+    const abs = resolve(repo, path)
+    const rel = relative(repo, abs)
+    if (!rel.startsWith(`..${sep}`) && !isAbsolute(rel) && !rel.split(sep).includes('node_modules')) sourcePaths.add(rel)
+  }
+  // Verify actual source bytes used for this bundle before executing it.
+  return provenance()
+}
+
+const target = '00000000-0000-4000-8000-000000000001'
+const otherTarget = '00000000-0000-4000-8000-000000000002'
+const docId = '00000000-0000-4000-8000-000000000010'
+const time = '2026-01-01T00:00:00.000Z'
+const travellerEditor = `reisender:${target}:aendern`
+const documentEditor = `document:${docId}:aendern`
+const surface = `reisender:${target}`
+const document = (id = docId, expiresOn = '2030-01-01') => ({
+  id, clientRef: id, createdAt: time, updatedAt: time, documentType: 'passport',
+  issuingCountryCode: 'DE', citizenshipClientRef: null, expiresOn,
+})
+const person = (label = 'Alice', documents = [], id = target) => ({
+  authority: 'account_registry', id, clientRef: id, createdAt: time, updatedAt: time,
+  facts: { label, residenceCountryCode: 'DE', citizenships: [], documents },
+})
+const props = (...travellers) => ({ problem: null, travellers })
+const travellerFields = (label = 'Alice') => ({ label, residenceCountryCode: 'DE' })
+const documentFields = (expiresOn = '2030-01-01') => ({
+  documentType: 'passport', issuingCountryCode: 'DE', citizenshipId: '', expiresOn,
+})
+let browser
+let server
+let workflow
+let input
+try {
+  const esbuild = require('esbuild')
+  const pureBuild = await esbuild.build({
+    absWorkingDir: repo,
+    stdin: { contents: `export * as workflow from ${JSON.stringify(join(repo, 'lib/traveller/account-registry-workflow.ts'))};\nexport * as input from ${JSON.stringify(join(repo, 'lib/traveller/account-registry-eingabe.ts'))};`, resolveDir: repo, loader: 'ts' },
+    outfile: join(out, 'pure-production-source.mjs'), bundle: true, platform: 'node', format: 'esm',
+    alias: { '@': repo }, metafile: true, logLevel: 'silent',
+  })
+  recordBundleSources(pureBuild)
+  const module = await import(pathToFileURL(join(out, 'pure-production-source.mjs')).href)
+  workflow = module.workflow
+  input = module.input
+  const w = workflow
+  for (const name of ['registryWorkflowAnfang', 'registryPropsBeobachten', 'registryKanonisch', 'registrySlot', 'registryEditorOeffnen', 'registryEditorSchliessen', 'registryFeldSetzen', 'registryBeginnen', 'registryUebernehmen', 'registryAnwenden']) {
+    assert.equal(typeof w[name], 'function', `Production API changed: inspect and adapt probe ${name}, do not skip it`)
+  }
+  let sequence = 0
+  const ids = { naechste: () => `independent-account-acceptance-${++sequence}` }
+  const slot = (state, editor) => {
+    const found = w.registrySlot(state, editor)
+    assert.ok(found, `Expected editor slot ${editor}`)
+    return found
+  }
+  const open = (state, editor) => {
+    const canonical = w.registryKanonisch(editor, state.props)
+    assert.ok(canonical, `Expected canonical edit basis ${editor}`)
+    return w.registryEditorOeffnen(state, editor, surface, canonical.felder, canonical.kontext)
+  }
+  const begin = (state, editor) => {
+    const result = w.registryBeginnen(state, { editor, payload: slot(state, editor).felder }, ids)
+    assert.ok(result.versuch, `Expected explicit dispatch, got ${result.grund}`)
+    return result
+  }
+  if (options.only !== 'mounted') {
+    for (const outcome of ['gespeichert', 'unbestaetigt']) {
+      await check(`pure A-R2 explicit adoption owns a newer epoch before late ${outcome}`, async () => {
+        let state = open(w.registryPropsBeobachten(w.registryWorkflowAnfang(), props(person())), travellerEditor)
+        state = w.registryFeldSetzen(state, travellerEditor, travellerFields('My newer draft'))
+        state = w.registryPropsBeobachten(state, props(person('Canonical two')))
+        assert.equal(slot(state, travellerEditor).konflikt, true)
+        const write = begin(state, travellerEditor)
+        state = w.registryUebernehmen(write.stand, travellerEditor)
+        const adopted = structuredClone(slot(state, travellerEditor))
+        assert.ok(adopted.epoche > write.versuch.epoche, 'Explicit adoption must advance ownership beyond the pending attempt')
+        assert.equal(adopted.offen, true)
+        assert.deepEqual(adopted.felder, travellerFields('Canonical two'))
+        const oldFocus = structuredClone(state.fokus)
+        state = w.registryAnwenden(state, write.versuch.id, { art: outcome })
+        const after = slot(state, travellerEditor)
+        assert.equal(after.offen, true, 'A late prior result must not close the adopted editor')
+        assert.deepEqual(after.felder, adopted.felder, 'A late prior result must not clear or overwrite the adopted values')
+        assert.equal(after.epoche, adopted.epoche, 'A prior result must not change the newer editor generation')
+        assert.equal(after.hinweis, adopted.hinweis, 'A prior result must not announce into the newer editor')
+        assert.deepEqual(state.fokus, oldFocus, 'A prior result must not request focus for the newer editor')
+        const receipt = state.belege.find((entry) => entry.id === write.versuch.id)
+        assert.equal(receipt?.ausgang, outcome, 'The historical attempt must still get its own honest receipt')
+        return { attemptEpoch: write.versuch.epoche, adoptedEpoch: adopted.epoche, retainedFields: after.felder, receiptOutcome: receipt.ausgang }
+      })
+    }
+    for (const kind of ['traveller', 'document']) {
+      await check(`pure A-R3 ${kind} edit reopen preserves canonical metadata and newer dirty drafts`, async () => {
+        const editor = kind === 'traveller' ? travellerEditor : documentEditor
+        const initial = props(person('Alice', [document()]))
+        const expected = kind === 'traveller' ? travellerFields() : documentFields()
+        let state = open(w.registryPropsBeobachten(w.registryWorkflowAnfang(), initial), editor)
+        const first = begin(state, editor)
+        state = w.registryAnwenden(first.stand, first.versuch.id, { art: 'gespeichert' })
+        state = w.registryPropsBeobachten(state, structuredClone(initial))
+        state = w.registryEditorSchliessen(state, editor)
+        state = open(state, editor)
+        assert.deepEqual(slot(state, editor).felder, expected, 'A clean edit must reopen with valid known metadata, not creation defaults')
+        const second = begin(state, editor)
+        assert.deepEqual(second.versuch.payload, expected, 'An ordinary second submit must preserve metadata')
+        const argument = kind === 'traveller' ? { id: target, ...second.versuch.payload } : { travellerId: target, documentId: docId, ...second.versuch.payload }
+        const parsed = kind === 'traveller' ? input.registryTravellerAenderungLesen(argument) : input.registryDocumentAenderungLesen(argument)
+        assert.equal(parsed.ok, true)
+        if (kind === 'traveller') assert.deepEqual(parsed.wert, { id: target, label: 'Alice', residenceCountryCode: 'DE' })
+        else assert.deepEqual(parsed.wert, { travellerId: target, documentId: docId, documentType: 'passport', issuingCountryCode: 'DE', citizenshipId: null, expiresOn: '2030-01-01' })
+        state = w.registryAnwenden(second.stand, second.versuch.id, { art: 'gespeichert' })
+        state = w.registryEditorSchliessen(state, editor)
+        const updated = props(person('Canonical later', [document(docId, '2031-02-03')]))
+        state = w.registryPropsBeobachten(state, updated)
+        state = open(state, editor)
+        const current = kind === 'traveller' ? travellerFields('Canonical later') : documentFields('2031-02-03')
+        assert.deepEqual(slot(state, editor).felder, current, 'A clean reopened edit must see later canonical metadata')
+        const dirty = kind === 'traveller' ? travellerFields('My retained draft') : documentFields('2035-04-05')
+        state = w.registryFeldSetzen(state, editor, dirty)
+        state = w.registryEditorSchliessen(state, editor)
+        state = w.registryPropsBeobachten(state, props(person('Canonical newest', [document(docId, '2032-03-04')])))
+        state = open(state, editor)
+        assert.deepEqual(slot(state, editor).felder, dirty, 'Cancel/reopen and later canonical props must retain a genuine newer dirty draft')
+        assert.equal(slot(state, editor).dirty, true)
+        assert.equal(slot(state, editor).konflikt, true, 'The retained draft must expose its conflict with later canonical data')
+        return { secondActionArgument: argument, frozenParserResult: parsed, laterCanonical: current, retainedDirtyFields: slot(state, editor).felder }
+      })
+    }
+  }
+
+  if (options.only !== 'pure') {
+    const actionShim = join(out, 'independent-actions.ts')
+    const routerShim = join(out, 'independent-navigation.ts')
+    const harness = join(out, 'independent-mount.tsx')
+    writeFileSync(actionShim, `
+const state = (window as any).__accountReview ??= { calls: [], pending: new Map(), settlements: [], refreshes: 0, version: 0 };
+state.settle = (id: number, kind: string) => {
+  const attempt = state.pending.get(id);
+  if (!attempt) throw new Error('Missing pending action ' + id);
+  state.pending.delete(id);
+  state.settlements.push({ id, kind });
+  if (kind === 'reject') attempt.reject(new Error('Independent real deferred action rejection'));
+  else if (kind === 'success') attempt.resolve({ ok: true, wert: null });
+  else throw new Error('Invalid settlement');
+};
+function call(name: string, argument: unknown) {
+  const id = state.calls.length + 1;
+  state.calls.push({ id, name, argument: structuredClone(argument) });
+  return new Promise((resolve, reject) => state.pending.set(id, { resolve, reject }));
+}
+export const registryTravellerAnlegen = (value: unknown) => call('traveller-anlegen', value);
+export const registryTravellerAendern = (value: unknown) => call('traveller-aendern', value);
+export const registryTravellerLoeschen = (value: unknown) => call('traveller-loeschen', value);
+export const registryCitizenshipAnlegen = (value: unknown) => call('citizenship-anlegen', value);
+export const registryCitizenshipLoeschen = (value: unknown) => call('citizenship-loeschen', value);
+export const registryDocumentAnlegen = (value: unknown) => call('document-anlegen', value);
+export const registryDocumentAendern = (value: unknown) => call('document-aendern', value);
+export const registryDocumentLoeschen = (value: unknown) => call('document-loeschen', value);
+`, { flag: 'wx' })
+    writeFileSync(routerShim, `
+export function useRouter() { return {
+  refresh() { (window as any).__accountReview.refreshes++; return undefined; },
+  push() { throw new Error('Unexpected router.push in bounded account probe'); },
+  replace() { throw new Error('Unexpected router.replace in bounded account probe'); },
+}; }
+export function usePathname() { return '/account/travellers'; }
+export function useSearchParams() { return new URLSearchParams(); }
+`, { flag: 'wx' })
+    writeFileSync(harness, `
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import AccountReisende from '@/components/account/AccountReisende';
+import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy';
+import ${JSON.stringify(actionShim)};
+function Harness() {
+  const [props, setProps] = useState<any>({ problem: null, travellers: [] });
+  useEffect(() => {
+    const state = (window as any).__accountReview;
+    state.setProps = setProps; state.copy = REGISTRY_COPY; state.version++;
+  }, [props]);
+  return <AccountReisende problem={props.problem} travellers={props.travellers} />;
+}
+createRoot(document.getElementById('root')!).render(<Harness />);
+`, { flag: 'wx' })
+    const mountedBuild = await esbuild.build({
+      absWorkingDir: repo, entryPoints: [harness], outfile: join(out, 'mounted-production-source.js'),
+      bundle: true, format: 'iife', platform: 'browser', jsx: 'automatic',
+      alias: { '@': repo }, nodePaths: [join(repo, 'node_modules')],
+      define: { 'process.env.NODE_ENV': '"production"' },
+      banner: { js: 'globalThis.process = globalThis.process || { env: { NODE_ENV: "production" } }; globalThis.global = globalThis;' },
+      metafile: true, logLevel: 'silent',
+      plugins: [{ name: 'independent-explicit-action-router-boundary', setup(build) {
+        build.onResolve({ filter: /.*/ }, args => {
+          if (args.path === 'next/navigation') return { path: routerShim }
+          if (args.path === '@/lib/traveller/account-registry-aktionen' || /\/account-registry-aktionen(?:\.ts)?$/.test(args.path)) return { path: actionShim }
+          return null
+        })
+      } }],
+    })
+    recordBundleSources(mountedBuild)
+    const globals = join(repo, 'styles/globals.css')
+    const postcss = require('postcss')
+    const css = (await postcss([
+      require('tailwindcss/nesting')(), require('tailwindcss')(require(join(repo, 'tailwind.config.js'))), require('autoprefixer')(),
+    ]).process(readFileSync(globals, 'utf8'), { from: globals })).css
+    writeFileSync(join(out, 'production-styles.css'), css, { flag: 'wx' })
+    const js = readFileSync(join(out, 'mounted-production-source.js'))
+    const html = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body class="bg-canvas text-ink-800"><button id="independent-outside">Independent outside control</button><main id="root" class="min-w-0 max-w-full"></main><script src="/mount.js"></script></body></html>'
+    server = createServer((req, res) => {
+      if (req.url === '/mount.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(js) }
+      else if (req.url === '/style.css') { res.writeHead(200, { 'content-type': 'text/css' }); res.end(css) }
+      else if (req.url === '/') { res.writeHead(200, { 'content-type': 'text/html' }); res.end(html) }
+      else { res.writeHead(404); res.end() }
+    })
+    await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
+    const origin = `http://127.0.0.1:${server.address().port}`
+    const { chromium } = require('playwright')
+    const { expect } = require('playwright/test')
+    browser = await chromium.launch({ headless: true })
+    report.browser = browser.version()
+    report.origin = origin
+    report.routerBoundary = 'refresh increments a counter and returns undefined; props change only when the probe supplies them'
+    const flush = (page) => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+    const setProps = async (page, value) => {
+      const previous = await page.evaluate(() => window.__accountReview.version)
+      await page.evaluate(value => window.__accountReview.setProps(value), value)
+      await page.waitForFunction(previous => window.__accountReview.version > previous, previous)
+      await flush(page)
+    }
+    const formFor = (page, editor) => page.locator(`form[data-registry-editor="${editor}"]`)
+    const labelInput = (form) => form.locator('input:not([role="searchbox"]):not([type="date"])').first()
+    const edit = async (page, id = target) => {
+      await page.locator(`[data-fokus="aendern:${id}"]`).click()
+      const form = formFor(page, `reisender:${id}:aendern`)
+      await expect(form).toBeVisible()
+      return form
+    }
+    const submit = async (page, form, count) => {
+      await form.locator('button[type="submit"]').click()
+      await page.waitForFunction(count => window.__accountReview.calls.length === count, count)
+    }
+    const settle = async (page, id, kind) => {
+      await page.evaluate(({ id, kind }) => window.__accountReview.settle(id, kind), { id, kind })
+      await flush(page)
+    }
+    const calls = (page) => page.evaluate(() => structuredClone(window.__accountReview.calls))
+    const focus = (page) => page.evaluate(() => ({
+      tag: document.activeElement?.tagName,
+      id: document.activeElement?.id,
+      focus: document.activeElement?.getAttribute('data-fokus'),
+      name: document.activeElement?.textContent?.trim(),
+      connected: Boolean(document.activeElement?.isConnected),
+    }))
+    const mounted = async (name, initial, operation) => check(name, async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+      page.setDefaultTimeout(8000)
+      page.on('pageerror', error => report.pageErrors.push({ case: name, message: error.message }))
+      await page.route('**/*', route => {
+        const url = route.request().url()
+        if (new URL(url).origin !== origin) { report.externalRequests.push({ case: name, url }); return route.abort() }
+        return route.continue()
+      })
+      try {
+        await page.goto(origin)
+        await page.waitForFunction(() => typeof window.__accountReview?.setProps === 'function')
+        const copy = await page.evaluate(() => window.__accountReview.copy)
+        await setProps(page, initial)
+        await page.locator(`[data-fokus="verwalten:${target}"]`).click()
+        return await operation(page, copy)
+      } finally { await page.close() }
+    })
+    const copyPattern = (text) => new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+
+    await mounted('mounted A-R1 saved/unobserved recovery reads only and retains unrelated draft', props(person()), async (page, copy) => {
+      await submit(page, await edit(page), 1)
+      await settle(page, 1, 'success')
+      await expect(page.getByText(copy.listeNichtGeladen, { exact: true })).toBeVisible()
+      const read = page.getByRole('button', { name: copyPattern(copy.erneutLesen) }).first()
+      await expect(read).toBeVisible()
+      await expect(read).toBeEnabled()
+      await page.locator('[data-fokus="anlegen-knopf"]').click()
+      const unrelated = formFor(page, 'anlegen')
+      await labelInput(unrelated).fill('Unrelated retained draft')
+      const beforeRead = await page.evaluate(() => window.__accountReview.refreshes)
+      await read.click()
+      assert.equal(await page.evaluate(() => window.__accountReview.refreshes), beforeRead + 1)
+      await flush(page)
+      await expect(page.getByText(copy.listeNichtGeladen, { exact: true })).toBeVisible()
+      await expect(labelInput(unrelated)).toHaveValue('Unrelated retained draft')
+      assert.equal((await calls(page)).length, 1, 'Recovery read must not repeat a mutation')
+      await setProps(page, props(person()))
+      await expect(page.getByText(copy.listeNichtGeladen, { exact: true })).toBeVisible()
+      await expect(labelInput(unrelated)).toHaveValue('Unrelated retained draft')
+      await setProps(page, props(person('Observed later Alice')))
+      await expect(page.getByText(copy.listeNeu, { exact: true })).toBeVisible()
+      await expect(labelInput(unrelated)).toHaveValue('Unrelated retained draft')
+      assert.equal((await calls(page)).length, 1)
+      return { actionCount: 1, manualReadCount: 1, unchangedSnapshotStayedUnobserved: true, changedSnapshotObserved: true, retainedDraft: 'Unrelated retained draft' }
+    })
+
+    for (const kind of ['traveller', 'document']) {
+      await mounted(`mounted A-R3 ${kind} clean edit reopen sends preserved metadata`, props(person('Alice', [document()])), async (page, copy) => {
+        const editor = kind === 'traveller' ? travellerEditor : documentEditor
+        const openEditor = async () => {
+          if (kind === 'traveller') return edit(page)
+          await page.getByRole('button', { name: copy.dokumentAendern, exact: true }).first().click()
+          const form = formFor(page, editor)
+          await expect(form).toBeVisible()
+          return form
+        }
+        let form = await openEditor()
+        await submit(page, form, 1)
+        await settle(page, 1, 'success')
+        await expect(page.locator('[data-registry-beleg][data-registry-ausgang="gespeichert"]').first()).toBeVisible()
+        // Accept either keeping a successfully saved edit open or closing it; the reopen contract is what matters.
+        if (await form.count()) {
+          if (kind === 'traveller') await page.locator(`[data-fokus="aendern:${target}"]`).click()
+          else await form.getByRole('button', { name: copy.abbrechen, exact: true }).click()
+          await expect(form).toHaveCount(0)
+        }
+        await setProps(page, props(person('Alice', [document()])))
+        form = await openEditor()
+        if (kind === 'traveller') {
+          await expect(labelInput(form)).toHaveValue('Alice')
+          await expect(form.getByRole('combobox', { name: copy.wohnsitzLabel, exact: true })).toHaveValue('DE')
+        } else {
+          await expect(form.getByRole('combobox', { name: copy.dokumentTypLabel, exact: true })).toHaveValue('passport')
+          await expect(form.getByRole('combobox', { name: copy.dokumentIssuerLabel, exact: true })).toHaveValue('DE')
+          await expect(form.locator('input[type="date"]')).toHaveValue('2030-01-01')
+        }
+        await submit(page, form, 2)
+        const second = (await calls(page))[1]
+        const expected = kind === 'traveller'
+          ? { id: target, label: 'Alice', residenceCountryCode: 'DE' }
+          : { travellerId: target, documentId: docId, ...documentFields() }
+        assert.equal(second.name, kind === 'traveller' ? 'traveller-aendern' : 'document-aendern')
+        assert.deepEqual(second.argument, expected)
+        const parsed = kind === 'traveller' ? input.registryTravellerAenderungLesen(second.argument) : input.registryDocumentAenderungLesen(second.argument)
+        assert.equal(parsed.ok, true)
+        return { secondAction: second, frozenParserResult: parsed }
+      })
+    }
+
+    for (const outcome of ['success', 'reject']) {
+      await mounted(`mounted A-R2 explicit adoption survives real late ${outcome}`, props(person()), async (page, copy) => {
+        const form = await edit(page)
+        await labelInput(form).fill('My newer draft')
+        await setProps(page, props(person('Canonical two')))
+        await expect(form.getByText(copy.konflikt, { exact: true })).toBeVisible()
+        await submit(page, form, 1)
+        const epochBefore = Number(await form.getAttribute('data-registry-epoche'))
+        await form.getByRole('button', { name: copy.uebernehmen, exact: true }).click()
+        await expect(labelInput(form)).toHaveValue('Canonical two')
+        const epochAfter = Number(await form.getAttribute('data-registry-epoche'))
+        assert.ok(Number.isFinite(epochBefore) && Number.isFinite(epochAfter) && epochAfter > epochBefore)
+        await labelInput(form).focus()
+        await settle(page, 1, outcome)
+        await expect(form).toBeVisible()
+        await expect(labelInput(form)).toHaveValue('Canonical two')
+        await expect(labelInput(form)).toBeFocused()
+        assert.equal(Number(await form.getAttribute('data-registry-epoche')), epochAfter)
+        await expect(form.locator('[role="alert"]')).toHaveCount(0)
+        const receipt = page.locator(`[data-registry-beleg][data-registry-ausgang="${outcome === 'success' ? 'gespeichert' : 'unbestaetigt'}"]`)
+        await expect(receipt).toBeVisible()
+        assert.equal(await receipt.evaluate(element => Boolean(element.closest('form'))), false)
+        if (outcome === 'reject') await expect(receipt.getByText(copy.unbekannt, { exact: true })).toBeVisible()
+        assert.equal((await calls(page)).length, 1)
+        return { epochBefore, epochAfter, retainedFields: 'Canonical two', focus: await focus(page), settlements: await page.evaluate(() => window.__accountReview.settlements) }
+      })
+    }
+
+    await mounted('mounted actual Promise rejection after A to B keeps B draft and focus', props(person(), person('Bob', [], otherTarget)), async (page, copy) => {
+      await submit(page, await edit(page), 1)
+      await page.locator(`[data-fokus="verwalten:${otherTarget}"]`).click()
+      const formB = await edit(page, otherTarget)
+      await labelInput(formB).fill('Bob newer unsent draft')
+      await labelInput(formB).focus()
+      await settle(page, 1, 'reject')
+      await expect(labelInput(formB)).toHaveValue('Bob newer unsent draft')
+      await expect(labelInput(formB)).toBeFocused()
+      await expect(formB.locator('[role="alert"]')).toHaveCount(0)
+      await expect(page.getByText(copy.unbekannt, { exact: true })).toBeVisible()
+      assert.equal((await calls(page)).length, 1)
+      return { targetA: target, targetB: otherTarget, retainedDraft: 'Bob newer unsent draft', actionCount: 1, settlements: await page.evaluate(() => window.__accountReview.settlements) }
+    })
+
+    await mounted('mounted A-R4 a newer historical-receipt focus move survives pending cancel restoration', props(person()), async (page, copy) => {
+      await submit(page, await edit(page), 1)
+      await settle(page, 1, 'reject')
+      const receipt = page.locator('[data-registry-beleg][data-registry-ausgang="unbestaetigt"]')
+      await expect(receipt.getByText(copy.unbekannt, { exact: true })).toBeVisible()
+      const repeat = receipt.getByRole('button', { name: copy.erneutAktion, exact: true })
+      await expect(repeat).toBeVisible()
+      await page.getByRole('button', { name: copy.staatsbuergerschaftHinzufuegen, exact: true }).click()
+      const form = formFor(page, `${surface}:citizenship-anlegen`)
+      await expect(form).toBeVisible()
+      const immediate = await form.getByRole('button', { name: copy.abbrechen, exact: true }).evaluate(button => {
+        button.click()
+        const receipt = document.querySelector('[data-registry-beleg][data-registry-ausgang="unbestaetigt"]')
+        const newerControl = receipt?.querySelector('button')
+        if (!(newerControl instanceof HTMLButtonElement)) throw new Error('Missing already-mounted receipt repeat control')
+        newerControl.focus()
+        return {
+          focusedReceiptControl: document.activeElement === newerControl,
+          editor: newerControl.closest('[data-registry-editor]')?.getAttribute('data-registry-editor'),
+          name: newerControl.textContent?.trim(),
+        }
+      })
+      assert.equal(immediate.focusedReceiptControl, true, 'The later focus move must actually occur before checking ownership')
+      await expect(form).toHaveCount(0)
+      await flush(page)
+      const afterCommit = await focus(page)
+      assert.equal(
+        await repeat.evaluate(element => element === document.activeElement),
+        true,
+        `Newer receipt focus must win over canceled-editor restoration; observed ${JSON.stringify(afterCommit)}`,
+      )
+      assert.equal((await calls(page)).length, 1, 'Focusing a historical receipt must not repeat its action')
+      return { immediate, afterCommit, actionCount: 1, attemptedRepeat: false }
+    })
+
+    for (const kind of ['citizenship-create', 'document-create', 'document-edit-at-limit']) {
+      const documents = kind === 'document-edit-at-limit'
+        ? Array.from({ length: 12 }, (_, index) => document(`00000000-0000-4000-8000-${String(index + 10).padStart(12, '0')}`))
+        : []
+      await mounted(`mounted A-R4 keyboard cancel ${kind} restores a live control without stealing later focus`, props(person('Alice', documents)), async (page, copy) => {
+        const editor = kind === 'citizenship-create' ? `${surface}:citizenship-anlegen` : kind === 'document-create' ? `${surface}:document-anlegen` : documentEditor
+        const opener = kind === 'citizenship-create'
+          ? page.getByRole('button', { name: copy.staatsbuergerschaftHinzufuegen, exact: true })
+          : kind === 'document-create'
+            ? page.getByRole('button', { name: copy.dokumentHinzufuegen, exact: true })
+            : page.getByRole('button', { name: copy.dokumentAendern, exact: true }).first()
+        const openEditor = async () => { await opener.click(); const form = formFor(page, editor); await expect(form).toBeVisible(); return form }
+        let form = await openEditor()
+        const cancel = form.getByRole('button', { name: copy.abbrechen, exact: true })
+        await cancel.focus()
+        await page.keyboard.press('Enter')
+        await expect(form).toHaveCount(0)
+        await flush(page)
+        const active = await focus(page)
+        assert.equal(active.connected, true)
+        assert.equal(active.tag, 'BUTTON', 'Cancel must focus a live button, never BODY or a removed control')
+        if (kind !== 'document-edit-at-limit') await expect(opener).toBeFocused()
+        else {
+          const onOpener = await opener.evaluate(element => element === document.activeElement)
+          const manage = page.locator(`[data-fokus="verwalten:${target}"]`)
+          const onStableFallback = await manage.evaluate(element => element === document.activeElement)
+          assert.ok(onOpener || onStableFallback, 'At the document limit, focus must return to that document edit opener or stable manage control')
+          assert.equal(await page.getByRole('button', { name: copy.dokumentHinzufuegen, exact: true }).count(), 0)
+        }
+        // A newer user focus move in the same turn must win over delayed cancel-focus work.
+        form = await openEditor()
+        await form.getByRole('button', { name: copy.abbrechen, exact: true }).evaluate(button => {
+          button.click()
+          document.getElementById('independent-outside').focus()
+        })
+        await expect(form).toHaveCount(0)
+        await flush(page)
+        await expect(page.locator('#independent-outside')).toBeFocused()
+        assert.equal((await calls(page)).length, 0, 'Cancel must not dispatch an action')
+        return { keyboardCancelFocus: active, laterFocus: await focus(page), actionCount: 0 }
+      })
+    }
+  }
+  assert.deepEqual(report.pageErrors, [], 'Mounted page errors are not acceptance')
+  assert.deepEqual(report.externalRequests, [], 'Any attempted external request invalidates isolated evidence')
+} catch (error) {
+  report.infrastructureOrContractFailure = String(error?.stack ?? error)
+} finally {
+  if (browser) await browser.close()
+  if (server?.listening) await new Promise(resolve => server.close(resolve))
+  try { report.finalProvenance = provenance() }
+  catch (error) { report.provenanceFailure = String(error?.stack ?? error) }
+  report.endedAt = new Date().toISOString()
+  const expectedCases = options.only === 'pure' ? 4 : options.only === 'mounted' ? 10 : 14
+  report.expectedCaseCount = expectedCases
+  report.actualCaseCount = report.cases.length
+  const passed = !report.infrastructureOrContractFailure && !report.provenanceFailure
+    && report.cases.length === expectedCases && report.cases.every(entry => entry.result === 'PASS')
+    && report.pageErrors.length === 0 && report.externalRequests.length === 0
+  report.result = passed ? `BOUNDED_${options.only.toUpperCase()}_ACCEPTANCE_PASS` : 'ACCEPTANCE_NOT_PASSED'
+  const output = join(out, 'account-acceptance-result.json')
+  writeFileSync(output, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify({ result: report.result, expectedHead, output, cases: report.cases.map(({ name, result }) => ({ name, result })), failure: report.infrastructureOrContractFailure ?? report.provenanceFailure }, null, 2))
+  if (!passed) process.exitCode = 1
+}

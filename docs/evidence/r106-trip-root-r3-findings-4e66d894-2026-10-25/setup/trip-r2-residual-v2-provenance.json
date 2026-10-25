@@ -1,0 +1,18 @@
+{
+  "preparedAt": "2026-10-25T12:55:48.183488+00:00",
+  "change": "Six explicit statement terminators only. Adjacent parenthesized window bridge expressions previously parsed as chained calls. No assertion, fixture, flow, head admission or product source changed.",
+  "originalSha256": "1ea683e1930ea23fe672d751bdb3d594e03a08515f67f406b057c5ddca7ea8d6",
+  "correctedSha256": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f",
+  "changedLines": [
+    83,
+    84,
+    98,
+    99,
+    204,
+    205
+  ],
+  "priorRun": "trip-r2-residual-4e66d894-run1.json",
+  "priorRunSha256": "a7c1c306ddc88f5ed7aa4fdbd2ffb03e42a089301b3bd604c1fb9e561fe68dca",
+  "priorDisposition": "Case1 and3 are probe setup TypeErrors, not product findings. Case2 independently reaches assertion and reproduces focus theft with natural pointer/Tab, no programmatic fallback. Root process exit1.",
+  "nextExecution": "NOT_EXECUTED_AT_PREPARATION"
+}

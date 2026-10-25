@@ -1,0 +1,2361 @@
+{
+  "executor": "ChatGPT / root Technical Lead",
+  "kind": "css",
+  "head": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+  "cwd": "/tmp/jetnity-r106-t-final-review",
+  "startedAt": "2026-10-25T13:25:20.589162+00:00",
+  "node": "v22.23.4",
+  "sourceWitnessBefore": {
+    "at": "2026-10-25T13:25:20.584510+00:00",
+    "head": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+    "trackedStatus": "",
+    "files": {
+      "components/trips/ActivitiesAuditClient.tsx": {
+        "gitBlob": "044cacd18d5dcec326d676dd7e9d3d4366321df4",
+        "sha256": "953a812cc143d95afc89145911311575c735bdf937df42e473e3581acedc8193"
+      },
+      "components/trips/AenderungVorschau.tsx": {
+        "gitBlob": "c6a4a0a87f4e59fd941e49e0956162d8d53bc62b",
+        "sha256": "292132218c8f079499b4674d6133cd24ccd0d603fe3c12b46b1b267c07cc3eec"
+      },
+      "components/trips/Aenderungsfortschritt.tsx": {
+        "gitBlob": "4b953f45f2054ad052d16d423402e1e2c7734ae2",
+        "sha256": "cb9af50da65ed5e197c8ad6edbc1b38ed5361062af0ad84a83a9a9f3a5a5671f"
+      },
+      "components/trips/AktivitaetKarte.tsx": {
+        "gitBlob": "2abbef0acfa8a283154687b85fc779d75696984c",
+        "sha256": "6a364cfaeddd7bf68e983b95e028c6564799cfd4505935d74680bf4af86db322"
+      },
+      "components/trips/AktivitaetenBereich.tsx": {
+        "gitBlob": "5ee93b8a5886acfd94c64567134e6505cc95c458",
+        "sha256": "7d111c7a76d1a2208efbdee748a0a66f4ca58068cd0d8264c7336382e542644c"
+      },
+      "components/trips/BuchungsSiegel.tsx": {
+        "gitBlob": "6598f90cb5827a3c7f05d4da1c3bd03d411bad70",
+        "sha256": "be411b164a7730abec39a8ceed14a88dbebdfa45f929369112e7aeab01e66e43"
+      },
+      "components/trips/EigeneReisevorbereitung.tsx": {
+        "gitBlob": "4c0a5be5e3b615f6ea5edbe7d8aa89250f872cfb",
+        "sha256": "b427a54085f21f9986a71ec790c8dbd81644944360318f354ec879d1501ef8fa"
+      },
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8"
+      },
+      "components/trips/FlugKarte.tsx": {
+        "gitBlob": "a169f95a5f8b4bc3d5ceaec682a3744f1010d838",
+        "sha256": "9db8a604271a7b9e9da49f8760a8aa0a274614fa375bd82affb020c2180b5223"
+      },
+      "components/trips/FlugRoute.tsx": {
+        "gitBlob": "631093d4579b5a677083936b1f85e04fca7c9390",
+        "sha256": "91362473597456e3d220b16d7498e83e889a1dcb2f91eea575d2a64fd8eccc15"
+      },
+      "components/trips/FlugSuche.tsx": {
+        "gitBlob": "f8f266cd06ad3e558cc44a614848f8bfeea60d25",
+        "sha256": "0fa889b792d1a49dc608848c904cdf1a28b046af6408580bbe119737174b1bc0"
+      },
+      "components/trips/GastArbeitsbereich.tsx": {
+        "gitBlob": "90f9d8781e23a3f96f92abd1d3616174585460d2",
+        "sha256": "b7cfa142605e338ed5346744a57793b879f189e9187c3ae8ed254d7cd5c23f69"
+      },
+      "components/trips/GastCreateLink.tsx": {
+        "gitBlob": "69df501e9e1dcfc1daebc740526cdc6f8f993cc4",
+        "sha256": "3942b90aa9466307da1c493423060f270b3239756d41215addbd9e0978b58101"
+      },
+      "components/trips/GastReiseLesefehler.tsx": {
+        "gitBlob": "3f307c205f3075ecbbe0e4a4d9325112ca32e1a0",
+        "sha256": "f3521d09014cbf666a626c3bdf226bfe45e71e97511f9141ae021763bd0e6cb7"
+      },
+      "components/trips/GastReisen.tsx": {
+        "gitBlob": "55a9019b66b23da67e496797b4456f6b9dd1a3f4",
+        "sha256": "7fd8690d131f7dd816c40f4bad5ef9d7b97e36790c42a5fc8430244d2080d9d3"
+      },
+      "components/trips/GastreiseBruecke.tsx": {
+        "gitBlob": "b3d852ecf0e420c4e29e0d183461e4a468f856e9",
+        "sha256": "a5e59a833ca849f9931442f8ac1340be10033aeeec78c341d355f38c7145e3a2"
+      },
+      "components/trips/HotelBereich.tsx": {
+        "gitBlob": "7eda769eac7b2105ab2a7baa907bb5b6e4097381",
+        "sha256": "4e321dba0a2424c1620b01d1f7147e081f782b4883c1bc69c25d7d97223c60b6"
+      },
+      "components/trips/HotelKarte.tsx": {
+        "gitBlob": "7211a19c1d1d168b96389a5962811c049fcbb7ff",
+        "sha256": "87d42a1beeec9e017a384d79fcb8b334ca7cd007d45dc7faf2020c9650e719d2"
+      },
+      "components/trips/KontoArbeitsbereich.tsx": {
+        "gitBlob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d",
+        "sha256": "f4dec055028a590fa6aa3bddb31a70d80d1ae146f0432ed9085807c74f4412b6"
+      },
+      "components/trips/KontoReiseArchivAktion.tsx": {
+        "gitBlob": "acb36b11bccd1316cbfebb43c80017c83189065a",
+        "sha256": "f4b6c3065963325ca8283d05b7763e011295d9f348f9a3fbc993009d50ee6ee7"
+      },
+      "components/trips/KontoReiseEintrag.tsx": {
+        "gitBlob": "e537e424572235866925bf366958b5ee16c39582",
+        "sha256": "fe825bd5d3ec0cd9d707b7c91c34c540f86c64a9ebb0f1413e84b831a4604722"
+      },
+      "components/trips/KontoReisenGruppen.tsx": {
+        "gitBlob": "4f8945be9e4f9e85d7147d0fc28f32929ed56828",
+        "sha256": "b832614ee0d25f3fc97a4a44ef6d8972e15ab72252f330c6c44149d3e3f1b2af"
+      },
+      "components/trips/MeineReisenHubAudit.tsx": {
+        "gitBlob": "f916afac5d3cd5089712b77b2bd1f595947a3207",
+        "sha256": "5f0b1f9bc474a85f750d461c53a017e0a17f3ebab648f5369417987bdf783b99"
+      },
+      "components/trips/MietwagenBereich.tsx": {
+        "gitBlob": "67cc0cbbf25df52770a916b29c2728f177f356fa",
+        "sha256": "3c5086fe1ce6ab070bfdb85e3e675179d4804bea4348cdd8ebee3ec2745118e8"
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68"
+      },
+      "components/trips/OfficialTruthPilotForm.tsx": {
+        "gitBlob": "58daa944c59d5b237ac3be58d8ad33e16b8f24f8",
+        "sha256": "a61e37ea695040bd0c0d86024df9dc065c6c23f2f3384f9f74918fe365f443ab"
+      },
+      "components/trips/OrganisierenFeldgruppe.tsx": {
+        "gitBlob": "472de6a292d29129ca492128b842f6bf2119966b",
+        "sha256": "48a3414b2cb1e1566786a69b72d5bd3e6fe865b939a60e2a8d16c373fd0a1c74"
+      },
+      "components/trips/PlanenCreateGate.tsx": {
+        "gitBlob": "59992863caef368586091835bc28da4aad7d789f",
+        "sha256": "f3a243f40c3e758b6014d162320967801c1fadfa3ef7b7da61a8a101628d28e9"
+      },
+      "components/trips/PlanenEinstiegNavigation.tsx": {
+        "gitBlob": "10b25079d4dbba9b8644b9ef01bc3c8a083ff82e",
+        "sha256": "cecbf8e4700b4074c99491e65deaa91d583403f48ef32ddcf2a6a9289949396d"
+      },
+      "components/trips/PlanpunktEditor.tsx": {
+        "gitBlob": "614ec416ea41d223a341569a3fa5f8ae190daf8f",
+        "sha256": "dc0e471bf1715009c94fdf370ed15da1bb9a2f663445d4ff33f9d5501e664ade"
+      },
+      "components/trips/Planungsfortschritt.tsx": {
+        "gitBlob": "fb20248e87886117d644087c7cc88a9bb95fd9ef",
+        "sha256": "fc29a0bc7de53cbeb4beac7929ff665a5f3aad40508268438d1faf59d697b7f4"
+      },
+      "components/trips/RegistryReiseUebernahme.tsx": {
+        "gitBlob": "df63143b2f0a03ef4d36752f9578999e66985718",
+        "sha256": "abe6777243ca86ab34ceb2d2a1a74a16d450ddfd6988fab216d6a981ac9df8d5"
+      },
+      "components/trips/ReiseAenderung.tsx": {
+        "gitBlob": "4a76754b36ee945ce3d5d8d6788e1480d2bb1fe3",
+        "sha256": "f7df0f87043746314c8e46803bb662aa4cf9df1761f29340b8de4fe479afb08e"
+      },
+      "components/trips/ReiseAenderungAuswirkungen.tsx": {
+        "gitBlob": "7a29d3cae6046f7f857ae9aa18aa5e1c8620d7ad",
+        "sha256": "bc9401ed0c71b96cae73220910c7e35c7fc390f0f7991fd2f0745337a1d3290c"
+      },
+      "components/trips/ReiseAenderungManuell.tsx": {
+        "gitBlob": "508d672fc8a713501cfee66a9ae173e3325a1ea0",
+        "sha256": "0d5a4192bdccc23891a0f10f58c631c1ec34bc1292fbbea384945a9b369280b3"
+      },
+      "components/trips/ReiseSicherheit.tsx": {
+        "gitBlob": "443a06687b8f959a1bc31bac189ea4e652c31afe",
+        "sha256": "a0d4141831ebb96c1044de1d6e90e75adc7daec1db8c087334add824b3586a9a"
+      },
+      "components/trips/Reisebegleiter.tsx": {
+        "gitBlob": "5ae64f83d500b170aa49feb27f003041479780fc",
+        "sha256": "1b95341e619855bbadcc8ad84499bcedb640df7e31b845fc601c69fb4c1890ef"
+      },
+      "components/trips/Reiseidee.tsx": {
+        "gitBlob": "78b18e878df302991bf4f74b304c4fec6a5abab5",
+        "sha256": "60d17acccd3aa4458285636a830350c8cd6c444e7fd9382b827df93307172b7f"
+      },
+      "components/trips/Reisekarte.tsx": {
+        "gitBlob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+        "sha256": "fb309c861a3b6f0ca08239b9047f141ba25a85f657c44ce0ecd01a9da334a2bb"
+      },
+      "components/trips/Reisevorbereitung.tsx": {
+        "gitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+        "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52"
+      },
+      "components/trips/ReisezeitHinweise.tsx": {
+        "gitBlob": "8831ac2f5c61b447f5ded81e31a9ee1dcc4d346b",
+        "sha256": "eb87c6953528df607fe7c62b14b5b18850a22654695c140ce2010051884f3df4"
+      },
+      "components/trips/TripAuditV1Panel.tsx": {
+        "gitBlob": "27a09c1244a0d7972961dbef635d691c4cf75d3d",
+        "sha256": "315f971931bafd1290d472e8f47bbe05034a8f3301ef292baed56dcf63ddfd07"
+      },
+      "components/trips/TripIntegratedDay.tsx": {
+        "gitBlob": "f452e0516770dbb6a0622a0be87ca744fe946950",
+        "sha256": "7d19278999d66dbe39e48c5d8c5bca5fc682ff3bbcae0935947fd6d85dd6ec82"
+      },
+      "components/trips/TripPlanner.tsx": {
+        "gitBlob": "2ed2471f5d999b1990972e4f97a56b83e8c03f8f",
+        "sha256": "5bfb221ff7f63a00c7ee020d235b4085e52229785abdf11624589d7a2a6eefd8"
+      },
+      "components/trips/TripTimelineZeitpruefung.tsx": {
+        "gitBlob": "1190ad244062277b84203f8d1d3236ffa5452de0",
+        "sha256": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78"
+      },
+      "components/trips/TripWorkspace.tsx": {
+        "gitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+        "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4"
+      },
+      "components/trips/TripWorkspaceAuditClient.tsx": {
+        "gitBlob": "e28cbf09be1eac87621baac314388a7bdde145a2",
+        "sha256": "b554aaef72afe233f9c35dba65ad9fca3c6e06bb621d17e1a108637468d71e2e"
+      },
+      "components/trips/TripWorkspaceDestinationEssentials.tsx": {
+        "gitBlob": "993a9064ce4a8a26f1e8c9777184855daf9a88b0",
+        "sha256": "1d9c41bd90132e27e141f63d4fec14893c1aa532d417b282f5e0aa0e018732f1"
+      },
+      "components/trips/TripWorkspaceDetail.tsx": {
+        "gitBlob": "1f2335354f629dcbf71597c3694a486527886f06",
+        "sha256": "d3adb82d98e9b276a15b2185179c9396f758d9bb738be8f934726dcdf6e8b5e8"
+      },
+      "components/trips/TripWorkspaceDomainNavigation.tsx": {
+        "gitBlob": "1d2d8bd841182e1b4cdfca7eb3343983ed6e13dd",
+        "sha256": "41ad3ed909c5ecf79cd5eb2f534ee0bd0ba52e0cc879b1f407181ee38865e257"
+      },
+      "components/trips/TripWorkspaceEditSurface.tsx": {
+        "gitBlob": "78296749720907855e2e26e819c46ab4aa43e7f8",
+        "sha256": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041"
+      },
+      "components/trips/TripWorkspaceJetztWichtig.tsx": {
+        "gitBlob": "9e1ceca2092b1a23b1b334ad0b5c880db65d958a",
+        "sha256": "4102d2d79c1df7aa59fb15f6f09bfc9782ae36c31b843c5f28b68b686ca56823"
+      },
+      "components/trips/TripWorkspaceKopf.tsx": {
+        "gitBlob": "7204669a58defe7ab04a65132c6b598419ccad56",
+        "sha256": "76ae32e188540fd6a0aaf52278a9da6bed7a8a92edd69b97cecd376593f94a5f"
+      },
+      "components/trips/TripWorkspaceModeNavigation.tsx": {
+        "gitBlob": "f368e485eb22d289b5cfb69ce97c1066c6f022c5",
+        "sha256": "e4c64a88819a5da72b42f9152ef1ec7a877315dd1e7efa8d6a59fa7a460bac26"
+      },
+      "components/trips/TripWorkspaceNavigation.tsx": {
+        "gitBlob": "50d7793ffbbbd4bd6a0c53c56f4a3a2de4327496",
+        "sha256": "380838b2dc16b081918f81ba977c6f7843be8912a9f11342f59a758c9c21be30"
+      },
+      "components/trips/TripWorkspacePlan.tsx": {
+        "gitBlob": "34cfe5186fb142d1affe71c2bae10fc375905298",
+        "sha256": "aa332f55eb10c02c34ed9ecc8bd536dee609c8d6640dbbf42e9cb31c221b02c8"
+      },
+      "components/trips/TripWorkspaceUebersicht.tsx": {
+        "gitBlob": "36b71b94c8a604e81994233733f7cfcda850e218",
+        "sha256": "100f5f88517015e2eec066a09c7cec9b7ad6d2f9ee54200c89c256d1f085589f"
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0"
+      },
+      "components/trips/VorschlagVorschau.tsx": {
+        "gitBlob": "9f3ac995e9b5e92146a73b1c0521ffe23c8fe062",
+        "sha256": "e04bb732c75dbe1dc203f8380a9db0a7640196e59c150501ab59475b56b84336"
+      },
+      "components/trips/gast-reise-lesezustand.ts": {
+        "gitBlob": "d1990189a881aa81d25f1486651e70602c9483c5",
+        "sha256": "7fb66f99784e91c9145646d5e36d4ce2fc954cbe4f8829328dfa81a5b82a2706"
+      },
+      "components/trips/useBookingActionLifecycle.ts": {
+        "gitBlob": "f59a4a25014c9aa17505b4386fd39a45f54ee270",
+        "sha256": "a4d3e29bab80026fa6b0d0bdf80c04f80fb66e8ade2f2d83e231627bf6c033cd"
+      },
+      "components/trips/useOfficialTruthPilot.ts": {
+        "gitBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+        "sha256": "df5a6e64cddd0d0893ee14a84a6faec0a3669a12679a351bf0f04c38b8b9d8d3"
+      },
+      "components/trips/usePersonalPreparationLifecycle.ts": {
+        "gitBlob": "ed1a8e02eeb29266f4ea9aecb5bb679512860aa6",
+        "sha256": "2358b3ab45af1a2ccec5c9b9a8eff9718f1c2cd42c811979f782eb733377f989"
+      },
+      "components/trips/usePlanEditorLifecycle.ts": {
+        "gitBlob": "5efe5eda2b07a7a5083c87e887b3ca0c73d17eea",
+        "sha256": "7ae1a9b6a729dcadc81903132fa7c2c7e30fd50b95f32c3824bd2b089fd60ea5"
+      },
+      "components/trips/usePlanningCreationLifecycle.ts": {
+        "gitBlob": "5e97d5a90de8251b94b162c4e6c5fb832dd92868",
+        "sha256": "7418ae18e3a3d27f00fdd2cc6d1b18d2c49660af91b3a50acebdc9c393970525"
+      },
+      "lib/readiness/ableitung.ts": {
+        "gitBlob": "6d10fdcdac6d283541cd99ec00296704b59d9956",
+        "sha256": "5da1397a0ac64ce0d54ba4c3d16ae24137884638e0a9dd10825b727844bd2aff"
+      },
+      "lib/readiness/abruf.ts": {
+        "gitBlob": "87cae75318178ae08c2f36e6389f242393277b6f",
+        "sha256": "551d0996531eb96c4d82ff6e7d3963c5f75ef319a282d1aebc41d42723a9df8b"
+      },
+      "lib/readiness/aktionen.ts": {
+        "gitBlob": "3e4e6ecf724a557907bb7151304929dcefb14c2f",
+        "sha256": "a3a92a4dc43cf5d1e58680e9ba246d0364512040cb425c18898586ed9dfc317a"
+      },
+      "lib/readiness/anforderungen.ts": {
+        "gitBlob": "91071d2902e43101bbf6fae4a97539ec07f5b608",
+        "sha256": "8e20d0c7af6b68cec4cc76feb401b05457dabb5668957c0221b362c5c13d06e9"
+      },
+      "lib/readiness/anfrage.test.ts": {
+        "gitBlob": "d901f4ae20bbae0094865f6deb75d6f3ed22c0a2",
+        "sha256": "21d3d381dfef5653ee02d53c35447d3b13401d98ded60b7b4f826ae3fab943bf"
+      },
+      "lib/readiness/anfrage.ts": {
+        "gitBlob": "e49fb6b7b43a0286e1fe4a871aa0c5dcd2326728",
+        "sha256": "9993c4cfe5fc6d7ed90aebf8724efd6d2fdac3522303d3057c5c09085b8c7658"
+      },
+      "lib/readiness/bauen.ts": {
+        "gitBlob": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+        "sha256": "1c818e792f250f934ab271db971fca1d7a0a59bedfbec0a18e6ff2e083593087"
+      },
+      "lib/readiness/bezeichnungen.test.ts": {
+        "gitBlob": "9a5435b51ad4e8a178ed5c5919cbdec997add108",
+        "sha256": "a541fbc55dab79ed0f801bbe97ce571b396a8f46e9ae93f43230e6547a2ee454"
+      },
+      "lib/readiness/bezeichnungen.ts": {
+        "gitBlob": "b3d172b9db8b17fa3a6422813af4b9275def622c",
+        "sha256": "6e25ca3a229d51a6ccc602dc6513fa660310f153807f751d8d55110dc504cf95"
+      },
+      "lib/readiness/digest.test.ts": {
+        "gitBlob": "4a2fb70d324e873d73904f07fea9e57ebe89c565",
+        "sha256": "4d897a9e67749d475d5d1616bb8c6519ead3430052a404e08f266a38cd82c269"
+      },
+      "lib/readiness/digest.ts": {
+        "gitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+        "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190"
+      },
+      "lib/readiness/dokument-formular.test.ts": {
+        "gitBlob": "fef89ac58edb06f888d702e346945f8d37561914",
+        "sha256": "dad134f44644403e32e054cd72eee677eacfbb862417cefc63e970da11045821"
+      },
+      "lib/readiness/dokument-formular.ts": {
+        "gitBlob": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+        "sha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975"
+      },
+      "lib/readiness/domain.ts": {
+        "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587"
+      },
+      "lib/readiness/e1-detail-contract.test.ts": {
+        "gitBlob": "dcff050cc8759cd0bb216f36cf3d938841b77b38",
+        "sha256": "150c9de505fae89bb99c78e652b15931380edfda7efb1af19b37cbbcc86d2cf0"
+      },
+      "lib/readiness/e2-official-actions.test.ts": {
+        "gitBlob": "1187a15951ead9a93a18656e91e26793431c3e94",
+        "sha256": "b91e46e57385382335d6f1fe76174a73fafd4bf79b487ebf18869bb400b30495"
+      },
+      "lib/readiness/e3-visitor-checklist.test.ts": {
+        "gitBlob": "ec95bf1f71f026b2475dab14ba2d9ff566c48130",
+        "sha256": "2743afbed935dd2d85d4b0ffaeda225c37d0194fd10e60fcef3a0740a1504078"
+      },
+      "lib/readiness/e4-temporal-rules.test.ts": {
+        "gitBlob": "a065db78b1a57a9c019bc47383e93afc77209409",
+        "sha256": "31160b97a6b27d377581ecf9aed1b543f911bb58585a3674d80f462fb18ed0db"
+      },
+      "lib/readiness/e5a-temporal-projection.test.ts": {
+        "gitBlob": "3452424e7a48c89113518360e7fbfe53437a1ce9",
+        "sha256": "4a50640ea790a43be119feb633ca40a47ed7f74552291c1a97087c0760e5730b"
+      },
+      "lib/readiness/engine.test.ts": {
+        "gitBlob": "a55d96a102c8c7475499b965cb581439957a5c9f",
+        "sha256": "845806871aec208e0bcd458b221d25ae3d9af42bd4b6053ad2b426d7f8e3c43f"
+      },
+      "lib/readiness/engine.ts": {
+        "gitBlob": "f105d59c1653e3382cb8ddce4b3101b87de31750",
+        "sha256": "0c7801bf724fc073f6bd33d09a9038605b5c7fbb9c018f5190e05dc10f370d94"
+      },
+      "lib/readiness/entscheidung.ts": {
+        "gitBlob": "f1510b9a4bef455fe410650781d4b99c439a2581",
+        "sha256": "d1b60056088b683b589842bb73e0655247569a8ed33ae0e665e2f224d229d542"
+      },
+      "lib/readiness/evidence-store-schema.test.ts": {
+        "gitBlob": "6f73e1b9a9b6755a329b9287954265c29f1d6078",
+        "sha256": "de90365d3583fba0a68922682976b3c0b33a2d6efaf98afba0f6f5dad1592326"
+      },
+      "lib/readiness/evidence.ts": {
+        "gitBlob": "f1a28d5a8f7445219f8cec224a849852c012fc3a",
+        "sha256": "e2db270b542443eb8b05808de7526de0d7578f42d89bdc60fd97548f327195cb"
+      },
+      "lib/readiness/fingerprint.test.ts": {
+        "gitBlob": "fc9d4ff99794538ba41f1d9a3c99e94f42e787d9",
+        "sha256": "0bd0521eedd2ff0943eb007ef78e768c7246b65537a711de831a8225393f28a6"
+      },
+      "lib/readiness/fingerprint.ts": {
+        "gitBlob": "c9e9a65528f04bd19fbb01f9e8d3b90fdefe06b7",
+        "sha256": "639b6d2841a9d0dbd84bfe91f1f9619c3edd675f30abf5999024ae10c2621659"
+      },
+      "lib/readiness/gast.ts": {
+        "gitBlob": "28cffa71264ff1ca0205b6b0be7eebc2d4498b08",
+        "sha256": "f5f606654e1361df4f6ac24ca127b61468d6f0b5b57e6f6d35a5cad59429da36"
+      },
+      "lib/readiness/kontext.test.ts": {
+        "gitBlob": "ce95bbceabe57b9d738d262b9eddbc5fc465dc22",
+        "sha256": "feaf8868a98507937c01dae177ef7adb296378f7977b5762961f1cbe5a31fc9d"
+      },
+      "lib/readiness/kontext.ts": {
+        "gitBlob": "381729fcc102cf8bbe0c795d19f528d8e66320e5",
+        "sha256": "3924c46f631801abcc1ea6239eca0b0a33a0d5d900dac4b264f4ccf25f6ad0b2"
+      },
+      "lib/readiness/official-option-scope.test.ts": {
+        "gitBlob": "235ec628db969a9dbededca2c9c2550437259b76",
+        "sha256": "c3c55859a2b417a6bc5893d1dae6e6941150607a90d08e84235fdad5e04e6746"
+      },
+      "lib/readiness/official-presentation.ts": {
+        "gitBlob": "251fe5444e5977fde0a790a1012d71db95bb0eb6",
+        "sha256": "d74e2c500a35ac143d9340e9dfcf0efbe9acec3fde026dd965bd862a8f95d0a7"
+      },
+      "lib/readiness/official-truth-accepted-evidence.test.ts": {
+        "gitBlob": "14dd6be4b912ec9d9adeedf83f81deb5f0f6dc91",
+        "sha256": "e0c9e3be2e6508068d2c07b206c44837f6c69fc3dad71e0df4e04de8b2604fa3"
+      },
+      "lib/readiness/official-truth-accepted-evidence.ts": {
+        "gitBlob": "024eaf2579ad9cf5637882b08c423100f9dbb1d3",
+        "sha256": "2f3ad46235c93a61096bf9befcb29ceeb703a40a9bf29c04f4205b02deb51fce"
+      },
+      "lib/readiness/official-truth-autonomous-preacceptance-witness-server.test.ts": {
+        "gitBlob": "5fcbf549dc2547232e78929ac3f031d2110d0abe",
+        "sha256": "fc34e259ea7cd5325a9298753b09c380dddc3d0a002f0e1c726a4ff96da0ed1d"
+      },
+      "lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts": {
+        "gitBlob": "d5af58a6d85dae93ba856f2d7b66a7a71f4796ad",
+        "sha256": "2a357da98924e7107a5dcb0f010293f39c6a1b598af3a4500192138347dfe955"
+      },
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": {
+        "gitBlob": "ff0eb432e3cc3c7589b71bf20a26a33115ccd502",
+        "sha256": "c73e0a144e6f0aee75ebab8ae7ce25989f5300c27518bafae550c35443bab7f7"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-artifact.ts": {
+        "gitBlob": "3c3aaeb3cc73e223b0a0cf2df1d9ceb27ff161cf",
+        "sha256": "1bdf271bf078d1c46fbc0f510789129e361bfdabce7cdd6e03a27a21071f323b"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-record-server.ts": {
+        "gitBlob": "6c95703d0f8a68b75cc7e0494dc9b59efe443dfb",
+        "sha256": "ef00c4bbb7b211d6c1f52e34f1e6c29afaa3e2ec221ec03a3ab75773bde4cb94"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-record.ts": {
+        "gitBlob": "064355d4c7cfe1732677c500118ec8f77fac7725",
+        "sha256": "3908d3af7eeba22367d48cb5b2c6b02a336b86b6faf47fcb5e24c1a0c8a82ca5"
+      },
+      "lib/readiness/official-truth-autonomous-review-material-server.ts": {
+        "gitBlob": "68d2ff362c3aec1bceda430518422c60b60ae785",
+        "sha256": "89043832d533df5dd5d85bcce8bbf1a8b27dab1aa3e2faeddf62888cada89548"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/authorization.test.ts": {
+        "gitBlob": "15bbc5776952f6b84a872013619b28bcffd142be",
+        "sha256": "3200543896aedecfc2dd21a07aeeffae283424c9f79d122367f49a08aea0068d"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/authorization.ts": {
+        "gitBlob": "9ef5d6c420124987cfbefd4278ca70f103f3e022",
+        "sha256": "b0f79045895777d5ff94618da3faa4392eec76da72dcca92f9dd53187bf84b90"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/cli.test.ts": {
+        "gitBlob": "7705d8331824a2b8cc0e0e1a49a56a833e602005",
+        "sha256": "0239f6d21a7e6c0844f95c8293f2c7e095ea6599a4db1b3a32e5f3784b8055c8"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/concurrency.test.ts": {
+        "gitBlob": "20776dc59513843a104d08149f26537ebea37c2b",
+        "sha256": "49f4e38223a281015743b5c92334dea65fe0d74c05bd2518fecba4bee083193a"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/fixtures/github.ts": {
+        "gitBlob": "0a2e5c43429018c690cfd6c3caf430316ddd1f8a",
+        "sha256": "aae93f4b6ff4bcbc87003abe50ccdf3b2ab72f1168fd44dab21b4598a70c691a"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/fixtures/owner-grant.json": {
+        "gitBlob": "7ebd9f21a94601fb17dd0981833d1f64e1eaab46",
+        "sha256": "f9be6603110d30ad0dbd039870c0b92306265dd20e9b733d85fd74bc7d894423"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/github-read.test.ts": {
+        "gitBlob": "191050a5df119a0cd0382c526c55e8ebcb3fd6a2",
+        "sha256": "61efb1379e0aa157e1e6e2b9fb7a4b53a170b2e939508ff1873ff6cea0b9b961"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts": {
+        "gitBlob": "8e0945ee478435285a3068be94917a171570cfab",
+        "sha256": "4db422ce4ed202cfefb63e7d053062b73417959ae36892a11c4f066ede835de3"
+      },
+      "lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts": {
+        "gitBlob": "d010cb2a53e0279cb7eb9e6f705539435544c366",
+        "sha256": "303ce1c725dd0e109c27e9ec5dd1ffe9ed405462bf7ad6cbe9eee8984daf1e58"
+      },
+      "lib/readiness/official-truth-bern-research-quarantine-1/offline.ts": {
+        "gitBlob": "dbc6664438e09807689310c3b5a93f148fc87c35",
+        "sha256": "75794243fad23899a232048023b8e8901faa198177a74ae59d2ef7e4dbab6d92"
+      },
+      "lib/readiness/official-truth-bounded-response-body.test.ts": {
+        "gitBlob": "85c46a2bf39d6b07ac44313cfc7363a30e696fc5",
+        "sha256": "e2a17d752a58df6b26d3f474f298f7abe00f592056d02e9a8b4d01d5443702be"
+      },
+      "lib/readiness/official-truth-bounded-response-body.ts": {
+        "gitBlob": "783d802fff48a2969b86945515b159a513df76e9",
+        "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2"
+      },
+      "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts": {
+        "gitBlob": "a36ecbd1bb84a9178b31eb1458e997c003f9176f",
+        "sha256": "f0c36b00a4377bb7898e66fee57b6d9cd2d922adf3a96b7e78c2549d31e38a3f"
+      },
+      "lib/readiness/official-truth-candidate-batch.test.ts": {
+        "gitBlob": "eac315384ea28fedf518bdd988bda64fd81486ff",
+        "sha256": "1e02d703e2ef30bc0797266ce95583c18ee9dbc01acd5d900cb5e41019b2fb7e"
+      },
+      "lib/readiness/official-truth-candidate-batch.ts": {
+        "gitBlob": "1ed12d9027019f39a479e052bbdd3250a2f58529",
+        "sha256": "52fcdcad5b569b49d7073662b21bef86a82606f1e942199a77fd4714e215205f"
+      },
+      "lib/readiness/official-truth-catalog-hardening-schema.test.ts": {
+        "gitBlob": "817f61781fc18ae6bce18bc7981af0f610a36589",
+        "sha256": "548a0c80bd6e7edca3d6eea25002beed15b07aba0258a3546382f7728ef3bd15"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/application.test.ts": {
+        "gitBlob": "1663bb9d0da59752766935d7c7f7846e0ff401f4",
+        "sha256": "aa7129a412c6bbcadae36e4e0b4fee6db45f4c8d9cf2ffb4f745baf17a98dbc4"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/availability-server.ts": {
+        "gitBlob": "13cd842537e7233efdb1779aef8a40bd58a65947",
+        "sha256": "488a7ab8e165c3cfe7b3c32dbb14a005fadc408a414f368f92aa15c72d8adf27"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/cancellation.test.ts": {
+        "gitBlob": "3140481c7f06c414c8f99f9572942cf128c66c9f",
+        "sha256": "52a95dedff86318fd14d11c1c7df95a43f0ff86875bfb779402454f96e5370fc"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts": {
+        "gitBlob": "25dafee0f06353785972efafe0fc2db90183372b",
+        "sha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts": {
+        "gitBlob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f",
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts": {
+        "gitBlob": "5cef61087ef9e53717ec6ffcf4a62fb34d05aee0",
+        "sha256": "bb6b06142b8c0fce7dd90d75497fafd233dc1ea48d7f2aec08171d158e54494b"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/database.test.ts": {
+        "gitBlob": "5a6273a1bf76416b8208379a47a029842d34dc8a",
+        "sha256": "6a6ed2c8933513d64e9cf23c534093dfd831be416d90408a7eb8c9c5160e8f13"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/deadline-server.ts": {
+        "gitBlob": "b7dc057aa7f008c3aa057c195b27838bfb260fa1",
+        "sha256": "9eeca622878a8af8709f0f12a8413e95a92e54cb559332c2b4759af559f1a4ed"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts": {
+        "gitBlob": "9c4c244f628942d30f4a235f40ec5ad5bfe1724f",
+        "sha256": "cdd9fbd69eb24bb2bb0192852ab11edd2a39dd92bf3d60de382ac1098a0dfcb7"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/request-server.ts": {
+        "gitBlob": "e648ff08c22c6f01f29253ab563820a5fff47203",
+        "sha256": "f6caef894e2322ba45f5dadf6571ff2b636e4a7eeded01ee72cc460bfc2d979b"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/request.test.ts": {
+        "gitBlob": "ebe1963249c6663db45f7dfec3416411319b9f58",
+        "sha256": "62910c47a49266e0240ab4d00e940ef12e64514d2ad6c1ef7b59bfe4c8f37818"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/result.ts": {
+        "gitBlob": "5e96e939788649c87da70cf1437f061696c256e9",
+        "sha256": "a6f78767a92c1d9d704b514bfa32e1abbb36bd1eb8c6f8901fd5f8345da0b2f2"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/scope-server.ts": {
+        "gitBlob": "bf4da504e58c850602190f822ef454bcbda029c1",
+        "sha256": "40dd3ad3c35f94c9c7c7cd9f3bac5c0aacc3bab44af3deab704e27cb9f5287c0"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1.test.ts": {
+        "gitBlob": "a3d45b949fc968bc98f6ecbdb792cddac39917f6",
+        "sha256": "049ae03509fdfa55ff88cf002f07fe871b4eafd79e9eaab2bbe72371c3059bd5"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/adapter.ts": {
+        "gitBlob": "53d5bbaf2c818450c8fade4c9aa28c584f6a53d5",
+        "sha256": "c5f53c36b155f0f28b1d273e9305f4620213a057698f679c5276aa628445a017"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts": {
+        "gitBlob": "9f061404abbab9498f4a57e0cd35e29258cc7cd7",
+        "sha256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/research.ts": {
+        "gitBlob": "50b5a229f54e21460bd09002db8883f2831f8369",
+        "sha256": "a90effe90b5e72c0a15472b2776148dc455ee433d5e051bad57d54506ed05bfe"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/source-probe.test.ts": {
+        "gitBlob": "b648fecd59b7987ab7f2da8afac8e56eb5812b75",
+        "sha256": "46c907eb9210b077b4992784ad1d44639d190604b9458f2244cf2134e1698ba1"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts": {
+        "gitBlob": "42426c807a3e423a8c6924a4a63ead56727682f0",
+        "sha256": "76290a4f7b9730e0d7607a87896db890f54333ba7fe411cf7d6e477cda1fcd87"
+      },
+      "lib/readiness/official-truth-ch-de-g1-g3-1/bern-preflight.test.ts": {
+        "gitBlob": "488b4f9e9dc6a4626e2fb2adb6786c95e8f8dbcd",
+        "sha256": "3ea4d5c2716d37ec74ddf241eb2e1a6b9149da20a6f15720d5c8701ab26f78e9"
+      },
+      "lib/readiness/official-truth-ch-de-g1-g3-1/context.test.ts": {
+        "gitBlob": "3398db12ad70e78e2cf07a8faa747f02715addb6",
+        "sha256": "38b13153a5675c9e97a4091274bdc626caada3b20ac3be1f467c9e7dff81610a"
+      },
+      "lib/readiness/official-truth-ch-de-source-budget-128k-1.ts": {
+        "gitBlob": "149640d7ff779d3c2e13ab085414b3f22846cd27",
+        "sha256": "eb30763a83dfc3abae066ebb2571fefc1d8d3b7c256a04efd5c7898bbfe72fb7"
+      },
+      "lib/readiness/official-truth-composition-policy-registry.test.ts": {
+        "gitBlob": "03fe17f01920aa5580ae3be6f8e240a5d08df3d3",
+        "sha256": "b5a034a366dceeee6a02d57f6d0638a2055cfe94ea9a71e090c471ce425c2e17"
+      },
+      "lib/readiness/official-truth-composition-policy-registry.ts": {
+        "gitBlob": "7b6a97a10052f925de8ab49a247fa0f32fcc3a81",
+        "sha256": "a5346d7d5141b98b0e2ada2d68e652083acfbc733c72791ff7e081c06c41a552"
+      },
+      "lib/readiness/official-truth-content-identity-r2.test.ts": {
+        "gitBlob": "01c032582fb37fd0881c828610a83db483c6d688",
+        "sha256": "be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16"
+      },
+      "lib/readiness/official-truth-content-identity-schema-v2.test.ts": {
+        "gitBlob": "249202c5b8ef737ccee5388964514055d82a0df7",
+        "sha256": "4966945c4626740fdb1a32a39d005709029eb75dc47e167c72b4cf364c41b5d6"
+      },
+      "lib/readiness/official-truth-content-identity.test.ts": {
+        "gitBlob": "0a91f366a153483e82107f093a931a9eb59d6467",
+        "sha256": "6f62b8d3a929b35a6d66af0f97ab46a297c12068bd400f730e6f8de3d893dc89"
+      },
+      "lib/readiness/official-truth-content-identity.ts": {
+        "gitBlob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18",
+        "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6"
+      },
+      "lib/readiness/official-truth-coverage.test.ts": {
+        "gitBlob": "d337e2723415c4dabda1c792199a53b0e936e80c",
+        "sha256": "70c1b630c1db991bce2c977b0a838dc7b8aef3c68fe24a605af564608287d8a5"
+      },
+      "lib/readiness/official-truth-coverage.ts": {
+        "gitBlob": "42c36f522016e87cf51461f7bd3f1056d4355529",
+        "sha256": "5220d545e459b9f6b372be86d6565ae59f13e1d445c2e54c4895f2f99c404039"
+      },
+      "lib/readiness/official-truth-current-version-lookup-1.test.ts": {
+        "gitBlob": "a4b058c21f894ab64f044063f45b1d31845ace82",
+        "sha256": "c2e81daa3d8feb0192964d59e2a7dfc91c3ca80ab45c3e5f18896484fa3329a1"
+      },
+      "lib/readiness/official-truth-discovered-url-candidates.test.ts": {
+        "gitBlob": "d2fad161589460d517811db481f634cf5787fa20",
+        "sha256": "e39184a22a69ed5e22e1cb262b93f129f6baa8bf98d953511963dd498855464a"
+      },
+      "lib/readiness/official-truth-discovered-url-candidates.ts": {
+        "gitBlob": "8c3eafc5dcca4375a8f2c779419bbe8f54fa9fc5",
+        "sha256": "41a2cff7b32d6fbdfdc5ee67181e0b7dc994bd00a0668f3cea1fc38f8198411a"
+      },
+      "lib/readiness/official-truth-evidence-metadata-custody-server.ts": {
+        "gitBlob": "acd7e5b6d867e65bd02381efd17d8c9f08904461",
+        "sha256": "d76c03d7d2b5268c811c9d4ac2be9031a18f7aec0e56abcb74bc167e4f3c95c3"
+      },
+      "lib/readiness/official-truth-fact-citation-coverage.test.ts": {
+        "gitBlob": "49e3ecd334ae3686faa62ba9f52833cb75fb6289",
+        "sha256": "7260a9408e499e0dd9dd47c8e91d7a27c2781b13e380a03de99904f7ba002afb"
+      },
+      "lib/readiness/official-truth-fact-entry-authority-server.test.ts": {
+        "gitBlob": "b9ab246d03d8045d0b57661976757962ab540a50",
+        "sha256": "bc39b90857b14fb8ed3b24cce256614427e104ae7f3ffd86b438a1374edfdb57"
+      },
+      "lib/readiness/official-truth-fact-entry-authority-server.ts": {
+        "gitBlob": "058d746043b466ac5777e8bd060b12d10010048d",
+        "sha256": "1681a4136afb5605783b1b0fe0baf8f62e8e5f74f127c53cbbecb6e56ef91d52"
+      },
+      "lib/readiness/official-truth-global-cell-admission-server.ts": {
+        "gitBlob": "c0317598be690de70aa9ddd05af69b9da2371209",
+        "sha256": "9f7daec34e53a5ab42c86f521e485a45f34582ecab796cfb91e00ed239c11f00"
+      },
+      "lib/readiness/official-truth-global-representation-qualification.ts": {
+        "gitBlob": "4fd9afc4a0e87e466b1b3f7d054aa67285955609",
+        "sha256": "8402bcb1757c949cfcbe49c55bba91e2a3a9d7a922a570ec4a7ff85d3781a12b"
+      },
+      "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts": {
+        "gitBlob": "123822d424b24646af845843216843796a391077",
+        "sha256": "65477e7c691679378ee0597694edbd439b3b6103af901cbfb571fcf41ef2cb13"
+      },
+      "lib/readiness/official-truth-govuk-content-api-identity-profile.ts": {
+        "gitBlob": "505ecc92bada48cf7ef81bd812210c1a5dac8d7b",
+        "sha256": "9b756a4347248decf20eb11264e2577f1f2eb0cbcdad0018d6d86d3e37002828"
+      },
+      "lib/readiness/official-truth-integrated-pilot-bundle.test.ts": {
+        "gitBlob": "0d530eba51af23d98b78f67e2f6fc260b054e859",
+        "sha256": "e165f094caf7f1b5bb2d63146302d759a433a7c1843f73bc7c1f32d7b8dacae2"
+      },
+      "lib/readiness/official-truth-integrated-pilot-bundle.ts": {
+        "gitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1",
+        "sha256": "cbda7fa49b4583ee7cba8f51ed56b85a7e1f0d09b570f5d332f5c12a0b65faef"
+      },
+      "lib/readiness/official-truth-integrated-pilot-controlled-runtime.test.ts": {
+        "gitBlob": "c82081ae75051e3ced0a90ad269162b457fed16e",
+        "sha256": "d170f02691916bb1ddb0446cb27c6f3c3e964ffba388f01771592098e016888e"
+      },
+      "lib/readiness/official-truth-integrated-pilot-official-source.test.ts": {
+        "gitBlob": "3857982ead18a226723808971e18143f18f54886",
+        "sha256": "8f303d60e3e4ac80badfa7db01abbb40a1d8d4b37d49b6cc94d53e95b0a724fc"
+      },
+      "lib/readiness/official-truth-integrated-pilot-r3.test.ts": {
+        "gitBlob": "7f4a60d1e78fb74d261a315e6fff8c5e5707e16f",
+        "sha256": "b1526b55a30c958150da6cc445a2b6d72b92ccc63b891f136c84c63d9aa4b73a"
+      },
+      "lib/readiness/official-truth-integrated-pilot-storage.test.ts": {
+        "gitBlob": "633901d3b220787de78b460e4a8025e0942a0c91",
+        "sha256": "48f80bd1608c6bc30062cf1c68c915e6dac26f4766b81e964aab25a19c8fdf24"
+      },
+      "lib/readiness/official-truth-integrated-pilot.test.ts": {
+        "gitBlob": "b3987fcd199d7282be8f0fd6bce27d049300acc9",
+        "sha256": "3c3477f519daf0b133f23c40b814ab5d05f05476d60c57d6f64849db9e52e0c9"
+      },
+      "lib/readiness/official-truth-original-custody.test.ts": {
+        "gitBlob": "86701365dc195ebcbacd5d2a3a7d19bce47bb326",
+        "sha256": "ad46a777318ccbc18432b0463de3cf641acb267f0f72bd5f55c2f7f225778f20"
+      },
+      "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts": {
+        "gitBlob": "7fce66c443d979e18a05b50a88113600ad7d414e",
+        "sha256": "5572f6209e58eaea944a7506c317ffa9e1ef5081b993790a8128a1dcb4444e0c"
+      },
+      "lib/readiness/official-truth-refresh-diff.test.ts": {
+        "gitBlob": "b7c6e31b66a2d4ace7f66c9cfaa433b9ad35e8ed",
+        "sha256": "8dcd7dd23f7905f99c8c644247be8e7f3503ab2ccdd45b903c54e9105fdde98f"
+      },
+      "lib/readiness/official-truth-refresh-diff.ts": {
+        "gitBlob": "b146a9d2f0394dc3236dc529cdee6f65fc4be778",
+        "sha256": "385b3e5d2059fa3b07038871b9b2035ab5b3a1f9f229abefc020df1d23c97fb8"
+      },
+      "lib/readiness/official-truth-research-execution-plan.test.ts": {
+        "gitBlob": "2d9f365e870d8690511242af69cb8b6710348d51",
+        "sha256": "13e5d3879a0595ed3be03fba07be741ed83925a57494009cb1a60b893693e482"
+      },
+      "lib/readiness/official-truth-research-execution-plan.ts": {
+        "gitBlob": "e998a7e98289aebb917e13887eb971238a83cb85",
+        "sha256": "4632c2ddb1b05101217da763e11524de7a38e6c268be9ffaf3b8109a7bc84239"
+      },
+      "lib/readiness/official-truth-research-request.test.ts": {
+        "gitBlob": "a69407ab7a164247dd888f92b93a39373fa1c421",
+        "sha256": "1e24f658899d81a7a6bea06e7fcc36d70996e35b5ceb9c80dd46c6882787c428"
+      },
+      "lib/readiness/official-truth-research-request.ts": {
+        "gitBlob": "b91eedb8e929dcb16e8cc031609af000de447f86",
+        "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce"
+      },
+      "lib/readiness/official-truth-research-source-routing.test.ts": {
+        "gitBlob": "7f640615e4ead50ad15cf3ceb5f0ac2b1900b435",
+        "sha256": "2cda36bc7b85169fb7378b878c2f99e174703c9e27218f66f2b75cf75463c4ec"
+      },
+      "lib/readiness/official-truth-research-source-routing.ts": {
+        "gitBlob": "c1cc413ac3fbca7a31b4435dc3ffe7abe4cfbb65",
+        "sha256": "4ceed46d607c286b974b6c25a170a1a5a54ac02eeedbbddcca97edec424fda61"
+      },
+      "lib/readiness/official-truth-retrieved-candidate-evidence.test.ts": {
+        "gitBlob": "31079c350975b28d09eb9c9553b7b156cd85f588",
+        "sha256": "98870afdb646c44f41ff3d5eecf5f453c634fde2f25e20587b4d77dabdd8dcf6"
+      },
+      "lib/readiness/official-truth-retrieved-candidate-evidence.ts": {
+        "gitBlob": "d4f075066734096b0d937adc2b4c3ea5c3900abc",
+        "sha256": "20592f79e94f15f18060b0a337a9a95db2dfb8b8de9313b984e1310a73b537da"
+      },
+      "lib/readiness/official-truth-retrieved-material.test.ts": {
+        "gitBlob": "4cdcda0a4d35dac496e897853db4b5eb9eaf66b2",
+        "sha256": "018a1e564df4a78662eef655a001b2f7a3981593e7be059a3255f470c05d630f"
+      },
+      "lib/readiness/official-truth-retrieved-material.ts": {
+        "gitBlob": "b2feda07fb198ae62be460eeeff302489af11361",
+        "sha256": "62e5eb176045c157d1d5cb4c5c78c4aa4aa7a7976cbc237187ffa2352e4e99a5"
+      },
+      "lib/readiness/official-truth-review-suggestion.test.ts": {
+        "gitBlob": "26fbabf6481c31d42210f66a890a6ca32dd6aee3",
+        "sha256": "faa2877f667dda6c19846a56f72da112384933562ca6bc350af02ec0b07b34be"
+      },
+      "lib/readiness/official-truth-review-suggestion.ts": {
+        "gitBlob": "e209e21b56918b6e1d5c431933de5cf913247148",
+        "sha256": "6db2f6b79d80a85fa243bcf12085c232a3ed3dfcc2a98b438461018638051a04"
+      },
+      "lib/readiness/official-truth-rule-candidate.test.ts": {
+        "gitBlob": "966bb7ea1d094f84da1ddb798483b48ce8597f6a",
+        "sha256": "e2ca9df0c364d4c152c1a33f161d99bf08c863e269c02103c36efa1c02cce24a"
+      },
+      "lib/readiness/official-truth-rule-candidate.ts": {
+        "gitBlob": "e5c1e9e96050f594fe04b5ba72beb2c3405d958b",
+        "sha256": "61ac7bd0d33a0c3c88d199867f385008c6a7c75bc867a1cad72f3f31e06ffab4"
+      },
+      "lib/readiness/official-truth-rule-review-decision-intent.test.ts": {
+        "gitBlob": "0611938af6316a0157f2a203234bd4b657b2e378",
+        "sha256": "fa64a5bc76f4b0e4a42c164913d84306b768e522a29534f3d1fa5f7852bc52f9"
+      },
+      "lib/readiness/official-truth-rule-review-decision-intent.ts": {
+        "gitBlob": "cfd53f67892ac5041792c09bbb402f353a47f337",
+        "sha256": "1c55a3ab45023dbbd14bcf77da4b8a6bdfe1ca0a81b0b099f92867182fbcd59c"
+      },
+      "lib/readiness/official-truth-rule-review-fingerprint.test.ts": {
+        "gitBlob": "957b5eb49d061bfdc4576e11f39e1265a953e0e8",
+        "sha256": "b0068403ffe5ffeff31cda74573f6e0b3b79867340279f45d471fb19876ad99c"
+      },
+      "lib/readiness/official-truth-rule-review-fingerprint.ts": {
+        "gitBlob": "f4712ab9f193911e83beaa173f648b685e76150f",
+        "sha256": "c01c842d5d23651c25039deb8140dee18505613b51670315ad35b17a104cd748"
+      },
+      "lib/readiness/official-truth-rule-review-packet.test.ts": {
+        "gitBlob": "5ce72562f4b846f144de559819a1292accc4ba69",
+        "sha256": "8b9ffeefaf081d184fdbf4b02f58c155ec59b7b31d3a93acc8a2dd03b65e6d53"
+      },
+      "lib/readiness/official-truth-rule-review-packet.ts": {
+        "gitBlob": "a36d907dd6b46cfec25d133f73c91100e185ffc6",
+        "sha256": "d073161d93c42e3dafcd046d453b77889400c2b18deffa1e95baba25aacca0b0"
+      },
+      "lib/readiness/official-truth-same-request-composition-context-capture.test.ts": {
+        "gitBlob": "30ea858d87f4f5d239470a79a768b2a6e6d7341d",
+        "sha256": "1337313aaa5fd59f9688ca0ff789300055be315b6fa4534b83a6c1a0326f3d3a"
+      },
+      "lib/readiness/official-truth-same-request-execution-context.test.ts": {
+        "gitBlob": "4886c6ab8bdff3663651d13be726e3b1fdf4da20",
+        "sha256": "cce4e219b3f9346efbd7f9f17fcac75e58ec943ae0dd07a270307fe1546219a7"
+      },
+      "lib/readiness/official-truth-same-request-extraction-server.test.ts": {
+        "gitBlob": "98cdc78dc602309e4425f325a7baa503a7d4ee71",
+        "sha256": "53ccb1670afd8101624762c3b26d6bd9804439649045d06d31cc5273a84329f1"
+      },
+      "lib/readiness/official-truth-same-request-extraction-server.ts": {
+        "gitBlob": "93cca29d4786397e96ef8b5e71b144448d270993",
+        "sha256": "70e5749cef2ab78a1e839458a0bfa2faf6ebda7506eb0ee52e036e226fe042e8"
+      },
+      "lib/readiness/official-truth-same-request-proof-server.test.ts": {
+        "gitBlob": "d6b35e8870ae81fa1636bbcc8a23bfb09ca30be2",
+        "sha256": "5703377353467ad94f999fe8c3eb80d0b8ab2088c17716f5bacdd58a44211ad9"
+      },
+      "lib/readiness/official-truth-same-request-proof-server.ts": {
+        "gitBlob": "d15bd98e6fcbcdf949aa791a4f7385e14dc98d75",
+        "sha256": "2592e5340ae7c50b93c61b76bcf6ac89752b4a4531ac0e7b047de6e02264655e"
+      },
+      "lib/readiness/official-truth-server-held-source-registry.test.ts": {
+        "gitBlob": "83f84b8e9b001c9918940fb122e3a01ba4c88e13",
+        "sha256": "ed4accf37b90cc601f753b9e1287b71ae2b0e553c1126e8f75ebd2e30373256e"
+      },
+      "lib/readiness/official-truth-server-held-source-registry.ts": {
+        "gitBlob": "5a4dd493f6e7e4bc47d20d5a4b252902734cc217",
+        "sha256": "d06de9e842f3fd5510a6dc600d9a546addb1e8076343f3a93080b03726766dbd"
+      },
+      "lib/readiness/official-truth-server-owned-retrieval.test.ts": {
+        "gitBlob": "30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9",
+        "sha256": "cf84e6e8f093a14dd16f1d831784d24f6d6883bb798b7a619b6b5f00fc8e534f"
+      },
+      "lib/readiness/official-truth-server-owned-retrieval.ts": {
+        "gitBlob": "5998fdea54d3337fb68cd7111460b59e43a3cef7",
+        "sha256": "b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994"
+      },
+      "lib/readiness/official-truth-source-catalog-server.test.ts": {
+        "gitBlob": "7cc556a4110a6f48f4c73fc347f98046d16facde",
+        "sha256": "b714e41bf818d0d090774088b77e49ed2b60f7e24651ef044e968b72ac5ce99e"
+      },
+      "lib/readiness/official-truth-source-catalog-server.ts": {
+        "gitBlob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee",
+        "sha256": "6d2cf2f4c9dd2f73554af0a5068f7554ec56b306f3c54fc8bbd81f711f3dd7b1"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/coordinator.test.ts": {
+        "gitBlob": "68a4a7355ee357760dd14bed066168dc9b9cd98f",
+        "sha256": "cdb675e0f42c0f64b509073a50a6bb92cd48e15582bb121c587b5b2db74babab"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/coordinator.ts": {
+        "gitBlob": "0a4f77e50026cd628271aa8e7833ee5362d176da",
+        "sha256": "d3d3f775064ff860cf1dd21d6b83a906a1656f4ef9ff18d2307159622fac6ca0"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/query-intents.ts": {
+        "gitBlob": "2d0119b9bf0565b9f90a0425ada3e5169b2a3ad6",
+        "sha256": "8b8e3636ee4cde8b4bf6b1421a64f456b1f12c61e81c39eeccf8e31848e2f2da"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/coordinator.test.ts": {
+        "gitBlob": "7c0c936a8d2d3857d0197d4852d3884e80a925e9",
+        "sha256": "80727ec8276d391620f44c23f0a1c7a2886d61158da04ed7a5319395a10ba298"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/coordinator.ts": {
+        "gitBlob": "f297fc8528cfcbd6596eabf0491d9845b6d7e3e0",
+        "sha256": "0a7a2125946649eea4e9aeb27bd66ee75a12d367f503c09c773fff551147b6af"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/port.ts": {
+        "gitBlob": "f6f0dc32b969959b1c396f62981317d33774944a",
+        "sha256": "4143dd2bf3ce92dc9a9af841f388cc31da4d80688740e5bdf5eb8623b09e2ae9"
+      },
+      "lib/readiness/official-truth-source-fingerprint-v2.test.ts": {
+        "gitBlob": "e8599e4fec66009353819db2d465aafac658566b",
+        "sha256": "7a84a125bf2d39775cf408c010363ac79e7afc1d60b8c8d26c5a000664cf78ca"
+      },
+      "lib/readiness/official-truth-source-fingerprint-v2.ts": {
+        "gitBlob": "72d324d019625c5028be8f47763fdd0f6ffe38e5",
+        "sha256": "d8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac"
+      },
+      "lib/readiness/official-truth-store-server.test.ts": {
+        "gitBlob": "ecc2ba127f5cdeca01a3a2abb2c5477c146b3201",
+        "sha256": "e21a7a8003ae1ff2b5eef3fbc4b7894b2fd521846b8a69d64a20252252969c52"
+      },
+      "lib/readiness/official-truth-store-server.ts": {
+        "gitBlob": "b56114d5ed732c0ea481fc735036af9f99bcda4c",
+        "sha256": "ec1a574783be80098fec11cb511ecc3a6de0b1baea45e24fff8410b52a1ad770"
+      },
+      "lib/readiness/official-truth-support-selection-server.ts": {
+        "gitBlob": "d8e865c5beb29ee8c9159984ee856dc7e94abbdf",
+        "sha256": "d4ac8a102efc956a4b318e680ac9e66130b6ce63574327853aaa966fc7cca715"
+      },
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts": {
+        "gitBlob": "ef6d30c6cd26acf948a35c2d3c4427b9c73f9f4e",
+        "sha256": "dd78aed2ed2f28e4e10216bdcd699c48815a7a172a823d36abeecfd14b8dec59"
+      },
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.ts": {
+        "gitBlob": "9f407dca147f8ba41280133dd64c7198c82c10a7",
+        "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62"
+      },
+      "lib/readiness/official-truth-uk-eta-legal-proof-readiness-1.test.ts": {
+        "gitBlob": "9970a7fd82176f19b4e325f837908863b669b9d5",
+        "sha256": "909120a854bbee3a68b758a6efdaf805e1464ffd0b1d8f3c3f9e2e774603eae2"
+      },
+      "lib/readiness/official.ts": {
+        "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c",
+        "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4"
+      },
+      "lib/readiness/p2-ta04-write-path-inventory.test.ts": {
+        "gitBlob": "8c7f28d2a9621f4dc51782ec7e9f99150f1cbc7d",
+        "sha256": "090ee2540df0f7c151c1b927dbf810e73dce58e31f5c9543de3232c9961778a4"
+      },
+      "lib/readiness/party-slot-integration.test.ts": {
+        "gitBlob": "0ac9dfa02e155d06fb9853b68e4d40254fa2ee9b",
+        "sha256": "02ca0bd09e39698d9860b11ec62a66338748e9fafadb4ef9f7d8e45988d9b87b"
+      },
+      "lib/readiness/party.test.ts": {
+        "gitBlob": "8b0d35047610e03857b5f902ba9151f3512d7684",
+        "sha256": "f574279db36bca20a4aafebc1d6e29919e7806f92f00d86c30a1bb88bfb5c376"
+      },
+      "lib/readiness/party.ts": {
+        "gitBlob": "b137915ad7da6c3e313ffa970900150ed129186d",
+        "sha256": "16e737098cf4f3f92f5b65dbc2b8deb1d48ca4e3a922bbfedae896b6e8e0f580"
+      },
+      "lib/readiness/persistenz.ts": {
+        "gitBlob": "d8036a29bf4b358dbcf3cf9a19d7ec606bdd2a96",
+        "sha256": "6f76c135188642551d45ae86b37d42909203db4f1200847c3f43f098ccead357"
+      },
+      "lib/readiness/personal-preparation-readback.test.ts": {
+        "gitBlob": "5f714b76cff69a8bbee1dd9813653949b6d24694",
+        "sha256": "c82e892b5e013d9984584f459cbf636ab512064e726d33c4f63c8498bf1a688a"
+      },
+      "lib/readiness/personal-preparation-workflow-wiring.test.ts": {
+        "gitBlob": "a1da17c6109c35289fa9919dba7c9ced6800091c",
+        "sha256": "d9995456ea4c4ca3da41cc38a831444fac47f0f08d406737ed0308f7000d9048"
+      },
+      "lib/readiness/personal-preparation-workflow.test.ts": {
+        "gitBlob": "19a972ed37edf302ee1679a21ce70591498330b6",
+        "sha256": "db8ad7a6e9bd87fa55a7a513da0f3c84f40a211ab3a03233ae638132f7f53cd9"
+      },
+      "lib/readiness/personal-preparation-workflow.ts": {
+        "gitBlob": "c295637b18d4b356ce14739e211871179cbf38f7",
+        "sha256": "0a92d55d2eec1e84ece469152ca4ed8dff109b54b7138760d66054214accc4cc"
+      },
+      "lib/readiness/preparation-identity.test.ts": {
+        "gitBlob": "601fc806b190f854a8387e75ae957e78889116ec",
+        "sha256": "f4160b3a1d7f7e3b0459425b6dcee9dca33b98405d6cdb2df9214e24daaf6cd5"
+      },
+      "lib/readiness/preparation-premium-experience-5.test.ts": {
+        "gitBlob": "667bdb5502df8f94243614066aef2a827a64ca0c",
+        "sha256": "6ceebc0c66fd5811408a280846fa2fc7d88ac3673eed7cf58d55414344db3e08"
+      },
+      "lib/readiness/preparation-premium-experience-5.ts": {
+        "gitBlob": "68c1d5a2d333da944e2987bbfef0ee019b8532af",
+        "sha256": "7e04b6502790e60ffb1d040c7187252d5a471ed402a957468774dc15612b7809"
+      },
+      "lib/readiness/provider.ts": {
+        "gitBlob": "3028961f1711620da860c7eeef50a4b71f82529c",
+        "sha256": "af1548a85460ab9f723242709378ebb4cb3f976c090c5824950695d1db2ff7b1"
+      },
+      "lib/readiness/rate-limit.ts": {
+        "gitBlob": "d988175ad116a666cf66ecd77950dc58eddb0f94",
+        "sha256": "d492d387b97f9c5fc82ea3940d898038e7d2b8bf6c1963b2101131df8f832393"
+      },
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts": {
+        "gitBlob": "fdd06ace70551afa15838ffb2f9257d98bd65031",
+        "sha256": "e065dba7f36b56762a8041d945d121efd8ea7f967bf86f4821085d07433bb612"
+      },
+      "lib/readiness/regulierungs-anwendbarkeit.ts": {
+        "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+      },
+      "lib/readiness/reisende-aktionen.ts": {
+        "gitBlob": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+        "sha256": "3a1d641c8c2930ba75314882ca6413ee4654ef7adb6796bc0fd0f8d75db5fa86"
+      },
+      "lib/readiness/reisende-gast.ts": {
+        "gitBlob": "d7cf17ec2b9fc8306c3d2d45892b754495a589b2",
+        "sha256": "75cfd8b7a0a4050b49f62ce206ce81bea8b05d7747d1229d24040500088ae722"
+      },
+      "lib/readiness/reisende.test.ts": {
+        "gitBlob": "ecef14ed23480695436f122f6d780849a321df65",
+        "sha256": "6a5fb839d61655f6e97c757cd2cd2ed53edbc34efdfac8b6ffde6341e8db2581"
+      },
+      "lib/readiness/reisende.ts": {
+        "gitBlob": "f01f75d2b198aae683d25829c345e24fac0c939f",
+        "sha256": "b27660da9d577fcca5adc2ca12d39f57c0cd8cb1376cf81f03305eca84273fd4"
+      },
+      "lib/readiness/rule-claim-store-schema.test.ts": {
+        "gitBlob": "fefbb97d985262b7bd8be821392bdda2db5f1a8b",
+        "sha256": "c232b5e420049eaa14e3e1cf1051d61e6ed01b35f7277010fdeb07325abcba4c"
+      },
+      "lib/readiness/rule-claims.test.ts": {
+        "gitBlob": "af5aa77a527dbb12d47dc65871b03de045d2d9d5",
+        "sha256": "838eff72ea366b1e5d449bfeae6904f5974e21a2a01ed471289d06b2b916495f"
+      },
+      "lib/readiness/rule-claims.ts": {
+        "gitBlob": "c61d06ca67d87e8c9b6435c23c8ac62965a251f6",
+        "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a"
+      },
+      "lib/readiness/s4-r1-truth-ops.test.ts": {
+        "gitBlob": "f3daa81c8280f10638779c998c5e3de23dafca2b",
+        "sha256": "8707ef808a37b62fef9b0d6dad3e854c1cebdda86c515c8b4de528c0a7eef6c4"
+      },
+      "lib/readiness/schema.test.ts": {
+        "gitBlob": "906ca212e2ff879448d0f332e9fb194271501aed",
+        "sha256": "3e0b42bd48d3c84b335c55f07391411c3180b465b521d03d3fee7f7b5908bffb"
+      },
+      "lib/readiness/schema.ts": {
+        "gitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+        "sha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c"
+      },
+      "lib/readiness/source-foundation.test.ts": {
+        "gitBlob": "3013d8124cc399ba6e8a66e2356d1b48fd942954",
+        "sha256": "10caa762da00b64c47303da538149c6e9a71f624a04c67c9cf0784f9962dde49"
+      },
+      "lib/readiness/source-registry.ts": {
+        "gitBlob": "672a316209cdeba279988e1691ce1e15e0dfb1b3",
+        "sha256": "058c9a69f11c703594415f56ed77ed15bf9804de7ae53aae5fb46c05511e22bc"
+      },
+      "lib/readiness/source-router.ts": {
+        "gitBlob": "98bd84acf911660ddab810cfeb97a1f79a4d8a68",
+        "sha256": "0c490186db5bacb8dd83670469e4a88102ea559c8223b5e916c06063c1ce97af"
+      },
+      "lib/readiness/status.test.ts": {
+        "gitBlob": "698d0d9444d2fc3b2b8f206d4de649d5fc9245c9",
+        "sha256": "48e6f6abc953289dda0c947c70ca70db794bc4b6ee0a018158b1fdf48bb10e18"
+      },
+      "lib/readiness/status.ts": {
+        "gitBlob": "0940f135ef7f52f15a9aed2e3b19126a837660be",
+        "sha256": "7778bef6f5519428351f443e3bf16cda56c0190371b1d27d53fb71a57e96322f"
+      },
+      "lib/readiness/temporal-projection.ts": {
+        "gitBlob": "357187d33ad4326d984783c11341d8c537820253",
+        "sha256": "9bd855bda361f43444c5cee36e98ff51a6c9f8775377149234f982b476dd8060"
+      },
+      "lib/readiness/temporal.ts": {
+        "gitBlob": "2b45246938196127124539302634e175a172b4b6",
+        "sha256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8"
+      },
+      "lib/readiness/traveller-anfrage.test.ts": {
+        "gitBlob": "34d5898f7b734bc39337eb2a3799e06674955854",
+        "sha256": "bce6e73975c56162d1af3a056b38aebc1eb5f584ef3ab574d478b63a2e832ad2"
+      },
+      "lib/readiness/traveller-anfrage.ts": {
+        "gitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+        "sha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d"
+      },
+      "lib/readiness/traveller-kontext.test.ts": {
+        "gitBlob": "2e3526a9a92711005ef5254498242f18dfd5477c",
+        "sha256": "5407fdfb2c1be40f2c007a6c697c8cc494f40b9ac1a6c454323df2b110fc6420"
+      },
+      "lib/readiness/traveller-kontext.ts": {
+        "gitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78",
+        "sha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52"
+      },
+      "lib/readiness/traveller-zuordnung.test.ts": {
+        "gitBlob": "7f8ab296c52f0acf3001638b037440a6a6a935d0",
+        "sha256": "c2471d38558a5f90e580d14e294fb592dece71ba2716d940b0190943ba4dff33"
+      },
+      "lib/readiness/traveller-zuordnung.ts": {
+        "gitBlob": "c12548859f26303818e2a04c6bab932fc4d5ee28",
+        "sha256": "0a369612566f053803103fdec31b4f35a80c268b1a99fab3929defde4afc32aa"
+      },
+      "lib/readiness/trip-official-evaluations-server.test.ts": {
+        "gitBlob": "b8e032803fa63b286161e46c349d4eda50081d72",
+        "sha256": "5fb30efd351f0a1c079944e4886187f4e5e5379c8000e1c267abd7a4e0085cb8"
+      },
+      "lib/readiness/trip-official-evaluations-server.ts": {
+        "gitBlob": "42b6a95c9e4873108272ccb16b0e2d703aac125b",
+        "sha256": "058b0d66212775898de87e0941d4cae98b1cbc4cbcbec5032d3c9e056e6109b9"
+      },
+      "lib/readiness/truth.test.ts": {
+        "gitBlob": "1495d2bc70158c4face598112a76130f857df4f2",
+        "sha256": "8774623bfff9ed2a8350fe1755fe6f55014eb30965a22249658dd97dbf9c0c12"
+      },
+      "lib/readiness/uebernahme.test.ts": {
+        "gitBlob": "432eb635b1cd0a37fd0b5886aa65ae9a25683b4c",
+        "sha256": "607a8ce3d9ba33e9e7dfda7d1021963974051036b92fe66cccbc845be65dd666"
+      },
+      "lib/readiness/uebernahme.ts": {
+        "gitBlob": "95e0840fac99702c64165ff24944795ac1923a2b",
+        "sha256": "a2eb7901419badf0833eb6b5eb688f578f8d12e13f28f8900289b212596dd3ee"
+      },
+      "lib/readiness/vergleich.test.ts": {
+        "gitBlob": "e60ffbf94a7b226c6ef3f03bfad673f1fb7c92ee",
+        "sha256": "f535626b151a64f1bb3a13a19546f727be5f3e7981b1525015828e451dd42879"
+      },
+      "lib/readiness/vergleich.ts": {
+        "gitBlob": "1f0aa8cf51b7265ba01a441be4eb38820891a76f",
+        "sha256": "8c40710892e074fcd722721e95e5f2e4b8aed5b153bfbb5eb99d7de0921629b3"
+      },
+      "lib/readiness/workspace-integration-r1.test.ts": {
+        "gitBlob": "9ed046d55f67b142668eb8f40863c778700389b2",
+        "sha256": "19c88a0b06b4773140139dbe4cae4d15cf70b5007144915c15d13c58750f5eab"
+      },
+      "lib/readiness/workspace-presentation.ts": {
+        "gitBlob": "917c29b0a0cc9530dbd00dd3cf9bfeee7a8726f8",
+        "sha256": "b34c84afd2fd6760245156273a38337268711e09170c3de268b06c756b04f5cc"
+      },
+      "lib/readiness/zustand.test.ts": {
+        "gitBlob": "b51432a2a5c2ddd6082dfc990cf5bef913ad6f43",
+        "sha256": "9644fa379f4b9d8f97e883730d4093875b931e56d4f6be72c6628934fea10ef6"
+      },
+      "lib/readiness/zustand.ts": {
+        "gitBlob": "780825c56824d74ac9d805bf26748f9b4dba061c",
+        "sha256": "8976eb2b502f3f6aa35ad69cc97e0f778be7516d2096061e057d487ca73c5234"
+      },
+      "lib/reiseaenderung/fixtures/reise.ts": {
+        "gitBlob": "7533df1f2de0a9972810278b64aa9839033342f8",
+        "sha256": "4939232ab1995ef742c0aabb4d7413408ab39fbea0aa76f3dee17f9c2465edbc"
+      },
+      "lib/trips/gastspeicher.ts": {
+        "gitBlob": "f18bf24efaf8f86196276f02758e2f162915d33a",
+        "sha256": "aeac3ccf9cd951848ac02d736bc8408083d6c7fe603f7762fa92ba3066c94b5c"
+      },
+      "next.config.js": {
+        "gitBlob": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+        "sha256": "5ef7138cae27c64347093b6faa67bb106b92d194ec13968fd30141a34afa5c0b"
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de"
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c"
+      },
+      "postcss.config.js": {
+        "gitBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+        "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts": {
+        "gitBlob": "060aad06da39282f47a6be470714078112309018",
+        "sha256": "fba5dbbac25afcfb0880a99cbf08f79ac4f4ab7e55d7ecc4fbe6f61378cdeded"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts": {
+        "gitBlob": "c5fea047afd3e495afca7eae020956ea0c84f699",
+        "sha256": "a2f1202b1980e06a19f5154df18167cd8a528517d10dc24884ec4408e5eac691"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.tsx": {
+        "gitBlob": "bddac80fe24be1adc010ee759a0d34c71aa65ec9",
+        "sha256": "dad5e2922d736044bc71e6813f82a9615e8b6c7b2cc71a4ce38db34626a95bea"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs": {
+        "gitBlob": "b4c1b52cbf9c89fcd0783bdb83ac174455514903",
+        "sha256": "7a8a5f5f5be8adcc2a6a3f58ecea71b08cb1276d94850408e5ed2872721991e8"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": {
+        "gitBlob": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6",
+        "sha256": "fc1b22018e9d6a64774e4d8cd7cda853494a99167b11cacfc47ff9366ede9c36"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts": {
+        "gitBlob": "3129729467c4db1a290c6f8ee281b54574e6c859",
+        "sha256": "d32f7d0c8b24a607d349ebefe410b53019db64202749d01c2cabbc8c129ccc9f"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/dynamic.tsx": {
+        "gitBlob": "779b10a30ae8a16b3e546398d9d7db92c74bfa5d",
+        "sha256": "1be5217f5a7f395751b6c3abbfa76228c8e87d646fb4eca4c7ebb98bb36bc82a"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/empty.ts": {
+        "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+        "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/image.tsx": {
+        "gitBlob": "12adadfd111d8c72166670da04391d1b2f33894a",
+        "sha256": "238dc9be1536d1ca3eeca7c4091f4ba9cbe5e8731c79a1509221fdf0db20972f"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/link.tsx": {
+        "gitBlob": "f022c7abd35efd402bc6b1c8e3f25de964b56ad4",
+        "sha256": "74209bd017a20700709123f1b809571e8bd362f3830141d0959b451828b9561c"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/navigation.tsx": {
+        "gitBlob": "4c2b06db0c62b0d24c9f1395ced47b828999c836",
+        "sha256": "12221479f323363b418a81ed8359cf8995cf3b18445a0a9454d0e0e97a7b78a0"
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "reviewed-author-css",
+      "argv": [
+        "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts",
+        "--ausgabe",
+        "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run2/css"
+      ],
+      "cwd": "/tmp/jetnity-r106-t-final-review",
+      "startedAt": "2026-10-25T13:25:20.593626+00:00",
+      "finishedAt": "2026-10-25T13:25:25.555935+00:00",
+      "exit": 0,
+      "stdoutStderr": "commands/reviewed-author-css.txt",
+      "logSha256": "bffc9be5c09c4b70083c734323eb8a4245a5044837119761d6ed16e76f74e74b"
+    }
+  ],
+  "scope": "Local synthetic execution only. No personal profile, hosted Account, full Next router, Supabase/RLS, Preview or Production claim. Embedded author/model/session fields in reviewed author outputs identify the harness author only.",
+  "retainedCssAssets": [
+    {
+      "original": ".next/static/chunks/19ds4pry6tbr3.css",
+      "retained": "css-assets/00-19ds4pry6tbr3.css",
+      "sha256": "9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b",
+      "bytes": 99091
+    }
+  ],
+  "sourceWitnessAfter": {
+    "at": "2026-10-25T13:25:25.580072+00:00",
+    "head": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+    "trackedStatus": "",
+    "files": {
+      "components/trips/ActivitiesAuditClient.tsx": {
+        "gitBlob": "044cacd18d5dcec326d676dd7e9d3d4366321df4",
+        "sha256": "953a812cc143d95afc89145911311575c735bdf937df42e473e3581acedc8193"
+      },
+      "components/trips/AenderungVorschau.tsx": {
+        "gitBlob": "c6a4a0a87f4e59fd941e49e0956162d8d53bc62b",
+        "sha256": "292132218c8f079499b4674d6133cd24ccd0d603fe3c12b46b1b267c07cc3eec"
+      },
+      "components/trips/Aenderungsfortschritt.tsx": {
+        "gitBlob": "4b953f45f2054ad052d16d423402e1e2c7734ae2",
+        "sha256": "cb9af50da65ed5e197c8ad6edbc1b38ed5361062af0ad84a83a9a9f3a5a5671f"
+      },
+      "components/trips/AktivitaetKarte.tsx": {
+        "gitBlob": "2abbef0acfa8a283154687b85fc779d75696984c",
+        "sha256": "6a364cfaeddd7bf68e983b95e028c6564799cfd4505935d74680bf4af86db322"
+      },
+      "components/trips/AktivitaetenBereich.tsx": {
+        "gitBlob": "5ee93b8a5886acfd94c64567134e6505cc95c458",
+        "sha256": "7d111c7a76d1a2208efbdee748a0a66f4ca58068cd0d8264c7336382e542644c"
+      },
+      "components/trips/BuchungsSiegel.tsx": {
+        "gitBlob": "6598f90cb5827a3c7f05d4da1c3bd03d411bad70",
+        "sha256": "be411b164a7730abec39a8ceed14a88dbebdfa45f929369112e7aeab01e66e43"
+      },
+      "components/trips/EigeneReisevorbereitung.tsx": {
+        "gitBlob": "4c0a5be5e3b615f6ea5edbe7d8aa89250f872cfb",
+        "sha256": "b427a54085f21f9986a71ec790c8dbd81644944360318f354ec879d1501ef8fa"
+      },
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8"
+      },
+      "components/trips/FlugKarte.tsx": {
+        "gitBlob": "a169f95a5f8b4bc3d5ceaec682a3744f1010d838",
+        "sha256": "9db8a604271a7b9e9da49f8760a8aa0a274614fa375bd82affb020c2180b5223"
+      },
+      "components/trips/FlugRoute.tsx": {
+        "gitBlob": "631093d4579b5a677083936b1f85e04fca7c9390",
+        "sha256": "91362473597456e3d220b16d7498e83e889a1dcb2f91eea575d2a64fd8eccc15"
+      },
+      "components/trips/FlugSuche.tsx": {
+        "gitBlob": "f8f266cd06ad3e558cc44a614848f8bfeea60d25",
+        "sha256": "0fa889b792d1a49dc608848c904cdf1a28b046af6408580bbe119737174b1bc0"
+      },
+      "components/trips/GastArbeitsbereich.tsx": {
+        "gitBlob": "90f9d8781e23a3f96f92abd1d3616174585460d2",
+        "sha256": "b7cfa142605e338ed5346744a57793b879f189e9187c3ae8ed254d7cd5c23f69"
+      },
+      "components/trips/GastCreateLink.tsx": {
+        "gitBlob": "69df501e9e1dcfc1daebc740526cdc6f8f993cc4",
+        "sha256": "3942b90aa9466307da1c493423060f270b3239756d41215addbd9e0978b58101"
+      },
+      "components/trips/GastReiseLesefehler.tsx": {
+        "gitBlob": "3f307c205f3075ecbbe0e4a4d9325112ca32e1a0",
+        "sha256": "f3521d09014cbf666a626c3bdf226bfe45e71e97511f9141ae021763bd0e6cb7"
+      },
+      "components/trips/GastReisen.tsx": {
+        "gitBlob": "55a9019b66b23da67e496797b4456f6b9dd1a3f4",
+        "sha256": "7fd8690d131f7dd816c40f4bad5ef9d7b97e36790c42a5fc8430244d2080d9d3"
+      },
+      "components/trips/GastreiseBruecke.tsx": {
+        "gitBlob": "b3d852ecf0e420c4e29e0d183461e4a468f856e9",
+        "sha256": "a5e59a833ca849f9931442f8ac1340be10033aeeec78c341d355f38c7145e3a2"
+      },
+      "components/trips/HotelBereich.tsx": {
+        "gitBlob": "7eda769eac7b2105ab2a7baa907bb5b6e4097381",
+        "sha256": "4e321dba0a2424c1620b01d1f7147e081f782b4883c1bc69c25d7d97223c60b6"
+      },
+      "components/trips/HotelKarte.tsx": {
+        "gitBlob": "7211a19c1d1d168b96389a5962811c049fcbb7ff",
+        "sha256": "87d42a1beeec9e017a384d79fcb8b334ca7cd007d45dc7faf2020c9650e719d2"
+      },
+      "components/trips/KontoArbeitsbereich.tsx": {
+        "gitBlob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d",
+        "sha256": "f4dec055028a590fa6aa3bddb31a70d80d1ae146f0432ed9085807c74f4412b6"
+      },
+      "components/trips/KontoReiseArchivAktion.tsx": {
+        "gitBlob": "acb36b11bccd1316cbfebb43c80017c83189065a",
+        "sha256": "f4b6c3065963325ca8283d05b7763e011295d9f348f9a3fbc993009d50ee6ee7"
+      },
+      "components/trips/KontoReiseEintrag.tsx": {
+        "gitBlob": "e537e424572235866925bf366958b5ee16c39582",
+        "sha256": "fe825bd5d3ec0cd9d707b7c91c34c540f86c64a9ebb0f1413e84b831a4604722"
+      },
+      "components/trips/KontoReisenGruppen.tsx": {
+        "gitBlob": "4f8945be9e4f9e85d7147d0fc28f32929ed56828",
+        "sha256": "b832614ee0d25f3fc97a4a44ef6d8972e15ab72252f330c6c44149d3e3f1b2af"
+      },
+      "components/trips/MeineReisenHubAudit.tsx": {
+        "gitBlob": "f916afac5d3cd5089712b77b2bd1f595947a3207",
+        "sha256": "5f0b1f9bc474a85f750d461c53a017e0a17f3ebab648f5369417987bdf783b99"
+      },
+      "components/trips/MietwagenBereich.tsx": {
+        "gitBlob": "67cc0cbbf25df52770a916b29c2728f177f356fa",
+        "sha256": "3c5086fe1ce6ab070bfdb85e3e675179d4804bea4348cdd8ebee3ec2745118e8"
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68"
+      },
+      "components/trips/OfficialTruthPilotForm.tsx": {
+        "gitBlob": "58daa944c59d5b237ac3be58d8ad33e16b8f24f8",
+        "sha256": "a61e37ea695040bd0c0d86024df9dc065c6c23f2f3384f9f74918fe365f443ab"
+      },
+      "components/trips/OrganisierenFeldgruppe.tsx": {
+        "gitBlob": "472de6a292d29129ca492128b842f6bf2119966b",
+        "sha256": "48a3414b2cb1e1566786a69b72d5bd3e6fe865b939a60e2a8d16c373fd0a1c74"
+      },
+      "components/trips/PlanenCreateGate.tsx": {
+        "gitBlob": "59992863caef368586091835bc28da4aad7d789f",
+        "sha256": "f3a243f40c3e758b6014d162320967801c1fadfa3ef7b7da61a8a101628d28e9"
+      },
+      "components/trips/PlanenEinstiegNavigation.tsx": {
+        "gitBlob": "10b25079d4dbba9b8644b9ef01bc3c8a083ff82e",
+        "sha256": "cecbf8e4700b4074c99491e65deaa91d583403f48ef32ddcf2a6a9289949396d"
+      },
+      "components/trips/PlanpunktEditor.tsx": {
+        "gitBlob": "614ec416ea41d223a341569a3fa5f8ae190daf8f",
+        "sha256": "dc0e471bf1715009c94fdf370ed15da1bb9a2f663445d4ff33f9d5501e664ade"
+      },
+      "components/trips/Planungsfortschritt.tsx": {
+        "gitBlob": "fb20248e87886117d644087c7cc88a9bb95fd9ef",
+        "sha256": "fc29a0bc7de53cbeb4beac7929ff665a5f3aad40508268438d1faf59d697b7f4"
+      },
+      "components/trips/RegistryReiseUebernahme.tsx": {
+        "gitBlob": "df63143b2f0a03ef4d36752f9578999e66985718",
+        "sha256": "abe6777243ca86ab34ceb2d2a1a74a16d450ddfd6988fab216d6a981ac9df8d5"
+      },
+      "components/trips/ReiseAenderung.tsx": {
+        "gitBlob": "4a76754b36ee945ce3d5d8d6788e1480d2bb1fe3",
+        "sha256": "f7df0f87043746314c8e46803bb662aa4cf9df1761f29340b8de4fe479afb08e"
+      },
+      "components/trips/ReiseAenderungAuswirkungen.tsx": {
+        "gitBlob": "7a29d3cae6046f7f857ae9aa18aa5e1c8620d7ad",
+        "sha256": "bc9401ed0c71b96cae73220910c7e35c7fc390f0f7991fd2f0745337a1d3290c"
+      },
+      "components/trips/ReiseAenderungManuell.tsx": {
+        "gitBlob": "508d672fc8a713501cfee66a9ae173e3325a1ea0",
+        "sha256": "0d5a4192bdccc23891a0f10f58c631c1ec34bc1292fbbea384945a9b369280b3"
+      },
+      "components/trips/ReiseSicherheit.tsx": {
+        "gitBlob": "443a06687b8f959a1bc31bac189ea4e652c31afe",
+        "sha256": "a0d4141831ebb96c1044de1d6e90e75adc7daec1db8c087334add824b3586a9a"
+      },
+      "components/trips/Reisebegleiter.tsx": {
+        "gitBlob": "5ae64f83d500b170aa49feb27f003041479780fc",
+        "sha256": "1b95341e619855bbadcc8ad84499bcedb640df7e31b845fc601c69fb4c1890ef"
+      },
+      "components/trips/Reiseidee.tsx": {
+        "gitBlob": "78b18e878df302991bf4f74b304c4fec6a5abab5",
+        "sha256": "60d17acccd3aa4458285636a830350c8cd6c444e7fd9382b827df93307172b7f"
+      },
+      "components/trips/Reisekarte.tsx": {
+        "gitBlob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+        "sha256": "fb309c861a3b6f0ca08239b9047f141ba25a85f657c44ce0ecd01a9da334a2bb"
+      },
+      "components/trips/Reisevorbereitung.tsx": {
+        "gitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+        "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52"
+      },
+      "components/trips/ReisezeitHinweise.tsx": {
+        "gitBlob": "8831ac2f5c61b447f5ded81e31a9ee1dcc4d346b",
+        "sha256": "eb87c6953528df607fe7c62b14b5b18850a22654695c140ce2010051884f3df4"
+      },
+      "components/trips/TripAuditV1Panel.tsx": {
+        "gitBlob": "27a09c1244a0d7972961dbef635d691c4cf75d3d",
+        "sha256": "315f971931bafd1290d472e8f47bbe05034a8f3301ef292baed56dcf63ddfd07"
+      },
+      "components/trips/TripIntegratedDay.tsx": {
+        "gitBlob": "f452e0516770dbb6a0622a0be87ca744fe946950",
+        "sha256": "7d19278999d66dbe39e48c5d8c5bca5fc682ff3bbcae0935947fd6d85dd6ec82"
+      },
+      "components/trips/TripPlanner.tsx": {
+        "gitBlob": "2ed2471f5d999b1990972e4f97a56b83e8c03f8f",
+        "sha256": "5bfb221ff7f63a00c7ee020d235b4085e52229785abdf11624589d7a2a6eefd8"
+      },
+      "components/trips/TripTimelineZeitpruefung.tsx": {
+        "gitBlob": "1190ad244062277b84203f8d1d3236ffa5452de0",
+        "sha256": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78"
+      },
+      "components/trips/TripWorkspace.tsx": {
+        "gitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+        "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4"
+      },
+      "components/trips/TripWorkspaceAuditClient.tsx": {
+        "gitBlob": "e28cbf09be1eac87621baac314388a7bdde145a2",
+        "sha256": "b554aaef72afe233f9c35dba65ad9fca3c6e06bb621d17e1a108637468d71e2e"
+      },
+      "components/trips/TripWorkspaceDestinationEssentials.tsx": {
+        "gitBlob": "993a9064ce4a8a26f1e8c9777184855daf9a88b0",
+        "sha256": "1d9c41bd90132e27e141f63d4fec14893c1aa532d417b282f5e0aa0e018732f1"
+      },
+      "components/trips/TripWorkspaceDetail.tsx": {
+        "gitBlob": "1f2335354f629dcbf71597c3694a486527886f06",
+        "sha256": "d3adb82d98e9b276a15b2185179c9396f758d9bb738be8f934726dcdf6e8b5e8"
+      },
+      "components/trips/TripWorkspaceDomainNavigation.tsx": {
+        "gitBlob": "1d2d8bd841182e1b4cdfca7eb3343983ed6e13dd",
+        "sha256": "41ad3ed909c5ecf79cd5eb2f534ee0bd0ba52e0cc879b1f407181ee38865e257"
+      },
+      "components/trips/TripWorkspaceEditSurface.tsx": {
+        "gitBlob": "78296749720907855e2e26e819c46ab4aa43e7f8",
+        "sha256": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041"
+      },
+      "components/trips/TripWorkspaceJetztWichtig.tsx": {
+        "gitBlob": "9e1ceca2092b1a23b1b334ad0b5c880db65d958a",
+        "sha256": "4102d2d79c1df7aa59fb15f6f09bfc9782ae36c31b843c5f28b68b686ca56823"
+      },
+      "components/trips/TripWorkspaceKopf.tsx": {
+        "gitBlob": "7204669a58defe7ab04a65132c6b598419ccad56",
+        "sha256": "76ae32e188540fd6a0aaf52278a9da6bed7a8a92edd69b97cecd376593f94a5f"
+      },
+      "components/trips/TripWorkspaceModeNavigation.tsx": {
+        "gitBlob": "f368e485eb22d289b5cfb69ce97c1066c6f022c5",
+        "sha256": "e4c64a88819a5da72b42f9152ef1ec7a877315dd1e7efa8d6a59fa7a460bac26"
+      },
+      "components/trips/TripWorkspaceNavigation.tsx": {
+        "gitBlob": "50d7793ffbbbd4bd6a0c53c56f4a3a2de4327496",
+        "sha256": "380838b2dc16b081918f81ba977c6f7843be8912a9f11342f59a758c9c21be30"
+      },
+      "components/trips/TripWorkspacePlan.tsx": {
+        "gitBlob": "34cfe5186fb142d1affe71c2bae10fc375905298",
+        "sha256": "aa332f55eb10c02c34ed9ecc8bd536dee609c8d6640dbbf42e9cb31c221b02c8"
+      },
+      "components/trips/TripWorkspaceUebersicht.tsx": {
+        "gitBlob": "36b71b94c8a604e81994233733f7cfcda850e218",
+        "sha256": "100f5f88517015e2eec066a09c7cec9b7ad6d2f9ee54200c89c256d1f085589f"
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0"
+      },
+      "components/trips/VorschlagVorschau.tsx": {
+        "gitBlob": "9f3ac995e9b5e92146a73b1c0521ffe23c8fe062",
+        "sha256": "e04bb732c75dbe1dc203f8380a9db0a7640196e59c150501ab59475b56b84336"
+      },
+      "components/trips/gast-reise-lesezustand.ts": {
+        "gitBlob": "d1990189a881aa81d25f1486651e70602c9483c5",
+        "sha256": "7fb66f99784e91c9145646d5e36d4ce2fc954cbe4f8829328dfa81a5b82a2706"
+      },
+      "components/trips/useBookingActionLifecycle.ts": {
+        "gitBlob": "f59a4a25014c9aa17505b4386fd39a45f54ee270",
+        "sha256": "a4d3e29bab80026fa6b0d0bdf80c04f80fb66e8ade2f2d83e231627bf6c033cd"
+      },
+      "components/trips/useOfficialTruthPilot.ts": {
+        "gitBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+        "sha256": "df5a6e64cddd0d0893ee14a84a6faec0a3669a12679a351bf0f04c38b8b9d8d3"
+      },
+      "components/trips/usePersonalPreparationLifecycle.ts": {
+        "gitBlob": "ed1a8e02eeb29266f4ea9aecb5bb679512860aa6",
+        "sha256": "2358b3ab45af1a2ccec5c9b9a8eff9718f1c2cd42c811979f782eb733377f989"
+      },
+      "components/trips/usePlanEditorLifecycle.ts": {
+        "gitBlob": "5efe5eda2b07a7a5083c87e887b3ca0c73d17eea",
+        "sha256": "7ae1a9b6a729dcadc81903132fa7c2c7e30fd50b95f32c3824bd2b089fd60ea5"
+      },
+      "components/trips/usePlanningCreationLifecycle.ts": {
+        "gitBlob": "5e97d5a90de8251b94b162c4e6c5fb832dd92868",
+        "sha256": "7418ae18e3a3d27f00fdd2cc6d1b18d2c49660af91b3a50acebdc9c393970525"
+      },
+      "lib/readiness/ableitung.ts": {
+        "gitBlob": "6d10fdcdac6d283541cd99ec00296704b59d9956",
+        "sha256": "5da1397a0ac64ce0d54ba4c3d16ae24137884638e0a9dd10825b727844bd2aff"
+      },
+      "lib/readiness/abruf.ts": {
+        "gitBlob": "87cae75318178ae08c2f36e6389f242393277b6f",
+        "sha256": "551d0996531eb96c4d82ff6e7d3963c5f75ef319a282d1aebc41d42723a9df8b"
+      },
+      "lib/readiness/aktionen.ts": {
+        "gitBlob": "3e4e6ecf724a557907bb7151304929dcefb14c2f",
+        "sha256": "a3a92a4dc43cf5d1e58680e9ba246d0364512040cb425c18898586ed9dfc317a"
+      },
+      "lib/readiness/anforderungen.ts": {
+        "gitBlob": "91071d2902e43101bbf6fae4a97539ec07f5b608",
+        "sha256": "8e20d0c7af6b68cec4cc76feb401b05457dabb5668957c0221b362c5c13d06e9"
+      },
+      "lib/readiness/anfrage.test.ts": {
+        "gitBlob": "d901f4ae20bbae0094865f6deb75d6f3ed22c0a2",
+        "sha256": "21d3d381dfef5653ee02d53c35447d3b13401d98ded60b7b4f826ae3fab943bf"
+      },
+      "lib/readiness/anfrage.ts": {
+        "gitBlob": "e49fb6b7b43a0286e1fe4a871aa0c5dcd2326728",
+        "sha256": "9993c4cfe5fc6d7ed90aebf8724efd6d2fdac3522303d3057c5c09085b8c7658"
+      },
+      "lib/readiness/bauen.ts": {
+        "gitBlob": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+        "sha256": "1c818e792f250f934ab271db971fca1d7a0a59bedfbec0a18e6ff2e083593087"
+      },
+      "lib/readiness/bezeichnungen.test.ts": {
+        "gitBlob": "9a5435b51ad4e8a178ed5c5919cbdec997add108",
+        "sha256": "a541fbc55dab79ed0f801bbe97ce571b396a8f46e9ae93f43230e6547a2ee454"
+      },
+      "lib/readiness/bezeichnungen.ts": {
+        "gitBlob": "b3d172b9db8b17fa3a6422813af4b9275def622c",
+        "sha256": "6e25ca3a229d51a6ccc602dc6513fa660310f153807f751d8d55110dc504cf95"
+      },
+      "lib/readiness/digest.test.ts": {
+        "gitBlob": "4a2fb70d324e873d73904f07fea9e57ebe89c565",
+        "sha256": "4d897a9e67749d475d5d1616bb8c6519ead3430052a404e08f266a38cd82c269"
+      },
+      "lib/readiness/digest.ts": {
+        "gitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+        "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190"
+      },
+      "lib/readiness/dokument-formular.test.ts": {
+        "gitBlob": "fef89ac58edb06f888d702e346945f8d37561914",
+        "sha256": "dad134f44644403e32e054cd72eee677eacfbb862417cefc63e970da11045821"
+      },
+      "lib/readiness/dokument-formular.ts": {
+        "gitBlob": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+        "sha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975"
+      },
+      "lib/readiness/domain.ts": {
+        "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587"
+      },
+      "lib/readiness/e1-detail-contract.test.ts": {
+        "gitBlob": "dcff050cc8759cd0bb216f36cf3d938841b77b38",
+        "sha256": "150c9de505fae89bb99c78e652b15931380edfda7efb1af19b37cbbcc86d2cf0"
+      },
+      "lib/readiness/e2-official-actions.test.ts": {
+        "gitBlob": "1187a15951ead9a93a18656e91e26793431c3e94",
+        "sha256": "b91e46e57385382335d6f1fe76174a73fafd4bf79b487ebf18869bb400b30495"
+      },
+      "lib/readiness/e3-visitor-checklist.test.ts": {
+        "gitBlob": "ec95bf1f71f026b2475dab14ba2d9ff566c48130",
+        "sha256": "2743afbed935dd2d85d4b0ffaeda225c37d0194fd10e60fcef3a0740a1504078"
+      },
+      "lib/readiness/e4-temporal-rules.test.ts": {
+        "gitBlob": "a065db78b1a57a9c019bc47383e93afc77209409",
+        "sha256": "31160b97a6b27d377581ecf9aed1b543f911bb58585a3674d80f462fb18ed0db"
+      },
+      "lib/readiness/e5a-temporal-projection.test.ts": {
+        "gitBlob": "3452424e7a48c89113518360e7fbfe53437a1ce9",
+        "sha256": "4a50640ea790a43be119feb633ca40a47ed7f74552291c1a97087c0760e5730b"
+      },
+      "lib/readiness/engine.test.ts": {
+        "gitBlob": "a55d96a102c8c7475499b965cb581439957a5c9f",
+        "sha256": "845806871aec208e0bcd458b221d25ae3d9af42bd4b6053ad2b426d7f8e3c43f"
+      },
+      "lib/readiness/engine.ts": {
+        "gitBlob": "f105d59c1653e3382cb8ddce4b3101b87de31750",
+        "sha256": "0c7801bf724fc073f6bd33d09a9038605b5c7fbb9c018f5190e05dc10f370d94"
+      },
+      "lib/readiness/entscheidung.ts": {
+        "gitBlob": "f1510b9a4bef455fe410650781d4b99c439a2581",
+        "sha256": "d1b60056088b683b589842bb73e0655247569a8ed33ae0e665e2f224d229d542"
+      },
+      "lib/readiness/evidence-store-schema.test.ts": {
+        "gitBlob": "6f73e1b9a9b6755a329b9287954265c29f1d6078",
+        "sha256": "de90365d3583fba0a68922682976b3c0b33a2d6efaf98afba0f6f5dad1592326"
+      },
+      "lib/readiness/evidence.ts": {
+        "gitBlob": "f1a28d5a8f7445219f8cec224a849852c012fc3a",
+        "sha256": "e2db270b542443eb8b05808de7526de0d7578f42d89bdc60fd97548f327195cb"
+      },
+      "lib/readiness/fingerprint.test.ts": {
+        "gitBlob": "fc9d4ff99794538ba41f1d9a3c99e94f42e787d9",
+        "sha256": "0bd0521eedd2ff0943eb007ef78e768c7246b65537a711de831a8225393f28a6"
+      },
+      "lib/readiness/fingerprint.ts": {
+        "gitBlob": "c9e9a65528f04bd19fbb01f9e8d3b90fdefe06b7",
+        "sha256": "639b6d2841a9d0dbd84bfe91f1f9619c3edd675f30abf5999024ae10c2621659"
+      },
+      "lib/readiness/gast.ts": {
+        "gitBlob": "28cffa71264ff1ca0205b6b0be7eebc2d4498b08",
+        "sha256": "f5f606654e1361df4f6ac24ca127b61468d6f0b5b57e6f6d35a5cad59429da36"
+      },
+      "lib/readiness/kontext.test.ts": {
+        "gitBlob": "ce95bbceabe57b9d738d262b9eddbc5fc465dc22",
+        "sha256": "feaf8868a98507937c01dae177ef7adb296378f7977b5762961f1cbe5a31fc9d"
+      },
+      "lib/readiness/kontext.ts": {
+        "gitBlob": "381729fcc102cf8bbe0c795d19f528d8e66320e5",
+        "sha256": "3924c46f631801abcc1ea6239eca0b0a33a0d5d900dac4b264f4ccf25f6ad0b2"
+      },
+      "lib/readiness/official-option-scope.test.ts": {
+        "gitBlob": "235ec628db969a9dbededca2c9c2550437259b76",
+        "sha256": "c3c55859a2b417a6bc5893d1dae6e6941150607a90d08e84235fdad5e04e6746"
+      },
+      "lib/readiness/official-presentation.ts": {
+        "gitBlob": "251fe5444e5977fde0a790a1012d71db95bb0eb6",
+        "sha256": "d74e2c500a35ac143d9340e9dfcf0efbe9acec3fde026dd965bd862a8f95d0a7"
+      },
+      "lib/readiness/official-truth-accepted-evidence.test.ts": {
+        "gitBlob": "14dd6be4b912ec9d9adeedf83f81deb5f0f6dc91",
+        "sha256": "e0c9e3be2e6508068d2c07b206c44837f6c69fc3dad71e0df4e04de8b2604fa3"
+      },
+      "lib/readiness/official-truth-accepted-evidence.ts": {
+        "gitBlob": "024eaf2579ad9cf5637882b08c423100f9dbb1d3",
+        "sha256": "2f3ad46235c93a61096bf9befcb29ceeb703a40a9bf29c04f4205b02deb51fce"
+      },
+      "lib/readiness/official-truth-autonomous-preacceptance-witness-server.test.ts": {
+        "gitBlob": "5fcbf549dc2547232e78929ac3f031d2110d0abe",
+        "sha256": "fc34e259ea7cd5325a9298753b09c380dddc3d0a002f0e1c726a4ff96da0ed1d"
+      },
+      "lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts": {
+        "gitBlob": "d5af58a6d85dae93ba856f2d7b66a7a71f4796ad",
+        "sha256": "2a357da98924e7107a5dcb0f010293f39c6a1b598af3a4500192138347dfe955"
+      },
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": {
+        "gitBlob": "ff0eb432e3cc3c7589b71bf20a26a33115ccd502",
+        "sha256": "c73e0a144e6f0aee75ebab8ae7ce25989f5300c27518bafae550c35443bab7f7"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-artifact.ts": {
+        "gitBlob": "3c3aaeb3cc73e223b0a0cf2df1d9ceb27ff161cf",
+        "sha256": "1bdf271bf078d1c46fbc0f510789129e361bfdabce7cdd6e03a27a21071f323b"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-record-server.ts": {
+        "gitBlob": "6c95703d0f8a68b75cc7e0494dc9b59efe443dfb",
+        "sha256": "ef00c4bbb7b211d6c1f52e34f1e6c29afaa3e2ec221ec03a3ab75773bde4cb94"
+      },
+      "lib/readiness/official-truth-autonomous-provenance-record.ts": {
+        "gitBlob": "064355d4c7cfe1732677c500118ec8f77fac7725",
+        "sha256": "3908d3af7eeba22367d48cb5b2c6b02a336b86b6faf47fcb5e24c1a0c8a82ca5"
+      },
+      "lib/readiness/official-truth-autonomous-review-material-server.ts": {
+        "gitBlob": "68d2ff362c3aec1bceda430518422c60b60ae785",
+        "sha256": "89043832d533df5dd5d85bcce8bbf1a8b27dab1aa3e2faeddf62888cada89548"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/authorization.test.ts": {
+        "gitBlob": "15bbc5776952f6b84a872013619b28bcffd142be",
+        "sha256": "3200543896aedecfc2dd21a07aeeffae283424c9f79d122367f49a08aea0068d"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/authorization.ts": {
+        "gitBlob": "9ef5d6c420124987cfbefd4278ca70f103f3e022",
+        "sha256": "b0f79045895777d5ff94618da3faa4392eec76da72dcca92f9dd53187bf84b90"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/cli.test.ts": {
+        "gitBlob": "7705d8331824a2b8cc0e0e1a49a56a833e602005",
+        "sha256": "0239f6d21a7e6c0844f95c8293f2c7e095ea6599a4db1b3a32e5f3784b8055c8"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/concurrency.test.ts": {
+        "gitBlob": "20776dc59513843a104d08149f26537ebea37c2b",
+        "sha256": "49f4e38223a281015743b5c92334dea65fe0d74c05bd2518fecba4bee083193a"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/fixtures/github.ts": {
+        "gitBlob": "0a2e5c43429018c690cfd6c3caf430316ddd1f8a",
+        "sha256": "aae93f4b6ff4bcbc87003abe50ccdf3b2ab72f1168fd44dab21b4598a70c691a"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/fixtures/owner-grant.json": {
+        "gitBlob": "7ebd9f21a94601fb17dd0981833d1f64e1eaab46",
+        "sha256": "f9be6603110d30ad0dbd039870c0b92306265dd20e9b733d85fd74bc7d894423"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/github-read.test.ts": {
+        "gitBlob": "191050a5df119a0cd0382c526c55e8ebcb3fd6a2",
+        "sha256": "61efb1379e0aa157e1e6e2b9fb7a4b53a170b2e939508ff1873ff6cea0b9b961"
+      },
+      "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts": {
+        "gitBlob": "8e0945ee478435285a3068be94917a171570cfab",
+        "sha256": "4db422ce4ed202cfefb63e7d053062b73417959ae36892a11c4f066ede835de3"
+      },
+      "lib/readiness/official-truth-bern-research-quarantine-1/offline.test.ts": {
+        "gitBlob": "d010cb2a53e0279cb7eb9e6f705539435544c366",
+        "sha256": "303ce1c725dd0e109c27e9ec5dd1ffe9ed405462bf7ad6cbe9eee8984daf1e58"
+      },
+      "lib/readiness/official-truth-bern-research-quarantine-1/offline.ts": {
+        "gitBlob": "dbc6664438e09807689310c3b5a93f148fc87c35",
+        "sha256": "75794243fad23899a232048023b8e8901faa198177a74ae59d2ef7e4dbab6d92"
+      },
+      "lib/readiness/official-truth-bounded-response-body.test.ts": {
+        "gitBlob": "85c46a2bf39d6b07ac44313cfc7363a30e696fc5",
+        "sha256": "e2a17d752a58df6b26d3f474f298f7abe00f592056d02e9a8b4d01d5443702be"
+      },
+      "lib/readiness/official-truth-bounded-response-body.ts": {
+        "gitBlob": "783d802fff48a2969b86945515b159a513df76e9",
+        "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2"
+      },
+      "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts": {
+        "gitBlob": "a36ecbd1bb84a9178b31eb1458e997c003f9176f",
+        "sha256": "f0c36b00a4377bb7898e66fee57b6d9cd2d922adf3a96b7e78c2549d31e38a3f"
+      },
+      "lib/readiness/official-truth-candidate-batch.test.ts": {
+        "gitBlob": "eac315384ea28fedf518bdd988bda64fd81486ff",
+        "sha256": "1e02d703e2ef30bc0797266ce95583c18ee9dbc01acd5d900cb5e41019b2fb7e"
+      },
+      "lib/readiness/official-truth-candidate-batch.ts": {
+        "gitBlob": "1ed12d9027019f39a479e052bbdd3250a2f58529",
+        "sha256": "52fcdcad5b569b49d7073662b21bef86a82606f1e942199a77fd4714e215205f"
+      },
+      "lib/readiness/official-truth-catalog-hardening-schema.test.ts": {
+        "gitBlob": "817f61781fc18ae6bce18bc7981af0f610a36589",
+        "sha256": "548a0c80bd6e7edca3d6eea25002beed15b07aba0258a3546382f7728ef3bd15"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/application.test.ts": {
+        "gitBlob": "1663bb9d0da59752766935d7c7f7846e0ff401f4",
+        "sha256": "aa7129a412c6bbcadae36e4e0b4fee6db45f4c8d9cf2ffb4f745baf17a98dbc4"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/availability-server.ts": {
+        "gitBlob": "13cd842537e7233efdb1779aef8a40bd58a65947",
+        "sha256": "488a7ab8e165c3cfe7b3c32dbb14a005fadc408a414f368f92aa15c72d8adf27"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/cancellation.test.ts": {
+        "gitBlob": "3140481c7f06c414c8f99f9572942cf128c66c9f",
+        "sha256": "52a95dedff86318fd14d11c1c7df95a43f0ff86875bfb779402454f96e5370fc"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts": {
+        "gitBlob": "25dafee0f06353785972efafe0fc2db90183372b",
+        "sha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts": {
+        "gitBlob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f",
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts": {
+        "gitBlob": "5cef61087ef9e53717ec6ffcf4a62fb34d05aee0",
+        "sha256": "bb6b06142b8c0fce7dd90d75497fafd233dc1ea48d7f2aec08171d158e54494b"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/database.test.ts": {
+        "gitBlob": "5a6273a1bf76416b8208379a47a029842d34dc8a",
+        "sha256": "6a6ed2c8933513d64e9cf23c534093dfd831be416d90408a7eb8c9c5160e8f13"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/deadline-server.ts": {
+        "gitBlob": "b7dc057aa7f008c3aa057c195b27838bfb260fa1",
+        "sha256": "9eeca622878a8af8709f0f12a8413e95a92e54cb559332c2b4759af559f1a4ed"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts": {
+        "gitBlob": "9c4c244f628942d30f4a235f40ec5ad5bfe1724f",
+        "sha256": "cdd9fbd69eb24bb2bb0192852ab11edd2a39dd92bf3d60de382ac1098a0dfcb7"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/request-server.ts": {
+        "gitBlob": "e648ff08c22c6f01f29253ab563820a5fff47203",
+        "sha256": "f6caef894e2322ba45f5dadf6571ff2b636e4a7eeded01ee72cc460bfc2d979b"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/request.test.ts": {
+        "gitBlob": "ebe1963249c6663db45f7dfec3416411319b9f58",
+        "sha256": "62910c47a49266e0240ab4d00e940ef12e64514d2ad6c1ef7b59bfe4c8f37818"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/result.ts": {
+        "gitBlob": "5e96e939788649c87da70cf1437f061696c256e9",
+        "sha256": "a6f78767a92c1d9d704b514bfa32e1abbb36bd1eb8c6f8901fd5f8345da0b2f2"
+      },
+      "lib/readiness/official-truth-ch-de-application-pilot-1/scope-server.ts": {
+        "gitBlob": "bf4da504e58c850602190f822ef454bcbda029c1",
+        "sha256": "40dd3ad3c35f94c9c7c7cd9f3bac5c0aacc3bab44af3deab704e27cb9f5287c0"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1.test.ts": {
+        "gitBlob": "a3d45b949fc968bc98f6ecbdb792cddac39917f6",
+        "sha256": "049ae03509fdfa55ff88cf002f07fe871b4eafd79e9eaab2bbe72371c3059bd5"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/adapter.ts": {
+        "gitBlob": "53d5bbaf2c818450c8fade4c9aa28c584f6a53d5",
+        "sha256": "c5f53c36b155f0f28b1d273e9305f4620213a057698f679c5276aa628445a017"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts": {
+        "gitBlob": "9f061404abbab9498f4a57e0cd35e29258cc7cd7",
+        "sha256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/research.ts": {
+        "gitBlob": "50b5a229f54e21460bd09002db8883f2831f8369",
+        "sha256": "a90effe90b5e72c0a15472b2776148dc455ee433d5e051bad57d54506ed05bfe"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/source-probe.test.ts": {
+        "gitBlob": "b648fecd59b7987ab7f2da8afac8e56eb5812b75",
+        "sha256": "46c907eb9210b077b4992784ad1d44639d190604b9458f2244cf2134e1698ba1"
+      },
+      "lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts": {
+        "gitBlob": "42426c807a3e423a8c6924a4a63ead56727682f0",
+        "sha256": "76290a4f7b9730e0d7607a87896db890f54333ba7fe411cf7d6e477cda1fcd87"
+      },
+      "lib/readiness/official-truth-ch-de-g1-g3-1/bern-preflight.test.ts": {
+        "gitBlob": "488b4f9e9dc6a4626e2fb2adb6786c95e8f8dbcd",
+        "sha256": "3ea4d5c2716d37ec74ddf241eb2e1a6b9149da20a6f15720d5c8701ab26f78e9"
+      },
+      "lib/readiness/official-truth-ch-de-g1-g3-1/context.test.ts": {
+        "gitBlob": "3398db12ad70e78e2cf07a8faa747f02715addb6",
+        "sha256": "38b13153a5675c9e97a4091274bdc626caada3b20ac3be1f467c9e7dff81610a"
+      },
+      "lib/readiness/official-truth-ch-de-source-budget-128k-1.ts": {
+        "gitBlob": "149640d7ff779d3c2e13ab085414b3f22846cd27",
+        "sha256": "eb30763a83dfc3abae066ebb2571fefc1d8d3b7c256a04efd5c7898bbfe72fb7"
+      },
+      "lib/readiness/official-truth-composition-policy-registry.test.ts": {
+        "gitBlob": "03fe17f01920aa5580ae3be6f8e240a5d08df3d3",
+        "sha256": "b5a034a366dceeee6a02d57f6d0638a2055cfe94ea9a71e090c471ce425c2e17"
+      },
+      "lib/readiness/official-truth-composition-policy-registry.ts": {
+        "gitBlob": "7b6a97a10052f925de8ab49a247fa0f32fcc3a81",
+        "sha256": "a5346d7d5141b98b0e2ada2d68e652083acfbc733c72791ff7e081c06c41a552"
+      },
+      "lib/readiness/official-truth-content-identity-r2.test.ts": {
+        "gitBlob": "01c032582fb37fd0881c828610a83db483c6d688",
+        "sha256": "be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16"
+      },
+      "lib/readiness/official-truth-content-identity-schema-v2.test.ts": {
+        "gitBlob": "249202c5b8ef737ccee5388964514055d82a0df7",
+        "sha256": "4966945c4626740fdb1a32a39d005709029eb75dc47e167c72b4cf364c41b5d6"
+      },
+      "lib/readiness/official-truth-content-identity.test.ts": {
+        "gitBlob": "0a91f366a153483e82107f093a931a9eb59d6467",
+        "sha256": "6f62b8d3a929b35a6d66af0f97ab46a297c12068bd400f730e6f8de3d893dc89"
+      },
+      "lib/readiness/official-truth-content-identity.ts": {
+        "gitBlob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18",
+        "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6"
+      },
+      "lib/readiness/official-truth-coverage.test.ts": {
+        "gitBlob": "d337e2723415c4dabda1c792199a53b0e936e80c",
+        "sha256": "70c1b630c1db991bce2c977b0a838dc7b8aef3c68fe24a605af564608287d8a5"
+      },
+      "lib/readiness/official-truth-coverage.ts": {
+        "gitBlob": "42c36f522016e87cf51461f7bd3f1056d4355529",
+        "sha256": "5220d545e459b9f6b372be86d6565ae59f13e1d445c2e54c4895f2f99c404039"
+      },
+      "lib/readiness/official-truth-current-version-lookup-1.test.ts": {
+        "gitBlob": "a4b058c21f894ab64f044063f45b1d31845ace82",
+        "sha256": "c2e81daa3d8feb0192964d59e2a7dfc91c3ca80ab45c3e5f18896484fa3329a1"
+      },
+      "lib/readiness/official-truth-discovered-url-candidates.test.ts": {
+        "gitBlob": "d2fad161589460d517811db481f634cf5787fa20",
+        "sha256": "e39184a22a69ed5e22e1cb262b93f129f6baa8bf98d953511963dd498855464a"
+      },
+      "lib/readiness/official-truth-discovered-url-candidates.ts": {
+        "gitBlob": "8c3eafc5dcca4375a8f2c779419bbe8f54fa9fc5",
+        "sha256": "41a2cff7b32d6fbdfdc5ee67181e0b7dc994bd00a0668f3cea1fc38f8198411a"
+      },
+      "lib/readiness/official-truth-evidence-metadata-custody-server.ts": {
+        "gitBlob": "acd7e5b6d867e65bd02381efd17d8c9f08904461",
+        "sha256": "d76c03d7d2b5268c811c9d4ac2be9031a18f7aec0e56abcb74bc167e4f3c95c3"
+      },
+      "lib/readiness/official-truth-fact-citation-coverage.test.ts": {
+        "gitBlob": "49e3ecd334ae3686faa62ba9f52833cb75fb6289",
+        "sha256": "7260a9408e499e0dd9dd47c8e91d7a27c2781b13e380a03de99904f7ba002afb"
+      },
+      "lib/readiness/official-truth-fact-entry-authority-server.test.ts": {
+        "gitBlob": "b9ab246d03d8045d0b57661976757962ab540a50",
+        "sha256": "bc39b90857b14fb8ed3b24cce256614427e104ae7f3ffd86b438a1374edfdb57"
+      },
+      "lib/readiness/official-truth-fact-entry-authority-server.ts": {
+        "gitBlob": "058d746043b466ac5777e8bd060b12d10010048d",
+        "sha256": "1681a4136afb5605783b1b0fe0baf8f62e8e5f74f127c53cbbecb6e56ef91d52"
+      },
+      "lib/readiness/official-truth-global-cell-admission-server.ts": {
+        "gitBlob": "c0317598be690de70aa9ddd05af69b9da2371209",
+        "sha256": "9f7daec34e53a5ab42c86f521e485a45f34582ecab796cfb91e00ed239c11f00"
+      },
+      "lib/readiness/official-truth-global-representation-qualification.ts": {
+        "gitBlob": "4fd9afc4a0e87e466b1b3f7d054aa67285955609",
+        "sha256": "8402bcb1757c949cfcbe49c55bba91e2a3a9d7a922a570ec4a7ff85d3781a12b"
+      },
+      "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts": {
+        "gitBlob": "123822d424b24646af845843216843796a391077",
+        "sha256": "65477e7c691679378ee0597694edbd439b3b6103af901cbfb571fcf41ef2cb13"
+      },
+      "lib/readiness/official-truth-govuk-content-api-identity-profile.ts": {
+        "gitBlob": "505ecc92bada48cf7ef81bd812210c1a5dac8d7b",
+        "sha256": "9b756a4347248decf20eb11264e2577f1f2eb0cbcdad0018d6d86d3e37002828"
+      },
+      "lib/readiness/official-truth-integrated-pilot-bundle.test.ts": {
+        "gitBlob": "0d530eba51af23d98b78f67e2f6fc260b054e859",
+        "sha256": "e165f094caf7f1b5bb2d63146302d759a433a7c1843f73bc7c1f32d7b8dacae2"
+      },
+      "lib/readiness/official-truth-integrated-pilot-bundle.ts": {
+        "gitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1",
+        "sha256": "cbda7fa49b4583ee7cba8f51ed56b85a7e1f0d09b570f5d332f5c12a0b65faef"
+      },
+      "lib/readiness/official-truth-integrated-pilot-controlled-runtime.test.ts": {
+        "gitBlob": "c82081ae75051e3ced0a90ad269162b457fed16e",
+        "sha256": "d170f02691916bb1ddb0446cb27c6f3c3e964ffba388f01771592098e016888e"
+      },
+      "lib/readiness/official-truth-integrated-pilot-official-source.test.ts": {
+        "gitBlob": "3857982ead18a226723808971e18143f18f54886",
+        "sha256": "8f303d60e3e4ac80badfa7db01abbb40a1d8d4b37d49b6cc94d53e95b0a724fc"
+      },
+      "lib/readiness/official-truth-integrated-pilot-r3.test.ts": {
+        "gitBlob": "7f4a60d1e78fb74d261a315e6fff8c5e5707e16f",
+        "sha256": "b1526b55a30c958150da6cc445a2b6d72b92ccc63b891f136c84c63d9aa4b73a"
+      },
+      "lib/readiness/official-truth-integrated-pilot-storage.test.ts": {
+        "gitBlob": "633901d3b220787de78b460e4a8025e0942a0c91",
+        "sha256": "48f80bd1608c6bc30062cf1c68c915e6dac26f4766b81e964aab25a19c8fdf24"
+      },
+      "lib/readiness/official-truth-integrated-pilot.test.ts": {
+        "gitBlob": "b3987fcd199d7282be8f0fd6bce27d049300acc9",
+        "sha256": "3c3477f519daf0b133f23c40b814ab5d05f05476d60c57d6f64849db9e52e0c9"
+      },
+      "lib/readiness/official-truth-original-custody.test.ts": {
+        "gitBlob": "86701365dc195ebcbacd5d2a3a7d19bce47bb326",
+        "sha256": "ad46a777318ccbc18432b0463de3cf641acb267f0f72bd5f55c2f7f225778f20"
+      },
+      "lib/readiness/official-truth-real-primary-source-bridge-1.test.ts": {
+        "gitBlob": "7fce66c443d979e18a05b50a88113600ad7d414e",
+        "sha256": "5572f6209e58eaea944a7506c317ffa9e1ef5081b993790a8128a1dcb4444e0c"
+      },
+      "lib/readiness/official-truth-refresh-diff.test.ts": {
+        "gitBlob": "b7c6e31b66a2d4ace7f66c9cfaa433b9ad35e8ed",
+        "sha256": "8dcd7dd23f7905f99c8c644247be8e7f3503ab2ccdd45b903c54e9105fdde98f"
+      },
+      "lib/readiness/official-truth-refresh-diff.ts": {
+        "gitBlob": "b146a9d2f0394dc3236dc529cdee6f65fc4be778",
+        "sha256": "385b3e5d2059fa3b07038871b9b2035ab5b3a1f9f229abefc020df1d23c97fb8"
+      },
+      "lib/readiness/official-truth-research-execution-plan.test.ts": {
+        "gitBlob": "2d9f365e870d8690511242af69cb8b6710348d51",
+        "sha256": "13e5d3879a0595ed3be03fba07be741ed83925a57494009cb1a60b893693e482"
+      },
+      "lib/readiness/official-truth-research-execution-plan.ts": {
+        "gitBlob": "e998a7e98289aebb917e13887eb971238a83cb85",
+        "sha256": "4632c2ddb1b05101217da763e11524de7a38e6c268be9ffaf3b8109a7bc84239"
+      },
+      "lib/readiness/official-truth-research-request.test.ts": {
+        "gitBlob": "a69407ab7a164247dd888f92b93a39373fa1c421",
+        "sha256": "1e24f658899d81a7a6bea06e7fcc36d70996e35b5ceb9c80dd46c6882787c428"
+      },
+      "lib/readiness/official-truth-research-request.ts": {
+        "gitBlob": "b91eedb8e929dcb16e8cc031609af000de447f86",
+        "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce"
+      },
+      "lib/readiness/official-truth-research-source-routing.test.ts": {
+        "gitBlob": "7f640615e4ead50ad15cf3ceb5f0ac2b1900b435",
+        "sha256": "2cda36bc7b85169fb7378b878c2f99e174703c9e27218f66f2b75cf75463c4ec"
+      },
+      "lib/readiness/official-truth-research-source-routing.ts": {
+        "gitBlob": "c1cc413ac3fbca7a31b4435dc3ffe7abe4cfbb65",
+        "sha256": "4ceed46d607c286b974b6c25a170a1a5a54ac02eeedbbddcca97edec424fda61"
+      },
+      "lib/readiness/official-truth-retrieved-candidate-evidence.test.ts": {
+        "gitBlob": "31079c350975b28d09eb9c9553b7b156cd85f588",
+        "sha256": "98870afdb646c44f41ff3d5eecf5f453c634fde2f25e20587b4d77dabdd8dcf6"
+      },
+      "lib/readiness/official-truth-retrieved-candidate-evidence.ts": {
+        "gitBlob": "d4f075066734096b0d937adc2b4c3ea5c3900abc",
+        "sha256": "20592f79e94f15f18060b0a337a9a95db2dfb8b8de9313b984e1310a73b537da"
+      },
+      "lib/readiness/official-truth-retrieved-material.test.ts": {
+        "gitBlob": "4cdcda0a4d35dac496e897853db4b5eb9eaf66b2",
+        "sha256": "018a1e564df4a78662eef655a001b2f7a3981593e7be059a3255f470c05d630f"
+      },
+      "lib/readiness/official-truth-retrieved-material.ts": {
+        "gitBlob": "b2feda07fb198ae62be460eeeff302489af11361",
+        "sha256": "62e5eb176045c157d1d5cb4c5c78c4aa4aa7a7976cbc237187ffa2352e4e99a5"
+      },
+      "lib/readiness/official-truth-review-suggestion.test.ts": {
+        "gitBlob": "26fbabf6481c31d42210f66a890a6ca32dd6aee3",
+        "sha256": "faa2877f667dda6c19846a56f72da112384933562ca6bc350af02ec0b07b34be"
+      },
+      "lib/readiness/official-truth-review-suggestion.ts": {
+        "gitBlob": "e209e21b56918b6e1d5c431933de5cf913247148",
+        "sha256": "6db2f6b79d80a85fa243bcf12085c232a3ed3dfcc2a98b438461018638051a04"
+      },
+      "lib/readiness/official-truth-rule-candidate.test.ts": {
+        "gitBlob": "966bb7ea1d094f84da1ddb798483b48ce8597f6a",
+        "sha256": "e2ca9df0c364d4c152c1a33f161d99bf08c863e269c02103c36efa1c02cce24a"
+      },
+      "lib/readiness/official-truth-rule-candidate.ts": {
+        "gitBlob": "e5c1e9e96050f594fe04b5ba72beb2c3405d958b",
+        "sha256": "61ac7bd0d33a0c3c88d199867f385008c6a7c75bc867a1cad72f3f31e06ffab4"
+      },
+      "lib/readiness/official-truth-rule-review-decision-intent.test.ts": {
+        "gitBlob": "0611938af6316a0157f2a203234bd4b657b2e378",
+        "sha256": "fa64a5bc76f4b0e4a42c164913d84306b768e522a29534f3d1fa5f7852bc52f9"
+      },
+      "lib/readiness/official-truth-rule-review-decision-intent.ts": {
+        "gitBlob": "cfd53f67892ac5041792c09bbb402f353a47f337",
+        "sha256": "1c55a3ab45023dbbd14bcf77da4b8a6bdfe1ca0a81b0b099f92867182fbcd59c"
+      },
+      "lib/readiness/official-truth-rule-review-fingerprint.test.ts": {
+        "gitBlob": "957b5eb49d061bfdc4576e11f39e1265a953e0e8",
+        "sha256": "b0068403ffe5ffeff31cda74573f6e0b3b79867340279f45d471fb19876ad99c"
+      },
+      "lib/readiness/official-truth-rule-review-fingerprint.ts": {
+        "gitBlob": "f4712ab9f193911e83beaa173f648b685e76150f",
+        "sha256": "c01c842d5d23651c25039deb8140dee18505613b51670315ad35b17a104cd748"
+      },
+      "lib/readiness/official-truth-rule-review-packet.test.ts": {
+        "gitBlob": "5ce72562f4b846f144de559819a1292accc4ba69",
+        "sha256": "8b9ffeefaf081d184fdbf4b02f58c155ec59b7b31d3a93acc8a2dd03b65e6d53"
+      },
+      "lib/readiness/official-truth-rule-review-packet.ts": {
+        "gitBlob": "a36d907dd6b46cfec25d133f73c91100e185ffc6",
+        "sha256": "d073161d93c42e3dafcd046d453b77889400c2b18deffa1e95baba25aacca0b0"
+      },
+      "lib/readiness/official-truth-same-request-composition-context-capture.test.ts": {
+        "gitBlob": "30ea858d87f4f5d239470a79a768b2a6e6d7341d",
+        "sha256": "1337313aaa5fd59f9688ca0ff789300055be315b6fa4534b83a6c1a0326f3d3a"
+      },
+      "lib/readiness/official-truth-same-request-execution-context.test.ts": {
+        "gitBlob": "4886c6ab8bdff3663651d13be726e3b1fdf4da20",
+        "sha256": "cce4e219b3f9346efbd7f9f17fcac75e58ec943ae0dd07a270307fe1546219a7"
+      },
+      "lib/readiness/official-truth-same-request-extraction-server.test.ts": {
+        "gitBlob": "98cdc78dc602309e4425f325a7baa503a7d4ee71",
+        "sha256": "53ccb1670afd8101624762c3b26d6bd9804439649045d06d31cc5273a84329f1"
+      },
+      "lib/readiness/official-truth-same-request-extraction-server.ts": {
+        "gitBlob": "93cca29d4786397e96ef8b5e71b144448d270993",
+        "sha256": "70e5749cef2ab78a1e839458a0bfa2faf6ebda7506eb0ee52e036e226fe042e8"
+      },
+      "lib/readiness/official-truth-same-request-proof-server.test.ts": {
+        "gitBlob": "d6b35e8870ae81fa1636bbcc8a23bfb09ca30be2",
+        "sha256": "5703377353467ad94f999fe8c3eb80d0b8ab2088c17716f5bacdd58a44211ad9"
+      },
+      "lib/readiness/official-truth-same-request-proof-server.ts": {
+        "gitBlob": "d15bd98e6fcbcdf949aa791a4f7385e14dc98d75",
+        "sha256": "2592e5340ae7c50b93c61b76bcf6ac89752b4a4531ac0e7b047de6e02264655e"
+      },
+      "lib/readiness/official-truth-server-held-source-registry.test.ts": {
+        "gitBlob": "83f84b8e9b001c9918940fb122e3a01ba4c88e13",
+        "sha256": "ed4accf37b90cc601f753b9e1287b71ae2b0e553c1126e8f75ebd2e30373256e"
+      },
+      "lib/readiness/official-truth-server-held-source-registry.ts": {
+        "gitBlob": "5a4dd493f6e7e4bc47d20d5a4b252902734cc217",
+        "sha256": "d06de9e842f3fd5510a6dc600d9a546addb1e8076343f3a93080b03726766dbd"
+      },
+      "lib/readiness/official-truth-server-owned-retrieval.test.ts": {
+        "gitBlob": "30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9",
+        "sha256": "cf84e6e8f093a14dd16f1d831784d24f6d6883bb798b7a619b6b5f00fc8e534f"
+      },
+      "lib/readiness/official-truth-server-owned-retrieval.ts": {
+        "gitBlob": "5998fdea54d3337fb68cd7111460b59e43a3cef7",
+        "sha256": "b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994"
+      },
+      "lib/readiness/official-truth-source-catalog-server.test.ts": {
+        "gitBlob": "7cc556a4110a6f48f4c73fc347f98046d16facde",
+        "sha256": "b714e41bf818d0d090774088b77e49ed2b60f7e24651ef044e968b72ac5ce99e"
+      },
+      "lib/readiness/official-truth-source-catalog-server.ts": {
+        "gitBlob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee",
+        "sha256": "6d2cf2f4c9dd2f73554af0a5068f7554ec56b306f3c54fc8bbd81f711f3dd7b1"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/coordinator.test.ts": {
+        "gitBlob": "68a4a7355ee357760dd14bed066168dc9b9cd98f",
+        "sha256": "cdb675e0f42c0f64b509073a50a6bb92cd48e15582bb121c587b5b2db74babab"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/coordinator.ts": {
+        "gitBlob": "0a4f77e50026cd628271aa8e7833ee5362d176da",
+        "sha256": "d3d3f775064ff860cf1dd21d6b83a906a1656f4ef9ff18d2307159622fac6ca0"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/query-intents.ts": {
+        "gitBlob": "2d0119b9bf0565b9f90a0425ada3e5169b2a3ad6",
+        "sha256": "8b8e3636ee4cde8b4bf6b1421a64f456b1f12c61e81c39eeccf8e31848e2f2da"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/coordinator.test.ts": {
+        "gitBlob": "7c0c936a8d2d3857d0197d4852d3884e80a925e9",
+        "sha256": "80727ec8276d391620f44c23f0a1c7a2886d61158da04ed7a5319395a10ba298"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/coordinator.ts": {
+        "gitBlob": "f297fc8528cfcbd6596eabf0491d9845b6d7e3e0",
+        "sha256": "0a7a2125946649eea4e9aeb27bd66ee75a12d367f503c09c773fff551147b6af"
+      },
+      "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/port.ts": {
+        "gitBlob": "f6f0dc32b969959b1c396f62981317d33774944a",
+        "sha256": "4143dd2bf3ce92dc9a9af841f388cc31da4d80688740e5bdf5eb8623b09e2ae9"
+      },
+      "lib/readiness/official-truth-source-fingerprint-v2.test.ts": {
+        "gitBlob": "e8599e4fec66009353819db2d465aafac658566b",
+        "sha256": "7a84a125bf2d39775cf408c010363ac79e7afc1d60b8c8d26c5a000664cf78ca"
+      },
+      "lib/readiness/official-truth-source-fingerprint-v2.ts": {
+        "gitBlob": "72d324d019625c5028be8f47763fdd0f6ffe38e5",
+        "sha256": "d8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac"
+      },
+      "lib/readiness/official-truth-store-server.test.ts": {
+        "gitBlob": "ecc2ba127f5cdeca01a3a2abb2c5477c146b3201",
+        "sha256": "e21a7a8003ae1ff2b5eef3fbc4b7894b2fd521846b8a69d64a20252252969c52"
+      },
+      "lib/readiness/official-truth-store-server.ts": {
+        "gitBlob": "b56114d5ed732c0ea481fc735036af9f99bcda4c",
+        "sha256": "ec1a574783be80098fec11cb511ecc3a6de0b1baea45e24fff8410b52a1ad770"
+      },
+      "lib/readiness/official-truth-support-selection-server.ts": {
+        "gitBlob": "d8e865c5beb29ee8c9159984ee856dc7e94abbdf",
+        "sha256": "d4ac8a102efc956a4b318e680ac9e66130b6ce63574327853aaa966fc7cca715"
+      },
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts": {
+        "gitBlob": "ef6d30c6cd26acf948a35c2d3c4427b9c73f9f4e",
+        "sha256": "dd78aed2ed2f28e4e10216bdcd699c48815a7a172a823d36abeecfd14b8dec59"
+      },
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.ts": {
+        "gitBlob": "9f407dca147f8ba41280133dd64c7198c82c10a7",
+        "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62"
+      },
+      "lib/readiness/official-truth-uk-eta-legal-proof-readiness-1.test.ts": {
+        "gitBlob": "9970a7fd82176f19b4e325f837908863b669b9d5",
+        "sha256": "909120a854bbee3a68b758a6efdaf805e1464ffd0b1d8f3c3f9e2e774603eae2"
+      },
+      "lib/readiness/official.ts": {
+        "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c",
+        "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4"
+      },
+      "lib/readiness/p2-ta04-write-path-inventory.test.ts": {
+        "gitBlob": "8c7f28d2a9621f4dc51782ec7e9f99150f1cbc7d",
+        "sha256": "090ee2540df0f7c151c1b927dbf810e73dce58e31f5c9543de3232c9961778a4"
+      },
+      "lib/readiness/party-slot-integration.test.ts": {
+        "gitBlob": "0ac9dfa02e155d06fb9853b68e4d40254fa2ee9b",
+        "sha256": "02ca0bd09e39698d9860b11ec62a66338748e9fafadb4ef9f7d8e45988d9b87b"
+      },
+      "lib/readiness/party.test.ts": {
+        "gitBlob": "8b0d35047610e03857b5f902ba9151f3512d7684",
+        "sha256": "f574279db36bca20a4aafebc1d6e29919e7806f92f00d86c30a1bb88bfb5c376"
+      },
+      "lib/readiness/party.ts": {
+        "gitBlob": "b137915ad7da6c3e313ffa970900150ed129186d",
+        "sha256": "16e737098cf4f3f92f5b65dbc2b8deb1d48ca4e3a922bbfedae896b6e8e0f580"
+      },
+      "lib/readiness/persistenz.ts": {
+        "gitBlob": "d8036a29bf4b358dbcf3cf9a19d7ec606bdd2a96",
+        "sha256": "6f76c135188642551d45ae86b37d42909203db4f1200847c3f43f098ccead357"
+      },
+      "lib/readiness/personal-preparation-readback.test.ts": {
+        "gitBlob": "5f714b76cff69a8bbee1dd9813653949b6d24694",
+        "sha256": "c82e892b5e013d9984584f459cbf636ab512064e726d33c4f63c8498bf1a688a"
+      },
+      "lib/readiness/personal-preparation-workflow-wiring.test.ts": {
+        "gitBlob": "a1da17c6109c35289fa9919dba7c9ced6800091c",
+        "sha256": "d9995456ea4c4ca3da41cc38a831444fac47f0f08d406737ed0308f7000d9048"
+      },
+      "lib/readiness/personal-preparation-workflow.test.ts": {
+        "gitBlob": "19a972ed37edf302ee1679a21ce70591498330b6",
+        "sha256": "db8ad7a6e9bd87fa55a7a513da0f3c84f40a211ab3a03233ae638132f7f53cd9"
+      },
+      "lib/readiness/personal-preparation-workflow.ts": {
+        "gitBlob": "c295637b18d4b356ce14739e211871179cbf38f7",
+        "sha256": "0a92d55d2eec1e84ece469152ca4ed8dff109b54b7138760d66054214accc4cc"
+      },
+      "lib/readiness/preparation-identity.test.ts": {
+        "gitBlob": "601fc806b190f854a8387e75ae957e78889116ec",
+        "sha256": "f4160b3a1d7f7e3b0459425b6dcee9dca33b98405d6cdb2df9214e24daaf6cd5"
+      },
+      "lib/readiness/preparation-premium-experience-5.test.ts": {
+        "gitBlob": "667bdb5502df8f94243614066aef2a827a64ca0c",
+        "sha256": "6ceebc0c66fd5811408a280846fa2fc7d88ac3673eed7cf58d55414344db3e08"
+      },
+      "lib/readiness/preparation-premium-experience-5.ts": {
+        "gitBlob": "68c1d5a2d333da944e2987bbfef0ee019b8532af",
+        "sha256": "7e04b6502790e60ffb1d040c7187252d5a471ed402a957468774dc15612b7809"
+      },
+      "lib/readiness/provider.ts": {
+        "gitBlob": "3028961f1711620da860c7eeef50a4b71f82529c",
+        "sha256": "af1548a85460ab9f723242709378ebb4cb3f976c090c5824950695d1db2ff7b1"
+      },
+      "lib/readiness/rate-limit.ts": {
+        "gitBlob": "d988175ad116a666cf66ecd77950dc58eddb0f94",
+        "sha256": "d492d387b97f9c5fc82ea3940d898038e7d2b8bf6c1963b2101131df8f832393"
+      },
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts": {
+        "gitBlob": "fdd06ace70551afa15838ffb2f9257d98bd65031",
+        "sha256": "e065dba7f36b56762a8041d945d121efd8ea7f967bf86f4821085d07433bb612"
+      },
+      "lib/readiness/regulierungs-anwendbarkeit.ts": {
+        "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+      },
+      "lib/readiness/reisende-aktionen.ts": {
+        "gitBlob": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+        "sha256": "3a1d641c8c2930ba75314882ca6413ee4654ef7adb6796bc0fd0f8d75db5fa86"
+      },
+      "lib/readiness/reisende-gast.ts": {
+        "gitBlob": "d7cf17ec2b9fc8306c3d2d45892b754495a589b2",
+        "sha256": "75cfd8b7a0a4050b49f62ce206ce81bea8b05d7747d1229d24040500088ae722"
+      },
+      "lib/readiness/reisende.test.ts": {
+        "gitBlob": "ecef14ed23480695436f122f6d780849a321df65",
+        "sha256": "6a5fb839d61655f6e97c757cd2cd2ed53edbc34efdfac8b6ffde6341e8db2581"
+      },
+      "lib/readiness/reisende.ts": {
+        "gitBlob": "f01f75d2b198aae683d25829c345e24fac0c939f",
+        "sha256": "b27660da9d577fcca5adc2ca12d39f57c0cd8cb1376cf81f03305eca84273fd4"
+      },
+      "lib/readiness/rule-claim-store-schema.test.ts": {
+        "gitBlob": "fefbb97d985262b7bd8be821392bdda2db5f1a8b",
+        "sha256": "c232b5e420049eaa14e3e1cf1051d61e6ed01b35f7277010fdeb07325abcba4c"
+      },
+      "lib/readiness/rule-claims.test.ts": {
+        "gitBlob": "af5aa77a527dbb12d47dc65871b03de045d2d9d5",
+        "sha256": "838eff72ea366b1e5d449bfeae6904f5974e21a2a01ed471289d06b2b916495f"
+      },
+      "lib/readiness/rule-claims.ts": {
+        "gitBlob": "c61d06ca67d87e8c9b6435c23c8ac62965a251f6",
+        "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a"
+      },
+      "lib/readiness/s4-r1-truth-ops.test.ts": {
+        "gitBlob": "f3daa81c8280f10638779c998c5e3de23dafca2b",
+        "sha256": "8707ef808a37b62fef9b0d6dad3e854c1cebdda86c515c8b4de528c0a7eef6c4"
+      },
+      "lib/readiness/schema.test.ts": {
+        "gitBlob": "906ca212e2ff879448d0f332e9fb194271501aed",
+        "sha256": "3e0b42bd48d3c84b335c55f07391411c3180b465b521d03d3fee7f7b5908bffb"
+      },
+      "lib/readiness/schema.ts": {
+        "gitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+        "sha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c"
+      },
+      "lib/readiness/source-foundation.test.ts": {
+        "gitBlob": "3013d8124cc399ba6e8a66e2356d1b48fd942954",
+        "sha256": "10caa762da00b64c47303da538149c6e9a71f624a04c67c9cf0784f9962dde49"
+      },
+      "lib/readiness/source-registry.ts": {
+        "gitBlob": "672a316209cdeba279988e1691ce1e15e0dfb1b3",
+        "sha256": "058c9a69f11c703594415f56ed77ed15bf9804de7ae53aae5fb46c05511e22bc"
+      },
+      "lib/readiness/source-router.ts": {
+        "gitBlob": "98bd84acf911660ddab810cfeb97a1f79a4d8a68",
+        "sha256": "0c490186db5bacb8dd83670469e4a88102ea559c8223b5e916c06063c1ce97af"
+      },
+      "lib/readiness/status.test.ts": {
+        "gitBlob": "698d0d9444d2fc3b2b8f206d4de649d5fc9245c9",
+        "sha256": "48e6f6abc953289dda0c947c70ca70db794bc4b6ee0a018158b1fdf48bb10e18"
+      },
+      "lib/readiness/status.ts": {
+        "gitBlob": "0940f135ef7f52f15a9aed2e3b19126a837660be",
+        "sha256": "7778bef6f5519428351f443e3bf16cda56c0190371b1d27d53fb71a57e96322f"
+      },
+      "lib/readiness/temporal-projection.ts": {
+        "gitBlob": "357187d33ad4326d984783c11341d8c537820253",
+        "sha256": "9bd855bda361f43444c5cee36e98ff51a6c9f8775377149234f982b476dd8060"
+      },
+      "lib/readiness/temporal.ts": {
+        "gitBlob": "2b45246938196127124539302634e175a172b4b6",
+        "sha256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8"
+      },
+      "lib/readiness/traveller-anfrage.test.ts": {
+        "gitBlob": "34d5898f7b734bc39337eb2a3799e06674955854",
+        "sha256": "bce6e73975c56162d1af3a056b38aebc1eb5f584ef3ab574d478b63a2e832ad2"
+      },
+      "lib/readiness/traveller-anfrage.ts": {
+        "gitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+        "sha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d"
+      },
+      "lib/readiness/traveller-kontext.test.ts": {
+        "gitBlob": "2e3526a9a92711005ef5254498242f18dfd5477c",
+        "sha256": "5407fdfb2c1be40f2c007a6c697c8cc494f40b9ac1a6c454323df2b110fc6420"
+      },
+      "lib/readiness/traveller-kontext.ts": {
+        "gitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78",
+        "sha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52"
+      },
+      "lib/readiness/traveller-zuordnung.test.ts": {
+        "gitBlob": "7f8ab296c52f0acf3001638b037440a6a6a935d0",
+        "sha256": "c2471d38558a5f90e580d14e294fb592dece71ba2716d940b0190943ba4dff33"
+      },
+      "lib/readiness/traveller-zuordnung.ts": {
+        "gitBlob": "c12548859f26303818e2a04c6bab932fc4d5ee28",
+        "sha256": "0a369612566f053803103fdec31b4f35a80c268b1a99fab3929defde4afc32aa"
+      },
+      "lib/readiness/trip-official-evaluations-server.test.ts": {
+        "gitBlob": "b8e032803fa63b286161e46c349d4eda50081d72",
+        "sha256": "5fb30efd351f0a1c079944e4886187f4e5e5379c8000e1c267abd7a4e0085cb8"
+      },
+      "lib/readiness/trip-official-evaluations-server.ts": {
+        "gitBlob": "42b6a95c9e4873108272ccb16b0e2d703aac125b",
+        "sha256": "058b0d66212775898de87e0941d4cae98b1cbc4cbcbec5032d3c9e056e6109b9"
+      },
+      "lib/readiness/truth.test.ts": {
+        "gitBlob": "1495d2bc70158c4face598112a76130f857df4f2",
+        "sha256": "8774623bfff9ed2a8350fe1755fe6f55014eb30965a22249658dd97dbf9c0c12"
+      },
+      "lib/readiness/uebernahme.test.ts": {
+        "gitBlob": "432eb635b1cd0a37fd0b5886aa65ae9a25683b4c",
+        "sha256": "607a8ce3d9ba33e9e7dfda7d1021963974051036b92fe66cccbc845be65dd666"
+      },
+      "lib/readiness/uebernahme.ts": {
+        "gitBlob": "95e0840fac99702c64165ff24944795ac1923a2b",
+        "sha256": "a2eb7901419badf0833eb6b5eb688f578f8d12e13f28f8900289b212596dd3ee"
+      },
+      "lib/readiness/vergleich.test.ts": {
+        "gitBlob": "e60ffbf94a7b226c6ef3f03bfad673f1fb7c92ee",
+        "sha256": "f535626b151a64f1bb3a13a19546f727be5f3e7981b1525015828e451dd42879"
+      },
+      "lib/readiness/vergleich.ts": {
+        "gitBlob": "1f0aa8cf51b7265ba01a441be4eb38820891a76f",
+        "sha256": "8c40710892e074fcd722721e95e5f2e4b8aed5b153bfbb5eb99d7de0921629b3"
+      },
+      "lib/readiness/workspace-integration-r1.test.ts": {
+        "gitBlob": "9ed046d55f67b142668eb8f40863c778700389b2",
+        "sha256": "19c88a0b06b4773140139dbe4cae4d15cf70b5007144915c15d13c58750f5eab"
+      },
+      "lib/readiness/workspace-presentation.ts": {
+        "gitBlob": "917c29b0a0cc9530dbd00dd3cf9bfeee7a8726f8",
+        "sha256": "b34c84afd2fd6760245156273a38337268711e09170c3de268b06c756b04f5cc"
+      },
+      "lib/readiness/zustand.test.ts": {
+        "gitBlob": "b51432a2a5c2ddd6082dfc990cf5bef913ad6f43",
+        "sha256": "9644fa379f4b9d8f97e883730d4093875b931e56d4f6be72c6628934fea10ef6"
+      },
+      "lib/readiness/zustand.ts": {
+        "gitBlob": "780825c56824d74ac9d805bf26748f9b4dba061c",
+        "sha256": "8976eb2b502f3f6aa35ad69cc97e0f778be7516d2096061e057d487ca73c5234"
+      },
+      "lib/reiseaenderung/fixtures/reise.ts": {
+        "gitBlob": "7533df1f2de0a9972810278b64aa9839033342f8",
+        "sha256": "4939232ab1995ef742c0aabb4d7413408ab39fbea0aa76f3dee17f9c2465edbc"
+      },
+      "lib/trips/gastspeicher.ts": {
+        "gitBlob": "f18bf24efaf8f86196276f02758e2f162915d33a",
+        "sha256": "aeac3ccf9cd951848ac02d736bc8408083d6c7fe603f7762fa92ba3066c94b5c"
+      },
+      "next.config.js": {
+        "gitBlob": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+        "sha256": "5ef7138cae27c64347093b6faa67bb106b92d194ec13968fd30141a34afa5c0b"
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de"
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c"
+      },
+      "postcss.config.js": {
+        "gitBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+        "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts": {
+        "gitBlob": "060aad06da39282f47a6be470714078112309018",
+        "sha256": "fba5dbbac25afcfb0880a99cbf08f79ac4f4ab7e55d7ecc4fbe6f61378cdeded"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts": {
+        "gitBlob": "c5fea047afd3e495afca7eae020956ea0c84f699",
+        "sha256": "a2f1202b1980e06a19f5154df18167cd8a528517d10dc24884ec4408e5eac691"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.tsx": {
+        "gitBlob": "bddac80fe24be1adc010ee759a0d34c71aa65ec9",
+        "sha256": "dad5e2922d736044bc71e6813f82a9615e8b6c7b2cc71a4ce38db34626a95bea"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs": {
+        "gitBlob": "b4c1b52cbf9c89fcd0783bdb83ac174455514903",
+        "sha256": "7a8a5f5f5be8adcc2a6a3f58ecea71b08cb1276d94850408e5ed2872721991e8"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": {
+        "gitBlob": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6",
+        "sha256": "fc1b22018e9d6a64774e4d8cd7cda853494a99167b11cacfc47ff9366ede9c36"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts": {
+        "gitBlob": "3129729467c4db1a290c6f8ee281b54574e6c859",
+        "sha256": "d32f7d0c8b24a607d349ebefe410b53019db64202749d01c2cabbc8c129ccc9f"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/dynamic.tsx": {
+        "gitBlob": "779b10a30ae8a16b3e546398d9d7db92c74bfa5d",
+        "sha256": "1be5217f5a7f395751b6c3abbfa76228c8e87d646fb4eca4c7ebb98bb36bc82a"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/empty.ts": {
+        "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+        "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/image.tsx": {
+        "gitBlob": "12adadfd111d8c72166670da04391d1b2f33894a",
+        "sha256": "238dc9be1536d1ca3eeca7c4091f4ba9cbe5e8731c79a1509221fdf0db20972f"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/link.tsx": {
+        "gitBlob": "f022c7abd35efd402bc6b1c8e3f25de964b56ad4",
+        "sha256": "74209bd017a20700709123f1b809571e8bd362f3830141d0959b451828b9561c"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/shims/navigation.tsx": {
+        "gitBlob": "4c2b06db0c62b0d24c9f1395ced47b828999c836",
+        "sha256": "12221479f323363b418a81ed8359cf8995cf3b18445a0a9454d0e0e97a7b78a0"
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+      }
+    }
+  },
+  "sourceWitnessesEqual": true,
+  "finishedAt": "2026-10-25T13:25:25.580134+00:00",
+  "allCommandsExitedZero": true,
+  "receiptSourceSha256": "1469d6bc709dcd722d731e96200c31d8c96a33e8a6bfb98224f8e6d58f810034",
+  "status": "EXECUTED_LOCAL_COMMANDS_SUCCESSFULLY"
+}

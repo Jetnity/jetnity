@@ -1,0 +1,131 @@
+TAP version 13
+# Subtest: mounted personal preparation
+    # Subtest: account confirms only after acceptance and one later canonical delivery
+    ok 1 - account confirms only after acceptance and one later canonical delivery
+      ---
+      duration_ms: 655.370982
+      type: 'test'
+      ...
+    # Subtest: a delivery before acceptance does not confirm, and the post-acceptance read stays single
+    ok 2 - a delivery before acceptance does not confirm, and the post-acceptance read stays single
+      ---
+      duration_ms: 431.61572
+      type: 'test'
+      ...
+    # Subtest: guest wrong trip blocks later submits across mode changes and keeps the draft
+    ok 3 - guest wrong trip blocks later submits across mode changes and keeps the draft
+      ---
+      duration_ms: 619.124299
+      type: 'test'
+      ...
+    # Subtest: mode change keeps a pending intent and a late result does not replace the newer draft
+    ok 4 - mode change keeps a pending intent and a late result does not replace the newer draft
+      ---
+      duration_ms: 469.766813
+      type: 'test'
+      ...
+    # Subtest: an open editor returns to Offen when the preparation context changes again
+    ok 5 - an open editor returns to Offen when the preparation context changes again
+      ---
+      duration_ms: 385.794376
+      type: 'test'
+      ...
+    # Subtest: a missing point and an unclear result do not send another write
+    ok 6 - a missing point and an unclear result do not send another write
+      ---
+      duration_ms: 369.340337
+      type: 'test'
+      ...
+    # Subtest: filters, empty copy, named delete and a double submit stay distinct
+    ok 7 - filters, empty copy, named delete and a double submit stay distinct
+      ---
+      duration_ms: 558.394549
+      type: 'test'
+      ...
+    # Subtest: an unreadable guest read blocks a later submit and keeps the draft
+    ok 8 - an unreadable guest read blocks a later submit and keeps the draft
+      ---
+      duration_ms: 396.079341
+      type: 'test'
+      ...
+    # Subtest: confirmation focuses the visible row and a mode change removes that target
+    ok 9 - confirmation focuses the visible row and a mode change removes that target
+      ---
+      duration_ms: 364.895392
+      type: 'test'
+      ...
+    # Subtest: Enter submits one create and a trip change drops the pending intent
+    ok 10 - Enter submits one create and a trip change drops the pending intent
+      ---
+      duration_ms: 338.311529
+      type: 'test'
+      ...
+    # Subtest: an unclear result cannot retry or edit until a later read, and a match stays reconciled
+    ok 11 - an unclear result cannot retry or edit until a later read, and a match stays reconciled
+      ---
+      duration_ms: 1232.518021
+      type: 'test'
+      ...
+    # Subtest: a later account delivery recovers absence and does not confirm an unknown match
+    ok 12 - a later account delivery recovers absence and does not confirm an unknown match
+      ---
+      duration_ms: 713.479304
+      type: 'test'
+      ...
+    # Subtest: late confirmation leaves search, another editor, a filter and a hidden section alone
+    ok 13 - late confirmation leaves search, another editor, a filter and a hidden section alone
+      ---
+      duration_ms: 1433.769808
+      type: 'test'
+      ...
+    # Subtest: late confirmation leaves a status choice and a delete confirmation alone
+    ok 14 - late confirmation leaves a status choice and a delete confirmation alone
+      ---
+      duration_ms: 731.713821
+      type: 'test'
+      ...
+    # Subtest: a later canonical absence keeps the receipt without claiming current visibility
+    ok 15 - a later canonical absence keeps the receipt without claiming current visibility
+      ---
+      duration_ms: 329.815708
+      type: 'test'
+      ...
+    # Subtest: discarding a reconciled delete does not restore a current-visibility claim
+    ok 16 - discarding a reconciled delete does not restore a current-visibility claim
+      ---
+      duration_ms: 530.40329
+      type: 'test'
+      ...
+    # Subtest: late confirmation leaves an unopened edit button focused after pointer and tab
+    ok 17 - late confirmation leaves an unopened edit button focused after pointer and tab
+      ---
+      duration_ms: 329.775108
+      type: 'test'
+      ...
+    # Subtest: a completed delete does not keep the old saved receipt or an enabled editor
+    ok 18 - a completed delete does not keep the old saved receipt or an enabled editor
+      ---
+      duration_ms: 435.27095
+      type: 'test'
+      ...
+    # Subtest: production wiring names the canonical prop and the workspace hook
+    ok 19 - production wiring names the canonical prop and the workspace hook
+      ---
+      duration_ms: 0.954373
+      type: 'test'
+      ...
+    1..19
+ok 1 - mounted personal preparation
+  ---
+  duration_ms: 10503.159337
+  type: 'suite'
+  ...
+1..1
+# tests 19
+# suites 1
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11593.060793

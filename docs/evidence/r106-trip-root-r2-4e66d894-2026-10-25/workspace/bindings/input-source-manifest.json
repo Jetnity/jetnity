@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "repository": "Jetnity/jetnity",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "inspectedR1": "80006fdf1443ca9d75d8c481246821354da16000",
+  "trackedCheckoutClean": true,
+  "checkedAt": "2026-10-25T12:48:20.758Z",
+  "files": {
+    "components/trips/EigeneReisevorbereitung.tsx": {
+      "bytes": 19706,
+      "sha256": "b78d39e3f232e8d0dd73bc4f2120768fc6497e16dfb136483e0733862a1b8222",
+      "gitBlob": "7c3bac055173b12e235b3f352828ffe04ff164eb"
+    },
+    "components/trips/GastArbeitsbereich.tsx": {
+      "bytes": 17183,
+      "sha256": "b7cfa142605e338ed5346744a57793b879f189e9187c3ae8ed254d7cd5c23f69",
+      "gitBlob": "90f9d8781e23a3f96f92abd1d3616174585460d2"
+    },
+    "components/trips/KontoArbeitsbereich.tsx": {
+      "bytes": 14034,
+      "sha256": "f4dec055028a590fa6aa3bddb31a70d80d1ae146f0432ed9085807c74f4412b6",
+      "gitBlob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d"
+    },
+    "components/trips/Reisevorbereitung.tsx": {
+      "bytes": 39449,
+      "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52",
+      "gitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c"
+    },
+    "components/trips/TripWorkspace.tsx": {
+      "bytes": 44265,
+      "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4",
+      "gitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1"
+    },
+    "components/trips/usePersonalPreparationLifecycle.ts": {
+      "bytes": 7228,
+      "sha256": "d02e444c539c22d48a159b8310fc80cd3a7e98eaa363a55b68116d33d0f47833",
+      "gitBlob": "a11b25652281e9d04be29aad7e0d9cf53c28e4e1"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md": {
+      "bytes": 37287,
+      "sha256": "06f3e133a933cc9d6707bebc92535695fb4fd6ba952c745090561db5c117eb9b",
+      "gitBlob": "e58f582669793ff3b7d86727ac9130afa89eef98"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md": {
+      "bytes": 16087,
+      "sha256": "c4eef224abfdd2b27f60ef882fecb88c8a9724d54f938f751c0ab242ef498e1c",
+      "gitBlob": "961e288a4e0ba40fa00e7ea95e920eabd6423ff2"
+    },
+    "lib/readiness/bauen.ts": {
+      "bytes": 3491,
+      "sha256": "1c818e792f250f934ab271db971fca1d7a0a59bedfbec0a18e6ff2e083593087",
+      "gitBlob": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52"
+    },
+    "lib/readiness/bezeichnungen.ts": {
+      "bytes": 8475,
+      "sha256": "6e25ca3a229d51a6ccc602dc6513fa660310f153807f751d8d55110dc504cf95",
+      "gitBlob": "b3d172b9db8b17fa3a6422813af4b9275def622c"
+    },
+    "lib/readiness/domain.ts": {
+      "bytes": 3637,
+      "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927"
+    },
+    "lib/readiness/fingerprint.ts": {
+      "bytes": 5962,
+      "sha256": "639b6d2841a9d0dbd84bfe91f1f9619c3edd675f30abf5999024ae10c2621659",
+      "gitBlob": "c9e9a65528f04bd19fbb01f9e8d3b90fdefe06b7"
+    },
+    "lib/readiness/gast.ts": {
+      "bytes": 1956,
+      "sha256": "f5f606654e1361df4f6ac24ca127b61468d6f0b5b57e6f6d35a5cad59429da36",
+      "gitBlob": "28cffa71264ff1ca0205b6b0be7eebc2d4498b08"
+    },
+    "lib/readiness/personal-preparation-workflow.ts": {
+      "bytes": 26405,
+      "sha256": "51cfcca9aeb960a227c97ceef9aabb5bb8b1f8619e3df63b574bd7f1f88ec581",
+      "gitBlob": "563fd3068c0bc42a52d9834fdb18f36e28c188a8"
+    },
+    "lib/readiness/schema.ts": {
+      "bytes": 13207,
+      "sha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+      "gitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6"
+    },
+    "lib/readiness/status.ts": {
+      "bytes": 8880,
+      "sha256": "7778bef6f5519428351f443e3bf16cda56c0190371b1d27d53fb71a57e96322f",
+      "gitBlob": "0940f135ef7f52f15a9aed2e3b19126a837660be"
+    },
+    "lib/reiseaenderung/fixtures/reise.ts": {
+      "bytes": 3337,
+      "sha256": "4939232ab1995ef742c0aabb4d7413408ab39fbea0aa76f3dee17f9c2465edbc",
+      "gitBlob": "7533df1f2de0a9972810278b64aa9839033342f8"
+    },
+    "lib/trips/gastspeicher.ts": {
+      "bytes": 50354,
+      "sha256": "aeac3ccf9cd951848ac02d736bc8408083d6c7fe603f7762fa92ba3066c94b5c",
+      "gitBlob": "f18bf24efaf8f86196276f02758e2f162915d33a"
+    },
+    "package-lock.json": {
+      "bytes": 318748,
+      "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+      "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+    },
+    "package.json": {
+      "bytes": 4674,
+      "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+      "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b"
+    },
+    "tsconfig.json": {
+      "bytes": 865,
+      "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+      "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641"
+    },
+    "types/trips.ts": {
+      "bytes": 17314,
+      "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "gitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef"
+    }
+  }
+}

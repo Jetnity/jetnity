@@ -1,0 +1,44 @@
+{
+  "purpose": "Preparation of future-head R2 acceptance copies; no probe execution",
+  "rejectedHeads": [
+    "80006fdf1443ca9d75d8c481246821354da16000",
+    "b218c33d9d00c19f3705aba8bd208cc455272659"
+  ],
+  "allowedChanges": [
+    "Replace fixed 80006fdf-only head admission with explicit new-candidate admission rejecting both demonstrated defective heads",
+    "Add fixture/API revalidation reminder"
+  ],
+  "preflightRetained": [
+    "Node22",
+    "explicit full SHA",
+    "checkout HEAD equality",
+    "committed blob manifest",
+    "fresh external output",
+    "mounted bundle SHA/source manifest and inspected Host API names"
+  ],
+  "runtimeExecuted": false,
+  "newHeadCompatibility": "NOT VERIFIED; new candidate SHA and source have not been supplied",
+  "files": [
+    {
+      "original": "/tmp/r106-review-evidence/trip-r1-regression-pure-80006fdf.ts",
+      "originalSha256": "8e68f35564dca1e4c7e77e0056535b9fed5e22893221a71e23b0dbedca4b1a3a",
+      "prepared": "/tmp/r106-review-evidence/trip-r2-same-ref-acceptance.ts",
+      "preparedSha256": "3748dd1bb2b8d6f7c45a5e47bb78ac7dd0873fe5008c7a9087a0a45255f8422c",
+      "behaviorAndAssertionBodyByteIdentical": true
+    },
+    {
+      "original": "/tmp/r106-review-evidence/trip-r1-regression-mounted-80006fdf.ts",
+      "originalSha256": "61ec758b5f802133ff7b1ab6cd363c35bad318fb9560f7ecacdbf03df1119d84",
+      "prepared": "/tmp/r106-review-evidence/trip-r2-controls-acceptance.ts",
+      "preparedSha256": "4abd1607dc7ae943d5521bc7511a105ddb3772fbcc4b5fd901482d5d50e5923e",
+      "behaviorAndAssertionBodyByteIdentical": true
+    },
+    {
+      "original": "/tmp/r106-review-evidence/trip-r1-post-delete-history-80006fdf.ts",
+      "originalSha256": "f569a34bbbe7919cc980879cbaf635ef39a6b3ba83f0a72d2a82487acfe51e61",
+      "prepared": "/tmp/r106-review-evidence/trip-r2-post-delete-acceptance.ts",
+      "preparedSha256": "3a1987a79dbd80606e4ef94bd17f5f607229e473e18e158cdac903eb7e05333b",
+      "behaviorAndAssertionBodyByteIdentical": true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import { writeFileSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import * as m from '/tmp/jetnity-r106-o-review/lib/admin/operations-read-lifecycle.ts';
+const now=Date.parse('2026-10-25T09:55:00Z');
+let s=m.standAnfang(1,'/a',true);
+const q=m.getBeginnen(s);s=q.stand;
+s=m.endpunktSetzen(s,'/b');s=m.endpunktSetzen(s,'/a');
+const obsoleteStillValid=m.laufGueltig(s,q.lauf!);
+const accepted=m.getErfolg(s,q.lauf!,{oldResponse:true},'old');
+const reports=[{case:'endpoint A→B→A revives old A request',obsoleteStillValid,oldResponseAccepted:accepted.bericht?.oldResponse===true}];
+assert.equal(obsoleteStillValid,true); assert.equal(accepted.bericht?.oldResponse,true);
+const report={checkedAt:new Date(now).toISOString(),items:[{id:'app',checkedAt:new Date(now+60000).toISOString(),freshness:{state:'fresh' as const,ageMs:0,ttlMs:60000},checks:[{id:'child',freshness:{state:'fresh' as const,ageMs:0,ttlMs:60000}}]}]};
+const hint=(r:any)=>r.items.map((i:any)=>({id:i.id,state:'fresh' as const,ageMs:0,checks:i.checks.map((c:any)=>({id:c.id,state:'fresh' as const,ageMs:0}))}));
+const b=m.buchAusBericht(report,{wand:now,mono:100},hint);
+reports.push({case:'future card checkedAt with current envelope stays fresh',card:b.karten[0].anzeige,child:b.karten[0].checks[0].anzeige} as any);
+assert.equal(b.karten[0].anzeige.state,'fresh');
+const b2=m.buchAusBericht({...report,items:report.items.map(i=>({...i,checkedAt:new Date(now).toISOString()}))},{wand:now,mono:NaN},hint);
+reports.push({case:'unusable initial monotonic anchor with valid wall stays fresh',card:b2.karten[0].anzeige} as any);
+assert.equal(b2.karten[0].anzeige.state,'fresh');
+const path='/tmp/jetnity-r106-o-review/lib/admin/operations-read-lifecycle.ts';
+const out={head:'c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da',node:process.version,sourceSha256:createHash('sha256').update(readFileSync(path)).digest('hex'),meaning:'Exit0 demonstrates asserted counterexamples; not productPASS',reports};
+writeFileSync('/tmp/r106-review-evidence/admin-counterexamples.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2));
+

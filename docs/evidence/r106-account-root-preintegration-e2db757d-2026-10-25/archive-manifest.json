@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-25T11:06:19.868416+00:00",
+  "purpose": "Read-only source/evidence inventory for later TL-owned finite R106 closure; only this inventory and its README are created. No archive copy, repository edit, platform write or test execution.",
+  "snapshot": "Latest completed Account root local review before required synchronization after O; e2 is not represented as a future integrated head.",
+  "repository": "Jetnity/jetnity",
+  "accountPr": 1008,
+  "preintegrationHead": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+  "parentRootEvidence": "https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6396573716",
+  "proposedArchiveRoot": "docs/evidence/r106-account-root-preintegration-e2db757d-2026-10-25/",
+  "executorAttribution": {
+    "executedBy": "Root Technical Lead, as recorded in root evidence6396573716 and same-session root task",
+    "inventoryBy": "Read-only Work review helper",
+    "authorResultFields": "Hard-coded author/session/model are Cursor harness provenance, not this root execution identity; original bytes remain unchanged."
+  },
+  "runs": [
+    {
+      "role": "independent_final_preintegration",
+      "head": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "startedAt": "2026-10-25T10:33:55.594Z",
+      "endedAt": "2026-10-25T10:34:03.769Z",
+      "node": "v22.23.4",
+      "browser": "140.0.7339.16",
+      "pure": 4,
+      "mounted": 10,
+      "pass": 14,
+      "fail": 0,
+      "externalRequests": [],
+      "pageErrors": [],
+      "trackedSourceBeforeAfterClean": true,
+      "result": "BOUNDED_ALL_ACCEPTANCE_PASS"
+    },
+    {
+      "role": "root_execution_of_author_runner",
+      "head": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "mountedPass": 39,
+      "contractPass": 2,
+      "totalPass": 41,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "exit": 0,
+      "browser": {
+        "version": "140.0.7339.16"
+      },
+      "externalRequests": [],
+      "node": "Root records Node22.23.4; original author-result JSON does not independently contain a node version field."
+    },
+    {
+      "role": "historical_setup_failure",
+      "head": "6b094021068483eee82cda7791b9fa99891c1877",
+      "startedAt": "2026-10-25T10:18:38.487Z",
+      "endedAt": "2026-10-25T10:18:44.360Z",
+      "purePass": 4,
+      "mountedRun": 0,
+      "expectedOriginalTotal": 13,
+      "result": "ACCEPTANCE_NOT_PASSED",
+      "cause": "Error: Cannot find module '@playwright/test'\nRequire stack:\n- /tmp/jetnity-r106-a-r1-review/package.json\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)\n    at Function._load (node:internal/modules/cjs/loader:1216:25)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)\n    at Module.require (node:internal/modules/cjs/loader:1527:12)\n    at require (node:internal/modules/helpers:147:16)\n    at file:///tmp/r106-review-evidence/account-acceptance.mjs:339:24\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)",
+      "browserLaunch": "Not reached; absence of page errors does not imply browser PASS."
+    },
+    {
+      "role": "historical_focus_failure",
+      "head": "6b094021068483eee82cda7791b9fa99891c1877",
+      "startedAt": "2026-10-25T10:21:20.361Z",
+      "endedAt": "2026-10-25T10:21:35.681Z",
+      "mountedRun": 10,
+      "pass": 9,
+      "fail": 1,
+      "failedCases": [
+        {
+          "name": "mounted A-R4 a newer historical-receipt focus move survives pending cancel restoration",
+          "result": "FAIL",
+          "startedAt": "2026-10-25T10:21:30.362Z",
+          "error": "AssertionError [ERR_ASSERTION]: Newer receipt focus must win over canceled-editor restoration; observed {\"tag\":\"BUTTON\",\"id\":\"\",\"focus\":\"staat-knopf:00000000-0000-4000-8000-000000000001\",\"name\":\"Staatsb\u00fcrgerschaft hinzuf\u00fcgen\",\"connected\":true}\n\nfalse !== true\n\n    at file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:535:14\n    at async file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:391:16\n    at async check (file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:114:22)\n    at async file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:509:5"
+        }
+      ],
+      "result": "ACCEPTANCE_NOT_PASSED"
+    }
+  ],
+  "selectedOriginalArtifacts": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-v2.mjs",
+      "proposedArchiveRelativePath": "probe/account-acceptance-v2.mjs.txt",
+      "role": "current_independent_probe",
+      "claimBoundary": "Frozen source; archive as text to avoid automatic code/lint discovery. This version uses playwright/test and no browser sandbox override.",
+      "bytes": 37608,
+      "sha256": "117c5f881c222df8de4578a36352f9050a2d2c32b871c3f73468a6d8d7445dc6",
+      "gitBlobIfArchivedUnchanged": "cadbf3b273b3837a4930c943b53519cf1af4ded4"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-e2db757d-final-run1/independent-actions.ts",
+      "proposedArchiveRelativePath": "probe/helpers/independent-actions.ts.txt",
+      "role": "executed_helper_source",
+      "claimBoundary": "One exact e2 execution copy. Generated from the probe; retain absolute original imports without silently rewriting bytes.",
+      "bytes": 1577,
+      "sha256": "928389cdad5fbb15dbbcc8470e9b08961e4e2746c8136ca258390ee22c09c98d",
+      "gitBlobIfArchivedUnchanged": "18fc25fd6977e861d0666632b9554f76f62e057b"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-e2db757d-final-run1/independent-navigation.ts",
+      "proposedArchiveRelativePath": "probe/helpers/independent-navigation.ts.txt",
+      "role": "executed_helper_source",
+      "claimBoundary": "One exact e2 execution copy. Generated from the probe; retain absolute original imports without silently rewriting bytes.",
+      "bytes": 427,
+      "sha256": "7c276ddf8948b5d9ac4154848ed79bb083c5bd35c8a2d80701ea255605bc0861",
+      "gitBlobIfArchivedUnchanged": "77efd280c1df8d230501667a7bd9780ea3574634"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-e2db757d-final-run1/independent-mount.tsx",
+      "proposedArchiveRelativePath": "probe/helpers/independent-mount.tsx.txt",
+      "role": "executed_helper_source",
+      "claimBoundary": "One exact e2 execution copy. Generated from the probe; retain absolute original imports without silently rewriting bytes.",
+      "bytes": 743,
+      "sha256": "7bf61894d99c00aac7c8bad5f2229e3807e5fc446f2e41ebd18870b99cdec771",
+      "gitBlobIfArchivedUnchanged": "d7fd80346d5da4f1f11ae2db6f1f7b02089f1fc9"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-e2db757d-final-run1/production-styles.css",
+      "proposedArchiveRelativePath": "probe/production-styles.css.txt",
+      "role": "exact_compiled_css",
+      "claimBoundary": "Actual CSS bytes present in the e2 independent run. Local project PostCSS compilation, not a Next Production CSS equivalence claim.",
+      "bytes": 21425,
+      "sha256": "3eb7ce8f2102c2d2576b80dfb5ae8f1e293e87bc853c3e0ae29204bc9f9c7205",
+      "gitBlobIfArchivedUnchanged": "876323e4a10855ee846e7e1c15d9b3e26a192cf4"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-e2db757d-final-run1/account-acceptance-result.json",
+      "proposedArchiveRelativePath": "independent-e2/account-acceptance-result.json",
+      "role": "root_independent_acceptance",
+      "claimBoundary": "14/14 bounded local cases, not TL PASS or post-integration acceptance.",
+      "bytes": 18282,
+      "sha256": "81fe1f35a7fc68f923498e1a30913fb2f5a8b04e10957b0b6758215314a1374a",
+      "gitBlobIfArchivedUnchanged": "b1c946206e79b53e2c894f6b66ac2002b9996357"
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-final-review/docs/evidence/account-traveller-management-completion-1/run-e2db757d502f97f0dcce48d61e0b0fd87f95caa0.json",
+      "proposedArchiveRelativePath": "root-author-run-e2/run-e2db757d.json",
+      "role": "root_execution_of_audited_author_runner",
+      "claimBoundary": "39 mounted records plus retained TAP footer showing 2 contract tests:41PASS. Hard-coded author/session/model identify harness provenance, not executor.",
+      "bytes": 12871,
+      "sha256": "57dba3a9146323731e3563123324e75c5e43b10a0677dcaa4465e5ea78358095",
+      "gitBlobIfArchivedUnchanged": "fafa875129da2a835eb30b2ede3231a030332097"
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-final-review/docs/evidence/account-traveller-management-completion-1/screens-e2db757d502f97f0dcce48d61e0b0fd87f95caa0/320.png",
+      "proposedArchiveRelativePath": "root-author-run-e2/screens/320.png",
+      "role": "root_execution_screenshot",
+      "claimBoundary": "Unique e2 root-run capture. Inventory does not newly assert visual inspection;32px root font is simulation, not native zoom.",
+      "bytes": 256193,
+      "sha256": "8f6011ec9f277ab2a353975351636b329e5e21edd3f5feb45fea9ec6ff28328e",
+      "gitBlobIfArchivedUnchanged": "312e1ba441b740e4f538698bc5c891ecb4d2ba5b"
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-final-review/docs/evidence/account-traveller-management-completion-1/screens-e2db757d502f97f0dcce48d61e0b0fd87f95caa0/320-root-32.png",
+      "proposedArchiveRelativePath": "root-author-run-e2/screens/320-root-32.png",
+      "role": "root_execution_screenshot",
+      "claimBoundary": "Unique e2 root-run capture. Inventory does not newly assert visual inspection;32px root font is simulation, not native zoom.",
+      "bytes": 261609,
+      "sha256": "f376b8f618ac51494c62c3a450dc720eb97df4c67530be720b3dd27e219e2f2a",
+      "gitBlobIfArchivedUnchanged": "fd0bb5cda86fd60caad956db627d3448c0ab68ed"
+    },
+    {
+      "sourcePath": "/tmp/jetnity-r106-a-final-review/docs/evidence/account-traveller-management-completion-1/screens-e2db757d502f97f0dcce48d61e0b0fd87f95caa0/1280.png",
+      "proposedArchiveRelativePath": "root-author-run-e2/screens/1280.png",
+      "role": "root_execution_screenshot",
+      "claimBoundary": "Unique e2 root-run capture. Inventory does not newly assert visual inspection;32px root font is simulation, not native zoom.",
+      "bytes": 378200,
+      "sha256": "4e4ab8051392a0610b1d6b6cfbcab8200f8a6c34b097f3d0107d6ce59ddb29eb",
+      "gitBlobIfArchivedUnchanged": "a0b2a683f9776c80031918f185f20b37957f1689"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-6b094021-r1-run1/account-acceptance-result.json",
+      "proposedArchiveRelativePath": "history/setup-6b094021/account-acceptance-result.json",
+      "role": "historical_setup_failure",
+      "claimBoundary": "4 pure cases passed; mounted setup stopped at missing @playwright/test before browser launch. Overall acceptance not passed.",
+      "bytes": 12452,
+      "sha256": "bb8a3a1c21b5f051f0f557ed56afcab4bae97b2e2e7b87f1f786030483c15a17",
+      "gitBlobIfArchivedUnchanged": "6582a50a7c5d6b12b40da220e164fd7bcd11670c"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance-6b094021-r1-run2/account-acceptance-result.json",
+      "proposedArchiveRelativePath": "history/focus-6b094021/account-acceptance-result.json",
+      "role": "historical_product_failure",
+      "claimBoundary": "10 mounted cases ran:9PASS/1FAIL. Historical-receipt focus was stolen by cancellation restoration. Not a product PASS.",
+      "bytes": 15487,
+      "sha256": "220e03bcec37a27fdae99a734a1618910567ae5bcf082d8efb8dbdf8fcb2fe57",
+      "gitBlobIfArchivedUnchanged": "5be9bf0372c0a806e70923a7607b66cfe92f3926"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/account-acceptance.mjs",
+      "proposedArchiveRelativePath": "history/setup-6b094021/account-acceptance-v1.mjs.txt",
+      "role": "historical_runner_source_do_not_run",
+      "claimBoundary": "Preserved original runner contains missing import and unapproved --no-sandbox argument; the recorded run stopped before launch. Do not execute or normalize it.",
+      "bytes": 35384,
+      "sha256": "1e589d624b8cb512f9af6cde409ea5841c0e8720dce024fe8229f4e3549e2252",
+      "gitBlobIfArchivedUnchanged": "2c67e54942cf3d90e1bb71bb4a66766c4b67e8b1"
+    }
+  ],
+  "selectedOriginalArtifactCount": 13,
+  "selectedOriginalBytes": 1052258,
+  "sourceBindingVerification": [
+    {
+      "group": "independent_initial",
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "pairsVerifiedAgainstGitObjects": 11,
+      "mismatches": []
+    },
+    {
+      "group": "independent_final",
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "pairsVerifiedAgainstGitObjects": 26,
+      "mismatches": []
+    },
+    {
+      "group": "root_execution_of_author_runner",
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "pairsVerifiedAgainstGitObjects": 8,
+      "mismatches": []
+    }
+  ],
+  "pinnedExistingCodeReferencesDoNotDuplicate": [
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "scripts/account-traveller-management-completion-1/run.mjs",
+      "gitBlob": "51955cc0039aba2273bf820fd6dd4d9283423c23",
+      "sha256": "6ce274852dc6559988aa4068f408d7cdc641477a4610d135b29d43046f4ae510",
+      "bytes": 7811
+    },
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "scripts/account-traveller-management-completion-1/mounted.ts",
+      "gitBlob": "3ec4218d4749f3151f6c4f928ccd16aded510b4e",
+      "sha256": "c13ce804fb4d8a4ac80fe8e5ec0d9d36795f2b3d8fcff0fa208f8e4e3cab4fe9",
+      "bytes": 68363
+    },
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "scripts/account-traveller-management-completion-1/mount.tsx",
+      "gitBlob": "528e7c771614472812ec29be99eeb593e0369322",
+      "sha256": "07ea33352d3520236b65edbf229608ff95f701d257aa8e44ebc7d5bc898c7198",
+      "bytes": 902
+    },
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "scripts/account-traveller-management-completion-1/shims/aktionen.ts",
+      "gitBlob": "dae0aeac52186c3fda3bbb860b938072cfce84d9",
+      "sha256": "e9e089170c18f1d727bc8444b4dfa423c3d2754860740f799edc372e0ca434d6",
+      "bytes": 2446
+    },
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "scripts/account-traveller-management-completion-1/shims/navigation.ts",
+      "gitBlob": "de979fe1d6a2de0e2ec8e45e33de32217527ff8b",
+      "sha256": "7f3086ed509310000145a2411e366a2e31f6e3ab6645c395db8891f777686fa0",
+      "bytes": 1965
+    },
+    {
+      "commit": "e2db757d502f97f0dcce48d61e0b0fd87f95caa0",
+      "path": "lib/traveller/account-registry-workflow-ui.test.ts",
+      "gitBlob": "0428c4b8788970df750ef40cd3bca7e2f6fad954",
+      "sha256": "2fa228529ab9b21b1acde7b6cd9971ec3b6cec9e0491797465c8d7b3685cc409",
+      "bytes": 2409
+    }
+  ],
+  "commands": {
+    "independent_final_reproduction": "PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers /root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node /tmp/r106-review-evidence/account-acceptance-v2.mjs --repo /tmp/jetnity-r106-a-final-review --expected-head e2db757d502f97f0dcce48d61e0b0fd87f95caa0 --output-dir /tmp/r106-review-evidence/account-acceptance-e2db757d-new-run --only all",
+    "root_author_runner_reproduction": "PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers node scripts/account-traveller-management-completion-1/run.mjs",
+    "author_recorded_child_command": "node --import tsx --test lib/traveller/account-registry-workflow-ui.test.ts",
+    "qualification": "Reproduction commands reconstructed from runner/result. Not executed during inventory. Author runner must run from a fresh isolated exact-e2 checkout with node22.23.4 on PATH; its child spawns node and per-head screenshot folder may overwrite existing captures."
+  },
+  "excludedButPreserved": [
+    {
+      "paths": [
+        "account-acceptance-*/mounted-production-source.js",
+        "account-acceptance-*/pure-production-source.mjs",
+        "account-review-harness.js",
+        "/tmp/account-traveller-management-completion-1/harness.js"
+      ],
+      "reason": "Generated bundles/compiled dependencies; reconstruct with frozen probe or pinned repository sources."
+    },
+    {
+      "paths": [
+        "node_modules",
+        "/tmp/r106-review-browsers"
+      ],
+      "reason": "Dependencies/browser installation; not review artifacts."
+    },
+    {
+      "paths": [
+        "account-acceptance-26844537-r1b-run1/"
+      ],
+      "reason": "Intermediate14PASS retained locally; final exact-e2 14-case execution selected instead. No history is deleted or relabelled."
+    },
+    {
+      "paths": [
+        "account-final-e2db-screens/"
+      ],
+      "reason": "Extracted copies of committed author screenshots; root-run e2 captures are selected instead."
+    },
+    {
+      "paths": [
+        "account-counterexamples.ts",
+        "account-counterexamples.json",
+        "account-mounted-counterexamples.mjs",
+        "account-mounted-counterexamples.json",
+        "account-mounted-counterexamples-initial-selector-failure.json"
+      ],
+      "reason": "Earlier c761 defect investigation retained locally and in existing root review history; outside this minimal R1/final inventory. Initial selector failure remains INCOMPLETE, not product PASS."
+    },
+    {
+      "paths": [
+        "account-acceptance-README.md",
+        "account-acceptance-v2-README.md",
+        "duplicated action/navigation helpers in earlier run directories"
+      ],
+      "reason": "Existing instructions/history retained locally; this inventory consolidates them and selects only one current helper copy."
+    }
+  ],
+  "limitations": [
+    "No hosted Account/full Next Router/Supabase/RLS/Production/launch/device/screenreader proof.",
+    "No post-O main synchronization or future Account merge acceptance claimed.",
+    "14 independent cases are bounded defect/regression acceptance; the separate audited author runner supplies its39 mounted+2contract scope.",
+    "The author runner retains only stdout/stderr tails, not a complete TAP log. The original tail includes the41-test footer.",
+    "Inventory hashes demonstrate inspected bytes/source identity, not a new execution or TL PASS.",
+    "The e2 independent CSS hash differs from historical6b/268 CSS; preserve e2 bytes and do not claim identical build output."
+  ],
+  "archiveStage": "STAGED_FOR_FINITE_CLOSURE_NOT_YET_COMMITTED; originals preserved byte-for-byte."
+}

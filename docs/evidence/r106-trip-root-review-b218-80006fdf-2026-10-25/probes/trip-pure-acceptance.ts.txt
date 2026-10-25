@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict'
+import { pathToFileURL } from 'node:url'
+import { join } from 'node:path'
+import { argumentsForRun, assertObserved, moduleApi, prepareRun, writeReport } from './trip-acceptance-common.mjs'
+
+async function run() {
+  const options = argumentsForRun()
+  const report: any = { purpose: 'Bounded independent acceptance assertions for R106 T R1; never a product/TL PASS', expectedHead: options.head, node: process.version, generatedAt: new Date().toISOString(), observations: [], verdict: 'NOT_VERIFIED' }
+  try {
+    const context = prepareRun(options, ['lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts', 'lib/reiseaenderung/fixtures/reise.ts'])
+    const workflow = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/personal-preparation-workflow.ts')).href))
+    const fixture = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/reiseaenderung/fixtures/reise.ts')).href))
+    const builder = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/bauen.ts')).href))
+    const basis = fixture.beispielreise({ id: 'tl-r1-acceptance-trip', readinessItems: [] })
+    const make = () => {
+      const sent = workflow.entscheiden(workflow.kontoBeobachten(workflow.leerLedger(basis.id), basis), { art: 'create', title: 'TL fixture', filter: 'alle' }, basis, basis)
+      assert.ok(sent.auftrag?.payload)
+      const intent = sent.ledger.intents.at(-1)
+      const built = builder.readinessItemBauen(basis, sent.auftrag.payload)
+      assert.ok(built.ok)
+      return { sent, intent, matching: { ...basis, readinessItems: [built.item] } }
+    }
+    function check(name: string, fn: () => unknown) {
+      try { report.observations.push({ name, result: 'PASS', detail: fn() }) }
+      catch (error) { report.observations.push({ name, result: 'FAIL', error: String(error) }) }
+    }
+    check('unknown retry is refused before any read', () => {
+      const { sent, intent } = make()
+      const unknown = workflow.scheitern(sent.ledger, intent.id, intent.lauf, 'Synthetic lost response', 'unclear')
+      const repeat = workflow.entscheiden(unknown, { art: 'retry', intentId: intent.id }, basis, basis)
+      assert.ok(repeat.auftrag == null, 'Retry before a qualified read must dispatch zero writes')
+      return { readCalls: 0, returnedWriteOrder: false }
+    })
+    for (const first of ['absent', 'conflicting']) check(`accepted account ${first} read can recover on a later matching delivery`, () => {
+      const { sent, intent, matching } = make()
+      const accepted = workflow.annehmen(sent.ledger, intent.id, intent.lauf).ledger
+      const mismatch = first === 'absent' ? { ...basis, readinessItems: [] } : { ...matching, readinessItems: [{ ...matching.readinessItems[0], title: 'Another value' }] }
+      const unresolved = workflow.kontoBeobachten(accepted, mismatch)
+      const recovered = workflow.kontoBeobachten(unresolved, matching)
+      const receipt = recovered.intents.find((entry: any) => entry.id === intent.id)
+      assertObserved(receipt, workflow, { unknown: false })
+      return { firstPhase: unresolved.intents.find((entry: any) => entry.id === intent.id)?.phase, laterPhase: receipt.phase, laterMessage: receipt.meldung }
+    })
+    for (const seam of ['account', 'guest']) check(`unknown ${seam} outcome becomes conservative reconciliation after a matching read`, () => {
+      const { sent, intent, matching } = make()
+      const unknown = workflow.scheitern(sent.ledger, intent.id, intent.lauf, 'Synthetic lost response', 'unclear')
+      const recovered = seam === 'account' ? workflow.kontoBeobachten(unknown, matching) : workflow.manuellLesen(unknown, { art: 'success', reise: matching }, basis.id)
+      const receipt = recovered.intents.find((entry: any) => entry.id === intent.id)
+      assertObserved(receipt, workflow, { unknown: true })
+      return { phase: receipt.phase, message: receipt.meldung, causalConfirmation: false }
+    })
+    report.head = context.head
+    report.verifiedSources = context.verifiedSources
+    report.scope = 'Actual pure production workflow, fixture and item builder. Synthetic memory only; no writer, storage, network or hosted operation.'
+    report.verdict = report.observations.every((item: any) => item.result === 'PASS') ? 'BOUNDED_ASSERTIONS_PASSED' : 'BOUNDED_ASSERTION_FAILED'
+  } catch (error) { report.error = String(error) }
+  writeReport(options, report)
+  if (report.verdict !== 'BOUNDED_ASSERTIONS_PASSED') process.exitCode = 1
+}
+run().catch((error) => { console.error(error); process.exitCode = 1 })

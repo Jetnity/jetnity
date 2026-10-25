@@ -1,0 +1,104 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { existsSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
+import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+
+export const DEFECT_HEAD = 'b218c33d9d00c19f3705aba8bd208cc455272659'
+
+export function argumentsForRun() {
+  const args = process.argv.slice(2)
+  assert.equal(args.length % 2, 0, 'Every option requires an explicit value')
+  const options = {}
+  for (let index = 0; index < args.length; index += 2) {
+    const name = args[index]
+    assert.ok(['--repo', '--head', '--sources', '--out', '--bundle', '--bundle-info'].includes(name), `Unknown option ${name}`)
+    assert.ok(!(name.slice(2) in options), `Duplicate option ${name}`)
+    options[name.slice(2)] = args[index + 1]
+  }
+  for (const name of ['repo', 'head', 'sources', 'out']) assert.ok(options[name], `Required --${name}`)
+  assert.ok(isAbsolute(options.out), 'Evidence output must be an absolute external path')
+  assert.ok(!existsSync(options.out), 'Refusing to overwrite previous evidence')
+  return options
+}
+
+function headFromFiles(repo) {
+  const marker = join(repo, '.git')
+  const gitDir = statSync(marker).isDirectory()
+    ? marker
+    : resolve(repo, readFileSync(marker, 'utf8').trim().replace(/^gitdir:\s*/, ''))
+  const commonDir = existsSync(join(gitDir, 'commondir'))
+    ? resolve(gitDir, readFileSync(join(gitDir, 'commondir'), 'utf8').trim())
+    : gitDir
+  const head = readFileSync(join(gitDir, 'HEAD'), 'utf8').trim()
+  if (/^[0-9a-f]{40}$/.test(head)) return head
+  assert.match(head, /^ref: refs\//, 'Unrecognized checkout HEAD')
+  const ref = head.slice(5)
+  for (const root of [gitDir, commonDir]) {
+    const direct = join(root, ref)
+    if (existsSync(direct)) return readFileSync(direct, 'utf8').trim()
+    const packed = join(root, 'packed-refs')
+    if (existsSync(packed)) {
+      const line = readFileSync(packed, 'utf8').split('\n').find((entry) => entry.endsWith(` ${ref}`))
+      if (line) return line.split(' ')[0]
+    }
+  }
+  throw new Error('Checkout HEAD ref could not be resolved')
+}
+
+export function blobForFile(path) {
+  const bytes = readFileSync(path)
+  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+}
+
+export function prepareRun(options, requiredSources) {
+  assert.equal(process.versions.node.split('.')[0], '22', 'Use the repository Node 22 runtime')
+  assert.match(options.head, /^[0-9a-f]{40}$/, 'An exact expected commit is required')
+  assert.notEqual(options.head, DEFECT_HEAD, 'Refusing acceptance on the previously demonstrated defective head')
+  const repo = realpathSync(options.repo)
+  assert.equal(headFromFiles(repo), options.head, 'Checkout HEAD differs from explicitly expected head')
+  const outputRelative = relative(repo, resolve(options.out))
+  assert.ok(outputRelative.startsWith(`..${sep}`) || isAbsolute(outputRelative), 'Evidence must stay outside the tracked checkout')
+  const manifest = JSON.parse(readFileSync(options.sources, 'utf8'))
+  assert.equal(manifest.head, options.head, 'Source manifest must be pinned to the same expected commit')
+  assert.ok(manifest.files && Object.keys(manifest.files).length > 0, 'Expected Git blob map is required')
+  const verifiedSources = {}
+  function verifySource(path) {
+    assert.ok(!isAbsolute(path) && !path.split(/[\\/]/).includes('..'), `Unsafe source path ${path}`)
+    assert.match(manifest.files[path] ?? '', /^[0-9a-f]{40}$/, `Missing expected committed blob for ${path}`)
+    const actual = blobForFile(join(repo, path))
+    assert.equal(actual, manifest.files[path], `Working-tree bytes differ from expected committed source: ${path}`)
+    verifiedSources[path] = actual
+    return actual
+  }
+  for (const path of ['package.json', 'package-lock.json', ...requiredSources]) verifySource(path)
+  return { repo, head: options.head, manifest, verifiedSources, verifySource }
+}
+
+export function sha256(path) {
+  return createHash('sha256').update(readFileSync(path)).digest('hex')
+}
+
+export function writeReport(options, report) {
+  assert.ok(!existsSync(options.out), 'Refusing to overwrite previous evidence')
+  writeFileSync(options.out, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify(report, null, 2))
+}
+
+export function moduleApi(module) {
+  return module.leerLedger ? module : module.default ?? module
+}
+
+export function assertObserved(intent, workflow, { unknown }) {
+  assert.ok(intent, 'Matching read must keep a discoverable receipt')
+  const message = intent.meldung
+  if (unknown) {
+    assert.notEqual(intent.phase, 'confirmed', 'Unknown outcome cannot become a causal write confirmation')
+    assert.equal(message, workflow.PERSONAL_ABGESTIMMT, 'Unknown matching read must expose the conservative reconciliation meaning')
+  } else {
+    assert.ok(
+      message === workflow.PERSONAL_BESTAETIGT || message === workflow.PERSONAL_ABGESTIMMT,
+      'Later matching read must leave the unresolved state with observed/reconciled meaning',
+    )
+  }
+  assert.ok(!['pending', 'awaiting', 'error', 'unclear', 'blocked', 'conflict', 'absent_uncertain', 'stale_unconfirmed'].includes(intent.phase), 'A later matching read must actually resolve the read uncertainty')
+}

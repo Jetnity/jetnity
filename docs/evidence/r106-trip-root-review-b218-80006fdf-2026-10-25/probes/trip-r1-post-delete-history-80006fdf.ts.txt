@@ -1,0 +1,136 @@
+import assert from 'node:assert/strict'
+import { readFileSync, realpathSync } from 'node:fs'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+
+const EXPECTED_HEAD = '80006fdf1443ca9d75d8c481246821354da16000'
+
+async function run() {
+  const options = argumentsForRun()
+  const report: any = {
+    purpose: 'Bounded independent post-delete current-state assertion; retained honest history is allowed; not a TL PASS',
+    expectedHead: options.head, node: process.version, generatedAt: new Date().toISOString(),
+    observations: [], verdict: 'NOT_VERIFIED',
+  }
+  let browser: any
+  let page: any
+  try {
+    assert.equal(options.head, EXPECTED_HEAD, 'Probe is pinned to the inspected R1 delivery')
+    const context = prepareRun(options, [
+      'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+      'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',
+      'lib/reiseaenderung/fixtures/reise.ts', 'scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx',
+    ])
+    assert.ok(options.bundle && options['bundle-info'], 'Use the existing guarded bundle and its metadata')
+    const bundleInfo = JSON.parse(readFileSync(options['bundle-info'], 'utf8'))
+    assert.equal(bundleInfo.head, context.head)
+    assert.equal(realpathSync(bundleInfo.repo), context.repo)
+    assert.equal(realpathSync(bundleInfo.bundle), realpathSync(options.bundle))
+    assert.equal(sha256(options.bundle), bundleInfo.bundleSha256)
+    for (const [path, expected] of Object.entries(bundleInfo.sourceBlobs)) assert.equal(context.verifySource(path), expected)
+    const workflow = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/personal-preparation-workflow.ts')).href))
+    const fixture = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/reiseaenderung/fixtures/reise.ts')).href))
+    const builder = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/bauen.ts')).href))
+    const playwright = await import(pathToFileURL(join(context.repo, 'node_modules/playwright/index.mjs')).href)
+    browser = await playwright.chromium.launch({ headless: true })
+    page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+    page.setDefaultTimeout(5000)
+    let externalRequests = 0
+    await page.route('**/*', async (route: any) => { externalRequests += 1; await route.abort() })
+    const basis = fixture.beispielreise({ id: 'tl-r1-post-delete-trip', readinessItems: [] })
+    const bundle = readFileSync(options.bundle, 'utf8')
+    await page.setContent(`<!doctype html><html><body><div id="root"></div><script>window.__START__=${JSON.stringify({ seam: 'guest', reise: basis })}</script><script>${bundle}</script></body></html>`)
+    await page.waitForFunction(() => (window as any).__PERSONAL__, undefined, { timeout: 5000 })
+    const keys = await page.evaluate(() => Object.keys((window as any).__PERSONAL__))
+    for (const name of ['setzen', 'entfernen', 'lesen', 'schreibenFreigeben', 'lesenFreigeben', 'reiseSetzen']) assert.ok(keys.includes(name), `Inspected Host API missing ${name}`)
+    const observation: any = {
+      name: 'A successfully deleted and reread-absent ref must not reappear as currently saved and visible',
+      result: 'NOT_VERIFIED',
+    }
+    report.observations.push(observation)
+    try {
+      await page.getByLabel('Eigene Vorbereitung', { exact: true }).fill('History fixture')
+      await page.getByRole('button', { name: 'Punkt hinzufügen', exact: true }).click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+      const payload = await page.evaluate(() => (window as any).__PERSONAL__.setzen[0])
+      const built = builder.readinessItemBauen(basis, payload)
+      assert.ok(built.ok)
+      const matching = { ...basis, readinessItems: [built.item] }
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.reiseSetzen(trip), matching)
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), matching)
+      const ref = built.item.clientRef
+      await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'confirmed', ref)
+      const row = page.locator(`[data-personal-client-ref="${ref}"]`)
+      await row.getByRole('button', { name: 'Titel bearbeiten', exact: true }).click()
+      assert.equal(await row.getByLabel('Titel bearbeiten', { exact: true }).inputValue(), 'History fixture')
+      await row.getByRole('button', { name: 'Entfernen', exact: true }).click()
+      await row.getByRole('button', { name: 'Endgültig entfernen', exact: true }).click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.entfernen.length === 1)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.reiseSetzen(trip), { ...basis, readinessItems: [] })
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 2)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), { ...basis, readinessItems: [] })
+      await page.waitForFunction(() => Number(document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung')) >= 2)
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+      const beforeSave = await page.evaluate((value: string) => {
+        const rows = Array.from(document.querySelectorAll<HTMLElement>(`[data-personal-client-ref="${value}"]`))
+        return {
+          rows: rows.map((element) => ({
+            phase: element.getAttribute('data-personal-phase'),
+            hasReadinessStatus: element.hasAttribute('data-readiness-status'),
+            visible: element.getClientRects().length > 0,
+            text: element.innerText,
+            buttons: Array.from(element.querySelectorAll<HTMLButtonElement>('button')).map((button) => ({ text: button.textContent?.trim(), disabled: button.disabled })),
+          })),
+          authorAbsenceSelectorCount: document.querySelectorAll(`[data-readiness-status][data-personal-client-ref="${value}"]`).length,
+          allRefElementsCount: rows.length,
+          writes: (window as any).__PERSONAL__.setzen.length,
+          deletes: (window as any).__PERSONAL__.entfernen.length,
+          reads: (window as any).__PERSONAL__.lesen,
+        }
+      }, ref)
+      const staleSave = page.locator(`[data-personal-client-ref="${ref}"]`).getByRole('button', { name: 'Speichern', exact: true })
+      const staleSaveCount = await staleSave.count()
+      const staleSaveEnabled = staleSaveCount > 0 && await staleSave.first().isEnabled()
+      if (staleSaveEnabled) await staleSave.first().click()
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+      const afterSave = await page.evaluate(() => ({
+        writes: (window as any).__PERSONAL__.setzen.length,
+        deletes: (window as any).__PERSONAL__.entfernen.length,
+        body: document.body.innerText,
+      }))
+      const falseCurrentReceipts = beforeSave.rows.filter((entry: any) => entry.visible && entry.text.includes(workflow.PERSONAL_BESTAETIGT))
+      observation.detail = {
+        clientRef: ref,
+        providedPostDeleteRead: { art: 'success', expectedTrip: basis.id, personalRefs: [] },
+        beforeSave,
+        staleEditor: {
+          enabledSaveOffered: staleSaveEnabled,
+          extraWriteAfterClick: afterSave.writes - beforeSave.writes,
+          absentTargetExplainedAfterClick: afterSave.body.includes(workflow.PERSONAL_ZIEL_WEG),
+        },
+        falseCurrentReceiptCount: falseCurrentReceipts.length,
+        historyPolicy: 'Honest history or a named completed-deletion receipt is allowed. This assertion rejects only a visible claim that the now-absent ref is saved and visible in current state. It does not claim the dangling editor recreates the row.',
+      }
+      assert.equal(afterSave.writes, beforeSave.writes, 'An absent target must not be recreated by any retained editor')
+      assert.equal(falseCurrentReceipts.length, 0, 'Historical create confirmation must not claim a successfully deleted ref is visible in current state')
+      observation.result = 'PASS'
+    } catch (error) { observation.result = 'FAIL'; observation.error = String(error) }
+    assert.equal(externalRequests, 0)
+    report.head = context.head
+    report.browser = browser.version()
+    report.externalRequests = externalRequests
+    report.verifiedSources = context.verifiedSources
+    report.bundleSha256 = bundleInfo.bundleSha256
+    report.scope = 'Actual production list/hook, normal named-delete UI and deferred synthetic callbacks in unchanged author flaeche Host. Canonical returned absence is controlled. Not real guest storage, full TripWorkspace, Next router, hosted Account or Production.'
+    report.verdict = report.observations.every((entry: any) => entry.result === 'PASS') ? 'BOUNDED_ASSERTIONS_PASSED' : 'BOUNDED_ASSERTION_FAILED'
+  } catch (error) { report.error = String(error) }
+  finally { await page?.close(); await browser?.close() }
+  writeReport(options, report)
+  if (report.verdict !== 'BOUNDED_ASSERTIONS_PASSED') process.exitCode = 1
+}
+
+run().catch((error) => { console.error(error); process.exitCode = 1 })

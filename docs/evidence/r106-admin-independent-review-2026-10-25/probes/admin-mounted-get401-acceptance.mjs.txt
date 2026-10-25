@@ -1,0 +1,328 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+import { createServer } from 'node:http'
+import { createRequire } from 'node:module'
+import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { isAbsolute, join } from 'node:path'
+
+const help = 'Usage: PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers <node22> /tmp/r106-review-evidence/admin-mounted-get401-acceptance.mjs --repo /absolute/clean/new-candidate-checkout --head FULL_NEW_40_CHARACTER_SHA\nSyntax-check preparation only until explicitly invoked with the new candidate. Runs 32 independent mounted cases: 14 malformed GET200 bodies plus two current401 variants, on each real board. Each case has its own context, observed pending request, settled outcome and successful explicit recovery. Unique JSON output; no full-TASK or TL PASS claim.'
+const args = process.argv.slice(2)
+if (args.length === 1 && args[0] === '--help') { console.log(help); process.exit(0) }
+assert.equal(args.length, 4, help)
+const options = {}
+for (let i = 0; i < args.length; i += 2) {
+  assert.ok(['--repo', '--head'].includes(args[i]), help)
+  assert.equal(options[args[i]], undefined, `Duplicate ${args[i]}`)
+  options[args[i]] = args[i + 1]
+}
+assert.ok(options['--repo'] && isAbsolute(options['--repo']), help)
+assert.match(options['--head'] ?? '', /^[0-9a-f]{40}$/, help)
+assert.ok(![
+  'c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da',
+  'c12444d735c5d8e8c1c800c5b712ecf48105bdec',
+].includes(options['--head']), 'This R2 acceptance probe requires an explicitly selected new candidate, not the initial or R1 delivery.')
+assert.match(process.version, /^v22\./, 'Use Node 22.')
+const repo = realpathSync(options['--repo'])
+const expectedHead = options['--head']
+const git = (...gitArgs) => execFileSync('git', gitArgs, { cwd: repo, encoding: 'utf8' }).trim()
+assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'Checkout differs from --head.')
+assert.equal(git('status', '--porcelain'), '', 'Clean checkout required.')
+const destination = `/tmp/r106-review-evidence/admin-mounted-get401-acceptance-${expectedHead.slice(0, 12)}-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+assert.equal(existsSync(destination), false, 'Never overwrite prior evidence.')
+const sources = [
+  'components/admin/system-health/SystemHealthBoard.tsx',
+  'components/admin/provider-ops/ProviderOpsBoard.tsx',
+  'components/admin/operations/useOperationsReport.ts',
+  'lib/admin/operations-read-lifecycle.ts',
+  'lib/admin/operations-report-validation.ts',
+  'lib/admin/ladezustand.ts',
+  'lib/admin/system-health/bewertung.ts',
+  'lib/admin/system-health/freshness.ts',
+  'lib/admin/provider-ops-board/bewertung.ts',
+  'lib/admin/provider-ops-board/freshness.ts',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs',
+  'styles/globals.css',
+  'tailwind.config.js',
+]
+function sourceSnapshot() {
+  assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'HEAD changed during probe.')
+  assert.equal(git('status', '--porcelain'), '', 'Checkout became dirty.')
+  return Object.fromEntries(sources.map(path => {
+    const bytes = readFileSync(join(repo, path))
+    const gitBlob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+    assert.equal(gitBlob, git('rev-parse', `${expectedHead}:${path}`), `Working bytes differ from committed head: ${path}`)
+    return [path, { gitBlob, sha256: createHash('sha256').update(bytes).digest('hex') }]
+  }))
+}
+const before = sourceSnapshot()
+const require = createRequire(join(repo, 'package.json'))
+const { build } = require('esbuild')
+const { chromium } = require('playwright')
+const postcss = require('postcss')
+const nesting = require('tailwindcss/nesting')
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
+const base = Date.parse('2026-10-25T02:00:00.000Z')
+const iso = ms => new Date(ms).toISOString()
+const unreadable = 'Die Antwort des Servers war nicht lesbar.'
+const result = {
+  expectedHead, verifiedHead: git('rev-parse', 'HEAD'), repo, node: process.version,
+  scope: 'Independent external R2 GET200 and authoritative401 acceptance probe. This is not full TASK acceptance or Technical-Lead PASS.',
+  boundary: 'Existing author React harness and unchanged production boards/hook/validator/domain helpers, compiled with the reviewed esbuild/Tailwind setup. Fresh browser context per body. Local synthetic canonical props and deferred fetch only; no hosted account, Next router, Supabase/RLS, Production or personal browser/session.',
+  sourceDigestsBefore: before,
+  runnerSha256: createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex'),
+  invocation: process.argv,
+  cases: [], externalRequestAttempts: [], localRequests: [], pageErrors: [],
+  viewport: { width: 390, height: 844 }, reducedMotion: 'reduce',
+}
+function report(board, marker, checkedAt = base) {
+  const health = board === 'health'
+  const ids = health ? ['app', 'vercel', 'supabase', 'github', 'infomaniak'] : ['provider-ops', 'kill-switch', 'cost-guard', 'model-usage']
+  const fresh = ttlMs => ({ state: 'fresh', ageMs: 0, ttlMs })
+  const items = ids.map(id => ({
+    id, name: id, status: health ? (id === 'app' ? 'unknown' : 'not_configured') : (id === 'model-usage' ? 'empty' : 'foundation_only'),
+    source: 'local-independent-get401-acceptance', checkedAt: iso(checkedAt),
+    freshness: fresh(id === 'github' || id === 'infomaniak' ? 300_000 : id === 'vercel' || id === 'model-usage' ? 120_000 : 60_000),
+    summary: id === ids[0] ? marker : `${id} synthetic report`,
+    proves: 'Only this local synthetic assertion.', doesNotProve: 'No deployment, provider or Production claim.',
+  }))
+  items[0].checks = [{
+    id: health ? 'app-prozess' : 'domain-flights', name: health ? 'App-Prozess' : 'Flights',
+    status: health ? 'healthy' : 'available', source: 'local-independent-get401-acceptance', freshness: fresh(60_000),
+    summary: 'Synthetic child', proves: 'Only this child.', doesNotProve: 'No broader health claim.',
+  }]
+  return { checkedAt: iso(checkedAt), writeActions: [], items }
+}
+// Twelve required malformed-body categories, with both enum fields and both
+// timestamp fields represented separately: fourteen actual HTTP200 bodies.
+const invalidBodies = [
+  ['null', () => null],
+  ['array', () => []],
+  ['empty-object', () => ({})],
+  ['missing-card-id', value => { value.items.pop(); return value }],
+  ['duplicate-card-id', value => { value.items[1] = structuredClone(value.items[0]); return value }],
+  ['wrong-card-id', value => { value.items[0].id = 'unexpected-card'; return value }],
+  ['invalid-status-enum', value => { value.items[0].status = 'not-a-status'; return value }],
+  ['invalid-freshness-enum', value => { value.items[0].freshness.state = 'not-a-freshness'; return value }],
+  ['nonempty-write-actions', value => { value.writeActions = ['POST']; return value }],
+  ['bad-metadata-value', value => { value.items[0].metadata = { invalid: 123 }; return value }],
+  ['invalid-report-time', value => { value.checkedAt = 'not-a-time'; return value }],
+  ['invalid-card-time', value => { value.items[0].checkedAt = 'not-a-time'; return value }],
+  ['negative-age', value => { value.items[0].freshness.ageMs = -1; return value }],
+  ['ttl-above-contract', value => { value.items[0].freshness.ttlMs = 9_999_999; return value }],
+]
+const unauthorizedBodies = [
+  { name: '401-json', status: 401, body: { message: 'LOCAL-401-JSON: Nicht angemeldet.' }, expectedAlert: 'LOCAL-401-JSON: Nicht angemeldet.' },
+  { name: '401-malformed-json', status: 401, malformed: true, expectedAlert: 'Nicht angemeldet.' },
+]
+const endpoint = board => board === 'health' ? '/api/admin/system-health' : '/api/admin/provider-ops'
+const expectedCards = board => board === 'health' ? 5 : 4
+let browser
+let server
+let origin
+const settle = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+
+async function snapshot(page, markers) {
+  return page.evaluate(markers => {
+    const section = document.querySelector('[data-operations-phase]')
+    const text = document.body.textContent ?? ''
+    return {
+      phase: section?.getAttribute('data-operations-phase'), pending: section?.getAttribute('data-operations-pending'),
+      ariaBusy: section?.getAttribute('aria-busy'), refreshDisabled: document.querySelector('button')?.disabled,
+      cards: Array.from(document.querySelectorAll('[data-health-id],[data-ops-id]')).map(node => ({
+        id: node.getAttribute('data-health-id') ?? node.getAttribute('data-ops-id'),
+        checkedAt: node.getAttribute('data-health-checked-at') ?? node.getAttribute('data-ops-checked-at'),
+      })),
+      alerts: Array.from(document.querySelectorAll('[role="alert"]')).map(node => node.textContent),
+      markers: Object.fromEntries(Object.entries(markers).map(([key, value]) => [key, text.includes(value)])),
+      historicalNotice: text.includes('Die angezeigte Prüfung ist historisch und unbestätigt.'),
+      fetchCalls: window.__calls.map(call => ({ id: call.id, url: call.url, method: call.method, cache: call.cache })),
+      responses: window.__responses.map(entry => ({ ...entry })),
+      unresolvedRequestIds: window.__requests.filter(entry => !entry.resolved).map(entry => entry.id),
+    }
+  }, markers)
+}
+async function createPage(board, marker) {
+  const context = await browser.newContext({ viewport: result.viewport, reducedMotion: result.reducedMotion })
+  await context.clock.install({ time: base })
+  await context.route('**/*', route => {
+    const url = route.request().url()
+    if (new URL(url).origin !== origin) { result.externalRequestAttempts.push(url); return route.abort() }
+    result.localRequests.push(new URL(url).pathname); return route.continue()
+  })
+  await context.addInitScript(({ board, initial, source }) => {
+    window.__FALL__ = { board, anfang: initial, endpunkt: source, erlaubt: true, sichtbar: true }
+    window.__calls = []; window.__requests = []; window.__responses = []
+    window.fetch = (url, init) => {
+      const id = window.__calls.length + 1
+      window.__calls.push({ id, url: String(url), method: String(init?.method ?? 'GET').toUpperCase(), cache: init?.cache })
+      return new Promise((resolve, reject) => window.__requests.push({ id, resolved: false, resolve, reject }))
+    }
+  }, { board, initial: report(board, marker), source: endpoint(board) })
+  const page = await context.newPage()
+  page.setDefaultTimeout(8000)
+  page.on('pageerror', error => result.pageErrors.push({ board, error: String(error) }))
+  await page.goto(origin, { waitUntil: 'load' })
+  await page.waitForFunction(marker => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'aktuell' && document.body.textContent.includes(marker), marker)
+  return { page, context }
+}
+async function startRead(page, board, id, markers) {
+  assert.equal(await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).isDisabled(), false)
+  await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).click()
+  await page.waitForFunction(id => window.__calls.length === id && document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending') === 'true', id)
+  const pending = await snapshot(page, markers)
+  assert.equal(pending.pending, 'true')
+  assert.equal(pending.ariaBusy, 'true')
+  assert.equal(pending.refreshDisabled, true)
+  assert.deepEqual(pending.unresolvedRequestIds, [id])
+  assert.deepEqual(pending.fetchCalls.at(-1), { id, url: endpoint(board), method: 'GET', cache: 'no-store' })
+  return pending
+}
+async function respond(page, id, spec) {
+  await page.evaluate(({ id, spec }) => {
+    const request = window.__requests.find(entry => entry.id === id && !entry.resolved)
+    if (!request) throw new Error(`No unresolved local request ${id}`)
+    request.resolved = true
+    const record = { id, status: spec.status, malformed: !!spec.malformed, jsonAttempted: false, jsonReturned: false, jsonThrew: false }
+    window.__responses.push(record)
+    request.resolve({
+      status: spec.status, ok: spec.status >= 200 && spec.status < 300,
+      json: async () => {
+        record.jsonAttempted = true
+        if (spec.malformed) { record.jsonThrew = true; throw new SyntaxError('Local malformed JSON fixture') }
+        record.jsonReturned = true
+        return spec.body
+      },
+    })
+  }, { id, spec })
+}
+async function waitSettled(page, phase) {
+  await page.waitForFunction(phase => {
+    const section = document.querySelector('[data-operations-phase]')
+    return section?.getAttribute('data-operations-phase') === phase && section?.getAttribute('data-operations-pending') === 'false' && document.querySelector('button')?.disabled === false
+  }, phase)
+  await settle(page)
+}
+async function runCase(board, spec) {
+  let page
+  let context
+  const markers = { baseline: `BASELINE-${board}-${spec.name}`, malformed: `INVALID-MUST-NOT-RENDER-${board}-${spec.name}`, recovery: `RECOVERED-${board}-${spec.name}` }
+  try {
+    ({ page, context } = await createPage(board, markers.baseline))
+    const initial = await snapshot(page, markers)
+    assert.equal(initial.phase, 'aktuell')
+    assert.equal(initial.pending, 'false')
+    assert.equal(initial.cards.length, expectedCards(board))
+    assert.equal(initial.markers.baseline, true)
+    assert.equal(initial.fetchCalls.length, 0)
+    assert.deepEqual(initial.alerts, [])
+    const pending = await startRead(page, board, 1, markers)
+    const body = spec.mutate ? spec.mutate(report(board, markers.malformed)) : spec.body
+    await respond(page, 1, { status: spec.status, body, malformed: spec.malformed })
+    await waitSettled(page, spec.status === 200 ? 'historisch' : 'verweigert')
+    const settled = await snapshot(page, markers)
+    assert.equal(settled.pending, 'false')
+    assert.equal(settled.ariaBusy, 'false')
+    assert.equal(settled.refreshDisabled, false)
+    assert.equal(settled.fetchCalls.length, 1)
+    assert.deepEqual(settled.unresolvedRequestIds, [])
+    assert.equal(settled.responses.length, 1)
+    assert.equal(settled.responses[0].id, 1)
+    assert.equal(settled.responses[0].jsonAttempted, true)
+    assert.equal(settled.markers.malformed, false)
+    if (spec.status === 200) {
+      assert.equal(settled.responses[0].jsonReturned, true)
+      assert.equal(settled.responses[0].jsonThrew, false)
+      assert.equal(settled.phase, 'historisch')
+      assert.deepEqual(settled.cards, initial.cards)
+      assert.equal(settled.markers.baseline, true)
+      assert.equal(settled.historicalNotice, true)
+      assert.deepEqual(settled.alerts, [unreadable])
+    } else {
+      assert.equal(settled.phase, 'verweigert')
+      assert.equal(settled.cards.length, 0)
+      assert.equal(settled.markers.baseline, false)
+      assert.equal(settled.historicalNotice, false)
+      assert.deepEqual(settled.alerts, [spec.expectedAlert])
+      assert.equal(settled.responses[0].jsonThrew, !!spec.malformed)
+    }
+    const recoveryPending = await startRead(page, board, 2, markers)
+    await respond(page, 2, { status: 200, body: report(board, markers.recovery, await page.evaluate(() => Date.now())) })
+    await waitSettled(page, 'aktuell')
+    const recovered = await snapshot(page, markers)
+    assert.equal(recovered.markers.recovery, true)
+    assert.equal(recovered.markers.baseline, false)
+    assert.equal(recovered.markers.malformed, false)
+    assert.equal(recovered.cards.length, expectedCards(board))
+    assert.equal(recovered.historicalNotice, false)
+    assert.deepEqual(recovered.alerts, [])
+    assert.equal(recovered.fetchCalls.length, 2)
+    assert.deepEqual(recovered.unresolvedRequestIds, [])
+    assert.equal(recovered.responses[1].id, 2)
+    assert.equal(recovered.responses[1].jsonReturned, true)
+    result.cases.push({ board, name: spec.name, status: spec.status, accepted: true, requestBodySha256: spec.malformed ? null : createHash('sha256').update(JSON.stringify(body)).digest('hex'), initial, pending, settled, recoveryPending, recovered })
+    console.log(`GET401_CASE_ACCEPTED ${board} ${spec.name}`)
+  } catch (error) {
+    result.cases.push({ board, name: spec.name, status: spec.status, accepted: false, failure: String(error?.stack ?? error), observed: page ? await snapshot(page, markers).catch(() => null) : null })
+    console.error(`GET401_CASE_FAILED ${board} ${spec.name}: ${String(error)}`)
+  } finally { await context?.close() }
+}
+
+try {
+  const bundle = await build({
+    absWorkingDir: repo, entryPoints: [join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx')],
+    bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic', alias: { '@': repo },
+    define: { 'process.env.NODE_ENV': '"production"' }, logLevel: 'silent',
+    plugins: [{ name: 'same-author-server-only-boundary', setup(api) {
+      api.onResolve({ filter: /^server-only$/ }, () => ({ path: join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts') }))
+    } }],
+  })
+  const globals = join(repo, 'styles/globals.css')
+  const css = (await postcss([nesting(), tailwindcss(require(join(repo, 'tailwind.config.js'))), autoprefixer()]).process(readFileSync(globals, 'utf8'), { from: globals })).css
+  const html = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/styles.css"></head><body><div id="root"></div><script src="/harness.js"></script></body></html>'
+  server = createServer((req, res) => {
+    const path = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
+    const asset = path === '/' ? ['text/html', html] : path === '/harness.js' ? ['text/javascript', bundle.outputFiles[0].contents] : path === '/styles.css' ? ['text/css', css] : null
+    if (!asset) { res.writeHead(404); res.end(); return }
+    res.writeHead(200, { 'content-type': `${asset[0]}; charset=utf-8`, 'cache-control': 'no-store' }); res.end(asset[1])
+  })
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
+  origin = `http://127.0.0.1:${server.address().port}`
+  result.origin = origin
+  browser = await chromium.launch({ headless: true })
+  result.browser = browser.version()
+  result.browserLaunch = { headless: true, addedFlags: [] }
+  const specs = [...invalidBodies.map(([name, mutate]) => ({ name, mutate, status: 200 })), ...unauthorizedBodies]
+  result.expectedCases = specs.length * 2
+  for (const board of ['health', 'ops']) for (const spec of specs) await runCase(board, spec)
+  assert.equal(result.cases.length, 32)
+  assert.ok(result.cases.every(entry => entry.accepted), 'At least one independent response case failed.')
+  assert.deepEqual(result.externalRequestAttempts, [])
+  assert.deepEqual(result.pageErrors, [])
+  result.explicitFetchesObserved = result.cases.reduce((count, entry) => count + entry.recovered.fetchCalls.length, 0)
+  assert.equal(result.explicitFetchesObserved, 64)
+  result.outcome = '32_FOCUSED_GET200_AND_401_CASES_PASSED_NOT_FULL_TASK_OR_TL_PASS'
+} catch (error) {
+  result.outcome = 'GET200_401_ACCEPTANCE_FAILED_OR_INCOMPLETE'
+  result.failure = String(error?.stack ?? error)
+  process.exitCode = 1
+} finally {
+  await browser?.close()
+  if (server?.listening) await new Promise(resolve => server.close(resolve))
+  try {
+    result.sourceDigestsAfter = sourceSnapshot()
+    assert.deepEqual(result.sourceDigestsAfter, before, 'Sources changed during execution.')
+    result.sourceBindingVerified = true
+  } catch (error) {
+    result.sourceBindingVerified = false
+    result.sourceBindingFailure = String(error?.stack ?? error)
+    result.outcome = 'SOURCE_BINDING_FAILED'
+    process.exitCode = 1
+  }
+  result.exit = process.exitCode ?? 0
+  writeFileSync(destination, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify({ outcome: result.outcome, expectedHead, verifiedHead: result.verifiedHead, browser: result.browser, expectedCases: result.expectedCases, acceptedCases: result.cases.filter(entry => entry.accepted).length, totalCases: result.cases.length, explicitFetchesObserved: result.explicitFetchesObserved, externalRequestAttempts: result.externalRequestAttempts.length, pageErrors: result.pageErrors.length, sourceBindingVerified: result.sourceBindingVerified, exit: result.exit, evidence: destination }, null, 2))
+}

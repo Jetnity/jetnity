@@ -1,0 +1,353 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+import { createServer } from 'node:http'
+import { createRequire } from 'node:module'
+import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { isAbsolute, join } from 'node:path'
+
+const help = 'Usage: PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers <node22> /tmp/r106-review-evidence/admin-mounted-acceptance.mjs --repo /absolute/clean/review/checkout --head FULL_NEW_40_CHARACTER_SHA\nCreates a uniquely named JSON under /tmp/r106-review-evidence; never overwrites the original counterexamples. Executes eight focused mounted acceptance cases, not the full author acceptance matrix.'
+const args = process.argv.slice(2)
+if (args.length === 1 && args[0] === '--help') { console.log(help); process.exit(0) }
+assert.equal(args.length, 4, help)
+const options = {}
+for (let index = 0; index < args.length; index += 2) {
+  assert.ok(['--repo', '--head'].includes(args[index]), help)
+  assert.equal(options[args[index]], undefined, `Duplicate ${args[index]}`)
+  options[args[index]] = args[index + 1]
+}
+assert.ok(options['--repo'] && isAbsolute(options['--repo']), help)
+assert.match(options['--head'] ?? '', /^[0-9a-f]{40}$/, help)
+assert.notEqual(options['--head'], 'c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da', 'Refusing to label the known-defective original head as a new acceptance target.')
+assert.match(process.version, /^v22\./, 'Use the requested Node 22 runtime.')
+const repo = realpathSync(options['--repo'])
+const expectedHead = options['--head']
+const git = (...gitArgs) => execFileSync('git', gitArgs, { cwd: repo, encoding: 'utf8' }).trim()
+assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'Checkout HEAD differs from explicit --head.')
+assert.equal(git('status', '--porcelain'), '', 'Acceptance requires a clean checkout.')
+const destination = `/tmp/r106-review-evidence/admin-mounted-acceptance-${expectedHead.slice(0, 12)}-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+assert.equal(existsSync(destination), false, 'Existing evidence must never be overwritten.')
+const sourcePaths = [
+  'components/admin/system-health/SystemHealthBoard.tsx',
+  'components/admin/provider-ops/ProviderOpsBoard.tsx',
+  'components/admin/operations/useOperationsReport.ts',
+  'lib/admin/operations-read-lifecycle.ts',
+  'lib/admin/operations-report-validation.ts',
+  'lib/admin/ladezustand.ts',
+  'lib/admin/system-health/bewertung.ts',
+  'lib/admin/system-health/freshness.ts',
+  'lib/admin/provider-ops-board/bewertung.ts',
+  'lib/admin/provider-ops-board/freshness.ts',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts',
+  'styles/globals.css',
+  'tailwind.config.js',
+]
+function sourceSnapshot() {
+  assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'HEAD changed during acceptance.')
+  assert.equal(git('status', '--porcelain'), '', 'Checkout became dirty during acceptance.')
+  return Object.fromEntries(sourcePaths.map(path => {
+    const bytes = readFileSync(join(repo, path))
+    const expectedGitBlob = git('rev-parse', `${expectedHead}:${path}`)
+    const actualGitBlob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+    assert.equal(actualGitBlob, expectedGitBlob, `Source differs from explicit committed head: ${path}`)
+    return [path, { gitBlob: actualGitBlob, sha256: createHash('sha256').update(bytes).digest('hex') }]
+  }))
+}
+const sourcesBefore = sourceSnapshot()
+const require = createRequire(join(repo, 'package.json'))
+const { build } = require('esbuild')
+const { chromium } = require('playwright')
+const postcss = require('postcss')
+const nesting = require('tailwindcss/nesting')
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
+const base = Date.parse('2026-10-25T02:00:00.000Z')
+const iso = value => new Date(value).toISOString()
+const result = {
+  expectedHead,
+  verifiedHead: git('rev-parse', 'HEAD'),
+  repo,
+  node: process.version,
+  scope: 'Eight focused independent mounted acceptance cases on both real Admin boards, using their real hook and domain hint helpers. This is not full TASK acceptance or TL PASS.',
+  boundaries: 'Existing author harness and actual project CSS. Synthetic canonical props, controlled local clocks and deferred window.fetch; no hosted data, Next router, Supabase/RLS, Production, personal session or launch proof.',
+  sourceDigestsBefore: sourcesBefore,
+  runnerSha256: createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex'),
+  invocation: process.argv,
+  cases: [], externalRequestAttempts: [], localRequests: [], pageErrors: [],
+  viewport: { width: 390, height: 844 }, reducedMotion: 'reduce',
+}
+
+function report(board, marker = 'INITIAL-ACCEPTED-REPORT', checkedAt = base) {
+  const health = board === 'health'
+  const ids = health ? ['app', 'vercel', 'supabase', 'github', 'infomaniak'] : ['provider-ops', 'kill-switch', 'cost-guard', 'model-usage']
+  const fresh = ttlMs => ({ state: 'fresh', ageMs: 0, ttlMs })
+  const items = ids.map(id => ({
+    id, name: id,
+    status: health ? (id === 'app' ? 'unknown' : 'not_configured') : (id === 'model-usage' ? 'empty' : 'foundation_only'),
+    source: 'local-independent-acceptance', checkedAt: iso(checkedAt),
+    freshness: fresh(id === 'github' || id === 'infomaniak' ? 300_000 : id === 'vercel' || id === 'model-usage' ? 120_000 : 60_000),
+    summary: id === ids[0] ? marker : `${id} synthetic report`,
+    proves: 'Only this local synthetic assertion.', doesNotProve: 'No deployment, provider integration or Production.',
+  }))
+  items[0].checks = [{
+    id: health ? 'app-prozess' : 'domain-flights', name: health ? 'App-Prozess' : 'Flights',
+    status: health ? 'healthy' : 'available', source: 'local-independent-acceptance', freshness: fresh(60_000),
+    summary: 'Synthetic child', proves: 'Only the synthetic child.', doesNotProve: 'No broader health claim.',
+  }]
+  return { checkedAt: iso(checkedAt), writeActions: [], items }
+}
+const endpoint = board => board === 'health' ? '/api/admin/system-health' : '/api/admin/provider-ops'
+const selected = board => board === 'health'
+  ? { card: '[data-health-id="app"]', other: '[data-health-id="vercel"]', child: '[data-health-check="app-prozess"]', freshness: 'data-health-freshness', checkedAt: 'data-health-checked-at', green: 'data-health-green' }
+  : { card: '[data-ops-id="provider-ops"]', other: '[data-ops-id="kill-switch"]', child: '[data-ops-check="domain-flights"]', freshness: 'data-ops-freshness', checkedAt: 'data-ops-checked-at', green: 'data-ops-green' }
+let browser
+let server
+let origin
+const settle = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+const waitMarker = (page, marker) => page.waitForFunction(marker => document.body.textContent.includes(marker), marker)
+async function snapshot(page, board) {
+  return page.evaluate(selectors => ({
+    phase: document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase'),
+    pending: document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending'),
+    refreshDisabled: document.querySelector('button')?.disabled,
+    cardFreshness: document.querySelector(selectors.card)?.getAttribute(selectors.freshness),
+    otherFreshness: document.querySelector(selectors.other)?.getAttribute(selectors.freshness),
+    childFreshness: document.querySelector(selectors.child)?.getAttribute(selectors.freshness),
+    childGreen: document.querySelector(selectors.child)?.getAttribute(selectors.green),
+    cardCheckedAt: document.querySelector(selectors.card)?.getAttribute(selectors.checkedAt),
+    cardCount: document.querySelectorAll('[data-health-id], [data-ops-id]').length,
+    wall: Date.now(), monotonicFinite: Number.isFinite(performance.now()),
+    fetchCalls: window.__calls.map(call => ({ url: call.url, cache: call.cache, signalAborted: call.signal?.aborted ?? null })),
+    responsesResolved: window.__resolved, responseBodiesRead: window.__bodiesRead,
+    propsWaiters: window.__propsWaiters.length, text: document.body.textContent,
+  }), selected(board))
+}
+async function createPage(board, { held = false, initial = report(board) } = {}) {
+  const context = await browser.newContext({ viewport: result.viewport, reducedMotion: result.reducedMotion })
+  await context.clock.install({ time: base })
+  await context.route('**/*', route => {
+    const url = route.request().url()
+    if (new URL(url).origin !== origin) { result.externalRequestAttempts.push(url); return route.abort() }
+    result.localRequests.push(new URL(url).pathname)
+    return route.continue()
+  })
+  await context.addInitScript(({ board, initial, held, source }) => {
+    window.__FALL__ = { board, anfang: initial, endpunkt: source, erlaubt: true, sichtbar: true }
+    window.__calls = []; window.__requests = []; window.__propsWaiters = []
+    window.__resolved = 0; window.__bodiesRead = 0
+    window.fetch = (url, init) => {
+      window.__calls.push({ url: String(url), cache: init?.cache, signal: init?.signal })
+      return new Promise((resolve, reject) => window.__requests.push({ resolve, reject }))
+    }
+    if (held) window.__JETNITY_OPS_PROPS_SPERRE__ = () => new Promise(resolve => window.__propsWaiters.push(resolve))
+  }, { board, initial, held, source: endpoint(board) })
+  const page = await context.newPage()
+  page.setDefaultTimeout(8000)
+  page.on('pageerror', error => result.pageErrors.push({ board, error: String(error) }))
+  await page.goto(origin, { waitUntil: 'load' })
+  await page.waitForFunction(() => typeof window.__setze === 'function')
+  return { page, context }
+}
+async function resolveGet(page, body) {
+  await page.evaluate(body => {
+    const request = window.__requests.shift()
+    if (!request) throw new Error('Expected one pending local fetch')
+    window.__resolved++
+    request.resolve({ ok: true, status: 200, json: async () => { window.__bodiesRead++; return body } })
+  }, body)
+  // Correct implementations may discard a stale response before reading its body.
+  await settle(page)
+}
+async function explicitCurrentRead(page, board, marker, expectedCalls) {
+  const button = page.getByRole('button', { name: 'Erneut prüfen', exact: true })
+  assert.equal(await button.isDisabled(), false)
+  await button.click()
+  await page.waitForFunction(count => window.__calls.length === count, expectedCalls)
+  const pending = await snapshot(page, board)
+  assert.equal(pending.pending, 'true')
+  assert.equal(pending.fetchCalls.length, expectedCalls)
+  assert.equal(pending.fetchCalls.at(-1).url, endpoint(board))
+  assert.equal(pending.fetchCalls.at(-1).cache, 'no-store')
+  await resolveGet(page, report(board, marker, await page.evaluate(() => Date.now())))
+  await waitMarker(page, marker)
+  const accepted = await snapshot(page, board)
+  assert.equal(accepted.phase, 'aktuell')
+  assert.equal(accepted.pending, 'false')
+  assert.equal(accepted.refreshDisabled, false)
+  return accepted
+}
+async function caseFor(name, board, options, fn) {
+  let context
+  let page
+  try {
+    ({ page, context } = await createPage(board, options))
+    const observations = await fn(page)
+    result.cases.push({ name, board, accepted: true, observations })
+    console.log(`FOCUSED_CASE_ACCEPTED ${board} ${name}`)
+  } catch (error) {
+    const observed = page ? await snapshot(page, board).catch(() => null) : null
+    result.cases.push({ name, board, accepted: false, observed, failure: String(error?.stack ?? error) })
+    console.error(`FOCUSED_CASE_FAILED ${board} ${name}: ${String(error)}`)
+  } finally { await context?.close() }
+}
+
+try {
+  const bundle = await build({
+    absWorkingDir: repo, entryPoints: [join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx')],
+    bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic', alias: { '@': repo },
+    define: { 'process.env.NODE_ENV': '"production"' }, logLevel: 'silent',
+    plugins: [{ name: 'same-author-server-only-boundary', setup(api) {
+      api.onResolve({ filter: /^server-only$/ }, () => ({ path: join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts') }))
+    } }],
+  })
+  const globals = join(repo, 'styles/globals.css')
+  const css = (await postcss([nesting(), tailwindcss(require(join(repo, 'tailwind.config.js'))), autoprefixer()])
+    .process(readFileSync(globals, 'utf8'), { from: globals })).css
+  const html = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/styles.css"></head><body><div id="root"></div><script src="/harness.js"></script></body></html>'
+  server = createServer((req, res) => {
+    const path = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
+    const asset = path === '/' ? ['text/html', html] : path === '/harness.js' ? ['text/javascript', bundle.outputFiles[0].contents] : path === '/styles.css' ? ['text/css', css] : null
+    if (!asset) { res.writeHead(404); res.end(); return }
+    res.writeHead(200, { 'content-type': `${asset[0]}; charset=utf-8`, 'cache-control': 'no-store' }); res.end(asset[1])
+  })
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
+  origin = `http://127.0.0.1:${server.address().port}`
+  result.origin = origin
+  browser = await chromium.launch({ headless: true })
+  result.browser = browser.version()
+  result.browserLaunch = { headless: true, addedFlags: [] }
+
+  for (const board of ['health', 'ops']) {
+    await caseFor('GET-retains-authority-over-new-initial-props-and-refresh-recovers', board, { held: true }, async page => {
+      await page.waitForFunction(() => window.__propsWaiters.length === 1)
+      await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).click()
+      await page.waitForFunction(() => window.__calls.length === 1)
+      await page.evaluate(initial => window.__setze({ anfang: initial }), report(board, 'NEW-PROPS-MUST-NOT-SUPERSEDE-GET'))
+      await settle(page)
+      // The fixed implementation may correctly decline to begin a second props run.
+      await page.evaluate(() => window.__propsWaiters.splice(0).forEach(resolve => resolve()))
+      await settle(page)
+      const pending = await snapshot(page, board)
+      assert.equal(pending.pending, 'true')
+      assert.equal(pending.refreshDisabled, true)
+      assert.equal(pending.cardCount, 0)
+      assert.equal(pending.fetchCalls.length, 1)
+      await resolveGet(page, report(board, 'AUTHORITATIVE-GET-WINS'))
+      await waitMarker(page, 'AUTHORITATIVE-GET-WINS')
+      const accepted = await snapshot(page, board)
+      assert.equal(accepted.phase, 'aktuell')
+      assert.equal(accepted.pending, 'false')
+      assert.equal(accepted.refreshDisabled, false)
+      assert.doesNotMatch(accepted.text, /NEW-PROPS-MUST-NOT-SUPERSEDE-GET/)
+      const retryAccepted = await explicitCurrentRead(page, board, 'SECOND-EXPLICIT-GET-ACCEPTED', 2)
+      return { pending, accepted, retryAccepted }
+    })
+
+    await caseFor('endpoint-A-B-A-permanently-invalidates-old-generation-and-new-GET-recovers', board, {}, async page => {
+      await page.locator(selected(board).card).waitFor()
+      await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).click()
+      await page.waitForFunction(() => window.__calls.length === 1)
+      await page.evaluate(() => window.__setze({ endpunkt: '/api/admin/local-other-source' }))
+      await page.waitForFunction(() => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'historisch')
+      await page.evaluate(source => window.__setze({ endpunkt: source }), endpoint(board))
+      await settle(page)
+      await resolveGet(page, report(board, 'OBSOLETE-A-MUST-NOT-COMMIT'))
+      const afterOldResponse = await snapshot(page, board)
+      assert.equal(afterOldResponse.phase, 'historisch')
+      assert.equal(afterOldResponse.pending, 'false')
+      assert.equal(afterOldResponse.refreshDisabled, false)
+      assert.equal(afterOldResponse.fetchCalls.length, 1)
+      assert.match(afterOldResponse.text, /INITIAL-ACCEPTED-REPORT/)
+      assert.doesNotMatch(afterOldResponse.text, /OBSOLETE-A-MUST-NOT-COMMIT/)
+      const currentAccepted = await explicitCurrentRead(page, board, 'CURRENT-A-GET-ACCEPTED', 2)
+      return { afterOldResponse, currentAccepted }
+    })
+
+    const futureCard = report(board, 'FUTURE-CARD-ONLY')
+    futureCard.items[0].checkedAt = iso(base + 120_000)
+    await caseFor('future-card-and-children-latch-unknown-until-new-authoritative-GET', board, { initial: futureCard }, async page => {
+      await page.locator(selected(board).card).waitFor()
+      const initial = await snapshot(page, board)
+      assert.ok(Date.parse(futureCard.checkedAt) <= initial.wall)
+      assert.ok(Date.parse(initial.cardCheckedAt) > initial.wall)
+      assert.equal(initial.cardFreshness, 'unknown')
+      assert.equal(initial.childFreshness, 'unknown')
+      assert.equal(initial.childGreen, 'false')
+      assert.equal(initial.otherFreshness, 'fresh')
+      assert.equal(initial.fetchCalls.length, 0)
+      await page.clock.setSystemTime(base + 180_000)
+      await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+      await settle(page)
+      const afterWallPassesTimestamp = await snapshot(page, board)
+      assert.equal(afterWallPassesTimestamp.cardFreshness, 'unknown')
+      assert.equal(afterWallPassesTimestamp.childFreshness, 'unknown')
+      assert.equal(afterWallPassesTimestamp.childGreen, 'false')
+      assert.equal(afterWallPassesTimestamp.fetchCalls.length, 0)
+      const newlyAccepted = await explicitCurrentRead(page, board, 'NEW-TRUSTWORTHY-CARD-REPORT', 1)
+      assert.equal(newlyAccepted.cardFreshness, 'fresh')
+      assert.equal(newlyAccepted.childFreshness, 'fresh')
+      assert.equal(newlyAccepted.childGreen, 'true')
+      return { initial, afterWallPassesTimestamp, newlyAccepted }
+    })
+
+    await caseFor('invalid-monotonic-accept-clock-latches-unknown-despite-valid-wall', board, { held: true }, async page => {
+      await page.waitForFunction(() => window.__propsWaiters.length === 1)
+      await page.evaluate(() => {
+        window.__originalMono = performance.now.bind(performance)
+        performance.now = () => Number.NaN
+        window.__propsWaiters.splice(0).forEach(resolve => resolve())
+      })
+      await page.locator(selected(board).card).waitFor()
+      const invalidMonoAtAcceptance = await snapshot(page, board)
+      assert.ok(Number.isFinite(invalidMonoAtAcceptance.wall))
+      assert.equal(invalidMonoAtAcceptance.monotonicFinite, false)
+      assert.equal(invalidMonoAtAcceptance.cardFreshness, 'unknown')
+      assert.equal(invalidMonoAtAcceptance.childFreshness, 'unknown')
+      assert.equal(invalidMonoAtAcceptance.childGreen, 'false')
+      assert.equal(invalidMonoAtAcceptance.fetchCalls.length, 0)
+      await page.evaluate(() => {
+        performance.now = window.__originalMono
+        document.dispatchEvent(new Event('visibilitychange'))
+      })
+      await page.clock.runFor(1000)
+      await settle(page)
+      const afterClockRecovery = await snapshot(page, board)
+      assert.equal(afterClockRecovery.monotonicFinite, true)
+      assert.equal(afterClockRecovery.cardFreshness, 'unknown')
+      assert.equal(afterClockRecovery.childFreshness, 'unknown')
+      assert.equal(afterClockRecovery.childGreen, 'false')
+      assert.equal(afterClockRecovery.fetchCalls.length, 0)
+      const newlyAccepted = await explicitCurrentRead(page, board, 'NEW-REPORT-WITH-VALID-CLOCKS', 1)
+      assert.equal(newlyAccepted.cardFreshness, 'fresh')
+      assert.equal(newlyAccepted.childFreshness, 'fresh')
+      assert.equal(newlyAccepted.childGreen, 'true')
+      return { invalidMonoAtAcceptance, afterClockRecovery, newlyAccepted }
+    })
+  }
+  assert.equal(result.cases.length, 8)
+  assert.ok(result.cases.every(entry => entry.accepted), 'One or more focused acceptance cases failed.')
+  assert.deepEqual(result.externalRequestAttempts, [])
+  assert.deepEqual(result.pageErrors, [])
+  result.outcome = 'EIGHT_FOCUSED_ACCEPTANCE_CASES_PASSED_NOT_FULL_TASK_OR_TL_PASS'
+} catch (error) {
+  result.outcome = 'FOCUSED_ACCEPTANCE_FAILED_OR_INCOMPLETE'
+  result.failure = String(error?.stack ?? error)
+  process.exitCode = 1
+} finally {
+  await browser?.close()
+  if (server?.listening) await new Promise(resolve => server.close(resolve))
+  try {
+    result.sourceDigestsAfter = sourceSnapshot()
+    assert.deepEqual(result.sourceDigestsAfter, sourcesBefore, 'Source hashes changed during execution.')
+    result.sourceBindingVerified = true
+  } catch (error) {
+    result.sourceBindingVerified = false
+    result.sourceBindingFailure = String(error?.stack ?? error)
+    result.outcome = 'SOURCE_BINDING_FAILED'
+    process.exitCode = 1
+  }
+  result.exit = process.exitCode ?? 0
+  writeFileSync(destination, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify({ outcome: result.outcome, expectedHead, verifiedHead: result.verifiedHead, browser: result.browser, cases: result.cases.map(({ name, board, accepted }) => ({ name, board, accepted })), externalRequestAttempts: result.externalRequestAttempts.length, pageErrors: result.pageErrors.length, sourceBindingVerified: result.sourceBindingVerified, exit: result.exit, evidence: destination }, null, 2))
+}

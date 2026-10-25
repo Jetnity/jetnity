@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
+import { isAbsolute, join, relative, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { argumentsForRun, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+
+const options = argumentsForRun()
+const context = prepareRun(options, [
+  'components/trips/EigeneReisevorbereitung.tsx',
+  'components/trips/usePersonalPreparationLifecycle.ts',
+  'lib/readiness/personal-preparation-workflow.ts',
+  'scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx',
+])
+assert.ok(options.bundle && isAbsolute(options.bundle), '--bundle absolute external destination is required')
+assert.ok(!existsSync(options.bundle), 'Do not overwrite prior review bundles')
+assert.ok(relative(context.repo, options.bundle).startsWith('../'), 'Bundle must remain outside the tracked checkout')
+const imported = await import(pathToFileURL(join(context.repo, 'node_modules/esbuild/lib/main.js')).href)
+const esbuild = imported.build ? imported : imported.default
+const result = await esbuild.build({
+  absWorkingDir: context.repo,
+  entryPoints: ['scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx'],
+  outfile: options.bundle,
+  bundle: true,
+  format: 'iife',
+  jsx: 'automatic',
+  alias: { '@': context.repo },
+  define: { 'process.env.NODE_ENV': '"production"' },
+  banner: { js: 'globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};' },
+  metafile: true,
+})
+for (const input of Object.keys(result.metafile.inputs)) {
+  if (input.split(/[\\/]/).includes('node_modules')) continue
+  const path = relative(context.repo, resolve(context.repo, input))
+  assert.ok(!path.startsWith('../') && !isAbsolute(path), `Unexpected non-repository source input ${input}`)
+  context.verifySource(path)
+}
+writeReport(options, {
+  purpose: 'Traceable review-only synthetic Host bundle, not Workspace integration proof',
+  repo: context.repo,
+  head: context.head,
+  node: process.version,
+  generatedAt: new Date().toISOString(),
+  bundle: options.bundle,
+  bundleSha256: sha256(options.bundle),
+  sourceBlobs: context.verifiedSources,
+  entry: 'scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx',
+})

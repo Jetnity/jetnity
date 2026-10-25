@@ -1,0 +1,19 @@
+--- scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs@2e67d1b994900da6db9e99140ab1cc772b68badb
++++ adapted-author-runner.mjs
+@@ -13,7 +13,7 @@
+ 
+ const require = createRequire(import.meta.url)
+ const wurzel = process.cwd()
+-const nachweis = join(wurzel, 'docs/evidence/admin-operations-evidence-lifecycle-completion-1')
++const nachweis = "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/author-evidence"
+ const BASIS = Date.parse('2026-10-25T02:00:00.000Z')
+ const LANG = 'Nachweisgrenze'.repeat(280)
+ const browserPfad = process.env.OPERATIONS_EVIDENCE_CHROMIUM
+@@ -1047,7 +1047,6 @@
+   const browser = await chromium.launch({
+     executablePath: browserPfad,
+     headless: true,
+-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+   })
+   try {
+     for (const eintrag of faelle) {

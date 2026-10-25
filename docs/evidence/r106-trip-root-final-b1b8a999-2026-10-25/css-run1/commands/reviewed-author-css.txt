@@ -1,0 +1,6 @@
+Error: fatal: ambiguous argument 'origin/main': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+
+    at git (/tmp/jetnity-r106-t-final-review/scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts:31:36)
+    at ablauf (/tmp/jetnity-r106-t-final-review/scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts:286:13)

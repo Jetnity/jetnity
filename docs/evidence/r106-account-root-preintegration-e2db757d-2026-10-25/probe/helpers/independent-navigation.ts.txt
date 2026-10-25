@@ -1,0 +1,8 @@
+
+export function useRouter() { return {
+  refresh() { (window as any).__accountReview.refreshes++; return undefined; },
+  push() { throw new Error('Unexpected router.push in bounded account probe'); },
+  replace() { throw new Error('Unexpected router.replace in bounded account probe'); },
+}; }
+export function usePathname() { return '/account/travellers'; }
+export function useSearchParams() { return new URLSearchParams(); }

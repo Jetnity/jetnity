@@ -1,0 +1,24 @@
+
+const state = (window as any).__accountReview ??= { calls: [], pending: new Map(), settlements: [], refreshes: 0, version: 0 };
+state.settle = (id: number, kind: string) => {
+  const attempt = state.pending.get(id);
+  if (!attempt) throw new Error('Missing pending action ' + id);
+  state.pending.delete(id);
+  state.settlements.push({ id, kind });
+  if (kind === 'reject') attempt.reject(new Error('Independent real deferred action rejection'));
+  else if (kind === 'success') attempt.resolve({ ok: true, wert: null });
+  else throw new Error('Invalid settlement');
+};
+function call(name: string, argument: unknown) {
+  const id = state.calls.length + 1;
+  state.calls.push({ id, name, argument: structuredClone(argument) });
+  return new Promise((resolve, reject) => state.pending.set(id, { resolve, reject }));
+}
+export const registryTravellerAnlegen = (value: unknown) => call('traveller-anlegen', value);
+export const registryTravellerAendern = (value: unknown) => call('traveller-aendern', value);
+export const registryTravellerLoeschen = (value: unknown) => call('traveller-loeschen', value);
+export const registryCitizenshipAnlegen = (value: unknown) => call('citizenship-anlegen', value);
+export const registryCitizenshipLoeschen = (value: unknown) => call('citizenship-loeschen', value);
+export const registryDocumentAnlegen = (value: unknown) => call('document-anlegen', value);
+export const registryDocumentAendern = (value: unknown) => call('document-aendern', value);
+export const registryDocumentLoeschen = (value: unknown) => call('document-loeschen', value);

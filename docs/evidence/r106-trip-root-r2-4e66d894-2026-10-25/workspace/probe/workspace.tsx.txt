@@ -1,0 +1,188 @@
+// External independent fixture. No product source is replaced here.
+import { useEffect, useRef, useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import TripWorkspace from '@/components/trips/TripWorkspace'
+import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
+import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
+import { aktiveV3GastreiseLesen, gastreiseSpeichern, SCHLUESSEL } from '@/lib/trips/gastspeicher'
+import { PERSONAL_AKTUALISIEREN, PERSONAL_VERWERFEN } from '@/lib/readiness/personal-preparation-workflow'
+import type { Trip } from '@/types/trips'
+
+const testWindow = window as any
+const seedRef = 'preparation-r4-existing'
+const siblingRef = 'entry-r4-sibling'
+const nativeStorage = {
+  get: Storage.prototype.getItem,
+  set: Storage.prototype.setItem,
+  remove: Storage.prototype.removeItem,
+}
+let phase = 'setup'
+let unreadable = false
+const storageEvents: any[] = []
+const actions: any[] = []
+const reads: any[] = []
+const settlements: any[] = []
+const forms: any[] = []
+const clicks: any[] = []
+testWindow.__T_R4_ROUTER__ = []
+
+function inPhase<T>(name: string, action: () => T): T {
+  const before = phase
+  phase = name
+  try { return action() } finally { phase = before }
+}
+function rawBytes() { return nativeStorage.get.call(window.localStorage, SCHLUESSEL.aktiv) }
+Storage.prototype.getItem = function (key: string) {
+  if (this === window.localStorage) {
+    storageEvents.push({ kind: 'get', key, phase, injectedUnreadable: unreadable && key === SCHLUESSEL.aktiv })
+    if (unreadable && key === SCHLUESSEL.aktiv) throw new DOMException('Synthetic storage read denial', 'SecurityError')
+  }
+  return nativeStorage.get.call(this, key)
+}
+Storage.prototype.setItem = function (key: string, value: string) {
+  if (this === window.localStorage) storageEvents.push({ kind: 'set', key, phase, valueBytes: String(value).length })
+  return nativeStorage.set.call(this, key, value)
+}
+Storage.prototype.removeItem = function (key: string) {
+  if (this === window.localStorage) storageEvents.push({ kind: 'remove', key, phase })
+  return nativeStorage.remove.call(this, key)
+}
+document.addEventListener('submit', (event) => {
+  const target = event.target
+  if (!(target instanceof HTMLFormElement) || !target.matches('[data-personal-preparation-create]')) return
+  const record = { isTrusted: event.isTrusted, defaultPreventedAfterDispatch: false, kind: 'real-personal-form-submit' }
+  forms.push(record)
+  queueMicrotask(() => { record.defaultPreventedAfterDispatch = event.defaultPrevented })
+}, true)
+document.addEventListener('click', (event) => {
+  const target = event.target instanceof Element ? event.target.closest('button') : null
+  if (!target || !target.closest('[data-personal-preparation-root]')) return
+  clicks.push({ text: target.textContent?.trim(), isTrusted: event.isTrusted, disabled: target.disabled, ariaDisabled: target.getAttribute('aria-disabled') })
+}, true)
+
+function seeded(id: string): Trip {
+  let trip = gastreiseSpeichern(beispielreise({ id, readinessItems: [] }))
+  trip = gastReadinessSetzen(trip, {
+    clientRef: seedRef, kind: 'preparation', userStatus: 'open', countryCode: null,
+    tripItemId: null, title: 'Existing personal item',
+  })
+  return gastReadinessSetzen(trip, {
+    clientRef: siblingRef, kind: 'entry_check', userStatus: 'open', countryCode: 'IT',
+    tripItemId: null, title: null,
+  })
+}
+
+function Host() {
+  const [trip, setTrip] = useState<Trip>(() => inPhase('fixture-seed', () => seeded(testWindow.__T_R4_START__.tripId)))
+  const currentView = useRef(trip)
+  const expectedReadback = useRef(trip)
+  const stableSeedItems = useRef(structuredClone((trip.readinessItems ?? []).filter((item) => item.clientRef === seedRef || item.clientRef === siblingRef)))
+  const responseMode = useRef<'hold' | 'immediate'>('hold')
+  const waiting = useRef<any[]>([])
+  const commits = useRef(0)
+
+  function mutate(kind: 'set' | 'delete', payload: any): Promise<string | null> {
+    // Entry is recorded BEFORE validation/storage. Nothing here defers the guest write.
+    const call = {
+      id: actions.length + 1, kind, tripId: trip.id, payload: structuredClone(payload),
+      completedSynchronously: false, error: null as string | null,
+    }
+    actions.push(call)
+    let result: string | null = null
+    try {
+      const next = inPhase(`callback-${kind}`, () => kind === 'set'
+        ? gastReadinessSetzen(trip, payload)
+        : gastReadinessEntfernen(trip, payload))
+      setTrip(next)
+      call.completedSynchronously = true
+    } catch (error) {
+      result = error instanceof Error ? error.message : 'Synthetic callback failure'
+      call.error = result
+    }
+    // This is the only asynchronous fixture change to the frozen callback:
+    // delay settlement AFTER the real synchronous body, never cancel its side effect.
+    if (responseMode.current === 'immediate') return Promise.resolve(result)
+    return new Promise((resolve, reject) => waiting.current.push({ callId: call.id, tripId: call.tripId, result, resolve, reject }))
+  }
+
+  async function readCurrent() {
+    const record: any = { id: reads.length + 1, expectedTripId: trip.id, result: null }
+    reads.push(record)
+    const result = inPhase('callback-read', () => aktiveV3GastreiseLesen(trip.id))
+    record.result = result.art
+    if (result.art === 'success') {
+      record.returnedTripId = result.reise.id
+      setTrip(result.reise)
+    }
+    return result
+  }
+
+  useEffect(() => {
+    currentView.current = trip
+    commits.current += 1
+    testWindow.__T_R4__ = {
+      ready: true,
+      copy: { read: PERSONAL_AKTUALISIEREN, discard: PERSONAL_VERWERFEN },
+      activeKey: SCHLUESSEL.aktiv,
+      seedRef, siblingRef,
+      snapshot: () => structuredClone({
+        view: currentView.current, commits: commits.current,
+        actions, reads, storageEvents, settlements, forms, clicks,
+        pendingResponses: waiting.current.map(({ callId, tripId: id }) => ({ callId, tripId: id })),
+        rawBytes: rawBytes(), unreadable,
+        stableSeedItems: stableSeedItems.current,
+        routerCalls: testWindow.__T_R4_ROUTER__,
+      }),
+      responseMode: (next: 'hold' | 'immediate') => { responseMode.current = next },
+      settle: (kind: 'accepted' | 'reject') => {
+        const next = waiting.current.shift()
+        if (!next) throw new Error('No pending response')
+        settlements.push({ callId: next.callId, tripId: next.tripId, kind, sideEffectWasAlreadyAttempted: true })
+        if (kind === 'reject') next.reject(new Error('Synthetic lost response after guest side effect'))
+        else next.resolve(next.result)
+      },
+      externalRemove: (clientRef: string) => {
+        // Synthetic concurrent writer: call the real getter and removal function.
+        // This does not call the controller or mutate its props; an explicit UI read must observe it.
+        expectedReadback.current = inPhase('fixture-concurrent-remove', () => {
+          const read = aktiveV3GastreiseLesen(currentView.current.id)
+          if (read.art !== 'success') throw new Error('Expected active trip missing during fixture removal')
+          return gastReadinessEntfernen(read.reise, clientRef)
+        })
+      },
+      failRead: (kind: 'wrong_trip' | 'unreadable') => {
+        if (kind === 'wrong_trip') {
+          inPhase('fixture-foreign-trip', () => gastreiseSpeichern(beispielreise({ id: 'independent-r4-foreign', readinessItems: [] })))
+        } else unreadable = true
+      },
+      restoreExpected: () => {
+        unreadable = false
+        inPhase('fixture-restore-expected', () => gastreiseSpeichern(expectedReadback.current))
+        // No setTrip here: the user must explicitly read before the barrier can clear.
+      },
+      switchTrip: (id: string) => {
+        unreadable = false
+        const next = inPhase('fixture-trip-switch', () => seeded(id))
+        expectedReadback.current = next
+        stableSeedItems.current = structuredClone((next.readinessItems ?? []).filter((item) => item.clientRef === seedRef || item.clientRef === siblingRef))
+        setTrip(next)
+      },
+    }
+  })
+
+  return <div data-independent-workspace-trip={trip.id}>
+    <TripWorkspace
+      reise={trip}
+      quelle="guest"
+      onPunktAnlegen={async () => { throw new Error('Unrelated plan mutation is outside this probe') }}
+      onPunktEntfernen={async () => { throw new Error('Unrelated plan mutation is outside this probe') }}
+      onReadinessSetzen={(payload) => mutate('set', payload)}
+      onReadinessEntfernen={(clientRef) => mutate('delete', clientRef)}
+      onReadinessAktualisieren={readCurrent}
+    />
+  </div>
+}
+
+const root = document.getElementById('root')
+if (!root) throw new Error('Missing fixture root')
+createRoot(root).render(<Host />)

@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "archive": "r106-trip-root-r3-findings-4e66d894-2026-10-25",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "status": "APPEND_ONLY_STAGED_FOR_ROOT_REVIEW_NOT_UPLOADED_NOT_COMMITTED",
+  "preparationExecutedProductCode": false,
+  "rawResultFiles": 2,
+  "run1ActualProductAssertionFailures": 1,
+  "run1SetupErrors": 2,
+  "run2ActualProductAssertionFailures": 3,
+  "run2SetupErrors": 0,
+  "run2P2FindingFamilies": 2,
+  "files": [
+    {
+      "archiveRelativePath": "prepared-two-case/trip-r2-residual-acceptance-2case.ts.txt",
+      "role": "ORIGINAL_TWO_CASE_PREPARATION_NEVER_EXECUTED",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-2case.ts",
+      "replayRelativePath": "host/trip-r2-residual-acceptance-2case.ts",
+      "bytes": 15067,
+      "sha256": "d31068ba9f42f1a8f43865b919f9178ea17dc3c73b49c53d1e7b4742153e7687",
+      "gitBlob": "202ced8cbe5806bc463887b0f9b51b71c90e2717"
+    },
+    {
+      "archiveRelativePath": "prepared-two-case/README.original.md.txt",
+      "role": "ORIGINAL_TWO_CASE_PREPARATION_README",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-2case-README.md",
+      "replayRelativePath": "notes/two-case-original-README.md",
+      "bytes": 4551,
+      "sha256": "1c736aac4a77a1ebb3811a8a732843146c5830493e49f81c45334e52908d9a83",
+      "gitBlob": "75924671dcf2b64ad661bcca9ff9bdca2bd0ab12"
+    },
+    {
+      "archiveRelativePath": "v1/trip-r2-residual-acceptance.ts.txt",
+      "role": "THREE_CASE_V1_SOURCE_USED_FOR_RUN1",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-residual-acceptance.ts",
+      "bytes": 19948,
+      "sha256": "1ea683e1930ea23fe672d751bdb3d594e03a08515f67f406b057c5ddca7ea8d6",
+      "gitBlob": "69b7831547c99ffea465548cb242aa46ac8ba58a"
+    },
+    {
+      "archiveRelativePath": "v1/README.original.md.txt",
+      "role": "ORIGINAL_THREE_CASE_PREPARATION_README",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-README.md",
+      "replayRelativePath": "notes/three-case-original-README.md",
+      "bytes": 5834,
+      "sha256": "1c487b3e73471a1e6a60d2c4862b0bd3bb172efdaf1fc5eb119fd785ebde9a28",
+      "gitBlob": "5ad6d140b23e3d0af4b1d737270a9699e95affb3"
+    },
+    {
+      "archiveRelativePath": "v2/trip-r2-residual-acceptance-v2.ts.txt",
+      "role": "V2_SIX_SEMICOLON_SETUP_CORRECTION_USED_FOR_RUN2",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v2.ts",
+      "replayRelativePath": "host/trip-r2-residual-acceptance-v2.ts",
+      "bytes": 19954,
+      "sha256": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f",
+      "gitBlob": "6bc348bc55d307a1041da12dafcd982295a6f82c"
+    },
+    {
+      "archiveRelativePath": "setup/trip-r2-residual-v2-setup.diff",
+      "role": "ORIGINAL_EXACT_SIX_SEMICOLON_DIFF",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-v2-setup.diff",
+      "replayRelativePath": null,
+      "bytes": 2250,
+      "sha256": "aa662900c05cfcee82af683a2448c6c0e008ba120bfe5d6275b1a1500087cfee",
+      "gitBlob": "44a4a0b1a1ca3903163e97d03aed60cec6863b4d"
+    },
+    {
+      "archiveRelativePath": "setup/trip-r2-residual-v2-provenance.json",
+      "role": "ORIGINAL_VERSIONED_SETUP_PROVENANCE",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-v2-provenance.json",
+      "replayRelativePath": null,
+      "bytes": 932,
+      "sha256": "75a97cfacfef16f598847501116106e45b7948695e420742f47a2ade3e87fb25",
+      "gitBlob": "81bb12a03bb9181d5d4360519a30c61fa8606f67"
+    },
+    {
+      "archiveRelativePath": "results/trip-r2-residual-4e66d894-run1.json",
+      "role": "RAW_RUN1_TWO_SETUP_ERRORS_ONE_ACTUAL_PRODUCT_ASSERTION_FAILURE",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-4e66d894-run1.json",
+      "replayRelativePath": null,
+      "bytes": 8656,
+      "sha256": "a7c1c306ddc88f5ed7aa4fdbd2ffb03e42a089301b3bd604c1fb9e561fe68dca",
+      "gitBlob": "59052c5971ae2d21ce8751025b622d2ca383c0f4"
+    },
+    {
+      "archiveRelativePath": "results/trip-r2-residual-4e66d894-run2.json",
+      "role": "RAW_RUN2_THREE_PRODUCT_ASSERTION_FAILURES",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-residual-4e66d894-run2.json",
+      "replayRelativePath": null,
+      "bytes": 11490,
+      "sha256": "98b6f573c0c30f7c2e89d1b44eeb0507bf122aa0a462af2cf324b11af64a8ebc",
+      "gitBlob": "fca7d7d90642064f45d64cf616acf3403000ef82"
+    },
+    {
+      "archiveRelativePath": "bindings/source-binding-metadata.json",
+      "role": "DERIVED_ARCHIVAL_METADATA_NOT_RAW_EXECUTION",
+      "sourcePath": null,
+      "replayRelativePath": null,
+      "bytes": 3427,
+      "sha256": "247a7342a5ecb1d80d0c71532e343257771ff00d626937aded9707ab2c2e2d9e",
+      "gitBlob": "d56be1bc8ea4b8e558e415645de2f0101dfeb1d1"
+    },
+    {
+      "archiveRelativePath": "README.md",
+      "role": "ARCHIVE_README_FINDING_CLASSIFICATION_AND_REPLAY",
+      "sourcePath": "/tmp/r106-review-evidence/TRIP_ROOT_R3_FINDINGS_4E66D894_ARCHIVE_README_2026-10-25.md",
+      "replayRelativePath": null,
+      "bytes": 12843,
+      "sha256": "2145603ef934e278cfdbf149819a0d1a3d46a72cb1c52187fb21c8da9ed6d4f3",
+      "gitBlob": "f4d0abeb9ec44d70c4aa961b6c5b49f1291fe566"
+    }
+  ],
+  "sharedReferences": [
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-acceptance-common.mjs.txt",
+      "role": "SHARED_REPLAY_COMMON",
+      "replayRelativePath": "host/trip-acceptance-common.mjs",
+      "bytes": 5271,
+      "sha256": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0",
+      "gitBlob": "e5bee1f134c22d0281b22bb70604ca71ddcd5fa9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-build-acceptance-bundle.mjs.txt",
+      "role": "SHARED_GUARDED_HOST_BUILDER",
+      "replayRelativePath": "host/trip-build-acceptance-bundle.mjs",
+      "bytes": 2239,
+      "sha256": "b2a9fb64f6b7cd89fcdeaa95cd54c77efe5ed90154da172f115cd24a59183e12",
+      "gitBlob": "4d7a75a89de60ad3a96e49e8ced6558751b2cff9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/bindings/trip-4e66d894-root1.bundle-info.json",
+      "role": "SAME_HOST_BUNDLE_METADATA_NOT_WORKSPACE_BUNDLE",
+      "replayRelativePath": null,
+      "bytes": 5347,
+      "sha256": "6a9fbd2255b7f6c96b823a08e6e685ba7c663f0411cd0980405f32d36cc61026",
+      "gitBlob": "611c3a2021fa88b4bea4e72b75d90eb8b709c11e"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/bindings/source-binding-metadata.json",
+      "role": "PREVIOUS_R2_SOURCE_CORRESPONDENCE_RECORD",
+      "replayRelativePath": null,
+      "bytes": 5793,
+      "sha256": "901847706d6bb0bb8a75100a598a43dbd0cbb1f0e84d22d902ff4346b46b60cf",
+      "gitBlob": "616c523f5748f176a050e33d701b60fc251b2c37"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/results/trip-r2-controls-4e66d894-run1.json",
+      "role": "IDENTICAL_62_SOURCE_BINDINGS_PRIOR_DISTINCT_PASS",
+      "replayRelativePath": null,
+      "bytes": 7577,
+      "sha256": "a44a22abb5be6cb4be862bc857e0365053f46996c1b2e218f6ffd15f8612207a",
+      "gitBlob": "db7e68fb6c7394b5138b82e8c37472392b245fe5"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-r2-4e66d894-2026-10-25/workspace/workspace-r4-result.json",
+      "role": "SEPARATE_3_WORKSPACE_PASSES_198_SOURCE_PATHS_UNCHANGED",
+      "replayRelativePath": null,
+      "bytes": 112735,
+      "sha256": "2177d7b73db805c2545ed22e97bd07cb94f708ce4fd9f396eb2f804659aa8851",
+      "gitBlob": "74a8127ddecf6a7ba457d9a2c6b1ef60dee4c173"
+    }
+  ],
+  "manifestSelfIncludedInFiles": false,
+  "exclusions": [
+    "No generated Host/Workspace bundle, dependency tree or browser binary.",
+    "No duplicate common builder or previously archived source-binding/result files.",
+    "No new product execution, product source edit, tracking write, platform write, or postmerge claim.",
+    "No invented historical execution for original two-case preparation."
+  ],
+  "existingFilesUnchanged": {
+    "evidence": 110,
+    "stagingMapsAndManifests": 5
+  }
+}

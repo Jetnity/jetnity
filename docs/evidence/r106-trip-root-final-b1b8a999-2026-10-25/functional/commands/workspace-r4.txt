@@ -1,0 +1,20 @@
+{
+  "result": "BOUNDED_WORKSPACE_OBSERVATIONS_PASSED",
+  "head": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+  "output": "/tmp/r106-review-evidence/trip-b1b8a999-functional-root-run1/workspace/workspace-r4-result.json",
+  "cases": [
+    {
+      "name": "wrong_trip",
+      "result": "PASS_BOUNDED_OBSERVATIONS"
+    },
+    {
+      "name": "unreadable",
+      "result": "PASS_BOUNDED_OBSERVATIONS"
+    },
+    {
+      "name": "trip_switch",
+      "result": "PASS_BOUNDED_OBSERVATIONS"
+    }
+  ],
+  "remainingGate": "Root inspection and separate central guard tests are required for native-disabled row controls. Author current-head CSS/matrix proof remains separate."
+}

@@ -1,0 +1,335 @@
+{
+  "role": "Read-only independent work helper; not Technical-Lead PASS",
+  "checkedAtUtc": "2026-10-25 10:31:02 UTC",
+  "repo": "Jetnity/jetnity",
+  "pr": 1007,
+  "localCheckout": "/tmp/jetnity-r106-o-r1-review",
+  "reviewedHead": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+  "priorHead": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da",
+  "runtimeProofHead": "1c1bd44f5c15716c70b413a574ee9f6ba9ae7587",
+  "livePr": {
+    "head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+    "base": "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+    "draft": true,
+    "mergeable": true,
+    "mergeableState": "blocked"
+  },
+  "localGraph": {
+    "mergeBase": "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+    "ahead": 8,
+    "behind": 0,
+    "clean": true
+  },
+  "reviewMethods": [
+    "Full R1 source/test/runner/doc delta read",
+    "Authoritative raw JSON read",
+    "Five runtime digests recomputed",
+    "All 52 prior evidence files compared byte-for-byte",
+    "Native Auth full log read",
+    "Current native App detailed steps read",
+    "Vercel exact deployment inspected"
+  ],
+  "noDuplicateBrowserExecution": true,
+  "fourFixes": {
+    "sourceGeneration": "quelle increment on actual endpoint changes, checked in laufGueltig; ref written before abort",
+    "cardTimestamp": "Per-card geprueftMs checked for finite/future independently",
+    "invalidAnchor": "Either missing accept clock forces unknown",
+    "pendingProps": "Hook and pure propsBeginnen refuse new props runs while GET lock held"
+  },
+  "remaining": [
+    {
+      "severity": "P2 acceptance gap",
+      "name": "O-R5 mounted invalid-2xx GET matrix remains absent",
+      "source": "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs:124,586",
+      "evidence": "ungueltigeKoerper is invoked only for window.__setze({anfang}); invalid GET body remains {checkedAt:'nein'}",
+      "required": "Run each required malformed shape through the real explicit GET 200 boundary on both boards and verify settled error/historical behavior and recovery"
+    },
+    {
+      "severity": "P2 proof quality",
+      "name": "Invalid-props loop has no per-delivery completion signal",
+      "source": "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs:586-595",
+      "evidence": "After initial null already yields phase fehler, each changed-props iteration waits for the same already-true phase",
+      "required": "Use independent mounts or an observed per-delivery validation completion; ensure assertions cannot pass from the previous body"
+    },
+    {
+      "severity": "Acceptance gap",
+      "name": "Authoritative 401 JSON/malformed matrix incomplete",
+      "source": "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs:319-358",
+      "evidence": "403 has JSON and malformed current cases; 401 appears only as stale malformed response after newer success",
+      "required": "TASK52 calls current401 and403 with JSON and malformed bodies"
+    },
+    {
+      "severity": "P3 documentation",
+      "name": "300s child-boundary claim incorrect",
+      "source": "REPORT:33; HANDOFF:52; run.mjs:642-647,804-816",
+      "evidence": "github-lauf has ttlMs60000 and is asserted stale just after60s;300s parent boundary is tested but no300s child exists",
+      "required": "Describe actual60s child/300s parent proof accurately; no need to invent a300s child requirement"
+    }
+  ],
+  "authorEvidence": {
+    "path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792923659785/result.json",
+    "head": "1c1bd44f5c15716c70b413a574ee9f6ba9ae7587",
+    "cases": 68,
+    "passed": 68,
+    "exit": 0,
+    "browser": "148.0.7778.96",
+    "allFiveRuntimeHashesMatch": true,
+    "proofToFinalDelta": "Four owned docs plus new evidence only; runtime and runner unchanged",
+    "priorEvidenceFilesCompared": 52,
+    "priorEvidenceFilesChanged": 0,
+    "preservedNewFailedRuns": [
+      "run-1792923483842",
+      "run-1792923548638"
+    ],
+    "preservedNewFailedCounts": "66/68; old denial deleted cards; docs explain uncommitted harness A/B commit race",
+    "supersededDirtySuccess": "run-1792923593286:68/68 names c7dd but current R1 bytes were dirty; not authoritative",
+    "taskBlob": "e75d3010d861e4047a18f282e5fa03bd74f181dc",
+    "planBlob": "79bc02e8b00d406e24fa21048860bc122c993e8d",
+    "O1": "operations-presentation.test.ts unchanged in R1; prior limited adaptation covered by TL addendum"
+  },
+  "ci": {
+    "run": 40184821930,
+    "checks": [
+      {
+        "id": 121143450777,
+        "name": "Vercel Preview Comments",
+        "head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+        "status": "completed",
+        "conclusion": "success",
+        "started": "2026-10-25T10:27:54Z",
+        "completed": "2026-10-25T10:27:54Z",
+        "url": "https://vercel.com/github"
+      },
+      {
+        "id": 121143278659,
+        "name": "Typecheck, Lint & Build",
+        "head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+        "status": "in_progress",
+        "conclusion": null,
+        "started": "2026-10-25T10:27:07Z",
+        "completed": null,
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/40184821930/job/121143278659"
+      },
+      {
+        "id": 121143278577,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+        "status": "completed",
+        "conclusion": "success",
+        "started": "2026-10-25T10:27:07Z",
+        "completed": "2026-10-25T10:27:39Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/40184821930/job/121143278577"
+      }
+    ],
+    "jobs": [
+      {
+        "id": 121143278577,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40184821930,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Zugang vorhanden?",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Abgleich",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          }
+        ]
+      },
+      {
+        "id": 121143278659,
+        "name": "Typecheck, Lint & Build",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_id": 40184821930,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Tests",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 9
+          },
+          {
+            "name": "Schutz der Admin-API",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10
+          },
+          {
+            "name": "Bezug auf das Schema",
+            "status": "pending",
+            "conclusion": null,
+            "number": 11
+          },
+          {
+            "name": "Unerreichbarer Code",
+            "status": "pending",
+            "conclusion": null,
+            "number": 12
+          },
+          {
+            "name": "Exporte ohne Aufrufer",
+            "status": "pending",
+            "conclusion": null,
+            "number": 13
+          },
+          {
+            "name": "Ungenutzte Pakete",
+            "status": "pending",
+            "conclusion": null,
+            "number": 14
+          },
+          {
+            "name": "Production build",
+            "status": "pending",
+            "conclusion": null,
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "pending",
+            "conclusion": null,
+            "number": 29
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null,
+            "number": 30
+          }
+        ]
+      }
+    ],
+    "appLimits": "Still in Tests at snapshot; no final test totals or guards/build conclusion available. Previous cancelled App is not reused.",
+    "authLogEvidence": [
+      "2026-10-25T10:27:20.4103238Z HEAD is now at 4d79294 Merge c12444d735c5d8e8c1c800c5b712ecf48105bdec into 500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+      "2026-10-25T10:27:38.2108647Z Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch.",
+      "2026-10-25T10:27:38.2109745Z   ✓ alle 55 erwarteten Werte stimmen"
+    ],
+    "checkoutMerge": {
+      "sha": "4d7929448f902c5147b8b12dd34f34e8ebeda48e",
+      "tree": "c3f0e62cb7ec7daa452cd7d5d7a410e146dc1963",
+      "parents": [
+        "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+        "c12444d735c5d8e8c1c800c5b712ecf48105bdec"
+      ],
+      "equalsLocalHeadTree": true
+    }
+  },
+  "vercel": {
+    "id": "dpl_GW7NQeYdaSdT7V3C5TMBsjdwL8Gk",
+    "project": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM",
+    "url": "jetnity-f7p1do2a8-jetnity-e1b93c82.vercel.app",
+    "state": "READY",
+    "target": null,
+    "gitSha": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+    "branch": "feat/r106-admin-operations-evidence-lifecycle-1",
+    "aliasError": null,
+    "scope": "Deployment metadata only; no hosted functional proof"
+  },
+  "threads": {
+    "review_threads": []
+  },
+  "reviews": [],
+  "inlineComments": [],
+  "noHostedDatabaseOrProductionActions": true
+}

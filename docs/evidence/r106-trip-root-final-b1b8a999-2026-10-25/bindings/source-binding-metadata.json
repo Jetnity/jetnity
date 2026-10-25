@@ -1,0 +1,400 @@
+{
+  "kind": "ARCHIVAL_CORRESPONDENCE_ONLY_NO_NEW_PRODUCT_EXECUTION",
+  "checkedAt": "2026-10-25T13:31:36.840132+00:00",
+  "repository": "Jetnity/jetnity",
+  "expectedHead": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+  "tree": "8d319e0c3f769e7f316b2f749f823c82eb7855c4",
+  "graphReadAtArchivalTime": {
+    "soleParent": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+    "acceptedMain": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "mergeBase": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "behind": 0,
+    "ahead": 15,
+    "currentCheckoutHead": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+    "trackedClean": true,
+    "notRetrospectiveAuthorRunnerMetadata": true
+  },
+  "rootReceipts": {
+    "functional": {
+      "rootReceipt": "functional/root-execution.json",
+      "receiptIdentity": {
+        "bytes": 136515,
+        "sha256": "28613f8af4cddb4e60ee3632bbc431252790686249c2bb30656f41d50ec8e020",
+        "gitBlob": "e66d6336f4d525cf43bed9448140e7d6cd5c7c80"
+      },
+      "commandExits": [
+        {
+          "name": "r1-pure",
+          "exit": 0
+        },
+        {
+          "name": "r2-same-ref",
+          "exit": 0
+        },
+        {
+          "name": "host-bundle",
+          "exit": 0
+        },
+        {
+          "name": "r1-mounted",
+          "exit": 0
+        },
+        {
+          "name": "r2-controls",
+          "exit": 0
+        },
+        {
+          "name": "r2-post-delete",
+          "exit": 0
+        },
+        {
+          "name": "r3-residual",
+          "exit": 0
+        },
+        {
+          "name": "workspace-manifest",
+          "exit": 0
+        },
+        {
+          "name": "workspace-r4",
+          "exit": 0
+        },
+        {
+          "name": "reviewed-author-suites",
+          "exit": 0
+        }
+      ],
+      "sourceWitnessPathsBeforeAndAfter": 288,
+      "sourceWitnessesEqual": true,
+      "allWitnessEntriesMatchCommittedHeadAndCurrentBytes": true,
+      "startedAt": "2026-10-25T13:22:16.796185+00:00",
+      "finishedAt": "2026-10-25T13:22:55.849594+00:00"
+    },
+    "build": {
+      "rootReceipt": "build/root-execution.json",
+      "receiptIdentity": {
+        "bytes": 126754,
+        "sha256": "d158cccc138b7cd3163e754389a1eb59850e3325716702df58a18b3dff40b9ba",
+        "gitBlob": "338800bece40d4624e674b492bfbd338a1da7735"
+      },
+      "commandExits": [
+        {
+          "name": "production-build",
+          "exit": 0
+        }
+      ],
+      "sourceWitnessPathsBeforeAndAfter": 288,
+      "sourceWitnessesEqual": true,
+      "allWitnessEntriesMatchCommittedHeadAndCurrentBytes": true,
+      "startedAt": "2026-10-25T13:22:18.079766+00:00",
+      "finishedAt": "2026-10-25T13:23:11.827748+00:00"
+    },
+    "css-run1": {
+      "rootReceipt": "css-run1/root-execution.json",
+      "receiptIdentity": {
+        "bytes": 127045,
+        "sha256": "74aa8986769b639b3cca06b3169d0ecfe60a26ff97d29d09d4af2778e85c1bea",
+        "gitBlob": "219fc47af9992547f7b4113b3012c04bac8c8caa"
+      },
+      "commandExits": [
+        {
+          "name": "reviewed-author-css",
+          "exit": 1
+        }
+      ],
+      "sourceWitnessPathsBeforeAndAfter": 288,
+      "sourceWitnessesEqual": true,
+      "allWitnessEntriesMatchCommittedHeadAndCurrentBytes": true,
+      "startedAt": "2026-10-25T13:23:44.654660+00:00",
+      "finishedAt": "2026-10-25T13:23:49.608746+00:00"
+    },
+    "css-run2": {
+      "rootReceipt": "css-run2/root-execution.json",
+      "receiptIdentity": {
+        "bytes": 127314,
+        "sha256": "25abca5670de5b26f6ca0822b5bcba92a6938de9648a4e64ef7341ac1cca3fac",
+        "gitBlob": "ce12a53de69f784bd7ae94b478a9448d468604ae"
+      },
+      "commandExits": [
+        {
+          "name": "reviewed-author-css",
+          "exit": 0
+        }
+      ],
+      "sourceWitnessPathsBeforeAndAfter": 288,
+      "sourceWitnessesEqual": true,
+      "allWitnessEntriesMatchCommittedHeadAndCurrentBytes": true,
+      "startedAt": "2026-10-25T13:25:20.589162+00:00",
+      "finishedAt": "2026-10-25T13:25:25.580134+00:00"
+    }
+  },
+  "functionalCounts": {
+    "independentPure": 6,
+    "independentControlledHost": 10,
+    "independentWorkspace": 3,
+    "independentTotal": 19,
+    "reviewedAuthorMountedList": 18,
+    "reviewedAuthorSourcePattern": 1,
+    "reviewedAuthorWorkspace": 6,
+    "reviewedAuthorTotal": 25
+  },
+  "independentResultInventory": [
+    {
+      "rawResult": "functional/r1-pure.json",
+      "kind": "pure",
+      "cases": 5,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    },
+    {
+      "rawResult": "functional/r2-same-ref.json",
+      "kind": "pure",
+      "cases": 1,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    },
+    {
+      "rawResult": "functional/r1-mounted.json",
+      "kind": "controlled-host",
+      "cases": 3,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    },
+    {
+      "rawResult": "functional/r2-controls.json",
+      "kind": "controlled-host",
+      "cases": 3,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    },
+    {
+      "rawResult": "functional/r2-post-delete.json",
+      "kind": "controlled-host",
+      "cases": 1,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    },
+    {
+      "rawResult": "functional/r3-residual.json",
+      "kind": "controlled-host",
+      "cases": 3,
+      "recordedVerdict": "BOUNDED_ASSERTIONS_PASSED"
+    }
+  ],
+  "fullGitManifest": {
+    "retained": "functional/committed-source-manifest.json",
+    "bytes": 873444,
+    "sha256": "9809ebe95bc2e23faba74ce737978eda0f9480fb4b0adaeb7714071c75550972",
+    "gitBlob": "dd9b06de647f840905a349e2adb6024af849ab14",
+    "blobPaths": 7329,
+    "completeMapMatchesCommittedTree": true,
+    "identicalFullCopiesDeduplicated": 3
+  },
+  "wrapper": {
+    "archived": "probes/trip-root-execute-v1.py.txt",
+    "bytes": 7975,
+    "sha256": "1469d6bc709dcd722d731e96200c31d8c96a33e8a6bfb98224f8e6d58f810034",
+    "gitBlob": "0755a4d0ebdcdd365dfd4bbaa96378902519ed71",
+    "equalsAllReceiptSourceHashes": true,
+    "selectedRepositoryBeforeAfterPaths": 288,
+    "allExternalHostProbesBeforeAfterWitnessed": false,
+    "buildBeforeCssEnforcedByWrapper": false
+  },
+  "host": {
+    "metadata": "functional/host.bundle-info.json",
+    "sourcePaths": 61,
+    "uniqueMountedResultSourcePaths": 62,
+    "allSourceBindingsMatchCommittedHeadAndCurrentBytes": true,
+    "generatedBundleIdentity": {
+      "bytes": 924433,
+      "sha256": "51db0326a4bb2b19a6c190bc493a078d805cbd43450f75ac4f1512c1d009d5c2",
+      "gitBlob": "17f7a2bc2637b8b79fa6933e243b45afe683cc12"
+    },
+    "generatedBundleArchived": false,
+    "unstyledSyntheticAdapters": true
+  },
+  "workspace": {
+    "rawResult": "functional/workspace/workspace-r4-result.json",
+    "initialPrimaryPaths": 22,
+    "compiledAndFinalPaths": 198,
+    "sourcePathCountIncludesPinnedPrimaryFiles": true,
+    "compiledBeforeAndFinalSourceIdentitiesEqual": true,
+    "probeBeforeAfterPaths": 9,
+    "probeBeforeAfterAndReferencedArchiveIdentitiesEqual": true,
+    "allRecordedSourceBindingsMatchCommittedHeadAndCurrentBytes": true,
+    "fullCentralRowGuardCoverage": false,
+    "nativeDisabledControlsAreUiObservationsOnly": true,
+    "generatedBundleIdentity": {
+      "bytes": 1754543,
+      "sha256": "2269c9393124f4a1267dc2b6060c182dd6aff31504394db3ab65f6ae09663f66",
+      "gitBlob": "b46cbed7b64a810beb8b405b26de61f32c63bfcc"
+    },
+    "generatedBundleArchived": false,
+    "realGuestSideEffectSynchronousBeforeDeferredResponse": true,
+    "oldWriteCancelledOrRolledBackClaimed": false
+  },
+  "reviewedAuthorSuite": {
+    "rawJson": "functional/reviewed-author-suites/browser-lauf.json",
+    "sourceHashPairs": 10,
+    "allRecordedSourcePairsMatchCommittedHeadAndBytes": true,
+    "rawMain": null,
+    "rawMergeBase": null,
+    "rawNullsPreserved": true,
+    "embeddedIdentityMeans": "Harness author only; actual executor is separately recorded in root receipt",
+    "nativeDisabledControlsDirectHandlerInvocation": "Author test uses __reactProps/onClick; handler-level coverage, not a trusted activation of disabled UI"
+  },
+  "css": {
+    "rawSuccessResult": "css-run2/css/ablauf.json",
+    "failedFirstAttemptReceipt": "css-run1/root-execution.json",
+    "firstAttemptFailureClassification": "Final origin/main metadata lookup failed; no final CSS JSON exists; not a product/CSS assertion failure",
+    "successfulSecondAttempt": true,
+    "sourceBindings": 9,
+    "measurementRecords": 11,
+    "keyboardCases": 1,
+    "screenshots": 12,
+    "identicalFirstAttemptScreensDeduplicated": 12,
+    "actualRetainedAsset": {
+      "archiveRelativePath": "css-run2/css-assets/00-19ds4pry6tbr3.css",
+      "bytes": 99091,
+      "sha256": "9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b",
+      "gitBlob": "a22fccc098cbbedc1b614c7b9e2f101951c1a273"
+    },
+    "rootVisualReviewAttestation": {
+      "attribution": "Parent/root message received during archive preparation; helper did not repeat visual acceptance",
+      "screensInspected": [
+        "lang-320.png",
+        "lang-320-root32.png",
+        "lang-1280.png",
+        "fehler-390.png"
+      ],
+      "rootAssessment": "Acceptable"
+    },
+    "refRepairAndChronologyAttribution": "Root reports normal fetch populated origin/main=77ed41ad between attempts; build preceded both CSS runs; no source change or rebuild. Wrapper receipts retain timestamps but do not enforce this sequence."
+  },
+  "historicalResults": [
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-r3-residual-44e1a1c4-intermediate-run1.json",
+      "head": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+      "cases": 3,
+      "rawIdentity": {
+        "bytes": 11132,
+        "sha256": "d3fdc64f2ba043c3a2cc89cf1f29d8aa3e7079db403c4e4949ea5d9b7f62d973",
+        "gitBlob": "9572023f72746ad07add12a1aa5be7b71b4fc0a4"
+      },
+      "recordedSourceCount": 62,
+      "sourceBlobsMatchActualCommittedHead": true,
+      "processExit": {
+        "value": 0,
+        "attribution": "Root parent attestation; raw JSON has no process-exit field"
+      }
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-pure-19ac02ae-final-run1.json",
+      "head": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+      "cases": 5,
+      "rawIdentity": {
+        "bytes": 2410,
+        "sha256": "ca5978474703f5596846dd3d019178f9ebd45f9967ce19275e967af1523dea26",
+        "gitBlob": "eaeb019aa387427cee4b8e050b2cb18a4f3f7735"
+      },
+      "recordedSourceCount": 5,
+      "sourceBlobsMatchActualCommittedHead": true,
+      "processExit": {
+        "value": 0,
+        "attribution": "Root parent attestation; raw JSON has no process-exit field"
+      }
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-r2-same-ref-19ac02ae-final-run1.json",
+      "head": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+      "cases": 1,
+      "rawIdentity": {
+        "bytes": 1497,
+        "sha256": "8cd8c5643cb9fc8089e9faa2cbcd9c36d93e18d549764e9a270edebc583c4d72",
+        "gitBlob": "3b84101b720194b9f75b0f763c4bdca17dff934f"
+      },
+      "recordedSourceCount": 5,
+      "sourceBlobsMatchActualCommittedHead": true,
+      "processExit": {
+        "value": 0,
+        "attribution": "Root parent attestation; raw JSON has no process-exit field"
+      }
+    }
+  ],
+  "historicalHostBundles": [
+    {
+      "metadataOriginal": "/tmp/r106-review-evidence/trip-44e1a1c4-root1.bundle-info.json",
+      "head": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+      "generatedBundleOmitted": true,
+      "generatedBundleIdentity": {
+        "bytes": 925133,
+        "sha256": "c8648e477a92b35b5587c0fe87df95171dd2c628dbeaf1fc384c1dcaf3b5553f",
+        "gitBlob": "ac607b0dc75f28257555392f61ed830a25d5475c"
+      },
+      "recordedSourceCount": 61,
+      "sourceBlobsMatchCommittedHead": true
+    },
+    {
+      "metadataOriginal": "/tmp/r106-review-evidence/trip-19ac02ae-final-run1.bundle-info.json",
+      "head": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+      "generatedBundleOmitted": true,
+      "generatedBundleIdentity": {
+        "bytes": 925133,
+        "sha256": "c8648e477a92b35b5587c0fe87df95171dd2c628dbeaf1fc384c1dcaf3b5553f",
+        "gitBlob": "ac607b0dc75f28257555392f61ed830a25d5475c"
+      },
+      "recordedSourceCount": 61,
+      "sourceBlobsMatchCommittedHead": true
+    }
+  ],
+  "omittedHistoricalCompleteManifests": [
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-sources-44e1a1c4.json",
+      "head": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+      "bytes": 870592,
+      "sha256": "6725021e262014a5add715b5b676574def8c503ed7aa1fdb79dbf4c9e4900916",
+      "gitBlob": "cb058f9f2fddf89e0ff6d8866810ccefc4ef4b50",
+      "blobPaths": 7310,
+      "completeMapMatchesCommittedGitTree": true,
+      "retained": false,
+      "reconstruction": "git ls-tree -rz <actual-head>; parse blob entries into {head,files}; JSON indent=2 plus final newline, as the archived root wrapper does"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-sources-19ac02ae.json",
+      "head": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+      "bytes": 873444,
+      "sha256": "d9f4d859be9a41cc424de79485a2a758e5115bcb921bb895b5045bdd4c6f73e0",
+      "gitBlob": "c1ce7fcaec37d8fdfc7ac5d522e657c3ff432559",
+      "blobPaths": 7329,
+      "completeMapMatchesCommittedGitTree": true,
+      "retained": false,
+      "reconstruction": "git ls-tree -rz <actual-head>; parse blob entries into {head,files}; JSON indent=2 plus final newline, as the archived root wrapper does"
+    }
+  ],
+  "v3Delta": {
+    "v2Reference": "../r106-trip-root-r3-findings-4e66d894-2026-10-25/v2/trip-r2-residual-acceptance-v2.ts.txt",
+    "v3Source": "probes/trip-r2-residual-acceptance-v3.ts.txt",
+    "behavioralBodyByteIdenticalToV2": true,
+    "admissionOnlyDiffVerified": true,
+    "originalPreparationStatusPreserved": "PREPARED_NOT_EXECUTED; later runs recorded separately"
+  },
+  "sourceReviews": {
+    "original19": "source-reviews/trip-source-review-19ac02ae.json",
+    "finalB1": "source-reviews/trip-source-review-b1b8a999.json",
+    "datedSourceOnlyNoNewExecution": true,
+    "b1DeltaOnlyFourExistingDocumentationPaths": true
+  },
+  "rootReportedFormattingFinding": {
+    "scope": "Historical committed author failure capture only",
+    "detail": "git diff --check 77..b1 exit 2, trailing spaces at lines 6 and 8; raw bytes remain unchanged",
+    "disposition": "Separate root TL acceptance record; no runtime failure or helper risk acceptance asserted"
+  },
+  "scopeLimits": [
+    "No TL PASS, Ready, merge, native CI or postmerge acceptance.",
+    "No hosted Account, full Next router, Supabase/RLS, Preview or Production proof.",
+    "Root wrapper witnesses selected repository sources, not all external probes before/after.",
+    "Workspace native-disabled row observations are not complete central dispatch coverage.",
+    "Historical executions retain their actual heads; author identities and metadata nulls are not rewritten."
+  ],
+  "preservedBaseline": {
+    "evidenceFiles": 122,
+    "stagingMapsAndManifests": 8,
+    "total": 130,
+    "identityMapSha256": "7f07753b7f43350290b090b753bee7c1fd874eace9e473ab5e9d501dd9cd9ed7"
+  }
+}

@@ -1,0 +1,286 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+import { createServer } from 'node:http'
+import { createRequire } from 'node:module'
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+
+const repo = '/tmp/jetnity-r106-o-review'
+const destination = '/tmp/r106-review-evidence/admin-mounted-counterexamples.json'
+const requiredHead = 'c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da'
+const require = createRequire(join(repo, 'package.json'))
+const { build } = require('esbuild')
+const { chromium } = require('playwright')
+const postcss = require('postcss')
+const nesting = require('tailwindcss/nesting')
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
+const base = Date.parse('2026-10-25T02:00:00.000Z')
+const iso = value => new Date(value).toISOString()
+const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim()
+assert.equal(head, requiredHead)
+const statusBefore = execFileSync('git', ['status', '--porcelain'], { cwd: repo, encoding: 'utf8' })
+assert.equal(statusBefore, '')
+const sourcePaths = [
+  'components/admin/system-health/SystemHealthBoard.tsx',
+  'components/admin/provider-ops/ProviderOpsBoard.tsx',
+  'components/admin/operations/useOperationsReport.ts',
+  'lib/admin/operations-read-lifecycle.ts',
+  'lib/admin/operations-report-validation.ts',
+  'lib/admin/system-health/bewertung.ts',
+  'lib/admin/system-health/freshness.ts',
+  'lib/admin/provider-ops-board/bewertung.ts',
+  'lib/admin/provider-ops-board/freshness.ts',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts',
+]
+const result = {
+  head,
+  node: process.version,
+  meaning: 'Successful execution means asserted defects were reproduced, not product PASS.',
+  evidenceClass: 'Independent local mounted production boards, real hook and domain age helpers; existing author harness; synthetic canonical props and deferred fetch only.',
+  limits: 'No hosted account, Next router, Supabase, RLS, Production, personal browser/session or launch proof. No remote reads. No responsive or accessibility acceptance claim.',
+  command: 'PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers /root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node /tmp/r106-review-evidence/admin-mounted-counterexamples.mjs',
+  sourceDigests: Object.fromEntries(sourcePaths.map(path => [path, createHash('sha256').update(readFileSync(join(repo, path))).digest('hex')])),
+  runnerSha256: createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex'),
+  cases: [],
+  externalRequestAttempts: [],
+  localRequests: [],
+  pageErrors: [],
+  viewport: { width: 390, height: 844 },
+  reducedMotion: 'reduce',
+  statusBefore,
+}
+
+function report(board, marker = 'INITIAL') {
+  const health = board === 'health'
+  const ids = health ? ['app', 'vercel', 'supabase', 'github', 'infomaniak'] : ['provider-ops', 'kill-switch', 'cost-guard', 'model-usage']
+  const fresh = ttlMs => ({ state: 'fresh', ageMs: 0, ttlMs })
+  const items = ids.map(id => ({
+    id,
+    name: id,
+    status: health ? (id === 'app' ? 'unknown' : 'not_configured') : (id === 'model-usage' ? 'empty' : 'foundation_only'),
+    source: 'local-independent-counterexample',
+    checkedAt: iso(base),
+    freshness: fresh(id === 'github' || id === 'infomaniak' ? 300_000 : id === 'vercel' || id === 'model-usage' ? 120_000 : 60_000),
+    summary: id === ids[0] ? marker : `${id} synthetic report`,
+    proves: 'Only this local synthetic assertion.',
+    doesNotProve: 'No deployment, provider integration or Production.',
+  }))
+  items[0].checks = [{
+    id: health ? 'app-prozess' : 'domain-flights',
+    name: health ? 'App-Prozess' : 'Flights',
+    status: health ? 'healthy' : 'available',
+    source: 'local-independent-counterexample',
+    freshness: fresh(60_000),
+    summary: 'Synthetic child',
+    proves: 'Only the synthetic child.',
+    doesNotProve: 'No broader health claim.',
+  }]
+  return { checkedAt: iso(base), writeActions: [], items }
+}
+
+const selected = board => board === 'health'
+  ? { card: '[data-health-id="app"]', child: '[data-health-check="app-prozess"]', freshness: 'data-health-freshness', checkedAt: 'data-health-checked-at', green: 'data-health-green' }
+  : { card: '[data-ops-id="provider-ops"]', child: '[data-ops-check="domain-flights"]', freshness: 'data-ops-freshness', checkedAt: 'data-ops-checked-at', green: 'data-ops-green' }
+const endpoint = board => board === 'health' ? '/api/admin/system-health' : '/api/admin/provider-ops'
+let browser
+let server
+let origin
+
+async function state(page) {
+  return page.evaluate(() => ({
+    phase: document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase'),
+    pending: document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending'),
+    refreshDisabled: document.querySelector('button')?.disabled,
+    fetchCalls: window.__calls.map(call => ({ url: call.url, cache: call.cache, signalAborted: call.signal?.aborted ?? null })),
+    responsesResolved: window.__resolved,
+    responseBodiesRead: window.__bodiesRead,
+    propsWaiters: window.__propsWaiters.length,
+    text: document.body.textContent,
+  }))
+}
+
+async function settle(page) {
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+}
+
+async function createPage(board, { held = false, initial = report(board) } = {}) {
+  const context = await browser.newContext({ viewport: result.viewport, reducedMotion: result.reducedMotion })
+  await context.clock.install({ time: base })
+  await context.route('**/*', route => {
+    const url = route.request().url()
+    if (new URL(url).origin !== origin) {
+      result.externalRequestAttempts.push(url)
+      return route.abort()
+    }
+    result.localRequests.push(new URL(url).pathname)
+    return route.continue()
+  })
+  await context.addInitScript(({ board, initial, held, source }) => {
+    window.__FALL__ = { board, anfang: initial, endpunkt: source, erlaubt: true, sichtbar: true }
+    window.__calls = []
+    window.__requests = []
+    window.__propsWaiters = []
+    window.__resolved = 0
+    window.__bodiesRead = 0
+    window.fetch = (url, init) => {
+      window.__calls.push({ url: String(url), cache: init?.cache, signal: init?.signal })
+      return new Promise((resolve, reject) => window.__requests.push({ resolve, reject }))
+    }
+    if (held) window.__JETNITY_OPS_PROPS_SPERRE__ = () => new Promise(resolve => window.__propsWaiters.push(resolve))
+  }, { board, initial, held, source: endpoint(board) })
+  const page = await context.newPage()
+  page.setDefaultTimeout(8000)
+  page.on('pageerror', error => result.pageErrors.push({ board, error: String(error) }))
+  await page.goto(origin, { waitUntil: 'load' })
+  await page.waitForFunction(() => typeof window.__setze === 'function')
+  return { page, context }
+}
+
+async function resolveGet(page, body) {
+  await page.evaluate(body => {
+    const request = window.__requests.shift()
+    if (!request) throw new Error('Expected one deferred local fetch')
+    window.__resolved++
+    request.resolve({ ok: true, status: 200, json: async () => { window.__bodiesRead++; return body } })
+  }, body)
+  await page.waitForFunction(() => window.__bodiesRead === 1)
+  await settle(page)
+}
+
+async function caseFor(name, board, options, fn) {
+  let context
+  try {
+    const created = await createPage(board, options)
+    context = created.context
+    const observations = await fn(created.page)
+    result.cases.push({ name, board, defectReproduced: true, observations })
+    console.log(`DEFECT_REPRODUCED ${board} ${name}`)
+  } catch (error) {
+    result.cases.push({ name, board, defectReproduced: false, probeFailure: String(error?.stack ?? error) })
+    console.error(`PROBE_INCOMPLETE ${board} ${name}: ${String(error)}`)
+  } finally {
+    await context?.close()
+  }
+}
+
+try {
+  const bundle = await build({
+    absWorkingDir: repo,
+    entryPoints: [join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx')],
+    bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic',
+    alias: { '@': repo },
+    define: { 'process.env.NODE_ENV': '"production"' },
+    plugins: [{ name: 'same-author-server-only-boundary', setup(api) {
+      api.onResolve({ filter: /^server-only$/ }, () => ({ path: join(repo, 'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts') }))
+    } }],
+    logLevel: 'silent',
+  })
+  const globals = join(repo, 'styles/globals.css')
+  const css = (await postcss([nesting(), tailwindcss(require(join(repo, 'tailwind.config.js'))), autoprefixer()])
+    .process(readFileSync(globals, 'utf8'), { from: globals })).css
+  const html = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/styles.css"></head><body><div id="root"></div><script src="/harness.js"></script></body></html>'
+  server = createServer((req, res) => {
+    const path = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
+    const asset = path === '/' ? ['text/html', html] : path === '/harness.js' ? ['text/javascript', bundle.outputFiles[0].contents] : path === '/styles.css' ? ['text/css', css] : null
+    if (!asset) { res.writeHead(404); res.end(); return }
+    res.writeHead(200, { 'content-type': `${asset[0]}; charset=utf-8`, 'cache-control': 'no-store' })
+    res.end(asset[1])
+  })
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
+  origin = `http://127.0.0.1:${server.address().port}`
+  result.origin = origin
+  browser = await chromium.launch({ headless: true })
+  result.browser = browser.version()
+  result.browserLaunch = { headless: true, addedFlags: [] }
+
+  for (const board of ['health', 'ops']) {
+    await caseFor('new-props-during-first-GET-leaves-refresh-locked', board, { held: true }, async page => {
+      await page.waitForFunction(() => window.__propsWaiters.length === 1)
+      await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).click()
+      await page.waitForFunction(() => window.__calls.length === 1 && document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending') === 'true')
+      await page.evaluate(initial => window.__setze({ anfang: initial }), report(board, 'NEW-PROPS-SUPERSEDE-FIRST-GET'))
+      await page.waitForFunction(() => window.__propsWaiters.length === 2)
+      await page.evaluate(() => window.__propsWaiters.splice(0).forEach(resolve => resolve()))
+      await page.waitForFunction(() => document.body.textContent.includes('NEW-PROPS-SUPERSEDE-FIRST-GET'))
+      const beforeGetSettles = await state(page)
+      assert.equal(beforeGetSettles.pending, 'true')
+      await resolveGet(page, report(board, 'AUTHORITATIVE-GET-SHOULD-WIN'))
+      await page.clock.runFor(2000)
+      await settle(page)
+      const afterGetAndTwoLocalTicks = await state(page)
+      assert.equal(afterGetAndTwoLocalTicks.phase, 'aktuell')
+      assert.equal(afterGetAndTwoLocalTicks.pending, 'true')
+      assert.equal(afterGetAndTwoLocalTicks.refreshDisabled, true)
+      assert.equal(afterGetAndTwoLocalTicks.responseBodiesRead, 1)
+      assert.equal(afterGetAndTwoLocalTicks.responsesResolved, 1)
+      assert.match(afterGetAndTwoLocalTicks.text, /NEW-PROPS-SUPERSEDE-FIRST-GET/)
+      assert.doesNotMatch(afterGetAndTwoLocalTicks.text, /AUTHORITATIVE-GET-SHOULD-WIN/)
+      await page.evaluate(() => document.querySelector('button').click())
+      assert.equal((await state(page)).fetchCalls.length, 1)
+      return { beforeGetSettles, afterGetAndTwoLocalTicks, retryFetchCount: 1, expected: 'Explicit GET retains authority; after it settles, pending clears and refresh is usable.', actual: 'Changed props commit, GET is ignored, and disabled refresh remains locked with no unresolved fetch.' }
+    })
+
+    await caseFor('endpoint-A-B-A-accepts-aborted-old-response', board, {}, async page => {
+      await page.locator(selected(board).card).waitFor()
+      await page.getByRole('button', { name: 'Erneut prüfen', exact: true }).click()
+      await page.waitForFunction(() => window.__calls.length === 1)
+      await page.evaluate(() => window.__setze({ endpunkt: '/api/admin/local-other-source' }))
+      await page.waitForFunction(() => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'historisch')
+      const atB = await state(page)
+      assert.equal(atB.fetchCalls[0].signalAborted, true)
+      await page.evaluate(source => window.__setze({ endpunkt: source }), endpoint(board))
+      await settle(page)
+      await resolveGet(page, report(board, 'OBSOLETE-A-RESPONSE-ACCEPTED'))
+      await page.waitForFunction(() => document.body.textContent.includes('OBSOLETE-A-RESPONSE-ACCEPTED'))
+      const afterOldResponse = await state(page)
+      assert.equal(afterOldResponse.phase, 'aktuell')
+      assert.equal(afterOldResponse.fetchCalls.length, 1)
+      assert.equal(afterOldResponse.fetchCalls[0].signalAborted, true)
+      return { atB, afterOldResponse, expected: 'The old A generation stays invalid after A→B→A even if the transport ignores abort.', actual: 'The aborted old A response commits as current without a newer GET.' }
+    })
+
+    const futureCard = report(board, 'FUTURE-CARD-ONLY')
+    futureCard.items[0].checkedAt = iso(base + 120_000)
+    await caseFor('future-card-with-current-report-stays-fresh-through-real-domain-hint', board, { initial: futureCard }, async page => {
+      const selectors = selected(board)
+      await page.locator(selectors.card).waitFor()
+      const observation = await page.evaluate(({ selectors, envelope }) => ({
+        wall: Date.now(),
+        envelopeCheckedAt: envelope,
+        cardCheckedAt: document.querySelector(selectors.card)?.getAttribute(selectors.checkedAt),
+        cardFreshness: document.querySelector(selectors.card)?.getAttribute(selectors.freshness),
+        childFreshness: document.querySelector(selectors.child)?.getAttribute(selectors.freshness),
+        childGreen: document.querySelector(selectors.child)?.getAttribute(selectors.green),
+        fetchCount: window.__calls.length,
+      }), { selectors, envelope: futureCard.checkedAt })
+      assert.ok(Date.parse(observation.envelopeCheckedAt) <= observation.wall)
+      assert.ok(Date.parse(observation.cardCheckedAt) > observation.wall)
+      assert.equal(observation.cardFreshness, 'fresh')
+      assert.equal(observation.childFreshness, 'fresh')
+      assert.equal(observation.childGreen, 'true')
+      assert.equal(observation.fetchCount, 0)
+      return { ...observation, expected: 'A future parent checkedAt latches that parent and its initially fresh children unknown.', actual: 'Parent and child remain fresh, and the healthy/available child renders green.', hintBoundary: 'No hint replacement: the unchanged production board calls its real frozen wendeEvidenceAlterAn and berechneFreshness.' }
+    })
+  }
+  assert.deepEqual(result.externalRequestAttempts, [])
+  assert.deepEqual(result.pageErrors, [])
+  assert.equal(result.cases.length, 6)
+  assert.ok(result.cases.every(entry => entry.defectReproduced))
+  result.outcome = 'THREE_DEFECTS_REPRODUCED_IN_SIX_MOUNTED_CASES'
+} catch (error) {
+  result.outcome = 'INCOMPLETE'
+  result.failure = String(error?.stack ?? error)
+  process.exitCode = 1
+} finally {
+  await browser?.close()
+  if (server?.listening) await new Promise(resolve => server.close(resolve))
+  result.statusAfter = execFileSync('git', ['status', '--porcelain'], { cwd: repo, encoding: 'utf8' })
+  if (result.statusAfter !== '') { result.outcome = 'INCOMPLETE_DIRTY_CHECKOUT'; process.exitCode = 1 }
+  result.exit = process.exitCode ?? 0
+  if (existsSync(destination)) copyFileSync(destination, destination.replace(/\.json$/, `-prior-${Date.now()}.json`))
+  writeFileSync(destination, JSON.stringify(result, null, 2) + '\n')
+  console.log(JSON.stringify({ outcome: result.outcome, head, browser: result.browser, cases: result.cases.map(({ name, board, defectReproduced, probeFailure }) => ({ name, board, defectReproduced, probeFailure })), externalRequests: result.externalRequestAttempts.length, pageErrors: result.pageErrors.length, exit: result.exit, evidence: destination }, null, 2))
+}

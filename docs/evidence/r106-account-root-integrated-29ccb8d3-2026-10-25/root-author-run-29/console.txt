@@ -1,0 +1,275 @@
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+TAP version 13
+# Subtest: Account-Registry Workflow UI-Vertrag
+    # Subtest: die Oberfläche ruft die acht Aktionen nur über den Hook auf
+    ok 1 - die Oberfläche ruft die acht Aktionen nur über den Hook auf
+      ---
+      duration_ms: 0.90423
+      type: 'test'
+      ...
+    # Subtest: der Hook führt keine sensitiven Felder ein
+    ok 2 - der Hook führt keine sensitiven Felder ein
+      ---
+      duration_ms: 0.187066
+      type: 'test'
+      ...
+    1..2
+ok 1 - Account-Registry Workflow UI-Vertrag
+  ---
+  duration_ms: 1.824684
+  type: 'suite'
+  ...
+# Subtest: Account-Registry gemountet
+    # Subtest: traveller-anlegen
+    ok 1 - traveller-anlegen
+      ---
+      duration_ms: 861.19268
+      type: 'test'
+      ...
+    # Subtest: traveller-aendern
+    ok 2 - traveller-aendern
+      ---
+      duration_ms: 852.649557
+      type: 'test'
+      ...
+    # Subtest: traveller-loeschen
+    ok 3 - traveller-loeschen
+      ---
+      duration_ms: 692.481034
+      type: 'test'
+      ...
+    # Subtest: citizenship-anlegen
+    ok 4 - citizenship-anlegen
+      ---
+      duration_ms: 805.220048
+      type: 'test'
+      ...
+    # Subtest: citizenship-loeschen
+    ok 5 - citizenship-loeschen
+      ---
+      duration_ms: 683.035135
+      type: 'test'
+      ...
+    # Subtest: document-anlegen
+    ok 6 - document-anlegen
+      ---
+      duration_ms: 1613.924746
+      type: 'test'
+      ...
+    # Subtest: document-aendern
+    ok 7 - document-aendern
+      ---
+      duration_ms: 899.94454
+      type: 'test'
+      ...
+    # Subtest: document-loeschen
+    ok 8 - document-loeschen
+      ---
+      duration_ms: 701.222703
+      type: 'test'
+      ...
+    # Subtest: gleiche Runde sendet eine Aktion
+    ok 9 - gleiche Runde sendet eine Aktion
+      ---
+      duration_ms: 374.609222
+      type: 'test'
+      ...
+    # Subtest: Erfolg von A bleibt auf A
+    ok 10 - Erfolg von A bleibt auf A
+      ---
+      duration_ms: 973.116217
+      type: 'test'
+      ...
+    # Subtest: Unbekannt von A bleibt auf A
+    ok 11 - Unbekannt von A bleibt auf A
+      ---
+      duration_ms: 969.220395
+      type: 'test'
+      ...
+    # Subtest: Schliessen und erneut oeffnen sendet nichts
+    ok 12 - Schliessen und erneut oeffnen sendet nichts
+      ---
+      duration_ms: 897.186222
+      type: 'test'
+      ...
+    # Subtest: veraltete Anerkennung schreibt nicht
+    ok 13 - veraltete Anerkennung schreibt nicht
+      ---
+      duration_ms: 960.132958
+      type: 'test'
+      ...
+    # Subtest: unbekannt A dann B dann keine Anerkennung von A
+    ok 14 - unbekannt A dann B dann keine Anerkennung von A
+      ---
+      duration_ms: 858.659715
+      type: 'test'
+      ...
+    # Subtest: bekannte Wiederholung laesst das alte Unbekannt stehen
+    ok 15 - bekannte Wiederholung laesst das alte Unbekannt stehen
+      ---
+      duration_ms: 888.060038
+      type: 'test'
+      ...
+    # Subtest: Dokument D bleibt von Dokument E getrennt
+    ok 16 - Dokument D bleibt von Dokument E getrennt
+      ---
+      duration_ms: 937.57843
+      type: 'test'
+      ...
+    # Subtest: Staatsbuergerschaft bleibt vom Dokumentformular getrennt
+    ok 17 - Staatsbuergerschaft bleibt vom Dokumentformular getrennt
+      ---
+      duration_ms: 940.814612
+      type: 'test'
+      ...
+    # Subtest: Verschwinden bewegt den Fokus nur aus dem entfernten Ziel
+    ok 18 - Verschwinden bewegt den Fokus nur aus dem entfernten Ziel
+      ---
+      duration_ms: 725.561158
+      type: 'test'
+      ...
+    # Subtest: Lesefehler behaelt den Entwurf
+    ok 19 - Lesefehler behaelt den Entwurf
+      ---
+      duration_ms: 757.148146
+      type: 'test'
+      ...
+    # Subtest: Lesen und spaetere Fehler senden keine Aktion
+    ok 20 - Lesen und spaetere Fehler senden keine Aktion
+      ---
+      duration_ms: 926.025389
+      type: 'test'
+      ...
+    # Subtest: unveraenderte Liste gibt keine weitere Speicherung frei
+    ok 21 - unveraenderte Liste gibt keine weitere Speicherung frei
+      ---
+      duration_ms: 1468.336315
+      type: 'test'
+      ...
+    # Subtest: schmutzige Uebernahme behaelt die Eingabe
+    ok 22 - schmutzige Uebernahme behaelt die Eingabe
+      ---
+      duration_ms: 1391.223786
+      type: 'test'
+      ...
+    # Subtest: saubere Uebernahme entzieht dem alten Abschluss die Oberflaeche
+    ok 23 - saubere Uebernahme entzieht dem alten Abschluss die Oberflaeche
+      ---
+      duration_ms: 1315.229387
+      type: 'test'
+      ...
+    # Subtest: gleiche Bezeichnung waehlt keine Karte
+    ok 24 - gleiche Bezeichnung waehlt keine Karte
+      ---
+      duration_ms: 378.167452
+      type: 'test'
+      ...
+    # Subtest: leere Dokumentzuordnung bleibt leer
+    ok 25 - leere Dokumentzuordnung bleibt leer
+      ---
+      duration_ms: 717.476223
+      type: 'test'
+      ...
+    # Subtest: acht Staatsbuergerschaften lassen Aendern und Entfernen
+    ok 26 - acht Staatsbuergerschaften lassen Aendern und Entfernen
+      ---
+      duration_ms: 786.410915
+      type: 'test'
+      ...
+    # Subtest: zwoelf Dokumente lassen das bestehende aendern
+    ok 27 - zwoelf Dokumente lassen das bestehende aendern
+      ---
+      duration_ms: 788.754613
+      type: 'test'
+      ...
+    # Subtest: leer 500 und 503 bleiben unterscheidbar
+    ok 28 - leer 500 und 503 bleiben unterscheidbar
+      ---
+      duration_ms: 242.749977
+      type: 'test'
+      ...
+    # Subtest: Ablehnung zeigt die Meldung
+    ok 29 - Ablehnung zeigt die Meldung
+      ---
+      duration_ms: 707.884256
+      type: 'test'
+      ...
+    # Subtest: Tastatur Escape und Enter
+    ok 30 - Tastatur Escape und Enter
+      ---
+      duration_ms: 805.829365
+      type: 'test'
+      ...
+    # Subtest: gespeichert ohne neue Liste bietet Lesen an
+    ok 31 - gespeichert ohne neue Liste bietet Lesen an
+      ---
+      duration_ms: 1079.252636
+      type: 'test'
+      ...
+    # Subtest: ausdrueckliche Uebernahme entzieht dem alten Erfolg die Oberflaeche
+    ok 32 - ausdrueckliche Uebernahme entzieht dem alten Erfolg die Oberflaeche
+      ---
+      duration_ms: 789.786258
+      type: 'test'
+      ...
+    # Subtest: eine echte Ablehnung nach neuer Generation bleibt beim Entwurf
+    ok 33 - eine echte Ablehnung nach neuer Generation bleibt beim Entwurf
+      ---
+      duration_ms: 744.319401
+      type: 'test'
+      ...
+    # Subtest: eine gespeicherte Aenderung oeffnet mit dem bekannten Stand
+    ok 34 - eine gespeicherte Aenderung oeffnet mit dem bekannten Stand
+      ---
+      duration_ms: 1154.640845
+      type: 'test'
+      ...
+    # Subtest: eine Dokumentaenderung oeffnet mit den bekannten Metadaten
+    ok 35 - eine Dokumentaenderung oeffnet mit den bekannten Metadaten
+      ---
+      duration_ms: 1167.903431
+      type: 'test'
+      ...
+    # Subtest: Abbrechen setzt den Fokus auf den bleibenden Schalter
+    ok 36 - Abbrechen setzt den Fokus auf den bleibenden Schalter
+      ---
+      duration_ms: 3226.365191
+      type: 'test'
+      ...
+    # Subtest: Abbrechen laesst den Fokus auf dem aelteren Beleg
+    ok 37 - Abbrechen laesst den Fokus auf dem aelteren Beleg
+      ---
+      duration_ms: 838.875885
+      type: 'test'
+      ...
+    # Subtest: Escape schliesst die Verwaltung und behaelt den Entwurf
+    ok 38 - Escape schliesst die Verwaltung und behaelt den Entwurf
+      ---
+      duration_ms: 1505.790376
+      type: 'test'
+      ...
+    # Subtest: schmale Breiten und grosse Schrift
+    ok 39 - schmale Breiten und grosse Schrift
+      ---
+      duration_ms: 680.210704
+      type: 'test'
+      ...
+    1..39
+ok 2 - Account-Registry gemountet
+  ---
+  duration_ms: 37260.417885
+  type: 'suite'
+  ...
+1..2
+# tests 41
+# suites 2
+# pass 41
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 38075.642674
+evidence /tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/run-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8.json
+exit 0 cases 39 status PASS
