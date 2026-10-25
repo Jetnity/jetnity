@@ -81,10 +81,11 @@ async function text(page: Page): Promise<string> {
 
 type Aufnahme = {
   file: string
+  capture: 'element'
   viewport: { width: number; height: number }
   rootFontPx: 32
   state: string
-  scrolledTo: string
+  target: string
   overflow: { verwaltung: number; dokument: number }
 }
 
@@ -107,15 +108,15 @@ async function rahmen(page: Page, name: string, state: string, scrolledTo: strin
     assert.ok(mass.verwaltung <= 1, `${name} Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
     console.log(`css ${name} ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
     if (breite === 320 || breite === 1440) {
-      await ziel.evaluate((element) => element.scrollIntoView({ block: 'start', inline: 'nearest' }))
       const file = `${name}-${breite}.png`
-      await page.screenshot({ path: `${screens}/${file}`, fullPage: false })
+      await ziel.screenshot({ path: `${screens}/${file}`, animations: 'disabled' })
       aufnahmen.push({
         file,
+        capture: 'element',
         viewport: { width: breite, height: 900 },
         rootFontPx: 32,
         state,
-        scrolledTo,
+        target: scrolledTo,
         overflow: mass,
       })
     }

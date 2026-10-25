@@ -170,6 +170,7 @@ const ergebnis = {
     requestSubmit: 'The same-turn double submit calls form.requestSubmit() twice in one turn. That is guard admission, not a keyboard Enter pair.',
     keyboard: 'Opening the editor, cancelling it with Escape, and submitting one edit use page.keyboard.press. The cancel button uses a pointer click.',
   },
+  screenshotNote: 'Each PNG is an element capture of the named target after the page viewport and root font are set. It is not a viewport crop of the map. Section and document overflow are still measured on the viewport. In this Chromium, window scrollTop clamps below the visit controls when the root font is 32px, so a viewport crop stays on the map.',
   tracked: {
     before: statusBefore,
     beforeDirty: trackedDirtyBefore,
