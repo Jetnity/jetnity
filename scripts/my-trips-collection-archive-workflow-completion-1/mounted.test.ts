@@ -415,7 +415,7 @@ describe('montierte Meine-Reisen-Sammlung', () => {
         fenster.__sammlung.setErgebnis({ ...fenster.__sammlung.anfang, zeilen: [zeile] })
       })
       await ruhen(herkunft)
-      await herkunft.getByText('früheren Status nicht belegt').waitFor()
+      await herkunft.getByText('frühere Status nicht belegt').waitFor()
       assert.equal(await herkunft.getByText('Die Aktion läuft.').count(), 1)
       assert.equal(await herkunft.getByRole('button', { name: 'Wiederherstellen' }).count(), 0)
       assert.equal(await herkunft.locator('[data-archiv-schreiben="pending"]').count(), 1)
@@ -423,11 +423,11 @@ describe('montierte Meine-Reisen-Sammlung', () => {
       await adresseSetzen(herkunft, 'q=nur-navigation')
       assert.equal(await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.aktionAnzahl()), aktionenVorher)
       assert.equal(await herkunft.locator('[data-archiv-schreiben="pending"]').count(), 1)
-      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      assert.equal(await herkunft.getByText('frühere Status nicht belegt').count(), 1)
       const refreshVorUnklar = (await lese(herkunft)).refresh
       await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true }))
       await herkunft.getByText('Das Ergebnis dieser Aktion ist unklar.').waitFor()
-      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      assert.equal(await herkunft.getByText('frühere Status nicht belegt').count(), 1)
       assert.equal((await lese(herkunft)).refresh, refreshVorUnklar)
       await herkunft.evaluate(() => {
         const fenster = window as unknown as SammlungFenster
@@ -463,13 +463,13 @@ describe('montierte Meine-Reisen-Sammlung', () => {
         })
       })
       await ruhen(herkunft)
-      await herkunft.getByText('früheren Status nicht belegt').waitFor()
+      await herkunft.getByText('frühere Status nicht belegt').waitFor()
       assert.equal(await herkunft.getByText('Die Aktion läuft.').count(), 1)
       assert.equal(await herkunft.getByRole('button', { name: 'Wiederherstellen' }).count(), 0)
       const refreshVorErfolg = (await lese(herkunft)).refresh
       await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true, wert: null }))
       await herkunft.getByText('Die Aktion hat Erfolg gemeldet.').waitFor()
-      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      assert.equal(await herkunft.getByText('frühere Status nicht belegt').count(), 1)
       assert.equal(await herkunft.locator('[data-archiv-schreiben="acknowledged"]').count(), 1)
       assert.equal((await lese(herkunft)).refresh, refreshVorErfolg + 1)
       await herkunft.close()
