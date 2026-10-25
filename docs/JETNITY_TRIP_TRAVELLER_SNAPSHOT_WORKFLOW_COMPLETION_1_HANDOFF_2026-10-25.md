@@ -31,12 +31,30 @@ Stop for independent Technical-Lead candidate review. Do not Ready, do not merge
 - Merge-base: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - No rebase. If `main` moves later, report the drift and wait.
 
-The documentation commit after `6e3ec8b5` updates this handoff, the status, the report, the self-review, and `mounted-matrix.txt`. It does not change product code. Use the pushed branch head, not `6e3ec8b5`, as the review head once that docs commit is the tip.
+`origin/main` fetched again for this consolidation is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Before this documentation commit the branch was **17 ahead / 0 behind**. This commit adds documentation only. The pushed tip is the review head. No rebase.
+
+The handoff at `736edb9f900645137c6947f8de194171d3757c95` recorded only the two card corrections. It is not the current receipt.
+
+## Current packet
+
+Review R1 and both later addenda are on this tip. Product behavior is commit `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`, tree `8975beab7ef622a18002692c3435527375b8c8b7`. The mounted log is bound to that tree. This consolidation does not change it and does not re-run the command.
+
+1. Newer draft during a held save, commit `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`. When the pending intent is no longer the operation for that draft generation, occupancy is released and a newer intent such as removal confirmation stays. When that same intent is still pending and the draft generation has moved, an entered null becomes idle and says the previous save was accepted and the later edits are not repeated. A writer that was not entered becomes `not_sent`. An entered non-null becomes `unproven`. The original payload is not sent again, and that stale accept does not refresh.
+
+2. Matching readback, same commit. The submitted fingerprint is recognized only while the draft generation is still that submission. The draft is not rebuilt, so the citizenship UUID and passport relation stay. A later matching graph can be shown as consistent. A later edit drops that claim. A different graph conflicts. The match is an observation, not an exactly-once receipt.
+
+3. Registry uncertainty, commit `c589266158a4d15f90a952e370435150e45f41d7`. `unaufgeloest` stays on that registry source through cancel and a section return. Unknown, then another request, then cancel, then another request still shows both “Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.” and “Eine erneute Übernahme kann einen weiteren Snapshot erzeugen, falls die vorherige angekommen ist.” before confirm. Confirm is a new writer call. A later accepted confirm does not claim the first attempt was absent.
+
+4. T-EX2, same commit, only the test “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh” in `lib/readiness/trip-official-evaluations-server.test.ts`. The removal writer returns null and the refresh count stays 0. `onReadinessAktualisieren` raises it to 1 and returns `{ art: 'props' }`. The accommodation callback raises it to 2. Invalidations stay 2. The write payloads stay the removal and the accommodation pair. Every other assertion in that file stays. Native App job 121237625987 on superseded `b443fb13` was the old expected 2 / actual 1 failure. That assertion is retargeted under the root authorization. It is not waived and it is not disabled. T-EX1 remains the four helper assertions.
+
+5. Owned one-refresh proof, same mounted command, test “each accepted save, removal and intake requests one refresh”, `art: 'konto'`. `window.__ROUTER_REFRESH__` reaches 1 after save, 2 after removal, and 3 after intake. The Konto call list has one `travellerSetzen`, one `travellerEntfernen`, and one `registryTravellerInReiseUebernehmen`. The stubbed unit test is not the only wiring evidence.
+
+6. Focus ownership, commit `6e3ec8b5`. A trusted focus calls `interaktion`. Completion keeps the status request only when that interaction is still current and the active element is still that card, or body after the disabled save button releases focus. The effect follows the request and the phase, then clears the request. A pointer click on the second card’s residence country search, with the value left empty, keeps that input. Tab from “Weitere Staatsbürgerschaft” into that search does the same. A save with no further move focuses the accepted status paragraph. Escape still focuses “Angaben entfernen”. The hold uses the account matrix host because Konto’s product writer returns null immediately. The cards are the Workspace cards.
+
+Mounted command on tree `8975beab`: 21 pass, 0 fail, exit 0. Node v22.23.4, Playwright 1.55.0. `npm test` on that product pass exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npm run typecheck`, the five hygiene checks, and `npm run build` exit 0. `npx eslint .` exits 0 with 0 errors and 181 warnings.
 
 ## Next step
 
-Independent exact-head re-gate of the pushed tip. Both product P1s stay OPEN. The two review-R1 card defects are corrected on `a68e6b4a`. The registry warning and T-EX2 retarget are on `c5892661`. The focus-ownership correction is on `6e3ec8b5`. None of that is acceptance.
-
-T-EX2, authorized by root for this addendum, retargets only “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh” in `lib/readiness/trip-official-evaluations-server.test.ts`. The removal writer returns null without refreshing. The test then calls the forwarded `onReadinessAktualisieren` and sees one refresh. The accommodation callback supplies the second. The mounted Konto path separately shows one router refresh for an accepted save, one for an accepted removal, and one for an accepted intake. T-EX1 remains the four helper assertions. No other unlisted test was edited. Local PostgreSQL 16 proofs did not run here.
+Independent exact-head re-gate of the pushed tip. P1, the product relation-loss on a residence-only edit, stays OPEN. Draft remains. No Ready, no merge, no main sync, no sibling integration, no tracking close.
 
 Holds that remain: #985/#982, #917, #913/#911, #968, #748, #626, #937/#936, Bern #934. No Production DB, Auth, AAL, RLS, secret, provider, payment, legal, or launch action is authorized by this delivery.

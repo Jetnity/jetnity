@@ -25,11 +25,13 @@ T-EX2 now covers the old `1 !== 2` assertion and only that test. The writer stil
 
 The audit once-count is a test-bundle rewrite. The source file on disk is the frozen component.
 
-`npm test` does not execute the Playwright files. The 20-test result is only the direct command in `mounted-matrix.txt`. An unknown intake keeps `unaufgeloest` across cancel and section return. A later accepted confirm does not claim the first attempt was absent. The duplicate warning stays with that source.
+`npm test` does not execute the Playwright files. The 21-test result on tree `8975beab` is the direct command in `mounted-matrix.txt`. An unknown intake keeps `unaufgeloest` across cancel and section return. A later accepted confirm does not claim the first attempt was absent. The duplicate warning stays with that source.
 
 I first moved the draft baseline at accept time. That made a later guest prop carrying the original traveller look like a conflict and disabled Save. The baseline now moves only when a later observation matches the submitted fingerprint and the draft generation is still that submission. I would want a reviewer to check that choice: an accepted edit stays dirty until that matching observation, and a delivery that still equals the pre-edit baseline does not become a conflict.
 
 Focus ownership is a trusted focus event plus the card that contains `document.activeElement` when the writer settles. The country-search regression clicks that input and, separately, tabs into it from the neighbouring button. The neighbour `focus()` call is untrusted and does not itself retire the older request; the Tab does. I would want a reviewer to check two limits. A focus move that never produces a trusted event, and never leaves the saving card, can still receive the status focus. Konto cannot defer its product writer, so the hold is the account matrix host rather than the Konto callback. Body focus after the save button disables still allows the deliberate status focus. That matches a click that did not choose another target.
+
+The current handoff gathers the card corrections, the registry warning, T-EX2, the Konto one-refresh count, and the focus correction into one packet. The handoff at `736edb9f` had only the card corrections. This consolidation commit does not change the product tree `8975beab7ef622a18002692c3435527375b8c8b7`.
 
 ## Not claimed
 

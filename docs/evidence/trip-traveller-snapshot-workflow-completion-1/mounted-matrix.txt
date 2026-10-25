@@ -12,7 +12,7 @@ tests: 21
 pass: 21
 fail: 0
 
-The run used the working tree captured by that focus commit. No product file changed between the passing run and the commit. This documentation file is a later docs-only commit. The earlier 20-pass log stays in git on tree 55970376c0e8c08b0bc79610854fc4898355673a. The earlier 18-pass log stays in git on tree 4f2165518fdea569afbb63d45efaef13409c276b.
+The run used the working tree captured by that focus commit. No product file changed between the passing run and the commit. Later documentation commits, including the consolidated R1 packet, do not change that product tree and do not re-run this command. The earlier 20-pass log stays in git on tree 55970376c0e8c08b0bc79610854fc4898355673a. The earlier 18-pass log stays in git on tree 4f2165518fdea569afbb63d45efaef13409c276b.
 
 The previous 15-pass log on implementation tree a8d9f7f938382623622f3adf5bb3500f5fd519ef remains in git at b443fb13db1e97e0d0d85d51814046349fd7491b. Historical RED `mounted-residence-red.txt` stays bound to head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec. Historical GREEN `mounted-residence-green.txt` stays bound to head 27102ebae649ceaaab5866a0df6db84f570c507a.
 

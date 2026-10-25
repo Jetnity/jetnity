@@ -1,6 +1,6 @@
 # R107-T status — 2026-10-25
 
-Status: candidate correction for review R1 is on the branch. P1 stays OPEN. This is not PASS, Ready, or merge.
+Status: the current tip contains the review-R1 card corrections and both later addenda (registry warning, T-EX2, focus ownership). P1 stays OPEN. This is not PASS, Ready, or merge. The handoff at `736edb9f` recorded only the card corrections.
 
 Logical agent: Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1.
 Session: https://cursor.com/agents/bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0
