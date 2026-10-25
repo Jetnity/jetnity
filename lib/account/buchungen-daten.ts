@@ -1,85 +1,119 @@
 // lib/account/buchungen-daten.ts
 //
-// Eine serverseitige Aggregation bestätigter Buchungen des angemeldeten
-// Kontos. Eine Abfrage, kein N+1, kein `user_id`-Filter, kein Service Role.
+// Eine serverseitige Seite bestätigter Buchungen des angemeldeten Kontos.
+// Eine Abfrage, kein N+1, kein `user_id`-Filter, kein Service Role, keine Zählung.
 //
-// RLS aus `20260817120000_reiseschema.sql` bleibt die Ownership-Authority:
-// `trip_items_lesen` und `trips_lesen` für `authenticated`. Empty ≠ Error
-// über `problemAus()`. Kein Write-Pfad.
-//
-// Vor dem Limit steht eine stabile DB-Ordnung: booking_confirmed_at absteigend,
-// fehlende Zeiten zuletzt, danach id. Die 200er-Teilmenge ist damit
-// deterministisch. Die Bestätigungszeit bleibt Schnittkriterium und erscheint
-// nicht in der UI.
+// RLS bleibt die Ownership-Authority. Empty ≠ Error über `problemAus()`.
+// Ein ungültiger Filter oder Cursor fragt die Datenbank nicht.
 
 import 'server-only'
 
-import { problemAus, type Lesung, type Leseantwort, type Problem } from '@/lib/api/datenbank-lesen'
 import {
-  BUCHUNGEN_LISTE_GRENZE,
-  buchungenAbgeschnitten,
-  buchungenAusZeilen,
-  type KontoBuchung,
-  type RoheBuchungszeile,
-} from '@/lib/account/buchungen'
+  buchungenAbfrageBauen,
+  buchungenAdresse,
+  buchungenAnfrageAus,
+  buchungenSeiteAusZeilen,
+  type BuchungenAnfrage,
+  type BuchungenErgebnis,
+  type BuchungenRohQuery,
+} from '@/lib/account/buchungen-abfrage'
+import { problemAus, type Leseantwort, type Problem } from '@/lib/api/datenbank-lesen'
+import type { RoheBuchungszeile } from '@/lib/account/buchungen'
 import { createServerComponentClient } from '@/lib/supabase/server'
-
-/**
- * Nur die für S1 nötigen Spalten. Keine Beträge, Partnerfelder,
- * Deeplinks oder Reisenden-/Dokumentangaben.
- */
-const BUCHUNGEN_SPALTEN =
-  'id, kind, title, starts_on, starts_at, ends_on, ends_at, booking_status, ' +
-  'trips!inner(id, title, status)'
 
 const ABBILDUNGSFEHLER: Problem = {
   status: 500,
   message: 'Mindestens eine bestätigte Buchung konnte nicht sicher gelesen werden.',
 }
 
-export type BuchungenLesung = Lesung<KontoBuchung> & { abgeschnitten: boolean }
-
-function alsAntwort<Zeile>(abfrage: PromiseLike<unknown>): PromiseLike<Leseantwort<Zeile> & { count?: number | null }> {
-  return abfrage as PromiseLike<Leseantwort<Zeile> & { count?: number | null }>
+type BuchungenKette = PromiseLike<Leseantwort<RoheBuchungszeile>> & {
+  eq: (spalte: string, wert: string) => BuchungenKette
+  in: (spalte: string, werte: readonly string[]) => BuchungenKette
+  filter: (spalte: string, operator: string, wert: string) => BuchungenKette
+  or: (ausdruck: string) => BuchungenKette
+  is: (spalte: string, wert: null) => BuchungenKette
+  gt: (spalte: string, wert: string) => BuchungenKette
+  order: (spalte: string, optionen: { ascending: boolean; nullsFirst?: boolean }) => BuchungenKette
+  limit: (n: number) => BuchungenKette
 }
 
-export async function buchungenLaden(): Promise<BuchungenLesung> {
-  const supabase = await createServerComponentClient()
-  let antwort: Leseantwort<RoheBuchungszeile> & { count?: number | null }
+export type BuchungenDatenClient = {
+  from: (tabelle: string) => { select: (spalten: string) => BuchungenKette }
+}
 
+function lesenFehler(
+  anfrage: Extract<BuchungenAnfrage, { ok: true }>,
+  status: number,
+): BuchungenErgebnis {
+  return {
+    ok: false,
+    grund: 'lesen',
+    status,
+    filter: anfrage.filter,
+    ersteSeite: anfrage.ersteSeite,
+    wiederholen: anfrage.wiederholen,
+  }
+}
+
+function buchungenKetteAnwenden(
+  start: { select: (spalten: string) => BuchungenKette },
+  abfrage: ReturnType<typeof buchungenAbfrageBauen>,
+): BuchungenKette {
+  let kette: BuchungenKette = start.select(abfrage.spalten).eq('booking_status', 'booked')
+  kette =
+    abfrage.kind.op === 'in' ? kette.in('kind', abfrage.kind.werte) : kette.eq('kind', abfrage.kind.wert)
+  if (abfrage.archiv?.op === 'in') kette = kette.in('trips.status', abfrage.archiv.werte)
+  else if (abfrage.archiv?.op === 'eq') kette = kette.eq('trips.status', abfrage.archiv.wert)
+  if (abfrage.titelMuster !== null) kette = kette.filter('title', 'imatch', abfrage.titelMuster)
+  if (abfrage.keyset?.op === 'or') kette = kette.or(abfrage.keyset.ausdruck)
+  else if (abfrage.keyset?.op === 'null') kette = kette.is('booking_confirmed_at', null).gt('id', abfrage.keyset.id)
+  return kette
+    .order('booking_confirmed_at', { ascending: false, nullsFirst: false })
+    .order('id', { ascending: true })
+    .limit(abfrage.limit)
+}
+
+export async function buchungenAbfrageSenden(
+  client: BuchungenDatenClient,
+  abfrage: ReturnType<typeof buchungenAbfrageBauen>,
+): Promise<Leseantwort<RoheBuchungszeile>> {
+  return buchungenKetteAnwenden(client.from('trip_items'), abfrage)
+}
+
+async function seiteLesen(
+  anfrage: Extract<BuchungenAnfrage, { ok: true }>,
+  client: BuchungenDatenClient,
+): Promise<BuchungenErgebnis> {
+  let antwort: Leseantwort<RoheBuchungszeile>
   try {
-    antwort = await alsAntwort<RoheBuchungszeile>(
-      supabase
-        .from('trip_items')
-        .select(BUCHUNGEN_SPALTEN, { count: 'exact' })
-        .eq('booking_status', 'booked')
-        .order('booking_confirmed_at', { ascending: false, nullsFirst: false })
-        .order('id', { ascending: true })
-        .limit(BUCHUNGEN_LISTE_GRENZE),
-    )
-  } catch (fehler) {
-    const message = fehler instanceof Error ? fehler.message : String(fehler)
-    return { zeilen: null, problem: { status: 500, message }, abgeschnitten: false }
+    antwort = await buchungenAbfrageSenden(client, buchungenAbfrageBauen(anfrage.filter, anfrage.cursor))
+  } catch {
+    return lesenFehler(anfrage, 500)
   }
 
-  if (antwort.error) {
-    return { zeilen: null, problem: problemAus(antwort, antwort.error), abgeschnitten: false }
-  }
+  if (antwort.error) return lesenFehler(anfrage, problemAus(antwort, antwort.error).status)
+  if (antwort.data === null) return lesenFehler(anfrage, 500)
 
-  if (antwort.data === null) {
-    return {
-      zeilen: null,
-      problem: { status: 500, message: 'Die Abfrage lieferte weder Daten noch einen Fehler.' },
-      abgeschnitten: false,
-    }
-  }
-
-  const abbildung = buchungenAusZeilen(antwort.data)
-  if (!abbildung.ok) return { zeilen: null, problem: ABBILDUNGSFEHLER, abgeschnitten: false }
+  const seite = buchungenSeiteAusZeilen(antwort.data, anfrage.filter)
+  if (!seite.ok) return lesenFehler(anfrage, ABBILDUNGSFEHLER.status)
 
   return {
-    zeilen: abbildung.buchungen,
-    problem: null,
-    abgeschnitten: buchungenAbgeschnitten(antwort.data.length, antwort.count),
+    ok: true,
+    filter: anfrage.filter,
+    fortsetzung: anfrage.cursor !== null,
+    buchungen: seite.buchungen,
+    weiter: seite.weiter ? buchungenAdresse(anfrage.filter, seite.weiter) : null,
+    ersteSeite: anfrage.ersteSeite,
+    wiederholen: anfrage.wiederholen,
   }
+}
+
+export async function buchungenFuerParameter(
+  roh: BuchungenRohQuery,
+  client?: BuchungenDatenClient,
+): Promise<BuchungenErgebnis> {
+  const anfrage = buchungenAnfrageAus(roh)
+  if (!anfrage.ok) return anfrage
+  const supabase = client ?? ((await createServerComponentClient()) as unknown as BuchungenDatenClient)
+  return seiteLesen(anfrage, supabase)
 }

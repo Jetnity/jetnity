@@ -3,11 +3,9 @@ import assert from 'node:assert/strict'
 
 import {
   BUCHUNGEN_COPY,
-  BUCHUNGEN_LISTE_GRENZE,
   buchungAusZeile,
-  buchungReisePfad,
+  buchungPlanpunktPfad,
   buchungZeittext,
-  buchungenAbgeschnitten,
   buchungenAusZeilen,
   buchungenGruppenAus,
   buchungenSchnittVergleich,
@@ -67,9 +65,13 @@ describe('AP-10-S1 Buchungsabbildung', () => {
     assert.equal(abbildung.ok, true)
     if (!abbildung.ok) return
     assert.equal(abbildung.buchungen.length, 2)
-    assert.equal(abbildung.buchungen[0]?.tripArchived, false)
-    assert.equal(abbildung.buchungen[1]?.tripArchived, true)
-    assert.equal(abbildung.buchungen[1]?.tripTitle, 'Algarve 2025')
+    assert.deepEqual(
+      abbildung.buchungen.map((buchung) => buchung.id),
+      ['alt', 'neu'],
+    )
+    assert.equal(abbildung.buchungen[0]?.tripArchived, true)
+    assert.equal(abbildung.buchungen[1]?.tripArchived, false)
+    assert.equal(abbildung.buchungen[0]?.tripTitle, 'Algarve 2025')
 
     const gruppen = buchungenGruppenAus(abbildung.buchungen)
     assert.equal(gruppen.aktuell.length, 1)
@@ -103,15 +105,20 @@ describe('AP-10-S1 Buchungsabbildung', () => {
     assert.doesNotMatch(buchungZeittext(mitZeit) ?? '', /unbekannt|noch nicht|offen/i)
   })
 
-  test('liefert den internen Reise-Pfad und keine zweite Identität', () => {
-    assert.equal(buchungReisePfad('trip-1'), '/reisen/trip-1')
+  test('öffnet den bestehenden Planpunkt nur für kanonische UUIDs', () => {
+    const tripId = '11111111-1111-4111-8111-111111111111'
+    const itemId = '22222222-2222-4222-8222-222222222222'
+    const pfad = buchungPlanpunktPfad(tripId, itemId)
+    assert.equal(pfad, `/reisen/${tripId}?ansicht=plan&punkt=${itemId}`)
+    assert.equal(buchungPlanpunktPfad('trip-1', itemId), null)
+    assert.equal(buchungPlanpunktPfad(tripId, 'ITEM'), null)
     const gebucht = buchungAusZeile(zeile())
     assert.notEqual(gebucht, 'auslassen')
     if (typeof gebucht === 'string') return
-    assert.equal(buchungReisePfad(gebucht.tripId), '/reisen/trip-1')
     assert.equal('priceAmount' in gebucht, false)
     assert.equal('provider' in gebucht, false)
     assert.equal('bookingUrl' in gebucht, false)
+    assert.equal('bookingConfirmedAt' in gebucht, false)
   })
 
   test('unterscheidet leere Abbildung von unvollständigen Zeilen', () => {
@@ -162,15 +169,14 @@ describe('AP-10-S1 Buchungsabbildung', () => {
     )
   })
 
-  test('schneidet nicht still ab', () => {
-    assert.equal(buchungenAbgeschnitten(12, 12), false)
-    assert.equal(buchungenAbgeschnitten(200, 201), true)
-    assert.equal(buchungenAbgeschnitten(BUCHUNGEN_LISTE_GRENZE, null), true)
-    assert.equal(buchungenAbgeschnitten(3, null), false)
-  })
-
-  test('sortiert deterministisch: offene Reisen zuerst, dann Datum, dann Titel', () => {
+  test('behält die Abfragereihenfolge statt nach Archiv oder Reisedatum umzusortieren', () => {
     const abbildung = buchungenAusZeilen([
+      zeile({
+        id: 'c',
+        title: 'Alt',
+        starts_on: '2024-01-01',
+        trips: { id: 't-3', title: 'Alt', status: 'archived' },
+      }),
       zeile({
         id: 'b',
         title: 'Beta',
@@ -183,18 +189,12 @@ describe('AP-10-S1 Buchungsabbildung', () => {
         starts_on: '2026-09-13',
         trips: { id: 't-1', title: 'Offen', status: 'planned' },
       }),
-      zeile({
-        id: 'c',
-        title: 'Alt',
-        starts_on: '2024-01-01',
-        trips: { id: 't-3', title: 'Alt', status: 'archived' },
-      }),
     ])
     assert.equal(abbildung.ok, true)
     if (!abbildung.ok) return
     assert.deepEqual(
       abbildung.buchungen.map((buchung) => buchung.id),
-      ['a', 'b', 'c'],
+      ['c', 'b', 'a'],
     )
   })
 
