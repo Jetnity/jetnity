@@ -1,0 +1,14 @@
+{
+  "finalHead": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+  "historicalInteractionHead": "a547366a5107e445642f980b621dff7c7b5adaa8",
+  "historicalInteractionReceipt": "/tmp/r107-world-r1-review/core-r2-a547/bounded-results.json",
+  "historicalInteractionReceiptSha256": "720914cf7c029e9f6fda211446b983f9f3360393bd7b67ee087a66baf8b0c318",
+  "historicalAggregateExit": 1,
+  "historicalPassingInteractionCaseCount": 7,
+  "limit": "Original a547 aggregate failed layout; seven interaction successes remain historical. c68 corrected only layout as previously reviewed. No interaction rerun at final head.",
+  "historicalLayoutHead": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+  "historicalLayoutPassed": true,
+  "historicalCssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+  "currentByteBindingComplete": true,
+  "freshBrowserExecution": false
+}

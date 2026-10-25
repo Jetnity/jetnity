@@ -1,0 +1,89 @@
+import assert from 'node:assert/strict'
+import {createHash} from 'node:crypto'
+import {createRequire} from 'node:module'
+import {readFileSync,writeFileSync} from 'node:fs'
+import {join} from 'node:path'
+import esbuild from 'esbuild'
+import {chromium} from 'playwright'
+const ROOT='/tmp/r107-mytrips-r3-review'
+const DIR=join(ROOT,'scripts/my-trips-collection-archive-workflow-completion-1')
+const require=createRequire(import.meta.url),out=join(ROOT,'root-r3-bundle.js')
+await esbuild.build({absWorkingDir:ROOT,entryPoints:[join(DIR,'mount.tsx')],outfile:out,bundle:true,format:'iife',platform:'browser',jsx:'automatic',logLevel:'silent',alias:{'@':ROOT},define:{'process.env.NODE_ENV':'"production"'},banner:{js:'globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};globalThis.global=globalThis;'},plugins:[{name:'author-boundaries',setup(build){build.onResolve({filter:/.*/},args=>{if(args.path==='next/navigation')return{path:join(DIR,'shims/navigation.ts')};if(args.path==='@/lib/trips/archiv-aktionen'||args.path.endsWith('/lib/trips/archiv-aktionen'))return{path:join(DIR,'shims/aktionen.ts')};return null})}}]})
+const css=(await require('postcss')([require('tailwindcss/nesting')(),require('tailwindcss')(require(join(ROOT,'tailwind.config.js'))),require('autoprefixer')()]).process(readFileSync(join(ROOT,'styles/globals.css'),'utf8'),{from:join(ROOT,'styles/globals.css')})).css
+const html='<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'+css+'</style></head><body><div id="root"></div><script>'+readFileSync(out,'utf8')+'</script></body></html>'
+const origin='https://jetnity-mytrips-r1-review.invalid'
+const browser=await chromium.launch({headless:true})
+const browserVersion=browser.version(),results=[],errors=[]
+const settle=page=>page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))))
+async function open(search=''){const page=await browser.newPage({viewport:{width:1280,height:900}});page.on('pageerror',e=>errors.push(String(e)));await page.route(origin+'/**',route=>route.fulfill({status:200,contentType:'text/html',body:html}));await page.emulateMedia({reducedMotion:'reduce'});await page.goto(origin+'/reisen'+(search?'?'+search:''));await page.waitForFunction(()=>window.__sammlung);await settle(page);return page}
+const snapshot=page=>page.evaluate(()=>{const root=document.querySelector('[data-sammlung-wurzel]');return{browserSearch:window.location.search,id:root?.getAttribute('data-sammlung-id'),live:root?.getAttribute('data-sammlung-live'),adopted:root?.getAttribute('data-sammlung-uebernommen'),agrees:root?.getAttribute('data-sammlung-einig'),loading:root?.getAttribute('data-sammlung-laden'),invalid:!!root?.textContent.includes('Diese Adresse ist keine gültige Ansicht.'),search:document.querySelector('[data-sammlung-suche]')?.value,text:root?.textContent,actions:window.__sammlung.aktionAnzahl(),refresh:window.__sammlung.aufrufe.refresh,push:window.__sammlung.aufrufe.push.slice(),restoreButtons:document.querySelectorAll('[data-reisen-aktion="wiederherstellen"]').length,operations:[...document.querySelectorAll('[data-archiv-vorgang]')].map(e=>({id:e.getAttribute('data-archiv-vorgang'),write:e.getAttribute('data-archiv-schreiben'),observation:e.getAttribute('data-archiv-sehen'),list:e.getAttribute('data-archiv-liste'),text:e.textContent})),retryDisabled:document.querySelector('[data-sammlung-erneut]')?.disabled,nextDisabled:document.querySelector('[data-sammlung-weiter]')?.disabled}})
+async function pending(page){await page.evaluate(()=>{const h=window.__sammlung;h.setzeAktion(()=>new Promise(resolve=>h.resolve=resolve))});await page.locator('[data-reisen-aktion="archivieren"]').click();await settle(page)}
+async function invalid(page,raw){await page.evaluate(raw=>{const h=window.__sammlung;h.setzeAdresse(raw);h.setErgebnis({ungueltig:true,zeilen:[],problem:null,hatWeiter:false,naechsterCursor:null,q:'',archiv:'alle',cursor:null,adresse:'/reisen?'+raw})},raw);await settle(page)}
+try{
+ for(const raw of ['q=a&q=b','archiv=offen&archiv=archiv','cursor=x&cursor=y']){
+  const deep=await open(raw);const first=await snapshot(deep)
+  assert.equal(first.invalid,true);assert.equal(first.adopted,'/reisen?'+raw);assert.equal(first.live,first.adopted);assert.equal(first.loading,'0')
+  await deep.evaluate(()=>{const h=window.__sammlung;h.setErgebnis({...h.anfang})});await settle(deep)
+  const lateValid=await snapshot(deep);assert.equal(lateValid.invalid,true);assert.equal(lateValid.adopted,first.adopted);assert.equal(lateValid.actions,0)
+  results.push({case:'repeated-params-deep-link-'+raw,first,lateValid});await deep.close()
+  const page=await open();const before=await snapshot(page);await invalid(page,raw);const after=await snapshot(page)
+  assert.equal(after.invalid,true);assert.equal(after.adopted,'/reisen?'+raw);assert.equal(after.live,after.adopted);assert.equal(after.loading,'0');assert.equal(after.id,before.id);assert.equal(after.actions,0)
+  results.push({case:'repeated-params-in-place-'+raw,before,after});await page.close()
+ }
+ {
+  const page=await open();await pending(page);const before=await snapshot(page);await invalid(page,'cursor=ungueltig');const unread=await snapshot(page)
+  assert.equal(unread.operations[0].observation,'unread');assert.equal(unread.operations[0].list,'nicht-gelesen');assert.equal(unread.operations[0].write,'pending');assert.equal(unread.operations[0].id,before.operations[0].id)
+  await page.evaluate(()=>window.__sammlung.resolve({ok:true,wert:null}));await settle(page);const ack=await snapshot(page)
+  assert.equal(ack.operations[0].write,'acknowledged');assert.equal(ack.operations[0].observation,'unread');assert.equal(ack.operations[0].text.includes('nicht sichtbar'),false);assert.equal(ack.actions,1)
+  await page.evaluate(()=>{const h=window.__sammlung;h.setzeAdresse('');h.setErgebnis({...h.anfang,zeilen:[],hatWeiter:false,naechsterCursor:null})});await settle(page);const validEmpty=await snapshot(page)
+  assert.equal(validEmpty.operations[0].observation,'row-absent');assert.equal(validEmpty.operations[0].list,'gelesen')
+  await invalid(page,'cursor=ungueltig');const retained=await snapshot(page)
+  assert.equal(retained.operations[0].observation,'row-absent');assert.equal(retained.operations[0].list,'nicht-gelesen');assert.equal(retained.operations[0].write,'acknowledged');assert.equal(retained.actions,1)
+  results.push({case:'invalid-not-read-keeps-archive-observation',before,unread,ack,validEmpty,retained});await page.close()
+ }
+ for(const [label,response] of [['ack',{ok:true,wert:null}],['unknown',{ok:true}]]){
+  const page=await open();await pending(page);const before=await snapshot(page)
+  await page.evaluate(()=>{const h=window.__sammlung;h.setErgebnis({...h.anfang,zeilen:[{...h.anfang.zeilen[0],status:'archived',archivePreviousStatus:null,updatedAt:'2026-10-25T12:00:01.000000Z'}]})});await settle(page);const missing=await snapshot(page)
+  assert.equal(missing.operations.length,1);assert.equal(missing.operations[0].write,'pending');assert.equal(missing.operations[0].id,before.operations[0].id);assert.equal(missing.restoreButtons,0)
+  await page.evaluate(()=>window.__sammlung.setzeAdresse('q=nur-navigation'));await settle(page);const navigation=await snapshot(page);assert.equal(navigation.actions,1);assert.equal(navigation.operations.length,1)
+  await page.evaluate(value=>window.__sammlung.resolve(value),response);await settle(page);const after=await snapshot(page)
+  assert.equal(after.operations[0].write,label==='ack'?'acknowledged':'unknown');assert.equal(after.restoreButtons,0);assert.equal(after.actions,1);assert.equal(after.refresh,label==='ack'?1:0)
+  results.push({case:'missing-provenance-keeps-'+label,before,missing,navigation,after});await page.close()
+ }
+ {
+  const page=await open('q=owner-query-token&archiv=offen');const first=await snapshot(page)
+  await page.locator('[data-sammlung-suche]').fill('separate-draft')
+  await page.evaluate(()=>window.__sammlung.setzeAdresse('q=new-live-token&archiv=archiv'));await settle(page);const mismatch=await snapshot(page)
+  assert.equal(first.text.includes('owner-query-token'),true);assert.equal(mismatch.text.includes('owner-query-token'),true);assert.equal(mismatch.text.includes('new-live-token'),true);assert.equal(mismatch.search,'separate-draft')
+  results.push({case:'displayed-query-ownership-copy',first,mismatch,visibleCommittedQuery:first.text.includes('owner-query-token'),visibleRetainedOwner:mismatch.text.includes('owner-query-token'),visibleLiveAddress:mismatch.text.includes('new-live-token')})
+  await page.close()
+ }
+ for(const raw of ['archiv=','cursor=']){
+  const page=await open(raw);const first=await snapshot(page)
+  await page.evaluate(()=>{const h=window.__sammlung;h.setErgebnis({...h.anfang})});await settle(page);const lateValid=await snapshot(page)
+  assert.equal(first.invalid,true);assert.equal(first.live,'/reisen?'+raw);assert.equal(first.adopted,'/reisen?'+raw);assert.equal(first.browserSearch,'?'+raw)
+  assert.equal(lateValid.invalid,true);assert.equal(lateValid.adopted,'/reisen?'+raw);assert.equal(lateValid.browserSearch,first.browserSearch);assert.equal(lateValid.live,first.live)
+  results.push({case:'empty-invalid-deep-link-stays-distinct-'+raw,first,lateValid});await page.close()
+  const inplace=await open();const before=await snapshot(inplace)
+  await inplace.evaluate(({raw,address})=>{const h=window.__sammlung;h.setzeAdresse(raw);h.setErgebnis({ungueltig:true,zeilen:[],problem:null,hatWeiter:false,naechsterCursor:null,q:'',archiv:'alle',cursor:null,adresse:address})},{raw,address:first.adopted});await settle(inplace)
+  const invalidInPlace=await snapshot(inplace)
+  assert.equal(invalidInPlace.invalid,true);assert.equal(invalidInPlace.adopted,'/reisen?'+raw);assert.equal(invalidInPlace.id,before.id)
+  await inplace.evaluate(()=>{const h=window.__sammlung;h.setErgebnis({...h.anfang})});await settle(inplace)
+  const lateInPlace=await snapshot(inplace)
+  assert.equal(lateInPlace.invalid,true);assert.equal(lateInPlace.adopted,'/reisen?'+raw);assert.equal(lateInPlace.live,invalidInPlace.live);assert.equal(lateInPlace.id,before.id);assert.equal(lateInPlace.actions,0)
+  results.push({case:'empty-invalid-in-place-stays-distinct-'+raw,before,invalidInPlace,lateInPlace});await inplace.close()
+
+ }
+ {
+  const page=await open('q=');const first=await snapshot(page)
+  assert.equal(first.invalid,false);assert.equal(first.live,'/reisen');assert.equal(first.adopted,'/reisen');assert.equal(first.search,'');assert.equal(first.actions,0)
+  await page.evaluate(()=>{const h=window.__sammlung;h.setErgebnis({...h.anfang})});await settle(page);const later=await snapshot(page)
+  assert.equal(later.invalid,false);assert.equal(later.live,'/reisen');assert.equal(later.adopted,'/reisen');assert.equal(later.id,first.id)
+  results.push({case:'valid-empty-search-normalizes-to-reisen',first,later});await page.close()
+ }
+}finally{await browser.close()}
+assert.equal(errors.length,0)
+const paths=['styles/globals.css','tailwind.config.js','scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts','components/trips/MyTripsCollection.tsx','components/trips/KontoReiseArchivAktion.tsx','components/trips/useTripArchiveWorkflow.ts','components/trips/useMyTripsCollectionNavigation.ts','lib/trips/reisen-sammlung-abfrage.ts','lib/trips/reisen-sammlung-daten.ts','lib/trips/trip-archive-workflow.ts','scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx','scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts']
+const receipt={head:'444a8c254e11688120f7f2b6e49193746932a865',runtimeCommit:'96715e43f9c979a542a1b7bd5acc2b15ef494c5d',deliveryStatus:'full requested R1 correction delivery; 444a docs-only tail over 96715 runtime and 18-case author receipt; independent root gates remain',runtime:process.version,browserVersion,css:true,boundary:'actual candidate component/CSS; retained author navigation/archive-action shims; fulfilled synthetic routes; no DB/service/accounts',errors,sources:Object.fromEntries(paths.map(p=>[p,createHash('sha256').update(readFileSync(join(ROOT,p))).digest('hex')])),results}
+writeFileSync(join(ROOT,'root-r3-results.json'),JSON.stringify(receipt,null,2))
+console.log(JSON.stringify({head:receipt.head,errors,cases:results.map(r=>r.case),ownership:results.filter(r=>r.case==='displayed-query-ownership-copy').map(r=>({visibleCommittedQuery:r.visibleCommittedQuery,visibleRetainedOwner:r.visibleRetainedOwner,visibleLiveAddress:r.visibleLiveAddress,draft:r.mismatch.search})),empty:results.filter(r=>r.case.includes('empty-invalid')).map(r=>({case:r.case,invalidBefore:r.first?.invalid??r.invalidInPlace?.invalid,invalidAfter:r.lateValid?.invalid??r.lateInPlace?.invalid}))},null,2))

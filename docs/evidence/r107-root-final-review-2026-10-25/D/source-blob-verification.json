@@ -1,0 +1,53 @@
+{
+  "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+  "checks": [
+    {
+      "path": "components/admin/UsersTable.tsx",
+      "expected": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "actual": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "expected": "8151f96889ec432711f9bee71359eaef6102b02c",
+      "actual": "8151f96889ec432711f9bee71359eaef6102b02c",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_REPORT_2026-10-25.md",
+      "expected": "a5295b11cf6b0f9fecdf3884714f7143b388e4bb",
+      "actual": "a5295b11cf6b0f9fecdf3884714f7143b388e4bb",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "expected": "73d877d83365fe491aa35c5daf6e57c92b3ba7fc",
+      "actual": "73d877d83365fe491aa35c5daf6e57c92b3ba7fc",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_STATUS_2026-10-25.md",
+      "expected": "f29d0495762ad608db600269bbf44c4e48ab022f",
+      "actual": "f29d0495762ad608db600269bbf44c4e48ab022f",
+      "matches": true
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/gates.json",
+      "expected": "eb62aa6c91a0b8130b37182be88f59ab64f63f43",
+      "actual": "eb62aa6c91a0b8130b37182be88f59ab64f63f43",
+      "matches": true
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/mounted.json",
+      "expected": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+      "actual": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+      "matches": true
+    },
+    {
+      "path": "scripts/admin-user-directory-completion-1/verify.mjs",
+      "expected": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "actual": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "matches": true
+    }
+  ]
+}

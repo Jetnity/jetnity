@@ -1,0 +1,81 @@
+{
+  "archiveTransformation": "Documentation-only projection of existing recorded JSON: dependency input rows omitted; all remaining keys and values retained; no execution.",
+  "originalPath": "/tmp/r107-admin-r1-review/core-r2-878/bundle-inputs.json",
+  "originalBytes": 345468,
+  "originalSha256": "8bb57ee43211a48cde5dbf5841dbb1466ba4781120a8f57a218d74b15a7b6a5f",
+  "originalInputCount": 1714,
+  "retainedInputCount": 17,
+  "record": {
+    "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+    "inputs": [
+      {
+        "path": "/tmp/r107-admin-r1-review/docs/evidence/admin-user-directory-completion-1/stubs/next-link.tsx",
+        "sha256": "fbb67afb7c89508b1c2cf66b8f7b3cfa1fcedd6abe754a665affcae695f84fb5"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/docs/evidence/admin-user-directory-completion-1/stubs/next-navigation.ts",
+        "sha256": "5c9c422f6642c310c7bd5d31607b0bb6b367da4c8000b4f7ca99ad561c97a3c3"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/utils.ts",
+        "sha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/components/ui/badge.tsx",
+        "sha256": "982ae3bfd0d118365b7058d7070d1467ea8a3f0d2e5bf2beecc9c346f9818394"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/components/ui/button.tsx",
+        "sha256": "49bceb9be3f2bb1c670b1697795dff420af81b099f87bbb1aeb315345d6eec74"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/root-helper-extract.ts",
+        "sha256": "9e68aaeb50bc63e408fccc97baafdc2c9c2b362a59292eaa05547408fc6ba039"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/components/ui/input.tsx",
+        "sha256": "b1162378c3845f8442e15c214fcbf4f553d40db7a4bfce8ef5b590b3ad5d211b"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/components/ui/dropdown-menu.tsx",
+        "sha256": "3e27c8d07b2990b461d8c75487444c37a24ed1211ac146ba10b609095e6a1509"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/components/admin/Ladezustand.tsx",
+        "sha256": "d40e50957c82768ee12c376430a80fea2b0b3fc804a8d41f79d38f5218de02ee"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/docs/evidence/admin-user-directory-completion-1/stubs/actions.ts",
+        "sha256": "ea88007194f0de1169d23b039990cd3685f24fd0d3bb98619dda8b953123f0ae"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/admin/users-search-navigation.ts",
+        "sha256": "4ddef9d48028d878946a82eb880265e366d849a88b6c7b3a40d354a419c979bb"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/auth/roles.ts",
+        "sha256": "d3c4d08a1f8d2b772ce73c7c236c5c6f70c81a074c31d97a0eb54809001c4c15"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/api/suchfilter.ts",
+        "sha256": "e7d8c41e64d8a26c6bb4631124187b534d702660826c02d7961142aa332146ab"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/admin/users-directory-query.ts",
+        "sha256": "7c9a4ef9cfeeccce48db0a4bd4ed33273ccaae89be74e6fc2d55237a73fabe3a"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/lib/admin/users-directory-presentation.ts",
+        "sha256": "95fc1544bee9e1195075b04204ef762fbb553630b030c4ec867f558bb953f1bf"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/core-r2-878/components/admin/UsersTable.tsx",
+        "sha256": "5cf01834ed0d768a51fc12ad31d7b23844c790f55d279e66be054df3668e7379"
+      },
+      {
+        "path": "/tmp/r107-admin-r1-review/docs/evidence/admin-user-directory-completion-1/harness.tsx",
+        "sha256": "5e8b2c2afe7dccbe1d7aefcbb1ec898b8e835fca9cae8cd005bd59602aaa3727"
+      }
+    ]
+  }
+}

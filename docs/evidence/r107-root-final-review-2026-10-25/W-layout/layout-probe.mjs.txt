@@ -1,0 +1,84 @@
+import {createHash} from 'node:crypto'
+import {createRequire} from 'node:module'
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs'
+import {resolve} from 'node:path'
+const require=createRequire(import.meta.url)
+const repo='/tmp/r107-world-r1-review'
+const prior=repo+'/core-r2-a547'
+const current=repo+'/layout-c68'
+const dir=repo+'/scripts/account-world-visit-workflow-completion-1'
+const head='c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa'
+const authorReceipt=JSON.parse(readFileSync(current+'/docs/evidence/account-world-visit-workflow-completion-1/run-e4b4c0bb16a6.json','utf8'))
+const sha=b=>createHash('sha256').update(b).digest('hex')
+const inputPath=p=>existsSync(current+'/'+p)?current+'/'+p:existsSync(prior+'/'+p)?prior+'/'+p:repo+'/'+p
+const bindings=Object.entries({...authorReceipt.sources,...authorReceipt.proof}).map(([path,expected])=>({path,local:inputPath(path),expected,actual:sha(readFileSync(inputPath(path)))}))
+writeFileSync(current+'/receipt-source-bindings.json',JSON.stringify(bindings,null,2)+'\n')
+if(bindings.some(b=>b.expected!==b.actual))throw Error('Current receipt binding mismatch')
+const product=['components/account/AccountBesuche.tsx','components/account/AccountBesuchFormular.tsx','components/account/useAccountVisitWorkflow.ts','lib/account/account-visit-workflow.ts','lib/account/besuche-copy.ts']
+const aliases=Object.fromEntries(product.map(p=>['@/'+p.replace(/\.tsx?$/,''),inputPath(p)]));aliases['@']=repo
+const bundle=await require('esbuild').build({absWorkingDir:repo,entryPoints:[dir+'/mount.tsx'],bundle:true,write:false,metafile:true,format:'iife',platform:'browser',jsx:'automatic',alias:aliases,define:{'process.env.NODE_ENV':'"production"'},banner:{js:'globalThis.process = globalThis.process || { env: { NODE_ENV: "production" } }; globalThis.global = globalThis;'},logLevel:'silent',plugins:[{name:'approved-stubs',setup(build){build.onResolve({filter:/.*/},args=>{if(args.path==='next/navigation')return {path:dir+'/shims/navigation.ts'};if(args.path==='@/lib/account/besuche-aktionen'||args.path.endsWith('/besuche-aktionen')||args.path.endsWith('/besuche-aktionen.ts'))return {path:dir+'/shims/aktionen.ts'};return null})}}]})
+const inputs=Object.keys(bundle.metafile.inputs).map(p=>{const path=resolve(repo,p);return {path,sha256:sha(readFileSync(path))}})
+for(const p of product)if(!inputs.some(x=>x.path===inputPath(p)))throw Error('Current product input missing '+p)
+writeFileSync(current+'/bundle-inputs.json',JSON.stringify({head,inputs},null,2)+'\n')
+const js=bundle.outputFiles[0].text
+const config=require(repo+'/tailwind.config.js')
+const formPath='components/account/AccountBesuchFormular.tsx'
+const cssConfig={...config,content:[...config.content,'!./'+formPath,{raw:readFileSync(current+'/'+formPath,'utf8'),extension:'tsx'}]}
+const css=(await require('postcss')([require('tailwindcss/nesting')(),require('tailwindcss')(cssConfig),require('autoprefixer')()]).process(readFileSync(repo+'/styles/globals.css','utf8'),{from:repo+'/styles/globals.css'})).css
+const cssSha256=sha(css)
+writeFileSync(current+'/layout.css',css);writeFileSync(current+'/layout-bundle.js',js)
+if(cssSha256!==authorReceipt.cssSha256)throw Error('Compiled CSS does not match current author receipt: '+cssSha256)
+const html='<!doctype html><html lang="de"><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><div id="root"></div><script>'+js+'</script></body></html>'
+const browser=await require('playwright').chromium.launch({headless:true})
+const metrics=[],screens=[],pageErrors=[]
+const shots=current+'/screens';mkdirSync(shots,{recursive:true})
+let actionCount,visibleVisits
+try{
+ const p=await browser.newPage({viewport:{width:1440,height:900}})
+ p.setDefaultTimeout(5000)
+ p.on('pageerror',e=>pageErrors.push(String(e)))
+ await p.route('**/*',r=>r.fulfill({status:200,contentType:'text/html',body:html}))
+ await p.goto('https://jetnity-world-review.invalid/')
+ await p.waitForFunction(()=>typeof window.__visitSetzen==='function')
+ const {besuchVerwaltungDichteFixture}=require(repo+'/lib/account/account-world-visit-management-premium-1-fixture.ts')
+ await p.evaluate(besuche=>window.__visitSetzen({besuche,problem:null,tripProblem:null}),besuchVerwaltungDichteFixture(40))
+ await p.waitForTimeout(80)
+ const first=p.locator('[data-besuch]').first()
+ await first.getByRole('button',{name:'Bearbeiten',exact:true}).click()
+ await first.locator('form').waitFor()
+ await p.emulateMedia({reducedMotion:'reduce'})
+ visibleVisits=await p.locator('article[data-besuch]').count()
+ for(const width of [320,390,768,1440]){
+  await p.setViewportSize({width,height:900})
+  await p.evaluate(()=>document.documentElement.style.fontSize='32px')
+  await p.waitForTimeout(80)
+  const measured=await p.evaluate(()=>{
+   const rect=el=>{const r=el.getBoundingClientRect();const c=getComputedStyle(el);return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,overflowX:c.overflowX,overflowY:c.overflowY}}
+   const inside=(x,b)=>x.width>0&&x.height>0&&x.left>=b.left-1&&x.right<=b.right+1&&x.top>=b.top-1&&x.bottom<=b.bottom+1
+   const surfaces=[]
+   for(const [name,selector,cardSelector] of [['editor','[data-besuch-editor-epoche] form','article'],['create','[data-besuch-anlage="offen"] form','[data-besuch-anlage="offen"]']]){
+    const form=document.querySelector(selector),card=form.closest(cardSelector),footer=form.querySelector('[data-besuch-formular-fuss]'),fr=rect(form),ar=rect(card),footerRect=rect(footer)
+    const buttons=[...footer.querySelectorAll('button')].map(el=>{
+     const r=rect(el)
+     const neighboringIntersections=[...document.querySelectorAll('article[data-besuch]')].filter(a=>a!==card).map(a=>({id:a.getAttribute('data-besuch'),bounds:rect(a)})).filter(a=>r.left<a.bounds.right-1&&r.right>a.bounds.left+1&&r.top<a.bounds.bottom-1&&r.bottom>a.bounds.top+1)
+     const range=document.createRange();range.selectNodeContents(el);const textBounds=[...range.getClientRects()].map(r=>({left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}))
+     return {text:el.textContent.trim(),type:el.type,...r,inCard:inside(r,ar),inForm:inside(r,fr),textFits:r.scrollWidth<=r.clientWidth+1&&r.scrollHeight<=r.clientHeight+1,textBounds,textBoundsFit:textBounds.every(t=>inside(t,r)),neighboringIntersections,rightInsetFromCard:ar.right-r.right,rightInsetFromForm:fr.right-r.right}
+    })
+    surfaces.push({name,card:ar,form:fr,footer:footerRect,footerDirection:getComputedStyle(footer).flexDirection,formInsideCard:inside(fr,ar),footerInsideForm:inside(footerRect,fr),buttons})
+   }
+   const section=document.querySelector('[data-besuch-verwaltung]')
+   return {rootFont:getComputedStyle(document.documentElement).fontSize,surfaces,sectionOverflow:section.scrollWidth-section.clientWidth,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}
+  })
+  metrics.push({viewport:{width,height:900},...measured})
+  const file='editor-card-'+width+'.png'
+  await first.screenshot({path:shots+'/'+file,animations:'disabled'})
+  screens.push({file,viewport:{width,height:900},rootFont:32,target:'article[data-besuch]:first',state:'first editor open, dense40, first12 visible',head,cssSha256,sha256:sha(readFileSync(shots+'/'+file))})
+ }
+ actionCount=await p.evaluate(()=>window.__visitAufrufe.length)
+ await p.close()
+}finally{await browser.close()}
+const passed=pageErrors.length===0&&actionCount===0&&visibleVisits===12&&metrics.length===4&&metrics.every(m=>m.rootFont==='32px'&&m.sectionOverflow<=1&&m.documentOverflow<=1&&m.surfaces.every(s=>s.formInsideCard&&s.footerInsideForm&&s.footerDirection===(s.name==='editor'||m.viewport.width<640?'column':'row')&&s.buttons.length===(s.name==='editor'?2:1)&&s.buttons.every(b=>b.inCard&&b.inForm&&b.textFits&&b.textBoundsFit&&b.neighboringIntersections.length===0)))
+const receipt={reviewer:'/root/dependency_review read-only helper',head,node:process.version,cssSha256,expectedAuthorCss:authorReceipt.cssSha256,cssMatchesAuthor:cssSha256===authorReceipt.cssSha256,bundleSha256:sha(js),boundary:'Current form plus unchanged a547 product files, existing CSS/config/dependencies, isolated action/navigation shims. Fully intercepted invalid-domain page. Layout-only review; no hosted/native acceptance.',priorInteractionReceipt:prior+'/bounded-results.json',priorInteractionReceiptSha256:sha(readFileSync(prior+'/bounded-results.json')),passed,actionCount,visibleVisits,pageErrors,metrics,screens}
+writeFileSync(current+'/layout-results.json',JSON.stringify(receipt,null,2)+'\n')
+console.log(JSON.stringify({head,passed,cssMatchesAuthor:receipt.cssMatchesAuthor,visibleVisits,actionCount,pageErrors,metrics:metrics.map(m=>({viewport:m.viewport.width,surfaces:m.surfaces.map(s=>({name:s.name,cardWidth:s.card.width,formWidth:s.form.width,formInsideCard:s.formInsideCard,footerDirection:s.footerDirection,buttons:s.buttons.map(b=>({text:b.text,width:b.width,height:b.height,inCard:b.inCard,inForm:b.inForm,textFits:b.textFits,textBoundsFit:b.textBoundsFit,neighborCount:b.neighboringIntersections.length,rightInsetFromCard:b.rightInsetFromCard}))})),sectionOverflow:m.sectionOverflow,documentOverflow:m.documentOverflow}))},null,2))
+if(!passed)process.exitCode=1

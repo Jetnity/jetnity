@@ -1,0 +1,40 @@
+{
+  "authorization": "ROOT_AUTHORIZED_ACTUAL_FINAL_M_LAYOUT_ONLY",
+  "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+  "sourceRoot": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "dependencyRoot": "/tmp/jetnity-r106-t-final-review/node_modules",
+  "sourceProof": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source-proof.json",
+    "sha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c"
+  },
+  "css": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/final.css",
+    "sha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67"
+  },
+  "bundle": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/harness.js",
+    "sha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc"
+  },
+  "artifactReceipt": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/artifact-receipt.json",
+    "sha256": "0882b36bf04d292d192896c16deefa4a19fab3fc19507ae771f84c5b79817a01"
+  },
+  "browserLaunch": {
+    "channel": null,
+    "executablePath": "/tmp/r106-review-browsers/chromium-1187/chrome-linux/chrome"
+  },
+  "outputDirectory": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/layout-only",
+  "proposedBrowserQualification": "Root authorizes one supplemental existing four-width/root32/48-card block on retained Chromium140; not an author Chrome-channel, full18-group, native Node22 or hosted replay.",
+  "wrapperPath": "/tmp/r107-mytrips-r3-review/integration-preparation/M-layout-only-wrapper.mjs",
+  "wrapperSha256": "d321cd70548a8fe851c0fe5918f0978165bb1e271323a63fecf8e289a27a35f8",
+  "rootAuthorization": {
+    "grantedAtUtc": "2026-10-25T21:15:31.300888+00:00",
+    "reason": "No historical M compiled stylesheet/hash retained. Incoming scan inputs require bounded actual-final layout proof. Root independently reviewed original extraction, all final source/build/evidence inputs and exact live head.",
+    "wrapperUnchangedSha256": "d321cd70548a8fe851c0fe5918f0978165bb1e271323a63fecf8e289a27a35f8",
+    "sourceAndBuildVerificationSha256": "3faee6a56a0471099ad1010ae4d361c492167da25d3b52bc4fafcabc1d74cebc",
+    "evidenceAndLayoutInputVerificationSha256": "f6e2bf92e0410d49fa72d6d59c88007057c6249976dd8ac3bc86ccd618f6eb08",
+    "authorizedExecutions": 1,
+    "extraMatrix": false
+  }
+}

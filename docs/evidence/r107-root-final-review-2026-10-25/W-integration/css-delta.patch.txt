@@ -1,0 +1,60 @@
+--- historical-c68/layout.css
++++ final-1343/final.css
+@@ -1646,6 +1646,9 @@
+ .grid-cols-\[minmax\(0\2c 1fr\)\] {
+   grid-template-columns: minmax(0,1fr);
+ }
++.grid-cols-\[minmax\(0\2c 1fr\)_minmax\(0\2c 1fr\)\] {
++  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
++}
+ .grid-cols-\[repeat\(auto-fit\2c minmax\(min\(100\%\2c 140px\)\2c 1fr\)\)\] {
+   grid-template-columns: repeat(auto-fit,minmax(min(100%,140px),1fr));
+ }
+@@ -5402,6 +5405,10 @@
+     grid-template-columns: minmax(16rem,0.78fr) minmax(0,1.22fr);
+   }
+ 
++  .lg\:grid-cols-none {
++    grid-template-columns: none;
++  }
++
+   .lg\:flex-row {
+     flex-direction: row;
+   }
+@@ -5606,6 +5613,14 @@
+   display: none;
+ }
+ 
++.\[\&\>\*\]\:min-w-0>* {
++  min-width: 0px;
++}
++
++.\[\&\>\*\]\:max-w-full>* {
++  max-width: 100%;
++}
++
+ .\[\&\>div\:last-child\]\:hidden>div:last-child {
+   display: none;
+ }
+@@ -5632,6 +5647,10 @@
+ 
+ .\[\&_\.sr-only\]\:whitespace-normal .sr-only {
+   white-space: normal;
++}
++
++.\[\&_input\]\:max-w-full input {
++  max-width: 100%;
+ }
+ 
+ .\[\&_input\]\:\!text-base input {
+@@ -5668,6 +5687,10 @@
+   overflow-wrap: break-word;
+ }
+ 
++.\[\&_select\]\:max-w-full select {
++  max-width: 100%;
++}
++
+ .\[\&_select\]\:\!text-base select {
+   font-size: 1rem !important;
+   line-height: 1.5rem !important;

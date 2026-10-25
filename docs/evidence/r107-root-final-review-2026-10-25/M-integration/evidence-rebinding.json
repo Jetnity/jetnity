@@ -1,0 +1,1668 @@
+{
+  "schema": "jetnity-r107-m-actual-evidence-rebinding-v1",
+  "preparedAtUtc": "2026-10-25T21:12:01.811Z",
+  "reviewer": "/root/archive_audit/m_receipt_binding",
+  "scope": "Read-only byte/source/evidence binding only; no execution, acceptance, Ready or merge",
+  "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+  "treeEvidence": {
+    "local": "/workspace/scratch/4b268945c5cd/r107-mdda-exact-tree.json",
+    "sha256": "10ebbf7b325bff31bcd632125067e961228fb3ff2e9659c73809b6d0107fe3e5",
+    "entryCount": 8408,
+    "truncated": false
+  },
+  "rootBinding": {
+    "local": "/workspace/scratch/4b268945c5cd/r107-mdda-root-binding.json",
+    "sha256": "fa12dea9e1f4f87410b7abb2ad355fdfec40f1cc8fbdb2ae97d6da877e728d46",
+    "parents": [
+      "444a8c254e11688120f7f2b6e49193746932a865",
+      "70b878a8fbe23f0dd455175a53de74175b2b976d"
+    ],
+    "ahead": 16,
+    "behind": 0,
+    "ownPaths": 50,
+    "ownChanged": [
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+        "sha": "7ed216597aba4e17366823f4c908a313fb53fd48"
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+        "sha": "c387dca4055afa6b751de9cde0e0cc3436be7624"
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+        "sha": "41080b32771c5b5fbf914529b1474f9b3467d342"
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+        "sha": "556e080440f5b631fa6cd58844595a366c778432"
+      }
+    ],
+    "incomingPaths": 197,
+    "overlap": [],
+    "extra": [],
+    "incomingErrors": []
+  },
+  "mounted": [
+    {
+      "path": "components/trips/KontoReiseArchivAktion.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReiseArchivAktion.tsx",
+      "blob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+      "sha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+      "finalTreeBlob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "components/trips/KontoReiseEintrag.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReiseEintrag.tsx",
+      "blob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+      "sha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+      "finalTreeBlob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "components/trips/MyTripsCollection.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/MyTripsCollection.tsx",
+      "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+      "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+      "finalTreeBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "components/trips/Reisekarte.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/Reisekarte.tsx",
+      "blob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+      "sha256": "fb309c861a3b6f0ca08239b9047f141ba25a85f657c44ce0ecd01a9da334a2bb",
+      "finalTreeBlob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "components/trips/useMyTripsCollectionNavigation.ts",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/useMyTripsCollectionNavigation.ts",
+      "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+      "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+      "finalTreeBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "components/trips/useTripArchiveWorkflow.ts",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/useTripArchiveWorkflow.ts",
+      "blob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+      "sha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+      "finalTreeBlob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/account/naechste-reise.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/naechste-reise.ts",
+      "blob": "9c437704fd58c83a4a6da3f1325ea6d6f3d4d685",
+      "sha256": "930e7b656fc60b0507e05de7ce7b57ffed3d3b0d63fc14e5c945bfc58608f269",
+      "finalTreeBlob": "9c437704fd58c83a4a6da3f1325ea6d6f3d4d685",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/account/reise-archiv.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-archiv.ts",
+      "blob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+      "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814",
+      "finalTreeBlob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/account/reise-lage.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-lage.ts",
+      "blob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+      "finalTreeBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/bezeichnungen.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/bezeichnungen.ts",
+      "blob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+      "sha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+      "finalTreeBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/my-trips-premium-hub-ux-1.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/my-trips-premium-hub-ux-1.ts",
+      "blob": "d1804e19b3d47427baac9d73a01265b71d832b06",
+      "sha256": "704cbb5bb8020f47c2e2dceeb463b0feb375d18b4e4066a350504ebae8d99307",
+      "finalTreeBlob": "d1804e19b3d47427baac9d73a01265b71d832b06",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/reise-orte.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reise-orte.ts",
+      "blob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+      "sha256": "5cac9ddf123498c281ab0cbf85319c347c4aee59d3f7a71a23b933916a4684f4",
+      "finalTreeBlob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-abfrage.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.ts",
+      "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+      "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+      "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/trip-archive-workflow.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/trip-archive-workflow.ts",
+      "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+      "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+      "finalTreeBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/utils.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/utils.ts",
+      "blob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "sha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+      "finalTreeBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+      "blob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+      "sha256": "b193d77582d0b401ac624471e856b151768f5c1beb0955d419bebd6a66dfe07e",
+      "finalTreeBlob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+      "blob": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b",
+      "sha256": "575b6d6777f7777c5652b144c12e54a55d8441f8dacd00e228ec0d09060b4e99",
+      "finalTreeBlob": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+      "blob": "1a5a87498b450161678b92c52de25f27d9b654da",
+      "sha256": "96ac2503e54a53a31f7faa369d8a9917d10ad8f4fe7cf26454393fae6e47c0bf",
+      "finalTreeBlob": "1a5a87498b450161678b92c52de25f27d9b654da",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "types/trips.ts",
+      "local": "/tmp/r107-mytrips-r3-review/types/trips.ts",
+      "blob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+      "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "finalTreeBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    }
+  ],
+  "query": [
+    {
+      "path": "lib/account/reise-archiv.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-archiv.ts",
+      "blob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+      "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814",
+      "finalTreeBlob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/account/reise-lage.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-lage.ts",
+      "blob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+      "finalTreeBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/api/datenbank-lesen.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/api/datenbank-lesen.ts",
+      "blob": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "sha256": "9d6ada9651d59dc808e58f9ac5bfbbce4e5417f5ffafc5e7fc06e07d2d4bb135",
+      "finalTreeBlob": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/supabase/server.ts",
+      "blob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "sha256": "8c37b6df7659035c3ad46f090415b92c30c741c102a695f0aa763d085cfabb13",
+      "finalTreeBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-abfrage.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.ts",
+      "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+      "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+      "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-daten.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.ts",
+      "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+      "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+      "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "lib/trips/reisen-uebersicht.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-uebersicht.ts",
+      "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+      "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+      "finalTreeBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "types/trips.ts",
+      "local": "/tmp/r107-mytrips-r3-review/types/trips.ts",
+      "blob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+      "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "finalTreeBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    }
+  ],
+  "support": [
+    {
+      "path": "styles/globals.css",
+      "local": "/tmp/r107-mytrips-r3-review/styles/globals.css",
+      "blob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+      "finalTreeBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "tailwind.config.js",
+      "local": "/tmp/r107-mytrips-r3-review/tailwind.config.js",
+      "blob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+      "finalTreeBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "postcss.config.js",
+      "local": "/tmp/r107-mytrips-r3-review/postcss.config.js",
+      "blob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715",
+      "finalTreeBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "package.json",
+      "local": "/tmp/r107-mytrips-r3-review/package.json",
+      "blob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+      "finalTreeBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "package-lock.json",
+      "local": "/tmp/r107-mytrips-r3-review/package-lock.json",
+      "blob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+      "finalTreeBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "tsconfig.json",
+      "local": "/tmp/r107-mytrips-r3-review/tsconfig.json",
+      "blob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+      "finalTreeBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/run.mjs",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/run.mjs",
+      "blob": "c0671bbe52adb9e27ee28edeecbd3d04c8c2b778",
+      "sha256": "b54db4543a2ff898724d9e70fe8e7e86642a5dd6caad548ab27ba2d474d12a85",
+      "finalTreeBlob": "c0671bbe52adb9e27ee28edeecbd3d04c8c2b778",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+      "blob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+      "sha256": "d21a218b8de9f166ba74d9c6b4cb0ba710db1160f467491df50bb2843d539159",
+      "finalTreeBlob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+      "matchesFinalTree": true,
+      "matchesRetainedSHA256": true
+    }
+  ],
+  "focusedRuntimeImportClosure": {
+    "method": "TypeScript AST static import/export/require traversal; excludes type-only edges and external packages; no application module executed",
+    "entries": [
+      "lib/account/reise-gruppen-grenzen.test.ts",
+      "lib/account/world-map.test.ts",
+      "lib/trips/archiv-aktionen.test.ts",
+      "lib/trips/reise-orte.test.ts",
+      "lib/trips/reisen-sammlung-abfrage.test.ts",
+      "lib/trips/reisen-sammlung-daten.test.ts",
+      "lib/trips/reisen-uebersicht.test.ts",
+      "lib/trips/trip-archive-workflow.test.ts"
+    ],
+    "records": [
+      {
+        "path": "lib/account/besuche.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/besuche.ts",
+        "blob": "eda9f25c835980b24821e2459a60b1bcc6fb37cb",
+        "sha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b",
+        "finalTreeBlob": "eda9f25c835980b24821e2459a60b1bcc6fb37cb",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/reise-archiv.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-archiv.ts",
+        "blob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+        "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814",
+        "finalTreeBlob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/reise-gruppen-grenzen.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-gruppen-grenzen.test.ts",
+        "blob": "4ca516ccf4fc9ad4c2a7b3bad342838b16a82b79",
+        "sha256": "6d4d54f50b7bfcaef172f2d70fcc142042429aaae3450cdc8bb4898f8ee91285",
+        "finalTreeBlob": "4ca516ccf4fc9ad4c2a7b3bad342838b16a82b79",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/reise-lage.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-lage.ts",
+        "blob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+        "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+        "finalTreeBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/welt-ansicht.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/welt-ansicht.ts",
+        "blob": "33eae4c21f625e6649c96d6debfa640629644676",
+        "sha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0",
+        "finalTreeBlob": "33eae4c21f625e6649c96d6debfa640629644676",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/welt-laender.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/welt-laender.ts",
+        "blob": "cd38905715a928727c41732a7d95ce35bbc9fbb3",
+        "sha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1",
+        "finalTreeBlob": "cd38905715a928727c41732a7d95ce35bbc9fbb3",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/world-map-ansicht.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map-ansicht.ts",
+        "blob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+        "sha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+        "finalTreeBlob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/world-map-geografie.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map-geografie.ts",
+        "blob": "9aff68fa152c37249e680b8d78e08857141334a9",
+        "sha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+        "finalTreeBlob": "9aff68fa152c37249e680b8d78e08857141334a9",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/world-map.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map.test.ts",
+        "blob": "82b7b2c794ad97907dcb5f8620a02bc76600ff06",
+        "sha256": "864a7b24d177c8e6ba151b58b233dc882a613034074581fc985d7508243ec195",
+        "finalTreeBlob": "82b7b2c794ad97907dcb5f8620a02bc76600ff06",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/account/world-map.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map.ts",
+        "blob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+        "sha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+        "finalTreeBlob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/api/datenbank-lesen.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/api/datenbank-lesen.ts",
+        "blob": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+        "sha256": "9d6ada9651d59dc808e58f9ac5bfbbce4e5417f5ffafc5e7fc06e07d2d4bb135",
+        "finalTreeBlob": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/country/copy.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/country/copy.ts",
+        "blob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+        "sha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+        "finalTreeBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/country/darstellung.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/country/darstellung.ts",
+        "blob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+        "sha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+        "finalTreeBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/country/katalog.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/country/katalog.ts",
+        "blob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "finalTreeBlob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/supabase/server.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/supabase/server.ts",
+        "blob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+        "sha256": "8c37b6df7659035c3ad46f090415b92c30c741c102a695f0aa763d085cfabb13",
+        "finalTreeBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/archiv-aktionen.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/archiv-aktionen.test.ts",
+        "blob": "a787d6e5b68b17f2a5c5d272c44acaa9273198e2",
+        "sha256": "f03392b6725fa5bf4bf971b908a56c75dd1da47aa4e532d322a8c4d20299f9a1",
+        "finalTreeBlob": "a787d6e5b68b17f2a5c5d272c44acaa9273198e2",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/bezeichnungen.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/bezeichnungen.ts",
+        "blob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+        "sha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+        "finalTreeBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/liste-grenze.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/liste-grenze.ts",
+        "blob": "ea8b02be04ae1c15beb103621bc3bfae9599c856",
+        "sha256": "3e2d4b275c052490d481989da435a2e60df06b23f9892569600b32dc1eccfaee",
+        "finalTreeBlob": "ea8b02be04ae1c15beb103621bc3bfae9599c856",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reise-orte.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reise-orte.test.ts",
+        "blob": "31950a1448dfff54ba0c337c2e3b8daad199023a",
+        "sha256": "fd42956578b9a7ff016bea304a06c7d9ff29229d6c36590281cb11c197f41087",
+        "finalTreeBlob": "31950a1448dfff54ba0c337c2e3b8daad199023a",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reise-orte.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reise-orte.ts",
+        "blob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+        "sha256": "5cac9ddf123498c281ab0cbf85319c347c4aee59d3f7a71a23b933916a4684f4",
+        "finalTreeBlob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.test.ts",
+        "blob": "b8730c82b5aa3ce5af70bc9f69551f33ad329bbb",
+        "sha256": "9e1c4b03f4a6f535e1844b47436492a74c32a494f66be0785a48c594b433f6af",
+        "finalTreeBlob": "b8730c82b5aa3ce5af70bc9f69551f33ad329bbb",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.ts",
+        "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.test.ts",
+        "blob": "d7fa4d648f2abfba54dc703c5e9741c6ec6d4441",
+        "sha256": "50f9560f5b359ebc23df17818f312c0ace5b6ba0d527b91e2aad0624c978d864",
+        "finalTreeBlob": "d7fa4d648f2abfba54dc703c5e9741c6ec6d4441",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.ts",
+        "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+        "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-uebersicht.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-uebersicht.test.ts",
+        "blob": "adeb5589f8cdf0005b6c9599ba318570251af0bf",
+        "sha256": "a4b16567321b5a75c94e5a131b6023f213dd99ed1e93eee59f7b57309399415e",
+        "finalTreeBlob": "adeb5589f8cdf0005b6c9599ba318570251af0bf",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/reisen-uebersicht.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-uebersicht.ts",
+        "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+        "finalTreeBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/trip-archive-workflow.test.ts",
+        "blob": "719b33141f7a221c769e299359b8cf974099d206",
+        "sha256": "f105b83d7868c2bb1881b6387f2fb33cb86e07175dedd95086ab5c114ee8edd7",
+        "finalTreeBlob": "719b33141f7a221c769e299359b8cf974099d206",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/trip-archive-workflow.ts",
+        "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "finalTreeBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "types/trips.ts",
+        "local": "/tmp/r107-mytrips-r3-review/types/trips.ts",
+        "blob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+        "finalTreeBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "matchesFinalTree": true
+      }
+    ],
+    "unresolved": [],
+    "heldFrontier": []
+  },
+  "focusedSourceAssertionInputs": [
+    {
+      "path": "app/(public)/reisen/page.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/proof-7c-page.tsx",
+      "blob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+      "sha256": "60e65e606aa35a2529c563c6d2ce8cdb721906c34451073eb9cffcc3e75bf65a",
+      "finalTreeBlob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../app/(public)/reisen/page.tsx"
+        },
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../app/(public)/reisen/page.tsx"
+        },
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../app/(public)/reisen/page.tsx"
+        },
+        {
+          "from": "lib/trips/reisen-sammlung-daten.test.ts",
+          "literal": "../../app/(public)/reisen/page.tsx"
+        }
+      ]
+    },
+    {
+      "path": "app/account/page.tsx",
+      "local": "/tmp/jetnity-r107-snapshot/app/account/page.tsx",
+      "blob": "ee2d7b1c3f2a53155e12bb7b63cc43491f06b2e7",
+      "sha256": "ac01fc365ff20bf4a49a90552e21959f2af1b84b348b6d268823d8b7595d63ff",
+      "finalTreeBlob": "ee2d7b1c3f2a53155e12bb7b63cc43491f06b2e7",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reisen-uebersicht.test.ts",
+          "literal": "../../app/account/page.tsx"
+        }
+      ]
+    },
+    {
+      "path": "app/account/welt/page.tsx",
+      "local": "/tmp/jetnity-r107-snapshot/app/account/welt/page.tsx",
+      "blob": "ac3b5aa0509afc7ba0fe4c4acdde7ded4b93eca3",
+      "sha256": "8e417ebd73315ee3440cdc0fedad7ae959f49884632977b82de13f7db496dd20",
+      "finalTreeBlob": "ac3b5aa0509afc7ba0fe4c4acdde7ded4b93eca3",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reisen-uebersicht.test.ts",
+          "literal": "../../app/account/welt/page.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/account/AccountUebersicht.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/account/AccountUebersicht.tsx",
+      "blob": "80fc5a13fb96fd1b0f2938f4cbe0eedb7ecbfafd",
+      "sha256": "3ca3f50db66d7c78fd4087c9869efdf7a98ecbb5d215e9cc52b708682d482ac8",
+      "finalTreeBlob": "80fc5a13fb96fd1b0f2938f4cbe0eedb7ecbfafd",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountUebersicht.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/account/AccountUebersichtLive.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/account/AccountUebersichtLive.tsx",
+      "blob": "893ce8699c1031b42e457049f161c64de8c0d524",
+      "sha256": "34bede7fe1a3ab9fdaee711cfa1a5753c30a508f960723fdfcf4a9f0b6f65ff8",
+      "finalTreeBlob": "893ce8699c1031b42e457049f161c64de8c0d524",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountUebersichtLive.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/account/AccountWeltKarte.tsx",
+      "blob": "bd8ffeea167883d160a2e579546e42dbd6e01870",
+      "sha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+      "finalTreeBlob": "bd8ffeea167883d160a2e579546e42dbd6e01870",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/AccountWeltKarte.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/account/world-explorer-1/WorldExplorer.tsx",
+      "blob": "e6c770f6b3c88c727039be03c23b43b7e87add33",
+      "sha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+      "finalTreeBlob": "e6c770f6b3c88c727039be03c23b43b7e87add33",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../../components/account/world-explorer-1/WorldExplorer.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/trips/GastReisen.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/GastReisen.tsx",
+      "blob": "55a9019b66b23da67e496797b4456f6b9dd1a3f4",
+      "sha256": "7fd8690d131f7dd816c40f4bad5ef9d7b97e36790c42a5fc8430244d2080d9d3",
+      "finalTreeBlob": "55a9019b66b23da67e496797b4456f6b9dd1a3f4",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "../../components/trips/GastReisen.tsx"
+        },
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "../../components/trips/GastReisen.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/trips/KontoReisenGruppen.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReisenGruppen.tsx",
+      "blob": "4f8945be9e4f9e85d7147d0fc28f32929ed56828",
+      "sha256": "b832614ee0d25f3fc97a4a44ef6d8972e15ab72252f330c6c44149d3e3f1b2af",
+      "finalTreeBlob": "4f8945be9e4f9e85d7147d0fc28f32929ed56828",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../components/trips/KontoReisenGruppen.tsx"
+        },
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../components/trips/KontoReisenGruppen.tsx"
+        },
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../components/trips/KontoReisenGruppen.tsx"
+        },
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../components/trips/KontoReisenGruppen.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/trips/MyTripsCollection.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/MyTripsCollection.tsx",
+      "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+      "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+      "finalTreeBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reisen-sammlung-daten.test.ts",
+          "literal": "../../components/trips/MyTripsCollection.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/trips/Reisekarte.tsx",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/Reisekarte.tsx",
+      "blob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+      "sha256": "fb309c861a3b6f0ca08239b9047f141ba25a85f657c44ce0ecd01a9da334a2bb",
+      "finalTreeBlob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "../../components/trips/Reisekarte.tsx"
+        }
+      ]
+    },
+    {
+      "path": "components/trips/useMyTripsCollectionNavigation.ts",
+      "local": "/tmp/r107-mytrips-r3-review/components/trips/useMyTripsCollectionNavigation.ts",
+      "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+      "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+      "finalTreeBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reisen-sammlung-daten.test.ts",
+          "literal": "../../components/trips/useMyTripsCollectionNavigation.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/account/reise-lage.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/reise-lage.ts",
+      "blob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+      "finalTreeBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "reise-lage.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/account/world-map-ansicht.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map-ansicht.ts",
+      "blob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+      "sha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+      "finalTreeBlob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "world-map-ansicht.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/account/world-map-geografie.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map-geografie.ts",
+      "blob": "9aff68fa152c37249e680b8d78e08857141334a9",
+      "sha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+      "finalTreeBlob": "9aff68fa152c37249e680b8d78e08857141334a9",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "world-map-geografie.ts"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "world-map-geografie.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/account/world-map.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/account/world-map.ts",
+      "blob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+      "sha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+      "finalTreeBlob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "world-map.ts"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "world-map.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/anlegen.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/anlegen.ts",
+      "blob": "97f3e35117fac68bd41d0f273d1d215f8bc3aeaa",
+      "sha256": "c7548d77b8890ff8f4c83f366649c69046490171d163f3abf511ad73e185b08d",
+      "finalTreeBlob": "97f3e35117fac68bd41d0f273d1d215f8bc3aeaa",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "anlegen.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/archiv-aktionen.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/archiv-aktionen.ts",
+      "blob": "1b4851b604f19588899b78153b1509d8e1674dd1",
+      "sha256": "5f331f9cd1fce6601074d6d91698076771fa06c856609e7d1a425f749ef93291",
+      "finalTreeBlob": "1b4851b604f19588899b78153b1509d8e1674dd1",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "archiv-aktionen.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "archiv-aktionen.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "archiv-aktionen.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "archiv-aktionen.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "archiv-aktionen.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/daten.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/daten.ts",
+      "blob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+      "sha256": "d0d57ba8b8345e827785d899f696a80545931cb6b5e1acd6ed6c5820ff9469cd",
+      "finalTreeBlob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/reise-gruppen-grenzen.test.ts",
+          "literal": "../../lib/trips/daten.ts"
+        },
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../trips/daten.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "daten.ts"
+        },
+        {
+          "from": "lib/trips/reisen-uebersicht.test.ts",
+          "literal": "daten.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/gastspeicher.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/gastspeicher.ts",
+      "blob": "f18bf24efaf8f86196276f02758e2f162915d33a",
+      "sha256": "aeac3ccf9cd951848ac02d736bc8408083d6c7fe603f7762fa92ba3066c94b5c",
+      "finalTreeBlob": "f18bf24efaf8f86196276f02758e2f162915d33a",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "gastspeicher.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/reise-orte.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reise-orte.ts",
+      "blob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+      "sha256": "5cac9ddf123498c281ab0cbf85319c347c4aee59d3f7a71a23b933916a4684f4",
+      "finalTreeBlob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "reise-orte.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-daten.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.ts",
+      "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+      "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+      "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/trips/reisen-sammlung-daten.test.ts",
+          "literal": "reisen-sammlung-daten.ts"
+        }
+      ]
+    },
+    {
+      "path": "lib/trips/reisen-uebersicht.ts",
+      "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-uebersicht.ts",
+      "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+      "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+      "finalTreeBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+      "matchesFinalTree": true,
+      "references": [
+        {
+          "from": "lib/account/world-map.test.ts",
+          "literal": "../trips/reisen-uebersicht.ts"
+        },
+        {
+          "from": "lib/trips/archiv-aktionen.test.ts",
+          "literal": "reisen-uebersicht.ts"
+        },
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "reisen-uebersicht.ts"
+        },
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "reisen-uebersicht.ts"
+        },
+        {
+          "from": "lib/trips/reise-orte.test.ts",
+          "literal": "reisen-uebersicht.ts"
+        }
+      ]
+    }
+  ],
+  "authorReceipt": {
+    "path": "docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json",
+    "local": "/tmp/r107-mytrips-r3-review/docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json",
+    "blob": "689077cefe53746fe7e6896f3b13e4d5e4c6700b",
+    "sha256": "4dd3ece07a993d0b8bd1c418d348b848a6f188e2d62396271af9cb9afa7413cc",
+    "finalTreeBlob": "689077cefe53746fe7e6896f3b13e4d5e4c6700b",
+    "matchesFinalTree": true,
+    "historicalHead": "96715e43f9c979a542a1b7bd5acc2b15ef494c5d",
+    "historicalTree": "d734a39f5f97228f076a8d12e37e02b71257a0ae",
+    "status": "PASS",
+    "exit": 0,
+    "dirty": "",
+    "cases": 18,
+    "sources": [
+      {
+        "path": "app/(public)/reisen/page.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/proof-7c-page.tsx",
+        "blob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+        "sha256": "60e65e606aa35a2529c563c6d2ce8cdb721906c34451073eb9cffcc3e75bf65a",
+        "finalTreeBlob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+        "matchesFinalTree": true,
+        "retainedBlob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+        "retainedSha256": "60e65e606aa35a2529c563c6d2ce8cdb721906c34451073eb9cffcc3e75bf65a",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/MyTripsCollection.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/MyTripsCollection.tsx",
+        "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+        "finalTreeBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "matchesFinalTree": true,
+        "retainedBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "retainedSha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/useMyTripsCollectionNavigation.ts",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/useMyTripsCollectionNavigation.ts",
+        "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+        "finalTreeBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "matchesFinalTree": true,
+        "retainedBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "retainedSha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/useTripArchiveWorkflow.ts",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/useTripArchiveWorkflow.ts",
+        "blob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "sha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+        "finalTreeBlob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "matchesFinalTree": true,
+        "retainedBlob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "retainedSha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/KontoReiseArchivAktion.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReiseArchivAktion.tsx",
+        "blob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "sha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+        "finalTreeBlob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "matchesFinalTree": true,
+        "retainedBlob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "retainedSha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/KontoReiseEintrag.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReiseEintrag.tsx",
+        "blob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "sha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+        "finalTreeBlob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "matchesFinalTree": true,
+        "retainedBlob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "retainedSha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/reisen-uebersicht.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-uebersicht.ts",
+        "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+        "finalTreeBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "matchesFinalTree": true,
+        "retainedBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "retainedSha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.ts",
+        "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "matchesFinalTree": true,
+        "retainedBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "retainedSha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.ts",
+        "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+        "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "matchesFinalTree": true,
+        "retainedBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "retainedSha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/trip-archive-workflow.ts",
+        "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "finalTreeBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "matchesFinalTree": true,
+        "retainedBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "retainedSha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "matchesOriginalSourcePin": true
+      }
+    ],
+    "qualification": "Historical author execution only; source rebinding does not make it a fresh dda52b66 gate"
+  },
+  "independentR3": {
+    "historicalHead": "444a8c254e11688120f7f2b6e49193746932a865",
+    "historicalRuntimeCommit": "96715e43f9c979a542a1b7bd5acc2b15ef494c5d",
+    "node": "v24.22.1",
+    "browser": "140.0.7339.16",
+    "observations": 15,
+    "pageErrors": [],
+    "sources": [
+      {
+        "path": "styles/globals.css",
+        "local": "/tmp/r107-mytrips-r3-review/styles/globals.css",
+        "blob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "finalTreeBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "matchesFinalTree": true,
+        "retainedSha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "tailwind.config.js",
+        "local": "/tmp/r107-mytrips-r3-review/tailwind.config.js",
+        "blob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "finalTreeBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "matchesFinalTree": true,
+        "retainedSha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+        "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+        "blob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+        "sha256": "d21a218b8de9f166ba74d9c6b4cb0ba710db1160f467491df50bb2843d539159",
+        "finalTreeBlob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+        "matchesFinalTree": true,
+        "retainedSha256": "d21a218b8de9f166ba74d9c6b4cb0ba710db1160f467491df50bb2843d539159",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/MyTripsCollection.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/MyTripsCollection.tsx",
+        "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+        "finalTreeBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "matchesFinalTree": true,
+        "retainedSha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/KontoReiseArchivAktion.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/KontoReiseArchivAktion.tsx",
+        "blob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "sha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+        "finalTreeBlob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "matchesFinalTree": true,
+        "retainedSha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/useTripArchiveWorkflow.ts",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/useTripArchiveWorkflow.ts",
+        "blob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "sha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+        "finalTreeBlob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "matchesFinalTree": true,
+        "retainedSha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "components/trips/useMyTripsCollectionNavigation.ts",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/useMyTripsCollectionNavigation.ts",
+        "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+        "finalTreeBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "matchesFinalTree": true,
+        "retainedSha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-abfrage.ts",
+        "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "matchesFinalTree": true,
+        "retainedSha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/reisen-sammlung-daten.ts",
+        "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+        "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "matchesFinalTree": true,
+        "retainedSha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/trips/trip-archive-workflow.ts",
+        "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "finalTreeBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "matchesFinalTree": true,
+        "retainedSha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+        "blob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+        "sha256": "b193d77582d0b401ac624471e856b151768f5c1beb0955d419bebd6a66dfe07e",
+        "finalTreeBlob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+        "matchesFinalTree": true,
+        "retainedSha256": "b193d77582d0b401ac624471e856b151768f5c1beb0955d419bebd6a66dfe07e",
+        "matchesOriginalSourcePin": true
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+        "local": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+        "blob": "1a5a87498b450161678b92c52de25f27d9b654da",
+        "sha256": "96ac2503e54a53a31f7faa369d8a9917d10ad8f4fe7cf26454393fae6e47c0bf",
+        "finalTreeBlob": "1a5a87498b450161678b92c52de25f27d9b654da",
+        "matchesFinalTree": true,
+        "retainedSha256": "96ac2503e54a53a31f7faa369d8a9917d10ad8f4fe7cf26454393fae6e47c0bf",
+        "matchesOriginalSourcePin": true
+      }
+    ],
+    "qualification": "Historic synthetic interaction/ownership evidence; no final-head browser execution or CSS identity claim"
+  },
+  "historicalQueryReceipt": {
+    "local": "/tmp/r107-mytrips-query-review/independent-query-probe.json",
+    "sha256": "d7c087df5927aa3955ac0eecdf30d61ec772d73bddf28df2ef91977d9265eb97",
+    "head": "863b7f3b879eaa1723cee57879eda521ecd223e9",
+    "node": "v24.22.1",
+    "sourcePins": [
+      {
+        "path": "app/(public)/reisen/page.tsx",
+        "historicalBlob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+        "finalTreeBlob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+        "unchanged": true
+      },
+      {
+        "path": "components/trips/KontoReiseArchivAktion.tsx",
+        "historicalBlob": "ef60cecff2704c3294c28e1e31cbc5871effa7b6",
+        "finalTreeBlob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "unchanged": false
+      },
+      {
+        "path": "components/trips/KontoReiseEintrag.tsx",
+        "historicalBlob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "finalTreeBlob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "unchanged": true
+      },
+      {
+        "path": "components/trips/MyTripsCollection.tsx",
+        "historicalBlob": "87b449001673169c01a385a75b6c55d4a827e1b3",
+        "finalTreeBlob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "unchanged": false
+      },
+      {
+        "path": "components/trips/useMyTripsCollectionNavigation.ts",
+        "historicalBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "finalTreeBlob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "unchanged": true
+      },
+      {
+        "path": "components/trips/useTripArchiveWorkflow.ts",
+        "historicalBlob": "eedefb13748580e2fe968308ce8108e1c58b0949",
+        "finalTreeBlob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+        "historicalBlob": "dba9065e6391031812bbf4829a79589efae7dc31",
+        "finalTreeBlob": "7ed216597aba4e17366823f4c908a313fb53fd48",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+        "historicalBlob": "b6f139a20d179ac055842966ad6cf584a0511a30",
+        "finalTreeBlob": "7d4e5ce4f2e4e3715066c77d1204fa754677cbee",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+        "historicalBlob": "eeb48803371adfab81bdbd008c33ec100a4db088",
+        "finalTreeBlob": "c387dca4055afa6b751de9cde0e0cc3436be7624",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+        "historicalBlob": "ba29a6b5f553f5bc3fa3a0f8f9a58256b4664ffd",
+        "finalTreeBlob": "41080b32771c5b5fbf914529b1474f9b3467d342",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+        "historicalBlob": "ae17eb4e8c0a96b5173f50314430d1b2dae14e3d",
+        "finalTreeBlob": "556e080440f5b631fa6cd58844595a366c778432",
+        "unchanged": false
+      },
+      {
+        "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+        "historicalBlob": "eeb1f1239e07df5d9d9bc7459c4c83918b947777",
+        "finalTreeBlob": "eeb1f1239e07df5d9d9bc7459c4c83918b947777",
+        "unchanged": true
+      },
+      {
+        "path": "docs/evidence/my-trips-collection-archive-workflow-completion-1/run-ddd1f7eace34519996ec686223d684102a933baa.json",
+        "historicalBlob": "f2649b70af8dab36d1bb3d052cd704e7d0ad72f7",
+        "finalTreeBlob": "f2649b70af8dab36d1bb3d052cd704e7d0ad72f7",
+        "unchanged": true
+      },
+      {
+        "path": "lib/account/reise-gruppen-grenzen.test.ts",
+        "historicalBlob": "4ca516ccf4fc9ad4c2a7b3bad342838b16a82b79",
+        "finalTreeBlob": "4ca516ccf4fc9ad4c2a7b3bad342838b16a82b79",
+        "unchanged": true
+      },
+      {
+        "path": "lib/account/world-map.test.ts",
+        "historicalBlob": "82b7b2c794ad97907dcb5f8620a02bc76600ff06",
+        "finalTreeBlob": "82b7b2c794ad97907dcb5f8620a02bc76600ff06",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/archiv-aktionen.test.ts",
+        "historicalBlob": "a787d6e5b68b17f2a5c5d272c44acaa9273198e2",
+        "finalTreeBlob": "a787d6e5b68b17f2a5c5d272c44acaa9273198e2",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/daten.ts",
+        "historicalBlob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+        "finalTreeBlob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/reise-orte.test.ts",
+        "historicalBlob": "31950a1448dfff54ba0c337c2e3b8daad199023a",
+        "finalTreeBlob": "31950a1448dfff54ba0c337c2e3b8daad199023a",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.test.ts",
+        "historicalBlob": "c563c8515cc396c5b6860a8a5e5f58d0a319a26e",
+        "finalTreeBlob": "b8730c82b5aa3ce5af70bc9f69551f33ad329bbb",
+        "unchanged": false
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.ts",
+        "historicalBlob": "faf5add13e4177f1df8f8f8178a13c43c2d46556",
+        "finalTreeBlob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "unchanged": false
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.test.ts",
+        "historicalBlob": "d0fd45f21a3ab8fe12f80b6176f37fde42e22f14",
+        "finalTreeBlob": "d7fa4d648f2abfba54dc703c5e9741c6ec6d4441",
+        "unchanged": false
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-daten.ts",
+        "historicalBlob": "5575a8599ead35d648ffd85f4b611520e0deffc2",
+        "finalTreeBlob": "c196b9249d905479740657c780915e1b4fe33a2f",
+        "unchanged": false
+      },
+      {
+        "path": "lib/trips/reisen-uebersicht.test.ts",
+        "historicalBlob": "adeb5589f8cdf0005b6c9599ba318570251af0bf",
+        "finalTreeBlob": "adeb5589f8cdf0005b6c9599ba318570251af0bf",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/reisen-uebersicht.ts",
+        "historicalBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "finalTreeBlob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+        "unchanged": true
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.test.ts",
+        "historicalBlob": "aa4956940b79650afec8c4492cd0e909a6efb7da",
+        "finalTreeBlob": "719b33141f7a221c769e299359b8cf974099d206",
+        "unchanged": false
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.ts",
+        "historicalBlob": "e0a78b7ca6a5bc4a7b12cc0e1b108756889dd761",
+        "finalTreeBlob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "unchanged": false
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+        "historicalBlob": "19ebe126e5413d8851ecf22130ab4262686481a5",
+        "finalTreeBlob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+        "unchanged": false
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+        "historicalBlob": "48100202d1dae0191d374d1a1169730ec536497c",
+        "finalTreeBlob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+        "unchanged": false
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/run.mjs",
+        "historicalBlob": "c0671bbe52adb9e27ee28edeecbd3d04c8c2b778",
+        "finalTreeBlob": "c0671bbe52adb9e27ee28edeecbd3d04c8c2b778",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+        "historicalBlob": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b",
+        "finalTreeBlob": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+        "historicalBlob": "46538b85407cd91a1ec7c0995af6959fda223884",
+        "finalTreeBlob": "1a5a87498b450161678b92c52de25f27d9b654da",
+        "unchanged": false
+      }
+    ],
+    "qualification": "Old 863b/ddd1 query execution remains historic; changed source pins are not silently promoted to whole-module final-head proof"
+  },
+  "historicalReceiptFiles": [
+    {
+      "local": "/tmp/r107-mytrips-r3-review/proof-source-binding-96715.json",
+      "sha256": "ca22cd8c8b4b976a1097fb50ff0d2f3cdd8a3d25819fcedde3b90cef30fe96ed"
+    },
+    {
+      "local": "/tmp/r107-mytrips-r3-review/docs-tail-binding.json",
+      "sha256": "54847e315970866c9a4a1739139938a5d48fc1d78d54a4c749744de7ce43c1eb"
+    },
+    {
+      "local": "/tmp/r107-mytrips-r3-review/root-r3-results.json",
+      "sha256": "64aef9099542de9cd45d6708ede2970393b0603b8e5074d21fe73c3f2d397cc8"
+    },
+    {
+      "local": "/tmp/r107-mytrips-r3-review/root-r3-pre-read.json",
+      "sha256": "5bee310dea214bf9cac208bc608d9cee3c2ec8c79a6a3888fc9c7b504f7d6c38"
+    },
+    {
+      "local": "/tmp/r107-mytrips-r3-review/root-r3-address-unit.log",
+      "sha256": "defcbe8a3245727243e0899a1c29d4fb3216bc086d742ee27872f3e831ac8606"
+    },
+    {
+      "local": "/tmp/r107-mytrips-r3-review/REVIEW.md",
+      "sha256": "1e314a537b7b3ac5872c7da2a713d260d7ff9cf5c9f1f2cbef28c9a068520ea4"
+    }
+  ],
+  "docsTail96715To444a": {
+    "runtime": "96715e43f9c979a542a1b7bd5acc2b15ef494c5d",
+    "candidate": "444a8c254e11688120f7f2b6e49193746932a865",
+    "changedPaths": [
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+      "docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json",
+      "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-1440.png",
+      "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-320.png",
+      "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-390.png",
+      "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-768.png"
+    ],
+    "productOrTestSourceChanged": false
+  },
+  "execution": {
+    "tests": false,
+    "css": false,
+    "bundle": false,
+    "browser": false,
+    "network": false,
+    "externalWrites": false
+  },
+  "limitations": [
+    "No historical compiled M CSS output/hash is retained; parent owns new actual-final CSS/bundle binding, browser remains separately gated.",
+    "Full npm test last executed on 7c997103: 7186 total, 7170 pass, 11 fail, 5 skipped; not repeated after owner/empty-address corrections. Full eslint/hygiene also historical at 7c, with eslint 0 errors/181 warnings.",
+    "Current author 96715 receipt: Node22.23.4 reported; focused address/reader unit 13 passed; mounted18, typecheck/build at96715. Independent R3 Node24.22.1/Chromium140.0.7339.16 is supplemental, never native Node22/hosted acceptance.",
+    "Whole /reisen route is not source-identical: its guest bridge transitively reaches T account-registry-trip-copy.ts, whose reviewed incoming delta adds four copy constants. Only scoped Collection/Query/proof inputs are rebound here.",
+    "Hosted PostgreSQL collation/planner/auth/session and operation causal readback are not proved by synthetic historical receipts. Full-route unmount loses the local archive ledger; 8-second lease is a UI guard, not a read receipt."
+  ],
+  "summary": {
+    "mountedCount": 19,
+    "queryCount": 8,
+    "supportCount": 8,
+    "focusedRuntimeCount": 29,
+    "sourceAssertionInputCount": 23,
+    "authorSourceCount": 10,
+    "r3SourceCount": 12,
+    "mismatches": [],
+    "historicalQuerySourceChanges": [
+      "components/trips/KontoReiseArchivAktion.tsx",
+      "components/trips/MyTripsCollection.tsx",
+      "components/trips/useTripArchiveWorkflow.ts",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+      "lib/trips/reisen-sammlung-abfrage.test.ts",
+      "lib/trips/reisen-sammlung-abfrage.ts",
+      "lib/trips/reisen-sammlung-daten.test.ts",
+      "lib/trips/reisen-sammlung-daten.ts",
+      "lib/trips/trip-archive-workflow.test.ts",
+      "lib/trips/trip-archive-workflow.ts",
+      "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+      "scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+      "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts"
+    ],
+    "historicalUnitLoaderCount": 4,
+    "routeQualificationChainCount": 4
+  },
+  "historicalUnitLoaderSupport": [
+    {
+      "path": "scripts/server-only-test-register.mjs",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/server-only-test-register.mjs",
+      "blob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+      "finalTreeBlob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "matchesFinalTree": true
+    },
+    {
+      "path": "scripts/server-only-test-loader.mjs",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/server-only-test-loader.mjs",
+      "blob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+      "sha256": "9249fc5a0d1327724687ec13796ca0b1322280455e2efb9f15eada09383ce8a7",
+      "finalTreeBlob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+      "matchesFinalTree": true
+    },
+    {
+      "path": "scripts/server-only-empty.mjs",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/server-only-empty.mjs",
+      "blob": "ea042f27099d25c9e5706e3026a95d2f4eba48c3",
+      "sha256": "44a452dceb69613fa1cc8c57d0a14916d61560ac9307d7c9cdc036e1dabbff80",
+      "finalTreeBlob": "ea042f27099d25c9e5706e3026a95d2f4eba48c3",
+      "matchesFinalTree": true
+    },
+    {
+      "path": "scripts/server-only-empty.js",
+      "local": "/tmp/r107-mytrips-r3-review/scripts/server-only-empty.js",
+      "blob": "fa6f4a5ccea49ac0d2533bc8656540d060db35ae",
+      "sha256": "62383a273617b448556d1a28571dc7ccb751066aacf09ea64720c55d7462469a",
+      "finalTreeBlob": "fa6f4a5ccea49ac0d2533bc8656540d060db35ae",
+      "matchesFinalTree": true
+    }
+  ],
+  "authorityPins": {
+    "task": {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "local": "/tmp/r107-mytrips-r3-review/docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "blob": "eeb1f1239e07df5d9d9bc7459c4c83918b947777",
+      "sha256": "65fbfc4aea9b2d10d014cbcd45b571a97980b58b8a6e1d667b1aa9892f7bbaa0",
+      "finalTreeBlob": "eeb1f1239e07df5d9d9bc7459c4c83918b947777",
+      "matchesFinalTree": true
+    },
+    "M_EX1": "Only the four authorized existing source-assertion test retargets; all four are included in focused entries and retain final-tree identity.",
+    "M_EX2_newAuditRoutePresent": false
+  },
+  "wholeRouteQualification": {
+    "scope": "Route wrapper identity is insufficient to call the complete route source-identical.",
+    "transitiveChain": [
+      {
+        "path": "components/trips/GastreiseBruecke.tsx",
+        "local": "/tmp/r107-mytrips-r3-review/components/trips/GastreiseBruecke.tsx",
+        "blob": "b3d852ecf0e420c4e29e0d183461e4a468f856e9",
+        "sha256": "a5e59a833ca849f9931442f8ac1340be10033aeeec78c341d355f38c7145e3a2",
+        "finalTreeBlob": "b3d852ecf0e420c4e29e0d183461e4a468f856e9",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/readiness/reisende-aktionen.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/readiness/reisende-aktionen.ts",
+        "blob": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+        "sha256": "3a1d641c8c2930ba75314882ca6413ee4654ef7adb6796bc0fd0f8d75db5fa86",
+        "finalTreeBlob": "d455041606c0d0a6039329c62f1acfa7ec97802c",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/traveller/account-registry-trip.ts",
+        "local": "/tmp/r107-mytrips-r3-review/lib/traveller/account-registry-trip.ts",
+        "blob": "289d5bd97f2589e64e70a02f370cb3cee133a35a",
+        "sha256": "8cf93d7302fb0d221c26df6829c462f6c2bb7f3c9e27fe4e59cbd53bfe8f986c",
+        "finalTreeBlob": "289d5bd97f2589e64e70a02f370cb3cee133a35a",
+        "matchesFinalTree": true
+      },
+      {
+        "path": "lib/traveller/account-registry-trip-copy.ts",
+        "local": "/tmp/r107-trip-consistency-review/lib/traveller/account-registry-trip-copy.ts",
+        "blob": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+        "sha256": "bc17113190cd8e2b9bc14981b0b1021ab2190819a88dc40733d41fe3b37c6ebe",
+        "finalTreeBlob": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+        "matchesFinalTree": true
+      }
+    ],
+    "incomingChangedPath": "lib/traveller/account-registry-trip-copy.ts",
+    "reviewedIncomingDelta": "Four added copy constants (warten, refreshUnklar, unbekannt, erneut); no whole-route runtime execution is inferred.",
+    "basis": "Bound exact bytes plus previously completed Technical Lead/helper incoming-dependency review; no new route tests."
+  }
+}

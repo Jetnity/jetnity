@@ -1,0 +1,2688 @@
+{
+  "head": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+  "tree": "d732487b09c3245c9c22e38b38bb030c8aa181cf",
+  "scope": "One bounded lexical check of the retained W harness only; no broader repository or general class-dataflow audit",
+  "tokens": [
+    "grid-cols-[minmax(0,1fr)_minmax(0,1fr)]",
+    "lg:grid-cols-none",
+    "[&>*]:min-w-0",
+    "[&>*]:max-w-full",
+    "[&_input]:max-w-full",
+    "[&_select]:max-w-full"
+  ],
+  "inputs": [
+    {
+      "path": "lib/country/copy.ts",
+      "local": "/tmp/r107-world-r1-review/lib/country/copy.ts",
+      "expectedSha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+      "finalGitBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+      "kind": "bound repository input",
+      "actualSha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/country/katalog.ts",
+      "local": "/tmp/r107-world-r1-review/lib/country/katalog.ts",
+      "expectedSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+      "finalGitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+      "kind": "bound repository input",
+      "actualSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/country/darstellung.ts",
+      "local": "/tmp/r107-world-r1-review/lib/country/darstellung.ts",
+      "expectedSha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+      "finalGitBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+      "kind": "bound repository input",
+      "actualSha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/country/land-feld.ts",
+      "local": "/tmp/r107-world-r1-review/lib/country/land-feld.ts",
+      "expectedSha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4",
+      "finalGitBlob": "b47d4be66bfb83d95517ffe25ac5859738aae2da",
+      "kind": "bound repository input",
+      "actualSha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "local": "/tmp/r107-world-r1-review/components/country/LandFeld.tsx",
+      "expectedSha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b",
+      "finalGitBlob": "4f6894927d64e9dd05db074ae05a663cb1578b5e",
+      "kind": "bound repository input",
+      "actualSha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/utils.ts",
+      "local": "/tmp/r107-world-r1-review/lib/utils.ts",
+      "expectedSha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+      "finalGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "kind": "bound repository input",
+      "actualSha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "local": "/tmp/r107-world-r1-review/components/suche/Suchliste.tsx",
+      "expectedSha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352",
+      "finalGitBlob": "d69781e62dae73acde6590bde03f3533c8388b77",
+      "kind": "bound repository input",
+      "actualSha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/places/domain.ts",
+      "local": "/tmp/r107-world-r1-review/lib/places/domain.ts",
+      "expectedSha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c",
+      "finalGitBlob": "047d902c1ddcf56e5819dedf12b7b3580331e1c0",
+      "kind": "bound repository input",
+      "actualSha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/places/pruefen.ts",
+      "local": "/tmp/r107-world-r1-review/lib/places/pruefen.ts",
+      "expectedSha256": "1e6e6bc58321ab4c02de859a121dc54754cc708d9d5bdea0f2acc490dfcf85c8",
+      "finalGitBlob": "2167d2fb35fcb8c3a45a024f6cca4b8fea574769",
+      "kind": "bound repository input",
+      "actualSha256": "1e6e6bc58321ab4c02de859a121dc54754cc708d9d5bdea0f2acc490dfcf85c8",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/places/auswahl.ts",
+      "local": "/tmp/r107-world-r1-review/lib/places/auswahl.ts",
+      "expectedSha256": "6fde5c624550e09029ea8cbf9b148aa5d45a42c9d43a898b83d121f84629415e",
+      "finalGitBlob": "aea169b355fa62acc4a5c78cc43ffd47446f8f30",
+      "kind": "bound repository input",
+      "actualSha256": "6fde5c624550e09029ea8cbf9b148aa5d45a42c9d43a898b83d121f84629415e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/digest.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/digest.ts",
+      "expectedSha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+      "finalGitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+      "kind": "bound repository input",
+      "actualSha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+      "expectedSha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e",
+      "finalGitBlob": "25dafee0f06353785972efafe0fc2db90183372b",
+      "kind": "bound repository input",
+      "actualSha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "types/trips.ts",
+      "local": "/tmp/r107-world-r1-review/types/trips.ts",
+      "expectedSha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "finalGitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+      "kind": "bound repository input",
+      "actualSha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/day-stage-assignment.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/day-stage-assignment.ts",
+      "expectedSha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4",
+      "finalGitBlob": "9f5c84bb97b8609a2b0b0659b23bc9ac3dfac658",
+      "kind": "bound repository input",
+      "actualSha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/bezeichnungen.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/bezeichnungen.ts",
+      "expectedSha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+      "finalGitBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+      "kind": "bound repository input",
+      "actualSha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/buchung.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/buchung.ts",
+      "expectedSha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b",
+      "finalGitBlob": "dd6b76fb68bc9721d1f345eb66ef18a14868cbff",
+      "kind": "bound repository input",
+      "actualSha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/mietwagen-felder.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/mietwagen-felder.ts",
+      "expectedSha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b",
+      "finalGitBlob": "5a256b1ee8038238198a84a5870c714fcc017dcd",
+      "kind": "bound repository input",
+      "actualSha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/mobilitaet-felder.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/mobilitaet-felder.ts",
+      "expectedSha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e",
+      "finalGitBlob": "155f8a71aff2c4e47fdfdf2a6fa0d40f106e807d",
+      "kind": "bound repository input",
+      "actualSha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/tage.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/tage.ts",
+      "expectedSha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
+      "finalGitBlob": "e34eb190e86ba6ed982071fc5e77f4ab7d7631a8",
+      "kind": "bound repository input",
+      "actualSha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/domain.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/domain.ts",
+      "expectedSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "finalGitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+      "kind": "bound repository input",
+      "actualSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/traveller-kontext.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/traveller-kontext.ts",
+      "expectedSha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52",
+      "finalGitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78",
+      "kind": "bound repository input",
+      "actualSha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/traveller-anfrage.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/traveller-anfrage.ts",
+      "expectedSha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d",
+      "finalGitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+      "kind": "bound repository input",
+      "actualSha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/readiness/schema.ts",
+      "local": "/tmp/r107-world-r1-review/lib/readiness/schema.ts",
+      "expectedSha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+      "finalGitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+      "kind": "bound repository input",
+      "actualSha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/route/schema.ts",
+      "local": "/tmp/r107-world-r1-review/lib/route/schema.ts",
+      "expectedSha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+      "finalGitBlob": "f2615a4103b2b8525d93d67695e7e15978c9b442",
+      "kind": "bound repository input",
+      "actualSha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/trips/schema.ts",
+      "local": "/tmp/r107-world-r1-review/lib/trips/schema.ts",
+      "expectedSha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+      "finalGitBlob": "5063ead19ed2a9e99166d7942f88434e64b62a84",
+      "kind": "bound repository input",
+      "actualSha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/formular/feldfehler.ts",
+      "local": "/tmp/r107-world-r1-review/lib/formular/feldfehler.ts",
+      "expectedSha256": "04a7b38200432cce38ee02bf05c762beaa52fb0b09fc0d745593817b96759108",
+      "finalGitBlob": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+      "kind": "bound repository input",
+      "actualSha256": "04a7b38200432cce38ee02bf05c762beaa52fb0b09fc0d745593817b96759108",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/suche/anfrage.ts",
+      "local": "/tmp/r107-world-r1-review/lib/suche/anfrage.ts",
+      "expectedSha256": "f16fb8a8ac684b53189313b5d726c922f4543a1bea0a1f7c857b5654a257b2b1",
+      "finalGitBlob": "93537d9665d8f855ccb76ad64570b7676c394baa",
+      "kind": "bound repository input",
+      "actualSha256": "f16fb8a8ac684b53189313b5d726c922f4543a1bea0a1f7c857b5654a257b2b1",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/suche/lage.ts",
+      "local": "/tmp/r107-world-r1-review/lib/suche/lage.ts",
+      "expectedSha256": "aaf9ae4f6e851898411fa26ae99fbeac2552231d4c16d918e7458228501941ef",
+      "finalGitBlob": "987986b26093fed273b9aa656fc757632ef986eb",
+      "kind": "bound repository input",
+      "actualSha256": "aaf9ae4f6e851898411fa26ae99fbeac2552231d4c16d918e7458228501941ef",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/suche/tastatur.ts",
+      "local": "/tmp/r107-world-r1-review/lib/suche/tastatur.ts",
+      "expectedSha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394",
+      "finalGitBlob": "3c4953419af69132fe094ee26100fc87cd13bf69",
+      "kind": "bound repository input",
+      "actualSha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/places/OrtSuche.tsx",
+      "local": "/tmp/r107-world-r1-review/components/places/OrtSuche.tsx",
+      "expectedSha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb",
+      "finalGitBlob": "ddba2d97116da362ad048cdb57d08e3c0afd33b0",
+      "kind": "bound repository input",
+      "actualSha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/besuche-copy.ts",
+      "local": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/besuche-copy.ts",
+      "expectedSha256": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207",
+      "finalGitBlob": "3f15f0b9fa677bff40fa4f2d24ca1e97ef24d20f",
+      "kind": "bound repository input",
+      "actualSha256": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/besuche-eingabe.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/besuche-eingabe.ts",
+      "expectedSha256": "e7e92ab4ac3907b36a0e518518655b604ad44cb832691b09065cc5e89209c29e",
+      "finalGitBlob": "c48ed7d0eaf2ee82c0c470124d38b8602cb5e77a",
+      "kind": "bound repository input",
+      "actualSha256": "e7e92ab4ac3907b36a0e518518655b604ad44cb832691b09065cc5e89209c29e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/visit-date-precision-1/zeitfeld.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/visit-date-precision-1/zeitfeld.ts",
+      "expectedSha256": "8b6b4f21dc60ec7e36871249c3118905e345efcef5dd87f720bd750a68ba85c0",
+      "finalGitBlob": "692d6ad8f05c86cbf30fb24c20e4c2de1b91af67",
+      "kind": "bound repository input",
+      "actualSha256": "8b6b4f21dc60ec7e36871249c3118905e345efcef5dd87f720bd750a68ba85c0",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "local": "/tmp/r107-world-r1-review/layout-c68/components/account/AccountBesuchFormular.tsx",
+      "expectedSha256": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+      "finalGitBlob": "ca9d6faeddce5fec8fe37feabca781f179c5f6e2",
+      "kind": "bound repository input",
+      "actualSha256": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/besuche.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/besuche.ts",
+      "expectedSha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b",
+      "finalGitBlob": "eda9f25c835980b24821e2459a60b1bcc6fb37cb",
+      "kind": "bound repository input",
+      "actualSha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/world-map.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/world-map.ts",
+      "expectedSha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+      "finalGitBlob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+      "kind": "bound repository input",
+      "actualSha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/world-map-ansicht.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/world-map-ansicht.ts",
+      "expectedSha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+      "finalGitBlob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+      "kind": "bound repository input",
+      "actualSha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/welt-laender.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/welt-laender.ts",
+      "expectedSha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1",
+      "finalGitBlob": "cd38905715a928727c41732a7d95ce35bbc9fbb3",
+      "kind": "bound repository input",
+      "actualSha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "local": "/tmp/r107-world-r1-review/components/account/WeltZustaende.tsx",
+      "expectedSha256": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c",
+      "finalGitBlob": "9fc629d4ba236a1933a8ca164b4a63ecdffec5cc",
+      "kind": "bound repository input",
+      "actualSha256": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/world-explorer-1/presentation.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/presentation.ts",
+      "expectedSha256": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697",
+      "finalGitBlob": "9d81c041af57cb2d6d96361963f6d5b9d4e4c894",
+      "kind": "bound repository input",
+      "actualSha256": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/world-map-geografie.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/world-map-geografie.ts",
+      "expectedSha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+      "finalGitBlob": "9aff68fa152c37249e680b8d78e08857141334a9",
+      "kind": "bound repository input",
+      "actualSha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/world-explorer-1/viewport.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/viewport.ts",
+      "expectedSha256": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604",
+      "finalGitBlob": "b64c6449761dd49e7789d98e6cf9ee0b206a35ba",
+      "kind": "bound repository input",
+      "actualSha256": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "local": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerMap.tsx",
+      "expectedSha256": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb",
+      "finalGitBlob": "39a33519fb25667f4436df78001746f52f4cbae5",
+      "kind": "bound repository input",
+      "actualSha256": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "local": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerDetails.tsx",
+      "expectedSha256": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8",
+      "finalGitBlob": "e89ffc707ec6d78489679c48a40c6bb9dbc34424",
+      "kind": "bound repository input",
+      "actualSha256": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "local": "/tmp/r107-world-r1-review/components/account/world-explorer-1/WorldExplorer.tsx",
+      "expectedSha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+      "finalGitBlob": "e6c770f6b3c88c727039be03c23b43b7e87add33",
+      "kind": "bound repository input",
+      "actualSha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "local": "/tmp/r107-world-r1-review/components/account/AccountWeltKarte.tsx",
+      "expectedSha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+      "finalGitBlob": "bd8ffeea167883d160a2e579546e42dbd6e01870",
+      "kind": "bound repository input",
+      "actualSha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "scripts/account-world-visit-workflow-completion-1/shims/navigation.ts",
+      "local": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/navigation.ts",
+      "expectedSha256": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+      "finalGitBlob": "68020ab2267d57001c17cb1dae16d948145e005d",
+      "kind": "bound repository input",
+      "actualSha256": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/account-visit-workflow.ts",
+      "local": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/account-visit-workflow.ts",
+      "expectedSha256": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+      "finalGitBlob": "ed2b5b67d7a1c255b62dea85e19c1b2e4f590e8c",
+      "kind": "bound repository input",
+      "actualSha256": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/useAccountVisitWorkflow.ts",
+      "local": "/tmp/r107-world-r1-review/core-r2-a547/components/account/useAccountVisitWorkflow.ts",
+      "expectedSha256": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+      "finalGitBlob": "3c7bc2a4db8b466e005c6893de8703034a29d583",
+      "kind": "bound repository input",
+      "actualSha256": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/account-world-visit-management-premium-1.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/account-world-visit-management-premium-1.ts",
+      "expectedSha256": "9ef8eaac99d64b223c72c9f0f9c03dd25dc584f94519085d982fb81836622839",
+      "finalGitBlob": "ba5580d757faf59916ef26f881c0ef86196f5d22",
+      "kind": "bound repository input",
+      "actualSha256": "9ef8eaac99d64b223c72c9f0f9c03dd25dc584f94519085d982fb81836622839",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts",
+      "local": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts",
+      "expectedSha256": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+      "finalGitBlob": "b829b9e153d35f3c4614196fb5aee70f3a19ca97",
+      "kind": "bound repository input",
+      "actualSha256": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "local": "/tmp/r107-world-r1-review/core-r2-a547/components/account/AccountBesuche.tsx",
+      "expectedSha256": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+      "finalGitBlob": "2552e936ddab83c81f6e45224162c43822fa1b9d",
+      "kind": "bound repository input",
+      "actualSha256": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "lib/account/welt-ansicht.ts",
+      "local": "/tmp/r107-world-r1-review/lib/account/welt-ansicht.ts",
+      "expectedSha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0",
+      "finalGitBlob": "33eae4c21f625e6649c96d6debfa640629644676",
+      "kind": "bound repository input",
+      "actualSha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "scripts/account-world-visit-workflow-completion-1/mount.tsx",
+      "local": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/mount.tsx",
+      "expectedSha256": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+      "finalGitBlob": "bf001d28f00b1c9d069906bedaa21affe0490f88",
+      "kind": "bound repository input",
+      "actualSha256": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "dense fixture",
+      "local": "/tmp/r107-world-r1-review/lib/account/account-world-visit-management-premium-1-fixture.ts",
+      "expectedSha256": "d2771930f5392fcd5b31889857c82241220ff4d6d70a5fd401aa438aea84aa14",
+      "finalGitBlob": "0d49da5b7eb448800f57191334867633a1e75ac7",
+      "kind": "bound fixture",
+      "actualSha256": "d2771930f5392fcd5b31889857c82241220ff4d6d70a5fd401aa438aea84aa14",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "historical geometry harness",
+      "local": "/tmp/r107-world-r1-review/layout-c68/layout-probe.mjs",
+      "expectedSha256": "54ae5eb5e8b38d2d8db2206554fb7c7d4dcd3aff6913c9adab7b81b6b255a9c5",
+      "kind": "retained review runner",
+      "actualSha256": "54ae5eb5e8b38d2d8db2206554fb7c7d4dcd3aff6913c9adab7b81b6b255a9c5",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    },
+    {
+      "path": "historical W bundle",
+      "local": "/tmp/r107-world-r1-review/layout-c68/layout-bundle.js",
+      "expectedSha256": "f7dc37368b4329fe865d0e3f38799357f109050ab436d4c6be10e1a483e1fa31",
+      "kind": "source-bound retained bundle",
+      "actualSha256": "f7dc37368b4329fe865d0e3f38799357f109050ab436d4c6be10e1a483e1fa31",
+      "rawExactTokenHits": [],
+      "decodedLiteralTokenHits": []
+    }
+  ],
+  "totalJsxClassSites": 310,
+  "closedLiteralOrConditionalClassSiteCount": 267,
+  "closedClassSites": [
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 53,
+      "expression": "\"grid min-w-0 w-full gap-1\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 54,
+      "expression": "\"text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 57,
+      "expression": "\"sr-only\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 78,
+      "expression": "\"sr-only\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 114,
+      "expression": "\"text-xs font-normal leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 116,
+      "expression": "\"text-xs font-normal leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 46,
+      "expression": "\"px-4 py-3 text-sm text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 49,
+      "expression": "\"px-4 py-3 text-sm text-red-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 54,
+      "expression": "\"px-4 py-3 text-sm text-red-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 59,
+      "expression": "\"px-4 py-3 text-sm text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 78,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 83,
+      "expression": "\"mt-0.5 block text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/places/OrtSuche.tsx",
+      "line": 291,
+      "expression": "\"relative min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 122,
+      "expression": "\"min-w-0 max-w-full rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 124,
+      "expression": "\"text-lg font-semibold tracking-[-0.03em] text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 126,
+      "expression": "\"mt-3 text-sm leading-6 text-red-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 131,
+      "expression": "\"mt-3 text-sm leading-6 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 136,
+      "expression": "\"mt-3 grid min-w-0 gap-3 [&_input]:text-base [&_select]:text-base sm:[&_input]:text-sm sm:[&_select]:text-sm\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 137,
+      "expression": "\"grid min-w-0 gap-1\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 138,
+      "expression": "\"text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 153,
+      "expression": "\"text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 170,
+      "expression": "\"grid min-w-0 gap-2 border-0 p-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 171,
+      "expression": "\"text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 172,
+      "expression": "\"text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 173,
+      "expression": "zeitNebeneinander ? 'grid min-w-0 gap-3 sm:grid-cols-3' : 'grid min-w-0 gap-3'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 177,
+      "expression": "\"grid min-w-0 gap-1 text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 194,
+      "expression": "\"grid min-w-0 gap-1 text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 212,
+      "expression": "\"grid min-w-0 gap-1 text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 235,
+      "expression": "zeitNebeneinander\n            ? 'mt-5 flex min-w-0 max-w-full flex-col gap-3 sm:flex-row'\n            : 'mt-5 flex min-w-0 max-w-full flex-col gap-3'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 244,
+      "expression": "`inline-flex min-h-11 min-w-0 max-w-full items-center justify-center gap-2 rounded-full bg-brand-800 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:opacity-60 ${\n            zeitNebeneinander\n              ? 'w-full whitespace-normal px-4 py-2 text-center leading-5 sm:w-auto sm:whitespace-nowrap sm:px-5 sm:py-0'\n              : 'w-full whitespace-normal px-4 py-2 text-center leading-5'\n          }`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 257,
+      "expression": "`inline-flex min-h-11 min-w-0 max-w-full items-center justify-center rounded-full border border-line-200 bg-white text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60 ${\n              zeitNebeneinander\n                ? 'px-5'\n                : 'w-full whitespace-normal px-4 py-2 text-center leading-5'\n            }`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 66,
+      "expression": "\"stroke-brand-900/80\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 134,
+      "expression": "\"pointer-events-none absolute -translate-x-1/2 -translate-y-1/2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 144,
+      "expression": "\"relative block h-8 w-8\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 145,
+      "expression": "\"absolute inset-[3px] rounded-full bg-surface-0 shadow-[0_1px_4px_rgba(15,46,42,0.45)]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 229,
+      "expression": "\"relative flex h-5 w-5 shrink-0 items-center justify-center\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 230,
+      "expression": "\"h-4 w-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 239,
+      "expression": "\"stroke-brand-900/80\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 304,
+      "expression": "\"mt-3 flex flex-wrap gap-1.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 306,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 307,
+      "expression": "\"inline-flex max-w-full items-center gap-1.5 rounded-full border border-line-200 bg-surface-0 py-1 pl-1.5 pr-2.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 309,
+      "expression": "\"min-w-0 break-words text-xs leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 310,
+      "expression": "\"font-semibold\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 311,
+      "expression": "\"text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 51,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 52,
+      "expression": "\"mb-3 flex flex-wrap items-center gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 55,
+      "expression": "\"min-w-12 text-center text-sm text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 61,
+      "expression": "\"mb-3 text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 65,
+      "expression": "\"rounded-[22px] bg-brand-900 p-6 shadow-[0_18px_40px_rgba(15,46,42,0.16)]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 68,
+      "expression": "\"relative rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-citrus-400\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 98,
+      "expression": "\"overflow-hidden rounded-xl\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 99,
+      "expression": "\"block h-auto w-full\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 104,
+      "expression": "\"fill-brand-900\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 105,
+      "expression": "\"fill-surface-75 stroke-brand-800/80 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 107,
+      "expression": "\"fill-brand-900\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 108,
+      "expression": "\"stroke-brand-900/65 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 109,
+      "expression": "\"stroke-surface-0/20 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 124,
+      "expression": "\"absolute z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-citrus-400\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 126,
+      "expression": "`flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-semibold shadow-md ring-2 ${group.records.some((r) => r.id === selected) ? 'bg-citrus-400 text-brand-900 ring-brand-900' : 'bg-brand-900 text-white ring-white'}`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 126,
+      "expression": "\"h-2 w-2 rounded-full bg-current\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 127,
+      "expression": "`pointer-events-none absolute max-w-[9rem] truncate rounded-full bg-brand-900 px-2 py-1 text-xs text-white ring-2 ring-citrus-400 ${group.oben < 20 ? 'top-full' : 'bottom-full'} ${group.links < 25 ? 'left-0' : group.links > 75 ? 'right-0' : 'left-1/2 -translate-x-1/2'}`",
+      "possibleValueCount": 6,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 131,
+      "expression": "\"mt-3 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 134,
+      "expression": "\"mt-3 rounded-2xl border border-line-200 bg-surface-50 p-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 135,
+      "expression": "\"text-sm font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 136,
+      "expression": "\"mt-2 grid gap-1 sm:grid-cols-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 20,
+      "expression": "\"rounded-[22px] border border-line-200 bg-surface-50 p-5 text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 21,
+      "expression": "\"font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 22,
+      "expression": "\"mt-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 31,
+      "expression": "\"min-w-0 rounded-[22px] border border-line-200 bg-surface-50 p-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 32,
+      "expression": "\"mb-3 min-h-11 rounded-xl px-2 text-sm font-semibold text-brand-800 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 33,
+      "expression": "\"scroll-mt-28 break-words text-xl font-semibold text-brand-800 outline-none focus-visible:ring-2 focus-visible:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 34,
+      "expression": "\"mt-1 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 35,
+      "expression": "\"mt-2 break-words text-sm text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 36,
+      "expression": "\"mt-2 text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 37,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 38,
+      "expression": "\"mt-3 text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 39,
+      "expression": "\"mt-5 border-t border-line-200 pt-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 40,
+      "expression": "\"font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 41,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 42,
+      "expression": "\"mt-2 space-y-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 42,
+      "expression": "\"break-words text-sm leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 43,
+      "expression": "\"font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 44,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 46,
+      "expression": "\"mt-5 border-t border-line-200 pt-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 47,
+      "expression": "\"font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 48,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 49,
+      "expression": "\"mt-2 space-y-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 50,
+      "expression": "\"flex min-h-11 flex-col justify-center rounded-xl border border-line-200 bg-surface-0 p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 51,
+      "expression": "\"break-words font-semibold text-brand-800 underline underline-offset-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 52,
+      "expression": "\"mt-1 break-words text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 54,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+      "line": 56,
+      "expression": "\"mt-5 text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 64,
+      "expression": "\"relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 lg:left-1/2 lg:w-[min(90rem,calc(100cqw-4rem))] lg:-translate-x-1/2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 66,
+      "expression": "\"text-xs font-semibold uppercase tracking-[0.16em] text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 67,
+      "expression": "\"mt-2 text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 68,
+      "expression": "\"mt-2 max-w-2xl text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 69,
+      "expression": "\"mt-4 rounded-2xl bg-surface-50 p-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 70,
+      "expression": "\"text-xs font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 71,
+      "expression": "\"mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 72,
+      "expression": "\"flex items-center gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 73,
+      "expression": "\"flex items-center gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 76,
+      "expression": "\"mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 77,
+      "expression": "\"mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 78,
+      "expression": "\"mt-6\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 79,
+      "expression": "\"text-sm font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 80,
+      "expression": "\"mt-2 flex max-w-2xl items-center gap-2 rounded-2xl border border-line-300 px-3 focus-within:ring-2 focus-within:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 81,
+      "expression": "\"h-5 w-5 shrink-0 text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 83,
+      "expression": "\"min-h-12 min-w-0 flex-1 bg-transparent text-base text-brand-800 outline-none [&::-webkit-search-cancel-button]:hidden\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 84,
+      "expression": "\"flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 86,
+      "expression": "\"mt-2 max-w-3xl text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 87,
+      "expression": "\"mt-4 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 88,
+      "expression": "`min-h-11 rounded-full border px-5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${filter === key ? 'border-brand-800 bg-brand-800 text-white' : 'border-line-200 bg-surface-0 text-brand-800 hover:bg-surface-100'}`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 90,
+      "expression": "\"mt-3 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 91,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 92,
+      "expression": "\"mt-2 text-sm text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 94,
+      "expression": "\"mt-5 grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 95,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 97,
+      "expression": "\"mt-4 flex flex-wrap gap-x-4 gap-y-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 97,
+      "expression": "\"flex items-center gap-2 text-xs text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 101,
+      "expression": "\"mt-6 border-t border-line-200 pt-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 102,
+      "expression": "\"text-base font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 103,
+      "expression": "\"mt-3 text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 104,
+      "expression": "\"mt-3 grid min-w-0 gap-2 sm:grid-cols-2 lg:grid-cols-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 105,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 105,
+      "expression": "`flex min-h-11 w-full min-w-0 gap-2 rounded-2xl border p-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selection === r.id ? 'border-brand-700 bg-surface-100' : 'border-line-200 bg-surface-0 hover:bg-surface-50'}`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 106,
+      "expression": "\"min-w-0 break-words text-sm leading-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 106,
+      "expression": "\"block font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 106,
+      "expression": "\"block text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 106,
+      "expression": "\"block text-xs text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 106,
+      "expression": "\"block text-xs text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 109,
+      "expression": "\"mt-3 min-h-11 rounded-full border border-line-300 px-5 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 111,
+      "expression": "\"mt-5 space-y-2 border-t border-line-100 pt-3 text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+      "line": 116,
+      "expression": "\"mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 89,
+      "expression": "\"flex min-w-0 items-start gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 91,
+      "expression": "\"min-w-0 text-sm leading-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 92,
+      "expression": "\"font-semibold text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 93,
+      "expression": "\"text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 101,
+      "expression": "\"relative flex items-center justify-center\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 103,
+      "expression": "gewaehlt\n            ? 'absolute h-11 w-11 rounded-full bg-citrus-400/55 ring-2 ring-citrus-400 shadow-[0_0_0_4px_rgba(15,48,42,0.28)]'\n            : 'absolute h-8 w-8 rounded-full bg-white/0 ring-2 ring-transparent transition-colors motion-safe:group-hover:bg-white/75 motion-safe:group-hover:ring-citrus-400 motion-reduce:transition-none'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 111,
+      "expression": "gewaehlt\n              ? 'relative block h-[18px] w-[18px] rounded-full bg-brand-900 ring-[3px] ring-citrus-400 shadow-[0_2px_8px_rgba(15,46,42,0.55)]'\n              : 'relative block h-3.5 w-3.5 rounded-full bg-brand-900 ring-2 ring-white shadow-[0_1px_5px_rgba(15,46,42,0.55)] motion-safe:transition-transform motion-safe:group-hover:scale-125 motion-reduce:transform-none motion-reduce:transition-none'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 119,
+      "expression": "`relative flex h-[18px] w-[18px] items-center justify-center rounded-full text-[10px] font-semibold leading-none shadow-[0_1px_5px_rgba(15,46,42,0.55)] ${\n            gewaehlt\n              ? 'bg-brand-900 text-citrus-400 ring-[3px] ring-citrus-400'\n              : 'bg-brand-900 text-white ring-2 ring-white'\n          }`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 195,
+      "expression": "`group absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-50 ${\n        gewaehlt || offen ? 'z-20' : 'z-10'\n      }`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 231,
+      "expression": "\"mt-2 rounded-2xl border border-line-200 bg-surface-0 p-2 shadow-[0_6px_20px_rgba(15,46,42,0.08)]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 239,
+      "expression": "\"px-1 text-xs font-semibold leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 242,
+      "expression": "\"mt-1 grid gap-1 sm:grid-cols-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 244,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 249,
+      "expression": "eintrag.schluessel === gewaehlterOrt\n                  ? 'flex min-h-11 w-full min-w-0 items-center rounded-xl border border-brand-600 bg-surface-50 px-3 text-left text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'\n                  : 'flex min-h-11 w-full min-w-0 items-center rounded-xl border border-line-200 px-3 text-left text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 255,
+      "expression": "\"min-w-0 break-words\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 289,
+      "expression": "\"flex min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 292,
+      "expression": "gewaehlt\n            ? 'flex w-full min-w-0 flex-col rounded-2xl border border-brand-700 bg-white p-3 shadow-[inset_4px_0_0_0_rgb(223_244_122),0_10px_28px_rgba(15,46,42,0.08)]'\n            : 'flex w-full min-w-0 flex-col rounded-2xl border border-line-200 bg-surface-0 p-3'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 304,
+      "expression": "\"flex min-h-11 w-full min-w-0 items-start gap-2.5 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 309,
+      "expression": "aufKarte\n                ? 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-100 text-brand-800'\n                : 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-25 text-ink-650'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 315,
+      "expression": "\"h-3.5 w-3.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 315,
+      "expression": "\"h-3.5 w-3.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 317,
+      "expression": "\"min-w-0 flex-1\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 318,
+      "expression": "\"block break-words text-sm font-semibold leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 321,
+      "expression": "\"mt-0.5 block break-words text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 325,
+      "expression": "\"mt-0.5 block break-words text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 332,
+      "expression": "\"mt-2 flex flex-col gap-1.5 border-t border-line-100 pt-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 334,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 338,
+      "expression": "\"group flex min-h-11 w-full min-w-0 items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 340,
+      "expression": "\"min-w-0 flex-1\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 341,
+      "expression": "\"block break-words text-[13px] font-semibold leading-5 text-brand-700 underline-offset-4 group-hover:underline\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 344,
+      "expression": "\"block break-words text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 351,
+      "expression": "\"h-4 w-4 shrink-0 text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 382,
+      "expression": "\"flex h-full min-h-11 items-center rounded-[22px] border border-line-200 bg-surface-50 px-4 py-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 383,
+      "expression": "\"text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 392,
+      "expression": "kompakt\n          ? 'flex flex-wrap content-center gap-x-4 gap-y-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2'\n          : 'grid h-full content-center gap-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2 sm:grid-cols-3 lg:grid-cols-1'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 399,
+      "expression": "\"flex min-h-11 items-center gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 401,
+      "expression": "\"text-sm leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 486,
+      "expression": "`relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 ${\n        istAtlas\n          ? 'lg:left-1/2 lg:w-[min(90rem,calc(100cqw-4rem))] lg:-translate-x-1/2'\n          : ''\n      }`",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 500,
+      "expression": "\"text-xs font-semibold uppercase tracking-[0.16em] text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 505,
+      "expression": "\"mt-2 text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 509,
+      "expression": "\"mt-2 max-w-2xl text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 516,
+      "expression": "\"mt-4 flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-start\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 524,
+      "expression": "\"mt-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 527,
+      "expression": "\"inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 537,
+      "expression": "\"mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 546,
+      "expression": "\"mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 554,
+      "expression": "\"mt-5 min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 557,
+      "expression": "\"relative rounded-[22px] bg-brand-900 p-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_18px_40px_rgba(15,46,42,0.16)]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 562,
+      "expression": "\"overflow-hidden rounded-[14px]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 567,
+      "expression": "\"block h-auto w-full\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 595,
+      "expression": "\"fill-brand-900\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 613,
+      "expression": "\"fill-surface-75 stroke-brand-800/80 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 623,
+      "expression": "\"fill-brand-900 stroke-brand-800/55 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 630,
+      "expression": "\"stroke-brand-900/65 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 642,
+      "expression": "\"stroke-surface-0/20 [vector-effect:non-scaling-stroke]\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 650,
+      "expression": "\"absolute inset-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 686,
+      "expression": "istAtlas\n              ? 'mt-4 grid items-stretch gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]'\n              : 'mt-4 grid gap-3'",
+      "possibleValueCount": 2,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 692,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 709,
+      "expression": "\"mt-5 flex flex-col gap-3 border-t border-line-100 pt-5 lg:flex-row lg:items-center lg:justify-between\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 710,
+      "expression": "\"min-w-0 max-w-xl text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 716,
+      "expression": "\"inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 lg:w-auto\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 719,
+      "expression": "\"h-4 w-4\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 727,
+      "expression": "\"mt-4 min-w-0 space-y-1 break-words border-t border-line-100 pt-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 728,
+      "expression": "\"text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 730,
+      "expression": "\"text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 736,
+      "expression": "\"text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 740,
+      "expression": "\"text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 744,
+      "expression": "\"mt-6 border-t border-line-100 pt-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 745,
+      "expression": "\"text-sm font-semibold tracking-[-0.02em] text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 748,
+      "expression": "\"mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 763,
+      "expression": "\"mt-4 break-words border-t border-line-100 pt-3 text-xs leading-5 text-ink-650\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 352,
+      "expression": "\"text-xs font-semibold uppercase tracking-[0.18em] text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 355,
+      "expression": "\"mt-2 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 356,
+      "expression": "\"min-w-0 break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 368,
+      "expression": "\"inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 374,
+      "expression": "\"mt-3 max-w-xl text-sm leading-6 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 375,
+      "expression": "\"mt-2 max-w-xl text-sm leading-6 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 381,
+      "expression": "\"mt-14 border-t border-line-200 pt-10\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 384,
+      "expression": "\"flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 387,
+      "expression": "\"text-xl font-semibold tracking-[-0.03em] text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 392,
+      "expression": "\"text-sm text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 399,
+      "expression": "\"mt-4 grid min-w-0 gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 418,
+      "expression": "\"mt-4 rounded-[26px] border border-red-200 bg-red-50 px-6 py-8 text-center sm:px-10\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 420,
+      "expression": "\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 421,
+      "expression": "\"h-5 w-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 423,
+      "expression": "\"mt-5 text-lg font-semibold text-red-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 424,
+      "expression": "\"mx-auto mt-3 max-w-md text-sm leading-6 text-red-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 442,
+      "expression": "\"mt-4 grid min-w-0 gap-1\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 443,
+      "expression": "\"text-sm font-medium text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 457,
+      "expression": "\"min-h-11 w-full rounded-2xl border border-line-200 bg-white px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:text-sm\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 460,
+      "expression": "\"text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 466,
+      "expression": "\"mt-4 rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-8 text-center sm:px-10\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 467,
+      "expression": "\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 468,
+      "expression": "\"h-5 w-5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 470,
+      "expression": "\"mt-5 text-xl font-semibold tracking-[-0.03em] text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 473,
+      "expression": "\"mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 483,
+      "expression": "\"mt-4 scroll-mt-28\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 488,
+      "expression": "\"sr-only\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 548,
+      "expression": "\"mt-4 rounded-2xl border border-dashed border-line-400 bg-white/65 px-4 py-6 text-sm leading-6 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 555,
+      "expression": "\"mt-4 grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 605,
+      "expression": "\"mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 606,
+      "expression": "\"w-full text-sm leading-6 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 613,
+      "expression": "\"inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 621,
+      "expression": "\"inline-flex min-h-11 w-full items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 653,
+      "expression": "\"mt-4 rounded-2xl border border-line-200 bg-surface-50 px-4 py-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 657,
+      "expression": "\"text-sm leading-6 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 658,
+      "expression": "\"mt-2 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 692,
+      "expression": "\"mt-3 rounded-2xl border border-line-200 bg-surface-50 px-4 py-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 700,
+      "expression": "\"text-sm leading-6 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 704,
+      "expression": "\"mt-2 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 721,
+      "expression": "\"mt-2 text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 783,
+      "expression": "\"min-w-0\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 786,
+      "expression": "\"flex h-full w-full min-w-0 flex-col rounded-2xl border border-line-200 bg-surface-0 px-3 py-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 788,
+      "expression": "\"break-words text-sm font-semibold leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 790,
+      "expression": "\"break-words text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 792,
+      "expression": "\"break-words text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 796,
+      "expression": "\"break-words text-xs leading-5 text-brand-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 801,
+      "expression": "\"mt-2 border-t border-line-100 pt-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 806,
+      "expression": "\"text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 808,
+      "expression": "\"mt-2 text-xs leading-5 text-red-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 811,
+      "expression": "\"mt-2 text-xs leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 814,
+      "expression": "\"mt-2 text-xs leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 817,
+      "expression": "\"mt-2 text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 819,
+      "expression": "\"mt-2 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 825,
+      "expression": "\"inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-danger-600 px-4 text-xs font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 851,
+      "expression": "\"mt-2 flex flex-wrap gap-2 border-t border-line-100 pt-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 863,
+      "expression": "\"h-3.5 w-3.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 872,
+      "expression": "\"h-3.5 w-3.5\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 879,
+      "expression": "\"mt-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 938,
+      "expression": "\"mt-3 rounded-2xl border border-line-200 bg-surface-50 px-3 py-3\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 939,
+      "expression": "\"text-xs leading-5 text-brand-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 942,
+      "expression": "\"mt-2 text-xs leading-5 text-ink-700\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 944,
+      "expression": "\"mt-2 text-xs leading-5 text-ink-800\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 946,
+      "expression": "\"mt-2 flex flex-wrap gap-2\"",
+      "possibleValueCount": 1,
+      "targetTokenHits": []
+    }
+  ],
+  "knownNonliteralClassSiteCount": 43,
+  "knownNonliteralClassSites": [
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 76,
+      "expression": "sucheKlasse"
+    },
+    {
+      "path": "components/country/LandFeld.tsx",
+      "line": 90,
+      "expression": "feldKlasse"
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 40,
+      "expression": "cn(\n        'absolute z-30 mt-2 max-h-60 w-full overflow-auto rounded-2xl border border-line-200 bg-white py-1 shadow-[0_18px_50px_rgba(15,46,42,0.12)]',\n        className,\n      )"
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 72,
+      "expression": "cn(\n              'flex min-h-11 w-full cursor-pointer items-start justify-between gap-3 px-4 py-2.5 text-left text-sm transition',\n              eintrag.betont && aktiv !== index ? 'bg-surface-50' : null,\n              aktiv === index ? 'bg-surface-100' : 'hover:bg-surface-25',\n            )"
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 79,
+      "expression": "cn('block text-brand-800', eintrag.betont ? 'font-semibold' : 'font-medium')"
+    },
+    {
+      "path": "components/suche/Suchliste.tsx",
+      "line": 88,
+      "expression": "cn(\n                  'shrink-0 rounded-full px-2 py-0.5 text-xs font-medium leading-5',\n                  eintrag.betont ? 'bg-surface-100 text-brand-800' : 'bg-surface-50 text-ink-800',\n                )"
+    },
+    {
+      "path": "components/places/OrtSuche.tsx",
+      "line": 312,
+      "expression": "inputClassName"
+    },
+    {
+      "path": "components/places/OrtSuche.tsx",
+      "line": 316,
+      "expression": "cn(\n            'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-ink-700',\n            variante === 'hero' ? 'right-3' : 'right-3.5',\n          )"
+    },
+    {
+      "path": "components/places/OrtSuche.tsx",
+      "line": 346,
+      "expression": "variante === 'hero' ? 'left-0 right-0' : undefined"
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 191,
+      "expression": "feldKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 202,
+      "expression": "feldKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuchFormular.tsx",
+      "line": 226,
+      "expression": "feldKlasse"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 139,
+      "expression": "`absolute left-1/2 top-1/2 block h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed bg-surface-0/85 shadow-[0_0_0_2px_rgb(251_252_249)] ${\n                MARKE_RAND[flaeche.zustand]\n              }`"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 147,
+      "expression": "`relative block h-8 w-8 rounded-full border-[3px] ${MARKE_RAND[flaeche.zustand]} ${\n                flaeche.zustand === 'geplant' ? 'border-dashed' : 'border-solid'\n              }`"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 183,
+      "expression": "FUELLUNG[flaeche.zustand]"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 201,
+      "expression": "`${UMRISS[flaeche.zustand]} [vector-effect:non-scaling-stroke]`"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 253,
+      "expression": "UMRISS[zustand]"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 256,
+      "expression": "UMRISS[zustand]"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 267,
+      "expression": "UMRISS[zustand]"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 273,
+      "expression": "FUELLUNG[zustand]"
+    },
+    {
+      "path": "components/account/WeltZustaende.tsx",
+      "line": 285,
+      "expression": "UMRISS[zustand]"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 53,
+      "expression": "BUTTON"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 54,
+      "expression": "BUTTON"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 56,
+      "expression": "`${BUTTON} gap-2`"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 57,
+      "expression": "BUTTON"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 132,
+      "expression": "BUTTON"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 136,
+      "expression": "`${BUTTON} w-full justify-start text-left`"
+    },
+    {
+      "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+      "line": 137,
+      "expression": "`${BUTTON} mt-2`"
+    },
+    {
+      "path": "components/account/AccountWeltKarte.tsx",
+      "line": 144,
+      "expression": "`pointer-events-none absolute z-10 max-w-[11rem] truncate rounded-full bg-brand-900 px-2.5 py-1.5 text-[11px] font-semibold leading-none text-white shadow-[0_8px_18px_rgba(15,46,42,0.35)] ring-2 ring-citrus-400 ${\n        unten ? 'top-full mt-1' : 'bottom-full mb-1'\n      } ${BESCHRIFTUNG_AUSRICHTUNG[ausrichtung]}`"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 659,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 662,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 705,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 710,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 713,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 831,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 836,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 844,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 861,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 870,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 949,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 950,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 953,
+      "expression": "aktionKlasse"
+    },
+    {
+      "path": "components/account/AccountBesuche.tsx",
+      "line": 958,
+      "expression": "aktionKlasse"
+    }
+  ],
+  "libraryClassGenerators": [
+    {
+      "line": 16808,
+      "expression": "mergeClasses(\"lucide\", className)"
+    },
+    {
+      "line": 16825,
+      "expression": "mergeClasses(\n          `lucide-${toKebabCase(toPascalCase(iconName))}`,\n          `lucide-${iconName}`,\n          className\n        )"
+    }
+  ],
+  "rawExactTokenHitCount": 0,
+  "decodedLiteralTokenHitCount": 0,
+  "composedClosedClassTokenHitCount": 0,
+  "browserRun": false
+}

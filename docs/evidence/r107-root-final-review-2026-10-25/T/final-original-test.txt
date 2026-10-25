@@ -1,0 +1,26 @@
+test('a residence-only save keeps the loaded citizenship UUID and its passport relation', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-residence-uuid',
+      travellers: 1,
+      party: [reisender()],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, reise, css)
+    try {
+      await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung' }).click()
+      await page.waitForSelector('[data-workspace-modus="vorbereitung"]')
+      const karte = page.locator('[data-preparation-traveller="traveller:1"]')
+      await karte.getByText('Angaben bearbeiten', { exact: true }).click()
+      await karte.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).selectOption('IT')
+      const speichern = karte.getByRole('button', { name: 'Angaben speichern', exact: true })
+      await speichern.focus()
+      await speichern.press('Enter')
+      await page.waitForFunction(() => window.__SNAPSHOT__.payloads.length === 1)
+      const payload = await page.evaluate(() => window.__SNAPSHOT__.payloads[0])
+      const sichtbar = JSON.stringify(payload)
+      assert.equal(payload?.citizenships[0]?.clientRef, STAATSBUERGERSCHAFT, sichtbar)
+      assert.equal(payload?.documents[0]?.citizenshipClientRef, STAATSBUERGERSCHAFT, sichtbar)
+      assert.equal(payload?.residenceCountryCode, 'IT', sichtbar)
+    } finally {
+      await schliessen()
+    }
+  })

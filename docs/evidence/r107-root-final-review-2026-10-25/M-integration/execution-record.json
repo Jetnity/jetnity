@@ -1,0 +1,29 @@
+{
+  "commands": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "71f8f6",
+        "wall_time_seconds": 3.499786242,
+        "exit_code": 0,
+        "original_token_count": 93,
+        "output": "Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:\n  npx update-browserslist-db@latest\n  Why you should do it regularly: https://github.com/browserslist/update-db#readme\n{\"head\":\"dda52b660369a436fa1eb25ff69c0f076254661a\",\"cssSha256\":\"ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67\",\"cssBytes\":129687,\"warnings\":0,\"node\":\"v24.22.1\"}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "61643a",
+        "wall_time_seconds": 0.62240151,
+        "exit_code": 0,
+        "original_token_count": 70,
+        "output": "{\"head\":\"dda52b660369a436fa1eb25ff69c0f076254661a\",\"bundleSha256\":\"e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc\",\"bundleBytes\":925400,\"repositoryInputs\":19,\"dependencyInputs\":1679,\"retainedDependencyMatches\":1679,\"newlyHashedDependencies\":0,\"node\":\"v24.22.1\"}\n"
+      }
+    }
+  ],
+  "cssCompileCount": 1,
+  "harnessBuildCount": 1,
+  "browserRun": false,
+  "testsRun": false,
+  "scope": "Single authorized actual-final CSS and harness construction only"
+}

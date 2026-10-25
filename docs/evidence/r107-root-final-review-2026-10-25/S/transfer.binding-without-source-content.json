@@ -1,0 +1,781 @@
+{
+  "archiveTransformation": "Documentation-only projection of existing recorded JSON: changedFiles.content omitted because exact committed source is reconstructible; all binding, identities, hashes and other fields retained; no execution.",
+  "originalPath": "/tmp/r107-dependency-review/integration-1677/transfer.json",
+  "originalBytes": 112181,
+  "originalSha256": "5fc244980ed65b056b32427204b95efc87a1abd730b5476d71cbbd2fa880c273",
+  "record": {
+    "binding": {
+      "candidate": "1677cd28c327e317ba8fca8becc6260faa8963ea",
+      "tree": "63acafa9716450b6b5eadbddd25b6db693abefba",
+      "main": "60b8e75ece16a8640d21e460380f25d627bbe700",
+      "oldS": "70b609c745e1bb266f419efd722cb71690ee1a0e",
+      "merge": "354c0093a952552956b9f5007e0e9265bde692ac",
+      "unchanged": [
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_PLAN_2026-10-25.md",
+          "sha": "436fc2561289baa2da9583c070662a6b8c9ad82b"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_SELF_REVIEW_2026-10-25.md",
+          "sha": "2dd469987efda62996edb7c71868257abc27e0a7"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_TASK_V1_2026-10-25.md",
+          "sha": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-23c5-xmqv-rm74.json",
+          "sha": "a8fe55eac31f4c2890775060a5b578f414ea25fd"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3jxr-9vmj-r5cp.json",
+          "sha": "db883c92205e2ba590c9eeecf0d99b8a1df20408"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3ppc-4f35-3m26.json",
+          "sha": "833a80ef803fa7209e86b87447ccfdcc44868d9b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3v7f-55p6-f55p.json",
+          "sha": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-48c2-rrv3-qjmp.json",
+          "sha": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-58qx-3vcg-4xpx.json",
+          "sha": "bac67fde250baf614c5cd3aefe53e6bc1b338427"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-5j98-mcp5-4vw2.json",
+          "sha": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-68fv-2mgg-jv7q.json",
+          "sha": "515e6aec21ad8c298a649e31034411874bd361b9"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-6j4f-fj2g-mc7p.json",
+          "sha": "2f228e7918a51ed2b290a26407f90e70d126fc1b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-73wf-gq98-2v4g.json",
+          "sha": "eeae134e5cc17416f8f62d33325f68f5de92bb14"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7mvr-c777-76hp.json",
+          "sha": "e2d4875ffb3708d1a14989410434cfce4bd94fd0"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7r86-cg39-jmmj.json",
+          "sha": "dd99c2ead4a5232171a8953d1c33b91f775a707e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-96hv-2xvq-fx4p.json",
+          "sha": "44af9c053677c309ead6e6d78b54bfa6415902d9"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c2c7-rcm5-vvqj.json",
+          "sha": "e5994abdc0021c7ec57505559880d7f9703af302"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c83g-rgw3-j3cx.json",
+          "sha": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-f886-m6hf-6m8v.json",
+          "sha": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mh99-v99m-4gvg.json",
+          "sha": "3bd478989ed1e6102c603f182d436c2bb34d3a07"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mrhx-c7xc-m3w5.json",
+          "sha": "58272ea0d840c1602e8b36c9972ef17d45d51f03"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-q2hr-2g5m-vwhr.json",
+          "sha": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-qhr7-859c-m2p7.json",
+          "sha": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rgw5-rvv9-x895.json",
+          "sha": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rj75-hqrm-r3gf.json",
+          "sha": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-w9m9-85wc-3x92.json",
+          "sha": "9db0818645753c589e8f14cde21d518406d87f84"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/ci-baseline-40202059080.txt",
+          "sha": "bac49565d29a262bd8040b31d49b592c71c205e7"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/input-binding.json",
+          "sha": "be4123020a218303f699fd9c1bd7761ada6a942e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json",
+          "sha": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json",
+          "sha": "7396e61da7c4a52e1263d5cccfea102c8a7faa33"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile.json",
+          "sha": "48d7e00ed91889938e133c3640039d2f5e6ef035"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_1.1.21.json",
+          "sha": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_2.1.7.json",
+          "sha": "27bbfee1fb936b45670321f2e86fd3fe3f363a85"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_5.0.12.json",
+          "sha": "bd3417cfff76be2e54312f093088e82e3ad07e8a"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/browserslist_4.28.7.json",
+          "sha": "cd92120dfd7d8970fec9856de63e142c034b5c48"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/glob_10.5.0.json",
+          "sha": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/minimatch_9.0.7.json",
+          "sha": "2406c8ccbcbe5f4d87998212d340222211cc1a3b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_2.3.2.json",
+          "sha": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_4.0.4.json",
+          "sha": "71cbbe4a58ddde221f77662b57acf4965ba53963"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/playwright_1.55.1.json",
+          "sha": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_6.1.3.json",
+          "sha": "1652ff90ecb0122714101263b3de0a7e5a2038e5"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_7.1.6.json",
+          "sha": "e159d742de90e3dceadb603f466fb6c1ac0bba57"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/source-map-js_1.2.2.json",
+          "sha": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/ws_8.21.0.json",
+          "sha": "1b7fe42fed0b6d42d1e774504a7ba75add17b037"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/yaml_2.8.3.json",
+          "sha": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/zod_4.6.6.json",
+          "sha": "7c5e99597a1e1417c1c376ffc065d7b68e13993a"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/osv-crosscheck.json",
+          "sha": "b255a7b83bcc6335c741ed35e8fac9538fc899bb"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/triage-matrix.json",
+          "sha": "5f4961c8c214ea22f79d446c3163f723ecd0b74f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/validation.json",
+          "sha": "982a7ee971a37fc6181e2e1e2c951e6d187e697d"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/build-matrix.mjs",
+          "sha": "26fe13d6718d6de49de1a8229088dc5519def1ca"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/inventory.mjs",
+          "sha": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/range.mjs",
+          "sha": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs",
+          "sha": "fd8ce4365d44445f0d63f84941f48def934feea7"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/validate-evidence.mjs",
+          "sha": "cea63f4d63d81f937fc916312f1a4df9326768df"
+        }
+      ],
+      "changes": [
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+          "old": "7cb37593550093ca92e0885c01bdc99262b57f4b",
+          "current": "cb708eaaec377c896e452ee9048e702db590a9c3"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+          "old": "5373112af81f5f39d2222cd2e16109e1da959707",
+          "current": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+          "old": "878dc3e3e8d4c143578d46e86e73eefe747398fc",
+          "current": "790216ce5cc60f90d8c43968f1173bd220d2e347"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/commands.txt",
+          "old": "f0bfdc08fabc4a06197db434c34f332bce9c85d8",
+          "current": "bb3777fc1f3c47210a5fd864355f815e3e796d41"
+        }
+      ],
+      "incoming": [
+        {
+          "path": "components/trips/GastArbeitsbereich.tsx",
+          "accepted": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+          "incoming": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+          "match": true
+        },
+        {
+          "path": "components/trips/KontoArbeitsbereich.tsx",
+          "accepted": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+          "incoming": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+          "match": true
+        },
+        {
+          "path": "components/trips/RegistryReiseUebernahme.tsx",
+          "accepted": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+          "incoming": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+          "match": true
+        },
+        {
+          "path": "components/trips/Reisevorbereitung.tsx",
+          "accepted": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+          "incoming": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+          "match": true
+        },
+        {
+          "path": "components/trips/TripWorkspace.tsx",
+          "accepted": "16825180b4da46ea71d549f4ffc399717664f020",
+          "incoming": "16825180b4da46ea71d549f4ffc399717664f020",
+          "match": true
+        },
+        {
+          "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+          "accepted": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+          "incoming": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+          "accepted": "eb0e9109c7d9e67b6242e77b5189a81cba12d994",
+          "incoming": "eb0e9109c7d9e67b6242e77b5189a81cba12d994",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+          "accepted": "252ae82c9cf1aff34f7f46e16999d50178369dff",
+          "incoming": "252ae82c9cf1aff34f7f46e16999d50178369dff",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+          "accepted": "215b60b1758317b0c191780b1a7c0f7f81d52d88",
+          "incoming": "215b60b1758317b0c191780b1a7c0f7f81d52d88",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+          "accepted": "40a6ea87afdc58c8d1f415a9d129c4a252d457fa",
+          "incoming": "40a6ea87afdc58c8d1f415a9d129c4a252d457fa",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+          "accepted": "cf85966951cc1ca526bce3a2965c0c7413f2aca7",
+          "incoming": "cf85966951cc1ca526bce3a2965c0c7413f2aca7",
+          "match": true
+        },
+        {
+          "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+          "accepted": "75c59b0851d835560ff4b5562e9fcc52c395b2ad",
+          "incoming": "75c59b0851d835560ff4b5562e9fcc52c395b2ad",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-1280.png",
+          "accepted": "9194041168f7af4b9bcd04e3bd3b21fa4c56c3aa",
+          "incoming": "9194041168f7af4b9bcd04e3bd3b21fa4c56c3aa",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-320.png",
+          "accepted": "0b77c37325cb03c7b826e400f01c43df1a912fc6",
+          "incoming": "0b77c37325cb03c7b826e400f01c43df1a912fc6",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-360.png",
+          "accepted": "ad074e9bbc6cbd6d6e5cc10306297bd03484d29e",
+          "incoming": "ad074e9bbc6cbd6d6e5cc10306297bd03484d29e",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-390.png",
+          "accepted": "74e7c9f11aab93a48521de855cb3502948ae900c",
+          "incoming": "74e7c9f11aab93a48521de855cb3502948ae900c",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-768.png",
+          "accepted": "9a005d558d909950d13fb1c41738aa9d3171b7b1",
+          "incoming": "9a005d558d909950d13fb1c41738aa9d3171b7b1",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt",
+          "accepted": "81a5ac8468c85f4c128753b37a28b7e3c5db9923",
+          "incoming": "81a5ac8468c85f4c128753b37a28b7e3c5db9923",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-residence-green.txt",
+          "accepted": "d7f1170ad83b10a852d6f725fb27fbaa4bc9379b",
+          "incoming": "d7f1170ad83b10a852d6f725fb27fbaa4bc9379b",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-residence-red.txt",
+          "accepted": "faa0d8eb36d3e3827af73773854159f523c56a24",
+          "incoming": "faa0d8eb36d3e3827af73773854159f523c56a24",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-absent-320.png",
+          "accepted": "bdad19837803eec7009d3c94fbb590ef60b47c29",
+          "incoming": "bdad19837803eec7009d3c94fbb590ef60b47c29",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-confirm-320.png",
+          "accepted": "64a2d0344dcd79a53ba2f5158d3cb7bb596d6061",
+          "incoming": "64a2d0344dcd79a53ba2f5158d3cb7bb596d6061",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-conflict-320.png",
+          "accepted": "f3b5b4ed72220855debb48fc19b745cb227b1eb1",
+          "incoming": "f3b5b4ed72220855debb48fc19b745cb227b1eb1",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-pending-320.png",
+          "accepted": "16878a837d6e329a3a26230b0728f5c894f470db",
+          "incoming": "16878a837d6e329a3a26230b0728f5c894f470db",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-rows-1280.png",
+          "accepted": "916f54b4a20bfc3ed177debbb5340b9fdeae8310",
+          "incoming": "916f54b4a20bfc3ed177debbb5340b9fdeae8310",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-rows-320.png",
+          "accepted": "e16f441b9815712da65669997053c8e533d78ea0",
+          "incoming": "e16f441b9815712da65669997053c8e533d78ea0",
+          "match": true
+        },
+        {
+          "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-unknown-320.png",
+          "accepted": "82ceb252bc4e9f536af8d41049a16aa2759b8a6b",
+          "incoming": "82ceb252bc4e9f536af8d41049a16aa2759b8a6b",
+          "match": true
+        },
+        {
+          "path": "lib/country/ui.test.ts",
+          "accepted": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+          "incoming": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+          "match": true
+        },
+        {
+          "path": "lib/readiness/preparation-premium-experience-5.test.ts",
+          "accepted": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+          "incoming": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+          "match": true
+        },
+        {
+          "path": "lib/readiness/trip-official-evaluations-server.test.ts",
+          "accepted": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+          "incoming": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+          "match": true
+        },
+        {
+          "path": "lib/readiness/trip-traveller-snapshot-workflow-1.test.ts",
+          "accepted": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+          "incoming": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+          "match": true
+        },
+        {
+          "path": "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+          "accepted": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+          "incoming": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+          "match": true
+        },
+        {
+          "path": "lib/traveller/account-registry-trip-copy.ts",
+          "accepted": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+          "incoming": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+          "accepted": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+          "incoming": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+          "accepted": "6633d268c44be1ce4582a7538d73ab65e1443942",
+          "incoming": "6633d268c44be1ce4582a7538d73ab65e1443942",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+          "accepted": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+          "incoming": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.test.ts",
+          "accepted": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+          "incoming": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+          "accepted": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+          "incoming": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+          "accepted": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+          "incoming": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+          "accepted": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+          "incoming": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+          "match": true
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx",
+          "accepted": "bb535dce616901db03cad8ba1df7493aec877687",
+          "incoming": "bb535dce616901db03cad8ba1df7493aec877687",
+          "match": true
+        }
+      ],
+      "unchangedCount": 54,
+      "changedCount": 4,
+      "incomingCount": 41,
+      "allIncomingMatch": true,
+      "scope": [
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+          "sha": "cb708eaaec377c896e452ee9048e702db590a9c3"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_PLAN_2026-10-25.md",
+          "sha": "436fc2561289baa2da9583c070662a6b8c9ad82b"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+          "sha": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_SELF_REVIEW_2026-10-25.md",
+          "sha": "2dd469987efda62996edb7c71868257abc27e0a7"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+          "sha": "790216ce5cc60f90d8c43968f1173bd220d2e347"
+        },
+        {
+          "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_TASK_V1_2026-10-25.md",
+          "sha": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-23c5-xmqv-rm74.json",
+          "sha": "a8fe55eac31f4c2890775060a5b578f414ea25fd"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3jxr-9vmj-r5cp.json",
+          "sha": "db883c92205e2ba590c9eeecf0d99b8a1df20408"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3ppc-4f35-3m26.json",
+          "sha": "833a80ef803fa7209e86b87447ccfdcc44868d9b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3v7f-55p6-f55p.json",
+          "sha": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-48c2-rrv3-qjmp.json",
+          "sha": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-58qx-3vcg-4xpx.json",
+          "sha": "bac67fde250baf614c5cd3aefe53e6bc1b338427"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-5j98-mcp5-4vw2.json",
+          "sha": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-68fv-2mgg-jv7q.json",
+          "sha": "515e6aec21ad8c298a649e31034411874bd361b9"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-6j4f-fj2g-mc7p.json",
+          "sha": "2f228e7918a51ed2b290a26407f90e70d126fc1b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-73wf-gq98-2v4g.json",
+          "sha": "eeae134e5cc17416f8f62d33325f68f5de92bb14"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7mvr-c777-76hp.json",
+          "sha": "e2d4875ffb3708d1a14989410434cfce4bd94fd0"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7r86-cg39-jmmj.json",
+          "sha": "dd99c2ead4a5232171a8953d1c33b91f775a707e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-96hv-2xvq-fx4p.json",
+          "sha": "44af9c053677c309ead6e6d78b54bfa6415902d9"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c2c7-rcm5-vvqj.json",
+          "sha": "e5994abdc0021c7ec57505559880d7f9703af302"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c83g-rgw3-j3cx.json",
+          "sha": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-f886-m6hf-6m8v.json",
+          "sha": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mh99-v99m-4gvg.json",
+          "sha": "3bd478989ed1e6102c603f182d436c2bb34d3a07"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mrhx-c7xc-m3w5.json",
+          "sha": "58272ea0d840c1602e8b36c9972ef17d45d51f03"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-q2hr-2g5m-vwhr.json",
+          "sha": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-qhr7-859c-m2p7.json",
+          "sha": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rgw5-rvv9-x895.json",
+          "sha": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rj75-hqrm-r3gf.json",
+          "sha": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-w9m9-85wc-3x92.json",
+          "sha": "9db0818645753c589e8f14cde21d518406d87f84"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/ci-baseline-40202059080.txt",
+          "sha": "bac49565d29a262bd8040b31d49b592c71c205e7"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/commands.txt",
+          "sha": "bb3777fc1f3c47210a5fd864355f815e3e796d41"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/input-binding.json",
+          "sha": "be4123020a218303f699fd9c1bd7761ada6a942e"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json",
+          "sha": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json",
+          "sha": "7396e61da7c4a52e1263d5cccfea102c8a7faa33"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile.json",
+          "sha": "48d7e00ed91889938e133c3640039d2f5e6ef035"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_1.1.21.json",
+          "sha": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_2.1.7.json",
+          "sha": "27bbfee1fb936b45670321f2e86fd3fe3f363a85"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_5.0.12.json",
+          "sha": "bd3417cfff76be2e54312f093088e82e3ad07e8a"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/browserslist_4.28.7.json",
+          "sha": "cd92120dfd7d8970fec9856de63e142c034b5c48"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/glob_10.5.0.json",
+          "sha": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/minimatch_9.0.7.json",
+          "sha": "2406c8ccbcbe5f4d87998212d340222211cc1a3b"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_2.3.2.json",
+          "sha": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_4.0.4.json",
+          "sha": "71cbbe4a58ddde221f77662b57acf4965ba53963"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/playwright_1.55.1.json",
+          "sha": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_6.1.3.json",
+          "sha": "1652ff90ecb0122714101263b3de0a7e5a2038e5"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_7.1.6.json",
+          "sha": "e159d742de90e3dceadb603f466fb6c1ac0bba57"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/source-map-js_1.2.2.json",
+          "sha": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/ws_8.21.0.json",
+          "sha": "1b7fe42fed0b6d42d1e774504a7ba75add17b037"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/yaml_2.8.3.json",
+          "sha": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/npm-view/zod_4.6.6.json",
+          "sha": "7c5e99597a1e1417c1c376ffc065d7b68e13993a"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/osv-crosscheck.json",
+          "sha": "b255a7b83bcc6335c741ed35e8fac9538fc899bb"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/triage-matrix.json",
+          "sha": "5f4961c8c214ea22f79d446c3163f723ecd0b74f"
+        },
+        {
+          "path": "docs/evidence/dependency-advisory-triage-1/validation.json",
+          "sha": "982a7ee971a37fc6181e2e1e2c951e6d187e697d"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/build-matrix.mjs",
+          "sha": "26fe13d6718d6de49de1a8229088dc5519def1ca"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/inventory.mjs",
+          "sha": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/range.mjs",
+          "sha": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs",
+          "sha": "fd8ce4365d44445f0d63f84941f48def934feea7"
+        },
+        {
+          "path": "scripts/dependency-advisory-triage-1/validate-evidence.mjs",
+          "sha": "cea63f4d63d81f937fc916312f1a4df9326768df"
+        }
+      ],
+      "pins": [
+        {
+          "path": "package.json",
+          "sha": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b"
+        },
+        {
+          "path": "package-lock.json",
+          "sha": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+        }
+      ]
+    },
+    "changedFiles": [
+      {
+        "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+        "encoding": "utf-8",
+        "sha": "cb708eaaec377c896e452ee9048e702db590a9c3",
+        "display_url": "https://github.com/Jetnity/jetnity/blob/1677cd28c327e317ba8fca8becc6260faa8963ea/docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+        "display_title": "JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md"
+      },
+      {
+        "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+        "encoding": "utf-8",
+        "sha": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f",
+        "display_url": "https://github.com/Jetnity/jetnity/blob/1677cd28c327e317ba8fca8becc6260faa8963ea/docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+        "display_title": "JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md"
+      },
+      {
+        "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+        "encoding": "utf-8",
+        "sha": "790216ce5cc60f90d8c43968f1173bd220d2e347",
+        "display_url": "https://github.com/Jetnity/jetnity/blob/1677cd28c327e317ba8fca8becc6260faa8963ea/docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+        "display_title": "JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md"
+      },
+      {
+        "path": "docs/evidence/dependency-advisory-triage-1/commands.txt",
+        "encoding": "utf-8",
+        "sha": "bb3777fc1f3c47210a5fd864355f815e3e796d41",
+        "display_url": "https://github.com/Jetnity/jetnity/blob/1677cd28c327e317ba8fca8becc6260faa8963ea/docs/evidence/dependency-advisory-triage-1/commands.txt",
+        "display_title": "commands.txt"
+      }
+    ]
+  }
+}

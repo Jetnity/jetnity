@@ -1,0 +1,84 @@
+import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+const OUT = dirname(fileURLToPath(import.meta.url))
+const REPO = join(OUT, 'source')
+const DIR = join(REPO, 'scripts/my-trips-collection-archive-workflow-completion-1')
+if (process.cwd() !== REPO) throw new Error('Bundle cwd must be exact actual-final source root')
+const sha = (bytes) => createHash('sha256').update(bytes).digest('hex')
+const blob = (bytes) => createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+const proofBytes = readFileSync(join(OUT, 'source-proof.json'))
+const proof = JSON.parse(proofBytes)
+if (proof.actualFinalHead !== 'dda52b660369a436fa1eb25ff69c0f076254661a' || proof.actualFinalTree !== '503752c1bee097f5bba47487061415730429cc57') throw new Error('Wrong actual-final source identity')
+writeFileSync(join(OUT, 'bundle-build-started.json'), JSON.stringify({head:proof.actualFinalHead,tree:proof.actualFinalTree,at:new Date().toISOString(),node:process.version,sourceProofSha256:sha(proofBytes)})+'\n',{flag:'wx'})
+const require = createRequire(join(REPO, 'package.json'))
+const esbuild = require('esbuild')
+const aktionen = join(DIR, 'shims/aktionen.ts')
+const navigation = join(DIR, 'shims/navigation.ts')
+// Original M run.mjs options; only output destination and metafile capture are added.
+const built = await esbuild.build({
+  absWorkingDir: REPO,
+  entryPoints: [join(DIR, 'mount.tsx')],
+  outfile: join(OUT, 'harness.js'),
+  bundle: true,
+  format: 'iife',
+  platform: 'browser',
+  jsx: 'automatic',
+  alias: { '@': REPO },
+  define: { 'process.env.NODE_ENV': '"production"' },
+  banner: { js: 'globalThis.process = globalThis.process || { env: { NODE_ENV: "production" } }; globalThis.global = globalThis;' },
+  logLevel: 'silent',
+  metafile: true,
+  plugins: [{name:'sammlung-harness-aliases',setup(build){
+    build.onResolve({filter:/.*/},(args)=>{
+      if(args.path==='next/navigation') return {path:navigation}
+      if(args.path==='@/lib/trips/archiv-aktionen'||args.path.endsWith('/lib/trips/archiv-aktionen')) return {path:aktionen}
+      return null
+    })
+  }}],
+})
+writeFileSync(join(OUT,'bundle-metafile.json'), JSON.stringify(built.metafile,null,2)+'\n',{flag:'wx'})
+const pins = new Map(proof.files.map(x=>[x.path,x]))
+const dependencyRoot = realpathSync(join(REPO,'node_modules'))
+const retainedPath = '/tmp/r107-world-r1-review/integration-1343/historical-bundle-source-binding.json'
+const retainedBytes = readFileSync(retainedPath)
+const retained = new Map(JSON.parse(retainedBytes).dependencyInputs.map(x=>[realpathSync(x.source),x.historicalSha256]))
+const repositoryInputs=[],dependencyInputs=[]
+for(const [input,meta] of Object.entries(built.metafile.inputs)){
+  const file = realpathSync(resolve(REPO,input))
+  const bytes = readFileSync(file)
+  const inputSha = sha(bytes)
+  const repoPath = relative(REPO,file)
+  if(repoPath!==''&&!repoPath.startsWith('..')&&!isAbsolute(repoPath)){
+    const pin=pins.get(repoPath)
+    if(!pin||pin.blob!==blob(bytes)||pin.sha256!==inputSha) throw new Error(`Bundle repository input not bound: ${repoPath}`)
+    repositoryInputs.push({path:repoPath,source:file,blob:pin.blob,sha256:inputSha,bytes:bytes.length,metafileBytes:meta.bytes})
+  } else {
+    const depPath=relative(dependencyRoot,file)
+    if(depPath===''||depPath.startsWith('..')||isAbsolute(depPath)) throw new Error(`Unexpected bundle dependency outside retained root: ${file}`)
+    const old=retained.get(file)
+    if(old&&old!==inputSha) throw new Error(`Retained dependency bytes changed: ${file}`)
+    dependencyInputs.push({path:depPath,source:file,sha256:inputSha,bytes:bytes.length,metafileBytes:meta.bytes,retainedWInventorySha256:old??null,matchesRetainedWInventory:old?old===inputSha:null})
+  }
+}
+const harness = readFileSync(join(OUT,'harness.js'))
+const receipt={
+ actualFinalHead:proof.actualFinalHead,actualFinalTree:proof.actualFinalTree,generatedAtUtc:new Date().toISOString(),
+ node:process.version,sourceRoot:REPO,sourceProofSha256:sha(proofBytes),
+ command:`${process.execPath} ${fileURLToPath(import.meta.url)}`,cwd:process.cwd(),
+ buildScriptSha256:sha(readFileSync(fileURLToPath(import.meta.url))),
+ originalRunnerPath:'scripts/my-trips-collection-archive-workflow-completion-1/run.mjs',originalRunnerSha256:pins.get('scripts/my-trips-collection-archive-workflow-completion-1/run.mjs').sha256,
+ aliases:['next/navigation','@/lib/trips/archiv-aktionen'],originalOptionsPreserved:true,onlyAdditions:'metafile capture and fresh output location',
+ bundlePath:join(OUT,'harness.js'),bundleSha256:sha(harness),bundleBytes:harness.length,
+ metafilePath:join(OUT,'bundle-metafile.json'),metafileSha256:sha(readFileSync(join(OUT,'bundle-metafile.json'))),
+ repositoryInputCount:repositoryInputs.length,repositoryInputs,dependencyRoot,dependencyInputCount:dependencyInputs.length,dependencyInputs,
+ retainedDependencyInventory:retainedPath,retainedDependencyInventorySha256:sha(retainedBytes),
+ retainedDependencyMatches:dependencyInputs.filter(x=>x.matchesRetainedWInventory===true).length,
+ newlyHashedRetainedDependencyFiles:dependencyInputs.filter(x=>x.matchesRetainedWInventory===null).length,
+ completeBundleInputsBound:true,browserRun:false,testsRun:false,
+ scope:'One actual-final harness bundle and input metadata only; historical W inventory reused solely as dependency-byte cache, no W/M test acceptance transfer',
+}
+writeFileSync(join(OUT,'bundle-build-receipt.json'),JSON.stringify(receipt,null,2)+'\n',{flag:'wx'})
+console.log(JSON.stringify({head:receipt.actualFinalHead,bundleSha256:receipt.bundleSha256,bundleBytes:receipt.bundleBytes,repositoryInputs:repositoryInputs.length,dependencyInputs:dependencyInputs.length,retainedDependencyMatches:receipt.retainedDependencyMatches,newlyHashedDependencies:receipt.newlyHashedRetainedDependencyFiles,node:process.version}))

@@ -1,0 +1,84 @@
+import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const require = createRequire(import.meta.url)
+const output = dirname(fileURLToPath(import.meta.url))
+const staged = resolve(output, 'css-inputs')
+const head = '1343f8b9e20e68166e2e12cc7880f7eb3cff980c'
+const tree = 'd732487b09c3245c9c22e38b38bb030c8aa181cf'
+const historicalCssPath = '/tmp/r107-world-r1-review/layout-c68/layout.css'
+const expectedHistoricalCss = 'b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc'
+const sha256 = value => createHash('sha256').update(value).digest('hex')
+const gitBlob = bytes => createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex')
+if (process.cwd() !== staged) throw new Error('Run from the exact staged CSS-input root')
+
+const manifestPath = resolve(output, 'css-input-manifest.json')
+const manifestBytes = readFileSync(manifestPath)
+const manifest = JSON.parse(manifestBytes)
+if (manifest.head !== head || manifest.tree !== tree) throw new Error('Manifest identity mismatch')
+for (const input of manifest.inputs) {
+  const bytes = readFileSync(resolve(staged, input.path))
+  if (gitBlob(bytes) !== input.expectedGitBlob || sha256(bytes) !== input.sha256) {
+    throw new Error(`Staged input drift: ${input.path}`)
+  }
+}
+
+const dependencies = Object.fromEntries([
+  'postcss', 'tailwindcss', 'autoprefixer', 'tailwind-scrollbar-hide', 'tailwindcss-animate',
+].map(name => [name, JSON.parse(readFileSync(resolve('/tmp/jetnity-r106-t-final-review/node_modules', name, 'package.json'))).version]))
+const config = require(resolve(staged, 'tailwind.config.js'))
+const formPath = 'components/account/AccountBesuchFormular.tsx'
+const cssConfig = {
+  ...config,
+  content: [
+    ...config.content,
+    '!./' + formPath,
+    { raw: readFileSync(resolve(staged, formPath), 'utf8'), extension: 'tsx' },
+  ],
+}
+const result = await require('postcss')([
+  require('tailwindcss/nesting')(),
+  require('tailwindcss')(cssConfig),
+  require('autoprefixer')(),
+]).process(readFileSync(resolve(staged, 'styles/globals.css'), 'utf8'), {
+  from: resolve(staged, 'styles/globals.css'),
+})
+const css = result.css
+const historicalCss = readFileSync(historicalCssPath)
+if (sha256(historicalCss) !== expectedHistoricalCss) throw new Error('Historical CSS artifact drift')
+const actualCssSha256 = sha256(css)
+const cssIdentical = actualCssSha256 === expectedHistoricalCss
+const receipt = {
+  reviewer: '/root/world_review',
+  head,
+  tree,
+  command: `${process.execPath} ${fileURLToPath(import.meta.url)}`,
+  cwd: process.cwd(),
+  node: process.version,
+  dependencies,
+  inputManifest: manifestPath,
+  inputManifestSha256: sha256(manifestBytes),
+  scanCount: manifest.scanCount,
+  supportCount: manifest.supportCount,
+  verifiedInputCount: manifest.inputs.length,
+  compilerScriptSha256: sha256(readFileSync(fileURLToPath(import.meta.url))),
+  contentTreatment: 'Exact final-tree globs; current form excluded by path and included as raw TSX, preserving the c68 pipeline. No CSS overrides.',
+  historicalHead: 'c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa',
+  historicalCssPath,
+  historicalCssSha256: expectedHistoricalCss,
+  historicalCssBytes: historicalCss.length,
+  actualCssSha256,
+  actualCssBytes: Buffer.byteLength(css),
+  cssIdentical,
+  warnings: result.warnings().map(warning => warning.toString()),
+  freshBrowserExecution: false,
+  testsRun: false,
+  formalAcceptance: false,
+  limitation: 'CSS compilation and byte comparison only. Historical execution remains historical; native CI, Preview and acceptance belong to root.',
+}
+writeFileSync(resolve(output, 'final.css'), css)
+writeFileSync(resolve(output, 'css-comparison.json'), JSON.stringify(receipt, null, 2) + '\n')
+console.log(JSON.stringify({ head, tree, actualCssSha256, historicalCssSha256: expectedHistoricalCss, cssIdentical, actualCssBytes: receipt.actualCssBytes, historicalCssBytes: receipt.historicalCssBytes, warnings: receipt.warnings, freshBrowserExecution: false }, null, 2))

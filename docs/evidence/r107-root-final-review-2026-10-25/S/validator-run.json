@@ -1,0 +1,29 @@
+{
+  "reviewer": "/root/dependency_review read-only helper",
+  "head": "1677cd28c327e317ba8fca8becc6260faa8963ea",
+  "tree": "63acafa9716450b6b5eadbddd25b6db693abefba",
+  "main": "60b8e75ece16a8640d21e460380f25d627bbe700",
+  "node": "v24.22.1",
+  "cwd": "/tmp/r107-dependency-review/integration-1677/candidate",
+  "argv": [
+    "node",
+    "scripts/dependency-advisory-triage-1/validate-evidence.mjs",
+    "/tmp/r107-dependency-review/integration-1677/candidate"
+  ],
+  "exit": 0,
+  "output": "EVIDENCE_VALID rows=42\n",
+  "executionCount": 1,
+  "fixtureRerun": false,
+  "matrixRebuild": false,
+  "inventoryScan": false,
+  "registryCalls": false,
+  "boundary": "Only the existing clean validator on exact candidate retained S inputs and package/lock pins. This does not establish current source traversal, installed/deployed selection, native CI or Technical-Lead acceptance.",
+  "postRead": {
+    "head": "1677cd28c327e317ba8fca8becc6260faa8963ea",
+    "base": "60b8e75ece16a8640d21e460380f25d627bbe700",
+    "draft": true,
+    "state": "open",
+    "updated": "2026-10-25T19:06:58Z"
+  },
+  "authorReplay": "Separate author Node v22.23.4 receipts in commands.txt INTEGRATION_SYNC1 describe merge354 before notes1677; not relabeled as independent execution."
+}

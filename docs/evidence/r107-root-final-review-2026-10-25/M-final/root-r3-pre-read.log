@@ -1,0 +1,32 @@
+{
+  "head": "444a8c254e11688120f7f2b6e49193746932a865",
+  "runtime": "v24.22.1",
+  "boundary": "actual candidate parser and reader; supplied from() trap; existing server-only test loader; no hosted client called",
+  "outcomes": [
+    {
+      "parameter": {
+        "archiv": ""
+      },
+      "parserAccepted": false,
+      "fromCalls": 0,
+      "invalid": true,
+      "address": "/reisen?archiv="
+    },
+    {
+      "parameter": {
+        "cursor": ""
+      },
+      "parserAccepted": false,
+      "fromCalls": 0,
+      "invalid": true,
+      "address": "/reisen?cursor="
+    },
+    {
+      "parameter": {
+        "q": ""
+      },
+      "parserAccepted": true,
+      "address": "/reisen"
+    }
+  ]
+}

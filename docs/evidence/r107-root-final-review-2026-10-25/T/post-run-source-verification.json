@@ -1,0 +1,272 @@
+[
+  {
+    "lane": "red",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+    "expected": "9d878f0263233b166110596683f9dfa440be19e3",
+    "actual": "9d878f0263233b166110596683f9dfa440be19e3",
+    "sha256": "9eb7ae0d32a0af9138248144def0cd94bfd115148160d88ba1de3be5393320e0",
+    "afterGitBlob": "9d878f0263233b166110596683f9dfa440be19e3",
+    "afterSha256": "9eb7ae0d32a0af9138248144def0cd94bfd115148160d88ba1de3be5393320e0",
+    "unchanged": true
+  },
+  {
+    "lane": "red",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+    "expected": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "actual": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "sha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "afterGitBlob": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "afterSha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "unchanged": true
+  },
+  {
+    "lane": "red",
+    "path": "components/trips/Reisevorbereitung.tsx",
+    "expected": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+    "actual": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+    "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52",
+    "afterGitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+    "afterSha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52",
+    "unchanged": true
+  },
+  {
+    "lane": "red",
+    "path": "components/trips/TripWorkspace.tsx",
+    "expected": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+    "actual": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+    "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4",
+    "afterGitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+    "afterSha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4",
+    "unchanged": true
+  },
+  {
+    "lane": "red",
+    "path": "lib/readiness/dokument-formular.ts",
+    "expected": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+    "actual": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+    "sha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975",
+    "afterGitBlob": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+    "afterSha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+    "expected": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "actual": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "sha256": "cfc4cf8389c86da4481fdc0ecdab40c387c3c17cb12c85290bb2a409030625d4",
+    "afterGitBlob": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "afterSha256": "cfc4cf8389c86da4481fdc0ecdab40c387c3c17cb12c85290bb2a409030625d4",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+    "expected": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "actual": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "sha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "afterGitBlob": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "afterSha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/GastArbeitsbereich.tsx",
+    "expected": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+    "actual": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+    "sha256": "4d4f31798116eb39a84987b0b8076c4476e82ed50785f4ad135ed732449eb320",
+    "afterGitBlob": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+    "afterSha256": "4d4f31798116eb39a84987b0b8076c4476e82ed50785f4ad135ed732449eb320",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/KontoArbeitsbereich.tsx",
+    "expected": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+    "actual": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+    "sha256": "bc82a47699e112e7a08079a2925ae07090ba5c63239cbadbaaaa7e9aaea7596a",
+    "afterGitBlob": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+    "afterSha256": "bc82a47699e112e7a08079a2925ae07090ba5c63239cbadbaaaa7e9aaea7596a",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/RegistryReiseUebernahme.tsx",
+    "expected": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+    "actual": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+    "sha256": "69e0dc3801055d4bdd5718f6feb50033320c1308b17cd68e401178d13dbf293f",
+    "afterGitBlob": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+    "afterSha256": "69e0dc3801055d4bdd5718f6feb50033320c1308b17cd68e401178d13dbf293f",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/Reisevorbereitung.tsx",
+    "expected": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+    "actual": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+    "sha256": "14376753d01384f199b6946053a4a235118838f933f0e4af1ec207a50175c100",
+    "afterGitBlob": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+    "afterSha256": "14376753d01384f199b6946053a4a235118838f933f0e4af1ec207a50175c100",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/TripWorkspace.tsx",
+    "expected": "16825180b4da46ea71d549f4ffc399717664f020",
+    "actual": "16825180b4da46ea71d549f4ffc399717664f020",
+    "sha256": "f2401d6d52935ae7da2bebe6500abd7742696d8858c59b3d35936a2881ddc6bc",
+    "afterGitBlob": "16825180b4da46ea71d549f4ffc399717664f020",
+    "afterSha256": "f2401d6d52935ae7da2bebe6500abd7742696d8858c59b3d35936a2881ddc6bc",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+    "expected": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+    "actual": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+    "sha256": "be23ee4684c56e239a2502f85b525c0dbd38b20d66aa76cff2b0916109c6bf7b",
+    "afterGitBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+    "afterSha256": "be23ee4684c56e239a2502f85b525c0dbd38b20d66aa76cff2b0916109c6bf7b",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/country/ui.test.ts",
+    "expected": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+    "actual": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+    "sha256": "26abee8b93f7af21abae3b31dc3958f0b25e5625dd7be1b2c2c90e6906fb6ba2",
+    "afterGitBlob": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+    "afterSha256": "26abee8b93f7af21abae3b31dc3958f0b25e5625dd7be1b2c2c90e6906fb6ba2",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/readiness/preparation-premium-experience-5.test.ts",
+    "expected": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+    "actual": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+    "sha256": "ff66cddabfed2b1ac9513be02f6a4ac15458331ff34984bf080baf1034a73d26",
+    "afterGitBlob": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+    "afterSha256": "ff66cddabfed2b1ac9513be02f6a4ac15458331ff34984bf080baf1034a73d26",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/readiness/trip-official-evaluations-server.test.ts",
+    "expected": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+    "actual": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+    "sha256": "f57ea08503eaa0ab5f22d449362f5df7bfdc3d79070838a3ea534b3477e422cc",
+    "afterGitBlob": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+    "afterSha256": "f57ea08503eaa0ab5f22d449362f5df7bfdc3d79070838a3ea534b3477e422cc",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/readiness/trip-traveller-snapshot-workflow-1.test.ts",
+    "expected": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+    "actual": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+    "sha256": "df5ce4035da142009511fc9e9de8cd2ada38709c3e7b9f5bf8ef60d65175a70c",
+    "afterGitBlob": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+    "afterSha256": "df5ce4035da142009511fc9e9de8cd2ada38709c3e7b9f5bf8ef60d65175a70c",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+    "expected": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+    "actual": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+    "sha256": "0a842b85b967ff76c0fd4b9f8c2e4b5ea2189fc2e86729a2bceb12fcdf5d6f78",
+    "afterGitBlob": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+    "afterSha256": "0a842b85b967ff76c0fd4b9f8c2e4b5ea2189fc2e86729a2bceb12fcdf5d6f78",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "lib/traveller/account-registry-trip-copy.ts",
+    "expected": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+    "actual": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+    "sha256": "bc17113190cd8e2b9bc14981b0b1021ab2190819a88dc40733d41fe3b37c6ebe",
+    "afterGitBlob": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+    "afterSha256": "bc17113190cd8e2b9bc14981b0b1021ab2190819a88dc40733d41fe3b37c6ebe",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+    "expected": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+    "actual": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+    "sha256": "d8c807bb09d8e76e940a67f0422f0386bd3c3725d23c660b927e7f6fe863758d",
+    "afterGitBlob": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+    "afterSha256": "d8c807bb09d8e76e940a67f0422f0386bd3c3725d23c660b927e7f6fe863758d",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+    "expected": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "actual": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "sha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "afterGitBlob": "6633d268c44be1ce4582a7538d73ab65e1443942",
+    "afterSha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+    "expected": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+    "actual": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+    "sha256": "5b4bfe0ac948cc2659cdebd98d7b15266cb57890603c8ccbfac99c3e892ab97b",
+    "afterGitBlob": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+    "afterSha256": "5b4bfe0ac948cc2659cdebd98d7b15266cb57890603c8ccbfac99c3e892ab97b",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.test.ts",
+    "expected": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+    "actual": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+    "sha256": "cd88591f8b8547321e5fe61feee670ec429c815a96ccdfdc6e79ac683d0ea2ef",
+    "afterGitBlob": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+    "afterSha256": "cd88591f8b8547321e5fe61feee670ec429c815a96ccdfdc6e79ac683d0ea2ef",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+    "expected": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "actual": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "sha256": "cfc4cf8389c86da4481fdc0ecdab40c387c3c17cb12c85290bb2a409030625d4",
+    "afterGitBlob": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+    "afterSha256": "cfc4cf8389c86da4481fdc0ecdab40c387c3c17cb12c85290bb2a409030625d4",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+    "expected": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+    "actual": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+    "sha256": "7780aa35e1ce1835cf140b0ccaea3a6642574e84533de10608a436ea799360ef",
+    "afterGitBlob": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+    "afterSha256": "7780aa35e1ce1835cf140b0ccaea3a6642574e84533de10608a436ea799360ef",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+    "expected": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+    "actual": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+    "sha256": "57b7aa4f59f226c76da412c04798bb368596f17fa513a482e19b8141d21df3ae",
+    "afterGitBlob": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+    "afterSha256": "57b7aa4f59f226c76da412c04798bb368596f17fa513a482e19b8141d21df3ae",
+    "unchanged": true
+  },
+  {
+    "lane": "final",
+    "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx",
+    "expected": "bb535dce616901db03cad8ba1df7493aec877687",
+    "actual": "bb535dce616901db03cad8ba1df7493aec877687",
+    "sha256": "c6a957a84e5f4bbfd95bf3ae1acea963923eab886c281f9170e5c8ba9c08cfff",
+    "afterGitBlob": "bb535dce616901db03cad8ba1df7493aec877687",
+    "afterSha256": "c6a957a84e5f4bbfd95bf3ae1acea963923eab886c281f9170e5c8ba9c08cfff",
+    "unchanged": true
+  }
+]

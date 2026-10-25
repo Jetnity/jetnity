@@ -1,0 +1,1728 @@
+{
+  "recordedAtUtc": "2026-10-25T19:48:58Z",
+  "scope": "Read-only exact-source and evidence rebinding. No tests, builds, source edits, external writes or acceptance decision.",
+  "identity": {
+    "main": "747c909cccb2b18ac91b7976b5b671dc11347cf3",
+    "mainTree": "63acafa9716450b6b5eadbddd25b6db693abefba",
+    "preSyncHead": "878212adf0384bba02cd1ce217041a673bfdaf84",
+    "preSyncTree": "b0e0fe9601404e0954c956b19c6bf437a32b9a1d",
+    "mergeCommit": "b83477489864ed357f27c7bd1bd8d8b5ee92484c",
+    "mergeParents": [
+      "878212adf0384bba02cd1ce217041a673bfdaf84",
+      "747c909cccb2b18ac91b7976b5b671dc11347cf3"
+    ],
+    "mergeTree": "4e9032f5c455ed54074eef379d491e349a33c0a0",
+    "finalHead": "f2a36c71cb57570d65969b800f647fed3b8cd06b",
+    "finalParents": [
+      "b83477489864ed357f27c7bd1bd8d8b5ee92484c"
+    ],
+    "finalTree": "76654739b7882f954508299721c5d40fbb4df4b0",
+    "mergeBase": "747c909cccb2b18ac91b7976b5b671dc11347cf3",
+    "ahead": 11,
+    "behind": 0,
+    "draft": true,
+    "authorHandoff": {
+      "commentId": 6402296584,
+      "url": "https://github.com/Jetnity/jetnity/pull/1020#issuecomment-6402296584",
+      "updatedAt": "2026-10-25T19:47:17Z",
+      "fullSourceDeliveryObserved": true,
+      "stoppedDraft": true,
+      "nativeGatesPendingAtDelivery": true,
+      "session": "bc-cc48889b-f8c5-4cce-9892-1daa0eab7fc6",
+      "name": "Jetnity Admin User Directory Completion 1 — Cursor Generation 1",
+      "model": "grok-4.7-high-fast"
+    }
+  },
+  "summary": {
+    "ownPaths": 29,
+    "unchangedOwnBlobs": 24,
+    "changedOwnNotes": 5,
+    "incomingPaths": 99,
+    "oldToFinalChangedPaths": 104,
+    "postMergeChangedPaths": 5,
+    "incomingExactMainMismatches": [],
+    "ownChangeSetMatchesFiveNotes": true,
+    "postMergeDeltaMatchesFiveNotes": true,
+    "incomingOwnPathOverlap": [],
+    "frozenAuthMismatches": [],
+    "frozenClientMismatches": [],
+    "mountedInputMismatches": [],
+    "cssInputMismatches": [],
+    "scannerInputs": 14
+  },
+  "ownPins": [
+    {
+      "path": "app/(admin)/admin/users/page.tsx",
+      "proof": "531bf101e483943b9fd07c424afaf7c9dc69090f",
+      "old": "531bf101e483943b9fd07c424afaf7c9dc69090f",
+      "merge": "531bf101e483943b9fd07c424afaf7c9dc69090f",
+      "final": "531bf101e483943b9fd07c424afaf7c9dc69090f",
+      "main": "cc7ff95c80a2e427051f9ac9f7730f1138882d49"
+    },
+    {
+      "path": "components/admin/UsersTable.tsx",
+      "proof": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "old": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "merge": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "final": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "main": "8c4e232a9aaaed8f7ac8539e329b421c14a2c81f"
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "proof": "603531e99362cc506c27d27bcf767d9d7af2f3c6",
+      "old": "8151f96889ec432711f9bee71359eaef6102b02c",
+      "merge": "8151f96889ec432711f9bee71359eaef6102b02c",
+      "final": "67d14fbac4b71244e8e4835a9ff5bcde3220e359",
+      "main": null
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_PLAN_2026-10-25.md",
+      "proof": "888407e808559463e22b0dbc2392bef09d01f48d",
+      "old": "888407e808559463e22b0dbc2392bef09d01f48d",
+      "merge": "888407e808559463e22b0dbc2392bef09d01f48d",
+      "final": "888407e808559463e22b0dbc2392bef09d01f48d",
+      "main": null
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_REPORT_2026-10-25.md",
+      "proof": "be8f81694b3f8c59b187e61cd3f6b17d37dcb50d",
+      "old": "a5295b11cf6b0f9fecdf3884714f7143b388e4bb",
+      "merge": "a5295b11cf6b0f9fecdf3884714f7143b388e4bb",
+      "final": "b29bef8ba995f77d84934b7247a42806d2f8ce4f",
+      "main": null
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "proof": "3c82a4ca20abfbc274984b9a7387a873f4e775fe",
+      "old": "73d877d83365fe491aa35c5daf6e57c92b3ba7fc",
+      "merge": "73d877d83365fe491aa35c5daf6e57c92b3ba7fc",
+      "final": "145c6fe97c13082684fb4e8cb69fa02b88eceaea",
+      "main": null
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_STATUS_2026-10-25.md",
+      "proof": "69821efbd7a4063e4ca2cd3f3f80565ec5addb0e",
+      "old": "f29d0495762ad608db600269bbf44c4e48ab022f",
+      "merge": "f29d0495762ad608db600269bbf44c4e48ab022f",
+      "final": "c30988d293b80189628144817041357585174fde",
+      "main": null
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "proof": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb",
+      "old": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb",
+      "merge": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb",
+      "final": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/desktop-directory.png",
+      "proof": "a321449dd88938753e45be7d2a4a2329ae6d7fb0",
+      "old": "a321449dd88938753e45be7d2a4a2329ae6d7fb0",
+      "merge": "a321449dd88938753e45be7d2a4a2329ae6d7fb0",
+      "final": "a321449dd88938753e45be7d2a4a2329ae6d7fb0",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/desktop-page-3.png",
+      "proof": "8436c337192c9ec8e36904dc3762a68e1be2280a",
+      "old": "8436c337192c9ec8e36904dc3762a68e1be2280a",
+      "merge": "8436c337192c9ec8e36904dc3762a68e1be2280a",
+      "final": "8436c337192c9ec8e36904dc3762a68e1be2280a",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/error-mobile.png",
+      "proof": "0ea0359e05d78935617b18b0dd866dcc744f5fbf",
+      "old": "0ea0359e05d78935617b18b0dd866dcc744f5fbf",
+      "merge": "0ea0359e05d78935617b18b0dd866dcc744f5fbf",
+      "final": "0ea0359e05d78935617b18b0dd866dcc744f5fbf",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/gates.json",
+      "proof": "f25d39bb31ae7429c32d5449e0cc986f3e320746",
+      "old": "eb62aa6c91a0b8130b37182be88f59ab64f63f43",
+      "merge": "eb62aa6c91a0b8130b37182be88f59ab64f63f43",
+      "final": "d52a412647134c83de9b805fc124c1ce9454f96a",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/harness.tsx",
+      "proof": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "old": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "merge": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "final": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/mobile-directory.png",
+      "proof": "d2ec6f419fb3b1f37086dd8bcafd06148ec6a275",
+      "old": "d2ec6f419fb3b1f37086dd8bcafd06148ec6a275",
+      "merge": "d2ec6f419fb3b1f37086dd8bcafd06148ec6a275",
+      "final": "d2ec6f419fb3b1f37086dd8bcafd06148ec6a275",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/mounted.json",
+      "proof": "14cca350830b9092d4df8313956f45a2a18e12f0",
+      "old": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+      "merge": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+      "final": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/actions.ts",
+      "proof": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "old": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "merge": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "final": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-link.tsx",
+      "proof": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "old": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "merge": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "final": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-navigation.ts",
+      "proof": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "old": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "merge": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "final": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/server-only.ts",
+      "proof": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "old": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "merge": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "final": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "main": null
+    },
+    {
+      "path": "lib/admin/profil-erstellt.test.ts",
+      "proof": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "old": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "merge": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "final": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "main": "41a6c5297ce32e3670778eb82397ae1e6393fa76"
+    },
+    {
+      "path": "lib/admin/users-directory-presentation.test.ts",
+      "proof": "20e09ba311798b59b31526f431cd9ce8f0fdccf6",
+      "old": "20e09ba311798b59b31526f431cd9ce8f0fdccf6",
+      "merge": "20e09ba311798b59b31526f431cd9ce8f0fdccf6",
+      "final": "20e09ba311798b59b31526f431cd9ce8f0fdccf6",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-directory-presentation.ts",
+      "proof": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "old": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "merge": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "final": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-directory-query.test.ts",
+      "proof": "bffb2296eebe1651037b4ca5ec66890369cf303c",
+      "old": "bffb2296eebe1651037b4ca5ec66890369cf303c",
+      "merge": "bffb2296eebe1651037b4ca5ec66890369cf303c",
+      "final": "bffb2296eebe1651037b4ca5ec66890369cf303c",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-directory-query.ts",
+      "proof": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "old": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "merge": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "final": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-directory-read.test.ts",
+      "proof": "a3726540177831a43a661ca000bac93be8dcceb4",
+      "old": "a3726540177831a43a661ca000bac93be8dcceb4",
+      "merge": "a3726540177831a43a661ca000bac93be8dcceb4",
+      "final": "a3726540177831a43a661ca000bac93be8dcceb4",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-search-navigation.test.ts",
+      "proof": "52f9554117ea432f4c5df1b0e82711b7ae37fcb4",
+      "old": "52f9554117ea432f4c5df1b0e82711b7ae37fcb4",
+      "merge": "52f9554117ea432f4c5df1b0e82711b7ae37fcb4",
+      "final": "52f9554117ea432f4c5df1b0e82711b7ae37fcb4",
+      "main": "439b89f06dae7a3817dee1eca2962884e7a50daf"
+    },
+    {
+      "path": "lib/admin/users-search-navigation.ts",
+      "proof": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "old": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "merge": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "final": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "main": "03420ad48c98f828b37c1e6d7edc5bbf62ad8a1e"
+    },
+    {
+      "path": "lib/next/request-api-compat.test.ts",
+      "proof": "235c98227a5b7386099398a25a65324256adefda",
+      "old": "235c98227a5b7386099398a25a65324256adefda",
+      "merge": "235c98227a5b7386099398a25a65324256adefda",
+      "final": "235c98227a5b7386099398a25a65324256adefda",
+      "main": "e988a387ea9467d0a1454454f7682d062c957a21"
+    },
+    {
+      "path": "scripts/admin-user-directory-completion-1/verify.mjs",
+      "proof": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "old": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "merge": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "final": "414e6f0dea3ca0a20127775a26b380e8519bb969",
+      "main": null
+    }
+  ],
+  "incomingPins": [
+    {
+      "path": "components/trips/GastArbeitsbereich.tsx",
+      "proof": "90f9d8781e23a3f96f92abd1d3616174585460d2",
+      "old": "90f9d8781e23a3f96f92abd1d3616174585460d2",
+      "merge": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+      "final": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+      "main": "a8da52126b4e386ef9a742643dca22ac43d119a1"
+    },
+    {
+      "path": "components/trips/KontoArbeitsbereich.tsx",
+      "proof": "fdad125b008b86ec1153e6140d5494fa3aa6f55d",
+      "old": "fdad125b008b86ec1153e6140d5494fa3aa6f55d",
+      "merge": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+      "final": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+      "main": "a776fb4d166936c4ac1432f75bdba405963bbe8f"
+    },
+    {
+      "path": "components/trips/RegistryReiseUebernahme.tsx",
+      "proof": "df63143b2f0a03ef4d36752f9578999e66985718",
+      "old": "df63143b2f0a03ef4d36752f9578999e66985718",
+      "merge": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+      "final": "5b8e9c77dcc10cf675f597995062d8c39581c693",
+      "main": "5b8e9c77dcc10cf675f597995062d8c39581c693"
+    },
+    {
+      "path": "components/trips/Reisevorbereitung.tsx",
+      "proof": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+      "old": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+      "merge": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+      "final": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+      "main": "e39587978196ad3badbdaebdbd1f484d84da50d2"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "proof": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+      "old": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+      "merge": "16825180b4da46ea71d549f4ffc399717664f020",
+      "final": "16825180b4da46ea71d549f4ffc399717664f020",
+      "main": "16825180b4da46ea71d549f4ffc399717664f020"
+    },
+    {
+      "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "proof": null,
+      "old": null,
+      "merge": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "final": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "main": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "cb708eaaec377c896e452ee9048e702db590a9c3",
+      "final": "cb708eaaec377c896e452ee9048e702db590a9c3",
+      "main": "cb708eaaec377c896e452ee9048e702db590a9c3"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_PLAN_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "436fc2561289baa2da9583c070662a6b8c9ad82b",
+      "final": "436fc2561289baa2da9583c070662a6b8c9ad82b",
+      "main": "436fc2561289baa2da9583c070662a6b8c9ad82b"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f",
+      "final": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f",
+      "main": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_SELF_REVIEW_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "2dd469987efda62996edb7c71868257abc27e0a7",
+      "final": "2dd469987efda62996edb7c71868257abc27e0a7",
+      "main": "2dd469987efda62996edb7c71868257abc27e0a7"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "790216ce5cc60f90d8c43968f1173bd220d2e347",
+      "final": "790216ce5cc60f90d8c43968f1173bd220d2e347",
+      "main": "790216ce5cc60f90d8c43968f1173bd220d2e347"
+    },
+    {
+      "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_TASK_V1_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0",
+      "final": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0",
+      "main": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "eb0e9109c7d9e67b6242e77b5189a81cba12d994",
+      "final": "eb0e9109c7d9e67b6242e77b5189a81cba12d994",
+      "main": "eb0e9109c7d9e67b6242e77b5189a81cba12d994"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "252ae82c9cf1aff34f7f46e16999d50178369dff",
+      "final": "252ae82c9cf1aff34f7f46e16999d50178369dff",
+      "main": "252ae82c9cf1aff34f7f46e16999d50178369dff"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "215b60b1758317b0c191780b1a7c0f7f81d52d88",
+      "final": "215b60b1758317b0c191780b1a7c0f7f81d52d88",
+      "main": "215b60b1758317b0c191780b1a7c0f7f81d52d88"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "40a6ea87afdc58c8d1f415a9d129c4a252d457fa",
+      "final": "40a6ea87afdc58c8d1f415a9d129c4a252d457fa",
+      "main": "40a6ea87afdc58c8d1f415a9d129c4a252d457fa"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "cf85966951cc1ca526bce3a2965c0c7413f2aca7",
+      "final": "cf85966951cc1ca526bce3a2965c0c7413f2aca7",
+      "main": "cf85966951cc1ca526bce3a2965c0c7413f2aca7"
+    },
+    {
+      "path": "docs/JETNITY_TRIP_TRAVELLER_SNAPSHOT_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "proof": null,
+      "old": null,
+      "merge": "75c59b0851d835560ff4b5562e9fcc52c395b2ad",
+      "final": "75c59b0851d835560ff4b5562e9fcc52c395b2ad",
+      "main": "75c59b0851d835560ff4b5562e9fcc52c395b2ad"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-23c5-xmqv-rm74.json",
+      "proof": null,
+      "old": null,
+      "merge": "a8fe55eac31f4c2890775060a5b578f414ea25fd",
+      "final": "a8fe55eac31f4c2890775060a5b578f414ea25fd",
+      "main": "a8fe55eac31f4c2890775060a5b578f414ea25fd"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3jxr-9vmj-r5cp.json",
+      "proof": null,
+      "old": null,
+      "merge": "db883c92205e2ba590c9eeecf0d99b8a1df20408",
+      "final": "db883c92205e2ba590c9eeecf0d99b8a1df20408",
+      "main": "db883c92205e2ba590c9eeecf0d99b8a1df20408"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3ppc-4f35-3m26.json",
+      "proof": null,
+      "old": null,
+      "merge": "833a80ef803fa7209e86b87447ccfdcc44868d9b",
+      "final": "833a80ef803fa7209e86b87447ccfdcc44868d9b",
+      "main": "833a80ef803fa7209e86b87447ccfdcc44868d9b"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3v7f-55p6-f55p.json",
+      "proof": null,
+      "old": null,
+      "merge": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886",
+      "final": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886",
+      "main": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-48c2-rrv3-qjmp.json",
+      "proof": null,
+      "old": null,
+      "merge": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f",
+      "final": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f",
+      "main": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-58qx-3vcg-4xpx.json",
+      "proof": null,
+      "old": null,
+      "merge": "bac67fde250baf614c5cd3aefe53e6bc1b338427",
+      "final": "bac67fde250baf614c5cd3aefe53e6bc1b338427",
+      "main": "bac67fde250baf614c5cd3aefe53e6bc1b338427"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-5j98-mcp5-4vw2.json",
+      "proof": null,
+      "old": null,
+      "merge": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e",
+      "final": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e",
+      "main": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-68fv-2mgg-jv7q.json",
+      "proof": null,
+      "old": null,
+      "merge": "515e6aec21ad8c298a649e31034411874bd361b9",
+      "final": "515e6aec21ad8c298a649e31034411874bd361b9",
+      "main": "515e6aec21ad8c298a649e31034411874bd361b9"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-6j4f-fj2g-mc7p.json",
+      "proof": null,
+      "old": null,
+      "merge": "2f228e7918a51ed2b290a26407f90e70d126fc1b",
+      "final": "2f228e7918a51ed2b290a26407f90e70d126fc1b",
+      "main": "2f228e7918a51ed2b290a26407f90e70d126fc1b"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-73wf-gq98-2v4g.json",
+      "proof": null,
+      "old": null,
+      "merge": "eeae134e5cc17416f8f62d33325f68f5de92bb14",
+      "final": "eeae134e5cc17416f8f62d33325f68f5de92bb14",
+      "main": "eeae134e5cc17416f8f62d33325f68f5de92bb14"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7mvr-c777-76hp.json",
+      "proof": null,
+      "old": null,
+      "merge": "e2d4875ffb3708d1a14989410434cfce4bd94fd0",
+      "final": "e2d4875ffb3708d1a14989410434cfce4bd94fd0",
+      "main": "e2d4875ffb3708d1a14989410434cfce4bd94fd0"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7r86-cg39-jmmj.json",
+      "proof": null,
+      "old": null,
+      "merge": "dd99c2ead4a5232171a8953d1c33b91f775a707e",
+      "final": "dd99c2ead4a5232171a8953d1c33b91f775a707e",
+      "main": "dd99c2ead4a5232171a8953d1c33b91f775a707e"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-96hv-2xvq-fx4p.json",
+      "proof": null,
+      "old": null,
+      "merge": "44af9c053677c309ead6e6d78b54bfa6415902d9",
+      "final": "44af9c053677c309ead6e6d78b54bfa6415902d9",
+      "main": "44af9c053677c309ead6e6d78b54bfa6415902d9"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c2c7-rcm5-vvqj.json",
+      "proof": null,
+      "old": null,
+      "merge": "e5994abdc0021c7ec57505559880d7f9703af302",
+      "final": "e5994abdc0021c7ec57505559880d7f9703af302",
+      "main": "e5994abdc0021c7ec57505559880d7f9703af302"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c83g-rgw3-j3cx.json",
+      "proof": null,
+      "old": null,
+      "merge": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec",
+      "final": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec",
+      "main": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-f886-m6hf-6m8v.json",
+      "proof": null,
+      "old": null,
+      "merge": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f",
+      "final": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f",
+      "main": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mh99-v99m-4gvg.json",
+      "proof": null,
+      "old": null,
+      "merge": "3bd478989ed1e6102c603f182d436c2bb34d3a07",
+      "final": "3bd478989ed1e6102c603f182d436c2bb34d3a07",
+      "main": "3bd478989ed1e6102c603f182d436c2bb34d3a07"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mrhx-c7xc-m3w5.json",
+      "proof": null,
+      "old": null,
+      "merge": "58272ea0d840c1602e8b36c9972ef17d45d51f03",
+      "final": "58272ea0d840c1602e8b36c9972ef17d45d51f03",
+      "main": "58272ea0d840c1602e8b36c9972ef17d45d51f03"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-q2hr-2g5m-vwhr.json",
+      "proof": null,
+      "old": null,
+      "merge": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19",
+      "final": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19",
+      "main": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-qhr7-859c-m2p7.json",
+      "proof": null,
+      "old": null,
+      "merge": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd",
+      "final": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd",
+      "main": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rgw5-rvv9-x895.json",
+      "proof": null,
+      "old": null,
+      "merge": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf",
+      "final": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf",
+      "main": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rj75-hqrm-r3gf.json",
+      "proof": null,
+      "old": null,
+      "merge": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b",
+      "final": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b",
+      "main": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-w9m9-85wc-3x92.json",
+      "proof": null,
+      "old": null,
+      "merge": "9db0818645753c589e8f14cde21d518406d87f84",
+      "final": "9db0818645753c589e8f14cde21d518406d87f84",
+      "main": "9db0818645753c589e8f14cde21d518406d87f84"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/ci-baseline-40202059080.txt",
+      "proof": null,
+      "old": null,
+      "merge": "bac49565d29a262bd8040b31d49b592c71c205e7",
+      "final": "bac49565d29a262bd8040b31d49b592c71c205e7",
+      "main": "bac49565d29a262bd8040b31d49b592c71c205e7"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/commands.txt",
+      "proof": null,
+      "old": null,
+      "merge": "bb3777fc1f3c47210a5fd864355f815e3e796d41",
+      "final": "bb3777fc1f3c47210a5fd864355f815e3e796d41",
+      "main": "bb3777fc1f3c47210a5fd864355f815e3e796d41"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/input-binding.json",
+      "proof": null,
+      "old": null,
+      "merge": "be4123020a218303f699fd9c1bd7761ada6a942e",
+      "final": "be4123020a218303f699fd9c1bd7761ada6a942e",
+      "main": "be4123020a218303f699fd9c1bd7761ada6a942e"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json",
+      "proof": null,
+      "old": null,
+      "merge": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc",
+      "final": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc",
+      "main": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json",
+      "proof": null,
+      "old": null,
+      "merge": "7396e61da7c4a52e1263d5cccfea102c8a7faa33",
+      "final": "7396e61da7c4a52e1263d5cccfea102c8a7faa33",
+      "main": "7396e61da7c4a52e1263d5cccfea102c8a7faa33"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile.json",
+      "proof": null,
+      "old": null,
+      "merge": "48d7e00ed91889938e133c3640039d2f5e6ef035",
+      "final": "48d7e00ed91889938e133c3640039d2f5e6ef035",
+      "main": "48d7e00ed91889938e133c3640039d2f5e6ef035"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_1.1.21.json",
+      "proof": null,
+      "old": null,
+      "merge": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665",
+      "final": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665",
+      "main": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_2.1.7.json",
+      "proof": null,
+      "old": null,
+      "merge": "27bbfee1fb936b45670321f2e86fd3fe3f363a85",
+      "final": "27bbfee1fb936b45670321f2e86fd3fe3f363a85",
+      "main": "27bbfee1fb936b45670321f2e86fd3fe3f363a85"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_5.0.12.json",
+      "proof": null,
+      "old": null,
+      "merge": "bd3417cfff76be2e54312f093088e82e3ad07e8a",
+      "final": "bd3417cfff76be2e54312f093088e82e3ad07e8a",
+      "main": "bd3417cfff76be2e54312f093088e82e3ad07e8a"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/browserslist_4.28.7.json",
+      "proof": null,
+      "old": null,
+      "merge": "cd92120dfd7d8970fec9856de63e142c034b5c48",
+      "final": "cd92120dfd7d8970fec9856de63e142c034b5c48",
+      "main": "cd92120dfd7d8970fec9856de63e142c034b5c48"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/glob_10.5.0.json",
+      "proof": null,
+      "old": null,
+      "merge": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b",
+      "final": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b",
+      "main": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/minimatch_9.0.7.json",
+      "proof": null,
+      "old": null,
+      "merge": "2406c8ccbcbe5f4d87998212d340222211cc1a3b",
+      "final": "2406c8ccbcbe5f4d87998212d340222211cc1a3b",
+      "main": "2406c8ccbcbe5f4d87998212d340222211cc1a3b"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_2.3.2.json",
+      "proof": null,
+      "old": null,
+      "merge": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f",
+      "final": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f",
+      "main": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_4.0.4.json",
+      "proof": null,
+      "old": null,
+      "merge": "71cbbe4a58ddde221f77662b57acf4965ba53963",
+      "final": "71cbbe4a58ddde221f77662b57acf4965ba53963",
+      "main": "71cbbe4a58ddde221f77662b57acf4965ba53963"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/playwright_1.55.1.json",
+      "proof": null,
+      "old": null,
+      "merge": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479",
+      "final": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479",
+      "main": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_6.1.3.json",
+      "proof": null,
+      "old": null,
+      "merge": "1652ff90ecb0122714101263b3de0a7e5a2038e5",
+      "final": "1652ff90ecb0122714101263b3de0a7e5a2038e5",
+      "main": "1652ff90ecb0122714101263b3de0a7e5a2038e5"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_7.1.6.json",
+      "proof": null,
+      "old": null,
+      "merge": "e159d742de90e3dceadb603f466fb6c1ac0bba57",
+      "final": "e159d742de90e3dceadb603f466fb6c1ac0bba57",
+      "main": "e159d742de90e3dceadb603f466fb6c1ac0bba57"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/source-map-js_1.2.2.json",
+      "proof": null,
+      "old": null,
+      "merge": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5",
+      "final": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5",
+      "main": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/ws_8.21.0.json",
+      "proof": null,
+      "old": null,
+      "merge": "1b7fe42fed0b6d42d1e774504a7ba75add17b037",
+      "final": "1b7fe42fed0b6d42d1e774504a7ba75add17b037",
+      "main": "1b7fe42fed0b6d42d1e774504a7ba75add17b037"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/yaml_2.8.3.json",
+      "proof": null,
+      "old": null,
+      "merge": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1",
+      "final": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1",
+      "main": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/npm-view/zod_4.6.6.json",
+      "proof": null,
+      "old": null,
+      "merge": "7c5e99597a1e1417c1c376ffc065d7b68e13993a",
+      "final": "7c5e99597a1e1417c1c376ffc065d7b68e13993a",
+      "main": "7c5e99597a1e1417c1c376ffc065d7b68e13993a"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/osv-crosscheck.json",
+      "proof": null,
+      "old": null,
+      "merge": "b255a7b83bcc6335c741ed35e8fac9538fc899bb",
+      "final": "b255a7b83bcc6335c741ed35e8fac9538fc899bb",
+      "main": "b255a7b83bcc6335c741ed35e8fac9538fc899bb"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/triage-matrix.json",
+      "proof": null,
+      "old": null,
+      "merge": "5f4961c8c214ea22f79d446c3163f723ecd0b74f",
+      "final": "5f4961c8c214ea22f79d446c3163f723ecd0b74f",
+      "main": "5f4961c8c214ea22f79d446c3163f723ecd0b74f"
+    },
+    {
+      "path": "docs/evidence/dependency-advisory-triage-1/validation.json",
+      "proof": null,
+      "old": null,
+      "merge": "982a7ee971a37fc6181e2e1e2c951e6d187e697d",
+      "final": "982a7ee971a37fc6181e2e1e2c951e6d187e697d",
+      "main": "982a7ee971a37fc6181e2e1e2c951e6d187e697d"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-1280.png",
+      "proof": null,
+      "old": null,
+      "merge": "9194041168f7af4b9bcd04e3bd3b21fa4c56c3aa",
+      "final": "9194041168f7af4b9bcd04e3bd3b21fa4c56c3aa",
+      "main": "9194041168f7af4b9bcd04e3bd3b21fa4c56c3aa"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "0b77c37325cb03c7b826e400f01c43df1a912fc6",
+      "final": "0b77c37325cb03c7b826e400f01c43df1a912fc6",
+      "main": "0b77c37325cb03c7b826e400f01c43df1a912fc6"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-360.png",
+      "proof": null,
+      "old": null,
+      "merge": "ad074e9bbc6cbd6d6e5cc10306297bd03484d29e",
+      "final": "ad074e9bbc6cbd6d6e5cc10306297bd03484d29e",
+      "main": "ad074e9bbc6cbd6d6e5cc10306297bd03484d29e"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-390.png",
+      "proof": null,
+      "old": null,
+      "merge": "74e7c9f11aab93a48521de855cb3502948ae900c",
+      "final": "74e7c9f11aab93a48521de855cb3502948ae900c",
+      "main": "74e7c9f11aab93a48521de855cb3502948ae900c"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/card-768.png",
+      "proof": null,
+      "old": null,
+      "merge": "9a005d558d909950d13fb1c41738aa9d3171b7b1",
+      "final": "9a005d558d909950d13fb1c41738aa9d3171b7b1",
+      "main": "9a005d558d909950d13fb1c41738aa9d3171b7b1"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt",
+      "proof": null,
+      "old": null,
+      "merge": "81a5ac8468c85f4c128753b37a28b7e3c5db9923",
+      "final": "81a5ac8468c85f4c128753b37a28b7e3c5db9923",
+      "main": "81a5ac8468c85f4c128753b37a28b7e3c5db9923"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-residence-green.txt",
+      "proof": null,
+      "old": null,
+      "merge": "d7f1170ad83b10a852d6f725fb27fbaa4bc9379b",
+      "final": "d7f1170ad83b10a852d6f725fb27fbaa4bc9379b",
+      "main": "d7f1170ad83b10a852d6f725fb27fbaa4bc9379b"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-residence-red.txt",
+      "proof": null,
+      "old": null,
+      "merge": "faa0d8eb36d3e3827af73773854159f523c56a24",
+      "final": "faa0d8eb36d3e3827af73773854159f523c56a24",
+      "main": "faa0d8eb36d3e3827af73773854159f523c56a24"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-absent-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "bdad19837803eec7009d3c94fbb590ef60b47c29",
+      "final": "bdad19837803eec7009d3c94fbb590ef60b47c29",
+      "main": "bdad19837803eec7009d3c94fbb590ef60b47c29"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-confirm-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "64a2d0344dcd79a53ba2f5158d3cb7bb596d6061",
+      "final": "64a2d0344dcd79a53ba2f5158d3cb7bb596d6061",
+      "main": "64a2d0344dcd79a53ba2f5158d3cb7bb596d6061"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-conflict-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "f3b5b4ed72220855debb48fc19b745cb227b1eb1",
+      "final": "f3b5b4ed72220855debb48fc19b745cb227b1eb1",
+      "main": "f3b5b4ed72220855debb48fc19b745cb227b1eb1"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-pending-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "16878a837d6e329a3a26230b0728f5c894f470db",
+      "final": "16878a837d6e329a3a26230b0728f5c894f470db",
+      "main": "16878a837d6e329a3a26230b0728f5c894f470db"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-rows-1280.png",
+      "proof": null,
+      "old": null,
+      "merge": "916f54b4a20bfc3ed177debbb5340b9fdeae8310",
+      "final": "916f54b4a20bfc3ed177debbb5340b9fdeae8310",
+      "main": "916f54b4a20bfc3ed177debbb5340b9fdeae8310"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-rows-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "e16f441b9815712da65669997053c8e533d78ea0",
+      "final": "e16f441b9815712da65669997053c8e533d78ea0",
+      "main": "e16f441b9815712da65669997053c8e533d78ea0"
+    },
+    {
+      "path": "docs/evidence/trip-traveller-snapshot-workflow-completion-1/state-unknown-320.png",
+      "proof": null,
+      "old": null,
+      "merge": "82ceb252bc4e9f536af8d41049a16aa2759b8a6b",
+      "final": "82ceb252bc4e9f536af8d41049a16aa2759b8a6b",
+      "main": "82ceb252bc4e9f536af8d41049a16aa2759b8a6b"
+    },
+    {
+      "path": "lib/country/ui.test.ts",
+      "proof": "fa0140a73b9d026bcbadd956f41f2e30892a4ee9",
+      "old": "fa0140a73b9d026bcbadd956f41f2e30892a4ee9",
+      "merge": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+      "final": "254106836ccf4fe396c2caefd78d96f17a9f459b",
+      "main": "254106836ccf4fe396c2caefd78d96f17a9f459b"
+    },
+    {
+      "path": "lib/readiness/preparation-premium-experience-5.test.ts",
+      "proof": "667bdb5502df8f94243614066aef2a827a64ca0c",
+      "old": "667bdb5502df8f94243614066aef2a827a64ca0c",
+      "merge": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+      "final": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc",
+      "main": "ea31b58b96eb64430db64d0765cbcbd322c9e4fc"
+    },
+    {
+      "path": "lib/readiness/trip-official-evaluations-server.test.ts",
+      "proof": "b8e032803fa63b286161e46c349d4eda50081d72",
+      "old": "b8e032803fa63b286161e46c349d4eda50081d72",
+      "merge": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "final": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "main": "310211af15a8cc6f17329d84a5d6b018aeb6f677"
+    },
+    {
+      "path": "lib/readiness/trip-traveller-snapshot-workflow-1.test.ts",
+      "proof": null,
+      "old": null,
+      "merge": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+      "final": "86ab38fe0330abde060bb3940dc12576ea4b81b9",
+      "main": "86ab38fe0330abde060bb3940dc12576ea4b81b9"
+    },
+    {
+      "path": "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+      "proof": null,
+      "old": null,
+      "merge": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+      "final": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+      "main": "9e203a28fc221557e9ff7af7b388c57b6b270455"
+    },
+    {
+      "path": "lib/traveller/account-registry-trip-copy.ts",
+      "proof": "2021cc965686d9f4b083bbf4a197804935548ba2",
+      "old": "2021cc965686d9f4b083bbf4a197804935548ba2",
+      "merge": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+      "final": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0",
+      "main": "7c1344a6a7bd3afd5fc80bb0811e13b63511b4e0"
+    },
+    {
+      "path": "scripts/dependency-advisory-triage-1/build-matrix.mjs",
+      "proof": null,
+      "old": null,
+      "merge": "26fe13d6718d6de49de1a8229088dc5519def1ca",
+      "final": "26fe13d6718d6de49de1a8229088dc5519def1ca",
+      "main": "26fe13d6718d6de49de1a8229088dc5519def1ca"
+    },
+    {
+      "path": "scripts/dependency-advisory-triage-1/inventory.mjs",
+      "proof": null,
+      "old": null,
+      "merge": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5",
+      "final": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5",
+      "main": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5"
+    },
+    {
+      "path": "scripts/dependency-advisory-triage-1/range.mjs",
+      "proof": null,
+      "old": null,
+      "merge": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87",
+      "final": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87",
+      "main": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87"
+    },
+    {
+      "path": "scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs",
+      "proof": null,
+      "old": null,
+      "merge": "fd8ce4365d44445f0d63f84941f48def934feea7",
+      "final": "fd8ce4365d44445f0d63f84941f48def934feea7",
+      "main": "fd8ce4365d44445f0d63f84941f48def934feea7"
+    },
+    {
+      "path": "scripts/dependency-advisory-triage-1/validate-evidence.mjs",
+      "proof": null,
+      "old": null,
+      "merge": "cea63f4d63d81f937fc916312f1a4df9326768df",
+      "final": "cea63f4d63d81f937fc916312f1a4df9326768df",
+      "main": "cea63f4d63d81f937fc916312f1a4df9326768df"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+      "proof": null,
+      "old": null,
+      "merge": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+      "final": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2",
+      "main": "bb2e8798f37ed3239cae6c9db4f92dc6f9fd3ba2"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+      "proof": null,
+      "old": null,
+      "merge": "6633d268c44be1ce4582a7538d73ab65e1443942",
+      "final": "6633d268c44be1ce4582a7538d73ab65e1443942",
+      "main": "6633d268c44be1ce4582a7538d73ab65e1443942"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+      "proof": null,
+      "old": null,
+      "merge": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+      "final": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24",
+      "main": "a5b6f5eccff58d7d2355c8d8c830094f729e8b24"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.test.ts",
+      "proof": null,
+      "old": null,
+      "merge": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+      "final": "544d75066057c9ac9710f244f0ded18b1e3c1247",
+      "main": "544d75066057c9ac9710f244f0ded18b1e3c1247"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+      "proof": null,
+      "old": null,
+      "merge": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+      "final": "8b8fb6ce6aad481905a866929dcd16b3626e3a41",
+      "main": "8b8fb6ce6aad481905a866929dcd16b3626e3a41"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+      "proof": null,
+      "old": null,
+      "merge": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+      "final": "7e9a42aa7912147228be8f560aba38089cc0eda3",
+      "main": "7e9a42aa7912147228be8f560aba38089cc0eda3"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+      "proof": null,
+      "old": null,
+      "merge": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+      "final": "bfb28ce34fd17221574a616695433cd63d36f1c7",
+      "main": "bfb28ce34fd17221574a616695433cd63d36f1c7"
+    },
+    {
+      "path": "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx",
+      "proof": null,
+      "old": null,
+      "merge": "bb535dce616901db03cad8ba1df7493aec877687",
+      "final": "bb535dce616901db03cad8ba1df7493aec877687",
+      "main": "bb535dce616901db03cad8ba1df7493aec877687"
+    }
+  ],
+  "contractPins": [
+    {
+      "path": "app/(admin)/admin/users/actions.ts",
+      "proof": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+      "old": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+      "merge": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+      "final": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+      "main": "bd30b9e108890e17f1d6dc32829c687c089958e1"
+    },
+    {
+      "path": "lib/auth/roles.ts",
+      "proof": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "old": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "merge": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "final": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "main": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d"
+    },
+    {
+      "path": "lib/auth/admin-guard.ts",
+      "proof": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "old": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "merge": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "final": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "main": "b650a5e25a4db6572bbb7267e3735a746649497b"
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "proof": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "old": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "merge": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "final": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "main": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18"
+    },
+    {
+      "path": "lib/api/suchfilter.ts",
+      "proof": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "old": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "merge": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "final": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "main": "db8037faf9bfefbaf7889804739807ad785d5624"
+    },
+    {
+      "path": "lib/api/datenbank-lesen.ts",
+      "proof": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "old": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "merge": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "final": "dc66e852527df8561f3ac4aa45744df9bd076c48",
+      "main": "dc66e852527df8561f3ac4aa45744df9bd076c48"
+    },
+    {
+      "path": "lib/admin/ladezustand.ts",
+      "proof": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "old": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "merge": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "final": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "main": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c"
+    },
+    {
+      "path": "lib/admin/profil-erstellt.ts",
+      "proof": "dac8e66c3469815c251f16f83415389e49299c2a",
+      "old": "dac8e66c3469815c251f16f83415389e49299c2a",
+      "merge": "dac8e66c3469815c251f16f83415389e49299c2a",
+      "final": "dac8e66c3469815c251f16f83415389e49299c2a",
+      "main": "dac8e66c3469815c251f16f83415389e49299c2a"
+    },
+    {
+      "path": "components/admin/Ladezustand.tsx",
+      "proof": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "old": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "merge": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "final": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "main": "483191e0d1f747b5a5a42a8fcdfa253f11464c85"
+    },
+    {
+      "path": "lib/formular/feldfehler.ts",
+      "proof": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+      "old": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+      "merge": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+      "final": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+      "main": "f2485b53fa0a61c562a90c35037464e9d9775eac"
+    },
+    {
+      "path": "package.json",
+      "proof": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "old": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "merge": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "final": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+      "main": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b"
+    },
+    {
+      "path": "package-lock.json",
+      "proof": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "old": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "merge": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "final": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+      "main": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+    },
+    {
+      "path": "tsconfig.json",
+      "proof": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "old": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "merge": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "final": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "main": "187583dcb17aed1abef60ebddf9b9be01a013641"
+    },
+    {
+      "path": "tailwind.config.js",
+      "proof": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "old": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "merge": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "final": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "main": "cae427453bff10090cabd2abd75bdacbf8df421e"
+    },
+    {
+      "path": "postcss.config.js",
+      "proof": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "old": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "merge": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "final": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+      "main": "43604e3f0fe5322dad23c4ea07e9d580f601a951"
+    },
+    {
+      "path": "styles/globals.css",
+      "proof": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "old": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "merge": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "final": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "main": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa"
+    },
+    {
+      "path": "scripts/server-only-test-register.mjs",
+      "proof": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "old": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "merge": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "final": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+      "main": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b"
+    },
+    {
+      "path": "lib/admin/profil-erstellt.test.ts",
+      "proof": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "old": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "merge": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "final": "b7bd4cca515603f16eee37b9d96958caa4408f08",
+      "main": "41a6c5297ce32e3670778eb82397ae1e6393fa76"
+    },
+    {
+      "path": "lib/next/request-api-compat.test.ts",
+      "proof": "235c98227a5b7386099398a25a65324256adefda",
+      "old": "235c98227a5b7386099398a25a65324256adefda",
+      "merge": "235c98227a5b7386099398a25a65324256adefda",
+      "final": "235c98227a5b7386099398a25a65324256adefda",
+      "main": "e988a387ea9467d0a1454454f7682d062c957a21"
+    }
+  ],
+  "mountedRepositoryPins": [
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-link.tsx",
+      "proof": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "old": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "merge": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "final": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+      "main": null
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-navigation.ts",
+      "proof": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "old": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "merge": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "final": "70db696b32b7f73e892224c1bc38235d369f1973",
+      "main": null
+    },
+    {
+      "path": "lib/utils.ts",
+      "proof": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "old": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "merge": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "final": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+      "main": "8b0917dce65ff5cadc370c442e8ea8541efebd48"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "proof": "0867744f763042699953f04c158502849d198ef1",
+      "old": "0867744f763042699953f04c158502849d198ef1",
+      "merge": "0867744f763042699953f04c158502849d198ef1",
+      "final": "0867744f763042699953f04c158502849d198ef1",
+      "main": "0867744f763042699953f04c158502849d198ef1"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "proof": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "old": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "merge": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "final": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "main": "80b5170e98a3bf328fd98a4a42ab45e83b503a18"
+    },
+    {
+      "path": "components/ui/input.tsx",
+      "proof": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "old": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "merge": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "final": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "main": "1b417e83b0f6b6305b5489226e10b28ed034b61f"
+    },
+    {
+      "path": "components/ui/dropdown-menu.tsx",
+      "proof": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "old": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "merge": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "final": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "main": "01eb442c145bf261ec6260abfe1614782735f6ee"
+    },
+    {
+      "path": "components/admin/Ladezustand.tsx",
+      "proof": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "old": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "merge": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "final": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "main": "483191e0d1f747b5a5a42a8fcdfa253f11464c85"
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/stubs/actions.ts",
+      "proof": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "old": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "merge": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "final": "ba3238c9a04829ab735a2265c771648232a9a996",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-search-navigation.ts",
+      "proof": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "old": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "merge": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "final": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+      "main": "03420ad48c98f828b37c1e6d7edc5bbf62ad8a1e"
+    },
+    {
+      "path": "lib/auth/roles.ts",
+      "proof": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "old": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "merge": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "final": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "main": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d"
+    },
+    {
+      "path": "lib/api/suchfilter.ts",
+      "proof": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "old": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "merge": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "final": "db8037faf9bfefbaf7889804739807ad785d5624",
+      "main": "db8037faf9bfefbaf7889804739807ad785d5624"
+    },
+    {
+      "path": "lib/admin/users-directory-query.ts",
+      "proof": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "old": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "merge": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "final": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+      "main": null
+    },
+    {
+      "path": "lib/admin/users-directory-presentation.ts",
+      "proof": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "old": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "merge": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "final": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+      "main": null
+    },
+    {
+      "path": "components/admin/UsersTable.tsx",
+      "proof": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "old": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "merge": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "final": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "main": "8c4e232a9aaaed8f7ac8539e329b421c14a2c81f"
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/harness.tsx",
+      "proof": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "old": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "merge": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "final": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "main": null
+    }
+  ],
+  "cssInputPins": [
+    {
+      "path": "components/admin/Ladezustand.tsx",
+      "proof": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "old": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "merge": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "final": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+      "main": "483191e0d1f747b5a5a42a8fcdfa253f11464c85"
+    },
+    {
+      "path": "components/admin/UsersTable.tsx",
+      "proof": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "old": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "merge": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "final": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+      "main": "8c4e232a9aaaed8f7ac8539e329b421c14a2c81f"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "proof": "0867744f763042699953f04c158502849d198ef1",
+      "old": "0867744f763042699953f04c158502849d198ef1",
+      "merge": "0867744f763042699953f04c158502849d198ef1",
+      "final": "0867744f763042699953f04c158502849d198ef1",
+      "main": "0867744f763042699953f04c158502849d198ef1"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "proof": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "old": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "merge": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "final": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+      "main": "80b5170e98a3bf328fd98a4a42ab45e83b503a18"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "proof": "b465428a13ef36c29bb980b136fa125c57fd4bf4",
+      "old": "b465428a13ef36c29bb980b136fa125c57fd4bf4",
+      "merge": "b465428a13ef36c29bb980b136fa125c57fd4bf4",
+      "final": "b465428a13ef36c29bb980b136fa125c57fd4bf4",
+      "main": "b465428a13ef36c29bb980b136fa125c57fd4bf4"
+    },
+    {
+      "path": "components/ui/checkbox.tsx",
+      "proof": "a1beb937f20f94db402ba89a81d4a932ce02e254",
+      "old": "a1beb937f20f94db402ba89a81d4a932ce02e254",
+      "merge": "a1beb937f20f94db402ba89a81d4a932ce02e254",
+      "final": "a1beb937f20f94db402ba89a81d4a932ce02e254",
+      "main": "a1beb937f20f94db402ba89a81d4a932ce02e254"
+    },
+    {
+      "path": "components/ui/dropdown-menu.tsx",
+      "proof": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "old": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "merge": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "final": "01eb442c145bf261ec6260abfe1614782735f6ee",
+      "main": "01eb442c145bf261ec6260abfe1614782735f6ee"
+    },
+    {
+      "path": "components/ui/feld.tsx",
+      "proof": "98d1e96349a4751509119d8f12429666b5413320",
+      "old": "98d1e96349a4751509119d8f12429666b5413320",
+      "merge": "98d1e96349a4751509119d8f12429666b5413320",
+      "final": "98d1e96349a4751509119d8f12429666b5413320",
+      "main": "98d1e96349a4751509119d8f12429666b5413320"
+    },
+    {
+      "path": "components/ui/input.tsx",
+      "proof": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "old": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "merge": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "final": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+      "main": "1b417e83b0f6b6305b5489226e10b28ed034b61f"
+    },
+    {
+      "path": "components/ui/label.tsx",
+      "proof": "5c6b91344bcf4d7e8fd64960cb4ae37e862d8d18",
+      "old": "5c6b91344bcf4d7e8fd64960cb4ae37e862d8d18",
+      "merge": "5c6b91344bcf4d7e8fd64960cb4ae37e862d8d18",
+      "final": "5c6b91344bcf4d7e8fd64960cb4ae37e862d8d18",
+      "main": "5c6b91344bcf4d7e8fd64960cb4ae37e862d8d18"
+    },
+    {
+      "path": "components/ui/scroll-row.tsx",
+      "proof": "5cfee9180fe5aad59d085f9afd1bf36c971ffa20",
+      "old": "5cfee9180fe5aad59d085f9afd1bf36c971ffa20",
+      "merge": "5cfee9180fe5aad59d085f9afd1bf36c971ffa20",
+      "final": "5cfee9180fe5aad59d085f9afd1bf36c971ffa20",
+      "main": "5cfee9180fe5aad59d085f9afd1bf36c971ffa20"
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/harness.tsx",
+      "proof": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "old": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "merge": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "final": "aa63678e2de70347845781f08657a30dfbfa574d",
+      "main": null
+    }
+  ],
+  "scannerQualification": {
+    "file": "lib/next/request-api-compat.test.ts",
+    "tests": [
+      "kein Caller reicht eine Factory-Promise als Client weiter",
+      "der Kompatibilitätsalias createServerClient bleibt unbenutzt als synchrone Hintertür"
+    ],
+    "changedIncomingInputs": [
+      "components/trips/GastArbeitsbereich.tsx",
+      "components/trips/KontoArbeitsbereich.tsx",
+      "components/trips/RegistryReiseUebernahme.tsx",
+      "components/trips/Reisevorbereitung.tsx",
+      "components/trips/TripWorkspace.tsx",
+      "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+      "lib/traveller/account-registry-trip-copy.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx"
+    ],
+    "earlier69NotInputIdentical": true,
+    "freshNativeAppRequired": true,
+    "separateRerunRecommended": false
+  },
+  "authority": {
+    "frozenHandlers": [
+      "editable",
+      "changeRole",
+      "toggleBan"
+    ],
+    "previousPreparationExactBodiesAgainst747": true,
+    "currentUsersTableBlobUnchanged": true,
+    "assignableSemanticsPreserved": true,
+    "assignablePreviousDiffOnlyWhitespaceAndArrowParentheses": true,
+    "taskBlob": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb",
+    "planBlob": "888407e808559463e22b0dbc2392bef09d01f48d",
+    "D_EX1": "Only accepted Admin Users assertions in lib/next/request-api-compat.test.ts and formatter assertions in lib/admin/profil-erstellt.test.ts; both file blobs unchanged by sync."
+  },
+  "limitations": [
+    "Rebinding preserves earlier execution head/runtime/synthetic seams; it is not a new execution.",
+    "Independent mounted packet retains disclosed feldFehlerId/ariaBeschrieben extraction boundary.",
+    "Fresh native App/Auth/Preview and root final review remain required; this packet does not independently inspect those runs/deployment.",
+    "Unknown stored role/status fallback and historical #608 proof remain bounded exclusions.",
+    "No signed-in Next routing, hosted Supabase, SQL/RLS or Production claim."
+  ],
+  "receiptProvenance": {
+    "oldGatesBlob": "eb62aa6c91a0b8130b37182be88f59ab64f63f43",
+    "oldGatesMatchesExact878": true,
+    "allHistoricalGatesFieldsUnchanged": true,
+    "onlyNewTopLevelField": [
+      "mainSync1"
+    ],
+    "mountedReceiptBlob": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+    "mountedReceiptMatchesOldAndFinal": true,
+    "authorMounted": {
+      "head": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+      "node": "v22.23.4",
+      "playwright": "1.55.0",
+      "dirty": "",
+      "cases": 44,
+      "rerun": false
+    },
+    "independentMounted": {
+      "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+      "node": "v24.22.1",
+      "cases": 5,
+      "recordedAtUtc": "2026-10-25T17:59:43.081437+00:00",
+      "cssSHA256": "fc289d597820e35b93bc09344a0c77f70b1750b3af111774c839683db88a4639",
+      "rerun": false
+    },
+    "scannerInputListMatchesActualDelta": true,
+    "historical69ExplicitlyNotInputIdentical": true,
+    "newReceiptClaimsMatchExactIdentity": true
+  },
+  "noteSourceChecks": [
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "expectedBlob": "67d14fbac4b71244e8e4835a9ff5bcde3220e359",
+      "contentGitBlob": "67d14fbac4b71244e8e4835a9ff5bcde3220e359",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_REPORT_2026-10-25.md",
+      "expectedBlob": "b29bef8ba995f77d84934b7247a42806d2f8ce4f",
+      "contentGitBlob": "b29bef8ba995f77d84934b7247a42806d2f8ce4f",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "expectedBlob": "145c6fe97c13082684fb4e8cb69fa02b88eceaea",
+      "contentGitBlob": "145c6fe97c13082684fb4e8cb69fa02b88eceaea",
+      "matches": true
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_STATUS_2026-10-25.md",
+      "expectedBlob": "c30988d293b80189628144817041357585174fde",
+      "contentGitBlob": "c30988d293b80189628144817041357585174fde",
+      "matches": true
+    },
+    {
+      "path": "docs/evidence/admin-user-directory-completion-1/gates.json",
+      "expectedBlob": "d52a412647134c83de9b805fc124c1ce9454f96a",
+      "contentGitBlob": "d52a412647134c83de9b805fc124c1ce9454f96a",
+      "matches": true
+    }
+  ],
+  "bundleManifest": {
+    "path": "/tmp/r107-admin-r1-review/core-r2-878/bundle-inputs.json",
+    "sha256": "8bb57ee43211a48cde5dbf5841dbb1466ba4781120a8f57a218d74b15a7b6a5f",
+    "matchesOriginalVerificationRecord": true,
+    "originalExecutionHead": "878212adf0384bba02cd1ce217041a673bfdaf84",
+    "totalInputs": 1714,
+    "dependencyInputs": 1697,
+    "repositoryInputs": [
+      {
+        "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-link.tsx",
+        "recordedSHA256": "fbb67afb7c89508b1c2cf66b8f7b3cfa1fcedd6abe754a665affcae695f84fb5",
+        "proofGitBlob": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+        "oldGitBlob": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+        "finalGitBlob": "3465b906f9cc7159be7974c602fdcd0b29d66dc2",
+        "unchanged": true
+      },
+      {
+        "path": "docs/evidence/admin-user-directory-completion-1/stubs/next-navigation.ts",
+        "recordedSHA256": "5c9c422f6642c310c7bd5d31607b0bb6b367da4c8000b4f7ca99ad561c97a3c3",
+        "proofGitBlob": "70db696b32b7f73e892224c1bc38235d369f1973",
+        "oldGitBlob": "70db696b32b7f73e892224c1bc38235d369f1973",
+        "finalGitBlob": "70db696b32b7f73e892224c1bc38235d369f1973",
+        "unchanged": true
+      },
+      {
+        "path": "lib/utils.ts",
+        "recordedSHA256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+        "proofGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "oldGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "finalGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "unchanged": true
+      },
+      {
+        "path": "components/ui/badge.tsx",
+        "recordedSHA256": "982ae3bfd0d118365b7058d7070d1467ea8a3f0d2e5bf2beecc9c346f9818394",
+        "proofGitBlob": "0867744f763042699953f04c158502849d198ef1",
+        "oldGitBlob": "0867744f763042699953f04c158502849d198ef1",
+        "finalGitBlob": "0867744f763042699953f04c158502849d198ef1",
+        "unchanged": true
+      },
+      {
+        "path": "components/ui/button.tsx",
+        "recordedSHA256": "49bceb9be3f2bb1c670b1697795dff420af81b099f87bbb1aeb315345d6eec74",
+        "proofGitBlob": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+        "oldGitBlob": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+        "finalGitBlob": "80b5170e98a3bf328fd98a4a42ab45e83b503a18",
+        "unchanged": true
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "recordedSHA256": "b1162378c3845f8442e15c214fcbf4f553d40db7a4bfce8ef5b590b3ad5d211b",
+        "proofGitBlob": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+        "oldGitBlob": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+        "finalGitBlob": "1b417e83b0f6b6305b5489226e10b28ed034b61f",
+        "unchanged": true
+      },
+      {
+        "path": "components/ui/dropdown-menu.tsx",
+        "recordedSHA256": "3e27c8d07b2990b461d8c75487444c37a24ed1211ac146ba10b609095e6a1509",
+        "proofGitBlob": "01eb442c145bf261ec6260abfe1614782735f6ee",
+        "oldGitBlob": "01eb442c145bf261ec6260abfe1614782735f6ee",
+        "finalGitBlob": "01eb442c145bf261ec6260abfe1614782735f6ee",
+        "unchanged": true
+      },
+      {
+        "path": "components/admin/Ladezustand.tsx",
+        "recordedSHA256": "d40e50957c82768ee12c376430a80fea2b0b3fc804a8d41f79d38f5218de02ee",
+        "proofGitBlob": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+        "oldGitBlob": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+        "finalGitBlob": "483191e0d1f747b5a5a42a8fcdfa253f11464c85",
+        "unchanged": true
+      },
+      {
+        "path": "docs/evidence/admin-user-directory-completion-1/stubs/actions.ts",
+        "recordedSHA256": "ea88007194f0de1169d23b039990cd3685f24fd0d3bb98619dda8b953123f0ae",
+        "proofGitBlob": "ba3238c9a04829ab735a2265c771648232a9a996",
+        "oldGitBlob": "ba3238c9a04829ab735a2265c771648232a9a996",
+        "finalGitBlob": "ba3238c9a04829ab735a2265c771648232a9a996",
+        "unchanged": true
+      },
+      {
+        "path": "lib/admin/users-search-navigation.ts",
+        "recordedSHA256": "4ddef9d48028d878946a82eb880265e366d849a88b6c7b3a40d354a419c979bb",
+        "proofGitBlob": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+        "oldGitBlob": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+        "finalGitBlob": "2ff59bf3a74440904330201f0999665fdc07b7cf",
+        "unchanged": true
+      },
+      {
+        "path": "lib/auth/roles.ts",
+        "recordedSHA256": "d3c4d08a1f8d2b772ce73c7c236c5c6f70c81a074c31d97a0eb54809001c4c15",
+        "proofGitBlob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+        "oldGitBlob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+        "finalGitBlob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+        "unchanged": true
+      },
+      {
+        "path": "lib/api/suchfilter.ts",
+        "recordedSHA256": "e7d8c41e64d8a26c6bb4631124187b534d702660826c02d7961142aa332146ab",
+        "proofGitBlob": "db8037faf9bfefbaf7889804739807ad785d5624",
+        "oldGitBlob": "db8037faf9bfefbaf7889804739807ad785d5624",
+        "finalGitBlob": "db8037faf9bfefbaf7889804739807ad785d5624",
+        "unchanged": true
+      },
+      {
+        "path": "lib/admin/users-directory-query.ts",
+        "recordedSHA256": "7c9a4ef9cfeeccce48db0a4bd4ed33273ccaae89be74e6fc2d55237a73fabe3a",
+        "proofGitBlob": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+        "oldGitBlob": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+        "finalGitBlob": "1725f2eb3445e61ee16ee8dd0fdb589e107a89ee",
+        "unchanged": true
+      },
+      {
+        "path": "lib/admin/users-directory-presentation.ts",
+        "recordedSHA256": "95fc1544bee9e1195075b04204ef762fbb553630b030c4ec867f558bb953f1bf",
+        "proofGitBlob": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+        "oldGitBlob": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+        "finalGitBlob": "2c0cd849912a0555ce4d7779f4ba3536aa93e3e5",
+        "unchanged": true
+      },
+      {
+        "path": "components/admin/UsersTable.tsx",
+        "recordedSHA256": "5cf01834ed0d768a51fc12ad31d7b23844c790f55d279e66be054df3668e7379",
+        "proofGitBlob": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+        "oldGitBlob": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+        "finalGitBlob": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+        "unchanged": true
+      },
+      {
+        "path": "docs/evidence/admin-user-directory-completion-1/harness.tsx",
+        "recordedSHA256": "5e8b2c2afe7dccbe1d7aefcbb1ec898b8e835fca9cae8cd005bd59602aaa3727",
+        "proofGitBlob": "aa63678e2de70347845781f08657a30dfbfa574d",
+        "oldGitBlob": "aa63678e2de70347845781f08657a30dfbfa574d",
+        "finalGitBlob": "aa63678e2de70347845781f08657a30dfbfa574d",
+        "unchanged": true
+      }
+    ],
+    "customInputs": [
+      {
+        "path": "root-helper-extract.ts",
+        "recordedSHA256": "9e68aaeb50bc63e408fccc97baafdc2c9c2b362a59292eaa05547408fc6ba039",
+        "boundary": "Disclosed exact feldFehlerId/ariaBeschrieben extraction; not a full trip-schema dependency proof."
+      }
+    ],
+    "preSyncPreparationObservation": "All 1714 recorded input SHA-256 values were independently compared with their existing local bytes during preparation and matched. That byte scan and the browser cases were not repeated in this integration review."
+  },
+  "performed": {
+    "tests": false,
+    "browserRuns": false,
+    "builds": false,
+    "sourceChanges": false,
+    "externalWrites": false,
+    "ready": false,
+    "merge": false,
+    "finalPass": false
+  },
+  "conclusion": "No source or provenance finding in the bounded integration delta. Historical evidence can be rebound to identical scoped inputs; fresh native App/Auth/Preview and root final review remain separate."
+}

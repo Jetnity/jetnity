@@ -1,0 +1,15 @@
+{
+  "head": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+  "tree": "d732487b09c3245c9c22e38b38bb030c8aa181cf",
+  "rootSuppliedBase": "30119c5affbd391cce31f2ceade2e4b068dfbcba",
+  "rootSuppliedAhead": 18,
+  "rootSuppliedBehind": 0,
+  "treeSource": "/workspace/scratch/4b268945c5cd/r107-w1343-exact-tree.json",
+  "treeSourceSha256": "d0af9c3296d43973a5c0c7b9bc11312fb7017f4a2fb40040083a74a307d07161",
+  "treeEntries": 8359,
+  "truncated": false,
+  "rootBindingSource": "/workspace/scratch/4b268945c5cd/r107-w1343-root-binding.json",
+  "rootBindingSha256": "8f21ed3fd624af5fdc839fc4aeb67b0dbc93682c71cd95e1b0e2c184dc490ea8",
+  "timestampUTC": "2026-10-25T20:31:59.831361+00:00",
+  "scope": "Verified final-tree Tailwind input snapshot and historical byte binding; no full checkout, browser run or acceptance"
+}

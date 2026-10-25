@@ -1,0 +1,229 @@
+{
+  "archiveTransformation": "Documentation-only projection of existing recorded JSON: dependency input rows omitted; all remaining keys and values retained; no execution.",
+  "originalPath": "/tmp/r107-world-r1-review/layout-c68/bundle-inputs.json",
+  "originalBytes": 350217,
+  "originalSha256": "32e507554cf0f455547b4213152d5976d2b1effb0e125b30df7fc2b7c074414f",
+  "originalInputCount": 1743,
+  "retainedInputCount": 54,
+  "record": {
+    "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+    "inputs": [
+      {
+        "path": "/tmp/r107-world-r1-review/lib/country/copy.ts",
+        "sha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/country/katalog.ts",
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/country/darstellung.ts",
+        "sha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/country/land-feld.ts",
+        "sha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/country/LandFeld.tsx",
+        "sha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/utils.ts",
+        "sha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/suche/Suchliste.tsx",
+        "sha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/places/domain.ts",
+        "sha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/places/pruefen.ts",
+        "sha256": "1e6e6bc58321ab4c02de859a121dc54754cc708d9d5bdea0f2acc490dfcf85c8"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/places/auswahl.ts",
+        "sha256": "6fde5c624550e09029ea8cbf9b148aa5d45a42c9d43a898b83d121f84629415e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/digest.ts",
+        "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+        "sha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/types/trips.ts",
+        "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/day-stage-assignment.ts",
+        "sha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/bezeichnungen.ts",
+        "sha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/buchung.ts",
+        "sha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/mietwagen-felder.ts",
+        "sha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/mobilitaet-felder.ts",
+        "sha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/tage.ts",
+        "sha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/domain.ts",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/traveller-kontext.ts",
+        "sha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/traveller-anfrage.ts",
+        "sha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/readiness/schema.ts",
+        "sha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/route/schema.ts",
+        "sha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/trips/schema.ts",
+        "sha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/formular/feldfehler.ts",
+        "sha256": "04a7b38200432cce38ee02bf05c762beaa52fb0b09fc0d745593817b96759108"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/suche/anfrage.ts",
+        "sha256": "f16fb8a8ac684b53189313b5d726c922f4543a1bea0a1f7c857b5654a257b2b1"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/suche/lage.ts",
+        "sha256": "aaf9ae4f6e851898411fa26ae99fbeac2552231d4c16d918e7458228501941ef"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/suche/tastatur.ts",
+        "sha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/places/OrtSuche.tsx",
+        "sha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/besuche-copy.ts",
+        "sha256": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/besuche-eingabe.ts",
+        "sha256": "e7e92ab4ac3907b36a0e518518655b604ad44cb832691b09065cc5e89209c29e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/visit-date-precision-1/zeitfeld.ts",
+        "sha256": "8b6b4f21dc60ec7e36871249c3118905e345efcef5dd87f720bd750a68ba85c0"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/layout-c68/components/account/AccountBesuchFormular.tsx",
+        "sha256": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/besuche.ts",
+        "sha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/world-map.ts",
+        "sha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/world-map-ansicht.ts",
+        "sha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/welt-laender.ts",
+        "sha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/account/WeltZustaende.tsx",
+        "sha256": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/presentation.ts",
+        "sha256": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/world-map-geografie.ts",
+        "sha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/viewport.ts",
+        "sha256": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerMap.tsx",
+        "sha256": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerDetails.tsx",
+        "sha256": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/account/world-explorer-1/WorldExplorer.tsx",
+        "sha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/components/account/AccountWeltKarte.tsx",
+        "sha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/navigation.ts",
+        "sha256": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/account-visit-workflow.ts",
+        "sha256": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/core-r2-a547/components/account/useAccountVisitWorkflow.ts",
+        "sha256": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/account-world-visit-management-premium-1.ts",
+        "sha256": "9ef8eaac99d64b223c72c9f0f9c03dd25dc584f94519085d982fb81836622839"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts",
+        "sha256": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/core-r2-a547/components/account/AccountBesuche.tsx",
+        "sha256": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/lib/account/welt-ansicht.ts",
+        "sha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0"
+      },
+      {
+        "path": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/mount.tsx",
+        "sha256": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9"
+      }
+    ]
+  }
+}

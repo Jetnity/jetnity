@@ -1,0 +1,40 @@
+import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+const OUT = dirname(fileURLToPath(import.meta.url))
+const REPO = join(OUT, 'source')
+if (process.cwd() !== REPO) throw new Error('CSS cwd must be the exact actual-final source root')
+const proofBytes = readFileSync(join(OUT, 'source-proof.json'))
+const proof = JSON.parse(proofBytes)
+const sha = (bytes) => createHash('sha256').update(bytes).digest('hex')
+if (proof.actualFinalHead !== 'dda52b660369a436fa1eb25ff69c0f076254661a' || proof.actualFinalTree !== '503752c1bee097f5bba47487061415730429cc57' || !proof.completeConfiguredCssScan) throw new Error('Wrong actual-final source identity')
+writeFileSync(join(OUT, 'css-compile-started.json'), JSON.stringify({head: proof.actualFinalHead, tree: proof.actualFinalTree, at: new Date().toISOString(), node: process.version, sourceProofSha256: sha(proofBytes)}) + '\n', {flag:'wx'})
+const require = createRequire(join(REPO, 'package.json'))
+const postcss = require('postcss')
+const nesting = require('tailwindcss/nesting')
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
+const from = join(REPO, 'styles/globals.css')
+const config = require(join(REPO, 'tailwind.config.js'))
+// Original M compileCss pipeline and unmodified config/content; no W raw-form override.
+const result = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(from, 'utf8'), {from})
+const css = Buffer.from(result.css)
+writeFileSync(join(OUT, 'final.css'), css, {flag:'wx'})
+const receipt = {
+  actualFinalHead: proof.actualFinalHead, actualFinalTree: proof.actualFinalTree,
+  generatedAtUtc: new Date().toISOString(), node: process.version,
+  sourceRoot: REPO, sourceProofSha256: sha(proofBytes),
+  command: `${process.execPath} ${fileURLToPath(import.meta.url)}`, cwd: process.cwd(),
+  compilerScriptSha256: sha(readFileSync(fileURLToPath(import.meta.url))),
+  pipeline: 'postcss([tailwindcss/nesting(), tailwindcss(exactConfig), autoprefixer()]).process(exactGlobals, {from})',
+  configuredContent: config.content, rawContentOverride: false,
+  configuredScanCount: proof.configuredCssScanCount,
+  cssPath: join(OUT, 'final.css'), cssSha256: sha(css), cssBytes: css.length,
+  postcssWarnings: result.warnings().map(w => ({plugin:w.plugin, text:w.text, line:w.line, column:w.column})),
+  historicalCssOutputAvailable: false, historicalReconstruction: false,
+  scope: 'One fresh actual-final CSS compilation only; no layout/browser/tests/native acceptance',
+}
+writeFileSync(join(OUT, 'css-compile-receipt.json'), JSON.stringify(receipt, null, 2) + '\n', {flag:'wx'})
+console.log(JSON.stringify({head:receipt.actualFinalHead,cssSha256:receipt.cssSha256,cssBytes:receipt.cssBytes,warnings:receipt.postcssWarnings.length,node:receipt.node}))

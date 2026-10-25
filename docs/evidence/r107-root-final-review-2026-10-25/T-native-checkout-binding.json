@@ -1,0 +1,19 @@
+{
+  "kind": "Historical native checkout metadata reconstruction; no new execution",
+  "observedAt": "2026-10-25T20:00:05Z",
+  "pr": 1017,
+  "run": 40220752327,
+  "appJob": 121251791085,
+  "logSource": "https://github.com/Jetnity/jetnity/actions/runs/40220752327/job/121251791085",
+  "actualCheckout": "43ab9de4d825a9bd39d99435db545dde2f0e1e69",
+  "checkoutTree": "0bda1d7556dcbda64e77600a1658bf934b84b583",
+  "checkoutParents": [
+    "a74c443c6be3f064f150fcf021ab6154bda325e5",
+    "fe434ae7ffcafedb0c2e9f7c528b84d96941fe13"
+  ],
+  "acceptedCandidate": "fe434ae7ffcafedb0c2e9f7c528b84d96941fe13",
+  "acceptedTree": "0bda1d7556dcbda64e77600a1658bf934b84b583",
+  "candidateTreeEqualsActualCheckout": true,
+  "commitMetadataSource": "https://api.github.com/repos/Jetnity/jetnity/commits/43ab9de4d825a9bd39d99435db545dde2f0e1e69",
+  "source": "Root read the retained original native log's git log -1 stdout and separately fetched that exact commit metadata; no guessed PR checkout and no test rerun."
+}

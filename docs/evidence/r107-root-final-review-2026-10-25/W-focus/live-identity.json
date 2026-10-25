@@ -1,0 +1,30 @@
+{
+  "pr": 1018,
+  "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+  "base": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "state": "open",
+  "draft": true,
+  "tree": "32242ff4f3e1cb0ce922d960e95d959f67a3ddf1",
+  "mergeBase": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "ahead": 14,
+  "behind": 0,
+  "files": 51,
+  "delivery": {
+    "comment": 6400974498,
+    "updatedAt": "2026-10-25T18:00:35Z",
+    "session": "bc-af293d35-d2af-43d8-b193-9fbaab7c351b",
+    "author": "Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1",
+    "model": "grok-4.7-high-fast",
+    "status": "Explicit final-head delivery and STOP; author packet complete, layout correction still missing"
+  },
+  "immutable": [
+    {
+      "path": "docs/JETNITY_ACCOUNT_WORLD_VISIT_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+      "sha": "771313c5c3ee601598d41e83e9ad2e1b6f6b73a4"
+    },
+    {
+      "path": "docs/JETNITY_ACCOUNT_WORLD_VISIT_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "sha": "9fb3c8f242014761af64aa342a3222cf7d15f180"
+    }
+  ]
+}

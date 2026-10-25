@@ -1,0 +1,59 @@
+{
+  "recordedAtUtc": "2026-10-25T17:59:43.081437+00:00",
+  "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+  "node": "v24.22.1",
+  "exitCode": 0,
+  "caseCount": 5,
+  "allAssertionsPassed": true,
+  "previousDPacketUnchanged": {
+    "root-filter-ownership-probe.mjs": true,
+    "root-filter-ownership-results.json": true,
+    "root-probe-bundle.js": true,
+    "root-probe.css": true,
+    "FOLLOWUP_FILTER_OWNERSHIP.md": true
+  },
+  "frozenFunctions": {
+    "baseline": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+    "names": [
+      "editable",
+      "changeRole",
+      "toggleBan"
+    ],
+    "exactTextIdentical": true
+  },
+  "cssSha256": "fc289d597820e35b93bc09344a0c77f70b1750b3af111774c839683db88a4639",
+  "artifacts": {
+    "REVIEW.md": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/REVIEW.md",
+      "sha256": "998cf46cdccbf9bd86de5c98aebac7ea2c1c79b9262a452383c89dfd8749165d"
+    },
+    "bounded-probe.mjs": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/bounded-probe.mjs",
+      "sha256": "da5fbeec35ade86545c19c309b469aa07a97ec1457262b4dcbd54fe31b52f49b"
+    },
+    "bounded-probe-results.json": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/bounded-probe-results.json",
+      "sha256": "aa346fe5cff5bd9eac0fdf125cf2c6bb9b60972875b759828531aa3fd2d693ee"
+    },
+    "bounded-probe-bundle.js": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/bounded-probe-bundle.js",
+      "sha256": "3003cbfc622ee7b811c0ebca93df7d6c9e78200bd6cda0fa53b0c5b3d7066001"
+    },
+    "bundle-inputs.json": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/bundle-inputs.json",
+      "sha256": "8bb57ee43211a48cde5dbf5841dbb1466ba4781120a8f57a218d74b15a7b6a5f"
+    },
+    "source-manifest.json": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/source-manifest.json",
+      "sha256": "18b206b95177bb12702fc9cb2232ff3ad313afa8754587529341fb805479c9fd"
+    },
+    "source-blob-verification.json": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/source-blob-verification.json",
+      "sha256": "e8d181e114e85da8e2c221065eeab37149da618b40ca5900398273caac4281e9"
+    },
+    "live-identity.json": {
+      "path": "/tmp/r107-admin-r1-review/core-r2-878/live-identity.json",
+      "sha256": "618833942f1f13be3c7e54a1bd857abfb2e90119e713b8bc42c1d40ef7b53271"
+    }
+  }
+}

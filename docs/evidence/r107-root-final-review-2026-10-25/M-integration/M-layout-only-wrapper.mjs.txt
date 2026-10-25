@@ -1,0 +1,227 @@
+// PREPARATION ONLY — NOT RUN. No CSS compilation or source bundling occurs here.
+// Future use requires root authorization and actual-final source/artifact bindings.
+// Derivation and differences: M-layout-only-wrapper-notes.md.
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { createServer } from 'node:http'
+import { createRequire } from 'node:module'
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
+
+const proofPath = 'scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts'
+const proofSha = 'd21a218b8de9f166ba74d9c6b4cb0ba710db1160f467491df50bb2843d539159'
+const runPath = 'scripts/my-trips-collection-archive-workflow-completion-1/run.mjs'
+const runSha = 'b54db4543a2ff898724d9e70fe8e7e86642a5dd6caad548ab27ba2d474d12a85'
+const sha = (bytes) => createHash('sha256').update(bytes).digest('hex')
+const blob = (bytes) => createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+const refuse = (message) => { throw new Error(`M layout wrapper refused: ${message}`) }
+const hex = (value, length) => typeof value === 'string' && new RegExp(`^[0-9a-f]{${length}}$`).test(value) && !/^0+$/.test(value)
+const absolute = (value) => typeof value === 'string' && isAbsolute(value) && resolve(value) === value
+function pinnedFile(value, label) {
+  if (!value || !absolute(value.path) || !hex(value.sha256, 64)) refuse(`${label} needs an absolute path and SHA256`)
+  const bytes = readFileSync(value.path)
+  if (sha(bytes) !== value.sha256) refuse(`${label} bytes differ from the binding`)
+  return bytes
+}
+
+// All guards run before a browser import/start, server or output-directory creation.
+if (process.argv.length !== 3 || !absolute(process.argv[2])) refuse('supply exactly one absolute actual-final binding JSON path')
+const bindingBytes = readFileSync(process.argv[2])
+const binding = JSON.parse(bindingBytes.toString('utf8'))
+if (binding.authorization !== 'ROOT_AUTHORIZED_ACTUAL_FINAL_M_LAYOUT_ONLY') refuse('placeholder/unapproved binding')
+if (!hex(binding.actualFinalHead, 40) || !hex(binding.actualFinalTree, 40)) refuse('actual final head/tree are missing')
+if (!absolute(binding.sourceRoot) || !absolute(binding.dependencyRoot) || !absolute(binding.outputDirectory)) refuse('source/dependency/output paths are not bound')
+const sourceRoot = realpathSync(binding.sourceRoot)
+const dependencyRoot = realpathSync(binding.dependencyRoot)
+const sourceProofBytes = pinnedFile(binding.sourceProof, 'source proof')
+const sourceProof = JSON.parse(sourceProofBytes.toString('utf8'))
+if (sourceProof.actualFinalHead !== binding.actualFinalHead || sourceProof.actualFinalTree !== binding.actualFinalTree || sourceProof.sourceRoot !== binding.sourceRoot) refuse('source proof identity mismatch')
+if (sourceProof.completeConfiguredCssScan !== true || !Array.isArray(sourceProof.files) || sourceProof.files.length === 0) refuse('complete actual-final source/scan binding is absent')
+const sourcePins = new Map()
+for (const item of sourceProof.files) {
+  if (typeof item.path !== 'string' || isAbsolute(item.path) || item.path.split('/').some((part) => part === '..' || part === '.' || part === '') || item.path.includes('\\') || sourcePins.has(item.path)) refuse('invalid/duplicate source path')
+  if (!hex(item.blob, 40) || !hex(item.sha256, 64)) refuse(`source pin missing: ${item.path}`)
+  const bytes = readFileSync(join(sourceRoot, item.path))
+  if (blob(bytes) !== item.blob || sha(bytes) !== item.sha256) refuse(`source bytes differ: ${item.path}`)
+  sourcePins.set(item.path, item)
+}
+for (const required of [
+  'app/(public)/reisen/page.tsx', 'components/trips/MyTripsCollection.tsx',
+  'styles/globals.css', 'tailwind.config.js', 'postcss.config.js', 'package.json', 'package-lock.json', 'tsconfig.json',
+  proofPath, runPath, 'scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx',
+  'scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts',
+  'scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts',
+]) if (!sourcePins.has(required)) refuse(`required source pin absent: ${required}`)
+if (sourcePins.get(proofPath).sha256 !== proofSha || sourcePins.get(runPath).sha256 !== runSha) refuse('retained test/runner changed; extraction needs renewed review')
+
+const css = pinnedFile(binding.css, 'final CSS')
+const harnessJs = pinnedFile(binding.bundle, 'final harness bundle')
+const artifactReceiptBytes = pinnedFile(binding.artifactReceipt, 'artifact provenance receipt')
+const artifactReceipt = JSON.parse(artifactReceiptBytes.toString('utf8'))
+if (artifactReceipt.actualFinalHead !== binding.actualFinalHead || artifactReceipt.actualFinalTree !== binding.actualFinalTree || artifactReceipt.sourceProofSha256 !== binding.sourceProof.sha256 || artifactReceipt.cssSha256 !== binding.css.sha256 || artifactReceipt.bundleSha256 !== binding.bundle.sha256) refuse('CSS/bundle provenance does not bind the actual-final source proof')
+if (artifactReceipt.completeBundleInputsBound !== true || artifactReceipt.dependencyRoot !== binding.dependencyRoot || artifactReceipt.packageLockSha256 !== sourcePins.get('package-lock.json').sha256) refuse('bundle/dependency binding incomplete')
+const dependencyVersions = {}
+for (const name of ['postcss', 'tailwindcss', 'autoprefixer', 'tailwind-scrollbar-hide', 'tailwindcss-animate', 'esbuild', 'playwright', 'tsx', 'next', 'react', 'react-dom']) {
+  const installed = JSON.parse(readFileSync(join(dependencyRoot, name, 'package.json'), 'utf8')).version
+  if (artifactReceipt.dependencyVersions?.[name] !== installed) refuse(`dependency receipt differs: ${name}`)
+  dependencyVersions[name] = installed
+}
+const launch = binding.browserLaunch
+if (!launch || Boolean(launch.channel) === Boolean(launch.executablePath)) refuse('choose exactly one explicit browser channel or executable')
+if (launch.channel && launch.channel !== 'chrome') refuse('the original channel is chrome; another browser needs separate review')
+if (launch.executablePath && (!absolute(launch.executablePath) || !existsSync(launch.executablePath))) refuse('explicit browser executable is unavailable')
+const output = binding.outputDirectory
+if (!output.startsWith('/tmp/r107-mytrips-r3-review/integration-final-') || !output.includes(binding.actualFinalHead.slice(0, 8)) || existsSync(output)) refuse('output must be a fresh actual-final integration directory')
+const outputFromSource = relative(sourceRoot, output)
+if (outputFromSource === '' || (!outputFromSource.startsWith('..') && !isAbsolute(outputFromSource))) refuse('output must be outside staged source')
+
+const require = createRequire(join(dependencyRoot, 'playwright/package.json'))
+const { chromium } = require('playwright')
+mkdirSync(dirname(output), { recursive: true })
+mkdirSync(output)
+const screens = join(output, 'screens')
+mkdirSync(screens)
+
+// Exact run.mjs HTML/body and local routes; CSS and bundle are prebuilt bound inputs.
+const html = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sammlung</title><link rel="stylesheet" href="/style.css"></head><body class="bg-canvas text-ink-800"><div id="root"></div><script src="/harness.js"></script></body></html>'
+const server = createServer((req, res) => {
+  const pfad = new URL(req.url || '/', 'http://127.0.0.1').pathname
+  if (pfad === '/harness.js') {
+    res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' })
+    res.end(harnessJs)
+    return
+  }
+  if (pfad === '/style.css') {
+    res.writeHead(200, { 'content-type': 'text/css; charset=utf-8', 'cache-control': 'no-store' })
+    res.end(css)
+    return
+  }
+  if (pfad === '/') {
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' })
+    res.end(html)
+    return
+  }
+  res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' })
+  res.end('not found')
+})
+await new Promise((resolveListen, rejectListen) => {
+  server.once('error', rejectListen)
+  server.listen(0, '127.0.0.1', resolveListen)
+})
+const origin = `http://127.0.0.1:${server.address().port}`
+const faelle = []
+function merken(name, ok, detail) { faelle.push({ name, ok, detail }) }
+
+// Existing helpers: only TypeScript annotations/cast removed; behavior unchanged.
+async function oeffnen(browser) {
+  return oeffnenBei(browser, '')
+}
+
+async function oeffnenBei(browser, query) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+  await page.clock.install({ time: new Date('2026-10-25T12:00:00Z') })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto(query ? `${origin}/?${query}` : origin)
+  await page.waitForSelector('[data-sammlung-wurzel]')
+  return page
+}
+
+async function ruhen(page) {
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)))),
+  )
+}
+
+async function ergebnis(page, teil) {
+  await page.evaluate((stueck) => {
+    const fenster = window
+    fenster.__sammlung.setErgebnis({ ...fenster.__sammlung.anfang, ...stueck })
+  }, teil)
+  await ruhen(page)
+}
+
+let browser
+let browserVersion = null
+let failure = null
+try {
+  browser = await chromium.launch({
+    ...(launch.channel ? { channel: launch.channel } : { executablePath: launch.executablePath }),
+    headless: true,
+  })
+  browserVersion = browser.version()
+  // BEGIN unchanged existing layout block (indentation only).
+  const bild = await oeffnen(browser)
+  assert.equal(await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-marke'), null)
+  const bildId = await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-id')
+  await bild.evaluate(() => {
+    const knoten = document.querySelector('[data-sammlung-wurzel]')
+    if (knoten) knoten.setAttribute('data-sammlung-marke', 'bleibt')
+  })
+  const lang = 'Reise '.repeat(20).trim()
+  const viele = Array.from({ length: 48 }, (_, index) => ({
+    id: `00000000-0000-4000-8000-${index.toString(16).padStart(12, '0')}`,
+    title: index === 0 ? lang : `Reise ${index}`,
+    origin: index === 0 ? lang : 'Zürich',
+    startDate: null,
+    endDate: null,
+    travellers: 1,
+    currency: 'CHF',
+    budgetAmount: null,
+    status: 'planned',
+    updatedAt: '2026-10-25T12:00:00.000000Z',
+    archivePreviousStatus: null,
+    stages: [],
+    stageCount: 0,
+    dayCount: 0,
+    itemCount: 0,
+  }))
+  await ergebnis(bild, { zeilen: viele, hatWeiter: false, naechsterCursor: null })
+  assert.equal(await bild.locator('[data-reisen-kalender="wartet"]').count(), 0)
+  assert.equal(await bild.getByRole('heading', { name: 'Ohne Datum' }).count(), 1)
+  await bild.evaluate(() => {
+    document.documentElement.style.fontSize = '32px'
+  })
+  for (const breite of [320, 390, 768, 1440]) {
+    await bild.setViewportSize({ width: breite, height: 900 })
+    const ueberlauf = await bild.evaluate(() => {
+      const knoten = document.querySelector('[data-sammlung-wurzel]')
+      if (!knoten) return true
+      return knoten.scrollWidth > knoten.clientWidth + 1
+    })
+    assert.equal(ueberlauf, false, `Überlauf bei ${breite}`)
+    await bild.screenshot({ path: join(screens, `sammlung-${breite}.png`) })
+  }
+  assert.equal(await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-marke'), 'bleibt')
+  assert.equal(await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-id'), bildId)
+  merken('Viewports, Schrift und dichte Seite', true)
+  await bild.close()
+  // END unchanged existing layout block.
+} catch (error) {
+  failure = error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : { message: String(error) }
+  process.exitCode = 1
+} finally {
+  if (browser) {
+    try { await browser.close() } catch (error) {
+      failure ??= { message: `Browser cleanup failed: ${String(error)}` }
+      process.exitCode = 1
+    }
+  }
+  await new Promise((resolveClose) => server.close(resolveClose))
+  writeFileSync(join(output, 'layout-only-receipt.json'), JSON.stringify({
+    kind: 'existing-M-layout-block-only',
+    formalAcceptance: false,
+    actualFinalHead: binding.actualFinalHead,
+    actualFinalTree: binding.actualFinalTree,
+    executionTimeUtc: new Date().toISOString(),
+    bindingPath: process.argv[2], bindingSha256: sha(bindingBytes),
+    sourceProof: binding.sourceProof,
+    css: binding.css, bundle: binding.bundle,
+    artifactReceipt: binding.artifactReceipt,
+    extractedFrom: { path: proofPath, sha256: proofSha, originalLines: '570-614' },
+    node: process.version, browserVersion, browserLaunch: launch, dependencyVersions,
+    status: failure ? 'execution-failed' : 'existing-layout-block-completed',
+    cases: faelle, failure,
+    scope: 'Only the existing 48-card / root-font-32px / 320,390,768,1440 layout block. No ownership/query/action/native/hosted acceptance.',
+    history: 'The earlier 18-group author run, 15 independent ownership observations and query observations remain historical; this is no replay of those suites.',
+  }, null, 2) + '\n', { flag: 'wx' })
+}

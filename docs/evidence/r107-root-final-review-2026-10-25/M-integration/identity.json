@@ -1,0 +1,43 @@
+{
+  "head": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "tree": "503752c1bee097f5bba47487061415730429cc57",
+  "treeEntries": 8408,
+  "truncated": false,
+  "parents": [
+    "444a8c254e11688120f7f2b6e49193746932a865",
+    "70b878a8fbe23f0dd455175a53de74175b2b976d"
+  ],
+  "base": "70b878a8fbe23f0dd455175a53de74175b2b976d",
+  "ahead": 16,
+  "behind": 0,
+  "ownPaths": 50,
+  "incomingPaths": 197,
+  "ownChangedNotes": [
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "sha": "7ed216597aba4e17366823f4c908a313fb53fd48"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+      "sha": "c387dca4055afa6b751de9cde0e0cc3436be7624"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "sha": "41080b32771c5b5fbf914529b1474f9b3467d342"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+      "sha": "556e080440f5b631fa6cd58844595a366c778432"
+    }
+  ],
+  "extra": [],
+  "overlap": [],
+  "incomingErrors": [],
+  "rootRecords": {
+    "tree": "10ebbf7b325bff31bcd632125067e961228fb3ff2e9659c73809b6d0107fe3e5",
+    "binding": "fa12dea9e1f4f87410b7abb2ad355fdfec40f1cc8fbdb2ae97d6da877e728d46"
+  },
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "browserAuthorized": false,
+  "sourceRemoteFetches": 0
+}

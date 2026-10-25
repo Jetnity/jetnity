@@ -1,0 +1,482 @@
+{
+  "reviewer": "/root/dependency_review read-only",
+  "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+  "node": "v24.22.1",
+  "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+  "expectedAuthorCss": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+  "cssMatchesAuthor": true,
+  "bundleSha256": "f233b6e625cb93bf5b070d51205e315029b963033e9327cc02fd324852d7a796",
+  "boundary": "Actual current product files, existing project CSS and isolated action/navigation shims. Locally intercepted invalid-domain page. No hosted/native acceptance.",
+  "findings": [
+    {
+      "name": "Escape closes own editor and returns focus with zero actions",
+      "pass": true,
+      "focused": {
+        "tag": "BUTTON",
+        "id": "",
+        "dataFocus": "bearbeiten:00000000-0000-4000-8000-000000000001",
+        "surface": "ereignis:00000000-0000-4000-8000-000000000001"
+      },
+      "editorCount": 0,
+      "actionCount": 0,
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Escape",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Pointer cancel closes own editor and returns focus with zero actions",
+      "pass": true,
+      "focused": {
+        "tag": "BUTTON",
+        "id": "",
+        "dataFocus": "bearbeiten:00000000-0000-4000-8000-000000000001",
+        "surface": "ereignis:00000000-0000-4000-8000-000000000001"
+      },
+      "editorCount": 0,
+      "actionCount": 0,
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Search create draft and newer visit retain their focus ownership",
+      "pass": true,
+      "search": {
+        "focused": {
+          "tag": "INPUT",
+          "id": "account-besuche-suche",
+          "dataFocus": null
+        },
+        "editorCount": 1
+      },
+      "create": {
+        "focused": {
+          "tag": "INPUT",
+          "id": "",
+          "dataFocus": null,
+          "surface": "anlegen"
+        },
+        "editorCount": 1
+      },
+      "newer": {
+        "focused": {
+          "tag": "BUTTON",
+          "id": "",
+          "dataFocus": "bearbeiten:00000000-0000-4000-8000-000000000002",
+          "surface": "ereignis:00000000-0000-4000-8000-000000000002"
+        },
+        "oldEditorCount": 0,
+        "newEditorCount": 1
+      },
+      "actionCount": 0,
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Escape",
+          "trusted": true
+        },
+        {
+          "key": "Escape",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Revoke cancel retains own return focus with zero actions",
+      "pass": true,
+      "focused": {
+        "tag": "BUTTON",
+        "id": "",
+        "dataFocus": "widerrufen:00000000-0000-4000-8000-000000000001",
+        "surface": "ereignis:00000000-0000-4000-8000-000000000001"
+      },
+      "confirmationCount": 0,
+      "actionCount": 0,
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Actual Enter pair in edit submits once",
+      "pass": true,
+      "calls": [
+        {
+          "id": 1,
+          "name": "aendern",
+          "argument": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "placeId": "geonames:2267057",
+            "countryCode": null,
+            "jahr": 2017,
+            "monat": null,
+            "tag": null
+          }
+        }
+      ],
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Actual Enter pair in create submits once",
+      "pass": true,
+      "calls": [
+        {
+          "id": 1,
+          "name": "bestaetigen",
+          "argument": {
+            "placeId": null,
+            "countryCode": "PT",
+            "jahr": null,
+            "monat": null,
+            "tag": null
+          }
+        }
+      ],
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Actual Enter pair in revoke confirmation submits once",
+      "pass": true,
+      "calls": [
+        {
+          "id": 1,
+          "name": "widerrufen",
+          "argument": {
+            "id": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "keys": [
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        }
+      ]
+    },
+    {
+      "name": "Root32 editor footer containment inside actual card and form",
+      "pass": false,
+      "metrics": [
+        {
+          "viewport": 320,
+          "rootFont": "32px",
+          "article": {
+            "left": 0,
+            "right": 320,
+            "top": 19771.46875,
+            "bottom": 22736.46875,
+            "width": 320,
+            "height": 2965,
+            "scrollWidth": 318,
+            "clientWidth": 318
+          },
+          "form": {
+            "left": 25,
+            "right": 295,
+            "top": 20205.46875,
+            "bottom": 22711.46875,
+            "width": 270,
+            "height": 2506,
+            "scrollWidth": 268,
+            "clientWidth": 268
+          },
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "left": 58,
+              "right": 262,
+              "top": 22478.46875,
+              "bottom": 22566.46875,
+              "width": 204,
+              "height": 88,
+              "scrollWidth": 204,
+              "clientWidth": 204,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            },
+            {
+              "text": "Abbrechen",
+              "left": 58,
+              "right": 262,
+              "top": 22590.46875,
+              "bottom": 22678.46875,
+              "width": 204,
+              "height": 88,
+              "scrollWidth": 202,
+              "clientWidth": 202,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            }
+          ],
+          "sectionOverflow": 0,
+          "documentOverflow": 0
+        },
+        {
+          "viewport": 390,
+          "rootFont": "32px",
+          "article": {
+            "left": 0,
+            "right": 390,
+            "top": 14973.609375,
+            "bottom": 17538.609375,
+            "width": 390,
+            "height": 2565,
+            "scrollWidth": 388,
+            "clientWidth": 388
+          },
+          "form": {
+            "left": 25,
+            "right": 365,
+            "top": 15407.609375,
+            "bottom": 17513.609375,
+            "width": 340,
+            "height": 2106,
+            "scrollWidth": 338,
+            "clientWidth": 338
+          },
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "left": 58,
+              "right": 332,
+              "top": 17280.609375,
+              "bottom": 17368.609375,
+              "width": 274,
+              "height": 88,
+              "scrollWidth": 274,
+              "clientWidth": 274,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            },
+            {
+              "text": "Abbrechen",
+              "left": 58,
+              "right": 332,
+              "top": 17392.609375,
+              "bottom": 17480.609375,
+              "width": 274,
+              "height": 88,
+              "scrollWidth": 272,
+              "clientWidth": 272,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            }
+          ],
+          "sectionOverflow": 0,
+          "documentOverflow": 0
+        },
+        {
+          "viewport": 768,
+          "rootFont": "32px",
+          "article": {
+            "left": 0,
+            "right": 376,
+            "top": 8036.78125,
+            "bottom": 10705.78125,
+            "width": 376,
+            "height": 2669,
+            "scrollWidth": 576,
+            "clientWidth": 374
+          },
+          "form": {
+            "left": 25,
+            "right": 351,
+            "top": 8470.78125,
+            "bottom": 10680.78125,
+            "width": 326,
+            "height": 2210,
+            "scrollWidth": 551,
+            "clientWidth": 324
+          },
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "left": 66,
+              "right": 300.5625,
+              "top": 10551.78125,
+              "bottom": 10639.78125,
+              "width": 234.5625,
+              "height": 88,
+              "scrollWidth": 235,
+              "clientWidth": 235,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            },
+            {
+              "text": "Abbrechen",
+              "left": 324.5625,
+              "right": 576.578125,
+              "top": 10551.78125,
+              "bottom": 10639.78125,
+              "width": 252.015625,
+              "height": 88,
+              "scrollWidth": 250,
+              "clientWidth": 250,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 200.578125,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 225.578125
+            }
+          ],
+          "sectionOverflow": 0,
+          "documentOverflow": 0
+        },
+        {
+          "viewport": 1440,
+          "rootFont": "32px",
+          "article": {
+            "left": 0,
+            "right": 469.328125,
+            "top": -1776.109375,
+            "bottom": 612.890625,
+            "width": 469.328125,
+            "height": 2389,
+            "scrollWidth": 576,
+            "clientWidth": 467
+          },
+          "form": {
+            "left": 25,
+            "right": 444.328125,
+            "top": -1342.109375,
+            "bottom": 587.890625,
+            "width": 419.328125,
+            "height": 1930,
+            "scrollWidth": 551,
+            "clientWidth": 417
+          },
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "left": 66,
+              "right": 300.5625,
+              "top": 458.890625,
+              "bottom": 546.890625,
+              "width": 234.5625,
+              "height": 88,
+              "scrollWidth": 235,
+              "clientWidth": 235,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 0,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 0
+            },
+            {
+              "text": "Abbrechen",
+              "left": 324.5625,
+              "right": 576.578125,
+              "top": 458.890625,
+              "bottom": 546.890625,
+              "width": 252.015625,
+              "height": 88,
+              "scrollWidth": 250,
+              "clientWidth": 250,
+              "outsideCardLeft": 0,
+              "outsideCardRight": 107.25,
+              "outsideFormLeft": 0,
+              "outsideFormRight": 132.25
+            }
+          ],
+          "sectionOverflow": 0,
+          "documentOverflow": 0
+        }
+      ],
+      "actionCount": 0,
+      "keys": []
+    }
+  ],
+  "screens": [
+    {
+      "file": "editor-card-768.png",
+      "viewport": 768,
+      "rootFont": 32,
+      "target": "[data-besuch]:first",
+      "state": "open editor, dense40, first12 visible",
+      "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+      "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79"
+    },
+    {
+      "file": "editor-viewport-768.png",
+      "viewport": 768,
+      "rootFont": 32,
+      "capture": "viewport after attempted scroll to cancel",
+      "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+      "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79"
+    },
+    {
+      "file": "editor-card-1440.png",
+      "viewport": 1440,
+      "rootFont": 32,
+      "target": "[data-besuch]:first",
+      "state": "open editor, dense40, first12 visible",
+      "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+      "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79"
+    },
+    {
+      "file": "editor-viewport-1440.png",
+      "viewport": 1440,
+      "rootFont": 32,
+      "capture": "viewport after attempted scroll to cancel",
+      "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+      "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79"
+    }
+  ]
+}

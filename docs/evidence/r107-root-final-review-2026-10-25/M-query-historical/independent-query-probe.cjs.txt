@@ -1,0 +1,175 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const crypto = require('node:crypto');
+const { PostgrestClient } = require('@supabase/postgrest-js');
+const query = require('./lib/trips/reisen-sammlung-abfrage.ts');
+const { reisenSammlungAusParametern } = require('./lib/trips/reisen-sammlung-daten.ts');
+
+const head = '863b7f3b879eaa1723cee57879eda521ecd223e9';
+const baseline = 'a74c443c6be3f064f150fcf021ab6154bda325e5';
+const id = '00000000-0000-4000-8000-000000000001';
+const time = '2026-10-25T12:00:00.123456Z';
+const report = { head, baseline, node: process.version, network: 'None; supplied PostgrestClient fetch is an in-process callback', cases: [] };
+
+async function check(name, work) {
+  const detail = await work();
+  report.cases.push({ name, result: 'satisfied', detail });
+}
+
+function transport(responder) {
+  const calls = [];
+  const client = new PostgrestClient('https://read-only-review.invalid', {
+    fetch: async function offlineFetch(input) {
+      const url = new URL(input.toString());
+      assert.equal(url.origin, 'https://read-only-review.invalid');
+      assert.equal(url.pathname, '/trips');
+      calls.push(url);
+      const rows = responder(url);
+      return new Response(JSON.stringify(rows), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    },
+  });
+  return { client, calls };
+}
+
+function encode(fields) { return Buffer.from(JSON.stringify(fields)).toString('base64url'); }
+function micros(stamp) {
+  const matched = /^2026-10-25T12:00:00\.(\d{1,6})Z$/.exec(stamp);
+  assert.ok(matched, stamp);
+  return Number(matched[1].padEnd(6, '0'));
+}
+
+function unquote(text) {
+  assert.equal(text[0], '"');
+  assert.equal(text.at(-1), '"');
+  let decoded = '';
+  for (let i = 1; i < text.length - 1; i += 1) {
+    let char = text[i];
+    if (char === '\\') {
+      char = text[++i];
+      assert.ok(char === '\\' || char === '"');
+    } else assert.notEqual(char, '"');
+    decoded += char;
+  }
+  return decoded;
+}
+
+async function main() {
+  await check('actual PostgREST builder preserves both independently quoted search and keyset filters', async () => {
+    const needle = 'a,"\\.[]()*+?^$|{}%_';
+    const cursor = query.cursorCodieren({ q: needle, archiv: 'offen', zeit: time, id });
+    assert.ok(cursor);
+    const tx = transport(() => []);
+    const result = await reisenSammlungAusParametern({ q: needle, archiv: 'offen', cursor }, tx.client);
+    assert.equal(result.ungueltig, false);
+    assert.equal(tx.calls.length, 1);
+    const url = tx.calls[0];
+    assert.deepEqual(Array.from(url.searchParams.keys()), ['select', 'status', 'or', 'or', 'order', 'limit']);
+    assert.equal(url.searchParams.get('status'), 'neq.archived');
+    assert.equal(url.searchParams.get('order'), 'updated_at.desc,id.desc');
+    assert.equal(url.searchParams.get('limit'), '49');
+    assert.deepEqual(url.searchParams.getAll('or'), [`(${query.suchOder(needle)})`, `(${query.keysetOder(time, id)})`]);
+    return { queries: 1, logicalOrParameters: 2, limit: 49, order: url.searchParams.get('order') };
+  });
+
+  await check('251 stable rows with tie groups spanning page boundaries and distinct microseconds appear exactly once', async () => {
+    const rows = Array.from({ length: 251 }, (_, i) => ({
+      id: `00000000-0000-4000-8000-${i.toString(16).padStart(12, '0')}`,
+      title: `Trip ${i}`, origin: null, start_date: null, end_date: null,
+      travellers: 1, currency: 'CHF', budget_amount: null, status: 'planned',
+      updated_at: i < 130 ? '2026-10-25T12:00:00.100001Z' : (i % 2 ? '2026-10-25T12:00:00.1Z' : '2026-10-25T12:00:00.100000Z'),
+      metadata: null, trip_stages: [], trip_days: [{ count: 0 }], trip_items: [{ count: 0 }],
+    }));
+    const compare = (a, b) => micros(b.updated_at) - micros(a.updated_at) || (a.id < b.id ? 1 : a.id > b.id ? -1 : 0);
+    const expected = rows.slice().sort(compare).map(row => row.id);
+    const tx = transport(url => {
+      assert.equal(url.searchParams.get('order'), 'updated_at.desc,id.desc');
+      assert.equal(url.searchParams.get('limit'), '49');
+      let selected = rows.slice().sort(compare);
+      const filters = url.searchParams.getAll('or');
+      assert.ok(filters.length <= 1);
+      if (filters.length) {
+        const match = /^\(updated_at\.lt\."([^"]+)",and\(updated_at\.eq\."([^"]+)",id\.lt\."([^"]+)"\)\)$/.exec(filters[0]);
+        assert.ok(match, filters[0]);
+        assert.equal(match[1], match[2]);
+        const boundary = micros(match[1]);
+        selected = selected.filter(row => micros(row.updated_at) < boundary || (micros(row.updated_at) === boundary && row.id < match[3]));
+      }
+      return selected.slice(0, 49);
+    });
+    const seen = [], sizes = [], boundaryTexts = [];
+    let cursor;
+    for (let page = 0; page < 8; page += 1) {
+      const result = await reisenSammlungAusParametern({ cursor }, tx.client);
+      assert.equal(result.problem, null);
+      assert.equal(result.ungueltig, false);
+      sizes.push(result.zeilen.length);
+      seen.push(...result.zeilen.map(row => row.id));
+      if (!result.hatWeiter) break;
+      assert.ok(result.naechsterCursor);
+      cursor = result.naechsterCursor;
+      const decoded = JSON.parse(Buffer.from(cursor, 'base64url').toString());
+      assert.equal(decoded.t, result.zeilen.at(-1).updatedAt);
+      assert.equal(decoded.i, result.zeilen.at(-1).id);
+      boundaryTexts.push(decoded.t);
+    }
+    assert.deepEqual(seen, expected);
+    assert.equal(new Set(seen).size, 251);
+    assert.deepEqual(sizes, [48, 48, 48, 48, 48, 11]);
+    assert.equal(tx.calls.length, 6);
+    return { total: seen.length, unique: new Set(seen).size, pageSizes: sizes, queries: tx.calls.length, boundaryTexts };
+  });
+
+  await check('hand-crafted malformed cursor payloads and repeated parameters make zero transport calls', async () => {
+    const fields = { v: 1, q: '', a: 'alle', t: time, i: id };
+    const invalid = [
+      ...['2026-02-29T12:00:00Z','2026-04-31T12:00:00Z','2026-10-25T24:00:00Z','2026-10-25T12:00:60Z','2026-10-25T12:00:00.1234567Z','2026-10-25T12:00:00+16:00','2026-10-25T12:00:00+15:60','0000-01-01T00:00:00Z'].map(t => ({ cursor: encode({ ...fields, t }) })),
+      ...['\n','\r','\u2028','\u2029','\r\n'].flatMap(suffix => [{ cursor: encode({ ...fields, t: time + suffix }) }, { cursor: encode({ ...fields, i: id + suffix }) }]),
+      { cursor: encode({ ...fields, i: 'FFFFFFFF-ffff-ffff-ffff-ffffffffffff' }) },
+      { cursor: encode({ ...fields, v: '1' }) },
+      { cursor: encode({ ...fields, extra: true }) },
+      { cursor: encode({ ...fields, q: 'mismatch' }) },
+      { cursor: 'x'.repeat(627) }, { q: ['a','b'] }, { archiv: ['alle','offen'] }, { cursor: [encode(fields), encode(fields)] },
+    ];
+    const tx = transport(() => { throw new Error('Malformed request crossed validation'); });
+    for (const input of invalid) assert.equal((await reisenSammlungAusParametern(input, tx.client)).ungueltig, true);
+    assert.equal(tx.calls.length, 0);
+    return { inputs: invalid.length, queries: tx.calls.length };
+  });
+
+  await check('quoted search round-trips all meta characters without introducing operators', async () => {
+    const symbols = '\\.+*?^$()[]{}|%,_"-:=!<>界😀';
+    const cases = [...symbols, symbols, '*'.repeat(120), '\\'.repeat(120), '界'.repeat(120)];
+    for (const needle of cases) {
+      const wire = query.suchOder(needle);
+      const boundary = wire.indexOf(',origin.imatch.');
+      assert.ok(boundary > 0);
+      const titleQuote = wire.slice('title.imatch.'.length, boundary);
+      const originQuote = wire.slice(boundary + ',origin.imatch.'.length);
+      assert.equal(titleQuote, originQuote);
+      const pattern = unquote(titleQuote);
+      let literal = '';
+      for (let i = 0; i < pattern.length; i += 1) {
+        if (pattern[i] === '\\') literal += pattern[++i];
+        else {
+          assert.equal('.+*?^$()[]{}|'.includes(pattern[i]), false, pattern);
+          literal += pattern[i];
+        }
+      }
+      assert.equal(literal, needle);
+    }
+    return { inputs: cases.length, postgresExecution: false, claim: 'Wire grammar and literal encoding only' };
+  });
+
+  const unchanged = JSON.parse(fs.readFileSync('./source-transfer.json', 'utf8'));
+  report.sourceBlobs = unchanged.map(file => {
+    const bytes = fs.readFileSync(file.path);
+    const sha = crypto.createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
+    assert.equal(sha, file.sha, file.path);
+    return { path: file.path, sha };
+  });
+  report.status = 'independent checks satisfied, not Technical-Lead acceptance';
+  fs.writeFileSync('independent-query-probe.json', JSON.stringify(report, null, 2) + '\n');
+  console.log(JSON.stringify({ ...report, sourceBlobs: `${report.sourceBlobs.length} exact candidate blobs verified unchanged` }, null, 2));
+}
+
+main().catch(error => { console.error(error); process.exitCode = 1; });

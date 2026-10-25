@@ -1,0 +1,38 @@
+{
+  "name": "a residence-only save keeps the loaded citizenship UUID and its passport relation",
+  "records": {
+    "red": {
+      "file": "/tmp/r107-trip-residence-final-review/red/scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+      "fileSha256": "9eb7ae0d32a0af9138248144def0cd94bfd115148160d88ba1de3be5393320e0",
+      "testSha256": "9ae99d4bf91fdbf2eda47b43de4ef92da6dc94f9b85db5b6dff3d4a43a8bd92e",
+      "fixtureSha256": "f704ca37c5b4622e161ec7e1ec9aff07a2d4f062cb34b304faabcddb542b9744",
+      "interactionSha256": "5cdf1b45c98a4ed9c943953cf15beb470a987d79c9870b9c87c4ac5de232fded",
+      "assertions": [
+        "assert.equal(payload?.citizenships[0]?.clientRef, STAATSBUERGERSCHAFT, sichtbar)",
+        "assert.equal(payload?.documents[0]?.citizenshipClientRef, STAATSBUERGERSCHAFT, sichtbar)",
+        "assert.equal(payload?.residenceCountryCode, 'IT', sichtbar)"
+      ],
+      "assertionSha256": "08e37fc50131bece32105cc6d4e20a71f9ba38c3ae066ad677afa9f861f679e0",
+      "testText": "test('a residence-only save keeps the loaded citizenship UUID and its passport relation', { timeout: 120_000 }, async () => {\n    const reise = beispielreise({\n      id: 'trip-residence-uuid',\n      travellers: 1,\n      party: [reisender()],\n    })\n    const { page, schliessen } = await oeffnen(browser, bundle, reise)\n    try {\n      await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung' }).click()\n      await page.waitForSelector('[data-workspace-modus=\"vorbereitung\"]')\n      const karte = page.locator('[data-preparation-traveller=\"traveller:1\"]')\n      await karte.getByText('Angaben bearbeiten', { exact: true }).click()\n      await karte.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).selectOption('IT')\n      const speichern = karte.getByRole('button', { name: 'Angaben speichern', exact: true })\n      await speichern.focus()\n      await speichern.press('Enter')\n      await page.waitForFunction(() => window.__SNAPSHOT__.payloads.length === 1)\n      const payload = await page.evaluate(() => window.__SNAPSHOT__.payloads[0])\n      const sichtbar = JSON.stringify(payload)\n      assert.equal(payload?.citizenships[0]?.clientRef, STAATSBUERGERSCHAFT, sichtbar)\n      assert.equal(payload?.documents[0]?.citizenshipClientRef, STAATSBUERGERSCHAFT, sichtbar)\n      assert.equal(payload?.residenceCountryCode, 'IT', sichtbar)\n    } finally {\n      await schliessen()\n    }\n  })"
+    },
+    "final": {
+      "file": "/tmp/r107-trip-residence-final-review/final/scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts",
+      "fileSha256": "cfc4cf8389c86da4481fdc0ecdab40c387c3c17cb12c85290bb2a409030625d4",
+      "testSha256": "307eaa79c2ab3474891a50ea9dbc460210da1f82ecbf716f023652200a6da9f9",
+      "fixtureSha256": "f704ca37c5b4622e161ec7e1ec9aff07a2d4f062cb34b304faabcddb542b9744",
+      "interactionSha256": "5cdf1b45c98a4ed9c943953cf15beb470a987d79c9870b9c87c4ac5de232fded",
+      "assertions": [
+        "assert.equal(payload?.citizenships[0]?.clientRef, STAATSBUERGERSCHAFT, sichtbar)",
+        "assert.equal(payload?.documents[0]?.citizenshipClientRef, STAATSBUERGERSCHAFT, sichtbar)",
+        "assert.equal(payload?.residenceCountryCode, 'IT', sichtbar)"
+      ],
+      "assertionSha256": "08e37fc50131bece32105cc6d4e20a71f9ba38c3ae066ad677afa9f861f679e0",
+      "testText": "test('a residence-only save keeps the loaded citizenship UUID and its passport relation', { timeout: 120_000 }, async () => {\n    const reise = beispielreise({\n      id: 'trip-residence-uuid',\n      travellers: 1,\n      party: [reisender()],\n    })\n    const { page, schliessen } = await oeffnen(browser, bundle, reise, css)\n    try {\n      await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung' }).click()\n      await page.waitForSelector('[data-workspace-modus=\"vorbereitung\"]')\n      const karte = page.locator('[data-preparation-traveller=\"traveller:1\"]')\n      await karte.getByText('Angaben bearbeiten', { exact: true }).click()\n      await karte.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).selectOption('IT')\n      const speichern = karte.getByRole('button', { name: 'Angaben speichern', exact: true })\n      await speichern.focus()\n      await speichern.press('Enter')\n      await page.waitForFunction(() => window.__SNAPSHOT__.payloads.length === 1)\n      const payload = await page.evaluate(() => window.__SNAPSHOT__.payloads[0])\n      const sichtbar = JSON.stringify(payload)\n      assert.equal(payload?.citizenships[0]?.clientRef, STAATSBUERGERSCHAFT, sichtbar)\n      assert.equal(payload?.documents[0]?.citizenshipClientRef, STAATSBUERGERSCHAFT, sichtbar)\n      assert.equal(payload?.residenceCountryCode, 'IT', sichtbar)\n    } finally {\n      await schliessen()\n    }\n  })"
+    }
+  },
+  "redEqualsHistoricalFirstGreen": true,
+  "fixturesEqual": true,
+  "interactionsAndAssertionsEqual": true,
+  "assertionsEqual": true,
+  "onlyTestBodyDifferenceIsCSSArgument": true
+}

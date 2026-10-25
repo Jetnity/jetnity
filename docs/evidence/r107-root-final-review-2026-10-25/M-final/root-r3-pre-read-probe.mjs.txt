@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict'
+import {createRequire} from 'node:module'
+import {writeFileSync} from 'node:fs'
+const require=createRequire(import.meta.url)
+const query=require('./lib/trips/reisen-sammlung-abfrage.ts')
+const reader=require('./lib/trips/reisen-sammlung-daten.ts')
+const outcomes=[]
+for(const parameter of [{archiv:''},{cursor:''}]){
+ let fromCalls=0
+ const client={from(){fromCalls+=1;throw new Error('Invalid input entered from()')}}
+ const request=query.sammlungAnfrageAus(parameter)
+ assert.equal(request.ok,false)
+ const result=await reader.reisenSammlungAusParametern(parameter,client)
+ assert.equal(fromCalls,0)
+ assert.equal(result.ungueltig,true)
+ assert.deepEqual(result.zeilen,[])
+ assert.equal(result.problem,null)
+ const raw=new URLSearchParams(parameter)
+ const expected='/reisen?'+raw.toString()
+ assert.equal(result.adresse,expected)
+ assert.equal(query.kanonischeAdresse(raw),expected)
+ outcomes.push({parameter,parserAccepted:request.ok,fromCalls,invalid:result.ungueltig,address:result.adresse})
+}
+const empty=query.sammlungAnfrageAus({q:''})
+assert.equal(empty.ok,true)
+assert.equal(empty.q,'')
+assert.equal(query.sammlungHref(empty),'/reisen')
+assert.equal(query.kanonischeAdresse(new URLSearchParams('q=')),'/reisen')
+outcomes.push({parameter:{q:''},parserAccepted:empty.ok,address:query.sammlungHref(empty)})
+const receipt={head:'444a8c254e11688120f7f2b6e49193746932a865',runtime:process.version,boundary:'actual candidate parser and reader; supplied from() trap; existing server-only test loader; no hosted client called',outcomes}
+writeFileSync('root-r3-pre-read.json',JSON.stringify(receipt,null,2))
+console.log(JSON.stringify(receipt,null,2))

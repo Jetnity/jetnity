@@ -1,0 +1,347 @@
+{
+  "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+  "node": "v24.22.1",
+  "source": "Actual current UsersTable; retained unchanged query/UI/harness/action/navigation stubs and existing project CSS; previous exact helper extraction boundary retained",
+  "bundleSha256": "3003cbfc622ee7b811c0ebca93df7d6c9e78200bd6cda0fa53b0c5b3d7066001",
+  "cssSha256": "fc289d597820e35b93bc09344a0c77f70b1750b3af111774c839683db88a4639",
+  "frozenFunctions": {
+    "baseline": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+    "names": [
+      "editable",
+      "changeRole",
+      "toggleBan"
+    ],
+    "exactTextIdentical": true
+  },
+  "results": [
+    {
+      "case": "delayed-search-then-role",
+      "queued": {
+        "search": "page=1",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1&q=anna",
+          "/admin/users?page=1&role=operator"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951119038
+          },
+          {
+            "href": "/admin/users?page=1&role=operator",
+            "at": 1792951119059
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "dispatched"
+      },
+      "olderAck": "/admin/users?page=1&q=anna",
+      "afterOlderAck": {
+        "search": "page=1&q=anna",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1&role=operator"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951119038
+          },
+          {
+            "href": "/admin/users?page=1&role=operator",
+            "at": 1792951119059
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "dispatched"
+      },
+      "latestAck": "/admin/users?page=1&role=operator",
+      "afterLatestAck": {
+        "search": "page=1&role=operator",
+        "input": "",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951119038
+          },
+          {
+            "href": "/admin/users?page=1&role=operator",
+            "at": 1792951119059
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "operator",
+        "accountStatus": "",
+        "phase": "settled"
+      }
+    },
+    {
+      "case": "delayed-search-then-status",
+      "queued": {
+        "search": "page=1",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1&q=anna",
+          "/admin/users?page=1&status=pending"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951120446
+          },
+          {
+            "href": "/admin/users?page=1&status=pending",
+            "at": 1792951120467
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "dispatched"
+      },
+      "olderAck": "/admin/users?page=1&q=anna",
+      "afterOlderAck": {
+        "search": "page=1&q=anna",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1&status=pending"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951120446
+          },
+          {
+            "href": "/admin/users?page=1&status=pending",
+            "at": 1792951120467
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "dispatched"
+      },
+      "latestAck": "/admin/users?page=1&status=pending",
+      "afterLatestAck": {
+        "search": "page=1&status=pending",
+        "input": "",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951120446
+          },
+          {
+            "href": "/admin/users?page=1&status=pending",
+            "at": 1792951120467
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "pending",
+        "phase": "settled"
+      }
+    },
+    {
+      "case": "clear-supersedes-delayed-search",
+      "queued": {
+        "search": "page=1",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1&q=anna",
+          "/admin/users?page=1"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951121862
+          },
+          {
+            "href": "/admin/users?page=1",
+            "at": 1792951121912
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "acknowledged"
+      },
+      "olderAck": "/admin/users?page=1&q=anna",
+      "afterOlderAck": {
+        "search": "page=1&q=anna",
+        "input": "",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?page=1"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951121862
+          },
+          {
+            "href": "/admin/users?page=1",
+            "at": 1792951121912
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "acknowledged"
+      },
+      "latestAck": "/admin/users?page=1",
+      "afterLatestAck": {
+        "search": "page=1",
+        "input": "",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [],
+        "replaces": [
+          {
+            "href": "/admin/users?page=1&q=anna",
+            "at": 1792951121862
+          },
+          {
+            "href": "/admin/users?page=1",
+            "at": 1792951121912
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "settled"
+      }
+    },
+    {
+      "case": "external-navigation-supersedes-held-search",
+      "boundary": "Retained external-navigation stub intentionally drops queued commits; no stale queued ack is claimed committed in this case.",
+      "before": {
+        "search": "q=anna&page=3&source=support",
+        "input": "bobby",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?q=bob&page=1&source=support"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1792951123319
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "cancelled"
+      },
+      "after": {
+        "search": "q=elsa&page=2&source=support",
+        "input": "elsa",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [],
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1792951123319
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "settled"
+      }
+    },
+    {
+      "case": "actual-native-back-forward-retains-pending",
+      "before": {
+        "search": "q=anna&page=3&source=support&reviewHold=1",
+        "input": "bobby",
+        "status": "Die angezeigten Konten gehören noch zur vorherigen Abfrage.",
+        "pending": [
+          "/admin/users?q=bob&page=1&source=support&reviewHold=1"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support&reviewHold=1",
+            "at": 1792951124851
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "cancelled"
+      },
+      "afterBack": {
+        "search": "q=bob&page=1&source=support&reviewHold=1",
+        "input": "bob",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [
+          "/admin/users?q=bob&page=1&source=support&reviewHold=1"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support&reviewHold=1",
+            "at": 1792951124851
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "settled"
+      },
+      "afterForward": {
+        "search": "q=anna&page=3&source=support&reviewHold=1",
+        "input": "anna",
+        "status": "Aktuelle Ergebnisse",
+        "pending": [
+          "/admin/users?q=bob&page=1&source=support&reviewHold=1"
+        ],
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support&reviewHold=1",
+            "at": 1792951124851
+          }
+        ],
+        "actions": [],
+        "refreshCount": 0,
+        "role": "",
+        "accountStatus": "",
+        "phase": "settled"
+      },
+      "popstates": [
+        {
+          "trusted": true,
+          "search": "?q=bob&page=1&source=support&reviewHold=1"
+        },
+        {
+          "trusted": true,
+          "search": "?q=anna&page=3&source=support&reviewHold=1"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "kind": "root-actual-final-M-bounded-layout-disposition",
+  "observedAtUtc": "2026-10-25T21:17:00.305954+00:00",
+  "head": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "tree": "503752c1bee097f5bba47487061415730429cc57",
+  "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/r107-mytrips-r3-review/integration-preparation/M-layout-only-wrapper.mjs /tmp/r107-mytrips-r3-review/integration-final-dda52b660369/M-layout-only-binding.ROOT_AUTHORIZED.json",
+  "cwd": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "exitCode": 0,
+  "wallTimeSeconds": 1.605149662,
+  "executionTimeUtc": "2026-10-25T21:15:41.259Z",
+  "node": "v24.22.1",
+  "browser": "140.0.7339.16",
+  "receiptSha256": "8880326d0876d6757ddc463be8d74e912967daa18e0f78b81853ba58db351b3c",
+  "bindingSha256": "3927d2c68ea386ce965aae7ae9eaa2c8b5991622ce4972be4b84985202f50a05",
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "cssSha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+  "bundleSha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc",
+  "existingLayoutBlockAccepted": true,
+  "screenshots": [
+    {
+      "path": "layout-only/screens/sammlung-1440.png",
+      "sha256": "ce812a2d0b1f9c7f1902ea7e75daf349898f8888c6815a76e67cd131ae60ef85",
+      "bytes": 327146,
+      "rootVisuallyRead": true
+    },
+    {
+      "path": "layout-only/screens/sammlung-320.png",
+      "sha256": "b804a817e9bb9ba2800e3b7752c65caf5308ce30435ce4383ded9d776d679f67",
+      "bytes": 203877,
+      "rootVisuallyRead": true
+    },
+    {
+      "path": "layout-only/screens/sammlung-390.png",
+      "sha256": "3645792193b048f8e9f32f6c873716250ea1fbd80d6a248129e44354737242e2",
+      "bytes": 222919,
+      "rootVisuallyRead": true
+    },
+    {
+      "path": "layout-only/screens/sammlung-768.png",
+      "sha256": "fcfb8c6f6cb9544944faefc9c4c14fefbe98b6235f46422ff40c69eb0ab26669",
+      "bytes": 268086,
+      "rootVisuallyRead": true
+    }
+  ],
+  "limits": [
+    "Exactly the existing extracted layout block; one new execution, not author18 or historicalroot15 replay.",
+    "48 synthetic rows including long title/origin,32px root font,4 widths320/390/768/1440 at900px height. Collection-root scrollWidth <= clientWidth+1 passed at each; date fallback, retained marker and component instance assertions passed.",
+    "Four screenshots are viewport crops, not full-page/card screenshots; root visually read all four. No card-internal bounding-box, new page-error or network/action assertions were added.",
+    "No original compiled M CSS hash/artifact retained; no historical stylesheet equivalence claim. New final-source layout proof closes only this bounded final-CSS gap.",
+    "No hosted/Supabase/account/browserzoom/device/screenreader/native-CI or fullNext route claim."
+  ],
+  "nativeFinalPass": false,
+  "readyOrMergeAuthorizedByThisRecord": false
+}

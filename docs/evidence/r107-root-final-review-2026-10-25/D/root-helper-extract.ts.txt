@@ -1,0 +1,8 @@
+export function feldFehlerId(feldId: string): string {
+  return `${feldId}-fehler`
+}
+
+export function ariaBeschrieben(...teile: Array<string | undefined | null>): string | undefined {
+  const liste = teile.filter((teil): teil is string => Boolean(teil && teil.trim()))
+  return liste.length > 0 ? liste.join(' ') : undefined
+}
