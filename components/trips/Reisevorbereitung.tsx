@@ -679,17 +679,34 @@ function ReisendenKarte({
   const intent = steuerung?.intent(slot.clientRef)
   const statusRef = React.useRef<HTMLParagraphElement>(null)
   const entfernenRef = React.useRef<HTMLButtonElement>(null)
+  const programmFokus = React.useRef(false)
+  const focusTarget = steuerung?.focusTarget ?? null
+  const phase = intent?.phase ?? null
+  const fokusVerbraucht = steuerung?.fokusVerbraucht
   React.useEffect(() => {
-    if (!steuerung || steuerung.focusTarget !== slot.clientRef || !intent) return
-    if (intent.phase === 'idle') entfernenRef.current?.focus()
-    else statusRef.current?.focus()
-  }, [intent, slot.clientRef, steuerung])
+    if (!focusTarget || focusTarget !== slot.clientRef || !phase) return
+    const ziel = phase === 'idle' ? entfernenRef.current : statusRef.current
+    if (!ziel) return
+    programmFokus.current = true
+    ziel.focus()
+    programmFokus.current = false
+    if (document.activeElement === ziel) fokusVerbraucht?.()
+  }, [focusTarget, fokusVerbraucht, phase, slot.clientRef])
 
   const gesperrt = steuerung ? steuerung.speichernGesperrt(slot.clientRef) : true
   const abwesend = Boolean(entwurf && entwurf.hadPresent && entwurf.membership === 'absent' && !entwurf.reentry)
 
   return (
-    <article data-preparation-traveller={slot.clientRef} data-traveller-phase={intent?.phase ?? 'leer'} className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
+    <article
+      data-preparation-traveller={slot.clientRef}
+      data-traveller-phase={intent?.phase ?? 'leer'}
+      className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3"
+      onFocusCapture={(event) => {
+        if (!steuerung || programmFokus.current) return
+        if (!event.nativeEvent.isTrusted) return
+        steuerung.interaktion()
+      }}
+    >
       <ReisendenZusammenfassung slot={slot} tripStart={tripStart} tripEnd={tripEnd} />
       {steuerung && entwurf ? (
         <details className="group/traveller w-full min-w-0">

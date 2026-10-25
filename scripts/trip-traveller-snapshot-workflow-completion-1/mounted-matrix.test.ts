@@ -466,6 +466,58 @@ describe('mounted traveller snapshot matrix', () => {
     }
   })
 
+  test('moving focus to another card keeps that country search after a late save', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-matrix-focus-owner',
+      travellers: 2,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1' }), person({ clientRef: 'traveller:2', label: 'Reisende 2' })],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, { art: 'account', reise })
+    const satz = 'Die Angaben wurden zum Speichern angenommen.'
+    try {
+      await page.waitForFunction(() => window.__MATRIX__)
+      const erste = await karte(page, 'traveller:1')
+      const zweite = await karte(page, 'traveller:2')
+      const suche = zweite.getByRole('searchbox', { name: 'Wohnsitzland, falls relevant: Land suchen', exact: true })
+
+      await page.evaluate(() => window.__MATRIX__.verhalten('hold'))
+      await erste.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      const wartend = page.getByText('Die Angaben werden gespeichert …')
+      await wartend.waitFor()
+      await page.evaluate(() => window.__MATRIX__.freigeben('null'))
+      await wartend.waitFor({ state: 'hidden' })
+      await page.waitForFunction((text) => {
+        const aktiv = document.activeElement
+        return aktiv instanceof HTMLParagraphElement && aktiv.textContent?.includes(text) === true
+      }, satz)
+
+      await page.evaluate(() => window.__MATRIX__.verhalten('hold'))
+      await erste.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await wartend.waitFor()
+      assert.equal(await suche.inputValue(), '')
+      await suche.click()
+      await page.evaluate(() => window.__MATRIX__.freigeben('null'))
+      await wartend.waitFor({ state: 'hidden' })
+      assert.equal(await suche.inputValue(), '')
+      assert.equal(await suche.evaluate((el) => document.activeElement === el), true)
+      assert.equal(await page.getByText(satz).count(), 1)
+
+      await page.evaluate(() => window.__MATRIX__.verhalten('hold'))
+      await erste.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await wartend.waitFor()
+      await zweite.getByRole('button', { name: 'Weitere Staatsbürgerschaft', exact: true }).focus()
+      await page.keyboard.press('Tab')
+      assert.equal(await suche.evaluate((el) => document.activeElement === el), true)
+      assert.equal(await suche.inputValue(), '')
+      await page.evaluate(() => window.__MATRIX__.freigeben('null'))
+      await wartend.waitFor({ state: 'hidden' })
+      assert.equal(await suche.inputValue(), '')
+      assert.equal(await suche.evaluate((el) => document.activeElement === el), true)
+    } finally {
+      await schliessen()
+    }
+  })
+
   test('registry intake keeps one writer through navigation and unmount', { timeout: 120_000 }, async () => {
     const ada = {
       id: 'registry-ada',

@@ -107,8 +107,19 @@ export type TripTravellerSteuerung = {
   neuErfassen: (clientRef: string) => void
   gespeicherteReiseLaden: () => void
   interaktion: () => void
+  fokusVerbraucht: () => void
   focusTarget: string | null
   intake: TripTravellerIntakeSteuerung
+}
+
+function abschlussFokus(target: string, erfasst: number, jetzt: number): string | null {
+  if (erfasst !== jetzt) return null
+  if (typeof document === 'undefined') return target
+  const aktiv = document.activeElement
+  if (!aktiv || aktiv === document.body || aktiv === document.documentElement) return target
+  const karte = aktiv.closest('[data-preparation-traveller]')
+  if (!karte || karte.getAttribute('data-preparation-traveller') !== target) return null
+  return target
 }
 
 const INTAKE_UNBEKANNT = 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.'
@@ -300,7 +311,7 @@ export function useTripTravellerSnapshotLifecycle({
       if (nachher.tripId !== schluessel.tripId || !abschlussAktuell(nachher.belegt, schluessel)) return
       const entwurf = nachher.drafts[target]
       const belegt = belegungLoesen(nachher.belegt, schluessel)
-      const fokus = nachher.interaction === interaction ? target : null
+      const fokus = abschlussFokus(target, interaction, nachher.interaction)
       const art = wert === null ? 'null' : typeof wert === 'string' ? klasseVon(wert) : 'malformed'
       const intent = nachher.intents[target]
       const dieseOperation = intent?.phase === 'pending' && intent.draftGeneration === draftGeneration
@@ -745,6 +756,12 @@ export function useTripTravellerSnapshotLifecycle({
     pending: anzeige.intakeBelegt !== null,
   }
 
+  const fokusVerbraucht = React.useCallback(() => {
+    const aktuell = bestand.current
+    if (aktuell.focusTarget === null) return
+    commit({ ...aktuell, focusTarget: null })
+  }, [commit])
+
   return {
     entwurf: (clientRef) => anzeige.drafts[clientRef] ?? null,
     intent: (clientRef) => anzeige.intents[clientRef] ?? LEERES_INTENT,
@@ -858,6 +875,7 @@ export function useTripTravellerSnapshotLifecycle({
       const aktuell = bestand.current
       commit({ ...aktuell, interaction: aktuell.interaction + 1, focusTarget: null })
     },
+    fokusVerbraucht,
     focusTarget: anzeige.focusTarget,
     intake,
   }
