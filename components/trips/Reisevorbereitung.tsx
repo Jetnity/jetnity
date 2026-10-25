@@ -7,6 +7,7 @@ import LandFeld from '@/components/country/LandFeld'
 import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
 import EigeneReisevorbereitung from '@/components/trips/EigeneReisevorbereitung'
 import type { PersonalSteuerung } from '@/components/trips/usePersonalPreparationLifecycle'
+import type { TripTravellerSteuerung } from '@/components/trips/useTripTravellerSnapshotLifecycle'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
@@ -37,14 +38,6 @@ import {
   readinessWorkspaceSichtbar,
   readinessWorkspaceZusammenfassung,
 } from '@/lib/readiness/workspace-presentation'
-import {
-  citizenshipClientRefFuer,
-  dokumenteAlsPayload,
-  dokumenteAusTraveller,
-  dokumenteNachCitizenships,
-  neueDokumentClientRef,
-  type DokumentFormularZeile,
-} from '@/lib/readiness/dokument-formular'
 import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
 import {
   dokumentAblaufGegenReise,
@@ -95,12 +88,14 @@ export default function Reisevorbereitung({
   onBereichOffen,
   onZiel,
   eigeneSteuerung = null,
+  travellerSteuerung = null,
 }: {
   reise: Trip
   offeneBereiche: ReadonlySet<PreparationBereichId>
   onBereichOffen: (id: PreparationBereichId, offen: boolean) => void
   onZiel: (id: PreparationBereichId) => void
   eigeneSteuerung?: PersonalSteuerung | null
+  travellerSteuerung?: TripTravellerSteuerung | null
   officialEvaluations?: OfficialEvaluation[]
   officialPilot?: React.ReactNode
   registryUebernahme?: React.ReactNode
@@ -251,9 +246,7 @@ export default function Reisevorbereitung({
               slot={slot}
               tripStart={reise.startDate}
               tripEnd={reise.endDate}
-              onTravellerSetzen={onTravellerSetzen}
-              onTravellerEntfernen={onTravellerEntfernen}
-              onFehler={setMeldung}
+              steuerung={onTravellerSetzen || onTravellerEntfernen ? travellerSteuerung : null}
             />
           ))}
         </Bereich>
@@ -675,29 +668,30 @@ function ReisendenKarte({
   slot,
   tripStart,
   tripEnd,
-  onTravellerSetzen,
-  onTravellerEntfernen,
-  onFehler,
+  steuerung,
 }: {
   slot: Slot
   tripStart: string | null
   tripEnd: string | null
-  onTravellerSetzen?: (eingabe: TravellerEingabe) => Promise<string | null>
-  onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
-  onFehler: (meldung: string) => void
+  steuerung: TripTravellerSteuerung | null
 }) {
-  const [residence, setResidence] = React.useState(slot.traveller?.residenceCountryCode ?? '')
-  const [citizenships, setCitizenships] = React.useState<string[]>(
-    slot.traveller?.citizenships.map((eintrag) => eintrag.countryCode) ?? [''],
-  )
-  const [documents, setDocuments] = React.useState<DokumentFormularZeile[]>(
-    dokumenteAusTraveller(slot.traveller?.documents),
-  )
+  const entwurf = steuerung?.entwurf(slot.clientRef) ?? null
+  const intent = steuerung?.intent(slot.clientRef)
+  const statusRef = React.useRef<HTMLParagraphElement>(null)
+  const entfernenRef = React.useRef<HTMLButtonElement>(null)
+  React.useEffect(() => {
+    if (!steuerung || steuerung.focusTarget !== slot.clientRef || !intent) return
+    if (intent.phase === 'idle') entfernenRef.current?.focus()
+    else statusRef.current?.focus()
+  }, [intent, slot.clientRef, steuerung])
+
+  const gesperrt = steuerung ? steuerung.speichernGesperrt(slot.clientRef) : true
+  const abwesend = Boolean(entwurf && entwurf.hadPresent && entwurf.membership === 'absent' && !entwurf.reentry)
 
   return (
-    <article data-preparation-traveller={slot.clientRef} className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
+    <article data-preparation-traveller={slot.clientRef} data-traveller-phase={intent?.phase ?? 'leer'} className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
       <ReisendenZusammenfassung slot={slot} tripStart={tripStart} tripEnd={tripEnd} />
-      {onTravellerSetzen ? (
+      {steuerung && entwurf ? (
         <details className="group/traveller w-full min-w-0">
           <summary className="flex min-h-[44px] w-full cursor-pointer list-none items-center justify-between gap-[8px] rounded-full px-1 text-sm font-semibold break-words text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
             Angaben bearbeiten
@@ -705,21 +699,9 @@ function ReisendenKarte({
           </summary>
           <form
             className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1"
-            onSubmit={async (event) => {
+            onSubmit={(event) => {
               event.preventDefault()
-              onFehler('')
-              const laender = citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code))
-              const fehler = await onTravellerSetzen({
-                clientRef: slot.clientRef,
-                label: slot.traveller?.label ?? slot.label,
-                residenceCountryCode: residence || null,
-                citizenships: laender.map((countryCode) => ({
-                  clientRef: citizenshipClientRefFuer(countryCode),
-                  countryCode,
-                })),
-                documents: dokumenteAlsPayload(documents, laender),
-              })
-              if (fehler) onFehler(fehler)
+              steuerung.speichern(slot.clientRef)
             }}
           >
             <p className="text-xs leading-5 text-ink-800">
@@ -728,65 +710,59 @@ function ReisendenKarte({
             </p>
             <fieldset className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2">
               <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften</legend>
-              {citizenships.map((code, index) => (
-                <div key={`cit-${index}`} className="grid min-w-0 gap-2">
+              {entwurf.citizenships.map((zeile, index) => (
+                <div key={zeile.clientRef} className="grid min-w-0 gap-2">
                   <LandFeld
                     label={`Staatsbürgerschaft ${index + 1}`}
-                    value={code}
-                    onChange={(naechsterCode) => {
-                      const naechste = [...citizenships]
-                      naechste[index] = naechsterCode
-                      setCitizenships(naechste)
-                    }}
+                    value={zeile.countryCode}
+                    onChange={(naechsterCode) => steuerung.staatsbuergerschaftSetzen(slot.clientRef, zeile.clientRef, naechsterCode)}
                     optional={false}
                   />
-                  {citizenships.length > 1 ? (
+                  {entwurf.citizenships.length > 1 ? (
                     <button
                       type="button"
                       className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                      onClick={() => {
-                        const naechste = citizenships.filter((_, i) => i !== index)
-                        setCitizenships(naechste)
-                        setDocuments(dokumenteNachCitizenships(documents, naechste))
-                      }}
+                      onClick={() => steuerung.staatsbuergerschaftEntfernen(slot.clientRef, zeile.clientRef)}
                     >
                       Entfernen
                     </button>
                   ) : null}
                 </div>
               ))}
-              {citizenships.length < 8 ? (
+              {entwurf.citizenships.length < 8 ? (
                 <button
                   type="button"
                   className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  onClick={() => setCitizenships([...citizenships, ''])}
+                  onClick={() => steuerung.staatsbuergerschaftHinzufuegen(slot.clientRef)}
                 >
                   Weitere Staatsbürgerschaft
                 </button>
               ) : null}
             </fieldset>
-            <LandFeld label="Wohnsitzland, falls relevant" value={residence} onChange={setResidence} />
+            <LandFeld
+              label="Wohnsitzland, falls relevant"
+              value={entwurf.residenceCountryCode ?? ''}
+              onChange={(countryCode) => steuerung.wohnsitzSetzen(slot.clientRef, countryCode)}
+            />
             <fieldset className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2">
               <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
-              {documents.map((document, index) => (
-                <div key={document.clientRef || `doc-${index}`} className="grid w-full min-w-0 gap-2 rounded-2xl bg-surface-25 px-[12px] py-3">
+              {entwurf.documents.map((document, index) => (
+                <div key={document.clientRef} className="grid w-full min-w-0 gap-2 rounded-2xl bg-surface-25 px-[12px] py-3">
                   <label className="grid gap-1 text-xs font-medium text-brand-800">
                     Dokument {index + 1}
                     <select
                       value={document.documentType}
-                      onChange={(event) => {
-                        const naechste = [...documents]
-                        naechste[index] = {
-                          ...document,
+                      onChange={(event) =>
+                        steuerung.dokumentSetzen(slot.clientRef, document.clientRef, {
                           documentType: event.target.value as TravellerDocumentType | '',
-                        }
-                        setDocuments(naechste)
-                      }}
+                        })
+                      }
                       className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                     >
                       <option value="">Noch nicht angegeben</option>
                       <option value="passport">Reisepass</option>
                       <option value="national_id">Personalausweis</option>
+                      {document.documentType === 'unknown' ? <option value="unknown">Unbekannt</option> : null}
                     </select>
                   </label>
                   {document.documentType ? (
@@ -794,22 +770,18 @@ function ReisendenKarte({
                       <LandFeld
                         label="Ausstellendes Land"
                         value={document.issuingCountryCode}
-                        onChange={(issuingCountryCode) => {
-                          const naechste = [...documents]
-                          naechste[index] = { ...document, issuingCountryCode }
-                          setDocuments(naechste)
-                        }}
+                        onChange={(issuingCountryCode) =>
+                          steuerung.dokumentSetzen(slot.clientRef, document.clientRef, { issuingCountryCode })
+                        }
                       />
                       <label className="grid gap-1 text-xs font-medium text-brand-800">
                         Ablaufdatum, falls bekannt
                         <input
                           type="date"
                           value={document.expiresOn}
-                          onChange={(event) => {
-                            const naechste = [...documents]
-                            naechste[index] = { ...document, expiresOn: event.target.value }
-                            setDocuments(naechste)
-                          }}
+                          onChange={(event) =>
+                            steuerung.dokumentSetzen(slot.clientRef, document.clientRef, { expiresOn: event.target.value })
+                          }
                           className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                         />
                       </label>
@@ -818,61 +790,43 @@ function ReisendenKarte({
                         tripStart={tripStart}
                         tripEnd={tripEnd}
                       />
-                      {citizenships.some((code) => /^[A-Z]{2}$/.test(code.trim())) ? (
-                        <label className="grid gap-1 text-xs font-medium text-brand-800">
-                          Zugeordnete Staatsbürgerschaft
-                          <select
-                            value={document.citizenshipClientRef ?? ''}
-                            onChange={(event) => {
-                              const naechste = [...documents]
-                              naechste[index] = {
-                                ...document,
-                                citizenshipClientRef: event.target.value || null,
-                              }
-                              setDocuments(naechste)
-                            }}
-                            className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                          >
-                            <option value="">Noch nicht zugeordnet</option>
-                            {[...new Set(citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code)))].map(
-                              (code) => (
-                                <option key={code} value={citizenshipClientRefFuer(code)}>
-                                  {landAnzeigeText(code)}
-                                </option>
-                              ),
-                            )}
-                          </select>
-                        </label>
-                      ) : null}
+                      <label className="grid gap-1 text-xs font-medium text-brand-800">
+                        Zugeordnete Staatsbürgerschaft
+                        <select
+                          value={document.citizenshipClientRef ?? ''}
+                          onChange={(event) =>
+                            steuerung.dokumentSetzen(slot.clientRef, document.clientRef, {
+                              citizenshipClientRef: event.target.value || null,
+                            })
+                          }
+                          className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                        >
+                          <option value="">Noch nicht zugeordnet</option>
+                          {entwurf.citizenships.map((zeile, citizenshipIndex) => (
+                            <option key={zeile.clientRef} value={zeile.clientRef}>
+                              {zeile.countryCode ? landAnzeigeText(zeile.countryCode) : `Ohne Länderangabe ${citizenshipIndex + 1}`}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
                     </>
                   ) : null}
-                  {documents.length > 1 ? (
+                  {entwurf.documents.length > 1 ? (
                     <button
                       type="button"
                       className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                      onClick={() => setDocuments(documents.filter((_, i) => i !== index))}
+                      onClick={() => steuerung.dokumentEntfernen(slot.clientRef, document.clientRef)}
                     >
                       Dokument entfernen
                     </button>
                   ) : null}
                 </div>
               ))}
-              {documents.length < 12 ? (
+              {entwurf.documents.length < 12 ? (
                 <button
                   type="button"
                   className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  onClick={() =>
-                    setDocuments([
-                      ...documents,
-                      {
-                        clientRef: neueDokumentClientRef(),
-                        documentType: '',
-                        issuingCountryCode: '',
-                        expiresOn: '',
-                        citizenshipClientRef: null,
-                      },
-                    ])
-                  }
+                  onClick={() => steuerung.dokumentHinzufuegen(slot.clientRef)}
                 >
                   Weiteres Dokument
                 </button>
@@ -882,25 +836,83 @@ function ReisendenKarte({
             <div className="grid w-full grid-cols-1 gap-2">
               <button
                 type="submit"
-                className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                disabled={gesperrt}
+                className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
               >
                 Angaben speichern
               </button>
-              {slot.persisted && onTravellerEntfernen && (
-                <button
-                  type="button"
-                  className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  onClick={async () => {
-                    onFehler('')
-                    const fehler = await onTravellerEntfernen(slot.clientRef)
-                    if (fehler) onFehler(fehler)
-                  }}
-                >
-                  Angaben entfernen
-                </button>
-              )}
             </div>
           </form>
+          {intent && intent.satz ? (
+            <p ref={statusRef} tabIndex={-1} role={intent.phase === 'not_sent' ? 'alert' : 'status'} className="break-words text-sm leading-6 text-ink-800 outline-none">
+              {intent.satz}
+              {intent.phase === 'accepted' && intent.refresh === 'unclear' ? ' Ob die Reise neu geladen wurde, ist nicht bekannt.' : ''}
+              {intent.phase === 'consistent' ? ' Die geladenen Angaben stimmen mit der letzten Speicherung überein.' : ''}
+            </p>
+          ) : (
+            <p ref={statusRef} tabIndex={-1} className="sr-only outline-none" />
+          )}
+          {entwurf.conflict ? (
+            <div className="grid w-full grid-cols-1 gap-2">
+              <p className="break-words text-sm leading-6 text-ink-800">Die geladenen Angaben haben sich geändert. Speichern bleibt zu, bis du eine Möglichkeit wählst.</p>
+              <button type="button" className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-brand-800" onClick={() => steuerung.neuLaden(slot.clientRef)}>
+                Neu laden
+              </button>
+              <button type="button" className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-brand-800" onClick={() => steuerung.eingabenBehalten(slot.clientRef)}>
+                Meine Eingaben behalten
+              </button>
+            </div>
+          ) : null}
+          {abwesend ? (
+            <div className="grid w-full grid-cols-1 gap-2">
+              <p className="break-words text-sm leading-6 text-ink-800">Die gespeicherten Angaben für diesen Reiseplatz sind nicht mehr vorhanden. Der Platz in der Personenzahl bleibt. Eine Person im Konto-Register wurde nicht gelöscht.</p>
+              <button type="button" className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-brand-800" onClick={() => steuerung.neuErfassen(slot.clientRef)}>
+                Angaben für diesen Platz neu erfassen
+              </button>
+            </div>
+          ) : null}
+          {intent?.guestBlocked ? (
+            <button type="button" className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-brand-800" onClick={() => steuerung.gespeicherteReiseLaden()}>
+              Gespeicherte Reise laden
+            </button>
+          ) : null}
+          {slot.persisted && entwurf.membership === 'present' ? (
+            intent?.phase === 'confirm_remove' ? (
+              <div
+                className="grid w-full grid-cols-1 gap-2"
+                onKeyDown={(event) => {
+                  if (event.key !== 'Escape') return
+                  event.preventDefault()
+                  steuerung.entfernenAbbrechen(slot.clientRef)
+                  entfernenRef.current?.focus()
+                }}
+              >
+                <p className="break-words text-sm leading-6 text-ink-800">{intent.satz}</p>
+                <button type="button" className="min-h-[44px] rounded-full bg-brand-800 px-[16px] text-sm font-semibold text-white" onClick={() => steuerung.entfernenBestaetigen(slot.clientRef)}>
+                  Entfernen bestätigen
+                </button>
+                <button
+                  type="button"
+                  className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-ink-800"
+                  onClick={() => {
+                    steuerung.entfernenAbbrechen(slot.clientRef)
+                    entfernenRef.current?.focus()
+                  }}
+                >
+                  Abbrechen
+                </button>
+              </div>
+            ) : (
+              <button
+                ref={entfernenRef}
+                type="button"
+                className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                onClick={() => steuerung.entfernenAnfragen(slot.clientRef)}
+              >
+                Angaben entfernen
+              </button>
+            )
+          ) : null}
         </details>
       ) : null}
     </article>

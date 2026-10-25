@@ -184,34 +184,35 @@ export default function KontoArbeitsbereich({
         pilot.invalidate()
         const ergebnis = await travellerSetzen({ ...eingabe, tripId: reise.id })
         if (!ergebnis.ok) return ergebnis.meldung
-        router.refresh()
         return null
       }}
       onTravellerEntfernen={async (clientRef) => {
         pilot.invalidate()
         const ergebnis = await travellerEntfernen({ tripId: reise.id, clientRef })
         if (!ergebnis.ok) return ergebnis.meldung
-        router.refresh()
         return null
       }}
-      registryUebernahme={
-        registry ? (
-          <RegistryReiseUebernahme
-            problem={registry.problem}
-            travellers={registry.travellers}
-            voll={registryTripUebernahmeGesperrt(reise)}
-            onUebernehmen={async (registryTravellerId) => {
-              pilot.invalidate()
-              const ergebnis = await registryTravellerInReiseUebernehmen({
-                tripId: reise.id,
-                registryTravellerId,
-              })
-              if (!ergebnis.ok) return ergebnis.meldung
-              router.refresh()
-              return null
-            }}
-          />
-        ) : null
+      registrySteuerung={
+        registry
+          ? (steuerung) => (
+              <RegistryReiseUebernahme
+                problem={registry.problem}
+                travellers={registry.travellers}
+                voll={registryTripUebernahmeGesperrt(reise)}
+                tripId={reise.id}
+                steuerung={steuerung}
+                onUebernehmen={async ({ tripId, registryTravellerId }) => {
+                  pilot.invalidate()
+                  const ergebnis = await registryTravellerInReiseUebernehmen({
+                    tripId,
+                    registryTravellerId,
+                  })
+                  if (!ergebnis.ok) return ergebnis.meldung
+                  return null
+                }}
+              />
+            )
+          : undefined
       }
       onReadinessEntfernen={async (clientRef) => {
         const ergebnis = await readinessEntfernen({ tripId: reise.id, clientRef })
