@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "abgebrochen": true,
+  "head": "f7637c3129303e3ca41951f74f8a56f20b918b56",
+  "grund": "Der Prozess wurde beendet, bevor der Runner result.json schrieb. MutationObserver.observe(document.documentElement) warf, weil das Element im Init-Script noch fehlte, und der Fetch-Stub wurde dadurch nicht installiert. Das ist kein Beleg für einen Board-Defekt und nicht der Prüfstand."
+}
