@@ -121,27 +121,48 @@ function boardPfad(board) {
   return board === 'health' ? '/api/admin/system-health' : '/api/admin/provider-ops'
 }
 
-function ungueltigeKoerper(board) {
-  const basis = bericht(board, {})
-  const duplikat = structuredClone(basis)
-  duplikat.items[1] = { ...structuredClone(duplikat.items[0]), name: 'Kopie' }
-  const fehlt = structuredClone(basis)
-  fehlt.items = fehlt.items.slice(0, -1)
-  const falsch = structuredClone(basis)
-  falsch.items[0] = { ...falsch.items[0], id: 'fremd' }
-  const status = structuredClone(basis)
-  status.items[0] = { ...status.items[0], status: 'kaputt' }
-  const aktion = structuredClone(basis)
-  aktion.writeActions = ['POST']
-  const meta = structuredClone(basis)
-  meta.items[0] = { ...meta.items[0], metadata: { n: 1 } }
-  const zeit = structuredClone(basis)
-  zeit.checkedAt = 'nein'
-  const alter = structuredClone(basis)
-  alter.items[0] = { ...alter.items[0], freshness: { state: 'fresh', ageMs: -1, ttlMs: 60_000 } }
-  const ttl = structuredClone(basis)
-  ttl.items[0] = { ...ttl.items[0], freshness: { state: 'fresh', ageMs: 0, ttlMs: 9_999_999 } }
-  return [duplikat, fehlt, falsch, status, aktion, meta, zeit, alter, ttl, [], {}]
+function benannteUngueltige(board) {
+  const basis = () => bericht(board, {})
+  const mit = (name, aendern) => {
+    const wert = basis()
+    aendern(wert)
+    const check = wert.items?.[0]?.checks?.[0]
+    if (check) check.name = `VERBOTEN-${name}`
+    if (wert.items?.[0]) wert.items[0].summary = `VERBOTEN-${name}`
+    return [name, wert]
+  }
+  return [
+    mit('duplikat', (wert) => {
+      wert.items[1] = { ...structuredClone(wert.items[0]), name: 'Kopie' }
+    }),
+    mit('fehlt', (wert) => {
+      wert.items = wert.items.slice(0, -1)
+    }),
+    mit('falsch', (wert) => {
+      wert.items[0] = { ...wert.items[0], id: 'fremd' }
+    }),
+    mit('status', (wert) => {
+      wert.items[0] = { ...wert.items[0], status: 'kaputt' }
+    }),
+    mit('aktion', (wert) => {
+      wert.writeActions = ['POST']
+    }),
+    mit('meta', (wert) => {
+      wert.items[0] = { ...wert.items[0], metadata: { n: 1 } }
+    }),
+    mit('zeit', (wert) => {
+      wert.checkedAt = 'nein'
+    }),
+    mit('alter', (wert) => {
+      wert.items[0] = { ...wert.items[0], freshness: { state: 'fresh', ageMs: -1, ttlMs: 60_000 } }
+    }),
+    mit('ttl', (wert) => {
+      wert.items[0] = { ...wert.items[0], freshness: { state: 'fresh', ageMs: 0, ttlMs: 9_999_999 } }
+    }),
+    ['array', []],
+    ['leer', {}],
+    ['null', null],
+  ]
 }
 
 function markiert(board, name) {
@@ -583,16 +604,118 @@ fall('tastatur-waehrend-prop-pruefung', beide, async ({ page, board }) => {
   await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
 })
 
-fall('ungueltige-anfangskoerper', beide, async ({ page, board }) => {
-  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'fehler', null, 'null nicht fehler')
-  if (await page.locator('[data-health-id],[data-ops-id]').count()) throw new Error('Karte bei null')
-  for (const koerper of ungueltigeKoerper(board)) {
-    await page.evaluate((wert) => window.__setze({ anfang: wert }), koerper)
-    await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'fehler', null, 'ungültiger Körper nicht fehler')
-    if (await page.locator('[data-health-id],[data-ops-id]').count()) throw new Error('Karte bei ungültigem Körper')
-    if ((await page.locator('[role="alert"]').innerText()).length === 0) throw new Error('keine Fehlermeldung')
+for (const [koerperName] of benannteUngueltige('health')) {
+  fall(`props-ungueltig-${koerperName}`, beide, async ({ page, board }) => {
+    await warte(page, () => {
+      const phasen = window.__phasen
+      return Array.isArray(phasen) && phasen[0] === 'prueft' && phasen[phasen.length - 1] === 'fehler'
+    }, null, `${koerperName} nicht abgeschlossen`)
+    const gesehen = await page.evaluate(() => window.__phasen.slice())
+    if (gesehen.length !== 2 || gesehen[0] !== 'prueft' || gesehen[1] !== 'fehler') {
+      throw new Error(`${koerperName} Phasen ${gesehen.join('>')}`)
+    }
+    if (await page.locator('[data-health-id],[data-ops-id]').count()) throw new Error(`${koerperName} zeigt Karten`)
+    const text = await page.locator('body').innerText()
+    if (!text.includes('Die Antwort des Servers war nicht lesbar.')) throw new Error(`${koerperName} ohne Lesefehler`)
+    if (text.includes(`VERBOTEN-${koerperName}`)) throw new Error(`${koerperName} wurde sichtbar`)
+    if (await abrufe(page) !== 0) throw new Error(`${koerperName} hat abgerufen`)
+    const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+    if (await knopf.isDisabled()) throw new Error(`${koerperName} sperrt den Knopf`)
+    await knopf.click()
+    if (await abrufe(page) !== 1) throw new Error(`${koerperName} startet keinen Folgeabruf`)
+    await loese(page, { status: 200, koerper: markiert(board, `NACH-${koerperName}`) })
+    await warte(page, (name) => document.body.innerText.includes(name), `NACH-${koerperName}`, `${koerperName} Folgeabruf fehlt`)
+    await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'aktuell')
+    await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
+  })
+}
+
+fall('get-ungueltige-200', beide, async ({ page, board }) => {
+  await warte(page, () => document.body.innerText.includes('URSPRUNG-BLEIBT'), null, 'Ursprung fehlt')
+  const checkedAtAttr = board === 'health' ? 'data-health-checked-at' : 'data-ops-checked-at'
+  const geprueft = await page.locator(karteSel(board)).getAttribute(checkedAtAttr)
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  let gealtert = false
+  for (const [koerperName, koerper] of benannteUngueltige(board)) {
+    const alterVorher = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
+    const abrufeVorher = await abrufe(page)
+    await knopf.click()
+    await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'true')
+    if (await abrufe(page) !== abrufeVorher + 1) throw new Error(`${koerperName} hat nicht genau einen Abruf gestartet`)
+    await loese(page, { status: 200, koerper })
+    await warte(page, (erwartet) => {
+      const phase = document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase')
+      const pending = document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending')
+      return phase === 'historisch' && pending === 'false' && window.__abrufe.length === erwartet
+    }, abrufeVorher + 1, `${koerperName} nicht historisch abgeschlossen`)
+    const text = await page.locator('body').innerText()
+    if (!text.includes('URSPRUNG-BLEIBT')) throw new Error(`${koerperName} hat den Ursprung ersetzt`)
+    if (text.includes(`VERBOTEN-${koerperName}`)) throw new Error(`${koerperName} hat geschützte Details befördert`)
+    if (!text.includes('Die angezeigte Prüfung ist historisch und unbestätigt.')) throw new Error(`${koerperName} ohne Historiesatz`)
+    if (!text.includes('Die Antwort des Servers war nicht lesbar.')) throw new Error(`${koerperName} ohne Lesefehler`)
+    if (text.includes('Für diese Ansicht fehlt die Berechtigung.') || text.includes('Nicht angemeldet.')) {
+      throw new Error(`${koerperName} wurde zur Verweigerung`)
+    }
+    if (await page.locator(karteSel(board)).count() === 0) throw new Error(`${koerperName} hat die Karte entfernt`)
+    if (await page.locator(karteSel(board)).getAttribute(checkedAtAttr) !== geprueft) throw new Error(`${koerperName} hat checkedAt ersetzt`)
+    const alterNach = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
+    if (!(alterNach >= alterVorher)) throw new Error(`${koerperName} setzt das Alter zurück: ${alterVorher} -> ${alterNach}`)
+    if (await knopf.isDisabled()) throw new Error(`${koerperName} lässt den Knopf gesperrt`)
+    if (!gealtert) {
+      await page.clock.runFor(5_000)
+      await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+      const weiter = Number(await page.locator(karteSel(board)).getAttribute(alterAttr(board)))
+      if (!(weiter >= alterNach + 5_000)) throw new Error(`${koerperName} altert nicht: ${alterNach} -> ${weiter}`)
+      if (await abrufe(page) !== abrufeVorher + 1) throw new Error('Alterung hat abgerufen')
+      gealtert = true
+    }
+    await knopf.click()
+    await loese(page, { status: 200, koerper: markiert(board, 'URSPRUNG-BLEIBT') })
+    await warte(page, () => {
+      const phase = document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase')
+      const pending = document.querySelector('[data-operations-pending]')?.getAttribute('data-operations-pending')
+      return phase === 'aktuell' && pending === 'false' && document.body.innerText.includes('URSPRUNG-BLEIBT')
+    }, null, `${koerperName} Folgeabruf fehlt`)
+    if (await page.locator(karteSel(board)).getAttribute(checkedAtAttr) !== geprueft) throw new Error(`${koerperName} Folgeabruf hat checkedAt ersetzt`)
   }
-  if (await abrufe(page) !== 0) throw new Error('ungültige Körper haben abgerufen')
+})
+
+fall('verweigerung-401-json-und-kaputt', beide, async ({ page, board }) => {
+  await warte(page, () => document.body.innerText.includes('GESCHUETZT-401'), null, 'geschützter Anfang fehlt')
+  const knopf = page.getByRole('button', { name: 'Erneut prüfen' })
+  await knopf.click()
+  await loese(page, { status: 401, koerper: { message: 'Sitzung abgelaufen.' } })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'verweigert', null, '401 JSON fehlt')
+  if (await page.locator(karteSel(board)).count()) throw new Error('401 JSON zeigt Karten')
+  let text = await page.locator('body').innerText()
+  if (!text.includes('Sitzung abgelaufen.')) throw new Error('401 JSON ohne Servertext')
+  if (text.includes('GESCHUETZT-401')) throw new Error('401 JSON lässt geschützte Details stehen')
+  await knopf.click()
+  await loese(page, { status: 503, koerper: { message: 'Wartung' } })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'verweigert', null, '401 JSON verliert die Verriegelung')
+  if (await page.locator(karteSel(board)).count()) throw new Error('503 nach 401 zeigt Karten')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: markiert(board, 'NACH-401-JSON') })
+  await warte(page, () => document.body.innerText.includes('NACH-401-JSON'), null, 'Refresh nach 401 JSON fehlt')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'aktuell')
+  await knopf.click()
+  await loese(page, { status: 401, kaputt: true })
+  await warte(page, () => document.body.innerText.includes('Nicht angemeldet.'), null, '401 ohne JSON fehlt')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'verweigert')
+  if (await page.locator(karteSel(board)).count()) throw new Error('401 ohne JSON zeigt Karten')
+  text = await page.locator('body').innerText()
+  if (text.includes('NACH-401-JSON') || text.includes('GESCHUETZT-401')) throw new Error('401 ohne JSON lässt geschützte Details stehen')
+  if (text.includes('Die Antwort des Servers war nicht lesbar.')) throw new Error('401 ohne JSON wurde zum Lesefehler')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: { checkedAt: 'nein' } })
+  await warte(page, () => document.querySelector('[data-operations-phase]')?.getAttribute('data-operations-phase') === 'verweigert', null, '401 ohne JSON verliert die Verriegelung')
+  if (await page.locator(karteSel(board)).count()) throw new Error('ungültiges 200 nach 401 zeigt Karten')
+  if (await knopf.isDisabled()) throw new Error('401 lässt den Knopf gesperrt')
+  await knopf.click()
+  await loese(page, { status: 200, koerper: markiert(board, 'NACH-401-KAPUTT') })
+  await warte(page, () => document.body.innerText.includes('NACH-401-KAPUTT'), null, 'Refresh nach 401 ohne JSON fehlt')
+  await gleich(page, '[data-operations-phase]', 'data-operations-phase', 'aktuell')
+  await gleich(page, '[data-operations-pending]', 'data-operations-pending', 'false')
 })
 
 fall('historisch-altert-nach-fehler', beide, async ({ page, board }) => {
@@ -642,6 +765,10 @@ fall('ttl-alle-grenzen', beide, async ({ page, board }) => {
     await probe('[data-health-check="github-lauf"]', 'fresh', 'GitHub-Kind vor 60s')
     await tick(1)
     await probe('[data-health-id="app"]', 'fresh', 'App bei 60s')
+    await probe('[data-health-check="github-lauf"]', 'fresh', 'GitHub-Kind bei 60s')
+    if (await page.locator('[data-health-check="github-lauf"]').getAttribute('data-health-age-ms') !== '60000') {
+      throw new Error(`GitHub-Kind Gleichheit ${await page.locator('[data-health-check="github-lauf"]').getAttribute('data-health-age-ms')}`)
+    }
     await tick(1)
     await probe('[data-health-id="app"]', 'stale', 'App nach 60s')
     await probe('[data-health-check="github-lauf"]', 'stale', 'GitHub-Kind nach 60s')
@@ -667,8 +794,13 @@ fall('ttl-alle-grenzen', beide, async ({ page, board }) => {
     await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell vor 60s')
     await tick(1)
     await probe('[data-ops-id="provider-ops"]', 'fresh', 'Provider bei 60s')
+    await probe('[data-ops-check="domain-flights"]', 'fresh', 'Flights-Kind bei 60s')
+    if (await page.locator('[data-ops-check="domain-flights"]').getAttribute('data-ops-age-ms') !== '60000') {
+      throw new Error(`Flights-Kind Gleichheit ${await page.locator('[data-ops-check="domain-flights"]').getAttribute('data-ops-age-ms')}`)
+    }
     await tick(1)
     await probe('[data-ops-id="provider-ops"]', 'stale', 'Provider nach 60s')
+    await probe('[data-ops-check="domain-flights"]', 'stale', 'Flights-Kind nach 60s')
     await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell nach 60s')
     await tick(59_998)
     await probe('[data-ops-id="model-usage"]', 'fresh', 'Modell vor 120s')
@@ -816,7 +948,14 @@ function anfangFuer(name, board) {
     }]
     return wert
   }
-  if (name.endsWith('ungueltige-anfangskoerper')) return null
+  const propsKoerper = name.match(/props-ungueltig-(.+)$/)
+  if (propsKoerper) {
+    const fund = benannteUngueltige(board).find(([eintrag]) => eintrag === propsKoerper[1])
+    if (!fund) throw new Error(`unbekannter Körper ${name}`)
+    return fund[1]
+  }
+  if (name.endsWith('get-ungueltige-200')) return markiert(board, 'URSPRUNG-BLEIBT')
+  if (name.endsWith('verweigerung-401-json-und-kaputt')) return markiert(board, 'GESCHUETZT-401')
   if (name.includes('ueberlauf') || name.includes('beleg')) {
     return bericht(board, { proves: LANG, summary: LANG, app: { metadata: { beleg: LANG } } })
   }
@@ -926,6 +1065,19 @@ async function main() {
         window.__abrufe = []
         window.__wartend = []
         window.__abgebrochen = 0
+        window.__phasen = []
+        const merkePhase = () => {
+          const knoten = document.querySelector('[data-operations-phase]')
+          const phase = knoten ? knoten.getAttribute('data-operations-phase') : null
+          if (!phase) return
+          if (window.__phasen[window.__phasen.length - 1] !== phase) window.__phasen.push(phase)
+        }
+        new MutationObserver(merkePhase).observe(document.documentElement, {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          attributeFilter: ['data-operations-phase'],
+        })
         window.fetch = (url, init) => {
           window.__abrufe.push({ url: String(url), cache: init && init.cache })
           return new Promise((resolve, reject) => {
