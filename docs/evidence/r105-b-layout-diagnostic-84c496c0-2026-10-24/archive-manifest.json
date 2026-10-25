@@ -1,0 +1,125 @@
+{
+  "kind": "technical-lead-targeted-layout-diagnostic-archive",
+  "archivalRelocation": true,
+  "notANewExecutionAtArchivedPaths": true,
+  "executedHead": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "executedTree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "disposition": "ROOT_CONFIRMED_BOUNDED_P2_LAYOUT_FAILURE",
+  "scope": "One 320x700 viewport with root font 32px, actual DOM/computed-style capture and one Root-viewed viewport screenshot. Not full 56-measurement acceptance or hosted Production evidence.",
+  "supersedesOnly": "Pending cause diagnosis in the earlier failure README; its run outcomes, original files and hashes remain unchanged.",
+  "priorFailureArchive": "docs/evidence/r105-b-tl-84c496c0-2026-10-24",
+  "priorFailureArchivePathsUnchanged": 31,
+  "initialAttempt": "Root observer/instrumentation error: __name ReferenceError. Initial controller assertion stopped before result.json; four existing original files only, no result synthesized.",
+  "notArchived": [
+    "node_modules/dependencies",
+    "browser or tsx caches/profiles",
+    "unretained initial controller version"
+  ],
+  "originalArtifactCount": 13,
+  "files": [
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/capture/montage-root-observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/capture/montage-root-observer.json",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 175,
+      "sha256": "59a868881772e4558df340dfcdb0fe169d47313dca9e88efc56aeba47b5527c6",
+      "gitBlob": "85c7f579b43e505b8ce33015ed3dec0587603ac2"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/capture/overflow-320.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/capture/overflow-320.png",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 193438,
+      "sha256": "e38b5200588fd7f172aec7ff31368b8b67d27bbf5e630aabf8767b2af607180d",
+      "gitBlob": "1af4f9245cb3626f683e292c1adcd11091d8885e"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/capture/overflow-diagnostic.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/capture/overflow-diagnostic.json",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 629613,
+      "sha256": "2e588d09a90a80d7206ae7f5094dcc9a03101a48c4abaccfccfca8500619c78b",
+      "gitBlob": "390a618e65324b4f30c3fab9d9c0388d10bbe9c6"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/diagnostic-montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/diagnostic-montage.ts",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 15642,
+      "sha256": "2a2392c1df6454114567fb198b07920cd419d1cae923b6d6cd59c2551d799e43",
+      "gitBlob": "31175ee4a21aa7a78c1f25ca12ac891d0277d48d"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/result.json",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 1480,
+      "sha256": "fdd3278f3daec5b594a7a6c405a920414179b26dfb03afc8fb87b4c8bb32f23d",
+      "gitBlob": "23c4f750ab7c6639eccb60cf63d6c1bd2ab11532"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/stderr.log",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 125,
+      "sha256": "213b6f9d2e1b8992f72bf0872e9e001b392d8a3e4615c6d23ac73895193dde94",
+      "gitBlob": "8b1472e7e4e77a296003d1ac680f1a820c948c71"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/captured-failure/stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-hj4mnu8f/stdout.log",
+      "role": "original completed targeted capture; layout command remains exit 1",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/controller/diagnostic-run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-run.py",
+      "role": "current Root controller for the completed targeted capture; not the unretained initial controller version",
+      "bytes": 5308,
+      "sha256": "7b617abc943459a00de12cb1a8b734d70111216916410efb88f3474bfba05dca",
+      "gitBlob": "9ad43b5d281146c8af1f7dac2926e5923adcda45"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/initial-observer-tool-error/capture/montage-root-observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-9xhyh1jx/capture/montage-root-observer.json",
+      "role": "initial Root instrumentation error; not a new product error",
+      "bytes": 175,
+      "sha256": "59a868881772e4558df340dfcdb0fe169d47313dca9e88efc56aeba47b5527c6",
+      "gitBlob": "85c7f579b43e505b8ce33015ed3dec0587603ac2"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/initial-observer-tool-error/diagnostic-montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-9xhyh1jx/diagnostic-montage.ts",
+      "role": "initial Root instrumentation error; not a new product error",
+      "bytes": 15656,
+      "sha256": "a9249a84212b2a0a6df17da69d13faf62cde541a774f24133358a1810f116753",
+      "gitBlob": "aef61ee4b612bf67bac41eb7d5e682c78f9b7d1f"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/initial-observer-tool-error/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-9xhyh1jx/stderr.log",
+      "role": "initial Root instrumentation error; not a new product error",
+      "bytes": 312,
+      "sha256": "b3876b2b8838381ac43a10479d3708f73670cea59ec9115b94a6ef4eaaf992a2",
+      "gitBlob": "a07bb76886ca719c88908e2a62dc1c24a5b35053"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/initial-observer-tool-error/stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-overflow-diagnostic-9xhyh1jx/stdout.log",
+      "role": "initial Root instrumentation error; not a new product error",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-layout-diagnostic-84c496c0-2026-10-24/static/css-static-diagnosis.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-static-diagnosis-84c496c0.json",
+      "role": "independent read-only static helper; font estimates are not browser measurements",
+      "bytes": 5984,
+      "sha256": "2acc3983ab3d5b819d2eb8f4999fe7d86e7b90db2bc030d3d885bb688ed0c53e",
+      "gitBlob": "6b5eb21369ebf3f370502de6b04ab001b6881b27"
+    }
+  ]
+}

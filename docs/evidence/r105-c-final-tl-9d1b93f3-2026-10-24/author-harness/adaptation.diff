@@ -1,0 +1,30 @@
+--- author-original/harness.mjs
++++ outside-checkout/harness.adapted.mjs
+@@ -15,10 +15,10 @@
+ import { chromium } from 'playwright'
+ 
+ const require = createRequire(import.meta.url)
+-const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..')
+-const EVIDENCE = join(REPO, 'docs/evidence/manual-journey-editor-completion-1')
++const REPO = "/tmp/jetnity-r105-c-v6-review-9d1b93f371d5"
++const EVIDENCE = "/tmp/jetnity-r105-c-author-harness-hy7mdz5h/author-evidence"
+ const SCREENS = join(EVIDENCE, 'screens')
+-const OUT = join('/tmp', 'manual-journey-editor-completion-1')
++const OUT = "/tmp/jetnity-r105-c-author-harness-hy7mdz5h/build"
+ const FLIGHT_THROW = 'Die Flugroute konnte nicht gespeichert werden. Bitte versuche es erneut.'
+ const STAY_THROW = 'Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.'
+ const CONNECTION_UNKNOWN = 'Ob die Verbindung gespeichert wurde, konnten wir nicht bestätigen. Deine Eingabe bleibt erhalten. Prüfe deinen Reiseplan vor einem erneuten Versuch. Ein erneuter Versuch kann eine zweite Verbindung anlegen.'
+@@ -88,12 +88,7 @@
+ async function launchBrowser() {
+   const errors = []
+   try {
+-    return { browser: await chromium.launch({ headless: true }), channel: 'playwright-chromium', errors }
+-  } catch (error) {
+-    errors.push(String(error))
+-  }
+-  try {
+-    return { browser: await chromium.launch({ headless: true, channel: 'chrome' }), channel: 'chrome', errors }
++    return { browser: await chromium.launch({ headless: true, executablePath: "/tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome" }), channel: 'playwright-chromium', errors }
+   } catch (error) {
+     errors.push(String(error))
+   }

@@ -1,0 +1,236 @@
+{
+  "status": "PASS",
+  "startedAtUtc": "2026-10-24T21:40:35.475640+00:00",
+  "executionClass": "ROOT_EXECUTED_AUTHOR_HARNESS",
+  "independentCustomRunner": false,
+  "provenanceNote": "Author/session/model/command fields in author-evidence/result.json remain source-authored metadata. This sidecar records the actual Technical-Lead execution, not a new Cursor run.",
+  "actualCommand": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.adapted.mjs"
+  ],
+  "actualCommandShell": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/jetnity-r105-c-author-harness-gg8p97y1/harness.adapted.mjs",
+  "actualWorkingDirectory": "/tmp/jetnity-r105-c-v5-review-961fa594792b",
+  "repo": "/tmp/jetnity-r105-c-v5-review-961fa594792b",
+  "output": "/tmp/jetnity-r105-c-author-harness-gg8p97y1",
+  "before": {
+    "head": "961fa594792b5c07f2e8423b31690f433f858fab",
+    "tree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+    "cleanStatus": "",
+    "sources": {
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+        "bytes": 23439
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+        "bytes": 17650
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+        "bytes": 26535
+      },
+      "lib/trips/manual-journey-editor-completion-1.ts": {
+        "gitBlob": "4c141abbff7ce365167dd2df31bb1d59f3092757",
+        "sha256": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+        "bytes": 2238
+      },
+      "scripts/manual-journey-editor-completion-1/harness.mjs": {
+        "gitBlob": "6d73e2fa7086df08b0e967232350e6fd7c597c50",
+        "sha256": "58009d9835a73101b51d272961e4a94f69ce2fcbc280809b56fb4165a700af8c",
+        "bytes": 64077
+      },
+      "scripts/manual-journey-editor-completion-1/mount.tsx": {
+        "gitBlob": "b32c92d6a8977be6111bbc6be58d05883a7d90ce",
+        "sha256": "bd27771ce8c5d12b0fd3571f26a09f8ce6339729d9782f1ee1de656980ff0fc7",
+        "bytes": 18658
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "adapter": {
+    "adapterOnly": [
+      "REPO",
+      "EVIDENCE",
+      "OUT",
+      "browser executable lookup; no fallback browser"
+    ],
+    "SCREENS": "unchanged expression; follows redirected EVIDENCE",
+    "importsAndRequire": "unchanged; external node_modules symlink provides dependencies",
+    "originalSha256": "58009d9835a73101b51d272961e4a94f69ce2fcbc280809b56fb4165a700af8c",
+    "adaptedSha256": "ae8c99255d99267e6296520d44c4134a8f0a21309e924f1a6327e194e1959b56",
+    "protectedBodySha256": "cb63f38419a3066e57df7df72cfd2b2856ae42ed29182f3d17620b2d6c7f7903",
+    "protectedBodyByteIdentical": true,
+    "reverseAdaptationRestoresOriginal": true,
+    "namedGroupCount": 22
+  },
+  "wrapperSha256": "5150fbd29c4bb5421cf7736711ce94b5003127c371ed473a39b8044cc43c5385",
+  "browserExecutable": "/tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome",
+  "childEnvironment": "explicit non-secret PATH/LANG/LC_ALL/TZ/PLAYWRIGHT_BROWSERS_PATH only",
+  "repositoryWritesIntended": false,
+  "historicalOutputsOverwritten": false,
+  "sourceAuthorMetadataPreserved": true,
+  "testsIndependentOfAuthorHarness": "NOT_RUN_BY_THIS_WRAPPER",
+  "childExitCode": 0,
+  "evidenceSha256": "eabc9f31202b223a0e0d976f9e6afbd1c604294d7bf4f06e26739587f51acb17",
+  "validatedAuthorResult": {
+    "status": "PASS",
+    "namedScenarioGroups": 22,
+    "layouts": 9,
+    "diagnosticArrays": {
+      "behaviorBlockedRequests": [],
+      "behaviorPageErrors": [],
+      "layoutBlockedRequests": [],
+      "layoutPageErrors": [],
+      "blockedRequests": [],
+      "pageErrors": []
+    },
+    "actualBrowser": {
+      "channel": "playwright-chromium",
+      "launchErrors": [],
+      "version": "140.0.7339.16"
+    }
+  },
+  "after": {
+    "head": "961fa594792b5c07f2e8423b31690f433f858fab",
+    "tree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+    "cleanStatus": "",
+    "sources": {
+      "components/trips/FlugBestand.tsx": {
+        "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+        "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+        "bytes": 23439
+      },
+      "components/trips/UnterkunftBestand.tsx": {
+        "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+        "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+        "bytes": 17650
+      },
+      "components/trips/MobilitaetBereich.tsx": {
+        "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+        "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+        "bytes": 26535
+      },
+      "lib/trips/manual-journey-editor-completion-1.ts": {
+        "gitBlob": "4c141abbff7ce365167dd2df31bb1d59f3092757",
+        "sha256": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+        "bytes": 2238
+      },
+      "scripts/manual-journey-editor-completion-1/harness.mjs": {
+        "gitBlob": "6d73e2fa7086df08b0e967232350e6fd7c597c50",
+        "sha256": "58009d9835a73101b51d272961e4a94f69ce2fcbc280809b56fb4165a700af8c",
+        "bytes": 64077
+      },
+      "scripts/manual-journey-editor-completion-1/mount.tsx": {
+        "gitBlob": "b32c92d6a8977be6111bbc6be58d05883a7d90ce",
+        "sha256": "bd27771ce8c5d12b0fd3571f26a09f8ce6339729d9782f1ee1de656980ff0fc7",
+        "bytes": 18658
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "sourceBindingsUnchanged": true,
+  "artifacts": {
+    "adaptation.diff": {
+      "sha256": "03f501f6af6e938a3df2bb3a982df74043dceaf26eb19e355c3518ba0c36a9c0",
+      "bytes": 1688
+    },
+    "author-evidence/result.json": {
+      "sha256": "eabc9f31202b223a0e0d976f9e6afbd1c604294d7bf4f06e26739587f51acb17",
+      "bytes": 8189
+    },
+    "author-evidence/screens/1280.png": {
+      "sha256": "49752f157a60beac17e11cbb223e21fc79b6a73b9531983fdcf05fb94e932258",
+      "bytes": 265483
+    },
+    "author-evidence/screens/320-root-32.png": {
+      "sha256": "d32f6e3bba846ea6e889704491966b868857fd1a02f9c0125be8ef9f218dc2d5",
+      "bytes": 181484
+    },
+    "author-evidence/screens/320.png": {
+      "sha256": "eda7d5496b3655dbf854c6962e7b6ede2e8f2b9beda70df1551c0d4abb05eae9",
+      "bytes": 183786
+    },
+    "author-evidence/screens/390.png": {
+      "sha256": "f8c7900b0e72c36292b4f156c481b620032905e02b843d4dd1d23b77df388edc",
+      "bytes": 232830
+    },
+    "author-evidence/screens/landscape.png": {
+      "sha256": "8d6ec737343360bc091057f379a7d3a2f268199cfed6eb54e651be3d8f6bafaf",
+      "bytes": 104859
+    },
+    "build/harness.js": {
+      "sha256": "7d4646cc44cdb9d837f2b179eb08dbeff4f79db43a0e6ffe9c26ac98c8a2317d",
+      "bytes": 1043428
+    },
+    "build/style.css": {
+      "sha256": "8a3c5ad3b42b6ca8dbf0ba2f5a314dd2a204688ea57bf36a27fe6a643a60c61a",
+      "bytes": 128885
+    },
+    "harness.adapted.mjs": {
+      "sha256": "ae8c99255d99267e6296520d44c4134a8f0a21309e924f1a6327e194e1959b56",
+      "bytes": 63972
+    },
+    "harness.original.mjs": {
+      "sha256": "58009d9835a73101b51d272961e4a94f69ce2fcbc280809b56fb4165a700af8c",
+      "bytes": 64077
+    },
+    "harness.stderr.log": {
+      "sha256": "c2de0e537eb69082e5fb2bda5f3173303a71ab9b0eb1013820a4a090a6af033a",
+      "bytes": 192
+    },
+    "harness.stdout.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "mount.original.tsx": {
+      "sha256": "bd27771ce8c5d12b0fd3571f26a09f8ce6339729d9782f1ee1de656980ff0fc7",
+      "bytes": 18658
+    },
+    "wrapper.run.py": {
+      "sha256": "5150fbd29c4bb5421cf7736711ce94b5003127c371ed473a39b8044cc43c5385",
+      "bytes": 17004
+    }
+  },
+  "finishedAtUtc": "2026-10-24T21:40:59.866072+00:00"
+}

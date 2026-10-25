@@ -1,0 +1,9 @@
+{
+  "output": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn",
+  "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "cssPath": "/tmp/jetnity-r105-b-v4-css-85abdc7c/jetnity-b-postcss-85abdc7c33a3.css",
+  "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+  "chromium": "/tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome",
+  "nodeVersion": "v24.22.1"
+}

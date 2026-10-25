@@ -1,0 +1,23 @@
+browserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/tmp/playwright_chromiumdev_profile-Govx0B --remote-debugging-pipe --no-startup-window
+<launched> pid=58
+[pid=58][err] [58:58:1024/233346.451957:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:45] setsockopt: Operation not permitted (1)
+Call log:
+  - <launching> /tmp/jetnity-r104-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/tmp/playwright_chromiumdev_profile-Govx0B --remote-debugging-pipe --no-startup-window
+  - <launched> pid=58
+  - [pid=58][err] [58:58:1024/233346.451957:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:45] setsockopt: Operation not permitted (1)
+  - [pid=58] <gracefully close start>
+  - [pid=58] <kill>
+  - [pid=58] <will force kill>
+  - [pid=58] <process did exit: exitCode=null, signal=SIGTRAP>
+  - [pid=58] starting temporary directories cleanup
+  - [pid=58] finished temporary directories cleanup
+  - [pid=58] <gracefully close end>
+
+    at montage (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:229:32)
+    at AccountBuchungen (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:355:1)
+    at Object.<anonymous> (/tmp/jetnity-r105-b-overflow-diagnostic-vz9fuxgq/diagnostic-montage.ts:358:2)
+    at Object.transformer (/tmp/jetnity-r104-review/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at async node:internal/modules/esm/loader:647:26

@@ -1,0 +1,256 @@
+{
+  "kind": "technical-lead-execution-archive",
+  "archivalRelocation": true,
+  "notANewExecutionAtArchivedPaths": true,
+  "executedHead": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "executedTree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "recordedHarnessStatus": "FAIL",
+  "currentLayoutDisposition": "BLOCKED_PENDING_TARGETED_CAUSE_REVIEW",
+  "statement": "Byte-preserving originals of the completed Root 32-test run, project PostCSS compilation, and first action/montage run. The action command passed; montage failed at liste/320 with 37px overflow. No successful final montage, visual acceptance, native CI, full Technical-Lead PASS or merge is inferred.",
+  "notProducedByFailedRun": [
+    "montage/montage.json",
+    "the six intended montage screenshots"
+  ],
+  "deliberatelyNotArchived": [
+    "node_modules symlink/dependencies",
+    "browser cache and temporary profiles",
+    "temporary tsx cache and other temporary process files"
+  ],
+  "generatedBundleIncluded": true,
+  "originalArtifactCount": 29,
+  "files": [
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/README.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/README.md",
+      "role": "original Root-run artifact",
+      "bytes": 7392,
+      "sha256": "2a85a8890f60a750569024a8a6007f358bceb8e473442d0b515dd70da05b74c4",
+      "gitBlob": "0946c7f49aaab2f43e6f6a96303872c227c231f2"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/ablauf-stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/ablauf-stderr.log",
+      "role": "original Root-run artifact",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/ablauf-stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/ablauf-stdout.log",
+      "role": "original Root-run artifact",
+      "bytes": 874,
+      "sha256": "2e46ee3838278c3969e128ce3c9750dda8b90ed00d3a9ff4f233f86c8020e935",
+      "gitBlob": "3d7de71a72a15dde06b4ac3cc584456fe88723f7"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/ablauf/ablauf.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/ablauf/ablauf.json",
+      "role": "original Root-run artifact",
+      "bytes": 3116,
+      "sha256": "f7678d8f414caf64bbe2e3944c8af98da506fe7eeeeaf8248534f1d50d005b91",
+      "gitBlob": "d0adc20ca89ba137a821e0e90af1834d36990b74"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/adaptation.diff",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/adaptation.diff",
+      "role": "original Root-run artifact",
+      "bytes": 5730,
+      "sha256": "b6042f3173f58d72ba4a40d994a55a4869bcd91a9151bef2cdfe6debe90748ec",
+      "gitBlob": "0f86e2db369814cdd2cc911e90d934a7e3ce6db9"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/adaptation.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/adaptation.json",
+      "role": "original Root-run artifact",
+      "bytes": 6668,
+      "sha256": "98306294af9dc33c97cd1829368e9ff50371bd5aa45090528a08181964ed3837",
+      "gitBlob": "3f184cbbf94e1f2ebc56257fdf5e1bf5ed45f7aa"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/copies/ablauf.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/copies/ablauf.ts",
+      "role": "original Root-run artifact",
+      "bytes": 35629,
+      "sha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "gitBlob": "666a83fa33b2547b9f44bd8a545ba9043a2679c0"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/copies/montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/copies/montage.ts",
+      "role": "original Root-run artifact",
+      "bytes": 13839,
+      "sha256": "ca76794668f593fbd3a86fe4489f9ae301583d56ff736dee033166cb8ed0fbe7",
+      "gitBlob": "99e2cfff576c58647f1cdb3137de188b0a726a05"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/generated/flaeche.js",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/tmp/buchungen-flaeche-Wlksh0/flaeche.js",
+      "role": "original Root-run artifact",
+      "bytes": 930646,
+      "sha256": "4784bbc8a12b58bf7032ff2361463399c0ed04333d3ba8c7bc97dae8b59f2c3c",
+      "gitBlob": "7f577787332c01d1d7bfb9790c0e347296975dca"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/montage-stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/montage-stderr.log",
+      "role": "original Root-run artifact",
+      "bytes": 121,
+      "sha256": "374f4c981296e7685f05a432fa082610496a54c46b38d36f06bead9457e6f90f",
+      "gitBlob": "ba16703f3bc0d7d8dcd1441e87656c6d85a8fbb3"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/montage-stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/montage-stdout.log",
+      "role": "original Root-run artifact",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/montage/montage-root-observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/montage/montage-root-observer.json",
+      "role": "passive diagnostics written after failed montage",
+      "bytes": 175,
+      "sha256": "59a868881772e4558df340dfcdb0fe169d47313dca9e88efc56aeba47b5527c6",
+      "gitBlob": "85c7f579b43e505b8ce33015ed3dec0587603ac2"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/original/ablauf.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v3-review-84c496c037cf/scripts/account-booking-folder-completion-1/ablauf.ts",
+      "role": "unmodified source at executed head",
+      "bytes": 35490,
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/original/crypto-browser-stub.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v3-review-84c496c037cf/scripts/account-booking-folder-completion-1/crypto-browser-stub.ts",
+      "role": "unmodified source at executed head",
+      "bytes": 113,
+      "sha256": "dadf9edb2ea7d96b3973d5f105a2180a1434edb2e61bc756736c37e291631591",
+      "gitBlob": "583b5c1e1283a30ccbf74e5da8554990bd815873"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/original/flaeche.tsx",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v3-review-84c496c037cf/scripts/account-booking-folder-completion-1/flaeche.tsx",
+      "role": "unmodified source at executed head",
+      "bytes": 1201,
+      "sha256": "83dc0728d0f8af23933d9cd38f2a9a9355ee33d3b8c1adf2dbf9bed7280e1e05",
+      "gitBlob": "3f57401088c6e66247ddebe48032eae770418350"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/original/montage.ts",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v3-review-84c496c037cf/scripts/account-booking-folder-completion-1/montage.ts",
+      "role": "unmodified source at executed head",
+      "bytes": 12594,
+      "sha256": "22be351095a5096c5dbf02e33ca95eedc257411b8499669c7530cfd5e5e932e3",
+      "gitBlob": "74403a630872e624908fa84565bcab7d7a2bd0e1"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/prepare.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/prepare.py",
+      "role": "original Root-run artifact",
+      "bytes": 6898,
+      "sha256": "6dbd188f848b5300efa68e626ed5e9b98f52d75a3ba4e3df5c3ecffeb0601341",
+      "gitBlob": "225d3ff41e65f56df787a2d17ebee215936a4695"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/run.py",
+      "role": "original Root-run artifact",
+      "bytes": 23077,
+      "sha256": "5110e4047f24f339600994d04e02aed82595e556aa0e4a6b6d22b85e02b4a4db",
+      "gitBlob": "77031a1f70c14d3beeade7d934a65e7392e3eb9f"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/wrapper-result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/result.json",
+      "role": "completed failed Root execution",
+      "bytes": 41193,
+      "sha256": "0c586de67f6f7a3548ec1d11d206bd05c73968cbc07087207c8c5755accc9084",
+      "gitBlob": "42d8befc3c2bafef0a250d1a260ce1b09e6556f5"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/css-provenance.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-84c496c0-20261024-2302z/css-provenance-84c496c037cf.json",
+      "role": "completed CSS compilation provenance",
+      "bytes": 13315,
+      "sha256": "8b546b19bcd747795e47a53476650241e641a7a39e48ea6af83923e177a03f14",
+      "gitBlob": "83068c943677a67820aefddd76c4f46add1a2f7a"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/producer/README.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/README.md",
+      "role": "original CSS compilation producer/preparation documentation",
+      "bytes": 3884,
+      "sha256": "833fa01cbb6ea4d24ef19f4f2b97c6a5b8b2705503256efa0f99ad15ac7183b7",
+      "gitBlob": "056275bc6b26b0e5bd692684cf2c89771d46af7f"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/producer/compile-css.mjs",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/compile-css.mjs",
+      "role": "original CSS compilation producer/preparation documentation",
+      "bytes": 4454,
+      "sha256": "da4a232c1555744561a5067c155f8337f4fab63b51014842e11639c8facd3ea1",
+      "gitBlob": "b7ae41bbe13464d9832b3fd379cd314fa3fc315f"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/producer/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/run.py",
+      "role": "original CSS compilation producer/preparation documentation",
+      "bytes": 11028,
+      "sha256": "8ffc4d8512cc94577fa531753a9f9629ad97cf769470cc52fbaa519b4d3c56d0",
+      "gitBlob": "6665e2be55131d24659e0342810972b955b3e204"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/project-postcss.css",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-84c496c0-20261024-2302z/jetnity-b-postcss-84c496c037cf.css",
+      "role": "actual generated project PostCSS CSS",
+      "bytes": 129091,
+      "sha256": "6ea356ae1284e432eae27e9511923cf43550a4f80b34ac63c7235424e1f22af8",
+      "gitBlob": "5fe16ba04fcbd326ac45a84e6908b48dcf840304"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/focused/focused.tap",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-bjk05h9o/focused.tap",
+      "role": "original focused-test artifact",
+      "bytes": 7384,
+      "sha256": "ccf56ce0fb4207751ffa4590d06ecb12b3b0c8b77a6dea2c3f55a34cd00f4ab2",
+      "gitBlob": "283811c7ef74319f2db00b0dbb707666620f3ccb"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/focused/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-bjk05h9o/result.json",
+      "role": "completed Root focused-test execution",
+      "bytes": 9845,
+      "sha256": "a3a0d67f4088fefa1401f88fa3b1426ef297829ec560a9f16ecc93f7f17a5393",
+      "gitBlob": "c45d1eb94ceb00e0f2100bb50a191e57696aee6b"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/focused/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-bjk05h9o/run.py",
+      "role": "original focused-test artifact",
+      "bytes": 10854,
+      "sha256": "655d69988fce470d8323bdf4406dc3c10e78451f5d0f4b723262b783079baec7",
+      "gitBlob": "2588b148739e276126f5d2c9bbc95ce6584e5cad"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/focused/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-bjk05h9o/stderr.log",
+      "role": "original focused-test artifact",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/source-checkout/actual-main-proof.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v3-84c496c0-actual-main-proof.json",
+      "role": "read-only materialization/source proof; not an execution",
+      "bytes": 9589,
+      "sha256": "1242636a8269c5cc7935883553d17923aaa03d416a9da2dbd1180cb0e3629c24",
+      "gitBlob": "061efa57c302807b4afa3fb9da9301bc17869718"
+    }
+  ]
+}

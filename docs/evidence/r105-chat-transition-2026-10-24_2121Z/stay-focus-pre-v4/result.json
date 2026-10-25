@@ -1,0 +1,272 @@
+{
+  "createdAtUtc": "2026-10-24T21:12:41.054Z",
+  "head": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "tree": "4c6315603edb46937eab1982e93748a4b6558614",
+  "command": "node /tmp/jetnity-r105-c-stay-focus-ahsghe/run.mjs",
+  "output": "/tmp/jetnity-r105-c-stay-focus-ahsghe",
+  "node": "v24.22.1",
+  "react": "19.2.8",
+  "sourceSha256": {
+    "components/trips/UnterkunftBestand.tsx": "ee6ef9d9ff55ba9e35d6bd7fce51252f15271483dda16cbfa15fcab617e80484",
+    "lib/trips/naechte-abdeckung.ts": "27a40cf3457380f4670ac62c51a980c50828583a7a429b4be53d253c59a3f5ec",
+    "lib/trips/unterkunft-manuell.ts": "1b213b2d89d8cda03b3032fda67736468938a22ec7e3b33238a1b0044ff64b1d",
+    "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8",
+    "lib/trips/schema.ts": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "fixtureSha256": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+  "runnerSha256": "957ca8a3d825b90dac5ba50c4b209ff6536293b525e2e3646aed41c2ab1ed4d0",
+  "boundary": "Real unchanged UnterkunftBestand, two synthetic stay rows, in-memory held callback. No graph/storage/account/provider/hosted access. Minimal CSS: focus behavior only, not layout acceptance.",
+  "cases": [
+    {
+      "name": "pending-stay-A-success-newer-B-open",
+      "outcome": "success",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "text": "",
+          "label": "Check-out",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändernCheck-inCheck-outZeitraum speichernAbbrechen"
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "BUTTON",
+          "text": "Zeitraum ändern",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernZeitraum gespeichert."
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "aTruth": {
+        "forms": 0,
+        "busy": null,
+        "draft": null,
+        "alerts": [],
+        "savedStatus": 1,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    },
+    {
+      "name": "pending-stay-A-success-newer-B-closed",
+      "outcome": "success",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "text": "Zeitraum ändern",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "BUTTON",
+          "text": "Zeitraum ändern",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernZeitraum gespeichert."
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "aTruth": {
+        "forms": 0,
+        "busy": null,
+        "draft": null,
+        "alerts": [],
+        "savedStatus": 1,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    },
+    {
+      "name": "pending-stay-A-domain-newer-B-open",
+      "outcome": "domain",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "text": "",
+          "label": "Check-out",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändernCheck-inCheck-outZeitraum speichernAbbrechen"
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "P",
+          "text": "Synthetischer Speicherfehler A.",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernCheck-inCheck-outSynthetischer Speicherfehler A.Zeitraum speichernAbbrechen"
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "aTruth": {
+        "forms": 1,
+        "busy": "false",
+        "draft": "2026-11-07",
+        "alerts": [
+          "Synthetischer Speicherfehler A."
+        ],
+        "savedStatus": 0,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    },
+    {
+      "name": "pending-stay-A-domain-newer-B-closed",
+      "outcome": "domain",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "text": "Zeitraum ändern",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "P",
+          "text": "Synthetischer Speicherfehler A.",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernCheck-inCheck-outSynthetischer Speicherfehler A.Zeitraum speichernAbbrechen"
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "aTruth": {
+        "forms": 1,
+        "busy": "false",
+        "draft": "2026-11-07",
+        "alerts": [
+          "Synthetischer Speicherfehler A."
+        ],
+        "savedStatus": 0,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    },
+    {
+      "name": "pending-stay-A-reject-newer-B-open",
+      "outcome": "reject",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "text": "",
+          "label": "Check-out",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändernCheck-inCheck-outZeitraum speichernAbbrechen"
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "P",
+          "text": "Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernCheck-inCheck-outDer Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.Zeitraum speichernAbbrechen"
+        },
+        "bOpen": 1,
+        "bDraft": "2026-11-11"
+      },
+      "aTruth": {
+        "forms": 1,
+        "busy": "false",
+        "draft": "2026-11-07",
+        "alerts": [
+          "Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut."
+        ],
+        "savedStatus": 0,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    },
+    {
+      "name": "pending-stay-A-reject-newer-B-closed",
+      "outcome": "reject",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "text": "Zeitraum ändern",
+          "rowText": "Stay B6. Nov. – 10. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-06 · Check-out: 2026-11-10Zeitraum ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "after": {
+        "focus": {
+          "isExactOwner": false,
+          "tag": "P",
+          "text": "Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.",
+          "rowText": "Stay A2. Nov. – 6. Nov. · 4 NächteAusgewähltCheck-in: 2026-11-02 · Check-out: 2026-11-06Zeitraum ändernCheck-inCheck-outDer Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.Zeitraum speichernAbbrechen"
+        },
+        "bOpen": 0,
+        "bDraft": null
+      },
+      "aTruth": {
+        "forms": 1,
+        "busy": "false",
+        "draft": "2026-11-07",
+        "alerts": [
+          "Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut."
+        ],
+        "savedStatus": 0,
+        "calls": 1
+      },
+      "bStatePreserved": true,
+      "aTruthCorrect": true,
+      "focusPreserved": false,
+      "passed": false
+    }
+  ],
+  "pageErrors": [],
+  "blockedRequests": [],
+  "port": 43649,
+  "browser": "140.0.7339.16",
+  "status": "REPRODUCED_FAILURE",
+  "finalHead": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "finalTree": "4c6315603edb46937eab1982e93748a4b6558614",
+  "productGitStatus": "",
+  "finalSourceSha256": {
+    "components/trips/UnterkunftBestand.tsx": "ee6ef9d9ff55ba9e35d6bd7fce51252f15271483dda16cbfa15fcab617e80484",
+    "lib/trips/naechte-abdeckung.ts": "27a40cf3457380f4670ac62c51a980c50828583a7a429b4be53d253c59a3f5ec",
+    "lib/trips/unterkunft-manuell.ts": "1b213b2d89d8cda03b3032fda67736468938a22ec7e3b33238a1b0044ff64b1d",
+    "lib/trips/manual-journey-editor-completion-1.ts": "f24a85f67a516712fda1d65ed1d90a4ef0c738e075368c66dc7b30ecc09d5ce8",
+    "lib/trips/schema.ts": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "cleanExactSource": true
+}

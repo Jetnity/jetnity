@@ -1,0 +1,59 @@
+{
+  "createdAtUtc": "2026-10-24T22:00:47.556Z",
+  "head": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+  "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "command": "node /tmp/jetnity-r105-c-final-independent-mLxGm4/preset/run.mjs /tmp/jetnity-r105-c-v6-review-9d1b93f371d5 9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509 bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "output": "/tmp/jetnity-r105-c-preset-final-proof-DPxSak",
+  "node": "v24.22.1",
+  "sourceSha256": {
+    "lib/trips/manual-journey-editor-completion-1.ts": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "sourceVerifiedAgainstGit": true,
+  "runnerSha256": "d18a97c61a55699b4143cf94fcc3370466c47da1358e56a5901152392f2d132c",
+  "fixtureSha256": "b840641e68e74b1ea8c0fc0a6f557a721af732f12a39b2e3b35a4a83bb87df4e",
+  "boundary": "Pure actual normalized-preset/key helper. No browser/network/hosted access. Full Trip schema validity is not re-proved by this small helper-only regression.",
+  "cases": [
+    {
+      "name": "delimiter-in-distinct-fields-cannot-collide",
+      "presetA": {
+        "mode": "rail",
+        "originName": "a\u001fb",
+        "destinationName": "c",
+        "originPlaceId": null,
+        "destinationPlaceId": null,
+        "startsOn": "",
+        "dayId": ""
+      },
+      "presetB": {
+        "mode": "rail",
+        "originName": "a",
+        "destinationName": "b\u001fc",
+        "originPlaceId": null,
+        "destinationPlaceId": null,
+        "startsOn": "",
+        "dayId": ""
+      },
+      "keyA": "[\"rail\",\"a\\u001fb\",\"c\",\"\",\"\",\"\",\"\"]",
+      "keyB": "[\"rail\",\"a\",\"b\\u001fc\",\"\",\"\",\"\",\"\"]",
+      "passed": true
+    },
+    {
+      "name": "same-normalized-tuple-stable",
+      "passed": true
+    },
+    {
+      "name": "equivalent-input-object-same-key",
+      "passed": true
+    }
+  ],
+  "status": "PRESET_KEY_REGRESSION_PASS",
+  "finalHead": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+  "finalTree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "productGitStatus": "",
+  "finalSourceSha256": {
+    "lib/trips/manual-journey-editor-completion-1.ts": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "cleanExactSource": true
+}

@@ -1,0 +1,364 @@
+{
+  "head": "961fa594792b5c07f2e8423b31690f433f858fab",
+  "tree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+  "command": "node /tmp/jetnity-r105-c-final-independent-mLxGm4/flight/run.mjs /tmp/jetnity-r105-c-v5-review-961fa594792b 961fa594792b5c07f2e8423b31690f433f858fab 24a1a3a025853a8e8744a80f1820172157c21c40",
+  "expectedHead": "961fa594792b5c07f2e8423b31690f433f858fab",
+  "expectedTree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+  "sourceVerifiedAgainstGit": true,
+  "output": "/tmp/jetnity-r105-c-flight-final-proof-ssEwjA",
+  "createdAtUtc": "2026-10-24T21:40:34.904Z",
+  "node": "v24.22.1",
+  "sourceSha256": {
+    "components/trips/FlugBestand.tsx": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+    "components/trips/UnterkunftBestand.tsx": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+    "components/trips/MobilitaetBereich.tsx": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+    "lib/trips/manual-journey-editor-completion-1.ts": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+    "lib/route/schema.ts": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+    "lib/trips/flug-abdeckung.ts": "799ecadbb4e6e4600c2f32ee47552c062f358e6b7b374846a957b0bbd97a7820",
+    "lib/trips/schema.ts": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "fixtureSha256": "5038738a09c668e5ef8add7bd9151871798f4f1334e5e708e49e3e3000199996",
+  "runnerSha256": "b18d3b8b0174ae8ee8ec82ca0f31accf6c33d2238332af9b738e3d971685db3e",
+  "boundary": "Independent local React mount of unchanged exact-head components. In-memory callback and delayed graph readback. No account, storage, provider or hosted access.",
+  "cases": [
+    {
+      "name": "flight-late-readback-focuses-after-new-editor-open",
+      "before": {
+        "tag": "INPUT",
+        "label": "Abflugzeit (optional)",
+        "text": ""
+      },
+      "after": {
+        "tag": "INPUT",
+        "label": "Abflugzeit (optional)",
+        "text": ""
+      },
+      "draft": "12:00",
+      "selectedStatus": 0,
+      "formCount": 1,
+      "passed": true
+    },
+    {
+      "name": "flight-A-late-readback-after-B-draft-open",
+      "before": {
+        "tag": "INPUT",
+        "label": "Abflugzeit (optional)",
+        "row": "flight-b"
+      },
+      "after": {
+        "tag": "INPUT",
+        "label": "Abflugzeit (optional)",
+        "row": "flight-b",
+        "text": ""
+      },
+      "draftB": "12:00",
+      "formCountB": 1,
+      "selectedStatus": 0,
+      "passed": true
+    },
+    {
+      "name": "current-flight-normal-matching-readback",
+      "after": {
+        "tag": "BUTTON",
+        "row": "flight-a",
+        "text": "Flugroute ändern"
+      },
+      "selectedStatus": 1,
+      "forms": 0,
+      "shownSavedTime": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-success-newer-B-open",
+      "outcome": "success",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 0,
+        "aBusy": null,
+        "aDraft": null,
+        "aDisabled": 0,
+        "aAlerts": [],
+        "aSavedStatus": 1,
+        "calls": 1
+      },
+      "afterGraph": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0,
+        "aGraphShowsSavedTime": true
+      },
+      "truthCorrect": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-success-newer-B-closed",
+      "outcome": "success",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 0,
+        "aBusy": null,
+        "aDraft": null,
+        "aDisabled": 0,
+        "aAlerts": [],
+        "aSavedStatus": 1,
+        "calls": 1
+      },
+      "afterGraph": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0,
+        "aGraphShowsSavedTime": true
+      },
+      "truthCorrect": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-domain-newer-B-open",
+      "outcome": "domain",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 1,
+        "aBusy": "false",
+        "aDraft": "11:30",
+        "aDisabled": 0,
+        "aAlerts": [
+          "Synthetischer Fehler."
+        ],
+        "aSavedStatus": 0,
+        "calls": 1
+      },
+      "afterGraph": null,
+      "truthCorrect": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-domain-newer-B-closed",
+      "outcome": "domain",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 1,
+        "aBusy": "false",
+        "aDraft": "11:30",
+        "aDisabled": 0,
+        "aAlerts": [
+          "Synthetischer Fehler."
+        ],
+        "aSavedStatus": 0,
+        "calls": 1
+      },
+      "afterGraph": null,
+      "truthCorrect": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-reject-newer-B-open",
+      "outcome": "reject",
+      "newer": "open",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "INPUT",
+          "row": "flight-b",
+          "label": "Abflugzeit (optional)",
+          "text": ""
+        },
+        "bOpen": 1,
+        "bDraft": "12:00",
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 1,
+        "aBusy": "false",
+        "aDraft": "11:30",
+        "aDisabled": 0,
+        "aAlerts": [
+          "Die Flugroute konnte nicht gespeichert werden. Bitte versuche es erneut."
+        ],
+        "aSavedStatus": 0,
+        "calls": 1
+      },
+      "afterGraph": null,
+      "truthCorrect": true,
+      "passed": true
+    },
+    {
+      "name": "pending-A-reject-newer-B-closed",
+      "outcome": "reject",
+      "newer": "closed",
+      "before": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "afterCallback": {
+        "focus": {
+          "isExactOwner": true,
+          "tag": "BUTTON",
+          "row": "flight-b",
+          "text": "Flugroute ändern"
+        },
+        "bOpen": 0,
+        "bDraft": null,
+        "selectedStatus": 0
+      },
+      "callbackTruth": {
+        "aFormCount": 1,
+        "aBusy": "false",
+        "aDraft": "11:30",
+        "aDisabled": 0,
+        "aAlerts": [
+          "Die Flugroute konnte nicht gespeichert werden. Bitte versuche es erneut."
+        ],
+        "aSavedStatus": 0,
+        "calls": 1
+      },
+      "afterGraph": null,
+      "truthCorrect": true,
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "blockedRequests": [],
+  "port": 42385,
+  "browser": "140.0.7339.16",
+  "react": "19.2.8",
+  "status": "THREE_CONTROLS_AND_SIX_OWNERSHIP_CASES_PASS",
+  "productGitStatus": "",
+  "finalHead": "961fa594792b5c07f2e8423b31690f433f858fab",
+  "finalTree": "24a1a3a025853a8e8744a80f1820172157c21c40",
+  "finalSourceSha256": {
+    "components/trips/FlugBestand.tsx": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+    "components/trips/UnterkunftBestand.tsx": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+    "components/trips/MobilitaetBereich.tsx": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+    "lib/trips/manual-journey-editor-completion-1.ts": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+    "lib/route/schema.ts": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+    "lib/trips/flug-abdeckung.ts": "799ecadbb4e6e4600c2f32ee47552c062f358e6b7b374846a957b0bbd97a7820",
+    "lib/trips/schema.ts": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+    "types/trips.ts": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+  },
+  "cleanExactSource": true
+}

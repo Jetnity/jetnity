@@ -1,0 +1,20 @@
+{
+  "kind": "immutable-evidence-archive-path-mapping",
+  "schemaVersion": 2,
+  "preparedAtUtc": "2026-10-25T00:09:30.044531+00:00",
+  "originalExecutionPath": "/tmp/jetnity-r105-b-harness-final-proof-frao2ze2/tmp/buchungen-flaeche-Wlksh0/flaeche.js",
+  "historicalArchivePath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/generated/flaeche.js",
+  "currentArchivePath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/generated/flaeche.js.txt",
+  "bytes": 930646,
+  "sha256": "4784bbc8a12b58bf7032ff2361463399c0ed04333d3ba8c7bc97dae8b59f2c3c",
+  "gitBlob": "7f577787332c01d1d7bfb9790c0e347296975dca",
+  "contentChanged": false,
+  "originalExecutionMetadataChanged": false,
+  "originalArchiveManifestChanged": false,
+  "originalArchiveReadmeChanged": false,
+  "otherRawArtifactsChanged": false,
+  "supersedesOnly": "The archived bundle location for this single blob. Existing historical manifest preservedPath and result paths retain their original wording; this mapping resolves the current archival path.",
+  "reason": "Store the generated bundle as immutable text evidence so repository source-code lint does not treat this archived build output as maintained JavaScript.",
+  "noConfigurationOrRuntimeChange": true,
+  "notANewExecution": true
+}

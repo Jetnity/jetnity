@@ -1,0 +1,107 @@
+import type { RoheBuchungszeile } from '@/lib/account/buchungen'
+import { buchungenAnsichtAus, buchungenSeiteAusZeilen, type BuchungenFilter } from '@/lib/account/buchungen-abfrage'
+
+const FILTER: BuchungenFilter = { titel: 'Zürich', art: 'flight', archiv: 'aktiv' }
+
+function uuid(n: number): string {
+  return `00000000-0000-4000-8000-${n.toString(16).padStart(12, '0')}`
+}
+
+function zeile(n: number): RoheBuchungszeile & { booking_confirmed_at: string } {
+  return {
+    id: uuid(n),
+    kind: 'flight',
+    title: n === 1 ? `${'Langtitel'.repeat(12)} Zürich` : `Flug ${n}`,
+    starts_on: '2026-09-12',
+    starts_at: '08:40:00',
+    ends_on: '2026-09-12',
+    ends_at: null,
+    booking_status: 'booked',
+    booking_confirmed_at: '2026-08-30T12:00:00.123456Z',
+    trips: { id: uuid(90), title: 'Lissabon', status: n % 2 === 0 ? 'archived' : 'planned' },
+  }
+}
+
+function ansicht(zustand: 'liste' | 'fortsetzung' | 'leer' | 'keine' | 'fehler' | 'ungueltig' | 'fortsetzungLeer') {
+  if (zustand === 'liste') {
+    const seite = buchungenSeiteAusZeilen(
+      Array.from({ length: 51 }, (_, index) => zeile(index + 1)),
+      FILTER,
+    )
+    if (!seite.ok) throw new Error('Liste konnte nicht abgebildet werden')
+    return buchungenAnsichtAus({
+      ok: true,
+      filter: FILTER,
+      fortsetzung: false,
+      buchungen: seite.buchungen,
+      weiter: `/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=${seite.weiter}`,
+      ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+      wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+    })
+  }
+  if (zustand === 'fortsetzung') {
+    const seite = buchungenSeiteAusZeilen([zeile(1), zeile(2)], FILTER)
+    if (!seite.ok) throw new Error('Fortsetzung konnte nicht abgebildet werden')
+    return buchungenAnsichtAus({
+      ok: true,
+      filter: FILTER,
+      fortsetzung: true,
+      buchungen: seite.buchungen,
+      weiter: null,
+      ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+      wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=cursor',
+    })
+  }
+  if (zustand === 'leer') {
+    return buchungenAnsichtAus({
+      ok: true,
+      filter: { titel: null, art: null, archiv: 'alle' },
+      fortsetzung: false,
+      buchungen: [],
+      weiter: null,
+      ersteSeite: '/account/bookings',
+      wiederholen: '/account/bookings',
+    })
+  }
+  if (zustand === 'keine') {
+    return buchungenAnsichtAus({
+      ok: true,
+      filter: FILTER,
+      fortsetzung: false,
+      buchungen: [],
+      weiter: null,
+      ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+      wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+    })
+  }
+  if (zustand === 'fehler') {
+    return buchungenAnsichtAus({
+      ok: false,
+      grund: 'lesen',
+      status: 500,
+      filter: FILTER,
+      ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+      wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+    })
+  }
+  if (zustand === 'fortsetzungLeer') {
+    return buchungenAnsichtAus({
+      ok: true,
+      filter: FILTER,
+      fortsetzung: true,
+      buchungen: [],
+      weiter: null,
+      ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+      wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=cursor',
+    })
+  }
+  return buchungenAnsichtAus({
+    ok: false,
+    grund: 'cursor',
+    filter: FILTER,
+    ersteSeite: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv',
+    wiederholen: '/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=kaputt',
+  })
+}
+
+export { ansicht }

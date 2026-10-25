@@ -1,0 +1,230 @@
+TAP version 13
+# Subtest: Buchungsabfrage
+    # Subtest: leitet die buchbaren Arten aus dem bestehenden Vertrag ab
+    ok 1 - leitet die buchbaren Arten aus dem bestehenden Vertrag ab
+      ---
+      duration_ms: 3.394879
+      type: 'test'
+      ...
+    # Subtest: Titelsuche bleibt der rohe Titel hinter ***=
+    ok 2 - Titelsuche bleibt der rohe Titel hinter ***=
+      ---
+      duration_ms: 1.150126
+      type: 'test'
+      ...
+    # Subtest: nimmt nur kanonische Zeitstempel an und schreibt sie nicht um
+    ok 3 - nimmt nur kanonische Zeitstempel an und schreibt sie nicht um
+      ---
+      duration_ms: 0.777843
+      type: 'test'
+      ...
+    # Subtest: ein Cursor eines anderen Filters ist ungültig und fragt nichts
+    ok 4 - ein Cursor eines anderen Filters ist ungültig und fragt nichts
+      ---
+      duration_ms: 0.784565
+      type: 'test'
+      ...
+    # Subtest: wiederholte, zu lange und unbekannte Parameter sind ungültig
+    ok 5 - wiederholte, zu lange und unbekannte Parameter sind ungültig
+      ---
+      duration_ms: 0.839878
+      type: 'test'
+      ...
+    # Subtest: Art und Archiv stehen vor dem Limit, Titel nicht in der Keyset-Klammer
+    ok 6 - Art und Archiv stehen vor dem Limit, Titel nicht in der Keyset-Klammer
+      ---
+      duration_ms: 0.746198
+      type: 'test'
+      ...
+    # Subtest: eine spätere leere Seite ist nicht das leere Konto
+    ok 7 - eine spätere leere Seite ist nicht das leere Konto
+      ---
+      duration_ms: 18.721462
+      type: 'test'
+      ...
+    # Subtest: Abbildung bleibt fail-closed und der Cursor ist die 50. sichtbare Zeile
+    ok 8 - Abbildung bleibt fail-closed und der Cursor ist die 50. sichtbare Zeile
+      ---
+      duration_ms: 3.852033
+      type: 'test'
+      ...
+    # Subtest: Zustände bleiben getrennt und die Karte öffnet den Planpunkt
+    ok 9 - Zustände bleiben getrennt und die Karte öffnet den Planpunkt
+      ---
+      duration_ms: 33.068555
+      type: 'test'
+      ...
+    1..9
+ok 1 - Buchungsabfrage
+  ---
+  duration_ms: 65.462186
+  type: 'suite'
+  ...
+# Subtest: Buchungen laden
+    # Subtest: ein ungültiger Cursor ruft den Client nicht auf
+    ok 1 - ein ungültiger Cursor ruft den Client nicht auf
+      ---
+      duration_ms: 1.109125
+      type: 'test'
+      ...
+    # Subtest: data null, Wurf, Abfragefehler und kaputte Zeile bleiben Fehler
+    ok 2 - data null, Wurf, Abfragefehler und kaputte Zeile bleiben Fehler
+      ---
+      duration_ms: 2.121016
+      type: 'test'
+      ...
+    # Subtest: eine spätere leere Antwort ist das Ende dieses Stands
+    ok 3 - eine spätere leere Antwort ist das Ende dieses Stands
+      ---
+      duration_ms: 2.210802
+      type: 'test'
+      ...
+    # Subtest: die nächste Adresse trägt den Cursor der 50. Zeile
+    ok 4 - die nächste Adresse trägt den Cursor der 50. Zeile
+      ---
+      duration_ms: 5.272236
+      type: 'test'
+      ...
+    # Subtest: der installierte Client sendet imatch, eine Art und kein count
+    ok 5 - der installierte Client sendet imatch, eine Art und kein count
+      ---
+      duration_ms: 54.1612
+      type: 'test'
+      ...
+    1..5
+ok 2 - Buchungen laden
+  ---
+  duration_ms: 66.400098
+  type: 'suite'
+  ...
+# Subtest: AP-10-S1 Buchungsordner Vertrag
+    # Subtest: Account-Navigation führt Buchungen weiterhin nicht als eigenen Punkt
+    ok 1 - Account-Navigation führt Buchungen weiterhin nicht als eigenen Punkt
+      ---
+      duration_ms: 2.635501
+      type: 'test'
+      ...
+    # Subtest: Route existiert und bleibt hinter der Account-Auth
+    ok 2 - Route existiert und bleibt hinter der Account-Auth
+      ---
+      duration_ms: 3.678287
+      type: 'test'
+      ...
+    # Subtest: liest owner-scoped über authenticated RLS und nicht über Service Role
+    ok 3 - liest owner-scoped über authenticated RLS und nicht über Service Role
+      ---
+      duration_ms: 2.838667
+      type: 'test'
+      ...
+    # Subtest: Empty und Error bleiben in der Oberfläche getrennt
+    ok 4 - Empty und Error bleiben in der Oberfläche getrennt
+      ---
+      duration_ms: 0.484628
+      type: 'test'
+      ...
+    # Subtest: Übersicht bleibt ohne Booking-Dashboard
+    ok 5 - Übersicht bleibt ohne Booking-Dashboard
+      ---
+      duration_ms: 0.25286
+      type: 'test'
+      ...
+    # Subtest: Runtime enthält keinen Write-Pfad und keine Traveller-PII
+    ok 6 - Runtime enthält keinen Write-Pfad und keine Traveller-PII
+      ---
+      duration_ms: 0.435297
+      type: 'test'
+      ...
+    # Subtest: verwendet den bestehenden Booking-Vertrag statt einer zweiten Wahrheit
+    ok 7 - verwendet den bestehenden Booking-Vertrag statt einer zweiten Wahrheit
+      ---
+      duration_ms: 2.441008
+      type: 'test'
+      ...
+    1..7
+ok 3 - AP-10-S1 Buchungsordner Vertrag
+  ---
+  duration_ms: 14.980502
+  type: 'suite'
+  ...
+# Subtest: AP-10-S1 Buchungsabbildung
+    # Subtest: nimmt nur ausdrücklich booked und buchbare Arten auf
+    ok 1 - nimmt nur ausdrücklich booked und buchbare Arten auf
+      ---
+      duration_ms: 1.87742
+      type: 'test'
+      ...
+    # Subtest: lässt Stay, Transfer und Mietwagen zu, wenn booked
+    ok 2 - lässt Stay, Transfer und Mietwagen zu, wenn booked
+      ---
+      duration_ms: 0.277934
+      type: 'test'
+      ...
+    # Subtest: behält archivierte Reisen und kennzeichnet sie
+    ok 3 - behält archivierte Reisen und kennzeichnet sie
+      ---
+      duration_ms: 1.419497
+      type: 'test'
+      ...
+    # Subtest: erfindet bei fehlendem Datum keinen Zeitraum
+    ok 4 - erfindet bei fehlendem Datum keinen Zeitraum
+      ---
+      duration_ms: 0.284393
+      type: 'test'
+      ...
+    # Subtest: zeigt gespeicherte Zeit nur, wenn sie vorhanden ist
+    ok 5 - zeigt gespeicherte Zeit nur, wenn sie vorhanden ist
+      ---
+      duration_ms: 2.169371
+      type: 'test'
+      ...
+    # Subtest: öffnet den bestehenden Planpunkt nur für kanonische UUIDs
+    ok 6 - öffnet den bestehenden Planpunkt nur für kanonische UUIDs
+      ---
+      duration_ms: 2.419311
+      type: 'test'
+      ...
+    # Subtest: unterscheidet leere Abbildung von unvollständigen Zeilen
+    ok 7 - unterscheidet leere Abbildung von unvollständigen Zeilen
+      ---
+      duration_ms: 0.272025
+      type: 'test'
+      ...
+    # Subtest: lehnt unbekannten Trip-Status fail-closed ab und erfindet kein draft
+    ok 8 - lehnt unbekannten Trip-Status fail-closed ab und erfindet kein draft
+      ---
+      duration_ms: 0.200217
+      type: 'test'
+      ...
+    # Subtest: schneidet die neuesten Bestätigungen deterministisch vor dem Limit
+    ok 9 - schneidet die neuesten Bestätigungen deterministisch vor dem Limit
+      ---
+      duration_ms: 2.968668
+      type: 'test'
+      ...
+    # Subtest: behält die Abfragereihenfolge statt nach Archiv oder Reisedatum umzusortieren
+    ok 10 - behält die Abfragereihenfolge statt nach Archiv oder Reisedatum umzusortieren
+      ---
+      duration_ms: 1.856013
+      type: 'test'
+      ...
+    # Subtest: hält die Nutzercopy ohne Preis- oder Providerbehauptung
+    ok 11 - hält die Nutzercopy ohne Preis- oder Providerbehauptung
+      ---
+      duration_ms: 0.306439
+      type: 'test'
+      ...
+    1..11
+ok 4 - AP-10-S1 Buchungsabbildung
+  ---
+  duration_ms: 18.94674
+  type: 'suite'
+  ...
+1..4
+# tests 32
+# suites 4
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1732.736406

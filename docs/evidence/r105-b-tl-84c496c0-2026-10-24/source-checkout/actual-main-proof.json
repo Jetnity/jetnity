@@ -1,0 +1,155 @@
+{
+  "status": "MATERIALIZED_EXACT_NOT_TESTED",
+  "observedAtUtc": "2026-10-24T23:01:48.957595+00:00",
+  "repo": "/tmp/jetnity-r105-b-v3-review-84c496c037cf",
+  "head": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "tree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "parents": [
+    "fe6cca376cf6b01ab3f29ccf881285bd7008aeff"
+  ],
+  "detached": true,
+  "clean": true,
+  "trackedFiles": 6829,
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "mergeBase": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "ahead": 10,
+  "behind": 0,
+  "incrementalDiffPaths": [
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_HANDOFF_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_REPORT_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_SELF_REVIEW_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_STATUS_2026-10-24.md",
+    "docs/evidence/account-booking-folder-completion-1/NOTES.md",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md"
+  ],
+  "actualMainDiffPaths": [
+    "app/account/bookings/page.tsx",
+    "components/account/AccountBuchungen.tsx",
+    "components/account/BuchungenFilter.tsx",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_HANDOFF_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_PLAN_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_REPORT_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_SELF_REVIEW_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_STATUS_2026-10-24.md",
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_TASK_V1_2026-10-24.md",
+    "docs/evidence/account-booking-folder-completion-1/NOTES.md",
+    "docs/evidence/account-booking-folder-completion-1/ablauf.json",
+    "docs/evidence/account-booking-folder-completion-1/montage.json",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/ablauf/ablauf.json",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/montage.json",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-fehler-390.png",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-fortsetzungLeer-390.png",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-keine-390.png",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-leer-390.png",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-liste-320-32px.png",
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/montage/screens/bookings-liste-390.png",
+    "lib/account/buchungen-abfrage.test.ts",
+    "lib/account/buchungen-abfrage.ts",
+    "lib/account/buchungen-daten.test.ts",
+    "lib/account/buchungen-daten.ts",
+    "lib/account/buchungen-ui.test.ts",
+    "lib/account/buchungen.test.ts",
+    "lib/account/buchungen.ts",
+    "scripts/account-booking-folder-completion-1/ablauf.ts",
+    "scripts/account-booking-folder-completion-1/crypto-browser-stub.ts",
+    "scripts/account-booking-folder-completion-1/flaeche.tsx",
+    "scripts/account-booking-folder-completion-1/montage.ts"
+  ],
+  "sourceCommit": "1574adcb802cc7c0039eb9724e0a8a11191d4ed8",
+  "sourceToFinalRuntimeScriptsDiff": [],
+  "prefixTrees": {
+    "app": {
+      "before": "452d05a9513bacd38002b09330f1b3002e916438",
+      "after": "452d05a9513bacd38002b09330f1b3002e916438",
+      "unchanged": true
+    },
+    "components": {
+      "before": "47931c11bc8c264fd29053edb08a61b17589195b",
+      "after": "47931c11bc8c264fd29053edb08a61b17589195b",
+      "unchanged": true
+    },
+    "lib": {
+      "before": "f7ad4dafc3c621632e68a74f767d4a5e285f2bdd",
+      "after": "f7ad4dafc3c621632e68a74f767d4a5e285f2bdd",
+      "unchanged": true
+    },
+    "scripts": {
+      "before": "369dcaa9e961a5efc375b6bd38a9f4f14b0a4ec0",
+      "after": "369dcaa9e961a5efc375b6bd38a9f4f14b0a4ec0",
+      "unchanged": true
+    }
+  },
+  "pins": {
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_TASK_V1_2026-10-24.md": {
+      "gitBlob": "754fc2e0d87ba0755713c174acf60723ab3d1f13",
+      "sha256": "8fa6c96610be75824a9ac60cdb6a51f2d0a05ae82a988fe298c6e13b722eb0ee",
+      "bytes": 14001
+    },
+    "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_PLAN_2026-10-24.md": {
+      "gitBlob": "b29a5195c57c797f6252dc5863fc6c7b9f0ebac2",
+      "sha256": "97e8e304d3edc58394ca5770bec2058c31b6ec9fc7d8c7f1edfccb4fce11a481",
+      "bytes": 33050
+    },
+    "docs/evidence/account-booking-folder-completion-1/NOTES.md": {
+      "gitBlob": "5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9",
+      "sha256": "319d1a0b4815bcd6be4f7ea72a573bf7e2d63bbaf9acd32e480c598a3e73473e",
+      "bytes": 13224
+    },
+    "docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md": {
+      "gitBlob": "61ee41957c8cf5d7f245dc42f4e269b5d3bf9505",
+      "sha256": "8263bf14c135ff5b2cd5cf8c622438c948f8cc8f5fd86324eff223fa6e98f185",
+      "bytes": 15871
+    },
+    "scripts/account-booking-folder-completion-1/ablauf.ts": {
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "bytes": 35490
+    },
+    "scripts/account-booking-folder-completion-1/flaeche.tsx": {
+      "gitBlob": "3f57401088c6e66247ddebe48032eae770418350",
+      "sha256": "83dc0728d0f8af23933d9cd38f2a9a9355ee33d3b8c1adf2dbf9bed7280e1e05",
+      "bytes": 1201
+    },
+    "scripts/account-booking-folder-completion-1/montage.ts": {
+      "gitBlob": "74403a630872e624908fa84565bcab7d7a2bd0e1",
+      "sha256": "22be351095a5096c5dbf02e33ca95eedc257411b8499669c7530cfd5e5e932e3",
+      "bytes": 12594
+    },
+    "scripts/account-booking-folder-completion-1/crypto-browser-stub.ts": {
+      "gitBlob": "583b5c1e1283a30ccbf74e5da8554990bd815873",
+      "sha256": "dadf9edb2ea7d96b3973d5f105a2180a1434edb2e61bc756736c37e291631591",
+      "bytes": 113
+    }
+  },
+  "historicalNotesRestoredExactly": true,
+  "archiveEqualsFe6NotesExactly": true,
+  "existingCheckouts": {
+    "/tmp/jetnity-r105-b-v2-review-fe6cca376cf6": {
+      "head": "fe6cca376cf6b01ab3f29ccf881285bd7008aeff",
+      "tree": "efde73b48178bd673c4561c5294251bdc6683478",
+      "clean": true
+    },
+    "/tmp/jetnity-r105-main-review-9092b29c2e18": {
+      "head": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+      "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+      "clean": true
+    },
+    "/tmp/jetnity-r105-continuity-review-750a7d0eed40": {
+      "head": "750a7d0eed40f63983d07d8b9136c967eaf86f56",
+      "tree": "7066eba9d37183cc8be1236c93579fed4b2a4fef",
+      "clean": true
+    }
+  },
+  "executionsByThisAgent": {
+    "test": false,
+    "build": false,
+    "browser": false,
+    "remoteWrites": false
+  },
+  "stop": {
+    "url": "https://github.com/Jetnity/jetnity/pull/1000#issuecomment-6390583993",
+    "created_at": "2026-10-24T22:55:44Z",
+    "body": "## B-P2-PROOF-05 \u2014 historical NOTES restored \u2014 STOP / write freeze\n\nSame author **Jetnity Account Booking Folder Completion 1 \u2014 Cursor Generation 1**. Same session `bc-a34030c7-4c19-4c9f-863f-193cfdfa34da` (https://cursor.com/agents/bc-a34030c7-4c19-4c9f-863f-193cfdfa34da). Actual model `grok-4.7-high-fast`. This is not code PASS, Ready, merge, or Production acceptance. Draft stays Draft. #997 stays open. No follow-up.\n\n### Exact git after push\n\n- Accepted main / merge-base: `9092b29c2e187bd73d644a3d85670f3ac6436be1`\n- Main tree: `bc39c3b74b5cbab7c15595500ddc70a72de8826b`\n- Reviewed head `fe6cca376cf6b01ab3f29ccf881285bd7008aeff`, tree `efde73b48178bd673c4561c5294251bdc6683478`, is superseded for this preservation\n- Final head: `84c496c037cff9e14102ff0fe3e6686fee33d5a6`\n- Final tree: `3996b1bbe5eb11197c6e6450f0288d2ecbb3120c`\n- **10 ahead / 0 behind** `9092b29`\n- PLAN blob `b29a5195c57c797f6252dc5863fc6c7b9f0ebac2` unchanged\n- TASK blob `754fc2e0d87ba0755713c174acf60723ab3d1f13` unchanged\n- Mode `NORMAL`\n\n### Blobs\n\n- `docs/evidence/account-booking-folder-completion-1/NOTES.md` is restored to `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` from `5a284965`\n- `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md` is the `fe6cca37` notes text, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`\n- That archive records the already executed `1574adcb` proof. It is not a new run\n\n### Changed paths versus `fe6cca37`\n\n- `docs/evidence/account-booking-folder-completion-1/NOTES.md`\n- `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`\n- `docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_STATUS_2026-10-24.md`\n- `docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_REPORT_2026-10-24.md`\n- `docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_SELF_REVIEW_2026-10-24.md`\n- `docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_HANDOFF_2026-10-24.md`\n\n`git diff fe6cca37 HEAD -- components lib app scripts` is empty. No new Node, browser, or full-suite execution. The `1574adcb` proof and native CI `40140352357` on `fe6cca37` are not gates for `84c496c0`.\n\n**STOP / write freeze** on `84c496c037cff9e14102ff0fe3e6686fee33d5a6`. I did not mark Ready, merge, close #997, or start a follow-up. A later CI finding waits for an explicit Technical-Lead instruction."
+  }
+}

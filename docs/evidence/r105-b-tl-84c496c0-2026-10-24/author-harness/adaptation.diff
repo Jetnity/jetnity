@@ -1,0 +1,123 @@
+--- original/ablauf.ts
++++ adapted/ablauf.ts
+@@ -481,7 +481,7 @@
+   welt.fehlerRest = 0
+   welt.zeilen = Array.from({ length: 51 }, (_, index) => zeile(index + 1, { title: index === 0 ? 'Alpha Zürich' : `Flug ${index + 1}` }))
+   const start = await laden('/account/bookings')
+-  const browser = await chromium.launch()
++  const browser = await chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })
+   const seite = await browser.newPage()
+   const externe: string[] = []
+   seite.on('request', (anfrage) => {
+@@ -760,7 +760,7 @@
+     modell: 'grok-4.7-high-fast',
+     kopf: git(['rev-parse', 'HEAD']),
+     baum: git(['rev-parse', 'HEAD^{tree}']),
+-    main: git(['rev-parse', 'origin/main']),
++    main: git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1']),
+     quellen,
+     befehl: process.argv.join(' '),
+     node: process.version,
+@@ -787,7 +787,7 @@
+   )
+   if (gebaut.status !== 0) throw new Error(gebaut.stderr || gebaut.stdout)
+   const lader = await laderBeweis()
+-  const browser = await chromium.launch()
++  const browser = await chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })
+   const version = browser.version()
+   await browser.close()
+   const flaeche = await oberflaeche(version, bundle)
+--- original/montage.ts
++++ adapted/montage.ts
+@@ -1,5 +1,5 @@
+ // Lokale Montage der gerenderten Buchungsseite.
+-// CSS kommt aus dem Production-Build. Das ist keine Geräte-, Zoom- oder Screenreader-Prüfung.
++// CSS kommt aus lokaler Projekt-PostCSS-Kompilierung, nicht aus einem Next-Build. Keine Geräte-, Zoom- oder Screenreader-Prüfung.
+ 
+ import { spawnSync } from 'node:child_process'
+ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+@@ -140,9 +140,9 @@
+ }
+ 
+ function cssLesen(): string {
+-  const dateien = cssDateien(join('.next', 'static'))
+-  if (dateien.length === 0) throw new Error('Production-CSS fehlt. Zuerst den Build ausführen.')
+-  return dateien.map((pfad) => readFileSync(pfad, 'utf8')).join('\n')
++  const pfad = process.env.JETNITY_REVIEW_CSS_PATH
++  if (!pfad) throw new Error('Verifizierte lokale Projekt-PostCSS-Datei fehlt.')
++  return readFileSync(pfad, 'utf8')
+ }
+ 
+ function dokument(markup: string, css: string): string {
+@@ -217,9 +217,16 @@
+ async function montage(): Promise<void> {
+ const ausgabe = neueAusgabe()
+ const bilder = join(ausgabe, 'screens')
++// Root-only passive observer; no routing, interception, fixture or navigation changes.
++const rootDiagnostik = {
++  pageerror: [] as string[],
++  consoleError: [] as string[],
++  unexpectedRequests: [] as string[],
++  requestFailed: [] as string[],
++}
+ mkdirSync(bilder, { recursive: true })
+ const css = cssLesen()
+-const browser = await chromium.launch()
++const browser = await chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })
+ const befund: {
+   browser: string
+   zustaende: Record<string, unknown>
+@@ -232,13 +239,26 @@
+   tastatur: {},
+   bewegung: 'reduce',
+   hinweis:
+-    'CSS und Root-Font aus dem lokalen Production-Build in headless Chromium. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto.',
++    'LOCAL_PROJECT_POSTCSS_COMPILATION: CSS aus der unveränderten Projekt-PostCSS-Pipeline in headless Chromium. Kein Next-Build-CSS-Nachweis, kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto.',
+ }
+ 
+ try {
+   for (const zustand of zustaende) {
+     const markup = renderToStaticMarkup(createElement(AccountBuchungen, { ansicht: ansicht(zustand) }))
+     const seite = await browser.newPage()
++    seite.on('pageerror', (problem) => rootDiagnostik.pageerror.push(problem.message))
++    seite.on('console', (meldung) => {
++      if (meldung.type() === 'error') rootDiagnostik.consoleError.push(meldung.text())
++    })
++    seite.on('request', (anfrage) => {
++      const url = anfrage.url()
++      if (!url.startsWith('data:') && !url.startsWith('blob:') && url !== 'about:blank') {
++        rootDiagnostik.unexpectedRequests.push(url)
++      }
++    })
++    seite.on('requestfailed', (anfrage) => {
++      rootDiagnostik.requestFailed.push(anfrage.url() + ' ' + (anfrage.failure()?.errorText ?? 'unknown'))
++    })
+     const messungen = []
+     for (const breite of breiten) {
+       await seite.setViewportSize({ width: breite.width, height: breite.height })
+@@ -298,19 +318,23 @@
+       modell: 'grok-4.7-high-fast',
+       kopf: git(['rev-parse', 'HEAD']),
+       baum: git(['rev-parse', 'HEAD^{tree}']),
+-      main: git(['rev-parse', 'origin/main']),
++      main: git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1']),
+       quellen: hashes,
+       befehl: process.argv.join(' '),
+       node: process.version,
+     },
+     grenze:
+-      'Statisches Markup mit CSS aus dem lokalen Production-Build. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.',
++      'Statisches Markup mit LOCAL_PROJECT_POSTCSS_COMPILATION aus der unveränderten Projekt-PostCSS-Pipeline. Kein Next-Build-CSS-Nachweis, keine Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px.',
+     befund,
+   }
+   writeFileSync(join(ausgabe, 'montage.json'), `${JSON.stringify(bericht, null, 2)}\n`)
+   console.log(JSON.stringify({ ausgabe, browser: befund.browser, tastatur: befund.tastatur, zustaende: Object.keys(befund.zustaende) }))
+ } finally {
+   await browser.close()
++  writeFileSync(join(ausgabe, 'montage-root-observer.json'), `${JSON.stringify({
++    kind: 'ROOT_ADDED_PASSIVE_MONTAGE_OBSERVER',
++    diagnostics: rootDiagnostik,
++  }, null, 2)}\n`)
+ }
+ }
+ 

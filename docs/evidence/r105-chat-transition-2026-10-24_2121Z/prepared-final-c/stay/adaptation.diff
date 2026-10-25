@@ -1,0 +1,109 @@
+--- original-six-stay-repro/run.mjs
++++ final-independent-stay/run.mjs
+@@ -1,15 +1,22 @@
+ import assert from 'node:assert/strict'
+ import { createRequire } from 'node:module'
+ import { createServer } from 'node:http'
+-import { readFileSync, writeFileSync } from 'node:fs'
++import { readFileSync, writeFileSync, mkdtempSync, readdirSync } from 'node:fs'
+ import { createHash } from 'node:crypto'
+ import { execFile } from 'node:child_process'
+ import { promisify } from 'node:util'
++import { dirname } from 'node:path'
++import { fileURLToPath } from 'node:url'
+ 
+-const REPO = '/tmp/jetnity-r105-c-v3-review-be2c4932fc58'
+-const OUT = '/tmp/jetnity-r105-c-stay-focus-ahsghe'
+-const EXPECTED_HEAD = 'be2c4932fc58d0bdca78e91cc7837a666201715f'
+-const EXPECTED_TREE = '4c6315603edb46937eab1982e93748a4b6558614'
++const REPO = process.argv[2]
++const EXPECTED_HEAD = process.argv[3]
++const EXPECTED_TREE = process.argv[4]
++assert.match(REPO ?? '', /^\/tmp\/jetnity-[A-Za-z0-9._-]+$/)
++assert.match(EXPECTED_HEAD ?? '', /^[0-9a-f]{40}$/)
++assert.match(EXPECTED_TREE ?? '', /^[0-9a-f]{40}$/)
++const INPUT = dirname(fileURLToPath(import.meta.url))
++const OUT = mkdtempSync('/tmp/jetnity-r105-c-stay-final-proof-')
++for (const name of ['run.mjs','mount.tsx']) writeFileSync(`${OUT}/${name}`,readFileSync(`${INPUT}/${name}`),{flag:'wx'})
+ const execFileAsync = promisify(execFile)
+ const git = async (...args) => (await execFileAsync('git', args, {cwd: REPO, encoding: 'utf8'})).stdout.trim()
+ assert.equal(await git('rev-parse', 'HEAD'), EXPECTED_HEAD)
+@@ -31,7 +38,7 @@
+ const { chromium } = require('playwright')
+ const result = {
+   createdAtUtc: new Date().toISOString(), head: EXPECTED_HEAD, tree: EXPECTED_TREE,
+-  command: `node ${OUT}/run.mjs`, output: OUT, node: process.version,
++  command: `node ${INPUT}/run.mjs ${REPO} ${EXPECTED_HEAD} ${EXPECTED_TREE}`, output: OUT, node: process.version, sourceVerifiedAgainstGit: true,
+   react: require('react/package.json').version,
+   sourceSha256, fixtureSha256: hash(readFileSync(`${OUT}/mount.tsx`)),
+   runnerSha256: hash(readFileSync(`${OUT}/run.mjs`)),
+@@ -121,8 +128,55 @@
+       await page.close()
+     }
+   }
+-  result.status = result.cases.length === 6 && result.cases.every(c => c.passed) && result.pageErrors.length === 0 && result.blockedRequests.length === 0 ? 'PASS' : 'REPRODUCED_FAILURE'
+-  if (result.status !== 'PASS') process.exitCode = 1
++
++  // Three current-owner controls: preserve the ordinary success/domain/reject focus.
++  // No newer B interaction occurs in these executions.
++  for (const outcome of ['success', 'domain', 'reject']) {
++    const page = await context.newPage()
++    page.on('pageerror', error => result.pageErrors.push(String(error)))
++    await page.goto(`${origin}/stay-pair`)
++    const rowA = page.locator('li').filter({has: page.getByText('Stay A', {exact: true})})
++    const rowB = page.locator('li').filter({has: page.getByText('Stay B', {exact: true})})
++    assert.equal(await rowA.count(), 1)
++    assert.equal(await rowB.count(), 1)
++    await rowA.getByRole('button', {name: 'Zeitraum ändern', exact: true}).click()
++    await rowA.getByLabel('Check-out', {exact: true}).fill('2026-11-07')
++    await rowA.getByRole('button', {name: 'Zeitraum speichern', exact: true}).click()
++    await page.waitForFunction(() => window.review.requests.length === 1)
++    assert.equal(await rowA.locator('form').getAttribute('aria-busy'), 'true')
++    assert.equal(await rowB.locator('form').count(), 0)
++    assert.deepEqual(await page.evaluate(() => window.review.requests.map(r => r.payload)), [{itemId: 'stay-a', startsOn: '2026-11-02', endsOn: '2026-11-07'}])
++    await page.evaluate(next => window.review.release(next), outcome)
++    if (outcome === 'success') await rowA.getByText('Zeitraum gespeichert.', {exact: true}).waitFor()
++    else await rowA.getByRole('alert').waitFor()
++    await paint(page)
++    const owner = await (outcome === 'success' ? rowA.getByRole('button', {name: 'Zeitraum ändern', exact: true}) : rowA.getByRole('alert')).elementHandle()
++    assert.ok(owner)
++    const focus = await page.evaluate(el => ({isExactOwner: document.activeElement === el,
++      tag: document.activeElement?.tagName, text: document.activeElement?.textContent?.trim(),
++      rowText: document.activeElement?.closest('li')?.textContent?.trim()}), owner)
++    const aForms = await rowA.locator('form').count()
++    const aTruth = {
++      forms: aForms,
++      busy: aForms ? await rowA.locator('form').getAttribute('aria-busy') : null,
++      draft: aForms ? await rowA.getByLabel('Check-out', {exact: true}).inputValue() : null,
++      alerts: await rowA.getByRole('alert').allTextContents(),
++      savedStatus: await rowA.getByText('Zeitraum gespeichert.', {exact: true}).count(),
++      calls: await page.evaluate(() => window.review.requests.length),
++      disabled: await rowA.locator('input:disabled,select:disabled,textarea:disabled').count(),
++    }
++    const expectedError = outcome === 'domain' ? 'Synthetischer Speicherfehler A.' : 'Der Zeitraum konnte nicht gespeichert werden. Bitte versuche es erneut.'
++    const aTruthCorrect = outcome === 'success' ? aTruth.forms === 0 && aTruth.savedStatus === 1 :
++      aTruth.forms === 1 && aTruth.busy === 'false' && aTruth.draft === '2026-11-07' && aTruth.alerts.includes(expectedError) && aTruth.savedStatus === 0 && aTruth.disabled === 0
++    const bStatePreserved = await rowB.locator('form').count() === 0
++    result.cases.push({name: `current-stay-A-${outcome}`, outcome, newer: 'none', after: {focus}, aTruth,
++      bStatePreserved, aTruthCorrect, focusPreserved: focus.isExactOwner,
++      passed: focus.isExactOwner && bStatePreserved && aTruthCorrect && aTruth.calls === 1})
++    await page.screenshot({path: `${OUT}/current-A-${outcome}.png`, fullPage: true})
++    await page.close()
++  }
++  result.status = result.cases.length === 9 && result.cases.every(c => c.passed === true) && result.pageErrors.length === 0 && result.blockedRequests.length === 0 ? 'NINE_STAY_CASES_PASS' : 'SEE_CASES'
++  if (result.status !== 'NINE_STAY_CASES_PASS') process.exitCode = 1
+ } catch (error) {
+   result.status = 'HARNESS_ERROR'
+   result.error = String(error.stack ?? error)
+@@ -135,9 +189,9 @@
+   result.productGitStatus = await git('status', '--short')
+   result.finalSourceSha256 = Object.fromEntries(sources.map(file => [file, hash(readFileSync(`${REPO}/${file}`))]))
+   result.cleanExactSource = result.finalHead === EXPECTED_HEAD && result.finalTree === EXPECTED_TREE && result.productGitStatus === '' && JSON.stringify(result.finalSourceSha256) === JSON.stringify(sourceSha256)
+-  if (!result.cleanExactSource) process.exitCode = 2
++  if (!result.cleanExactSource) {result.status = 'SOURCE_CHANGED'; process.exitCode = 2}
+   writeFileSync(`${OUT}/result.json`, `${JSON.stringify(result, null, 2)}\n`, {flag: 'wx'})
+-  const artifacts = ['mount.tsx', 'run.mjs', 'result.json', ...result.cases.map(c => `${c.outcome}-B-${c.newer}.png`)]
++  const artifacts = ['mount.tsx', 'run.mjs', 'result.json', ...readdirSync(OUT).filter(name => name.endsWith('.png'))].sort()
+   writeFileSync(`${OUT}/manifest.json`, `${JSON.stringify({head: EXPECTED_HEAD, tree: EXPECTED_TREE, sha256: Object.fromEntries(artifacts.map(p => [p, hash(readFileSync(`${OUT}/${p}`))]))}, null, 2)}\n`, {flag: 'wx'})
+   console.log(JSON.stringify({status: result.status, cases: result.cases.map(c => ({name: c.name, focusPreserved: c.focusPreserved, bStatePreserved: c.bStatePreserved, aTruthCorrect: c.aTruthCorrect, passed: c.passed, afterTag: c.after.focus.tag})), pageErrors: result.pageErrors, blockedRequests: result.blockedRequests, cleanExactSource: result.cleanExactSource, output: OUT, resultSha256: hash(readFileSync(`${OUT}/result.json`)), manifestSha256: hash(readFileSync(`${OUT}/manifest.json`))}, null, 2))
+ }

@@ -1,0 +1,18 @@
+{
+  "head": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+  "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "sha256": {
+    "current-A-domain.png": "4f6eaee3a291a5a15d6f8e4acf8fcf9ce8326e56c3272f5155e1bdd52c881f1d",
+    "current-A-reject.png": "f98523c6f78d89769e2cc095fa6a3380517609e20254aab813ee2b6ec58f3d50",
+    "current-A-success.png": "da54d5f0e0c5b494ac26877e955ce1bce5bd30fecaa58a9e807ddef6b5f7169a",
+    "domain-B-closed.png": "7f013bdcaa75c3195f01e89c118f2ece6d531a37a32619c80953779456b8804b",
+    "domain-B-open.png": "8daf9bb5775fff41fbe1947e0d3bbbfea7f5f9630be0dfe52ed8ec71e2b58b93",
+    "mount.tsx": "5c73a325f4a07a85fb77d00055ead746b4b33bf0969cb26cb52e0c3a63907ad1",
+    "reject-B-closed.png": "08f727563eb7439cb39ec3d705fc2f36e329b0c5896bfc924a08ff78e5d32620",
+    "reject-B-open.png": "569a0e59b67696ec50d2b7b1dbd1537188d4227f250aeba8fe269d55b17f0dc4",
+    "result.json": "da63fc420cfcae468b314d968dc197eb06f028a315b56448ac28245af6983e5f",
+    "run.mjs": "45a70cc8561dd12e0685dc244ea56cf291b683eb40d1b1e3ce698159d738891f",
+    "success-B-closed.png": "fadca119a2fdefd510080470ce8ead1c93120079baad7deec5e08a5f96d7e83f",
+    "success-B-open.png": "48e9477db56da6e9ada332376488c71995e6bb694d29ef724a35e76878a234c7"
+  }
+}

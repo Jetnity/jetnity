@@ -1,0 +1,32 @@
+{
+  "kind": "read-only-input-reference-map",
+  "priorArtifactsCopiedAgain": false,
+  "controllerReconstructionVerifiedWithoutExecution": true,
+  "diagnosticScriptsByteIdentical": true,
+  "references": [
+    {
+      "originalPath": "/tmp/jetnity-r105-b-harness-prep/adapted/montage.ts",
+      "priorArchivePath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/author-harness/copies/montage.ts",
+      "role": "Exact adapted source consumed by both diagnostic invocations",
+      "bytes": 13839,
+      "sha256": "ca76794668f593fbd3a86fe4489f9ae301583d56ff736dee033166cb8ed0fbe7",
+      "gitBlob": "99e2cfff576c58647f1cdb3137de188b0a726a05"
+    },
+    {
+      "originalPath": "/tmp/jetnity-r105-b-css-84c496c0-20261024-2302z/jetnity-b-postcss-84c496c037cf.css",
+      "priorArchivePath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/project-postcss.css",
+      "role": "Exact local project PostCSS stylesheet consumed by both invocations",
+      "bytes": 129091,
+      "sha256": "6ea356ae1284e432eae27e9511923cf43550a4f80b34ac63c7235424e1f22af8",
+      "gitBlob": "5fe16ba04fcbd326ac45a84e6908b48dcf840304"
+    },
+    {
+      "originalPath": "/tmp/jetnity-r105-b-css-84c496c0-20261024-2302z/css-provenance-84c496c037cf.json",
+      "priorArchivePath": "docs/evidence/r105-b-tl-84c496c0-2026-10-24/css/css-provenance.json",
+      "role": "Original local project PostCSS provenance; no new compilation",
+      "bytes": 13315,
+      "sha256": "8b546b19bcd747795e47a53476650241e641a7a39e48ea6af83923e177a03f14",
+      "gitBlob": "83068c943677a67820aefddd76c4f46add1a2f7a"
+    }
+  ]
+}

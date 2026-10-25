@@ -1,0 +1,317 @@
+{
+  "kind": "ROOT_LOCAL_POSTCSS_CSS_PROVENANCE",
+  "status": "CSS_COMPILED_SOURCES_UNCHANGED",
+  "startedAtUtc": "2026-10-25T00:04:43.265460+00:00",
+  "nextBuildClaim": false,
+  "layoutExecuted": false,
+  "nativeNextBuildGate": "Separate; this runner does not satisfy it.",
+  "repo": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "expectedHead": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "expectedTree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "output": "/tmp/jetnity-r105-b-v4-css-85abdc7c",
+  "actualWorkingDirectory": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/tmp/jetnity-r105-b-css-prep/compile-css.mjs",
+    "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+    "/tmp/jetnity-r105-b-v4-css-85abdc7c/jetnity-b-postcss-85abdc7c33a3.css"
+  ],
+  "childEnvironmentKeys": [
+    "LANG",
+    "LC_ALL",
+    "NODE_ENV",
+    "PATH",
+    "TMPDIR"
+  ],
+  "nodeEnvironment": "production",
+  "repositoryNodeModules": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules",
+  "resolvedNodeModules": "/tmp/jetnity-r104-review/node_modules",
+  "before": {
+    "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+    "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+    "cleanStatus": "",
+    "sources": [
+      {
+        "path": "styles/globals.css",
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      {
+        "path": "postcss.config.js",
+        "gitBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+        "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715",
+        "bytes": 163
+      },
+      {
+        "path": "tailwind.config.js",
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      {
+        "path": "next.config.js",
+        "gitBlob": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+        "sha256": "5ef7138cae27c64347093b6faa67bb106b92d194ec13968fd30141a34afa5c0b",
+        "bytes": 1162
+      },
+      {
+        "path": "package.json",
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      {
+        "path": "package-lock.json",
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      },
+      {
+        "path": "tsconfig.json",
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+        "bytes": 865
+      },
+      {
+        "path": "components/account/AccountBuchungen.tsx",
+        "gitBlob": "83f7cf960489f2d855647cd52ee34fc4e5eec8b1",
+        "sha256": "171558b8e50937c21af5c1ba54153d9969d1140c1f33f62743a15a7fa533e555",
+        "bytes": 8812
+      },
+      {
+        "path": "components/account/BuchungenFilter.tsx",
+        "gitBlob": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+        "sha256": "806f00ac952ccbbd79bb08224c381a0f789d98cba24025dc07a3ee866938cbb3",
+        "bytes": 3428
+      },
+      {
+        "path": "lib/account/buchungen.ts",
+        "gitBlob": "2a15645baedd10100496c71de702b15eec8543cc",
+        "sha256": "d89ccbe95fc2966ad5a124505fe07d811f3bd226bfe51b46cc1e1a048a38cad4",
+        "bytes": 9265
+      },
+      {
+        "path": "lib/account/buchungen-abfrage.ts",
+        "gitBlob": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+        "sha256": "b3d7d4464fb0aa2ee80e1d12309fbe37c22bf0b5d972439b769aa7852b1563de",
+        "bytes": 12636
+      },
+      {
+        "path": "lib/account/buchungen-daten.ts",
+        "gitBlob": "b4335793a73a5d0af16a03d2e07f5e932fa996d2",
+        "sha256": "1ea328ddd9226819d7981947eb39d56c276f9d70bb167ff86c052d43ac24ba9c",
+        "bytes": 4463
+      },
+      {
+        "path": "scripts/account-booking-folder-completion-1/montage.ts",
+        "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+        "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+        "bytes": 18259
+      }
+    ],
+    "ignoredFilesInTailwindContentRoots": []
+  },
+  "gitFilterDriversNeutralizedPerCommand": [
+    "lfs"
+  ],
+  "wrapperSha256": "8ffc4d8512cc94577fa531753a9f9629ad97cf769470cc52fbaa519b4d3c56d0",
+  "helperSha256": "da4a232c1555744561a5067c155f8337f4fab63b51014842e11639c8facd3ea1",
+  "child": {
+    "exitCode": 0,
+    "stdoutSha256": "a855e5369c8140350d7e83ec58541c0e4841f87add169556ccb6b8ba66f330d8",
+    "stderrSha256": "c2de0e537eb69082e5fb2bda5f3173303a71ab9b0eb1013820a4a090a6af033a",
+    "stderr": "Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:\n  npx update-browserslist-db@latest\n  Why you should do it regularly: https://github.com/browserslist/update-db#readme\n"
+  },
+  "after": {
+    "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+    "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+    "cleanStatus": "",
+    "sources": [
+      {
+        "path": "styles/globals.css",
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      {
+        "path": "postcss.config.js",
+        "gitBlob": "43604e3f0fe5322dad23c4ea07e9d580f601a951",
+        "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715",
+        "bytes": 163
+      },
+      {
+        "path": "tailwind.config.js",
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      {
+        "path": "next.config.js",
+        "gitBlob": "e2f9b811ccfd1e80aac8351963386bb1e6b3db96",
+        "sha256": "5ef7138cae27c64347093b6faa67bb106b92d194ec13968fd30141a34afa5c0b",
+        "bytes": 1162
+      },
+      {
+        "path": "package.json",
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      {
+        "path": "package-lock.json",
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      },
+      {
+        "path": "tsconfig.json",
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+        "bytes": 865
+      },
+      {
+        "path": "components/account/AccountBuchungen.tsx",
+        "gitBlob": "83f7cf960489f2d855647cd52ee34fc4e5eec8b1",
+        "sha256": "171558b8e50937c21af5c1ba54153d9969d1140c1f33f62743a15a7fa533e555",
+        "bytes": 8812
+      },
+      {
+        "path": "components/account/BuchungenFilter.tsx",
+        "gitBlob": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+        "sha256": "806f00ac952ccbbd79bb08224c381a0f789d98cba24025dc07a3ee866938cbb3",
+        "bytes": 3428
+      },
+      {
+        "path": "lib/account/buchungen.ts",
+        "gitBlob": "2a15645baedd10100496c71de702b15eec8543cc",
+        "sha256": "d89ccbe95fc2966ad5a124505fe07d811f3bd226bfe51b46cc1e1a048a38cad4",
+        "bytes": 9265
+      },
+      {
+        "path": "lib/account/buchungen-abfrage.ts",
+        "gitBlob": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+        "sha256": "b3d7d4464fb0aa2ee80e1d12309fbe37c22bf0b5d972439b769aa7852b1563de",
+        "bytes": 12636
+      },
+      {
+        "path": "lib/account/buchungen-daten.ts",
+        "gitBlob": "b4335793a73a5d0af16a03d2e07f5e932fa996d2",
+        "sha256": "1ea328ddd9226819d7981947eb39d56c276f9d70bb167ff86c052d43ac24ba9c",
+        "bytes": 4463
+      },
+      {
+        "path": "scripts/account-booking-folder-completion-1/montage.ts",
+        "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+        "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+        "bytes": 18259
+      }
+    ],
+    "ignoredFilesInTailwindContentRoots": []
+  },
+  "compilation": {
+    "kind": "LOCAL_PROJECT_POSTCSS_COMPILATION",
+    "nextBuildClaim": false,
+    "actualWorkingDirectory": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+    "nodeVersion": "v24.22.1",
+    "nodeExecutable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "configPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/postcss.config.js",
+    "configSha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715",
+    "pipeline": [
+      {
+        "name": "tailwindcss/nesting",
+        "options": {}
+      },
+      {
+        "name": "tailwindcss",
+        "options": {}
+      },
+      {
+        "name": "autoprefixer",
+        "options": {}
+      }
+    ],
+    "packages": [
+      {
+        "name": "postcss",
+        "version": "8.5.23",
+        "lockedVersion": "8.5.23",
+        "packagePath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules/postcss/package.json",
+        "packageDirectory": "/tmp/jetnity-r104-review/node_modules/postcss",
+        "entryPath": "/tmp/jetnity-r104-review/node_modules/postcss/lib/postcss.js",
+        "packageJsonSha256": "df43e035f054943454c49556c89cea8a288d91f5d4b1a6f4e56d48b85c7ebd75"
+      },
+      {
+        "name": "tailwindcss",
+        "version": "3.4.17",
+        "lockedVersion": "3.4.17",
+        "packagePath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules/tailwindcss/package.json",
+        "packageDirectory": "/tmp/jetnity-r104-review/node_modules/tailwindcss",
+        "entryPath": "/tmp/jetnity-r104-review/node_modules/tailwindcss/lib/index.js",
+        "packageJsonSha256": "56330837214a14ffcf0faba46f0f94fb23209778f5d4cc0a2bed7d775108c8d1"
+      },
+      {
+        "name": "autoprefixer",
+        "version": "10.4.21",
+        "lockedVersion": "10.4.21",
+        "packagePath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules/autoprefixer/package.json",
+        "packageDirectory": "/tmp/jetnity-r104-review/node_modules/autoprefixer",
+        "entryPath": "/tmp/jetnity-r104-review/node_modules/autoprefixer/lib/autoprefixer.js",
+        "packageJsonSha256": "39c01e338d38a21dc48946118e61415d915b91610c72f550e57b528e23e50836"
+      },
+      {
+        "name": "tailwind-scrollbar-hide",
+        "version": "4.0.0",
+        "lockedVersion": "4.0.0",
+        "packagePath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules/tailwind-scrollbar-hide/package.json",
+        "packageDirectory": "/tmp/jetnity-r104-review/node_modules/tailwind-scrollbar-hide",
+        "entryPath": "/tmp/jetnity-r104-review/node_modules/tailwind-scrollbar-hide/dist/index.js",
+        "packageJsonSha256": "b8c79fa59dde15fd76785d127e77811130c099d62b0a09ad2c1c63e6e4ddeaf9"
+      },
+      {
+        "name": "tailwindcss-animate",
+        "version": "1.0.7",
+        "lockedVersion": "1.0.7",
+        "packagePath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules/tailwindcss-animate/package.json",
+        "packageDirectory": "/tmp/jetnity-r104-review/node_modules/tailwindcss-animate",
+        "entryPath": "/tmp/jetnity-r104-review/node_modules/tailwindcss-animate/index.js",
+        "packageJsonSha256": "a6a9ae2d3731891b7d005a7baf235db24fa9ce6c56a6da1cda4a953ea131bb69"
+      }
+    ],
+    "modules": [
+      {
+        "name": "postcss",
+        "resolved": "/tmp/jetnity-r104-review/node_modules/postcss/lib/postcss.js",
+        "entrySha256": "8314c843f5dfa922e6f3fb9b8d8bf3e4b0be0d94b08075e1b4f3599f4276fb67"
+      },
+      {
+        "name": "tailwindcss/nesting",
+        "resolved": "/tmp/jetnity-r104-review/node_modules/tailwindcss/nesting/index.js",
+        "entrySha256": "34b0834dc682c4f16b2c35d6ce0b8be59ca7c38a84b17ab8c54ab9252f41e7f0"
+      },
+      {
+        "name": "tailwindcss",
+        "resolved": "/tmp/jetnity-r104-review/node_modules/tailwindcss/lib/index.js",
+        "entrySha256": "277a58612ffb9c7577d0a6155448c8dc2c7dfa82a90a5b972726b364b4e7bea0"
+      },
+      {
+        "name": "autoprefixer",
+        "resolved": "/tmp/jetnity-r104-review/node_modules/autoprefixer/lib/autoprefixer.js",
+        "entrySha256": "94b40b643ca1f428e16f4f361db7daf275e550bfc508641a5c855a0d992fd781"
+      }
+    ],
+    "inputPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/styles/globals.css",
+    "inputSha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+    "outputPath": "/tmp/jetnity-r105-b-v4-css-85abdc7c/jetnity-b-postcss-85abdc7c33a3.css",
+    "cssBytes": 129181,
+    "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+    "warnings": []
+  },
+  "limitations": [
+    "Locally compiled project PostCSS/Tailwind CSS; not claimed byte-identical to Next build output.",
+    "No .next output is created or imitated.",
+    "No browser, layout, hosted-data, native-device or native-zoom proof is produced.",
+    "Actual runtime/dependency versions are recorded; native Next build and CI gates remain separate."
+  ],
+  "finishedAtUtc": "2026-10-25T00:04:54.876791+00:00"
+}

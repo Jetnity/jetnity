@@ -1,0 +1,18 @@
+{
+  "head": "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+  "tree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "sha256": {
+    "flight-A-readback-after-B-draft.png": "d0eb0cb12f48e67accc40309d82d9044a50b0593bb5f5890dd83f53e637453ac",
+    "flight-current-normal-readback.png": "f4355659a48e048482cadf65bc63e91946a24afb8f54ec5c8a4764ba294c0fe1",
+    "flight-readback-new-draft.png": "4565e9ed0a3616ab3d3a76e8ac12648e57990bbd9d56f0e7aa5ba86c5a3ba8d1",
+    "mount.tsx": "5038738a09c668e5ef8add7bd9151871798f4f1334e5e708e49e3e3000199996",
+    "pending-A-domain-B-closed.png": "a2beb04d089e9d4b260b840e416f923880a99b7096604f78d42b5783c3e65c65",
+    "pending-A-domain-B-open.png": "3d33e0c8249bdf2cad4f6c9ab211916bd52994b6fff49a4392e79e505e8c94af",
+    "pending-A-reject-B-closed.png": "cc14a56115acd8ab222bc7b845e6afc9ce51819a16bc9bcd7829d3a3e589b423",
+    "pending-A-reject-B-open.png": "4125a00e4fc9feafe1a7536349f8cbe2c4db072146a0727d44e1712714d2e465",
+    "pending-A-success-B-closed.png": "b98d9a21bc968afad9866ccab7919e4693fdda9068cdaaa4c446372b873ffb09",
+    "pending-A-success-B-open.png": "28f01773f5a8d6ce23e135f8a04a1e1f97d9dd87b9caf4ff1bb6c95a7ca2253e",
+    "result.json": "14fbd7f0e46ad83a2b3487682c08d677960481dee4cb6cd3af45486f4e5911e7",
+    "run.mjs": "b18d3b8b0174ae8ee8ec82ca0f31accf6c33d2238332af9b738e3d971685db3e"
+  }
+}

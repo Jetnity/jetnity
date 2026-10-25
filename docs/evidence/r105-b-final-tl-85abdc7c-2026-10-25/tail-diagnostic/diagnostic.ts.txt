@@ -1,0 +1,183 @@
+// Root-only diagnostic: one static render, one isolated page, two viewport captures.
+// This does not run or replace the author's montage assertions.
+import { createHash } from 'node:crypto'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { chromium } from 'playwright'
+import AccountBuchungen from '@/components/account/AccountBuchungen'
+import { ansicht } from './fixture-source'
+
+function requireThat(ok: unknown, message: string): asserts ok {
+  if (!ok) throw new Error(message)
+}
+
+const configPath = process.argv[2]
+requireThat(configPath, 'A controller-generated config path is required')
+const config = JSON.parse(readFileSync(configPath, 'utf8'))
+const output = config.output as string
+const observer = {
+  pageerror: [] as string[],
+  consoleError: [] as string[],
+  unexpectedRequests: [] as string[],
+  requestFailed: [] as string[],
+}
+
+async function frames(page: import('playwright').Page): Promise<void> {
+  await page.evaluate(async () => {
+    await document.fonts.ready
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+  })
+}
+
+async function measure(page: import('playwright').Page, stage: string) {
+  // A literal browser function avoids TSX name-preservation helpers crossing the evaluate boundary.
+  const measured = await page.evaluate(`(() => {
+    const root = document.documentElement
+    const cards = [...document.querySelectorAll('[data-buchungen="liste"] article')]
+    const lastCard = cards.at(-1)
+    const lastTitle = lastCard?.querySelector('h2')
+    const pagination = [...document.querySelectorAll('a')].find(
+      (link) => (link.textContent ?? '').replace(/\\s+/g, ' ').trim() === 'Weitere Buchungen',
+    )
+    function rect(element) {
+      const r = element.getBoundingClientRect()
+      return { x: r.x, y: r.y, top: r.top, right: r.right, bottom: r.bottom, left: r.left,
+        width: r.width, height: r.height, documentTop: r.top + window.scrollY,
+        documentBottom: r.bottom + window.scrollY }
+    }
+    function detail(element) {
+      if (!element) return null
+      const r = rect(element)
+      const css = getComputedStyle(element)
+      const left = Math.max(0, r.left)
+      const right = Math.min(window.innerWidth, r.right)
+      const top = Math.max(0, r.top)
+      const bottom = Math.min(window.innerHeight, r.bottom)
+      const inViewport = right > left && bottom > top
+      const hit = inViewport ? document.elementFromPoint((left + right) / 2, (top + bottom) / 2) : null
+      return { tag: element.tagName, text: (element.textContent ?? '').replace(/\\s+/g, ' ').trim(),
+        href: element.getAttribute('href'), rect: r, inViewport,
+        clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
+        css: { display: css.display, visibility: css.visibility, opacity: css.opacity,
+          fontSize: css.fontSize, lineHeight: css.lineHeight, fontWeight: css.fontWeight,
+          letterSpacing: css.letterSpacing, overflowWrap: css.overflowWrap,
+          color: css.color, backgroundColor: css.backgroundColor },
+        hitTest: hit ? { tag: hit.tagName, text: (hit.textContent ?? '').replace(/\\s+/g, ' ').trim().slice(0, 120),
+          targetContainsHit: element === hit || element.contains(hit) } : null }
+    }
+    return { url: location.href, viewport: { width: innerWidth, height: innerHeight,
+      devicePixelRatio: devicePixelRatio }, scroll: { x: scrollX, y: scrollY },
+      clientWidth: root.clientWidth, scrollWidth: root.scrollWidth, overflow: root.scrollWidth - root.clientWidth,
+      clientHeight: root.clientHeight, scrollHeight: root.scrollHeight,
+      body: { clientWidth: document.body.clientWidth, scrollWidth: document.body.scrollWidth,
+        scrollHeight: document.body.scrollHeight }, rootFontSize: getComputedStyle(root).fontSize,
+      h1: detail(document.querySelector('h1')), numberCards: cards.length,
+      cardRects: cards.map((card, index) => ({ index: index + 1, title: card.querySelector('h2')?.textContent ?? null,
+        rect: rect(card) })), lastCard: detail(lastCard), lastTitle: detail(lastTitle),
+      lastPlanLink: detail(lastCard?.querySelector('a')), pagination: detail(pagination) }
+  })()`)
+  return { stage, ...measured }
+}
+
+async function main() {
+  const result: Record<string, any> = {
+    kind: 'ROOT_FINAL_LIST_TAIL_VIEWPORT_DIAGNOSTIC',
+    status: 'FAIL', startedAtUtc: new Date().toISOString(),
+    executor: 'Technical Lead / Root', head: config.head, tree: config.tree,
+    nodeVersion: process.version, viewport: { width: 320, height: 700 }, rootFontSize: '32px',
+    fixture: "Unmodified extracted author ansicht('liste')", renderCount: 0,
+    css: { path: config.cssPath, sha256: config.cssSha256, class: 'LOCAL_PROJECT_POSTCSS_COMPILATION' },
+    limits: ['One static render and one headless about:blank page; no full-page screenshot.',
+      'This is a focused capture diagnostic, not a repeat or replacement of the 56 author measurements.',
+      'No hydration, Next Router, hosted account, hosted RLS, native zoom or screen-reader claim.',
+      'Two normal viewport screenshots require Root visual inspection; capture cause is not assumed.'],
+    pageOffline: true, serviceWorkers: 'block', snapshots: [], screenshots: [], visualInspectionClaim: false,
+  }
+  let browser: import('playwright').Browser | undefined
+  try {
+    requireThat(process.version === config.nodeVersion, 'Node version differs from the verified run')
+    const css = readFileSync(config.cssPath)
+    requireThat(createHash('sha256').update(css).digest('hex') === config.cssSha256, 'CSS bytes changed')
+    const view = ansicht('liste')
+    requireThat(view.zustand === 'liste' && view.buchungen.length === 50 && view.weiterHref, 'Author fixture is not a 50-card list with continuation')
+    const last = view.buchungen.at(-1)
+    requireThat(last?.title === 'Flug 50' && last.id === '00000000-0000-4000-8000-000000000032', 'Unexpected last fixture item')
+    result.expected = { numberCards: view.buchungen.length, lastId: last.id, lastTitle: last.title,
+      paginationHref: view.weiterHref }
+    const markup = renderToStaticMarkup(createElement(AccountBuchungen, { ansicht: view }))
+    result.renderCount = 1
+    result.markupSha256 = createHash('sha256').update(markup).digest('hex')
+    const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>${css.toString('utf8')}</style></head><body>${markup}</body></html>`
+    result.documentSha256 = createHash('sha256').update(html).digest('hex')
+    browser = await chromium.launch({ executablePath: config.chromium, headless: true })
+    result.browserVersion = browser.version()
+    const context = await browser.newContext({ viewport: { width: 320, height: 700 }, deviceScaleFactor: 1,
+      offline: true, serviceWorkers: 'block' })
+    const page = await context.newPage()
+    page.on('pageerror', (error) => observer.pageerror.push(error.message))
+    page.on('console', (message) => { if (message.type() === 'error') observer.consoleError.push(message.text()) })
+    page.on('request', (request) => {
+      const url = request.url()
+      if (!url.startsWith('data:') && !url.startsWith('blob:') && url !== 'about:blank') observer.unexpectedRequests.push(url)
+    })
+    page.on('requestfailed', (request) => observer.requestFailed.push(request.url() + ' ' + (request.failure()?.errorText ?? 'unknown')))
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.setContent(html, { waitUntil: 'domcontentloaded' })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    await frames(page)
+    result.snapshots.push(await measure(page, 'before-scroll'))
+
+    await page.evaluate(() => {
+      const card = [...document.querySelectorAll('[data-buchungen="liste"] article')].at(-1)
+      if (!card) throw new Error('Last card missing')
+      window.scrollTo({ top: card.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'instant' })
+    })
+    await frames(page)
+    const cardSnapshot = await measure(page, 'last-card-viewport')
+    result.snapshots.push(cardSnapshot)
+    const cardScreenshot = join(output, 'last-card-320x700.png')
+    await page.screenshot({ path: cardScreenshot, fullPage: false, animations: 'disabled' })
+    result.screenshots.push({ path: cardScreenshot, stage: 'last-card-viewport', fullPage: false })
+
+    await page.evaluate(() => { window.scrollTo({ top: document.documentElement.scrollHeight, left: 0, behavior: 'instant' }) })
+    await frames(page)
+    const paginationSnapshot = await measure(page, 'pagination-viewport')
+    result.snapshots.push(paginationSnapshot)
+    const paginationScreenshot = join(output, 'pagination-320x700.png')
+    await page.screenshot({ path: paginationScreenshot, fullPage: false, animations: 'disabled' })
+    result.screenshots.push({ path: paginationScreenshot, stage: 'pagination-viewport', fullPage: false })
+
+    for (const snapshot of result.snapshots) {
+      requireThat(snapshot.numberCards === 50 && snapshot.lastTitle?.text === last.title, 'Missing or changed final card')
+      requireThat(snapshot.pagination?.href === view.weiterHref, 'Pagination href differs from fixture')
+      requireThat(snapshot.clientWidth === 320 && snapshot.scrollWidth === 320 && snapshot.overflow === 0, 'Horizontal layout changed')
+      requireThat(snapshot.rootFontSize === '32px' && snapshot.h1?.css.fontSize === '60px'
+        && snapshot.h1.css.lineHeight === '72px' && snapshot.h1.css.letterSpacing === '-2.4px'
+        && snapshot.h1.css.fontWeight === '600' && snapshot.h1.css.overflowWrap === 'anywhere', 'Expected H1 style missing')
+      requireThat(snapshot.url === 'about:blank', 'Unexpected document location')
+    }
+    requireThat(cardSnapshot.lastTitle?.inViewport && cardSnapshot.lastTitle.hitTest?.targetContainsHit, 'Last title not hit-test visible in its viewport')
+    requireThat(paginationSnapshot.pagination?.inViewport && paginationSnapshot.pagination.hitTest?.targetContainsHit, 'Pagination not hit-test visible in its viewport')
+    result.domChecksCompleted = true
+    result.status = 'CAPTURED_REQUIRES_VISUAL_REVIEW'
+  } catch (error) {
+    result.error = error instanceof Error ? error.stack ?? error.message : String(error)
+    process.exitCode = 1
+  } finally {
+    try { await browser?.close() } catch (error) {
+      result.browserCloseError = String(error); result.status = 'FAIL'; process.exitCode = 1
+    }
+    result.observer = observer
+    if (Object.values(observer).some((entries) => entries.length > 0)) {
+      result.status = 'FAIL'; result.observerFailure = true; process.exitCode = 1
+    }
+    result.finishedAtUtc = new Date().toISOString()
+    writeFileSync(join(output, 'diagnostic.json'), JSON.stringify(result, null, 2) + '\n', { flag: 'wx' })
+    writeFileSync(join(output, 'observer.json'), JSON.stringify(observer, null, 2) + '\n', { flag: 'wx' })
+    console.log(JSON.stringify({ status: result.status, output, renderCount: result.renderCount }))
+  }
+}
+
+void main()

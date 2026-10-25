@@ -1,0 +1,3073 @@
+{
+  "kind": "ROOT_FINAL_LIST_TAIL_VIEWPORT_DIAGNOSTIC",
+  "status": "CAPTURED_REQUIRES_VISUAL_REVIEW",
+  "startedAtUtc": "2026-10-25T00:13:46.047Z",
+  "executor": "Technical Lead / Root",
+  "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "nodeVersion": "v24.22.1",
+  "viewport": {
+    "width": 320,
+    "height": 700
+  },
+  "rootFontSize": "32px",
+  "fixture": "Unmodified extracted author ansicht('liste')",
+  "renderCount": 1,
+  "css": {
+    "path": "/tmp/jetnity-r105-b-v4-css-85abdc7c/jetnity-b-postcss-85abdc7c33a3.css",
+    "sha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+    "class": "LOCAL_PROJECT_POSTCSS_COMPILATION"
+  },
+  "limits": [
+    "One static render and one headless about:blank page; no full-page screenshot.",
+    "This is a focused capture diagnostic, not a repeat or replacement of the 56 author measurements.",
+    "No hydration, Next Router, hosted account, hosted RLS, native zoom or screen-reader claim.",
+    "Two normal viewport screenshots require Root visual inspection; capture cause is not assumed."
+  ],
+  "pageOffline": true,
+  "serviceWorkers": "block",
+  "snapshots": [
+    {
+      "stage": "before-scroll",
+      "url": "about:blank",
+      "viewport": {
+        "width": 320,
+        "height": 700,
+        "devicePixelRatio": 1
+      },
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "clientWidth": 320,
+      "scrollWidth": 320,
+      "overflow": 0,
+      "clientHeight": 700,
+      "scrollHeight": 28350,
+      "body": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "scrollHeight": 28350
+      },
+      "rootFontSize": "32px",
+      "h1": {
+        "tag": "H1",
+        "text": "Bestätigte Buchungen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": 48,
+          "top": 48,
+          "right": 320,
+          "bottom": 336,
+          "left": 0,
+          "width": 320,
+          "height": 288,
+          "documentTop": 48,
+          "documentBottom": 336
+        },
+        "inViewport": true,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "60px",
+          "lineHeight": "72px",
+          "fontWeight": "600",
+          "letterSpacing": "-2.4px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": {
+          "tag": "H1",
+          "text": "Bestätigte Buchungen",
+          "targetContainsHit": true
+        }
+      },
+      "numberCards": 50,
+      "cardRects": [
+        {
+          "index": 1,
+          "title": "LangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitel Zürich",
+          "rect": {
+            "x": 0,
+            "y": 2371,
+            "top": 2371,
+            "right": 320,
+            "bottom": 3405,
+            "left": 0,
+            "width": 320,
+            "height": 1034,
+            "documentTop": 2371,
+            "documentBottom": 3405
+          }
+        },
+        {
+          "index": 2,
+          "title": "Flug 2",
+          "rect": {
+            "x": 0,
+            "y": 3437,
+            "top": 3437,
+            "right": 320,
+            "bottom": 3911.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 3437,
+            "documentBottom": 3911.5
+          }
+        },
+        {
+          "index": 3,
+          "title": "Flug 3",
+          "rect": {
+            "x": 0,
+            "y": 3943.5,
+            "top": 3943.5,
+            "right": 320,
+            "bottom": 4417.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 3943.5,
+            "documentBottom": 4417.5
+          }
+        },
+        {
+          "index": 4,
+          "title": "Flug 4",
+          "rect": {
+            "x": 0,
+            "y": 4449.5,
+            "top": 4449.5,
+            "right": 320,
+            "bottom": 4924,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 4449.5,
+            "documentBottom": 4924
+          }
+        },
+        {
+          "index": 5,
+          "title": "Flug 5",
+          "rect": {
+            "x": 0,
+            "y": 4956,
+            "top": 4956,
+            "right": 320,
+            "bottom": 5430,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 4956,
+            "documentBottom": 5430
+          }
+        },
+        {
+          "index": 6,
+          "title": "Flug 6",
+          "rect": {
+            "x": 0,
+            "y": 5462,
+            "top": 5462,
+            "right": 320,
+            "bottom": 5936.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 5462,
+            "documentBottom": 5936.5
+          }
+        },
+        {
+          "index": 7,
+          "title": "Flug 7",
+          "rect": {
+            "x": 0,
+            "y": 5968.5,
+            "top": 5968.5,
+            "right": 320,
+            "bottom": 6442.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 5968.5,
+            "documentBottom": 6442.5
+          }
+        },
+        {
+          "index": 8,
+          "title": "Flug 8",
+          "rect": {
+            "x": 0,
+            "y": 6474.5,
+            "top": 6474.5,
+            "right": 320,
+            "bottom": 6949,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 6474.5,
+            "documentBottom": 6949
+          }
+        },
+        {
+          "index": 9,
+          "title": "Flug 9",
+          "rect": {
+            "x": 0,
+            "y": 6981,
+            "top": 6981,
+            "right": 320,
+            "bottom": 7455,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 6981,
+            "documentBottom": 7455
+          }
+        },
+        {
+          "index": 10,
+          "title": "Flug 10",
+          "rect": {
+            "x": 0,
+            "y": 7487,
+            "top": 7487,
+            "right": 320,
+            "bottom": 7961.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 7487,
+            "documentBottom": 7961.5
+          }
+        },
+        {
+          "index": 11,
+          "title": "Flug 11",
+          "rect": {
+            "x": 0,
+            "y": 7993.5,
+            "top": 7993.5,
+            "right": 320,
+            "bottom": 8467.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 7993.5,
+            "documentBottom": 8467.5
+          }
+        },
+        {
+          "index": 12,
+          "title": "Flug 12",
+          "rect": {
+            "x": 0,
+            "y": 8499.5,
+            "top": 8499.5,
+            "right": 320,
+            "bottom": 8974,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 8499.5,
+            "documentBottom": 8974
+          }
+        },
+        {
+          "index": 13,
+          "title": "Flug 13",
+          "rect": {
+            "x": 0,
+            "y": 9006,
+            "top": 9006,
+            "right": 320,
+            "bottom": 9480,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 9006,
+            "documentBottom": 9480
+          }
+        },
+        {
+          "index": 14,
+          "title": "Flug 14",
+          "rect": {
+            "x": 0,
+            "y": 9512,
+            "top": 9512,
+            "right": 320,
+            "bottom": 9986.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 9512,
+            "documentBottom": 9986.5
+          }
+        },
+        {
+          "index": 15,
+          "title": "Flug 15",
+          "rect": {
+            "x": 0,
+            "y": 10018.5,
+            "top": 10018.5,
+            "right": 320,
+            "bottom": 10492.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 10018.5,
+            "documentBottom": 10492.5
+          }
+        },
+        {
+          "index": 16,
+          "title": "Flug 16",
+          "rect": {
+            "x": 0,
+            "y": 10524.5,
+            "top": 10524.5,
+            "right": 320,
+            "bottom": 10999,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 10524.5,
+            "documentBottom": 10999
+          }
+        },
+        {
+          "index": 17,
+          "title": "Flug 17",
+          "rect": {
+            "x": 0,
+            "y": 11031,
+            "top": 11031,
+            "right": 320,
+            "bottom": 11505,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 11031,
+            "documentBottom": 11505
+          }
+        },
+        {
+          "index": 18,
+          "title": "Flug 18",
+          "rect": {
+            "x": 0,
+            "y": 11537,
+            "top": 11537,
+            "right": 320,
+            "bottom": 12011.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 11537,
+            "documentBottom": 12011.5
+          }
+        },
+        {
+          "index": 19,
+          "title": "Flug 19",
+          "rect": {
+            "x": 0,
+            "y": 12043.5,
+            "top": 12043.5,
+            "right": 320,
+            "bottom": 12517.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 12043.5,
+            "documentBottom": 12517.5
+          }
+        },
+        {
+          "index": 20,
+          "title": "Flug 20",
+          "rect": {
+            "x": 0,
+            "y": 12549.5,
+            "top": 12549.5,
+            "right": 320,
+            "bottom": 13024,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 12549.5,
+            "documentBottom": 13024
+          }
+        },
+        {
+          "index": 21,
+          "title": "Flug 21",
+          "rect": {
+            "x": 0,
+            "y": 13056,
+            "top": 13056,
+            "right": 320,
+            "bottom": 13530,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 13056,
+            "documentBottom": 13530
+          }
+        },
+        {
+          "index": 22,
+          "title": "Flug 22",
+          "rect": {
+            "x": 0,
+            "y": 13562,
+            "top": 13562,
+            "right": 320,
+            "bottom": 14036.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 13562,
+            "documentBottom": 14036.5
+          }
+        },
+        {
+          "index": 23,
+          "title": "Flug 23",
+          "rect": {
+            "x": 0,
+            "y": 14068.5,
+            "top": 14068.5,
+            "right": 320,
+            "bottom": 14542.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 14068.5,
+            "documentBottom": 14542.5
+          }
+        },
+        {
+          "index": 24,
+          "title": "Flug 24",
+          "rect": {
+            "x": 0,
+            "y": 14574.5,
+            "top": 14574.5,
+            "right": 320,
+            "bottom": 15049,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 14574.5,
+            "documentBottom": 15049
+          }
+        },
+        {
+          "index": 25,
+          "title": "Flug 25",
+          "rect": {
+            "x": 0,
+            "y": 15081,
+            "top": 15081,
+            "right": 320,
+            "bottom": 15555,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 15081,
+            "documentBottom": 15555
+          }
+        },
+        {
+          "index": 26,
+          "title": "Flug 26",
+          "rect": {
+            "x": 0,
+            "y": 15587,
+            "top": 15587,
+            "right": 320,
+            "bottom": 16061.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 15587,
+            "documentBottom": 16061.5
+          }
+        },
+        {
+          "index": 27,
+          "title": "Flug 27",
+          "rect": {
+            "x": 0,
+            "y": 16093.5,
+            "top": 16093.5,
+            "right": 320,
+            "bottom": 16567.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 16093.5,
+            "documentBottom": 16567.5
+          }
+        },
+        {
+          "index": 28,
+          "title": "Flug 28",
+          "rect": {
+            "x": 0,
+            "y": 16599.5,
+            "top": 16599.5,
+            "right": 320,
+            "bottom": 17074,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 16599.5,
+            "documentBottom": 17074
+          }
+        },
+        {
+          "index": 29,
+          "title": "Flug 29",
+          "rect": {
+            "x": 0,
+            "y": 17106,
+            "top": 17106,
+            "right": 320,
+            "bottom": 17580,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 17106,
+            "documentBottom": 17580
+          }
+        },
+        {
+          "index": 30,
+          "title": "Flug 30",
+          "rect": {
+            "x": 0,
+            "y": 17612,
+            "top": 17612,
+            "right": 320,
+            "bottom": 18086.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 17612,
+            "documentBottom": 18086.5
+          }
+        },
+        {
+          "index": 31,
+          "title": "Flug 31",
+          "rect": {
+            "x": 0,
+            "y": 18118.5,
+            "top": 18118.5,
+            "right": 320,
+            "bottom": 18592.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 18118.5,
+            "documentBottom": 18592.5
+          }
+        },
+        {
+          "index": 32,
+          "title": "Flug 32",
+          "rect": {
+            "x": 0,
+            "y": 18624.5,
+            "top": 18624.5,
+            "right": 320,
+            "bottom": 19099,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 18624.5,
+            "documentBottom": 19099
+          }
+        },
+        {
+          "index": 33,
+          "title": "Flug 33",
+          "rect": {
+            "x": 0,
+            "y": 19131,
+            "top": 19131,
+            "right": 320,
+            "bottom": 19605,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 19131,
+            "documentBottom": 19605
+          }
+        },
+        {
+          "index": 34,
+          "title": "Flug 34",
+          "rect": {
+            "x": 0,
+            "y": 19637,
+            "top": 19637,
+            "right": 320,
+            "bottom": 20111.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 19637,
+            "documentBottom": 20111.5
+          }
+        },
+        {
+          "index": 35,
+          "title": "Flug 35",
+          "rect": {
+            "x": 0,
+            "y": 20143.5,
+            "top": 20143.5,
+            "right": 320,
+            "bottom": 20617.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 20143.5,
+            "documentBottom": 20617.5
+          }
+        },
+        {
+          "index": 36,
+          "title": "Flug 36",
+          "rect": {
+            "x": 0,
+            "y": 20649.5,
+            "top": 20649.5,
+            "right": 320,
+            "bottom": 21124,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 20649.5,
+            "documentBottom": 21124
+          }
+        },
+        {
+          "index": 37,
+          "title": "Flug 37",
+          "rect": {
+            "x": 0,
+            "y": 21156,
+            "top": 21156,
+            "right": 320,
+            "bottom": 21630,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 21156,
+            "documentBottom": 21630
+          }
+        },
+        {
+          "index": 38,
+          "title": "Flug 38",
+          "rect": {
+            "x": 0,
+            "y": 21662,
+            "top": 21662,
+            "right": 320,
+            "bottom": 22136.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 21662,
+            "documentBottom": 22136.5
+          }
+        },
+        {
+          "index": 39,
+          "title": "Flug 39",
+          "rect": {
+            "x": 0,
+            "y": 22168.5,
+            "top": 22168.5,
+            "right": 320,
+            "bottom": 22642.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 22168.5,
+            "documentBottom": 22642.5
+          }
+        },
+        {
+          "index": 40,
+          "title": "Flug 40",
+          "rect": {
+            "x": 0,
+            "y": 22674.5,
+            "top": 22674.5,
+            "right": 320,
+            "bottom": 23149,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 22674.5,
+            "documentBottom": 23149
+          }
+        },
+        {
+          "index": 41,
+          "title": "Flug 41",
+          "rect": {
+            "x": 0,
+            "y": 23181,
+            "top": 23181,
+            "right": 320,
+            "bottom": 23655,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 23181,
+            "documentBottom": 23655
+          }
+        },
+        {
+          "index": 42,
+          "title": "Flug 42",
+          "rect": {
+            "x": 0,
+            "y": 23687,
+            "top": 23687,
+            "right": 320,
+            "bottom": 24161.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 23687,
+            "documentBottom": 24161.5
+          }
+        },
+        {
+          "index": 43,
+          "title": "Flug 43",
+          "rect": {
+            "x": 0,
+            "y": 24193.5,
+            "top": 24193.5,
+            "right": 320,
+            "bottom": 24667.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 24193.5,
+            "documentBottom": 24667.5
+          }
+        },
+        {
+          "index": 44,
+          "title": "Flug 44",
+          "rect": {
+            "x": 0,
+            "y": 24699.5,
+            "top": 24699.5,
+            "right": 320,
+            "bottom": 25174,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 24699.5,
+            "documentBottom": 25174
+          }
+        },
+        {
+          "index": 45,
+          "title": "Flug 45",
+          "rect": {
+            "x": 0,
+            "y": 25206,
+            "top": 25206,
+            "right": 320,
+            "bottom": 25680,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 25206,
+            "documentBottom": 25680
+          }
+        },
+        {
+          "index": 46,
+          "title": "Flug 46",
+          "rect": {
+            "x": 0,
+            "y": 25712,
+            "top": 25712,
+            "right": 320,
+            "bottom": 26186.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 25712,
+            "documentBottom": 26186.5
+          }
+        },
+        {
+          "index": 47,
+          "title": "Flug 47",
+          "rect": {
+            "x": 0,
+            "y": 26218.5,
+            "top": 26218.5,
+            "right": 320,
+            "bottom": 26692.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 26218.5,
+            "documentBottom": 26692.5
+          }
+        },
+        {
+          "index": 48,
+          "title": "Flug 48",
+          "rect": {
+            "x": 0,
+            "y": 26724.5,
+            "top": 26724.5,
+            "right": 320,
+            "bottom": 27199,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 26724.5,
+            "documentBottom": 27199
+          }
+        },
+        {
+          "index": 49,
+          "title": "Flug 49",
+          "rect": {
+            "x": 0,
+            "y": 27231,
+            "top": 27231,
+            "right": 320,
+            "bottom": 27705,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 27231,
+            "documentBottom": 27705
+          }
+        },
+        {
+          "index": 50,
+          "title": "Flug 50",
+          "rect": {
+            "x": 0,
+            "y": 27737,
+            "top": 27737,
+            "right": 320,
+            "bottom": 28211.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 27737,
+            "documentBottom": 28211.5
+          }
+        }
+      ],
+      "lastCard": {
+        "tag": "ARTICLE",
+        "text": "FlugArchiviertFlug 5012. Sept., 08:40Reise: LissabonPlanpunkt öffnen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": 27737,
+          "top": 27737,
+          "right": 320,
+          "bottom": 28211.5,
+          "left": 0,
+          "width": 320,
+          "height": 474.5,
+          "documentTop": 27737,
+          "documentBottom": 28211.5
+        },
+        "inViewport": false,
+        "clientWidth": 318,
+        "scrollWidth": 318,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "32px",
+          "lineHeight": "48px",
+          "fontWeight": "400",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgb(255, 255, 255)"
+        },
+        "hitTest": null
+      },
+      "lastTitle": {
+        "tag": "H2",
+        "text": "Flug 50",
+        "href": null,
+        "rect": {
+          "x": 41,
+          "y": 27834.5,
+          "top": 27834.5,
+          "right": 279,
+          "bottom": 27890.5,
+          "left": 41,
+          "width": 238,
+          "height": 56,
+          "documentTop": 27834.5,
+          "documentBottom": 27890.5
+        },
+        "inViewport": false,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "40px",
+          "lineHeight": "56px",
+          "fontWeight": "600",
+          "letterSpacing": "-1.2px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": null
+      },
+      "lastPlanLink": {
+        "tag": "A",
+        "text": "Planpunkt öffnen",
+        "href": "/reisen/00000000-0000-4000-8000-00000000005a?ansicht=plan&punkt=00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 41,
+          "y": 28042.5,
+          "top": 28042.5,
+          "right": 279,
+          "bottom": 28170.5,
+          "left": 41,
+          "width": 238,
+          "height": 128,
+          "documentTop": 28042.5,
+          "documentBottom": 28170.5
+        },
+        "inViewport": false,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": null
+      },
+      "pagination": {
+        "tag": "A",
+        "text": "Weitere Buchungen",
+        "href": "/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=v1|c5615ef894a609c00290af2e1de7a55bb9433e0a1590318851671ff57759a482|2026-08-30T12:00:00.123456Z|00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 0,
+          "y": 28261.5,
+          "top": 28261.5,
+          "right": 320,
+          "bottom": 28349.5,
+          "left": 0,
+          "width": 320,
+          "height": 88,
+          "documentTop": 28261.5,
+          "documentBottom": 28349.5
+        },
+        "inViewport": false,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": null
+      }
+    },
+    {
+      "stage": "last-card-viewport",
+      "url": "about:blank",
+      "viewport": {
+        "width": 320,
+        "height": 700,
+        "devicePixelRatio": 1
+      },
+      "scroll": {
+        "x": 0,
+        "y": 27650
+      },
+      "clientWidth": 320,
+      "scrollWidth": 320,
+      "overflow": 0,
+      "clientHeight": 700,
+      "scrollHeight": 28350,
+      "body": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "scrollHeight": 28350
+      },
+      "rootFontSize": "32px",
+      "h1": {
+        "tag": "H1",
+        "text": "Bestätigte Buchungen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": -27602,
+          "top": -27602,
+          "right": 320,
+          "bottom": -27314,
+          "left": 0,
+          "width": 320,
+          "height": 288,
+          "documentTop": 48,
+          "documentBottom": 336
+        },
+        "inViewport": false,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "60px",
+          "lineHeight": "72px",
+          "fontWeight": "600",
+          "letterSpacing": "-2.4px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": null
+      },
+      "numberCards": 50,
+      "cardRects": [
+        {
+          "index": 1,
+          "title": "LangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitel Zürich",
+          "rect": {
+            "x": 0,
+            "y": -25279,
+            "top": -25279,
+            "right": 320,
+            "bottom": -24245,
+            "left": 0,
+            "width": 320,
+            "height": 1034,
+            "documentTop": 2371,
+            "documentBottom": 3405
+          }
+        },
+        {
+          "index": 2,
+          "title": "Flug 2",
+          "rect": {
+            "x": 0,
+            "y": -24213,
+            "top": -24213,
+            "right": 320,
+            "bottom": -23738.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 3437,
+            "documentBottom": 3911.5
+          }
+        },
+        {
+          "index": 3,
+          "title": "Flug 3",
+          "rect": {
+            "x": 0,
+            "y": -23706.5,
+            "top": -23706.5,
+            "right": 320,
+            "bottom": -23232.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 3943.5,
+            "documentBottom": 4417.5
+          }
+        },
+        {
+          "index": 4,
+          "title": "Flug 4",
+          "rect": {
+            "x": 0,
+            "y": -23200.5,
+            "top": -23200.5,
+            "right": 320,
+            "bottom": -22726,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 4449.5,
+            "documentBottom": 4924
+          }
+        },
+        {
+          "index": 5,
+          "title": "Flug 5",
+          "rect": {
+            "x": 0,
+            "y": -22694,
+            "top": -22694,
+            "right": 320,
+            "bottom": -22220,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 4956,
+            "documentBottom": 5430
+          }
+        },
+        {
+          "index": 6,
+          "title": "Flug 6",
+          "rect": {
+            "x": 0,
+            "y": -22188,
+            "top": -22188,
+            "right": 320,
+            "bottom": -21713.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 5462,
+            "documentBottom": 5936.5
+          }
+        },
+        {
+          "index": 7,
+          "title": "Flug 7",
+          "rect": {
+            "x": 0,
+            "y": -21681.5,
+            "top": -21681.5,
+            "right": 320,
+            "bottom": -21207.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 5968.5,
+            "documentBottom": 6442.5
+          }
+        },
+        {
+          "index": 8,
+          "title": "Flug 8",
+          "rect": {
+            "x": 0,
+            "y": -21175.5,
+            "top": -21175.5,
+            "right": 320,
+            "bottom": -20701,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 6474.5,
+            "documentBottom": 6949
+          }
+        },
+        {
+          "index": 9,
+          "title": "Flug 9",
+          "rect": {
+            "x": 0,
+            "y": -20669,
+            "top": -20669,
+            "right": 320,
+            "bottom": -20195,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 6981,
+            "documentBottom": 7455
+          }
+        },
+        {
+          "index": 10,
+          "title": "Flug 10",
+          "rect": {
+            "x": 0,
+            "y": -20163,
+            "top": -20163,
+            "right": 320,
+            "bottom": -19688.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 7487,
+            "documentBottom": 7961.5
+          }
+        },
+        {
+          "index": 11,
+          "title": "Flug 11",
+          "rect": {
+            "x": 0,
+            "y": -19656.5,
+            "top": -19656.5,
+            "right": 320,
+            "bottom": -19182.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 7993.5,
+            "documentBottom": 8467.5
+          }
+        },
+        {
+          "index": 12,
+          "title": "Flug 12",
+          "rect": {
+            "x": 0,
+            "y": -19150.5,
+            "top": -19150.5,
+            "right": 320,
+            "bottom": -18676,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 8499.5,
+            "documentBottom": 8974
+          }
+        },
+        {
+          "index": 13,
+          "title": "Flug 13",
+          "rect": {
+            "x": 0,
+            "y": -18644,
+            "top": -18644,
+            "right": 320,
+            "bottom": -18170,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 9006,
+            "documentBottom": 9480
+          }
+        },
+        {
+          "index": 14,
+          "title": "Flug 14",
+          "rect": {
+            "x": 0,
+            "y": -18138,
+            "top": -18138,
+            "right": 320,
+            "bottom": -17663.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 9512,
+            "documentBottom": 9986.5
+          }
+        },
+        {
+          "index": 15,
+          "title": "Flug 15",
+          "rect": {
+            "x": 0,
+            "y": -17631.5,
+            "top": -17631.5,
+            "right": 320,
+            "bottom": -17157.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 10018.5,
+            "documentBottom": 10492.5
+          }
+        },
+        {
+          "index": 16,
+          "title": "Flug 16",
+          "rect": {
+            "x": 0,
+            "y": -17125.5,
+            "top": -17125.5,
+            "right": 320,
+            "bottom": -16651,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 10524.5,
+            "documentBottom": 10999
+          }
+        },
+        {
+          "index": 17,
+          "title": "Flug 17",
+          "rect": {
+            "x": 0,
+            "y": -16619,
+            "top": -16619,
+            "right": 320,
+            "bottom": -16145,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 11031,
+            "documentBottom": 11505
+          }
+        },
+        {
+          "index": 18,
+          "title": "Flug 18",
+          "rect": {
+            "x": 0,
+            "y": -16113,
+            "top": -16113,
+            "right": 320,
+            "bottom": -15638.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 11537,
+            "documentBottom": 12011.5
+          }
+        },
+        {
+          "index": 19,
+          "title": "Flug 19",
+          "rect": {
+            "x": 0,
+            "y": -15606.5,
+            "top": -15606.5,
+            "right": 320,
+            "bottom": -15132.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 12043.5,
+            "documentBottom": 12517.5
+          }
+        },
+        {
+          "index": 20,
+          "title": "Flug 20",
+          "rect": {
+            "x": 0,
+            "y": -15100.5,
+            "top": -15100.5,
+            "right": 320,
+            "bottom": -14626,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 12549.5,
+            "documentBottom": 13024
+          }
+        },
+        {
+          "index": 21,
+          "title": "Flug 21",
+          "rect": {
+            "x": 0,
+            "y": -14594,
+            "top": -14594,
+            "right": 320,
+            "bottom": -14120,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 13056,
+            "documentBottom": 13530
+          }
+        },
+        {
+          "index": 22,
+          "title": "Flug 22",
+          "rect": {
+            "x": 0,
+            "y": -14088,
+            "top": -14088,
+            "right": 320,
+            "bottom": -13613.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 13562,
+            "documentBottom": 14036.5
+          }
+        },
+        {
+          "index": 23,
+          "title": "Flug 23",
+          "rect": {
+            "x": 0,
+            "y": -13581.5,
+            "top": -13581.5,
+            "right": 320,
+            "bottom": -13107.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 14068.5,
+            "documentBottom": 14542.5
+          }
+        },
+        {
+          "index": 24,
+          "title": "Flug 24",
+          "rect": {
+            "x": 0,
+            "y": -13075.5,
+            "top": -13075.5,
+            "right": 320,
+            "bottom": -12601,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 14574.5,
+            "documentBottom": 15049
+          }
+        },
+        {
+          "index": 25,
+          "title": "Flug 25",
+          "rect": {
+            "x": 0,
+            "y": -12569,
+            "top": -12569,
+            "right": 320,
+            "bottom": -12095,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 15081,
+            "documentBottom": 15555
+          }
+        },
+        {
+          "index": 26,
+          "title": "Flug 26",
+          "rect": {
+            "x": 0,
+            "y": -12063,
+            "top": -12063,
+            "right": 320,
+            "bottom": -11588.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 15587,
+            "documentBottom": 16061.5
+          }
+        },
+        {
+          "index": 27,
+          "title": "Flug 27",
+          "rect": {
+            "x": 0,
+            "y": -11556.5,
+            "top": -11556.5,
+            "right": 320,
+            "bottom": -11082.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 16093.5,
+            "documentBottom": 16567.5
+          }
+        },
+        {
+          "index": 28,
+          "title": "Flug 28",
+          "rect": {
+            "x": 0,
+            "y": -11050.5,
+            "top": -11050.5,
+            "right": 320,
+            "bottom": -10576,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 16599.5,
+            "documentBottom": 17074
+          }
+        },
+        {
+          "index": 29,
+          "title": "Flug 29",
+          "rect": {
+            "x": 0,
+            "y": -10544,
+            "top": -10544,
+            "right": 320,
+            "bottom": -10070,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 17106,
+            "documentBottom": 17580
+          }
+        },
+        {
+          "index": 30,
+          "title": "Flug 30",
+          "rect": {
+            "x": 0,
+            "y": -10038,
+            "top": -10038,
+            "right": 320,
+            "bottom": -9563.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 17612,
+            "documentBottom": 18086.5
+          }
+        },
+        {
+          "index": 31,
+          "title": "Flug 31",
+          "rect": {
+            "x": 0,
+            "y": -9531.5,
+            "top": -9531.5,
+            "right": 320,
+            "bottom": -9057.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 18118.5,
+            "documentBottom": 18592.5
+          }
+        },
+        {
+          "index": 32,
+          "title": "Flug 32",
+          "rect": {
+            "x": 0,
+            "y": -9025.5,
+            "top": -9025.5,
+            "right": 320,
+            "bottom": -8551,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 18624.5,
+            "documentBottom": 19099
+          }
+        },
+        {
+          "index": 33,
+          "title": "Flug 33",
+          "rect": {
+            "x": 0,
+            "y": -8519,
+            "top": -8519,
+            "right": 320,
+            "bottom": -8045,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 19131,
+            "documentBottom": 19605
+          }
+        },
+        {
+          "index": 34,
+          "title": "Flug 34",
+          "rect": {
+            "x": 0,
+            "y": -8013,
+            "top": -8013,
+            "right": 320,
+            "bottom": -7538.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 19637,
+            "documentBottom": 20111.5
+          }
+        },
+        {
+          "index": 35,
+          "title": "Flug 35",
+          "rect": {
+            "x": 0,
+            "y": -7506.5,
+            "top": -7506.5,
+            "right": 320,
+            "bottom": -7032.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 20143.5,
+            "documentBottom": 20617.5
+          }
+        },
+        {
+          "index": 36,
+          "title": "Flug 36",
+          "rect": {
+            "x": 0,
+            "y": -7000.5,
+            "top": -7000.5,
+            "right": 320,
+            "bottom": -6526,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 20649.5,
+            "documentBottom": 21124
+          }
+        },
+        {
+          "index": 37,
+          "title": "Flug 37",
+          "rect": {
+            "x": 0,
+            "y": -6494,
+            "top": -6494,
+            "right": 320,
+            "bottom": -6020,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 21156,
+            "documentBottom": 21630
+          }
+        },
+        {
+          "index": 38,
+          "title": "Flug 38",
+          "rect": {
+            "x": 0,
+            "y": -5988,
+            "top": -5988,
+            "right": 320,
+            "bottom": -5513.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 21662,
+            "documentBottom": 22136.5
+          }
+        },
+        {
+          "index": 39,
+          "title": "Flug 39",
+          "rect": {
+            "x": 0,
+            "y": -5481.5,
+            "top": -5481.5,
+            "right": 320,
+            "bottom": -5007.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 22168.5,
+            "documentBottom": 22642.5
+          }
+        },
+        {
+          "index": 40,
+          "title": "Flug 40",
+          "rect": {
+            "x": 0,
+            "y": -4975.5,
+            "top": -4975.5,
+            "right": 320,
+            "bottom": -4501,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 22674.5,
+            "documentBottom": 23149
+          }
+        },
+        {
+          "index": 41,
+          "title": "Flug 41",
+          "rect": {
+            "x": 0,
+            "y": -4469,
+            "top": -4469,
+            "right": 320,
+            "bottom": -3995,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 23181,
+            "documentBottom": 23655
+          }
+        },
+        {
+          "index": 42,
+          "title": "Flug 42",
+          "rect": {
+            "x": 0,
+            "y": -3963,
+            "top": -3963,
+            "right": 320,
+            "bottom": -3488.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 23687,
+            "documentBottom": 24161.5
+          }
+        },
+        {
+          "index": 43,
+          "title": "Flug 43",
+          "rect": {
+            "x": 0,
+            "y": -3456.5,
+            "top": -3456.5,
+            "right": 320,
+            "bottom": -2982.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 24193.5,
+            "documentBottom": 24667.5
+          }
+        },
+        {
+          "index": 44,
+          "title": "Flug 44",
+          "rect": {
+            "x": 0,
+            "y": -2950.5,
+            "top": -2950.5,
+            "right": 320,
+            "bottom": -2476,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 24699.5,
+            "documentBottom": 25174
+          }
+        },
+        {
+          "index": 45,
+          "title": "Flug 45",
+          "rect": {
+            "x": 0,
+            "y": -2444,
+            "top": -2444,
+            "right": 320,
+            "bottom": -1970,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 25206,
+            "documentBottom": 25680
+          }
+        },
+        {
+          "index": 46,
+          "title": "Flug 46",
+          "rect": {
+            "x": 0,
+            "y": -1938,
+            "top": -1938,
+            "right": 320,
+            "bottom": -1463.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 25712,
+            "documentBottom": 26186.5
+          }
+        },
+        {
+          "index": 47,
+          "title": "Flug 47",
+          "rect": {
+            "x": 0,
+            "y": -1431.5,
+            "top": -1431.5,
+            "right": 320,
+            "bottom": -957.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 26218.5,
+            "documentBottom": 26692.5
+          }
+        },
+        {
+          "index": 48,
+          "title": "Flug 48",
+          "rect": {
+            "x": 0,
+            "y": -925.5,
+            "top": -925.5,
+            "right": 320,
+            "bottom": -451,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 26724.5,
+            "documentBottom": 27199
+          }
+        },
+        {
+          "index": 49,
+          "title": "Flug 49",
+          "rect": {
+            "x": 0,
+            "y": -419,
+            "top": -419,
+            "right": 320,
+            "bottom": 55,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 27231,
+            "documentBottom": 27705
+          }
+        },
+        {
+          "index": 50,
+          "title": "Flug 50",
+          "rect": {
+            "x": 0,
+            "y": 87,
+            "top": 87,
+            "right": 320,
+            "bottom": 561.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 27737,
+            "documentBottom": 28211.5
+          }
+        }
+      ],
+      "lastCard": {
+        "tag": "ARTICLE",
+        "text": "FlugArchiviertFlug 5012. Sept., 08:40Reise: LissabonPlanpunkt öffnen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": 87,
+          "top": 87,
+          "right": 320,
+          "bottom": 561.5,
+          "left": 0,
+          "width": 320,
+          "height": 474.5,
+          "documentTop": 27737,
+          "documentBottom": 28211.5
+        },
+        "inViewport": true,
+        "clientWidth": 318,
+        "scrollWidth": 318,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "32px",
+          "lineHeight": "48px",
+          "fontWeight": "400",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgb(255, 255, 255)"
+        },
+        "hitTest": {
+          "tag": "P",
+          "text": "Reise: Lissabon",
+          "targetContainsHit": true
+        }
+      },
+      "lastTitle": {
+        "tag": "H2",
+        "text": "Flug 50",
+        "href": null,
+        "rect": {
+          "x": 41,
+          "y": 184.5,
+          "top": 184.5,
+          "right": 279,
+          "bottom": 240.5,
+          "left": 41,
+          "width": 238,
+          "height": 56,
+          "documentTop": 27834.5,
+          "documentBottom": 27890.5
+        },
+        "inViewport": true,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "40px",
+          "lineHeight": "56px",
+          "fontWeight": "600",
+          "letterSpacing": "-1.2px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": {
+          "tag": "H2",
+          "text": "Flug 50",
+          "targetContainsHit": true
+        }
+      },
+      "lastPlanLink": {
+        "tag": "A",
+        "text": "Planpunkt öffnen",
+        "href": "/reisen/00000000-0000-4000-8000-00000000005a?ansicht=plan&punkt=00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 41,
+          "y": 392.5,
+          "top": 392.5,
+          "right": 279,
+          "bottom": 520.5,
+          "left": 41,
+          "width": 238,
+          "height": 128,
+          "documentTop": 28042.5,
+          "documentBottom": 28170.5
+        },
+        "inViewport": true,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": {
+          "tag": "A",
+          "text": "Planpunkt öffnen",
+          "targetContainsHit": true
+        }
+      },
+      "pagination": {
+        "tag": "A",
+        "text": "Weitere Buchungen",
+        "href": "/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=v1|c5615ef894a609c00290af2e1de7a55bb9433e0a1590318851671ff57759a482|2026-08-30T12:00:00.123456Z|00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 0,
+          "y": 611.5,
+          "top": 611.5,
+          "right": 320,
+          "bottom": 699.5,
+          "left": 0,
+          "width": 320,
+          "height": 88,
+          "documentTop": 28261.5,
+          "documentBottom": 28349.5
+        },
+        "inViewport": true,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": {
+          "tag": "A",
+          "text": "Weitere Buchungen",
+          "targetContainsHit": true
+        }
+      }
+    },
+    {
+      "stage": "pagination-viewport",
+      "url": "about:blank",
+      "viewport": {
+        "width": 320,
+        "height": 700,
+        "devicePixelRatio": 1
+      },
+      "scroll": {
+        "x": 0,
+        "y": 27650
+      },
+      "clientWidth": 320,
+      "scrollWidth": 320,
+      "overflow": 0,
+      "clientHeight": 700,
+      "scrollHeight": 28350,
+      "body": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "scrollHeight": 28350
+      },
+      "rootFontSize": "32px",
+      "h1": {
+        "tag": "H1",
+        "text": "Bestätigte Buchungen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": -27602,
+          "top": -27602,
+          "right": 320,
+          "bottom": -27314,
+          "left": 0,
+          "width": 320,
+          "height": 288,
+          "documentTop": 48,
+          "documentBottom": 336
+        },
+        "inViewport": false,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "60px",
+          "lineHeight": "72px",
+          "fontWeight": "600",
+          "letterSpacing": "-2.4px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": null
+      },
+      "numberCards": 50,
+      "cardRects": [
+        {
+          "index": 1,
+          "title": "LangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitelLangtitel Zürich",
+          "rect": {
+            "x": 0,
+            "y": -25279,
+            "top": -25279,
+            "right": 320,
+            "bottom": -24245,
+            "left": 0,
+            "width": 320,
+            "height": 1034,
+            "documentTop": 2371,
+            "documentBottom": 3405
+          }
+        },
+        {
+          "index": 2,
+          "title": "Flug 2",
+          "rect": {
+            "x": 0,
+            "y": -24213,
+            "top": -24213,
+            "right": 320,
+            "bottom": -23738.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 3437,
+            "documentBottom": 3911.5
+          }
+        },
+        {
+          "index": 3,
+          "title": "Flug 3",
+          "rect": {
+            "x": 0,
+            "y": -23706.5,
+            "top": -23706.5,
+            "right": 320,
+            "bottom": -23232.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 3943.5,
+            "documentBottom": 4417.5
+          }
+        },
+        {
+          "index": 4,
+          "title": "Flug 4",
+          "rect": {
+            "x": 0,
+            "y": -23200.5,
+            "top": -23200.5,
+            "right": 320,
+            "bottom": -22726,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 4449.5,
+            "documentBottom": 4924
+          }
+        },
+        {
+          "index": 5,
+          "title": "Flug 5",
+          "rect": {
+            "x": 0,
+            "y": -22694,
+            "top": -22694,
+            "right": 320,
+            "bottom": -22220,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 4956,
+            "documentBottom": 5430
+          }
+        },
+        {
+          "index": 6,
+          "title": "Flug 6",
+          "rect": {
+            "x": 0,
+            "y": -22188,
+            "top": -22188,
+            "right": 320,
+            "bottom": -21713.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 5462,
+            "documentBottom": 5936.5
+          }
+        },
+        {
+          "index": 7,
+          "title": "Flug 7",
+          "rect": {
+            "x": 0,
+            "y": -21681.5,
+            "top": -21681.5,
+            "right": 320,
+            "bottom": -21207.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 5968.5,
+            "documentBottom": 6442.5
+          }
+        },
+        {
+          "index": 8,
+          "title": "Flug 8",
+          "rect": {
+            "x": 0,
+            "y": -21175.5,
+            "top": -21175.5,
+            "right": 320,
+            "bottom": -20701,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 6474.5,
+            "documentBottom": 6949
+          }
+        },
+        {
+          "index": 9,
+          "title": "Flug 9",
+          "rect": {
+            "x": 0,
+            "y": -20669,
+            "top": -20669,
+            "right": 320,
+            "bottom": -20195,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 6981,
+            "documentBottom": 7455
+          }
+        },
+        {
+          "index": 10,
+          "title": "Flug 10",
+          "rect": {
+            "x": 0,
+            "y": -20163,
+            "top": -20163,
+            "right": 320,
+            "bottom": -19688.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 7487,
+            "documentBottom": 7961.5
+          }
+        },
+        {
+          "index": 11,
+          "title": "Flug 11",
+          "rect": {
+            "x": 0,
+            "y": -19656.5,
+            "top": -19656.5,
+            "right": 320,
+            "bottom": -19182.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 7993.5,
+            "documentBottom": 8467.5
+          }
+        },
+        {
+          "index": 12,
+          "title": "Flug 12",
+          "rect": {
+            "x": 0,
+            "y": -19150.5,
+            "top": -19150.5,
+            "right": 320,
+            "bottom": -18676,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 8499.5,
+            "documentBottom": 8974
+          }
+        },
+        {
+          "index": 13,
+          "title": "Flug 13",
+          "rect": {
+            "x": 0,
+            "y": -18644,
+            "top": -18644,
+            "right": 320,
+            "bottom": -18170,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 9006,
+            "documentBottom": 9480
+          }
+        },
+        {
+          "index": 14,
+          "title": "Flug 14",
+          "rect": {
+            "x": 0,
+            "y": -18138,
+            "top": -18138,
+            "right": 320,
+            "bottom": -17663.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 9512,
+            "documentBottom": 9986.5
+          }
+        },
+        {
+          "index": 15,
+          "title": "Flug 15",
+          "rect": {
+            "x": 0,
+            "y": -17631.5,
+            "top": -17631.5,
+            "right": 320,
+            "bottom": -17157.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 10018.5,
+            "documentBottom": 10492.5
+          }
+        },
+        {
+          "index": 16,
+          "title": "Flug 16",
+          "rect": {
+            "x": 0,
+            "y": -17125.5,
+            "top": -17125.5,
+            "right": 320,
+            "bottom": -16651,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 10524.5,
+            "documentBottom": 10999
+          }
+        },
+        {
+          "index": 17,
+          "title": "Flug 17",
+          "rect": {
+            "x": 0,
+            "y": -16619,
+            "top": -16619,
+            "right": 320,
+            "bottom": -16145,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 11031,
+            "documentBottom": 11505
+          }
+        },
+        {
+          "index": 18,
+          "title": "Flug 18",
+          "rect": {
+            "x": 0,
+            "y": -16113,
+            "top": -16113,
+            "right": 320,
+            "bottom": -15638.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 11537,
+            "documentBottom": 12011.5
+          }
+        },
+        {
+          "index": 19,
+          "title": "Flug 19",
+          "rect": {
+            "x": 0,
+            "y": -15606.5,
+            "top": -15606.5,
+            "right": 320,
+            "bottom": -15132.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 12043.5,
+            "documentBottom": 12517.5
+          }
+        },
+        {
+          "index": 20,
+          "title": "Flug 20",
+          "rect": {
+            "x": 0,
+            "y": -15100.5,
+            "top": -15100.5,
+            "right": 320,
+            "bottom": -14626,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 12549.5,
+            "documentBottom": 13024
+          }
+        },
+        {
+          "index": 21,
+          "title": "Flug 21",
+          "rect": {
+            "x": 0,
+            "y": -14594,
+            "top": -14594,
+            "right": 320,
+            "bottom": -14120,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 13056,
+            "documentBottom": 13530
+          }
+        },
+        {
+          "index": 22,
+          "title": "Flug 22",
+          "rect": {
+            "x": 0,
+            "y": -14088,
+            "top": -14088,
+            "right": 320,
+            "bottom": -13613.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 13562,
+            "documentBottom": 14036.5
+          }
+        },
+        {
+          "index": 23,
+          "title": "Flug 23",
+          "rect": {
+            "x": 0,
+            "y": -13581.5,
+            "top": -13581.5,
+            "right": 320,
+            "bottom": -13107.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 14068.5,
+            "documentBottom": 14542.5
+          }
+        },
+        {
+          "index": 24,
+          "title": "Flug 24",
+          "rect": {
+            "x": 0,
+            "y": -13075.5,
+            "top": -13075.5,
+            "right": 320,
+            "bottom": -12601,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 14574.5,
+            "documentBottom": 15049
+          }
+        },
+        {
+          "index": 25,
+          "title": "Flug 25",
+          "rect": {
+            "x": 0,
+            "y": -12569,
+            "top": -12569,
+            "right": 320,
+            "bottom": -12095,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 15081,
+            "documentBottom": 15555
+          }
+        },
+        {
+          "index": 26,
+          "title": "Flug 26",
+          "rect": {
+            "x": 0,
+            "y": -12063,
+            "top": -12063,
+            "right": 320,
+            "bottom": -11588.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 15587,
+            "documentBottom": 16061.5
+          }
+        },
+        {
+          "index": 27,
+          "title": "Flug 27",
+          "rect": {
+            "x": 0,
+            "y": -11556.5,
+            "top": -11556.5,
+            "right": 320,
+            "bottom": -11082.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 16093.5,
+            "documentBottom": 16567.5
+          }
+        },
+        {
+          "index": 28,
+          "title": "Flug 28",
+          "rect": {
+            "x": 0,
+            "y": -11050.5,
+            "top": -11050.5,
+            "right": 320,
+            "bottom": -10576,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 16599.5,
+            "documentBottom": 17074
+          }
+        },
+        {
+          "index": 29,
+          "title": "Flug 29",
+          "rect": {
+            "x": 0,
+            "y": -10544,
+            "top": -10544,
+            "right": 320,
+            "bottom": -10070,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 17106,
+            "documentBottom": 17580
+          }
+        },
+        {
+          "index": 30,
+          "title": "Flug 30",
+          "rect": {
+            "x": 0,
+            "y": -10038,
+            "top": -10038,
+            "right": 320,
+            "bottom": -9563.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 17612,
+            "documentBottom": 18086.5
+          }
+        },
+        {
+          "index": 31,
+          "title": "Flug 31",
+          "rect": {
+            "x": 0,
+            "y": -9531.5,
+            "top": -9531.5,
+            "right": 320,
+            "bottom": -9057.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 18118.5,
+            "documentBottom": 18592.5
+          }
+        },
+        {
+          "index": 32,
+          "title": "Flug 32",
+          "rect": {
+            "x": 0,
+            "y": -9025.5,
+            "top": -9025.5,
+            "right": 320,
+            "bottom": -8551,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 18624.5,
+            "documentBottom": 19099
+          }
+        },
+        {
+          "index": 33,
+          "title": "Flug 33",
+          "rect": {
+            "x": 0,
+            "y": -8519,
+            "top": -8519,
+            "right": 320,
+            "bottom": -8045,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 19131,
+            "documentBottom": 19605
+          }
+        },
+        {
+          "index": 34,
+          "title": "Flug 34",
+          "rect": {
+            "x": 0,
+            "y": -8013,
+            "top": -8013,
+            "right": 320,
+            "bottom": -7538.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 19637,
+            "documentBottom": 20111.5
+          }
+        },
+        {
+          "index": 35,
+          "title": "Flug 35",
+          "rect": {
+            "x": 0,
+            "y": -7506.5,
+            "top": -7506.5,
+            "right": 320,
+            "bottom": -7032.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 20143.5,
+            "documentBottom": 20617.5
+          }
+        },
+        {
+          "index": 36,
+          "title": "Flug 36",
+          "rect": {
+            "x": 0,
+            "y": -7000.5,
+            "top": -7000.5,
+            "right": 320,
+            "bottom": -6526,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 20649.5,
+            "documentBottom": 21124
+          }
+        },
+        {
+          "index": 37,
+          "title": "Flug 37",
+          "rect": {
+            "x": 0,
+            "y": -6494,
+            "top": -6494,
+            "right": 320,
+            "bottom": -6020,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 21156,
+            "documentBottom": 21630
+          }
+        },
+        {
+          "index": 38,
+          "title": "Flug 38",
+          "rect": {
+            "x": 0,
+            "y": -5988,
+            "top": -5988,
+            "right": 320,
+            "bottom": -5513.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 21662,
+            "documentBottom": 22136.5
+          }
+        },
+        {
+          "index": 39,
+          "title": "Flug 39",
+          "rect": {
+            "x": 0,
+            "y": -5481.5,
+            "top": -5481.5,
+            "right": 320,
+            "bottom": -5007.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 22168.5,
+            "documentBottom": 22642.5
+          }
+        },
+        {
+          "index": 40,
+          "title": "Flug 40",
+          "rect": {
+            "x": 0,
+            "y": -4975.5,
+            "top": -4975.5,
+            "right": 320,
+            "bottom": -4501,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 22674.5,
+            "documentBottom": 23149
+          }
+        },
+        {
+          "index": 41,
+          "title": "Flug 41",
+          "rect": {
+            "x": 0,
+            "y": -4469,
+            "top": -4469,
+            "right": 320,
+            "bottom": -3995,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 23181,
+            "documentBottom": 23655
+          }
+        },
+        {
+          "index": 42,
+          "title": "Flug 42",
+          "rect": {
+            "x": 0,
+            "y": -3963,
+            "top": -3963,
+            "right": 320,
+            "bottom": -3488.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 23687,
+            "documentBottom": 24161.5
+          }
+        },
+        {
+          "index": 43,
+          "title": "Flug 43",
+          "rect": {
+            "x": 0,
+            "y": -3456.5,
+            "top": -3456.5,
+            "right": 320,
+            "bottom": -2982.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 24193.5,
+            "documentBottom": 24667.5
+          }
+        },
+        {
+          "index": 44,
+          "title": "Flug 44",
+          "rect": {
+            "x": 0,
+            "y": -2950.5,
+            "top": -2950.5,
+            "right": 320,
+            "bottom": -2476,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 24699.5,
+            "documentBottom": 25174
+          }
+        },
+        {
+          "index": 45,
+          "title": "Flug 45",
+          "rect": {
+            "x": 0,
+            "y": -2444,
+            "top": -2444,
+            "right": 320,
+            "bottom": -1970,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 25206,
+            "documentBottom": 25680
+          }
+        },
+        {
+          "index": 46,
+          "title": "Flug 46",
+          "rect": {
+            "x": 0,
+            "y": -1938,
+            "top": -1938,
+            "right": 320,
+            "bottom": -1463.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 25712,
+            "documentBottom": 26186.5
+          }
+        },
+        {
+          "index": 47,
+          "title": "Flug 47",
+          "rect": {
+            "x": 0,
+            "y": -1431.5,
+            "top": -1431.5,
+            "right": 320,
+            "bottom": -957.5,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 26218.5,
+            "documentBottom": 26692.5
+          }
+        },
+        {
+          "index": 48,
+          "title": "Flug 48",
+          "rect": {
+            "x": 0,
+            "y": -925.5,
+            "top": -925.5,
+            "right": 320,
+            "bottom": -451,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 26724.5,
+            "documentBottom": 27199
+          }
+        },
+        {
+          "index": 49,
+          "title": "Flug 49",
+          "rect": {
+            "x": 0,
+            "y": -419,
+            "top": -419,
+            "right": 320,
+            "bottom": 55,
+            "left": 0,
+            "width": 320,
+            "height": 474,
+            "documentTop": 27231,
+            "documentBottom": 27705
+          }
+        },
+        {
+          "index": 50,
+          "title": "Flug 50",
+          "rect": {
+            "x": 0,
+            "y": 87,
+            "top": 87,
+            "right": 320,
+            "bottom": 561.5,
+            "left": 0,
+            "width": 320,
+            "height": 474.5,
+            "documentTop": 27737,
+            "documentBottom": 28211.5
+          }
+        }
+      ],
+      "lastCard": {
+        "tag": "ARTICLE",
+        "text": "FlugArchiviertFlug 5012. Sept., 08:40Reise: LissabonPlanpunkt öffnen",
+        "href": null,
+        "rect": {
+          "x": 0,
+          "y": 87,
+          "top": 87,
+          "right": 320,
+          "bottom": 561.5,
+          "left": 0,
+          "width": 320,
+          "height": 474.5,
+          "documentTop": 27737,
+          "documentBottom": 28211.5
+        },
+        "inViewport": true,
+        "clientWidth": 318,
+        "scrollWidth": 318,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "32px",
+          "lineHeight": "48px",
+          "fontWeight": "400",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgb(255, 255, 255)"
+        },
+        "hitTest": {
+          "tag": "P",
+          "text": "Reise: Lissabon",
+          "targetContainsHit": true
+        }
+      },
+      "lastTitle": {
+        "tag": "H2",
+        "text": "Flug 50",
+        "href": null,
+        "rect": {
+          "x": 41,
+          "y": 184.5,
+          "top": 184.5,
+          "right": 279,
+          "bottom": 240.5,
+          "left": 41,
+          "width": 238,
+          "height": 56,
+          "documentTop": 27834.5,
+          "documentBottom": 27890.5
+        },
+        "inViewport": true,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "40px",
+          "lineHeight": "56px",
+          "fontWeight": "600",
+          "letterSpacing": "-1.2px",
+          "overflowWrap": "anywhere",
+          "color": "rgb(21, 58, 51)",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "hitTest": {
+          "tag": "H2",
+          "text": "Flug 50",
+          "targetContainsHit": true
+        }
+      },
+      "lastPlanLink": {
+        "tag": "A",
+        "text": "Planpunkt öffnen",
+        "href": "/reisen/00000000-0000-4000-8000-00000000005a?ansicht=plan&punkt=00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 41,
+          "y": 392.5,
+          "top": 392.5,
+          "right": 279,
+          "bottom": 520.5,
+          "left": 41,
+          "width": 238,
+          "height": 128,
+          "documentTop": 28042.5,
+          "documentBottom": 28170.5
+        },
+        "inViewport": true,
+        "clientWidth": 238,
+        "scrollWidth": 238,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": {
+          "tag": "A",
+          "text": "Planpunkt öffnen",
+          "targetContainsHit": true
+        }
+      },
+      "pagination": {
+        "tag": "A",
+        "text": "Weitere Buchungen",
+        "href": "/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=v1|c5615ef894a609c00290af2e1de7a55bb9433e0a1590318851671ff57759a482|2026-08-30T12:00:00.123456Z|00000000-0000-4000-8000-000000000032",
+        "rect": {
+          "x": 0,
+          "y": 611.5,
+          "top": 611.5,
+          "right": 320,
+          "bottom": 699.5,
+          "left": 0,
+          "width": 320,
+          "height": 88,
+          "documentTop": 28261.5,
+          "documentBottom": 28349.5
+        },
+        "inViewport": true,
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "css": {
+          "display": "inline-flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "fontSize": "28px",
+          "lineHeight": "40px",
+          "fontWeight": "600",
+          "letterSpacing": "normal",
+          "overflowWrap": "anywhere",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(21, 58, 51)"
+        },
+        "hitTest": {
+          "tag": "A",
+          "text": "Weitere Buchungen",
+          "targetContainsHit": true
+        }
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/last-card-320x700.png",
+      "stage": "last-card-viewport",
+      "fullPage": false
+    },
+    {
+      "path": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/pagination-320x700.png",
+      "stage": "pagination-viewport",
+      "fullPage": false
+    }
+  ],
+  "visualInspectionClaim": false,
+  "expected": {
+    "numberCards": 50,
+    "lastId": "00000000-0000-4000-8000-000000000032",
+    "lastTitle": "Flug 50",
+    "paginationHref": "/account/bookings?titel=Z%C3%BCrich&art=flight&archiv=aktiv&weiter=v1|c5615ef894a609c00290af2e1de7a55bb9433e0a1590318851671ff57759a482|2026-08-30T12:00:00.123456Z|00000000-0000-4000-8000-000000000032"
+  },
+  "markupSha256": "c774b2df26588a69f2c20f5375f3dc420774a13b81e5ee61d318705356dfd937",
+  "documentSha256": "407bab82231e9d1e37c083c0d1d25a12fe82a39126ad8c4c12129967969ea945",
+  "browserVersion": "140.0.7339.16",
+  "domChecksCompleted": true,
+  "observer": {
+    "pageerror": [],
+    "consoleError": [],
+    "unexpectedRequests": [],
+    "requestFailed": []
+  },
+  "finishedAtUtc": "2026-10-25T00:13:47.270Z"
+}
