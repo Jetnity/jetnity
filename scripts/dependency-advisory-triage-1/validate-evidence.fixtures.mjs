@@ -91,6 +91,18 @@ const cases = [
     omit.vulnerabilities = {}
     writeJson(dir, rel, omit)
   }],
+  ['empty omit-dev nodes fail', (dir) => {
+    const rel = 'docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json'
+    const omit = readJson(dir, rel)
+    for (const vuln of Object.values(omit.vulnerabilities)) vuln.nodes = []
+    writeJson(dir, rel, omit)
+  }],
+  ['mismatched omit-dev node association fails', (dir) => {
+    const rel = 'docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json'
+    const omit = readJson(dir, rel)
+    omit.vulnerabilities.ws.nodes = ['node_modules/zod']
+    writeJson(dir, rel, omit)
+  }],
 ]
 
 for (const [name, change] of cases) {

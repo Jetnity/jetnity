@@ -7,7 +7,7 @@ Date: 2026-10-25. Lane: R107-S. State: corrected audit packet ready for a new in
 - Logical agent: Jetnity Dependency Advisory Triage 1 — Cursor Generation 1.
 - Runtime: `grok-4.7-high-fast`. Session: `bc-ace2870d-6fe3-4d6f-9213-676752ad3b9b`.
 - Accepted plan parent: `1fcb220a03bb895e3a6609ad81b9a9f7fedb992b`. PLAN blob `436fc2561289baa2da9583c070662a6b8c9ad82b`. TASK blob unchanged `4a4b686fbcc429a4041012f3d967b3f5d1767bc0`.
-- Corrects candidate `b905f89eafa0a2c614ca125316497716db27eb91`. The earlier candidate `01f4f2b97b614c3b16048fa8585e1e635c93286f` remains the head whose priority summary was withdrawn. The delivery head is the commit that adds this revision; this file does not contain its own hash.
+- Corrects candidate `93bd34c70d041c21d9240aec4a35b839ba455587`. The earlier candidate `01f4f2b97b614c3b16048fa8585e1e635c93286f` remains the head whose priority summary was withdrawn. The delivery head is the commit that adds this revision; this file does not contain its own hash.
 - Package blobs unchanged: `e6187432cb8f224c10281b7b476bb24eb8ef1c1b`, `4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe`.
 - Main at the start of this correction: `a74c443c6be3f064f150fcf021ab6154bda325e5`. No rebase in this packet.
 - Draft PR #1021. Tracking #1016 stays open.
@@ -19,6 +19,8 @@ The registry commands were not repeated. Retained state remains `REGISTRY_AUDIT_
 The numerical summary from `01f4f2b9` (0 / 28 provisional P1 / 12 provisional P2 / 2 P3) is withdrawn. The corrected matrix is 0 provisional P0, 40 provisional P1, 2 P2, and 0 P3. Bucket U is the floor on every row. Execution of the vulnerable function is `NOT_ASSESSED`. No remediation group is activated.
 
 Candidate review R2: `retrievedAt` is null and `acquisitionState` is `UNAVAILABLE` on every row. `primaryPublished` and `primaryUpdated` stay the payload times. The validator parses the raw lock, requires the row fields, rejects a retained candidate from another major than the primary patch, and reads the omit-dev audit. The retained omit-dev output still names `source-map-js`, `ws`, and `zod`.
+
+Candidate review R3: those three omit-dev rows must keep nonempty node paths. Each path must be that package in the raw lock and in the full-lock audit, with the same per-package advisory ids. Emptying the node lists is no longer accepted. The retained omit-dev JSON was not changed.
 
 Four advisory ids cover three production-closure packages: GHSA-mrhx-c7xc-m3w5 (`zod@3.25.76`), GHSA-96hv-2xvq-fx4p and GHSA-58qx-3vcg-4xpx (`ws@8.18.3`), and GHSA-68fv-2mgg-jv7q (`source-map-js@1.2.1`). Those rows are an advisory-to-lock concern. They are not an exploit finding and not a deployed-bundle finding.
 

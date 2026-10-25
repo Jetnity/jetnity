@@ -56,7 +56,7 @@ This correction reran only local commands, recorded with argv, stdout, and exit 
 | Column | Statement |
 | --- | --- |
 | Registry change since `2026-10-25T14:24:43Z` | The retained full-lock package count is still 11, with the same 2 moderate and 9 high split the accepted plan transcribed from CI. CI did not name ids. An unchanged count is not identity equality and is not a clearance. This correction did not call the registry again. |
-| Full lock versus the installed subset | CI audited 533 installed packages. This lock census is 611 entries, 565 path suffixes, and 562 canonical names. Installed consistency is **UNVERIFIED**. The omit-dev response kept 3 high package rows: `source-map-js`, `ws`, `zod`. |
+| Full lock versus the installed subset | CI audited 533 installed packages. This lock census is 611 entries, 565 path suffixes, and 562 canonical names. Installed consistency is **UNVERIFIED**. The omit-dev response kept 3 high package rows: `source-map-js`, `ws`, `zod`. Each of those rows keeps the same nonempty node path and the same per-package advisory ids as the full-lock audit. An empty node list is not treated as that association. |
 | Folding | 23 GHSA ids are folded into 11 package rows. The matrix has 42 rows because one GHSA can match more than one locked path. The validator derives those 42 keys from the retained audit, the primary ranges, and the pinned lock. |
 
 Primary records are the 23 retained GitHub Advisory payloads. OSV stays labeled aggregator. GitHub's word `medium` is official severity **moderate**. Every matrix row is `RANGE_DECIDED`. No row was dropped as unaffected against a range the comparator could not parse.

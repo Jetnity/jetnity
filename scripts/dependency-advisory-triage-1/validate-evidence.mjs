@@ -259,18 +259,37 @@ const productionClosure = ['source-map-js', 'ws', 'zod']
 if (omitNames.join() !== productionClosure.join()) fail(`omit-dev packages ${omitNames.join(',')}`)
 if ((omitAudit.metadata?.vulnerabilities?.high) !== 3 || (omitAudit.metadata?.vulnerabilities?.total) !== 3) fail('omit-dev severity census')
 if (binding.reconciliation?.omitDevPackageCount !== omitNames.length) fail('omit-dev binding disagrees with retained output')
+function advisoryIds(vuln) {
+  const ids = new Set()
+  for (const via of vuln?.via || []) {
+    if (via && typeof via === 'object') {
+      const id = ghsaId(via.url)
+      if (id) ids.add(id)
+    }
+  }
+  return ids
+}
 const omitIds = new Set()
 for (const [name, vuln] of Object.entries(omitAudit.vulnerabilities || {})) {
   if (vuln.severity !== 'high') fail(`omit-dev severity ${name}`)
-  for (const lockPath of vuln.nodes || []) {
-    if (!fromLock.has(lockPath)) fail(`omit-dev path missing from raw lock ${lockPath}`)
+  const nodes = vuln.nodes
+  if (!Array.isArray(nodes) || nodes.length === 0) fail(`omit-dev nodes empty ${name}`)
+  const fullVuln = (audit.vulnerabilities || {})[name]
+  if (!fullVuln) fail(`omit-dev package missing from full audit ${name}`)
+  const fullNodes = new Set(fullVuln.nodes || [])
+  for (const lockPath of nodes) {
+    const locked = fromLock.get(lockPath)
+    if (!locked) fail(`omit-dev path missing from raw lock ${lockPath}`)
+    else if (locked.canonicalName !== name) fail(`omit-dev node identity ${name} ${lockPath}`)
+    if (!fullNodes.has(lockPath)) fail(`omit-dev node not in full audit ${name} ${lockPath}`)
   }
-  for (const via of vuln.via || []) {
-    if (via && typeof via === 'object') {
-      const id = ghsaId(via.url)
-      if (id) omitIds.add(id)
-    }
+  for (const lockPath of fullNodes) {
+    if (!nodes.includes(lockPath)) fail(`omit-dev node omitted ${name} ${lockPath}`)
   }
+  const packageIds = advisoryIds(vuln)
+  const fullIds = advisoryIds(fullVuln)
+  for (const id of packageIds) omitIds.add(id)
+  if ([...packageIds].sort().join() !== [...fullIds].sort().join()) fail(`omit-dev advisory association ${name}`)
 }
 for (const id of ['GHSA-mrhx-c7xc-m3w5', 'GHSA-96hv-2xvq-fx4p', 'GHSA-58qx-3vcg-4xpx', 'GHSA-68fv-2mgg-jv7q']) {
   if (!omitIds.has(id)) fail(`omit-dev missing ${id}`)
