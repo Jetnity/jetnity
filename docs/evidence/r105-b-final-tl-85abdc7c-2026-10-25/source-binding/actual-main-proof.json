@@ -1,0 +1,12 @@
+{
+  "observedAtUtc": "2026-10-25T00:05:43.553994+00:00",
+  "repository": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "mergeBase": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "countsMainVsHead": "0\t13",
+  "localOriginMain": "07016ada86dcfc79d5c7c3efa9ba1d62336a1f60",
+  "status": "",
+  "materializerMainFieldMeaning": "Technical graph anchor0c37 only;51ahead in that report is not the actual-main comparison."
+}

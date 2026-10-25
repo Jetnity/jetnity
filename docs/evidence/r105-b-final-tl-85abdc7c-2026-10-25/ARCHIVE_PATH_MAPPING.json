@@ -1,0 +1,151 @@
+{
+  "kind": "original-byte-preserving-archive-path-map",
+  "rawExecutionMetadataRewritten": false,
+  "archivalPathsWereNotExecutionPaths": true,
+  "changes": [
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-abfrage.test.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-abfrage.test.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-abfrage.test.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 11731,
+      "sha256": "b82ef92dba8e8b4ea0bc5d1a9c6ade423b13f2c870376cd796d8e409010cdfe3",
+      "gitBlob": "81bee03b8e906763f3ba4e04e2ee5cf48cd847ec"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-daten.test.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-daten.test.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-daten.test.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 7164,
+      "sha256": "6aec6285537f573bfd4d98548a8748bb240abe8e28cbf6072eb75f651a68d7b1",
+      "gitBlob": "d3868629b50d45f25808cd3ae968243ffd05dd29"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen.test.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen.test.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen.test.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 7846,
+      "sha256": "40f97fb55deed081dbff0e0b29f2263fb236fa7b04a3ed88c9c86631a3ad49ab",
+      "gitBlob": "0ce848ba86c392e96ae4efea1c7308422261644e"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-ui.test.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-ui.test.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-ui.test.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 6160,
+      "sha256": "3585ff0b774090faa115f6270f3c6207a2a61f25b17a9d7be5d71c7a23ea6a6d",
+      "gitBlob": "197fbaf518a0702d80756482bc09deaaac16d149"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/compile-css.mjs",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/producer/compile-css.mjs",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/producer/compile-css.mjs.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 4454,
+      "sha256": "da4a232c1555744561a5067c155f8337f4fab63b51014842e11639c8facd3ea1",
+      "gitBlob": "b7ae41bbe13464d9832b3fd379cd314fa3fc315f"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/original/ablauf.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/ablauf.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/ablauf.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 35490,
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/original/montage.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/montage.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/montage.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 18259,
+      "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adapted/ablauf.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/ablauf.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/ablauf.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 35629,
+      "sha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "gitBlob": "666a83fa33b2547b9f44bd8a545ba9043a2679c0"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adapted/montage.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/montage.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/montage.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 19367,
+      "sha256": "b50d27d9102ef0c1f3dab37987117e235744dfde36b079e03e37c9c183d87997",
+      "gitBlob": "4ac7dd14e9ad037a8f22a67e9b06c95a0f36f4ba"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/original/ablauf.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/ablauf.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/ablauf.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 35490,
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/copies/ablauf.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/ablauf.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/ablauf.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 35629,
+      "sha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "gitBlob": "666a83fa33b2547b9f44bd8a545ba9043a2679c0"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/original/montage.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/montage.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/montage.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 18259,
+      "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/copies/montage.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/montage.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/montage.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 19367,
+      "sha256": "b50d27d9102ef0c1f3dab37987117e235744dfde36b079e03e37c9c183d87997",
+      "gitBlob": "4ac7dd14e9ad037a8f22a67e9b06c95a0f36f4ba"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/tmp/buchungen-flaeche-8SJsWc/flaeche.js",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/generated/flaeche.js",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/generated/flaeche.js.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 931389,
+      "sha256": "95d504939aa5104ab14a33422d6e42d29097d4bce07203e55bdf4c827ff856e2",
+      "gitBlob": "803697ac5d2dbcba40c013f01cedb00d31336a96"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/diagnostic.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/diagnostic.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/diagnostic.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 11157,
+      "sha256": "4e3a64a26d6b66ae015d42ad22a5b0beb256608ded5cee29c80513d2e7213b35",
+      "gitBlob": "7ea3ffa40ebfe1aba37c87096fdac4e6fb680b25"
+    },
+    {
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/fixture-source.ts",
+      "archivePathWithoutTextSuffix": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/fixture-source.ts",
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/fixture-source.ts.txt",
+      "reason": "Historical code stored as text evidence; exact original bytes and Git blob retained",
+      "bytes": 3752,
+      "sha256": "06e615a6a659029c46e2f9c1a1a539a07bc4244c30b822c30c664673eedac8e4",
+      "gitBlob": "caa211400af525f4df32693cad95554f3314bdf7"
+    }
+  ]
+}

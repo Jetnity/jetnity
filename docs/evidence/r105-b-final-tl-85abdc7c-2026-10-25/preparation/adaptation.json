@@ -1,0 +1,166 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "repo": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "actualMainTree": "bc39c3b74b5cbab7c15595500ddc70a72de8826b",
+  "mergeBase": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "ahead": 13,
+  "behind": 0,
+  "rootFinalStopRequiredBeforeInvocation": true,
+  "remoteFreshnessNotCheckedHere": true,
+  "gitFilterDriversNeutralizedPerCommand": [
+    "lfs"
+  ],
+  "designInterimHead": "824f1bab0a5415a0e8c118004d4b429d58bf47f1",
+  "sourceBlobsExplicitlyAccepted": {
+    "ablauf.ts": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+    "montage.ts": "dd6a3b8c51c80dd016117b0a529f19b2605195ac"
+  },
+  "scripts": {
+    "ablauf.ts": {
+      "source": "scripts/account-booking-folder-completion-1/ablauf.ts",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "originalSha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "adaptedSha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "reverseAdaptedSha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "protectedSourceSha256": "651bc2b2d18ffa33d86755a6d6fdd19af023b67b90e95f907d78cf8ca1bd354a",
+      "reverseEqualsOriginal": true,
+      "protectedRegions": [],
+      "changes": [
+        {
+          "label": "isolated Chromium executable",
+          "old": "chromium.launch()",
+          "new": "chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })",
+          "count": 2,
+          "category": "environment"
+        },
+        {
+          "label": "actual-main metadata without shared-ref mutation",
+          "old": "git(['rev-parse', 'origin/main'])",
+          "new": "git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1'])",
+          "count": 1,
+          "category": "provenance"
+        }
+      ]
+    },
+    "montage.ts": {
+      "source": "scripts/account-booking-folder-completion-1/montage.ts",
+      "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+      "originalSha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "adaptedSha256": "b50d27d9102ef0c1f3dab37987117e235744dfde36b079e03e37c9c183d87997",
+      "reverseAdaptedSha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "protectedSourceSha256": "fdf15d204a161c2d7212204bcdb01ca9d5f088aaf9f97be1cbae29f9884542d8",
+      "reverseEqualsOriginal": true,
+      "protectedRegions": [
+        {
+          "label": "fixture-state-construction",
+          "start": "function ansicht(",
+          "end": "\nfunction cssDateien(",
+          "sha256": "50c24d163e5be570a7e87b3f75a9be21b12dc876111cf199b840c2f49d5638ca",
+          "bytes": 2883
+        },
+        {
+          "label": "computed-style-assertions",
+          "start": "function stilePruefen(",
+          "end": "\nfunction dokument(",
+          "sha256": "4c65c284745b4671b4254bfd73a3705216af29b979c1485760d1a126d30cc92f",
+          "bytes": 2016
+        },
+        {
+          "label": "widths-states-keyboard-assertions",
+          "start": "const breiten = [",
+          "end": "\nasync function montage(",
+          "sha256": "c9615fe9f71d99c3fb982b20ad9fadd544fdd323839996ce0f2d4bd36fe69efc",
+          "bytes": 2442
+        },
+        {
+          "label": "measurement-overflow-style-keyboard-screenshots",
+          "start": "    const messungen = []",
+          "end": "    befund.zustaende[zustand] = messungen",
+          "sha256": "e7f70e0285fe62b0df6bef5f18428a6d77f47d1f80e7f346be1bb7327164d6ac",
+          "bytes": 3711
+        }
+      ],
+      "changes": [
+        {
+          "label": "isolated Chromium executable",
+          "old": "chromium.launch()",
+          "new": "chromium.launch({ executablePath: process.env.JETNITY_REVIEW_CHROMIUM })",
+          "count": 1,
+          "category": "environment"
+        },
+        {
+          "label": "actual-main metadata without shared-ref mutation",
+          "old": "git(['rev-parse', 'origin/main'])",
+          "new": "git(['rev-parse', '9092b29c2e187bd73d644a3d85670f3ac6436be1'])",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "truthful CSS source comment",
+          "old": "// CSS kommt aus dem Production-Build. Das ist keine Geräte-, Zoom- oder Screenreader-Prüfung.",
+          "new": "// CSS kommt aus LOCAL_PROJECT_POSTCSS_COMPILATION, nicht aus einem Next-Build. Keine Geräte-, Zoom- oder Screenreader-Prüfung.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "external verified PostCSS input retaining V4 object shape",
+          "old": "function cssLesen(): { text: string; sha256: string; dateien: { pfad: string; sha256: string; bytes: number }[] } {\n  const dateien = cssDateien(join('.next', 'static')).sort()\n  if (dateien.length === 0) throw new Error('Production-CSS fehlt. Zuerst den Build ausführen.')\n  const eintraege = dateien.map((pfad) => {\n    const inhalt = readFileSync(pfad)\n    return { pfad, sha256: sha256(inhalt), bytes: inhalt.length, text: inhalt.toString('utf8') }\n  })\n  const text = eintraege.map((eintrag) => eintrag.text).join('\\n')\n  return {\n    text,\n    sha256: sha256(text),\n    dateien: eintraege.map(({ pfad, sha256: summe, bytes }) => ({ pfad, sha256: summe, bytes })),\n  }\n}",
+          "new": "function cssLesen(): { text: string; sha256: string; dateien: { pfad: string; sha256: string; bytes: number }[] } {\n  const pfad = process.env.JETNITY_REVIEW_CSS_PATH\n  if (!pfad) throw new Error('Verifizierte lokale Projekt-PostCSS-Datei fehlt.')\n  const inhalt = readFileSync(pfad)\n  const text = inhalt.toString('utf8')\n  return {\n    text,\n    sha256: sha256(text),\n    dateien: [{ pfad, sha256: sha256(inhalt), bytes: inhalt.length }],\n  }\n}",
+          "count": 1,
+          "category": "environment"
+        },
+        {
+          "label": "truthful CSS finding provenance",
+          "old": "CSS aus dem lokalen Next-Production-Build, injiziert als zusammengefügtes style-Element.",
+          "new": "LOCAL_PROJECT_POSTCSS_COMPILATION: CSS aus der unveränderten Projekt-PostCSS-Pipeline, injiziert als style-Element. Kein Next-Build-CSS-Nachweis.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "truthful CSS manifest provenance",
+          "old": "Zusammengeführte Dateien unter .next/static mit Endung .css aus dem lokalen next build. Das ist nicht die unabhängige PostCSS-Kompilation der Prüfung.",
+          "new": "LOCAL_PROJECT_POSTCSS_COMPILATION: Eine verifizierte CSS-Datei aus der unveränderten Projekt-PostCSS-Pipeline. Kein Next-Production-CSS-Gleichheitsnachweis; sha256/dateien dokumentieren genau diese Datei.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "truthful CSS scope provenance",
+          "old": "Statisches Markup mit CSS aus dem lokalen Production-Build.",
+          "new": "Statisches Markup mit LOCAL_PROJECT_POSTCSS_COMPILATION aus der unveränderten Projekt-PostCSS-Pipeline. Kein Next-Build-CSS-Nachweis.",
+          "count": 1,
+          "category": "provenance"
+        },
+        {
+          "label": "passive observer declaration",
+          "old": "const bilder = join(ausgabe, 'screens')",
+          "new": "const bilder = join(ausgabe, 'screens')\n// Root-only passive observer; no routing, interception, fixture or navigation changes.\nconst rootDiagnostik = {\n  pageerror: [] as string[],\n  consoleError: [] as string[],\n  unexpectedRequests: [] as string[],\n  requestFailed: [] as string[],\n}",
+          "count": 1,
+          "category": "observer-only"
+        },
+        {
+          "label": "passive per-page listeners",
+          "old": "    const seite = await browser.newPage()",
+          "new": "    const seite = await browser.newPage()\n    seite.on('pageerror', (problem) => rootDiagnostik.pageerror.push(problem.message))\n    seite.on('console', (meldung) => {\n      if (meldung.type() === 'error') rootDiagnostik.consoleError.push(meldung.text())\n    })\n    seite.on('request', (anfrage) => {\n      const url = anfrage.url()\n      if (!url.startsWith('data:') && !url.startsWith('blob:') && url !== 'about:blank') {\n        rootDiagnostik.unexpectedRequests.push(url)\n      }\n    })\n    seite.on('requestfailed', (anfrage) => {\n      rootDiagnostik.requestFailed.push(anfrage.url() + ' ' + (anfrage.failure()?.errorText ?? 'unknown'))\n    })",
+          "count": 1,
+          "category": "observer-only"
+        },
+        {
+          "label": "separate observer after browser close",
+          "old": "} finally {\n  await browser.close()\n}",
+          "new": "} finally {\n  await browser.close()\n  writeFileSync(join(ausgabe, 'montage-root-observer.json'), `${JSON.stringify({\n    kind: 'ROOT_ADDED_PASSIVE_MONTAGE_OBSERVER',\n    diagnostics: rootDiagnostik,\n  }, null, 2)}\\n`)\n}",
+          "count": 1,
+          "category": "observer-only"
+        }
+      ]
+    }
+  },
+  "tooling": {
+    "prepare.py": "38c64bb915c47c5222c9f5a9b457847a27c147a3baacb7663ecfe1c3864e4ec1",
+    "run.py": "3b1c1cf300dd8d611ef807ed1a2077c4160c494d6f536491836cc2e8f2922c33",
+    "README.md": "a3941622538f6edaa6e0fc3cb12c6e4cf183873f90c72190ea6d51a231c15bfd"
+  },
+  "adaptationDiffSha256": "fc818ef21c7af415804806002dbe2ce25eddcf0165d69af0c0638864f47da31b"
+}

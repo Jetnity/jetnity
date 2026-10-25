@@ -1,0 +1,260 @@
+{
+  "executionClass": "ROOT_EXECUTED_EXISTING_FOCUSED_TESTS",
+  "status": "FAIL",
+  "startedAtUtc": "2026-10-25T00:04:43.274157+00:00",
+  "repo": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "output": "/tmp/jetnity-r105-b-focused-final-proof-avana4zy",
+  "expectedHead": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "expectedTree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "expectedCounts": {
+    "tests": 32,
+    "suites": 4,
+    "pass": 32,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "command": [
+    "node",
+    "--import",
+    "./scripts/server-only-test-register.mjs",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-reporter=tap",
+    "lib/account/buchungen-abfrage.test.ts",
+    "lib/account/buchungen-daten.test.ts",
+    "lib/account/buchungen.test.ts",
+    "lib/account/buchungen-ui.test.ts"
+  ],
+  "actualWorkingDirectory": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "environmentKeys": [
+    "LANG",
+    "LC_ALL",
+    "PATH",
+    "TZ"
+  ],
+  "environmentValuesRecorded": false,
+  "isolation": "normal node:test process isolation; no override or fallback",
+  "permissionNote": "Execution permissions are controlled by the Root caller. This wrapper never changes permissions, escalates, or retries.",
+  "nativeCiOrFullBuildClaim": false,
+  "testInvocationAttempted": true,
+  "phase": "verify-source-and-tap",
+  "gitFilterDriversNeutralizedPerCommand": [
+    "lfs"
+  ],
+  "before": {
+    "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+    "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+    "gitStatus": "",
+    "detached": true,
+    "sources": {
+      "lib/account/buchungen-abfrage.test.ts": {
+        "gitBlob": "81bee03b8e906763f3ba4e04e2ee5cf48cd847ec",
+        "sha256": "b82ef92dba8e8b4ea0bc5d1a9c6ade423b13f2c870376cd796d8e409010cdfe3",
+        "bytes": 11731
+      },
+      "lib/account/buchungen-daten.test.ts": {
+        "gitBlob": "d3868629b50d45f25808cd3ae968243ffd05dd29",
+        "sha256": "6aec6285537f573bfd4d98548a8748bb240abe8e28cbf6072eb75f651a68d7b1",
+        "bytes": 7164
+      },
+      "lib/account/buchungen.test.ts": {
+        "gitBlob": "0ce848ba86c392e96ae4efea1c7308422261644e",
+        "sha256": "40f97fb55deed081dbff0e0b29f2263fb236fa7b04a3ed88c9c86631a3ad49ab",
+        "bytes": 7846
+      },
+      "lib/account/buchungen-ui.test.ts": {
+        "gitBlob": "197fbaf518a0702d80756482bc09deaaac16d149",
+        "sha256": "3585ff0b774090faa115f6270f3c6207a2a61f25b17a9d7be5d71c7a23ea6a6d",
+        "bytes": 6160
+      },
+      "app/account/bookings/page.tsx": {
+        "gitBlob": "9bfb0db745675bd99a40cca75f71545fc282c042",
+        "sha256": "bcc0b0059bf9cdcfd207b44cb705530f9d17eff1b872cef83ea21ec641c32226",
+        "bytes": 1368
+      },
+      "components/account/AccountBuchungen.tsx": {
+        "gitBlob": "83f7cf960489f2d855647cd52ee34fc4e5eec8b1",
+        "sha256": "171558b8e50937c21af5c1ba54153d9969d1140c1f33f62743a15a7fa533e555",
+        "bytes": 8812
+      },
+      "components/account/BuchungenFilter.tsx": {
+        "gitBlob": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+        "sha256": "806f00ac952ccbbd79bb08224c381a0f789d98cba24025dc07a3ee866938cbb3",
+        "bytes": 3428
+      },
+      "lib/account/buchungen-abfrage.ts": {
+        "gitBlob": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+        "sha256": "b3d7d4464fb0aa2ee80e1d12309fbe37c22bf0b5d972439b769aa7852b1563de",
+        "bytes": 12636
+      },
+      "lib/account/buchungen-daten.ts": {
+        "gitBlob": "b4335793a73a5d0af16a03d2e07f5e932fa996d2",
+        "sha256": "1ea328ddd9226819d7981947eb39d56c276f9d70bb167ff86c052d43ac24ba9c",
+        "bytes": 4463
+      },
+      "lib/account/buchungen.ts": {
+        "gitBlob": "2a15645baedd10100496c71de702b15eec8543cc",
+        "sha256": "d89ccbe95fc2966ad5a124505fe07d811f3bd226bfe51b46cc1e1a048a38cad4",
+        "bytes": 9265
+      },
+      "scripts/server-only-test-register.mjs": {
+        "gitBlob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+        "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+        "bytes": 508
+      },
+      "scripts/server-only-test-loader.mjs": {
+        "gitBlob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+        "sha256": "9249fc5a0d1327724687ec13796ca0b1322280455e2efb9f15eada09383ce8a7",
+        "bytes": 401
+      },
+      "scripts/server-only-empty.js": {
+        "gitBlob": "fa6f4a5ccea49ac0d2533bc8656540d060db35ae",
+        "sha256": "62383a273617b448556d1a28571dc7ccb751066aacf09ea64720c55d7462469a",
+        "bytes": 79
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      },
+      "tsconfig.json": {
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+        "bytes": 865
+      }
+    }
+  },
+  "resolvedNodeModules": "/tmp/jetnity-r104-review/node_modules",
+  "resolvedNodeExecutable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "nodeVersionCommand": {
+    "command": [
+      "node",
+      "--version"
+    ],
+    "exitCode": 0,
+    "stderr": ""
+  },
+  "node": "v24.22.1",
+  "exitCode": 0,
+  "after": {
+    "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+    "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+    "gitStatus": "",
+    "detached": true,
+    "sources": {
+      "lib/account/buchungen-abfrage.test.ts": {
+        "gitBlob": "81bee03b8e906763f3ba4e04e2ee5cf48cd847ec",
+        "sha256": "b82ef92dba8e8b4ea0bc5d1a9c6ade423b13f2c870376cd796d8e409010cdfe3",
+        "bytes": 11731
+      },
+      "lib/account/buchungen-daten.test.ts": {
+        "gitBlob": "d3868629b50d45f25808cd3ae968243ffd05dd29",
+        "sha256": "6aec6285537f573bfd4d98548a8748bb240abe8e28cbf6072eb75f651a68d7b1",
+        "bytes": 7164
+      },
+      "lib/account/buchungen.test.ts": {
+        "gitBlob": "0ce848ba86c392e96ae4efea1c7308422261644e",
+        "sha256": "40f97fb55deed081dbff0e0b29f2263fb236fa7b04a3ed88c9c86631a3ad49ab",
+        "bytes": 7846
+      },
+      "lib/account/buchungen-ui.test.ts": {
+        "gitBlob": "197fbaf518a0702d80756482bc09deaaac16d149",
+        "sha256": "3585ff0b774090faa115f6270f3c6207a2a61f25b17a9d7be5d71c7a23ea6a6d",
+        "bytes": 6160
+      },
+      "app/account/bookings/page.tsx": {
+        "gitBlob": "9bfb0db745675bd99a40cca75f71545fc282c042",
+        "sha256": "bcc0b0059bf9cdcfd207b44cb705530f9d17eff1b872cef83ea21ec641c32226",
+        "bytes": 1368
+      },
+      "components/account/AccountBuchungen.tsx": {
+        "gitBlob": "83f7cf960489f2d855647cd52ee34fc4e5eec8b1",
+        "sha256": "171558b8e50937c21af5c1ba54153d9969d1140c1f33f62743a15a7fa533e555",
+        "bytes": 8812
+      },
+      "components/account/BuchungenFilter.tsx": {
+        "gitBlob": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+        "sha256": "806f00ac952ccbbd79bb08224c381a0f789d98cba24025dc07a3ee866938cbb3",
+        "bytes": 3428
+      },
+      "lib/account/buchungen-abfrage.ts": {
+        "gitBlob": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+        "sha256": "b3d7d4464fb0aa2ee80e1d12309fbe37c22bf0b5d972439b769aa7852b1563de",
+        "bytes": 12636
+      },
+      "lib/account/buchungen-daten.ts": {
+        "gitBlob": "b4335793a73a5d0af16a03d2e07f5e932fa996d2",
+        "sha256": "1ea328ddd9226819d7981947eb39d56c276f9d70bb167ff86c052d43ac24ba9c",
+        "bytes": 4463
+      },
+      "lib/account/buchungen.ts": {
+        "gitBlob": "2a15645baedd10100496c71de702b15eec8543cc",
+        "sha256": "d89ccbe95fc2966ad5a124505fe07d811f3bd226bfe51b46cc1e1a048a38cad4",
+        "bytes": 9265
+      },
+      "scripts/server-only-test-register.mjs": {
+        "gitBlob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b",
+        "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+        "bytes": 508
+      },
+      "scripts/server-only-test-loader.mjs": {
+        "gitBlob": "1b9db96938cd646a8d60f981cc13d4ca18e06925",
+        "sha256": "9249fc5a0d1327724687ec13796ca0b1322280455e2efb9f15eada09383ce8a7",
+        "bytes": 401
+      },
+      "scripts/server-only-empty.js": {
+        "gitBlob": "fa6f4a5ccea49ac0d2533bc8656540d060db35ae",
+        "sha256": "62383a273617b448556d1a28571dc7ccb751066aacf09ea64720c55d7462469a",
+        "bytes": 79
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      },
+      "tsconfig.json": {
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+        "bytes": 865
+      }
+    }
+  },
+  "counts": {
+    "tests": 4,
+    "suites": 0,
+    "pass": 4,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "error": "RuntimeError: Focused TAP count mismatch: {'tests': 4, 'suites': 0, 'pass': 4, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}",
+  "finishedAtUtc": "2026-10-25T00:04:51.052287+00:00",
+  "artifacts": {
+    "stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "focused.tap": {
+      "sha256": "693b62b1a0a0e0127c90f284059e3e19009040c54f2291dd6ae99228dfab3be9",
+      "bytes": 681
+    },
+    "run.py": {
+      "sha256": "655d69988fce470d8323bdf4406dc3c10e78451f5d0f4b723262b783079baec7",
+      "bytes": 10854
+    }
+  }
+}

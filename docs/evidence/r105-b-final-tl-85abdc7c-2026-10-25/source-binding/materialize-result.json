@@ -1,0 +1,152 @@
+{
+  "status": "SUCCESS",
+  "startedAtUtc": "2026-10-25T00:04:07.495900+00:00",
+  "manifest": "/tmp/jetnity-r105-b-v4-85abdc7c-manifest.json",
+  "phase": "complete",
+  "networkOperations": "none",
+  "existingReviewTreesModified": false,
+  "manifestSha256": "473b39899230fddc20b79e43f4cdcda5f0b8faf8bfc17d664dd7d5fa9ed44c5e",
+  "shallowRepository": true,
+  "filterSafety": {
+    "driversNeutralized": [
+      "lfs"
+    ],
+    "perGitInvocationOverrides": {
+      "process": "",
+      "clean": "",
+      "smudge": "",
+      "required": "false"
+    },
+    "repositoryConfigModified": false,
+    "rawBlobBytesRemainAuthority": true,
+    "targetIndexAttributes": {
+      "checkedPaths": 6837,
+      "activeFilterAttributes": []
+    },
+    "newWorktreeIndexAttributes": {
+      "checkedPaths": 6837,
+      "activeFilterAttributes": []
+    }
+  },
+  "lane": "b-v4-final",
+  "repo": "/tmp/jetnity-r104-review",
+  "baselinePhysical": "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+  "baselineTree": "3996b1bbe5eb11197c6e6450f0288d2ecbb3120c",
+  "main": "0c37d318c47a758f06634448d6e0de3856bbc6a6",
+  "requestedHead": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "destination": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3",
+  "nodeModules": "/tmp/jetnity-r104-review/node_modules",
+  "expectedTree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "commitsReused": [],
+  "commitsImported": [
+    "95fdf6c9d46ac6a4bf3c0548bcf584e80d62ac87",
+    "824f1bab0a5415a0e8c118004d4b429d58bf47f1",
+    "85abdc7c33a34b7a93a3fdb6f78f658940ee1063"
+  ],
+  "changedBlobCount": 14,
+  "changes": {
+    "removeSources": [
+      "components/account/AccountBuchungen.tsx",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_HANDOFF_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_REPORT_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_SELF_REVIEW_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_STATUS_2026-10-24.md",
+      "scripts/account-booking-folder-completion-1/montage.ts"
+    ],
+    "writeDestinations": [
+      "components/account/AccountBuchungen.tsx",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_HANDOFF_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_REPORT_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_SELF_REVIEW_2026-10-24.md",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_STATUS_2026-10-24.md",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/ablauf/ablauf.json",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/montage.json",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-fehler-390.png",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-fortsetzungLeer-390.png",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-keine-390.png",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-leer-390.png",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-liste-320-32px.png",
+      "docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage/screens/bookings-liste-390.png",
+      "scripts/account-booking-folder-completion-1/montage.ts"
+    ]
+  },
+  "tree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "remoteTreeExact": true,
+  "historyEvidence": {
+    "scope": "verified main..head only; no claim about history before main",
+    "mainAncestorOfHead": true,
+    "rangeParentsCloseAtMain": true,
+    "rangeShallowBoundaries": [],
+    "rangeCommits": [
+      "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+      "824f1bab0a5415a0e8c118004d4b429d58bf47f1",
+      "95fdf6c9d46ac6a4bf3c0548bcf584e80d62ac87",
+      "84c496c037cff9e14102ff0fe3e6686fee33d5a6",
+      "fe6cca376cf6b01ab3f29ccf881285bd7008aeff",
+      "1574adcb802cc7c0039eb9724e0a8a11191d4ed8",
+      "6da50e3e062d1ebabc60990f64e8c9a2a4968278",
+      "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+      "9d1b93f371d5f1a14d3aa0607dfc7f8ff9b92509",
+      "f522e3c8319bd7a0b8de6f86cb28c31fc4c090a5",
+      "1990ef0bc0398823b3cdea6a622f6d18bf4e2486",
+      "961fa594792b5c07f2e8423b31690f433f858fab",
+      "860b35d93819aa551c98a7b810648bde54db1df8",
+      "b356fd9ff1215174511bd59a0eddc27206e47f69",
+      "938a8e4a75648541a60174016638cebd5b4be1d0",
+      "43124e28f0c2ac366d25a86787f055b885b1fc00",
+      "444a0f87798729e55bf2bf49caddf08962372010",
+      "545cbdf783e75ab82f8d23b5f1533b60e56f06a5",
+      "ad9c878426d2bc3316a06455296a92bb16350e04",
+      "af1ce7075910b11b0ae2700080d1fef3a4d22892",
+      "8d4fe188025515ab3b9b1168b3281f2f0bde39a1",
+      "aa594b18a0d827b9dcae1b607bfefa4b45764d06",
+      "7b0bcc3b49844d6244d5c98e4de8bae174031475",
+      "373168f6c37f3929b7033eac6420bec36110d990",
+      "6122e540e010d73d62a9d996e6f4d060582b72cc",
+      "a4fc53c20433d0c6214acf483ae81648390d1896",
+      "4e774689adbf224b2fc67a97001f5f65be28151a",
+      "051a1f6a862b1c3ba94b929b98004836c0e93826",
+      "b3f5af898cc2daf7f917d74fa0dbf10223529c97",
+      "13ccf37a1846b787112cf75918cbf827707fb4c2",
+      "81acf8673972ff6c83ebd6cdba88753aa0d759d6",
+      "a0106b362eb837107f43d05f307cf59cb0611e43",
+      "be2c4932fc58d0bdca78e91cc7837a666201715f",
+      "9b11323dccf844d850dd444b1b4d205bf754109c",
+      "00c09935f73c16ef881e523e20b0a36db8e94b7e",
+      "ecdaef7b7ecb24b34b3bc482810ed646a405c807",
+      "52779d7f5307b7de5389e76e982c2eb208aa04c6",
+      "fc0999815fe1b002f3b56978842d8653966466d8",
+      "9c80c8ffa95589d8be4922ca1eb55ecdf627df7f",
+      "0ce2a3faf21baea965c8e9cbbdf35f3181079fcc",
+      "c2220a1a2677ab3d25f9701dbfbdb7f586f626a6",
+      "e763caa51b0213bd3c0e71afe948b00ab402eb5d",
+      "1cc1eb973e1f87b61697536e49ab820ad179230f",
+      "a5159391fc1872d62e2599302bbf0cb62d521109",
+      "285c2de6820d50f4ec75c822dd91759c450523c3",
+      "5a28496521c66cb2407f1f897b6c79646df1ea94",
+      "de836013e78827d66e02be501d353f3ae2cf225e",
+      "2ceb9e3a689d9e64e2ed555833e8b302cd139116",
+      "46cd5d73052e6a550a658b98f5e2a623ba3dd9d8",
+      "e13858e7849738b24d98af6c237acceeeb0c48ab",
+      "f07833dd7b1d1e288e44047dab77d5b5f181b399"
+    ],
+    "mergeBases": [
+      "0c37d318c47a758f06634448d6e0de3856bbc6a6"
+    ],
+    "behind": 0,
+    "ahead": 51
+  },
+  "mergeBases": [
+    "0c37d318c47a758f06634448d6e0de3856bbc6a6"
+  ],
+  "behind": 0,
+  "ahead": 51,
+  "countsScope": "verified main..head only; no claim about history before main",
+  "newWorktreeCreated": true,
+  "head": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "detached": true,
+  "cleanStatus": "",
+  "trackedFiles": 6837,
+  "nodeModulesSymlink": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/node_modules",
+  "finishedAtUtc": "2026-10-25T00:04:17.124264+00:00"
+}

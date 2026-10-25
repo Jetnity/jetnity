@@ -1,0 +1,57 @@
+{
+  "purpose": "Inspection-only pixel crops of unchanged original evidence; not new browser captures",
+  "records": [
+    {
+      "original": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-320-32px.png",
+      "originalSha256": "a5f8619600e559ac6063c0951d091a7349aa55f4bc8f8dbd073eb11f6e6e9779",
+      "cropBox": [
+        0,
+        0,
+        320,
+        1900
+      ],
+      "crop": "liste-320-top.png",
+      "cropSha256": "ac44793a2412ef379c12a88fa3b331b7302b774e0e8a83d24408837a7285b0e5",
+      "pixelsUnscaled": true
+    },
+    {
+      "original": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-320-32px.png",
+      "originalSha256": "a5f8619600e559ac6063c0951d091a7349aa55f4bc8f8dbd073eb11f6e6e9779",
+      "cropBox": [
+        0,
+        1900,
+        320,
+        3400
+      ],
+      "crop": "liste-320-first-card.png",
+      "cropSha256": "c40834bd07799b3b5f2789c6013a9e1c9668628ddb737be90a7cba0d3c817f42",
+      "pixelsUnscaled": true
+    },
+    {
+      "original": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-390.png",
+      "originalSha256": "3487dbd2db3d0c6bf71d90aa1d8c78e2d31f18b8cfe73c4ff8a74085b493f25b",
+      "cropBox": [
+        0,
+        0,
+        390,
+        1450
+      ],
+      "crop": "liste-390-top.png",
+      "cropSha256": "c64999d80da38203f50a5ea38bdea7194e0b4736c14fabf72480372b9a0c677e",
+      "pixelsUnscaled": true
+    },
+    {
+      "original": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-390.png",
+      "originalSha256": "3487dbd2db3d0c6bf71d90aa1d8c78e2d31f18b8cfe73c4ff8a74085b493f25b",
+      "cropBox": [
+        0,
+        11600,
+        390,
+        12826
+      ],
+      "crop": "liste-390-tail.png",
+      "cropSha256": "c3c4b69088cc511a83aae92509e0672de0245393fb8c8aea8211e5de21ad6b04",
+      "pixelsUnscaled": true
+    }
+  ]
+}

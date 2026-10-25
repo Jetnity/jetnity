@@ -1,0 +1,662 @@
+{
+  "kind": "final-head-root-execution-evidence-archive",
+  "archivalRelocation": true,
+  "notANewExecutionAtArchivedPaths": true,
+  "archivalHelperExecutedTestsBrowserOrNetwork": false,
+  "archivalHelperVisualInspectionClaim": false,
+  "executedHead": "85abdc7c33a34b7a93a3fdb6f78f658940ee1063",
+  "executedTree": "9ea461a1ca193fd86314e2269f10cf8d2521ac8a",
+  "actualMain": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "mergeBase": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+  "ahead": 13,
+  "behind": 0,
+  "sourceAuthorSession": "bc-a34030c7-4c19-4c9f-863f-193cfdfa34da",
+  "executor": "Technical Lead / Root",
+  "archivalHelper": "recovery_local_inventory",
+  "focusedIncompleteStatus": "FAIL",
+  "focusedIncompleteCounts": {
+    "tests": 4,
+    "suites": 0,
+    "pass": 4,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "focusedCompletedStatus": "PASS",
+  "focusedCompletedCounts": {
+    "tests": 32,
+    "suites": 4,
+    "pass": 32,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "focusedRunnerByteIdentical": true,
+  "actionMontageStatus": "PASS",
+  "cssClassification": "LOCAL_PROJECT_POSTCSS_COMPILATION",
+  "tailCaptureStatus": "CAPTURED_REQUIRES_VISUAL_REVIEW",
+  "tailDiagnosticRenderCount": 1,
+  "rootVisualNote": "visual-inspection/root-note.md",
+  "originalWrapperVisualInspectionClaimsUnchanged": true,
+  "finalTechnicalLeadVerdictClaim": false,
+  "privacyReview": {
+    "fixtures": "synthetic local data",
+    "credentialPatternCandidates": 0,
+    "environmentValuesOrCredentialsInventoried": false
+  },
+  "originalArtifactCount": 68,
+  "sourceReferenceCount": 35,
+  "originalsUnmodified": true,
+  "priorArchivesModified": false,
+  "notArchived": [
+    "node_modules/dependencies",
+    "browser cache/profile/crash data",
+    "tsx caches",
+    "temporary materializer transfer manifest"
+  ],
+  "files": [
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/incomplete-000443Z/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-avana4zy/result.json",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 9965,
+      "sha256": "df56777e78d1d6b96f237a49f421f8105fd3d9b652c5c620d6d363a2fee6d246",
+      "gitBlob": "b057dfff780af7ab7199c1fbb5a8c695b9df3118"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/incomplete-000443Z/focused.tap",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-avana4zy/focused.tap",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 681,
+      "sha256": "693b62b1a0a0e0127c90f284059e3e19009040c54f2291dd6ae99228dfab3be9",
+      "gitBlob": "f5e265a32c65123fd00026ea6d28f37832746b38",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/incomplete-000443Z/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-avana4zy/stderr.log",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/incomplete-000443Z/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-avana4zy/run.py",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 10854,
+      "sha256": "655d69988fce470d8323bdf4406dc3c10e78451f5d0f4b723262b783079baec7",
+      "gitBlob": "2588b148739e276126f5d2c9bbc95ce6584e5cad",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/pass-000535Z/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-lltnzrej/result.json",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 9845,
+      "sha256": "48b8cbe073561c91d856bdf05b9bde09120ba3439925dc1d1723fc69284fd6ed",
+      "gitBlob": "9e1a772b59346d80d29bd2784cb715658e06a8ce"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/pass-000535Z/focused.tap",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-lltnzrej/focused.tap",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 7383,
+      "sha256": "f38b9e19a40bc275a48c759274b58f1a96ee54553b740ef82ed769e0a0168ced",
+      "gitBlob": "cfedea43e8efc7415ea9e757a0dad714504b425e",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/pass-000535Z/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-lltnzrej/stderr.log",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/pass-000535Z/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-focused-final-proof-lltnzrej/run.py",
+      "role": "Original focused execution artifact; original outcome remains unchanged",
+      "bytes": 10854,
+      "sha256": "655d69988fce470d8323bdf4406dc3c10e78451f5d0f4b723262b783079baec7",
+      "gitBlob": "2588b148739e276126f5d2c9bbc95ce6584e5cad",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-abfrage.test.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-abfrage.test.ts",
+      "role": "Exact executed test source, copied after execution; unchanged Git identity independently checked",
+      "bytes": 11731,
+      "sha256": "b82ef92dba8e8b4ea0bc5d1a9c6ade423b13f2c870376cd796d8e409010cdfe3",
+      "gitBlob": "81bee03b8e906763f3ba4e04e2ee5cf48cd847ec",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-daten.test.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-daten.test.ts",
+      "role": "Exact executed test source, copied after execution; unchanged Git identity independently checked",
+      "bytes": 7164,
+      "sha256": "6aec6285537f573bfd4d98548a8748bb240abe8e28cbf6072eb75f651a68d7b1",
+      "gitBlob": "d3868629b50d45f25808cd3ae968243ffd05dd29",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen.test.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen.test.ts",
+      "role": "Exact executed test source, copied after execution; unchanged Git identity independently checked",
+      "bytes": 7846,
+      "sha256": "40f97fb55deed081dbff0e0b29f2263fb236fa7b04a3ed88c9c86631a3ad49ab",
+      "gitBlob": "0ce848ba86c392e96ae4efea1c7308422261644e",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/focused/source-assertions/lib/account/buchungen-ui.test.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-review-85abdc7c33a3/lib/account/buchungen-ui.test.ts",
+      "role": "Exact executed test source, copied after execution; unchanged Git identity independently checked",
+      "bytes": 6160,
+      "sha256": "3585ff0b774090faa115f6270f3c6207a2a61f25b17a9d7be5d71c7a23ea6a6d",
+      "gitBlob": "197fbaf518a0702d80756482bc09deaaac16d149",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/css-provenance-85abdc7c33a3.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-css-85abdc7c/css-provenance-85abdc7c33a3.json",
+      "role": "Original final-head local project PostCSS artifact",
+      "bytes": 13279,
+      "sha256": "44a3114c1493dfe06832324d99af144594e39241df2b2937ea54ec0e8cba3d35",
+      "gitBlob": "dc6ea52850436be2df9f47c372c02fb44bd9fc93"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/jetnity-b-postcss-85abdc7c33a3.css",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-css-85abdc7c/jetnity-b-postcss-85abdc7c33a3.css",
+      "role": "Original final-head local project PostCSS artifact",
+      "bytes": 129181,
+      "sha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+      "gitBlob": "a556fc749df3d38e12b41ba7c783abf8ea16734e"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/producer/README.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/README.md",
+      "role": "Producer source; run/helper hashes match original provenance",
+      "bytes": 3884,
+      "sha256": "833fa01cbb6ea4d24ef19f4f2b97c6a5b8b2705503256efa0f99ad15ac7183b7",
+      "gitBlob": "056275bc6b26b0e5bd692684cf2c89771d46af7f"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/producer/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/run.py",
+      "role": "Producer source; run/helper hashes match original provenance",
+      "bytes": 11028,
+      "sha256": "8ffc4d8512cc94577fa531753a9f9629ad97cf769470cc52fbaa519b4d3c56d0",
+      "gitBlob": "6665e2be55131d24659e0342810972b955b3e204"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/css/producer/compile-css.mjs.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-css-prep/compile-css.mjs",
+      "role": "Producer source; run/helper hashes match original provenance",
+      "bytes": 4454,
+      "sha256": "da4a232c1555744561a5067c155f8337f4fab63b51014842e11639c8facd3ea1",
+      "gitBlob": "b7ae41bbe13464d9832b3fd379cd314fa3fc315f",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adaptation.diff",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adaptation.diff",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 7825,
+      "sha256": "fc818ef21c7af415804806002dbe2ce25eddcf0165d69af0c0638864f47da31b",
+      "gitBlob": "36e9784d4f451e3f993db2bfe7ff9d5ab23debc4"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adaptation.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adaptation.json",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 9548,
+      "sha256": "2359af57ff94ac895327fb72c3f86a5e9eb4362f86fb65562b117043af20b3cc",
+      "gitBlob": "4ecdbbf6496ce905afa27087ed7c678e28298339"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/ablauf.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/original/ablauf.ts",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 35490,
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/original/montage.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/original/montage.ts",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 18259,
+      "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/ablauf.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adapted/ablauf.ts",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 35629,
+      "sha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "gitBlob": "666a83fa33b2547b9f44bd8a545ba9043a2679c0",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/preparation/adapted/montage.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-prepared-85abdc7c33a3/adapted/montage.ts",
+      "role": "Original final-bound preparation artifact; PREPARED status describes preparation only",
+      "bytes": 19367,
+      "sha256": "b50d27d9102ef0c1f3dab37987117e235744dfde36b079e03e37c9c183d87997",
+      "gitBlob": "4ac7dd14e9ad037a8f22a67e9b06c95a0f36f4ba",
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/result.json",
+      "role": "Original Root action/montage execution result; visual-inspection false flag retained",
+      "bytes": 47628,
+      "sha256": "501fd918acc97614c7e719d2cfcf324e1a009977064926e87266b3efcf6b9424",
+      "gitBlob": "12222dfb889af40beb26ccd1b6d776b157b265d4"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/run.py",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 28774,
+      "sha256": "3b1c1cf300dd8d611ef807ed1a2077c4160c494d6f536491836cc2e8f2922c33",
+      "gitBlob": "76e241a69f881249751d33db23dd5a5e91e87095",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/prepare.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/prepare.py",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 15116,
+      "sha256": "38c64bb915c47c5222c9f5a9b457847a27c147a3baacb7663ecfe1c3864e4ec1",
+      "gitBlob": "fe45c265d114e65729a0d6b2cb6188adf2d8dd65",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/README.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/README.md",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 7365,
+      "sha256": "a3941622538f6edaa6e0fc3cb12c6e4cf183873f90c72190ea6d51a231c15bfd",
+      "gitBlob": "c8943996467922b4164081bd08f1adf30058d9e0",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/adaptation.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/adaptation.json",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 9548,
+      "sha256": "2359af57ff94ac895327fb72c3f86a5e9eb4362f86fb65562b117043af20b3cc",
+      "gitBlob": "4ecdbbf6496ce905afa27087ed7c678e28298339",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/adaptation.diff",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/adaptation.diff",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 7825,
+      "sha256": "fc818ef21c7af415804806002dbe2ce25eddcf0165d69af0c0638864f47da31b",
+      "gitBlob": "36e9784d4f451e3f993db2bfe7ff9d5ab23debc4",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/ablauf.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/original/ablauf.ts",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 35490,
+      "sha256": "3cb4d1bf2a1f50ed2dbe2d1502fd80caeb1e790c89986801db4def67ce00c9bb",
+      "gitBlob": "e9b6f41a126aa19f53e7940c0e464ccdc26bce8c",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/ablauf.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/copies/ablauf.ts",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 35629,
+      "sha256": "f2d8c23b9509fa62e1b9d65a47718315661271b6bc4422bc5eca0f99edb3a414",
+      "gitBlob": "666a83fa33b2547b9f44bd8a545ba9043a2679c0",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/original/montage.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/original/montage.ts",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 18259,
+      "sha256": "0f5380aba68792487405b79f48fb2b4a7ac4183efa5291883ad151e3a637133f",
+      "gitBlob": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/copies/montage.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/copies/montage.ts",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 19367,
+      "sha256": "b50d27d9102ef0c1f3dab37987117e235744dfde36b079e03e37c9c183d87997",
+      "gitBlob": "4ac7dd14e9ad037a8f22a67e9b06c95a0f36f4ba",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/ablauf-stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/ablauf-stdout.log",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 877,
+      "sha256": "4ac31098e3f14a97370d3ee6b67ed1e6f61546feb68033a09e710b84f02dbf0d",
+      "gitBlob": "24d5a2ba74beae53b2af835bead1e15b2102219d",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/ablauf-stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/ablauf-stderr.log",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/ablauf/ablauf.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/ablauf/ablauf.json",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 3125,
+      "sha256": "4cd0569401b758e4c1b6daa50962a58c4bab81f1213d3e48c963f6a884ae556c",
+      "gitBlob": "2f552c59216b1516ff20c608deda8d31e948d937",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/generated/flaeche.js.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/tmp/buchungen-flaeche-8SJsWc/flaeche.js",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 931389,
+      "sha256": "95d504939aa5104ab14a33422d6e42d29097d4bce07203e55bdf4c827ff856e2",
+      "gitBlob": "803697ac5d2dbcba40c013f01cedb00d31336a96",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage-stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage-stdout.log",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 1054,
+      "sha256": "a570fa265b0eaa632239c2a9282140a9f80cba55cb8782a0c6faf5ddc86a330f",
+      "gitBlob": "4fb65d19e3697928e4e1d58c386a6aedb28372e0",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage-stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage-stderr.log",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/montage.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/montage.json",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 41266,
+      "sha256": "8d8957973c7ec67f0edf9eb268e9f882dd206b96134582dca10d30cd0055014b",
+      "gitBlob": "594afddfd335a0e501eed4b2441c863f1f3bedfc",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/montage-root-observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/montage-root-observer.json",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 175,
+      "sha256": "59a868881772e4558df340dfcdb0fe169d47313dca9e88efc56aeba47b5527c6",
+      "gitBlob": "85c7f579b43e505b8ce33015ed3dec0587603ac2",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-liste-390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-390.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 787225,
+      "sha256": "3487dbd2db3d0c6bf71d90aa1d8c78e2d31f18b8cfe73c4ff8a74085b493f25b",
+      "gitBlob": "75ef999a9ce43a26f54b66f372bc6b699dd8e779",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-liste-320-32px.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-liste-320-32px.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 905492,
+      "sha256": "a5f8619600e559ac6063c0951d091a7349aa55f4bc8f8dbd073eb11f6e6e9779",
+      "gitBlob": "738b6d4633d851384a75216c641aea07e310fe3e",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-leer-390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-leer-390.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 241190,
+      "sha256": "2ed31be3589111fa0c8a3659213704b5be49011690bbb501878c22e2f18383a7",
+      "gitBlob": "98e1e45ff4e069bfb2feb9f6291ccb497f876031",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-keine-390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-keine-390.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 240523,
+      "sha256": "5f6b4c136edfe872588523dba759725d50f7436e32b44aa9f7421cdc20fd644e",
+      "gitBlob": "fedebfaf889d0187f377ed2c45824f1a55b2b65b",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-fehler-390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-fehler-390.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 233849,
+      "sha256": "0a05dededadd6e9216f99c1da4f22bcf718a435cc9b0b8e1119f09f196f98ccc",
+      "gitBlob": "f61f51af9be2e34e3c111bd31cda6d283bbb8a59",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/author-harness/montage/screens/bookings-fortsetzungLeer-390.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-harness-final-proof-jcjnph2j/montage/screens/bookings-fortsetzungLeer-390.png",
+      "role": "Original Root action/montage artifact; original assertions and run boundaries retained",
+      "bytes": 255015,
+      "sha256": "e9c564f59e188eb0e031281909c53f5871db8eb40c0b8d2633e611dae981c837",
+      "gitBlob": "2fc2ed681a7d26b38df4cb5ce499b447fea949fc",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/source-binding/materialize-result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-85abdc7c-materialize-result.json",
+      "role": "Original materialization/current-main binding evidence; physical anchor distinguished from actual main",
+      "bytes": 6890,
+      "sha256": "4f336454361d9149bdbc1c913adaa0437983d709e4615c544ffc08ac4bdfe8d5",
+      "gitBlob": "12243b5e46c15a520a527d3643cc701392ef6dbe"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/source-binding/actual-main-proof.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-85abdc7c-actual-main-proof.json",
+      "role": "Original materialization/current-main binding evidence; physical anchor distinguished from actual main",
+      "bytes": 586,
+      "sha256": "46baf46dff01943d53572e82700289eb22359d6e0934a56496584a9b786b4dfb",
+      "gitBlob": "fe045844b03ed94fc6b4db375fbad825196f476e"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/crops/crops.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-visual-inspection-85abdc7c/crops.json",
+      "role": "Original inspection crop or crop map; not a new browser capture",
+      "bytes": 1929,
+      "sha256": "27ebc22ee9890732f45f90448f02de6636d1797fcc19213bd8943b183fa775cb",
+      "gitBlob": "aa4aeb29d6dad5a6cdf64d7d1a7d262855d9bf2c"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/crops/liste-320-first-card.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-visual-inspection-85abdc7c/liste-320-first-card.png",
+      "role": "Original inspection crop or crop map; not a new browser capture",
+      "bytes": 75692,
+      "sha256": "c40834bd07799b3b5f2789c6013a9e1c9668628ddb737be90a7cba0d3c817f42",
+      "gitBlob": "5bab4a34dbe1bf080b8fb89f540fca2385577996"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/crops/liste-320-top.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-visual-inspection-85abdc7c/liste-320-top.png",
+      "role": "Original inspection crop or crop map; not a new browser capture",
+      "bytes": 106814,
+      "sha256": "ac44793a2412ef379c12a88fa3b331b7302b774e0e8a83d24408837a7285b0e5",
+      "gitBlob": "bead36ea2377057885bb67fc7bdfc4801bc57422"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/crops/liste-390-tail.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-visual-inspection-85abdc7c/liste-390-tail.png",
+      "role": "Original inspection crop or crop map; not a new browser capture",
+      "bytes": 201224,
+      "sha256": "c3c4b69088cc511a83aae92509e0672de0245393fb8c8aea8211e5de21ad6b04",
+      "gitBlob": "e5c3be77343c7bbadb4f865b9f060d338f9af0c8"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/crops/liste-390-top.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-visual-inspection-85abdc7c/liste-390-top.png",
+      "role": "Original inspection crop or crop map; not a new browser capture",
+      "bytes": 90552,
+      "sha256": "c64999d80da38203f50a5ea38bdea7194e0b4736c14fabf72480372b9a0c677e",
+      "gitBlob": "bbfe8ca4b504dbfe8a8c6d357da2b9f6a03d8526"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/visual-inspection/root-note.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-root-local-review-85abdc7c.md",
+      "role": "Root-authored visual-inspection note; archival helper does not make its own visual-inspection claim",
+      "bytes": 8443,
+      "sha256": "9f62a3aa09c915f3bbdf7560b886ec1ce772e213b085f0bddb157ee265e6935a",
+      "gitBlob": "00d9d3932d5a6cd9d263e622fcd9e525950baa3e"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/result.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/result.json",
+      "role": "Original separate Root one-page viewport diagnostic execution record",
+      "bytes": 26754,
+      "sha256": "b830f3a6a4dcc4acb96c0f1a6fcccfb93bfb670e3d2a6179282cbd39248307ac",
+      "gitBlob": "1dec3219488676abdd1da3be9c3b5e9bbad9e265"
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/diagnostic.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/diagnostic.ts",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 11157,
+      "sha256": "4e3a64a26d6b66ae015d42ad22a5b0beb256608ded5cee29c80513d2e7213b35",
+      "gitBlob": "7ea3ffa40ebfe1aba37c87096fdac4e6fb680b25",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/stdout.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/stdout.log",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 124,
+      "sha256": "1ddb8e374448b0fbc2f7cb1b269a9dfd33db910c20bb951b8af95dfc7cce1a73",
+      "gitBlob": "5b2af48e0dd1e9869e9b52756d7e3bf9a6d3697c",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/README.md",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/README.md",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 4062,
+      "sha256": "3ced79d4790f3fd791d69742aadf2c685edcfae1fb13444af104941caf93ab33",
+      "gitBlob": "06725d40ac231ea8d0a481ebe936b99876d5341b",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/diagnostic.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/diagnostic.json",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 76880,
+      "sha256": "49bcda7a4fe17cd63a87a631697481d5310966585463d1ab6210fde09c34e5f9",
+      "gitBlob": "5be3738b1c6b4d653e3c9f70ef7eb96bd7f26590",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/observer.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/observer.json",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 95,
+      "sha256": "dbd77559e95794d6603f8c84ecfcc86697bafdf30e0c067f737297fcc0694201",
+      "gitBlob": "32275bafabc11e3e50c68e3b1d32f1803b06e5db",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/fixture-source.ts.txt",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/fixture-source.ts",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 3752,
+      "sha256": "06e615a6a659029c46e2f9c1a1a539a07bc4244c30b822c30c664673eedac8e4",
+      "gitBlob": "caa211400af525f4df32693cad95554f3314bdf7",
+      "originalExecutionReceiptVerified": true,
+      "pathOnlyTextRepresentation": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/manifest.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/manifest.json",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 11900,
+      "sha256": "7e928957b1990262341b0bce876b75d21a6978aee8142e673098e97aa2abe92d",
+      "gitBlob": "a9ff6974ceabba2f114a760ac7fda6e08f43626c",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/stderr.log",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/stderr.log",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/pagination-320x700.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/pagination-320x700.png",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 151069,
+      "sha256": "eb6969d13d65aa8b12e0031c70a8e1f1db2fe3b84a15fd60bb88682907d0c902",
+      "gitBlob": "a40a8890d8376e6d8683810475c7cae0caea2ebd",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/config.json",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/config.json",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 455,
+      "sha256": "6353bc7b31129904ddfc9ade843c6afcd333d4b5c1756d4f5116583225720632",
+      "gitBlob": "c580da131bcc67472ea580790b6e3bdd2a153c50",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/last-card-320x700.png",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/last-card-320x700.png",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 151069,
+      "sha256": "eb6969d13d65aa8b12e0031c70a8e1f1db2fe3b84a15fd60bb88682907d0c902",
+      "gitBlob": "a40a8890d8376e6d8683810475c7cae0caea2ebd",
+      "originalExecutionReceiptVerified": true
+    },
+    {
+      "preservedPath": "docs/evidence/r105-b-final-tl-85abdc7c-2026-10-25/tail-diagnostic/run.py",
+      "originalExecutionPath": "/tmp/jetnity-r105-b-v4-tail-viewport-proof-bvgkhszn/run.py",
+      "role": "Original one-page tail diagnostic artifact; CAPTURED_REQUIRES_VISUAL_REVIEW status retained",
+      "bytes": 13047,
+      "sha256": "55cd8d80483c32f66adedc6525e0b9539216cbc8f744dacd2f3460633194601c",
+      "gitBlob": "41aa1e3d429a82607120ef6d1078f91681fe410c",
+      "originalExecutionReceiptVerified": true
+    }
+  ]
+}
