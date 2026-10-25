@@ -1,0 +1,33 @@
+{
+  "purpose": "Independent TL-helper counterexamples; observed defects, not a product PASS",
+  "head": "b218c33d9d00c19f3705aba8bd208cc455272659",
+  "node": "v22.23.4",
+  "generatedAt": "2026-10-25T10:02:09.304Z",
+  "scope": "Pure real production workflow + actual fixture and item builder, synthetic in-memory values only. No storage, network, account, database, or runtime writers executed.",
+  "sourceBlob": "80ac9973f315345832692ae0907ebdc2deb6adb4",
+  "counterexamples": [
+    {
+      "name": "unclear_to_retry_without_read",
+      "phaseBefore": "unclear",
+      "readCalls": 0,
+      "returnedWriteOrder": true,
+      "sameClientRef": true
+    },
+    {
+      "name": "account_absent_then_matching",
+      "firstPhase": "absent_uncertain",
+      "laterMatchingPhase": "absent_uncertain",
+      "laterDelivery": 3
+    },
+    {
+      "name": "account_conflict_then_matching",
+      "firstPhase": "conflict",
+      "laterMatchingPhase": "conflict"
+    },
+    {
+      "name": "unknown_read_reconciliation_ignored",
+      "accountAfterMatchingRead": "unclear",
+      "guestAfterMatchingRead": "unclear"
+    }
+  ]
+}

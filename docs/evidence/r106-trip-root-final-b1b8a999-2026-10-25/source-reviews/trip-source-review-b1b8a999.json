@@ -1,0 +1,191 @@
+{
+  "kind": "independent-helper-final-source-rebind",
+  "createdAt": "2026-10-25T13:23:15.313946+00:00",
+  "reviewer": "/root/r106_trip_review",
+  "repository": "Jetnity/jetnity",
+  "pullRequest": 1009,
+  "verdict": "DOC_ONLY_REBIND_SOURCE_REVIEW_UNCHANGED_NOT_TL_PASS",
+  "head": {
+    "candidate": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+    "tree": "8d319e0c3f769e7f316b2f749f823c82eb7855c4",
+    "soleParent": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+    "reviewedIntegratedRuntime": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "acceptedMain": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "mergeBase": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "behind": 0,
+    "ahead": 15,
+    "checkout": "/tmp/jetnity-r106-t-final-review",
+    "trackedCleanAtPreparation": true
+  },
+  "priorReviewPreserved": {
+    "/tmp/r106-review-evidence/trip-source-review-19ac02ae.json": "541891c846f8535e681b5a68239a0b6be25072fda06052103289b1755fe0ff29",
+    "/tmp/r106-review-evidence/trip-source-review-19ac02ae.md": "141e5fc46e1fe59f7048d78f41c949371153f2172db8fc0da47fea9184555385"
+  },
+  "completeSourceComparison": {
+    "changedPaths": {
+      "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md": {
+        "before": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "5d2c08128ff7bbdc541eff84089388deb6d13f53"
+        },
+        "after": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "be293869b40867f02c67e27da2e5af2996036506"
+        }
+      },
+      "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md": {
+        "before": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "5e9100e056aac68c3152bb3571a5a961171c5abd"
+        },
+        "after": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "3ac1bd6728fe552fe8c9a5375a98d7cce993d9dc"
+        }
+      },
+      "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md": {
+        "before": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "804e7c0f68dbdb7e8174fdab32c2dbedf6241049"
+        },
+        "after": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "523cbb2c963f13724a4be74086b74134ba12eb51"
+        }
+      },
+      "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/PROVENANCE.md": {
+        "before": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "683a54d8a95f36ab549a19feb8d273841165e985"
+        },
+        "after": {
+          "mode": "100644",
+          "type": "blob",
+          "blob": "e45f0626a821fa6dd66e5dc59121b88ed27abbd6"
+        }
+      }
+    },
+    "added": 0,
+    "deleted": 0,
+    "allOtherTreeEntriesIdentical": true,
+    "nonDocEntriesCompared": 1779,
+    "nonDocDifferencesFrom19acOr44e1": 0,
+    "allPrior31ScopedSourceBindingsEqualFinal": 31,
+    "unchangedOwnedCodeTestHarnessPaths": 23,
+    "ownedEvidenceFilesBytePreservedExceptExplicitProvenanceClarification": 50,
+    "taskAndPlanUnchanged": true,
+    "coreSourceBindings": {
+      "components/trips/EigeneReisevorbereitung.tsx": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4c0a5be5e3b615f6ea5edbe7d8aa89250f872cfb"
+      },
+      "components/trips/usePersonalPreparationLifecycle.ts": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ed1a8e02eeb29266f4ea9aecb5bb679512860aa6"
+      },
+      "lib/readiness/personal-preparation-workflow.ts": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c295637b18d4b356ce14739e211871179cbf38f7"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6"
+      },
+      "scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b4c1b52cbf9c89fcd0783bdb83ac174455514903"
+      },
+      "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "961e288a4e0ba40fa00e7ea95e920eabd6423ff2"
+      },
+      "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e58f582669793ff3b7d86727ac9130afa89eef98"
+      }
+    }
+  },
+  "d1EvidenceCorrection": {
+    "rawArtifact": "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/unstyled/browser-lauf.json",
+    "rawSha256": "cb3d33ce9ae26933e8271495321361dd4fbff929d5f9a7caed86be4f7b7445c3",
+    "rawBlob": "0fe886c4ea3f44812038e7283093dfa8020c5d5c",
+    "rawBytesUnchanged": true,
+    "recordedHead": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "recordedBehaviorTestSourceCount": 10,
+    "runnerInRecordedSourceMap": false,
+    "runnerCommittedBlob": "b4c1b52cbf9c89fcd0783bdb83ac174455514903",
+    "assessment": "The four-document delta correctly distinguishes the 10 behavior/test hashes in raw JSON from the runner blob stated separately in PROVENANCE. Present committed-tree equality does not retrospectively establish a machine-recorded clean-tree before/after witness for that author run."
+  },
+  "p2ClosureBasis": {
+    "familyCount": 2,
+    "assertionCount": 3,
+    "terminology": "Two P2 families, not three: current-state/history receipts contain two failing-then-corrected assertions; focus ownership contains one. The prior report listed the three individual scenarios.",
+    "families": [
+      {
+        "name": "Current-state/history receipts",
+        "assertions": [
+          "Confirmed create followed by qualifying canonical absence",
+          "Reconciled-delete local discard exposing the old create receipt"
+        ],
+        "source": "Workflow 137-141, 228-247, 416-430, 699-736; list 135-149, 298-319, 419; hook 37/184. The qualified-read snapshot survives discard and drives both receipt render paths."
+      },
+      {
+        "name": "Focus ownership",
+        "assertions": [
+          "Late A completion after trusted pointer/Tab focuses unopened B edit control"
+        ],
+        "source": "List 103-133, 308, 338, 412, 424-465 and workflow 249-251, 606-627. Owned controls/direct rows invalidate old ownership, while own completion focus is bracketed."
+      }
+    ],
+    "disposition": "Source corrections unchanged and independently corroborated on the recorded 44e1 intermediate head. No new finding arises from the four-document wording delta. Final acceptance remains root-owned."
+  },
+  "historicalRootCorroboration": {
+    "path": "/tmp/r106-review-evidence/trip-r3-residual-44e1a1c4-intermediate-run1.json",
+    "sha256": "d3fdc64f2ba043c3a2cc89cf1f29d8aa3e7079db403c4e4949ea5d9b7f62d973",
+    "actualExecutedHead": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "verdict": "BOUNDED_ASSERTIONS_PASSED",
+    "cases": 3,
+    "sourceBlobsEqualFinal": 62,
+    "externalRequests": 0,
+    "naturalTrustedPointerThenTab": true,
+    "programmaticFocusFallback": false,
+    "remainsHistoricalExecution": true
+  },
+  "probeCompatibility": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v3.ts",
+    "sha256": "f7cfc670d8055d7ce0f906c340131ee9905a96d3de7d233c03506ab47fc8a7d0",
+    "unchangedCompatible": true,
+    "basis": "All runtime, tests, harness, selectors, bridge, fixture and dependencies are identical to the already source-reviewed 44e1/19ac versions; no probe changes required."
+  },
+  "limits": [
+    "No tests, browser, builder or final functional gates were executed by this helper.",
+    "Root-owned final independent functional, CSS and native gates were pending per the task; this report does not assess or predict their results.",
+    "The 44e1 historical result is not relabelled as a b1 execution.",
+    "No hosted Account, Next-router, Supabase/RLS, Preview or Production verification is established by this source rebind.",
+    "No TL PASS, Ready, merge or risk acceptance is granted."
+  ],
+  "mutations": {
+    "productOrRepositoryEdits": false,
+    "commits": false,
+    "platformWrites": false,
+    "oldArtifactsChanged": false,
+    "externalNewFiles": [
+      "/tmp/r106-review-evidence/trip-source-review-b1b8a999.json",
+      "/tmp/r106-review-evidence/trip-source-review-b1b8a999.md"
+    ]
+  }
+}

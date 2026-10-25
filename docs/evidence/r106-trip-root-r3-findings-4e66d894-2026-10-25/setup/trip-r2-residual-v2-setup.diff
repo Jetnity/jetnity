@@ -1,0 +1,35 @@
+--- trip-r2-residual-acceptance.ts
++++ trip-r2-residual-acceptance-v2.ts
+@@ -80,8 +80,8 @@
+       await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+       await page.evaluate(() => (window as any).__PERSONAL__.lesenFreigeben({ art: 'props' }))
+       await page.evaluate((trip: any) => {
+-        (window as any).__PERSONAL__.kanonischSetzen(trip)
+-        (window as any).__PERSONAL__.reiseSetzen(trip)
++        (window as any).__PERSONAL__.kanonischSetzen(trip);
++        (window as any).__PERSONAL__.reiseSetzen(trip);
+       }, matching)
+       await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'confirmed', ref)
+       await frame(page)
+@@ -95,8 +95,8 @@
+       assert.equal(absent.readinessItems.some((item: any) => item.clientRef === ref), false)
+       await page.evaluate((trip: any) => {
+         // Both values change: this is a new raw canonical delivery, not display-only lag.
+-        (window as any).__PERSONAL__.kanonischSetzen(trip)
+-        (window as any).__PERSONAL__.reiseSetzen(trip)
++        (window as any).__PERSONAL__.kanonischSetzen(trip);
++        (window as any).__PERSONAL__.reiseSetzen(trip);
+       }, absent)
+       await page.waitForFunction((previous: number) => Number(document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung')) > previous, generationBefore)
+       await frame(page)
+@@ -201,8 +201,8 @@
+       await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 2)
+       const absent = { ...basis, readinessItems: [...basis.readinessItems] }
+       await page.evaluate((trip: any) => {
+-        (window as any).__PERSONAL__.reiseSetzen(trip)
+-        (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip })
++        (window as any).__PERSONAL__.reiseSetzen(trip);
++        (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip });
+       }, absent)
+       await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'reconciled', ref)
+       const reconciledReceipt = await row.innerText()

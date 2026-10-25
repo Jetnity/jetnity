@@ -1,0 +1,369 @@
+{
+  "expectedHead": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+  "repo": "/tmp/jetnity-r106-o-final-review",
+  "childCwd": "/tmp/jetnity-r106-o-final-review",
+  "node": "v22.23.4",
+  "scope": "Full existing 94-case author matrix with THREE explicit external setup/output adaptations: remove the launch args, redirect evidence, and permit an omitted optional browser path. All product source, fixtures and matrix assertions stay unchanged. Not full project acceptance or Technical-Lead PASS.",
+  "expectedCases": 94,
+  "noHostedAccountDatabaseOrProductionAccess": true,
+  "networkBoundary": "Preserves the author loopback harness and deferred fetch fixture exactly. This adapter adds no network instrumentation and makes no separate zero-external-request audit claim.",
+  "invocation": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "/tmp/r106-review-evidence/admin-author-matrix-adapter-v2.mjs",
+    "--repo",
+    "/tmp/jetnity-r106-o-final-review",
+    "--head",
+    "2e67d1b994900da6db9e99140ab1cc772b68badb"
+  ],
+  "sourceBindingBefore": {
+    "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+    "tree": "9e12de5ec3532c46ad53893ea7b8bd1559aeddf9",
+    "workingTreeStatus": "",
+    "sources": {
+      "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs": {
+        "gitBlob": "5fe62de0f6d7951fe666f88ce5a9f82e0026e457",
+        "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+        "bytes": 64890
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": {
+        "gitBlob": "ff95103ba2d9ac1b9e9daef8ce680e26a49af213",
+        "sha256": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12",
+        "bytes": 1300
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": {
+        "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+        "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249",
+        "bytes": 10
+      },
+      "components/admin/system-health/SystemHealthBoard.tsx": {
+        "gitBlob": "57befa119e6147581058b8ff3ae99e262b9ba6ee",
+        "sha256": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f",
+        "bytes": 7997
+      },
+      "components/admin/provider-ops/ProviderOpsBoard.tsx": {
+        "gitBlob": "e36a69dcad3c9d6eb372c91a3bfdef0e82c7675a",
+        "sha256": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3",
+        "bytes": 9854
+      },
+      "components/admin/operations/useOperationsReport.ts": {
+        "gitBlob": "067b5f21de4a8a942f015834a3c56d53b14d86a2",
+        "sha256": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd",
+        "bytes": 9034
+      },
+      "lib/admin/operations-read-lifecycle.ts": {
+        "gitBlob": "2a0b35b647cd22e74b5d3bbfc8d79c19efaddf6d",
+        "sha256": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751",
+        "bytes": 13013
+      },
+      "lib/admin/operations-report-validation.ts": {
+        "gitBlob": "7002ed56bcad211bb9bb54a63a4fbb42883c03e6",
+        "sha256": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e",
+        "bytes": 5979
+      },
+      "lib/admin/ladezustand.ts": {
+        "gitBlob": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+        "sha256": "c6a3ace5560913be6b89bfb2d731c54c7dfde743d1cb899ef9075a62f12a83c3",
+        "bytes": 5741
+      },
+      "lib/admin/system-health/bewertung.ts": {
+        "gitBlob": "366bb920c4a6fa789c79b82112c23ab2c6668d68",
+        "sha256": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91",
+        "bytes": 9287
+      },
+      "lib/admin/system-health/freshness.ts": {
+        "gitBlob": "546da8bd90410b8244871e04e78ed63fecd0cad4",
+        "sha256": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51",
+        "bytes": 619
+      },
+      "lib/admin/provider-ops-board/bewertung.ts": {
+        "gitBlob": "19e338c0e62e5c0ca3a21fe82fc2591f30c289b2",
+        "sha256": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34",
+        "bytes": 8413
+      },
+      "lib/admin/provider-ops-board/freshness.ts": {
+        "gitBlob": "efcd869e8a6620133272e36be074b7337f4d9071",
+        "sha256": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e",
+        "bytes": 617
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "originalRunner": {
+    "path": "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs",
+    "gitBlob": "5fe62de0f6d7951fe666f88ce5a9f82e0026e457",
+    "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+    "preservedAt": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/committed-author-runner.mjs"
+  },
+  "adapter": {
+    "version": "v2",
+    "setupOutputTransformationCount": 3,
+    "sha256": "577295b9f451b9a7a09c96b39fed47d6e63cc6f87ee20c45c74ae75f313ac9b7",
+    "preservedAt": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapter-source.mjs",
+    "exactDiffPath": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/exact-adapter.diff",
+    "exactDiffSha256": "df474eaf7863ebb336947672311aff1e00cf629c17dd2c095bad695f96d0664f"
+  },
+  "adaptedRunner": {
+    "path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapted-author-runner.mjs",
+    "sha256": "e85676df42dd70458d48633f05a42233d2e2692489d38fa1cd25ac205a1b9241",
+    "transformations": [
+      "Delete exactly the original launch args line.",
+      "Replace exactly const nachweis with the fresh external author-evidence path.",
+      "Change the browser-path guard to reject only a supplied nonexistent path, permitting Playwright default headless selection when the path is omitted."
+    ]
+  },
+  "browserSelection": {
+    "mode": "Playwright normal installed headless selection",
+    "explicitExecutablePath": null,
+    "OPERATIONS_EVIDENCE_CHROMIUM": "omitted",
+    "playwrightVersion": "1.55.0"
+  },
+  "inheritedUnchangedHome": true,
+  "addedLaunchArgs": [],
+  "removedExplicitLaunchArgs": [
+    "--no-sandbox",
+    "--disable-dev-shm-usage"
+  ],
+  "dependencyDirectory": "/tmp/jetnity-r106-o-final-review/node_modules",
+  "evidenceDirectory": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence",
+  "temporaryDirectory": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/temporary",
+  "childEnvironmentKeys": [
+    "PATH",
+    "LANG",
+    "TZ",
+    "TMPDIR",
+    "PLAYWRIGHT_BROWSERS_PATH",
+    "HOME"
+  ],
+  "outcome": "AUTHOR_94_CASE_MATRIX_COMPLETED_NOT_TECHNICAL_LEAD_PASS",
+  "childExitCode": 0,
+  "childSignal": null,
+  "authorResult": {
+    "path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/result.json",
+    "sha256": "21c662714d35025e60737b62bde9187532e11281d26ac1032053881d828ddeeb",
+    "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+    "ok": true,
+    "exit": 0,
+    "count": 94,
+    "passed": 94,
+    "browser": "140.0.7339.16",
+    "caseNames": [
+      "health:anfang-gueltig-ohne-automatischen-abruf",
+      "ops:anfang-gueltig-ohne-automatischen-abruf",
+      "health:anfang-ungueltig",
+      "ops:anfang-ungueltig",
+      "health:prueft-und-explizites-get-schlaegt-verspaetete-props",
+      "ops:prueft-und-explizites-get-schlaegt-verspaetete-props",
+      "health:tastatur-startet-genau-ein-get",
+      "ops:tastatur-startet-genau-ein-get",
+      "health:doppelklick-ein-get",
+      "ops:doppelklick-ein-get",
+      "health:props-wiederholen-ersetzt-nicht",
+      "ops:props-wiederholen-ersetzt-nicht",
+      "health:endpunkt-historisch-und-alter-lauf-verworfen",
+      "ops:endpunkt-historisch-und-alter-lauf-verworfen",
+      "health:berechtigung-stoppt-lauf-und-holt-nicht-neu",
+      "ops:berechtigung-stoppt-lauf-und-holt-nicht-neu",
+      "health:unmount-verwirft-spaete-antwort",
+      "ops:unmount-verwirft-spaete-antwort",
+      "health:neuere-verweigerung-schlaegt-aelteren-erfolg",
+      "ops:neuere-verweigerung-schlaegt-aelteren-erfolg",
+      "health:neuerer-erfolg-schlaegt-aeltere-verweigerung",
+      "ops:neuerer-erfolg-schlaegt-aeltere-verweigerung",
+      "health:verweigerung-bleibt-durch-503-netz-und-kaputtes-200",
+      "ops:verweigerung-bleibt-durch-503-netz-und-kaputtes-200",
+      "health:ttl-kind-und-ruecklauf",
+      "ops:ttl-kind-und-ruecklauf",
+      "health:ruecklauf-behaelt-stale",
+      "ops:ruecklauf-behaelt-stale",
+      "health:uhr-nach-gutem-tick-und-zukunft",
+      "ops:uhr-nach-gutem-tick-und-zukunft",
+      "health:zukunft-bleibt-nicht-gruen",
+      "ops:zukunft-bleibt-nicht-gruen",
+      "health:endpunkt-aba-verwirft-alten-lauf",
+      "ops:endpunkt-aba-verwirft-alten-lauf",
+      "health:karten-zukunft",
+      "ops:karten-zukunft",
+      "health:annahme-mono-unbrauchbar",
+      "ops:annahme-mono-unbrauchbar",
+      "health:annahme-wand-unbrauchbar",
+      "ops:annahme-wand-unbrauchbar",
+      "health:props-waehrend-erstem-get-erfolg",
+      "ops:props-waehrend-erstem-get-erfolg",
+      "health:props-waehrend-erstem-get-fehler",
+      "ops:props-waehrend-erstem-get-fehler",
+      "health:props-waehrend-erstem-get-verweigerung",
+      "ops:props-waehrend-erstem-get-verweigerung",
+      "health:tastatur-waehrend-prop-pruefung",
+      "ops:tastatur-waehrend-prop-pruefung",
+      "health:props-ungueltig-duplikat",
+      "ops:props-ungueltig-duplikat",
+      "health:props-ungueltig-fehlt",
+      "ops:props-ungueltig-fehlt",
+      "health:props-ungueltig-falsch",
+      "ops:props-ungueltig-falsch",
+      "health:props-ungueltig-status",
+      "ops:props-ungueltig-status",
+      "health:props-ungueltig-aktion",
+      "ops:props-ungueltig-aktion",
+      "health:props-ungueltig-meta",
+      "ops:props-ungueltig-meta",
+      "health:props-ungueltig-zeit",
+      "ops:props-ungueltig-zeit",
+      "health:props-ungueltig-alter",
+      "ops:props-ungueltig-alter",
+      "health:props-ungueltig-ttl",
+      "ops:props-ungueltig-ttl",
+      "health:props-ungueltig-array",
+      "ops:props-ungueltig-array",
+      "health:props-ungueltig-leer",
+      "ops:props-ungueltig-leer",
+      "health:props-ungueltig-null",
+      "ops:props-ungueltig-null",
+      "health:get-ungueltige-200",
+      "ops:get-ungueltige-200",
+      "health:verweigerung-401-json-und-kaputt",
+      "ops:verweigerung-401-json-und-kaputt",
+      "health:historisch-altert-nach-fehler",
+      "ops:historisch-altert-nach-fehler",
+      "health:ttl-alle-grenzen",
+      "ops:ttl-alle-grenzen",
+      "health:tab-zurueck-altert-ohne-abruf",
+      "ops:tab-zurueck-altert-ohne-abruf",
+      "health:beleg-320",
+      "health:beleg-320-200",
+      "health:beleg-360",
+      "health:beleg-390",
+      "health:beleg-768",
+      "health:beleg-1280",
+      "ops:beleg-320",
+      "ops:beleg-320-200",
+      "ops:beleg-360",
+      "ops:beleg-390",
+      "ops:beleg-768",
+      "ops:beleg-1280"
+    ]
+  },
+  "sourceBindingAfter": {
+    "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+    "tree": "9e12de5ec3532c46ad53893ea7b8bd1559aeddf9",
+    "workingTreeStatus": "",
+    "sources": {
+      "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs": {
+        "gitBlob": "5fe62de0f6d7951fe666f88ce5a9f82e0026e457",
+        "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+        "bytes": 64890
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": {
+        "gitBlob": "ff95103ba2d9ac1b9e9daef8ce680e26a49af213",
+        "sha256": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12",
+        "bytes": 1300
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": {
+        "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+        "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249",
+        "bytes": 10
+      },
+      "components/admin/system-health/SystemHealthBoard.tsx": {
+        "gitBlob": "57befa119e6147581058b8ff3ae99e262b9ba6ee",
+        "sha256": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f",
+        "bytes": 7997
+      },
+      "components/admin/provider-ops/ProviderOpsBoard.tsx": {
+        "gitBlob": "e36a69dcad3c9d6eb372c91a3bfdef0e82c7675a",
+        "sha256": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3",
+        "bytes": 9854
+      },
+      "components/admin/operations/useOperationsReport.ts": {
+        "gitBlob": "067b5f21de4a8a942f015834a3c56d53b14d86a2",
+        "sha256": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd",
+        "bytes": 9034
+      },
+      "lib/admin/operations-read-lifecycle.ts": {
+        "gitBlob": "2a0b35b647cd22e74b5d3bbfc8d79c19efaddf6d",
+        "sha256": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751",
+        "bytes": 13013
+      },
+      "lib/admin/operations-report-validation.ts": {
+        "gitBlob": "7002ed56bcad211bb9bb54a63a4fbb42883c03e6",
+        "sha256": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e",
+        "bytes": 5979
+      },
+      "lib/admin/ladezustand.ts": {
+        "gitBlob": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+        "sha256": "c6a3ace5560913be6b89bfb2d731c54c7dfde743d1cb899ef9075a62f12a83c3",
+        "bytes": 5741
+      },
+      "lib/admin/system-health/bewertung.ts": {
+        "gitBlob": "366bb920c4a6fa789c79b82112c23ab2c6668d68",
+        "sha256": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91",
+        "bytes": 9287
+      },
+      "lib/admin/system-health/freshness.ts": {
+        "gitBlob": "546da8bd90410b8244871e04e78ed63fecd0cad4",
+        "sha256": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51",
+        "bytes": 619
+      },
+      "lib/admin/provider-ops-board/bewertung.ts": {
+        "gitBlob": "19e338c0e62e5c0ca3a21fe82fc2591f30c289b2",
+        "sha256": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34",
+        "bytes": 8413
+      },
+      "lib/admin/provider-ops-board/freshness.ts": {
+        "gitBlob": "efcd869e8a6620133272e36be074b7337f4d9071",
+        "sha256": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e",
+        "bytes": 617
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "sourceBindingVerified": true,
+  "logs": {
+    "stdout": {
+      "path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-stdout.log",
+      "sha256": "b40ef2437d055ea05c3115ff33452aa4056c0a5684f26c547385054bdf3729b5"
+    },
+    "stderr": {
+      "path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-stderr.log",
+      "sha256": "c2de0e537eb69082e5fb2bda5f3173303a71ab9b0eb1013820a4a090a6af033a"
+    }
+  },
+  "exit": 0
+}

@@ -1,0 +1,723 @@
+{
+  "expectedHead": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+  "verifiedHead": "c12444d735c5d8e8c1c800c5b712ecf48105bdec",
+  "repo": "/tmp/jetnity-r106-o-r1-review",
+  "node": "v22.23.4",
+  "scope": "Eight focused independent mounted acceptance cases on both real Admin boards, using their real hook and domain hint helpers. This is not full TASK acceptance or TL PASS.",
+  "boundaries": "Existing author harness and actual project CSS. Synthetic canonical props, controlled local clocks and deferred window.fetch; no hosted data, Next router, Supabase/RLS, Production, personal session or launch proof.",
+  "sourceDigestsBefore": {
+    "components/admin/system-health/SystemHealthBoard.tsx": {
+      "gitBlob": "57befa119e6147581058b8ff3ae99e262b9ba6ee",
+      "sha256": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f"
+    },
+    "components/admin/provider-ops/ProviderOpsBoard.tsx": {
+      "gitBlob": "e36a69dcad3c9d6eb372c91a3bfdef0e82c7675a",
+      "sha256": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3"
+    },
+    "components/admin/operations/useOperationsReport.ts": {
+      "gitBlob": "067b5f21de4a8a942f015834a3c56d53b14d86a2",
+      "sha256": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd"
+    },
+    "lib/admin/operations-read-lifecycle.ts": {
+      "gitBlob": "2a0b35b647cd22e74b5d3bbfc8d79c19efaddf6d",
+      "sha256": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751"
+    },
+    "lib/admin/operations-report-validation.ts": {
+      "gitBlob": "7002ed56bcad211bb9bb54a63a4fbb42883c03e6",
+      "sha256": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e"
+    },
+    "lib/admin/ladezustand.ts": {
+      "gitBlob": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "sha256": "c6a3ace5560913be6b89bfb2d731c54c7dfde743d1cb899ef9075a62f12a83c3"
+    },
+    "lib/admin/system-health/bewertung.ts": {
+      "gitBlob": "366bb920c4a6fa789c79b82112c23ab2c6668d68",
+      "sha256": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91"
+    },
+    "lib/admin/system-health/freshness.ts": {
+      "gitBlob": "546da8bd90410b8244871e04e78ed63fecd0cad4",
+      "sha256": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51"
+    },
+    "lib/admin/provider-ops-board/bewertung.ts": {
+      "gitBlob": "19e338c0e62e5c0ca3a21fe82fc2591f30c289b2",
+      "sha256": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34"
+    },
+    "lib/admin/provider-ops-board/freshness.ts": {
+      "gitBlob": "efcd869e8a6620133272e36be074b7337f4d9071",
+      "sha256": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e"
+    },
+    "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": {
+      "gitBlob": "ff95103ba2d9ac1b9e9daef8ce680e26a49af213",
+      "sha256": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12"
+    },
+    "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": {
+      "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+    },
+    "styles/globals.css": {
+      "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+    },
+    "tailwind.config.js": {
+      "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+    }
+  },
+  "runnerSha256": "1b571fb70a81c98d28359ca19ccfa203a009b8f9e8f77b8de4b7e5b1dc63f536",
+  "invocation": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "/tmp/r106-review-evidence/admin-mounted-acceptance.mjs",
+    "--repo",
+    "/tmp/jetnity-r106-o-r1-review",
+    "--head",
+    "c12444d735c5d8e8c1c800c5b712ecf48105bdec"
+  ],
+  "cases": [
+    {
+      "name": "GET-retains-authority-over-new-initial-props-and-refresh-recovers",
+      "board": "health",
+      "accepted": true,
+      "observations": {
+        "pending": {
+          "phase": "prueft",
+          "pending": "true",
+          "refreshDisabled": true,
+          "cardCount": 0,
+          "wall": 1792893600276,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyPrüfung wird gelesen.Aktualisiert…Aktualisiert…"
+        },
+        "accepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893600325,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisAUTHORITATIVE-GET-WINSQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "retryAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.368Z",
+          "cardCount": 5,
+          "wall": 1792893600405,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            },
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 2,
+          "responseBodiesRead": 2,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisSECOND-EXPLICIT-GET-ACCEPTEDQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "endpoint-A-B-A-permanently-invalidates-old-generation-and-new-GET-recovers",
+      "board": "health",
+      "accepted": true,
+      "observations": {
+        "afterOldResponse": {
+          "phase": "historisch",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893600275,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenDie angezeigte Prüfung ist historisch und unbestätigt.appProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "currentAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.312Z",
+          "cardCount": 5,
+          "wall": 1792893600341,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": true
+            },
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 2,
+          "responseBodiesRead": 2,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisCURRENT-A-GET-ACCEPTEDQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "future-card-and-children-latch-unknown-until-new-authoritative-GET",
+      "board": "health",
+      "accepted": true,
+      "observations": {
+        "initial": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "fresh",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893600174,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: Alter unbekanntGeprüft 25.10.2026, 03:02:00 · Nachweis Alter unbekanntDatenqualität & NachweisFUTURE-CARD-ONLYQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterWallPassesTimestamp": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "stale",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893780037,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: Alter unbekanntGeprüft 25.10.2026, 03:02:00 · Nachweis Alter unbekanntDatenqualität & NachweisFUTURE-CARD-ONLYQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis veraltetDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis veraltetDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "newlyAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:03:00.080Z",
+          "cardCount": 5,
+          "wall": 1792893780118,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:03:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & NachweisNEW-TRUSTWORTHY-CARD-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "invalid-monotonic-accept-clock-latches-unknown-despite-valid-wall",
+      "board": "health",
+      "accepted": true,
+      "observations": {
+        "invalidMonoAtAcceptance": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "unknown",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893600203,
+          "monotonicFinite": false,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: Alter unbekanntGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterClockRecovery": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "unknown",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 5,
+          "wall": 1792893601292,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: Alter unbekanntGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "newlyAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:01.318Z",
+          "cardCount": 5,
+          "wall": 1792893601350,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:01Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & NachweisNEW-REPORT-WITH-VALID-CLOCKSQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "GET-retains-authority-over-new-initial-props-and-refresh-recovers",
+      "board": "ops",
+      "accepted": true,
+      "observations": {
+        "pending": {
+          "phase": "prueft",
+          "pending": "true",
+          "refreshDisabled": true,
+          "cardCount": 0,
+          "wall": 1792893600258,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyPrüfung wird gelesen.Aktualisiert…Aktualisiert…"
+        },
+        "accepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893600308,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisAUTHORITATIVE-GET-WINSQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "retryAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.329Z",
+          "cardCount": 4,
+          "wall": 1792893600356,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            },
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 2,
+          "responseBodiesRead": 2,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisSECOND-EXPLICIT-GET-ACCEPTEDQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "endpoint-A-B-A-permanently-invalidates-old-generation-and-new-GET-recovers",
+      "board": "ops",
+      "accepted": true,
+      "observations": {
+        "afterOldResponse": {
+          "phase": "historisch",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893600291,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenDie angezeigte Prüfung ist historisch und unbestätigt.Kostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "currentAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:00.322Z",
+          "cardCount": 4,
+          "wall": 1792893600356,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": true
+            },
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 2,
+          "responseBodiesRead": 2,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisCURRENT-A-GET-ACCEPTEDQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "future-card-and-children-latch-unknown-until-new-authoritative-GET",
+      "board": "ops",
+      "accepted": true,
+      "observations": {
+        "initial": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "fresh",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893600201,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: Alter unbekanntSynthetic childGeprüft 25.10.2026, 03:02:00 · Nachweis Alter unbekanntDatenqualität & NachweisFUTURE-CARD-ONLYQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterWallPassesTimestamp": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "stale",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893780026,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis veraltetDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: Alter unbekanntSynthetic childGeprüft 25.10.2026, 03:02:00 · Nachweis Alter unbekanntDatenqualität & NachweisFUTURE-CARD-ONLYQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis veraltetDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis veraltetDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "newlyAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:03:00.055Z",
+          "cardCount": 4,
+          "wall": 1792893780093,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:03:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & NachweisNEW-TRUSTWORTHY-CARD-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:03:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    },
+    {
+      "name": "invalid-monotonic-accept-clock-latches-unknown-despite-valid-wall",
+      "board": "ops",
+      "accepted": true,
+      "observations": {
+        "invalidMonoAtAcceptance": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "unknown",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893600182,
+          "monotonicFinite": false,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: Alter unbekanntSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterClockRecovery": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "unknown",
+          "otherFreshness": "unknown",
+          "childFreshness": "unknown",
+          "childGreen": "false",
+          "cardCheckedAt": "2026-10-25T02:00:00.000Z",
+          "cardCount": 4,
+          "wall": 1792893601283,
+          "monotonicFinite": true,
+          "fetchCalls": [],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: Alter unbekanntSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & NachweisINITIAL-ACCEPTED-REPORTQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis Alter unbekanntDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "newlyAccepted": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "cardFreshness": "fresh",
+          "otherFreshness": "fresh",
+          "childFreshness": "fresh",
+          "childGreen": "true",
+          "cardCheckedAt": "2026-10-25T02:00:01.310Z",
+          "cardCount": 4,
+          "wall": 1792893601334,
+          "monotonicFinite": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:01Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & NachweisNEW-REPORT-WITH-VALID-CLOCKSQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-acceptanceBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:01 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-acceptanceBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        }
+      }
+    }
+  ],
+  "externalRequestAttempts": [],
+  "localRequests": [
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js"
+  ],
+  "pageErrors": [],
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "reducedMotion": "reduce",
+  "origin": "http://127.0.0.1:39241",
+  "browser": "140.0.7339.16",
+  "browserLaunch": {
+    "headless": true,
+    "addedFlags": []
+  },
+  "outcome": "EIGHT_FOCUSED_ACCEPTANCE_CASES_PASSED_NOT_FULL_TASK_OR_TL_PASS",
+  "sourceDigestsAfter": {
+    "components/admin/system-health/SystemHealthBoard.tsx": {
+      "gitBlob": "57befa119e6147581058b8ff3ae99e262b9ba6ee",
+      "sha256": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f"
+    },
+    "components/admin/provider-ops/ProviderOpsBoard.tsx": {
+      "gitBlob": "e36a69dcad3c9d6eb372c91a3bfdef0e82c7675a",
+      "sha256": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3"
+    },
+    "components/admin/operations/useOperationsReport.ts": {
+      "gitBlob": "067b5f21de4a8a942f015834a3c56d53b14d86a2",
+      "sha256": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd"
+    },
+    "lib/admin/operations-read-lifecycle.ts": {
+      "gitBlob": "2a0b35b647cd22e74b5d3bbfc8d79c19efaddf6d",
+      "sha256": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751"
+    },
+    "lib/admin/operations-report-validation.ts": {
+      "gitBlob": "7002ed56bcad211bb9bb54a63a4fbb42883c03e6",
+      "sha256": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e"
+    },
+    "lib/admin/ladezustand.ts": {
+      "gitBlob": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+      "sha256": "c6a3ace5560913be6b89bfb2d731c54c7dfde743d1cb899ef9075a62f12a83c3"
+    },
+    "lib/admin/system-health/bewertung.ts": {
+      "gitBlob": "366bb920c4a6fa789c79b82112c23ab2c6668d68",
+      "sha256": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91"
+    },
+    "lib/admin/system-health/freshness.ts": {
+      "gitBlob": "546da8bd90410b8244871e04e78ed63fecd0cad4",
+      "sha256": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51"
+    },
+    "lib/admin/provider-ops-board/bewertung.ts": {
+      "gitBlob": "19e338c0e62e5c0ca3a21fe82fc2591f30c289b2",
+      "sha256": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34"
+    },
+    "lib/admin/provider-ops-board/freshness.ts": {
+      "gitBlob": "efcd869e8a6620133272e36be074b7337f4d9071",
+      "sha256": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e"
+    },
+    "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": {
+      "gitBlob": "ff95103ba2d9ac1b9e9daef8ce680e26a49af213",
+      "sha256": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12"
+    },
+    "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": {
+      "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+      "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+    },
+    "styles/globals.css": {
+      "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+      "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+    },
+    "tailwind.config.js": {
+      "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+      "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+    }
+  },
+  "sourceBindingVerified": true,
+  "exit": 0
+}

@@ -1,0 +1,72 @@
+--- trip-r1-regression-pure-80006fdf.ts
++++ trip-r2-same-ref-acceptance.ts
+@@ -3,7 +3,11 @@
+ import { pathToFileURL } from 'node:url'
+ import { argumentsForRun, moduleApi, prepareRun, writeReport } from './trip-acceptance-common.mjs'
+ 
+-const EXPECTED_HEAD = '80006fdf1443ca9d75d8c481246821354da16000'
++// Revalidate the fixture/builder exports and mounted Host API at the new exact head before execution.
++const REJECTED_HEADS = new Set([
++  '80006fdf1443ca9d75d8c481246821354da16000',
++  'b218c33d9d00c19f3705aba8bd208cc455272659',
++])
+ 
+ async function run() {
+   const options = argumentsForRun()
+@@ -16,7 +20,7 @@
+     verdict: 'NOT_VERIFIED',
+   }
+   try {
+-    assert.equal(options.head, EXPECTED_HEAD, 'This source-derived probe is pinned to the inspected R1 delivery')
++    assert.ok(!REJECTED_HEADS.has(options.head), 'R2 acceptance requires an explicit new candidate SHA; refusing either demonstrated defective head')
+     const context = prepareRun(options, [
+       'lib/readiness/personal-preparation-workflow.ts',
+       'lib/readiness/bauen.ts',
+--- trip-r1-regression-mounted-80006fdf.ts
++++ trip-r2-controls-acceptance.ts
+@@ -4,7 +4,11 @@
+ import { pathToFileURL } from 'node:url'
+ import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+ 
+-const EXPECTED_HEAD = '80006fdf1443ca9d75d8c481246821354da16000'
++// Revalidate the fixture/builder exports and mounted Host API at the new exact head before execution.
++const REJECTED_HEADS = new Set([
++  '80006fdf1443ca9d75d8c481246821354da16000',
++  'b218c33d9d00c19f3705aba8bd208cc455272659',
++])
+ 
+ async function run() {
+   const options = argumentsForRun()
+@@ -15,7 +19,7 @@
+   }
+   let browser: any
+   try {
+-    assert.equal(options.head, EXPECTED_HEAD, 'This source-derived probe is pinned to the inspected R1 delivery')
++    assert.ok(!REJECTED_HEADS.has(options.head), 'R2 acceptance requires an explicit new candidate SHA; refusing either demonstrated defective head')
+     const context = prepareRun(options, [
+       'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+       'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',
+--- trip-r1-post-delete-history-80006fdf.ts
++++ trip-r2-post-delete-acceptance.ts
+@@ -4,7 +4,11 @@
+ import { pathToFileURL } from 'node:url'
+ import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+ 
+-const EXPECTED_HEAD = '80006fdf1443ca9d75d8c481246821354da16000'
++// Revalidate the fixture/builder exports and mounted Host API at the new exact head before execution.
++const REJECTED_HEADS = new Set([
++  '80006fdf1443ca9d75d8c481246821354da16000',
++  'b218c33d9d00c19f3705aba8bd208cc455272659',
++])
+ 
+ async function run() {
+   const options = argumentsForRun()
+@@ -16,7 +20,7 @@
+   let browser: any
+   let page: any
+   try {
+-    assert.equal(options.head, EXPECTED_HEAD, 'Probe is pinned to the inspected R1 delivery')
++    assert.ok(!REJECTED_HEADS.has(options.head), 'R2 acceptance requires an explicit new candidate SHA; refusing either demonstrated defective head')
+     const context = prepareRun(options, [
+       'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+       'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',

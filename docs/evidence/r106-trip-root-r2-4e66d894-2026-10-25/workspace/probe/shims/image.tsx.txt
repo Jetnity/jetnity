@@ -1,0 +1,1 @@
+export default function Image({ src, alt }: any) { return <span role="img" aria-label={alt} data-src={typeof src === 'string' ? src : src?.src} /> }

@@ -1,0 +1,214 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync, spawn, spawnSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { createWriteStream, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, statSync, symlinkSync, writeFileSync } from 'node:fs'
+import { finished } from 'node:stream/promises'
+import { dirname, isAbsolute, join } from 'node:path'
+
+const usage = 'Usage: PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers <node22> /tmp/r106-review-evidence/admin-author-matrix-adapter.mjs --repo /absolute/clean/final-checkout --head FULL_EXPECTED_40_CHARACTER_SHA\nRuns the complete 94-case author matrix from the explicit committed head. Exactly two source edits are permitted: remove the existing launch args line; redirect const nachweis to a fresh external evidence directory. All originals, exact diff, logs, source bindings and results are preserved outside the repository. No added browser flags or dependency installation. Not Technical-Lead PASS.'
+const argv = process.argv.slice(2)
+if (argv.length === 1 && argv[0] === '--help') { console.log(usage); process.exit(0) }
+assert.equal(argv.length, 4, usage)
+const options = {}
+for (let index = 0; index < argv.length; index += 2) {
+  assert.ok(['--repo', '--head'].includes(argv[index]), usage)
+  assert.equal(options[argv[index]], undefined, `Duplicate ${argv[index]}`)
+  options[argv[index]] = argv[index + 1]
+}
+assert.ok(options['--repo'] && isAbsolute(options['--repo']), usage)
+assert.match(options['--head'] ?? '', /^[0-9a-f]{40}$/, usage)
+assert.match(process.version, /^v22\./, 'Use Node 22.')
+const repo = realpathSync(options['--repo'])
+const expectedHead = options['--head']
+const runnerRelative = 'scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs'
+const git = (...args) => execFileSync('git', args, { cwd: repo, encoding: 'utf8' }).trim()
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
+assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'Checkout differs from explicit --head.')
+assert.equal(git('status', '--porcelain'), '', 'Author matrix requires a clean checkout.')
+
+const sourcePaths = [
+  runnerRelative,
+  'scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx',
+  'scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts',
+  'components/admin/system-health/SystemHealthBoard.tsx',
+  'components/admin/provider-ops/ProviderOpsBoard.tsx',
+  'components/admin/operations/useOperationsReport.ts',
+  'lib/admin/operations-read-lifecycle.ts',
+  'lib/admin/operations-report-validation.ts',
+  'lib/admin/ladezustand.ts',
+  'lib/admin/system-health/bewertung.ts',
+  'lib/admin/system-health/freshness.ts',
+  'lib/admin/provider-ops-board/bewertung.ts',
+  'lib/admin/provider-ops-board/freshness.ts',
+  'styles/globals.css',
+  'tailwind.config.js',
+  'package.json',
+  'package-lock.json',
+]
+function sourceBinding() {
+  assert.equal(git('rev-parse', 'HEAD'), expectedHead, 'HEAD changed during the run.')
+  assert.equal(git('status', '--porcelain'), '', 'Repository became dirty during the run.')
+  return {
+    head: expectedHead,
+    tree: git('rev-parse', `${expectedHead}^{tree}`),
+    workingTreeStatus: '',
+    sources: Object.fromEntries(sourcePaths.map(path => {
+      const bytes = readFileSync(join(repo, path))
+      const gitBlob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+      assert.equal(gitBlob, git('rev-parse', `${expectedHead}:${path}`), `Source bytes differ from expected committed head: ${path}`)
+      return [path, { gitBlob, sha256: sha256(bytes), bytes: bytes.length }]
+    })),
+  }
+}
+const bindingBefore = sourceBinding()
+const committedBytes = execFileSync('git', ['show', `${expectedHead}:${runnerRelative}`], { cwd: repo })
+assert.deepEqual(readFileSync(join(repo, runnerRelative)), committedBytes, 'Runner worktree and committed bytes differ.')
+const original = committedBytes.toString('utf8')
+assert.deepEqual(Buffer.from(original, 'utf8'), committedBytes, 'Expected a UTF-8 runner.')
+assert.equal(original.includes('\r'), false, 'Unexpected line endings; refusing to rewrite them.')
+const evidenceLine = "const nachweis = join(wurzel, 'docs/evidence/admin-operations-evidence-lifecycle-completion-1')"
+const argsLine = "    args: ['--no-sandbox', '--disable-dev-shm-usage'],\n"
+const launchBlock = "  const browser = await chromium.launch({\n    executablePath: browserPfad,\n    headless: true,\n" + argsLine + "  })"
+const occurrences = (text, needle) => text.split(needle).length - 1
+assert.equal(occurrences(original, evidenceLine), 1, 'Expected exactly one original const nachweis line.')
+assert.equal(occurrences(original, argsLine), 1, 'Expected exactly one original launch-args line.')
+assert.equal(occurrences(original, launchBlock), 1, 'Launch block changed; manual adapter review required.')
+assert.equal(occurrences(original, 'chromium.launch({'), 1, 'Unexpected additional launch call.')
+assert.equal(occurrences(original, 'const wurzel = process.cwd()'), 1, 'Runner cwd contract changed.')
+
+const taskRoot = '/tmp/r106-review-evidence'
+assert.ok(statSync(taskRoot).isDirectory(), 'Expected existing external review-evidence directory.')
+const runDirectory = mkdtempSync(join(taskRoot, `admin-author-matrix-${expectedHead.slice(0, 12)}-`))
+const evidenceDirectory = join(runDirectory, 'author-evidence')
+const temporaryDirectory = join(runDirectory, 'temporary')
+mkdirSync(temporaryDirectory)
+const originalCopy = join(runDirectory, 'committed-author-runner.mjs')
+const adaptedPath = join(runDirectory, 'adapted-author-runner.mjs')
+const diffPath = join(runDirectory, 'exact-adapter.diff')
+const originalSource = new URL(import.meta.url)
+const adapterBytes = readFileSync(originalSource)
+const adapterCopy = join(runDirectory, 'adapter-source.mjs')
+const replacementEvidenceLine = `const nachweis = ${JSON.stringify(evidenceDirectory)}`
+const adapted = original.replace(evidenceLine, replacementEvidenceLine).replace(argsLine, '')
+const defaultLaunchBlock = launchBlock.replace(argsLine, '')
+const restored = adapted.replace(replacementEvidenceLine, evidenceLine).replace(defaultLaunchBlock, launchBlock)
+assert.equal(restored, original, 'Changes are not exactly the two approved transformations.')
+assert.equal(occurrences(adapted, defaultLaunchBlock), 1)
+assert.equal(adapted.includes('--no-sandbox'), false, 'Unexpected remaining explicit security argument.')
+assert.equal(adapted.includes('--disable-dev-shm-usage'), false, 'Unexpected remaining explicit launch argument.')
+writeFileSync(originalCopy, committedBytes, { flag: 'wx' })
+writeFileSync(adaptedPath, adapted, { flag: 'wx' })
+writeFileSync(adapterCopy, adapterBytes, { flag: 'wx' })
+const diff = spawnSync('diff', ['-u', '--label', `${runnerRelative}@${expectedHead}`, '--label', 'adapted-author-runner.mjs', originalCopy, adaptedPath], { encoding: 'utf8' })
+assert.equal(diff.error, undefined, `Cannot produce exact adapter diff: ${String(diff.error)}`)
+assert.equal(diff.status, 1, `Expected an ordinary two-edit diff; got status ${diff.status}: ${diff.stderr}`)
+writeFileSync(diffPath, diff.stdout, { flag: 'wx' })
+
+const dependencyDirectory = realpathSync(join(repo, 'node_modules'))
+assert.ok(statSync(dependencyDirectory).isDirectory(), 'Existing repository dependencies are required.')
+symlinkSync(dependencyDirectory, join(runDirectory, 'node_modules'), 'dir')
+const require = createRequire(join(repo, 'package.json'))
+const browserExecutable = require('playwright').chromium.executablePath()
+assert.ok(isAbsolute(browserExecutable) && existsSync(browserExecutable) && statSync(browserExecutable).isFile(), 'The repository Playwright Chromium executable must already be installed; no installation is performed.')
+// Only named non-secret runtime inputs are passed to the local author runner.
+// The unchanged runner still requires OPERATIONS_EVIDENCE_CHROMIUM; supply the
+// executable resolved by its existing Playwright package, with no added flags.
+const childEnvironment = {
+  PATH: `${dirname(process.execPath)}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`,
+  LANG: 'C.UTF-8',
+  TZ: 'Etc/UTC',
+  TMPDIR: temporaryDirectory,
+  OPERATIONS_EVIDENCE_CHROMIUM: browserExecutable,
+}
+if (process.env.PLAYWRIGHT_BROWSERS_PATH) childEnvironment.PLAYWRIGHT_BROWSERS_PATH = process.env.PLAYWRIGHT_BROWSERS_PATH
+const preparation = {
+  expectedHead, repo, childCwd: repo, node: process.version,
+  scope: 'Full existing 94-case author matrix, independently executed with only the explicit launch-args removal and external evidence destination adaptation. Not full project acceptance or Technical-Lead PASS.',
+  expectedCases: 94,
+  noHostedAccountDatabaseOrProductionAccess: true,
+  networkBoundary: 'Preserves the author loopback harness and deferred fetch fixture exactly. This adapter adds no network instrumentation and makes no separate zero-external-request audit claim.',
+  invocation: process.argv,
+  sourceBindingBefore: bindingBefore,
+  originalRunner: { path: runnerRelative, gitBlob: bindingBefore.sources[runnerRelative].gitBlob, sha256: sha256(committedBytes), preservedAt: originalCopy },
+  adapter: { sha256: sha256(adapterBytes), preservedAt: adapterCopy, exactDiffPath: diffPath, exactDiffSha256: sha256(diff.stdout) },
+  adaptedRunner: { path: adaptedPath, sha256: sha256(adapted), transformations: ['Delete exactly the original launch args line.', 'Replace exactly const nachweis with the fresh external author-evidence path.'] },
+  browserExecutable, addedLaunchArgs: [], removedExplicitLaunchArgs: ['--no-sandbox', '--disable-dev-shm-usage'],
+  dependencyDirectory, evidenceDirectory, temporaryDirectory,
+  childEnvironmentKeys: Object.keys(childEnvironment),
+}
+writeFileSync(join(runDirectory, 'adapter-preparation.json'), JSON.stringify(preparation, null, 2) + '\n', { flag: 'wx' })
+const result = { ...preparation, outcome: 'RUNNING', childExitCode: null, childSignal: null }
+const stdoutPath = join(runDirectory, 'author-stdout.log')
+const stderrPath = join(runDirectory, 'author-stderr.log')
+let stdout
+let stderr
+try {
+  stdout = createWriteStream(stdoutPath, { flags: 'wx' })
+  stderr = createWriteStream(stderrPath, { flags: 'wx' })
+  console.log(JSON.stringify({ stage: 'prepared', expectedHead, runDirectory, exactDiff: diffPath, browserExecutable, addedLaunchArgs: [] }))
+  const child = spawn(process.execPath, [adaptedPath], { cwd: repo, env: childEnvironment, stdio: ['ignore', 'pipe', 'pipe'] })
+  child.stdout.on('data', chunk => { stdout.write(chunk); process.stdout.write(chunk) })
+  child.stderr.on('data', chunk => { stderr.write(chunk); process.stderr.write(chunk) })
+  const completion = await new Promise((resolve, reject) => {
+    child.once('error', reject)
+    child.once('close', (code, signal) => resolve({ code, signal }))
+  })
+  result.childExitCode = completion.code
+  result.childSignal = completion.signal
+  stdout.end(); stderr.end()
+  await Promise.all([finished(stdout), finished(stderr)])
+  assert.equal(completion.signal, null, 'Author runner terminated by signal.')
+  assert.equal(completion.code, 0, 'Author runner exited unsuccessfully; preserved logs contain its failure.')
+  const authorResultPath = join(evidenceDirectory, 'result.json')
+  const authorResultBytes = readFileSync(authorResultPath)
+  const authorResult = JSON.parse(authorResultBytes)
+  result.authorResult = {
+    path: authorResultPath, sha256: sha256(authorResultBytes), head: authorResult.head,
+    ok: authorResult.ok, exit: authorResult.exit, count: authorResult.anzahl,
+    passed: authorResult.bestanden, browser: authorResult.browser,
+    caseNames: authorResult.faelle?.map(entry => entry.name),
+  }
+  assert.equal(authorResult.head, expectedHead, 'Author result names another source head.')
+  assert.equal(authorResult.ok, true)
+  assert.equal(authorResult.exit, 0)
+  assert.equal(authorResult.anzahl, 94, 'Expected the reviewed 94-case matrix; a different count needs review.')
+  assert.equal(authorResult.bestanden, 94)
+  assert.equal(authorResult.faelle?.length, 94)
+  assert.equal(new Set(authorResult.faelle.map(entry => entry.name)).size, 94, 'Duplicate author case names.')
+  assert.ok(authorResult.faelle.every(entry => entry.ok === true), 'A failed author case remains.')
+  for (const [path, digest] of Object.entries(authorResult.digests ?? {})) {
+    assert.equal(digest, bindingBefore.sources[path]?.sha256, `Author result source digest mismatch: ${path}`)
+  }
+  assert.equal(Object.keys(authorResult.digests ?? {}).length, 5, 'Expected five original author runtime digests.')
+  result.outcome = 'AUTHOR_94_CASE_MATRIX_COMPLETED_NOT_TECHNICAL_LEAD_PASS'
+} catch (error) {
+  result.outcome = 'AUTHOR_MATRIX_FAILED_OR_INCOMPLETE'
+  result.failure = String(error?.stack ?? error)
+  process.exitCode = 1
+} finally {
+  if (stdout && !stdout.writableEnded) stdout.end()
+  if (stderr && !stderr.writableEnded) stderr.end()
+  await Promise.all([stdout ? finished(stdout).catch(() => {}) : Promise.resolve(), stderr ? finished(stderr).catch(() => {}) : Promise.resolve()])
+  try {
+    result.sourceBindingAfter = sourceBinding()
+    assert.deepEqual(result.sourceBindingAfter, bindingBefore, 'Source changed while the matrix ran.')
+    assert.equal(sha256(readFileSync(originalSource)), preparation.adapter.sha256, 'Adapter changed while executing.')
+    assert.equal(sha256(readFileSync(adaptedPath)), preparation.adaptedRunner.sha256, 'Adapted runner changed while executing.')
+    assert.equal(sha256(readFileSync(originalCopy)), preparation.originalRunner.sha256, 'Preserved committed runner changed.')
+    result.sourceBindingVerified = true
+  } catch (error) {
+    result.sourceBindingVerified = false
+    result.sourceBindingFailure = String(error?.stack ?? error)
+    result.outcome = 'SOURCE_BINDING_FAILED'
+    process.exitCode = 1
+  }
+  result.logs = {
+    stdout: existsSync(stdoutPath) ? { path: stdoutPath, sha256: sha256(readFileSync(stdoutPath)) } : null,
+    stderr: existsSync(stderrPath) ? { path: stderrPath, sha256: sha256(readFileSync(stderrPath)) } : null,
+  }
+  result.exit = process.exitCode ?? 0
+  const resultPath = join(runDirectory, 'adapter-result.json')
+  writeFileSync(resultPath, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify({ outcome: result.outcome, expectedHead, count: result.authorResult?.count, passed: result.authorResult?.passed, browser: result.authorResult?.browser, sourceBindingVerified: result.sourceBindingVerified, childExitCode: result.childExitCode, exit: result.exit, adapterResult: resultPath, authorEvidence: evidenceDirectory }, null, 2))
+}

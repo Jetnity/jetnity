@@ -1,0 +1,25 @@
+--- trip-r2-residual-acceptance-v2.ts
++++ trip-r2-residual-acceptance-v3.ts
+@@ -4,7 +4,11 @@
+ import { pathToFileURL } from 'node:url'
+ import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+ 
+-const EXPECTED_HEAD = '4e66d8948046423656feb6b95b8562e546e82b19'
++const REJECTED_HEADS = new Set([
++  '4e66d8948046423656feb6b95b8562e546e82b19',
++  '80006fdf1443ca9d75d8c481246821354da16000',
++  'b218c33d9d00c19f3705aba8bd208cc455272659',
++])
+ 
+ async function run() {
+   const options = argumentsForRun()
+@@ -15,7 +19,8 @@
+   }
+   let browser: any
+   try {
+-    assert.equal(options.head, EXPECTED_HEAD, 'This residual probe requires the exact independently inspected R2 delivery')
++    assert.match(options.head, /^[0-9a-f]{40}$/, 'Supply an explicit independently inspected new 40-hex expected head')
++    assert.ok(!REJECTED_HEADS.has(options.head), 'Future-head acceptance refuses the previously demonstrated defective 4e66, 8000 and b218 deliveries')
+     const context = prepareRun(options, [
+       'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+       'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',

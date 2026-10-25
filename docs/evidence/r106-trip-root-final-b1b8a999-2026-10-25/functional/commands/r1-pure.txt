@@ -1,0 +1,62 @@
+{
+  "purpose": "Bounded independent acceptance assertions for R106 T R1; never a product/TL PASS",
+  "expectedHead": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+  "node": "v22.23.4",
+  "generatedAt": "2026-10-25T13:22:17.023Z",
+  "observations": [
+    {
+      "name": "unknown retry is refused before any read",
+      "result": "PASS",
+      "detail": {
+        "readCalls": 0,
+        "returnedWriteOrder": false
+      }
+    },
+    {
+      "name": "accepted account absent read can recover on a later matching delivery",
+      "result": "PASS",
+      "detail": {
+        "firstPhase": "absent_uncertain",
+        "laterPhase": "confirmed",
+        "laterMessage": "Gespeichert und im aktuellen Stand sichtbar."
+      }
+    },
+    {
+      "name": "accepted account conflicting read can recover on a later matching delivery",
+      "result": "PASS",
+      "detail": {
+        "firstPhase": "conflict",
+        "laterPhase": "confirmed",
+        "laterMessage": "Gespeichert und im aktuellen Stand sichtbar."
+      }
+    },
+    {
+      "name": "unknown account outcome becomes conservative reconciliation after a matching read",
+      "result": "PASS",
+      "detail": {
+        "phase": "reconciled",
+        "message": "Der sichtbare Stand stimmt mit dieser Eingabe überein. Das belegt nicht, welcher Vorgang ihn geschrieben hat.",
+        "causalConfirmation": false
+      }
+    },
+    {
+      "name": "unknown guest outcome becomes conservative reconciliation after a matching read",
+      "result": "PASS",
+      "detail": {
+        "phase": "reconciled",
+        "message": "Der sichtbare Stand stimmt mit dieser Eingabe überein. Das belegt nicht, welcher Vorgang ihn geschrieben hat.",
+        "causalConfirmation": false
+      }
+    }
+  ],
+  "verdict": "BOUNDED_ASSERTIONS_PASSED",
+  "head": "b1b8a999bfe4d81e315fac2671bcd9eef24b520b",
+  "verifiedSources": {
+    "package.json": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+    "package-lock.json": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "lib/readiness/personal-preparation-workflow.ts": "c295637b18d4b356ce14739e211871179cbf38f7",
+    "lib/readiness/bauen.ts": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+    "lib/reiseaenderung/fixtures/reise.ts": "7533df1f2de0a9972810278b64aa9839033342f8"
+  },
+  "scope": "Actual pure production workflow, fixture and item builder. Synthetic memory only; no writer, storage, network or hosted operation."
+}

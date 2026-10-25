@@ -1,0 +1,90 @@
+import assert from 'node:assert/strict'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { argumentsForRun, moduleApi, prepareRun, writeReport } from './trip-acceptance-common.mjs'
+
+const EXPECTED_HEAD = '80006fdf1443ca9d75d8c481246821354da16000'
+
+async function run() {
+  const options = argumentsForRun()
+  const report: any = {
+    purpose: 'Independent correct-behavior assertion for R1 same-ref history/read ordering; not a TL PASS',
+    expectedHead: options.head,
+    node: process.version,
+    generatedAt: new Date().toISOString(),
+    observations: [],
+    verdict: 'NOT_VERIFIED',
+  }
+  try {
+    assert.equal(options.head, EXPECTED_HEAD, 'This source-derived probe is pinned to the inspected R1 delivery')
+    const context = prepareRun(options, [
+      'lib/readiness/personal-preparation-workflow.ts',
+      'lib/readiness/bauen.ts',
+      'lib/reiseaenderung/fixtures/reise.ts',
+    ])
+    const workflow = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/personal-preparation-workflow.ts')).href))
+    const fixture = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/reiseaenderung/fixtures/reise.ts')).href))
+    const builder = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/bauen.ts')).href))
+    const empty = fixture.beispielreise({ id: 'tl-r1-same-ref-trip', readinessItems: [] })
+    const built = builder.readinessItemBauen(empty, {
+      clientRef: 'preparation-tl-same-ref', kind: 'preparation', userStatus: 'open',
+      countryCode: null, tripItemId: null, title: 'Original row',
+    })
+    assert.ok(built.ok)
+    const basis = { ...empty, readinessItems: [built.item] }
+    const ref = built.item.clientRef
+    const observation: any = { name: 'Re-reading old unresolved A must preserve newer pending B lock on the same ref', result: 'NOT_VERIFIED' }
+    report.observations.push(observation)
+    try {
+      const initial = workflow.kontoBeobachten(workflow.leerLedger(basis.id), basis)
+      const editA = workflow.entscheiden(initial, {
+        art: 'edit', clientRef: ref, title: 'First accepted edit', userStatus: 'open',
+        boundEpoch: workflow.preparationEpoch(basis, built.item), editorGeneration: 1, filter: 'alle',
+      }, basis, basis)
+      assert.ok(editA.auftrag)
+      const intentA = editA.ledger.intents.at(-1)
+      const acceptedA = workflow.annehmen(editA.ledger, intentA.id, intentA.lauf).ledger
+      const conflictA = workflow.kontoBeobachten(acceptedA, { ...basis })
+      assert.equal(conflictA.intents.find((intent: any) => intent.id === intentA.id).phase, 'conflict')
+      const editB = workflow.entscheiden(conflictA, {
+        art: 'edit', clientRef: ref, title: 'Second pending edit', userStatus: 'open',
+        boundEpoch: workflow.preparationEpoch(basis, built.item), editorGeneration: 2, filter: 'alle',
+      }, basis, basis)
+      assert.ok(editB.auftrag)
+      const intentB = editB.ledger.intents.at(-1)
+      assert.equal(intentB.phase, 'pending')
+      assert.ok(editB.ledger.locks.includes(ref), 'B must actually acquire the same-ref lock before the later read')
+      const laterRead = workflow.kontoBeobachten(editB.ledger, { ...basis })
+      const deleteAttempt = workflow.entscheiden(laterRead, {
+        art: 'delete', clientRef: ref, filter: 'alle', editorGeneration: 2,
+      }, basis, basis)
+      observation.detail = {
+        clientRef: ref,
+        oldIntent: intentA.id,
+        newerIntent: intentB.id,
+        oldPhaseAfterRead: laterRead.intents.find((intent: any) => intent.id === intentA.id).phase,
+        newerPhaseAfterRead: laterRead.intents.find((intent: any) => intent.id === intentB.id).phase,
+        lockBeforeLaterRead: editB.ledger.locks.includes(ref),
+        lockAfterLaterRead: laterRead.locks.includes(ref),
+        deliveredGeneration: laterRead.lieferung,
+        concurrentDeleteOrder: deleteAttempt.auftrag,
+        actualWriterCalls: 0,
+      }
+      assert.equal(laterRead.intents.find((intent: any) => intent.id === intentB.id).phase, 'pending')
+      assert.ok(laterRead.locks.includes(ref), 'An old receipt must not release a newer same-ref pending write lock')
+      assert.equal(deleteAttempt.auftrag, null, 'Ordinary delete must be refused while the same ref still has a pending write')
+      observation.result = 'PASS'
+    } catch (error) {
+      observation.result = 'FAIL'
+      observation.error = String(error)
+    }
+    report.head = context.head
+    report.verifiedSources = context.verifiedSources
+    report.scope = 'Actual production pure workflow and existing builder, synthetic data only. Returned write orders are measured; no writer, storage, browser or network call is made.'
+    report.verdict = report.observations.every((entry: any) => entry.result === 'PASS') ? 'BOUNDED_ASSERTIONS_PASSED' : 'BOUNDED_ASSERTION_FAILED'
+  } catch (error) { report.error = String(error) }
+  writeReport(options, report)
+  if (report.verdict !== 'BOUNDED_ASSERTIONS_PASSED') process.exitCode = 1
+}
+
+run().catch((error) => { console.error(error); process.exitCode = 1 })

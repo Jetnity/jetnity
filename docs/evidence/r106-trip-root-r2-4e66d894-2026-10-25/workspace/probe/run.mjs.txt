@@ -1,0 +1,413 @@
+/**
+ * Independent future-head T-R4 probe. PREPARED ONLY until root runs it.
+ * Actual TripWorkspace, guest writer/parser/storage and current-V3 accessor.
+ * No CSS/layout, full Next router, hosted Account, database or Production claim.
+ */
+import assert from 'node:assert/strict'
+import { createRequire } from 'node:module'
+import { createServer } from 'node:http'
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { candidate, fileIdentity, inside, PRIMARY_SOURCES, sourceManifest, verifyPinned } from './provenance.mjs'
+
+const HERE = dirname(fileURLToPath(import.meta.url))
+const HELP = 'Node22 run.mjs --repo /checkout --expected-head <NEW-R2-SHA> --source-manifest /pinned.json --output-dir /fresh/external-directory'
+if (process.argv.includes('--help')) { console.log(HELP); process.exit(0) }
+const args = process.argv.slice(2)
+assert.equal(args.length, 8, HELP)
+const options = {}
+for (let i = 0; i < args.length; i += 2) {
+  assert.ok(['--repo', '--expected-head', '--source-manifest', '--output-dir'].includes(args[i]), HELP)
+  assert.equal(options[args[i]], undefined, 'Duplicate option')
+  options[args[i]] = args[i + 1]
+}
+const head = options['--expected-head']
+const repo = candidate(options['--repo'], head)
+assert.ok(isAbsolute(options['--source-manifest']) && isAbsolute(options['--output-dir']), 'Use absolute paths')
+const pinnedPath = realpathSync(options['--source-manifest'])
+assert.ok(!inside(repo, pinnedPath), 'Use a separately pinned external manifest')
+const pinned = JSON.parse(readFileSync(pinnedPath, 'utf8'))
+const initial = verifyPinned(repo, head, pinned)
+const out = resolve(options['--output-dir'])
+assert.ok(!inside(repo, out) && !inside(HERE, out), 'Output must be outside checkout and probe source')
+assert.ok(!existsSync(out), 'Refusing to overwrite previous evidence')
+mkdirSync(out, { recursive: false })
+const require = createRequire(join(repo, 'package.json'))
+const usedSources = new Set(PRIMARY_SOURCES)
+let browser, server
+const report = {
+  schemaVersion: 1, expectedHead: head, repo, node: process.version,
+  preparedProbe: 'trip-workspace-r4-probe-v1', startedAt: new Date().toISOString(),
+  inputManifest: { path: pinnedPath, ...fileIdentity(pinnedPath) }, initialProvenance: initial,
+  notTechnicalLeadPass: true, cases: [], externalRequests: [], pageErrors: [], consoleErrors: [],
+  boundary: 'Real TripWorkspace and mode navigation. Real synchronous guest side effect; only response settlement is deferred. Explicit external Next shims, synthetic fixture writers/read failure injection. No CSS loaded.',
+  limitations: [
+    'Native disabled row controls are UI observations, not central controller invocation.',
+    'Trusted pointer/Enter plus standards-based requestSubmit exercise the production form path; root still verifies source forwarding and central guards.',
+    'No React internals, controller exposure, altered disabled attributes, forced DOM events or substitute workflow model.',
+    'No CSS matrix, hosted Account, full Next Router, Supabase/RLS, Production, device, screenreader or global storage atomicity acceptance.',
+    'Trip switch keeps TripWorkspace mounted with a new trip prop; it does not simulate the complete GastArbeitsbereich route lifecycle.',
+  ],
+}
+function write(name, value) { writeFileSync(join(out, name), JSON.stringify(value, null, 2) + '\n', { flag: 'wx' }) }
+function currentProbeFiles() {
+  return Object.fromEntries(['run.mjs', 'provenance.mjs', 'source-manifest.mjs', 'workspace.tsx', 'shims/dynamic.tsx', 'shims/navigation.tsx', 'shims/link.tsx', 'shims/image.tsx', 'shims/empty.ts'].map(p => [p, fileIdentity(join(HERE, p))]))
+}
+report.probeSourcesBefore = currentProbeFiles()
+const flush = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+const snapshot = page => page.evaluate(() => window.__T_R4__.snapshot())
+const personal = page => page.locator('[data-personal-preparation-root]')
+const createField = page => personal(page).getByLabel('Eigene Vorbereitung', { exact: true })
+const seedRow = (page, ref) => personal(page).locator(`[data-personal-client-ref="${ref}"][data-readiness-status]`)
+const pendingReceipt = (page, ref) => personal(page).locator(`[data-personal-client-ref="${ref}"]:not([data-readiness-status])`)
+const personalDOM = page => personal(page).evaluate(root => ({
+  markup: root.innerHTML,
+  fields: [...root.querySelectorAll('input,textarea,select')].map(el => ({
+    tag: el.tagName, value: el.value, disabled: el.disabled,
+    checked: 'checked' in el ? el.checked : null,
+  })),
+}))
+function mutations(state) { return state.storageEvents.filter(e => e.kind !== 'get' && e.phase.startsWith('callback-')) }
+function activeWrites(state, key) { return mutations(state).filter(e => e.key === key) }
+function noAction(before, after, label) {
+  assert.equal(after.actions.length, before.actions.length, `${label}: mutation callback was entered`)
+  assert.deepEqual(mutations(after), mutations(before), `${label}: product storage mutation occurred`)
+  assert.deepEqual(after.pendingResponses, before.pendingResponses, `${label}: a deferred mutation was queued`)
+  assert.equal(after.rawBytes, before.rawBytes, `${label}: active storage bytes changed`)
+}
+async function preparation(page) {
+  await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung', exact: true }).click()
+  await page.locator('[data-workspace-modus="vorbereitung"]').waitFor({ state: 'visible' })
+  const details = page.locator('#preparation-eigene-vorbereitung')
+  if (!(await details.evaluate(el => el.open))) await details.locator(':scope > summary').click()
+  await createField(page).waitFor({ state: 'visible' })
+  await flush(page)
+}
+async function awayBack(page) {
+  await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Reiseplan', exact: true }).click()
+  await page.locator('[data-workspace-modus="plan"]').waitFor({ state: 'visible' })
+  assert.equal(await personal(page).count(), 0, 'The actual personal component must unmount')
+  await preparation(page)
+}
+async function barrier(page, expected) {
+  await page.waitForFunction(value => document.querySelector('[data-personal-barrier]')?.getAttribute('data-personal-barrier') === String(value), expected)
+  await flush(page)
+}
+async function pointer(page, locator, label) {
+  assert.equal(await locator.count(), 1, `${label}: ambiguous or missing control`)
+  await locator.waitFor({ state: 'visible' })
+  const semantics = await locator.evaluate(el => ({ disabled: 'disabled' in el && el.disabled, ariaDisabled: el.getAttribute('aria-disabled'), tag: el.tagName }))
+  if (semantics.disabled) return { label, evidence: 'NATIVE_DISABLED_UI_ONLY', ...semantics }
+  // Real trusted pointer input, even where aria-disabled does not disable the HTML element.
+  // No force:true, element.click(), React private event dispatch or DOM attribute mutation.
+  await locator.scrollIntoViewIfNeeded()
+  const box = await locator.boundingBox()
+  assert.ok(box && box.width > 0 && box.height > 0, `${label}: no pointer target`)
+  const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+  assert.equal(await locator.evaluate((el, p) => { const hit = document.elementFromPoint(p.x, p.y); return hit === el || el.contains(hit) }, point), true, `${label}: target is obscured`)
+  await page.mouse.click(point.x, point.y)
+  await flush(page)
+  return { label, evidence: 'TRUSTED_POINTER_DELIVERED', ...semantics }
+}
+async function type(page, locator, text) {
+  const blocked = await locator.evaluate(el => Boolean(el.disabled || el.readOnly))
+  assert.equal(blocked, false, 'Proof unavailable: native disabled/readonly input prevents a genuine new draft; no bypass is used')
+  await pointer(page, locator, 'type into actual input')
+  await page.keyboard.press('Control+A')
+  await page.keyboard.type(text)
+  await flush(page)
+  assert.equal(await locator.inputValue(), text)
+}
+async function explicitRead(page, expected, copy, key) {
+  const before = await snapshot(page)
+  await personal(page).getByRole('button', { name: copy.read, exact: true }).last().click()
+  await page.waitForFunction(n => window.__T_R4__.snapshot().reads.length === n, before.reads.length + 1)
+  await flush(page)
+  const after = await snapshot(page)
+  noAction(before, after, `read ${expected}`)
+  assert.equal(after.reads.at(-1).result, expected)
+  const events = after.storageEvents.slice(before.storageEvents.length).filter(e => e.phase === 'callback-read')
+  assert.ok(events.length > 0, 'Reader was not observed at the storage seam')
+  assert.ok(events.every(e => e.kind === 'get' && e.key === key), 'Read touched another key, legacy/queue, or a write')
+  return { before, after, events }
+}
+async function rowControls(page, ref) {
+  const results = []
+  const row = seedRow(page, ref)
+  assert.equal(await row.count(), 1, 'A real existing personal row is required')
+  const initial = await snapshot(page)
+  const opened = await pointer(page, row.getByRole('button', { name: 'Titel bearbeiten', exact: true }), 'existing-row editor opener')
+  results.push(opened)
+  if (opened.evidence !== 'NATIVE_DISABLED_UI_ONLY') {
+    const title = row.getByLabel('Titel bearbeiten', { exact: true })
+    await title.waitFor({ state: 'visible' })
+    if (!(await title.evaluate(el => Boolean(el.disabled || el.readOnly)))) await type(page, title, 'Local row draft remains unsaved')
+    results.push(await pointer(page, row.getByRole('button', { name: 'Erledigt', exact: true }), 'existing-row status choice'))
+    results.push(await pointer(page, row.getByRole('button', { name: 'Speichern', exact: true }), 'existing-row save'))
+  } else results.push({ label: 'row edit/status/save', evidence: 'NOT_AVAILABLE_WITH_NATIVE_DISABLED_OPENER' })
+  noAction(initial, await snapshot(page), 'row edit/status/save under read barrier')
+  const openedDelete = await pointer(page, row.getByRole('button', { name: 'Entfernen', exact: true }), 'existing-row delete confirmation opener')
+  results.push(openedDelete)
+  if (openedDelete.evidence !== 'NATIVE_DISABLED_UI_ONLY') {
+    results.push(await pointer(page, row.getByRole('button', { name: 'Endgültig entfernen', exact: true }), 'existing-row final delete'))
+  }
+  noAction(initial, await snapshot(page), 'row delete under read barrier')
+  return results
+}
+
+async function failureCase(page, failure) {
+  await preparation(page)
+  const config = await page.evaluate(() => ({ copy: window.__T_R4__.copy, key: window.__T_R4__.activeKey, seedRef: window.__T_R4__.seedRef, siblingRef: window.__T_R4__.siblingRef }))
+  const start = await snapshot(page)
+  await type(page, createField(page), 'Uncertain existing attempt')
+  await pointer(page, personal(page).locator('form[data-personal-preparation-create] button[type="submit"]'), 'initial create')
+  await page.waitForFunction(() => window.__T_R4__.snapshot().actions.length === 1 && window.__T_R4__.snapshot().pendingResponses.length === 1)
+  const issued = await snapshot(page)
+  assert.equal(issued.actions[0].completedSynchronously, true, 'The real guest write must precede delayed settlement')
+  const ref = issued.actions[0].payload.clientRef
+  assert.ok(ref && JSON.parse(issued.rawBytes).readinessItems.some(item => item.clientRef === ref))
+  assert.equal(activeWrites(issued, config.key).length, activeWrites(start, config.key).length + 1)
+  assert.equal(issued.reads.length, 0)
+  await page.evaluate(() => window.__T_R4__.settle('reject'))
+  await page.waitForFunction(ref => document.querySelector(`[data-personal-client-ref="${ref}"][data-personal-phase="unclear"]`) != null, ref)
+  assert.equal((await snapshot(page)).pendingResponses.length, 0)
+
+  // Make a floating unresolved receipt by an actual concurrent removal and an explicit read.
+  // This removes no controller locks by fiat and never invents a read result.
+  await page.evaluate(ref => window.__T_R4__.externalRemove(ref), ref)
+  await explicitRead(page, 'success', config.copy, config.key)
+  await page.waitForFunction(ref => document.querySelector(`[data-personal-client-ref="${ref}"][data-personal-phase="absent_uncertain"]`) != null, ref)
+  assert.equal(await pendingReceipt(page, ref).count(), 1)
+
+  await page.evaluate(kind => window.__T_R4__.failRead(kind), failure)
+  const failed = await explicitRead(page, failure, config.copy, config.key)
+  assert.deepEqual(failed.after.view, failed.before.view, 'Failed read must not replace the displayed graph')
+  await barrier(page, true)
+  const blockedBytes = failed.after.rawBytes
+  const retryBefore = await snapshot(page)
+  const retry = await pointer(page, pendingReceipt(page, ref).getByRole('button', { name: 'Erneut versuchen', exact: true }), 'floating unresolved create retry')
+  noAction(retryBefore, await snapshot(page), 'retry after failed read')
+  assert.equal((await snapshot(page)).reads.length, retryBefore.reads.length, 'Retry must not trigger an automatic read loop')
+
+  await pendingReceipt(page, ref).getByRole('button', { name: config.copy.discard, exact: true }).click()
+  await page.waitForFunction(ref => document.querySelector(`[data-personal-client-ref="${ref}"]`) == null, ref)
+  const freshDraft = `Fresh deliberate draft after ${failure}`
+  await type(page, createField(page), freshDraft)
+  await awayBack(page)
+  await barrier(page, true)
+  assert.equal(await createField(page).inputValue(), freshDraft)
+  const unmasked = await snapshot(page)
+  assert.equal(unmasked.pendingResponses.length, 0, 'No old delayed job may mask a dispatch')
+  assert.equal(unmasked.rawBytes, blockedBytes)
+
+  const attempts = []
+  let before = await snapshot(page)
+  const submit = await pointer(page, personal(page).locator('form[data-personal-preparation-create] button[type="submit"]'), 'ordinary submit after discard/remount')
+  let after = await snapshot(page)
+  noAction(before, after, 'ordinary submit after discard/remount')
+  attempts.push({ ...submit, formEvents: after.forms.slice(before.forms.length) })
+
+  await pointer(page, createField(page), 'focus genuine create input for Enter')
+  before = await snapshot(page)
+  await page.keyboard.press('Enter')
+  await flush(page)
+  after = await snapshot(page)
+  noAction(before, after, 'ordinary Enter after discard/remount')
+  attempts.push({ label: 'ordinary Enter', evidence: after.forms.length > before.forms.length ? 'REAL_FORM_SUBMIT_OBSERVED' : 'NO_SUBMIT_EVENT_UI_ONLY', formEvents: after.forms.slice(before.forms.length) })
+
+  before = await snapshot(page)
+  await personal(page).locator('form[data-personal-preparation-create]').evaluate(form => {
+    if (!(form instanceof HTMLFormElement) || !form.checkValidity()) throw new Error('No valid native form submission path')
+    form.requestSubmit()
+  })
+  await flush(page)
+  after = await snapshot(page)
+  assert.equal(after.forms.length, before.forms.length + 1, 'requestSubmit must reach the genuine production form')
+  assert.equal(after.forms.at(-1).defaultPreventedAfterDispatch, true, 'Production form submit handler was not observed')
+  noAction(before, after, 'native requestSubmit through production form')
+  attempts.push({ label: 'HTMLFormElement.requestSubmit', evidence: 'PRODUCTION_FORM_HANDLER_PATH', formEvent: after.forms.at(-1) })
+  const controls = await rowControls(page, config.seedRef)
+  assert.equal(await createField(page).inputValue(), freshDraft, 'New composer draft must remain')
+  assert.equal((await snapshot(page)).rawBytes, blockedBytes)
+
+  await page.evaluate(() => window.__T_R4__.restoreExpected())
+  // Restoration by the fixture alone is not a certificate and must not clear the barrier.
+  await flush(page)
+  await barrier(page, true)
+  const successfulRead = await explicitRead(page, 'success', config.copy, config.key)
+  await barrier(page, false)
+  assert.equal(await createField(page).inputValue(), freshDraft)
+  await page.evaluate(() => window.__T_R4__.responseMode('immediate'))
+  const resume = await snapshot(page)
+  await pointer(page, personal(page).locator('form[data-personal-preparation-create] button[type="submit"]'), 'deliberate create after qualified expected-trip read')
+  await page.waitForFunction(n => window.__T_R4__.snapshot().actions.length === n, resume.actions.length + 1)
+  const newRef = (await snapshot(page)).actions.at(-1).payload.clientRef
+  assert.notEqual(newRef, ref, 'A discarded intent/new generation must be a fresh deliberate create')
+  await page.waitForFunction(ref => document.querySelector(`[data-personal-client-ref="${ref}"][data-personal-phase="confirmed"]`) != null, newRef)
+  const final = await snapshot(page)
+  assert.equal(final.actions.length, 2, 'Exactly original create and final conscious create may enter the writer')
+  assert.equal(final.pendingResponses.length, 0)
+  assert.equal(final.reads.length, 4, 'Expected one initial reconciliation, one failed read, one recovery read and one post-save read')
+  assert.equal(activeWrites(final, config.key).length, activeWrites(start, config.key).length + 2)
+  const stored = JSON.parse(final.rawBytes)
+  assert.equal(stored.id, start.view.id)
+  assert.deepEqual(stored.readinessItems.filter(item => item.clientRef === config.seedRef || item.clientRef === config.siblingRef), start.stableSeedItems, 'Existing personal row and nonpersonal sibling changed')
+  return {
+    failure, originalClientRef: ref, newClientRef: newRef,
+    actionEntries: final.actions, productReads: final.reads,
+    failedReadPreservedGraph: true, failedReadStorageEvents: failed.events,
+    qualifiedRecoveryRead: successfulRead.events, retry, createAttempts: attempts, rowControls: controls,
+    coverageLimit: 'Native-disabled row controls prove UI disablement only. No private controller hook is exposed.',
+    finalActiveStorageWrites: activeWrites(final, config.key),
+  }
+}
+
+async function tripSwitchCase(page) {
+  await preparation(page)
+  const key = await page.evaluate(() => window.__T_R4__.activeKey)
+  await type(page, createField(page), 'Old trip write already issued')
+  await pointer(page, personal(page).locator('form[data-personal-preparation-create] button[type="submit"]'), 'old trip synchronous create')
+  await page.waitForFunction(() => window.__T_R4__.snapshot().pendingResponses.length === 1)
+  const issued = await snapshot(page)
+  const oldRef = issued.actions[0].payload.clientRef
+  assert.equal(issued.actions.length, 1)
+  assert.equal(issued.actions[0].completedSynchronously, true)
+  assert.ok(JSON.parse(issued.rawBytes).readinessItems.some(item => item.clientRef === oldRef), 'Old write was actually stored before the trip switch')
+  assert.equal(activeWrites(issued, key).length, 1)
+  await page.evaluate(() => window.__T_R4__.switchTrip('independent-r4-trip-b'))
+  await page.waitForFunction(() => window.__T_R4__.snapshot().view.id === 'independent-r4-trip-b')
+  await preparation(page)
+  await type(page, createField(page), 'New trip retained draft')
+  const search = personal(page).locator('[data-personal-preparation-search]')
+  await pointer(page, search, 'new trip deliberate search focus')
+  assert.equal(await search.evaluate(el => document.activeElement === el), true)
+  const before = await snapshot(page)
+  const uiBefore = await personalDOM(page)
+  assert.equal(await personal(page).locator(`[data-personal-client-ref="${oldRef}"]`).count(), 0)
+  assert.equal(before.reads.length, 0)
+  await page.evaluate(() => window.__T_R4__.settle('accepted'))
+  await flush(page)
+  const after = await snapshot(page)
+  assert.equal(after.actions.length, before.actions.length)
+  assert.deepEqual(mutations(after), mutations(before))
+  assert.equal(after.reads.length, before.reads.length, 'Old response must not call the new trip reader')
+  assert.equal(after.rawBytes, before.rawBytes)
+  assert.deepEqual(after.view, before.view)
+  assert.deepEqual(await personalDOM(page), uiBefore, 'Late response changed new-trip personal UI/controller output')
+  assert.equal(after.pendingResponses.length, 0)
+  assert.equal(await createField(page).inputValue(), 'New trip retained draft')
+  assert.equal(await search.evaluate(el => document.activeElement === el), true, 'Late old-trip result stole new-trip focus')
+  assert.equal(await personal(page).locator(`[data-personal-client-ref="${oldRef}"]`).count(), 0)
+  return {
+    issuedBeforeSwitch: issued.actions[0], actualOldTripStorageWrite: activeWrites(issued, key),
+    newTrip: after.view.id, newTripCallbackOrReadEffect: false, newTripStorageAndDraftAndFocusPreserved: true,
+    newTripPersonalDOMUnchanged: true,
+    settlement: after.settlements.at(-1),
+    nonClaim: 'The old guest write completed before switching. This does not prove its cancellation, rollback, or cross-tab atomicity.',
+  }
+}
+
+try {
+  const esbuild = require('esbuild')
+  report.installedDependencyVersions = Object.fromEntries(['esbuild', 'playwright', 'react', 'react-dom'].map(name => [name, require(`${name}/package.json`).version]))
+  const shims = {
+    'next/dynamic': 'dynamic.tsx', 'next/navigation': 'navigation.tsx',
+    'next/link': 'link.tsx', 'next/image': 'image.tsx',
+    'next/cache': 'empty.ts', 'next/headers': 'empty.ts', 'next/server': 'empty.ts',
+    'server-only': 'empty.ts', '@opentelemetry/api': 'empty.ts',
+  }
+  const build = await esbuild.build({
+    absWorkingDir: repo, entryPoints: [join(HERE, 'workspace.tsx')], outfile: join(out, 'workspace-bundle.js'),
+    bundle: true, format: 'iife', platform: 'browser', jsx: 'automatic',
+    alias: { '@': repo }, nodePaths: [join(repo, 'node_modules')],
+    define: { 'process.env.NODE_ENV': '"production"' },
+    banner: { js: 'globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};globalThis.global=globalThis;' },
+    metafile: true, logLevel: 'silent',
+    plugins: [{ name: 'explicit-external-next-boundaries', setup(build) {
+      build.onResolve({ filter: /^(next\/|server-only$|@opentelemetry\/api$)/ }, args => shims[args.path]
+        ? { path: join(HERE, 'shims', shims[args.path]) }
+        : { errors: [{ text: `Unreviewed framework boundary ${args.path}` }] })
+    } }],
+  })
+  const dependencies = []
+  for (const input of Object.keys(build.metafile.inputs)) {
+    const abs = realpathSync(isAbsolute(input) ? input : resolve(repo, input))
+    if (abs.split(sep).includes('node_modules')) { dependencies.push(input); continue }
+    if (inside(repo, abs)) usedSources.add(relative(repo, abs))
+    else assert.ok(inside(HERE, abs), `Unexpected non-repository source input: ${input}`)
+  }
+  report.compiledSourceProvenance = sourceManifest(repo, head, [...usedSources])
+  write('committed-source-manifest.json', report.compiledSourceProvenance)
+  write('bundle-metafile.json', build.metafile)
+  report.bundle = { file: 'workspace-bundle.js', ...fileIdentity(join(out, 'workspace-bundle.js')), dependencyInputs: dependencies.length, css: 'NONE_BOUNDARY_ONLY_NO_LAYOUT_CLAIM' }
+  const js = readFileSync(join(out, 'workspace-bundle.js'))
+  server = createServer((req, res) => {
+    const url = new URL(req.url ?? '/', 'http://127.0.0.1')
+    if (url.pathname === '/bundle.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(js); return }
+    if (url.pathname === '/favicon.ico') { res.writeHead(204); res.end(); return }
+    if (url.pathname !== '/') { res.writeHead(404); res.end(); return }
+    const label = url.searchParams.get('case')
+    if (!['wrong_trip', 'unreadable', 'trip_switch'].includes(label)) { res.writeHead(400); res.end(); return }
+    const start = { tripId: `independent-r4-${label}` }
+    const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="root"></div><script>window.__T_R4_START__=${JSON.stringify(start)}</script><script src="/bundle.js"></script></body></html>`
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html)
+  })
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
+  const origin = `http://127.0.0.1:${server.address().port}`
+  report.origin = origin
+  const { chromium } = require('playwright')
+  browser = await chromium.launch({ headless: true })
+  report.browser = browser.version()
+  for (const name of ['wrong_trip', 'unreadable', 'trip_switch']) {
+    const record = { name, startedAt: new Date().toISOString(), result: 'NOT_RUN' }
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' })
+    const page = await context.newPage()
+    page.setDefaultTimeout(8000)
+    page.on('pageerror', error => report.pageErrors.push({ case: name, message: error.message }))
+    page.on('console', message => { if (message.type() === 'error') report.consoleErrors.push({ case: name, message: message.text() }) })
+    const safeUrl = raw => { const parsed = new URL(raw); return `${parsed.protocol}//${parsed.host}${parsed.pathname}` }
+    await context.route('**/*', route => {
+      const url = route.request().url()
+      if (new URL(url).origin !== origin) { report.externalRequests.push({ case: name, url: safeUrl(url), action: 'BLOCKED' }); return route.abort() }
+      return route.continue()
+    })
+    assert.equal(typeof context.routeWebSocket, 'function', 'This isolated probe requires installed Playwright WebSocket routing support')
+    await context.routeWebSocket(/.*/, ws => { report.externalRequests.push({ case: name, url: safeUrl(ws.url()), action: 'WEBSOCKET_BLOCKED' }); ws.close() })
+    try {
+      await page.goto(`${origin}/?case=${name}`)
+      await page.waitForFunction(() => window.__T_R4__?.ready === true)
+      record.evidence = name === 'trip_switch' ? await tripSwitchCase(page) : await failureCase(page, name)
+      record.result = 'PASS_BOUNDED_OBSERVATIONS'
+    } catch (error) {
+      record.result = 'NOT_PASSED'
+      record.error = String(error?.stack ?? error)
+      record.errorClassification = 'ROOT_MUST_DISTINGUISH_PRODUCT_FAILURE_FROM_FIXTURE_OR_CHANGED_UI_CONTRACT'
+    } finally {
+      try { write(`trace-${name}.json`, await snapshot(page)) } catch (error) { record.traceFailure = String(error) }
+      record.endedAt = new Date().toISOString()
+      report.cases.push(record)
+      await context.close()
+    }
+  }
+} catch (error) {
+  report.infrastructureOrSourceContractFailure = String(error?.stack ?? error)
+} finally {
+  if (browser) await browser.close()
+  if (server?.listening) await new Promise(resolve => server.close(resolve))
+  try {
+    report.finalProvenance = sourceManifest(repo, head, [...usedSources])
+    report.probeSourcesAfter = currentProbeFiles()
+    assert.deepEqual(report.probeSourcesAfter, report.probeSourcesBefore, 'Prepared probe changed during execution')
+  } catch (error) { report.provenanceFailure = String(error?.stack ?? error) }
+  report.endedAt = new Date().toISOString()
+  const passed = report.cases.length === 3 && report.cases.every(c => c.result === 'PASS_BOUNDED_OBSERVATIONS')
+    && !report.infrastructureOrSourceContractFailure && !report.provenanceFailure
+    && report.externalRequests.length === 0 && report.pageErrors.length === 0
+  report.result = passed ? 'BOUNDED_WORKSPACE_OBSERVATIONS_PASSED' : 'NOT_PASSED'
+  report.fullCentralRowGuardCoverage = false
+  report.remainingGate = 'Root inspection and separate central guard tests are required for native-disabled row controls. Author current-head CSS/matrix proof remains separate.'
+  write('workspace-r4-result.json', report)
+  console.log(JSON.stringify({ result: report.result, head, output: join(out, 'workspace-r4-result.json'), cases: report.cases.map(({ name, result }) => ({ name, result })), remainingGate: report.remainingGate }, null, 2))
+  if (!passed) process.exitCode = 1
+}

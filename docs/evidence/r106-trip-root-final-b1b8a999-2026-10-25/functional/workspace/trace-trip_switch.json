@@ -1,0 +1,390 @@
+{
+  "view": {
+    "id": "independent-r4-trip-b",
+    "clientRef": "trip-1",
+    "title": "Italien",
+    "origin": "Zürich",
+    "originPlaceId": null,
+    "startDate": "2026-09-12",
+    "endDate": "2026-09-16",
+    "travellers": 2,
+    "currency": "CHF",
+    "budgetAmount": 4000,
+    "status": "draft",
+    "pace": "balanced",
+    "interests": [
+      "culture"
+    ],
+    "travelWish": "Erst Florenz, dann Rom.",
+    "revision": 3,
+    "lastMutationId": null,
+    "stages": [
+      {
+        "id": "stage-1",
+        "position": 1,
+        "name": "Florenz",
+        "countryCode": "IT",
+        "arrivalDate": "2026-09-12",
+        "departureDate": "2026-09-14",
+        "latitude": null,
+        "longitude": null,
+        "placeId": null
+      },
+      {
+        "id": "stage-2",
+        "position": 2,
+        "name": "Rom",
+        "countryCode": "IT",
+        "arrivalDate": "2026-09-15",
+        "departureDate": "2026-09-16",
+        "latitude": null,
+        "longitude": null,
+        "placeId": null
+      }
+    ],
+    "days": [
+      {
+        "id": "day-1",
+        "stageId": "stage-1",
+        "dayIndex": 1,
+        "dayDate": "2026-09-12",
+        "title": "Anreise",
+        "items": [
+          {
+            "id": "item-1",
+            "dayId": "day-1",
+            "stageId": "stage-1",
+            "kind": "activity",
+            "title": "Dom",
+            "note": null,
+            "position": 1,
+            "startsOn": "2026-09-12",
+            "startsAt": "09:00",
+            "endsOn": null,
+            "endsAt": null,
+            "priceAmount": 18,
+            "priceCurrency": "EUR",
+            "provider": "getyourguide",
+            "externalRef": "gyg-1",
+            "bookingUrl": "https://example.com/dom",
+            "bookingStatus": "unconfirmed",
+            "bookingSource": null,
+            "bookingConfirmedAt": null,
+            "mobilityMode": null,
+            "originPlaceId": null,
+            "destinationPlaceId": null,
+            "originName": null,
+            "destinationName": null,
+            "connectionRef": null,
+            "mobilityChanges": null,
+            "mobilityEvidence": null,
+            "rentalSupplier": null,
+            "vehicleClass": null,
+            "transmission": null,
+            "rentalEvidence": null,
+            "routeItinerary": null
+          }
+        ]
+      },
+      {
+        "id": "day-2",
+        "stageId": "stage-1",
+        "dayIndex": 2,
+        "dayDate": "2026-09-13",
+        "title": null,
+        "items": [
+          {
+            "id": "item-2",
+            "dayId": "day-2",
+            "stageId": "stage-1",
+            "kind": "activity",
+            "title": "Uffizien",
+            "note": null,
+            "position": 1,
+            "startsOn": "2026-09-12",
+            "startsAt": "09:00",
+            "endsOn": null,
+            "endsAt": null,
+            "priceAmount": null,
+            "priceCurrency": null,
+            "provider": null,
+            "externalRef": null,
+            "bookingUrl": null,
+            "bookingStatus": "unconfirmed",
+            "bookingSource": null,
+            "bookingConfirmedAt": null,
+            "mobilityMode": null,
+            "originPlaceId": null,
+            "destinationPlaceId": null,
+            "originName": null,
+            "destinationName": null,
+            "connectionRef": null,
+            "mobilityChanges": null,
+            "mobilityEvidence": null,
+            "rentalSupplier": null,
+            "vehicleClass": null,
+            "transmission": null,
+            "rentalEvidence": null,
+            "routeItinerary": null
+          }
+        ]
+      },
+      {
+        "id": "day-3",
+        "stageId": "stage-1",
+        "dayIndex": 3,
+        "dayDate": "2026-09-14",
+        "title": null,
+        "items": []
+      },
+      {
+        "id": "day-4",
+        "stageId": "stage-2",
+        "dayIndex": 4,
+        "dayDate": "2026-09-15",
+        "title": null,
+        "items": [
+          {
+            "id": "item-3",
+            "dayId": "day-4",
+            "stageId": "stage-2",
+            "kind": "activity",
+            "title": "Kolosseum",
+            "note": null,
+            "position": 1,
+            "startsOn": "2026-09-12",
+            "startsAt": "09:00",
+            "endsOn": null,
+            "endsAt": null,
+            "priceAmount": null,
+            "priceCurrency": null,
+            "provider": null,
+            "externalRef": null,
+            "bookingUrl": null,
+            "bookingStatus": "unconfirmed",
+            "bookingSource": null,
+            "bookingConfirmedAt": null,
+            "mobilityMode": null,
+            "originPlaceId": null,
+            "destinationPlaceId": null,
+            "originName": null,
+            "destinationName": null,
+            "connectionRef": null,
+            "mobilityChanges": null,
+            "mobilityEvidence": null,
+            "rentalSupplier": null,
+            "vehicleClass": null,
+            "transmission": null,
+            "rentalEvidence": null,
+            "routeItinerary": null
+          }
+        ]
+      },
+      {
+        "id": "day-5",
+        "stageId": "stage-2",
+        "dayIndex": 5,
+        "dayDate": "2026-09-16",
+        "title": null,
+        "items": []
+      }
+    ],
+    "ohneTag": [],
+    "readinessItems": [
+      {
+        "id": "rdy-72e38cf5-020c-4312-b72b-1721f0ddaff1",
+        "clientRef": "preparation-r4-existing",
+        "kind": "preparation",
+        "userStatus": "open",
+        "evidence": "user",
+        "countryCode": null,
+        "tripItemId": null,
+        "title": "Existing personal item",
+        "contextFingerprint": "v4|sha256:420c3b63af001cb1f9375a9a925b8aa99ef23fd3a4920b736e6905ea9d11a8b2",
+        "travellerClientRef": null,
+        "createdAt": "2026-10-25T13:22:37.046Z",
+        "updatedAt": "2026-10-25T13:22:37.046Z"
+      },
+      {
+        "id": "rdy-ab71d6f3-c7fc-40bb-86b8-08604886d2cb",
+        "clientRef": "entry-r4-sibling",
+        "kind": "entry_check",
+        "userStatus": "open",
+        "evidence": "user",
+        "countryCode": "IT",
+        "tripItemId": null,
+        "title": null,
+        "contextFingerprint": "v4|sha256:224499d4c9ca1a7389ed15883419f5fc49053fac8c9a992766823629ba94dec0",
+        "travellerClientRef": null,
+        "createdAt": "2026-10-25T13:22:37.047Z",
+        "updatedAt": "2026-10-25T13:22:37.047Z"
+      }
+    ],
+    "party": [],
+    "createdAt": "2026-08-20T08:00:00.000Z",
+    "updatedAt": "2026-10-25T13:22:37.047Z",
+    "dayStageAssignmentMode": "explicit"
+  },
+  "commits": 3,
+  "actions": [
+    {
+      "id": 1,
+      "kind": "set",
+      "tripId": "independent-r4-trip_switch",
+      "payload": {
+        "clientRef": "preparation-3541d69d-a217-4442-9a26-ab53d5b7e432",
+        "kind": "preparation",
+        "userStatus": "open",
+        "countryCode": null,
+        "tripItemId": null,
+        "title": "Old trip write already issued"
+      },
+      "completedSynchronously": true,
+      "error": null
+    }
+  ],
+  "reads": [],
+  "storageEvents": [
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "valueBytes": 3277
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "valueBytes": 3695
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "valueBytes": 4087
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-seed",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "callback-set",
+      "valueBytes": 4538
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "callback-set",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "valueBytes": 3272
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "valueBytes": 3690
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "injectedUnreadable": false
+    },
+    {
+      "kind": "set",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "valueBytes": 4082
+    },
+    {
+      "kind": "get",
+      "key": "jetnity:reise:v3",
+      "phase": "fixture-trip-switch",
+      "injectedUnreadable": false
+    }
+  ],
+  "settlements": [
+    {
+      "callId": 1,
+      "tripId": "independent-r4-trip_switch",
+      "kind": "accepted",
+      "sideEffectWasAlreadyAttempted": true
+    }
+  ],
+  "forms": [
+    {
+      "isTrusted": true,
+      "defaultPreventedAfterDispatch": false,
+      "kind": "real-personal-form-submit"
+    }
+  ],
+  "clicks": [
+    {
+      "text": "Punkt hinzufügen",
+      "isTrusted": true,
+      "disabled": false,
+      "ariaDisabled": null
+    }
+  ],
+  "pendingResponses": [],
+  "rawBytes": "{\"id\":\"independent-r4-trip-b\",\"clientRef\":\"trip-1\",\"title\":\"Italien\",\"origin\":\"Zürich\",\"originPlaceId\":null,\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-16\",\"travellers\":2,\"currency\":\"CHF\",\"budgetAmount\":4000,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[\"culture\"],\"travelWish\":\"Erst Florenz, dann Rom.\",\"revision\":3,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-1\",\"position\":1,\"name\":\"Florenz\",\"countryCode\":\"IT\",\"arrivalDate\":\"2026-09-12\",\"departureDate\":\"2026-09-14\",\"latitude\":null,\"longitude\":null,\"placeId\":null},{\"id\":\"stage-2\",\"position\":2,\"name\":\"Rom\",\"countryCode\":\"IT\",\"arrivalDate\":\"2026-09-15\",\"departureDate\":\"2026-09-16\",\"latitude\":null,\"longitude\":null,\"placeId\":null}],\"days\":[{\"id\":\"day-1\",\"stageId\":\"stage-1\",\"dayIndex\":1,\"dayDate\":\"2026-09-12\",\"title\":\"Anreise\",\"items\":[{\"id\":\"item-1\",\"dayId\":\"day-1\",\"stageId\":\"stage-1\",\"kind\":\"activity\",\"title\":\"Dom\",\"note\":null,\"position\":1,\"startsOn\":\"2026-09-12\",\"startsAt\":\"09:00\",\"endsOn\":null,\"endsAt\":null,\"priceAmount\":18,\"priceCurrency\":\"EUR\",\"provider\":\"getyourguide\",\"externalRef\":\"gyg-1\",\"bookingUrl\":\"https://example.com/dom\",\"bookingStatus\":\"unconfirmed\",\"bookingSource\":null,\"bookingConfirmedAt\":null,\"mobilityMode\":null,\"originPlaceId\":null,\"destinationPlaceId\":null,\"originName\":null,\"destinationName\":null,\"connectionRef\":null,\"mobilityChanges\":null,\"mobilityEvidence\":null,\"rentalSupplier\":null,\"vehicleClass\":null,\"transmission\":null,\"rentalEvidence\":null,\"routeItinerary\":null}]},{\"id\":\"day-2\",\"stageId\":\"stage-1\",\"dayIndex\":2,\"dayDate\":\"2026-09-13\",\"title\":null,\"items\":[{\"id\":\"item-2\",\"dayId\":\"day-2\",\"stageId\":\"stage-1\",\"kind\":\"activity\",\"title\":\"Uffizien\",\"note\":null,\"position\":1,\"startsOn\":\"2026-09-12\",\"startsAt\":\"09:00\",\"endsOn\":null,\"endsAt\":null,\"priceAmount\":null,\"priceCurrency\":null,\"provider\":null,\"externalRef\":null,\"bookingUrl\":null,\"bookingStatus\":\"unconfirmed\",\"bookingSource\":null,\"bookingConfirmedAt\":null,\"mobilityMode\":null,\"originPlaceId\":null,\"destinationPlaceId\":null,\"originName\":null,\"destinationName\":null,\"connectionRef\":null,\"mobilityChanges\":null,\"mobilityEvidence\":null,\"rentalSupplier\":null,\"vehicleClass\":null,\"transmission\":null,\"rentalEvidence\":null,\"routeItinerary\":null}]},{\"id\":\"day-3\",\"stageId\":\"stage-1\",\"dayIndex\":3,\"dayDate\":\"2026-09-14\",\"title\":null,\"items\":[]},{\"id\":\"day-4\",\"stageId\":\"stage-2\",\"dayIndex\":4,\"dayDate\":\"2026-09-15\",\"title\":null,\"items\":[{\"id\":\"item-3\",\"dayId\":\"day-4\",\"stageId\":\"stage-2\",\"kind\":\"activity\",\"title\":\"Kolosseum\",\"note\":null,\"position\":1,\"startsOn\":\"2026-09-12\",\"startsAt\":\"09:00\",\"endsOn\":null,\"endsAt\":null,\"priceAmount\":null,\"priceCurrency\":null,\"provider\":null,\"externalRef\":null,\"bookingUrl\":null,\"bookingStatus\":\"unconfirmed\",\"bookingSource\":null,\"bookingConfirmedAt\":null,\"mobilityMode\":null,\"originPlaceId\":null,\"destinationPlaceId\":null,\"originName\":null,\"destinationName\":null,\"connectionRef\":null,\"mobilityChanges\":null,\"mobilityEvidence\":null,\"rentalSupplier\":null,\"vehicleClass\":null,\"transmission\":null,\"rentalEvidence\":null,\"routeItinerary\":null}]},{\"id\":\"day-5\",\"stageId\":\"stage-2\",\"dayIndex\":5,\"dayDate\":\"2026-09-16\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"readinessItems\":[{\"id\":\"rdy-72e38cf5-020c-4312-b72b-1721f0ddaff1\",\"clientRef\":\"preparation-r4-existing\",\"kind\":\"preparation\",\"userStatus\":\"open\",\"evidence\":\"user\",\"countryCode\":null,\"tripItemId\":null,\"title\":\"Existing personal item\",\"contextFingerprint\":\"v4|sha256:420c3b63af001cb1f9375a9a925b8aa99ef23fd3a4920b736e6905ea9d11a8b2\",\"travellerClientRef\":null,\"createdAt\":\"2026-10-25T13:22:37.046Z\",\"updatedAt\":\"2026-10-25T13:22:37.046Z\"},{\"id\":\"rdy-ab71d6f3-c7fc-40bb-86b8-08604886d2cb\",\"clientRef\":\"entry-r4-sibling\",\"kind\":\"entry_check\",\"userStatus\":\"open\",\"evidence\":\"user\",\"countryCode\":\"IT\",\"tripItemId\":null,\"title\":null,\"contextFingerprint\":\"v4|sha256:224499d4c9ca1a7389ed15883419f5fc49053fac8c9a992766823629ba94dec0\",\"travellerClientRef\":null,\"createdAt\":\"2026-10-25T13:22:37.047Z\",\"updatedAt\":\"2026-10-25T13:22:37.047Z\"}],\"party\":[],\"createdAt\":\"2026-08-20T08:00:00.000Z\",\"updatedAt\":\"2026-10-25T13:22:37.047Z\",\"dayStageAssignmentMode\":\"explicit\"}",
+  "unreadable": false,
+  "stableSeedItems": [
+    {
+      "id": "rdy-72e38cf5-020c-4312-b72b-1721f0ddaff1",
+      "clientRef": "preparation-r4-existing",
+      "kind": "preparation",
+      "userStatus": "open",
+      "evidence": "user",
+      "countryCode": null,
+      "tripItemId": null,
+      "title": "Existing personal item",
+      "contextFingerprint": "v4|sha256:420c3b63af001cb1f9375a9a925b8aa99ef23fd3a4920b736e6905ea9d11a8b2",
+      "travellerClientRef": null,
+      "createdAt": "2026-10-25T13:22:37.046Z",
+      "updatedAt": "2026-10-25T13:22:37.046Z"
+    },
+    {
+      "id": "rdy-ab71d6f3-c7fc-40bb-86b8-08604886d2cb",
+      "clientRef": "entry-r4-sibling",
+      "kind": "entry_check",
+      "userStatus": "open",
+      "evidence": "user",
+      "countryCode": "IT",
+      "tripItemId": null,
+      "title": null,
+      "contextFingerprint": "v4|sha256:224499d4c9ca1a7389ed15883419f5fc49053fac8c9a992766823629ba94dec0",
+      "travellerClientRef": null,
+      "createdAt": "2026-10-25T13:22:37.047Z",
+      "updatedAt": "2026-10-25T13:22:37.047Z"
+    }
+  ],
+  "routerCalls": []
+}

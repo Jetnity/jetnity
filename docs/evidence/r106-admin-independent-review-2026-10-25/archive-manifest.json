@@ -1,0 +1,610 @@
+{
+  "schema_version": 1,
+  "status": "STAGED_FOR_FINITE_CLOSURE_NOT_YET_COMMITTED",
+  "generated_at_utc": "2026-10-25T11:05:56.019858+00:00",
+  "repo": "Jetnity/jetnity",
+  "pr": 1007,
+  "proposed_repository_directory": "docs/evidence/r106-admin-independent-review-2026-10-25",
+  "archive_control_files": {
+    "manifest": "archive-manifest.json",
+    "readme": "README.md",
+    "note": "These two proposed files are not self-hashed; core_file hashes cover original evidence, not repackaged content."
+  },
+  "source_checkout_read_only": "/tmp/jetnity-r106-o-final-review",
+  "base_head": "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+  "accepted_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+  "accepted_tree": "9e12de5ec3532c46ad53893ea7b8bd1559aeddf9",
+  "root_reported_completion_context": {
+    "technical_lead_pass_comment_id": 6396807560,
+    "merged_main": "41844878a8437256572da3de1374fbb36fd7a516",
+    "tree": "9e12de5ec3532c46ad53893ea7b8bd1559aeddf9",
+    "native_push_run_id": 40187176784,
+    "push_run_status_at_parent_message": "in_progress",
+    "source": "Parent Technical Lead message; not independently re-polled by this archive helper. Merge commit is not present in this local object store."
+  },
+  "copy_policy": {
+    "preserve_original_bytes": true,
+    "preserve_original_absolute_paths_inside_evidence": true,
+    "mapping_authority": "core_files[].archive_relative_path maps each historical scratch source to its proposed durable location. Embedded absolute paths are historical observations, not portable links.",
+    "existing_source_files_unmodified": true,
+    "repository_writes_performed": false,
+    "browser_execution_performed_for_archive": false,
+    "ci_polling_performed": false
+  },
+  "core_files": [
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-counterexamples.ts",
+      "archive_relative_path": "probes/admin-counterexamples.ts.txt",
+      "bytes": 2171,
+      "sha256": "0b9286cbb0d895771046c88ed7c331a222a739fe9448762722612bbde5c5bc0d",
+      "role": "Original pure-model defect-reproduction source; hard-coded historical checkout and output paths; exit 0 demonstrates defects."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-counterexamples.mjs",
+      "archive_relative_path": "probes/admin-mounted-counterexamples.mjs.txt",
+      "bytes": 16498,
+      "sha256": "b86a79ce8931a443726a5cb15199ca428b7dad35836957089271f6c9b085d501",
+      "role": "Original six mounted defect reproductions on the two real boards; fixed historical checkout/output paths."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-acceptance.mjs",
+      "archive_relative_path": "probes/admin-mounted-acceptance.mjs.txt",
+      "bytes": 21595,
+      "sha256": "1b571fb70a81c98d28359ca19ccfa203a009b8f9e8f77b8de4b7e5b1dc63f536",
+      "role": "Eight positive lifecycle acceptance cases, explicit --repo/--head, before/after source hashes and request audit."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-get401-acceptance.mjs",
+      "archive_relative_path": "probes/admin-mounted-get401-acceptance.mjs.txt",
+      "bytes": 20660,
+      "sha256": "c5c324d300a7a6f893b726aac156bce0ba985bc6b106e0f87aa873d5c2064d76",
+      "role": "Thirty-two independent malformed GET/current-401 cases with observed pending, completed outcome and successful recovery."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-adapter.mjs",
+      "archive_relative_path": "probes/admin-author-matrix-adapter.mjs.txt",
+      "bytes": 14677,
+      "sha256": "e94ba9f0337bbe19606f1caafe1a79633d5ae0f5c89d5b9a87ab25c53198305d",
+      "role": "Preserved v1 external adapter source; historical unsuccessful browser startup; exactly two source transformations."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-adapter-v2.mjs",
+      "archive_relative_path": "probes/admin-author-matrix-adapter-v2.mjs.txt",
+      "bytes": 15785,
+      "sha256": "577295b9f451b9a7a09c96b39fed47d6e63cc6f87ee20c45c74ae75f313ac9b7",
+      "role": "Successful v2 external adapter source; exactly three authorized setup/output transformations; normal Playwright headless selection."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-counterexamples.json",
+      "archive_relative_path": "results/admin-counterexamples.json",
+      "bytes": 858,
+      "sha256": "68524aa89eea2d1ba8a4ffc1d2aae3f3352b689c8f6a2c7fbd8f252e14250cd8",
+      "role": "Historical pure-model counterexamples; original model digest is recorded; not product acceptance.",
+      "proof_head": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-counterexamples.json",
+      "archive_relative_path": "results/admin-mounted-counterexamples.json",
+      "bytes": 23925,
+      "sha256": "e7ef070c78523b70ee313c89549a650c3fc5b94715e42e7c5f211b21f980d5b0",
+      "role": "Six mounted counterexamples reproducing three defects; not product acceptance.",
+      "proof_head": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-acceptance-c12444d735c5-2026-10-25T10-32-02-556Z.json",
+      "archive_relative_path": "results/admin-mounted-acceptance-c12444d735c5-2026-10-25T10-32-02-556Z.json",
+      "bytes": 59403,
+      "sha256": "12de03e0968384ec69920851f78d2184037e68a2ed51922064a25d65f6c83641",
+      "role": "Historical R1 eight-case success; superseded as final-head evidence by the direct final run.",
+      "proof_head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-r1-independent-review-c12444d735c5.json",
+      "archive_relative_path": "results/admin-r1-independent-review-c12444d735c5.json",
+      "bytes": 11670,
+      "sha256": "c7bb67e1bf179185fd3ca76f95057373352e7353695530416bb2cecb1f682c86",
+      "role": "Historical independent R1 source/gap review explaining R2; native CI/Preview fields are historical and cannot gate final or merged main.",
+      "proof_head": "c12444d735c5d8e8c1c800c5b712ecf48105bdec"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-acceptance-2e67d1b99490-2026-10-25T10-44-14-221Z.json",
+      "archive_relative_path": "results/admin-mounted-acceptance-2e67d1b99490-2026-10-25T10-44-14-221Z.json",
+      "bytes": 59409,
+      "sha256": "f722abf653b5dab0e73d2a2c84dc9daaaf5439627faed246ffb53ca7cf151819",
+      "role": "Direct final-head 8/8 acceptance; source-bound, zero audited external requests/page errors.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-mounted-get401-acceptance-2e67d1b99490-2026-10-25T10-44-11-876Z.json",
+      "archive_relative_path": "results/admin-mounted-get401-acceptance-2e67d1b99490-2026-10-25T10-44-11-876Z.json",
+      "bytes": 222197,
+      "sha256": "3076cb896284aa1339095a9ddae1672da965b772959aed1a6fe2f1eaa3b52581",
+      "role": "Direct final-head 32/32 acceptance and 64 explicit fixture GETs; source-bound, zero audited external requests/page errors.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapter-result.json",
+      "archive_relative_path": "adapter-v1-failure/adapter-result.json",
+      "bytes": 11844,
+      "sha256": "3be1aa23c19f1e4845ed01b45ef9245c7b84ab22a1697cac23d409d65c322d2f",
+      "role": "Original raw adapter-v1-failure adapter-result.json; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/exact-adapter.diff",
+      "archive_relative_path": "adapter-v1-failure/exact-adapter.diff",
+      "bytes": 824,
+      "sha256": "26b473b8ec7d420c23d07f1368e845b11746186602d112b3562654331ba348ec",
+      "role": "Original raw adapter-v1-failure exact-adapter.diff; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/author-stderr.log",
+      "archive_relative_path": "adapter-v1-failure/author-stderr.log",
+      "bytes": 4806,
+      "sha256": "da213deac133c0de9c3ce35a844d117dc748ef09720b4273beb3ff60312bb794",
+      "role": "Original raw adapter-v1-failure author-stderr.log; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapter-result.json",
+      "archive_relative_path": "adapter-v2-success/adapter-result.json",
+      "bytes": 16304,
+      "sha256": "f0a4b441636d0f704ae0d650874c0cca188b8f3aec3802528a597a0079493104",
+      "role": "Original raw adapter-v2-success adapter-result.json; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/exact-adapter.diff",
+      "archive_relative_path": "adapter-v2-success/exact-adapter.diff",
+      "bytes": 1434,
+      "sha256": "df474eaf7863ebb336947672311aff1e00cf629c17dd2c095bad695f96d0664f",
+      "role": "Original raw adapter-v2-success exact-adapter.diff; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-stdout.log",
+      "archive_relative_path": "adapter-v2-success/author-stdout.log",
+      "bytes": 3407,
+      "sha256": "b40ef2437d055ea05c3115ff33452aa4056c0a5684f26c547385054bdf3729b5",
+      "role": "Original raw adapter-v2-success author-stdout.log; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-stderr.log",
+      "archive_relative_path": "adapter-v2-success/author-stderr.log",
+      "bytes": 192,
+      "sha256": "c2de0e537eb69082e5fb2bda5f3173303a71ab9b0eb1013820a4a090a6af033a",
+      "role": "Original raw adapter-v2-success author-stderr.log; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/result.json",
+      "archive_relative_path": "adapter-v2-success/author-evidence/result.json",
+      "bytes": 10195,
+      "sha256": "21c662714d35025e60737b62bde9187532e11281d26ac1032053881d828ddeeb",
+      "role": "Original raw adapter-v2-success author-evidence/result.json; preserve byte-for-byte, including historical absolute paths.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb"
+    }
+  ],
+  "optional_visual_files": [
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-1280.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-1280.png",
+      "bytes": 1363836,
+      "sha256": "9be573ce60ba8828f219bb1f748f5c97178767f6367ebbd11fb758d61bf6816d",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-1280.png",
+        "sha256": "f5d93f709776f4b05868914dfcc7c9ba7265d6225c186c4b88aa3cc2323da2aa",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-320-root-32.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-320-root-32.png",
+      "bytes": 2048018,
+      "sha256": "4b91fa67139f23286a8db0f1d5193a1a53a510ac8a36c3da2079749d4f720256",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-320-root-32.png",
+        "sha256": "d73f5c496aea4eac15ee7e91a78fb3488822bf3c25f944a9190ac078a1cf4112",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-320.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-320.png",
+      "bytes": 828138,
+      "sha256": "e4ea5eb289787a8da3ff69265cefe33085c6d1b65866cd075c0a969399067716",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-320.png",
+        "sha256": "aa91e062e96a36c65cad9485e5a741da4a8ce030e50225e2a07db83e5ffeffe9",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-360.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-360.png",
+      "bytes": 756355,
+      "sha256": "64d1aa54ad40d16c4e1d01644af1c905acf205251a69c0eb1bd0eb8ebe8b62a7",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-360.png",
+        "sha256": "64af1269c6a763c77dabd73ab474146525ac4de8f62d52b21bfade571a4e56db",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-390.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-390.png",
+      "bytes": 786745,
+      "sha256": "dc1ddd1b8a754128cc493d0507e816d40920ca4fb8a677d0173546b59add509a",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-390.png",
+        "sha256": "90068430e4401584ea789e401f2eefe441ea0e63d850a16221be2abef4125235",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/health-768.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/health-768.png",
+      "bytes": 1267100,
+      "sha256": "b953da9e113f6be2739ffcb77faec877a34b611af653002d1e0fdd7801afb359",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/health-768.png",
+        "sha256": "d9d2a506058a045f99ff5379f5da26ae0958dc415e01845c6af6b6d44ad4c980",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-1280.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-1280.png",
+      "bytes": 357122,
+      "sha256": "955828266787193a249d13b62fd75110242fd74e57db2016de091b222e39fe63",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-1280.png",
+        "sha256": "ddffd1aaa54db535d5f0db7a5e1b2a116fe2f9389fa359e1c5d375bfb2067681",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-320-root-32.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-320-root-32.png",
+      "bytes": 457784,
+      "sha256": "ce62e0aa0ad68d01badd2fd5a6ca59bb100691ce97015221c0e9cd8d15a3e50f",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-320-root-32.png",
+        "sha256": "960bdf891692c4b21a11ad6a26cd770419a02fcb53ad8018d0202b5ff61f7b33",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-320.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-320.png",
+      "bytes": 303022,
+      "sha256": "559411af0c6032aa279c61dced77decc5b215ae1ccd06384c6b66841d3d49ff1",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-320.png",
+        "sha256": "f3c60ae6531ef01b52614bc73f7e38038fcf0c6bbe5e2cf8d46b231c34a0e12e",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-360.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-360.png",
+      "bytes": 307489,
+      "sha256": "4b65fa0c1cd2ef672d2b3eeb9d94e0d36e5193a54d78cafa54e74aac8992efe5",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-360.png",
+        "sha256": "9387f1829e168b8fb2c0e8e0bd08791f075b1da3a3feaf0985bf3f5897ad4bfd",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-390.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-390.png",
+      "bytes": 311458,
+      "sha256": "fff7c5e7e216a230f4e281887a04022f312de703d850e86ef26e14837f015ddc",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-390.png",
+        "sha256": "5f558818da961f5624879d75735cf257add32d490043645187f64a5af25ad37b",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/author-evidence/ops-768.png",
+      "archive_relative_path": "adapter-v2-success/author-evidence/ops-768.png",
+      "bytes": 336254,
+      "sha256": "ef0ec7aafa2c888471b5921d8cd9f59f34060b1c1ed671bbe6c1387250e32567",
+      "role": "Optional unique screenshot from the independent 94-case run; excluded from minimal text core, not replaced by the author image.",
+      "proof_head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "existing_author_viewport_equivalent": {
+        "repo_path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/ops-768.png",
+        "sha256": "2e78dff5539d76c41e0a4bb6b9ab2c6d96aa0b541b27d57710f4c710af71800d",
+        "same_bytes": false,
+        "meaning": "Same named fixture/viewport in author Chrome 148 run; independent Chrome 140 pixels differ."
+      }
+    }
+  ],
+  "totals": {
+    "core_files": 20,
+    "core_bytes": 517854,
+    "optional_visual_files": 12,
+    "optional_visual_bytes": 9123321,
+    "all_selected_with_visuals_bytes": 9641175
+  },
+  "final_source_binding": {
+    "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+    "tree": "9e12de5ec3532c46ad53893ea7b8bd1559aeddf9",
+    "workingTreeStatus": "",
+    "sources": {
+      "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs": {
+        "gitBlob": "5fe62de0f6d7951fe666f88ce5a9f82e0026e457",
+        "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+        "bytes": 64890
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": {
+        "gitBlob": "ff95103ba2d9ac1b9e9daef8ce680e26a49af213",
+        "sha256": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12",
+        "bytes": 1300
+      },
+      "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": {
+        "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37",
+        "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249",
+        "bytes": 10
+      },
+      "components/admin/system-health/SystemHealthBoard.tsx": {
+        "gitBlob": "57befa119e6147581058b8ff3ae99e262b9ba6ee",
+        "sha256": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f",
+        "bytes": 7997
+      },
+      "components/admin/provider-ops/ProviderOpsBoard.tsx": {
+        "gitBlob": "e36a69dcad3c9d6eb372c91a3bfdef0e82c7675a",
+        "sha256": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3",
+        "bytes": 9854
+      },
+      "components/admin/operations/useOperationsReport.ts": {
+        "gitBlob": "067b5f21de4a8a942f015834a3c56d53b14d86a2",
+        "sha256": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd",
+        "bytes": 9034
+      },
+      "lib/admin/operations-read-lifecycle.ts": {
+        "gitBlob": "2a0b35b647cd22e74b5d3bbfc8d79c19efaddf6d",
+        "sha256": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751",
+        "bytes": 13013
+      },
+      "lib/admin/operations-report-validation.ts": {
+        "gitBlob": "7002ed56bcad211bb9bb54a63a4fbb42883c03e6",
+        "sha256": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e",
+        "bytes": 5979
+      },
+      "lib/admin/ladezustand.ts": {
+        "gitBlob": "e76ec82deb4fd7e8d9d8e3edef0fe84a4e4e148c",
+        "sha256": "c6a3ace5560913be6b89bfb2d731c54c7dfde743d1cb899ef9075a62f12a83c3",
+        "bytes": 5741
+      },
+      "lib/admin/system-health/bewertung.ts": {
+        "gitBlob": "366bb920c4a6fa789c79b82112c23ab2c6668d68",
+        "sha256": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91",
+        "bytes": 9287
+      },
+      "lib/admin/system-health/freshness.ts": {
+        "gitBlob": "546da8bd90410b8244871e04e78ed63fecd0cad4",
+        "sha256": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51",
+        "bytes": 619
+      },
+      "lib/admin/provider-ops-board/bewertung.ts": {
+        "gitBlob": "19e338c0e62e5c0ca3a21fe82fc2591f30c289b2",
+        "sha256": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34",
+        "bytes": 8413
+      },
+      "lib/admin/provider-ops-board/freshness.ts": {
+        "gitBlob": "efcd869e8a6620133272e36be074b7337f4d9071",
+        "sha256": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e",
+        "bytes": 617
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+        "bytes": 11591
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+        "bytes": 5217
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+        "bytes": 4674
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+        "bytes": 318748
+      }
+    }
+  },
+  "binding_checks_performed": {
+    "final_checkout_head_and_clean_status": true,
+    "v2_before_after_binding_equal": true,
+    "all_probe_result_script_hashes_match_archived_scripts": true,
+    "initial_pure_model_sha256_matches_initial_git_commit": true,
+    "v1_v2_adapter_hashes_match_canonical_scripts": true,
+    "v1_v2_preparation_is_exact_result_subset": true,
+    "root_and_author_94_case_name_sequences_match": true,
+    "root_and_author_five_runtime_digests_match": true
+  },
+  "original_counterexample_binding": {
+    "head": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da",
+    "model_path": "lib/admin/operations-read-lifecycle.ts",
+    "model_sha256": "f7f5450501e4102d912c638db4e7296028c3d6d48cca6ad0926e750c09ae040b",
+    "limitation": "Original pure script hardcodes head in output and only hashes its model; mounted script additionally asserts exact HEAD and clean checkout. Neither is a positive acceptance run."
+  },
+  "existing_repository_evidence": [
+    {
+      "path": "scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs",
+      "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+      "git_blob": "5fe62de0f6d7951fe666f88ce5a9f82e0026e457",
+      "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+      "reason_not_copied": "Already durable repository source; exact adapters archived separately."
+    },
+    {
+      "path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924786492/result.json",
+      "proof_head": "3fb6893b2c0b4927f6e98d71e031b739a46c29c1",
+      "sha256": "3af7330608b5d1fa7f29880adb444207e49010e57806070f538f4c00481d14c4",
+      "result": "94/94, exit 0, author Chrome 148.0.7778.96",
+      "relationship": "Same 94 case names and five runtime hashes as independent final-head run, but distinct executor, browser, proof head and result bytes; retain independent result."
+    },
+    {
+      "path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792924636541/result.json",
+      "proof_head": "f7637c3129303e3ca41951f74f8a56f20b918b56",
+      "reason_not_copied": "Already durable author explanation of the prior documentElement/MutationObserver initialization abort; distinct from root adapter v1 browser startup failure."
+    },
+    {
+      "path": "docs/evidence/admin-operations-evidence-lifecycle-completion-1/run-1792923659785/result.json",
+      "proof_head": "1c1bd44f5c15716c70b413a574ee9f6ba9ae7587",
+      "reason_not_copied": "Already durable author R1 68-case evidence; independent R1 eight-case result is retained because it is a separate execution."
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_OPERATIONS_EVIDENCE_LIFECYCLE_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "git_blob": "e75d3010d861e4047a18f282e5fa03bd74f181dc",
+      "reason_not_copied": "Immutable task already committed."
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_OPERATIONS_EVIDENCE_LIFECYCLE_COMPLETION_1_PLAN_2026-10-25.md",
+      "git_blob": "79bc02e8b00d406e24fa21048860bc122c993e8d",
+      "reason_not_copied": "Immutable plan already committed."
+    }
+  ],
+  "excluded_duplicate_or_generated_files": [
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/committed-author-runner.mjs",
+      "bytes": 64890,
+      "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+      "reason": "Exact committed repository runner; recover by Git blob/head, already stored in Git."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapter-source.mjs",
+      "bytes": 14677,
+      "sha256": "e94ba9f0337bbe19606f1caafe1a79633d5ae0f5c89d5b9a87ab25c53198305d",
+      "reason": "Byte-identical duplicate of canonical archived adapter script."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapted-author-runner.mjs",
+      "bytes": 64840,
+      "sha256": "7e0412367bb5c80d2edcf19151b9d90851ae873ff70bc20696429b6c1b68417f",
+      "reason": "Regenerate from committed runner plus archived exact-adapter.diff; original output-path literal is preserved in the diff and manifest."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapter-preparation.json",
+      "bytes": 6863,
+      "sha256": "3d2c74330545d30d53848d97b76d12980d840cf7afb67ef3241461380f6176c0",
+      "reason": "All its fields and values occur identically in archived adapter-result.json."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/node_modules",
+      "reason": "Generated dependency symlink; use exact package-lock dependencies. Never archive dependency contents."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/temporary",
+      "files": 4,
+      "bytes": 808283,
+      "reason": "Rebuildable bundled harness and temporary browser/process artifacts; not durable source or assertions."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/committed-author-runner.mjs",
+      "bytes": 64890,
+      "sha256": "6e84c227d56f515ce94fbef108f98801abb61bb3f3b3f0290c101ab800e809f7",
+      "reason": "Exact committed repository runner; recover by Git blob/head, already stored in Git."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapter-source.mjs",
+      "bytes": 15785,
+      "sha256": "577295b9f451b9a7a09c96b39fed47d6e63cc6f87ee20c45c74ae75f313ac9b7",
+      "reason": "Byte-identical duplicate of canonical archived adapter script."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapted-author-runner.mjs",
+      "bytes": 64839,
+      "sha256": "e85676df42dd70458d48633f05a42233d2e2692489d38fa1cd25ac205a1b9241",
+      "reason": "Regenerate from committed runner plus archived exact-adapter.diff; original output-path literal is preserved in the diff and manifest."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/adapter-preparation.json",
+      "bytes": 7315,
+      "sha256": "10ebb351f8b600e67698adc1b10ffc9504b1060a635a6456d9ce93d5a88bf65e",
+      "reason": "All its fields and values occur identically in archived adapter-result.json."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/node_modules",
+      "reason": "Generated dependency symlink; use exact package-lock dependencies. Never archive dependency contents."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-MW3wAi/temporary",
+      "files": 1,
+      "bytes": 763011,
+      "reason": "Rebuildable bundled harness and temporary browser/process artifacts; not durable source or assertions."
+    },
+    {
+      "source_path": "/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/author-stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Empty; its SHA256 is already recorded in the failure manifest."
+    }
+  ],
+  "portable_execution": {
+    "node": "22.x; original evidence Node v22.23.4",
+    "dependencies": "Existing clean checkout dependencies matching package-lock.json; Playwright 1.55.0, esbuild 0.25.9, Tailwind 3.4.17, PostCSS 8.5.23, Autoprefixer 10.4.21.",
+    "browser": "Provisioned local Playwright Chromium headless shell; observed Chrome 140.0.7339.16. No extra launch arguments are introduced.",
+    "output_root": "/tmp/r106-review-evidence must exist; newer probes and adapters always create fresh output paths.",
+    "historical_scripts": "Original counterexample scripts hardcode checkout/output paths and may overwrite their fixed output. Replay only in a separate disposable environment; originals stay unchanged.",
+    "default_full_matrix_adapter": "probes/admin-author-matrix-adapter-v2.mjs",
+    "v2_changes": [
+      "Remove original explicit args line.",
+      "Redirect evidence directory outside checkout.",
+      "Allow omitted optional browser executable while rejecting a supplied nonexistent path."
+    ],
+    "v2_environment": "OPERATIONS_EVIDENCE_CHROMIUM omitted; existing HOME inherited unchanged if present. No credentials or personal browser/session inputs.",
+    "evidence_meaning": "Local mounted production components plus synthetic props/clocks/deferred fetch. Not hosted Auth/Next-router/Supabase/RLS/Production/browser-session proof and not a CI/merge gate substitute."
+  },
+  "retention_limits": [
+    "The original manifests still reference historical scratch paths. Use this inventory to resolve archived files.",
+    "The full author adapter preserves the loopback fixture but adds no external-request auditor; zero audited external requests is asserted only by the independent eight- and thirty-two-case probes.",
+    "Final runtime source is bound to accepted head 2e67d1b, not an unperformed rerun of merged main. Root-reported tree equality is recorded separately.",
+    "This archive helper does not update native CI, Vercel, thread resolution, or post-merge Production status.",
+    "All twelve independent screenshots are retained; existing author screenshots are distinct executions and not byte-equivalent substitutes."
+  ],
+  "visual_selection": "All twelve optional_visual_files are included byte-for-byte in this archive."
+}

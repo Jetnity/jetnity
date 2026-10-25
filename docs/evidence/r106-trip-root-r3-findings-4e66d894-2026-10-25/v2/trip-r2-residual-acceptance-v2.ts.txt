@@ -1,0 +1,260 @@
+import assert from 'node:assert/strict'
+import { readFileSync, realpathSync } from 'node:fs'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+
+const EXPECTED_HEAD = '4e66d8948046423656feb6b95b8562e546e82b19'
+
+async function run() {
+  const options = argumentsForRun()
+  const report: any = {
+    purpose: 'Three bounded R2 residual assertions: later canonical absence, B unopened-edit focus and discarded-delete history; not TL PASS',
+    expectedHead: options.head, node: process.version, generatedAt: new Date().toISOString(),
+    observations: [], verdict: 'NOT_VERIFIED',
+  }
+  let browser: any
+  try {
+    assert.equal(options.head, EXPECTED_HEAD, 'This residual probe requires the exact independently inspected R2 delivery')
+    const context = prepareRun(options, [
+      'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+      'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',
+      'lib/reiseaenderung/fixtures/reise.ts', 'scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx',
+    ])
+    assert.ok(options.bundle && options['bundle-info'], 'Use a freshly guarded exact-head Host bundle and metadata')
+    const bundleInfo = JSON.parse(readFileSync(options['bundle-info'], 'utf8'))
+    assert.equal(bundleInfo.head, context.head)
+    assert.equal(realpathSync(bundleInfo.repo), context.repo)
+    assert.equal(realpathSync(bundleInfo.bundle), realpathSync(options.bundle))
+    assert.equal(sha256(options.bundle), bundleInfo.bundleSha256)
+    for (const [path, expected] of Object.entries(bundleInfo.sourceBlobs)) assert.equal(context.verifySource(path), expected)
+    const workflow = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/personal-preparation-workflow.ts')).href))
+    const fixture = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/reiseaenderung/fixtures/reise.ts')).href))
+    const builder = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/bauen.ts')).href))
+    const playwright = await import(pathToFileURL(join(context.repo, 'node_modules/playwright/index.mjs')).href)
+    browser = await playwright.chromium.launch({ headless: true })
+    const bundle = readFileSync(options.bundle, 'utf8')
+    const empty = fixture.beispielreise({ id: 'tl-r2-residual-trip', readinessItems: [] })
+    const builtB = builder.readinessItemBauen(empty, {
+      clientRef: 'preparation-tl-residual-b', kind: 'preparation', userStatus: 'open',
+      countryCode: null, tripItemId: null, title: 'Existing B',
+    })
+    assert.ok(builtB.ok)
+    const basis = { ...empty, readinessItems: [builtB.item] }
+    let externalRequests = 0
+    async function frame(page: any) {
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+    }
+    async function open(seam: 'account' | 'guest') {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+      page.setDefaultTimeout(5000)
+      await page.route('**/*', async (route: any) => { externalRequests += 1; await route.abort() })
+      const start = { seam, reise: basis, ...(seam === 'account' ? { kanonisch: basis } : {}) }
+      await page.setContent(`<!doctype html><html><body><div id="root"></div><script>window.__START__=${JSON.stringify(start)}</script><script>${bundle}</script></body></html>`)
+      await page.waitForFunction(() => (window as any).__PERSONAL__, undefined, { timeout: 5000 })
+      const keys = await page.evaluate(() => Object.keys((window as any).__PERSONAL__))
+      for (const name of ['setzen', 'entfernen', 'lesen', 'schreibenFreigeben', 'schreibenScheitern', 'lesenFreigeben', 'reiseSetzen', 'kanonischSetzen']) assert.ok(keys.includes(name), `Inspected Host API missing ${name}`)
+      return page
+    }
+    async function check(name: string, seam: 'account' | 'guest', fn: (page: any, observation: any) => Promise<void>) {
+      let page: any
+      const observation: any = { name, result: 'NOT_VERIFIED' }
+      report.observations.push(observation)
+      try { page = await open(seam); await fn(page, observation); observation.result = 'PASS' }
+      catch (error) { observation.result = 'FAIL'; observation.error = String(error) }
+      finally { await page?.close() }
+    }
+    async function createA(page: any, title: string) {
+      await page.getByLabel('Eigene Vorbereitung', { exact: true }).fill(title)
+      await page.getByRole('button', { name: 'Punkt hinzufügen', exact: true }).click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+      const payload = await page.evaluate(() => (window as any).__PERSONAL__.setzen[0])
+      const a = builder.readinessItemBauen(basis, payload)
+      assert.ok(a.ok)
+      assert.notEqual(a.item.clientRef, builtB.item.clientRef)
+      return { ref: a.item.clientRef, matching: { ...basis, readinessItems: [...basis.readinessItems, a.item] } }
+    }
+    await check('A previously confirmed create must not claim current visibility after a new canonical absence', 'account', async (page, observation) => {
+      const { ref, matching } = await createA(page, 'Confirmed then absent A')
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate(() => (window as any).__PERSONAL__.lesenFreigeben({ art: 'props' }))
+      await page.evaluate((trip: any) => {
+        (window as any).__PERSONAL__.kanonischSetzen(trip);
+        (window as any).__PERSONAL__.reiseSetzen(trip);
+      }, matching)
+      await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'confirmed', ref)
+      await frame(page)
+      const generationBefore = Number(await page.locator('[data-personal-hook-lieferung]').getAttribute('data-personal-hook-lieferung'))
+      const priorReceipt = await page.locator(`[data-personal-client-ref="${ref}"]`).innerText()
+      assert.ok(priorReceipt.includes(workflow.PERSONAL_BESTAETIGT), 'Establish an actual matching confirmation before later absence')
+      const newDraft = 'New draft must remain'
+      await page.getByLabel('Eigene Vorbereitung', { exact: true }).fill(newDraft)
+      const beforeCounts = await page.evaluate(() => ({ writes: (window as any).__PERSONAL__.setzen.length, deletes: (window as any).__PERSONAL__.entfernen.length, reads: (window as any).__PERSONAL__.lesen }))
+      const absent = { ...basis, readinessItems: [...basis.readinessItems] }
+      assert.equal(absent.readinessItems.some((item: any) => item.clientRef === ref), false)
+      await page.evaluate((trip: any) => {
+        // Both values change: this is a new raw canonical delivery, not display-only lag.
+        (window as any).__PERSONAL__.kanonischSetzen(trip);
+        (window as any).__PERSONAL__.reiseSetzen(trip);
+      }, absent)
+      await page.waitForFunction((previous: number) => Number(document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung')) > previous, generationBefore)
+      await frame(page)
+      const state = await page.evaluate((value: string) => ({
+        generation: Number(document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung')),
+        rows: Array.from(document.querySelectorAll<HTMLElement>(`[data-personal-client-ref="${value}"]`)).map((element) => ({
+          phase: element.getAttribute('data-personal-phase'),
+          hasCurrentRowStatus: element.hasAttribute('data-readiness-status'),
+          visible: element.getClientRects().length > 0,
+          text: element.innerText,
+          statusMessages: Array.from(element.querySelectorAll('[role="status"]')).map((message) => message.textContent?.trim() ?? ''),
+        })),
+        counts: { writes: (window as any).__PERSONAL__.setzen.length, deletes: (window as any).__PERSONAL__.entfernen.length, reads: (window as any).__PERSONAL__.lesen },
+      }), ref)
+      const draftAfter = await page.getByLabel('Eigene Vorbereitung', { exact: true }).inputValue()
+      const falseCurrentCount = state.rows.filter((entry: any) => entry.visible && entry.statusMessages.includes(workflow.PERSONAL_BESTAETIGT)).length
+      observation.detail = {
+        clientRef: ref, priorReceipt, generationBefore, after: state,
+        suppliedCanonicalTripId: absent.id, suppliedCanonicalPersonalRefs: absent.readinessItems.map((item: any) => item.clientRef),
+        bothRawAndDisplayedTripUpdated: true, localDeleteDispatched: false,
+        draftBeforeAbsence: newDraft, draftAfterAbsence: draftAfter, beforeCounts,
+        falseUnqualifiedCurrentVisibleReceiptCount: falseCurrentCount,
+        boundary: 'A fresh matching-trip canonical absence follows an earlier observed confirmation. Honest history is allowed. This is not merely missing displayed data while canonical data still contains A.',
+      }
+      assert.equal(state.counts.writes, beforeCounts.writes, 'Canonical absence must not resend a mutation')
+      assert.equal(state.counts.deletes, 0, 'This case must not rely on a local delete intent')
+      assert.equal(draftAfter, newDraft, 'Later canonical absence must preserve the newer draft')
+      assert.equal(falseCurrentCount, 0, 'The absent ref must not retain an unqualified currently-visible confirmation')
+    })
+    await check('Late A completion must preserve trusted Tab focus on B unopened edit control', 'guest', async (page, observation) => {
+      const { ref, matching } = await createA(page, 'Late pending A')
+      const rowB = page.locator(`[data-personal-client-ref="${builtB.item.clientRef}"]`)
+      const editB = rowB.getByRole('button', { name: 'Titel bearbeiten', exact: true })
+      assert.equal(await rowB.getByLabel('Titel bearbeiten', { exact: true }).count(), 0, 'B must remain unopened')
+      await page.evaluate(() => {
+        const log: any[] = []
+        ;(window as any).__TL_R2_FOCUS_EVENTS__ = log
+        for (const type of ['pointerdown', 'keydown', 'focusin']) {
+          document.addEventListener(type, (event) => {
+            const target = event.target instanceof Element ? event.target : null
+            log.push({
+              type: event.type, trusted: event.isTrusted,
+              key: event instanceof KeyboardEvent ? event.key : null,
+              tag: target?.tagName ?? null,
+              ref: target?.closest('[data-personal-client-ref]')?.getAttribute('data-personal-client-ref') ?? null,
+              text: target?.textContent?.trim() ?? null,
+            })
+          }, { capture: true })
+        }
+      })
+      // Prefer an ordinary pointer on the existing non-control title. No injected controls or React internals.
+      await rowB.locator('p').first().click()
+      const naturalRowFocus = await rowB.evaluate((element: Element) => document.activeElement === element)
+      if (!naturalRowFocus) await rowB.focus()
+      assert.equal(await rowB.evaluate((element: Element) => document.activeElement === element), true)
+      await page.keyboard.press('Tab')
+      assert.equal(await editB.evaluate((element: Element) => document.activeElement === element), true, 'Trusted Tab must actually land on the unopened B edit control')
+      const keyboardEvents = await page.evaluate(() => (window as any).__TL_R2_FOCUS_EVENTS__)
+      assert.ok(keyboardEvents.some((entry: any) => entry.type === 'keydown' && entry.key === 'Tab' && entry.trusted), 'Require trusted keyboard input, not a synthetic KeyboardEvent')
+      assert.ok(keyboardEvents.some((entry: any) => entry.type === 'focusin' && entry.tag === 'BUTTON' && entry.ref === builtB.item.clientRef && entry.text === 'Titel bearbeiten' && entry.trusted))
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.reiseSetzen(trip), matching)
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), matching)
+      await page.waitForFunction((value: string) => ['confirmed', 'reconciled'].includes(document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') ?? ''), ref)
+      await frame(page)
+      const retained = await editB.evaluate((element: Element) => document.activeElement === element)
+      observation.detail = {
+        pendingARef: ref, intendedBRef: builtB.item.clientRef,
+        pointerNaturallyFocusedExistingRow: naturalRowFocus,
+        programmaticRowFocusFallbackUsed: !naturalRowFocus,
+        arrangement: naturalRowFocus
+          ? 'Trusted pointer on existing B title naturally focused its production tabindex=-1 row, then trusted Tab focused its unopened edit button.'
+          : 'Pointer did not focus the row; explicit DOM focus of the existing production tabindex=-1 row arranged the trusted Tab move. This is a bounded onFocus-contract case, not an ordinary complete keyboard journey.',
+        eventsThroughKeyboardFocus: keyboardEvents,
+        retained,
+        activeAfter: await page.evaluate(() => ({
+          tag: document.activeElement?.tagName,
+          ref: document.activeElement?.closest('[data-personal-client-ref]')?.getAttribute('data-personal-client-ref') ?? null,
+          text: document.activeElement?.textContent?.trim(),
+        })),
+        counts: await page.evaluate(() => ({ writes: (window as any).__PERSONAL__.setzen.length, deletes: (window as any).__PERSONAL__.entfernen.length, reads: (window as any).__PERSONAL__.lesen })),
+      }
+      assert.equal(observation.detail.counts.writes, 1)
+      assert.equal(observation.detail.counts.deletes, 0)
+      assert.equal(retained, true, 'Late A completion must not steal trusted keyboard focus from unopened B edit control')
+    })
+    await check('Discarding an unknown-delete reconciliation must not revive a false current-visible create receipt', 'guest', async (page, observation) => {
+      const { ref, matching } = await createA(page, 'Created then uncertainly deleted A')
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.reiseSetzen(trip), matching)
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), matching)
+      await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'confirmed', ref)
+      const row = page.locator(`[data-personal-client-ref="${ref}"]`)
+      await row.getByRole('button', { name: 'Entfernen', exact: true }).click()
+      await row.getByRole('button', { name: 'Endgültig entfernen', exact: true }).click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.entfernen.length === 1)
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenScheitern())
+      await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'unclear', ref)
+      await page.getByRole('button', { name: 'Stand neu lesen', exact: true }).last().click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 2)
+      const absent = { ...basis, readinessItems: [...basis.readinessItems] }
+      await page.evaluate((trip: any) => {
+        (window as any).__PERSONAL__.reiseSetzen(trip);
+        (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip });
+      }, absent)
+      await page.waitForFunction((value: string) => document.querySelector(`[data-personal-client-ref="${value}"]`)?.getAttribute('data-personal-phase') === 'reconciled', ref)
+      const reconciledReceipt = await row.innerText()
+      assert.ok(reconciledReceipt.includes(workflow.PERSONAL_ABGESTIMMT), 'The unknown delete must be conservatively reconciled before discard')
+      assert.equal(await row.getAttribute('data-personal-phase'), 'reconciled')
+      const retainedDraft = 'Draft survives receipt discard'
+      await page.getByLabel('Eigene Vorbereitung', { exact: true }).fill(retainedDraft)
+      const beforeDiscard = await page.evaluate(() => ({
+        writes: (window as any).__PERSONAL__.setzen.length,
+        deletes: (window as any).__PERSONAL__.entfernen.length,
+        reads: (window as any).__PERSONAL__.lesen,
+      }))
+      await row.getByRole('button', { name: 'Versuch lokal verwerfen', exact: true }).click()
+      await frame(page)
+      const after = await page.evaluate((value: string) => ({
+        rows: Array.from(document.querySelectorAll<HTMLElement>(`[data-personal-client-ref="${value}"]`)).map((element) => ({
+          phase: element.getAttribute('data-personal-phase'),
+          visible: element.getClientRects().length > 0,
+          text: element.innerText,
+          statusMessages: Array.from(element.querySelectorAll('[role="status"]')).map((message) => message.textContent?.trim() ?? ''),
+        })),
+        counts: {
+          writes: (window as any).__PERSONAL__.setzen.length,
+          deletes: (window as any).__PERSONAL__.entfernen.length,
+          reads: (window as any).__PERSONAL__.lesen,
+        },
+      }), ref)
+      const draftAfter = await page.getByLabel('Eigene Vorbereitung', { exact: true }).inputValue()
+      const falseCurrentCount = after.rows.filter((entry: any) => entry.visible && entry.statusMessages.includes(workflow.PERSONAL_BESTAETIGT)).length
+      observation.detail = {
+        clientRef: ref, reconciledDeleteReceiptBeforeDiscard: reconciledReceipt,
+        expectedTripRead: { tripId: absent.id, personalRefs: absent.readinessItems.map((item: any) => item.clientRef) },
+        beforeDiscard, after, draftBeforeDiscard: retainedDraft, draftAfterDiscard: draftAfter,
+        falseUnqualifiedCurrentVisibleReceiptCount: falseCurrentCount,
+        boundary: 'Named delete callback rejected. A later successful expected-trip read observed absence and conservatively reconciled that delete. The real visible local-discard control was then activated. No claim that the unknown response proves execution or nonexecution.',
+      }
+      assert.deepEqual(after.counts, beforeDiscard, 'Discarding a local receipt must not write, delete or refresh again')
+      assert.equal(draftAfter, retainedDraft, 'Discarding the receipt must preserve the new draft')
+      assert.equal(falseCurrentCount, 0, 'Discarding a reconciled delete must not revive an older create as currently visible')
+    })
+    assert.equal(externalRequests, 0)
+    report.head = context.head
+    report.browser = browser.version()
+    report.externalRequests = externalRequests
+    report.verifiedSources = context.verifiedSources
+    report.bundleSha256 = bundleInfo.bundleSha256
+    report.scope = 'Actual production list/hook under unchanged inspected flaeche Host. Synthetic deferred adapters; real DOM pointer/key/focus operations; observational event logging only. No project CSS, real guest storage, full TripWorkspace, Next router, hosted Account/Supabase/RLS or Production proof.'
+    report.verdict = report.observations.every((entry: any) => entry.result === 'PASS') ? 'BOUNDED_ASSERTIONS_PASSED' : 'BOUNDED_ASSERTION_FAILED'
+  } catch (error) { report.error = String(error) }
+  finally { await browser?.close() }
+  writeReport(options, report)
+  if (report.verdict !== 'BOUNDED_ASSERTIONS_PASSED') process.exitCode = 1
+}
+
+run().catch((error) => { console.error(error); process.exitCode = 1 })

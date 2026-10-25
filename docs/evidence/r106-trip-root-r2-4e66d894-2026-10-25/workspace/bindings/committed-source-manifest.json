@@ -1,0 +1,1001 @@
+{
+  "schemaVersion": 1,
+  "repository": "Jetnity/jetnity",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "inspectedR1": "80006fdf1443ca9d75d8c481246821354da16000",
+  "trackedCheckoutClean": true,
+  "checkedAt": "2026-10-25T12:48:57.257Z",
+  "files": {
+    "components/country/LandFeld.tsx": {
+      "bytes": 3894,
+      "sha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b",
+      "gitBlob": "4f6894927d64e9dd05db074ae05a663cb1578b5e"
+    },
+    "components/trips/BuchungsSiegel.tsx": {
+      "bytes": 1227,
+      "sha256": "be411b164a7730abec39a8ceed14a88dbebdfa45f929369112e7aeab01e66e43",
+      "gitBlob": "6598f90cb5827a3c7f05d4da1c3bd03d411bad70"
+    },
+    "components/trips/EigeneReisevorbereitung.tsx": {
+      "bytes": 19706,
+      "sha256": "b78d39e3f232e8d0dd73bc4f2120768fc6497e16dfb136483e0733862a1b8222",
+      "gitBlob": "7c3bac055173b12e235b3f352828ffe04ff164eb"
+    },
+    "components/trips/FlugBestand.tsx": {
+      "bytes": 23439,
+      "sha256": "e8a09a6fcaa2d7c5db053c5aa56801616d65b8490777db257544a62851ca61d8",
+      "gitBlob": "a0d356466e9a28f31ae0249e42670bd099887b85"
+    },
+    "components/trips/FlugRoute.tsx": {
+      "bytes": 3515,
+      "sha256": "91362473597456e3d220b16d7498e83e889a1dcb2f91eea575d2a64fd8eccc15",
+      "gitBlob": "631093d4579b5a677083936b1f85e04fca7c9390"
+    },
+    "components/trips/GastArbeitsbereich.tsx": {
+      "bytes": 17183,
+      "sha256": "b7cfa142605e338ed5346744a57793b879f189e9187c3ae8ed254d7cd5c23f69",
+      "gitBlob": "90f9d8781e23a3f96f92abd1d3616174585460d2"
+    },
+    "components/trips/KontoArbeitsbereich.tsx": {
+      "bytes": 14034,
+      "sha256": "f4dec055028a590fa6aa3bddb31a70d80d1ae146f0432ed9085807c74f4412b6",
+      "gitBlob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d"
+    },
+    "components/trips/MietwagenBereich.tsx": {
+      "bytes": 17597,
+      "sha256": "3c5086fe1ce6ab070bfdb85e3e675179d4804bea4348cdd8ebee3ec2745118e8",
+      "gitBlob": "67cc0cbbf25df52770a916b29c2728f177f356fa"
+    },
+    "components/trips/MobilitaetBereich.tsx": {
+      "bytes": 26535,
+      "sha256": "2e7e89046991830092cf432dad543d3b2fe4b7624382f38be0de75dd06a07b68",
+      "gitBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec"
+    },
+    "components/trips/OrganisierenFeldgruppe.tsx": {
+      "bytes": 507,
+      "sha256": "48a3414b2cb1e1566786a69b72d5bd3e6fe865b939a60e2a8d16c373fd0a1c74",
+      "gitBlob": "472de6a292d29129ca492128b842f6bf2119966b"
+    },
+    "components/trips/PlanpunktEditor.tsx": {
+      "bytes": 14143,
+      "sha256": "dc0e471bf1715009c94fdf370ed15da1bb9a2f663445d4ff33f9d5501e664ade",
+      "gitBlob": "614ec416ea41d223a341569a3fa5f8ae190daf8f"
+    },
+    "components/trips/ReiseSicherheit.tsx": {
+      "bytes": 4984,
+      "sha256": "a0d4141831ebb96c1044de1d6e90e75adc7daec1db8c087334add824b3586a9a",
+      "gitBlob": "443a06687b8f959a1bc31bac189ea4e652c31afe"
+    },
+    "components/trips/Reisevorbereitung.tsx": {
+      "bytes": 39449,
+      "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52",
+      "gitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c"
+    },
+    "components/trips/ReisezeitHinweise.tsx": {
+      "bytes": 5369,
+      "sha256": "eb87c6953528df607fe7c62b14b5b18850a22654695c140ce2010051884f3df4",
+      "gitBlob": "8831ac2f5c61b447f5ded81e31a9ee1dcc4d346b"
+    },
+    "components/trips/TripAuditV1Panel.tsx": {
+      "bytes": 6877,
+      "sha256": "315f971931bafd1290d472e8f47bbe05034a8f3301ef292baed56dcf63ddfd07",
+      "gitBlob": "27a09c1244a0d7972961dbef635d691c4cf75d3d"
+    },
+    "components/trips/TripIntegratedDay.tsx": {
+      "bytes": 9584,
+      "sha256": "7d19278999d66dbe39e48c5d8c5bca5fc682ff3bbcae0935947fd6d85dd6ec82",
+      "gitBlob": "f452e0516770dbb6a0622a0be87ca744fe946950"
+    },
+    "components/trips/TripTimelineZeitpruefung.tsx": {
+      "bytes": 8894,
+      "sha256": "a31eb5f772e55e9094e84b4d7fbd19278b367da4ea886def74b9cd5b3e786f78",
+      "gitBlob": "1190ad244062277b84203f8d1d3236ffa5452de0"
+    },
+    "components/trips/TripWorkspace.tsx": {
+      "bytes": 44265,
+      "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4",
+      "gitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1"
+    },
+    "components/trips/TripWorkspaceDestinationEssentials.tsx": {
+      "bytes": 7186,
+      "sha256": "1d9c41bd90132e27e141f63d4fec14893c1aa532d417b282f5e0aa0e018732f1",
+      "gitBlob": "993a9064ce4a8a26f1e8c9777184855daf9a88b0"
+    },
+    "components/trips/TripWorkspaceDetail.tsx": {
+      "bytes": 5682,
+      "sha256": "d3adb82d98e9b276a15b2185179c9396f758d9bb738be8f934726dcdf6e8b5e8",
+      "gitBlob": "1f2335354f629dcbf71597c3694a486527886f06"
+    },
+    "components/trips/TripWorkspaceDomainNavigation.tsx": {
+      "bytes": 3349,
+      "sha256": "41ad3ed909c5ecf79cd5eb2f534ee0bd0ba52e0cc879b1f407181ee38865e257",
+      "gitBlob": "1d2d8bd841182e1b4cdfca7eb3343983ed6e13dd"
+    },
+    "components/trips/TripWorkspaceEditSurface.tsx": {
+      "bytes": 5632,
+      "sha256": "0397424f438ac01cd7908940d6478368747891abb046c47bc44882454ffed041",
+      "gitBlob": "78296749720907855e2e26e819c46ab4aa43e7f8"
+    },
+    "components/trips/TripWorkspaceJetztWichtig.tsx": {
+      "bytes": 6520,
+      "sha256": "4102d2d79c1df7aa59fb15f6f09bfc9782ae36c31b843c5f28b68b686ca56823",
+      "gitBlob": "9e1ceca2092b1a23b1b334ad0b5c880db65d958a"
+    },
+    "components/trips/TripWorkspaceKopf.tsx": {
+      "bytes": 3702,
+      "sha256": "76ae32e188540fd6a0aaf52278a9da6bed7a8a92edd69b97cecd376593f94a5f",
+      "gitBlob": "7204669a58defe7ab04a65132c6b598419ccad56"
+    },
+    "components/trips/TripWorkspaceModeNavigation.tsx": {
+      "bytes": 2801,
+      "sha256": "e4c64a88819a5da72b42f9152ef1ec7a877315dd1e7efa8d6a59fa7a460bac26",
+      "gitBlob": "f368e485eb22d289b5cfb69ce97c1066c6f022c5"
+    },
+    "components/trips/TripWorkspaceNavigation.tsx": {
+      "bytes": 2323,
+      "sha256": "380838b2dc16b081918f81ba977c6f7843be8912a9f11342f59a758c9c21be30",
+      "gitBlob": "50d7793ffbbbd4bd6a0c53c56f4a3a2de4327496"
+    },
+    "components/trips/TripWorkspacePlan.tsx": {
+      "bytes": 28251,
+      "sha256": "aa332f55eb10c02c34ed9ecc8bd536dee609c8d6640dbbf42e9cb31c221b02c8",
+      "gitBlob": "34cfe5186fb142d1affe71c2bae10fc375905298"
+    },
+    "components/trips/TripWorkspaceUebersicht.tsx": {
+      "bytes": 7980,
+      "sha256": "100f5f88517015e2eec066a09c7cec9b7ad6d2f9ee54200c89c256d1f085589f",
+      "gitBlob": "36b71b94c8a604e81994233733f7cfcda850e218"
+    },
+    "components/trips/UnterkunftBestand.tsx": {
+      "bytes": 17650,
+      "sha256": "f46238e53e356bff97106bb7d213648c1ec15a44454dbf2886ed14fb2dbf21c0",
+      "gitBlob": "72fb6146d72bb30cf796687620894a26a57dd25e"
+    },
+    "components/trips/useBookingActionLifecycle.ts": {
+      "bytes": 4743,
+      "sha256": "a4d3e29bab80026fa6b0d0bdf80c04f80fb66e8ade2f2d83e231627bf6c033cd",
+      "gitBlob": "f59a4a25014c9aa17505b4386fd39a45f54ee270"
+    },
+    "components/trips/usePersonalPreparationLifecycle.ts": {
+      "bytes": 7228,
+      "sha256": "d02e444c539c22d48a159b8310fc80cd3a7e98eaa363a55b68116d33d0f47833",
+      "gitBlob": "a11b25652281e9d04be29aad7e0d9cf53c28e4e1"
+    },
+    "components/trips/usePlanEditorLifecycle.ts": {
+      "bytes": 4267,
+      "sha256": "7ae1a9b6a729dcadc81903132fa7c2c7e30fd50b95f32c3824bd2b089fd60ea5",
+      "gitBlob": "5efe5eda2b07a7a5083c87e887b3ca0c73d17eea"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md": {
+      "bytes": 37287,
+      "sha256": "06f3e133a933cc9d6707bebc92535695fb4fd6ba952c745090561db5c117eb9b",
+      "gitBlob": "e58f582669793ff3b7d86727ac9130afa89eef98"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md": {
+      "bytes": 16087,
+      "sha256": "c4eef224abfdd2b27f60ef882fecb88c8a9724d54f938f751c0ab242ef498e1c",
+      "gitBlob": "961e288a4e0ba40fa00e7ea95e920eabd6423ff2"
+    },
+    "lib/account/naechste-reise.ts": {
+      "bytes": 2872,
+      "sha256": "930e7b656fc60b0507e05de7ce7b57ffed3d3b0d63fc14e5c945bfc58608f269",
+      "gitBlob": "9c437704fd58c83a4a6da3f1325ea6d6f3d4d685"
+    },
+    "lib/account/reise-archiv.ts": {
+      "bytes": 5720,
+      "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814",
+      "gitBlob": "93744e171db945477eaa9e9984c7d5847d42c6a3"
+    },
+    "lib/account/reise-lage.ts": {
+      "bytes": 3584,
+      "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+      "gitBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4"
+    },
+    "lib/activities/domain.ts": {
+      "bytes": 4555,
+      "sha256": "2aa92fe118544b394c5d74ff999479ae259037e57fdf14fbd1aac15269f15319",
+      "gitBlob": "525b0154b36e6313a4a4d9951116777256052db3"
+    },
+    "lib/activities/reisegraph.ts": {
+      "bytes": 2691,
+      "sha256": "602389069126902fc5db979496c702700b29d28af350483e5f0ae2e4ae5e3dfc",
+      "gitBlob": "33737d81d365a56e30dd71d39e19242c11288ef3"
+    },
+    "lib/activities/schema.ts": {
+      "bytes": 6433,
+      "sha256": "5db392908e01ebb420a282c6bb34b1e2b7c8cc1c174011ffb4c99c0251d02bb7",
+      "gitBlob": "14e3ce5bdaec15b2eee86de9011d16378b620af9"
+    },
+    "lib/activities/uebernahme.ts": {
+      "bytes": 3711,
+      "sha256": "39ede4fb8678fb4eda53a38a0d18e68c2a74c30bb2f997e6ace2a8087b764d6a",
+      "gitBlob": "cf13198b1bdcf503592aee2d68b656e871116e03"
+    },
+    "lib/country/copy.ts": {
+      "bytes": 639,
+      "sha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+      "gitBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5"
+    },
+    "lib/country/darstellung.ts": {
+      "bytes": 5493,
+      "sha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+      "gitBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b"
+    },
+    "lib/country/katalog.ts": {
+      "bytes": 2499,
+      "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+      "gitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448"
+    },
+    "lib/country/land-feld.ts": {
+      "bytes": 2043,
+      "sha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4",
+      "gitBlob": "b47d4be66bfb83d95517ffe25ac5859738aae2da"
+    },
+    "lib/flights/domain.ts": {
+      "bytes": 4016,
+      "sha256": "7a4c5a3347a2788956aa020d5f49c2f323de2e8eb76779ca044b9302de4084a2",
+      "gitBlob": "4e0ef5379664d8c00123fbc461e33b401e38deab"
+    },
+    "lib/flights/nachweis.ts": {
+      "bytes": 4941,
+      "sha256": "5c94e802cdcc0f50889fb10289278c2b6592fb44142b39ab91fdf41869be93f5",
+      "gitBlob": "c5aba2d5cd344cd4047b52f0ed02c237fec0e761"
+    },
+    "lib/flights/schema.ts": {
+      "bytes": 6490,
+      "sha256": "c2cc89942de1011ea597f1c940983849324b84e83d24bda696881912e7db3c21",
+      "gitBlob": "702d275c3cd4c4d3c404d52a0a7730cf316ceb3a"
+    },
+    "lib/flights/zeit.ts": {
+      "bytes": 3513,
+      "sha256": "b9b315cc053f8ed0c8920266b42defac75f5638d75677755840fa2859189aed3",
+      "gitBlob": "b8d3ae830b43d9f439ca6269378bcb75a23ae668"
+    },
+    "lib/hotels/domain.ts": {
+      "bytes": 5892,
+      "sha256": "ae74c3237bce0c5b55f08f249a483a094afe87954c33890c69fc5cec8c54e3f1",
+      "gitBlob": "abc11a182851127fc345be97018f14686324c018"
+    },
+    "lib/hotels/geo.ts": {
+      "bytes": 916,
+      "sha256": "4cb4a0ac38daf36d035d6059e3646ca939235919ed1c9b450db68b8868f69945",
+      "gitBlob": "8a4af10b0009b9b17dc71e06cabb528588cd4909"
+    },
+    "lib/hotels/quartier-kontext.ts": {
+      "bytes": 6929,
+      "sha256": "2b7c84b6afab70280e12c0fe4cd384962f4baab124560e6fb6d2306328208c19",
+      "gitBlob": "ce7ce8d9452f737ccac161a6b5ef30158881dd63"
+    },
+    "lib/hotels/reisegraph.ts": {
+      "bytes": 2653,
+      "sha256": "257dae91e4c86b28a12ecc43ffe51294846179fcb7883d8230a43659f7d60f4c",
+      "gitBlob": "2db5e6c52b51d471ad6d6d93d8971b444bc5d69a"
+    },
+    "lib/hotels/schema.ts": {
+      "bytes": 6886,
+      "sha256": "1f8caa0dad1fb97107f534b16c8e8fb14179084fc2b7d3839168ce3300174b10",
+      "gitBlob": "fbccbbe6cae50938483ad787c4ab1ed5aee8f4a3"
+    },
+    "lib/hotels/uebernahme.ts": {
+      "bytes": 3630,
+      "sha256": "a55c1f526b1a1d8a7c4cebde6f73a62c4f5ab86bc8423e02f78b66e106b8bb2a",
+      "gitBlob": "143b086fd88e0e6eb27ca5cd27e606840b3cf014"
+    },
+    "lib/mobility/client-anfrage.ts": {
+      "bytes": 1328,
+      "sha256": "1ac58d6f0ff5ceb6bfe9ed072c10c0288290acab4468c15f6f4b5af28c0599fe",
+      "gitBlob": "2bd554481a4f35b0a8b7c1fbf4a45ae9eb0e5688"
+    },
+    "lib/mobility/domain.ts": {
+      "bytes": 3418,
+      "sha256": "14e858848077b9aa5fc7ec2f1c96e3a9f27e831f758899f466b78874b4e44994",
+      "gitBlob": "423f6ba8ade64910592ea230caaf0f2664c09fa2"
+    },
+    "lib/mobility/kanten.ts": {
+      "bytes": 11294,
+      "sha256": "d8f59902e21ef2aeae6384f91cf2cf1dee91c8fa28d899d25eab3674a28569e0",
+      "gitBlob": "3cfdcad030f8b7047cb1191bcfa6b3a4b892cd4f"
+    },
+    "lib/mobility/manuell.ts": {
+      "bytes": 2350,
+      "sha256": "513ac2e92efea0010fd6b294f7567b2e304a7d9f9ba032da7ed85e779b25822e",
+      "gitBlob": "aea85f27a179d7889a124841a2391f2108b9af30"
+    },
+    "lib/mobility/schema.ts": {
+      "bytes": 7173,
+      "sha256": "7e089e66f66a63c596e82c596cba42632379d8dbc9f5496ca61981de7fe0e169",
+      "gitBlob": "c2184c2e3ac82183e2a188837694352a47f1bd47"
+    },
+    "lib/mobility/suche-ausloeser.ts": {
+      "bytes": 309,
+      "sha256": "5586742f95f43a265266c22315827ebeabc31cc2f82536ecfb28a7e598986b77",
+      "gitBlob": "2f18dc7569d0a1e54df1bdca637366043affe151"
+    },
+    "lib/places/domain.ts": {
+      "bytes": 1646,
+      "sha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c",
+      "gitBlob": "047d902c1ddcf56e5819dedf12b7b3580331e1c0"
+    },
+    "lib/places/kanon.ts": {
+      "bytes": 1455,
+      "sha256": "495c4629a199d638e8b3c9f74672fe7d98a4da6b1bdf173b25ce1011659c9014",
+      "gitBlob": "e5be1d23c3c8d66f90cc7106a3f01776731b2c5b"
+    },
+    "lib/provider-ops/anfrage.ts": {
+      "bytes": 2853,
+      "sha256": "526968d3170e03b94c50d50056704012603309dc8fcbb6f8564a492506f14222",
+      "gitBlob": "5e8707cbeabf38332e08450f9ba074aa804684d8"
+    },
+    "lib/provider-ops/cost-guard.ts": {
+      "bytes": 2439,
+      "sha256": "5180122eda6d18748bc9a4ea0252462c9d7ebda4ed35d7d906df444e43bb3f89",
+      "gitBlob": "0fa5cacf404cc71b4294de4eed2637f018d8f2c6"
+    },
+    "lib/provider-ops/index.ts": {
+      "bytes": 1885,
+      "sha256": "b7ef5739f1fc5f4309d22ffa4f2f316806958e952435ac218f78efe8130c73e2",
+      "gitBlob": "4b08576e0f86f8a15164ece96c55a9ed8896a8ae"
+    },
+    "lib/provider-ops/observability.ts": {
+      "bytes": 5646,
+      "sha256": "2d9c2f0d7a1145ab587f10c622fb314c42545ffbd0c01d1b8b64492491a55ca2",
+      "gitBlob": "7d9c2ba87a2f6722465bffe07ec253b08f77e3a2"
+    },
+    "lib/provider-ops/outcome.ts": {
+      "bytes": 1147,
+      "sha256": "75bb42c899de133f06bb197deebef51a336ddd267f60fbd25f19e79cff443e39",
+      "gitBlob": "e4ae0b92ec6d08b57127c367082ba9897b05c0a4"
+    },
+    "lib/provider-ops/usage-policy.ts": {
+      "bytes": 4522,
+      "sha256": "80f67a5319b02c8110f1fb61a48c642013e247b76f3f41f1df411ff66aff0821",
+      "gitBlob": "e63847df9d527d1484a97892b4a64e3ad6b12e57"
+    },
+    "lib/provider-ops/zustand.ts": {
+      "bytes": 1176,
+      "sha256": "f6de87f66d18ca01bb7ebdc811b1e113ec14bfc6ad154416b0abd6adb63e06cc",
+      "gitBlob": "8b877245746e402db06d0ae778dd6aecec465bed"
+    },
+    "lib/readiness/ableitung.ts": {
+      "bytes": 6039,
+      "sha256": "5da1397a0ac64ce0d54ba4c3d16ae24137884638e0a9dd10825b727844bd2aff",
+      "gitBlob": "6d10fdcdac6d283541cd99ec00296704b59d9956"
+    },
+    "lib/readiness/abruf.ts": {
+      "bytes": 4668,
+      "sha256": "551d0996531eb96c4d82ff6e7d3963c5f75ef319a282d1aebc41d42723a9df8b",
+      "gitBlob": "87cae75318178ae08c2f36e6389f242393277b6f"
+    },
+    "lib/readiness/anforderungen.ts": {
+      "bytes": 11504,
+      "sha256": "8e20d0c7af6b68cec4cc76feb401b05457dabb5668957c0221b362c5c13d06e9",
+      "gitBlob": "91071d2902e43101bbf6fae4a97539ec07f5b608"
+    },
+    "lib/readiness/bauen.ts": {
+      "bytes": 3491,
+      "sha256": "1c818e792f250f934ab271db971fca1d7a0a59bedfbec0a18e6ff2e083593087",
+      "gitBlob": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52"
+    },
+    "lib/readiness/bezeichnungen.ts": {
+      "bytes": 8475,
+      "sha256": "6e25ca3a229d51a6ccc602dc6513fa660310f153807f751d8d55110dc504cf95",
+      "gitBlob": "b3d172b9db8b17fa3a6422813af4b9275def622c"
+    },
+    "lib/readiness/digest.ts": {
+      "bytes": 3013,
+      "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+      "gitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54"
+    },
+    "lib/readiness/dokument-formular.ts": {
+      "bytes": 2710,
+      "sha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975",
+      "gitBlob": "f3a86918df34f4e25d813e9ad3478b783ddefd5a"
+    },
+    "lib/readiness/domain.ts": {
+      "bytes": 3637,
+      "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927"
+    },
+    "lib/readiness/engine.ts": {
+      "bytes": 27640,
+      "sha256": "0c7801bf724fc073f6bd33d09a9038605b5c7fbb9c018f5190e05dc10f370d94",
+      "gitBlob": "f105d59c1653e3382cb8ddce4b3101b87de31750"
+    },
+    "lib/readiness/entscheidung.ts": {
+      "bytes": 1462,
+      "sha256": "d1b60056088b683b589842bb73e0655247569a8ed33ae0e665e2f224d229d542",
+      "gitBlob": "f1510b9a4bef455fe410650781d4b99c439a2581"
+    },
+    "lib/readiness/fingerprint.ts": {
+      "bytes": 5962,
+      "sha256": "639b6d2841a9d0dbd84bfe91f1f9619c3edd675f30abf5999024ae10c2621659",
+      "gitBlob": "c9e9a65528f04bd19fbb01f9e8d3b90fdefe06b7"
+    },
+    "lib/readiness/gast.ts": {
+      "bytes": 1956,
+      "sha256": "f5f606654e1361df4f6ac24ca127b61468d6f0b5b57e6f6d35a5cad59429da36",
+      "gitBlob": "28cffa71264ff1ca0205b6b0be7eebc2d4498b08"
+    },
+    "lib/readiness/kontext.ts": {
+      "bytes": 4573,
+      "sha256": "3924c46f631801abcc1ea6239eca0b0a33a0d5d900dac4b264f4ccf25f6ad0b2",
+      "gitBlob": "381729fcc102cf8bbe0c795d19f528d8e66320e5"
+    },
+    "lib/readiness/official-presentation.ts": {
+      "bytes": 14366,
+      "sha256": "d74e2c500a35ac143d9340e9dfcf0efbe9acec3fde026dd965bd862a8f95d0a7",
+      "gitBlob": "251fe5444e5977fde0a790a1012d71db95bb0eb6"
+    },
+    "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts": {
+      "bytes": 4402,
+      "sha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e",
+      "gitBlob": "25dafee0f06353785972efafe0fc2db90183372b"
+    },
+    "lib/readiness/official.ts": {
+      "bytes": 13839,
+      "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+      "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c"
+    },
+    "lib/readiness/party.ts": {
+      "bytes": 6634,
+      "sha256": "16e737098cf4f3f92f5b65dbc2b8deb1d48ca4e3a922bbfedae896b6e8e0f580",
+      "gitBlob": "b137915ad7da6c3e313ffa970900150ed129186d"
+    },
+    "lib/readiness/personal-preparation-workflow.ts": {
+      "bytes": 26405,
+      "sha256": "51cfcca9aeb960a227c97ceef9aabb5bb8b1f8619e3df63b574bd7f1f88ec581",
+      "gitBlob": "563fd3068c0bc42a52d9834fdb18f36e28c188a8"
+    },
+    "lib/readiness/preparation-premium-experience-5.ts": {
+      "bytes": 3587,
+      "sha256": "7e04b6502790e60ffb1d040c7187252d5a471ed402a957468774dc15612b7809",
+      "gitBlob": "68c1d5a2d333da944e2987bbfef0ee019b8532af"
+    },
+    "lib/readiness/provider.ts": {
+      "bytes": 3440,
+      "sha256": "af1548a85460ab9f723242709378ebb4cb3f976c090c5824950695d1db2ff7b1",
+      "gitBlob": "3028961f1711620da860c7eeef50a4b71f82529c"
+    },
+    "lib/readiness/regulierungs-anwendbarkeit.ts": {
+      "bytes": 108170,
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130"
+    },
+    "lib/readiness/schema.ts": {
+      "bytes": 13207,
+      "sha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+      "gitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6"
+    },
+    "lib/readiness/status.ts": {
+      "bytes": 8880,
+      "sha256": "7778bef6f5519428351f443e3bf16cda56c0190371b1d27d53fb71a57e96322f",
+      "gitBlob": "0940f135ef7f52f15a9aed2e3b19126a837660be"
+    },
+    "lib/readiness/temporal.ts": {
+      "bytes": 14833,
+      "sha256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+      "gitBlob": "2b45246938196127124539302634e175a172b4b6"
+    },
+    "lib/readiness/traveller-anfrage.ts": {
+      "bytes": 10289,
+      "sha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d",
+      "gitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a"
+    },
+    "lib/readiness/traveller-kontext.ts": {
+      "bytes": 11425,
+      "sha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52",
+      "gitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78"
+    },
+    "lib/readiness/workspace-presentation.ts": {
+      "bytes": 1947,
+      "sha256": "b34c84afd2fd6760245156273a38337268711e09170c3de268b06c756b04f5cc",
+      "gitBlob": "917c29b0a0cc9530dbd00dd3cf9bfeee7a8726f8"
+    },
+    "lib/reiseaenderung/anwenden.ts": {
+      "bytes": 17162,
+      "sha256": "fbed1d67b5b82f3b921fcafad850f3e6f55c8de4065be2d937b651007908896d",
+      "gitBlob": "c50cc2851aec7c88b5ca1759b0229b5c603e523b"
+    },
+    "lib/reiseaenderung/fixtures/reise.ts": {
+      "bytes": 3337,
+      "sha256": "4939232ab1995ef742c0aabb4d7413408ab39fbea0aa76f3dee17f9c2465edbc",
+      "gitBlob": "7533df1f2de0a9972810278b64aa9839033342f8"
+    },
+    "lib/reiseaenderung/geschuetzt.ts": {
+      "bytes": 5288,
+      "sha256": "8e0aef077c66074f27a838e77ccc946187692cf0995bfdb7d1f888cd10394f65",
+      "gitBlob": "b1bfef92bbd6037ccc3716754ea28fa94b3643be"
+    },
+    "lib/rental-cars/bestand.ts": {
+      "bytes": 3218,
+      "sha256": "df6b8d314d10a2960955aade635ff76ee9a36145971c8f5d2fbe328106009023",
+      "gitBlob": "b364e9e665825e2881e213125f6553c92574c86a"
+    },
+    "lib/rental-cars/domain.ts": {
+      "bytes": 3860,
+      "sha256": "d9c7b1bc0ed8274dcc29d57c261f6732668bfdda6d80cfe32779ffe10c57a306",
+      "gitBlob": "4ac762f5d63882c02ae9616e75809c0b2301777b"
+    },
+    "lib/rental-cars/manuell-start.ts": {
+      "bytes": 1260,
+      "sha256": "5b215b121c4b04787afde247906f02a3c72cc79c96888b3c76c039dd775fd70f",
+      "gitBlob": "3eaa098d66e0a6759ce6a3118d5b6af2c1690332"
+    },
+    "lib/rental-cars/manuell.ts": {
+      "bytes": 2372,
+      "sha256": "ed6333d09785dff25d836d154edb0c71de668a69cf98251004e5f7fdf4ca8486",
+      "gitBlob": "4ec96e07d376126324462d9dafcc5c9c141a3c62"
+    },
+    "lib/rental-cars/schema.ts": {
+      "bytes": 8672,
+      "sha256": "31136abf1c30480b3d565f515751a9f5c6ce2aa54e0a7192b3544465330a6e20",
+      "gitBlob": "aed5b0c0feb5a28a8c7eec6ccc9d37bf35c9038f"
+    },
+    "lib/rental-cars/zeitraum.ts": {
+      "bytes": 3007,
+      "sha256": "ce7ef3941ebc0245f6ff4a7f64ae604018d5ea2e6404bb2b4ae756733b9ec464",
+      "gitBlob": "7c0412e8e9de3f010f7efeee6b3e20111b951c2a"
+    },
+    "lib/route/ableitung.ts": {
+      "bytes": 3792,
+      "sha256": "a93d962e50c919138309c23b689db1738372ef63a522c8d3afa9d49809861098",
+      "gitBlob": "8ee86fa238e1eb9398888c398f135c81f2a97de8"
+    },
+    "lib/route/anzeige.ts": {
+      "bytes": 3779,
+      "sha256": "7a538f0d0b455eaf638054bb20f9f3265ff0a0894495d2bf7d94578065f879d8",
+      "gitBlob": "a43f03f5fa7488a7164d6e472c7e38dedfae2081"
+    },
+    "lib/route/chronologie.ts": {
+      "bytes": 14984,
+      "sha256": "9d29629e854eef9a47be56fbd3b52945c11de17a0baddd19c14dc3e4c87181f2",
+      "gitBlob": "fbceaf2f20ce2077265f7148095eede81e4a7010"
+    },
+    "lib/route/domain.ts": {
+      "bytes": 2711,
+      "sha256": "6de9776bd37a3359e8aab549f80ba11c25b12fbf8722a510bfa8278fd5e07cb8",
+      "gitBlob": "59de349e313f20a74a2fc0119f2244fd0b65a50b"
+    },
+    "lib/route/fingerprint.ts": {
+      "bytes": 1207,
+      "sha256": "395f23fc425b8fecc1bb248402c20926b97910c9e1374ee0d29811854736b01a",
+      "gitBlob": "17927c07fedb15ba29b83fb29bd10910b957d04a"
+    },
+    "lib/route/itinerary.ts": {
+      "bytes": 2901,
+      "sha256": "28f2ac17e788b4f2b2b02bac466a047d14aacbf3807a7de668ba02811fb861bd",
+      "gitBlob": "54fc9c313f7505d0b8664417187509801dca29ad"
+    },
+    "lib/route/kontakte.ts": {
+      "bytes": 3596,
+      "sha256": "69ffb3c09205149b4ad8ac074fb186fa91babccde06f1c3935d66c3d79f8b935",
+      "gitBlob": "af1b038c01ae6d08cbad8e09ec7da7f72b18a734"
+    },
+    "lib/route/laender.ts": {
+      "bytes": 3121,
+      "sha256": "235503fce2d5fc49e5047f5764d9da2e823fe93a8ae05f8fe8bc538359eb63ec",
+      "gitBlob": "f88563b43b75ec1fb838499559ace6205cd48ce7"
+    },
+    "lib/route/pfad.ts": {
+      "bytes": 1972,
+      "sha256": "c14633263d13e3a5ed30b7991b2bd94bbd3b5edb5460399fb6f2796814b20462",
+      "gitBlob": "e5fdced8d3fc03e8dad0cf144c659780b0732573"
+    },
+    "lib/route/referenz.ts": {
+      "bytes": 2999,
+      "sha256": "1d11ed037ad63bff13957ec0cab2b76a9677cf3503edbddee2805010c26c1fbd",
+      "gitBlob": "477c8b33f39cf7832f994009e8c96147909dd739"
+    },
+    "lib/route/schema.ts": {
+      "bytes": 3119,
+      "sha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+      "gitBlob": "f2615a4103b2b8525d93d67695e7e15978c9b442"
+    },
+    "lib/route/verbindung.ts": {
+      "bytes": 3076,
+      "sha256": "b9e6fef5a39e6e6694ae65984e27eded2705c8064d32b02a304763b804f22701",
+      "gitBlob": "b95cd22cc6012bd9e8ad1ae92b55f20722c57619"
+    },
+    "lib/safety/anzeige.ts": {
+      "bytes": 3413,
+      "sha256": "f2902f68689756ab20789987f639e5d0de519ab6b0653415c768e5b4aabee078",
+      "gitBlob": "59d5ef00cb1559bd9999e99915aa048a6d478fc5"
+    },
+    "lib/safety/domain.ts": {
+      "bytes": 5185,
+      "sha256": "bbebf5cffe55b48f4cec6800ce04066d76fc3d54cc421b1359556bfa9210ad57",
+      "gitBlob": "938939f2b13e058e9b2eb91a04bdb82e6016d75e"
+    },
+    "lib/safety/engine.ts": {
+      "bytes": 12707,
+      "sha256": "bc5539956ce4e04f10e806d5412921068024dd68fcb0c6e8d8b22b2a4fbaa1d1",
+      "gitBlob": "47bbc795e035363294b884dd22b16dc9cc9002b2"
+    },
+    "lib/safety/evidence.ts": {
+      "bytes": 6508,
+      "sha256": "327df922bd3ec592a453a1c8472b21f0c8dd72538cf7b3e63625b46c6f160d58",
+      "gitBlob": "f84733ce97a4fe4628aa5466259093591804ff0d"
+    },
+    "lib/safety/fingerprint.ts": {
+      "bytes": 3766,
+      "sha256": "6544f205e7ae14df80a69fca6306dbcf7dfb206a68d8066b9128e8be2cc2d2b3",
+      "gitBlob": "c6a2f6700d2739b977c040f27cb7e561e27b5894"
+    },
+    "lib/safety/impact.ts": {
+      "bytes": 3867,
+      "sha256": "93088bc433ffa315f75337939d92c5ff28027ee76b15626f1b25be6028603f78",
+      "gitBlob": "cb0ebcccc093f6be60048036c544cecabd39a5ca"
+    },
+    "lib/safety/konflikt.ts": {
+      "bytes": 1466,
+      "sha256": "3a25ae2cc27f46c0f66f2da1aa2240cf4754ceaa53bf14163da20be4e00cd2de",
+      "gitBlob": "c9db11560792b54a9b1a1bcdaa1b557e97d2f97e"
+    },
+    "lib/safety/kontext.ts": {
+      "bytes": 3854,
+      "sha256": "817e1097210ea12bc7964b1dc6876c2e6a09d7cafb89ae039639433d222bbd6e",
+      "gitBlob": "5e54300d9086efe4bb8a8c2c11b743086d31d172"
+    },
+    "lib/safety/normalisieren.ts": {
+      "bytes": 6558,
+      "sha256": "fabd456fe3aeccdde681fb5e920769996375cdb11558cf7d4fa48da7475e6769",
+      "gitBlob": "a59f2b2b1fdf9ae44880fe2cbe1cce26e9f7ca1c"
+    },
+    "lib/safety/praesentation.ts": {
+      "bytes": 1802,
+      "sha256": "d547a14a89e9b3e275e880acb92bbf2cbae7034b87a33caa65eedc5d32163cc4",
+      "gitBlob": "0ef4eff678c527e8907e607c59e2a3150e1b3e53"
+    },
+    "lib/safety/provider.ts": {
+      "bytes": 1556,
+      "sha256": "7319aa6b94d8950671f577ae7e9c3d0960f7380346af5f14d54f3e28bd518ccf",
+      "gitBlob": "98339e30873d5519b9e8f821bfce6e6ccf821cc6"
+    },
+    "lib/safety/relevanz.ts": {
+      "bytes": 16392,
+      "sha256": "d82e767e34b76534ba7fd6c70917507907686341a0071a34931a41e6cd2ba542",
+      "gitBlob": "4de0e2a146ff3ebebb9da84b5324cc7fb4edaf2c"
+    },
+    "lib/safety/scope.ts": {
+      "bytes": 11970,
+      "sha256": "3a502cd77e0066744634ed92911649f5496354b1fcff27b5da8ab4dfb69f1a38",
+      "gitBlob": "5fec14e4b7d9b83ed1d77ef8699387919e44c086"
+    },
+    "lib/safety/status.ts": {
+      "bytes": 3850,
+      "sha256": "940cbb4afeee7ac9699d7368499dc156215c1813d09e018242b42a34bc000681",
+      "gitBlob": "4de58c0d579bc73690a610fdd0ae82ea25ee8d91"
+    },
+    "lib/seasonal/anzeige.ts": {
+      "bytes": 4050,
+      "sha256": "d51712c8653599354363b8ed2894bebbd2563fcd570d675cef18dc24f43654fa",
+      "gitBlob": "de2977eb342868fcebc8c031abea3796eeea6f78"
+    },
+    "lib/seasonal/domain.ts": {
+      "bytes": 4779,
+      "sha256": "aa4ea1af2a81e80a0e742878a4f44371bfacef7ee7f02d0cf3667dde7c1570e0",
+      "gitBlob": "a867e671d4658fa01bc5896dfabffc5b8159823a"
+    },
+    "lib/seasonal/engine.ts": {
+      "bytes": 14196,
+      "sha256": "b96d90e0e73aab0e922f5e41e52657c03ca89979c6e64bcfcd94aa08efa5e9df",
+      "gitBlob": "20161198844a329833b5e9fa8e16ba8633adebb7"
+    },
+    "lib/seasonal/evidence.ts": {
+      "bytes": 3960,
+      "sha256": "176ce08f7b1b8e34675a26153d51f0121163d572b6b3082b999f2737fc73e011",
+      "gitBlob": "251d5ab2f52f801cd186b6f9626c6546d7c08d69"
+    },
+    "lib/seasonal/fenster.ts": {
+      "bytes": 7458,
+      "sha256": "d08c0991da190f5bc6fded0eea07695adf6596aed21ca1ab01ed833d7a4d0b38",
+      "gitBlob": "4aa62b632f7bf335f6ba0897c064b30ab0b827c6"
+    },
+    "lib/seasonal/fingerprint.ts": {
+      "bytes": 3296,
+      "sha256": "c947ee64761a7252ce15baaf9b41f3f83428b69781ddb752c1780f7fe399814e",
+      "gitBlob": "42fed6b7094c4563d878b86d8af891d960566182"
+    },
+    "lib/seasonal/impact.ts": {
+      "bytes": 4036,
+      "sha256": "761bf604a8817751c7eb1539a3fb71e63fb0ad58372ed81f5cb2cebf2debffcc",
+      "gitBlob": "50ed1a28376ac2f922042bf8044fcb3150c66d22"
+    },
+    "lib/seasonal/kalender.ts": {
+      "bytes": 9564,
+      "sha256": "8609700aa8d08895340718e75b2acf5ba69437cd483e79d2874161f5cc03d133",
+      "gitBlob": "66cd9939164e11b620f727f05023942228699150"
+    },
+    "lib/seasonal/konflikt.ts": {
+      "bytes": 1378,
+      "sha256": "62f9c022cf61b1b8b5b32d63be610d263c655e2f76d77f355fcdc0b773c5bed3",
+      "gitBlob": "6494c73c7d6a6af4125a30c23b1fee203ebe5d47"
+    },
+    "lib/seasonal/kontext.ts": {
+      "bytes": 4704,
+      "sha256": "14751d3a2e71afc9bf155eab572018300e77cf44b459b340a1fea34516d0c011",
+      "gitBlob": "83cec01d1d2499ecaef4ab1ccf895ec2dfdcca1f"
+    },
+    "lib/seasonal/normalisieren.ts": {
+      "bytes": 7994,
+      "sha256": "7a03378ecddda7abbfa9f6864c506e90ba89ee799fedc4f9fa06c9fddb91021d",
+      "gitBlob": "5cf1132575189ac5e9554cba21078845218e1e7b"
+    },
+    "lib/seasonal/praesentation.ts": {
+      "bytes": 925,
+      "sha256": "00f7af4a4b1b4b343004c999067b41beada9d80fa6c1b6a50d7f347e925e1009",
+      "gitBlob": "ffa11e332b7b5204675fb573a3495ae9b664ae33"
+    },
+    "lib/seasonal/provider.ts": {
+      "bytes": 1946,
+      "sha256": "e510ea323287f57507dc9fe2dd9512484c36bc4f852ccbef384cc7b7680454f7",
+      "gitBlob": "46a7c4e64545968516c594bb812e49f6efaf404b"
+    },
+    "lib/seasonal/relevanz.ts": {
+      "bytes": 15464,
+      "sha256": "41921fdafa9e7404a41fc1d3091bc9414c46bf5e909bfc1a0dd8132722165790",
+      "gitBlob": "090f808f143933958b235912dfbc01ded17c609e"
+    },
+    "lib/seasonal/route-kontakte.ts": {
+      "bytes": 845,
+      "sha256": "53b706083555d3857630600a600218a64bc81674ef655984f2367a2e7adfb934",
+      "gitBlob": "ed10d6c0c65f49115336ef365f1e7fff44993f35"
+    },
+    "lib/seasonal/scope.ts": {
+      "bytes": 5337,
+      "sha256": "1115769aa7ffe16579ac703e255ec9edaebe134cd7b9e8511b19dd123b6be21b",
+      "gitBlob": "7d4bb96859b81ab24448090536f1c3e9966a9567"
+    },
+    "lib/seasonal/status.ts": {
+      "bytes": 5028,
+      "sha256": "3ecb6211b7db8d73f3173f6767003b01132bcffc7c92425f1513d89c1ec723f4",
+      "gitBlob": "698a481771b0ea6a6e08fa5ca36a46405f9de6a3"
+    },
+    "lib/traveller/dokument-lebenszyklus-copy.ts": {
+      "bytes": 1391,
+      "sha256": "4d6b9d3688f3e9aa8eccc2760f9edff8668b2116d5ae2de4445b67ca76bb8cf2",
+      "gitBlob": "10bdf6ba0aadb60d33f2729ad62acc01a6e87f78"
+    },
+    "lib/traveller/dokument-lebenszyklus.ts": {
+      "bytes": 5661,
+      "sha256": "39b3923046584ad7c110b169417a4bd8023c7fe41179bd6790d183daf2d4687b",
+      "gitBlob": "bf3ecc7ad2321d14ce34a1cde441929d584d8d91"
+    },
+    "lib/trips/arbeitsbereich.ts": {
+      "bytes": 11297,
+      "sha256": "a93bdd26ee5a1930048515b360bed95952a21cea43546df940068119b72dd898",
+      "gitBlob": "884763a0ad43aa2d6f14f9b14ccae90b0f690d59"
+    },
+    "lib/trips/attention-presentation.ts": {
+      "bytes": 1329,
+      "sha256": "099114811815266cd1866bff286ac5db4746199cffd04f5d7a33134e9cb94bc7",
+      "gitBlob": "ea288d05783403f9d5e1b48e7c1af384472c1ae0"
+    },
+    "lib/trips/attention.ts": {
+      "bytes": 25321,
+      "sha256": "16b1e8e44003c758164e2f9a8306acd73083c981361359ed52859a3668aa041f",
+      "gitBlob": "282d4d96ef45883c473a06be49a7617f01b4ea86"
+    },
+    "lib/trips/bezeichnungen.ts": {
+      "bytes": 3840,
+      "sha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+      "gitBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765"
+    },
+    "lib/trips/buchung.ts": {
+      "bytes": 2799,
+      "sha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b",
+      "gitBlob": "dd6b76fb68bc9721d1f345eb66ef18a14868cbff"
+    },
+    "lib/trips/create-stages.ts": {
+      "bytes": 1908,
+      "sha256": "a8e655556c04ca1f1f109a5beff97b7856cd819df14ac2569d53187a6e6a9f02",
+      "gitBlob": "32897d2e11b57408aca634d583e85aa0dcd39140"
+    },
+    "lib/trips/cross-device-interaction-1.ts": {
+      "bytes": 3406,
+      "sha256": "2889bdc0a53e022cb02095ec2ab14cf184830ccd01433e92ec95a8179cc4abd7",
+      "gitBlob": "c853b08f9b5e5bbbed58c940777d6898234d2a92"
+    },
+    "lib/trips/datum-anzeige.ts": {
+      "bytes": 2567,
+      "sha256": "6c9ebca000e98e319bbff8b88aaebde4241398973de751d5fa5a89d71a273471",
+      "gitBlob": "153363963707b2142094c0c94a6c4455f4cd65cd"
+    },
+    "lib/trips/day-stage-assignment.ts": {
+      "bytes": 5005,
+      "sha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4",
+      "gitBlob": "9f5c84bb97b8609a2b0b0659b23bc9ac3dfac658"
+    },
+    "lib/trips/destination-essentials.ts": {
+      "bytes": 24940,
+      "sha256": "7e6f9f468f455cc1ad606b64e16b41f4ed6f9c1218333252396f294f6ac85125",
+      "gitBlob": "6e98ef8abbc2e4336cba3c0a8f2bab8196b1c6b2"
+    },
+    "lib/trips/detail.ts": {
+      "bytes": 11900,
+      "sha256": "f1feceda3a215b8d5ced87fa63a96b14b920f1a257c05328d598cd328ede4750",
+      "gitBlob": "fe85b27abc747145dcb955ab7ca3d069ff65adcd"
+    },
+    "lib/trips/flug-abdeckung.ts": {
+      "bytes": 10115,
+      "sha256": "799ecadbb4e6e4600c2f32ee47552c062f358e6b7b374846a957b0bbd97a7820",
+      "gitBlob": "1b8f7d005c8dbe74eec69c37cea2901c2147d049"
+    },
+    "lib/trips/flug-manuell.ts": {
+      "bytes": 2478,
+      "sha256": "f6dbd87aa9f0a7cae4a85a489f793797d972f3aa7c79a1ecfdf058178ac6acf5",
+      "gitBlob": "4a540e179a2cba34cbe1bb20eda2ae75ffcf4516"
+    },
+    "lib/trips/gastspeicher.ts": {
+      "bytes": 50354,
+      "sha256": "aeac3ccf9cd951848ac02d736bc8408083d6c7fe603f7762fa92ba3066c94b5c",
+      "gitBlob": "f18bf24efaf8f86196276f02758e2f162915d33a"
+    },
+    "lib/trips/manual-journey-editor-completion-1.ts": {
+      "bytes": 2238,
+      "sha256": "326c122cce75ebf5a76ea19952bb22ccb9c05800147395435e19c4b46b952daa",
+      "gitBlob": "4c141abbff7ce365167dd2df31bb1d59f3092757"
+    },
+    "lib/trips/mietwagen-felder.ts": {
+      "bytes": 2581,
+      "sha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b",
+      "gitBlob": "5a256b1ee8038238198a84a5870c714fcc017dcd"
+    },
+    "lib/trips/mobilitaet-felder.ts": {
+      "bytes": 3271,
+      "sha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e",
+      "gitBlob": "155f8a71aff2c4e47fdfdf2a6fa0d40f106e807d"
+    },
+    "lib/trips/naechte-abdeckung.ts": {
+      "bytes": 14618,
+      "sha256": "27a40cf3457380f4670ac62c51a980c50828583a7a429b4be53d253c59a3f5ec",
+      "gitBlob": "dec9700cb730bf316e3c5a793eae2d75f3db230c"
+    },
+    "lib/trips/organize-premium-experience-6.ts": {
+      "bytes": 4373,
+      "sha256": "834959988b24150f1102b23298733d08e5df76dd7b60af401d8a791956f26617",
+      "gitBlob": "d81377950ca5bca5b2189e3d683989b759933f1b"
+    },
+    "lib/trips/reise-orte.ts": {
+      "bytes": 1868,
+      "sha256": "5cac9ddf123498c281ab0cbf85319c347c4aee59d3f7a71a23b933916a4684f4",
+      "gitBlob": "911a5bf25584c04d183f4ff38ae93d430ba3875b"
+    },
+    "lib/trips/schema.ts": {
+      "bytes": 29628,
+      "sha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+      "gitBlob": "5063ead19ed2a9e99166d7942f88434e64b62a84"
+    },
+    "lib/trips/tage.ts": {
+      "bytes": 2226,
+      "sha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
+      "gitBlob": "e34eb190e86ba6ed982071fc5e77f4ab7d7631a8"
+    },
+    "lib/trips/timeline.ts": {
+      "bytes": 3603,
+      "sha256": "dc86dacd2036c1887483f3e557e58207b48a2d2f43659a360731ecb325f8d2fd",
+      "gitBlob": "2399ff700fc68211f7a4a86826830066c4076f1d"
+    },
+    "lib/trips/trip-audit-v1/audit.ts": {
+      "bytes": 13367,
+      "sha256": "d0423450907f1f805a482ab9961b416edbba8f7a681605f8a035a1df82b70bc6",
+      "gitBlob": "0ac3fd0b1223029010cc31f1abb4d4b1a87b8e06"
+    },
+    "lib/trips/trip-audit-v1/limits.ts": {
+      "bytes": 4276,
+      "sha256": "f0a885f916508ea1e880775dc8f0618bad324c1ad06acd435580a12bad8d4b28",
+      "gitBlob": "f542ab45edc7f372f5e0af7063dcd334c1b00af7"
+    },
+    "lib/trips/trip-plan-editing-placement-recovery-1.ts": {
+      "bytes": 2004,
+      "sha256": "8d685ee3dac32f6b5d45b52bb7e78056ccf52ac3ceeec2cbdd2d05303e98bf09",
+      "gitBlob": "70f55a732019631a591fb1067388d59fe3af3dcf"
+    },
+    "lib/trips/trip-plan-integrated/day.ts": {
+      "bytes": 6888,
+      "sha256": "069b04bdd702821e68ff47ce7c6ba3a2a1b6b6f3d1b912b156844cc0ae49b7cc",
+      "gitBlob": "4b3959f1c84c77b58e89e5597c31452791348b37"
+    },
+    "lib/trips/trip-plan-integrated/external.ts": {
+      "bytes": 713,
+      "sha256": "1c3b05a9786efe4fe4301fa2aa740ef826eb7ff553d157b823d8928058e34c9a",
+      "gitBlob": "0b91925a055f2a75f2ba97c7f36d58a3a7bd15d8"
+    },
+    "lib/trips/trip-plan-integrated/intervals.ts": {
+      "bytes": 5727,
+      "sha256": "edb24219937aa6da11041d97c925fbc6d4b184ffcfdf0df9c953a0dfc3da26c8",
+      "gitBlob": "41b06e460478cd69e77df4bff81db5970cc00505"
+    },
+    "lib/trips/trip-plan-integrated/live.ts": {
+      "bytes": 2326,
+      "sha256": "94ec7c9b0bc7567267429b3b9eaa3be2e2c3e9c2bbbc42bde0fee37ace50675e",
+      "gitBlob": "66f4e7081ec18be8b5f247bc8817eb2d8cc49e41"
+    },
+    "lib/trips/trip-plan-integrated/manual.ts": {
+      "bytes": 3206,
+      "sha256": "40585bf800cd7e18ae394ac95d6cea6146e881b901d6c02fe9d286dea3bea99b",
+      "gitBlob": "7a67bfccba0e851d1cf18a90996c4a65481aefe9"
+    },
+    "lib/trips/trip-plan-integrated/movements.ts": {
+      "bytes": 5250,
+      "sha256": "31b76e47549aa144d722baeba6f59c50721b32e936946edcdb2dea5f059966fb",
+      "gitBlob": "64153f29807ffc34a0ca4fb300c3abbf14a07835"
+    },
+    "lib/trips/trip-plan-integrated/next.ts": {
+      "bytes": 3513,
+      "sha256": "41f29553faf2839510008175a86e73ca7647c196c2097e1c6bf5417b1c76587f",
+      "gitBlob": "af3a0cc7bbe37c7278f741b2e6ab2eb186a4c34a"
+    },
+    "lib/trips/trip-plan-premium-experience-4.ts": {
+      "bytes": 4335,
+      "sha256": "a6c610a58e71f03ef9aa41361a028f85958cf4ad4d2739569515391cdd035d6e",
+      "gitBlob": "5c59c84ee62e86e15abda2825f2ef92eb6104f18"
+    },
+    "lib/trips/trip-timeline-core-1.ts": {
+      "bytes": 2006,
+      "sha256": "aa9376486d4f9657deda0fc354185f94ee627f1ee636c2e19a456a4cf0606579",
+      "gitBlob": "bbab86fb06074eda35a81b75b402621367879f31"
+    },
+    "lib/trips/trip-timeline-temporal-review-1.ts": {
+      "bytes": 24628,
+      "sha256": "b82e38a8bc63e2d68520987440dd01ab794322ec064c75ef5254292b42643714",
+      "gitBlob": "15e41cf1ae76848316a8d76d3dc2e937622fa904"
+    },
+    "lib/trips/trip-workspace-premium-experience-3.ts": {
+      "bytes": 1117,
+      "sha256": "c1ee9beefd66001edb0d5425866edd7e9be9a3f9be85653ea9bd71da2d230ade",
+      "gitBlob": "a6cc551978ca42618af77ec231d7289a2cf69b55"
+    },
+    "lib/trips/uebersicht.ts": {
+      "bytes": 4600,
+      "sha256": "4bfbe648a2c01226f9ec3774f7ab55000dd9772fecf7f6e1aa931259924d9ac0",
+      "gitBlob": "8b18bc2e789f599a5246a873c974ded3afdb1e1c"
+    },
+    "lib/trips/unterkunft-manuell.ts": {
+      "bytes": 347,
+      "sha256": "1b213b2d89d8cda03b3032fda67736468938a22ec7e3b33238a1b0044ff64b1d",
+      "gitBlob": "d9b08ce8ac2aad516ab9604b04f16dd0f7433211"
+    },
+    "lib/trips/workspace-mode.ts": {
+      "bytes": 6918,
+      "sha256": "0cd7ef5d8034abc02d3af131fdbe37881895e6541a23f9db842d6cffa8a13b8d",
+      "gitBlob": "ffcddf3821eed98005af9ed1c70202f8a281aa33"
+    },
+    "lib/trips/workspace-praeferenzen.ts": {
+      "bytes": 1139,
+      "sha256": "7e55ac7455a3cabc024ce93bfda1321f85de266ecbc1cc4b07937bfe41b114e3",
+      "gitBlob": "0dbe60dfa9f59e2261c243b3577bf0f52ba8830d"
+    },
+    "lib/trips/zuordnung.ts": {
+      "bytes": 2762,
+      "sha256": "85ba3f5140a1859fc0fd7c7e65111d90c493effc3d9f684888805ebe00d06d3e",
+      "gitBlob": "9282a1463e418cdda308b6c47094fe0b1952ebb2"
+    },
+    "lib/utils.ts": {
+      "bytes": 423,
+      "sha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+      "gitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48"
+    },
+    "package-lock.json": {
+      "bytes": 318748,
+      "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+      "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+    },
+    "package.json": {
+      "bytes": 4674,
+      "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+      "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b"
+    },
+    "tsconfig.json": {
+      "bytes": 865,
+      "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b",
+      "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641"
+    },
+    "types/trips.ts": {
+      "bytes": 17314,
+      "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+      "gitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef"
+    }
+  }
+}

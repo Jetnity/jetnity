@@ -1,5 +1,9 @@
 # Jetnity – Roadmap
 
+> **R106 — begrenzter Fortschritt in Admin, Account und Trip Workspace (25. Oktober 2026).** Nach dem [Technical-Lead-/Cursor-Betriebsstandard](docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md) den [R106-Handoff](docs/JETNITY_R106_FINITE_BATCH_CLOSURE_HANDOFF_2026-10-25.md), [Live-Index #751](https://github.com/Jetnity/jetnity/issues/751) und [Auftrag #1003](https://github.com/Jetnity/jetnity/issues/1003) lesen. Dort stehen die getrennten Abnahmestände von O (PR #1007, Tracking #1004), A (PR #1008, Tracking #1005) und T (PR #1009, Tracking #1006) sowie der erste noch offene Schritt. Den späteren Docs-PR und seine eigenen Gates stets live rekonstruieren.
+>
+> **Kein automatischer vierter Produktauftrag.** Der begrenzte Abschluss erklärt weder diese Produktbereiche insgesamt noch V1 oder Launch für fertig. Bestehende Holds und Sondergates bleiben verbindlich. Ältere datierte Arbeitsstände darunter bleiben unveränderte historische Evidence; dauerhaft gültige Verträge bleiben bestehen. Live-Evidence gewinnt.
+
 Stand: 22. September 2026  
 Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety, Seasonal, AP-1–AP-4, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime, Visitor Search UX, TW7-A, D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2 einschließlich Production-Alignment sowie P2-TA-06 sind integriert. Live-`main` immer live prüfen.**
 

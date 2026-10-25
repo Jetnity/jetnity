@@ -1,0 +1,62 @@
+import assert from 'node:assert/strict'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { beispielreise } from '/tmp/jetnity-r106-t-review/lib/reiseaenderung/fixtures/reise.ts'
+import { readinessItemBauen } from '/tmp/jetnity-r106-t-review/lib/readiness/bauen.ts'
+import {
+  annehmen, entscheiden, kontoBeobachten, leerLedger, manuellLesen, scheitern,
+} from '/tmp/jetnity-r106-t-review/lib/readiness/personal-preparation-workflow.ts'
+
+const repo = '/tmp/jetnity-r106-t-review'
+// Head verified by the separate shell read immediately before this invocation.
+const head = 'b218c33d9d00c19f3705aba8bd208cc455272659'
+const source = readFileSync(repo + '/lib/readiness/personal-preparation-workflow.ts')
+const sourceBlob = createHash('sha1').update(`blob ${source.length}\0`).update(source).digest('hex')
+assert.equal(sourceBlob, '80ac9973f315345832692ae0907ebdc2deb6adb4')
+const basis = beispielreise({ id: 'tl-local-counterexample-trip', readinessItems: [] })
+const dispatched = entscheiden(kontoBeobachten(leerLedger(basis.id), basis), {
+  art: 'create', title: 'TL local fixture', filter: 'alle',
+}, basis, basis)
+assert.ok(dispatched.auftrag?.payload)
+const intent = dispatched.ledger.intents.at(-1)!
+const failed = scheitern(dispatched.ledger, intent.id, intent.lauf, 'Synthetic lost response', 'unclear')
+const retriedWithoutRead = entscheiden(failed, { art: 'retry', intentId: intent.id }, basis, basis)
+assert.ok(retriedWithoutRead.auftrag, 'Counterexample: retry dispatched before any read')
+assert.equal(retriedWithoutRead.auftrag.clientRef, intent.clientRef)
+
+const built = readinessItemBauen(basis, dispatched.auftrag.payload)
+assert.ok(built.ok)
+const matching = { ...basis, readinessItems: [built.item] }
+const accepted = annehmen(dispatched.ledger, intent.id, intent.lauf).ledger
+const firstAbsent = kontoBeobachten(accepted, { ...basis, readinessItems: [] })
+assert.equal(firstAbsent.intents.at(-1)!.phase, 'absent_uncertain')
+const afterMatching = kontoBeobachten(firstAbsent, matching)
+assert.equal(afterMatching.intents.at(-1)!.phase, 'absent_uncertain', 'Counterexample: later matching canonical delivery ignored')
+
+const conflicting = { ...matching, readinessItems: [{ ...built.item, title: 'Other stored title' }] }
+const firstConflict = kontoBeobachten(accepted, conflicting)
+assert.equal(firstConflict.intents.at(-1)!.phase, 'conflict')
+const conflictAfterMatching = kontoBeobachten(firstConflict, matching)
+assert.equal(conflictAfterMatching.intents.at(-1)!.phase, 'conflict')
+
+const unknownAccountRead = kontoBeobachten(failed, matching)
+const unknownGuestRead = manuellLesen(failed, { art: 'success', reise: matching }, basis.id)
+assert.equal(unknownAccountRead.intents.at(-1)!.phase, 'unclear')
+assert.equal(unknownGuestRead.intents.at(-1)!.phase, 'unclear')
+
+const report = {
+  purpose: 'Independent TL-helper counterexamples; observed defects, not a product PASS',
+  head,
+  node: process.version,
+  generatedAt: new Date().toISOString(),
+  scope: 'Pure real production workflow + actual fixture and item builder, synthetic in-memory values only. No storage, network, account, database, or runtime writers executed.',
+  sourceBlob,
+  counterexamples: [
+    { name: 'unclear_to_retry_without_read', phaseBefore: 'unclear', readCalls: 0, returnedWriteOrder: retriedWithoutRead.auftrag !== null, sameClientRef: retriedWithoutRead.auftrag.clientRef === intent.clientRef },
+    { name: 'account_absent_then_matching', firstPhase: firstAbsent.intents.at(-1)!.phase, laterMatchingPhase: afterMatching.intents.at(-1)!.phase, laterDelivery: afterMatching.lieferung },
+    { name: 'account_conflict_then_matching', firstPhase: firstConflict.intents.at(-1)!.phase, laterMatchingPhase: conflictAfterMatching.intents.at(-1)!.phase },
+    { name: 'unknown_read_reconciliation_ignored', accountAfterMatchingRead: unknownAccountRead.intents.at(-1)!.phase, guestAfterMatchingRead: unknownGuestRead.intents.at(-1)!.phase },
+  ],
+}
+writeFileSync('/tmp/r106-review-evidence/trip-counterexamples.json', JSON.stringify(report, null, 2) + '\n')
+console.log(JSON.stringify(report, null, 2))

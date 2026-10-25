@@ -1,0 +1,26 @@
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+browserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /tmp/r106-review-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/temporary/playwright_chromiumdev_profile-uRijsF --remote-debugging-pipe --no-startup-window
+<launched> pid=8817
+[pid=8817][err] [1025/104757.814825:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+[pid=8817][err] [1025/104757.815031:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+Call log:
+  - <launching> /tmp/r106-review-browsers/chromium-1187/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/temporary/playwright_chromiumdev_profile-uRijsF --remote-debugging-pipe --no-startup-window
+  - <launched> pid=8817
+  - [pid=8817][err] [1025/104757.814825:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+  - [pid=8817][err] [1025/104757.815031:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+  - [pid=8817] <gracefully close start>
+  - [pid=8817] <kill>
+  - [pid=8817] <will force kill>
+  - [pid=8817] <process did exit: exitCode=null, signal=SIGTRAP>
+  - [pid=8817] starting temporary directories cleanup
+  - [pid=8817] finished temporary directories cleanup
+  - [pid=8817] <gracefully close end>
+
+    at chromium.launch (/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapted-author-runner.mjs:1236:25)
+    at main (/tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapted-author-runner.mjs:1047:34)
+    at async file:///tmp/r106-review-evidence/admin-author-matrix-2e67d1b99490-4PGEMM/adapted-author-runner.mjs:1241:1

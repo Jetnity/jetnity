@@ -1,0 +1,545 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-25T11:10:35.795044+00:00",
+  "repository": "Jetnity/jetnity",
+  "tripPr": 1009,
+  "purpose": "Archival inventory and README only. No test/probe/browser execution, no archive copying, no repository/platform mutation. Selected original bytes remain untouched.",
+  "snapshot": "b218 historical defects and 800 R1 re-gating: original 8 cases pass but 5 deeper assertions fail. Future R2 scripts are preparation only, not new-head evidence.",
+  "proposedArchiveRoot": "docs/evidence/r106-trip-root-review-b218-80006fdf-2026-10-25/",
+  "executorAttribution": {
+    "b218": "Independent TL-helper execution, as labelled in original results and same-session review history.",
+    "800": "Root Technical Lead execution, reported in the root assignment and preserved result files.",
+    "inventory": "Read-only Work review helper; source/Git and byte inventory only."
+  },
+  "authorityReferences": {
+    "r1ChangesRequired": "https://github.com/Jetnity/jetnity/pull/1009#issuecomment-6396293132",
+    "r2ChangesRequired": "https://github.com/Jetnity/jetnity/pull/1009#issuecomment-6396794207",
+    "r2SameSessionAcknowledgment": "https://github.com/Jetnity/jetnity/pull/1009#issuecomment-6396795123",
+    "qualification": "Provided by root/session context; no GitHub polling in this archival task."
+  },
+  "historicalB218": {
+    "head": "b218c33d9d00c19f3705aba8bd208cc455272659",
+    "node": "v22.23.4",
+    "browser": "140.0.7339.16",
+    "pureReportedCounterexampleGroups": 4,
+    "mountedCases": 3,
+    "unknownReadGroupCovers": [
+      "account",
+      "guest"
+    ],
+    "meaning": "The scripts assert the presence of defects. A completed probe is not product acceptance.",
+    "pureWorkflowBlob": "80ac9973f315345832692ae0907ebdc2deb6adb4",
+    "mountedExternalRequests": 0,
+    "sourceBindingLimit": "The old pure script verifies its workflow blob but labels HEAD from a separate contemporaneous shell read. The old mounted script hardcodes its HEAD label and consumes a separately built bundle without recording input hashes; do not retroactively claim the modern guard existed."
+  },
+  "oldHeadGuardRefusals": {
+    "artifacts": [
+      "trip-acceptance-old-head-guard.json",
+      "trip-mounted-acceptance-old-head-guard.json"
+    ],
+    "count": 2,
+    "behaviorCasesExecuted": 0,
+    "verdict": "NOT_VERIFIED",
+    "meaning": "Intentional rejection of b218 before behavior execution; not passing product tests and not new product failures."
+  },
+  "executed800Runs": [
+    {
+      "artifact": "trip-acceptance-pure-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "generatedAt": "2026-10-25T10:57:42.312Z",
+      "node": "v22.23.4",
+      "browser": null,
+      "reportedCases": 5,
+      "pass": 5,
+      "fail": 0,
+      "verdict": "BOUNDED_ASSERTIONS_PASSED",
+      "caseNames": [
+        "unknown retry is refused before any read",
+        "accepted account absent read can recover on a later matching delivery",
+        "accepted account conflicting read can recover on a later matching delivery",
+        "unknown account outcome becomes conservative reconciliation after a matching read",
+        "unknown guest outcome becomes conservative reconciliation after a matching read"
+      ],
+      "externalRequests": null,
+      "qualification": "No exit field in original JSON. Success/failure follows recorded verdict and probe exitCode rule; root separately reported execution."
+    },
+    {
+      "artifact": "trip-acceptance-mounted-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "generatedAt": "2026-10-25T10:57:55.794Z",
+      "node": "v22.23.4",
+      "browser": "140.0.7339.16",
+      "reportedCases": 3,
+      "pass": 3,
+      "fail": 0,
+      "verdict": "BOUNDED_ASSERTIONS_PASSED",
+      "caseNames": [
+        "late A confirmation preserves a deliberately focused search field",
+        "unknown repeat cannot write before read and matching read is reconciliation",
+        "account later matching canonical delivery recovers after first absent delivery"
+      ],
+      "externalRequests": 0,
+      "qualification": "No exit field in original JSON. Success/failure follows recorded verdict and probe exitCode rule; root separately reported execution."
+    },
+    {
+      "artifact": "trip-r1-regression-pure-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "generatedAt": "2026-10-25T10:57:51.623Z",
+      "node": "v22.23.4",
+      "browser": null,
+      "reportedCases": 1,
+      "pass": 0,
+      "fail": 1,
+      "verdict": "BOUNDED_ASSERTION_FAILED",
+      "caseNames": [
+        "Re-reading old unresolved A must preserve newer pending B lock on the same ref"
+      ],
+      "externalRequests": null,
+      "qualification": "No exit field in original JSON. Success/failure follows recorded verdict and probe exitCode rule; root separately reported execution."
+    },
+    {
+      "artifact": "trip-r1-regression-mounted-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "generatedAt": "2026-10-25T10:57:57.038Z",
+      "node": "v22.23.4",
+      "browser": "140.0.7339.16",
+      "reportedCases": 3,
+      "pass": 0,
+      "fail": 3,
+      "verdict": "BOUNDED_ASSERTION_FAILED",
+      "caseNames": [
+        "Old A conflict read must not allow ordinary delete during newer same-ref B write",
+        "Late A completion must preserve deliberate B status focus",
+        "Late A completion must preserve deliberate B delete-confirmation focus"
+      ],
+      "externalRequests": 0,
+      "qualification": "No exit field in original JSON. Success/failure follows recorded verdict and probe exitCode rule; root separately reported execution."
+    },
+    {
+      "artifact": "trip-r1-post-delete-history-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "generatedAt": "2026-10-25T10:58:39.099Z",
+      "node": "v22.23.4",
+      "browser": "140.0.7339.16",
+      "reportedCases": 1,
+      "pass": 0,
+      "fail": 1,
+      "verdict": "BOUNDED_ASSERTION_FAILED",
+      "caseNames": [
+        "A successfully deleted and reread-absent ref must not reappear as currently saved and visible"
+      ],
+      "externalRequests": 0,
+      "qualification": "No exit field in original JSON. Success/failure follows recorded verdict and probe exitCode rule; root separately reported execution."
+    }
+  ],
+  "counts": {
+    "coreFiles": 19,
+    "coreBytes": 94087,
+    "preparedR2Files": 5,
+    "preparedR2Bytes": 32080,
+    "allSelectedOriginalFiles": 24,
+    "allSelectedOriginalBytes": 126167,
+    "originalCasesAt800": {
+      "purePass": 5,
+      "mountedPass": 3,
+      "totalPass": 8
+    },
+    "deeperCasesAt800": {
+      "pureFail": 1,
+      "mountedLockAndFocusFail": 3,
+      "mountedPostDeleteFail": 1,
+      "totalFail": 5
+    },
+    "futureR2ExecutedCases": 0
+  },
+  "coreFiles": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-common.mjs",
+      "proposedArchiveRelativePath": "probes/trip-acceptance-common.mjs.txt",
+      "role": "shared_guard",
+      "proofHead": null,
+      "bytes": 5271,
+      "sha256": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0",
+      "gitBlobIfArchivedUnchanged": "e5bee1f134c22d0281b22bb70604ca71ddcd5fa9",
+      "replayBasename": "trip-acceptance-common.mjs"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-build-acceptance-bundle.mjs",
+      "proposedArchiveRelativePath": "probes/trip-build-acceptance-bundle.mjs.txt",
+      "role": "guarded_replay_builder",
+      "proofHead": null,
+      "bytes": 2239,
+      "sha256": "b2a9fb64f6b7cd89fcdeaa95cd54c77efe5ed90154da172f115cd24a59183e12",
+      "gitBlobIfArchivedUnchanged": "4d7a75a89de60ad3a96e49e8ced6558751b2cff9",
+      "replayBasename": "trip-build-acceptance-bundle.mjs"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-counterexamples.ts",
+      "proposedArchiveRelativePath": "probes/trip-counterexamples.ts.txt",
+      "role": "historical_pure_defect_probe",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 4148,
+      "sha256": "a7f26164720d43845c2660f99f88cad4e19d3582356dc1235de361f257a7721d",
+      "gitBlobIfArchivedUnchanged": "0ec9c242d6827a0058718f35b2ac0982cec528e7",
+      "replayBasename": "trip-counterexamples.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-counterexamples.json",
+      "proposedArchiveRelativePath": "history/b218c33d/trip-counterexamples.json",
+      "role": "historical_pure_defect_result",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 1117,
+      "sha256": "0776c50839a262de8fea10b37f05586bd1dd5287ebee815049a67f1aa035fee4",
+      "gitBlobIfArchivedUnchanged": "f59f69c028fcb8971e057ff6682f9e46e04b24a1",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-counterexamples.ts",
+      "proposedArchiveRelativePath": "probes/trip-mounted-counterexamples.ts.txt",
+      "role": "historical_mounted_defect_probe",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 7020,
+      "sha256": "582a357d6d752314976483e7cdefaafe94d6309b15801eec873540f1f40fda36",
+      "gitBlobIfArchivedUnchanged": "4b5344048af17c33f52b664d33ab591d142483a6",
+      "replayBasename": "trip-mounted-counterexamples.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-counterexamples.json",
+      "proposedArchiveRelativePath": "history/b218c33d/trip-mounted-counterexamples.json",
+      "role": "historical_mounted_defect_result",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 1109,
+      "sha256": "1d59bc7094dd362c84f9759cf00517c9843ddf3ef2c4ccebd500da2f2fc32a73",
+      "gitBlobIfArchivedUnchanged": "0c955c6123973d74c445ff4e9d4f2047922e4cdf",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-pure-acceptance.ts",
+      "proposedArchiveRelativePath": "probes/trip-pure-acceptance.ts.txt",
+      "role": "executed_original_case_acceptance_probe",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 4591,
+      "sha256": "8a21fadb4ac39aa36f3df7ff6d19b26c1bf34461bdd84e8091430cd0f2e1da2d",
+      "gitBlobIfArchivedUnchanged": "9b9960cb352f37cd527520c3306692b0f99e5706",
+      "replayBasename": "trip-pure-acceptance.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-acceptance.ts",
+      "proposedArchiveRelativePath": "probes/trip-mounted-acceptance.ts.txt",
+      "role": "executed_original_case_mounted_probe",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 9952,
+      "sha256": "196b9081f3ff3cf47ef1f32bc4cd9a84cfe6add32712830c45f28b275f244448",
+      "gitBlobIfArchivedUnchanged": "fc0f9cf6b2808b8bc79017e0d9e482158c4f21d4",
+      "replayBasename": "trip-mounted-acceptance.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-old-head-guard.json",
+      "proposedArchiveRelativePath": "history/guard-refusal/trip-acceptance-old-head-guard.json",
+      "role": "intentional_guard_refusal_zero_behavior_cases",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 392,
+      "sha256": "712b1d1f16138a8528b951cbdc87c29271b8117883657d0536554a2c999caada",
+      "gitBlobIfArchivedUnchanged": "42921fb04c7baf3ee506859eb1029e66c4d99520",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-acceptance-old-head-guard.json",
+      "proposedArchiveRelativePath": "history/guard-refusal/trip-mounted-acceptance-old-head-guard.json",
+      "role": "intentional_guard_refusal_zero_behavior_cases",
+      "proofHead": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "bytes": 388,
+      "sha256": "89b3e3134de8fad35a996cdf73c2b6c97ab6913722c1b6f4fb7ca2022ba552c4",
+      "gitBlobIfArchivedUnchanged": "f5f51ccd765e3716414d887aa144c1901b15fa98",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-pure-80006fdf-root1.json",
+      "proposedArchiveRelativePath": "results/80006fdf/trip-acceptance-pure-80006fdf-root1.json",
+      "role": "five_original_pure_cases_passed",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 2410,
+      "sha256": "dd5de23529e7c75d189c16da0633fbb190144aba1467bd9e5c474341f5752e7e",
+      "gitBlobIfArchivedUnchanged": "afe9ab13fc3e983d5a5f6569b211de870efd705d",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-mounted-80006fdf-root1.json",
+      "proposedArchiveRelativePath": "results/80006fdf/trip-acceptance-mounted-80006fdf-root1.json",
+      "role": "three_original_mounted_cases_passed",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 6444,
+      "sha256": "4fcd490bfe05a93ec2428123f96c0e06f621ee8ae4a1aa6db743c495c8ec457f",
+      "gitBlobIfArchivedUnchanged": "070c6b30a38c3459f90ba03ae175b0feea16e2da",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-80006fdf-root1.bundle-info.json",
+      "proposedArchiveRelativePath": "bindings/trip-80006fdf-root1.bundle-info.json",
+      "role": "executed_bundle_metadata_not_bundle",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 5347,
+      "sha256": "d3c65a7f6fc90f2f77206c6ef04b00a7931b87f219409494a69e76ff89aefb3f",
+      "gitBlobIfArchivedUnchanged": "f2015336ced6769dbf7938ddfd74c28c126a4a7f",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-regression-pure-80006fdf.ts",
+      "proposedArchiveRelativePath": "probes/trip-r1-regression-pure-80006fdf.ts.txt",
+      "role": "executed_same_ref_correct_behavior_probe",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 5084,
+      "sha256": "8e68f35564dca1e4c7e77e0056535b9fed5e22893221a71e23b0dbedca4b1a3a",
+      "gitBlobIfArchivedUnchanged": "a6c206b01c25105bf54ac169a3debfe1e15ff375",
+      "replayBasename": "trip-r1-regression-pure-80006fdf.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-regression-mounted-80006fdf.ts",
+      "proposedArchiveRelativePath": "probes/trip-r1-regression-mounted-80006fdf.ts.txt",
+      "role": "executed_lock_and_focus_correct_behavior_probe",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 11106,
+      "sha256": "61ec758b5f802133ff7b1ab6cd363c35bad318fb9560f7ecacdbf03df1119d84",
+      "gitBlobIfArchivedUnchanged": "799fb0b2a0bcb268ccccd0daf92b97b60d8fb750",
+      "replayBasename": "trip-r1-regression-mounted-80006fdf.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-post-delete-history-80006fdf.ts",
+      "proposedArchiveRelativePath": "probes/trip-r1-post-delete-history-80006fdf.ts.txt",
+      "role": "executed_post_delete_correct_behavior_probe",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 9854,
+      "sha256": "f569a34bbbe7919cc980879cbaf635ef39a6b3ba83f0a72d2a82487acfe51e61",
+      "gitBlobIfArchivedUnchanged": "c0dc340d9bb8829c4175463a5e5cad7582c9dce4",
+      "replayBasename": "trip-r1-post-delete-history-80006fdf.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-regression-pure-80006fdf-root1.json",
+      "proposedArchiveRelativePath": "results/80006fdf/trip-r1-regression-pure-80006fdf-root1.json",
+      "role": "one_pure_assertion_failed",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 1825,
+      "sha256": "e17aa9e237a75f95a8c0c3e69ff8ef97d43f5f1401d74459ebffb4607af99de2",
+      "gitBlobIfArchivedUnchanged": "8cf058215eba0f5e1032480dece9a1926edcd68e",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-regression-mounted-80006fdf-root1.json",
+      "proposedArchiveRelativePath": "results/80006fdf/trip-r1-regression-mounted-80006fdf-root1.json",
+      "role": "three_mounted_assertions_failed",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 8251,
+      "sha256": "e298996abfd0e266936a9e379ba6a05368effb02199d64d2c9ea9f3515415c7c",
+      "gitBlobIfArchivedUnchanged": "075a81c923f7ca4ad52dc1afba025df84b99c71a",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r1-post-delete-history-80006fdf-root1.json",
+      "proposedArchiveRelativePath": "results/80006fdf/trip-r1-post-delete-history-80006fdf-root1.json",
+      "role": "one_post_delete_assertion_failed",
+      "proofHead": "80006fdf1443ca9d75d8c481246821354da16000",
+      "bytes": 7539,
+      "sha256": "2b5715a421792737cf0a720de08489a5f8977cdc03a6462b2d4b703192c227f6",
+      "gitBlobIfArchivedUnchanged": "5bcebc260990a1f175cce805e8dc077e69a05636",
+      "replayBasename": null
+    }
+  ],
+  "preparedR2Files": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-same-ref-acceptance.ts",
+      "proposedArchiveRelativePath": "prepared-r2/trip-r2-same-ref-acceptance.ts.txt",
+      "role": "NOT_EXECUTED_future_head_pure_probe",
+      "proofHead": null,
+      "bytes": 5286,
+      "sha256": "3748dd1bb2b8d6f7c45a5e47bb78ac7dd0873fe5008c7a9087a0a45255f8422c",
+      "gitBlobIfArchivedUnchanged": "6ae53a16b9deac5bdbec1b059afdf87a8193a388",
+      "replayBasename": "trip-r2-same-ref-acceptance.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-controls-acceptance.ts",
+      "proposedArchiveRelativePath": "prepared-r2/trip-r2-controls-acceptance.ts.txt",
+      "role": "NOT_EXECUTED_future_head_mounted_probe",
+      "proofHead": null,
+      "bytes": 11308,
+      "sha256": "4abd1607dc7ae943d5521bc7511a105ddb3772fbcc4b5fd901482d5d50e5923e",
+      "gitBlobIfArchivedUnchanged": "2f8ec0f1bd3d07aaf0c66bcbea2f71d210516d16",
+      "replayBasename": "trip-r2-controls-acceptance.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-post-delete-acceptance.ts",
+      "proposedArchiveRelativePath": "prepared-r2/trip-r2-post-delete-acceptance.ts.txt",
+      "role": "NOT_EXECUTED_future_head_post_delete_probe",
+      "proofHead": null,
+      "bytes": 10076,
+      "sha256": "3a1987a79dbd80606e4ef94bd17f5f607229e473e18e158cdac903eb7e05333b",
+      "gitBlobIfArchivedUnchanged": "7d393695ccd33754175847170bfd09711bcff657",
+      "replayBasename": "trip-r2-post-delete-acceptance.ts"
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-acceptance-changes.diff",
+      "proposedArchiveRelativePath": "prepared-r2/trip-r2-acceptance-changes.diff",
+      "role": "preparation_only_exact_head_guard_diff",
+      "proofHead": null,
+      "bytes": 3390,
+      "sha256": "4ef0ddbadf028a654d7ca96272e776edf723d0746e0c9a46ae0dd49d6eda9b02",
+      "gitBlobIfArchivedUnchanged": "016a2a2ea33e58f868613a62a35fc9cd3cc2b514",
+      "replayBasename": null
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-acceptance-provenance.json",
+      "proposedArchiveRelativePath": "prepared-r2/trip-r2-acceptance-provenance.json",
+      "role": "preparation_only_byte_preservation_record",
+      "proofHead": null,
+      "bytes": 2020,
+      "sha256": "f717517690c454e381307fb46a82a49af18d66fcbfd8cc5d2a2ce4dfb42a5d6e",
+      "gitBlobIfArchivedUnchanged": "9715c2fecfa41bf0d498fdf511d600ca446fae87",
+      "replayBasename": null
+    }
+  ],
+  "futureR2": {
+    "status": "NOT EXECUTED",
+    "expectedNewHead": null,
+    "preparedBehaviorCases": 5,
+    "rejectsHeads": [
+      "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "80006fdf1443ca9d75d8c481246821354da16000"
+    ],
+    "preservation": "Original preparation record confirms each behavior/assertion body remains byte-identical to its executed 800 predecessor. Only the head admission rule and an API-review reminder changed.",
+    "nextRequirement": "Independently inspect exact new workflow/builder/fixture/Host semantics, regenerate committed source manifest and guarded bundle for the explicit new SHA, then execute into fresh outputs and archive those results separately. A fixture mismatch is neither a product defect nor a PASS."
+  },
+  "sourceBindingVerification": [
+    {
+      "artifact": "trip-acceptance-pure-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 5,
+      "mismatches": []
+    },
+    {
+      "artifact": "trip-acceptance-mounted-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 62,
+      "mismatches": []
+    },
+    {
+      "artifact": "trip-r1-regression-pure-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 5,
+      "mismatches": []
+    },
+    {
+      "artifact": "trip-r1-regression-mounted-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 62,
+      "mismatches": []
+    },
+    {
+      "artifact": "trip-r1-post-delete-history-80006fdf-root1.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 62,
+      "mismatches": []
+    },
+    {
+      "artifact": "trip-80006fdf-root1.bundle-info.json",
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "pairsVerifiedAgainstCommittedGitTree": 61,
+      "mismatches": []
+    }
+  ],
+  "unique800RecordedInputBlobsVerified": 62,
+  "pinnedExistingCodeReferencesDoNotDuplicate": [
+    {
+      "head": "b218c33d9d00c19f3705aba8bd208cc455272659",
+      "tree": "c54a3260e9bc6c91d352321d11f5a4607effb6ba",
+      "sources": {
+        "components/trips/EigeneReisevorbereitung.tsx": "7ee1b7bda392bd9db5bcec3320d9b703c8c63fed",
+        "components/trips/usePersonalPreparationLifecycle.ts": "b86f551765c49ab64b7a7bdb782172fcf876c751",
+        "lib/readiness/personal-preparation-workflow.ts": "80ac9973f315345832692ae0907ebdc2deb6adb4",
+        "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6",
+        "lib/readiness/bauen.ts": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+        "lib/reiseaenderung/fixtures/reise.ts": "7533df1f2de0a9972810278b64aa9839033342f8",
+        "package.json": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "package-lock.json": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "scripts/server-only-test-register.mjs": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b"
+      }
+    },
+    {
+      "head": "80006fdf1443ca9d75d8c481246821354da16000",
+      "tree": "1234fa81fe5292a1a6d5ed93621a951cf8378ace",
+      "sources": {
+        "components/trips/EigeneReisevorbereitung.tsx": "8be6d7fb3c5782173e97d07a82e24459d9f46608",
+        "components/trips/usePersonalPreparationLifecycle.ts": "a11b25652281e9d04be29aad7e0d9cf53c28e4e1",
+        "lib/readiness/personal-preparation-workflow.ts": "7db0b86f68fca58a499b35e49ee60b541f23bc37",
+        "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6",
+        "lib/readiness/bauen.ts": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+        "lib/reiseaenderung/fixtures/reise.ts": "7533df1f2de0a9972810278b64aa9839033342f8",
+        "package.json": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "package-lock.json": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "scripts/server-only-test-register.mjs": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b"
+      }
+    }
+  ],
+  "retained800BundleIdentity": {
+    "head": "80006fdf1443ca9d75d8c481246821354da16000",
+    "recordedRepositoryInputs": 61,
+    "bundleSha256": "f0bf1752fed1e90efcd2dd9d840a253cfe2e27aefb094df2a76369359d7c7184",
+    "generatedBundleExcluded": true
+  },
+  "excludedButPreserved": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-mounted-bundle.js",
+      "bytes": 918480,
+      "sha256": "de5420ba89007a3c58557afb1aba5521c0bc3039f62626f460eadc39ba28c8a3",
+      "reason": "Generated b218 synthetic Host bundle; rebuild from the exact historical Git sources and compatible locked dependencies. Hash measured during archival inventory is not a retroactive run-time binding.",
+      "preservedLocally": true
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-80006fdf-root1.bundle.js",
+      "bytes": 922240,
+      "sha256": "f0bf1752fed1e90efcd2dd9d840a253cfe2e27aefb094df2a76369359d7c7184",
+      "reason": "Generated 800 synthetic Host bundle; reproduce with retained guarded builder. Its original hash and all recorded repository inputs remain in the retained bundle-info and result JSON.",
+      "preservedLocally": true
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-sources-80006fdf.json",
+      "bytes": 845067,
+      "sha256": "c4c242ca9d89568d05f3526073df9f6bd4daa7ef0d95f655521339d37fb15d2c",
+      "reason": "Full 7,130-path committed tree manifest is reconstructible from exact Git head. The compact executed input bindings are retained in original result/bundle metadata.",
+      "preservedLocally": true
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-acceptance-README.md",
+      "bytes": 5348,
+      "sha256": "662ced213ea2e7fda69f6f22e5748b9f736713505084c963dabf0455e5bb7399",
+      "reason": "Historical instructions retained locally; this archive README consolidates the portable replay boundaries.",
+      "preservedLocally": true
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-acceptance-README.md",
+      "bytes": 6184,
+      "sha256": "bf5a0e8d0ad58bfe5e1d49d9b7f848c262bda3147839eaae6dfe83ab7c89c8ec",
+      "reason": "Prepared R2 instructions retained locally; this archive README records NOT EXECUTED status and mandatory new-head API/bundle revalidation.",
+      "preservedLocally": true
+    },
+    {
+      "paths": [
+        "node_modules",
+        "/tmp/r106-review-browsers"
+      ],
+      "reason": "Provision dependencies and compatible browser from the exact checkout/lockfile. Do not vendor into review evidence."
+    }
+  ],
+  "unavailableHistoricalSetupLogs": {
+    "note": "Session history reported earlier nested-git EPERM and Chromium SIGTRAP startup stops. No standalone raw Trip artifact for those stops was found in the inspected directory. Do not invent logs, count them as behavior cases, or call them an approval denial."
+  },
+  "replayBoundaries": [
+    "Archive executable source only with .txt suffix; restore byte-identical copies to a fresh external replay directory before execution.",
+    "Keep common guard and all selected probe/builder executable copies side by side so relative imports resolve.",
+    "Read-only exact-head Git ls-tree reconstructs the source manifest; never construct expected blobs from unchecked working-tree bytes.",
+    "800 replay is expected to retain 8 passing original cases and 5 failing deeper assertions. Those results motivated R2, not PASS.",
+    "Historical b218 scripts have fixed absolute import/output paths; replay only in a fresh disposable environment with those paths and verified exact source. Never overwrite the archive or original result files.",
+    "The guarded modern builder deliberately rejects b218. Historical bundle reconstruction needs its documented esbuild recipe, not disabled acceptance guards.",
+    "The reviewed mounted probes use default Playwright Chromium, synthetic deferred adapters, abort external requests, and load no project CSS.",
+    "No real Workspace/guest storage CRUD, Next router, hosted Account, Supabase/RLS, Production, native CI, browser/device accessibility or final merge gate is established by this inventory."
+  ],
+  "archiveStage": "STAGED_FOR_FINITE_CLOSURE_NOT_YET_COMMITTED; R2 preparations remain historically unexecuted at this snapshot."
+}

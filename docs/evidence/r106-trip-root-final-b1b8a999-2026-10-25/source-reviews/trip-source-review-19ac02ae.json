@@ -1,0 +1,366 @@
+{
+  "kind": "independent-helper-source-review-rebind",
+  "createdAt": "2026-10-25T13:18:50.627990+00:00",
+  "reviewer": "/root/r106_trip_review",
+  "repository": "Jetnity/jetnity",
+  "pullRequest": 1009,
+  "verdict": "SOURCE_REVIEW_REBOUND_NO_NEW_MATERIAL_FINDING_IN_REVIEWED_CORRECTION",
+  "notTechnicalLeadPass": true,
+  "headBinding": {
+    "finalCandidate": "19ac02ae34a05cf6e2636313e8fda316782959a2",
+    "finalTree": "0064f4fbda85ece0a8e9812dcd1a0c6286198675",
+    "soleParent": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "reviewedRuntimeCommit": "577e7da70374159bfe2e0ae33b9d4c7cfad2368d",
+    "reviewedIntegratedCommit": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "acceptedMain": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "mergeBaseWithAcceptedMain": "77ed41adbd3d32bbc995300b61eef1e16c2710d6",
+    "acceptedMainOnly_finalOnly": [
+      0,
+      14
+    ],
+    "checkout": "/tmp/jetnity-r106-t-final-review",
+    "trackedCleanAtPreparation": true
+  },
+  "scope": "Read-only source/tree review of the five-file R3 correction and normal-main integration, rebound to final documentation/evidence commit. No new test, browser, builder or platform operation was executed by this helper.",
+  "treeProof": {
+    "correctionChangedFiles": [
+      "components/trips/EigeneReisevorbereitung.tsx",
+      "components/trips/usePersonalPreparationLifecycle.ts",
+      "lib/readiness/personal-preparation-workflow.test.ts",
+      "lib/readiness/personal-preparation-workflow.ts",
+      "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts"
+    ],
+    "intermediateToFinal": {
+      "modifiedOwnedDocs": [
+        "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+        "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+        "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+        "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md"
+      ],
+      "addedOwnedEvidence": [
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/PROVENANCE.md",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/ablauf.json",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/fehler-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/kein-treffer-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-1280.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-320-root32.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-320.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-360.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/lang-768.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/leer-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/pending-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/reduziert-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/css/tastatur-390.png",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/historical-r2-custom-list-10pass-6fail-terminal-936109.txt",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/unstyled/actual-workspace.txt",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/unstyled/browser-lauf.json",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/unstyled/browser-lauf.txt",
+        "docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/unstyled/custom-list-mounted.txt"
+      ],
+      "removed": [],
+      "nonDocEntriesCompared": 1779,
+      "nonDocModeTypeBlobMismatches": 0
+    },
+    "normalMerge": {
+      "base": "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+      "tripChangedPaths": 61,
+      "mainChangedPaths": 170,
+      "collisions": 0,
+      "mergedTreeMismatches": 0,
+      "inheritedMainPathsStillExactOnFinal": 170
+    },
+    "finalDiffFromAcceptedMainPaths": 80,
+    "unchangedOwnedRuntimeTestHarnessPaths": 23,
+    "oldOwnedEvidencePreserved": 32,
+    "taskAndPlanUnchangedFrom4e66": true
+  },
+  "sourceBindings": {
+    "components/trips/EigeneReisevorbereitung.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "4c0a5be5e3b615f6ea5edbe7d8aa89250f872cfb"
+    },
+    "components/trips/GastArbeitsbereich.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "90f9d8781e23a3f96f92abd1d3616174585460d2"
+    },
+    "components/trips/KontoArbeitsbereich.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d"
+    },
+    "components/trips/Reisevorbereitung.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "6193995c22873ce3c0e66edf40a02f134b1e732c"
+    },
+    "components/trips/TripWorkspace.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1"
+    },
+    "components/trips/usePersonalPreparationLifecycle.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "ed1a8e02eeb29266f4ea9aecb5bb679512860aa6"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "e58f582669793ff3b7d86727ac9130afa89eef98"
+    },
+    "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "961e288a4e0ba40fa00e7ea95e920eabd6423ff2"
+    },
+    "lib/readiness/bauen.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52"
+    },
+    "lib/readiness/domain.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "27ffd5d9f7b118a09741e92fee32d9cb08401927"
+    },
+    "lib/readiness/personal-preparation-readback.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "5f714b76cff69a8bbee1dd9813653949b6d24694"
+    },
+    "lib/readiness/personal-preparation-workflow-wiring.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "a1da17c6109c35289fa9919dba7c9ced6800091c"
+    },
+    "lib/readiness/personal-preparation-workflow.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "19a972ed37edf302ee1679a21ce70591498330b6"
+    },
+    "lib/readiness/personal-preparation-workflow.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "c295637b18d4b356ce14739e211871179cbf38f7"
+    },
+    "lib/readiness/preparation-identity.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "601fc806b190f854a8387e75ae957e78889116ec"
+    },
+    "lib/readiness/status.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "0940f135ef7f52f15a9aed2e3b19126a837660be"
+    },
+    "lib/reiseaenderung/fixtures/reise.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "7533df1f2de0a9972810278b64aa9839033342f8"
+    },
+    "lib/trips/gastspeicher.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "f18bf24efaf8f86196276f02758e2f162915d33a"
+    },
+    "package-lock.json": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe"
+    },
+    "package.json": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/ablauf.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "060aad06da39282f47a6be470714078112309018"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "c5fea047afd3e495afca7eae020956ea0c84f699"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "bddac80fe24be1adc010ee759a0d34c71aa65ec9"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "b4c1b52cbf9c89fcd0783bdb83ac174455514903"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "3129729467c4db1a290c6f8ee281b54574e6c859"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/shims/dynamic.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "779b10a30ae8a16b3e546398d9d7db92c74bfa5d"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/shims/empty.ts": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "336ce12bb9106afdf843063ee67c0c1970f70d37"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/shims/image.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "12adadfd111d8c72166670da04391d1b2f33894a"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/shims/link.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "f022c7abd35efd402bc6b1c8e3f25de964b56ad4"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/shims/navigation.tsx": {
+      "mode": "100644",
+      "type": "blob",
+      "blob": "4c2b06db0c62b0d24c9f1395ced47b828999c836"
+    }
+  },
+  "reviewedP2ClosureBasis": [
+    {
+      "id": "T-R3-canonical-absence",
+      "priorSeverity": "P2",
+      "disposition": "SOURCE_ADDRESSED_WITH_BOUNDED_44E1_ROOT_CORROBORATION",
+      "basis": "A separate latest-qualified-read personal-ref snapshot drives both visible receipt paths. Historical confirmed/reconciled non-delete receipts retain history but display the existing absence explanation after that snapshot omits their ref. Display lag alone does not establish canonical absence.",
+      "source": [
+        {
+          "path": "lib/readiness/personal-preparation-workflow.ts",
+          "lines": "137-141, 228-247, 699-707, 716-736"
+        },
+        {
+          "path": "components/trips/usePersonalPreparationLifecycle.ts",
+          "lines": "37, 184"
+        },
+        {
+          "path": "components/trips/EigeneReisevorbereitung.tsx",
+          "lines": "311, 419"
+        }
+      ],
+      "ownedRegression": "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:541-573",
+      "rootObservationIndex": 0
+    },
+    {
+      "id": "T-R3-discard-history",
+      "priorSeverity": "P2",
+      "disposition": "SOURCE_ADDRESSED_WITH_BOUNDED_44E1_ROOT_CORROBORATION",
+      "basis": "Discard spreads the ledger and removes only the selected intent without clearing the qualified-read ref snapshot. An older confirmed create exposed after deleting a reconciled-delete receipt therefore cannot regain the unqualified current-visible message while the latest qualified snapshot remains absent. Draft and callback paths are unchanged.",
+      "source": [
+        {
+          "path": "lib/readiness/personal-preparation-workflow.ts",
+          "lines": "233-247, 416-430"
+        },
+        {
+          "path": "components/trips/EigeneReisevorbereitung.tsx",
+          "lines": "135-149, 298-319"
+        }
+      ],
+      "ownedRegression": "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:575-609",
+      "rootObservationIndex": 2
+    },
+    {
+      "id": "T-R3-unopened-editor-focus",
+      "priorSeverity": "P2",
+      "disposition": "SOURCE_ADDRESSED_WITH_BOUNDED_44E1_ROOT_CORROBORATION",
+      "basis": "Unopened edit and create-submit controls now take focus ownership. Existing focusable rows also do so for trusted direct row focus; the completion effect brackets its own programmatic row focus and child-control focus is not counted again by the row. Existing connected/visible/hidden/collapsed checks and generation-bound completion remain.",
+      "source": [
+        {
+          "path": "components/trips/EigeneReisevorbereitung.tsx",
+          "lines": "103-133, 308, 338, 412, 424-465"
+        },
+        {
+          "path": "lib/readiness/personal-preparation-workflow.ts",
+          "lines": "249-251, 606-627"
+        }
+      ],
+      "ownedRegression": "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:612-641",
+      "rootObservationIndex": 1
+    }
+  ],
+  "regressionReview": {
+    "newPureCase": "lib/readiness/personal-preparation-workflow.test.ts:382-400; confirms receipt/history preservation and changed visible absence copy. Its discard uses a nonexistent ID and alone is not real discard-path proof.",
+    "actualDiscardCoveredByMountedSource": true,
+    "priorR2Rules": "Same-ref lock ownership, uncertain retry/read barrier, bounded additional read and draft/operation dispatch logic are unchanged by the three runtime-file R3 correction. No new concrete regression found in that correction.",
+    "testsExecutedByThisHelper": false
+  },
+  "priorRootExecutionReadAndBound": {
+    "path": "/tmp/r106-review-evidence/trip-r3-residual-44e1a1c4-intermediate-run1.json",
+    "sha256": "d3fdc64f2ba043c3a2cc89cf1f29d8aa3e7079db403c4e4949ea5d9b7f62d973",
+    "executedHead": "44e1a1c41d2e4939524d2b11996c7baa6a1b0056",
+    "verdict": "BOUNDED_ASSERTIONS_PASSED",
+    "cases": 3,
+    "node": "v22.23.4",
+    "browser": "140.0.7339.16",
+    "externalRequests": 0,
+    "naturalPointerThenTab": true,
+    "programmaticFocusFallback": false,
+    "verifiedSourceCount": 62,
+    "sourceBlobMismatchesAgainstFinal": 0,
+    "bundleSha256": "c8648e477a92b35b5587c0fe87df95171dd2c628dbeaf1fc384c1dcaf3b5553f",
+    "processExit": {
+      "value": 0,
+      "provenance": "Reported by root in the task; the JSON itself records the bounded verdict, not a subprocess exit field."
+    },
+    "checkpoint": "https://github.com/Jetnity/jetnity/pull/1009#issuecomment-6398101814",
+    "checkpointProvenance": "Parent-supplied reference; no platform fetch was performed by this helper in this review.",
+    "notA19acExecution": true
+  },
+  "probeCompatibility": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v3.ts",
+    "sha256": "f7cfc670d8055d7ce0f906c340131ee9905a96d3de7d233c03506ab47fc8a7d0",
+    "verdict": "SOURCE_COMPATIBLE_UNMODIFIED",
+    "inspected": [
+      "Unchanged flaeche Host bridge and deferred adapter contract",
+      "Unchanged real builder, trip fixture, readiness domain and view",
+      "Existing workflow exports, phase/message identifiers and DOM selectors used by all three cases",
+      "New focus ownership handlers and receipt rendering semantics"
+    ],
+    "finalCommittedManifest": {
+      "path": "/tmp/r106-review-evidence/trip-sources-19ac02ae.json",
+      "sha256": "d9f4d859be9a41cc424de79485a2a758e5115bcb921bb895b5045bdd4c6f73e0",
+      "entries": 7329,
+      "checkedAgainstCommittedGitTree": true
+    },
+    "futureExecution": "No final-head execution result is asserted or predicted here. Root owns separate exact-head gates and any actual final-head result."
+  },
+  "authority": {
+    "task": "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+    "taskBlob": "961e288a4e0ba40fa00e7ea95e920eabd6423ff2",
+    "plan": "docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+    "planBlob": "e58f582669793ff3b7d86727ac9130afa89eef98",
+    "relevantContract": "TASK 4.6, 4.7, 4.11 and PLAN lines 174-178; existing canonical-read and generation/focus boundaries."
+  },
+  "limits": [
+    "The reviewed root run mounted the real list/hook under the unchanged author Host with synthetic deferred adapters and no project CSS.",
+    "This report does not independently establish actual full Workspace/storage behavior, full Next router, hosted Account, Supabase/RLS, Preview, Production, native App/Auth CI, visual matrix or final-head broad checks.",
+    "The in-memory ledger ending at full Workspace unmount and the existing non-atomic whole-trip cross-tab writer remain accepted boundaries; this review does not reclassify them.",
+    "No author self-review is treated as TL acceptance. No Ready, merge or final risk disposition is granted here.",
+    "Final-head execution/platform gates belong to root and are recorded separately, rather than inferred from unchanged runtime blobs."
+  ],
+  "mutations": {
+    "productEdits": false,
+    "repositoryCommits": false,
+    "platformWrites": false,
+    "testsExecuted": false,
+    "oldEvidenceOverwritten": false,
+    "externalArtifactsOnly": [
+      "/tmp/r106-review-evidence/trip-source-review-19ac02ae.json",
+      "/tmp/r106-review-evidence/trip-source-review-19ac02ae.md"
+    ]
+  }
+}

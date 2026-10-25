@@ -1,0 +1,6 @@
+function note(method: string) { (window as any).__T_R4_ROUTER__?.push(method) }
+export function useRouter() {
+  return { replace: () => note('replace'), push: () => note('push'), refresh: () => note('refresh'), back: () => note('back') }
+}
+export function usePathname() { return '/' }
+export function useSearchParams() { return new URLSearchParams(window.location.search) }

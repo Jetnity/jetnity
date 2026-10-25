@@ -1,0 +1,15 @@
+{
+  "executor": "root Technical Lead independently executing reviewed author runner",
+  "head": "29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8",
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "scripts/account-traveller-management-completion-1/run.mjs"
+  ],
+  "nodeChildSelection": "Node22 directory prepended only for this process",
+  "startedAt": "2026-10-25T11:28:57.642241+00:00",
+  "endedAt": "2026-10-25T11:29:40.196060+00:00",
+  "exitCode": 0,
+  "console": "/tmp/r106-review-evidence/account-author-29ccb8d3-console.txt",
+  "authorResult": "/tmp/jetnity-r106-a-integrated-review/docs/evidence/account-traveller-management-completion-1/run-29ccb8d3cb7786f0d1b1f6c453526f67cdd7c3b8.json",
+  "attribution": "author/session/model fields inside authored result identify harness provenance; this record identifies actual executor"
+}

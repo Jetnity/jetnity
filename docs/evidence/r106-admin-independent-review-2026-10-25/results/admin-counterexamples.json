@@ -1,0 +1,34 @@
+{
+  "head": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da",
+  "node": "v22.23.4",
+  "sourceSha256": "f7f5450501e4102d912c638db4e7296028c3d6d48cca6ad0926e750c09ae040b",
+  "meaning": "Exit0 demonstrates asserted counterexamples; not productPASS",
+  "reports": [
+    {
+      "case": "endpoint A→B→A revives old A request",
+      "obsoleteStillValid": true,
+      "oldResponseAccepted": true
+    },
+    {
+      "case": "future card checkedAt with current envelope stays fresh",
+      "card": {
+        "state": "fresh",
+        "ageMs": 0,
+        "ttlMs": 60000
+      },
+      "child": {
+        "state": "fresh",
+        "ageMs": 0,
+        "ttlMs": 60000
+      }
+    },
+    {
+      "case": "unusable initial monotonic anchor with valid wall stays fresh",
+      "card": {
+        "state": "fresh",
+        "ageMs": 0,
+        "ttlMs": 60000
+      }
+    }
+  ]
+}

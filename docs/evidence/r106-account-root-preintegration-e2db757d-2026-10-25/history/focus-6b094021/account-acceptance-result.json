@@ -1,0 +1,389 @@
+{
+  "evidenceClass": "Independent bounded local acceptance: real production functions/components/CSS with synthetic deferred action and void router.refresh boundaries",
+  "expectedHead": "6b094021068483eee82cda7791b9fa99891c1877",
+  "repo": "/tmp/jetnity-r106-a-r1-review",
+  "node": "v22.23.4",
+  "only": "mounted",
+  "probeSha256": "117c5f881c222df8de4578a36352f9050a2d2c32b871c3f73468a6d8d7445dc6",
+  "startedAt": "2026-10-25T10:21:20.361Z",
+  "initialProvenance": {
+    "head": "6b094021068483eee82cda7791b9fa99891c1877",
+    "trackedCheckoutClean": true,
+    "files": {
+      "components/account/AccountReisende.tsx": {
+        "gitBlob": "a597b75f8f40f5cd3a25e40c34503c9175cf8269",
+        "sha256": "875bf1645e5fb571ffd2ebaa8d920b3e174643f228acbe9b03e7b973a1778072"
+      },
+      "components/account/AccountReisendeKarte.tsx": {
+        "gitBlob": "7ea45ae8480b81bfd39cbb78ec52ca341320ef2f",
+        "sha256": "448e35f768f3d67388e39ba05e89b55bfa472458bcef7831ea0d2bdf00a60a83"
+      },
+      "components/account/useAccountRegistryWorkflow.ts": {
+        "gitBlob": "b59fd88813204447e0000527d100a3ca9b1dac37",
+        "sha256": "4131963620cd894be5b161f9d32d23901e9cbdec785fc04499a833203973b218"
+      },
+      "lib/traveller/account-registry-copy.ts": {
+        "gitBlob": "ddccb1daf9c933fb593a9fc1f02282952d26a25d",
+        "sha256": "579186a0bb6db998d570837a2a6451d8d3c468b8934745ff0e1489cf8b478ebb"
+      },
+      "lib/traveller/account-registry-eingabe.ts": {
+        "gitBlob": "03c9a90955b460eaea72d4bc37c9fe19debe901d",
+        "sha256": "b33feb46a096e2eb6298a796d9f675b9e48e4e6336b561dd80b668c8527868e2"
+      },
+      "lib/traveller/account-registry-workflow.ts": {
+        "gitBlob": "ce1ba1a704ce270f81a34374e76bae68ec76bfbb",
+        "sha256": "72629bcfd59eaa7fe408b2b627403c0a05b044e4e82bb49ee08f26ac9ee062d0"
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de"
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c"
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+      },
+      "tsconfig.json": {
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b"
+      }
+    },
+    "checkedAt": "2026-10-25T10:21:20.360Z"
+  },
+  "notTechnicalLeadPass": true,
+  "limitations": [
+    "No hosted account, complete Next Router, Supabase, RLS, deployment, or production evidence.",
+    "Does not replace complete diff/scope review, all eight action guards, CI/Auth, or the required layout matrix.",
+    "Author evidence path relocation and corrected screenshot provenance require separate review."
+  ],
+  "cases": [
+    {
+      "name": "mounted A-R1 saved/unobserved recovery reads only and retains unrelated draft",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:24.830Z",
+      "evidence": {
+        "actionCount": 1,
+        "manualReadCount": 1,
+        "unchangedSnapshotStayedUnobserved": true,
+        "changedSnapshotObserved": true,
+        "retainedDraft": "Unrelated retained draft"
+      }
+    },
+    {
+      "name": "mounted A-R3 traveller clean edit reopen sends preserved metadata",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:25.965Z",
+      "evidence": {
+        "secondAction": {
+          "id": 2,
+          "name": "traveller-aendern",
+          "argument": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "label": "Alice",
+            "residenceCountryCode": "DE"
+          }
+        },
+        "frozenParserResult": {
+          "ok": true,
+          "wert": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "label": "Alice",
+            "residenceCountryCode": "DE"
+          }
+        }
+      }
+    },
+    {
+      "name": "mounted A-R3 document clean edit reopen sends preserved metadata",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:26.855Z",
+      "evidence": {
+        "secondAction": {
+          "id": 2,
+          "name": "document-aendern",
+          "argument": {
+            "travellerId": "00000000-0000-4000-8000-000000000001",
+            "documentType": "passport",
+            "issuingCountryCode": "DE",
+            "citizenshipId": "",
+            "expiresOn": "2030-01-01",
+            "documentId": "00000000-0000-4000-8000-000000000010"
+          }
+        },
+        "frozenParserResult": {
+          "ok": true,
+          "wert": {
+            "travellerId": "00000000-0000-4000-8000-000000000001",
+            "documentId": "00000000-0000-4000-8000-000000000010",
+            "documentType": "passport",
+            "issuingCountryCode": "DE",
+            "citizenshipId": null,
+            "expiresOn": "2030-01-01"
+          }
+        }
+      }
+    },
+    {
+      "name": "mounted A-R2 explicit adoption survives real late success",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:27.846Z",
+      "evidence": {
+        "epochBefore": 3,
+        "epochAfter": 4,
+        "retainedFields": "Canonical two",
+        "focus": {
+          "tag": "INPUT",
+          "id": "",
+          "focus": null,
+          "name": "",
+          "connected": true
+        },
+        "settlements": [
+          {
+            "id": 1,
+            "kind": "success"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mounted A-R2 explicit adoption survives real late reject",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:28.614Z",
+      "evidence": {
+        "epochBefore": 3,
+        "epochAfter": 4,
+        "retainedFields": "Canonical two",
+        "focus": {
+          "tag": "INPUT",
+          "id": "",
+          "focus": null,
+          "name": "",
+          "connected": true
+        },
+        "settlements": [
+          {
+            "id": 1,
+            "kind": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mounted actual Promise rejection after A to B keeps B draft and focus",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:29.380Z",
+      "evidence": {
+        "targetA": "00000000-0000-4000-8000-000000000001",
+        "targetB": "00000000-0000-4000-8000-000000000002",
+        "retainedDraft": "Bob newer unsent draft",
+        "actionCount": 1,
+        "settlements": [
+          {
+            "id": 1,
+            "kind": "reject"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mounted A-R4 a newer historical-receipt focus move survives pending cancel restoration",
+      "result": "FAIL",
+      "startedAt": "2026-10-25T10:21:30.362Z",
+      "error": "AssertionError [ERR_ASSERTION]: Newer receipt focus must win over canceled-editor restoration; observed {\"tag\":\"BUTTON\",\"id\":\"\",\"focus\":\"staat-knopf:00000000-0000-4000-8000-000000000001\",\"name\":\"Staatsbürgerschaft hinzufügen\",\"connected\":true}\n\nfalse !== true\n\n    at file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:535:14\n    at async file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:391:16\n    at async check (file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:114:22)\n    at async file:///tmp/r106-review-evidence/account-acceptance-v2.mjs:509:5"
+    },
+    {
+      "name": "mounted A-R4 keyboard cancel citizenship-create restores a live control without stealing later focus",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:31.214Z",
+      "evidence": {
+        "keyboardCancelFocus": {
+          "tag": "BUTTON",
+          "id": "",
+          "focus": "staat-knopf:00000000-0000-4000-8000-000000000001",
+          "name": "Staatsbürgerschaft hinzufügen",
+          "connected": true
+        },
+        "laterFocus": {
+          "tag": "BUTTON",
+          "id": "independent-outside",
+          "focus": null,
+          "name": "Independent outside control",
+          "connected": true
+        },
+        "actionCount": 0
+      }
+    },
+    {
+      "name": "mounted A-R4 keyboard cancel document-create restores a live control without stealing later focus",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:31.979Z",
+      "evidence": {
+        "keyboardCancelFocus": {
+          "tag": "BUTTON",
+          "id": "",
+          "focus": "dokument-knopf:00000000-0000-4000-8000-000000000001",
+          "name": "Dokument hinzufügen",
+          "connected": true
+        },
+        "laterFocus": {
+          "tag": "BUTTON",
+          "id": "independent-outside",
+          "focus": null,
+          "name": "Independent outside control",
+          "connected": true
+        },
+        "actionCount": 0
+      }
+    },
+    {
+      "name": "mounted A-R4 keyboard cancel document-edit-at-limit restores a live control without stealing later focus",
+      "result": "PASS",
+      "startedAt": "2026-10-25T10:21:32.745Z",
+      "evidence": {
+        "keyboardCancelFocus": {
+          "tag": "BUTTON",
+          "id": "",
+          "focus": "dokument-aendern:00000000-0000-4000-8000-000000000010",
+          "name": "Dokument ändern",
+          "connected": true
+        },
+        "laterFocus": {
+          "tag": "BUTTON",
+          "id": "independent-outside",
+          "focus": null,
+          "name": "Independent outside control",
+          "connected": true
+        },
+        "actionCount": 0
+      }
+    }
+  ],
+  "externalRequests": [],
+  "pageErrors": [],
+  "browser": "140.0.7339.16",
+  "origin": "http://127.0.0.1:33267",
+  "routerBoundary": "refresh increments a counter and returns undefined; props change only when the probe supplies them",
+  "finalProvenance": {
+    "head": "6b094021068483eee82cda7791b9fa99891c1877",
+    "trackedCheckoutClean": true,
+    "files": {
+      "components/account/AccountReisende.tsx": {
+        "gitBlob": "a597b75f8f40f5cd3a25e40c34503c9175cf8269",
+        "sha256": "875bf1645e5fb571ffd2ebaa8d920b3e174643f228acbe9b03e7b973a1778072"
+      },
+      "components/account/AccountReisendeKarte.tsx": {
+        "gitBlob": "7ea45ae8480b81bfd39cbb78ec52ca341320ef2f",
+        "sha256": "448e35f768f3d67388e39ba05e89b55bfa472458bcef7831ea0d2bdf00a60a83"
+      },
+      "components/account/useAccountRegistryWorkflow.ts": {
+        "gitBlob": "b59fd88813204447e0000527d100a3ca9b1dac37",
+        "sha256": "4131963620cd894be5b161f9d32d23901e9cbdec785fc04499a833203973b218"
+      },
+      "components/country/LandFeld.tsx": {
+        "gitBlob": "4f6894927d64e9dd05db074ae05a663cb1578b5e",
+        "sha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b"
+      },
+      "lib/account/naechste-reise.ts": {
+        "gitBlob": "9c437704fd58c83a4a6da3f1325ea6d6f3d4d685",
+        "sha256": "930e7b656fc60b0507e05de7ce7b57ffed3d3b0d63fc14e5c945bfc58608f269"
+      },
+      "lib/account/reise-archiv.ts": {
+        "gitBlob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+        "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814"
+      },
+      "lib/account/reise-lage.ts": {
+        "gitBlob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+        "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff"
+      },
+      "lib/country/copy.ts": {
+        "gitBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+        "sha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011"
+      },
+      "lib/country/darstellung.ts": {
+        "gitBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+        "sha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add"
+      },
+      "lib/country/katalog.ts": {
+        "gitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c"
+      },
+      "lib/country/land-feld.ts": {
+        "gitBlob": "b47d4be66bfb83d95517ffe25ac5859738aae2da",
+        "sha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4"
+      },
+      "lib/readiness/domain.ts": {
+        "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587"
+      },
+      "lib/traveller/account-registry-anzeige.ts": {
+        "gitBlob": "5b5c68cfca8b7f408a356d98773dd6885d71e385",
+        "sha256": "dacfd8d12aaf7b37a59a4c17cc937d57ddc695ee4b945d04429666b841cea0a8"
+      },
+      "lib/traveller/account-registry-copy.ts": {
+        "gitBlob": "ddccb1daf9c933fb593a9fc1f02282952d26a25d",
+        "sha256": "579186a0bb6db998d570837a2a6451d8d3c468b8934745ff0e1489cf8b478ebb"
+      },
+      "lib/traveller/account-registry-eingabe.ts": {
+        "gitBlob": "03c9a90955b460eaea72d4bc37c9fe19debe901d",
+        "sha256": "b33feb46a096e2eb6298a796d9f675b9e48e4e6336b561dd80b668c8527868e2"
+      },
+      "lib/traveller/account-registry-workflow.ts": {
+        "gitBlob": "ce1ba1a704ce270f81a34374e76bae68ec76bfbb",
+        "sha256": "72629bcfd59eaa7fe408b2b627403c0a05b044e4e82bb49ee08f26ac9ee062d0"
+      },
+      "lib/traveller/account-registry.ts": {
+        "gitBlob": "1bfa4ade96bdbab13b18b6312262dd7594e3f692",
+        "sha256": "7a6ff3d89b01ea96177f47dd58ed8dc37c133b07d627c0585e13e17e643b6120"
+      },
+      "lib/traveller/account-travellers-premium-registry-ux-1.ts": {
+        "gitBlob": "7310e53ac30312f5654338bd2a527602949f7ab9",
+        "sha256": "a14dadecc84f185a14ca2d522f683df034c67726bdf17dc228e4b724d8c36a7b"
+      },
+      "lib/traveller/dokument-lebenszyklus-copy.ts": {
+        "gitBlob": "10bdf6ba0aadb60d33f2729ad62acc01a6e87f78",
+        "sha256": "4d6b9d3688f3e9aa8eccc2760f9edff8668b2116d5ae2de4445b67ca76bb8cf2"
+      },
+      "lib/traveller/dokument-lebenszyklus.ts": {
+        "gitBlob": "bf3ecc7ad2321d14ce34a1cde441929d584d8d91",
+        "sha256": "39b3923046584ad7c110b169417a4bd8023c7fe41179bd6790d183daf2d4687b"
+      },
+      "package-lock.json": {
+        "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+        "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de"
+      },
+      "package.json": {
+        "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+        "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c"
+      },
+      "styles/globals.css": {
+        "gitBlob": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa",
+        "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+      },
+      "tailwind.config.js": {
+        "gitBlob": "cae427453bff10090cabd2abd75bdacbf8df421e",
+        "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813"
+      },
+      "tsconfig.json": {
+        "gitBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+        "sha256": "07767bead2eec64836ab1691984e81cbb6d60e7d40f65073170b14a61016558b"
+      },
+      "types/trips.ts": {
+        "gitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592"
+      }
+    },
+    "checkedAt": "2026-10-25T10:21:35.681Z"
+  },
+  "endedAt": "2026-10-25T10:21:35.681Z",
+  "expectedCaseCount": 10,
+  "actualCaseCount": 10,
+  "result": "ACCEPTANCE_NOT_PASSED"
+}

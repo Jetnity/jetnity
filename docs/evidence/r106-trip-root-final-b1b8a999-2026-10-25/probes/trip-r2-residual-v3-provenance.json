@@ -1,0 +1,82 @@
+{
+  "preparedAt": "2026-10-25T13:02:07.956731+00:00",
+  "status": "PREPARED_NOT_EXECUTED",
+  "purpose": "Future-head admission only for the same three corrected residual assertions; no TL PASS",
+  "source": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v2.ts",
+    "bytes": 19954,
+    "sha256": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f"
+  },
+  "candidate": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v3.ts",
+    "bytes": 20211,
+    "sha256": "f7cfc670d8055d7ce0f906c340131ee9905a96d3de7d233c03506ab47fc8a7d0"
+  },
+  "guardDelta": {
+    "removed": "One fixed expected-head constant and exact equality admission for 4e66d894.",
+    "added": "An explicit lowercase 40-hex expected-head assertion and rejection set for 4e66d894, 80006fdf and b218c33d.",
+    "rejectedHeads": [
+      "4e66d8948046423656feb6b95b8562e546e82b19",
+      "80006fdf1443ca9d75d8c481246821354da16000",
+      "b218c33d9d00c19f3705aba8bd208cc455272659"
+    ],
+    "noAncestryClaim": "A different hash alone is not independent review or descendant validation; root must inspect the delivered new head before execution."
+  },
+  "bodyComparison": {
+    "marker": "    const context = prepareRun(options, [",
+    "bytes": 19091,
+    "sourceSha256": "bcd91ed0bb8c338020b98befcf3b135ae6d5d31ef1ae9b474d04560ab53310a9",
+    "candidateSha256": "bcd91ed0bb8c338020b98befcf3b135ae6d5d31ef1ae9b474d04560ab53310a9",
+    "byteIdentical": true,
+    "covers": "const context through EOF, including all fixtures, mounted actions, observations, assertions, output scope and verdict logic"
+  },
+  "retainedGuards": [
+    "Node major 22",
+    "Exact checkout HEAD equals explicit expected head",
+    "Committed source manifest head equals expected head",
+    "Working source Git blobs equal committed manifest",
+    "Bundle head, real repository path, bundle path, SHA256 and every recorded input blob verified",
+    "Fresh absolute external output only, no overwrite",
+    "Default Chromium launch, no extra flags",
+    "External requests aborted and asserted zero"
+  ],
+  "priorExecutedSource": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-4e66d894-run2.json",
+    "sha256": "98b6f573c0c30f7c2e89d1b44eeb0507bf122aa0a462af2cf324b11af64a8ebc",
+    "head": "4e66d8948046423656feb6b95b8562e546e82b19",
+    "verdict": "BOUNDED_ASSERTION_FAILED",
+    "cases": 3,
+    "allThreeReachActualAssertions": true,
+    "keyboardArrangement": {
+      "naturalTrustedPointerThenTab": true,
+      "programmaticFallbackUsed": false
+    }
+  },
+  "priorV1Disposition": "The earlier v1 run had setup TypeErrors in cases 1 and 3. v2 adds six statement terminators only; its preserved run2 reaches all three product assertions. No v1 setup failure is reclassified as a product finding.",
+  "beforeExecutionRequired": [
+    "Receive and independently inspect the author new exact head, accepted TASK/PLAN and diff.",
+    "Revalidate all used fixture/builders, workflow exports, Host bridge operations, DOM selectors and current focus ownership wiring.",
+    "Generate source manifest from committed new-head Git objects, not unverified working-tree bytes.",
+    "Generate a fresh exact-head guarded bundle and metadata after compatibility inspection.",
+    "Use a new output path and keep actual new-head results separate from all historical results."
+  ],
+  "changesNotMade": [
+    "No product, repository or platform changes.",
+    "No probe, test, browser or bundle-builder execution.",
+    "No assertions relaxed and no fixture or behavioral setup changed.",
+    "No old source, metadata or raw run overwritten."
+  ],
+  "preservedInputs": {
+    "/tmp/r106-review-evidence/trip-r2-residual-acceptance.ts": "1ea683e1930ea23fe672d751bdb3d594e03a08515f67f406b057c5ddca7ea8d6",
+    "/tmp/r106-review-evidence/trip-r2-residual-acceptance-v2.ts": "cadc046f5e192da84aa6471e2d0d3285c6bc16844fce091c7487b4f80322372f",
+    "/tmp/r106-review-evidence/trip-r2-residual-4e66d894-run1.json": "a7c1c306ddc88f5ed7aa4fdbd2ffb03e42a089301b3bd604c1fb9e561fe68dca",
+    "/tmp/r106-review-evidence/trip-r2-residual-4e66d894-run2.json": "98b6f573c0c30f7c2e89d1b44eeb0507bf122aa0a462af2cf324b11af64a8ebc",
+    "/tmp/r106-review-evidence/trip-r2-residual-v2-provenance.json": "75a97cfacfef16f598847501116106e45b7948695e420742f47a2ade3e87fb25",
+    "/tmp/r106-review-evidence/trip-r2-residual-v2-setup.diff": "aa662900c05cfcee82af683a2448c6c0e008ba120bfe5d6275b1a1500087cfee",
+    "/tmp/r106-review-evidence/trip-acceptance-common.mjs": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0"
+  },
+  "diff": {
+    "path": "/tmp/r106-review-evidence/trip-r2-residual-v3-head-guard.diff",
+    "sha256": "23eca233f203f5b02f09ad9e6329ef890536d926feb421998b869edd178ac4d2"
+  }
+}

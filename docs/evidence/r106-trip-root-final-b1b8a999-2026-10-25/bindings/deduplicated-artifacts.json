@@ -1,0 +1,156 @@
+{
+  "kind": "EXACT_BYTE_IDENTITY_ALIASES_NO_RAW_JSON_REWRITE",
+  "referenceBase": "Archive root; per-entry secondary relativeReferenceFromOriginalDirectory is relative to the omitted file directory",
+  "entries": [
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-build-root-run1/committed-source-manifest.json",
+      "originalArchiveRelativePath": "build/committed-source-manifest.json",
+      "retainedArchiveRelativePath": "functional/committed-source-manifest.json",
+      "relativeReferenceFromOriginalDirectory": "../functional/committed-source-manifest.json",
+      "kind": "BYTE_IDENTICAL_COMPLETE_GIT_MANIFEST",
+      "bytes": 873444,
+      "sha256": "9809ebe95bc2e23faba74ce737978eda0f9480fb4b0adaeb7714071c75550972",
+      "gitBlob": "dd9b06de647f840905a349e2adb6024af849ab14"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/committed-source-manifest.json",
+      "originalArchiveRelativePath": "css-run1/committed-source-manifest.json",
+      "retainedArchiveRelativePath": "functional/committed-source-manifest.json",
+      "relativeReferenceFromOriginalDirectory": "../functional/committed-source-manifest.json",
+      "kind": "BYTE_IDENTICAL_COMPLETE_GIT_MANIFEST",
+      "bytes": 873444,
+      "sha256": "9809ebe95bc2e23faba74ce737978eda0f9480fb4b0adaeb7714071c75550972",
+      "gitBlob": "dd9b06de647f840905a349e2adb6024af849ab14"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/fehler-390.png",
+      "originalArchiveRelativePath": "css-run1/css/fehler-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/fehler-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/fehler-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 215514,
+      "sha256": "bd16f4f71b6b9f96bb88002bcfd8102a6d3687aae2e68cf2a4f749bf09a068e2",
+      "gitBlob": "e5bd5ebbb4f2e5023e642c1c2bd3f2a88a873e27"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/kein-treffer-390.png",
+      "originalArchiveRelativePath": "css-run1/css/kein-treffer-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/kein-treffer-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/kein-treffer-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 197577,
+      "sha256": "a702d9c1f82c205b8e373486b619a40b325444a02c9bd8795e9c2f215fc78a05",
+      "gitBlob": "e12d9e71110e2d83b2fe474d80d81688636e31ed"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-1280.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-1280.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-1280.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-1280.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 298851,
+      "sha256": "6d63eb88a8f3885c06802d557c52074f697c6353a22018f00e09fa196f669cf9",
+      "gitBlob": "70e09f4cef6d3453db0fd0c49aaa8600e90ae05e"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-320-root32.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-320-root32.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-320-root32.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-320-root32.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 349879,
+      "sha256": "fa9453d65eb4d85c4f37e2824247986108b6f63aec918a42af655e1fb5939245",
+      "gitBlob": "b68154642ce4a4fee1ba9b02cf7dcb777453a1f3"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-320.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-320.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-320.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-320.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 258274,
+      "sha256": "252bd062dd473912a059a4d7df29a6205954c1ad1be689dd3b4747dc2acc6132",
+      "gitBlob": "278601c41cb09fbd8088af71e759148fce2092dd"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-360.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-360.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-360.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-360.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 262441,
+      "sha256": "2c84287f55a8d7989fb76679f1c6c7df5b645d35c47bf30735ebe5277b4dd198",
+      "gitBlob": "b228c40110c401499a54ef55b68c5907aff67c67"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-390.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 264569,
+      "sha256": "1efb35d4076d34c58e03d938f53a9fce46743992245218e2f1c05615ed8be6ed",
+      "gitBlob": "488a9a35c154ccb2cf89601c9e3be2da69cbcfd3"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/lang-768.png",
+      "originalArchiveRelativePath": "css-run1/css/lang-768.png",
+      "retainedArchiveRelativePath": "css-run2/css/lang-768.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/lang-768.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 286762,
+      "sha256": "97fc2286b019b736d33712e448eefed871b090583a42d9f7047d740c9b4feaaa",
+      "gitBlob": "79a955e4936bf99b72212c45c2a81d08aa86a836"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/leer-390.png",
+      "originalArchiveRelativePath": "css-run1/css/leer-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/leer-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/leer-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 195581,
+      "sha256": "012d400a9cef0d23540a6d2d8bca7138f28c964631334c15307aa7b8d42ed589",
+      "gitBlob": "d62799272429f6c4c7f7c528251a88c7ff6d7c4b"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/pending-390.png",
+      "originalArchiveRelativePath": "css-run1/css/pending-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/pending-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/pending-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 196968,
+      "sha256": "297cd269da401206dc9ea6996a7071e53bae27033faab98de7c44a66a1f2573e",
+      "gitBlob": "576cfe1fe8cf058195bfa9ce630b21db3308e255"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/reduziert-390.png",
+      "originalArchiveRelativePath": "css-run1/css/reduziert-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/reduziert-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/reduziert-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 253154,
+      "sha256": "d7ee47f1d41206f50d12d2b3c8266d6b6ca7fe6065a6a08dab7f950d07dbbc2f",
+      "gitBlob": "eec2865e432bb093cb44a3463939190d64b0863a"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run1/css/tastatur-390.png",
+      "originalArchiveRelativePath": "css-run1/css/tastatur-390.png",
+      "retainedArchiveRelativePath": "css-run2/css/tastatur-390.png",
+      "relativeReferenceFromOriginalDirectory": "../../css-run2/css/tastatur-390.png",
+      "kind": "BYTE_IDENTICAL_SCREENSHOT_FROM_DISTINCT_EXECUTION",
+      "bytes": 197503,
+      "sha256": "81e819d3da90887f9ec52141f792fb3bce61b40dfb748f85aa7150107a475d0f",
+      "gitBlob": "79f794380de63bcbc0a652cb721c2770ae7f92a4"
+    },
+    {
+      "originalPath": "/tmp/r106-review-evidence/trip-b1b8a999-css-root-run2/committed-source-manifest.json",
+      "originalArchiveRelativePath": "css-run2/committed-source-manifest.json",
+      "retainedArchiveRelativePath": "functional/committed-source-manifest.json",
+      "relativeReferenceFromOriginalDirectory": "../functional/committed-source-manifest.json",
+      "kind": "BYTE_IDENTICAL_COMPLETE_GIT_MANIFEST",
+      "bytes": 873444,
+      "sha256": "9809ebe95bc2e23faba74ce737978eda0f9480fb4b0adaeb7714071c75550972",
+      "gitBlob": "dd9b06de647f840905a349e2adb6024af849ab14"
+    }
+  ]
+}

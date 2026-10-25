@@ -1,0 +1,15 @@
+
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import AccountReisende from '@/components/account/AccountReisende';
+import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy';
+import "/tmp/r106-review-evidence/account-acceptance-29ccb8d3-final-run1/independent-actions.ts";
+function Harness() {
+  const [props, setProps] = useState<any>({ problem: null, travellers: [] });
+  useEffect(() => {
+    const state = (window as any).__accountReview;
+    state.setProps = setProps; state.copy = REGISTRY_COPY; state.version++;
+  }, [props]);
+  return <AccountReisende problem={props.problem} travellers={props.travellers} />;
+}
+createRoot(document.getElementById('root')!).render(<Harness />);

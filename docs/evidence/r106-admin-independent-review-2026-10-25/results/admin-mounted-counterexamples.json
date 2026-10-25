@@ -1,0 +1,261 @@
+{
+  "head": "c7dd0ecd8bd48e7ba9009fc4aa3483a2ca40a2da",
+  "node": "v22.23.4",
+  "meaning": "Successful execution means asserted defects were reproduced, not product PASS.",
+  "evidenceClass": "Independent local mounted production boards, real hook and domain age helpers; existing author harness; synthetic canonical props and deferred fetch only.",
+  "limits": "No hosted account, Next router, Supabase, RLS, Production, personal browser/session or launch proof. No remote reads. No responsive or accessibility acceptance claim.",
+  "command": "PLAYWRIGHT_BROWSERS_PATH=/tmp/r106-review-browsers /root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node /tmp/r106-review-evidence/admin-mounted-counterexamples.mjs",
+  "sourceDigests": {
+    "components/admin/system-health/SystemHealthBoard.tsx": "68cbcadee839ebcf61e64c2febb85d79894961c7140e4209bd6c816e7bcc2014",
+    "components/admin/provider-ops/ProviderOpsBoard.tsx": "4e7885027e12997bca73488429a1dd7031dd025462b1f3234054cfe9d18a7718",
+    "components/admin/operations/useOperationsReport.ts": "9cada169f013594dde28ff3ce362c052c063f925cd9bd8146c2d78863b6b65b2",
+    "lib/admin/operations-read-lifecycle.ts": "f7f5450501e4102d912c638db4e7296028c3d6d48cca6ad0926e750c09ae040b",
+    "lib/admin/operations-report-validation.ts": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e",
+    "lib/admin/system-health/bewertung.ts": "8d4b01cb962c0bf22dd0fabb85960fcd6d222b18d25fe5652ae1099e8ed42e91",
+    "lib/admin/system-health/freshness.ts": "0d6e0b4ee11232b167c91188fd4b07ecf8c6669d0d6b8d18fee0a708d15f5f51",
+    "lib/admin/provider-ops-board/bewertung.ts": "6fc6f88abf073f9400168947ca4758b225ff229f09a707efd52732dc47198c34",
+    "lib/admin/provider-ops-board/freshness.ts": "06dfcf60847646f1a2708e16c42cf0107f0f0ebb5f60794d23fc68e43d6bea2e",
+    "scripts/admin-operations-evidence-lifecycle-completion-1/harness.tsx": "5c62f460c151b8b16ef826f2ef491169d1a5b72734d95ca068c59ab17986fa12",
+    "scripts/admin-operations-evidence-lifecycle-completion-1/leer.ts": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+  },
+  "runnerSha256": "b86a79ce8931a443726a5cb15199ca428b7dad35836957089271f6c9b085d501",
+  "cases": [
+    {
+      "name": "new-props-during-first-GET-leaves-refresh-locked",
+      "board": "health",
+      "defectReproduced": true,
+      "observations": {
+        "beforeGetSettles": {
+          "phase": "aktuell",
+          "pending": "true",
+          "refreshDisabled": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Aktualisiert…Aktualisiert…appProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisNEW-PROPS-SUPERSEDE-FIRST-GETQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterGetAndTwoLocalTicks": {
+          "phase": "aktuell",
+          "pending": "true",
+          "refreshDisabled": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Aktualisiert…Aktualisiert…appProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisNEW-PROPS-SUPERSEDE-FIRST-GETQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "retryFetchCount": 1,
+        "expected": "Explicit GET retains authority; after it settles, pending clears and refresh is usable.",
+        "actual": "Changed props commit, GET is ignored, and disabled refresh remains locked with no unresolved fetch."
+      }
+    },
+    {
+      "name": "endpoint-A-B-A-accepts-aborted-old-response",
+      "board": "health",
+      "defectReproduced": true,
+      "observations": {
+        "atB": {
+          "phase": "historisch",
+          "pending": "false",
+          "refreshDisabled": false,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenDie angezeigte Prüfung ist historisch und unbestätigt.appProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisINITIALQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterOldResponse": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/system-health",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenappProzess-Erreichbarkeit und Deployment werden getrennt bewertet.UnbekanntApp-ProzessGesundNachweis: frischGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisOBSOLETE-A-RESPONSE-ACCEPTEDQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.App-ProzessSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.supabaseApp-Datenzugriff und Plattformstatus werden getrennt bewertet.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweissupabase synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.vercelKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisvercel synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.githubKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisgithub synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.infomaniakKeine angebundene Statusquelle.Nicht konfiguriertGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweisinfomaniak synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "expected": "The old A generation stays invalid after A→B→A even if the transport ignores abort.",
+        "actual": "The aborted old A response commits as current without a newer GET."
+      }
+    },
+    {
+      "name": "future-card-with-current-report-stays-fresh-through-real-domain-hint",
+      "board": "health",
+      "defectReproduced": true,
+      "observations": {
+        "wall": 1792893600163,
+        "envelopeCheckedAt": "2026-10-25T02:00:00.000Z",
+        "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+        "cardFreshness": "fresh",
+        "childFreshness": "fresh",
+        "childGreen": "true",
+        "fetchCount": 0,
+        "expected": "A future parent checkedAt latches that parent and its initially fresh children unknown.",
+        "actual": "Parent and child remain fresh, and the healthy/available child renders green.",
+        "hintBoundary": "No hint replacement: the unchanged production board calls its real frozen wendeEvidenceAlterAn and berechneFreshness."
+      }
+    },
+    {
+      "name": "new-props-during-first-GET-leaves-refresh-locked",
+      "board": "ops",
+      "defectReproduced": true,
+      "observations": {
+        "beforeGetSettles": {
+          "phase": "aktuell",
+          "pending": "true",
+          "refreshDisabled": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Aktualisiert…Aktualisiert…Kostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisNEW-PROPS-SUPERSEDE-FIRST-GETQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterGetAndTwoLocalTicks": {
+          "phase": "aktuell",
+          "pending": "true",
+          "refreshDisabled": true,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": false
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Aktualisiert…Aktualisiert…Kostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisNEW-PROPS-SUPERSEDE-FIRST-GETQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "retryFetchCount": 1,
+        "expected": "Explicit GET retains authority; after it settles, pending clears and refresh is usable.",
+        "actual": "Changed props commit, GET is ignored, and disabled refresh remains locked with no unresolved fetch."
+      }
+    },
+    {
+      "name": "endpoint-A-B-A-accepts-aborted-old-response",
+      "board": "ops",
+      "defectReproduced": true,
+      "observations": {
+        "atB": {
+          "phase": "historisch",
+          "pending": "false",
+          "refreshDisabled": false,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 0,
+          "responseBodiesRead": 0,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenDie angezeigte Prüfung ist historisch und unbestätigt.Kostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisINITIALQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "afterOldResponse": {
+          "phase": "aktuell",
+          "pending": "false",
+          "refreshDisabled": false,
+          "fetchCalls": [
+            {
+              "url": "/api/admin/provider-ops",
+              "cache": "no-store",
+              "signalAborted": true
+            }
+          ],
+          "responsesResolved": 1,
+          "responseBodiesRead": 1,
+          "propsWaiters": 0,
+          "text": "Read-onlyGeprüft 25.10.2026, 03:00:00Erneut prüfenKostenabdeckung unvollständig · Kein vollständiges Ausgabenbild und kein globales Budget.model-usageKeine aufgezeichneten Modellaufrufe im gelesenen Zeitraum. Kein Beleg für null Ausgaben.Keine EinträgeGelesener Ausschnitt: letzte 30 Tage · höchstens 200 EinträgeGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweismodel-usage synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Provider-BereicheTechnische Grundlage vorhanden. Keine Live-Provider-Freigabe.Technisch vorbereitetFlightsBelegte Test-CapabilityNachweis: frischSynthetic childGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & NachweisOBSOLETE-A-RESPONSE-ACCEPTEDQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.FlightsSynthetic childQuelle: local-independent-counterexampleBelegt: Only the synthetic child.Grenzen: No broader health claim.Technische GrundlageNotabschaltungGlobale, dauerhafte Durchsetzung ist nicht belegt.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiskill-switch synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production.Technische GrundlageKostenbegrenzungKein globales, dauerhaftes Budgetlimit.Technisch vorbereitetGeprüft 25.10.2026, 03:00:00 · Nachweis frischDatenqualität & Nachweiscost-guard synthetic reportQuelle: local-independent-counterexampleBelegt: Only this local synthetic assertion.Grenzen: No deployment, provider integration or Production."
+        },
+        "expected": "The old A generation stays invalid after A→B→A even if the transport ignores abort.",
+        "actual": "The aborted old A response commits as current without a newer GET."
+      }
+    },
+    {
+      "name": "future-card-with-current-report-stays-fresh-through-real-domain-hint",
+      "board": "ops",
+      "defectReproduced": true,
+      "observations": {
+        "wall": 1792893600162,
+        "envelopeCheckedAt": "2026-10-25T02:00:00.000Z",
+        "cardCheckedAt": "2026-10-25T02:02:00.000Z",
+        "cardFreshness": "fresh",
+        "childFreshness": "fresh",
+        "childGreen": "true",
+        "fetchCount": 0,
+        "expected": "A future parent checkedAt latches that parent and its initially fresh children unknown.",
+        "actual": "Parent and child remain fresh, and the healthy/available child renders green.",
+        "hintBoundary": "No hint replacement: the unchanged production board calls its real frozen wendeEvidenceAlterAn and berechneFreshness."
+      }
+    }
+  ],
+  "externalRequestAttempts": [],
+  "localRequests": [
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js",
+    "/",
+    "/styles.css",
+    "/harness.js"
+  ],
+  "pageErrors": [],
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "reducedMotion": "reduce",
+  "statusBefore": "",
+  "origin": "http://127.0.0.1:39445",
+  "browser": "140.0.7339.16",
+  "browserLaunch": {
+    "headless": true,
+    "addedFlags": []
+  },
+  "outcome": "THREE_DEFECTS_REPRODUCED_IN_SIX_MOUNTED_CASES",
+  "statusAfter": "",
+  "exit": 0
+}

@@ -1,0 +1,22 @@
+// Metadata-only helper. It reads committed candidate source; it does not build or run it.
+import assert from 'node:assert/strict'
+import { existsSync, writeFileSync } from 'node:fs'
+import { isAbsolute, resolve } from 'node:path'
+import { candidate, inside, PRIMARY_SOURCES, sourceManifest } from './provenance.mjs'
+
+const args = process.argv.slice(2)
+assert.equal(args.length, 6, 'Usage: node source-manifest.mjs --repo /checkout --expected-head <NEW-R2-SHA> --output /fresh/external-manifest.json')
+const options = {}
+for (let i = 0; i < args.length; i += 2) {
+  assert.ok(['--repo', '--expected-head', '--output'].includes(args[i]))
+  assert.equal(options[args[i]], undefined, 'Duplicate option')
+  options[args[i]] = args[i + 1]
+}
+const repo = candidate(options['--repo'], options['--expected-head'])
+assert.ok(isAbsolute(options['--output']))
+const out = resolve(options['--output'])
+assert.ok(!inside(repo, out), 'Manifest must be external to the checkout')
+assert.ok(!existsSync(out), 'Refusing to replace an earlier manifest')
+const result = sourceManifest(repo, options['--expected-head'], PRIMARY_SOURCES)
+writeFileSync(out, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' })
+console.log(JSON.stringify({ manifest: out, head: result.expectedHead, tree: result.tree, files: Object.keys(result.files).length, execution: 'NONE_METADATA_ONLY' }))

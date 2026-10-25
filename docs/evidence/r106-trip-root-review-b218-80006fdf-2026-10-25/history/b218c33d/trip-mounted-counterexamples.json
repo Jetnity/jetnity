@@ -1,0 +1,32 @@
+{
+  "purpose": "Independent mounted counterexamples, not product PASS",
+  "head": "b218c33d9d00c19f3705aba8bd208cc455272659",
+  "node": "v22.23.4",
+  "browser": "140.0.7339.16",
+  "generatedAt": "2026-10-25T09:56:36.190Z",
+  "externalRequests": 0,
+  "scope": "Actual production list + hook in existing author synthetic Host, deferred writer/read adapters. No TripWorkspace/real Next router, no hosted Account/storage/Supabase/RLS, no CSS or layout assertion.",
+  "observations": [
+    {
+      "case": "late_A_confirmation_steals_search_focus",
+      "intentionallyFocusedBefore": "search",
+      "actualFocusAfter": "preparation-1792922195552-j4l2eocd8xk",
+      "expectedARef": "preparation-1792922195552-j4l2eocd8xk"
+    },
+    {
+      "case": "mounted_unknown_repeat_without_read",
+      "writes": 2,
+      "reads": 0,
+      "refs": [
+        "preparation-1792922195873-kwzrfu3i2qs",
+        "preparation-1792922195873-kwzrfu3i2qs"
+      ]
+    },
+    {
+      "case": "mounted_account_absent_then_matching",
+      "finalPhase": "absent_uncertain",
+      "committedDelivery": 3,
+      "reads": 1
+    }
+  ]
+}

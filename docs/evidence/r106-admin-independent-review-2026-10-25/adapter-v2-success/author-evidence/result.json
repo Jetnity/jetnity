@@ -1,0 +1,472 @@
+{
+  "ok": true,
+  "head": "2e67d1b994900da6db9e99140ab1cc772b68badb",
+  "befehl": "node scripts/admin-operations-evidence-lifecycle-completion-1/run.mjs",
+  "browserPfad": null,
+  "hinweis": "Lokaler Komponentenbeweis. Kein gehostetes Konto, kein Next-Router, kein Supabase, kein RLS, keine Production, kein Launch.",
+  "fixtureGrenze": "fetch ist ein lokales aufgeschobenes Fenster-Stub. Die synthetische Prop-Prüfung wartet nur, wenn das Harness window.__JETNITY_OPS_PROPS_SPERRE__ setzt. Produktion setzt das nicht und ruft beim Mount nicht ab.",
+  "faelle": [
+    {
+      "name": "health:anfang-gueltig-ohne-automatischen-abruf",
+      "ok": true
+    },
+    {
+      "name": "ops:anfang-gueltig-ohne-automatischen-abruf",
+      "ok": true
+    },
+    {
+      "name": "health:anfang-ungueltig",
+      "ok": true
+    },
+    {
+      "name": "ops:anfang-ungueltig",
+      "ok": true
+    },
+    {
+      "name": "health:prueft-und-explizites-get-schlaegt-verspaetete-props",
+      "ok": true
+    },
+    {
+      "name": "ops:prueft-und-explizites-get-schlaegt-verspaetete-props",
+      "ok": true
+    },
+    {
+      "name": "health:tastatur-startet-genau-ein-get",
+      "ok": true
+    },
+    {
+      "name": "ops:tastatur-startet-genau-ein-get",
+      "ok": true
+    },
+    {
+      "name": "health:doppelklick-ein-get",
+      "ok": true
+    },
+    {
+      "name": "ops:doppelklick-ein-get",
+      "ok": true
+    },
+    {
+      "name": "health:props-wiederholen-ersetzt-nicht",
+      "ok": true
+    },
+    {
+      "name": "ops:props-wiederholen-ersetzt-nicht",
+      "ok": true
+    },
+    {
+      "name": "health:endpunkt-historisch-und-alter-lauf-verworfen",
+      "ok": true
+    },
+    {
+      "name": "ops:endpunkt-historisch-und-alter-lauf-verworfen",
+      "ok": true
+    },
+    {
+      "name": "health:berechtigung-stoppt-lauf-und-holt-nicht-neu",
+      "ok": true
+    },
+    {
+      "name": "ops:berechtigung-stoppt-lauf-und-holt-nicht-neu",
+      "ok": true
+    },
+    {
+      "name": "health:unmount-verwirft-spaete-antwort",
+      "ok": true
+    },
+    {
+      "name": "ops:unmount-verwirft-spaete-antwort",
+      "ok": true
+    },
+    {
+      "name": "health:neuere-verweigerung-schlaegt-aelteren-erfolg",
+      "ok": true
+    },
+    {
+      "name": "ops:neuere-verweigerung-schlaegt-aelteren-erfolg",
+      "ok": true
+    },
+    {
+      "name": "health:neuerer-erfolg-schlaegt-aeltere-verweigerung",
+      "ok": true
+    },
+    {
+      "name": "ops:neuerer-erfolg-schlaegt-aeltere-verweigerung",
+      "ok": true
+    },
+    {
+      "name": "health:verweigerung-bleibt-durch-503-netz-und-kaputtes-200",
+      "ok": true
+    },
+    {
+      "name": "ops:verweigerung-bleibt-durch-503-netz-und-kaputtes-200",
+      "ok": true
+    },
+    {
+      "name": "health:ttl-kind-und-ruecklauf",
+      "ok": true
+    },
+    {
+      "name": "ops:ttl-kind-und-ruecklauf",
+      "ok": true
+    },
+    {
+      "name": "health:ruecklauf-behaelt-stale",
+      "ok": true
+    },
+    {
+      "name": "ops:ruecklauf-behaelt-stale",
+      "ok": true
+    },
+    {
+      "name": "health:uhr-nach-gutem-tick-und-zukunft",
+      "ok": true
+    },
+    {
+      "name": "ops:uhr-nach-gutem-tick-und-zukunft",
+      "ok": true
+    },
+    {
+      "name": "health:zukunft-bleibt-nicht-gruen",
+      "ok": true
+    },
+    {
+      "name": "ops:zukunft-bleibt-nicht-gruen",
+      "ok": true
+    },
+    {
+      "name": "health:endpunkt-aba-verwirft-alten-lauf",
+      "ok": true
+    },
+    {
+      "name": "ops:endpunkt-aba-verwirft-alten-lauf",
+      "ok": true
+    },
+    {
+      "name": "health:karten-zukunft",
+      "ok": true
+    },
+    {
+      "name": "ops:karten-zukunft",
+      "ok": true
+    },
+    {
+      "name": "health:annahme-mono-unbrauchbar",
+      "ok": true
+    },
+    {
+      "name": "ops:annahme-mono-unbrauchbar",
+      "ok": true
+    },
+    {
+      "name": "health:annahme-wand-unbrauchbar",
+      "ok": true
+    },
+    {
+      "name": "ops:annahme-wand-unbrauchbar",
+      "ok": true
+    },
+    {
+      "name": "health:props-waehrend-erstem-get-erfolg",
+      "ok": true
+    },
+    {
+      "name": "ops:props-waehrend-erstem-get-erfolg",
+      "ok": true
+    },
+    {
+      "name": "health:props-waehrend-erstem-get-fehler",
+      "ok": true
+    },
+    {
+      "name": "ops:props-waehrend-erstem-get-fehler",
+      "ok": true
+    },
+    {
+      "name": "health:props-waehrend-erstem-get-verweigerung",
+      "ok": true
+    },
+    {
+      "name": "ops:props-waehrend-erstem-get-verweigerung",
+      "ok": true
+    },
+    {
+      "name": "health:tastatur-waehrend-prop-pruefung",
+      "ok": true
+    },
+    {
+      "name": "ops:tastatur-waehrend-prop-pruefung",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-duplikat",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-duplikat",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-fehlt",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-fehlt",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-falsch",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-falsch",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-status",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-status",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-aktion",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-aktion",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-meta",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-meta",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-zeit",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-zeit",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-alter",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-alter",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-ttl",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-ttl",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-array",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-array",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-leer",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-leer",
+      "ok": true
+    },
+    {
+      "name": "health:props-ungueltig-null",
+      "ok": true
+    },
+    {
+      "name": "ops:props-ungueltig-null",
+      "ok": true
+    },
+    {
+      "name": "health:get-ungueltige-200",
+      "ok": true
+    },
+    {
+      "name": "ops:get-ungueltige-200",
+      "ok": true
+    },
+    {
+      "name": "health:verweigerung-401-json-und-kaputt",
+      "ok": true
+    },
+    {
+      "name": "ops:verweigerung-401-json-und-kaputt",
+      "ok": true
+    },
+    {
+      "name": "health:historisch-altert-nach-fehler",
+      "ok": true
+    },
+    {
+      "name": "ops:historisch-altert-nach-fehler",
+      "ok": true
+    },
+    {
+      "name": "health:ttl-alle-grenzen",
+      "ok": true
+    },
+    {
+      "name": "ops:ttl-alle-grenzen",
+      "ok": true
+    },
+    {
+      "name": "health:tab-zurueck-altert-ohne-abruf",
+      "ok": true
+    },
+    {
+      "name": "ops:tab-zurueck-altert-ohne-abruf",
+      "ok": true
+    },
+    {
+      "name": "health:beleg-320",
+      "ok": true,
+      "scroll": 320,
+      "client": 320,
+      "schrift": 16,
+      "breite": 320
+    },
+    {
+      "name": "health:beleg-320-200",
+      "ok": true,
+      "scroll": 320,
+      "client": 320,
+      "schrift": 32,
+      "breite": 320
+    },
+    {
+      "name": "health:beleg-360",
+      "ok": true,
+      "scroll": 360,
+      "client": 360,
+      "schrift": 16,
+      "breite": 360
+    },
+    {
+      "name": "health:beleg-390",
+      "ok": true,
+      "scroll": 390,
+      "client": 390,
+      "schrift": 16,
+      "breite": 390
+    },
+    {
+      "name": "health:beleg-768",
+      "ok": true,
+      "scroll": 768,
+      "client": 768,
+      "schrift": 16,
+      "breite": 768
+    },
+    {
+      "name": "health:beleg-1280",
+      "ok": true,
+      "scroll": 1280,
+      "client": 1280,
+      "schrift": 16,
+      "breite": 1280
+    },
+    {
+      "name": "ops:beleg-320",
+      "ok": true,
+      "scroll": 320,
+      "client": 320,
+      "schrift": 16,
+      "breite": 320
+    },
+    {
+      "name": "ops:beleg-320-200",
+      "ok": true,
+      "scroll": 320,
+      "client": 320,
+      "schrift": 32,
+      "breite": 320
+    },
+    {
+      "name": "ops:beleg-360",
+      "ok": true,
+      "scroll": 360,
+      "client": 360,
+      "schrift": 16,
+      "breite": 360
+    },
+    {
+      "name": "ops:beleg-390",
+      "ok": true,
+      "scroll": 390,
+      "client": 390,
+      "schrift": 16,
+      "breite": 390
+    },
+    {
+      "name": "ops:beleg-768",
+      "ok": true,
+      "scroll": 768,
+      "client": 768,
+      "schrift": 16,
+      "breite": 768
+    },
+    {
+      "name": "ops:beleg-1280",
+      "ok": true,
+      "scroll": 1280,
+      "client": 1280,
+      "schrift": 16,
+      "breite": 1280
+    }
+  ],
+  "digests": {
+    "components/admin/system-health/SystemHealthBoard.tsx": "9903422c9275fd22e9a6fa7c76fbb60314c1e4d36f611f4f9521a029658d7a8f",
+    "components/admin/provider-ops/ProviderOpsBoard.tsx": "870cb06f5d80113926d04a9ee63c2f779e3aa870bc21124081a34a4e76aaf6c3",
+    "components/admin/operations/useOperationsReport.ts": "d0e4595f7044a737bd5ae021bc43b8263ec420321df9ffe62935c04bb43e78dd",
+    "lib/admin/operations-read-lifecycle.ts": "e4f7fc2eabd267f19ae04daa60519eaf41a4912178f5a60086cd462bb6b67751",
+    "lib/admin/operations-report-validation.ts": "a6f71fd2eeda4eaea0ab374feaa68c3085e185a567f2fb44f81f65d32bc8ff0e"
+  },
+  "browser": "140.0.7339.16",
+  "exit": 0,
+  "anzahl": 94,
+  "bestanden": 94,
+  "viewports": [
+    320,
+    360,
+    390,
+    768,
+    1280
+  ],
+  "rootSchrift": [
+    16,
+    32
+  ],
+  "reducedMotion": "reduce",
+  "screenshots": [
+    "health-320.png",
+    "health-320-root-32.png",
+    "health-360.png",
+    "health-390.png",
+    "health-768.png",
+    "health-1280.png",
+    "ops-320.png",
+    "ops-320-root-32.png",
+    "ops-360.png",
+    "ops-390.png",
+    "ops-768.png",
+    "ops-1280.png"
+  ],
+  "uhr": "2026-10-25T02:00:00.000Z"
+}

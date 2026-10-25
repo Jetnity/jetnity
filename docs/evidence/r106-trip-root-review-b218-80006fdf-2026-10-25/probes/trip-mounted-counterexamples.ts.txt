@@ -1,0 +1,88 @@
+import assert from 'node:assert/strict'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { chromium } from '/tmp/jetnity-r106-t-review/node_modules/playwright/index.mjs'
+import { beispielreise } from '/tmp/jetnity-r106-t-review/lib/reiseaenderung/fixtures/reise.ts'
+import { readinessItemBauen } from '/tmp/jetnity-r106-t-review/lib/readiness/bauen.ts'
+
+async function run() {
+  const browser = await chromium.launch({ headless: true })
+  const observations: unknown[] = []
+  const bundle = readFileSync('/tmp/r106-review-evidence/trip-mounted-bundle.js', 'utf8')
+  let externalRequests = 0
+  async function open(start: unknown) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+    await page.route('**/*', async (route) => { externalRequests += 1; await route.abort() })
+    await page.setContent(`<!doctype html><html><body><div id="root"></div><script>window.__START__=${JSON.stringify(start)}</script><script>${bundle}</script></body></html>`)
+    await page.waitForFunction(() => (window as any).__PERSONAL__)
+    return page
+  }
+  try {
+    // The author harness mounts the actual production hook and list. Its writes
+    // and reads are deferred synthetic adapters; no storage/network is exercised.
+    const basis = beispielreise({ id: 'tl-mounted-trip', readinessItems: [] })
+    const focusPage = await open({ seam: 'guest', reise: basis })
+    await focusPage.getByLabel('Eigene Vorbereitung').fill('Focus A')
+    await focusPage.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+    await focusPage.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+    const payload = await focusPage.evaluate(() => (window as any).__PERSONAL__.setzen[0])
+    const built = readinessItemBauen(basis, payload)
+    assert.ok(built.ok)
+    const matching = { ...basis, readinessItems: [built.item] }
+    await focusPage.evaluate((trip) => (window as any).__PERSONAL__.reiseSetzen(trip), matching)
+    await focusPage.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+    await focusPage.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+    const search = focusPage.getByLabel('Suche in eigenen Punkten')
+    await search.focus()
+    assert.equal(await search.evaluate((el) => document.activeElement === el), true)
+    await focusPage.evaluate((trip) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), matching)
+    await focusPage.waitForFunction(() => document.querySelector('[data-personal-phase="confirmed"]'))
+    await focusPage.waitForFunction(() => document.activeElement?.hasAttribute('data-personal-client-ref'))
+    const focusedRef = await focusPage.evaluate(() => document.activeElement?.getAttribute('data-personal-client-ref'))
+    assert.equal(focusedRef, payload.clientRef, 'Counterexample: delayed A confirmation steals focus from search')
+    observations.push({ case: 'late_A_confirmation_steals_search_focus', intentionallyFocusedBefore: 'search', actualFocusAfter: focusedRef, expectedARef: payload.clientRef })
+    await focusPage.close()
+
+    const retryPage = await open({ seam: 'guest', reise: basis })
+    await retryPage.getByLabel('Eigene Vorbereitung').fill('Unknown attempt')
+    await retryPage.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+    await retryPage.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+    await retryPage.evaluate(() => (window as any).__PERSONAL__.schreibenScheitern())
+    await retryPage.waitForFunction(() => document.querySelector('[data-personal-phase="unclear"]'))
+    assert.equal(await retryPage.evaluate(() => (window as any).__PERSONAL__.lesen), 0)
+    await retryPage.getByRole('button', { name: 'Erneut versuchen' }).click()
+    await retryPage.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 2)
+    const retryObservation = await retryPage.evaluate(() => ({ writes: (window as any).__PERSONAL__.setzen.length, reads: (window as any).__PERSONAL__.lesen, refs: (window as any).__PERSONAL__.setzen.map((p: any) => p.clientRef) }))
+    assert.equal(retryObservation.reads, 0)
+    assert.equal(retryObservation.refs[0], retryObservation.refs[1])
+    observations.push({ case: 'mounted_unknown_repeat_without_read', ...retryObservation })
+    await retryPage.close()
+
+    const accountPage = await open({ seam: 'account', reise: basis, kanonisch: basis })
+    await accountPage.getByLabel('Eigene Vorbereitung').fill('Later read')
+    await accountPage.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+    await accountPage.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+    const accountPayload = await accountPage.evaluate(() => (window as any).__PERSONAL__.setzen[0])
+    const accountBuilt = readinessItemBauen(basis, accountPayload)
+    assert.ok(accountBuilt.ok)
+    await accountPage.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+    await accountPage.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+    await accountPage.evaluate(() => (window as any).__PERSONAL__.lesenFreigeben({ art: 'props' }))
+    await accountPage.evaluate((trip) => (window as any).__PERSONAL__.kanonischSetzen(trip), { ...basis, readinessItems: [] })
+    await accountPage.waitForFunction(() => document.querySelector('[data-personal-phase="absent_uncertain"]'))
+    const accountMatching = { ...basis, readinessItems: [accountBuilt.item] }
+    await accountPage.evaluate((trip) => { (window as any).__PERSONAL__.kanonischSetzen(trip); (window as any).__PERSONAL__.reiseSetzen(trip) }, accountMatching)
+    await accountPage.waitForFunction(() => document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung') === '3')
+    const finalPhase = await accountPage.locator('[data-personal-phase]').last().getAttribute('data-personal-phase')
+    assert.equal(finalPhase, 'absent_uncertain', 'Counterexample: a matching later canonical delivery remains ignored')
+    observations.push({ case: 'mounted_account_absent_then_matching', finalPhase, committedDelivery: 3, reads: await accountPage.evaluate(() => (window as any).__PERSONAL__.lesen) })
+    await accountPage.close()
+
+    const report = { purpose: 'Independent mounted counterexamples, not product PASS', head: 'b218c33d9d00c19f3705aba8bd208cc455272659', node: process.version, browser: browser.version(), generatedAt: new Date().toISOString(), externalRequests, scope: 'Actual production list + hook in existing author synthetic Host, deferred writer/read adapters. No TripWorkspace/real Next router, no hosted Account/storage/Supabase/RLS, no CSS or layout assertion.', observations }
+    assert.equal(externalRequests, 0)
+    writeFileSync('/tmp/r106-review-evidence/trip-mounted-counterexamples.json', JSON.stringify(report, null, 2) + '\n')
+    console.log(JSON.stringify(report, null, 2))
+  } finally {
+    await browser.close()
+  }
+}
+run().catch((error) => { console.error(error); process.exitCode = 1 })

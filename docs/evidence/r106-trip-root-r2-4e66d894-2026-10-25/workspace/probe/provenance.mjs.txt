@@ -1,0 +1,80 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+import { isAbsolute, relative, resolve, sep } from 'node:path'
+import { readFileSync, realpathSync } from 'node:fs'
+
+export const INSPECTED_R1 = '80006fdf1443ca9d75d8c481246821354da16000'
+export const PRIMARY_SOURCES = [
+  'package.json', 'package-lock.json', 'tsconfig.json',
+  'components/trips/TripWorkspace.tsx', 'components/trips/Reisevorbereitung.tsx',
+  'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+  'components/trips/GastArbeitsbereich.tsx', 'components/trips/KontoArbeitsbereich.tsx',
+  'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/gast.ts',
+  'lib/readiness/schema.ts', 'lib/readiness/bauen.ts', 'lib/readiness/domain.ts',
+  'lib/readiness/status.ts', 'lib/readiness/fingerprint.ts', 'lib/readiness/bezeichnungen.ts',
+  'lib/trips/gastspeicher.ts', 'lib/reiseaenderung/fixtures/reise.ts', 'types/trips.ts',
+  'docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md',
+  'docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md',
+]
+// These are the production callback/storage contracts the synthetic boundary copies.
+// A changed contract requires a fresh source review and a new probe version.
+export const FROZEN_BOUNDARY_SOURCES = [
+  'components/trips/GastArbeitsbereich.tsx', 'lib/readiness/gast.ts',
+  'lib/trips/gastspeicher.ts',
+  'docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md',
+  'docs/JETNITY_TRIP_PERSONAL_PREPARATION_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md',
+]
+export function sha(bytes) { return createHash('sha256').update(bytes).digest('hex') }
+export function blob(bytes) { return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex') }
+export function fileIdentity(path) {
+  const bytes = readFileSync(path)
+  return { bytes: bytes.length, sha256: sha(bytes), gitBlob: blob(bytes) }
+}
+export function git(repo, ...args) {
+  return execFileSync('git', ['-C', repo, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
+}
+export function inside(root, path) {
+  const rel = relative(root, path)
+  return rel === '' || (!rel.startsWith(`..${sep}`) && rel !== '..' && !isAbsolute(rel))
+}
+export function candidate(repoInput, head) {
+  assert.equal(process.versions.node.split('.')[0], '22', 'Node 22 is required')
+  assert.match(head, /^[a-f0-9]{40}$/, 'An exact lowercase 40-hex head is required')
+  assert.notEqual(head, INSPECTED_R1, 'REFUSED: inspected R1 is not the future R2 candidate')
+  assert.ok(isAbsolute(repoInput), 'Use an absolute checkout root')
+  const repo = realpathSync(repoInput)
+  assert.equal(realpathSync(git(repo, 'rev-parse', '--show-toplevel')), repo)
+  assert.equal(git(repo, 'rev-parse', 'HEAD'), head, 'HEAD differs from the explicitly named candidate')
+  assert.equal(git(repo, 'status', '--porcelain', '--untracked-files=no'), '', 'Tracked source/index must be clean')
+  execFileSync('git', ['-C', repo, 'merge-base', '--is-ancestor', INSPECTED_R1, head], { stdio: ['ignore', 'pipe', 'pipe'] })
+  for (const path of FROZEN_BOUNDARY_SOURCES) {
+    assert.equal(git(repo, 'rev-parse', `${head}:${path}`), git(repo, 'rev-parse', `${INSPECTED_R1}:${path}`), `Frozen callback/storage/task boundary changed: ${path}`)
+  }
+  return repo
+}
+export function sourceManifest(repo, head, paths) {
+  candidate(repo, head)
+  const files = {}
+  for (const path of [...new Set(paths)].sort()) {
+    const abs = resolve(repo, path)
+    assert.ok(inside(repo, abs) && !path.split(/[\\/]/).includes('node_modules'), `Invalid source path: ${path}`)
+    const id = fileIdentity(abs)
+    assert.equal(id.gitBlob, git(repo, 'rev-parse', `${head}:${path}`), `Uncommitted source bytes: ${path}`)
+    files[path] = id
+  }
+  return {
+    schemaVersion: 1, repository: 'Jetnity/jetnity', expectedHead: head,
+    tree: git(repo, 'rev-parse', `${head}^{tree}`), inspectedR1: INSPECTED_R1,
+    trackedCheckoutClean: true, checkedAt: new Date().toISOString(), files,
+  }
+}
+export function verifyPinned(repo, head, supplied) {
+  assert.equal(supplied.schemaVersion, 1)
+  assert.equal(supplied.expectedHead, head)
+  assert.equal(supplied.tree, git(repo, 'rev-parse', `${head}^{tree}`))
+  for (const path of PRIMARY_SOURCES) assert.ok(supplied.files?.[path], `Manifest omits primary source ${path}`)
+  const actual = sourceManifest(repo, head, Object.keys(supplied.files))
+  for (const [path, id] of Object.entries(actual.files)) assert.deepEqual(id, supplied.files[path], `Pinned source mismatch: ${path}`)
+  return actual
+}

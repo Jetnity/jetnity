@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "archive": "r106-trip-root-r2-4e66d894-2026-10-25",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "tree": "a5ad2109677ea30325bba6fe51a59e159cafdaac",
+  "status": "APPEND_ONLY_STAGED_FOR_ROOT_REVIEW_NOT_UPLOADED_NOT_COMMITTED",
+  "preparationExecutedProductCode": false,
+  "caseCounts": {
+    "pureSameRef": 1,
+    "mountedListHookControls": 3,
+    "mountedListHookPostDelete": 1,
+    "actualWorkspace": 3,
+    "totalBoundedCases": 8,
+    "rawResultFiles": 4
+  },
+  "files": [
+    {
+      "archiveRelativePath": "results/trip-r2-same-ref-4e66d894-run1.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-same-ref-4e66d894-run1.json",
+      "role": "RAW_ROOT_RESULT_1_BOUNDED_CASES",
+      "replayRelativePath": null,
+      "bytes": 1497,
+      "sha256": "8be6cb408d45ea453a66002f06b3f7ac67ddae0fa8b0d2eacc1f90c09b31baee",
+      "gitBlob": "b91d740ef30ac60da1aa11bbc1bc0212dd8f7eee"
+    },
+    {
+      "archiveRelativePath": "results/trip-r2-controls-4e66d894-run1.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-controls-4e66d894-run1.json",
+      "role": "RAW_ROOT_RESULT_3_BOUNDED_CASES",
+      "replayRelativePath": null,
+      "bytes": 7577,
+      "sha256": "a44a22abb5be6cb4be862bc857e0365053f46996c1b2e218f6ffd15f8612207a",
+      "gitBlob": "db7e68fb6c7394b5138b82e8c37472392b245fe5"
+    },
+    {
+      "archiveRelativePath": "results/trip-r2-post-delete-4e66d894-run1.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r2-post-delete-4e66d894-run1.json",
+      "role": "RAW_ROOT_RESULT_1_BOUNDED_CASES",
+      "replayRelativePath": null,
+      "bytes": 7047,
+      "sha256": "c868638ed21fd903e7e6c2db697d85c079a3242e8318d65c5cac185dfe2542e2",
+      "gitBlob": "429c0ac9d8770c7cd9195b02feff675cdc64aad3"
+    },
+    {
+      "archiveRelativePath": "workspace/workspace-r4-result.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/workspace-r4-result.json",
+      "role": "RAW_ROOT_RESULT_3_WORKSPACE_SCENARIOS",
+      "replayRelativePath": null,
+      "bytes": 112735,
+      "sha256": "2177d7b73db805c2545ed22e97bd07cb94f708ce4fd9f396eb2f804659aa8851",
+      "gitBlob": "74a8127ddecf6a7ba457d9a2c6b1ef60dee4c173"
+    },
+    {
+      "archiveRelativePath": "workspace/traces/trace-wrong_trip.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/trace-wrong_trip.json",
+      "role": "RAW_UNIQUE_WORKSPACE_TRACE",
+      "replayRelativePath": null,
+      "bytes": 19936,
+      "sha256": "ed2dfa0ab3305ea2473d964b8fb9389ec3ee4282502ceb32159e67c3ac433b8d",
+      "gitBlob": "a0275a69653176bbd3eb7a1cf502507354c1473d"
+    },
+    {
+      "archiveRelativePath": "workspace/traces/trace-unreadable.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/trace-unreadable.json",
+      "role": "RAW_UNIQUE_WORKSPACE_TRACE",
+      "replayRelativePath": null,
+      "bytes": 19664,
+      "sha256": "9f76551a339de56e6abddbfedaf432d7e0db1ab466cf8c3b3e8a44f569498e40",
+      "gitBlob": "20fa72eccaf0cb7bfcb485d05ac81b77de3b763b"
+    },
+    {
+      "archiveRelativePath": "workspace/traces/trace-trip_switch.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/trace-trip_switch.json",
+      "role": "RAW_UNIQUE_WORKSPACE_TRACE",
+      "replayRelativePath": null,
+      "bytes": 15112,
+      "sha256": "2d7c61aab47a6bab046a8fc5d3a1b745d8151fbe59a73583c30df799e98500c9",
+      "gitBlob": "7f4b560b4ea5c31ede83a1a7cf5e7b7b7896f779"
+    },
+    {
+      "archiveRelativePath": "workspace/bindings/input-source-manifest.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-committed-manifest-run1.json",
+      "role": "RAW_PINNED_22_PATH_COMMITTED_INPUT_MANIFEST",
+      "replayRelativePath": null,
+      "bytes": 5085,
+      "sha256": "123194393bc657ef3c2d0acbecd5112a27f2b0c68b86c554c3caec21fc5a47a9",
+      "gitBlob": "0eb7da3250ce3a559d559cbed8d29bfaf8d9d846"
+    },
+    {
+      "archiveRelativePath": "workspace/bindings/committed-source-manifest.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/committed-source-manifest.json",
+      "role": "RAW_198_PATH_COMPILED_SOURCE_MANIFEST",
+      "replayRelativePath": null,
+      "bytes": 42294,
+      "sha256": "15937eca8ef30f9ca62a92ddf4a915835ca78afe9eb7ae52bd0ff6168bb6a7dc",
+      "gitBlob": "746ccb03873f63aa175763392a2169b9bd53c4d8"
+    },
+    {
+      "archiveRelativePath": "workspace/bindings/bundle-metafile.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/bundle-metafile.json",
+      "role": "RAW_COMPLETE_ESBUILD_METAFILE",
+      "replayRelativePath": null,
+      "bytes": 1408406,
+      "sha256": "ba4d16eec6a86242df98a3653da6dba109ffd5a6574a899388da1571d4273dd2",
+      "gitBlob": "d1d463e3bec046f91fb53da4c77def36bce40934"
+    },
+    {
+      "archiveRelativePath": "bindings/trip-4e66d894-root1.bundle-info.json",
+      "sourcePath": "/tmp/r106-review-evidence/trip-4e66d894-root1.bundle-info.json",
+      "role": "RAW_SEPARATE_SYNTHETIC_HOST_BUNDLE_METADATA",
+      "replayRelativePath": null,
+      "bytes": 5347,
+      "sha256": "6a9fbd2255b7f6c96b823a08e6e685ba7c663f0411cd0980405f32d36cc61026",
+      "gitBlob": "611c3a2021fa88b4bea4e72b75d90eb8b709c11e"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/README.md.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/README.md",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/README.md",
+      "bytes": 11806,
+      "sha256": "4266b2ceb09561af4433cd77c8e0b72379fa1f44976bec25c989c3dbdd9778c7",
+      "gitBlob": "7ee8a72cefe2f6de33b5d7a5f84a04cd3420c538"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/run.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/run.mjs",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/run.mjs",
+      "bytes": 27889,
+      "sha256": "98336b5b6911c905fde22f512e9d9b8a0056d119fc29b7d2823372003290fefb",
+      "gitBlob": "85eccffb5d4eccf00c46a24fd046163ec8345b7e"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/provenance.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/provenance.mjs",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/provenance.mjs",
+      "bytes": 4689,
+      "sha256": "1ed2b4a33d32881e9279ebc9858eb5ef084fb7421ddc0fd762358e431378eb5c",
+      "gitBlob": "6400fb9a86609daf93e4dfb992fa6c9de54319c1"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/source-manifest.mjs.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/source-manifest.mjs",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/source-manifest.mjs",
+      "bytes": 1359,
+      "sha256": "0d8dad25740a76e0a7dfc82911c4be999874b0cd0e79c3ec322dc969190e32ea",
+      "gitBlob": "fd4bdedf4a38280211100099c7101e5bcdf59708"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/workspace.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/workspace.tsx",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/workspace.tsx",
+      "bytes": 8788,
+      "sha256": "d22dc6159e6926b6be06de06be0c09d6de4b6c0fd426454a6593e773cc1f4ae8",
+      "gitBlob": "d4e0d315eef41ceab43a816b991eb28f39816b24"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/shims/dynamic.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/dynamic.tsx",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/shims/dynamic.tsx",
+      "bytes": 232,
+      "sha256": "3431eb05985adc8b4203c15116ffcb41272ed0fd47c83f2c66cb8b053668a8af",
+      "gitBlob": "df1bce6d20da3e6989f573914b5916b67cf7c49b"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/shims/navigation.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/navigation.tsx",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/shims/navigation.tsx",
+      "bytes": 374,
+      "sha256": "1e7f28a60cf5eda94efc69db624df669f3e886779bfd239886185521abd34fc7",
+      "gitBlob": "ff131138c1fd906d2b9a36206abb598bdbe93f36"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/shims/link.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/link.tsx",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/shims/link.tsx",
+      "bytes": 114,
+      "sha256": "ba0acae76c4e555a388ff6935c3bcbaff1b0a8d3bca54459499f3af239e99e4a",
+      "gitBlob": "fde0b435172a88ce54182e9f2221bb4f58cd08c7"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/shims/image.tsx.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/image.tsx",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/shims/image.tsx",
+      "bytes": 149,
+      "sha256": "64e636a3ce22eb0c05aa9921234767edf24bcecf41691bcc72cfc60ba3eac216",
+      "gitBlob": "5e89205e1d0b55a46a7e946983722831b58327fc"
+    },
+    {
+      "archiveRelativePath": "workspace/probe/shims/empty.ts.txt",
+      "sourcePath": "/tmp/r106-review-evidence/trip-workspace-r4-probe-v1/shims/empty.ts",
+      "role": "BYTE_IDENTICAL_EXTERNAL_WORKSPACE_SOURCE_OR_PREPARATION_DOC",
+      "replayRelativePath": "workspace/shims/empty.ts",
+      "bytes": 10,
+      "sha256": "7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249",
+      "gitBlob": "336ce12bb9106afdf843063ee67c0c1970f70d37"
+    },
+    {
+      "archiveRelativePath": "bindings/source-binding-metadata.json",
+      "sourcePath": null,
+      "role": "DERIVED_ARCHIVAL_CORRESPONDENCE_METADATA_NOT_RAW_EXECUTION",
+      "replayRelativePath": null,
+      "bytes": 5793,
+      "sha256": "901847706d6bb0bb8a75100a598a43dbd0cbb1f0e84d22d902ff4346b46b60cf",
+      "gitBlob": "616c523f5748f176a050e33d701b60fc251b2c37"
+    },
+    {
+      "archiveRelativePath": "README.md",
+      "sourcePath": "/tmp/r106-review-evidence/TRIP_ROOT_R2_4E66D894_ARCHIVE_README_2026-10-25.md",
+      "role": "ARCHIVE_README_AND_REPLAY_INSTRUCTIONS",
+      "replayRelativePath": null,
+      "bytes": 13528,
+      "sha256": "da8c24cb1950b172cce05b407326d9d42be8b793fb068dab0d445fab8bfedf86",
+      "gitBlob": "291e6e6acc993e25ee9861696b5bff5ec34c1d49"
+    }
+  ],
+  "sharedReferences": [
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-acceptance-common.mjs.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-acceptance-common.mjs",
+      "replayRelativePath": "host/trip-acceptance-common.mjs",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 5271,
+      "sha256": "ddfa09e03dd9aca23c510c0f3b506b2cb9013ebcc26b2c28278b49f639885bb0",
+      "gitBlob": "e5bee1f134c22d0281b22bb70604ca71ddcd5fa9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/probes/trip-build-acceptance-bundle.mjs.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-build-acceptance-bundle.mjs",
+      "replayRelativePath": "host/trip-build-acceptance-bundle.mjs",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 2239,
+      "sha256": "b2a9fb64f6b7cd89fcdeaa95cd54c77efe5ed90154da172f115cd24a59183e12",
+      "gitBlob": "4d7a75a89de60ad3a96e49e8ced6558751b2cff9"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-same-ref-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-same-ref-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-same-ref-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 5286,
+      "sha256": "3748dd1bb2b8d6f7c45a5e47bb78ac7dd0873fe5008c7a9087a0a45255f8422c",
+      "gitBlob": "6ae53a16b9deac5bdbec1b059afdf87a8193a388"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-controls-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-controls-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-controls-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 11308,
+      "sha256": "4abd1607dc7ae943d5521bc7511a105ddb3772fbcc4b5fd901482d5d50e5923e",
+      "gitBlob": "2f8ec0f1bd3d07aaf0c66bcbea2f71d210516d16"
+    },
+    {
+      "archiveRelativePath": "../r106-trip-root-review-b218-80006fdf-2026-10-25/prepared-r2/trip-r2-post-delete-acceptance.ts.txt",
+      "sourcePathAtExecution": "/tmp/r106-review-evidence/trip-r2-post-delete-acceptance.ts",
+      "replayRelativePath": "host/trip-r2-post-delete-acceptance.ts",
+      "role": "IDENTICAL_PREVIOUS_ARCHIVE_SOURCE_REUSED_NOT_COPIED",
+      "bytes": 10076,
+      "sha256": "3a1987a79dbd80606e4ef94bd17f5f607229e473e18e158cdac903eb7e05333b",
+      "gitBlob": "7d393695ccd33754175847170bfd09711bcff657"
+    }
+  ],
+  "exclusions": [
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-r4-4e66d894-workspace-run1/workspace-bundle.js",
+      "bytes": 1754461,
+      "sha256": "a2a727e1a01da857347caf9cec2129c27ba5a3f09c46c8441b5880aff735bc9b",
+      "gitBlob": "b412419ba735f02c1eb4c4e14c982f12f88cad1b",
+      "reason": "Generated Workspace bundle; hash and source graph retained, replay rebuilds it."
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-4e66d894-root1.bundle.js",
+      "bytes": 923528,
+      "sha256": "b3880f04d20f832d4fdd0d4003eeb33a0b045c17c9188f9be9153651532d6c40",
+      "gitBlob": "559f9ce5edfbed654005c5205851b1fcea9ddbff",
+      "reason": "Generated synthetic Host bundle; separate metadata retained, replay rebuilds it."
+    },
+    {
+      "sourcePath": "/tmp/r106-review-evidence/trip-sources-4e66d894.json",
+      "bytes": 847505,
+      "sha256": "dbfa357266a17d6df4da790ced773dafaf5e7cdef78ffb41a56276579e0ba950",
+      "gitBlob": "f71f0df8206b9e005cad00c0fc68c2af4f790ab1",
+      "reason": "Reproducible full committed Git tree map; selected used source identities retained."
+    },
+    {
+      "kind": "installed dependencies and browsers",
+      "reason": "Not evidence artifacts; no generated dependency tree copied."
+    },
+    {
+      "kind": "new residual probe",
+      "reason": "Not ready; explicitly outside this archive."
+    }
+  ],
+  "manifestSelfIncludedInFiles": false,
+  "existingFilesUnchanged": {
+    "evidence": 86,
+    "uploadMaps": 4
+  }
+}

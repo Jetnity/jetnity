@@ -1,0 +1,147 @@
+{
+  "purpose": "Independent correct-behavior assertions for R1 same-ref locking and newer B-control focus; not a TL PASS",
+  "expectedHead": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "node": "v22.23.4",
+  "generatedAt": "2026-10-25T12:49:11.627Z",
+  "observations": [
+    {
+      "name": "Old A conflict read must not allow ordinary delete during newer same-ref B write",
+      "result": "PASS",
+      "detail": {
+        "phaseBeforeDelete": "pending",
+        "deleteButtonEnabled": true,
+        "observed": {
+          "writes": [
+            {
+              "clientRef": "preparation-tl-existing-b",
+              "kind": "preparation",
+              "userStatus": "open",
+              "countryCode": null,
+              "tripItemId": null,
+              "title": "First accepted edit"
+            },
+            {
+              "clientRef": "preparation-tl-existing-b",
+              "kind": "preparation",
+              "userStatus": "open",
+              "countryCode": null,
+              "tripItemId": null,
+              "title": "Second pending edit"
+            }
+          ],
+          "deletes": [],
+          "reads": 1
+        },
+        "secondWriteReleased": false
+      }
+    },
+    {
+      "name": "Late A completion must preserve deliberate B status focus",
+      "result": "PASS",
+      "detail": {
+        "intendedTarget": "B status",
+        "retained": true,
+        "active": {
+          "tag": "BUTTON",
+          "text": "Erledigt",
+          "ref": null
+        },
+        "statusSelectionRetained": "true",
+        "counts": {
+          "writes": 1,
+          "deletes": 0,
+          "reads": 1
+        }
+      }
+    },
+    {
+      "name": "Late A completion must preserve deliberate B delete-confirmation focus",
+      "result": "PASS",
+      "detail": {
+        "intendedTarget": "B delete-confirmation",
+        "retained": true,
+        "active": {
+          "tag": "BUTTON",
+          "text": "Endgültig entfernen",
+          "ref": null
+        },
+        "statusSelectionRetained": null,
+        "counts": {
+          "writes": 1,
+          "deletes": 0,
+          "reads": 1
+        }
+      }
+    }
+  ],
+  "verdict": "BOUNDED_ASSERTIONS_PASSED",
+  "head": "4e66d8948046423656feb6b95b8562e546e82b19",
+  "browser": "140.0.7339.16",
+  "externalRequests": 0,
+  "verifiedSources": {
+    "package.json": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+    "package-lock.json": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "components/trips/EigeneReisevorbereitung.tsx": "7c3bac055173b12e235b3f352828ffe04ff164eb",
+    "components/trips/usePersonalPreparationLifecycle.ts": "a11b25652281e9d04be29aad7e0d9cf53c28e4e1",
+    "lib/readiness/personal-preparation-workflow.ts": "563fd3068c0bc42a52d9834fdb18f36e28c188a8",
+    "lib/readiness/bauen.ts": "aedf5fe51fd1496999423a94dea9eb9f7cb88e52",
+    "lib/reiseaenderung/fixtures/reise.ts": "7533df1f2de0a9972810278b64aa9839033342f8",
+    "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6",
+    "lib/readiness/bezeichnungen.ts": "b3d172b9db8b17fa3a6422813af4b9275def622c",
+    "lib/readiness/domain.ts": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+    "lib/readiness/digest.ts": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+    "lib/readiness/fingerprint.ts": "c9e9a65528f04bd19fbb01f9e8d3b90fdefe06b7",
+    "lib/readiness/traveller-kontext.ts": "10b5c1b87689cc1613518617ce70e324b49faa78",
+    "lib/readiness/party.ts": "b137915ad7da6c3e313ffa970900150ed129186d",
+    "lib/route/domain.ts": "59de349e313f20a74a2fc0119f2244fd0b65a50b",
+    "lib/flights/zeit.ts": "b8d3ae830b43d9f439ca6269378bcb75a23ae668",
+    "lib/route/referenz.ts": "477c8b33f39cf7832f994009e8c96147909dd739",
+    "lib/route/pfad.ts": "e5fdced8d3fc03e8dad0cf144c659780b0732573",
+    "lib/route/chronologie.ts": "fbceaf2f20ce2077265f7148095eede81e4a7010",
+    "lib/route/fingerprint.ts": "17927c07fedb15ba29b83fb29bd10910b957d04a",
+    "lib/route/kontakte.ts": "af1b038c01ae6d08cbad8e09ec7da7f72b18a734",
+    "lib/route/laender.ts": "f88563b43b75ec1fb838499559ace6205cd48ce7",
+    "lib/flights/domain.ts": "4e0ef5379664d8c00123fbc461e33b401e38deab",
+    "lib/flights/schema.ts": "702d275c3cd4c4d3c404d52a0a7730cf316ceb3a",
+    "lib/route/schema.ts": "f2615a4103b2b8525d93d67695e7e15978c9b442",
+    "lib/route/itinerary.ts": "54fc9c313f7505d0b8664417187509801dca29ad",
+    "lib/route/verbindung.ts": "b95cd22cc6012bd9e8ad1ae92b55f20722c57619",
+    "lib/route/ableitung.ts": "8ee86fa238e1eb9398888c398f135c81f2a97de8",
+    "types/trips.ts": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+    "lib/trips/buchung.ts": "dd6b76fb68bc9721d1f345eb66ef18a14868cbff",
+    "lib/trips/mietwagen-felder.ts": "5a256b1ee8038238198a84a5870c714fcc017dcd",
+    "lib/trips/mobilitaet-felder.ts": "155f8a71aff2c4e47fdfdf2a6fa0d40f106e807d",
+    "lib/mobility/kanten.ts": "3cfdcad030f8b7047cb1191bcfa6b3a4b892cd4f",
+    "lib/rental-cars/domain.ts": "4ac762f5d63882c02ae9616e75809c0b2301777b",
+    "lib/rental-cars/zeitraum.ts": "7c0412e8e9de3f010f7efeee6b3e20111b951c2a",
+    "lib/trips/datum-anzeige.ts": "153363963707b2142094c0c94a6c4455f4cd65cd",
+    "lib/rental-cars/bestand.ts": "b364e9e665825e2881e213125f6553c92574c86a",
+    "lib/route/anzeige.ts": "a43f03f5fa7488a7164d6e472c7e38dedfae2081",
+    "lib/trips/flug-abdeckung.ts": "1b8f7d005c8dbe74eec69c37cea2901c2147d049",
+    "lib/trips/naechte-abdeckung.ts": "dec9700cb730bf316e3c5a793eae2d75f3db230c",
+    "lib/trips/arbeitsbereich.ts": "884763a0ad43aa2d6f14f9b14ccae90b0f690d59",
+    "lib/readiness/kontext.ts": "381729fcc102cf8bbe0c795d19f528d8e66320e5",
+    "lib/readiness/traveller-anfrage.ts": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+    "lib/readiness/schema.ts": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+    "lib/readiness/official.ts": "dbaf9738cee8583e1b29577896547d47d236a35c",
+    "lib/provider-ops/outcome.ts": "e4ae0b92ec6d08b57127c367082ba9897b05c0a4",
+    "lib/provider-ops/anfrage.ts": "5e8707cbeabf38332e08450f9ba074aa804684d8",
+    "lib/provider-ops/zustand.ts": "8b877245746e402db06d0ae778dd6aecec465bed",
+    "lib/provider-ops/cost-guard.ts": "0fa5cacf404cc71b4294de4eed2637f018d8f2c6",
+    "lib/provider-ops/observability.ts": "7d9c2ba87a2f6722465bffe07ec253b08f77e3a2",
+    "lib/provider-ops/usage-policy.ts": "e63847df9d527d1484a97892b4a64e3ad6b12e57",
+    "lib/provider-ops/index.ts": "4b08576e0f86f8a15164ece96c55a9ed8896a8ae",
+    "lib/readiness/abruf.ts": "87cae75318178ae08c2f36e6389f242393277b6f",
+    "lib/readiness/provider.ts": "3028961f1711620da860c7eeef50a4b71f82529c",
+    "lib/readiness/entscheidung.ts": "f1510b9a4bef455fe410650781d4b99c439a2581",
+    "lib/readiness/regulierungs-anwendbarkeit.ts": "cac99bc39eefa470f3269892808f76c6b76d8130",
+    "lib/readiness/temporal.ts": "2b45246938196127124539302634e175a172b4b6",
+    "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts": "25dafee0f06353785972efafe0fc2db90183372b",
+    "lib/readiness/engine.ts": "f105d59c1653e3382cb8ddce4b3101b87de31750",
+    "lib/readiness/anforderungen.ts": "91071d2902e43101bbf6fae4a97539ec07f5b608",
+    "lib/readiness/ableitung.ts": "6d10fdcdac6d283541cd99ec00296704b59d9956",
+    "lib/readiness/status.ts": "0940f135ef7f52f15a9aed2e3b19126a837660be"
+  },
+  "bundleSha256": "b3880f04d20f832d4fdd0d4003eeb33a0b045c17c9188f9be9153651532d6c40",
+  "scope": "Actual production list and lifecycle hook in the unchanged inspected synthetic flaeche Host. Deferred adapters record dispatches. No real storage CRUD, full TripWorkspace, Next router, hosted Account, Supabase/RLS or Production claim."
+}

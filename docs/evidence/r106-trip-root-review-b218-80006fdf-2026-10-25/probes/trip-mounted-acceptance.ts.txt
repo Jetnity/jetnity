@@ -1,0 +1,121 @@
+import assert from 'node:assert/strict'
+import { readFileSync, realpathSync } from 'node:fs'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { argumentsForRun, moduleApi, prepareRun, sha256, writeReport } from './trip-acceptance-common.mjs'
+
+async function run() {
+  const options = argumentsForRun()
+  const report: any = { purpose: 'Bounded mounted acceptance assertions for R106 T R1; never a product/TL PASS', expectedHead: options.head, node: process.version, generatedAt: new Date().toISOString(), observations: [], verdict: 'NOT_VERIFIED' }
+  let browser: any
+  try {
+    const context = prepareRun(options, [
+      'components/trips/EigeneReisevorbereitung.tsx', 'components/trips/usePersonalPreparationLifecycle.ts',
+      'lib/readiness/personal-preparation-workflow.ts', 'lib/readiness/bauen.ts',
+      'lib/reiseaenderung/fixtures/reise.ts', 'scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx',
+    ])
+    assert.ok(options.bundle && options['bundle-info'], '--bundle and --bundle-info from the guarded builder are required')
+    const bundleInfo = JSON.parse(readFileSync(options['bundle-info'], 'utf8'))
+    assert.equal(bundleInfo.head, context.head)
+    assert.equal(realpathSync(bundleInfo.repo), context.repo)
+    assert.equal(realpathSync(bundleInfo.bundle), realpathSync(options.bundle))
+    assert.equal(sha256(options.bundle), bundleInfo.bundleSha256, 'Bundle bytes changed after the recorded build')
+    for (const [path, expected] of Object.entries(bundleInfo.sourceBlobs)) {
+      assert.equal(context.verifySource(path), expected, 'Bundled sources do not match current expected commit')
+    }
+    const workflow = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/personal-preparation-workflow.ts')).href))
+    const fixture = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/reiseaenderung/fixtures/reise.ts')).href))
+    const builder = moduleApi(await import(pathToFileURL(join(context.repo, 'lib/readiness/bauen.ts')).href))
+    const playwright = await import(pathToFileURL(join(context.repo, 'node_modules/playwright/index.mjs')).href)
+    browser = await playwright.chromium.launch({ headless: true })
+    const bundle = readFileSync(options.bundle, 'utf8')
+    const basis = fixture.beispielreise({ id: 'tl-r1-mounted-trip', readinessItems: [] })
+    let externalRequests = 0
+    async function open(seam: 'guest' | 'account') {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+      await page.route('**/*', async (route: any) => { externalRequests += 1; await route.abort() })
+      const start = { seam, reise: basis, ...(seam === 'account' ? { kanonisch: basis } : {}) }
+      await page.setContent(`<!doctype html><html><body><div id="root"></div><script>window.__START__=${JSON.stringify(start)}</script><script>${bundle}</script></body></html>`)
+      await page.waitForFunction(() => (window as any).__PERSONAL__, undefined, { timeout: 5000 })
+      const apiNames = await page.evaluate(() => Object.keys((window as any).__PERSONAL__))
+      for (const name of ['setzen', 'lesen', 'schreibenFreigeben', 'schreibenScheitern', 'lesenFreigeben', 'reiseSetzen', 'kanonischSetzen']) assert.ok(apiNames.includes(name), `Review Host contract changed (${name}); inspect and adapt this external probe, never fake a PASS`)
+      return page
+    }
+    async function newCreate(page: any, title: string) {
+      await page.getByLabel('Eigene Vorbereitung', { exact: true }).fill(title)
+      await page.getByRole('button', { name: 'Punkt hinzufügen', exact: true }).click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.setzen.length === 1)
+      const payload = await page.evaluate(() => (window as any).__PERSONAL__.setzen[0])
+      const built = builder.readinessItemBauen(basis, payload)
+      assert.ok(built.ok)
+      return { payload, matching: { ...basis, readinessItems: [built.item] } }
+    }
+    async function settledFrame(page: any) {
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+    }
+    async function check(name: string, seam: 'guest' | 'account', fn: (page: any) => Promise<unknown>) {
+      let page: any
+      try { page = await open(seam); report.observations.push({ name, result: 'PASS', detail: await fn(page) }) }
+      catch (error) { report.observations.push({ name, result: 'FAIL', error: String(error) }) }
+      finally { await page?.close() }
+    }
+    await check('late A confirmation preserves a deliberately focused search field', 'guest', async (page) => {
+      const { matching } = await newCreate(page, 'Focus A')
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.reiseSetzen(trip), matching)
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      const search = page.getByLabel('Suche in eigenen Punkten', { exact: true })
+      await search.focus()
+      assert.equal(await search.evaluate((element: Element) => document.activeElement === element), true)
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }), matching)
+      await page.waitForFunction((messages: string[]) => messages.some((text) => document.body.innerText.includes(text)), [workflow.PERSONAL_BESTAETIGT, workflow.PERSONAL_ABGESTIMMT])
+      await settledFrame(page)
+      assert.equal(await search.evaluate((element: Element) => document.activeElement === element), true, 'Late confirmation must not steal deliberate search focus')
+      return { focusBefore: 'search', focusAfter: 'search' }
+    })
+    await check('unknown repeat cannot write before read and matching read is reconciliation', 'guest', async (page) => {
+      const { matching } = await newCreate(page, 'Unknown attempt')
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenScheitern())
+      await page.waitForFunction((text: string) => document.body.innerText.includes(text), workflow.PERSONAL_UNKLAR)
+      const retry = page.getByRole('button', { name: 'Erneut versuchen', exact: true })
+      const repeatOffered = await retry.count() > 0
+      const repeatEnabled = repeatOffered && await retry.first().isEnabled()
+      if (repeatEnabled) await retry.first().click()
+      await settledFrame(page)
+      const beforeRead = await page.evaluate(() => ({ writes: (window as any).__PERSONAL__.setzen.length, reads: (window as any).__PERSONAL__.lesen }))
+      assert.deepEqual(beforeRead, { writes: 1, reads: 0 }, 'Unclear outcome must not dispatch another write before a qualified read')
+      await page.getByRole('button', { name: 'Stand neu lesen', exact: true }).last().click()
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate((trip: any) => { (window as any).__PERSONAL__.reiseSetzen(trip); (window as any).__PERSONAL__.lesenFreigeben({ art: 'success', reise: trip }) }, matching)
+      await page.waitForFunction((text: string) => document.body.innerText.includes(text), workflow.PERSONAL_ABGESTIMMT)
+      assert.equal(await page.locator('[data-personal-phase="confirmed"]').count(), 0, 'Unknown outcome cannot receive causal confirmation')
+      assert.equal(await page.evaluate(() => (window as any).__PERSONAL__.setzen.length), 1, 'Read reconciliation itself must not write')
+      return { repeatOffered, repeatEnabled, writesBeforeRead: 1, readsBeforeRead: 0, writesAfterRead: 1, conservativeReconciliation: true }
+    })
+    await check('account later matching canonical delivery recovers after first absent delivery', 'account', async (page) => {
+      const { matching } = await newCreate(page, 'Later read')
+      await page.evaluate(() => (window as any).__PERSONAL__.schreibenFreigeben(null))
+      await page.waitForFunction(() => (window as any).__PERSONAL__.lesen === 1)
+      await page.evaluate(() => (window as any).__PERSONAL__.lesenFreigeben({ art: 'props' }))
+      await page.evaluate((trip: any) => (window as any).__PERSONAL__.kanonischSetzen(trip), { ...basis, readinessItems: [] })
+      await page.waitForFunction(() => Number(document.querySelector('[data-personal-hook-lieferung]')?.getAttribute('data-personal-hook-lieferung')) >= 2)
+      await page.evaluate((trip: any) => { (window as any).__PERSONAL__.kanonischSetzen(trip); (window as any).__PERSONAL__.reiseSetzen(trip) }, matching)
+      await page.waitForFunction((messages: string[]) => messages.some((text) => document.body.innerText.includes(text)), [workflow.PERSONAL_BESTAETIGT, workflow.PERSONAL_ABGESTIMMT])
+      assert.equal(await page.locator('[data-personal-phase="absent_uncertain"]').count(), 0)
+      assert.equal(await page.evaluate(() => (window as any).__PERSONAL__.setzen.length), 1, 'Recovery by a later read must not require another write')
+      return { laterMatchingObserved: true, totalWrites: 1 }
+    })
+    assert.equal(externalRequests, 0)
+    report.head = context.head
+    report.browser = browser.version()
+    report.externalRequests = externalRequests
+    report.verifiedSources = context.verifiedSources
+    report.bundleSha256 = bundleInfo.bundleSha256
+    report.scope = 'Production list + hook in the inspected author synthetic Host, deferred adapters. Not full TripWorkspace, real guest storage CRUD, Next router, hosted Account, Supabase/RLS, CSS, native-device or production acceptance.'
+    report.verdict = report.observations.every((item: any) => item.result === 'PASS') ? 'BOUNDED_ASSERTIONS_PASSED' : 'BOUNDED_ASSERTION_FAILED'
+  } catch (error) { report.error = String(error) }
+  finally { await browser?.close() }
+  writeReport(options, report)
+  if (report.verdict !== 'BOUNDED_ASSERTIONS_PASSED') process.exitCode = 1
+}
+run().catch((error) => { console.error(error); process.exitCode = 1 })
