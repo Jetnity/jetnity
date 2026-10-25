@@ -8,9 +8,9 @@ Runtime: `grok-4.7-high-fast` (`originalModelName`). Session `bc-27e5e422-852b-4
 
 Fetched `origin/main` again before this handoff. It is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base is that same SHA. No rebase, merge, or sibling cherry-pick.
 
-Runtime proof head: `a811029921298603e6516e30c5cb787877e0ead0`. Tree `af9708d2e301f526607a4098c684f53d67e0c523`. At that commit the branch was **12 ahead / 0 behind**. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-a811029921298603e6516e30c5cb787877e0ead0.json` records `dirty: ""`, `status: PASS`, and 16 cases.
+Runtime proof head: `96715e43f9c979a542a1b7bd5acc2b15ef494c5d`. Tree `d734a39f5f97228f076a8d12e37e02b71257a0ae`. At that commit the branch was **14 ahead / 0 behind**. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json` records `dirty: ""`, `status: PASS`, and 18 cases.
 
-The commit that adds this status, the report, the self-review, the handoff, and that evidence does not change runtime source. Review the branch head. If its only addition after `a8110299` is those documents and the evidence directory, the runtime proof still binds to `a8110299` / tree `af9708d2`.
+The commit that adds this status, the report, the self-review, the handoff, and that evidence does not change runtime source. Review the branch head. If its only addition after `96715e43` is those documents and the evidence directory, the runtime proof still binds to `96715e43` / tree `d734a39f`.
 
 TASK blob remains `eeb1f1239e07df5d9d9bc7459c4c83918b947777`.
 
@@ -27,22 +27,23 @@ An invalid or failed envelope sets `listenlieferung` to `nicht-gelesen` and does
 
 A same-id archived row with `archivePreviousStatus === null` still shows the fail-closed sentence and does not offer Wiederherstellen. Pending, unknown, and acknowledged feedback stay in that same block. Changing the address does not call the action again.
 
+A present empty `archiv` or `cursor` stays in the shared invalid address. `/reisen?archiv=` and `/reisen?cursor=` are not rewritten to `/reisen`. The parser still rejects them before `from('trips')`. A later valid `/reisen` envelope does not replace the alert while the live URL is still the empty invalid address. An omitted parameter, and a valid empty `q`, still commit as `/reisen`.
+
 The rows on screen are the last adopted server envelope whose address equals the live URL. Next to those rows the screen says which search and archive selection own them, for example `Diese Ansicht ist die Suche „beta“ in Offen.` A continuation adds `weitere Seite` and does not print the cursor. While another address is pending, that same line stays and a second line names the pending search and selection. The draft field is not that result. The sentence `Der Entwurf ist noch nicht die Suche.` is unchanged.
 
 ## Gates on this correction
 
-Observed on runtime head `a8110299`, tree `af9708d2`. Typecheck, the four-file lint, and the production build ran on that clean commit. The lane unit files and `check:exports` were run again on that same source while only these lane documents were dirty.
+Observed on clean runtime head `96715e43`, tree `d734a39f`.
 
 | Gate | Result |
 | --- | --- |
-| Lane unit files for address, reader, and archive classification | 16 pass, 0 fail |
+| Address and reader unit files | 13 pass, 0 fail |
 | `npm run typecheck` | pass, exit 0 |
-| eslint of `MyTripsCollection.tsx`, `reisen-sammlung-abfrage.ts`, and their two tests | exit 0. 0 errors, 1 warning: the existing `setHeute` effect |
-| `npm run build` | pass, exit 0. Next 16.4.1 compiled in 3.9s, TypeScript finished in 3.6s, `/reisen` stayed dynamic. Prebuild warned that this VM has no `.env` file. |
-| `check:exports` | 1228 files, 0 uncalled exports |
-| Mounted proof | 16 cases PASS on clean `a8110299`, exit 0, `dirty: ""`. Includes the visible search and archive owner line. |
+| eslint of `reisen-sammlung-abfrage.ts`, `reisen-sammlung-daten.test.ts`, and the two address/mounted tests | exit 0, no findings |
+| `npm run build` | pass, exit 0. Next 16.4.1 compiled in 3.8s, TypeScript finished in 3.4s, `/reisen` stayed dynamic. Prebuild warned that this VM has no `.env` file. |
+| Mounted proof | 18 cases PASS on clean `96715e43`, exit 0, `dirty: ""`. Includes empty `archiv` and `cursor`, and the visible search and archive owner line. |
 
-Recorded on the previous runtime head `7c997103` and not repeated after the owner line:
+Recorded on the previous runtime head `7c997103` and not repeated after the owner line or this empty-address fix:
 
 | Gate | Result |
 | --- | --- |
