@@ -4,23 +4,25 @@ Date: 2026-10-25
 
 Author: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1. Runtime `grok-4.7-high-fast`. Session `bc-af293d35-d2af-43d8-b193-9fbaab7c351b`.
 
-This report describes the candidate re-review R2 correction. It is not Technical-Lead acceptance. The R1 retry and detached-recovery corrections remain in force.
+This report describes the R2 layout addendum together with the already delivered R2 focus, keyboard, screenshot, and lint corrections. It is not Technical-Lead acceptance.
 
-## Keyboard edit cancellation
+## Card containment
 
-Closing an editor with Escape or with **Abbrechen** now returns focus to that event's Bearbeiten button. The move runs only when focus is still on the document body or inside the surface being closed, and not when the focused draft epoch is newer than that editor. Search, the open create draft, and another visit's Bearbeiten button keep the focus they already have. Settlement text still does not take focus.
+`AccountBesuchFormular` used `sm:flex-row` for every footer. Inside a two- or three-column card, at a 32px root font, **Abbrechen** extended 200.58px past the card at 768px and 107.25px past it at 1440px. The next card painted over the label. Section and document overflow stayed 0 because the spill stayed inside the wider list.
 
-The mounted case uses real key and pointer events: Enter on Bearbeiten opens the editor, a pointer click focuses the year field, Escape returns to that Bearbeiten button and sends nothing. The same path with a pointer click on **Abbrechen** does the same. Escape while search or the create draft is focused leaves the editor open and leaves focus there. Opening the other visit's editor leaves focus on that opener. Enter in its year field sends one `aendern` for that event.
+The editor passes `zeitNebeneinander={false}`. That footer now stays a column. Both buttons are full width of the form, their labels wrap, and nothing sets `overflow: hidden`. The create form still uses a row from the small breakpoint upward. Its single button stays content-sized there and full width below that breakpoint, so the label remains inside the form.
 
-`form.requestSubmit()` remains the same-turn double-submit admission. The receipt names it as such. It is not a keyboard Enter pair.
+The mounted check opens an editor on the first card of the dense list, with the next card present. At 320, 390, 768, and 1440, root font 32px, each editor button's rectangle is inside its form and inside its `article`, the label's scroll size fits the button, and no neighboring card intersects the button. The create button is inside the create form. The editor footer computes to `column` at all four widths. The create footer computes to `column` below 640px and `row` at 768 and 1440. The right edge of both editor buttons is 66px inside the card at 768 and at 1440.
 
-## Screenshots and the lint warning
+## Focus, keyboard, and screenshots
 
-The previous viewport crops of the dense editor and revoke states showed the map. In this Chromium, `window.scrollTop` clamps below the visit controls when the root font is 32px, so a viewport crop cannot be scrolled onto those controls. The new PNGs are element captures of the editor, the revoke confirmation, the failed-read recovery panel, and the removed-row revoke recovery panel. Each shot records `capture: "element"`, the viewport that set the layout, root font 32px, the state, the target selector, the section/document overflow, the CSS hash, and the tested source hashes.
+Closing an editor with Escape or with **Abbrechen** returns focus to that event's Bearbeiten button. The move runs only when focus is still on the document body or inside the surface being closed, and not when the focused draft epoch is newer than that editor. Search, the open create draft, and another visit's Bearbeiten button keep the focus they already have. Settlement text still does not take focus.
 
-Section and document overflow stayed 0 at 320, 390, 768, and 1440. That matches the independent measurement. It is not a new overflow claim.
+The mounted case uses real key and pointer events. `form.requestSubmit()` remains the same-turn double-submit admission and is named as such.
 
-`scripts/account-world-visit-workflow-completion-1/run.mjs` no longer imports unused `existsSync`. That import was the lane warning inside the previous 182. The observed lint total on this correction is **181 warnings and 0 errors**. A search of that lint log shows no warning in this lane's files. The earlier sentence that none of the 182 were in this lane was inaccurate.
+The editor PNGs are element captures of the card that contains the open editor, at 320, 390, 768, and 1440. Revoke and recovery shots remain element captures at 320 and 1440. Each shot records viewport, root font 32px, state, target, overflow, CSS hash, and tested source hashes. Section overflow stayed 0 at all four widths. In this Chromium, `scrollTop` still clamps below the list at 32px root font, so these are not viewport crops.
+
+`run.mjs` does not import `existsSync`. Project lint on this correction is **181 warnings and 0 errors**. A search of that lint log shows no warning in this lane's files.
 
 ## Checks on this correction
 
@@ -36,7 +38,7 @@ Section and document overflow stayed 0 at 320, 390, 768, and 1440. That matches 
 | `npm run build` | exit 0 |
 | `npm test` | exit 1. 7178 tests, 7162 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL 16 proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or `NOT_VERIFIED`). No visit test failed. |
 | Focused visit/map/home regressions | 62 pass, 0 fail |
-| Mounted harness | 15 pass, 0 fail, exit 0, bound to `31dcf14a` |
+| Mounted harness | 15 pass, 0 fail, exit 0, bound to `e4b4c0bb` |
 
 Node `v22.23.4`. Playwright `1.55.0`. Browser `140.0.7339.16`. This is not the reviewer's Node 24 run.
 
