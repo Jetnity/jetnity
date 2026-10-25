@@ -1,0 +1,10 @@
+{
+  "befehl": "node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts",
+  "exit": 0,
+  "signal": null,
+  "dateien": [
+    "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts",
+    "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts"
+  ],
+  "hinweis": "Synthetischer lokaler Chromium-Lauf. Kein hosted Account, kein Next-Router, kein Supabase, kein RLS, keine Production."
+}

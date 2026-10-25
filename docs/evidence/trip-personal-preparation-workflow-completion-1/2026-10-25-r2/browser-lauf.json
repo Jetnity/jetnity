@@ -1,0 +1,189 @@
+{
+  "autor": "Jetnity Trip Personal Preparation Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-6bbca11e-14c9-4f1a-ac07-e729d8a54ca3",
+  "modell": "grok-4.7-high-fast",
+  "kopf": "760afc59374c56a288925d09022688631f5dca74",
+  "main": "41844878a8437256572da3de1374fbb36fd7a516",
+  "mergeBase": "500fbe40c8c8a70a0fe0d291782289f809d5d5b3",
+  "node": "v22.23.4",
+  "exit": 0,
+  "hinweis": "Getrennte Läufe. Die custom-list-Suite enthält einen Quelltextvergleich ohne Browser. Das ist kein hosted Account, kein Next-Router, kein Supabase, kein RLS und keine Production. CSS-Matrix steht separat in ablauf.json.",
+  "quellen": {
+    "lib/readiness/personal-preparation-workflow.ts": {
+      "sha256": "51cfcca9aeb960a227c97ceef9aabb5bb8b1f8619e3df63b574bd7f1f88ec581",
+      "blob": "563fd3068c0bc42a52d9834fdb18f36e28c188a8"
+    },
+    "components/trips/usePersonalPreparationLifecycle.ts": {
+      "sha256": "d02e444c539c22d48a159b8310fc80cd3a7e98eaa363a55b68116d33d0f47833",
+      "blob": "a11b25652281e9d04be29aad7e0d9cf53c28e4e1"
+    },
+    "components/trips/EigeneReisevorbereitung.tsx": {
+      "sha256": "b78d39e3f232e8d0dd73bc4f2120768fc6497e16dfb136483e0733862a1b8222",
+      "blob": "7c3bac055173b12e235b3f352828ffe04ff164eb"
+    },
+    "components/trips/TripWorkspace.tsx": {
+      "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4",
+      "blob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1"
+    },
+    "components/trips/GastArbeitsbereich.tsx": {
+      "sha256": "b7cfa142605e338ed5346744a57793b879f189e9187c3ae8ed254d7cd5c23f69",
+      "blob": "90f9d8781e23a3f96f92abd1d3616174585460d2"
+    },
+    "components/trips/KontoArbeitsbereich.tsx": {
+      "sha256": "f4dec055028a590fa6aa3bddb31a70d80d1ae146f0432ed9085807c74f4412b6",
+      "blob": "fdad125b008b86ec1153e6140d5494fa3aa6f55d"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": {
+      "sha256": "fc1b22018e9d6a64774e4d8cd7cda853494a99167b11cacfc47ff9366ede9c36",
+      "blob": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.tsx": {
+      "sha256": "dad5e2922d736044bc71e6813f82a9615e8b6c7b2cc71a4ce38db34626a95bea",
+      "blob": "bddac80fe24be1adc010ee759a0d34c71aa65ec9"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts": {
+      "sha256": "41f73a4ca1bf15e2762101d8b4679a529486ea0514632b182b66811e403f8d77",
+      "blob": "a6b5bcafd8c5a0cc6035e18eb73595a20a461388"
+    },
+    "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts": {
+      "sha256": "a2f1202b1980e06a19f5154df18167cd8a528517d10dc24884ec4408e5eac691",
+      "blob": "c5fea047afd3e495afca7eae020956ea0c84f699"
+    }
+  },
+  "laeufe": [
+    {
+      "name": "custom-list-mounted",
+      "datei": "scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts",
+      "reporter": "tap",
+      "protokoll": "custom-list-mounted.txt",
+      "befehl": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter tap scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts",
+      "exit": 0,
+      "signal": null,
+      "zaehlung": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "faelle": [
+          {
+            "ok": true,
+            "name": "account confirms only after acceptance and one later canonical delivery"
+          },
+          {
+            "ok": true,
+            "name": "a delivery before acceptance does not confirm, and the post-acceptance read stays single"
+          },
+          {
+            "ok": true,
+            "name": "guest wrong trip blocks later submits across mode changes and keeps the draft"
+          },
+          {
+            "ok": true,
+            "name": "mode change keeps a pending intent and a late result does not replace the newer draft"
+          },
+          {
+            "ok": true,
+            "name": "an open editor returns to Offen when the preparation context changes again"
+          },
+          {
+            "ok": true,
+            "name": "a missing point and an unclear result do not send another write"
+          },
+          {
+            "ok": true,
+            "name": "filters, empty copy, named delete and a double submit stay distinct"
+          },
+          {
+            "ok": true,
+            "name": "an unreadable guest read blocks a later submit and keeps the draft"
+          },
+          {
+            "ok": true,
+            "name": "confirmation focuses the visible row and a mode change removes that target"
+          },
+          {
+            "ok": true,
+            "name": "Enter submits one create and a trip change drops the pending intent"
+          },
+          {
+            "ok": true,
+            "name": "an unclear result cannot retry or edit until a later read, and a match stays reconciled"
+          },
+          {
+            "ok": true,
+            "name": "a later account delivery recovers absence and does not confirm an unknown match"
+          },
+          {
+            "ok": true,
+            "name": "late confirmation leaves search, another editor, a filter and a hidden section alone"
+          },
+          {
+            "ok": true,
+            "name": "late confirmation leaves a status choice and a delete confirmation alone"
+          },
+          {
+            "ok": true,
+            "name": "a completed delete does not keep the old saved receipt or an enabled editor"
+          },
+          {
+            "ok": true,
+            "name": "production wiring names the canonical prop and the workspace hook"
+          }
+        ]
+      },
+      "mounted": 15,
+      "sourcePattern": 1,
+      "grenze": "EigeneReisevorbereitung und Hook über flaeche.tsx. Aufgeschobene Callbacks, ungestyltes HTML, synthetische beispielreise. Kein TripWorkspace, kein Next-Router, kein gehostetes Konto.",
+      "styling": "unstyled HTML; project CSS is recorded by ablauf.ts"
+    },
+    {
+      "name": "actual-workspace",
+      "datei": "scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts",
+      "reporter": "tap",
+      "protokoll": "actual-workspace.txt",
+      "befehl": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter tap scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts",
+      "exit": 0,
+      "signal": null,
+      "zaehlung": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "faelle": [
+          {
+            "ok": true,
+            "name": "guest create, edit, status and delete keep the sibling and use the real reader"
+          },
+          {
+            "ok": true,
+            "name": "real mode navigation keeps a pending intent, and a rejected response does not write again"
+          },
+          {
+            "ok": true,
+            "name": "a failed read of the expected trip blocks a new generation after discard and mode changes"
+          },
+          {
+            "ok": true,
+            "name": "a trip switch keeps the write that already ran and ignores its late result"
+          },
+          {
+            "ok": true,
+            "name": "account confirmation waits for a later raw canonical trip"
+          },
+          {
+            "ok": true,
+            "name": "collapsing the personal section stays collapsed when a late result arrives"
+          }
+        ]
+      },
+      "mounted": 6,
+      "sourcePattern": 0,
+      "grenze": "Echter TripWorkspace, echte Gast-Schreibfunktion und aktiveV3GastreiseLesen, synthetischer Speicher. Der Gastschreiber läuft beim Aufruf; nur die Antwort wird aufgeschoben. Konto-Schreibvorgänge bleiben am Adapter aufgeschoben. Kein Next-Router, kein Supabase, kein RLS, keine Production.",
+      "styling": "unstyled HTML; project CSS is recorded by ablauf.ts"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "herkunft": "Transcribed from the gitignored browser-lauf.log of the same run that wrote browser-lauf.json. .gitignore ignores *.log, so the TAP footer is recorded here.",
+  "befehl": "node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts scripts/trip-personal-preparation-workflow-completion-1/arbeitsbereich.test.ts",
+  "exit": 0,
+  "tests": 19,
+  "suites": 2,
+  "pass": 19,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "todo": 0,
+  "duration_ms": 9680.439683,
+  "node": "v22.23.4",
+  "codeHead": "46ae6c153c1203f350452dd700a7651acceda2c0",
+  "grenze": "Synthetic local Chromium. The workspace harness mounts TripWorkspace with external next/link, next/navigation, next/dynamic and next/image shims. No hosted Account, Next router, Supabase, RLS or Production."
+}

@@ -1302,6 +1302,46 @@ function tageMitKennung(startDate: string, endDate: string, stageId: string | nu
   }))
 }
 
+/**
+ * Liest nur die aktive Fassung v3 und gibt sie nur bei passender Reise zurück.
+ * Schreibt nicht, übernimmt kein Legacy und fasst die Warteschlange nicht an.
+ * `nicht_im_browser` ist unlesbar, nicht fehlend. Eine fremde Reise bleibt
+ * ohne Graph in der Antwort.
+ */
+export type AktiveV3Lesung =
+  | { art: 'success'; reise: Trip }
+  | { art: 'missing' }
+  | { art: 'invalid'; grund: 'json' | 'graph' }
+  | { art: 'unreadable' }
+  | { art: 'wrong_trip' }
+
+export function aktiveV3GastreiseLesen(tripId: string): AktiveV3Lesung {
+  let roh: SchluesselRoh
+  try {
+    roh = aktiveSchluesselRohLesen()
+  } catch {
+    return { art: 'unreadable' }
+  }
+  if (roh.art === 'nicht_im_browser' || roh.art === 'speicher_unlesbar') return { art: 'unreadable' }
+  if (roh.art === 'fehlend') return { art: 'missing' }
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(roh.bytes)
+  } catch {
+    return { art: 'invalid', grund: 'json' }
+  }
+  try {
+    const gelesen = reiseLesen(parsed)
+    if (!gelesen) return { art: 'invalid', grund: 'graph' }
+    const zugeordnet = mitZuordnung(gelesen)
+    if (!zugeordnet) return { art: 'invalid', grund: 'graph' }
+    if (zugeordnet.id !== tripId) return { art: 'wrong_trip' }
+    return { art: 'success', reise: zugeordnet }
+  } catch {
+    return { art: 'unreadable' }
+  }
+}
+
 /** Nur für Tests: die Schlüssel, unter denen dieser Speicher arbeitet. */
 export const SCHLUESSEL = {
   aktiv: SCHLUESSEL_AKTIV,

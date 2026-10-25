@@ -1,0 +1,174 @@
+---
+pid: 35737
+cwd: "/workspace"
+command: "node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts"
+title: "Run mounted personal preparation UI tests"
+status: failed   
+started_at: 2026-10-25T11:22:27.105Z
+running_for_ms: 185991   
+---
+TAP version 13
+# Subtest: mounted personal preparation
+    # Subtest: account confirms only after acceptance and one later canonical delivery
+    not ok 1 - account confirms only after acceptance and one later canonical delivery
+      ---
+      duration_ms: 30343.282939
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:3607'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:123:16)
+      ...
+    # Subtest: a delivery before acceptance does not confirm, and the post-acceptance read stays single
+    not ok 2 - a delivery before acceptance does not confirm, and the post-acceptance read stays single
+      ---
+      duration_ms: 30262.648348
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:5607'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:149:16)
+      ...
+    # Subtest: guest wrong trip blocks later submits across mode changes and keeps the draft
+    ok 3 - guest wrong trip blocks later submits across mode changes and keeps the draft
+      ---
+      duration_ms: 464.936288
+      type: 'test'
+      ...
+    # Subtest: mode change keeps a pending intent and a late result does not replace the newer draft
+    ok 4 - mode change keeps a pending intent and a late result does not replace the newer draft
+      ---
+      duration_ms: 325.324951
+      type: 'test'
+      ...
+    # Subtest: an open editor returns to Offen when the preparation context changes again
+    ok 5 - an open editor returns to Offen when the preparation context changes again
+      ---
+      duration_ms: 272.066326
+      type: 'test'
+      ...
+    # Subtest: a missing point and an unclear result do not send another write
+    ok 6 - a missing point and an unclear result do not send another write
+      ---
+      duration_ms: 261.162563
+      type: 'test'
+      ...
+    # Subtest: filters, empty copy, named delete and a double submit stay distinct
+    ok 7 - filters, empty copy, named delete and a double submit stay distinct
+      ---
+      duration_ms: 396.461658
+      type: 'test'
+      ...
+    # Subtest: an unreadable guest read blocks a later submit and keeps the draft
+    ok 8 - an unreadable guest read blocks a later submit and keeps the draft
+      ---
+      duration_ms: 246.770795
+      type: 'test'
+      ...
+    # Subtest: confirmation focuses the visible row and a mode change removes that target
+    not ok 9 - confirmation focuses the visible row and a mode change removes that target
+      ---
+      duration_ms: 30183.617227
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:16911'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:303:16)
+      ...
+    # Subtest: Enter submits one create and a trip change drops the pending intent
+    ok 10 - Enter submits one create and a trip change drops the pending intent
+      ---
+      duration_ms: 238.71377
+      type: 'test'
+      ...
+    # Subtest: an unclear result cannot retry or edit until a later read, and a match stays reconciled
+    not ok 11 - an unclear result cannot retry or edit until a later read, and a match stays reconciled
+      ---
+      duration_ms: 30838.842792
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:19209'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:368:15)
+      ...
+    # Subtest: a later account delivery recovers absence and does not confirm an unknown match
+    not ok 12 - a later account delivery recovers absence and does not confirm an unknown match
+      ---
+      duration_ms: 30212.817465
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:22999'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:398:16)
+      ...
+    # Subtest: late confirmation leaves search, another editor, a filter and a hidden section alone
+    not ok 13 - late confirmation leaves search, another editor, a filter and a hidden section alone
+      ---
+      duration_ms: 30212.863388
+      type: 'test'
+      location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:25701'
+      failureType: 'testCodeFailure'
+      error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TimeoutError'
+      stack: |-
+        TestContext.<anonymous> (/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:435:17)
+      ...
+    # Subtest: late confirmation leaves a status choice and a delete confirmation alone
+    ok 14 - late confirmation leaves a status choice and a delete confirmation alone
+      ---
+      duration_ms: 555.517454
+      type: 'test'
+      ...
+    # Subtest: a completed delete does not keep the old saved receipt or an enabled editor
+    ok 15 - a completed delete does not keep the old saved receipt or an enabled editor
+      ---
+      duration_ms: 345.080372
+      type: 'test'
+      ...
+    # Subtest: production wiring names the canonical prop and the workspace hook
+    ok 16 - production wiring names the canonical prop and the workspace hook
+      ---
+      duration_ms: 7.132298
+      type: 'test'
+      ...
+    1..16
+not ok 1 - mounted personal preparation
+  ---
+  duration_ms: 185252.936929
+  type: 'suite'
+  location: '/workspace/scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts:2:3358'
+  failureType: 'subtestsFailed'
+  error: '6 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 16
+# suites 1
+# pass 10
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 185891.871375
+
+---
+exit_code: 1
+elapsed_ms: 185991
+ended_at: 2026-10-25T11:25:33.096Z
+---

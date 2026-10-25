@@ -1,0 +1,9 @@
+# R3 evidence provenance
+
+Runs in `unstyled/` and `css/` executed on merge head `44e1a1c41d2e4939524d2b11996c7baa6a1b0056`. Parents: `577e7da70374159bfe2e0ae33b9d4c7cfad2368d` (R3 behavior) and `77ed41adbd3d32bbc995300b61eef1e16c2710d6` (accepted main). Owned runtime blobs match the behavior parent. Runner `scripts/trip-personal-preparation-workflow-completion-1/browser-lauf.mjs` blob `b4c1b52cbf9c89fcd0783bdb83ac174455514903` was not edited in R3. Node v22.23.4. Chromium 140.0.7339.16.
+
+`unstyled/` holds the two behavior suites and injects unstyled HTML. `css/` is the separate production CSS matrix from `.next/static`. A later docs commit that only adds this directory does not change those sources. The JSON `kopf` is the merge head, not that docs commit. `unstyled/browser-lauf.json` `quellen` records 10 behavior and test source paths and does not include `browser-lauf.mjs`. The runner blob in the paragraph above is this file's author statement. That run did not record a machine-checked clean-tree before-and-after hash of the runner.
+
+`historical-r2-custom-list-10pass-6fail-terminal-936109.txt` is an unmodified copy of the session terminal capture for the earlier mounted-list run: 16 tests, 10 pass, 6 fail, exit 1, started 2026-10-25T11:22:27.105Z, ended 2026-10-25T11:25:33.096Z. The capture includes its terminal metadata header. It was not rewritten.
+
+The first miscounted browser-lauf JSON was not found. `/tmp/personal-r2-browser/browser-lauf.json` and `/tmp/personal-r2-browser-2/browser-lauf.json` both already count 16 and 6 cases and record head `760afc59374c56a288925d09022688631f5dca74`. Committed `2026-10-25-r2/` is that later counted run. The statement that an earlier JSON counted only the suite line remains the previous REPORT's author statement. That raw JSON was not reconstructed.

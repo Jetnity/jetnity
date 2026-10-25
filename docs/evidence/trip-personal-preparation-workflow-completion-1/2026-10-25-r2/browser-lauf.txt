@@ -1,0 +1,169 @@
+# custom-list-mounted exit 0
+TAP version 13
+# Subtest: mounted personal preparation
+    # Subtest: account confirms only after acceptance and one later canonical delivery
+    ok 1 - account confirms only after acceptance and one later canonical delivery
+      ---
+      duration_ms: 335.701089
+      type: 'test'
+      ...
+    # Subtest: a delivery before acceptance does not confirm, and the post-acceptance read stays single
+    ok 2 - a delivery before acceptance does not confirm, and the post-acceptance read stays single
+      ---
+      duration_ms: 254.7207
+      type: 'test'
+      ...
+    # Subtest: guest wrong trip blocks later submits across mode changes and keeps the draft
+    ok 3 - guest wrong trip blocks later submits across mode changes and keeps the draft
+      ---
+      duration_ms: 448.4786
+      type: 'test'
+      ...
+    # Subtest: mode change keeps a pending intent and a late result does not replace the newer draft
+    ok 4 - mode change keeps a pending intent and a late result does not replace the newer draft
+      ---
+      duration_ms: 326.480738
+      type: 'test'
+      ...
+    # Subtest: an open editor returns to Offen when the preparation context changes again
+    ok 5 - an open editor returns to Offen when the preparation context changes again
+      ---
+      duration_ms: 256.464602
+      type: 'test'
+      ...
+    # Subtest: a missing point and an unclear result do not send another write
+    ok 6 - a missing point and an unclear result do not send another write
+      ---
+      duration_ms: 258.881872
+      type: 'test'
+      ...
+    # Subtest: filters, empty copy, named delete and a double submit stay distinct
+    ok 7 - filters, empty copy, named delete and a double submit stay distinct
+      ---
+      duration_ms: 376.918789
+      type: 'test'
+      ...
+    # Subtest: an unreadable guest read blocks a later submit and keeps the draft
+    ok 8 - an unreadable guest read blocks a later submit and keeps the draft
+      ---
+      duration_ms: 268.213488
+      type: 'test'
+      ...
+    # Subtest: confirmation focuses the visible row and a mode change removes that target
+    ok 9 - confirmation focuses the visible row and a mode change removes that target
+      ---
+      duration_ms: 241.591478
+      type: 'test'
+      ...
+    # Subtest: Enter submits one create and a trip change drops the pending intent
+    ok 10 - Enter submits one create and a trip change drops the pending intent
+      ---
+      duration_ms: 208.953429
+      type: 'test'
+      ...
+    # Subtest: an unclear result cannot retry or edit until a later read, and a match stays reconciled
+    ok 11 - an unclear result cannot retry or edit until a later read, and a match stays reconciled
+      ---
+      duration_ms: 950.518579
+      type: 'test'
+      ...
+    # Subtest: a later account delivery recovers absence and does not confirm an unknown match
+    ok 12 - a later account delivery recovers absence and does not confirm an unknown match
+      ---
+      duration_ms: 518.657103
+      type: 'test'
+      ...
+    # Subtest: late confirmation leaves search, another editor, a filter and a hidden section alone
+    ok 13 - late confirmation leaves search, another editor, a filter and a hidden section alone
+      ---
+      duration_ms: 990.228027
+      type: 'test'
+      ...
+    # Subtest: late confirmation leaves a status choice and a delete confirmation alone
+    ok 14 - late confirmation leaves a status choice and a delete confirmation alone
+      ---
+      duration_ms: 549.497992
+      type: 'test'
+      ...
+    # Subtest: a completed delete does not keep the old saved receipt or an enabled editor
+    ok 15 - a completed delete does not keep the old saved receipt or an enabled editor
+      ---
+      duration_ms: 349.151019
+      type: 'test'
+      ...
+    # Subtest: production wiring names the canonical prop and the workspace hook
+    ok 16 - production wiring names the canonical prop and the workspace hook
+      ---
+      duration_ms: 0.679947
+      type: 'test'
+      ...
+    1..16
+ok 1 - mounted personal preparation
+  ---
+  duration_ms: 6407.240479
+  type: 'suite'
+  ...
+1..1
+# tests 16
+# suites 1
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6905.805001
+
+# actual-workspace exit 0
+TAP version 13
+# Subtest: mounted TripWorkspace personal preparation
+    # Subtest: guest create, edit, status and delete keep the sibling and use the real reader
+    ok 1 - guest create, edit, status and delete keep the sibling and use the real reader
+      ---
+      duration_ms: 600.697731
+      type: 'test'
+      ...
+    # Subtest: real mode navigation keeps a pending intent, and a rejected response does not write again
+    ok 2 - real mode navigation keeps a pending intent, and a rejected response does not write again
+      ---
+      duration_ms: 551.973945
+      type: 'test'
+      ...
+    # Subtest: a failed read of the expected trip blocks a new generation after discard and mode changes
+    ok 3 - a failed read of the expected trip blocks a new generation after discard and mode changes
+      ---
+      duration_ms: 1056.590174
+      type: 'test'
+      ...
+    # Subtest: a trip switch keeps the write that already ran and ignores its late result
+    ok 4 - a trip switch keeps the write that already ran and ignores its late result
+      ---
+      duration_ms: 336.804702
+      type: 'test'
+      ...
+    # Subtest: account confirmation waits for a later raw canonical trip
+    ok 5 - account confirmation waits for a later raw canonical trip
+      ---
+      duration_ms: 307.90095
+      type: 'test'
+      ...
+    # Subtest: collapsing the personal section stays collapsed when a late result arrives
+    ok 6 - collapsing the personal section stays collapsed when a late result arrives
+      ---
+      duration_ms: 335.010589
+      type: 'test'
+      ...
+    1..6
+ok 1 - mounted TripWorkspace personal preparation
+  ---
+  duration_ms: 3416.747906
+  type: 'suite'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3880.865227
