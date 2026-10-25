@@ -24,7 +24,6 @@ for (const name of readdirSync(join(evidence, 'npm-view'))) {
   const body = readFileSync(join(evidence, 'npm-view', name), 'utf8').trim()
   const parsed = JSON.parse(body)
   const version = typeof parsed === 'string' ? parsed : parsed.version
-  const packageName = name.slice(0, name.length - '.json'.length).replace(/_(\d+\.\d+\.\d+)$/, '')
   const fromName = name.match(/^(.*)_(\d+\.\d+\.\d+)\.json$/)
   if (!fromName || !version) continue
   receipts.set(`${fromName[1].replaceAll('_', '/')}@${version}`, version)
@@ -86,7 +85,7 @@ function groupFor(name, path) {
 }
 
 const rows = []
-for (const [packageName, vuln] of Object.entries(audit.vulnerabilities)) {
+for (const vuln of Object.values(audit.vulnerabilities)) {
   const ids = new Set()
   for (const via of vuln.via || []) {
     if (via && typeof via === 'object') {

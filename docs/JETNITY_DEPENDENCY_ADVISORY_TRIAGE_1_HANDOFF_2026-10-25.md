@@ -4,7 +4,7 @@ Date: 2026-10-25. Stop here for independent Technical-Lead re-gating.
 
 ## For the Technical Lead
 
-Review the exact head that contains this file. It corrects candidate `93bd34c70d041c21d9240aec4a35b839ba455587`. The accepted plan head remains `1fcb220a03bb895e3a6609ad81b9a9f7fedb992b`, PLAN blob `436fc2561289baa2da9583c070662a6b8c9ad82b`, TASK blob `4a4b686fbcc429a4041012f3d967b3f5d1767bc0`. Package blobs must still be `e6187432cb8f224c10281b7b476bb24eb8ef1c1b` and `4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe`. Main at the start of this correction was `a74c443c6be3f064f150fcf021ab6154bda325e5`. If `origin/main` has moved, that drift is reported with the delivery; this lane was not rebased.
+Review the exact head that contains this file. It corrects candidate `595ccfcba5d549fb568791f36b73ae2564c5ada9`. The accepted plan head remains `1fcb220a03bb895e3a6609ad81b9a9f7fedb992b`, PLAN blob `436fc2561289baa2da9583c070662a6b8c9ad82b`, TASK blob `4a4b686fbcc429a4041012f3d967b3f5d1767bc0`. Package blobs must still be `e6187432cb8f224c10281b7b476bb24eb8ef1c1b` and `4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe`. Main at the start of this correction was `a74c443c6be3f064f150fcf021ab6154bda325e5`. If `origin/main` has moved, that drift is reported with the delivery; this lane was not rebased.
 
 Read:
 
@@ -19,6 +19,8 @@ The `01f4f2b9` priority summary (0 / 28 / 12 / 2) is withdrawn. The corrected ma
 `b905f89` labeled publication time as retrieval. `retrievedAt` is null and `acquisitionState` is `UNAVAILABLE`. The priority counts are unchanged. Candidate review R3 requires each omit-dev package's nonempty node paths to match that package in the raw lock and in the full-lock audit. The retained omit-dev file still names `node_modules/source-map-js`, `node_modules/ws`, and `node_modules/zod`.
 
 The corrected provisional P1 flag belongs on Draft PR #1021 and replaces the earlier numerical flag.
+
+Native App job 121241015963 on run 40217244719, read by root for exact `595ccfc`, used Node 22.23.3. It reported 7274 tests, 7272 passes, 0 failures, and 2 existing skips. Typecheck, guards, and the build succeeded. Auth on that run also succeeded. Lint reported 183 warnings against 181 already present. The two new warnings were unused `packageName` bindings at `scripts/dependency-advisory-triage-1/build-matrix.mjs` lines 27 and 89. This head removes those bindings. The npm-view loop still uses the filename match, and the audit loop now reads vulnerability values in the same enumeration order. A local rebuild of `triage-matrix.json` was byte-equivalent to the committed matrix. No classification, acquisition field, package, or lock byte changed. No S-FIX group is activated.
 
 ## Not done
 
