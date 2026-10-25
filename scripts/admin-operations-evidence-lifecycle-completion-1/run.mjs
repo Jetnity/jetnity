@@ -1066,18 +1066,6 @@ async function main() {
         window.__wartend = []
         window.__abgebrochen = 0
         window.__phasen = []
-        const merkePhase = () => {
-          const knoten = document.querySelector('[data-operations-phase]')
-          const phase = knoten ? knoten.getAttribute('data-operations-phase') : null
-          if (!phase) return
-          if (window.__phasen[window.__phasen.length - 1] !== phase) window.__phasen.push(phase)
-        }
-        new MutationObserver(merkePhase).observe(document.documentElement, {
-          subtree: true,
-          childList: true,
-          attributes: true,
-          attributeFilter: ['data-operations-phase'],
-        })
         window.fetch = (url, init) => {
           window.__abrufe.push({ url: String(url), cache: init && init.cache })
           return new Promise((resolve, reject) => {
@@ -1093,6 +1081,28 @@ async function main() {
               else signal.addEventListener('abort', merken, { once: true })
             }
           })
+        }
+        const merkePhase = () => {
+          const knoten = document.querySelector('[data-operations-phase]')
+          const phase = knoten ? knoten.getAttribute('data-operations-phase') : null
+          if (!phase) return
+          if (window.__phasen[window.__phasen.length - 1] !== phase) window.__phasen.push(phase)
+        }
+        const phasenOptionen = { subtree: true, childList: true, attributes: true, attributeFilter: ['data-operations-phase'] }
+        const haengePhasen = (ziel) => {
+          if (!ziel || typeof ziel.nodeType !== 'number') return false
+          new MutationObserver(merkePhase).observe(ziel, phasenOptionen)
+          return true
+        }
+        try {
+          if (!haengePhasen(document.documentElement)) {
+            new MutationObserver(() => {
+              if (window.__phasenBeobachter) return
+              if (haengePhasen(document.documentElement)) window.__phasenBeobachter = true
+            }).observe(document, { childList: true, subtree: true })
+          }
+        } catch {
+          // Ein früher Dokumentzustand darf den Abruf-Stub nicht abbrechen.
         }
         if (wert.sperre) {
           window.__propsWarten = []
