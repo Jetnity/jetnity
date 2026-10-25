@@ -26,7 +26,7 @@ T-EX2 now covers the old `1 !== 2` assertion and only that test. The writer stil
 
 The audit once-count is a test-bundle rewrite. The source file on disk is the frozen component.
 
-`npm test` does not execute the Playwright files. The 21-test result on tree `8975beab` is the direct command in `mounted-matrix.txt`. An unknown intake keeps `unaufgeloest` across cancel and section return. A later accepted confirm does not claim the first attempt was absent. The duplicate warning stays with that source.
+`npm test` does not execute the Playwright files. The 22-test result on tree `e0b8ffcb` is the direct command in `mounted-matrix.txt`. An unknown intake keeps `unaufgeloest` across cancel and section return. A later accepted confirm does not claim the first attempt was absent. The duplicate warning stays with that source.
 
 I first moved the draft baseline at accept time. That made a later guest prop carrying the original traveller look like a conflict and disabled Save. The baseline now moves only when a later observation matches the submitted fingerprint and the draft generation is still that submission. I would want a reviewer to check that choice: an accepted edit stays dirty until that matching observation, and a delivery that still equals the pre-edit baseline does not become a conflict.
 
