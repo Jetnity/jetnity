@@ -4,6 +4,8 @@ Date: 2026-10-25
 
 Reviewer: the same implementation author. This is not an independent Technical-Lead review and it is not a PASS.
 
+Main-sync1 is the merge commit `5888614f608d9c066fbf1d289ce115fad6377e82`. It does not re-execute the correction and it does not change the findings below. The a547 layout failure stays in that historical packet. The c68 geometry remains the later layout result. Generated CSS identity on the integrated tree is pending root's binding check.
+
 Reviewed correction code head: `e4b4c0bb16a68c982a9bf65445c9aab01a4bed15`. The head root re-reviewed was `90b2bbdcea77c5da28b2d90290eaf093adbb8235`. The layout addendum was measured on that inspected runtime. TASK blob `9fb3c8f242014761af64aa342a3222cf7d15f180`. PLAN blob `771313c5c3ee601598d41e83e9ad2e1b6f6b73a4`.
 
 ## Re-review findings

@@ -6,6 +6,12 @@ Author: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 
 
 This report describes the R2 layout addendum together with the already delivered R2 focus, keyboard, screenshot, and lint corrections. It is not Technical-Lead acceptance.
 
+## Main-sync1
+
+Sync commit `5888614f608d9c066fbf1d289ce115fad6377e82`, tree `6d2f07857af87adba66687c9fd395d90d22879dc`, parents `c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa` and `30119c5affbd391cce31f2ceade2e4b068dfbcba`. Authorized main `30119c5affbd391cce31f2ceade2e4b068dfbcba`, tree `76654739b7882f954508299721c5d40fbb4df4b0`. At that sync commit the branch was 17 ahead and 0 behind. The note that contains this paragraph is a later commit; re-read it.
+
+No visit product, runner, harness, fixture, screenshot, package, or CSS input changed. Incoming main's 128 paths and this lane's 69 paths are disjoint. Fixture SHA256 `d2771930f5392fcd5b31889857c82241220ff4d6d70a5fd401aa438aea84aa14`. Receipts were not rewritten. The a547 run still exits 1. The c68/e4b4 geometry supersedes only that old layout failure. CSS SHA256 `b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc` remains the c68 execution hash. Full generated CSS identity after the new scanned files is not claimed. The root binding check is pending. The checks below are the pre-sync correction, not a new execution on the integrated tree.
+
 ## Card containment
 
 `AccountBesuchFormular` used `sm:flex-row` for every footer. Inside a two- or three-column card, at a 32px root font, **Abbrechen** extended 200.58px past the card at 768px and 107.25px past it at 1440px. The next card painted over the label. Section and document overflow stayed 0 because the spill stayed inside the wider list.

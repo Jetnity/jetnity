@@ -2,9 +2,33 @@
 
 Date: 2026-10-25
 
-## Where this stands
+## Main-sync1
 
-The same original session corrected the candidate re-review R2 findings and the R2 layout addendum, then stopped for a full re-gating.
+The same original session merged authorized main and stopped. Draft. Not FINAL PASS, not Ready, not merged to main.
+
+- Logical name: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1
+- Session: https://cursor.com/agents/bc-af293d35-d2af-43d8-b193-9fbaab7c351b
+- Model: `grok-4.7-high-fast`
+- Branch: `feat/r107-account-world-visit-workflow-1`
+- Draft PR: #1018
+- Sync commit: `5888614f608d9c066fbf1d289ce115fad6377e82`
+- Sync tree: `6d2f07857af87adba66687c9fd395d90d22879dc`
+- Parents: `c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa`, `30119c5affbd391cce31f2ceade2e4b068dfbcba`
+- Authorized main and its tree: `30119c5affbd391cce31f2ceade2e4b068dfbcba`, `76654739b7882f954508299721c5d40fbb4df4b0`
+- At the sync commit: 17 ahead / 0 behind
+- TASK blob: `9fb3c8f242014761af64aa342a3222cf7d15f180`
+- PLAN blob: `771313c5c3ee601598d41e83e9ad2e1b6f6b73a4`
+- Path delta against that main: this lane's 69 paths only. Path delta against `c68ef9e1`: the 128 incoming main paths only. No shared path.
+- Dense fixture SHA256: `d2771930f5392fcd5b31889857c82241220ff4d6d70a5fd401aa438aea84aa14`
+- Retained c68 CSS SHA256: `b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc`. Root CSS binding check: pending. No replay was run.
+
+The note commit that contains this section is later than the sync commit. Re-read its head, tree, and ahead/behind. Do not invent that SHA here.
+
+Next actor: root Technical Lead, fresh exact-head gates on the pushed head. Cursor does not Ready, merge, close #1013, write main, start M, or start another task.
+
+## Where the correction stood before the sync
+
+The same original session corrected the candidate re-review R2 findings and the R2 layout addendum, then stopped for a full re-gating. Those facts below are the pre-sync record.
 
 - Session: https://cursor.com/agents/bc-af293d35-d2af-43d8-b193-9fbaab7c351b
 - Model: `grok-4.7-high-fast`
