@@ -4,22 +4,34 @@ Date: 2026-10-25
 
 ## Where this stands
 
-The same original session implemented the R3-authorized plan and stopped.
+The same original session corrected the candidate-review findings and stopped for a full re-review.
 
 - Session: https://cursor.com/agents/bc-af293d35-d2af-43d8-b193-9fbaab7c351b
 - Model: `grok-4.7-high-fast`
+- Logical name: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1
 - Branch: `feat/r107-account-world-visit-workflow-1`
 - Draft PR: #1018
 - Tracking: #1013. Batch: #1011
-- Evidence head: `82260869d6cb0070a020cc2efdcabb9de78cdfb4`
-- Evidence tree: `fee479e65a5833311eed6743dced7caacb66247d`
+- Reviewed candidate: `016d5309683c372bcfc06afd80355b5b48bc2e8d`
+- Correction code head: `8b1e6ac0185c2ba89542793a631f95ac0bb74ae4`
+- Correction code tree: `5df10781056b0f445a4695299683aa0bdc79ed87`
 - Main and merge-base, fetched before this handoff: `a74c443c6be3f064f150fcf021ab6154bda325e5`
-- At that evidence head: 8 ahead / 0 behind
+- Main tree: `c1fe5a50b0da710ef425674057f782b1dff6f8bc`
+- At the correction code head: 10 ahead / 0 behind
 - TASK blob: `9fb3c8f242014761af64aa342a3222cf7d15f180`
 - PLAN blob: `771313c5c3ee601598d41e83e9ad2e1b6f6b73a4`
-- Evidence JSON: `docs/evidence/account-world-visit-workflow-completion-1/run-82260869d6cb.json`
+- Corrected evidence: `docs/evidence/account-world-visit-workflow-completion-1/run-8b1e6ac0185c.json`
+- Earlier evidence, unchanged: `docs/evidence/account-world-visit-workflow-completion-1/run-82260869d6cb.json`
 
-The docs commit that adds this handoff is the next commit. Re-read its head, tree, and ahead/behind. Do not treat `82260869` as the review head once this file exists on a later commit.
+The docs commit that adds this handoff is the next commit. Re-read its head, tree, and ahead/behind. Do not treat `8b1e6ac0` as the review head once this file exists on a later commit.
+
+## What the next review should see
+
+- W-R1.1: retry cannot switch kind. A new same-event edit sends the current year. A new revoke confirmation is required before another revoke retry.
+- W-R1.2: edit and revoke recovery remain when the row is gone or the read fails. Refresh is not a replay.
+- W-R1.3: the new JSON binds command, versions, hashes, and tracked state. The old JSON was not amended.
+
+Mounted harness on `8b1e6ac0`: 14 pass. Focused regressions: 62 pass. Typecheck, lint, five hygiene guards, and production build: exit 0. `npm test`: exit 1, 7162 pass, 11 PostgreSQL-only failures, 5 skipped.
 
 ## Next action
 
@@ -31,7 +43,7 @@ Do not Ready. Do not merge. Do not close #1013. Do not write main. Do not rebase
 
 ## Holds that stay
 
-#985/#982, #917, #913/#911, #968, #748, #626, #937/#936, and Bern #934. No Production DB, Auth, AAL, RLS, secret, provider, payment, legal, or launch authority follows from this lane.
+#985/#982, #917, #913/#911, #968, #748, #626, #937/#936, and Bern #934. No Production DB, Auth, AAL, RLS, secret, provider, payment, legal, or launch authority follows from this lane. Global continuity files were not edited.
 
 ## If main moves
 
