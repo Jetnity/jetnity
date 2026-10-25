@@ -870,6 +870,53 @@ try {
     return { search: done.search, input: done.input }
   })
 
+  for (const filter of [
+    { name: 'role-keeps-delayed-search-ownership', control: 'Rolle', value: 'operator', key: 'role' },
+    { name: 'status-keeps-delayed-search-ownership', control: 'Status', value: 'pending', key: 'status' },
+  ]) {
+    await fall(browser, origin, filter.name, 'page=1', { width: 1280, height: 800 }, async (page) => {
+      await page.evaluate(() => window.__usersDirectory.delayCommits(true))
+      await page.locator(SEARCH).fill('anna')
+      await page.waitForFunction(() => window.__usersDirectory.pendingCommits().length === 1)
+      await page.getByRole('combobox', { name: filter.control }).selectOption(filter.value)
+      await page.waitForFunction(() => window.__usersDirectory.input() === '' && window.__usersDirectory.pendingCommits().length === 2)
+      const held = await snapshot(page)
+      assert.equal(new URLSearchParams(held.pending[0].split('?')[1] ?? '').get('q'), 'anna')
+      assert.equal(new URLSearchParams(held.pending[1].split('?')[1] ?? '').get('q'), null)
+      assert.equal(new URLSearchParams(held.pending[1].split('?')[1] ?? '').get(filter.key), filter.value)
+      const landed = await page.evaluate(() => window.__usersDirectory.commitNext())
+      assert.equal(new URLSearchParams(String(landed).split('?')[1] ?? '').get('q'), 'anna')
+      await page.waitForFunction(() => {
+        const input = window.__usersDirectory.input()
+        const status = window.__usersDirectory.status() || ''
+        return input === 'anna' || (input === '' && status.includes('vorherigen Abfrage'))
+      })
+      const afterStale = await snapshot(page)
+      assert.equal(afterStale.input, '')
+      assert.match(afterStale.status, /vorherigen Abfrage/)
+      assert.doesNotMatch(afterStale.status, /Aktuelle Ergebnisse/)
+      assert.equal(paramsOf(afterStale.search).get('q'), 'anna')
+      assert.equal(afterStale.pending.length, 1)
+      assert.notEqual(
+        await page.evaluate(() => document.querySelector('[data-users-directory-root]')?.getAttribute('data-operation-phase')),
+        'settled',
+      )
+      const corrected = await page.evaluate(() => window.__usersDirectory.commitNext())
+      const correctedParams = new URLSearchParams(String(corrected).split('?')[1] ?? '')
+      assert.equal(correctedParams.get('q'), null)
+      assert.equal(correctedParams.get(filter.key), filter.value)
+      await page.waitForFunction(({ key, value }) => {
+        const params = new URLSearchParams(window.__usersDirectory.search())
+        const status = window.__usersDirectory.status() || ''
+        return params.get('q') === null && params.get(key) === value && window.__usersDirectory.input() === '' && status.includes('Aktuelle Ergebnisse')
+      }, filter)
+      const done = await snapshot(page)
+      assert.equal(done.actionCalls.length, 0)
+      assert.doesNotMatch(done.status, /vorherigen Abfrage/)
+      return { search: done.search, input: done.input, filter: filter.key }
+    })
+  }
+
   await fall(browser, origin, 'keyboard-tab-and-activation', 'page=1', { width: 1280, height: 800 }, async (page) => {
     async function focusStart() {
       await page.evaluate(() => {

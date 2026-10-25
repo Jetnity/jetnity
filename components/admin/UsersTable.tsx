@@ -402,7 +402,9 @@ export default function UsersTable({
     cancelLease()
     epoch.current += 1
     if (search !== urlQ) setSearch(urlQ)
-    if (ownSearchAcks.length > 0) setOwnSearchAcks([])
+    // Die bereits ausgelöste Suche bleibt eine eigene Bestätigung. Sonst wirkt
+    // ihre verspätete Adresse wie eine fremde Navigation und überschreibt das
+    // neuere Rollen- oder Statusziel.
     const href = buildUsersListHref(sp, { q: urlQ, page: 1, ...change })
     if (href === usersListHrefFromParams(sp)) return
     dispatchNavigate(href)
