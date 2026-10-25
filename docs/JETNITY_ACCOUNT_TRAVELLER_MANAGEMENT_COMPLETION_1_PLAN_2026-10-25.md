@@ -1,6 +1,6 @@
 # Jetnity Account Traveller Management Completion 1 — PLAN
 
-Date: 2026-10-25. Plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review V1 ([comment 6392456358](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392456358)) on exact head `086028726f8ddd93c3a0a04ac7825c786effa16e`, plan blob `dc7d874149201611c1688884dc9781af6e25776d`. This revision answers A-PLAN-01, A-PLAN-02, A-PLAN-03, and A-PLAN-04. The eight-action parent-held design stays. TASK V1 stays byte-identical. This commit edits only this plan. No product, test, script, or evidence implementation is included. Implementation waits for a fresh head-bound Technical-Lead acceptance of this revised plan.
+Date: 2026-10-25. Plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review V1 ([comment 6392456358](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392456358)) on exact head `086028726f8ddd93c3a0a04ac7825c786effa16e`, plan blob `dc7d874149201611c1688884dc9781af6e25776d`. This revision answers A-PLAN-01, A-PLAN-02, A-PLAN-03, and A-PLAN-04. A further same-session correction answers Technical-Lead PLAN re-review V2 ([comment 6392525661](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392525661)) on exact head `bd5818c90bd8bdcb4c66eb25c7dd73397304f684`, plan blob `7bf8c18c94fae84d8586d1f0c03144e98f8246cc`: A-PLAN-05 and A-PLAN-06. The eight-action parent-held design stays. TASK V1 stays byte-identical. This commit edits only this plan. No product, test, script, or evidence implementation is included. Implementation waits for a fresh head-bound Technical-Lead acceptance of this revised plan.
 
 ## 1. Identity
 
@@ -148,11 +148,11 @@ An attempt records:
 Dirtyness and context epoch are separate.
 
 - Dirty means the user changed a field away from the snapshot last taken for that editor. A clean editor may display newer canonical fields. A dirty editor keeps the typed fields and shows the conflict in section 6.6.
-- `kontextEpoche` is a monotone integer per editor. It starts at 1 when that editor opens. It increases when the user changes a field, cancels or reopens a sub-editor, closes or switches the panel, explicitly adopts stored props, or when any relevant canonical context is adopted, including a clean auto-adoption. A matching success reset does not by itself give the old attempt authority over the editor that exists after the reset.
+- `kontextEpoche` is a monotone integer per editor. The next value is one greater than every epoch that editor has already used and every epoch stored on a receipt for that editor. The first open is 1. Reopen, cancel, field edit, explicit adoption, and clean canonical adoption all take that next value. Reopen never starts again at 1, and never at an epoch an old receipt still holds. A matching success reset does not by itself give the old attempt authority over the editor that exists after the reset.
 
 An attempt stores the epoch it captured at begin. Increasing the epoch never deletes a receipt and never authorizes a write. A newer epoch is not a certificate that the old server call failed to run.
 
-The hook also keeps a `Set` ref of in-flight surface ids. Every Save, Enter, confirm, and acknowledged repeat goes through `beginnen` before any `await`. The handler adds the surface id before the next render. If `beginnen` returns no attempt, the ref entry is removed immediately. `disabled={pending}` is only a visual hint. The refusal is the ref plus section 6.5.
+The hook also keeps a `Set` ref of in-flight surface ids, and that set is part of the state `beginnen` reads. Every Save, Enter, confirm, and acknowledged repeat calls `beginnen` before any `await`. The handler reads the ref and calls `beginnen` before it adds this call to the set. Only a returned attempt is inserted, synchronously, before `await` and before the next render. A second event in the same turn therefore sees the surface in flight. If `beginnen` returns no attempt, the set is left unchanged. `disabled={pending}` is only a visual hint. The refusal is `beginnen` on the current state, section 6.5.
 
 ### 6.2 Outcomes
 
@@ -196,7 +196,7 @@ Focus is a value on the state, not a call from the completion:
 - Escape with the panel open and no confirmation: focus that card's `Schließen` button and close the panel, as today.
 - A completion requests focus only when its captured epoch is still current and that surface is still the open one. A late result from A does not focus B. A late result after a canonical adoption does not focus the adopted editor.
 
-Absence is decided only from a valid list, section 6.4: `problem === null` and `travellers` is an array. When that array no longer contains a traveller id, the id has disappeared. The draft for that id is dropped after any in-flight attempt has settled, and the receipt is kept. If the last focused surface was that card and focus has fallen to `body`, focus moves to the add button. If the user has already focused another control, focus stays there. A 500, a 503, or an invalid prop pair does not mean the id disappeared and does not drop the draft or the receipt. The ok response of delete does not move focus by itself and does not remove the card locally. There is no optimistic row insert or delete.
+Absence is decided only from a valid list, section 6.4: `problem === null` and `travellers` is an array. A traveller id, citizenship id, or document id missing from that array has disappeared. The draft for that target is dropped after any in-flight attempt has settled, and every receipt is kept. Focus moves only when it was inside the removed traveller, citizenship, or document and the browser has dropped it to `body`. A removed traveller then focuses the add button. A removed citizenship or document focuses that same card's `Verwalten` button, not another card and not an open editor. If the user has deliberately focused any other control, focus stays there. A 500, a 503, or an invalid prop pair does not mean an id disappeared and does not drop the draft or a receipt. The ok response of delete does not move focus by itself and does not remove the card locally. There is no optimistic row insert or delete.
 
 ### 6.4 Read observation
 
@@ -237,9 +237,9 @@ A failed or invalid read may replace the visible list. It leaves parent-hook dra
 
 ### 6.5 One guard for every write
 
-`beginnen` is the only way any of the eight actions is dispatched. Save, Enter, the delete confirm button, and the acknowledged repeat all call it. A local citizenship check does not.
+`beginnen` is the only way any of the eight actions is dispatched. Save, Enter, the delete confirm button, and the acknowledged repeat all call it. A local citizenship check does not. The button's enabled state is a hint. It is not the authority.
 
-Receipt key, one unresolved `unbestaetigt` receipt per key:
+Receipt keys:
 
 | Action | Key |
 | --- | --- |
@@ -252,13 +252,24 @@ Receipt key, one unresolved `unbestaetigt` receipt per key:
 | Document edit | `document:<id>:aendern` |
 | Document delete | `document:<id>:loeschen` |
 
-`beginnen` returns no attempt when that surface is already in flight, or when that key still has an `unbestaetigt` receipt and this call does not carry an explicit acknowledgment. Reopening, editing, Enter, and a new context epoch do not set that acknowledgment. The ordinary controls stay refused, in the pure state and in the synchronous ref.
+Receipts are append-only. A settled receipt is never deleted and never rewritten, including its outcome, target, payload, epoch, and baseline stamp. Many receipts may share one key.
 
-The acknowledgment is the control `Trotzdem erneut speichern` on that receipt. It is enabled only while the latest props are a qualified valid snapshot for that receipt's baseline, section 6.4. Its visible text includes `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` Pressing it calls `beginnen` with `anerkennung: true`, creates a new attempt id, and captures the current draft. It promises neither exactly-once delivery nor a label match. A read does not press it. Enabling it does not press it.
+The current blocking receipt of a key is the newest receipt on that key whose outcome is `unbestaetigt`. Older unknown receipts stay in history and are not rewritten. A receipt that is still in flight is the pending replacement for its key. It blocks that key before it has an outcome, so an acknowledgment of the older receipt cannot dispatch while it is pending. When the pending replacement settles `unbestaetigt`, it becomes the current blocking receipt. The older unknown receipt remains byte-unchanged and is no longer a receipt an acknowledgment can name. When the pending replacement settles `gespeichert` or `abgewiesen`, that replacement is not a blocker. The newest remaining `unbestaetigt` receipt on the key, if one remains, is the current blocking receipt again. A known outcome on the replacement does not delete, rewrite, or retire that older unknown.
 
-A different key is independent. It keeps its own attempt, target, and payload, including while another key on another card is `unbestaetigt`, provided its own surface is not in flight. The same key cannot slip through on a second button.
+`beginnen(stand, aufruf)` reads only the state passed at that call. The hook keeps the latest props, receipt list, and in-flight set in a ref written on every render. The click handler reads that ref inside the event, before `await` and before the next render. The in-flight set in that `stand` does not yet contain this call. The handler does not close over an older eligible frame, and it does not pass a stored eligible flag.
 
-The old `unbestaetigt` receipt remains after the new attempt starts. A later result for the old attempt updates that receipt and, when the epoch differs, applies no reset, focus, or current-editor announcement.
+The call returns no attempt unless every point below is true:
+
+1. That surface has no in-flight attempt, and that key has no pending replacement.
+2. If the key has a current blocking receipt, `aufruf.anerkennung` is `{ belegId, schluessel }` and both fields equal that receipt's id and key. A bare boolean, a missing id, or an id of an older receipt is refused. If the key has no current blocking receipt, `anerkennung` is absent.
+3. If the key has a current blocking receipt, the latest props in `stand` are a qualified valid snapshot for that receipt's own baseline, section 6.4. A 500, a 503, an invalid pair, or an unchanged valid list fails this point. A snapshot that was qualified earlier does not survive into this call. If the key has no current blocking receipt, the latest props are a valid canonical list: a 500, a 503, or an invalid pair fails, and an unchanged valid list is allowed because there is no unknown baseline to move past.
+4. The target is still eligible on that same current valid list. A known traveller, citizenship, or document id must still be present. A create must still be under the existing limit. A disappeared target fails this point.
+
+Reopening, editing, Enter, and a new context epoch do not satisfy point 2. Ordinary Save and Enter omit `anerkennung` and are refused while a blocking receipt or a pending replacement exists. A failed, unchanged, or invalid snapshot revokes eligibility at the next `beginnen`, even if the user had already pressed the acknowledgment control while an older frame was qualified.
+
+The acknowledgment control is `Trotzdem erneut speichern` on the current blocking receipt only. Its visible text includes `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` Pressing it calls `beginnen` with that receipt's id and key. On success it appends a new attempt and leaves the old receipt untouched. It promises neither exactly-once delivery nor a label match. A read does not press it. Enabling it does not press it.
+
+A different key is independent. It keeps its own attempt, target, and payload, provided its own surface is not in flight and its own blocker passes the same four points. A later result for an in-flight attempt records that attempt's outcome once. When the epoch differs, it applies no reset, focus, or current-editor announcement. It does not alter any older receipt.
 
 ### 6.6 Props, dirtyness, and context epoch
 
@@ -280,7 +291,7 @@ All three deletes ask before they dispatch. The confirmation stores the target i
 | Citizenship | That citizenship's country display name | Existing association sentence stays |
 | Document | That document's type label, plus issuer when present | Metadata-only hint stays |
 
-The confirm button sends the stored id through `beginnen`, not a label lookup. If a valid list no longer contains that id, the dialog closes. A failed or invalid read does not. Focus follows section 6.3. Cancel returns focus to the opener. Confirm is refused while that delete key has an `unbestaetigt` receipt and the press is not the acknowledged new decision.
+The confirm button sends the stored id through `beginnen`, not a label lookup. If a valid list no longer contains that id, the dialog closes. A failed or invalid read does not. Focus follows section 6.3. Cancel returns focus to the opener. Confirm calls `beginnen` with the current state. A historical acknowledgment or a bare boolean does not satisfy section 6.5.
 
 This is a behavior change for citizenship and document delete: today those buttons dispatch immediately. It is inside the eight existing actions and the task's delete-confirmation requirement. It adds no data field.
 
@@ -325,12 +336,15 @@ Reducer means `account-registry-workflow.test.ts` inside `npm test`. Mounted mea
 | Case | Reducer | Mounted |
 | --- | --- | --- |
 | Each of the eight actions: in flight, `gespeichert`, `abgewiesen`, `unbestaetigt`, confirmed save plus a new valid snapshot, confirmed save while the list is not yet a new snapshot | yes | yes, one representative path per action and the shared rules |
-| Second begin on the same surface in one turn calls the action once | pure refusal | two clicks before the deferred promise resolves |
+| Second begin on the same surface in one turn calls the action once | pure refusal | one same-turn burst of two click or submit events before React disables the control; one action call |
 | Success from surface A after the user edits B | receipt kept on A; no reset or focus on B | A's receipt stays on A; B's open panel has none of A's text; focus stays out of B |
 | Rejection from A after switch to B | `unbestaetigt` receipt kept on A; no announcement or focus on B | same, on the mounted cards |
-| Close, reopen, type, then Save or Enter after rejection | epoch change does not authorize a write; same key stays refused | action count stays one until the acknowledged control is pressed |
-| Acknowledged repeat after a new valid snapshot | new attempt id; old receipt kept; no label match | uncertainty text visible; one new write; no card selected by label |
-| Target id absent from a valid list | draft dropped only then; receipt kept; focus only if that surface held focus | focus lands on the add button only in that case |
+| Close, reopen, type, then Save or Enter after rejection | reopen epoch is greater than the receipt epoch; ordinary Save and Enter omit `anerkennung` and `beginnen` refuses even when the snapshot is already qualified | same-turn submit and Enter send zero writes |
+| Stale acknowledgment after 503, invalid props, or an unchanged list | `beginnen` refuses despite `belegId` of the current blocker | zero writes; the handler passes the props from the latest ref |
+| `unbestaetigt` A, acknowledged B, then `unbestaetigt` B, then acknowledgment of A | A unchanged; B is the blocker; A's id is refused; no third attempt | zero further writes |
+| Acknowledged B settles `gespeichert` or `abgewiesen` while A is still `unbestaetigt` | A unchanged and is the blocker again; ordinary begin is refused; only A's id can pass point 2 | zero further writes until that exact acknowledgment |
+| Acknowledged repeat while the current blocker is qualified | new attempt id; old receipt byte-unchanged; no label match | uncertainty text visible; one new write; no card selected by label |
+| Traveller, citizenship, or document absent from a valid list | draft dropped only then; receipts kept; focus moves only from inside the removed target | add button or that card's `Verwalten` button receives focus; a control the user already focused is left alone |
 | Target id absent during 500, 503, or invalid props | draft and receipt kept; epoch unchanged | the card state returns with the draft; no delete focus move |
 | Valid list, then 500, then 503, then invalid, then a changed valid list | only the changed valid list qualifies; failures withdraw it | zero action calls on every read and failure, including a delayed failure after a newer snapshot and two overlapping refreshes |
 | Unchanged valid list | stays unconfirmed and does not qualify | not-yet-loaded sentence remains; Save, Enter, and the repeat control send no write |
