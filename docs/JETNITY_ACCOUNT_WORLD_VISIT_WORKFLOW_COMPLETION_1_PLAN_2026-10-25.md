@@ -26,8 +26,10 @@ This is the PLAN-only gate. It is not implementation, not proof, and not a Techn
 | Machine mode | `NORMAL` in `.jetnity/operating-mode.json` |
 | PLAN R1 reviewed head | `53229c0b06959fd343677856d240fb11f9aec43f` |
 | PLAN R1 reviewed blob | `d1b5658706e9a27e8c2d658213155c7f14d22023` |
+| PLAN R2 reviewed head | `b6aa14449424a1f2dec27aca656a2470e582f1a1` |
+| PLAN R2 reviewed blob | `ee6d5ef37bae38b3333f8620b8fa8a9eb0e6c164` |
 
-PLAN review R1 required W-R1.1 through W-R1.5. This revision is that correction and replaces the reviewed wording where the two differ. At this edit, `git fetch origin main` still showed `a74c443c6be3f064f150fcf021ab6154bda325e5`, merge-base the same, 0 behind. No allowlist expansion. The TASK blob stays `9fb3c8f242014761af64aa342a3222cf7d15f180`.
+PLAN review R1 required W-R1.1 through W-R1.5. Those outcome rules stay. PLAN review R2 accepts them and requires W-R2.1 and W-R2.2. This revision is that correction. At this edit, `git fetch origin main` still showed `a74c443c6be3f064f150fcf021ab6154bda325e5`, merge-base the same, 0 behind. No allowlist expansion. The TASK blob stays `9fb3c8f242014761af64aa342a3222cf7d15f180`.
 
 `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` still lead with the closed R106 package. Those files are outside this lane. This plan does not edit them. Live authority for this lane is the TASK, #751 intake 6399573707, #1011, and the Technical-Lead operating standard. Older dated handoffs are history. R106 is not reopened.
 
@@ -74,7 +76,7 @@ The inputs are disabled while `laeuft` is true. This plan does not claim a demon
 - New `components/account/useAccountVisitWorkflow.ts`: React holder for the pure ledger, the synchronous single-flight ref, one refresh request after an accepted write, and explicit list checking. It does not import the server actions.
 - New `lib/account/account-visit-workflow.ts`: pure phases, payload classification, list stamps, and focus permission. No React, no router, no storage, no action import.
 - New `lib/account/account-visit-workflow.test.ts`: the one allowed unit test. It covers the pure module and the source contract that the mounted wiring must keep.
-- `lib/account/besuche-copy.ts`: only the new workflow sentences in section 6. Existing confirmation, empty, and read-failure sentences stay.
+- `lib/account/besuche-copy.ts`: only the new workflow sentences in section 5. Existing confirmation, empty, and read-failure sentences stay.
 - Later, still this lane: `docs/JETNITY_ACCOUNT_WORLD_VISIT_WORKFLOW_COMPLETION_1_{STATUS,REPORT,SELF_REVIEW,HANDOFF}_2026-10-25.md`, `scripts/account-world-visit-workflow-completion-1/**`, and new files under `docs/evidence/account-world-visit-workflow-completion-1/**`.
 
 ### Frozen
@@ -123,6 +125,14 @@ type KanonischeFelder = {
   tag: number | null
 }
 
+type Bestaetigung = {
+  id: string
+  ereignisId: string
+  basis: KanonischeFelder
+  konflikt: 'keiner' | 'felder' | 'entfernt'
+  epoche: number
+}
+
 type Entwurf = {
   surface: 'anlegen' | `ereignis:${string}`
   ereignisId: string | null
@@ -141,6 +151,8 @@ type Vorgang = {
   ereignisId: string | null
   eingabe: BesuchEingabe | null
   entwurfEpoche: number
+  bestaetigungId: string | null
+  bestaetigungEpoche: number | null
   basisBeiStart: KanonischeFelder | null
   phase: 'unterwegs' | 'unbestaetigt' | 'angenommen'
   stempelGesehen: readonly string[]
@@ -150,7 +162,7 @@ type Vorgang = {
 }
 ```
 
-`ereignisId` is null for create. Edit and revoke store the row id captured at dispatch. A client `Vorgang.id` is never shown as a visit id and never sent to an action. `felder` uses the existing `BesuchFormularWert`. `basis` is the canonical place and date precision taken from a valid list when the editor or the revoke confirmation opens. Create has `basis: null`. `entwurfEpoche` and `basisBeiStart` are copies of `epoche` and `basis` at `senden`. A result may clear or close a draft only when `Entwurf.epoche` is still that copy. There is no `abgewiesen` phase and no `juengereListe` flag.
+`ereignisId` is null for create. Edit and revoke store the row id captured at dispatch. A client `Vorgang.id` is never shown as a visit id and never sent to an action. `felder` uses the existing `BesuchFormularWert`. `basis` on an editor is the canonical place and date precision taken from a valid list when that editor opens. Create has `basis: null`. `entwurfEpoche` and `basisBeiStart` are copies of the editor `epoche` and `basis` at `senden`. Every open or reopen of a revoke confirmation allocates a new `Bestaetigung.id` and a new `epoche`. That id is not the event id. `senden` copies both onto `bestaetigungId` and `bestaetigungEpoche` before the thunk runs. Create and edit leave both null. A result may close an editor only when `Entwurf.epoche` is still `entwurfEpoche` and `Entwurf.konflikt` is `keiner`. A result may clear a revoke confirmation only when all of these still hold: `Bestaetigung.id === bestaetigungId`, `Bestaetigung.epoche === bestaetigungEpoche`, `Bestaetigung.ereignisId` equals the operation’s event id, and `Bestaetigung.konflikt` is `keiner`. Event id alone is not enough. There is no `abgewiesen` phase and no `juengereListe` flag.
 
 ### Dispatch
 
@@ -177,10 +189,14 @@ workflow.senden('aendern', bearbeitet, () => besuchAendern({
 
 ```ts
 const id = ereignisId
+const bestaetigung = workflow.bestaetigung()
 const lokal = besuchLoeschungLesen({ id })
 if (!lokal.ok) return workflow.hinweis(`ereignis:${id}`, lokal.meldung)
-workflow.senden('widerrufen', id, () => besuchWiderrufen({ id }))
+if (!bestaetigung || bestaetigung.ereignisId !== id || bestaetigung.konflikt !== 'keiner') return
+workflow.senden('widerrufen', bestaetigung, () => besuchWiderrufen({ id }))
 ```
+
+`senden` copies `bestaetigung.id` and `bestaetigung.epoche` onto the operation before the thunk runs. A confirmation with `konflikt !== 'keiner'`, or a confirmation for a different event id, does not reach the thunk.
 
 `senden` sets the ref to a new operation id before any thunk runs. A second call in the same turn, including click plus Enter, returns while the ref is held and does not invoke its thunk. The thunk itself runs only inside `abschliessen`:
 
@@ -239,18 +255,36 @@ Edit and revoke look up the captured event id in a valid displayed list:
 
 ### Same-id drift
 
-Opening an editor or a revoke confirmation from a valid row copies that row’s canonical fields into `basis` and starts `dirty: false`. A keystroke sets `dirty: true` and bumps `epoche`. The frozen `account_visit_aendern` and `account_visit_widerrufen` accept no client version, so this baseline is only a local comparison.
+Opening an editor from a valid row copies that row’s canonical fields into `basis` and starts `dirty: false`. A keystroke sets `dirty: true` and bumps `epoche`. The frozen `account_visit_aendern` and `account_visit_widerrufen` accept no client version, so this baseline is only a local comparison.
 
-| Observation of the same id | Draft | Dispatch |
+Clean adoption belongs only to an editor. It does not apply to a revoke confirmation.
+
+| Observation of the same id | Editor | Dispatch |
 | --- | --- | --- |
-| Canonical fields equal `basis` | Unchanged | Allowed when no other guard refuses |
-| Canonical fields differ, `dirty === false`, and this surface is not `unterwegs` | Clean adoption: visible fields and `basis` become the displayed canonical values. `epoche` bumps. | No automatic send. A later submit sends the adopted draft. |
-| Canonical fields differ, and the draft is dirty or a payload is in flight | Conflict `felder`. The user’s fields stay. The in-flight `eingabe` stays the snapshot taken at `senden`. | Blocked until the user chooses reset or an explicit re-edit |
-| Id missing from a valid list | Conflict `entfernt`. No other row receives the draft. | Blocked. No "save anyway". |
+| Canonical fields equal `basis`, and no operation for this surface is `unterwegs` | Unchanged | Allowed when no other guard refuses |
+| Canonical fields differ, `dirty === false`, and no operation for this surface is `unterwegs` | Clean adoption: visible fields and `basis` become the displayed canonical values. `epoche` bumps. | No automatic send. A later submit sends the adopted draft. |
+| Canonical fields differ while an edit is `unterwegs`, whether or not the draft is dirty | Conflict `felder`. Bump `epoche` now, before settlement. The user’s fields stay. The in-flight `eingabe` stays the snapshot taken at `senden`. | Already in flight. No second call. |
+| Canonical fields differ, the draft is dirty, and nothing is in flight | Conflict `felder`. The user’s fields stay. `epoche` stays until the user chooses an action. | Blocked until reset or an explicit re-edit |
+| Id missing from a valid list | Conflict `entfernt`. If a matching operation is `unterwegs`, bump `epoche` at observation, before settlement. No other row receives the draft. | Blocked. No "save anyway". |
 
-Conflict actions are "Änderungen ansehen", "Liste übernehmen", and "Meinen Entwurf speichern". Ansehen shows the displayed canonical place and date beside the draft and writes nothing. Übernehmen replaces the draft and `basis` with those canonical fields, clears `dirty` and the conflict, and writes nothing. "Meinen Entwurf speichern" keeps the user’s fields, sets `basis` to the displayed canonical fields, and arms one deliberate `senden`. Revoke uses the same rule: a field change after the confirmation opens blocks "Ja, widerrufen" until the user explicitly confirms again; removal blocks the call.
+Conflict actions are "Änderungen ansehen", "Liste übernehmen", and "Meinen Entwurf speichern". Ansehen shows the displayed canonical place and date beside the draft and writes nothing. Übernehmen replaces the draft and `basis` with those canonical fields, clears `dirty` and the conflict, and writes nothing. "Meinen Entwurf speichern" keeps the user’s fields, sets `basis` to the displayed canonical fields, and arms one deliberate `senden`.
 
-While `unterwegs`, a changed or removed id does not rewrite the captured payload and does not move the result onto another row. Clean adoption waits until the surface is no longer in flight.
+An acknowledgement does not undo that conflict. `visitAnwenden` may close the editor only when the epoch still matches and `konflikt` is still `keiner`. If drift or removal was observed while the edit was `unterwegs`, the bumped epoch and the conflict remain after `angenommen`. The success sentence can be shown. The draft and the conflict banner stay until the user chooses one of the conflict actions or discards the draft.
+
+### Revoke confirmation
+
+Every open and every reopen allocates a new `Bestaetigung.id` and a new `epoche`. Reopen includes closing one confirmation and opening another, opening the same event again, and "Erneut bestätigen" after drift. The id is independent of the event id.
+
+| After a confirmation is open | Confirmation | Dispatch |
+| --- | --- | --- |
+| Displayed canonical fields still equal its `basis` | Stays `konflikt: 'keiner'` and keeps this id and epoch | "Ja, widerrufen" may call `senden` and captures this confirmation id and epoch |
+| Displayed canonical fields differ | Conflict `felder`. Bump `epoche` now. The old confirmation does not adopt the new fields and does not keep permission to revoke. | "Ja, widerrufen" returns before `senden`. "Erneut bestätigen" allocates a new confirmation id, a new epoch, and a `basis` taken from the displayed fields. Only that new id can be dispatched. |
+| Id missing from a valid list | Conflict `entfernt`. If this confirmation’s revoke is `unterwegs`, bump `epoche` at observation. | No call and no reconfirm |
+| A matching revoke is already `unterwegs` | Opening B, or opening A again, still allocates a new id and a new epoch. The in-flight operation keeps the id and epoch captured at its own dispatch. | The single-flight guard refuses the new confirmation’s submit. The UI stays open. |
+
+Settlement clears the visible confirmation only when its id, epoch, and event id all equal the values captured on that operation and its conflict is still `keiner`. Event id alone is not enough. The mounted sequence is allowed: start A’s revoke and leave it pending, open B, then open A again so A has a new confirmation id and epoch, then settle A’s old thunk. B’s confirmation and A’s new confirmation both remain. The old acknowledgement does not close them.
+
+Drift or removal observed on the in-flight confirmation, or on a newer confirmation for that event, bumps that confirmation’s `epoche` and sets its conflict before settlement. The captured `bestaetigungEpoche` stays the old value, so the old `angenommen` result fails the epoch check and the conflict check. It does not clear the confirmation and does not restore permission to revoke.
 
 The remaining race stays open. Another session can change the row after this client’s baseline matched and before the RPC runs. This UI cannot see that write. The explicit re-edit covers only the change already present in the props. The later evidence states that limit. The product copy does not turn it into a proof lecture.
 
@@ -266,11 +300,11 @@ Checking is single-flight. A second press while `pruefung === 'offen'` does not 
 
 ### Late results, filters, and removal
 
-Each result writes only the `Vorgang` with that client id. It does not read the currently open editor or the currently open confirmation.
+Each result updates only the `Vorgang` with that client id. Closing a surface is a separate match against the epoch, confirmation id, and event id captured on that operation. A surface that fails the match stays mounted, including the surface that is open now.
 
-- A newer create or edit draft bumps `epoche`. An older result does not clear it, does not replace its fields, and does not move focus into it. A clean adoption also bumps `epoche`, so a late result from the previous draft does not clear the adopted fields.
-- Revoke success clears the confirmation only when the open confirmation id is the operation's event id. A confirmation opened later for another id stays open.
-- Cancelling a confirmation before dispatch sends nothing and returns focus to that row's revoke button. Cancelling is disabled while that same revoke is `unterwegs`, because the call has already left. The pending note remains on that event id.
+- Opening or reopening an editor starts a new `epoche`. A keystroke, a clean adoption, and a conflict or removal observed during `unterwegs` bump it again. An older result does not clear the newer epoch, does not replace its fields, and does not move focus into it. Because the in-flight conflict bumps `epoche` before settlement, the later acknowledgement fails the epoch match and cannot close that draft.
+- Revoke settlement clears a confirmation only when the captured confirmation id, confirmation epoch, and event id all still match and the conflict is `keiner`. A later confirmation for the same event, a confirmation whose epoch was bumped by drift or removal, and a confirmation for another event stay open when the older operation settles.
+- Cancelling one confirmation before dispatch drops that confirmation id, sends nothing, and returns focus to that row's revoke button. Opening again allocates a different id. Cancelling is disabled for the confirmation id that is already `unterwegs`, because that call has left. The pending note remains on that operation. A newer confirmation for the same event can still be opened and is not cancelled by the older call.
 - Search and the twelve-row window keep using `besuchVerwaltungAusschnitt`. They are not given a second filter. If the open edit id is outside `ausschnitt.zeilen`, a banner names that hidden draft and offers "In der Liste zeigen" and "Entwurf verwerfen". Showing it clears the search and raises `sichtGrenze` to that row's index plus one. It does not reorder. Discard is refused while that surface is `unterwegs`.
 - Closing the add form while its draft is non-empty, or while a create operation is open, shows the same kind of banner. "Formular zeigen" reopens it. Discard is refused during `unterwegs`.
 - If a valid list no longer contains the edit or revoke target, the draft is not moved onto another row and no stale payload is sent. The banner uses the removed-target sentence in section 5.
@@ -295,17 +329,17 @@ Every success and failure path sends the captured `besuchEingabeAus` result. An 
 | Same-turn second submit | First thunk only | Unchanged by the second call | Pending on that surface | Guard held until `finally` |
 | Returned `{ ok: false }` of any sentence | One | Same draft and same event id | Unknown outcome. No replay implied | Liste prüfen, Erneut senden, or Vorgang schliessen |
 | Synchronous throw, rejected promise, or malformed body | One attempt, caught | Kept | Unknown outcome | Same three controls. Guard released |
-| `ok: true, wert: null` | One, then one refresh request | Create draft clears only at the same epoch. Edit editor closes only at the same epoch and same id | Existing success sentence plus the open-list sentence | Liste prüfen. No create row is chosen |
+| `ok: true, wert: null` | One, then one refresh request | Create draft clears only at the same epoch and only when its conflict is `keiner`. An editor closes only when its epoch matches and its conflict is `keiner`. A revoke confirmation clears only when its confirmation id, confirmation epoch, and event id all match and its conflict is `keiner` | Existing success sentence plus the open-list sentence. An unresolved conflict stays beside that sentence | Liste prüfen. No create row is chosen |
 | Refresh rejects, lease ends, or the same stamp is applied | No further write | Operation stays `angenommen` or `unbestaetigt` | Check ended. Displayed content is not called fresh or saved because of that ending | Liste prüfen |
 | Displayed stamp first seen after settlement differs | No further write | Create still has no row pointer | "Die angezeigte Liste hat sich geändert." Edit/revoke add presence or absence of the exact id | No causal sentence |
 | Stamp already seen before settlement | No further write | Unchanged | Stays `ausstehend` or `gleich`. Not promoted to `anders` | None from that delivery |
 | Failed visit read | No write from this failure | Operation context stays above the existing error panel | Existing 500/503 copy. Empty `besuche` is not absence | Existing error panel |
 | Failed trip read | Unchanged | Unchanged | Map keeps the supplied `welt` | This lane adds no fallback |
-| Same id, new canonical fields, clean editor | Zero until a later submit | Draft adopts the displayed fields | The form shows the displayed values | Submit sends the adopted draft |
+| Same id, new canonical fields, clean editor, nothing in flight | Zero until a later submit | Editor adopts the displayed fields. A revoke confirmation does not | The form shows the displayed values. The revoke question loses its permission | Editor submit sends the adopted draft. Revoke waits for "Erneut bestätigen" |
 | Same id, new canonical fields, dirty editor, before dispatch | Zero | User fields kept | Conflict sentence | Ansehen, Liste übernehmen, or Meinen Entwurf speichern |
-| Same id, new canonical fields, during pending | The original thunk only | Snapshot unchanged. Dirty draft not overwritten | Pending sentence plus the conflict sentence | No second target |
+| Same id, new canonical fields or removal, during pending, then `{ ok: true, wert: null }` | The original thunk only | Snapshot unchanged. Editor or confirmation epoch bumped at observation, before the response is applied. Draft, conflict, and revoke permission stay as observed | Pending sentence, then the success sentence, with the conflict or removed-target sentence still visible | No second target. The old result does not close the editor or that confirmation, and it does not restore "Ja, widerrufen" |
 | Filter or collapsed window hides the editor | No write | Draft kept | Hidden-draft sentence | Show or discard |
-| Confirm A, then confirm B, then A resolves | A's call only | B's confirmation stays | A's result stays on A | Focus does not jump to B |
+| A’s revoke pending, then open B, then open A again, then the old thunk settles | A’s original thunk only. B and the new A do not dispatch | The new A confirmation id stays open. B is not cleared by A’s result | A’s acknowledgement does not replace the new confirmation | Focus does not move to B or to the old confirmation |
 | Valid list loses the target before dispatch | Zero | Draft not retargeted | Removed-target sentence | Entwurf verwerfen |
 | Full unmount during `unbestaetigt` | The original call is not repeated by this UI | Ledger is gone | The short unmount sentence was visible before leaving | A later mount is a new visit to the page |
 
@@ -325,6 +359,7 @@ Added to `BESUCHE_COPY` only as workflow wording:
 - Exact id absent from the displayed list: "Dieser Besuch steht nicht in der angezeigten Liste."
 - Unknown: "Es ist unklar, ob die Änderung gespeichert wurde. Es wird nichts automatisch erneut gesendet." Actions: "Liste prüfen", "Erneut senden", "Vorgang schliessen"
 - Dirty conflict: "Der gespeicherte Besuch hat sich geändert. Dein Entwurf bleibt erhalten." Actions: "Änderungen ansehen", "Liste übernehmen", "Meinen Entwurf speichern"
+- Revoke drift: "Die Angaben haben sich geändert. Bitte bestätige den Widerruf erneut." Action: "Erneut bestätigen". "Ja, widerrufen" stays visible and does not send until that new confirmation is open.
 - In flight while the displayed row changed: "Die laufende Speicherung behält den abgeschickten Entwurf."
 - Removed target: "Dieser Besuch steht nicht mehr in der Liste." Action: "Entwurf verwerfen"
 - Hidden create: "Ein Entwurf ist ausgeblendet." Actions: "Formular zeigen", "Entwurf verwerfen"
@@ -335,13 +370,17 @@ A local reader miss shows that function’s existing `meldung` and no extra succ
 
 ## 6. Proof
 
-Pure tests in `lib/account/account-visit-workflow.test.ts` drive the reducer with injected ids and stamps. They assert the classification table, including every well-shaped `{ ok: false }` as `unbestaetigt`, the thunk boundary’s `finally`, the same-turn guard, no create matcher, exact-id observation, failed-read versus empty-list, epoch protection, clean adoption, dirty conflict, and the hidden-draft decision. They do not render the page. They do not treat a changed stamp as a fresh snapshot.
+Pure tests in `lib/account/account-visit-workflow.test.ts` drive the reducer with injected ids and stamps. They assert the classification table, including every well-shaped `{ ok: false }` as `unbestaetigt`, the thunk boundary’s `finally`, the same-turn guard, no create matcher, exact-id observation, failed-read versus empty-list, epoch protection, clean editor adoption, revoke drift without adoption, cleanup only on confirmation id plus confirmation epoch plus event id, dirty conflict that survives acknowledgement, and the hidden-draft decision. They do not render the page. They do not treat a changed stamp as a fresh snapshot.
 
 Mounted proof lives in `scripts/account-world-visit-workflow-completion-1/**`, after the same shape as the accepted account-traveller harness: esbuild aliases replace only `next/navigation` and `lib/account/besuche-aktionen.ts`. The production `AccountBesuche`, form, and hook are the mounted modules. Playwright is the existing devDependency. The harness sets props itself. A resolved refresh shim must not, by itself, set `inhaltBeobachtet` to `anders`.
 
 The mounted cases cover create, edit, and revoke for a returned generic `{ ok: false, meldung }` using `SCHREIBFEHLER`, `SCHREIBFEHLER_AUSFALL`, and a hint sentence such as `BESUCH_MELDUNG.ohneZiel`, in addition to a rejected promise. They cover a synchronous throw inside the thunk, malformed fulfillment, delayed success, delayed error, and settle. They cover a same-turn double submit, retained draft and target, explicit checking, acknowledgement with the list still open, unchanged props, a stamp seen before settlement, a later differing stamp, and exact-id presence or absence. They also cover two identical visits, a missing event, a failed read, a filter that hides the edited row, row replacement and removal, and switching or cancelling confirmation while an older operation resolves.
 
-Same-id cases are mounted, not only pure. Before dispatch, a clean editor adopts changed canonical fields and sends nothing until the user submits. A dirty editor keeps its typed fields, sends nothing, and sends the dirty payload only after "Meinen Entwurf speichern". During pending, the recorded argument stays the snapshot from `senden` while the props for that id change, and the draft is not replaced. Removal before dispatch records zero calls. Removal during pending does not retarget the result.
+Same-id cases are mounted, not only pure. Before dispatch, a clean editor adopts changed canonical fields and sends nothing until the user submits. A revoke confirmation that sees changed fields sends nothing and does not adopt; "Erneut bestätigen" allocates a new confirmation id, and only that id’s "Ja, widerrufen" sends. A dirty editor keeps its typed fields, sends nothing, and sends the dirty payload only after "Meinen Entwurf speichern".
+
+One mounted case changes the same id’s canonical fields, or removes the id, while the thunk is pending, then fulfills `{ ok: true, wert: null }`. It is run once for an open editor and once for an open revoke confirmation. The recorded argument stays the snapshot from `senden`. After that acknowledgement the editor is still mounted, the typed draft is unchanged, and the conflict or removed-target banner is still visible. The revoke confirmation is still mounted, its conflict remains, and "Ja, widerrufen" has not sent. Removal before dispatch records zero calls.
+
+Another mounted case starts A’s revoke and leaves the thunk pending, opens B’s confirmation, then opens A again. The second A opening has a different confirmation id. The old thunk is then fulfilled. The harness asserts that the new A confirmation remains, that B was not closed by A’s result, and that neither new confirmation dispatched.
 
 Assertions require the recorded action argument to be the captured `besuchEingabeAus` or `{ id }` shape, no second call after a returned `{ ok: false }` until "Erneut senden", and no create correlation. A local reader miss records zero calls. Lease expiry and a refresh that resolves without a new prop stamp leave the acknowledgement unchanged and do not show a freshness or extra success sentence. Map inputs are compared by reference to the props passed in, including while a draft is dirty.
 
@@ -361,4 +400,4 @@ Evidence from this lane is synthetic and local. It is not hosted Account proof, 
 
 ## 8. Stop
 
-The next step is a full Technical-Lead re-review of this corrected plan head. The same session implements only after that authorization. This document is not a PASS, Ready, or merge. Implementation, tests, evidence, and other documents stay unstarted.
+The next step is a Technical-Lead re-review of this R2 plan head. The same session implements only after that authorization. This document is not a PASS, Ready, or merge. Implementation, tests, evidence, and other documents stay unstarted.
