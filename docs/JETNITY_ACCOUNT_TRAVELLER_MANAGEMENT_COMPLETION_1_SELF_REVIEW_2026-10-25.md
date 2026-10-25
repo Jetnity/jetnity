@@ -2,19 +2,21 @@
 
 Author: Jetnity Account Traveller Management Completion 1 — Cursor Generation 1
 
-R1 fix head reviewed by the author: `6b094021068483eee82cda7791b9fa99891c1877`
+Supplement head reviewed by the author: `268445373d68f06cec322bcd2ad3a12724e5fb3e`
+
+Prior R1 head: `6b094021068483eee82cda7791b9fa99891c1877`
 
 This review is the author's own reading. It is not an independent Technical-Lead PASS and it does not authorize Ready or merge.
 
 ## R1 findings
 
-A-R1 through A-R5 are corrected on this head. None of them is recorded here as an accepted residual.
+A-R1 through A-R5, including the remaining A-R4 defect reproduced at `6b094021`, are corrected on this head. None of them is recorded here as an accepted residual.
 
 - A-R1: saved-but-unobserved receipts expose `Erneut lesen`. The mounted click sends no second write and keeps an unrelated draft.
 - A-R2: explicit adoption advances the epoch. Late success and the `unbestaetigt` outcome cannot close or focus the adopted editor. The mounted success case moved epoch 3 to 4.
 - A-R3: clean traveller and document edits reopen with the known list values. The second mounted payloads are `Alice` / `DE` and `passport` / `DE` / empty citizenship / `2030-01-01`. Dirty drafts survive. Create forms still clear.
-- A-R4: keyboard cancel restores focus after commit for citizenship create, document create, and document edit at the 12-document limit. A focus the user already moved is left alone. The late document save does not take that focus.
-- A-R5: the harness rejects the deferred action promise. `320.png` is the 16px capture and `320-root-32.png` is the 32px capture. The mounted module is under `scripts/account-traveller-management-completion-1/mounted.ts`.
+- A-R4: a Cancel click restores focus after commit for citizenship create, document create, and document edit at the 12-document limit. Restoration is limited to the cancelled `form[data-registry-editor]`. A newer focus on the historical receipt repeat button stays on `Trotzdem erneut speichern`. Focus already moved to `loeschen` stays there. The late document save does not take the restored focus. Escape follows PLAN §6.3: no confirmation closes the panel and focuses `Schließen`; an open delete confirmation closes only itself. The dirty draft `Entwurf bleibt` survives that panel close.
+- A-R5: the harness rejects the deferred action promise. `320.png` is the 16px capture and `320-root-32.png` is the 32px capture on this head. The older identical pair and the `6b094021` pair are preserved. The mounted module is under `scripts/account-traveller-management-completion-1/mounted.ts`.
 
 ## P0
 
@@ -26,11 +28,11 @@ None found in the owned diff.
 
 ## P2
 
-No open R1 product defect remains in this review.
+No open R1 product defect remains in this review. The receipt-focus steal and the form-level Escape interceptors from `6b094021` are closed here, not deferred.
 
-These limits are outside the five R1 findings and stay visible:
+These limits are outside the R1 findings and stay visible:
 
-1. Local `npm test` is not the cited native baseline. Exit 1. Summary: 7129 tests, 7113 pass, 11 fail, 5 skipped. Every failure inspected starts at `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. The account-registry, country, and document-lifecycle tests that this lane owns or touches passed in the focused run (77 pass, 0 fail). Native CI on `c7613bd6` does not cover this head.
+1. Local `npm test` is not the cited native baseline. Exit 1 on `26844537`. Summary: 7129 tests, 7113 pass, 11 fail, 5 skipped, `duration_ms 104941.811037`. Every inspected failure is a disposable PostgreSQL suite at `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. The account-registry, country, and document-lifecycle tests that this lane owns or touches passed in the focused run (77 pass, 0 fail). Native CI on `c7613bd6` does not cover this head.
 
 2. Production `router.refresh()` returns `void`. The rejection path runs only when the call returns a thenable. The harness shim does. The installed Next type does not. A failed production refresh is therefore not observable here, and a completed refresh is still not a list observation. The explicit reread keeps the 4000ms local deadline and does not send a write.
 
@@ -40,7 +42,7 @@ These limits are outside the five R1 findings and stay visible:
 
 2. Two account tabs can still race. This client cannot see the other tab. The unknown-outcome rule does not claim exactly-once.
 
-3. The repeat control uses `aria-disabled` and still receives a click, because `beginnen` is the authority. Playwright treats `aria-disabled="true"` as not enabled, so the mounted proof uses `click({ force: true })` to reach that guard. A forced click is not a second write path.
+3. The repeat control uses `aria-disabled` and still receives a click, because `beginnen` is the authority. Playwright treats `aria-disabled="true"` as not enabled, so the mounted proof uses `click({ force: true })` to reach that guard. A forced click is not a second write path. The A-R4 counterexample focuses that button without activating it.
 
 ## Traveller context
 
@@ -48,4 +50,4 @@ Several citizenships stay equal. Residence, issuer, and citizenship stay indepen
 
 ## Scope check
 
-The R1 diff is the card, the pure workflow and its tests, the UI-test import, the moved mounted harness, and `run.mjs`. TASK and PLAN blobs match the accepted plan head. No global continuity file was edited. The previous evidence directory for `4022bc82` is still present.
+The supplement diff is the card focus effect, removal of the two form Escape interceptors, and the mounted regression cases. TASK and PLAN blobs match the accepted plan head. No global continuity file was edited. The evidence directories for `4022bc82` and `6b094021` are still present.
