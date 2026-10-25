@@ -1,6 +1,6 @@
 # Jetnity Account Traveller Management Completion 1 — PLAN
 
-Date: 2026-10-25. Plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review V1 ([comment 6392456358](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392456358)) on exact head `086028726f8ddd93c3a0a04ac7825c786effa16e`, plan blob `dc7d874149201611c1688884dc9781af6e25776d`. This revision answers A-PLAN-01, A-PLAN-02, A-PLAN-03, and A-PLAN-04. A further same-session correction answers Technical-Lead PLAN re-review V2 ([comment 6392525661](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392525661)) on exact head `bd5818c90bd8bdcb4c66eb25c7dd73397304f684`, plan blob `7bf8c18c94fae84d8586d1f0c03144e98f8246cc`: A-PLAN-05 and A-PLAN-06. The eight-action parent-held design stays. TASK V1 stays byte-identical. This commit edits only this plan. No product, test, script, or evidence implementation is included. Implementation waits for a fresh head-bound Technical-Lead acceptance of this revised plan.
+Date: 2026-10-25. Plan for immutable TASK V1. Revised in the same session after Technical-Lead PLAN review V1 ([comment 6392456358](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392456358)) on exact head `086028726f8ddd93c3a0a04ac7825c786effa16e`, plan blob `dc7d874149201611c1688884dc9781af6e25776d`. This revision answers A-PLAN-01, A-PLAN-02, A-PLAN-03, and A-PLAN-04. A further same-session correction answers Technical-Lead PLAN re-review V2 ([comment 6392525661](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392525661)) on exact head `bd5818c90bd8bdcb4c66eb25c7dd73397304f684`, plan blob `7bf8c18c94fae84d8586d1f0c03144e98f8246cc`: A-PLAN-05 and A-PLAN-06. The same session then folds in the clarification on [comment 6392534988](https://github.com/Jetnity/jetnity/pull/1008#issuecomment-6392534988) at head `60bae304caf540dbd99b7184006ccfafb1c09c68`, plan blob `74b15f39c12f24c083aa6231234e6de2363aad54`: an acknowledged repeat uses that receipt's editor, and citizenship and document success copy confirms stored metadata. The eight-action parent-held design stays. TASK V1 stays byte-identical. This commit edits only this plan. No product, test, script, or evidence implementation is included. Implementation waits for a fresh head-bound Technical-Lead acceptance of this revised plan.
 
 ## 1. Identity
 
@@ -136,14 +136,17 @@ Surfaces:
 
 One surface has at most one in-flight attempt. A second begin on that surface returns the same state and no attempt. Create and a different traveller can be in flight together. Citizenship, document, edit, and delete on the same traveller share that traveller's single slot. That matches the card's current single transition and keeps one completion from clearing another editor on the same card.
 
+An editor is narrower than the card. The editor identities are: the create-person form; traveller edit for one traveller id; traveller delete for that id; citizenship add for one traveller id; citizenship delete for one citizenship id; document add for one traveller id; document edit for one document id; document delete for that document id. One card shows one open editor. The hook keeps a separate draft slot for each editor identity. Opening or closing another editor does not copy that editor's fields into a different slot.
+
 An attempt records:
 
 - local attempt id
 - one of the eight actions
 - surface id
+- editor identity
 - context epoch captured at begin
 - target ids: traveller, citizenship, document, each null when that action has no such id
-- the payload captured at begin
+- the payload captured at begin from that editor's draft slot
 
 Dirtyness and context epoch are separate.
 
@@ -264,12 +267,13 @@ The call returns no attempt unless every point below is true:
 2. If the key has a current blocking receipt, `aufruf.anerkennung` is `{ belegId, schluessel }` and both fields equal that receipt's id and key. A bare boolean, a missing id, or an id of an older receipt is refused. If the key has no current blocking receipt, `anerkennung` is absent.
 3. If the key has a current blocking receipt, the latest props in `stand` are a qualified valid snapshot for that receipt's own baseline, section 6.4. A 500, a 503, an invalid pair, or an unchanged valid list fails this point. A snapshot that was qualified earlier does not survive into this call. If the key has no current blocking receipt, the latest props are a valid canonical list: a 500, a 503, or an invalid pair fails, and an unchanged valid list is allowed because there is no unknown baseline to move past.
 4. The target is still eligible on that same current valid list. A known traveller, citizenship, or document id must still be present. A create must still be under the existing limit. A disappeared target fails this point.
+5. When `anerkennung` names a blocking receipt, the new attempt's action, editor identity, and target ids equal that receipt's. The payload is the draft slot of that editor. It is never the draft slot of another editor on the same card. If that editor is not the open editor, the slot still holds the payload captured for it, and the open editor's fields are left unread. A call whose editor, target, or payload comes from a different editor is refused.
 
 Reopening, editing, Enter, and a new context epoch do not satisfy point 2. Ordinary Save and Enter omit `anerkennung` and are refused while a blocking receipt or a pending replacement exists. A failed, unchanged, or invalid snapshot revokes eligibility at the next `beginnen`, even if the user had already pressed the acknowledgment control while an older frame was qualified.
 
-The acknowledgment control is `Trotzdem erneut speichern` on the current blocking receipt only. Its visible text includes `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` Pressing it calls `beginnen` with that receipt's id and key. On success it appends a new attempt and leaves the old receipt untouched. It promises neither exactly-once delivery nor a label match. A read does not press it. Enabling it does not press it.
+The acknowledgment control is `Trotzdem erneut speichern` on the current blocking receipt only. Its visible text includes `Der vorherige Versuch kann bereits gespeichert sein. Das ist eine neue Speicherung.` Pressing it calls `beginnen` with that receipt's id and key, and with that receipt's editor. The handler does not read the fields of whichever subform is open. On success it appends a new attempt from that editor's draft slot and leaves the old receipt untouched. It promises neither exactly-once delivery nor a label match. A read does not press it. Enabling it does not press it.
 
-A different key is independent. It keeps its own attempt, target, and payload, provided its own surface is not in flight and its own blocker passes the same four points. A later result for an in-flight attempt records that attempt's outcome once. When the epoch differs, it applies no reset, focus, or current-editor announcement. It does not alter any older receipt.
+A different key is independent. It keeps its own attempt, target, and payload, provided its own surface is not in flight and its own blocker passes the same five points. A later result for an in-flight attempt records that attempt's outcome once. When the epoch differs, it applies no reset, focus, or current-editor announcement. It does not alter any older receipt.
 
 ### 6.6 Props, dirtyness, and context epoch
 
@@ -318,10 +322,12 @@ Existing success sentences claim a visible result that this client cannot yet se
 | `erfolgAngelegt` | Die Anlage wurde bestätigt. |
 | `erfolgGeaendert` | Die Änderung wurde bestätigt. |
 | `erfolgGeloescht` | Die Löschung wurde bestätigt. Vorhandene Reisen bleiben unverändert. |
-| `erfolgCitizenship` | Die Staatsbürgerschaft wurde bestätigt. |
-| `erfolgCitizenshipEntfernt` | Die Staatsbürgerschaft wurde entfernt. Zugeordnete Dokumente behalten ihre übrigen Angaben. |
-| `erfolgDokument` | Die Dokument-Metadaten wurden bestätigt. |
-| `erfolgDokumentEntfernt` | Die Dokument-Metadaten wurden entfernt. |
+| `erfolgCitizenship` | Die Angaben wurden gespeichert. |
+| `erfolgCitizenshipEntfernt` | Die gespeicherte Angabe wurde entfernt. Zugeordnete Dokumente behalten ihre übrigen Angaben. |
+| `erfolgDokument` | Die Angaben wurden gespeichert. |
+| `erfolgDokumentEntfernt` | Die gespeicherten Angaben wurden entfernt. |
+
+`erfolgCitizenship` and `erfolgDokument` share `Die Angaben wurden gespeichert.` That sentence says the entered citizenship or document metadata was stored. It does not say a citizenship, a document, or any identity fact was checked. The two removal sentences say the stored entry was removed. They do not say the underlying fact was found invalid. `erfolgAngelegt`, `erfolgGeaendert`, and `erfolgGeloescht` remain the traveller-record sentences.
 
 The list status stays a second sentence: `Die aktuelle Liste ist hier noch nicht geladen.` or `Die angezeigte Liste ist ein neu gelesener Stand.` Uncertainty about a possible earlier save appears on the receipt where the user decides whether to write again. The surface does not explain label or id matching. That correlation limit is recorded in the evidence and the handoff.
 
@@ -343,7 +349,8 @@ Reducer means `account-registry-workflow.test.ts` inside `npm test`. Mounted mea
 | Stale acknowledgment after 503, invalid props, or an unchanged list | `beginnen` refuses despite `belegId` of the current blocker | zero writes; the handler passes the props from the latest ref |
 | `unbestaetigt` A, acknowledged B, then `unbestaetigt` B, then acknowledgment of A | A unchanged; B is the blocker; A's id is refused; no third attempt | zero further writes |
 | Acknowledged B settles `gespeichert` or `abgewiesen` while A is still `unbestaetigt` | A unchanged and is the blocker again; ordinary begin is refused; only A's id can pass point 2 | zero further writes until that exact acknowledgment |
-| Acknowledged repeat while the current blocker is qualified | new attempt id; old receipt byte-unchanged; no label match | uncertainty text visible; one new write; no card selected by label |
+| Acknowledged repeat while the current blocker is qualified | new attempt id; old receipt byte-unchanged; editor, target, and payload come from that receipt's editor; no label match | uncertainty text visible; one new write; no card selected by label |
+| Unknown receipt for document D or citizenship C, then another editor opens on the same card, then that receipt is acknowledged | attempt uses D's or C's editor, target ids, and draft slot; the open editor's fields are absent | the action stub receives that target and captured payload; the open form's values are not arguments |
 | Traveller, citizenship, or document absent from a valid list | draft dropped only then; receipts kept; focus moves only from inside the removed target | add button or that card's `Verwalten` button receives focus; a control the user already focused is left alone |
 | Target id absent during 500, 503, or invalid props | draft and receipt kept; epoch unchanged | the card state returns with the draft; no delete focus move |
 | Valid list, then 500, then 503, then invalid, then a changed valid list | only the changed valid list qualifies; failures withdraw it | zero action calls on every read and failure, including a delayed failure after a newer snapshot and two overlapping refreshes |
