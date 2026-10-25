@@ -8,9 +8,9 @@ Runtime: `grok-4.7-high-fast` (`originalModelName`). Session `bc-27e5e422-852b-4
 
 Fetched `origin/main` again before this handoff. It is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base is that same SHA. No rebase, merge, or sibling cherry-pick.
 
-Runtime proof head: `7c9971037f99297c1fd74bdd50c4ac3ecec41d25`. Tree `5f05ec70a639a2305c4e386ad1c0b87d170ea806`. At that commit the branch was **10 ahead / 0 behind**. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-7c9971037f99297c1fd74bdd50c4ac3ecec41d25.json` records `dirty: ""`, `status: PASS`, and 15 cases.
+Runtime proof head: `a811029921298603e6516e30c5cb787877e0ead0`. Tree `af9708d2e301f526607a4098c684f53d67e0c523`. At that commit the branch was **12 ahead / 0 behind**. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-a811029921298603e6516e30c5cb787877e0ead0.json` records `dirty: ""`, `status: PASS`, and 16 cases.
 
-The commit that adds this status, the report, the self-review, the handoff, and that evidence does not change runtime source. Review the branch head. If its only addition after `7c997103` is those documents and the evidence directory, the runtime proof still binds to `7c997103` / tree `5f05ec70`.
+The commit that adds this status, the report, the self-review, the handoff, and that evidence does not change runtime source. Review the branch head. If its only addition after `a8110299` is those documents and the evidence directory, the runtime proof still binds to `a8110299` / tree `af9708d2`.
 
 TASK blob remains `eeb1f1239e07df5d9d9bc7459c4c83918b947777`.
 
@@ -27,20 +27,28 @@ An invalid or failed envelope sets `listenlieferung` to `nicht-gelesen` and does
 
 A same-id archived row with `archivePreviousStatus === null` still shows the fail-closed sentence and does not offer Wiederherstellen. Pending, unknown, and acknowledged feedback stay in that same block. Changing the address does not call the action again.
 
-The rows on screen are the last adopted server envelope whose address equals the live URL. The draft field is not that result.
+The rows on screen are the last adopted server envelope whose address equals the live URL. Next to those rows the screen says which search and archive selection own them, for example `Diese Ansicht ist die Suche „beta“ in Offen.` A continuation adds `weitere Seite` and does not print the cursor. While another address is pending, that same line stays and a second line names the pending search and selection. The draft field is not that result. The sentence `Der Entwurf ist noch nicht die Suche.` is unchanged.
 
 ## Gates on this correction
 
+Observed on runtime head `a8110299`, tree `af9708d2`. Typecheck, the four-file lint, and the production build ran on that clean commit. The lane unit files and `check:exports` were run again on that same source while only these lane documents were dirty.
+
 | Gate | Result |
 | --- | --- |
-| Lane unit files for address, reader, and archive classification | 16 pass |
+| Lane unit files for address, reader, and archive classification | 16 pass, 0 fail |
+| `npm run typecheck` | pass, exit 0 |
+| eslint of `MyTripsCollection.tsx`, `reisen-sammlung-abfrage.ts`, and their two tests | exit 0. 0 errors, 1 warning: the existing `setHeute` effect |
+| `npm run build` | pass, exit 0. Next 16.4.1 compiled in 3.9s, TypeScript finished in 3.6s, `/reisen` stayed dynamic. Prebuild warned that this VM has no `.env` file. |
+| `check:exports` | 1228 files, 0 uncalled exports |
+| Mounted proof | 16 cases PASS on clean `a8110299`, exit 0, `dirty: ""`. Includes the visible search and archive owner line. |
+
+Recorded on the previous runtime head `7c997103` and not repeated after the owner line:
+
+| Gate | Result |
+| --- | --- |
 | `npm test` | 7186 tests, 7170 pass, 11 fail, 5 skipped. All 11 are existing Official Truth / native PostgreSQL suites. Five throw `local_proof_connection_override_forbidden` because this VM sets `SUPABASE_PROJECT_REF`. Four fail on `initdb` ENOENT, two of those as a failed subtest. Two return `NOT_VERIFIED` because local PostgreSQL binaries are required. None of the 11 are in this lane's files. |
-| `npm run typecheck` | pass |
-| `npm run build` | pass. Next 16.4.1 compiled in 8.1s, TypeScript finished in 6.7s, `/reisen` stayed dynamic. Prebuild warned that this VM has no `.env` file. |
 | `npx eslint .` | exit 0. 0 errors, 181 warnings. |
-| `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` | pass |
-| `check:schema-bezug` | exit 0, with the existing LOCAL/UNAPPLIED RPC notes. No migration. |
-| Mounted proof | 15 cases PASS on clean `7c997103`, exit 0, `dirty: ""` |
+| `check:dead`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | pass at that head. No migration. The owner line adds no route, dependency, or schema reference. |
 
 ## Next action
 

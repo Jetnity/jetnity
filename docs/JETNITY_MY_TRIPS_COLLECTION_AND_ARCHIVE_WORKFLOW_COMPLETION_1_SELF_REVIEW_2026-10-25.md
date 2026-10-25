@@ -2,7 +2,7 @@
 
 Author: **Jetnity My Trips Collection and Archive Workflow Completion 1 — Cursor Generation 1**. This note is not an independent Technical-Lead review and not a PASS.
 
-Reviewed tree for the runtime proof: `5f05ec70a639a2305c4e386ad1c0b87d170ea806` at `7c9971037f99297c1fd74bdd50c4ac3ecec41d25`.
+Reviewed tree for the runtime proof: `af9708d2e301f526607a4098c684f53d67e0c523` at `a811029921298603e6516e30c5cb787877e0ead0`.
 
 ## What I checked
 
@@ -10,12 +10,12 @@ Reviewed tree for the runtime proof: `5f05ec70a639a2305c4e386ad1c0b87d170ea806` 
 - The mounted proof opens those three addresses as a first paint and as an in-place snapshot. The invalid heading replaces Alpha only after the matching envelope. A later `/reisen` object does not bring Alpha back.
 - `beobachtungAnwenden` with `nicht-gelesen` or a problem leaves `observation` and `write` unchanged. A successful empty read still sets `row-absent`. An acknowledgement after the unread envelope stays `unread`. The mounted copy says “keine Liste gelesen” and does not say “nicht sichtbar”. Late `{ ok: true, wert: null }` and late `{ ok: true }` both keep that distinction. `setzeAdresse` during the pending write does not increase the action count.
 - The fail-closed sentence stays when the same id is archived and `archivePreviousStatus` is null. Pending, unknown, and acknowledged feedback stay visible beside it. Wiederherstellen is absent until a later snapshot supplies a previous status. That later snapshot does not drop the acknowledgement.
-- The displayed rows remain the last adopted envelope whose address equals the live URL. The draft field is not that result. The earlier A → B → A, lease, and stable-envelope cases still pass.
+- The displayed rows remain the last adopted envelope whose address equals the live URL. The visible line names that search and archive selection. While a different address is pending, the retained line stays and the pending search and selection are named. A continuation says `weitere Seite` and the cursor token is not in the visible text. Typing in the field still shows `Der Entwurf ist noch nicht die Suche.` and does not change the owner line. The earlier A → B → A, lease, and stable-envelope cases still pass.
 - `KontoReisenGruppen.tsx`, `archiv-aktionen.ts`, `suchfilter.ts`, `liste-grenze.ts`, and the TASK file are unchanged.
 
 ## What I will not claim
 
-I did not run hosted SQL, RLS, a signed-in browser session, Production, or a physical device. The mounted page is esbuild plus the project CSS, not the Next router. `npm test` is not green in this VM. I did not mark Ready and I did not merge.
+I did not run hosted SQL, RLS, a signed-in browser session, Production, or a physical device. The mounted page is esbuild plus the project CSS, not the Next router. `npm test` and full `eslint .` were last run on `7c997103` and were not repeated after the owner line. `npm test` is not green in this VM. I did not mark Ready and I did not merge.
 
 ## Residual risk
 

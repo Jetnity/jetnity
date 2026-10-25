@@ -2,7 +2,7 @@
 
 Logical agent: **Jetnity My Trips Collection and Archive Workflow Completion 1 — Cursor Generation 1**. Runtime `grok-4.7-high-fast`. Session `bc-27e5e422-852b-49c7-9b67-0fc723f13175`.
 
-Runtime evidence head: `7c9971037f99297c1fd74bdd50c4ac3ecec41d25`. Tree `5f05ec70a639a2305c4e386ad1c0b87d170ea806`. `origin/main` and merge-base `a74c443c6be3f064f150fcf021ab6154bda325e5`. **0 behind / 10 ahead** at that commit. TASK blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777`. Node `v22.23.4`. Next `16.4.1` from the production build.
+Runtime evidence head: `a811029921298603e6516e30c5cb787877e0ead0`. Tree `af9708d2e301f526607a4098c684f53d67e0c523`. `origin/main` and merge-base `a74c443c6be3f064f150fcf021ab6154bda325e5`. **0 behind / 12 ahead** at that commit. TASK blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777`. Node `v22.23.4`. Next `16.4.1` from the production build.
 
 This report is not Technical-Lead PASS, Ready, or merge approval.
 
@@ -14,7 +14,7 @@ Repeated raw `q`, `archiv`, or `cursor` values are rejected before that read. Th
 
 `reisenLaden()` still caps at 200. Account home and World still call it. Graph reads stay in `lib/trips/daten.ts`.
 
-The rows on screen are the last adopted server envelope whose address equals the live URL. The draft field is separate and is not the committed search. While the live URL and that envelope differ, retry and continuation stay disabled. Search, filter, clear, and reset stay available.
+The rows on screen are the last adopted server envelope whose address equals the live URL. The line next to them names that search and archive selection. A continuation says `weitere Seite` and does not print the cursor token. While the live URL differs, the adopted line stays and a second line names the pending search and selection, or says the new address is not a valid view. The draft field is separate and is not the committed search. `Der Entwurf ist noch nicht die Suche.` still appears only when the field differs from the adopted search. While the live URL and that envelope differ, retry and continuation stay disabled. Search, filter, clear, and reset stay available.
 
 Archive success is only `{ ok: true, wert: null }`. `{ ok: false, meldung }` is `returned-negative`. Everything else is `unknown`. The same-turn lock is the `sperre` ref. `listenlieferung` is `gelesen` only for an adopted list read. An invalid address or a database problem sets `nicht-gelesen` and leaves `observation` and `write` unchanged. Copy then says this address did not read a list and repeats the retained observation. It does not say the trip is absent. A later acknowledgement changes `write` only.
 
@@ -22,17 +22,15 @@ A same-id row with `status === 'archived'` and no `archivePreviousStatus` keeps 
 
 ## Proof
 
-Lane unit files `reisen-sammlung-abfrage.test.ts`, `reisen-sammlung-daten.test.ts`, and `trip-archive-workflow.test.ts`: 16 pass. `npm test` includes those files and the four M-EX1 retargets.
+Lane unit files `reisen-sammlung-abfrage.test.ts`, `reisen-sammlung-daten.test.ts`, and `trip-archive-workflow.test.ts`: 16 pass, 0 fail, on the `a8110299` source.
 
-`npm test`: 7186 tests, 7170 pass, 11 fail, 5 skipped. Every failure is an existing Official Truth or native PostgreSQL suite. Five throw `local_proof_connection_override_forbidden` because this VM sets `SUPABASE_PROJECT_REF`. Four fail on `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`, two of those as a failed subtest. Two return `NOT_VERIFIED` because local PostgreSQL binaries are required. This VM has no PostgreSQL server binaries. No failure is in this lane's files.
+`npm run typecheck` passed on clean `a8110299`, exit 0. eslint of the four owner-line files exited 0 with 0 errors and 1 warning, the existing `setHeute` effect. `npm run build` on that head passed: compiled in 3.9s, TypeScript finished in 3.6s, `/reisen` dynamic. Prebuild warned that no `.env` file is present in this VM.
 
-`npm run typecheck` passed. `npm run build` passed: compiled in 8.1s, TypeScript finished in 6.7s, `/reisen` dynamic. Prebuild warned that no `.env` file is present in this VM.
+`npm test` was last run on the previous runtime head `7c997103` and was not repeated after the owner line: 7186 tests, 7170 pass, 11 fail, 5 skipped. Every failure is an existing Official Truth or native PostgreSQL suite. Five throw `local_proof_connection_override_forbidden` because this VM sets `SUPABASE_PROJECT_REF`. Four fail on `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`, two of those as a failed subtest. Two return `NOT_VERIFIED` because local PostgreSQL binaries are required. This VM has no PostgreSQL server binaries. No failure is in this lane's files. Full `npx eslint .` on that same previous head exited 0 with 0 errors and 181 warnings.
 
-`npx eslint .`: 0 errors, 181 warnings. The device-calendar `setHeute` effect remains one of those warnings.
+Hygiene on `7c997103`: `check:dead` 0 orphans; `check:deps` 0 unused; `check:api-schutz` 12 admin routes use `requireAdminApi()`; `check:schema-bezug` exit 0 with the existing LOCAL/UNAPPLIED RPC notes. No migration. Those four checks were not repeated after the owner line. `check:exports` was repeated on the owner-line source: 1228 files, 0 uncalled exports.
 
-Hygiene: `check:dead` 0 orphans; `check:exports` 0 uncalled exports; `check:deps` 0 unused; `check:api-schutz` 12 admin routes use `requireAdminApi()`; `check:schema-bezug` exit 0 with the existing LOCAL/UNAPPLIED RPC notes. No migration.
-
-Mounted proof: `node scripts/my-trips-collection-archive-workflow-completion-1/run.mjs` on clean `7c997103`, exit 0, 15 cases, `dirty: ""`. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-7c9971037f99297c1fd74bdd50c4ac3ecec41d25.json`. The three new cases are repeated-parameter adoption, an unread invalid envelope with late success and unknown settlement, and same-id missing provenance with pending, unknown, and acknowledged feedback. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. The shim returns void and has no arrival generation. Screenshots are synthetic fixtures at 320, 390, 768, and 1440, with root font 32px.
+Mounted proof: `node scripts/my-trips-collection-archive-workflow-completion-1/run.mjs` on clean `a8110299`, exit 0, 16 cases, `dirty: ""`. Evidence `docs/evidence/my-trips-collection-archive-workflow-completion-1/run-a811029921298603e6516e30c5cb787877e0ead0.json`. The cases cover repeated-parameter adoption, an unread invalid envelope with late success and unknown settlement, same-id missing provenance, and the visible owner line for the retained search, a pending search, a continuation without the cursor token, and an invalid pending address. The fail-closed locator matches `der frühere Status`. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. The shim returns void and has no arrival generation. Screenshots are synthetic fixtures at 320, 390, 768, and 1440, with root font 32px.
 
 ## Limits
 
