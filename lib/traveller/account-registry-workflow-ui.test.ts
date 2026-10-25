@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { registerMounted } from '@/lib/traveller/account-registry-workflow-mounted'
+import { registerMounted } from '../../scripts/account-traveller-management-completion-1/mounted'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')

@@ -1,6 +1,6 @@
 import { after, before, describe, test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { chromium, type Browser, type Page } from 'playwright'
 
 import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy'
@@ -18,6 +18,7 @@ declare global {
     __registryRefreshes: number[]
     __registryRefreshMode: 'resolve' | 'reject' | 'defer'
     __registryErledigen: (id: number, wert: unknown) => void
+    __registryAblehnen: (id: number) => void
     __registryRefreshErledigen: (id: number) => void
     __registrySetzen: (props: Props) => void
   }
@@ -136,6 +137,10 @@ async function erledigen(page: Page, aufrufId: number, wert: unknown) {
     id: aufrufId,
     wert,
   })
+}
+
+async function ablehnen(page: Page, aufrufId: number) {
+  await page.evaluate(`window.__registryAblehnen(${JSON.stringify(aufrufId)})`)
 }
 
 async function verwalten(page: Page, travellerId: string) {
@@ -1005,6 +1010,228 @@ export function registerMounted() {
       ruhig()
     })
 
+    fall('gespeichert ohne neue Liste bietet Lesen an', async (page) => {
+      const a = person(1, 'Alice')
+      const b = person(4, 'Bert')
+      const editorB = `reisender:${b.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([a, b]))
+      await verwalten(page, a.id)
+      await page.locator(`[data-fokus="aendern:${a.id}"]`).click()
+      await page.locator(`[data-registry-editor="reisender:${a.id}:aendern"] input:not([role="searchbox"])`).fill('Alicia')
+      await senden(page, `reisender:${a.id}:aendern`)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      await erledigen(page, (await aufrufe(page))[0]!.id, { ok: true, wert: null })
+      const karteA = page.locator(`[data-registry-innen="reisender:${a.id}"]`)
+      await karteA.getByText(REGISTRY_COPY.erfolgGeaendert, { exact: true }).waitFor()
+      await karteA.getByText(REGISTRY_COPY.listeNichtGeladen, { exact: true }).waitFor()
+      await verwalten(page, b.id)
+      await page.locator(`[data-fokus="aendern:${b.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editorB}"] input:not([role="searchbox"])`).fill('Bert Entwurf')
+      const schreibvorgaenge = await anzahl(page)
+      const leseversuche = await refreshes(page)
+      await karteA.getByRole('button', { name: /Erneut lesen/ }).click()
+      assert.equal(await anzahl(page), schreibvorgaenge)
+      assert.equal(await refreshes(page), leseversuche + 1)
+      assert.equal(await page.locator(`[data-registry-editor="${editorB}"] input:not([role="searchbox"])`).inputValue(), 'Bert Entwurf')
+      ruhig()
+    })
+
+    fall('ausdrueckliche Uebernahme entzieht dem alten Erfolg die Oberflaeche', async (page) => {
+      const traveller = person(1, 'Alice')
+      const editor = `reisender:${traveller.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Getippt')
+      await setzen(page, liste([person(1, 'Neu')]))
+      await page.getByText(REGISTRY_COPY.konflikt, { exact: true }).waitFor()
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      const epocheVersuch = Number(await page.locator(`form[data-registry-editor="${editor}"]`).getAttribute('data-registry-epoche'))
+      await page.getByRole('button', { name: REGISTRY_COPY.uebernehmen }).click()
+      const epocheNeu = Number(await page.locator(`form[data-registry-editor="${editor}"]`).getAttribute('data-registry-epoche'))
+      assert.ok(epocheNeu > epocheVersuch)
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Neu')
+      await page.locator(`[data-fokus="loeschen:${traveller.id}"]`).focus()
+      await erledigen(page, (await aufrufe(page))[0]!.id, { ok: true, wert: null })
+      await beleg(page, editor, 'gespeichert').waitFor()
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"]`).count(), 1)
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Neu')
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"]`).getByText(REGISTRY_COPY.erfolgGeaendert).count(), 0)
+      assert.equal((await fokus(page)).fokus, `loeschen:${traveller.id}`)
+      assert.equal(await anzahl(page), 1)
+      ruhig()
+      return { epocheVersuch, epocheNeu }
+    })
+
+    fall('eine echte Ablehnung nach neuer Generation bleibt beim Entwurf', async (page) => {
+      const traveller = person(1, 'Alice')
+      const editor = `reisender:${traveller.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Erster Entwurf')
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      const call = (await aufrufe(page))[0]!
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Zweiter Entwurf')
+      await page.locator(`[data-fokus="loeschen:${traveller.id}"]`).focus()
+      await ablehnen(page, call.id)
+      await beleg(page, editor, 'unbestaetigt').waitFor()
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Zweiter Entwurf')
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"]`).getByText(REGISTRY_COPY.erfolgGeaendert).count(), 0)
+      assert.equal(await page.locator(`[data-registry-innen="reisender:${traveller.id}"]`).getByText(REGISTRY_COPY.unbekannt).count(), 1)
+      assert.equal((await fokus(page)).fokus, `loeschen:${traveller.id}`)
+      assert.equal(await anzahl(page), 1)
+      ruhig()
+    })
+
+    fall('eine gespeicherte Aenderung oeffnet mit dem bekannten Stand', async (page) => {
+      const traveller = person(1, 'Alice')
+      const editor = `reisender:${traveller.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Alicia')
+      const wohnsitz = page.locator(`[data-registry-editor="${editor}"] select`).first()
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      await erledigen(page, (await aufrufe(page))[0]!.id, { ok: true, wert: null })
+      await page.locator(`form[data-registry-editor="${editor}"]`).waitFor({ state: 'detached' })
+      await page.getByText(REGISTRY_COPY.listeNichtGeladen, { exact: true }).waitFor()
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Alice')
+      assert.equal(await wohnsitz.inputValue(), 'DE')
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 2)
+      const zweiter = (await aufrufe(page))[1]!
+      assert.equal(zweiter.name, 'traveller-aendern')
+      assert.equal(zweiter.argument.label, 'Alice')
+      assert.equal(zweiter.argument.residenceCountryCode, 'DE')
+      await erledigen(page, zweiter.id, { ok: true, wert: null })
+      await page.locator(`form[data-registry-editor="${editor}"]`).waitFor({ state: 'detached' })
+      await setzen(page, liste([person(1, 'Bert', { residenceCountryCode: 'FR' })]))
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Bert')
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] select`).first().inputValue(), 'FR')
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Entwurf')
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`form[data-registry-editor="${editor}"]`).waitFor({ state: 'detached' })
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Entwurf')
+      ruhig()
+    })
+
+    fall('eine Dokumentaenderung oeffnet mit den bekannten Metadaten', async (page) => {
+      const dok = dokument(3)
+      const traveller = person(1, 'Alice', { documents: [dok] })
+      const editor = `document:${dok.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="dokument-aendern:${dok.id}"]`).click()
+      await waehle(page, editor, 'national_id')
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      await erledigen(page, (await aufrufe(page))[0]!.id, { ok: true, wert: null })
+      await page.locator(`form[data-registry-editor="${editor}"]`).waitFor({ state: 'detached' })
+      await page.getByText(REGISTRY_COPY.erfolgDokument, { exact: true }).waitFor()
+      await page.getByText(REGISTRY_COPY.listeNichtGeladen, { exact: true }).waitFor()
+      await page.locator(`[data-fokus="dokument-aendern:${dok.id}"]`).click()
+      const formular = page.locator(`form[data-registry-editor="${editor}"]`)
+      assert.equal(await formular.locator('select').nth(0).inputValue(), 'passport')
+      assert.equal(await formular.locator('select').nth(1).inputValue(), 'DE')
+      assert.equal(await formular.locator('select').nth(2).inputValue(), '')
+      assert.equal(await formular.locator('input[type="date"]').inputValue(), '2030-01-01')
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 2)
+      const zweiter = (await aufrufe(page))[1]!
+      assert.equal(zweiter.name, 'document-aendern')
+      assert.equal(zweiter.argument.documentType, 'passport')
+      assert.equal(zweiter.argument.issuingCountryCode, 'DE')
+      assert.equal(zweiter.argument.citizenshipId, '')
+      assert.equal(zweiter.argument.expiresOn, '2030-01-01')
+      await erledigen(page, zweiter.id, { ok: true, wert: null })
+      await formular.waitFor({ state: 'detached' })
+      await setzen(page, liste([person(1, 'Alice', { documents: [{ ...dok, documentType: 'national_id' }] })]))
+      await page.locator(`[data-fokus="dokument-aendern:${dok.id}"]`).click()
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"] select`).first().inputValue(), 'national_id')
+      await waehle(page, editor, 'unknown')
+      await page.locator(`form[data-registry-editor="${editor}"]`).getByRole('button', { name: REGISTRY_COPY.abbrechen }).click()
+      await page.locator(`[data-fokus="dokument-aendern:${dok.id}"]`).click()
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"] select`).first().inputValue(), 'unknown')
+      ruhig()
+    })
+
+    fall('Escape setzt den Fokus auf den bleibenden Schalter', async (page) => {
+      const traveller = person(1, 'Alice')
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
+      await page.locator('[data-registry-editor$="citizenship-anlegen"] select').first().focus()
+      await page.keyboard.press('Escape')
+      await page.waitForFunction(
+        (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
+        `staat-knopf:${traveller.id}`,
+      )
+      assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
+
+      await page.locator(`[data-fokus="dokument-knopf:${traveller.id}"]`).click()
+      await page.locator('[data-registry-editor$="document-anlegen"] select').first().focus()
+      await page.keyboard.press('Escape')
+      await page.waitForFunction(
+        (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
+        `dokument-knopf:${traveller.id}`,
+      )
+      assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
+
+      await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
+      await page.evaluate(`(() => {
+        const form = document.querySelector('form[data-registry-editor$="citizenship-anlegen"]')
+        const abbrechen = form && form.querySelector('button[type="button"]')
+        if (abbrechen instanceof HTMLButtonElement) abbrechen.click()
+        const ziel = document.querySelector('[data-fokus^="loeschen:"]')
+        if (ziel instanceof HTMLElement) ziel.focus()
+      })()`)
+      await page.locator('form[data-registry-editor$="citizenship-anlegen"]').waitFor({ state: 'detached' })
+      assert.equal((await fokus(page)).fokus, `loeschen:${traveller.id}`)
+
+      const documents = Array.from({ length: 12 }, (_, index) => dokument(20 + index))
+      const voll = person(1, 'Alice', { documents })
+      const dokId = documents[0]!.id
+      const editor = `document:${dokId}:aendern`
+      await setzen(page, liste([voll]))
+      await verwalten(page, voll.id)
+      assert.equal(await page.getByRole('button', { name: REGISTRY_COPY.dokumentHinzufuegen }).count(), 0)
+      await page.locator(`[data-fokus="dokument-aendern:${dokId}"]`).click()
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      await page.locator(`form[data-registry-editor="${editor}"] select`).first().focus()
+      await page.keyboard.press('Escape')
+      await page.waitForFunction(
+        (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
+        `dokument-aendern:${dokId}`,
+      )
+      assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"]`).count(), 0)
+      await erledigen(page, (await aufrufe(page))[0]!.id, { ok: true, wert: null })
+      await beleg(page, editor, 'gespeichert').waitFor()
+      assert.equal((await fokus(page)).fokus, `dokument-aendern:${dokId}`)
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"]`).count(), 0)
+      const epocheBeleg = Number(await beleg(page, editor, 'gespeichert').getAttribute('data-registry-epoche'))
+      await page.locator(`[data-fokus="dokument-aendern:${dokId}"]`).click()
+      const epocheEditor = Number(await page.locator(`form[data-registry-editor="${editor}"]`).getAttribute('data-registry-epoche'))
+      assert.ok(epocheEditor > epocheBeleg)
+      assert.equal(await page.locator(`form[data-registry-editor="${editor}"] select`).first().inputValue(), 'passport')
+      assert.equal(await anzahl(page), 1)
+      ruhig()
+    })
+
     fall('schmale Breiten und grosse Schrift', async (page) => {
       const traveller = person(1, 'A'.repeat(40))
       await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -1023,11 +1250,13 @@ export function registerMounted() {
             client: document.documentElement.clientWidth,
             overflow: stil?.overflow ?? '',
             animation: stil?.animationName ?? '',
+            font: getComputedStyle(document.documentElement).fontSize,
           }
         })
         assert.ok(masse.scroll <= masse.client + 1, `${breite} ${masse.scroll}>${masse.client}`)
         assert.notEqual(masse.overflow, 'hidden')
-        messungen.push({ breite, ...masse, font: 16 })
+        if (breite === 320) await page.screenshot({ path: `${screens}/320.png` })
+        messungen.push({ breite, ...masse })
       }
       await page.setViewportSize({ width: 320, height: 900 })
       await page.evaluate(() => {
@@ -1040,15 +1269,23 @@ export function registerMounted() {
       }))
       assert.equal(gross.font, '32px')
       assert.ok(gross.scroll <= gross.client + 1, `32px ${gross.scroll}>${gross.client}`)
-      await page.screenshot({ path: `${screens}/320.png` })
       await page.screenshot({ path: `${screens}/320-root-32.png` })
+      const schrift320 = messungen.find((eintrag) => eintrag.breite === 320)?.font ?? ''
+      assert.equal(schrift320, '16px')
+      assert.equal(readFileSync(`${screens}/320.png`).equals(readFileSync(`${screens}/320-root-32.png`)), false)
       await page.setViewportSize({ width: 1280, height: 900 })
       await page.evaluate(() => {
         document.documentElement.style.fontSize = ''
       })
+      const wieder = await page.evaluate(() => getComputedStyle(document.documentElement).fontSize)
       await page.screenshot({ path: `${screens}/1280.png` })
       ruhig()
-      return { messungen, gross, motion: 'reduce', rootFont: '32px' }
+      return {
+        messungen,
+        gross,
+        motion: 'reduce',
+        screenshots: { '320.png': schrift320, '320-root-32.png': gross.font, '1280.png': wieder },
+      }
     })
   })
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { RegistryWorkflow } from '@/components/account/useAccountRegistryWorkflow'
 import LandFeld from '@/components/country/LandFeld'
@@ -105,7 +105,10 @@ export function RegistryBelege({
   lesen: () => void
 }) {
   if (belege.length === 0) return null
-  const lesenSichtbar = belege.some((beleg) => beleg.ausgang === 'unbestaetigt' || beleg.ausgang === 'abgewiesen')
+  const lesenSichtbar = belege.some((beleg) => {
+    if (beleg.ausgang === 'unbestaetigt' || beleg.ausgang === 'abgewiesen') return true
+    return registryListenBild(stand, beleg).nichtGeladen
+  })
   return (
     <div data-registry-belege="wahr" aria-busy={stand.lesen.offen} className="mt-4 grid gap-3">
       {belege.map((beleg) => {
@@ -175,6 +178,8 @@ export default function AccountReisendeKarte({
   const panelRef = useRef<HTMLDivElement>(null)
   const loeschenRef = useRef<HTMLElement>(null)
   const warOffen = useRef(false)
+  const fokusZiel = useRef<string | null>(null)
+  const [fokusSchritt, setFokusSchritt] = useState(0)
   const heute = useSyncExternalStore(ohneKalendertagAbo, leseGeraeteKalendertag, keinServerKalendertag)
   const surface = `reisender:${traveller.id}`
   const aendernEditor = `${surface}:aendern`
@@ -216,6 +221,22 @@ export default function AccountReisendeKarte({
   useEffect(() => {
     if (loeschen?.offen) loeschenRef.current?.focus()
   }, [loeschen?.offen])
+
+  function fokusNachCommit(ziel: string) {
+    fokusZiel.current = ziel
+    setFokusSchritt((wert) => wert + 1)
+  }
+
+  useEffect(() => {
+    const ziel = fokusZiel.current
+    if (!ziel) return
+    fokusZiel.current = null
+    const aktiv = document.activeElement as HTMLElement | null
+    const frei = aktiv == null || aktiv === document.body || aktiv === document.documentElement
+    const imEditor = Boolean(aktiv?.closest?.('[data-registry-editor]'))
+    if (!frei && !imEditor) return
+    document.querySelector<HTMLElement>(`[data-fokus="${CSS.escape(ziel)}"]`)?.focus()
+  }, [fokusSchritt])
 
   function fokusAuf(ziel: string) {
     document.querySelector<HTMLElement>(`[data-fokus="${CSS.escape(ziel)}"]`)?.focus()
@@ -487,6 +508,13 @@ export default function AccountReisendeKarte({
                 data-registry-editor={staatEditor}
                 data-registry-epoche={staat?.epoche ?? 0}
                 className="mt-4 flex flex-col gap-2"
+                onKeyDown={(event) => {
+                  if (event.key !== 'Escape') return
+                  event.preventDefault()
+                  event.stopPropagation()
+                  workflow.schliessen(staatEditor)
+                  fokusNachCommit(`staat-knopf:${traveller.id}`)
+                }}
                 onSubmit={(event) => {
                   event.preventDefault()
                   const land = neueStaatsbuergerschaft.trim().toUpperCase()
@@ -515,11 +543,10 @@ export default function AccountReisendeKarte({
                   </button>
                   <button
                     type="button"
-                    data-fokus={`staat-knopf:${traveller.id}`}
                     className={nebenAktion}
                     onClick={() => {
                       workflow.schliessen(staatEditor)
-                      fokusAuf(`staat-knopf:${traveller.id}`)
+                      fokusNachCommit(`staat-knopf:${traveller.id}`)
                     }}
                   >
                     {REGISTRY_COPY.abbrechen}
@@ -577,6 +604,7 @@ export default function AccountReisendeKarte({
                       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                         <button
                           type="button"
+                          data-fokus={`dokument-aendern:${eintrag.id}`}
                           className={nebenAktion}
                           onClick={() =>
                             workflow.oeffnen(`document:${eintrag.id}:aendern`, surface, {
@@ -645,6 +673,15 @@ export default function AccountReisendeKarte({
                 data-registry-editor={dokumentSlot.editor}
                 data-registry-epoche={dokumentSlot.epoche}
                 data-registry-dokument-edit={dokumentModus === 'neu' ? '' : dokumentModus}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Escape') return
+                  event.preventDefault()
+                  event.stopPropagation()
+                  workflow.schliessen(dokumentSlot.editor)
+                  fokusNachCommit(
+                    dokumentModus === 'neu' ? `dokument-knopf:${traveller.id}` : `dokument-aendern:${dokumentModus}`,
+                  )
+                }}
                 onSubmit={(event) => {
                   event.preventDefault()
                   workflow.senden(dokumentSlot.editor)
@@ -710,11 +747,12 @@ export default function AccountReisendeKarte({
                   </button>
                   <button
                     type="button"
-                    data-fokus={`dokument-knopf:${traveller.id}`}
                     className={nebenAktion}
                     onClick={() => {
                       workflow.schliessen(dokumentSlot.editor)
-                      fokusAuf(`dokument-knopf:${traveller.id}`)
+                      fokusNachCommit(
+                        dokumentModus === 'neu' ? `dokument-knopf:${traveller.id}` : `dokument-aendern:${dokumentModus}`,
+                      )
                     }}
                   >
                     {REGISTRY_COPY.abbrechen}

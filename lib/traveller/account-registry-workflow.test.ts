@@ -16,6 +16,7 @@ import {
   registryListenBild,
   registryPropsBeobachten,
   registrySlot,
+  registryUebernehmen,
   registryWorkflowAnfang,
   type IdQuelle,
   type RegistryBeleg,
@@ -403,6 +404,94 @@ describe('Account-Registry-Workflow', () => {
     )
     assert.equal(boolesch.versuch, null)
     assert.equal(boolesch.grund, 'anerkennung')
+  })
+
+  test('eine ausdrückliche Übernahme hebt die Epoche vor dem alten Abschluss', () => {
+    let stand = sehen(registryWorkflowAnfang(), [person('anne', { label: 'Alt' })])
+    stand = oeffnen(stand, 'reisender:anne:aendern', 'reisender:anne', { label: 'Alt', residenceCountryCode: 'DE' })
+    stand = registryFeldSetzen(stand, 'reisender:anne:aendern', { label: 'Getippt', residenceCountryCode: 'DE' })
+    stand = sehen(stand, [person('anne', { label: 'Neu' })])
+    const begonnen = senden(stand, 'reisender:anne:aendern', ids())
+    const vorher = registrySlot(begonnen.stand, 'reisender:anne:aendern')?.epoche ?? 0
+    stand = registryUebernehmen(begonnen.stand, 'reisender:anne:aendern')
+    const uebernommen = registrySlot(stand, 'reisender:anne:aendern')
+    assert.ok((uebernommen?.epoche ?? 0) > vorher)
+    assert.equal(uebernommen?.offen, true)
+    assert.equal(uebernommen?.konflikt, false)
+    assert.deepEqual(uebernommen?.felder, { label: 'Neu', residenceCountryCode: 'DE' })
+    const erfolg = registryAnwenden(stand, 'versuch-1', { art: 'gespeichert' })
+    assert.equal(registrySlot(erfolg, 'reisender:anne:aendern')?.offen, true)
+    assert.deepEqual(registrySlot(erfolg, 'reisender:anne:aendern')?.felder, { label: 'Neu', residenceCountryCode: 'DE' })
+    assert.equal(erfolg.fokus, null)
+    const abgelehnt = registryAnwenden(stand, 'versuch-1', { art: 'unbestaetigt' })
+    assert.equal(registrySlot(abgelehnt, 'reisender:anne:aendern')?.offen, true)
+    assert.deepEqual(registrySlot(abgelehnt, 'reisender:anne:aendern')?.felder, { label: 'Neu', residenceCountryCode: 'DE' })
+    assert.equal(abgelehnt.fokus, null)
+    assert.equal(abgelehnt.belege[0]?.ausgang, 'unbestaetigt')
+  })
+
+  test('eine Änderung öffnet mit dem bekannten Stand und behält einen schmutzigen Entwurf', () => {
+    const editor = 'reisender:anne:aendern'
+    const bekannt = { label: 'Alice', residenceCountryCode: 'DE' }
+    let stand = sehen(registryWorkflowAnfang(), [])
+    stand = oeffnen(stand, 'anlegen', 'anlegen', { label: 'A', residenceCountryCode: 'DE' })
+    stand = registryAnwenden(senden(stand, 'anlegen', ids()).stand, 'versuch-1', { art: 'gespeichert' })
+    assert.deepEqual(registrySlot(stand, 'anlegen')?.felder, { label: '', residenceCountryCode: '' })
+    assert.equal(registrySlot(stand, 'anlegen')?.offen, true)
+
+    stand = sehen(registryWorkflowAnfang(), [person('anne', { label: 'Alice' })])
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    stand = registryFeldSetzen(stand, editor, { label: 'Alicia', residenceCountryCode: 'DE' })
+    stand = registryAnwenden(senden(stand, editor, ids()).stand, 'versuch-1', { art: 'gespeichert' })
+    assert.equal(registrySlot(stand, editor)?.offen, false)
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    assert.deepEqual(registrySlot(stand, editor)?.felder, bekannt)
+    const zweiter = senden(stand, editor, ids())
+    assert.deepEqual(zweiter.versuch?.payload, bekannt)
+    stand = registryFeldSetzen(zweiter.stand, editor, { label: 'Entwurf', residenceCountryCode: 'FR' })
+    stand = registryEditorSchliessen(stand, editor)
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    assert.deepEqual(registrySlot(stand, editor)?.felder, { label: 'Entwurf', residenceCountryCode: 'FR' })
+    assert.equal(registrySlot(stand, editor)?.dirty, true)
+
+    stand = sehen(registryWorkflowAnfang(), [person('anne', { label: 'Alice' })])
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    stand = registryEditorSchliessen(stand, editor)
+    stand = sehen(stand, [person('anne', { label: 'Bert' })])
+    assert.deepEqual(registrySlot(stand, editor)?.felder, { label: 'Bert', residenceCountryCode: 'DE' })
+    stand = oeffnen(stand, editor, 'reisender:anne', { label: 'Bert', residenceCountryCode: 'DE' })
+    assert.deepEqual(registrySlot(stand, editor)?.felder, { label: 'Bert', residenceCountryCode: 'DE' })
+  })
+
+  test('eine Dokumentänderung öffnet mit den bekannten Metadaten', () => {
+    const editor = 'document:dok-1:aendern'
+    const bekannt = { documentType: 'passport', issuingCountryCode: 'DE', citizenshipId: '', expiresOn: '' }
+    const dok = dokument('dok-1')
+    let stand = sehen(registryWorkflowAnfang(), [person('anne', { documents: [dok] })])
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    stand = registryFeldSetzen(stand, editor, { ...bekannt, documentType: 'national_id' })
+    stand = registryAnwenden(senden(stand, editor, ids()).stand, 'versuch-1', { art: 'gespeichert' })
+    assert.equal(registrySlot(stand, editor)?.offen, false)
+    assert.notDeepEqual(registrySlot(stand, editor)?.felder, {
+      documentType: '',
+      issuingCountryCode: '',
+      citizenshipId: '',
+      expiresOn: '',
+    })
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    assert.deepEqual(registrySlot(stand, editor)?.felder, bekannt)
+    const zweiter = senden(stand, editor, ids())
+    assert.equal((zweiter.versuch?.payload as { documentType?: string }).documentType, 'passport')
+    stand = registryFeldSetzen(zweiter.stand, editor, { ...bekannt, documentType: 'unknown' })
+    stand = registryEditorSchliessen(stand, editor)
+    stand = oeffnen(stand, editor, 'reisender:anne', bekannt)
+    assert.equal((registrySlot(stand, editor)?.felder as { documentType?: string }).documentType, 'unknown')
+    stand = sehen(registryWorkflowAnfang(), [person('anne', { documents: [{ ...dok, documentType: 'national_id' }] })])
+    stand = oeffnen(stand, editor, 'reisender:anne', { ...bekannt, documentType: 'national_id' })
+    stand = registryEditorSchliessen(stand, editor)
+    stand = sehen(stand, [person('anne', { documents: [{ ...dok, documentType: 'unknown' }] })])
+    stand = oeffnen(stand, editor, 'reisender:anne', { ...bekannt, documentType: 'unknown' })
+    assert.equal((registrySlot(stand, editor)?.felder as { documentType?: string }).documentType, 'unknown')
   })
 
   test('eine andere Fläche bleibt unabhängig', () => {

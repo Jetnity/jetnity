@@ -350,8 +350,25 @@ export function registryEditorOeffnen(
   const vorhanden = registrySlot(stand, editor)
   if (vorhanden?.offen) return stand
   const gehoben = mitEpoche(stand, editor)
+  const sauber = vorhanden != null && !vorhanden.dirty
   const slot: RegistrySlot = vorhanden
-    ? { ...vorhanden, surface, epoche: gehoben.epoche, offen: true }
+    ? {
+        ...vorhanden,
+        surface,
+        epoche: gehoben.epoche,
+        offen: true,
+        ...(sauber
+          ? {
+              felder,
+              basisFelder: felder,
+              kontext,
+              neueFelder: felder,
+              dirty: false,
+              konflikt: false,
+              hinweis: null,
+            }
+          : {}),
+      }
     : {
         editor,
         surface,
@@ -403,10 +420,15 @@ export function registrySurfaceSchliessen(stand: RegistryStand, surface: string)
 export function registryUebernehmen(stand: RegistryStand, editor: string): RegistryStand {
   const slot = registrySlot(stand, editor)
   if (!slot?.konflikt) return stand
-  return ersetzeSlot(stand, {
+  const kanonisch = registryKanonisch(editor, stand.props)
+  const gehoben = mitEpoche(stand, editor)
+  return ersetzeSlot(gehoben.stand, {
     ...slot,
+    epoche: gehoben.epoche,
     felder: slot.neueFelder,
     basisFelder: slot.neueFelder,
+    kontext: kanonisch?.kontext ?? slot.kontext,
+    neueFelder: slot.neueFelder,
     dirty: false,
     konflikt: false,
     hinweis: null,
@@ -414,11 +436,9 @@ export function registryUebernehmen(stand: RegistryStand, editor: string): Regis
 }
 
 function anfangFelder(aktion: RegistryAktion, bisher: unknown): unknown {
-  if (aktion === 'traveller-anlegen' || aktion === 'traveller-aendern') {
-    return { label: '', residenceCountryCode: '' }
-  }
+  if (aktion === 'traveller-anlegen') return { label: '', residenceCountryCode: '' }
   if (aktion === 'citizenship-anlegen') return { countryCode: '' }
-  if (aktion === 'document-anlegen' || aktion === 'document-aendern') {
+  if (aktion === 'document-anlegen') {
     return { documentType: '', issuingCountryCode: '', citizenshipId: '', expiresOn: '' }
   }
   return bisher

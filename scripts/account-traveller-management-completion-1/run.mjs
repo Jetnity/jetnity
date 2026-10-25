@@ -31,7 +31,7 @@ const quellen = [
   'lib/traveller/account-registry-copy.ts',
   'lib/traveller/account-registry-workflow.test.ts',
   'lib/traveller/account-registry-workflow-ui.test.ts',
-  'lib/traveller/account-registry-workflow-mounted.ts',
+  'scripts/account-traveller-management-completion-1/mounted.ts',
 ]
 
 function sha(datei) {
