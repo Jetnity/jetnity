@@ -2,8 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import SystemHealthBoard from '@/components/admin/system-health/SystemHealthBoard'
-import ProviderOpsBoard from '@/components/admin/provider-ops/ProviderOpsBoard'
+import SystemHealthBoard, { SystemHealthAnsicht } from '@/components/admin/system-health/SystemHealthBoard'
+import ProviderOpsBoard, { ProviderOpsAnsicht } from '@/components/admin/provider-ops/ProviderOpsBoard'
 import { SYSTEM_HEALTH_AUDIT_BERICHT } from './system-health/fixtures'
 import { PROVIDER_OPS_BOARD_AUDIT_BERICHT } from './provider-ops-board/fixtures'
 
@@ -16,7 +16,7 @@ for (const state of ['fresh', 'stale', 'unknown'] as const) {
       item.freshness.state = state
       for (const check of item.checks ?? []) check.freshness.state = state
     }
-    const html = renderToStaticMarkup(createElement(SystemHealthBoard, { anfang: report }))
+    const html = renderToStaticMarkup(createElement(SystemHealthAnsicht, { bericht: report }))
     assert.equal((html.match(/data-health-green="true"/g) ?? []).length, state === 'fresh' ? 1 : 0)
     assert.match(html, /data-health-id="app" data-health-status="unknown"/)
     assert.match(html, /data-health-id="supabase" data-health-status="not_configured"/)
@@ -34,7 +34,7 @@ for (const status of ['empty', 'unknown', 'unavailable', 'available'] as const) 
     const usage = report.items.find(item => item.id === 'model-usage')!
     usage.status = status
     usage.metadata = status === 'available' ? { zeilen: '3', kostenMikroUsd: '21000' } : undefined
-    const html = renderToStaticMarkup(createElement(ProviderOpsBoard, { anfang: report }))
+    const html = renderToStaticMarkup(createElement(ProviderOpsAnsicht, { bericht: report }))
     const card = html.match(/<article[^>]*data-ops-id="model-usage"[\s\S]*?<\/article>/)![0]
     assert.match(card, /data-ops-green="false"/)
     assert.match(collapsed(html), /Kostenabdeckung unvollständig/)
@@ -46,3 +46,22 @@ for (const status of ['empty', 'unknown', 'unavailable', 'available'] as const) 
     if (status === 'unavailable') assert.match(collapsed(card), /konnte nicht gelesen werden/)
   })
 }
+
+test('health board shell waits for validation and keeps one explicit refresh', () => {
+  const html = renderToStaticMarkup(createElement(SystemHealthBoard, { anfang: SYSTEM_HEALTH_AUDIT_BERICHT }))
+  assert.match(html, /data-operations-phase="prueft"/)
+  assert.match(html, /data-operations-pending="false"/)
+  assert.match(html, /Erneut prüfen/)
+  assert.doesNotMatch(html, /data-health-id=/)
+  assert.doesNotMatch(html, /Angezeigt bleibt der vorherige Prüfstand/)
+  const ohne = renderToStaticMarkup(createElement(SystemHealthBoard, { anfang: SYSTEM_HEALTH_AUDIT_BERICHT, aktualisierenErlaubt: false }))
+  assert.doesNotMatch(ohne, /Erneut prüfen/)
+})
+
+test('provider board shell waits for validation and keeps one explicit refresh', () => {
+  const html = renderToStaticMarkup(createElement(ProviderOpsBoard, { anfang: PROVIDER_OPS_BOARD_AUDIT_BERICHT }))
+  assert.match(html, /data-operations-phase="prueft"/)
+  assert.match(html, /Erneut prüfen/)
+  assert.doesNotMatch(html, /data-ops-id=/)
+  assert.doesNotMatch(html, /Angezeigt bleibt der vorherige Prüfstand/)
+})
