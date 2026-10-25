@@ -1,0 +1,257 @@
+{
+  "status": "PASS",
+  "caseCount": 31,
+  "pass": 31,
+  "fail": 0,
+  "browser": {
+    "version": "148.0.7778.96"
+  },
+  "motion": "reduce ist in der Layout-Prüfung emuliert",
+  "cases": [
+    {
+      "name": "traveller-anlegen",
+      "pass": true
+    },
+    {
+      "name": "traveller-aendern",
+      "pass": true
+    },
+    {
+      "name": "traveller-loeschen",
+      "pass": true
+    },
+    {
+      "name": "citizenship-anlegen",
+      "pass": true
+    },
+    {
+      "name": "citizenship-loeschen",
+      "pass": true
+    },
+    {
+      "name": "document-anlegen",
+      "pass": true
+    },
+    {
+      "name": "document-aendern",
+      "pass": true
+    },
+    {
+      "name": "document-loeschen",
+      "pass": true
+    },
+    {
+      "name": "gleiche Runde sendet eine Aktion",
+      "pass": true,
+      "detail": {
+        "ereignisse": 2
+      }
+    },
+    {
+      "name": "Erfolg von A bleibt auf A",
+      "pass": true,
+      "detail": {
+        "vorher": {
+          "fokus": null,
+          "id": "registry-panel-00000000-0000-4000-8000-000000000002",
+          "editor": null
+        },
+        "nachher": {
+          "fokus": null,
+          "id": "registry-panel-00000000-0000-4000-8000-000000000002",
+          "editor": null
+        }
+      }
+    },
+    {
+      "name": "Unbekannt von A bleibt auf A",
+      "pass": true
+    },
+    {
+      "name": "Schliessen und erneut oeffnen sendet nichts",
+      "pass": true,
+      "detail": {
+        "epocheBeleg": 2,
+        "epocheEditor": 5
+      }
+    },
+    {
+      "name": "veraltete Anerkennung schreibt nicht",
+      "pass": true
+    },
+    {
+      "name": "unbekannt A dann B dann keine Anerkennung von A",
+      "pass": true
+    },
+    {
+      "name": "bekannte Wiederholung laesst das alte Unbekannt stehen",
+      "pass": true
+    },
+    {
+      "name": "Dokument D bleibt von Dokument E getrennt",
+      "pass": true
+    },
+    {
+      "name": "Staatsbuergerschaft bleibt vom Dokumentformular getrennt",
+      "pass": true
+    },
+    {
+      "name": "Verschwinden bewegt den Fokus nur aus dem entfernten Ziel",
+      "pass": true
+    },
+    {
+      "name": "Lesefehler behaelt den Entwurf",
+      "pass": true
+    },
+    {
+      "name": "Lesen und spaetere Fehler senden keine Aktion",
+      "pass": true,
+      "detail": {
+        "refreshes": 2
+      }
+    },
+    {
+      "name": "unveraenderte Liste gibt keine weitere Speicherung frei",
+      "pass": true
+    },
+    {
+      "name": "schmutzige Uebernahme behaelt die Eingabe",
+      "pass": true
+    },
+    {
+      "name": "saubere Uebernahme entzieht dem alten Abschluss die Oberflaeche",
+      "pass": true
+    },
+    {
+      "name": "gleiche Bezeichnung waehlt keine Karte",
+      "pass": true
+    },
+    {
+      "name": "leere Dokumentzuordnung bleibt leer",
+      "pass": true
+    },
+    {
+      "name": "acht Staatsbuergerschaften lassen Aendern und Entfernen",
+      "pass": true
+    },
+    {
+      "name": "zwoelf Dokumente lassen das bestehende aendern",
+      "pass": true
+    },
+    {
+      "name": "leer 500 und 503 bleiben unterscheidbar",
+      "pass": true
+    },
+    {
+      "name": "Ablehnung zeigt die Meldung",
+      "pass": true
+    },
+    {
+      "name": "Tastatur Escape und Enter",
+      "pass": true
+    },
+    {
+      "name": "schmale Breiten und grosse Schrift",
+      "pass": true,
+      "detail": {
+        "messungen": [
+          {
+            "breite": 320,
+            "scroll": 320,
+            "client": 320,
+            "overflow": "visible",
+            "animation": "none",
+            "font": 16
+          },
+          {
+            "breite": 360,
+            "scroll": 360,
+            "client": 360,
+            "overflow": "visible",
+            "animation": "none",
+            "font": 16
+          },
+          {
+            "breite": 390,
+            "scroll": 390,
+            "client": 390,
+            "overflow": "visible",
+            "animation": "none",
+            "font": 16
+          },
+          {
+            "breite": 768,
+            "scroll": 768,
+            "client": 768,
+            "overflow": "visible",
+            "animation": "none",
+            "font": 16
+          },
+          {
+            "breite": 1280,
+            "scroll": 1280,
+            "client": 1280,
+            "overflow": "visible",
+            "animation": "none",
+            "font": 16
+          }
+        ],
+        "gross": {
+          "scroll": 320,
+          "client": 320,
+          "font": "32px"
+        },
+        "motion": "reduce",
+        "rootFont": "32px"
+      }
+    }
+  ],
+  "externalRequests": [],
+  "author": "Jetnity Account Traveller Management Completion 1 — Cursor Generation 1",
+  "session": "bc-3b7c97c5-d9fa-4326-9000-14377b2dd939",
+  "model": "grok-4.7-high-fast",
+  "commit": "4022bc8281e27d2d7965807f45964c9f7ab09d6d",
+  "command": "node --import tsx --test lib/traveller/account-registry-workflow-ui.test.ts",
+  "exit": 0,
+  "origin": "http://127.0.0.1:38465",
+  "aliasBoundary": "esbuild aliases replace only @/lib/traveller/account-registry-aktionen and next/navigation. LandFeld, copy, limits, card markup and project CSS stay real. No deployed route, account session, or Supabase client.",
+  "fixtureBoundary": "Synthetic local Playwright. Labels are fixed strings such as Synthetische Person A. The action stub returns deferred promises. refresh resolves, rejects, or stays deferred without changing props. The wrapper then passes the next scripted problem and travellers. A resolved refresh is not a list observation.",
+  "rootFontNote": "The 32px check sets font-size on documentElement. It is not native browser zoom, not a device, and not a screen reader.",
+  "correlationLimit": "A changed valid list is a newly observed canonical snapshot. It does not identify which router.refresh produced it and does not prove the read followed an unknown write. Unchanged content stays unconfirmed. There is no server read nonce.",
+  "sources": {
+    "components/account/AccountReisende.tsx": {
+      "sha256": "875bf1645e5fb571ffd2ebaa8d920b3e174643f228acbe9b03e7b973a1778072",
+      "blob": "a597b75f8f40f5cd3a25e40c34503c9175cf8269"
+    },
+    "components/account/AccountReisendeKarte.tsx": {
+      "sha256": "1329d6414b0c70dabad96a40c290529bd539871d96847331af14914f0cdbbb3b",
+      "blob": "d8269e58b8778e707d202ce4ef322ca5d020a77c"
+    },
+    "components/account/useAccountRegistryWorkflow.ts": {
+      "sha256": "4131963620cd894be5b161f9d32d23901e9cbdec785fc04499a833203973b218",
+      "blob": "b59fd88813204447e0000527d100a3ca9b1dac37"
+    },
+    "lib/traveller/account-registry-workflow.ts": {
+      "sha256": "9a2f4e5006bc74260cb320a50ffd66e1a9f4b8888983dd69cfe3f07042dcaeae",
+      "blob": "612cf4e480e32e4b40d84ae922c08dc0be36d44b"
+    },
+    "lib/traveller/account-registry-copy.ts": {
+      "sha256": "579186a0bb6db998d570837a2a6451d8d3c468b8934745ff0e1489cf8b478ebb",
+      "blob": "ddccb1daf9c933fb593a9fc1f02282952d26a25d"
+    },
+    "lib/traveller/account-registry-workflow.test.ts": {
+      "sha256": "efa9b7cdc9045df14a98c015825736bb1e0d2a6c9e7bc733708be7e0edf44f87",
+      "blob": "f1a92748f6068a7886a83a6f12aa7e8bf29cbc01"
+    },
+    "lib/traveller/account-registry-workflow-ui.test.ts": {
+      "sha256": "3136afd29b01ee1119a354566e8237fdd06345e1e1a1d772676ae6deaa51ab7a",
+      "blob": "c90fa18503fb4001113edc896cec27a3ca37ced5"
+    },
+    "lib/traveller/account-registry-workflow-mounted.ts": {
+      "sha256": "3fd59a0d377fa362113b76d946436d3a0e49e76a4d666c95ddbb27ea589a25d4",
+      "blob": "966af8d4256f57ce64039c53cf1495ce647f1b8d"
+    }
+  },
+  "stdoutTail": " - Unbekannt von A bleibt auf A\n      ---\n      duration_ms: 899.444221\n      type: 'test'\n      ...\n    # Subtest: Schliessen und erneut oeffnen sendet nichts\n    ok 12 - Schliessen und erneut oeffnen sendet nichts\n      ---\n      duration_ms: 765.027156\n      type: 'test'\n      ...\n    # Subtest: veraltete Anerkennung schreibt nicht\n    ok 13 - veraltete Anerkennung schreibt nicht\n      ---\n      duration_ms: 794.302705\n      type: 'test'\n      ...\n    # Subtest: unbekannt A dann B dann keine Anerkennung von A\n    ok 14 - unbekannt A dann B dann keine Anerkennung von A\n      ---\n      duration_ms: 767.970231\n      type: 'test'\n      ...\n    # Subtest: bekannte Wiederholung laesst das alte Unbekannt stehen\n    ok 15 - bekannte Wiederholung laesst das alte Unbekannt stehen\n      ---\n      duration_ms: 773.592159\n      type: 'test'\n      ...\n    # Subtest: Dokument D bleibt von Dokument E getrennt\n    ok 16 - Dokument D bleibt von Dokument E getrennt\n      ---\n      duration_ms: 867.115375\n      type: 'test'\n      ...\n    # Subtest: Staatsbuergerschaft bleibt vom Dokumentformular getrennt\n    ok 17 - Staatsbuergerschaft bleibt vom Dokumentformular getrennt\n      ---\n      duration_ms: 746.260367\n      type: 'test'\n      ...\n    # Subtest: Verschwinden bewegt den Fokus nur aus dem entfernten Ziel\n    ok 18 - Verschwinden bewegt den Fokus nur aus dem entfernten Ziel\n      ---\n      duration_ms: 729.5831\n      type: 'test'\n      ...\n    # Subtest: Lesefehler behaelt den Entwurf\n    ok 19 - Lesefehler behaelt den Entwurf\n      ---\n      duration_ms: 667.44255\n      type: 'test'\n      ...\n    # Subtest: Lesen und spaetere Fehler senden keine Aktion\n    ok 20 - Lesen und spaetere Fehler senden keine Aktion\n      ---\n      duration_ms: 843.346844\n      type: 'test'\n      ...\n    # Subtest: unveraenderte Liste gibt keine weitere Speicherung frei\n    ok 21 - unveraenderte Liste gibt keine weitere Speicherung frei\n      ---\n      duration_ms: 1259.595865\n      type: 'test'\n      ...\n    # Subtest: schmutzige Uebernahme behaelt die Eingabe\n    ok 22 - schmutzige Uebernahme behaelt die Eingabe\n      ---\n      duration_ms: 1276.679948\n      type: 'test'\n      ...\n    # Subtest: saubere Uebernahme entzieht dem alten Abschluss die Oberflaeche\n    ok 23 - saubere Uebernahme entzieht dem alten Abschluss die Oberflaeche\n      ---\n      duration_ms: 1279.280621\n      type: 'test'\n      ...\n    # Subtest: gleiche Bezeichnung waehlt keine Karte\n    ok 24 - gleiche Bezeichnung waehlt keine Karte\n      ---\n      duration_ms: 328.793\n      type: 'test'\n      ...\n    # Subtest: leere Dokumentzuordnung bleibt leer\n    ok 25 - leere Dokumentzuordnung bleibt leer\n      ---\n      duration_ms: 717.533085\n      type: 'test'\n      ...\n    # Subtest: acht Staatsbuergerschaften lassen Aendern und Entfernen\n    ok 26 - acht Staatsbuergerschaften lassen Aendern und Entfernen\n      ---\n      duration_ms: 782.637747\n      type: 'test'\n      ...\n    # Subtest: zwoelf Dokumente lassen das bestehende aendern\n    ok 27 - zwoelf Dokumente lassen das bestehende aendern\n      ---\n      duration_ms: 724.977366\n      type: 'test'\n      ...\n    # Subtest: leer 500 und 503 bleiben unterscheidbar\n    ok 28 - leer 500 und 503 bleiben unterscheidbar\n      ---\n      duration_ms: 271.681593\n      type: 'test'\n      ...\n    # Subtest: Ablehnung zeigt die Meldung\n    ok 29 - Ablehnung zeigt die Meldung\n      ---\n      duration_ms: 650.996187\n      type: 'test'\n      ...\n    # Subtest: Tastatur Escape und Enter\n    ok 30 - Tastatur Escape und Enter\n      ---\n      duration_ms: 788.660467\n      type: 'test'\n      ...\n    # Subtest: schmale Breiten und grosse Schrift\n    ok 31 - schmale Breiten und grosse Schrift\n      ---\n      duration_ms: 686.342532\n      type: 'test'\n      ...\n    1..31\nok 2 - Account-Registry gemountet\n  ---\n  duration_ms: 24120.833844\n  type: 'suite'\n  ...\n1..2\n# tests 33\n# suites 2\n# pass 33\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 24528.028227\n",
+  "stderrTail": ""
+}
