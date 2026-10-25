@@ -722,6 +722,120 @@ describe('mounted traveller snapshot matrix', () => {
     }
   })
 
+  test('a newer draft survives completion of the older save', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-newer-draft',
+      travellers: 1,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'CH' })],
+    })
+    const satz =
+      'Die vorherige Speicherung wurde angenommen. Die späteren Änderungen auf dieser Karte sind davon nicht erfasst und werden nicht von selbst wiederholt.'
+    for (const freigabe of ['null', 'string', 'throw'] as const) {
+      const { page, schliessen } = await oeffnen(browser, bundle, css, { art: 'account', reise })
+      try {
+        await page.waitForFunction(() => window.__MATRIX__)
+        await page.evaluate(() => window.__MATRIX__.verhalten('hold'))
+        const ziel = await wohnsitz(page, 'traveller:1', 'FR')
+        await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+        await page.getByText('Die Angaben werden gespeichert …').waitFor()
+        await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).selectOption('IT')
+        await page.evaluate((wert) => window.__MATRIX__.freigeben(wert), freigabe)
+        if (freigabe === 'null') await page.getByText(satz).waitFor()
+        else await page.getByText('Das Ergebnis ist nicht bekannt. Die Angaben bleiben auf dieser Karte und werden nicht von selbst wiederholt.').waitFor()
+        const phase = await ziel.getAttribute('data-traveller-phase')
+        assert.equal(phase, freigabe === 'null' ? 'idle' : 'unproven')
+        assert.notEqual(phase, 'pending')
+        assert.equal(await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).inputValue(), 'IT')
+        assert.equal(await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).isDisabled(), false)
+        assert.equal(await page.getByText('Die geladenen Angaben haben sich geändert.').count(), 0)
+        assert.equal(await page.evaluate(() => window.__MATRIX__.payloads.length), 1)
+        const payload = await page.evaluate(() => window.__MATRIX__.payloads[0])
+        assert.equal(payload.residenceCountryCode, 'FR')
+        assert.equal(payload.citizenships[0].clientRef, STAATSBUERGERSCHAFT)
+        assert.equal(payload.documents[0].clientRef, 'document:pass-1')
+        assert.equal(payload.documents[0].citizenshipClientRef, STAATSBUERGERSCHAFT)
+        assert.equal(await page.evaluate(() => window.__MATRIX__.refresh()), 0)
+      } finally {
+        await schliessen()
+      }
+    }
+  })
+
+  test('a removal confirmation opened during a save survives the older result', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-newer-confirm',
+      travellers: 1,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'CH' })],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, { art: 'account', reise })
+    try {
+      await page.waitForFunction(() => window.__MATRIX__)
+      await page.evaluate(() => window.__MATRIX__.verhalten('hold'))
+      const ziel = await karte(page, 'traveller:1')
+      await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await page.getByText('Die Angaben werden gespeichert …').waitFor()
+      await ziel.getByRole('button', { name: 'Angaben entfernen', exact: true }).click()
+      await page.getByRole('button', { name: 'Entfernen bestätigen', exact: true }).waitFor()
+      await page.evaluate(() => window.__MATRIX__.freigeben('null'))
+      await page.waitForTimeout(50)
+      assert.equal(await page.getByRole('button', { name: 'Entfernen bestätigen', exact: true }).count(), 1)
+      assert.equal(await ziel.getAttribute('data-traveller-phase'), 'confirm_remove')
+      assert.equal(await page.getByText('Die Angaben wurden zum Speichern angenommen.').count(), 0)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.payloads.length), 1)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.entfernen.length), 0)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.refresh()), 0)
+    } finally {
+      await schliessen()
+    }
+  })
+
+  test('a matching readback of an edited save is consistent and a later edit stays distinct', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-matching-readback',
+      travellers: 1,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'CH' })],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, { art: 'account', reise })
+    try {
+      await page.waitForFunction(() => window.__MATRIX__)
+      await page.evaluate(() => window.__MATRIX__.verhalten('null'))
+      const ziel = await wohnsitz(page, 'traveller:1', 'FR')
+      await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await page.getByText('Die Angaben wurden zum Speichern angenommen.').waitFor()
+      assert.equal(await page.getByText('Die geladenen Angaben haben sich geändert.').count(), 0)
+      const frankreich = beispielreise({
+        ...reise,
+        party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'FR' })],
+      })
+      await page.evaluate((wert) => window.__MATRIX__.kanonischSetzen(wert), frankreich)
+      await page.getByText('Die geladenen Angaben stimmen mit der letzten Speicherung überein.').waitFor()
+      assert.equal(await ziel.getAttribute('data-traveller-phase'), 'consistent')
+      assert.equal(await page.getByText('Die geladenen Angaben haben sich geändert.').count(), 0)
+      assert.equal(await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).isDisabled(), false)
+      assert.equal(await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).inputValue(), 'FR')
+      assert.equal(await page.evaluate(() => window.__MATRIX__.payloads.length), 1)
+      const payload = await page.evaluate(() => window.__MATRIX__.payloads[0])
+      assert.equal(payload.residenceCountryCode, 'FR')
+      assert.equal(payload.citizenships[0].clientRef, STAATSBUERGERSCHAFT)
+      assert.equal(payload.citizenships[0].countryCode, 'CH')
+      assert.equal(payload.documents[0].clientRef, 'document:pass-1')
+      assert.equal(payload.documents[0].citizenshipClientRef, STAATSBUERGERSCHAFT)
+      await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).selectOption('IT')
+      assert.equal(await page.getByText('Die geladenen Angaben stimmen mit der letzten Speicherung überein.').count(), 0)
+      const deutschland = beispielreise({
+        ...reise,
+        party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'DE' })],
+      })
+      await page.evaluate((wert) => window.__MATRIX__.kanonischSetzen(wert), deutschland)
+      await page.getByText('Die geladenen Angaben haben sich geändert.').waitFor()
+      assert.equal(await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).inputValue(), 'IT')
+      assert.equal(await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).isDisabled(), true)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.payloads.length), 1)
+    } finally {
+      await schliessen()
+    }
+  })
+
   test('project css keeps the open traveller states inside the viewport', { timeout: 180_000 }, async () => {
     const lang = 'Reisende mit einem sehr langen Anzeigenamen der in der schmalen Karte umbrechen muss'
     const reise = beispielreise({

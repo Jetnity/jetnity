@@ -140,10 +140,22 @@ function beobachte(ledger: Ledger, reise: Trip): Ledger {
   const plaetze = travellerSlots(reise)
   const drafts = { ...ledger.drafts }
   for (const platz of plaetze) {
-    drafts[platz.clientRef] = lieferungAnwenden(drafts[platz.clientRef] ?? null, platz.traveller, {
-      clientRef: platz.clientRef,
-      label: platz.label,
-    })
+    const bisher = drafts[platz.clientRef] ?? null
+    const intent = ledger.intents[platz.clientRef]
+    const anerkannt =
+      intent &&
+      bisher &&
+      bisher.generation === intent.draftGeneration &&
+      (intent.phase === 'accepted' || intent.phase === 'consistent')
+        ? intent.submittedFingerprint
+        : null
+    drafts[platz.clientRef] = lieferungAnwenden(
+      bisher,
+      platz.traveller,
+      { clientRef: platz.clientRef, label: platz.label },
+      undefined,
+      anerkannt,
+    )
   }
   const delivery = ledger.delivery + 1
   const intents = { ...ledger.intents }
@@ -246,11 +258,20 @@ export function useTripTravellerSnapshotLifecycle({
       const aktuell = bestand.current
       const entwurf = aktuell.drafts[clientRef]
       if (!entwurf || aktuell.tripId !== tripRef.current) return
+      const naechster = aendern(entwurf)
+      const intent = aktuell.intents[clientRef]
+      const gelesen = intent && (intent.phase === 'accepted' || intent.phase === 'consistent') && naechster.generation !== entwurf.generation
       commit({
         ...aktuell,
         interaction: aktuell.interaction + 1,
         focusTarget: null,
-        drafts: { ...aktuell.drafts, [clientRef]: aendern(entwurf) },
+        drafts: { ...aktuell.drafts, [clientRef]: naechster },
+        intents: gelesen
+          ? {
+              ...aktuell.intents,
+              [clientRef]: { ...intent, phase: 'idle', satz: '', readbackAfterDelivery: null, submittedFingerprint: null },
+            }
+          : aktuell.intents,
       })
     },
     [commit],
@@ -277,11 +298,83 @@ export function useTripTravellerSnapshotLifecycle({
       const entwurf = nachher.drafts[target]
       const belegt = belegungLoesen(nachher.belegt, schluessel)
       const fokus = nachher.interaction === interaction ? target : null
-      if (!entwurf || entwurf.generation !== draftGeneration) {
-        commit({ ...nachher, belegt, focusTarget: null })
+      const art = wert === null ? 'null' : typeof wert === 'string' ? klasseVon(wert) : 'malformed'
+      const intent = nachher.intents[target]
+      const dieseOperation = intent?.phase === 'pending' && intent.draftGeneration === draftGeneration
+      if (!dieseOperation) {
+        const guestBlocked = seamRef.current === 'guest' && writerEntered && art !== 'null'
+        commit({
+          ...nachher,
+          belegt,
+          focusTarget: null,
+          guestUnresolved: guestBlocked ? true : nachher.guestUnresolved,
+          intents:
+            guestBlocked && intent
+              ? { ...nachher.intents, [target]: { ...intent, guestBlocked: true } }
+              : nachher.intents,
+        })
         return
       }
-      const art = wert === null ? 'null' : typeof wert === 'string' ? klasseVon(wert) : 'malformed'
+      if (!entwurf || entwurf.generation !== draftGeneration) {
+        if (art === 'null' && writerEntered) {
+          commit({
+            ...nachher,
+            belegt,
+            intents: {
+              ...nachher.intents,
+              [target]: {
+                phase: 'idle',
+                satz: 'Die vorherige Speicherung wurde angenommen. Die späteren Änderungen auf dieser Karte sind davon nicht erfasst und werden nicht von selbst wiederholt.',
+                draftGeneration: entwurf?.generation ?? draftGeneration,
+                readbackAfterDelivery: null,
+                submittedFingerprint: null,
+                refresh: 'none',
+                guestBlocked: false,
+              },
+            },
+            focusTarget: null,
+          })
+          return
+        }
+        if (!writerEntered) {
+          commit({
+            ...nachher,
+            belegt,
+            intents: {
+              ...nachher.intents,
+              [target]: {
+                ...(intent ?? LEERES_INTENT),
+                phase: 'not_sent',
+                satz: 'Diese Angaben können so nicht gespeichert werden.',
+                draftGeneration: entwurf?.generation ?? draftGeneration,
+                guestBlocked: false,
+              },
+            },
+            focusTarget: null,
+          })
+          return
+        }
+        const guestBlocked = seamRef.current === 'guest'
+        commit({
+          ...nachher,
+          belegt,
+          guestUnresolved: guestBlocked ? true : nachher.guestUnresolved,
+          intents: {
+            ...nachher.intents,
+            [target]: {
+              ...(intent ?? LEERES_INTENT),
+              phase: 'unproven',
+              satz: guestBlocked
+                ? 'Das Ergebnis ist nicht bekannt. Die Angaben bleiben auf dieser Karte und werden nicht von selbst wiederholt. Eine weitere Speicherung oder Entfernung bleibt blockiert, bis die gespeicherte Reise geladen wurde.'
+                : 'Das Ergebnis ist nicht bekannt. Die Angaben bleiben auf dieser Karte und werden nicht von selbst wiederholt.',
+              draftGeneration: entwurf?.generation ?? draftGeneration,
+              guestBlocked,
+            },
+          },
+          focusTarget: null,
+        })
+        return
+      }
       if (!writerEntered || art === 'null') {
         if (art === 'null' && writerEntered) {
           const delivery = nachher.delivery

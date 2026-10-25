@@ -440,6 +440,7 @@ export function lieferungAnwenden(
   traveller: TripTraveller | null,
   platz: { clientRef: string; label: string | null },
   zufall?: Zufall,
+  anerkannt?: string | null,
 ): TravellerDraft {
   if (!traveller) {
     if (!entwurf) return leererEntwurf(platz.clientRef, platz.label, zufall)
@@ -448,6 +449,15 @@ export function lieferungAnwenden(
   const fingerprint = fingerprintTraveller(traveller)
   if (!entwurf) return entwurfAusVorhanden(traveller, zufall)
   if (entwurf.reentry) return { ...entwurf, membership: 'present' }
+  if (anerkannt && fingerprint === anerkannt) {
+    return {
+      ...entwurf,
+      membership: 'present',
+      conflict: false,
+      dirty: false,
+      baselineFingerprint: fingerprint,
+    }
+  }
   if (!entwurf.dirty && !entwurf.conflict && fingerprint !== entwurf.baselineFingerprint) {
     return { ...entwurfAusVorhanden(traveller, zufall), generation: entwurf.generation + 1 }
   }
@@ -505,8 +515,8 @@ export function readbackUrteil(eingabe: {
 }): 'ignored' | 'consistent' | 'differs' | 'stale' {
   if (eingabe.draftGeneration !== eingabe.intentGeneration) return 'stale'
   if (eingabe.delivery <= eingabe.readbackAfterDelivery) return 'ignored'
-  if (eingabe.draftDirty) return 'differs'
   if (eingabe.membership === 'present' && eingabe.fingerprint === eingabe.submittedFingerprint) return 'consistent'
+  if (eingabe.draftDirty) return 'differs'
   return 'differs'
 }
 

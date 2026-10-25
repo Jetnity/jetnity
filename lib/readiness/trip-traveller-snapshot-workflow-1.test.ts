@@ -286,6 +286,91 @@ describe('trip traveller snapshot observation and admission', () => {
       }),
       'stale',
     )
+    assert.equal(
+      readbackUrteil({
+        readbackAfterDelivery: 4,
+        submittedFingerprint: fingerprint,
+        intentGeneration: 2,
+        draftGeneration: 2,
+        draftDirty: true,
+        delivery: 4,
+        membership: 'present',
+        fingerprint,
+      }),
+      'ignored',
+    )
+    assert.equal(
+      readbackUrteil({
+        readbackAfterDelivery: 4,
+        submittedFingerprint: fingerprint,
+        intentGeneration: 2,
+        draftGeneration: 2,
+        draftDirty: true,
+        delivery: 5,
+        membership: 'present',
+        fingerprint,
+      }),
+      'consistent',
+    )
+    assert.equal(
+      readbackUrteil({
+        readbackAfterDelivery: 4,
+        submittedFingerprint: fingerprint,
+        intentGeneration: 2,
+        draftGeneration: 2,
+        draftDirty: true,
+        delivery: 5,
+        membership: 'present',
+        fingerprint: 'anders',
+      }),
+      'differs',
+    )
+  })
+
+  test('an acknowledged fingerprint adopts the dirty draft without minting child refs', () => {
+    const platz = { clientRef: 'traveller:1', label: 'Reisende 1' }
+    const basis = entwurfAusVorhanden(person())
+    const frankreich = person({ residenceCountryCode: 'FR' })
+    const anerkannt = entwurfAusVorhanden(frankreich).baselineFingerprint
+    const entwurf = wohnsitzSetzen(basis, 'FR')
+    const staatsbuergerschaften = entwurf.citizenships.map((zeile) => zeile.clientRef)
+    const dokumente = entwurf.documents.map((zeile) => ({
+      clientRef: zeile.clientRef,
+      citizenshipClientRef: zeile.citizenshipClientRef,
+    }))
+    const ohne = lieferungAnwenden(entwurf, frankreich, platz)
+    assert.equal(ohne.conflict, true)
+    assert.equal(ohne.dirty, true)
+    assert.equal(ohne.residenceCountryCode, 'FR')
+    assert.deepEqual(ohne.citizenships.map((zeile) => zeile.clientRef), staatsbuergerschaften)
+
+    const italien = wohnsitzSetzen(basis, 'IT')
+    const abweichung = lieferungAnwenden(italien, frankreich, platz)
+    assert.equal(abweichung.conflict, true)
+    assert.equal(abweichung.residenceCountryCode, 'IT')
+    assert.deepEqual(abweichung.citizenships.map((zeile) => zeile.clientRef), staatsbuergerschaften)
+    assert.deepEqual(
+      abweichung.documents.map((zeile) => ({
+        clientRef: zeile.clientRef,
+        citizenshipClientRef: zeile.citizenshipClientRef,
+      })),
+      dokumente,
+    )
+
+    const uebernommen = lieferungAnwenden(entwurf, frankreich, platz, undefined, anerkannt)
+    assert.equal(uebernommen.conflict, false)
+    assert.equal(uebernommen.dirty, false)
+    assert.equal(uebernommen.baselineFingerprint, anerkannt)
+    assert.equal(uebernommen.generation, entwurf.generation)
+    assert.equal(uebernommen.residenceCountryCode, 'FR')
+    assert.deepEqual(uebernommen.citizenships.map((zeile) => zeile.clientRef), staatsbuergerschaften)
+    assert.deepEqual(
+      uebernommen.documents.map((zeile) => ({
+        clientRef: zeile.clientRef,
+        citizenshipClientRef: zeile.citizenshipClientRef,
+      })),
+      dokumente,
+    )
   })
 
   test('guest admission does not replay and only an explicit same-trip read re-arms', () => {
