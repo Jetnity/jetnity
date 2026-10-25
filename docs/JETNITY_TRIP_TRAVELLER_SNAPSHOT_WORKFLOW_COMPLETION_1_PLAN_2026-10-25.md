@@ -1,8 +1,8 @@
 # Jetnity Trip Traveller Snapshot Workflow Completion 1 — PLAN
 
-Date: 2026-10-25. Revision R2 of the plan for immutable TASK V1. This commit replaces only this file. TASK V1 stays byte-identical. No product code, test, script, or evidence is included.
+Date: 2026-10-25. Revision R3 of the plan for immutable TASK V1. This commit replaces only this file. TASK V1 stays byte-identical. No product code, test, script, or evidence is included.
 
-Reviewed R1 head `a13bc1684a45a7fcf23fd265b49414d3f5196027`, tree `cf622a8535f3a5b144d3b1418d3a71d72e5e6e12`, plan blob `f34f53ae5e1368adff79c4711e7d45fa4a42ed5a`. Technical-Lead review R2 keeps T-R1.1 through T-R1.6 and T-EX1, and requires T-R2.1 through T-R2.3. P1 remains OPEN. This session stops again for a full plan re-review. The new head and plan blob are in the session reply, not in this file.
+Reviewed R2 head `0c7beb27baed3a2b6d308c5a28af359e80c7b335`, tree `07c56c280602566bf8ba095caae0411e30c596c2`, plan blob `d86eda78eb0b50f955249611d9b90cc46fea32c3`. Technical-Lead review R3 accepts T-R2.1 and T-R2.3. The unresolved-guest latch stays. T-R3.1 separates that latch from the usable-graph base. T-EX1 is unchanged. P1 remains OPEN. This session stops again for a full plan re-review. The new head and plan blob are in the session reply, not in this file.
 
 | Review id | Where this revision answers it |
 | --- | --- |
@@ -15,7 +15,8 @@ Reviewed R1 head `a13bc1684a45a7fcf23fd265b49414d3f5196027`, tree `cf622a8535f3a
 | T-R2.1 | §6.1 exact-ref preflight; no trim, cut, fallback, or collision collapse |
 | T-R2.2 | §6.3 unresolved guest graph stays blocked until an explicit same-trip read |
 | T-R2.3 | §6.4 the legacy node's existing `onUebernehmen` is the one captured writer |
-| T-EX1 | §8 accepted for implementation only after a later explicit PLAN PASS; unchanged by R2 |
+| T-R3.1 | §6.3 usable base tracks the latest adopted same-trip graph; unresolved latch does not |
+| T-EX1 | §8 accepted for implementation only after a later explicit PLAN PASS; unchanged by R3 |
 
 ## 1. Identity
 
@@ -26,7 +27,7 @@ Reviewed R1 head `a13bc1684a45a7fcf23fd265b49414d3f5196027`, tree `cf622a8535f3a
 | Actual `originalModelName` | `grok-4.7-high-fast` |
 | Session | https://cursor.com/agents/bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0 |
 | Session id | `bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0` |
-| UI rename | The rename tool returned the title `Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1` for this `bcId`. The R2 run-info read the same `bcId`, the same title, and `originalModelName` `grok-4.7-high-fast`. That is this session's tool result. It is not an independent Technical-Lead observation of the agents list. |
+| UI rename | The rename tool returned the title `Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1` for this `bcId`. The R3 run-info read the same `bcId`, the same title, and `originalModelName` `grok-4.7-high-fast`. That is this session's tool result. It is not an independent Technical-Lead observation of the agents list. |
 | Branch | `feat/r107-trip-traveller-snapshot-workflow-1` |
 | Draft PR | #1017 |
 | Tracking | #1012 |
@@ -46,12 +47,12 @@ The requested model is the attested runtime model from this same run. This revis
 | `origin/main` | `a74c443c6be3f064f150fcf021ab6154bda325e5` |
 | `origin/main` tree | `c1fe5a50b0da710ef425674057f782b1dff6f8bc` |
 | Seed head | `25d70d62d78cc44bf96d15c261ca566f03ec1268` |
-| Reviewed R1 head | `a13bc1684a45a7fcf23fd265b49414d3f5196027` |
-| Reviewed R1 tree | `cf622a8535f3a5b144d3b1418d3a71d72e5e6e12` |
-| Reviewed R1 plan blob | `f34f53ae5e1368adff79c4711e7d45fa4a42ed5a` |
+| Reviewed R2 head | `0c7beb27baed3a2b6d308c5a28af359e80c7b335` |
+| Reviewed R2 tree | `07c56c280602566bf8ba095caae0411e30c596c2` |
+| Reviewed R2 plan blob | `d86eda78eb0b50f955249611d9b90cc46fea32c3` |
 | Seed parent / merge-base | `a74c443c6be3f064f150fcf021ab6154bda325e5` |
 | TASK blob | `75c59b0851d835560ff4b5562e9fcc52c395b2ad` |
-| Ahead / behind before this revision | 3 ahead / 0 behind |
+| Ahead / behind before this revision | 4 ahead / 0 behind |
 | Operating-mode blob | `1912bf56751a940acc56fad84e2bf9e6a174e0fa` |
 | Diff before this revision | TASK plus the reviewed plan only |
 
@@ -174,7 +175,7 @@ If the canonical trip no longer has a slot for that ref at all, the draft is not
 
 Observation of a write starts only at settlement. When the callback returns `null`, the intent records `readbackAfterDelivery` as the current delivery number. A delivery whose number is less than or equal to that value is pre-settlement for this intent, even if its fields match the submitted snapshot. It does not move the intent to `consistent`. Only a later delivery may be compared. A match of membership `present` plus every submitted field on that later delivery is `consistent`. That word means the loaded slot supports the submitted snapshot. It does not mean the click caused the row, that the write happened once, or that the delivery is fresh. A later delivery that differs, while the draft generation is still the submitted one and the draft is clean, shows that the loaded slot differs and does not mark `consistent`. A dirty draft is kept, and a stale submission stays blocked until the explicit conflict choice above. A newer draft generation ignores stale success, stale error, and stale completion.
 
-### 6.3 Slot save, remove, and guest admission (T-R1.2, T-R1.4, T-R2.2)
+### 6.3 Slot save, remove, and guest admission (T-R1.2, T-R1.4, T-R2.2, T-R3.1)
 
 Each intent records `tripId`, traveller `clientRef`, draft generation, and operation generation. Serialization of the payload and the writer invocation sit in one synchronous try/catch/finally owned by the hook. The ref records the occupied key before any `await` and before the writer function is entered. `writerEntered` stays false until that function is actually called.
 
@@ -186,14 +187,17 @@ Account and guest do not share one concurrency rule.
 - **Account, different targets.** Another slot may have its own in-flight save or remove. `travellerSetzen` submits one traveller, and `party_schreiben` upserts that `client_ref` without deleting the other party rows. This UI does not add an account-wide queue. It also does not claim that two account writes are one transaction.
 - **Guest, any other traveller target.** The occupy key is the trip, not the slot. `gastTravellerSetzen` and `gastTravellerEntfernen` serialize the entire supplied trip. While one guest traveller save or remove is in flight, a save or remove for a different slot does not call the writer. That attempt is `not_sent` only on the clicked target. The visible sentence is that another save or removal for this trip is still finishing. The clicked draft stays. The payload is not queued and is not submitted when the first write settles. A later explicit click is a new intent.
 
-Guest settled-trip ref, inside allowlisted `GastArbeitsbereich` only. The frozen `gastreiseSpeichern`, `schreibenVersuch`, `schreibenMuss`, and `aktiveV3GastreiseLesen` functions stay unchanged. No new storage query is added.
+Guest traveller base, inside allowlisted `GastArbeitsbereich` only. The frozen `gastreiseSpeichern`, `schreibenVersuch`, `schreibenMuss`, `aktiveV3GastreiseLesen`, and `gastPlanpunktAnlegen` functions stay unchanged. No new storage query is added, and no other guest mutation changes what it writes.
 
-- The adapter keeps a ref of the latest known-safe guest trip. Traveller callbacks read that ref. They do not close over the render `reise`.
-- The ref is replaced only in two cases. A traveller callback returned `null`: the ref becomes the trip object returned by `gastTravellerSetzen` or `gastTravellerEntfernen`, and that same object is what `setReise` receives. Or the explicit reconciliation below returned `{ art: 'success', reise }` for this same `tripId`.
-- A string, throw, rejection, or malformed fulfillment after the traveller writer was entered does not replace the ref. `schreibenVersuch` can already have executed `localStorage.setItem` before the readback fails and `schreibenMuss` throws. The hook records the trip as `unresolved`. Releasing the in-flight occupy is not re-arming. Save and remove for every slot on that trip stay blocked. The second attempt is `not_sent` on the clicked target, its draft and message stay, and its payload is not stored for later.
-- Reconciliation is one explicit control on the affected trip. It calls the existing `onReadinessAktualisieren` path, which already calls `aktiveV3GastreiseLesen(tripId)` and does not write. Only `art === 'success'` with `reise.id === tripId` replaces the ref, clears `unresolved`, and allows a later deliberate traveller click. `missing`, `invalid`, `unreadable`, `wrong_trip`, a throw, or a success for another id leaves the latch closed and leaves the ref unchanged. The read does not submit a draft. Returning to Vorbereitung does not call it, and neither that return nor this read replays a payload.
-- A later deliberate save or remove, after that successful read, uses the ref from the read. The proof requires that this graph still contains the first write's effect.
-- Other guest operations are not placed behind this latch and are not proved atomic with it. Cross-tab `localStorage` atomicity stays unproved and out of scope. Account `unproven` does not use this latch, because `party_schreiben` upserts the submitted traveller and does not replace the whole party from the React graph.
+Two rules stay separate.
+
+**While the guest graph is usable,** the traveller base is the latest same-trip graph this adapter has successfully adopted. `GastArbeitsbereich` keeps that base in one ref. One local function, `gleicheReiseUebernehmen(graph)`, is the only assignment of the ref in this state. It assigns only when `graph.id` is this trip. Every existing successful adoption calls it with the same object it passes to `setReise`, synchronously, before that callback returns. That includes the initial matching load, `gastPlanpunktAnlegen` at lines 104–108, the other current guest writer returns, `onGespeichert`, a traveller callback that returned `null`, and a successful `onReadinessAktualisieren` read. `setReise(null)` does not become the base. Traveller save and remove read the ref. They do not close over the render `reise`. A plan point added as graph G1 is therefore still in the graph passed to the later traveller writer. This function does not change the plan-point, booking, readiness, or route mutation itself.
+
+**Once an entered traveller write makes the graph `unresolved`,** ordinary prop deliveries and other guest successes do not clear that latch and do not replace the base. `schreibenVersuch` can already have executed `localStorage.setItem` before the readback fails and `schreibenMuss` throws. The adapter sets its unresolved flag synchronously before it returns the string, throw message, or malformed result, and it does not assign the ref from that attempt. `gleicheReiseUebernehmen` still calls `setReise` for a later plan-point or other guest success, so that operation's own result remains visible, but it skips the ref assignment while the flag is set. A changed `reise` prop inside `TripWorkspace` is not reconciliation. The hook records `unresolved` from the traveller result and does not invoke another traveller writer. Releasing the in-flight occupy is not re-arming. The second attempt is `not_sent` on the clicked target, its draft and message stay, and its payload is not stored for later. If a traveller callback is entered while the flag is set, it returns without calling `gastTravellerSetzen` or `gastTravellerEntfernen`.
+
+The only re-arm is the explicit control on the affected trip. It calls the existing `onReadinessAktualisieren` path, which already calls `aktiveV3GastreiseLesen(tripId)` and does not write. The hook then calls one optional adapter callback, `onGuestGraphUebernehmen`, only when that explicit result is `{ art: 'success', reise }` and `reise.id` is this trip. That callback assigns the ref, clears the adapter flag, and calls `setReise` with that read. The hook clears its own latch only after that assignment. `missing`, `invalid`, `unreadable`, `wrong_trip`, a throw, or a success for another id leaves both latches closed and leaves the ref unchanged. Any other completion of the same read, including the refresh after an `accepted` traveller write and a readiness refresh, uses `gleicheReiseUebernehmen` and therefore cannot clear an unresolved latch. The read does not submit a draft. Returning to Vorbereitung does not call the explicit control, and neither that return nor the read replays a payload.
+
+A later deliberate save or remove, after that successful explicit read, uses the ref from the read. The proof requires that this graph still contains the first write's effect. Other guest operations are not placed behind the latch and are not proved atomic with a traveller write that is in flight or unresolved. Their successful result must not re-arm traveller save or remove. Cross-tab `localStorage` atomicity stays unproved and out of scope. Account `unproven` does not use this latch, because `party_schreiben` upserts the submitted traveller and does not replace the whole party from the React graph.
 
 Enter in the save form submits that form only. The remove control stays `type="button"` outside the save form. Remove asks for a named confirmation first. The copy names the slot label and says this deletes the saved details for this trip slot, the headcount stays, the empty slot remains, and an Account Registry person is not deleted. Cancel focuses the remove button and does not call the writer. Confirm sends the existing remove callback for that `clientRef` only. There is no `window.confirm`.
 
@@ -252,10 +256,10 @@ Implementation, after a later explicit PLAN PASS, may change only:
 | --- | --- |
 | `components/trips/Reisevorbereitung.tsx` | Traveller-card composition only. The card renders ledger state. Official and personal sections stay. |
 | `components/trips/RegistryReiseUebernahme.tsx` | Controlled intake when `steuerung` is present. Register the received `onUebernehmen` on the one controller. Existing copy keys stay. No second outcome ledger and no replacement writer. |
-| `components/trips/TripWorkspace.tsx` | Mount the new hook. Pass canonical observation and the render prop. For a leftover node, `cloneElement` adds the controller and `tripId` and keeps that node's `onUebernehmen`. No mode, plan, or personal-preparation rewrite. |
+| `components/trips/TripWorkspace.tsx` | Mount the new hook. Pass canonical observation, the render prop, and optional `onGuestGraphUebernehmen`. For a leftover node, `cloneElement` adds the controller and `tripId` and keeps that node's `onUebernehmen`. No mode, plan, or personal-preparation rewrite. A `reise` prop change does not clear the guest unresolved latch. |
 | `components/trips/useTripTravellerSnapshotLifecycle.ts` | New. React adapter: synchronous occupy, serialization and invocation in one try/catch/finally, one refresh after `accepted`, frozen callbacks. |
 | `components/trips/KontoArbeitsbereich.tsx` | Pass `registrySteuerung`. Split traveller and intake write from refresh. The intake writer receives the captured `{ tripId, registryTravellerId }`. Keep `registryTripUebernahmeGesperrt(reise)`, `registryTravellerInReiseUebernehmen`, and `router.refresh()` in this file. Keep the raw `serverReise` canonical prop. |
-| `components/trips/GastArbeitsbereich.tsx` | Safe-trip ref for traveller save/remove. Update it only on `null` or on an explicit successful same-trip read. Split that read from the write. No registry UI. No new storage API. |
+| `components/trips/GastArbeitsbereich.tsx` | `gleicheReiseUebernehmen` tracks the latest adopted same-trip graph while usable, including `gastPlanpunktAnlegen`. While unresolved, those adoptions do not move the traveller base or clear the latch. `onGuestGraphUebernehmen` clears it only after the explicit same-trip read. No registry UI. No new storage API. No change to other mutation semantics. |
 | `lib/readiness/trip-traveller-snapshot-workflow-1.ts` | New. Pure draft, final-emitted-graph, membership, conflict, and intent rules. No React, router, or server action. |
 | `lib/readiness/trip-traveller-snapshot-workflow-1.test.ts` | New. Pure cases, included by the existing `lib/**/*.test.ts` test script. |
 | `lib/traveller/account-registry-trip-copy.ts` | The new intake sentences only. |
@@ -313,8 +317,10 @@ No `package.json` exception is requested. `npm test` already loads `lib/**/*.tes
 | Blank untouched new document row plus a residence edit | blank row omitted | one save | success copy does not claim that blank row was stored |
 | Double Enter or save while remove is in flight, same slot | second intent `not_sent` | one | one pending region; the second payload is not replayed |
 | Account, two slots | independent intents | one each | one `unproven` result does not clear the other |
-| Guest, rapid save/save or save/remove on two slots, first result `null` | trip occupy | the first call only | the second is `not_sent`; a later explicit click uses the returned trip |
+| Guest, rapid save/save or save/remove on two slots, first result `null` | trip occupy | the first call only | the second is `not_sent`; a later explicit click uses the adopted base |
+| Guest plan point added, graph still usable, then a traveller save | base is that adopted graph | one traveller save | the submitted graph still contains the added point |
 | Guest, first write returns a string after a possible `setItem`, then another slot saves or removes | graph `unresolved` | the first call only | the second writer is not called; the old ref is not written back |
+| Guest unresolved, then another guest operation succeeds | latch stays closed; base unchanged | zero traveller writes | that success does not re-arm save or remove |
 | Guest explicit read succeeds for this trip after that string | ref becomes the read trip; latch clears | zero during the read | no draft is submitted; a later deliberate write still contains the first effect |
 | Guest explicit read is missing, invalid, unreadable, wrong-trip, or thrown | latch stays closed | zero | traveller writes stay blocked |
 | Section return while the guest graph is unresolved | latch and drafts kept | zero | no read and no replay |
@@ -370,7 +376,7 @@ Pure tests in `lib/readiness/trip-traveller-snapshot-workflow-1.test.ts`, run by
 - Field match with membership `absent` is not a clean empty draft. Explicit re-entry is a new generation. Keep-my-edits does not authorize a save after membership loss.
 - A canonical delivery at or before settlement does not become `consistent`. A later delivery with the same membership and fields does. A dirty draft still requires Neu laden or Meine Eingaben behalten before submit.
 - Double save, account different-slot independence, guest second-slot admission `not_sent` without a stored replay payload, string after a possible write, synchronous throw, rejection, malformed fulfillment, stale completion, accepted-then-refresh-throw, and intake with two same-label ids. The pure tests drive the decision function twice without waiting for React.
-- Guest decision: after a non-null result the trip stays unresolved, a second-slot save or remove does not produce a writer call, a failed or mismatched read does not clear the latch, and a successful same-trip read clears it without a stored payload. The legacy writer registry invokes the supplied function once and does not replace it.
+- Guest decision: after a non-null result the trip stays unresolved, a second-slot save or remove does not produce a writer call, a failed or mismatched read does not clear the latch, and only the explicit successful same-trip read clears it without a stored payload. While usable, an adopted plan-point graph is the next traveller base. While unresolved, another adopted guest graph is not. The legacy writer registry invokes the supplied function once and does not replace it.
 
 ### 10.3 Mounted workspace, controller, and CSS
 
@@ -383,7 +389,8 @@ The harness follows the existing esbuild-plus-Playwright page used by `scripts/t
 - The GREEN residence-only case from §10.1, plus a pointer click on the same button.
 - Legacy refs, two citizenships, two documents, citizenship removal, relation selection, the blank-country-linked-document case, and invalid or duplicate input through the real controls.
 - Double Enter; guest rapid different-slot save/save and save/remove after a `null` return, asserting the first update is still in the stored graph and the second click did not write a stale payload; synchronous throw; rejected promise; malformed return; stale completion.
-- Guest `setItem` succeeds and the following readback fails, so the first callback returns a string. A second-slot save and a second-slot remove are then attempted. Neither calls the writer. An explicit read that is `unreadable`, `invalid`, `missing`, or `wrong_trip` leaves those controls blocked. A following explicit read of `{ art: 'success' }` for this trip does not submit a draft. The next deliberate second-slot save uses that read's graph and still contains the first effect. Leaving and reopening Vorbereitung does not read and does not submit.
+- While the guest graph is usable, add a plan point through the existing control, then save a traveller. The traveller writer receives the graph that contains that point.
+- Guest `setItem` succeeds and the following readback fails, so the first callback returns a string. A second-slot save and a second-slot remove are then attempted. Neither calls the writer. A following successful plan-point add does not re-arm those controls and does not replace the traveller base. An explicit read that is `unreadable`, `invalid`, `missing`, or `wrong_trip` leaves them blocked. A following explicit read of `{ art: 'success' }` for this trip does not submit a draft. The next deliberate second-slot save uses that read's graph and still contains the first effect. Leaving and reopening Vorbereitung does not read and does not submit. A `reise` prop change alone does not clear the latch.
 - Saved blank `traveller:1` removed into a placeholder: save stays disabled, keep-my-edits does not write, and only the explicit re-entry control enables a later create.
 - A canonical delivery that arrives before settlement and matches the payload does not show the consistent sentence. A delivery after settlement may.
 - Intake of two same-label sources, `voll` changing before resolve, list `problem`, `travellers == null`, empty list, `accepted` before the next props, string and thrown intake with no automatic second materialization, navigation to Reiseplan and back, and a full unmount that does not restore or replay the intent.
@@ -400,12 +407,12 @@ Also run, and record honestly: the existing traveller, registry materialization/
 
 No new dependency, provider, paid call, secret, migration, RLS change, or Auth change. No new recurring cost. The USD 100 monthly boundary is unchanged. Prelaunch and `noindex` stay.
 
-The editor still sends only the existing label, residence, citizenship country, document type, issuer, expiry, and refs. It does not add a passport number, MRZ, biometric, or health field. Service role is not used. The integrity fix is that an unrelated residence edit no longer drops a document relation, a dangling relation to an omitted blank row is rejected before the writer, a ref the frozen reader would trim, cut, or replace is rejected unchanged, an uncertain guest graph is not used as the next whole-trip write, and an uncertain registry intake is not repeated into a second fresh snapshot.
+The editor still sends only the existing label, residence, citizenship country, document type, issuer, expiry, and refs. It does not add a passport number, MRZ, biometric, or health field. Service role is not used. The integrity fix is that an unrelated residence edit no longer drops a document relation, a dangling relation to an omitted blank row is rejected before the writer, a ref the frozen reader would trim, cut, or replace is rejected unchanged, a usable guest traveller write keeps the latest adopted same-trip graph, an uncertain guest graph is not used as the next whole-trip write, and an uncertain registry intake is not repeated into a second fresh snapshot.
 
-Not proved by this lane, even after the planned tests: hosted readback, SQL, RLS, Production data, a causal link between a `null` action result and a later prop, exactly-once writes, commit certainty of a string or a throw, guest cross-tab atomicity, atomicity between a traveller write and a different guest writer, recovery after the workspace unmounts, native device or screen-reader behavior, and the frozen `travellerLegacyLesen` drop when some other caller bypasses this UI. A schema or versioned-mutation change is not required for the UI repair. If implementation finds that a correct save cannot be expressed with the current payload, it stops at that boundary instead of editing `schema.ts` or the RPCs.
+Not proved by this lane, even after the planned tests: hosted readback, SQL, RLS, Production data, a causal link between a `null` action result and a later prop, exactly-once writes, commit certainty of a string or a throw, guest cross-tab atomicity, atomicity between an in-flight or unresolved traveller write and a different guest writer, recovery after the workspace unmounts, native device or screen-reader behavior, and the frozen `travellerLegacyLesen` drop when some other caller bypasses this UI. A sequential plan-point add followed by a traveller save, while the guest graph is usable, is in scope. A schema or versioned-mutation change is not required for the UI repair. If implementation finds that a correct save cannot be expressed with the current payload, it stops at that boundary instead of editing `schema.ts` or the RPCs.
 
 #985/#982 and #917 stay STOP/HOLD with no alternate path. #913/#911, #968, #748, #626, #937/#936, and Bern #934 stay as they are. No Production, provider, secret, payment, legal, or launch action.
 
 ## 12. Stop
 
-This document is the R2 plan correction. The next step is an independent full Technical-Lead re-review of the exact head that contains this file and the unchanged TASK. This session does not implement, does not add tests, does not run the RED or GREEN proof, does not collect evidence, does not edit any other document, does not mark Ready, does not merge, does not close #1012, and does not write `main`.
+This document is the R3 plan correction. The next step is an independent full Technical-Lead re-review of the exact head that contains this file and the unchanged TASK. This session does not implement, does not add tests, does not run the RED or GREEN proof, does not collect evidence, does not edit any other document, does not mark Ready, does not merge, does not close #1012, and does not write `main`.
