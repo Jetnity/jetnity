@@ -9,7 +9,7 @@ Issue: #997. Draft PR: #1000. Branch: `feat/account-booking-folder-completion-1`
 
 **STOP / WRITE FREEZE. NOT CODE PASS. NOT READY. NOT MERGED. ISSUE STAYS OPEN. NO FOLLOW-UP.**
 
-The self-review is not Technical-Lead PASS. This preservation commit answers B-P2-PROOF-05. A later CI or Preview finding waits. This session does not commit again unless the Technical Lead instructs it.
+The self-review is not Technical-Lead PASS. This commit answers B-P2-LAYOUT-06. A later CI or Preview finding waits. This session does not commit again unless the Technical Lead instructs it.
 
 ## Exact git
 
@@ -26,8 +26,13 @@ The self-review is not Technical-Lead PASS. This preservation commit answers B-P
 | Reviewed head superseded by this preservation | `fe6cca376cf6b01ab3f29ccf881285bd7008aeff`, tree `efde73b48178bd673c4561c5294251bdc6683478` |
 | Historical NOTES blob, restored | `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` |
 | Archived fe6 NOTES blob | `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505` |
+| Layout proof head | `824f1bab0a5415a0e8c118004d4b429d58bf47f1` |
+| Layout proof tree | `704c9eeaf3016d09c7c92209190228ebcc62d69a` |
+| Component blob | `83f7cf960489f2d855647cd52ee34fc4e5eec8b1` |
+| Montage script blob | `dd6a3b8c51c80dd016117b0a529f19b2605195ac` |
+| Production CSS SHA256 | `9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b` |
 | Review head | The commit that contains this HANDOFF. |
-| Ahead / behind before this preservation commit | 9 / 0 against `9092b29` |
+| Ahead / behind before this layout docs commit | 12 / 0 against `9092b29` |
 | Mode | `NORMAL` |
 | Integration | A → C → B. C is the merged main. No further sibling merge. |
 
@@ -43,11 +48,22 @@ The harness files and the V2 JSON/screenshots stay at their `fe6cca37` blobs. `a
 
 The branch delta against main remains the booking-folder delivery: page, account components, `lib/account/buchungen*`, the harness, TASK, PLAN, and these docs.
 
+## What this layout correction owns
+
+- `components/account/AccountBuchungen.tsx`
+- `scripts/account-booking-folder-completion-1/montage.ts`
+- `docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/`
+- the four owned STATUS, REPORT, SELF_REVIEW, and HANDOFF files
+
+`BuchungenFilter.tsx` is not in this correction. TASK and PLAN blobs are unchanged. `NOTES.md` remains `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9`. `ablauf.json` remains `cd93aeefab08db4a4599df9e1582b3e1ac334691`. `montage.json` remains `7a41748c2595fdb4f04e6d18b35cb3c4139dafab`. The v2 archive, including NOTES blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`, is unchanged.
+
 ## Executed versus not verified
 
-Executed on `1574adcb`: focused 32/32; action harness exit 0; montage exit 0 with overflow max 0; typecheck; lint 0 errors and 144 warnings; five guards; production build.
+Executed on `824f1bab`: focused 32/32; action harness exit 0, Chromium 140.0.7339.16, viewport 390×844, root 16px; montage exit 0, 56 measurements, overflow max 0, root 32px only at width 320; typecheck exit 0; lint exit 0, 144 warnings, 0 errors; five guards exit 0; production build exit 0, Next.js 16.4.1, `/account/bookings` dynamic. The build CSS is the digest above. It was produced from this component blob. It is not the reviewer’s PostCSS compilation.
 
-Not executed on this head: local full `npm test`, local PostgreSQL `~*`, hosted PostgREST, hosted RLS, Next App Router, hydration, native device, native zoom, screen reader, and any hosted account read. Native CI `40120501254` remains the green run for `5a284965` only.
+Not executed on this head: local full `npm test`, local PostgreSQL `~*`, hosted PostgREST, hosted RLS, Next App Router, hydration, native device, native zoom, screen reader, and any hosted account read. Earlier native CI is not a gate for this head.
+
+The `1574adcb` runs remain the historical B-P2-PROOF-04 evidence. They are not gates for `824f1bab`. Native CI `40120501254` remains the green run for `5a284965` only.
 
 ## Database, production, provider, cost
 

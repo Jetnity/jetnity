@@ -52,6 +52,14 @@ Owned: this REPORT, STATUS, SELF_REVIEW, HANDOFF, and `docs/evidence/account-boo
 
 `docs/evidence/account-booking-folder-completion-1/NOTES.md` is restored exactly to blob `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` from `5a284965`. The notes text that existed at `fe6cca37` is copied byte-for-byte to `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`. That archive records the already executed `1574adcb` proof. It is not a new run. The V2 JSON files and screenshots stay in place. No component, library, app, script, TASK, or PLAN blob changes in this preservation commit. The `1574` command results and native CI `40140352357` on `fe6cca37` are not relabeled as gates for the preservation head.
 
+## B-P2-LAYOUT-06
+
+The independent montage on `84c496c0` reported `liste 320 Überlauf 37` with the heading at 60px / 72px / −2.4px and `Planpunkt öffnen` 288.875px wide inside a 238px card. This correction keeps the label, the 32px root, and the design tokens. Long words and the action links wrap inside the existing width. The page is not clipped.
+
+The earlier author montage recorded overflow 0 at root 32px and did not record the computed heading size. This run injects the production CSS from `.next/static`, records each source and built CSS digest, and fails unless the heading is the `text-3xl` size. At 320/32 that size is 60px / 72px / −2.4px and overflow is 0. The built CSS SHA256 is `9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b`. It is not the review PostCSS SHA256 `6ea356ae1284e432eae27e9511923cf43550a4f80b34ac63c7235424e1f22af8`.
+
+Fresh output: `docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/`. Prior evidence files stay byte-identical. Component blob `83f7cf960489f2d855647cd52ee34fc4e5eec8b1`. Montage script blob `dd6a3b8c51c80dd016117b0a529f19b2605195ac`. Filter blob unchanged `02e51e09b3b8dd20758eb3ed6f5c2a857852f74d`.
+
 ## Remaining limits
 
 Hosted matching and hosted RLS are unverified. Local `~*` is NOT-RUN. The synthetic store uses exact timestamp text and `String.includes`. The action history is one `about:blank` document. The montage is static markup with production CSS, not hydration or native zoom. CI and Preview for the final head are not claimed in this report.

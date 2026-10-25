@@ -54,6 +54,12 @@ Hosted PostgREST has not applied the raw `imatch` value or the quoted keyset `.o
 
 The historical `NOTES.md` was rewritten at `fe6cca37` even though the V2 instruction required every existing evidence file to stay byte-identical. This preservation commit puts blob `5fdde5ee5eb264b051ad7dd24f4c8999e2afeec9` back at `docs/evidence/account-booking-folder-completion-1/NOTES.md` and keeps the `fe6cca37` bytes, blob `61ee41957c8cf5d7f245dc42f4e269b5d3bf9505`, at `docs/evidence/account-booking-folder-completion-1/v2-proof04-2026-10-24/NOTES-at-fe6cca37.md`. No new execution is attached to that archive. Runtime, script, TASK, and PLAN blobs are unchanged from `fe6cca37`.
 
+## B-P2-LAYOUT-06
+
+The 320/32 overflow is fixed in `AccountBuchungen.tsx` by wrapping the heading, titles, hints, and action labels. The montage now refuses a run whose computed heading is not `text-3xl` or `text-5xl`. A full-width link that is a flex item computes as `flex`; the check accepts that and still requires the utility size, weight, letter-spacing, and a non-transparent background. Overflow above 1px still fails. I did not rerun the old component, so the v2 overflow-0 report stays a historical measurement without a recorded heading size.
+
 ## Ownership
+
+The layout commits edit `components/account/AccountBuchungen.tsx` and `scripts/account-booking-folder-completion-1/montage.ts`. This docs commit adds `docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/` and these four docs. `BuchungenFilter.tsx`, parser, loader, page, TASK, and PLAN are unchanged. Historical evidence blobs listed under B-P2-PROOF-05 stay unchanged.
 
 The proof commit edited the booking harness and the new evidence directory. This preservation commit edits only the restored NOTES path, the new archive file, and these four docs. The merge brought the accepted C tree in unchanged. No sibling was rebased. No product runtime file changed after `5a284965`.

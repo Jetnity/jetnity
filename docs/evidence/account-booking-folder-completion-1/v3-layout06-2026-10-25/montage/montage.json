@@ -1,0 +1,1411 @@
+{
+  "herkunft": {
+    "autor": "Jetnity Account Booking Folder Completion 1 — Cursor Generation 1",
+    "session": "bc-a34030c7-4c19-4c9f-863f-193cfdfa34da",
+    "modell": "grok-4.7-high-fast",
+    "kopf": "824f1bab0a5415a0e8c118004d4b429d58bf47f1",
+    "baum": "704c9eeaf3016d09c7c92209190228ebcc62d69a",
+    "main": "9092b29c2e187bd73d644a3d85670f3ac6436be1",
+    "quellen": {
+      "scripts/account-booking-folder-completion-1/montage.ts": "dd6a3b8c51c80dd016117b0a529f19b2605195ac",
+      "components/account/AccountBuchungen.tsx": "83f7cf960489f2d855647cd52ee34fc4e5eec8b1",
+      "components/account/BuchungenFilter.tsx": "02e51e09b3b8dd20758eb3ed6f5c2a857852f74d",
+      "lib/account/buchungen-abfrage.ts": "493a39b75b5bf0ca6378d903b81d0d2cf55c2caa",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_TASK_V1_2026-10-24.md": "754fc2e0d87ba0755713c174acf60723ab3d1f13",
+      "docs/JETNITY_ACCOUNT_BOOKING_FOLDER_COMPLETION_1_PLAN_2026-10-24.md": "b29a5195c57c797f6252dc5863fc6c7b9f0ebac2"
+    },
+    "css": {
+      "herkunft": "Zusammengeführte Dateien unter .next/static mit Endung .css aus dem lokalen next build. Das ist nicht die unabhängige PostCSS-Kompilation der Prüfung.",
+      "sha256": "9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b",
+      "dateien": [
+        {
+          "pfad": ".next/static/chunks/19ds4pry6tbr3.css",
+          "sha256": "9fdcfb3304373fe80e813c75b8a05078064bb38eeba3b6f309db2e28d45ccf7b",
+          "bytes": 99091
+        }
+      ],
+      "quellen": [
+        {
+          "pfad": "styles/globals.css",
+          "sha256": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114",
+          "bytes": 11591,
+          "git": "38af78e159e7934dc2bded1e3ffcfba7b7fed9aa"
+        },
+        {
+          "pfad": "tailwind.config.js",
+          "sha256": "97d6056c22990f30cabcd5a6e087b12432fe27b1910a04889b5640ae2dd77813",
+          "bytes": 5217,
+          "git": "cae427453bff10090cabd2abd75bdacbf8df421e"
+        },
+        {
+          "pfad": "postcss.config.js",
+          "sha256": "ff4c3cb6b50996b1d32f3ed61ba3c80e57058d43de490bb50e91f1ff8812a715",
+          "bytes": 163,
+          "git": "43604e3f0fe5322dad23c4ea07e9d580f601a951"
+        }
+      ]
+    },
+    "befehl": "/exec-daemon/node /workspace/scripts/account-booking-folder-completion-1/montage.ts --ausgabe docs/evidence/account-booking-folder-completion-1/v3-layout06-2026-10-25/montage",
+    "node": "v22.23.4"
+  },
+  "grenze": "Statisches Markup mit CSS aus dem lokalen Production-Build. Die berechnete H1-Schrift muss text-3xl (60px bei Root 32px, 30px bei Root 16px) oder ab 640px text-5xl sein; sonst bricht die Montage ab. Kein Hydration, kein App-Router, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Root-Font 32px nur bei Breite 320, sonst 16px. Die Montage von 1574adcb mit Überlauf 0 bleibt unverändert und ist kein Beleg für diese Schrift.",
+  "befund": {
+    "browser": "140.0.7339.16",
+    "zustaende": {
+      "liste": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 259,
+            "breite": 238
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 279,
+            "breite": 238
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 339,
+            "breite": 318
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 369,
+            "breite": 348
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 409,
+            "breite": 388
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        }
+      ],
+      "fortsetzung": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 259,
+            "breite": 238
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 279,
+            "breite": 238
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 339,
+            "breite": 318
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 369,
+            "breite": 348
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 409,
+            "breite": 388
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "liste",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Planpunkt öffnen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(21, 58, 51)",
+            "display": "inline-flex",
+            "overflowWrap": "anywhere",
+            "rechts": 211.546875,
+            "breite": 186.546875
+          }
+        }
+      ],
+      "leer": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "leer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": null
+        }
+      ],
+      "keine": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 263,
+            "breite": 246
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 287,
+            "breite": 254
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 343,
+            "breite": 326
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 373,
+            "breite": 356
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 413,
+            "breite": 396
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "keine",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        }
+      ],
+      "fehler": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 263,
+            "breite": 246
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 287,
+            "breite": 254
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 343,
+            "breite": 326
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 373,
+            "breite": 356
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 413,
+            "breite": 396
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fehler",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        }
+      ],
+      "ungueltig": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 263,
+            "breite": 246
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 287,
+            "breite": 254
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 343,
+            "breite": 326
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 373,
+            "breite": 356
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 413,
+            "breite": 396
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "ungueltig",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        }
+      ],
+      "fortsetzungLeer": [
+        {
+          "name": "280",
+          "width": 280,
+          "height": 700,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 263,
+            "breite": 246
+          }
+        },
+        {
+          "name": "320",
+          "width": 320,
+          "height": 700,
+          "schrift": "32px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "60px",
+            "lineHeight": "72px",
+            "letterSpacing": "-2.4px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "28px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 287,
+            "breite": 254
+          }
+        },
+        {
+          "name": "360",
+          "width": 360,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 343,
+            "breite": 326
+          }
+        },
+        {
+          "name": "390",
+          "width": 390,
+          "height": 844,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 373,
+            "breite": 356
+          }
+        },
+        {
+          "name": "430",
+          "width": 430,
+          "height": 900,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "30px",
+            "lineHeight": "36px",
+            "letterSpacing": "-1.2px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 413,
+            "breite": 396
+          }
+        },
+        {
+          "name": "768",
+          "width": 768,
+          "height": 1024,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "1280",
+          "width": 1280,
+          "height": 800,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        },
+        {
+          "name": "844x390",
+          "width": 844,
+          "height": 390,
+          "schrift": "16px",
+          "ueberlauf": 0,
+          "zustand": "fortsetzungLeer",
+          "h1": {
+            "fontSize": "48px",
+            "lineHeight": "48px",
+            "letterSpacing": "-1.92px",
+            "fontWeight": "600",
+            "overflowWrap": "anywhere"
+          },
+          "link": {
+            "text": "Filter zurücksetzen",
+            "fontSize": "14px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "display": "flex",
+            "overflowWrap": "anywhere",
+            "rechts": 299.4375,
+            "breite": 175.65625
+          }
+        }
+      ]
+    },
+    "tastatur": {
+      "liste": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen",
+        "A:Planpunkt öffnen",
+        "A:Weitere Buchungen"
+      ],
+      "fortsetzung": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen",
+        "A:Planpunkt öffnen",
+        "A:Erste Seite dieser Filter"
+      ],
+      "leer": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen"
+      ],
+      "keine": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen"
+      ],
+      "fehler": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen",
+        "A:Erneut versuchen"
+      ],
+      "ungueltig": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen",
+        "A:Erste Seite dieser Filter",
+        "A:Erneut versuchen"
+      ],
+      "fortsetzungLeer": [
+        "INPUT:titel",
+        "SELECT:art",
+        "SELECT:archiv",
+        "BUTTON:Suchen",
+        "A:Filter zurücksetzen",
+        "A:Erste Seite dieser Filter"
+      ]
+    },
+    "bewegung": "reduce",
+    "hinweis": "CSS aus dem lokalen Next-Production-Build, injiziert als zusammengefügtes style-Element. Berechnete H1-, Link- und Root-Stile werden mitgeschrieben und gegen die Utilities geprüft. Kein physisches Gerät, kein nativer Zoom, kein Screenreader, kein gehostetes Konto. Die frühere Montage mit Überlauf 0 hat die berechnete H1-Schrift nicht festgehalten; sie wird hier nicht umgedeutet."
+  }
+}
