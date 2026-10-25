@@ -1,18 +1,18 @@
-R107-T mounted Workspace, registry, guest and project-CSS proof after the focus-ownership correction.
+R107-T mounted Workspace, registry, guest and project-CSS proof after the match-claim correction.
 
 `npm test` and CI do not re-run this Playwright script until a later allowlisted `package.json` change. This log is local evidence only. It is not native Node-22 CI and not hosted acceptance.
 
 command: node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts
 node: v22.23.4
 playwright: 1.55.0
-focus commit: 6e3ec8b5910cf39f342844b2ccc5198f5a4617b2
-focus tree: 8975beab7ef622a18002692c3435527375b8c8b7
+match commit: 669f8ec80324583adaec6dc21d5caf6d23e11c84
+match tree: e0b8ffcbecdbc01d64686ec886140a1c1ee79437
 exit: 0
-tests: 21
-pass: 21
+tests: 22
+pass: 22
 fail: 0
 
-The run used the working tree captured by that focus commit. No product file changed between the passing run and the commit. Later documentation commits, including the consolidated R1 packet, do not change that product tree and do not re-run this command. The earlier 20-pass log stays in git on tree 55970376c0e8c08b0bc79610854fc4898355673a. The earlier 18-pass log stays in git on tree 4f2165518fdea569afbb63d45efaef13409c276b.
+The run used the working tree captured by that match commit. No product file changed between the passing run and the commit. This documentation file is a later docs-only commit. The earlier 21-pass log stays in git on tree 8975beab7ef622a18002692c3435527375b8c8b7. The earlier 20-pass log stays in git on tree 55970376c0e8c08b0bc79610854fc4898355673a. The earlier 18-pass log stays in git on tree 4f2165518fdea569afbb63d45efaef13409c276b.
 
 The previous 15-pass log on implementation tree a8d9f7f938382623622f3adf5bb3500f5fd519ef remains in git at b443fb13db1e97e0d0d85d51814046349fd7491b. Historical RED `mounted-residence-red.txt` stays bound to head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec. Historical GREEN `mounted-residence-green.txt` stays bound to head 27102ebae649ceaaab5866a0df6db84f570c507a.
 
@@ -23,6 +23,7 @@ Covered here, all exit 0:
 - removed saved profile needs explicit re-entry
 - Escape cancels removal; a late response does not steal a newer field
 - a save with no further move focuses the accepted status; a pointer click on the other card’s residence country search, without editing the value, keeps that input; Tab into that search does the same
+- FR save, matching FR readback, then a later DE graph: the draft shows DE, the current-match sentence is gone, the accepted sentence stays, conflict stays absent, and payload and refresh stay at one
 - registry: two same-label ids, capacity during the request, string outcome is not replayed, section navigation, unmount
 - problem 503, null travellers and empty list stay distinct
 - Konto render prop invokes the stubbed writer once; the legacy audit node invokes its existing stub once

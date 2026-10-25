@@ -27,17 +27,19 @@ Stop for independent Technical-Lead candidate review. Do not Ready, do not merge
 - Addendum tree: `55970376c0e8c08b0bc79610854fc4898355673a`
 - Focus correction commit: `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`
 - Focus correction tree: `8975beab7ef622a18002692c3435527375b8c8b7`
+- Match-claim correction commit: `669f8ec80324583adaec6dc21d5caf6d23e11c84`
+- Match-claim correction tree: `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`
 - `origin/main` fetched for this handoff: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - Merge-base: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - No rebase. If `main` moves later, report the drift and wait.
 
-`origin/main` fetched again for this consolidation is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Before this documentation commit the branch was **17 ahead / 0 behind**. This commit adds documentation only. The pushed tip is the review head. No rebase.
+`origin/main` fetched again for this receipt is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Before this documentation commit the branch was **19 ahead / 0 behind**. This commit adds documentation only. The pushed tip is the review head. No rebase.
 
 The handoff at `736edb9f900645137c6947f8de194171d3757c95` recorded only the two card corrections. It is not the current receipt.
 
 ## Current packet
 
-Review R1 and both later addenda are on this tip. Product behavior is commit `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`, tree `8975beab7ef622a18002692c3435527375b8c8b7`. The mounted log is bound to that tree. This consolidation does not change it and does not re-run the command.
+Review R1, both later addenda, and the later match-claim correction are on this tip. Product behavior is commit `669f8ec80324583adaec6dc21d5caf6d23e11c84`, tree `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`. The mounted log is bound to that tree.
 
 1. Newer draft during a held save, commit `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`. When the pending intent is no longer the operation for that draft generation, occupancy is released and a newer intent such as removal confirmation stays. When that same intent is still pending and the draft generation has moved, an entered null becomes idle and says the previous save was accepted and the later edits are not repeated. A writer that was not entered becomes `not_sent`. An entered non-null becomes `unproven`. The original payload is not sent again, and that stale accept does not refresh.
 
@@ -51,7 +53,9 @@ Review R1 and both later addenda are on this tip. Product behavior is commit `6e
 
 6. Focus ownership, commit `6e3ec8b5`. A trusted focus calls `interaktion`. Completion keeps the status request only when that interaction is still current and the active element is still that card, or body after the disabled save button releases focus. The effect follows the request and the phase, then clears the request. A pointer click on the second card’s residence country search, with the value left empty, keeps that input. Tab from “Weitere Staatsbürgerschaft” into that search does the same. A save with no further move focuses the accepted status paragraph. Escape still focuses “Angaben entfernen”. The hold uses the account matrix host because Konto’s product writer returns null immediately. The cards are the Workspace cards.
 
-Mounted command on tree `8975beab`: 21 pass, 0 fail, exit 0. Node v22.23.4, Playwright 1.55.0. `npm test` on that product pass exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npm run typecheck`, the five hygiene checks, and `npm run build` exit 0. `npx eslint .` exits 0 with 0 errors and 181 warnings.
+7. Later canonical change, commit `669f8ec8`. Save FR, then a matching FR graph, becomes consistent. A later DE graph with no user edit replaces the draft cleanly: residence DE, dirty false, conflict false. The current-match sentence goes away. The earlier save stays accepted, so “Die Angaben wurden zum Speichern angenommen.” remains. The payload stays the one FR write. Refresh stays 1. No replay and no conflict warning.
+
+Mounted command on tree `e0b8ffcb`: 22 pass, 0 fail, exit 0. Node v22.23.4, Playwright 1.55.0. `npm test` on that product pass exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npm run typecheck`, the five hygiene checks, and `npm run build` exit 0. `npx eslint .` exits 0 with 0 errors and 181 warnings.
 
 ## Next step
 

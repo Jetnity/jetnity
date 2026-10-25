@@ -71,9 +71,15 @@ The mounted account host holds the writer. A save with no further move focuses t
 
 The mounted command on this tree exits 0 with 21 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0. No new file exception. T-EX1 and T-EX2 are unchanged.
 
+## Later canonical change
+
+`669f8ec80324583adaec6dc21d5caf6d23e11c84`, tree `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`. After FR is saved and a matching FR graph is consistent, a later DE graph with no user edit adopts DE on the clean draft. The sentence “Die geladenen Angaben stimmen mit der letzten Speicherung überein.” is removed. “Die Angaben wurden zum Speichern angenommen.” stays, because that one write was accepted. The conflict sentence does not appear. The payload remains the FR write and the refresh count remains 1.
+
+The mounted command on this tree exits 0 with 22 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0.
+
 ## Consolidation
 
-The handoff at `736edb9f` stopped after the two card corrections. Registry uncertainty, T-EX2, the Konto one-refresh count, and focus ownership were already on later commits of this same branch. This documentation commit gathers them into one current packet in the handoff. It does not change product code and does not re-run the mounted command. The product tree remains `8975beab7ef622a18002692c3435527375b8c8b7`.
+The handoff at `736edb9f` stopped after the two card corrections. Registry uncertainty, T-EX2, the Konto one-refresh count, focus ownership, and the match-claim correction are in the current packet. This documentation commit does not change product code. The product tree is `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`.
 
 ## Boundaries
 

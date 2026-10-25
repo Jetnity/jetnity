@@ -1,6 +1,6 @@
 # R107-T status — 2026-10-25
 
-Status: the current tip contains the review-R1 card corrections and both later addenda (registry warning, T-EX2, focus ownership). P1 stays OPEN. This is not PASS, Ready, or merge. The handoff at `736edb9f` recorded only the card corrections.
+Status: the current tip contains the review-R1 card corrections, both later addenda, and the match-claim correction. P1 stays OPEN. This is not PASS, Ready, or merge. The handoff at `736edb9f` recorded only the card corrections.
 
 Logical agent: Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1.
 Session: https://cursor.com/agents/bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0
@@ -32,3 +32,5 @@ The R1 addendum adds one registry correction. An unknown intake keeps its uncert
 Root authorized T-EX2 for one assertion in `lib/readiness/trip-official-evaluations-server.test.ts`: “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh”. The traveller removal writer returns null and does not refresh. The forwarded `onReadinessAktualisieren` supplies one refresh. The accommodation callback supplies the second. Every other assertion in that file stays. T-EX1 stays limited to its four helper assertions. TASK and the accepted PLAN bytes are unchanged. These corrections are local and are not acceptance.
 
 The focus addendum on `b443fb13` is corrected on `6e3ec8b5`. A trusted pointer click or Tab into another card’s country search, without a value edit, is the current focus owner. The older save’s completion does not move focus to its status paragraph. A completion that still owns the region focuses the status once, then clears the request so a later controller render cannot take it back. Escape still returns focus to “Angaben entfernen”. The deferred sequence is the account matrix host: Konto’s product writer returns null immediately and cannot hold the writer open. The cards, project CSS, and action shims are the real Workspace surface.
+
+A later canonical country after a matching readback no longer keeps the current-match sentence. Commit `669f8ec80324583adaec6dc21d5caf6d23e11c84`, tree `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`. The draft adopts that country cleanly. The earlier save stays accepted. Payload and refresh counts stay at one. The mounted run is 22 pass, 0 fail, exit 0, bound to that tree.

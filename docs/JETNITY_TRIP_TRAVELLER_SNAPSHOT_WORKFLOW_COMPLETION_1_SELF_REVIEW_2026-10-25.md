@@ -2,10 +2,11 @@
 
 This review is the implementation author’s. It is not an independent Technical-Lead PASS and it does not close P1.
 
-Reviewed focus head: `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`.
-Tree: `8975beab7ef622a18002692c3435527375b8c8b7`.
+Reviewed product head: `669f8ec80324583adaec6dc21d5caf6d23e11c84`.
+Tree: `e0b8ffcbecdbc01d64686ec886140a1c1ee79437`.
+The focus correction remains `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`, tree `8975beab7ef622a18002692c3435527375b8c8b7`.
 The registry addendum remains `c589266158a4d15f90a952e370435150e45f41d7`, tree `55970376c0e8c08b0bc79610854fc4898355673a`.
-The card correction remains `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`. This answers review R1 of `b443fb13db1e97e0d0d85d51814046349fd7491b`, the registry/T-EX2 addendum, and the focus addendum. The earlier implementation head remains `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
+The card correction remains `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`. This answers review R1 of `b443fb13db1e97e0d0d85d51814046349fd7491b`, the registry/T-EX2 addendum, the focus addendum, and the later match-claim correction. The earlier implementation head remains `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
 TASK blob `75c59b0851d835560ff4b5562e9fcc52c395b2ad` unchanged.
 Plan blob at the authorized head remains `252ae82c9cf1aff34f7f46e16999d50178369dff`.
 
@@ -31,7 +32,9 @@ I first moved the draft baseline at accept time. That made a later guest prop ca
 
 Focus ownership is a trusted focus event plus the card that contains `document.activeElement` when the writer settles. The country-search regression clicks that input and, separately, tabs into it from the neighbouring button. The neighbour `focus()` call is untrusted and does not itself retire the older request; the Tab does. I would want a reviewer to check two limits. A focus move that never produces a trusted event, and never leaves the saving card, can still receive the status focus. Konto cannot defer its product writer, so the hold is the account matrix host rather than the Konto callback. Body focus after the save button disables still allows the deliberate status focus. That matches a click that did not choose another target.
 
-The current handoff gathers the card corrections, the registry warning, T-EX2, the Konto one-refresh count, and the focus correction into one packet. The handoff at `736edb9f` had only the card corrections. This consolidation commit does not change the product tree `8975beab7ef622a18002692c3435527375b8c8b7`.
+The current handoff gathers the card corrections, the registry warning, T-EX2, the Konto one-refresh count, the focus correction, and the later match-claim correction into one packet. The handoff at `736edb9f` had only the card corrections.
+
+A consistent intent used to survive a later canonical country. The draft adopted that country, and the match sentence stayed. The observer now returns that intent to accepted when the current fingerprint is no longer the submitted one. I would want a reviewer to check that the accepted sentence remains as the historical outcome of the one write, while the current-match sentence does not. The clean draft is not marked conflict, and nothing is written again.
 
 ## Not claimed
 
