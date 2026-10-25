@@ -1,0 +1,53 @@
+TAP version 13
+# Subtest: mounted TripWorkspace personal preparation
+    # Subtest: guest create, edit, status and delete keep the sibling and use the real reader
+    ok 1 - guest create, edit, status and delete keep the sibling and use the real reader
+      ---
+      duration_ms: 605.653929
+      type: 'test'
+      ...
+    # Subtest: real mode navigation keeps a pending intent, and a rejected response does not write again
+    ok 2 - real mode navigation keeps a pending intent, and a rejected response does not write again
+      ---
+      duration_ms: 537.636181
+      type: 'test'
+      ...
+    # Subtest: a failed read of the expected trip blocks a new generation after discard and mode changes
+    ok 3 - a failed read of the expected trip blocks a new generation after discard and mode changes
+      ---
+      duration_ms: 1073.212993
+      type: 'test'
+      ...
+    # Subtest: a trip switch keeps the write that already ran and ignores its late result
+    ok 4 - a trip switch keeps the write that already ran and ignores its late result
+      ---
+      duration_ms: 323.639658
+      type: 'test'
+      ...
+    # Subtest: account confirmation waits for a later raw canonical trip
+    ok 5 - account confirmation waits for a later raw canonical trip
+      ---
+      duration_ms: 320.629922
+      type: 'test'
+      ...
+    # Subtest: collapsing the personal section stays collapsed when a late result arrives
+    ok 6 - collapsing the personal section stays collapsed when a late result arrives
+      ---
+      duration_ms: 372.529105
+      type: 'test'
+      ...
+    1..6
+ok 1 - mounted TripWorkspace personal preparation
+  ---
+  duration_ms: 3478.065345
+  type: 'suite'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3967.694461

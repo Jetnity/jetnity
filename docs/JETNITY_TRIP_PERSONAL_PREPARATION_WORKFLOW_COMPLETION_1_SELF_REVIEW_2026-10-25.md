@@ -2,16 +2,16 @@
 
 Date: 2026-10-25. Writer: **Jetnity Trip Personal Preparation Workflow Completion 1 — Cursor Generation 1**. Session `bc-6bbca11e-14c9-4f1a-ac07-e729d8a54ca3`. Model `grok-4.7-high-fast`.
 
-This self-review is not Technical-Lead PASS. It does not authorize Ready or merge. R2 behavior head `760afc59374c56a288925d09022688631f5dca74`. The review head is the commit that contains this file. TASK blob `961e288a4e0ba40fa00e7ea95e920eabd6423ff2` and PLAN blob `e58f582669793ff3b7d86727ac9130afa89eef98` are unchanged.
+This self-review is not Technical-Lead PASS. It does not authorize Ready or merge. Executed proof head `44e1a1c41d2e4939524d2b11996c7baa6a1b0056`. The review head is the commit that contains this file. TASK blob `961e288a4e0ba40fa00e7ea95e920eabd6423ff2` and PLAN blob `e58f582669793ff3b7d86727ac9130afa89eef98` are unchanged.
 
 ## Checked
 
-- An older canonical read of a conflicting edit does not remove the lock held by a newer pending edit of the same ref. Delete and retry of that ref return no order. A pending edit of a different ref keeps its lock while the older ref is reconciled.
-- Focusing Erledigt or Endgültig entfernen on B moves the interaction generation. A's later confirmation leaves that control focused.
-- After a named delete and a successful read with no personal ref, the body does not contain "Gespeichert und im aktuellen Stand sichtbar." Speichern is absent. The absence sentence remains.
-- Guest callback entry increments `entries` and `writes` immediately. A switched trip keeps those bytes. Releasing the late response adds no write and no read, and the new trip's draft stays empty.
-- After a wrong-trip read, discard, a typed new draft, and real mode-away/back, submit, Enter, edit, status, delete, and retry do not increase `entries` or the queue. A later successful read of the expected trip allows one deliberate save. Foreign and invalid bytes stay until the test itself restores them.
-- The current-source CSS matrix uses `.next/static` from the local build of this tree. Historical CSS evidence was not overwritten.
+- After an account create is confirmed, a later same-trip canonical delivery that drops the ref leaves the receipt and removes "Gespeichert und im aktuellen Stand sichtbar." The same sentence remains while the canonical read still contains the ref and the displayed list does not.
+- After a guest delete is rejected and an absence read reconciles it, discarding that local attempt leaves the older create as `confirmed` and does not restore the visibility sentence. Writes stay 1, deletes stay 1, reads stay 2, and a newer draft remains.
+- Pointer on B's title, then Tab to the unopened "Titel bearbeiten" button, then A's qualifying read, leaves focus on that button. B's editor stays closed.
+- The completion focus effect still moves focus to a visible confirmed row. Status, named delete, search, editor, filter, and hidden-section cases still pass.
+- A programmatic row focus in this Chromium is trusted. Counting it as a user interaction wrote the pre-confirmation ledger back and dropped the new phase. The effect now brackets that call. The flag is not a product control.
+- Merge parents are the R3 behavior commit and accepted main `77ed41ad`. Inherited Account and Admin files are not in the diff against that main.
 
 ## Findings
 
@@ -21,17 +21,19 @@ None in the owned local proof.
 
 ### P1
 
-The guest whole-trip writer still has no compare-and-swap. The read barrier, locks, and unclear-outcome obligation live in memory and end when TripWorkspace unmounts. Two tabs can still replace each other's whole-trip bytes.
+The guest whole-trip writer still has no compare-and-swap. The read barrier, locks, and the new observed-ref set live in memory and end when TripWorkspace unmounts. Two tabs can still replace each other's whole-trip bytes.
 
 ### P2
 
-Status, save, named delete, and row retry stay HTML-disabled while the barrier is set. React does not call `onClick` for that prop. The workspace proof invokes the production `onClick` stored on the node and then counts callback entries. Submit and Enter use the real form events because that control is only `aria-disabled`. This is not a pointer click on a disabled button.
+Status, save, named delete, and row retry stay HTML-disabled while the barrier is set. The workspace proof invokes the production `onClick` stored on the node. That remains white-box wiring, not an ordinary browser click on a disabled control. Submit and Enter use the real form.
 
-A late guest response does not undo the write that already reached storage. A matching read after an unknown outcome stays reconciliation, not causal confirmation. Native App, Auth, and Preview for this head were not observed at authoring. Full local `npm test` was not re-run. The CSS matrix mounts the list and hook, not the full TripWorkspace chrome. The behavior suites are unstyled.
+A late guest response does not undo a write that already reached storage. A matching read after an unknown outcome stays reconciliation. Native App, Auth, and Preview for this head were not observed at authoring. Full local `npm test` was not re-run. The CSS matrix mounts the list and hook, not the full TripWorkspace chrome. The behavior suites are unstyled and live in a different directory from the CSS matrix.
+
+The first miscounted browser-lauf JSON is unavailable. The 10-pass/6-fail TAP is the preserved terminal capture, not a reconstruction.
 
 ### P3
 
-Below the `sm` breakpoint the filter controls remain stacked. Harness chrome is not product UI. The first absence filter hid a still-current confirmation; that attempt failed and is not the retained behavior.
+Below the `sm` breakpoint the filter controls remain stacked. Harness chrome is not product UI.
 
 ## Not claimed
 

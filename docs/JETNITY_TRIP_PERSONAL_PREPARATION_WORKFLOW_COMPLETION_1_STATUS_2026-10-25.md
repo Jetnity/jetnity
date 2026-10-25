@@ -2,24 +2,24 @@
 
 Date: 2026-10-25. Writer: **Jetnity Trip Personal Preparation Workflow Completion 1 — Cursor Generation 1**. Session `bc-6bbca11e-14c9-4f1a-ac07-e729d8a54ca3`. Model `grok-4.7-high-fast`. Draft PR #1009. Tracking #1006 stays open.
 
-**Status: R2 corrections are on `760afc59374c56a288925d09022688631f5dca74`. This docs commit is the review head. STOP for independent Technical-Lead re-gating. Not product PASS. Not Ready. Not merged.**
+**Status: R3 corrections and the accepted-main merge are on `44e1a1c41d2e4939524d2b11996c7baa6a1b0056`. This docs commit is the review head and does not change runtime or the runner. STOP for independent Technical-Lead re-gating. Not product PASS. Not Ready. Not merged.**
 
-Reviewed head that R2 required to change: `80006fdf1443ca9d75d8c481246821354da16000`. R2 behavior head: `760afc59374c56a288925d09022688631f5dca74`. Actual main, re-read immediately before this docs commit: `41844878a8437256572da3de1374fbb36fd7a516`. Merge-base remains `500fbe40c8c8a70a0fe0d291782289f809d5d5b3`. Relation before this docs commit: **12 behind / 10 ahead**. No main sync. Immutable TASK blob `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`. PLAN blob `e58f582669793ff3b7d86727ac9130afa89eef98`, unchanged. Mode `NORMAL`.
+R3 behavior parent: `577e7da70374159bfe2e0ae33b9d4c7cfad2368d`. Merge parents: that behavior commit and accepted main `77ed41adbd3d32bbc995300b61eef1e16c2710d6`. Merge-base is now `77ed41adbd3d32bbc995300b61eef1e16c2710d6`. Relation after the merge, re-read before this docs commit: **0 behind / 13 ahead**. Main had not moved past `77ed41ad`. No rebase, no force-push, no direct main write. Immutable TASK blob `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`. PLAN blob `e58f582669793ff3b7d86727ac9130afa89eef98`, unchanged. Mode `NORMAL`.
 
-R1 remains at `80006fdf`. Its CI run [40186336755](https://github.com/Jetnity/jetnity/actions/runs/40186336755) passed and is historical after this head change. Prior evidence `2026-10-25-lauf-1/` and `2026-10-25-r1/` stays in place. New evidence is `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r2/`.
+`41844878a8437256572da3de1374fbb36fd7a516` is the accepted O merge, not Account. Account candidate 29 merged later as `77ed41adbd3d32bbc995300b61eef1e16c2710d6` at 12:46:47Z. Its actual-main run [40194636884](https://github.com/Jetnity/jetnity/actions/runs/40194636884) passed, and root then authorized T-I1. The earlier STATUS sentence that put A on main at `41844878` was wrong.
 
-## R2
+Reviewed head that R3 required to change: `4e66d8948046423656feb6b95b8562e546e82b19`. R2 behavior `760afc59` and its evidence stay. Fresh evidence is `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r3/`.
 
-- T-R6: `sperreLoesen` keeps a ref locked while a different intent on that ref is `pending` or `awaiting`. An older read, failure, or discard cannot clear that newer operation. A different ref is unaffected. Later-read recovery and unknown-match reconciliation stay as delivered in R1.
-- T-R3: status, save, delete, cancel, retry, discard, and refresh controls call `interaktion` on focus and click. The completion's own row focus does not. A late confirmation leaves B's Erledigt choice and B's named delete confirmation focused.
-- T-R7: only the latest intent for an absent ref is shown. An older confirmed create no longer says the point is currently visible after a completed delete. An orphan editor has no Speichern button. A completed delete may keep its labelled absence receipt.
-- T-R4: the guest harness writes at callback entry and only defers the response. Callback entries are counted apart from completed writes. A failed expected-trip read blocks submit, Enter, edit, status, delete, and retry after discard, a new composer generation, and real mode-away/back, until a successful read of that trip. The late result of a switched trip does not write or read again and does not change the new trip's draft or focus. The already executed guest write stays in storage.
+## R3
+
+- A qualifying account, guest, or manual read records the personal refs it actually saw. A confirmed or reconciled create stays in history. Once that latest read omits the ref, the receipt uses the existing absence sentence and does not say "Gespeichert und im aktuellen Stand sichtbar." A canonical read that still contains the ref keeps that sentence while the displayed row is behind. Discarding a newer local receipt does not restore the visibility claim. Drafts and write counts stay put. The phase of the historical create stays `confirmed`.
+- The unopened "Titel bearbeiten" button and the submit button take focus on focus. A trusted focus on the row itself does too. The completion's programmatic row focus is marked and does not count, including when that focus event is trusted. Status, delete, search, editor, and filter cases stay.
+- T-I1: normal merge of accepted main `77ed41ad`. Inherited O/A files match that main. The post-merge diff against main is the owned T slice.
 
 ## Not done
 
-- Technical-Lead exact-head re-gate, product PASS, Ready, or merge.
-- Fresh native App, Auth, and Preview for `760afc59` and for this docs commit. The green run on `80006fdf` does not cover this head.
-- Hosted Account, full Next router, Supabase, RLS, or Production.
-- A fresh full local `npm test`. The PostgreSQL 16 proofs were not re-run and were not pointed at a hosted database.
-- Main sync. Integration remains O → A → T. A is on main at `41844878`; T waits for an explicit instruction after A actual-main PASS.
+- Technical-Lead exact-head re-gate of the commit that contains this file. Product PASS, Ready, and merge are not claimed.
+- Fresh native App, Auth, and Preview for `44e1a1c4` and for this docs commit. Older green runs do not cover this head.
+- Hosted Account, full Next router, Supabase, RLS, or Production proof from these local suites.
+- A fresh full local `npm test`.
 - Closing #1006, writing main, or starting a follow-up.
