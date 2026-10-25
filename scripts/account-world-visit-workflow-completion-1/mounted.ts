@@ -91,7 +91,23 @@ type Aufnahme = {
 
 const aufnahmen: Aufnahme[] = []
 
-async function rahmen(page: Page, name: string, state: string, scrolledTo: string) {
+type KnopfBericht = {
+  text: string
+  breit: number
+  hoch: number
+  imFormular: boolean
+  inKarte: boolean
+  textImKnopf: boolean
+  ueberhangRechts: number
+  bedecktVon: number
+}
+
+type HaltBericht = {
+  editor: { fuss: string; formularInKarte: boolean; knoepfe: KnopfBericht[] }
+  anlage: { fuss: string; formularInKarte: boolean; knoepfe: KnopfBericht[] }
+}
+
+async function rahmen(page: Page, name: string, state: string, scrolledTo: string, aufnehmenBei: number[] = [320, 1440]) {
   if (!screens) return
   mkdirSync(screens, { recursive: true })
   const ziel = page.locator(scrolledTo).first()
@@ -107,7 +123,7 @@ async function rahmen(page: Page, name: string, state: string, scrolledTo: strin
     })
     assert.ok(mass.verwaltung <= 1, `${name} Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
     console.log(`css ${name} ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
-    if (breite === 320 || breite === 1440) {
+    if (aufnehmenBei.includes(breite)) {
       const file = `${name}-${breite}.png`
       await ziel.screenshot({ path: `${screens}/${file}`, animations: 'disabled' })
       aufnahmen.push({
@@ -120,6 +136,72 @@ async function rahmen(page: Page, name: string, state: string, scrolledTo: strin
         overflow: mass,
       })
     }
+  }
+}
+
+async function fussHalten(page: Page) {
+  for (const breite of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width: breite, height: 900 })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    const halt = await page.evaluate<HaltBericht>(`(() => {
+      const paare = [
+        ['editor', '[data-besuch-editor-epoche] form', 'article'],
+        ['anlage', '[data-besuch-anlage="offen"] form', '[data-besuch-anlage="offen"]'],
+      ]
+      const ergebnis = {}
+      for (const [name, formSelektor, kartenSelektor] of paare) {
+        const form = document.querySelector(formSelektor)
+        const karte = form.closest(kartenSelektor)
+        const formular = form.getBoundingClientRect()
+        const kartenKasten = karte.getBoundingClientRect()
+        const fuss = form.querySelector('[data-besuch-formular-fuss]')
+        const knoepfe = []
+        for (const knopf of form.querySelectorAll('button')) {
+          const k = knopf.getBoundingClientRect()
+          const eigene = knopf.closest('article')
+          let bedecktVon = 0
+          for (const artikel of document.querySelectorAll('article[data-besuch]')) {
+            if (artikel === eigene) continue
+            const a = artikel.getBoundingClientRect()
+            if (k.left < a.right - 1 && k.right > a.left + 1 && k.top < a.bottom - 1 && k.bottom > a.top + 1) bedecktVon += 1
+          }
+          knoepfe.push({
+            text: (knopf.textContent || '').replace(/\\s+/g, ' ').trim(),
+            breit: k.width,
+            hoch: k.height,
+            imFormular: k.width > 0 && k.height > 0 && k.left >= formular.left - 1 && k.top >= formular.top - 1 && k.right <= formular.right + 1 && k.bottom <= formular.bottom + 1,
+            inKarte: k.width > 0 && k.height > 0 && k.left >= kartenKasten.left - 1 && k.top >= kartenKasten.top - 1 && k.right <= kartenKasten.right + 1 && k.bottom <= kartenKasten.bottom + 1,
+            textImKnopf: knopf.scrollWidth <= knopf.clientWidth + 1 && knopf.scrollHeight <= knopf.clientHeight + 1,
+            ueberhangRechts: Math.round((k.right - kartenKasten.right) * 100) / 100,
+            bedecktVon,
+          })
+        }
+        ergebnis[name] = {
+          fuss: getComputedStyle(fuss).flexDirection,
+          formularInKarte: formular.left >= kartenKasten.left - 1 && formular.right <= kartenKasten.right + 1 && formular.top >= kartenKasten.top - 1 && formular.bottom <= kartenKasten.bottom + 1,
+          knoepfe,
+        }
+      }
+      return ergebnis
+    })()`)
+    assert.equal(halt.editor.fuss, 'column', `Editor-Fuss bei ${breite} ist ${halt.editor.fuss}`)
+    assert.equal(halt.editor.formularInKarte, true, `Editor-Formular liegt bei ${breite} ausserhalb der Karte`)
+    assert.equal(halt.anlage.fuss, breite >= 640 ? 'row' : 'column', `Anlage-Fuss bei ${breite} ist ${halt.anlage.fuss}`)
+    assert.equal(halt.anlage.formularInKarte, true, `Anlage-Formular liegt bei ${breite} ausserhalb seines Bereichs`)
+    for (const [name, gruppe] of [['editor', halt.editor], ['anlage', halt.anlage]] as const) {
+      assert.ok(gruppe.knoepfe.length > 0, `${name} hat bei ${breite} keinen Knopf`)
+      for (const knopf of gruppe.knoepfe) {
+        assert.equal(knopf.imFormular, true, `${name} ${knopf.text} liegt bei ${breite} ausserhalb des Formulars, Überhang ${knopf.ueberhangRechts}`)
+        assert.equal(knopf.inKarte, true, `${name} ${knopf.text} liegt bei ${breite} ausserhalb der Karte, Überhang ${knopf.ueberhangRechts}`)
+        assert.equal(knopf.textImKnopf, true, `${name} ${knopf.text} wird bei ${breite} abgeschnitten`)
+        assert.equal(knopf.bedecktVon, 0, `${name} ${knopf.text} wird bei ${breite} von ${knopf.bedecktVon} Nachbarkarten überdeckt`)
+        assert.ok(knopf.breit > 0 && knopf.hoch > 0)
+        console.log(`halt ${name} ${breite} ${knopf.text} ueberhangRechts=${knopf.ueberhangRechts} breit=${Math.round(knopf.breit)} hoch=${Math.round(knopf.hoch)}`)
+      }
+    }
+    assert.ok(halt.editor.knoepfe.some((knopf) => knopf.text === BESUCHE_COPY.aendernAktion))
+    assert.ok(halt.editor.knoepfe.some((knopf) => knopf.text === BESUCHE_COPY.abbrechen))
+    assert.ok(halt.anlage.knoepfe.some((knopf) => knopf.text === BESUCHE_COPY.anlegenAktion))
   }
 }
 
@@ -404,7 +486,8 @@ test('dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen',
   const zweite = await page.locator('[data-besuch]').nth(1).getAttribute('data-besuch')
   await page.locator(`[data-besuch="${erste}"]`).getByRole('button', { name: BESUCHE_COPY.bearbeiten }).click()
   await page.locator(`[data-besuch="${zweite}"]`).getByRole('button', { name: BESUCHE_COPY.widerrufen }).click()
-  await rahmen(page, 'editor', 'open editor on the first visible visit', '[data-besuch-editor-epoche]')
+  await fussHalten(page)
+  await rahmen(page, 'editor', 'open editor inside its own card', 'article:has([data-besuch-editor-epoche])', [320, 390, 768, 1440])
   await rahmen(page, 'widerruf', 'open revoke confirmation on the next visible visit', '[data-besuch-bestaetigung]')
   await setzen(page, { problem: { status: 503, message: 'synthetisch' }, besuche: [], tripProblem: null })
   await rahmen(page, 'lesefehler', 'failed visit read with an empty payload', '[role="alert"]')

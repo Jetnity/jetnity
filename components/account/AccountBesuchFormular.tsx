@@ -119,7 +119,7 @@ export default function AccountBesuchFormular({
       onKeyDown={taste}
       data-besuch-formular="ein"
       data-fokus={fokusId}
-      className="rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5"
+      className="min-w-0 max-w-full rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5"
     >
       <h2 className="text-lg font-semibold tracking-[-0.03em] text-brand-800">{titel}</h2>
       {hinweis ? (
@@ -230,11 +230,22 @@ export default function AccountBesuchFormular({
         </fieldset>
       </div>
 
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+      <div
+        data-besuch-formular-fuss="ein"
+        className={
+          zeitNebeneinander
+            ? 'mt-5 flex min-w-0 max-w-full flex-col gap-3 sm:flex-row'
+            : 'mt-5 flex min-w-0 max-w-full flex-col gap-3'
+        }
+      >
         <button
           type="submit"
           disabled={laeuft}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:opacity-60"
+          className={`inline-flex min-h-11 min-w-0 max-w-full items-center justify-center gap-2 rounded-full bg-brand-800 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:opacity-60 ${
+            zeitNebeneinander
+              ? 'w-full whitespace-normal px-4 py-2 text-center leading-5 sm:w-auto sm:whitespace-nowrap sm:px-5 sm:py-0'
+              : 'w-full whitespace-normal px-4 py-2 text-center leading-5'
+          }`}
         >
           {aktionText}
         </button>
@@ -243,7 +254,11 @@ export default function AccountBesuchFormular({
             type="button"
             onClick={onAbbrechen}
             disabled={laeuft}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60"
+            className={`inline-flex min-h-11 min-w-0 max-w-full items-center justify-center rounded-full border border-line-200 bg-white text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60 ${
+              zeitNebeneinander
+                ? 'px-5'
+                : 'w-full whitespace-normal px-4 py-2 text-center leading-5'
+            }`}
           >
             {BESUCHE_COPY.abbrechen}
           </button>
