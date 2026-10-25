@@ -75,6 +75,8 @@ import { readinessAnsicht } from '@/lib/readiness/status'
 import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
+import { usePersonalPreparationLifecycle } from '@/components/trips/usePersonalPreparationLifecycle'
+import type { ReadinessAktualisierung } from '@/lib/readiness/personal-preparation-workflow'
 import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
 import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
 import {
@@ -259,6 +261,9 @@ type TripWorkspaceProps = {
     title: string | null
   }) => Promise<string | null>
   onReadinessEntfernen?: (clientRef: string) => Promise<string | null>
+  onReadinessAktualisieren?: () => Promise<ReadinessAktualisierung>
+  /** Unveränderte Server-Reise. Nur die eigene Vorbereitung beobachtet sie. */
+  readinessKanonischeReise?: Trip
   onTravellerSetzen?: (eingabe: {
     clientRef: string
     label: string | null
@@ -347,6 +352,8 @@ export default function TripWorkspace({
   onFlugRouteManuell,
   onReadinessSetzen,
   onReadinessEntfernen,
+  onReadinessAktualisieren,
+  readinessKanonischeReise,
   onTravellerSetzen,
   onTravellerEntfernen,
   registryUebernahme,
@@ -362,6 +369,15 @@ export default function TripWorkspace({
     () => true,
   )
   const weit = React.useSyncExternalStore(weiteAnsichtAbonnieren, weiteAnsichtLesen, () => false)
+  const eigeneSteuerung = usePersonalPreparationLifecycle({
+    tripId: reise.id,
+    reise,
+    kanonisch: readinessKanonischeReise,
+    seam: quelle === 'account' ? 'account' : 'guest',
+    onSetzen: onReadinessSetzen,
+    onEntfernen: onReadinessEntfernen,
+    onAktualisieren: onReadinessAktualisieren,
+  })
 
   const [modus, setModus] = React.useState<WorkspaceModus>(() => modusAusAnfangsBereich(anfangsBereich))
   const [modusBereit, setModusBereit] = React.useState(false)
@@ -688,6 +704,7 @@ export default function TripWorkspace({
       offeneBereiche={offeneBereiche}
       onBereichOffen={bereichOffenSetzen}
       onZiel={(bereich) => preparationOeffnen({ bereich })}
+      eigeneSteuerung={eigeneSteuerung}
     />
   )
 

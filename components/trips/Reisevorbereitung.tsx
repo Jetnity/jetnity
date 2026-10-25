@@ -5,7 +5,8 @@ import { AlertCircle, Check, ChevronDown, RotateCcw } from 'lucide-react'
 
 import LandFeld from '@/components/country/LandFeld'
 import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
-import { readinessClientRefErzeugen } from '@/lib/readiness/bauen'
+import EigeneReisevorbereitung from '@/components/trips/EigeneReisevorbereitung'
+import type { PersonalSteuerung } from '@/components/trips/usePersonalPreparationLifecycle'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
@@ -93,11 +94,13 @@ export default function Reisevorbereitung({
   offeneBereiche,
   onBereichOffen,
   onZiel,
+  eigeneSteuerung = null,
 }: {
   reise: Trip
   offeneBereiche: ReadonlySet<PreparationBereichId>
   onBereichOffen: (id: PreparationBereichId, offen: boolean) => void
   onZiel: (id: PreparationBereichId) => void
+  eigeneSteuerung?: PersonalSteuerung | null
   officialEvaluations?: OfficialEvaluation[]
   officialPilot?: React.ReactNode
   registryUebernahme?: React.ReactNode
@@ -114,7 +117,6 @@ export default function Reisevorbereitung({
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
 }) {
   const [meldung, setMeldung] = React.useState('')
-  const [titel, setTitel] = React.useState('')
   const { items, summary, evaluations } = readinessAnsicht(reise, officialEvaluations)
   const sichtbareItems = readinessWorkspaceSichtbar(items)
   const sichtbareZusammenfassung = readinessWorkspaceZusammenfassung(summary, items)
@@ -152,22 +154,6 @@ export default function Reisevorbereitung({
     setMeldung('')
     const fehler = await onSetzen({ ...item, userStatus })
     if (fehler) setMeldung(fehler)
-  }
-
-  const eigeneHinzufuegen = async (event: React.FormEvent) => {
-    event.preventDefault()
-    if (!onSetzen) return
-    setMeldung('')
-    const fehler = await onSetzen({
-      clientRef: readinessClientRefErzeugen('preparation'),
-      kind: 'preparation',
-      userStatus: 'open',
-      countryCode: null,
-      tripItemId: null,
-      title: titel,
-    })
-    if (fehler) setMeldung(fehler)
-    else setTitel('')
   }
 
   const punktListe = (liste: readonly ReadinessViewItem[]) => (
@@ -343,30 +329,14 @@ export default function Reisevorbereitung({
           onOffen={onBereichOffen}
           hinweis={persoenlich.eigene.length === 0 ? 'Eigene Punkte ohne amtliche Wirkung' : punkteHinweis(persoenlich.eigene)}
         >
-          {persoenlich.eigene.length > 0 ? punktListe(persoenlich.eigene) : null}
-          {onSetzen ? (
-            <form onSubmit={eigeneHinzufuegen} className="grid gap-2">
-              <label className="grid gap-1 text-sm font-medium text-brand-800">
-                Eigene Vorbereitung
-                <input
-                  value={titel}
-                  onChange={(event) => setTitel(event.target.value)}
-                  maxLength={80}
-                  className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  placeholder="z. B. Reiseadapter einpacken"
-                />
-              </label>
-              <p className="text-xs leading-5 text-ink-800">{SENSITIVE_HINWEIS}</p>
-              <button
-                type="submit"
-                className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-              >
-                Punkt hinzufügen
-              </button>
-            </form>
-          ) : persoenlich.eigene.length === 0 ? (
-            <p className="text-xs leading-5 text-ink-800">Noch keine eigene Vorbereitung.</p>
-          ) : null}
+          <EigeneReisevorbereitung
+            reise={reise}
+            items={persoenlich.eigene}
+            onSetzen={onSetzen}
+            onEntfernen={onEntfernen}
+            steuerung={eigeneSteuerung}
+            erstellenLabel="Punkt hinzufügen"
+          />
         </Bereich>
       </div>
 

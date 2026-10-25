@@ -169,6 +169,11 @@ export default function KontoArbeitsbereich({
         router.refresh()
         return null
       }}
+      readinessKanonischeReise={serverReise}
+      onReadinessAktualisieren={async () => {
+        router.refresh()
+        return { art: 'props' }
+      }}
       onReadinessSetzen={async (eingabe) => {
         const ergebnis = await readinessSetzen({ ...eingabe, tripId: reise.id })
         if (!ergebnis.ok) return ergebnis.meldung

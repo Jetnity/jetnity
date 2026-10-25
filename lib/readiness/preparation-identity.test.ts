@@ -11,13 +11,13 @@ import { READINESS_GRENZEN } from '@/lib/readiness/domain'
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { readinessItemLesen, readinessKontoEingabeSchema } from '@/lib/readiness/schema'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
-import type Reisevorbereitung from '@/components/trips/Reisevorbereitung'
+import type EigeneReisevorbereitung from '@/components/trips/EigeneReisevorbereitung'
 import type { readinessSetzen } from '@/lib/readiness/aktionen'
 import type { Trip } from '@/types/trips'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const require = createRequire(import.meta.url)
-type Payload = Parameters<NonNullable<React.ComponentProps<typeof Reisevorbereitung>['onSetzen']>>[0]
+type Payload = Parameters<NonNullable<React.ComponentProps<typeof EigeneReisevorbereitung>['onSetzen']>>[0]
 
 // Execute the actual TS/TSX module, substituting only external runtime seams.
 // No copied submit/action implementation and no live database or Next runtime.
@@ -43,13 +43,23 @@ type ElementProps = {
 }
 
 function element(node: React.ReactNode, type: string): React.ReactElement<ElementProps> {
+  const marked: React.ReactElement<ElementProps & { 'data-personal-preparation-create'?: string }>[] = []
+  const markieren = (children: React.ReactNode) => React.Children.forEach(children, (child) => {
+    if (!React.isValidElement<ElementProps & { 'data-personal-preparation-create'?: string }>(child)) return
+    if (child.props['data-personal-preparation-create'] != null) marked.push(child)
+    markieren(child.props.children)
+  })
+  markieren(node)
+  assert.equal(marked.length, 1, 'exactly one personal preparation create form')
   const found: React.ReactElement<ElementProps>[] = []
   const besuchen = (children: React.ReactNode) => React.Children.forEach(children, (child) => {
     if (!React.isValidElement<ElementProps>(child)) return
     if (child.type === type) found.push(child)
     besuchen(child.props.children)
   })
-  besuchen(node)
+  const region = marked[0]!
+  if (region.type === type) found.push(region)
+  besuchen(region.props.children)
   assert.equal(found.length, 1, `exactly one ${type} in the preparation form`)
   return found[0]!
 }
@@ -57,13 +67,22 @@ function element(node: React.ReactNode, type: string): React.ReactElement<Elemen
 function formular() {
   const states: unknown[] = []
   let index = 0
-  const ui = laden<{ default: typeof Reisevorbereitung }>('components/trips/Reisevorbereitung.tsx', {
+  const ui = laden<{ default: typeof EigeneReisevorbereitung }>('components/trips/EigeneReisevorbereitung.tsx', {
     react: {
       ...React,
       useState: (initial: unknown) => {
         const slot = index++
-        if (!(slot in states)) states[slot] = initial
-        return [states[slot], (value: unknown) => { states[slot] = value }]
+        if (!(slot in states)) states[slot] = typeof initial === 'function' ? (initial as () => unknown)() : initial
+        return [states[slot], (value: unknown) => {
+          states[slot] = typeof value === 'function' ? (value as (prev: unknown) => unknown)(states[slot]) : value
+        }]
+      },
+      useEffect: () => {},
+      useLayoutEffect: () => {},
+      useRef: (initial: unknown) => {
+        const slot = index++
+        if (!(slot in states)) states[slot] = { current: initial }
+        return states[slot]
       },
     },
   })
@@ -72,9 +91,7 @@ function formular() {
     index = 0
     return ui.default({
       reise: beispielreise(),
-      offeneBereiche: new Set(['reisende-dokumente', 'offizielle-anforderungen', 'tickets-buchungen', 'eigene-vorbereitung']),
-      onBereichOffen: () => {},
-      onZiel: () => {},
+      items: [],
       onSetzen: async (payload) => { payloads.push(payload); return null },
     })
   }

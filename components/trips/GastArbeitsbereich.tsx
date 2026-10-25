@@ -49,6 +49,7 @@ import {
   gastPlanpunktEntfernen,
   gastUnterkunftZeitraumSetzen,
   gastreiseEntfernen,
+  aktiveV3GastreiseLesen,
 } from '@/lib/trips/gastspeicher'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
@@ -256,6 +257,11 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         } catch (fehler) {
           return fehler instanceof Error ? fehler.message : 'Der Zeitraum konnte nicht gespeichert werden.'
         }
+      }}
+      onReadinessAktualisieren={async () => {
+        const lesung = aktiveV3GastreiseLesen(tripId)
+        if (lesung.art === 'success') setReise(lesung.reise)
+        return lesung
       }}
       onReadinessSetzen={async (eingabe) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
