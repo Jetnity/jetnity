@@ -17,7 +17,7 @@ Date: 2026-10-25. Lane **S** of R107. Tracking [#1016](https://github.com/Jetnit
 
 Authoritative model evidence is the cloud-run field `originalModelName`. This session did not select Auto and did not substitute another model.
 
-This revision answers Technical-Lead plan review R1 on head `b0d44c3e7f7483027bb13cb97d54c37b4e049843` / PLAN blob `c05bea9947ac9eb35365ac8bbfa875fc5856bca0`. It is the same session and the same logical agent. It changes only this PLAN.
+R1 on head `b0d44c3e7f7483027bb13cb97d54c37b4e049843` / PLAN blob `c05bea9947ac9eb35365ac8bbfa875fc5856bca0` is the prior plan revision. This revision answers R2 on head `5968ec9cd9cab096c1f672422c26baa07d50a913` / PLAN blob `67fe017c80c889db8205e5cd23ab9478537f00de`. It is the same session and the same logical agent. It changes only this PLAN's restoration rule and the wording that depends on it.
 
 **STOP** after this revised plan is committed on `audit/r107-dependency-advisory-triage-1`. The immutable TASK stays byte-identical. No status, report, self-review, handoff, evidence directory, inventory script, test, audit command or second document is part of this delivery. Root re-reviews this exact plan head before any of that work.
 
@@ -158,9 +158,9 @@ Explicit dependency sets, which are the evidence of what was submitted:
 
 `npm view <name>@<candidate> version dependencies peerDependencies --json` uses the same child environment, cwd, registry, userconfig, globalconfig, cache, `--ignore-scripts`, and `--offline=false`. It does not take include or omit flags, because it reads one public packument rather than a dependency set. It is not an install. It is used only after a primary advisory names a candidate version.
 
-npm's builtin npmrc, at the npm installation's own `npmrc`, has no documented replacement flag and remains loaded. This pass does not read or print it. Retained audit JSON is accepted only when it does not name a registry host other than `registry.npmjs.org`. Any other host, or a response that cannot be checked, is `CONFIG_BOUNDARY_UNMET`: discard the body, do not quote it, and stop that npm source. Ambient HTTP proxies are not forwarded; a resulting network failure is `REGISTRY_UNAVAILABLE`, not a reason to restore the proxy. The POSIX default cache is `~/.npm`. `--cache` points at the empty disposable cache instead. The disposable directory, including that cache, is deleted after the receipts are copied. It is not committed.
+npm's builtin npmrc, at the npm installation's own `npmrc`, has no documented replacement flag and remains loaded. This pass does not read or print it, and it does not inventory credentials or add a further config investigation. A response body that names a host other than `registry.npmjs.org`, or a body that cannot be checked, is `CONFIG_BOUNDARY_UNMET`: discard the body, do not quote it, and stop that npm source. A body that names `registry.npmjs.org` does not prove which host was contacted, that the transport was unauthenticated, or that no credential was sent. Those properties rest on the child environment and the explicit flags. Ambient HTTP proxies are not forwarded; a resulting network failure is `REGISTRY_UNAVAILABLE`, not a reason to restore the proxy. The POSIX default cache is `~/.npm`. `--cache` points at the empty disposable cache instead. The disposable directory, including that cache, is deleted after the receipts are copied. It is not committed.
 
-Exit 0 or 1 with parseable JSON is `REGISTRY_AUDIT_OK`. With `--audit-level=info`, exit 1 means the JSON reports at least one vulnerability. Any other exit, non-JSON stdout, or a missing network is `REGISTRY_UNAVAILABLE` for that command. A write inside the repository worktree is `UNSAFE_TOOL` and follows §10.4. Do not fall through to `npm ci`, `npx`, or a second installer.
+Exit 0 or 1 with parseable JSON is `REGISTRY_AUDIT_OK`. With `--audit-level=info`, exit 1 means the JSON reports at least one vulnerability. Any other exit, non-JSON stdout, or a missing network is `REGISTRY_UNAVAILABLE` for that command. A repository worktree change during the command is unexpected. §10.4 leaves it untouched unless command causation and sole-writer attribution are both established. Do not fall through to `npm ci`, `npx`, or a second installer.
 
 Primary per-advisory record, unauthenticated. `curl` uses the same `env -i` allowlist, `curl -q` so it does not read a curlrc, no `--netrc`, and no `Authorization` header:
 
@@ -270,7 +270,7 @@ For each assessed affected path the report will propose one smallest next change
 
 No other path is in scope. In particular this lane does not edit `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, `ROADMAP.md`, `DECISIONS.md`, `ARCHITECTURE.md`, `DESIGN_SYSTEM.md`, `.jetnity/operating-mode.json`, `package.json`, `package-lock.json`, `next.config.js`, `vercel.json`, or `.github/workflows/ci.yml`.
 
-Pre-existing worktree fact, observed before the first plan commit and left unstaged: `next-env.d.ts` differs by the generated import paths `./.next/types/...` versus `./.next/dev/types/...`. This lane does not stage or regenerate that file. Recovery of a command-caused change uses the byte snapshot in §10.4. A blanket `git restore` is not used, including on this already-dirty file.
+Pre-existing worktree fact, observed before the first plan commit and left unstaged: `next-env.d.ts` differs by the generated import paths `./.next/types/...` versus `./.next/dev/types/...`. This lane does not stage or regenerate that file. If that file or any other repository path changes during a metadata command, §10.4 leaves the new bytes in place unless causation and sole-writer attribution are both established. A snapshot of the older bytes is not that attribution. A blanket `git restore` is not used.
 
 ## 8. Frozen contracts and reuse
 
@@ -301,8 +301,8 @@ Multi-agent suitability remains the TASK's `MULTI_AGENT` decision. This lane's o
 | `REGISTRY_AUDIT_OK` | Exit 0 or 1 and parseable JSON | Primary GHSA fetch |
 | `REGISTRY_UNAVAILABLE` | Network, HTTP failure, rate limit, non-JSON | Record the gap per source. Do not invent ids. Continue only for sources that returned primary payloads. |
 | `CONFIG_BOUNDARY_UNMET` | The child allowlist cannot run npm, the disposable path is inside `HOME` or `CODEX_HOME`, or the response names a non-public registry | Stop that npm source. Do not fall back to ambient config or credentials. |
-| `UNSAFE_TOOL` | A repository worktree path changed during the child command | Apply §10.4. Stop the registry pass. |
-| `RESTORE_UNATTRIBUTED` | A changed path has no pre-command byte snapshot, or the snapshot cannot be written back identically | STOP and report. Do not restore any other path. |
+| `UNSAFE_TOOL` | The metadata child is shown to have written one repository path, and sole-writer attribution in §10.4 holds | Restore only that path from its snapshot. Stop the registry pass. |
+| `RESTORE_UNATTRIBUTED` | A repository path differs after the child and causation or sole-writer attribution is missing | STOP and report. Leave every repository path untouched. |
 | `ADVISORY_PRIMARY_OK` | GHSA payload has id, range, URL, timestamps | Version decision |
 | `ADVISORY_PRIMARY_GAP` | Payload missing a required field | Row stays unresolved for that field |
 | `RANGE_DECIDED` | Registry statement and local comparator agree | Exposure classification |
@@ -329,20 +329,26 @@ Before and after the registry commands, record:
 
 ### 10.4 Pre-command bytes and restoration
 
+The metadata commands use the disposable project as their cwd. They are specified so they do not write the repository. A snapshot records pre-command bytes. It does not show that the child caused a later difference.
+
 Immediately before the child starts, and before any npm or curl process:
 
 1. Record `git status --porcelain=v1`.
 2. Copy the exact worktree bytes of every dirty tracked path, including the already-dirty `next-env.d.ts` when it is dirty, into `snapshots/` in the disposable directory. Record each snapshot's SHA-256.
-3. For the watched clean paths `package.json`, `package-lock.json`, and `next-env.d.ts` when it is clean, record the HEAD blob bytes and their SHA-256 as that path's snapshot.
-4. The watched set is the union of the dirty paths and those three paths. A path outside that set is not eligible for later restoration.
+3. For `package.json`, `package-lock.json`, and `next-env.d.ts` when it is clean, record the HEAD blob bytes and their SHA-256 beside those snapshots.
+4. The comparison set is the union of the dirty paths and those three paths.
 
-After the child exits, recompute the same worktree hashes.
+After the child exits, recompute the worktree hashes. A path whose bytes still match its snapshot is left as it was.
 
-- A path whose bytes still match its snapshot, including a still-dirty `next-env.d.ts`, is left untouched.
-- A watched path whose bytes differ is restored by writing the snapshot bytes back over that one path. The write is checked by SHA-256. This is the whole restoration. It is not `git restore`, `git checkout`, `git reset`, or a directory-wide clean.
-- A new untracked path in the repository, a change to a path that has no snapshot, or a snapshot that cannot be written back with the same SHA-256 is `RESTORE_UNATTRIBUTED`. Stop. Report the path and the before/after porcelain lines. Do not restore any other path and do not continue the registry pass.
+Any repository difference is unexpected. The default is `RESTORE_UNATTRIBUTED`: stop, report the path and the before/after porcelain lines, and leave every repository path untouched. That default covers a missing snapshot, a new untracked path, a concurrent or background edit, and every case where causation is uncertain. A hash difference during the command window is not causation. The old snapshot is not written back over a concurrent change.
 
-The metadata commands use the disposable project as cwd so the repository is not their output directory. A repository change is still handled only by the rules above.
+Restoration of one path is allowed only when all three are true before the write:
+
+- the pre-command snapshot for that path exists and its SHA-256 was recorded;
+- the metadata child is shown to have written that path, by a direct observation of that process's write rather than by timing alone;
+- that child is the sole writer of the path from the snapshot until the write-back, and the path's bytes are still the observed post-command bytes at the moment of write-back.
+
+The write-back copies those snapshot bytes onto that one path and checks the SHA-256. It is not `git restore`, `git checkout`, `git reset`, or a directory-wide clean. The state is `UNSAFE_TOOL`, and the registry pass stops after that single restore. If any of the three conditions fails, or the bytes change again before the write-back, the state remains `RESTORE_UNATTRIBUTED` and nothing is written. No extra process, config, or credential inspection is added to manufacture attribution.
 
 Evidence files under `docs/evidence/dependency-advisory-triage-1/`:
 
@@ -357,7 +363,7 @@ Evidence files under `docs/evidence/dependency-advisory-triage-1/`:
 `validate-evidence.mjs` fails unless all of the following hold:
 
 - input SHA-256 and blobs match §4, or a later authorized head whose package blobs still match §4
-- `package.json` and `package-lock.json` match their pre-command snapshots
+- `package.json` and `package-lock.json` still match their pre-command snapshots. A difference is `RESTORE_UNATTRIBUTED` under §10.4 and the validator does not restore it.
 - `commands.txt` shows the full set with all four `--include` values and no `--omit`, and the omit-dev set with `--omit=dev`, `--include=prod`, `--include=optional`, `--include=peer`, and no `--include=dev`
 - every matrix row has an advisory id, lock path, version, primary https URL, retrieval time, official severity, impact, exposure bucket, Jetnity priority, confidence, and remaining uncertainty
 - every id in the matrix exists in a retained primary payload
@@ -378,7 +384,7 @@ The two conditional browser skips, 181 existing lint warnings, guest cross-tab n
 - The audit is about lock blob `4c64e03d` at the assessed head. Any later lockfile change invalidates it.
 - CI run 40202059080 proves an aggregate installed-tree summary on ubuntu-latest at that timestamp. It does not prove advisory identity or Production contents.
 - Deployed runtime, optional sharp/SWC selection by name, and held-lane reachability stay UNKNOWN unless the authorized pass obtains a primary source that actually answers them. This plan does not expect the pass to obtain deployed bytes. Unknown deployment keeps exposure bucket U and does not lower priority. Workspace installed consistency stays **UNVERIFIED** and is not inferred from the hidden lockfile.
-- The builtin npmrc remains on the config search path. The child boundary does not read or print it. A response that does not stay on `registry.npmjs.org` stops that npm source.
+- The builtin npmrc remains on the config search path. The child boundary does not read or print it, and this lane does not inventory credentials to investigate it. Body text that names `registry.npmjs.org` does not prove the contacted host, an unauthenticated transport, or the absence of a credential. A body that names another host stops that npm source.
 - No exploit, payload, or vulnerability demonstration is in scope.
 - Author self-review is not acceptance. Cursor does not Ready, merge, close #1016, write `main`, or start a follow-up slice.
 
@@ -390,4 +396,4 @@ The TASK already forbids audit-time installation and already points at the exist
 
 ## 13. Decision packet requested from the Technical Lead
 
-R1 is incorporated in §§4–11: the sanitized child environment and the explicit full and omit-dev sets, the hidden-lockfile correction, the severity/context priority table, and snapshot restoration. Re-review this plan head. If it is accepted, authorize this same session to execute §§6–10 only, writing only the files in §7. If `origin/main` has moved, the authorization should say whether to continue on the drifted base or to wait. No Owner confirmation is required for that internal gate. No package upgrade is authorized by acceptance of this plan.
+R1 remains the isolation, hidden-lockfile, and priority design. R2 changes §10.4: repository drift is reported and left untouched unless the metadata child is shown to be the sole writer of that path. Re-review this plan head. If it is accepted, authorize this same session to execute §§6–10 only, writing only the files in §7. If `origin/main` has moved, the authorization should say whether to continue on the drifted base or to wait. No Owner confirmation is required for that internal gate. No package upgrade is authorized by acceptance of this plan.
