@@ -200,7 +200,7 @@ export default function Reisevorbereitung({
       )}
 
       <div id="reisevorbereitung-detail" className="mt-4 grid w-full min-w-0 max-w-full grid-cols-1 gap-3">
-        <nav aria-label="Bereiche der Vorbereitung" className="grid w-full grid-cols-1 gap-2">
+        <nav aria-label="Bereiche der Vorbereitung" className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&>*]:min-w-0 [&>*]:max-w-full">
           {PREPARATION_BEREICHE.map((bereich) => (
             <a
               key={bereich.id}
@@ -394,8 +394,8 @@ function Bereich({
         }}
         className="flex min-h-[44px] w-full min-w-0 cursor-pointer list-none items-center justify-between gap-[8px] rounded-2xl px-[12px] py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0 flex-1">
-          <span className="block break-words text-sm font-semibold leading-5 text-brand-800">{BEREICH_TITEL[id]}</span>
-          <span className="mt-0.5 block break-words text-xs leading-5 text-ink-800">{hinweis}</span>
+          <span className="block max-w-full break-words text-sm font-semibold leading-5 text-brand-800">{BEREICH_TITEL[id]}</span>
+          <span className="mt-0.5 block max-w-full break-words text-xs leading-5 text-ink-800">{hinweis}</span>
         </span>
         <ChevronDown className="h-4 w-4 shrink-0 text-brand-800 group-open/bereich:rotate-180" aria-hidden="true" />
       </summary>
@@ -698,7 +698,7 @@ function ReisendenKarte({
             <ChevronDown className="h-4 w-4 group-open/traveller:rotate-180" aria-hidden="true" />
           </summary>
           <form
-            className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1"
+            className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&>*]:min-w-0 [&>*]:max-w-full [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1 [&_select]:max-w-full [&_input]:max-w-full"
             onSubmit={(event) => {
               event.preventDefault()
               steuerung.speichern(slot.clientRef)

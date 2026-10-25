@@ -9,7 +9,7 @@ import type { TravellerDocumentType, TripTraveller } from '@/types/trips'
 
 export const SATZ_DUPLIKAT_LAND = 'Dieselbe Staatsbürgerschaft kann nur einmal erfasst werden.'
 export const SATZ_BEZIEHUNG = 'Das Dokument muss zu einer Staatsbürgerschaft derselben Person gehören.'
-export const SATZ_NICHT_GESENDET = 'Diese Angaben können so nicht gespeichert werden.'
+const SATZ_NICHT_GESENDET = 'Diese Angaben können so nicht gespeichert werden.'
 
 export type ZeilenHerkunft = 'loaded' | 'created'
 
@@ -126,7 +126,7 @@ function kollidiert(paare: ReadonlyArray<{ geliefert: string; bild: string }>): 
   return false
 }
 
-export function neueCitizenshipClientRef(zufall: Zufall = () => globalThis.crypto.randomUUID()): string {
+function neueCitizenshipClientRef(zufall: Zufall = () => globalThis.crypto.randomUUID()): string {
   return `citizenship:${zufall()}`.slice(0, 64)
 }
 
@@ -176,7 +176,7 @@ export function fingerprintFelder(eingabe: {
   })
 }
 
-export function fingerprintTraveller(traveller: TripTraveller): string {
+function fingerprintTraveller(traveller: TripTraveller): string {
   return fingerprintFelder({
     clientRef: traveller.clientRef,
     label: traveller.label,
@@ -218,7 +218,7 @@ export function entwurfAusVorhanden(traveller: TripTraveller, zufall?: Zufall): 
   }
 }
 
-export function leererEntwurf(clientRef: string, label: string | null, zufall?: Zufall): TravellerDraft {
+function leererEntwurf(clientRef: string, label: string | null, zufall?: Zufall): TravellerDraft {
   return {
     clientRef,
     label,

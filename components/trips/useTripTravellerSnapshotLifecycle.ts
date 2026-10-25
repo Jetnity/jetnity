@@ -72,7 +72,7 @@ type Ledger = {
 }
 
 export type TripTravellerIntakeSteuerung = {
-  writerRef: React.MutableRefObject<IntakeWriter | null>
+  writerRegistrieren: (writer: IntakeWriter) => void
   anfordern: (registryTravellerId: string) => void
   bestaetigen: (registryTravellerId: string) => void
   abbrechen: (registryTravellerId: string) => void
@@ -219,11 +219,12 @@ export function useTripTravellerSnapshotLifecycle({
     anzeige = beobachte(anzeige, quelle)
     gesehenJetzt = quelle
   }
-  if (anzeige !== ledger) {
-    bestand.current = anzeige
-    setLedger(anzeige)
-  }
+  if (anzeige !== ledger) setLedger(anzeige)
   if (gesehenJetzt !== gesehen) setGesehen(gesehenJetzt)
+
+  React.useLayoutEffect(() => {
+    bestand.current = ledger
+  }, [ledger])
 
   const commit = React.useCallback((next: Ledger) => {
     bestand.current = next
@@ -260,6 +261,7 @@ export function useTripTravellerSnapshotLifecycle({
       target: string,
       schluessel: Belegung,
       draftGeneration: number,
+      interaction: number,
       starten: (markierung: { entered: boolean }) => Promise<string | null>,
     ) => {
       const markierung = { entered: false }
@@ -274,8 +276,9 @@ export function useTripTravellerSnapshotLifecycle({
       if (nachher.tripId !== schluessel.tripId || !abschlussAktuell(nachher.belegt, schluessel)) return
       const entwurf = nachher.drafts[target]
       const belegt = belegungLoesen(nachher.belegt, schluessel)
+      const fokus = nachher.interaction === interaction ? target : null
       if (!entwurf || entwurf.generation !== draftGeneration) {
-        commit({ ...nachher, belegt })
+        commit({ ...nachher, belegt, focusTarget: null })
         return
       }
       const art = wert === null ? 'null' : typeof wert === 'string' ? klasseVon(wert) : 'malformed'
@@ -298,7 +301,7 @@ export function useTripTravellerSnapshotLifecycle({
                 guestBlocked: false,
               },
             },
-            focusTarget: target,
+            focusTarget: fokus,
           })
           try {
             await lesenRef.current?.()
@@ -346,7 +349,7 @@ export function useTripTravellerSnapshotLifecycle({
             guestBlocked,
           },
         },
-        focusTarget: target,
+        focusTarget: fokus,
       })
     },
     [commit],
@@ -446,7 +449,8 @@ export function useTripTravellerSnapshotLifecycle({
       })
       const payload = serialisiert.payload
       const draftGeneration = entwurf.generation
-      void abschliessen(clientRef, schluessel, draftGeneration, async (markierung) => {
+      const interaction = aktuell.interaction
+      void abschliessen(clientRef, schluessel, draftGeneration, interaction, async (markierung) => {
         const writer = setzenRef.current
         if (!writer) throw new Error('writer-fehlt')
         markierung.entered = true
@@ -493,7 +497,8 @@ export function useTripTravellerSnapshotLifecycle({
           },
         },
       })
-      void abschliessen(clientRef, schluessel, entwurf.generation, async (markierung) => {
+      const interaction = aktuell.interaction
+      void abschliessen(clientRef, schluessel, entwurf.generation, interaction, async (markierung) => {
         const writer = entfernenRef.current
         if (!writer) throw new Error('writer-fehlt')
         markierung.entered = true
@@ -503,8 +508,12 @@ export function useTripTravellerSnapshotLifecycle({
     [abschliessen, commit],
   )
 
+  const writerRegistrieren = React.useCallback((writer: IntakeWriter) => {
+    writerRef.current = writer
+  }, [])
+
   const intake: TripTravellerIntakeSteuerung = {
-    writerRef,
+    writerRegistrieren,
     anfordern: (registryTravellerId) => {
       const aktuell = bestand.current
       if (aktuell.intakeBelegt) return
@@ -726,7 +735,11 @@ export function useTripTravellerSnapshotLifecycle({
         gastRef.current?.(lesung.reise)
         const nachher = bestand.current
         if (nachher.tripId !== tripRef.current) return
-        commit({ ...nachher, guestUnresolved: false })
+        const intents = { ...nachher.intents }
+        for (const [ref, intent] of Object.entries(intents)) {
+          if (intent.guestBlocked) intents[ref] = { ...intent, guestBlocked: false }
+        }
+        commit({ ...nachher, guestUnresolved: false, intents })
       })()
     },
     interaktion: () => {

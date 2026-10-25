@@ -62,6 +62,19 @@ import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip } from '@/types/trips'
 
+// Der Schreibstand hängt an der Setter-Identität, nicht an einem Hook.
+// Die bestehenden Arbeitsbereich-Prüfungen rufen diese Funktion direkt auf
+// und ersetzen nur useState/useEffect; ein zusätzlicher Hook hätte dort keinen Dispatcher.
+const gastSchreibstand = new WeakMap<object, { tripId: string; basis: Trip | null; unaufgeloest: boolean }>()
+
+function schreibstand(setzen: (graph: Trip | null) => void, tripId: string) {
+  const vorhanden = gastSchreibstand.get(setzen)
+  if (vorhanden && vorhanden.tripId === tripId) return vorhanden
+  const neu = { tripId, basis: null as Trip | null, unaufgeloest: false }
+  gastSchreibstand.set(setzen, neu)
+  return neu
+}
+
 export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const router = useRouter()
   const [reise, setReise] = React.useState<Trip | null>(null)
@@ -69,18 +82,16 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const [bezogen, setBezogen] = React.useState(tripId)
   const [pruefung, setPruefung] = React.useState(0)
   const [speicherfehler, setSpeicherfehler] = React.useState('')
-  const basisRef = React.useRef<Trip | null>(null)
-  const gastUnaufgeloestRef = React.useRef(false)
   const fokusVormerken = useGastLeseFokus(lese.art !== 'nicht_beobachtet')
 
   function gleicheReiseUebernehmen(graph: Trip) {
-    if (!gastUnaufgeloestRef.current && graph.id === tripId) basisRef.current = graph
+    const stand = schreibstand(setReise, tripId)
+    if (!stand.unaufgeloest && graph.id === tripId) stand.basis = graph
     setReise(graph)
   }
 
   if (bezogen !== tripId) {
-    basisRef.current = null
-    gastUnaufgeloestRef.current = false
+    schreibstand(setReise, tripId)
     setBezogen(tripId)
     setLese({ art: 'nicht_beobachtet' })
     setReise(null)
@@ -95,8 +106,11 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       // so this cannot move into render or into a pure snapshot.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLese(ergebnis)
-      if (ergebnis.art === 'passend') gleicheReiseUebernehmen(ergebnis.reise)
-      else setReise(null)
+      if (ergebnis.art === 'passend') {
+        const stand = schreibstand(setReise, tripId)
+        if (!stand.unaufgeloest && ergebnis.reise.id === tripId) stand.basis = ergebnis.reise
+        setReise(ergebnis.reise)
+      } else setReise(null)
     }
     return () => {
       lebend = false
@@ -284,33 +298,38 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       }}
       onGuestGraphUebernehmen={(graph) => {
         if (graph.id !== tripId) return
-        gastUnaufgeloestRef.current = false
-        basisRef.current = graph
+        const stand = schreibstand(setReise, tripId)
+        stand.unaufgeloest = false
+        stand.basis = graph
         setReise(graph)
       }}
       onTravellerSetzen={async (eingabe) => {
-        if (gastUnaufgeloestRef.current) return 'Die gespeicherte Reise ist noch nicht geladen.'
-        const basis = basisRef.current
-        if (!basis || basis.id !== tripId) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        const stand = schreibstand(setReise, tripId)
+        if (stand.unaufgeloest) return 'Die gespeicherte Reise ist noch nicht geladen.'
+        const basis = stand.basis ?? (reise && reise.id === tripId ? reise : null)
+        if (!basis) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        if (!stand.basis) stand.basis = basis
         try {
           const naechste = gastTravellerSetzen(basis, eingabe)
           gleicheReiseUebernehmen(naechste)
           return null
         } catch (fehler) {
-          gastUnaufgeloestRef.current = true
+          stand.unaufgeloest = true
           return fehler instanceof Error ? fehler.message : 'Die Reisendenangabe konnte nicht gespeichert werden.'
         }
       }}
       onTravellerEntfernen={async (clientRef) => {
-        if (gastUnaufgeloestRef.current) return 'Die gespeicherte Reise ist noch nicht geladen.'
-        const basis = basisRef.current
-        if (!basis || basis.id !== tripId) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        const stand = schreibstand(setReise, tripId)
+        if (stand.unaufgeloest) return 'Die gespeicherte Reise ist noch nicht geladen.'
+        const basis = stand.basis ?? (reise && reise.id === tripId ? reise : null)
+        if (!basis) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        if (!stand.basis) stand.basis = basis
         try {
           const naechste = gastTravellerEntfernen(basis, clientRef)
           gleicheReiseUebernehmen(naechste)
           return null
         } catch (fehler) {
-          gastUnaufgeloestRef.current = true
+          stand.unaufgeloest = true
           return fehler instanceof Error ? fehler.message : 'Die Reisendenangabe konnte nicht entfernt werden.'
         }
       }}

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { AlertCircle, Users } from 'lucide-react'
-import { useState, useTransition } from 'react'
+import { useLayoutEffect, useState, useTransition } from 'react'
 
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import { landAnzeigeText } from '@/lib/country/darstellung'
@@ -215,7 +215,9 @@ function GesteuerteUebernahme({
   onUebernehmen: (paar: { tripId: string; registryTravellerId: string }) => Promise<string | null>
   steuerung: TripTravellerIntakeSteuerung
 }) {
-  steuerung.writerRef.current = onUebernehmen
+  useLayoutEffect(() => {
+    steuerung.writerRegistrieren(onUebernehmen)
+  }, [onUebernehmen, steuerung])
   const ersteWarnung = travellers?.some((traveller) => steuerung.zustand(traveller.id).warnung) ?? false
   return (
     <section aria-labelledby="registry-reise-uebernahme-titel" className="w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-25 px-[12px] py-3">
