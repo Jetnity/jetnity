@@ -10,7 +10,7 @@
 // Die Zeitangabe darf leer bleiben, und zwar jedes Feld einzeln. „Irgendwann
 // 2004“ ist eine gültige Erinnerung; ein erfundener 1. Januar wäre es nicht.
 
-import { useId, useState, type FormEvent, type Ref } from 'react'
+import { useId, useState, type FormEvent, type KeyboardEvent, type Ref } from 'react'
 
 import LandFeld from '@/components/country/LandFeld'
 import OrtSuche from '@/components/places/OrtSuche'
@@ -81,6 +81,9 @@ export default function AccountBesuchFormular({
   laeuft,
   ortRef,
   zeitNebeneinander = true,
+  hinweis = null,
+  statusText = null,
+  fokusId,
 }: {
   titel: string
   aktionText: string
@@ -92,6 +95,9 @@ export default function AccountBesuchFormular({
   ortRef?: Ref<HTMLInputElement>
   /** Volle Breite darf Jahr, Monat und Tag nebeneinander legen. In einer Karte bleiben sie gestapelt. */
   zeitNebeneinander?: boolean
+  hinweis?: string | null
+  statusText?: string | null
+  fokusId?: string
 }) {
   const basisId = useId()
   const [jahrMaximum] = useState(() => new Date().getUTCFullYear())
@@ -101,13 +107,31 @@ export default function AccountBesuchFormular({
     onAbsenden()
   }
 
+  function taste(ereignis: KeyboardEvent<HTMLFormElement>) {
+    if (ereignis.key !== 'Escape' || !onAbbrechen || laeuft) return
+    ereignis.preventDefault()
+    onAbbrechen()
+  }
+
   return (
     <form
       onSubmit={absenden}
+      onKeyDown={taste}
       data-besuch-formular="ein"
+      data-fokus={fokusId}
       className="rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5"
     >
       <h2 className="text-lg font-semibold tracking-[-0.03em] text-brand-800">{titel}</h2>
+      {hinweis ? (
+        <p role="alert" data-besuch-hinweis="lokal" className="mt-3 text-sm leading-6 text-red-800">
+          {hinweis}
+        </p>
+      ) : null}
+      {statusText ? (
+        <p role="status" data-besuch-formular-status="ein" className="mt-3 text-sm leading-6 text-brand-800">
+          {statusText}
+        </p>
+      ) : null}
 
       <div className="mt-3 grid min-w-0 gap-3 [&_input]:text-base [&_select]:text-base sm:[&_input]:text-sm sm:[&_select]:text-sm">
         <div className="grid min-w-0 gap-1">
