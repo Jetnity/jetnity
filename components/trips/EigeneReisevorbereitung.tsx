@@ -15,6 +15,7 @@ import {
   PERSONAL_STALE_ERKLAERUNG,
   PERSONAL_SUCHE_LABEL,
   PERSONAL_VERWERFEN,
+  PERSONAL_ZIEL_WEG,
   preparationEpoch,
   persoenlicheEingabe,
   zeileSichtbar,
@@ -120,9 +121,12 @@ export default function EigeneReisevorbereitung({
     ziel.focus()
   }, [steuerung?.fokusIntentId])
 
-  const schwebend = intents.filter(
-    (intent) => intent.art === 'create' && !eigene.some((item) => item.clientRef === intent.clientRef),
-  )
+  const letzteJeRef = new Map<string, PersonalIntent>()
+  for (const intent of intents) letzteJeRef.set(intent.clientRef, intent)
+  const schwebend = intents.filter((intent) => {
+    if (eigene.some((item) => item.clientRef === intent.clientRef)) return false
+    return letzteJeRef.get(intent.clientRef)?.id === intent.id
+  })
   const sichtbar = eigene.filter((item) => zeileSichtbar(item, filter, suche, intents))
   const schwebendSichtbar = schwebend.filter((intent) => {
     const alsZeile = {
@@ -174,6 +178,7 @@ export default function EigeneReisevorbereitung({
               steuerung?.interaktion()
               setFilter(wert)
             }}
+            onFocus={() => steuerung?.interaktion()}
           >
             {label}
           </button>
@@ -219,6 +224,7 @@ export default function EigeneReisevorbereitung({
                 steuerung?.editorBewegt(item.clientRef, generation)
               }}
               onStatus={(status) => {
+                steuerung?.interaktion()
                 const generation = (editoren[item.clientRef]?.generation ?? 0) + 1
                 setEditoren((vorher) => {
                   const editor = vorher[item.clientRef]
@@ -228,9 +234,11 @@ export default function EigeneReisevorbereitung({
                 steuerung?.editorBewegt(item.clientRef, generation)
               }}
               onSpeichern={() => {
+                if (!steuerung) return
+                steuerung.interaktion()
                 const editor = editoren[item.clientRef]
                 if (!editor) return
-                steuerung?.bearbeiten({
+                steuerung.bearbeiten({
                   clientRef: item.clientRef,
                   title: editor.title,
                   userStatus: editor.status,
@@ -239,9 +247,16 @@ export default function EigeneReisevorbereitung({
                   filter,
                 })
               }}
-              onLoeschenFragen={() => setLoeschen(item.clientRef)}
-              onLoeschenAbbrechen={() => setLoeschen(null)}
+              onLoeschenFragen={() => {
+                steuerung?.interaktion()
+                setLoeschen(item.clientRef)
+              }}
+              onLoeschenAbbrechen={() => {
+                steuerung?.interaktion()
+                setLoeschen(null)
+              }}
               onLoeschen={() => {
+                steuerung?.interaktion()
                 const generation = editoren[item.clientRef]?.generation ?? 0
                 steuerung?.entfernen(item.clientRef, filter, generation)
                 if (!steuerung && onEntfernen) void onEntfernen(item.clientRef)
@@ -260,21 +275,11 @@ export default function EigeneReisevorbereitung({
             />
           ))}
           {Object.entries(editoren)
-            .filter(([ref]) => !eigene.some((item) => item.clientRef === ref))
+            .filter(([ref]) => !eigene.some((item) => item.clientRef === ref) && !schwebend.some((intent) => intent.clientRef === ref))
             .map(([ref, editor]) => (
-              <li key={ref} className="grid gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3" data-personal-client-ref={ref}>
+              <li key={ref} className="grid gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3" data-personal-client-ref={ref} data-personal-absent="true">
                 <p className="break-words text-sm font-semibold text-brand-800">{editor.title}</p>
-                <button type="button" className={PRIMAER} onClick={() => steuerung?.bearbeiten({
-                  clientRef: ref,
-                  title: editor.title,
-                  userStatus: editor.status,
-                  boundEpoch: editor.boundEpoch,
-                  editorGeneration: editor.generation,
-                  filter,
-                })}
-                >
-                  Speichern
-                </button>
+                <p className="break-words text-sm leading-6 text-brand-800">{PERSONAL_ZIEL_WEG}</p>
               </li>
             ))}
           {schwebendSichtbar.map((intent) => (
@@ -292,9 +297,9 @@ export default function EigeneReisevorbereitung({
               <Meldung intent={intent} />
               {intent.phase !== 'pending' && intent.phase !== 'awaiting' && intent.phase !== 'confirmed' ? (
                 <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-                  <button type="button" className={SEKUNDAER} onClick={() => steuerung?.erneut(intent.id)}>Erneut versuchen</button>
-                  <button type="button" className={SEKUNDAER} onClick={() => steuerung?.verwerfen(intent.id)}>{PERSONAL_VERWERFEN}</button>
-                  <button type="button" className={SEKUNDAER} onClick={() => steuerung?.aktualisieren()}>{PERSONAL_AKTUALISIEREN}</button>
+                  <button type="button" className={SEKUNDAER} onFocus={() => steuerung?.interaktion()} onClick={() => { steuerung?.interaktion(); steuerung?.erneut(intent.id) }}>Erneut versuchen</button>
+                  <button type="button" className={SEKUNDAER} onFocus={() => steuerung?.interaktion()} onClick={() => { steuerung?.interaktion(); steuerung?.verwerfen(intent.id) }}>{PERSONAL_VERWERFEN}</button>
+                  <button type="button" className={SEKUNDAER} onFocus={() => steuerung?.interaktion()} onClick={() => { steuerung?.interaktion(); steuerung?.aktualisieren() }}>{PERSONAL_AKTUALISIEREN}</button>
                 </div>
               ) : null}
             </li>
@@ -327,7 +332,7 @@ export default function EigeneReisevorbereitung({
         </p>
       ) : null}
       {steuerung ? (
-        <button type="button" className={SEKUNDAER} onClick={() => steuerung.aktualisieren()}>
+        <button type="button" className={SEKUNDAER} onFocus={() => steuerung.interaktion()} onClick={() => steuerung.aktualisieren()}>
           {PERSONAL_AKTUALISIEREN}
         </button>
       ) : null}
@@ -400,11 +405,11 @@ function Zeile({
             <input value={editor.title} onChange={(event) => onTitel(event.target.value)} onFocus={onInteraktion} maxLength={80} className={FELD} />
           </label>
           <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-            <Status aktiv={editor.status === 'open'} onClick={() => onStatus('open')} disabled={sperre}>Offen</Status>
-            <Status aktiv={editor.status === 'done'} onClick={() => onStatus('done')} disabled={sperre}>Erledigt</Status>
-            <Status aktiv={editor.status === 'skipped'} onClick={() => onStatus('skipped')} disabled={sperre}>Nicht relevant</Status>
+            <Status aktiv={editor.status === 'open'} onClick={() => onStatus('open')} onFocus={onInteraktion} disabled={sperre}>Offen</Status>
+            <Status aktiv={editor.status === 'done'} onClick={() => onStatus('done')} onFocus={onInteraktion} disabled={sperre}>Erledigt</Status>
+            <Status aktiv={editor.status === 'skipped'} onClick={() => onStatus('skipped')} onFocus={onInteraktion} disabled={sperre}>Nicht relevant</Status>
           </div>
-          <button type="button" className={PRIMAER} disabled={sperre || unterwegs} onClick={onSpeichern}>
+          <button type="button" className={PRIMAER} disabled={sperre || unterwegs} onFocus={onInteraktion} onClick={onSpeichern}>
             Speichern
           </button>
         </div>
@@ -416,27 +421,27 @@ function Zeile({
       {loeschen ? (
         <div className="grid gap-2" role="group" aria-label={entfernenFrage(item.title ?? '', doppelt, statusText)}>
           <p className="break-words text-sm leading-6 text-brand-800">{entfernenFrage(item.title ?? '', doppelt, statusText)}</p>
-          <button type="button" className={PRIMAER} disabled={sperre} onClick={onLoeschen}>
+          <button type="button" className={PRIMAER} disabled={sperre} onFocus={onInteraktion} onClick={onLoeschen}>
             Endgültig entfernen
           </button>
-          <button type="button" className={SEKUNDAER} onClick={onLoeschenAbbrechen}>
+          <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onLoeschenAbbrechen}>
             Abbrechen
           </button>
         </div>
       ) : (
-        <button type="button" className={`${SEKUNDAER} text-ink-800`} onClick={onLoeschenFragen}>
+        <button type="button" className={`${SEKUNDAER} text-ink-800`} onFocus={onInteraktion} onClick={onLoeschenFragen}>
           Entfernen
         </button>
       )}
       {intent && intent.phase !== 'pending' && intent.phase !== 'awaiting' && intent.phase !== 'confirmed' ? (
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-          <button type="button" className={SEKUNDAER} disabled={sperre} onClick={onErneut}>
+          <button type="button" className={SEKUNDAER} disabled={sperre} onFocus={onInteraktion} onClick={onErneut}>
             Erneut versuchen
           </button>
-          <button type="button" className={SEKUNDAER} onClick={onVerwerfen}>
+          <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onVerwerfen}>
             {PERSONAL_VERWERFEN}
           </button>
-          <button type="button" className={SEKUNDAER} onClick={onAktualisieren}>
+          <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onAktualisieren}>
             {PERSONAL_AKTUALISIEREN}
           </button>
         </div>
@@ -458,15 +463,17 @@ function Status({
   aktiv,
   disabled,
   onClick,
+  onFocus,
   children,
 }: {
   aktiv: boolean
   disabled: boolean
   onClick: () => void
+  onFocus: () => void
   children: React.ReactNode
 }) {
   return (
-    <button type="button" aria-pressed={aktiv} disabled={disabled} className={aktiv ? PRIMAER : SEKUNDAER} onClick={onClick}>
+    <button type="button" aria-pressed={aktiv} disabled={disabled} className={aktiv ? PRIMAER : SEKUNDAER} onClick={onClick} onFocus={onFocus}>
       {children}
     </button>
   )

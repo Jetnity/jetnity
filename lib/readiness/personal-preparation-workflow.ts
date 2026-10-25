@@ -394,7 +394,7 @@ export function entscheiden(
       ledger: {
         ...ledger,
         ...composer,
-        locks: ledger.locks.filter((ref) => ref !== intent.clientRef),
+        locks: sperreLoesen(ledger, intent),
         intents: ledger.intents.filter((eintrag) => eintrag.id !== intent.id),
         hinweis: ledger.barrier ? ledger.hinweis : PERSONAL_VERWORFEN,
         fokusIntentId: ledger.fokusIntentId === intent.id ? null : ledger.fokusIntentId,
@@ -524,7 +524,7 @@ export function scheitern(
   return ersetzen(
     {
       ...ledger,
-      locks: ledger.locks.filter((ref) => ref !== intent.clientRef),
+      locks: sperreLoesen(ledger, intent),
       hinweis: unklar && !ledger.barrier ? PERSONAL_ERST_LESEN : ledger.hinweis,
       lesePflicht: unklar
         ? { ...ledger.lesePflicht, [intent.clientRef]: { seit: ledger.lieferung, gelesen: null } }
@@ -561,6 +561,21 @@ export function annehmen(
   return { ledger: ersetzen(ledger, neu), lesen }
 }
 
+function operationOffen(phase: PersonalPhase): boolean {
+  return phase === 'pending' || phase === 'awaiting'
+}
+
+function fremdeSperre(ledger: PersonalLedger, intent: PersonalIntent): boolean {
+  return ledger.intents.some(
+    (eintrag) => eintrag.id !== intent.id && eintrag.clientRef === intent.clientRef && operationOffen(eintrag.phase),
+  )
+}
+
+function sperreLoesen(ledger: PersonalLedger, intent: PersonalIntent): string[] {
+  if (fremdeSperre(ledger, intent)) return ledger.locks
+  return ledger.locks.filter((ref) => ref !== intent.clientRef)
+}
+
 function terminal(ledger: PersonalLedger, intent: PersonalIntent, phase: PersonalPhase, meldung: string): PersonalLedger {
   const neuerEntwurf = intent.art === 'create' && ledger.composerGeneration !== intent.composerGeneration
   const editorFremd = intent.art !== 'create' && ledger.editorStand[intent.clientRef] !== undefined && ledger.editorStand[intent.clientRef] !== intent.editorGeneration
@@ -574,7 +589,7 @@ function terminal(ledger: PersonalLedger, intent: PersonalIntent, phase: Persona
   return ersetzen(
     {
       ...ledger,
-      locks: ledger.locks.filter((ref) => ref !== intent.clientRef),
+      locks: sperreLoesen(ledger, intent),
       composerLock: titelLeeren ? false : ledger.composerLock,
       composerRef: titelLeeren ? null : ledger.composerRef,
       titelLeerenFuer: titelLeeren ? intent.id : ledger.titelLeerenFuer,
@@ -660,7 +675,7 @@ export function gastErgebnis(
   }
   if (lesung.art === 'props') return ledger
   return ersetzen(
-    { ...ledger, barrier: true, hinweis: PERSONAL_BARRIERE, locks: ledger.locks.filter((ref) => ref !== intent.clientRef) },
+    { ...ledger, barrier: true, hinweis: PERSONAL_BARRIERE, locks: sperreLoesen(ledger, intent) },
     { ...intent, phase: 'blocked', meldung: PERSONAL_BARRIERE, fokussieren: false },
   )
 }

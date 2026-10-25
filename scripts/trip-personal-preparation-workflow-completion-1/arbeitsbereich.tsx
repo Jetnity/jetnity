@@ -23,6 +23,7 @@ type Job = {
 
 type Bruecke = {
   writes: number
+  entries: number
   reads: number
   queued: number
   letzte: unknown
@@ -33,7 +34,7 @@ type Bruecke = {
   reiseSetzen: (reise: Trip) => void
   kanonischSetzen: (reise: Trip | undefined) => void
   speicherSetzen: (roh: string | null) => void
-  lesenAls: (art: 'normal' | 'unreadable') => void
+  lesenAls: (art: 'normal' | 'unreadable' | 'wrong_trip') => void
   fremdSchreiben: () => string | null
 }
 
@@ -63,10 +64,11 @@ function Host() {
   const [kanonisch, setKanonisch] = useState<Trip | undefined>(start.kanonisch)
   const reiseRef = useRef(reise)
   const writes = useRef(0)
+  const entries = useRef(0)
   const reads = useRef(0)
   const letzte = useRef<unknown>(null)
   const verzoegern = useRef(false)
-  const lesart = useRef<'normal' | 'unreadable'>('normal')
+  const lesart = useRef<'normal' | 'unreadable' | 'wrong_trip'>('normal')
   const wartend = useRef<Job[]>([])
 
   const fertig = (basis: Trip, next: Trip): string | null => {
@@ -79,27 +81,33 @@ function Host() {
   }
 
   const setzen = (eingabe: Parameters<typeof gastReadinessSetzen>[1]) => {
-    const basis = reiseRef.current
-    const ausfuehren = () => {
-      letzte.current = eingabe
-      if (start.seam === 'account') {
+    entries.current += 1
+    letzte.current = eingabe
+    if (start.seam === 'account') {
+      const ausfuehren = () => {
         writes.current += 1
         return null
       }
-      if (reiseRef.current.id !== basis.id) return null
-      try {
-        return fertig(basis, gastReadinessSetzen(basis, eingabe))
-      } catch (fehler) {
-        return fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht gespeichert werden.'
-      }
+      if (!verzoegern.current) return Promise.resolve().then(ausfuehren)
+      return new Promise<string | null>((resolve, reject) => {
+        wartend.current.push({ ausfuehren, resolve, reject })
+      })
     }
-    if (!verzoegern.current) return Promise.resolve().then(ausfuehren)
+    const basis = reiseRef.current
+    let ergebnis: string | null
+    try {
+      ergebnis = fertig(basis, gastReadinessSetzen(basis, eingabe))
+    } catch (fehler) {
+      ergebnis = fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht gespeichert werden.'
+    }
+    if (!verzoegern.current) return Promise.resolve(ergebnis)
     return new Promise<string | null>((resolve, reject) => {
-      wartend.current.push({ ausfuehren, resolve, reject })
+      wartend.current.push({ ausfuehren: () => ergebnis, resolve, reject })
     })
   }
 
   const entfernen = (clientRef: string) => {
+    entries.current += 1
     const basis = reiseRef.current
     if (start.seam === 'account') {
       writes.current += 1
@@ -115,6 +123,7 @@ function Host() {
   const lesen = async (): Promise<ReadinessAktualisierung> => {
     reads.current += 1
     if (start.seam === 'account') return { art: 'props' }
+    if (lesart.current === 'wrong_trip') return { art: 'wrong_trip' }
     const id = reiseRef.current.id
     if (lesart.current === 'unreadable') {
       const original = Storage.prototype.getItem
@@ -139,6 +148,9 @@ function Host() {
     window.__ARBEIT__ = {
       get writes() {
         return writes.current
+      },
+      get entries() {
+        return entries.current
       },
       get reads() {
         return reads.current

@@ -6,7 +6,7 @@ import { join, resolve } from 'node:path'
 import { after, afterEach, before, describe, test } from 'node:test'
 
 import * as esbuild from 'esbuild'
-import { chromium, type Browser, type Page } from 'playwright'
+import { chromium, type Browser, type Locator, type Page } from 'playwright'
 
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { preparationEpoch } from '@/lib/readiness/personal-preparation-workflow'
@@ -16,6 +16,7 @@ declare global {
   interface Window {
     __ARBEIT__: {
       writes: number
+      entries: number
       reads: number
       queued: number
       letzte: { clientRef?: string; title?: string | null; userStatus?: string } | null
@@ -26,7 +27,7 @@ declare global {
       reiseSetzen: (reise: Trip) => void
       kanonischSetzen: (reise: Trip | undefined) => void
       speicherSetzen: (roh: string | null) => void
-      lesenAls: (art: 'normal' | 'unreadable') => void
+      lesenAls: (art: 'normal' | 'unreadable' | 'wrong_trip') => void
       fremdSchreiben: () => string | null
     }
   }
@@ -130,6 +131,27 @@ function gemerkt<T extends { schliessen: () => Promise<void> }>(eintrag: T): T {
   return eintrag
 }
 
+async function stand(page: Page) {
+  return page.evaluate(() => ({
+    writes: window.__ARBEIT__.writes,
+    entries: window.__ARBEIT__.entries,
+    reads: window.__ARBEIT__.reads,
+    queued: window.__ARBEIT__.queued,
+    bytes: window.__ARBEIT__.bytes(),
+  }))
+}
+
+async function klickTrotzSperre(ziel: Locator) {
+  const getroffen = await ziel.evaluate((el) => {
+    const schluessel = Object.keys(el).find((name) => name.startsWith('__reactProps'))
+    const props = schluessel ? (el as unknown as Record<string, { onClick?: () => void }>)[schluessel] : null
+    if (!props?.onClick) return false
+    props.onClick()
+    return true
+  })
+  assert.equal(getroffen, true)
+}
+
 async function vorbereitung(page: Page) {
   await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung' }).click()
   await page.waitForSelector('[data-workspace-modus="vorbereitung"]')
@@ -199,7 +221,7 @@ describe('mounted TripWorkspace personal preparation', () => {
     await schliessen()
   })
 
-  test('real mode navigation keeps a pending intent, and failed reads do not write', async () => {
+  test('real mode navigation keeps a pending intent, and a rejected response does not write again', async () => {
     const reise = beispielreise({ id: 'gast-modus', readinessItems: [] })
     const { page, schliessen } = gemerkt(await oeffnen(browser, bundle, { seam: 'guest', reise, geschwister: true }))
     await vorbereitung(page)
@@ -208,49 +230,156 @@ describe('mounted TripWorkspace personal preparation', () => {
     const feld = page.locator('#preparation-eigene-vorbereitung').getByLabel('Eigene Vorbereitung')
     await feld.fill('Wartet')
     await feld.press('Enter')
-    await page.waitForFunction(() => window.__ARBEIT__.queued === 1)
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 1 && window.__ARBEIT__.writes === 1 && window.__ARBEIT__.queued === 1)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /Wartet/)
     assert.equal(await page.locator('[data-personal-phase="pending"]').count(), 1)
     await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Reiseplan' }).click()
     await page.waitForSelector('[data-workspace-modus="plan"]')
     assert.equal(await page.locator('[data-personal-preparation-root]').count(), 0)
     await vorbereitung(page)
     assert.equal(await page.locator('[data-personal-phase="pending"]').count(), 1)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 1)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.entries), 1)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.queued), 1)
     await page.evaluate(() => window.__ARBEIT__.scheitern())
     await page.waitForFunction(() => document.body.innerText.includes('Lies zuerst'))
     await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Reiseplan' }).click()
     await vorbereitung(page)
     await page.getByRole('button', { name: 'Erneut versuchen' }).click()
     await page.waitForTimeout(40)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 1)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.entries), 1)
     assert.equal(await page.evaluate(() => window.__ARBEIT__.queued), 0)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.bytes()), vorher)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /Wartet/)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /entry-geschwister/)
+    assert.notEqual(await page.evaluate(() => window.__ARBEIT__.bytes()), vorher)
+    await schliessen()
+  })
 
-    const fremd = await page.evaluate(() => window.__ARBEIT__.fremdSchreiben())
-    const lesenKnopf = page.locator('#preparation-eigene-vorbereitung').getByRole('button', { name: 'Stand neu lesen' }).last()
-    await lesenKnopf.click()
-    await page.waitForFunction(() => document.body.innerText.includes('nicht gelesen'))
+  test('a failed read of the expected trip blocks a new generation after discard and mode changes', async () => {
+    const basis = beispielreise({ id: 'gast-barriere' })
+    const bestehend = punkt(basis, 'preparation-bestehend', 'Bestehend')
+    const reise = beispielreise({ id: basis.id, readinessItems: [bestehend] })
+    const { page, schliessen } = gemerkt(await oeffnen(browser, bundle, { seam: 'guest', reise, geschwister: true }))
+    await vorbereitung(page)
+    const zeile = page.locator('[data-personal-client-ref="preparation-bestehend"]')
+    await zeile.waitFor()
+    await page.evaluate(() => {
+      window.__ARBEIT__.verzoegern(true)
+      window.__ARBEIT__.lesenAls('wrong_trip')
+    })
+    await zeile.getByRole('button', { name: 'Titel bearbeiten' }).click()
+    await zeile.getByLabel('Titel bearbeiten').fill('Bestehend neu')
+    await zeile.getByRole('button', { name: 'Speichern' }).click()
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 1 && window.__ARBEIT__.writes === 1 && window.__ARBEIT__.queued === 1)
+    const feld = page.locator('#preparation-eigene-vorbereitung').getByLabel('Eigene Vorbereitung')
+    await feld.fill('Neu')
+    await feld.press('Enter')
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 2 && window.__ARBEIT__.writes === 2 && window.__ARBEIT__.queued === 2)
+    const neuRef = await page.evaluate(() => window.__ARBEIT__.letzte?.clientRef ?? '')
+    assert.match(neuRef, /^preparation-/)
+    assert.notEqual(neuRef, 'preparation-bestehend')
+    await page.evaluate(() => window.__ARBEIT__.freigeben())
+    await page.waitForFunction(() => window.__ARBEIT__.queued === 1 && document.querySelector('[data-personal-client-ref="preparation-bestehend"]')?.getAttribute('data-personal-phase') === 'blocked')
+    await page.evaluate(() => window.__ARBEIT__.freigeben())
+    await page.waitForFunction(() => window.__ARBEIT__.queued === 0 && document.querySelector('[data-personal-barrier]')?.getAttribute('data-personal-barrier') === 'true')
+    const neuZeile = page.locator(`[data-personal-client-ref="${neuRef}"]`)
+    assert.equal(await neuZeile.getAttribute('data-personal-phase'), 'blocked')
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /Bestehend neu/)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /entry-geschwister/)
+    await feld.fill('Anders', { force: true })
+    assert.equal(await feld.inputValue(), 'Anders')
+    await neuZeile.getByRole('button', { name: 'Versuch lokal verwerfen' }).click()
+    await page.waitForFunction((ref) => {
+      const knoten = document.querySelector(`[data-personal-client-ref="${ref}"]`)
+      return knoten != null && !knoten.textContent?.includes('Versuch lokal verwerfen') && document.querySelector('[data-personal-barrier]')?.getAttribute('data-personal-barrier') === 'true'
+    }, neuRef)
+    await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Reiseplan' }).click()
+    await page.waitForSelector('[data-workspace-modus="plan"]')
+    assert.equal(await page.locator('[data-personal-preparation-root]').count(), 0)
+    await vorbereitung(page)
+    assert.equal(await feld.inputValue(), 'Anders')
+    assert.equal(await page.locator('[data-personal-barrier]').getAttribute('data-personal-barrier'), 'true')
+    assert.equal(await zeile.getAttribute('data-personal-phase'), 'blocked')
+    const gehalten = await stand(page)
+    assert.equal(gehalten.entries, 2)
+    assert.equal(gehalten.writes, 2)
+    assert.equal(gehalten.queued, 0)
+    assert.match(gehalten.bytes ?? '', /Bestehend neu/)
+
+    const unveraendert = async (bytes: string | null) => {
+      const jetzt = await stand(page)
+      assert.equal(jetzt.entries, gehalten.entries)
+      assert.equal(jetzt.writes, gehalten.writes)
+      assert.equal(jetzt.queued, 0)
+      assert.equal(jetzt.bytes, bytes)
+    }
     await page.locator('#preparation-eigene-vorbereitung form').evaluate((form) => {
       form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
     })
     await page.waitForTimeout(40)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.bytes()), fremd)
+    await unveraendert(gehalten.bytes)
+    await feld.press('Enter', { force: true })
+    await page.waitForTimeout(40)
+    await unveraendert(gehalten.bytes)
+    assert.equal(await feld.inputValue(), 'Anders')
 
-    await page.evaluate((roh) => window.__ARBEIT__.speicherSetzen(roh), '{')
-    await lesenKnopf.click()
+    await zeile.getByRole('button', { name: 'Titel bearbeiten' }).click()
+    const erledigt = zeile.getByRole('button', { name: 'Erledigt', exact: true })
+    await klickTrotzSperre(erledigt)
+    await page.waitForFunction(() => document.querySelector('[data-personal-client-ref="preparation-bestehend"] button[aria-pressed="true"]')?.textContent === 'Erledigt')
+    await klickTrotzSperre(zeile.getByRole('button', { name: 'Speichern' }))
     await page.waitForTimeout(40)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
+    await unveraendert(gehalten.bytes)
+    await zeile.getByRole('button', { name: 'Entfernen' }).click()
+    await klickTrotzSperre(zeile.getByRole('button', { name: 'Endgültig entfernen' }))
+    await page.waitForTimeout(40)
+    await unveraendert(gehalten.bytes)
+    await klickTrotzSperre(zeile.getByRole('button', { name: 'Erneut versuchen' }))
+    await page.waitForTimeout(40)
+    await unveraendert(gehalten.bytes)
+    assert.equal(await zeile.getAttribute('data-personal-phase'), 'blocked')
+    assert.match(await page.locator('#preparation-eigene-vorbereitung').innerText(), /Bestehend neu/)
+
+    await page.evaluate(() => window.__ARBEIT__.lesenAls('normal'))
+    const fremd = await page.evaluate(() => window.__ARBEIT__.fremdSchreiben())
+    assert.notEqual(fremd, gehalten.bytes)
+    const lesenKnopf = page.locator('#preparation-eigene-vorbereitung').getByRole('button', { name: 'Stand neu lesen' }).last()
+    const lesenVorher = await page.evaluate(() => window.__ARBEIT__.reads)
+    await lesenKnopf.click()
+    await page.waitForFunction((alt) => window.__ARBEIT__.reads > alt, lesenVorher)
+    await unveraendert(fremd)
+    assert.match(await page.locator('#preparation-eigene-vorbereitung').innerText(), /Bestehend neu/)
+    assert.equal(await page.locator('[data-personal-barrier]').getAttribute('data-personal-barrier'), 'true')
+
+    await page.evaluate(() => window.__ARBEIT__.speicherSetzen('{'))
+    const nachFremd = await page.evaluate(() => window.__ARBEIT__.reads)
+    await lesenKnopf.click()
+    await page.waitForFunction((alt) => window.__ARBEIT__.reads > alt, nachFremd)
+    await unveraendert('{')
+
+    await page.evaluate((roh) => window.__ARBEIT__.speicherSetzen(roh), gehalten.bytes)
     await page.evaluate(() => window.__ARBEIT__.lesenAls('unreadable'))
-    await page.evaluate((roh) => window.__ARBEIT__.speicherSetzen(roh), vorher)
+    const nachUngueltig = await page.evaluate(() => window.__ARBEIT__.reads)
     await lesenKnopf.click()
-    await page.waitForTimeout(40)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.bytes()), vorher)
+    await page.waitForFunction((alt) => window.__ARBEIT__.reads > alt, nachUngueltig)
+    await unveraendert(gehalten.bytes)
+
+    await page.evaluate(() => window.__ARBEIT__.lesenAls('normal'))
+    const vorErfolg = await page.evaluate(() => window.__ARBEIT__.reads)
+    await lesenKnopf.click()
+    await page.waitForFunction((alt) => window.__ARBEIT__.reads > alt && document.querySelector('[data-personal-barrier]')?.getAttribute('data-personal-barrier') === 'false', vorErfolg)
+    assert.equal(await feld.inputValue(), 'Anders')
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.bytes()), gehalten.bytes)
+    await zeile.getByLabel('Titel bearbeiten').fill('Bestehend danach')
+    await zeile.getByRole('button', { name: 'Speichern' }).click()
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 3 && window.__ARBEIT__.writes === 3)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /Bestehend danach/)
+    assert.match(await page.evaluate(() => window.__ARBEIT__.bytes() ?? ''), /entry-geschwister/)
     await schliessen()
   })
 
-  test('a trip switch drops the pending intent and does not write the other trip', async () => {
+  test('a trip switch keeps the write that already ran and ignores its late result', async () => {
     const reise = beispielreise({ id: 'gast-a', readinessItems: [] })
     const { page, schliessen } = gemerkt(await oeffnen(browser, bundle, { seam: 'guest', reise }))
     await vorbereitung(page)
@@ -259,14 +388,25 @@ describe('mounted TripWorkspace personal preparation', () => {
     const feld = page.locator('#preparation-eigene-vorbereitung').getByLabel('Eigene Vorbereitung')
     await feld.fill('Alt')
     await feld.press('Enter')
-    await page.waitForFunction(() => window.__ARBEIT__.queued === 1)
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 1 && window.__ARBEIT__.writes === 1 && window.__ARBEIT__.queued === 1 && window.__ARBEIT__.reads === 0)
+    const geschrieben = await page.evaluate(() => window.__ARBEIT__.bytes())
+    assert.match(geschrieben ?? '', /Alt/)
+    assert.notEqual(geschrieben, vorher)
     await page.evaluate((wert) => window.__ARBEIT__.reiseSetzen(wert), beispielreise({ id: 'gast-b', readinessItems: [] }))
-    await page.waitForFunction(() => document.querySelectorAll('[data-personal-phase="pending"]').length === 0)
+    await page.waitForFunction(() => document.body.innerText.includes('Noch keine eigene Vorbereitung'))
+    assert.equal(await page.locator('[data-personal-phase="pending"]').count(), 0)
     await page.evaluate(() => window.__ARBEIT__.freigeben())
     await page.waitForTimeout(40)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 0)
-    assert.equal(await page.evaluate(() => window.__ARBEIT__.bytes()), vorher)
+    const nachher = await stand(page)
+    assert.equal(nachher.entries, 1)
+    assert.equal(nachher.writes, 1)
+    assert.equal(nachher.reads, 0)
+    assert.equal(nachher.queued, 0)
+    assert.equal(nachher.bytes, geschrieben)
     assert.equal(await page.locator('[data-personal-phase="confirmed"]').count(), 0)
+    assert.equal(await page.locator('[data-personal-phase="pending"]').count(), 0)
+    assert.equal(await feld.inputValue(), '')
+    assert.equal(await page.locator('[data-personal-focus]').count(), 0)
     await schliessen()
   })
 
@@ -278,7 +418,7 @@ describe('mounted TripWorkspace personal preparation', () => {
     const feld = page.locator('#preparation-eigene-vorbereitung').getByLabel('Eigene Vorbereitung')
     await feld.fill('Konto')
     await feld.press('Enter')
-    await page.waitForFunction(() => window.__ARBEIT__.queued === 1)
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 1 && window.__ARBEIT__.writes === 0 && window.__ARBEIT__.queued === 1)
     assert.equal(await page.locator('[data-personal-phase="pending"]').count(), 1)
     const lieferung = await page.locator('[data-personal-lieferung]').getAttribute('data-personal-lieferung')
     await page.evaluate(() => window.__ARBEIT__.kanonischSetzen(window.__START__.reise))
@@ -292,7 +432,7 @@ describe('mounted TripWorkspace personal preparation', () => {
       } catch (error) {
         fehler = String(error)
       }
-      return { vor, queued: window.__ARBEIT__.queued, writes: window.__ARBEIT__.writes, reads: window.__ARBEIT__.reads, fehler }
+      return { vor, queued: window.__ARBEIT__.queued, writes: window.__ARBEIT__.writes, entries: window.__ARBEIT__.entries, reads: window.__ARBEIT__.reads, fehler }
     })
     assert.equal(frei.vor, 1, JSON.stringify(frei))
     try {
@@ -320,6 +460,7 @@ describe('mounted TripWorkspace personal preparation', () => {
     await page.waitForSelector('[data-personal-phase="confirmed"]')
     assert.equal(await page.evaluate(() => window.__ARBEIT__.reads), 1)
     assert.equal(await page.evaluate(() => window.__ARBEIT__.writes), 1)
+    assert.equal(await page.evaluate(() => window.__ARBEIT__.entries), 1)
     await schliessen()
   })
 
@@ -331,11 +472,11 @@ describe('mounted TripWorkspace personal preparation', () => {
     const feld = page.locator('#preparation-eigene-vorbereitung').getByLabel('Eigene Vorbereitung')
     await feld.fill('Zu')
     await feld.press('Enter')
-    await page.waitForFunction(() => window.__ARBEIT__.queued === 1)
+    await page.waitForFunction(() => window.__ARBEIT__.entries === 1 && window.__ARBEIT__.writes === 1 && window.__ARBEIT__.queued === 1 && window.__ARBEIT__.reads === 0)
     await page.locator('#preparation-eigene-vorbereitung > summary').click()
     assert.equal(await page.locator('#preparation-eigene-vorbereitung').evaluate((el) => (el as HTMLDetailsElement).open), false)
     await page.evaluate(() => window.__ARBEIT__.freigeben())
-    await page.waitForFunction(() => window.__ARBEIT__.writes === 1)
+    await page.waitForFunction(() => window.__ARBEIT__.writes === 1 && window.__ARBEIT__.reads === 1 && window.__ARBEIT__.entries === 1)
     await page.waitForTimeout(40)
     assert.equal(await page.locator('#preparation-eigene-vorbereitung').evaluate((el) => (el as HTMLDetailsElement).open), false)
     assert.equal(await page.evaluate(() => document.activeElement?.closest('#preparation-eigene-vorbereitung input') == null), true)

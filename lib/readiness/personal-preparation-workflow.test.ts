@@ -300,6 +300,55 @@ describe('personal preparation workflow', () => {
     assert.equal(ohneFokus.fokusIntentId, null)
   })
 
+  test('an older read cannot unlock a newer operation on the same ref', () => {
+    const offen = anlegen('Adapter', 'open')
+    const item = offen.readinessItems![0]!
+    const alt = entscheiden(leerLedger(offen.id), {
+      art: 'edit', clientRef: item.clientRef, title: 'Adapter', userStatus: 'done', boundEpoch: preparationEpoch(offen, item), editorGeneration: 1, filter: 'alle',
+    }, offen, offen)
+    let ledger = annehmen(alt.ledger, letzteId(alt.ledger), 1).ledger
+    ledger = kontoBeobachten(ledger, offen)
+    assert.equal(letzter(ledger).phase, 'conflict')
+    assert.equal(ledger.locks.includes(item.clientRef), false)
+    const neu = entscheiden(ledger, {
+      art: 'edit', clientRef: item.clientRef, title: 'Adapter', userStatus: 'open', boundEpoch: preparationEpoch(offen, item), editorGeneration: 2, filter: 'alle',
+    }, offen, offen)
+    assert.ok(neu.auftrag)
+    ledger = neu.ledger
+    assert.equal(ledger.locks.includes(item.clientRef), true)
+    ledger = kontoBeobachten(ledger, offen)
+    const pending = ledger.intents.find((eintrag) => eintrag.phase === 'pending')
+    assert.equal(pending?.clientRef, item.clientRef)
+    assert.equal(ledger.locks.includes(item.clientRef), true)
+    const loeschen = entscheiden(ledger, { art: 'delete', clientRef: item.clientRef, filter: 'alle', editorGeneration: 2 }, offen, offen)
+    assert.equal(loeschen.auftrag, null)
+    const erneut = entscheiden(ledger, { art: 'retry', intentId: letzteId(alt.ledger) }, offen, offen)
+    assert.equal(erneut.auftrag, null)
+
+    const betaItem = punkt(offen, 'preparation-beta', 'Beta')
+    const mitBeta = reiseMit(offen, [item, betaItem])
+    const beta = entscheiden(leerLedger(mitBeta.id), {
+      art: 'edit', clientRef: betaItem.clientRef, title: 'Beta', userStatus: 'done', boundEpoch: preparationEpoch(mitBeta, betaItem), editorGeneration: 1, filter: 'alle',
+    }, mitBeta, mitBeta)
+    let gemischt = annehmen(beta.ledger, letzteId(beta.ledger), 1).ledger
+    gemischt = kontoBeobachten(gemischt, mitBeta)
+    assert.equal(gemischt.intents.find((eintrag) => eintrag.clientRef === betaItem.clientRef)?.phase, 'conflict')
+    const alpha = entscheiden(gemischt, {
+      art: 'edit', clientRef: item.clientRef, title: 'Adapter', userStatus: 'open', boundEpoch: preparationEpoch(mitBeta, item), editorGeneration: 3, filter: 'alle',
+    }, mitBeta, mitBeta)
+    assert.ok(alpha.auftrag)
+    gemischt = kontoBeobachten(alpha.ledger, mitBeta)
+    assert.equal(gemischt.intents.find((eintrag) => eintrag.clientRef === item.clientRef && eintrag.phase === 'pending')?.art, 'edit')
+    assert.equal(gemischt.locks.includes(item.clientRef), true)
+    assert.equal(gemischt.locks.includes(betaItem.clientRef), false)
+    const status = entscheiden(gemischt, {
+      art: 'edit', clientRef: betaItem.clientRef, title: 'Beta', userStatus: 'skipped', boundEpoch: preparationEpoch(mitBeta, betaItem), editorGeneration: 4, filter: 'alle',
+    }, mitBeta, mitBeta)
+    assert.ok(status.auftrag)
+    assert.equal(status.ledger.locks.includes(item.clientRef), true)
+    assert.equal(status.ledger.intents.find((eintrag) => eintrag.phase === 'pending' && eintrag.clientRef === item.clientRef)?.art, 'edit')
+  })
+
   test('the existing guest writer still rejects a 51st point and accepts an exact edit', () => {
     const basis = beispielreise()
     const items = Array.from({ length: READINESS_GRENZEN.itemsJeReise }, (_, index) => punkt(basis, `preparation-${index}`, `Punkt ${index}`))
