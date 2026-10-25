@@ -22,7 +22,13 @@ import {
   zaehlungAus,
   type MeineReisenGruppenKey,
 } from '@/lib/trips/my-trips-premium-hub-ux-1'
-import { sammlungHref, type ArchivAuswahl, type SammlungErgebnis } from '@/lib/trips/reisen-sammlung-abfrage'
+import {
+  ansichtAusAdresse,
+  ansichtPhrase,
+  sammlungHref,
+  type ArchivAuswahl,
+  type SammlungErgebnis,
+} from '@/lib/trips/reisen-sammlung-abfrage'
 import { archivHinweis, type ArchivVorgang } from '@/lib/trips/trip-archive-workflow'
 import type { TripSummary } from '@/types/trips'
 
@@ -92,6 +98,13 @@ export default function MyTripsCollection({
     angenommen && !angenommen.ungueltig && !problem && zeilen.length === 0 && q === '' && auswahl !== 'alle' && cursor === null,
   )
   const entwurfOffen = entwurf.trim() !== q
+  const besitz = angenommen
+    ? angenommen.ungueltig
+      ? 'Die angezeigte Meldung gehört zu einer ungültigen Adresse.'
+      : `Diese Ansicht ist ${ansichtPhrase({ q, archiv: auswahl, fortsetzung: cursor !== null })}.`
+    : null
+  const ziel = ansichtAusAdresse(navigation.live)
+  const zielSatz = ziel ? `Geladen wird ${ansichtPhrase(ziel)}.` : 'Die neue Adresse ist keine gültige Ansicht.'
   const sichtbar = new Set(zeilen.map((reise) => reise.id))
   const protokolle = letzteJeReise(archiv.vorgaenge)
   const verborgen = protokolle.filter((vorgang) => !sichtbar.has(vorgang.tripId))
@@ -199,8 +212,17 @@ export default function MyTripsCollection({
       </form>
 
       {navigation.laden ? <p className="text-sm leading-6 text-ink-700">Diese Ansicht wird geladen.</p> : null}
-      {navigation.laden || !einig ? (
-        <p className="text-sm leading-6 text-ink-700">Die angezeigten Reisen sind das zuletzt geladene Ergebnis.</p>
+      {besitz ? (
+        <p data-sammlung-besitz className="text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
+          {besitz}
+        </p>
+      ) : null}
+      {!einig ? (
+        <p data-sammlung-ziel className="text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
+          {zielSatz}
+          {angenommen && !angenommen.ungueltig ? ' Die bisherigen Reisen bleiben sichtbar.' : null}
+          {angenommen?.ungueltig ? ' Die bisherige Meldung bleibt sichtbar.' : null}
+        </p>
       ) : null}
       {angenommen && !angenommen.ungueltig && !problem && zeilen.length > 0 ? (
         <p className="text-sm leading-6 text-ink-700">

@@ -94,7 +94,7 @@ A committed filter change (`q` or `archiv`) builds a new address without `cursor
 
 Continuation, archive selection, clear, and restart are buttons. The click handler is the only call to `router.push`. The collection does not render `next/link` for those addresses and does not call `router.prefetch`. A viewport, hover, or idle pass therefore does not issue a page read. One explicit activation is one read of that address. There is no hidden next page and no background continuation.
 
-The visible owner line names the live URL's `q`, archive selection, and whether a cursor is present. It says the search looks at title and origin (`Suche in Titel und Herkunft.`) and, when the draft differs, `Der Entwurf ist noch nicht die Suche.` It does not show the filter grammar, case rules, or collation. When the list on screen is for a different address, it adds `Die angezeigten Reisen sind das zuletzt geladene Ergebnis.` Section 2.8 is the navigation lifecycle. The collection component in section 2.6 stays mounted across those transitions.
+The visible owner line sits next to the results and names the adopted search text and archive selection: `Diese Ansicht ist ohne Suche in Alle.` or `Diese Ansicht ist die Suche „…“ in Offen.` A continuation adds `weitere Seite` and does not print the cursor token. The form still says the search looks at title and origin (`Suche in Titel und Herkunft.`) and, when the draft differs from that adopted search, `Der Entwurf ist noch nicht die Suche.` It does not show the filter grammar, case rules, or collation. While the live address differs, the same line keeps the adopted search and selection, and a second line names the pending search and selection (`Geladen wird die Suche „…“ in Archiv.`) or says the new address is not a valid view. Section 2.8 is the navigation lifecycle. The collection component in section 2.6 stays mounted across those transitions.
 
 ### 2.3 Cursor and order
 
@@ -172,7 +172,7 @@ For an authenticated valid request it calls the new reader instead of `reisenLad
 | No matches | valid first page, zero rows, needle or `offen`/`archiv` | `Keine Reise passt zur Suche.` or, when the needle is empty and only the archive selection is narrow, `Keine Reise in dieser Auswahl.` | called |
 | End of continuation | valid cursor, zero rows, no problem | Not the empty-account heading. Say this continuation step is empty. Restart stays available. | called |
 | Current page | one or more rows | Page-scoped counts. Next only when lookahead returned a row. | called |
-| Pending navigation | a local intent or a URL whose server props have not caught up, inside the lease in section 2.8 | Previous adopted rows remain. The control says `Diese Ansicht wird geladen.` The address line names the live URL. | whichever read Next issued; the client does not correlate it |
+| Pending navigation | a local intent or a URL whose server props have not caught up, inside the lease in section 2.8 | Previous adopted rows remain. The control says `Diese Ansicht wird geladen.` The owner line keeps the adopted search and archive selection and names the pending one, without the cursor token. | whichever read Next issued; the client does not correlate it |
 
 The existing 503 sentence `Deine Reisen sind gespeichert` is replaced on this page because a failed read must not assert that. The error heading stays so the current source assertion still matches.
 
@@ -252,7 +252,7 @@ Release otherwise uses only the observations above:
 - If the current server props already use the newly observed URL and the snapshot is newer than the adopted list, those props are adopted and no lease opens. Otherwise, when the URL changed and no intent remains, the hook stores a new `url` intent for the live URL, with its own id, `urlAtIssue` set to that URL, and a new lease. The old id cannot clear it.
 - A live URL that equals the intent address does not by itself release the guard and does not prove which gesture landed. Release then waits for a later server snapshot whose address equals that URL, or for the lease. The same rows or the same error both release the guard. The screen does not call that render a receipt.
 - After release, a read error for the URL replaces the rows for that address. It does not render the empty-account state and does not drop archive records.
-- While the URL and the adopted list differ, the adopted rows remain and the owner line says they are the last loaded result. Editing the draft does not cancel a pending retry and does not change the adopted list.
+- While the URL and the adopted list differ, the adopted rows remain. The owner line names that retained search and archive selection, and a second line names the pending search and selection. Neither line prints the cursor token. Editing the draft does not cancel a pending retry and does not change the adopted list.
 
 `router.back` and `router.forward` stay the framework methods. The hook does not wrap them in a result callback. Their observable effect is the next `useSearchParams()` value.
 

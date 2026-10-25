@@ -4,6 +4,8 @@ import assert from 'node:assert/strict'
 import {
   REISEN_SAMMLUNG_CURSOR_MAX,
   cursorCodieren,
+  ansichtAusAdresse,
+  ansichtPhrase,
   kanonischeAdresse,
   parameterAusSuche,
   ungueltigeAdresse,
@@ -139,5 +141,16 @@ describe('Cursor und Kalender', () => {
       assert.equal(kanonischeAdresse(suche), ungueltigeAdresse(parameter))
       assert.equal(kanonischeAdresse(suche), `/reisen?${text}`)
     }
+    assert.equal(ansichtPhrase({ q: '', archiv: 'alle', fortsetzung: false }), 'ohne Suche in Alle')
+    assert.equal(ansichtPhrase({ q: 'beta', archiv: 'offen', fortsetzung: true }), 'die Suche „beta“ in Offen, weitere Seite')
+    assert.equal(ansichtPhrase({ q: 'beta', archiv: 'offen', fortsetzung: true }).includes('cursor'), false)
+    assert.deepEqual(ansichtAusAdresse('/reisen'), { q: '', archiv: 'alle', fortsetzung: false })
+    assert.deepEqual(ansichtAusAdresse('/reisen?q=beta&archiv=archiv'), { q: 'beta', archiv: 'archiv', fortsetzung: false })
+    assert.equal(ansichtAusAdresse('/reisen?q=a&q=b'), null)
+    const token = cursorCodieren({ q: 'beta', archiv: 'offen', zeit: ZEIT, id: ID })
+    assert.ok(token)
+    const fortsetzung = ansichtAusAdresse(`/reisen?q=beta&archiv=offen&cursor=${token}`)
+    assert.equal(fortsetzung?.fortsetzung, true)
+    assert.equal(token && ansichtPhrase({ q: 'beta', archiv: 'offen', fortsetzung: true }).includes(token), false)
   })
 })

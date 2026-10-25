@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url'
 
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { cursorCodieren, sammlungHref } from '@/lib/trips/reisen-sammlung-abfrage'
+
 const hier = dirname(fileURLToPath(import.meta.url))
 const origin = process.env.MY_TRIPS_HARNESS_ORIGIN
 const screens = process.env.MY_TRIPS_SCREENS
@@ -474,6 +476,52 @@ describe('montierte Meine-Reisen-Sammlung', () => {
       assert.equal((await lese(herkunft)).refresh, refreshVorErfolg + 1)
       await herkunft.close()
       merken('Fehlende Herkunft verbirgt die Aktion nicht', true)
+
+      const besitz = await oeffnen(browser)
+      assert.equal(await besitz.locator('[data-sammlung-besitz]').innerText(), 'Diese Ansicht ist ohne Suche in Alle.')
+      await besitz.locator('[data-sammlung-suche]').fill('nur-entwurf')
+      assert.equal(await besitz.getByText('Der Entwurf ist noch nicht die Suche.').count(), 1)
+      assert.equal(await besitz.locator('[data-sammlung-besitz]').innerText(), 'Diese Ansicht ist ohne Suche in Alle.')
+      await adresseSetzen(besitz, 'q=beta&archiv=offen')
+      assert.equal(await besitz.locator('[data-sammlung-besitz]').innerText(), 'Diese Ansicht ist ohne Suche in Alle.')
+      assert.equal(await besitz.locator('[data-sammlung-ziel]').innerText(), 'Geladen wird die Suche „beta“ in Offen. Die bisherigen Reisen bleiben sichtbar.')
+      assert.deepEqual((await lese(besitz)).ids, [ALPHA])
+      await ergebnis(besitz, {
+        q: 'beta',
+        archiv: 'offen',
+        adresse: '/reisen?q=beta&archiv=offen',
+        hatWeiter: false,
+        naechsterCursor: null,
+      })
+      await besitz.getByText('Diese Ansicht ist die Suche „beta“ in Offen.').waitFor()
+      assert.equal(await besitz.locator('[data-sammlung-ziel]').count(), 0)
+      const fortsetzung = cursorCodieren({
+        q: 'beta',
+        archiv: 'offen',
+        zeit: '2026-10-25T12:00:00.000000Z',
+        id: ALPHA,
+      })
+      assert.ok(fortsetzung)
+      await adresseSetzen(besitz, `q=beta&archiv=offen&cursor=${fortsetzung}`)
+      assert.match(await besitz.locator('[data-sammlung-ziel]').innerText(), /weitere Seite/)
+      assert.equal((await besitz.locator('[data-sammlung-ziel]').innerText()).includes(fortsetzung ?? ''), false)
+      assert.equal(await besitz.locator('[data-sammlung-besitz]').innerText(), 'Diese Ansicht ist die Suche „beta“ in Offen.')
+      await ergebnis(besitz, {
+        q: 'beta',
+        archiv: 'offen',
+        cursor: fortsetzung,
+        adresse: sammlungHref({ q: 'beta', archiv: 'offen', cursor: fortsetzung }),
+        hatWeiter: false,
+        naechsterCursor: null,
+      })
+      await besitz.getByText('Diese Ansicht ist die Suche „beta“ in Offen, weitere Seite.').waitFor()
+      assert.equal((await besitz.locator('body').innerText()).includes(fortsetzung ?? ''), false)
+      await adresseSetzen(besitz, 'q=a&q=b')
+      assert.equal(await besitz.locator('[data-sammlung-besitz]').innerText(), 'Diese Ansicht ist die Suche „beta“ in Offen, weitere Seite.')
+      assert.match(await besitz.locator('[data-sammlung-ziel]').innerText(), /keine gültige Ansicht/)
+      assert.equal((await besitz.locator('[data-sammlung-ziel]').innerText()).includes('q=a'), false)
+      await besitz.close()
+      merken('Die Ansicht nennt Suche und Archivauswahl', true)
 
       const bild = await oeffnen(browser)
       assert.equal(await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-marke'), null)

@@ -270,3 +270,27 @@ export function kanonischeAdresse(suche: { getAll(name: string): string[] }): st
   if (!anfrage.ok) return ungueltigeAdresse(parameter)
   return sammlungHref(anfrage)
 }
+
+const AUSWAHL_NAME: Record<ArchivAuswahl, string> = {
+  alle: 'Alle',
+  offen: 'Offen',
+  archiv: 'Archiv',
+}
+
+export function ansichtPhrase(teile: { q: string; archiv: ArchivAuswahl; fortsetzung: boolean }): string {
+  const wahl = AUSWAHL_NAME[teile.archiv]
+  const kern = teile.q ? `die Suche „${teile.q}“ in ${wahl}` : `ohne Suche in ${wahl}`
+  return teile.fortsetzung ? `${kern}, weitere Seite` : kern
+}
+
+export function ansichtAusAdresse(adresse: string): { q: string; archiv: ArchivAuswahl; fortsetzung: boolean } | null {
+  let suche: URLSearchParams
+  try {
+    suche = new URL(adresse, 'http://reise.local').searchParams
+  } catch {
+    return null
+  }
+  const anfrage = sammlungAnfrageAus(parameterAusSuche(suche))
+  if (!anfrage.ok) return null
+  return { q: anfrage.q, archiv: anfrage.archiv, fortsetzung: anfrage.cursor !== null }
+}
