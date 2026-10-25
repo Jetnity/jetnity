@@ -1,0 +1,33 @@
+node v22.23.4
+npm 10.9.7
+cwd for npm: disposable /tmp project containing only the byte-verified package.json and package-lock.json
+child: env -i
+allowlist: PATH, existing HOME unchanged and not printed, USER, LANG, LC_ALL=C.UTF-8, TMPDIR=disposable/tmp, NODE_ENV=development
+absent from the child: CODEX_HOME, npm_config_*, NPM_CONFIG_*, NPM_TOKEN, NODE_AUTH_TOKEN, NODE_OPTIONS, HTTP_PROXY, HTTPS_PROXY, ALL_PROXY, http_proxy, https_proxy, all_proxy, NO_PROXY
+LOGNAME was not present in the parent and was not added
+userconfig and globalconfig: zero-byte files mode 0600
+cache: empty disposable directory
+no fix, no signatures, no --force, no --global, no --prefix
+npm config was not run
+builtin npmrc was not read or printed
+disposable directory deleted after the receipts were copied
+
+FULL_LOCK_GRAPH argv:
+npm audit --json --package-lock-only --ignore-scripts --offline=false --registry=https://registry.npmjs.org --userconfig=<disposable>/empty-user.npmrc --globalconfig=<disposable>/empty-global.npmrc --cache=<disposable>/cache --audit-level=info --include=prod --include=dev --include=optional --include=peer
+exit: 1
+stderr excerpt: npm notice that a newer npm major exists. No install was run. No home path and no token were present.
+
+OMIT_DEV_LOCK_GRAPH argv:
+npm audit --json --package-lock-only --ignore-scripts --offline=false --registry=https://registry.npmjs.org --userconfig=<disposable>/empty-user.npmrc --globalconfig=<disposable>/empty-global.npmrc --cache=<disposable>/cache --audit-level=info --omit=dev --include=prod --include=optional --include=peer
+exit: 1
+stderr excerpt: empty
+
+npm view used the same child, cwd, registry, userconfig, globalconfig, cache, --ignore-scripts and --offline=false after a primary advisory named a candidate. Specs: brace-expansion@1.1.21, brace-expansion@2.1.7, brace-expansion@5.0.12, minimatch@9.0.7, picomatch@2.3.2, picomatch@4.0.4, browserslist@4.28.7, glob@10.5.0, playwright@1.55.1, postcss-selector-parser@6.1.3, postcss-selector-parser@7.1.6, source-map-js@1.2.2, ws@8.21.0, yaml@2.8.3, zod@4.6.6. All exited 0.
+
+Primary advisory fetch: curl -q, no curlrc, no --netrc, no Authorization header, Accept application/vnd.github+json, User-Agent jetnity-r107-s-readonly. 23 GHSA payloads, each curl exit 0.
+
+OSV: POST https://api.osv.dev/v1/querybatch for the 14 locked vulnerable versions. Labeled aggregator. Not a fixed-version source.
+
+Inventory: node scripts/dependency-advisory-triage-1/inventory.mjs. No npm import, no installer, no node_modules read.
+
+Worktree after the metadata children: package.json, package-lock.json and next-env.d.ts hashes matched the pre-command snapshot. No path was restored.

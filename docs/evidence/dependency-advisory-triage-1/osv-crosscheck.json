@@ -1,0 +1,288 @@
+{
+  "role": "aggregator",
+  "source": "https://api.osv.dev/v1/querybatch",
+  "notPrimary": true,
+  "note": "ID sets for the 14 locked vulnerable versions agreed with the primary GHSA ranges. OSV was not used to choose a fixed version.",
+  "queries": [
+    {
+      "package": {
+        "name": "brace-expansion",
+        "ecosystem": "npm"
+      },
+      "version": "1.1.18"
+    },
+    {
+      "package": {
+        "name": "brace-expansion",
+        "ecosystem": "npm"
+      },
+      "version": "2.0.2"
+    },
+    {
+      "package": {
+        "name": "brace-expansion",
+        "ecosystem": "npm"
+      },
+      "version": "5.0.9"
+    },
+    {
+      "package": {
+        "name": "browserslist",
+        "ecosystem": "npm"
+      },
+      "version": "4.25.4"
+    },
+    {
+      "package": {
+        "name": "glob",
+        "ecosystem": "npm"
+      },
+      "version": "10.4.5"
+    },
+    {
+      "package": {
+        "name": "minimatch",
+        "ecosystem": "npm"
+      },
+      "version": "9.0.5"
+    },
+    {
+      "package": {
+        "name": "picomatch",
+        "ecosystem": "npm"
+      },
+      "version": "2.3.1"
+    },
+    {
+      "package": {
+        "name": "picomatch",
+        "ecosystem": "npm"
+      },
+      "version": "4.0.3"
+    },
+    {
+      "package": {
+        "name": "playwright",
+        "ecosystem": "npm"
+      },
+      "version": "1.55.0"
+    },
+    {
+      "package": {
+        "name": "postcss-selector-parser",
+        "ecosystem": "npm"
+      },
+      "version": "6.1.2"
+    },
+    {
+      "package": {
+        "name": "source-map-js",
+        "ecosystem": "npm"
+      },
+      "version": "1.2.1"
+    },
+    {
+      "package": {
+        "name": "ws",
+        "ecosystem": "npm"
+      },
+      "version": "8.18.3"
+    },
+    {
+      "package": {
+        "name": "yaml",
+        "ecosystem": "npm"
+      },
+      "version": "2.8.1"
+    },
+    {
+      "package": {
+        "name": "zod",
+        "ecosystem": "npm"
+      },
+      "version": "3.25.76"
+    }
+  ],
+  "results": [
+    {
+      "vulns": [
+        {
+          "id": "GHSA-6j4f-fj2g-mc7p",
+          "modified": "2026-09-30T00:00:03.836613Z"
+        },
+        {
+          "id": "GHSA-q2hr-2g5m-vwhr",
+          "modified": "2026-09-30T00:00:03.849541Z"
+        },
+        {
+          "id": "GHSA-qhr7-859c-m2p7",
+          "modified": "2026-09-30T00:00:04.402763Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-3jxr-9vmj-r5cp",
+          "modified": "2026-09-10T03:51:10.092354Z"
+        },
+        {
+          "id": "GHSA-6j4f-fj2g-mc7p",
+          "modified": "2026-09-30T00:00:03.836613Z"
+        },
+        {
+          "id": "GHSA-f886-m6hf-6m8v",
+          "modified": "2026-09-10T03:51:00.342356Z"
+        },
+        {
+          "id": "GHSA-mh99-v99m-4gvg",
+          "modified": "2026-09-10T03:50:12.282849Z"
+        },
+        {
+          "id": "GHSA-q2hr-2g5m-vwhr",
+          "modified": "2026-09-30T00:00:03.849541Z"
+        },
+        {
+          "id": "GHSA-qhr7-859c-m2p7",
+          "modified": "2026-09-30T00:00:04.402763Z"
+        },
+        {
+          "id": "GHSA-rgw5-rvv9-x895",
+          "modified": "2026-09-10T03:51:14.535270Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-6j4f-fj2g-mc7p",
+          "modified": "2026-09-30T00:00:03.836613Z"
+        },
+        {
+          "id": "GHSA-q2hr-2g5m-vwhr",
+          "modified": "2026-09-30T00:00:03.849541Z"
+        },
+        {
+          "id": "GHSA-qhr7-859c-m2p7",
+          "modified": "2026-09-30T00:00:04.402763Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-73wf-gq98-2v4g",
+          "modified": "2026-09-10T03:51:15.295037Z"
+        },
+        {
+          "id": "GHSA-c83g-rgw3-j3cx",
+          "modified": "2026-09-10T03:50:54.622936Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-5j98-mcp5-4vw2",
+          "modified": "2026-09-10T03:50:30.568830Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-23c5-xmqv-rm74",
+          "modified": "2026-09-10T03:50:59.274637Z"
+        },
+        {
+          "id": "GHSA-3ppc-4f35-3m26",
+          "modified": "2026-09-10T03:50:33.812431Z"
+        },
+        {
+          "id": "GHSA-7r86-cg39-jmmj",
+          "modified": "2026-09-10T03:50:34.376990Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-3v7f-55p6-f55p",
+          "modified": "2026-09-10T03:50:36.949634Z"
+        },
+        {
+          "id": "GHSA-c2c7-rcm5-vvqj",
+          "modified": "2026-09-10T03:51:00.292614Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-3v7f-55p6-f55p",
+          "modified": "2026-09-10T03:50:36.949634Z"
+        },
+        {
+          "id": "GHSA-c2c7-rcm5-vvqj",
+          "modified": "2026-09-10T03:51:00.292614Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-7mvr-c777-76hp",
+          "modified": "2026-09-10T03:50:29.418266Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-rj75-hqrm-r3gf",
+          "modified": "2026-10-05T23:00:05.308008Z"
+        },
+        {
+          "id": "GHSA-w9m9-85wc-3x92",
+          "modified": "2026-09-10T03:50:47.767644Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-68fv-2mgg-jv7q",
+          "modified": "2026-10-05T23:45:07.974936Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-58qx-3vcg-4xpx",
+          "modified": "2026-09-10T03:51:04.572514Z"
+        },
+        {
+          "id": "GHSA-96hv-2xvq-fx4p",
+          "modified": "2026-09-10T03:50:49.163643Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-48c2-rrv3-qjmp",
+          "modified": "2026-09-10T03:50:37.151581Z"
+        }
+      ]
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-mrhx-c7xc-m3w5",
+          "modified": "2026-10-23T18:30:09.376405Z"
+        }
+      ]
+    }
+  ]
+}
