@@ -1,6 +1,6 @@
 {
-  "boundToProductCommit": "fb3f13cf9667c0af42d7d1fbf11667e8c292ac66",
-  "answersReview": "43aafe5628e95060632d4192368aa4d43e75cfd4",
+  "boundToProductCommit": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+  "answersReview": "d29a621390bf1d760c3086bea8cb5f19e5160d25",
   "commandsRanOnDirtyTreeBeforeThatCommit": true,
   "node": "v22.23.4",
   "next": "16.4.1",
@@ -27,16 +27,18 @@
     {
       "command": "node scripts/admin-user-directory-completion-1/verify.mjs",
       "exit": 0,
-      "cases": 42,
-      "authoritativeRerunHead": "fb3f13cf9667c0af42d7d1fbf11667e8c292ac66",
-      "note": "Synthetic UsersTable, router stub and project CSS. Tab and Enter are real keyboard events. Not a signed-in Next router. The former querySelector focus enumeration is retired and labeled css-error-layout."
+      "cases": 44,
+      "authoritativeRerunHead": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+      "dirtyAtCapture": "",
+      "note": "Synthetic UsersTable, router stub and project CSS. The authoritative rerun is on the clean correction commit. role-keeps-delayed-search-ownership and status-keeps-delayed-search-ownership commit the delayed anna replace before the newer filter. Tab and Enter remain real keyboard events. Not a signed-in Next router."
     },
     {
       "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test on the directory, navigation, profil-erstellt, request-api-compat and roles tests",
       "exit": 0,
       "tests": 69,
       "pass": 69,
-      "fail": 0
+      "fail": 0,
+      "ranAfterProductCommit": true
     },
     {
       "command": "npm test",
@@ -83,7 +85,7 @@
       "command": "npm run build",
       "exit": 0,
       "prebuild": "check:setup exit 0 with one warning: no .env or .env.local in this environment",
-      "compiled": "21.8s",
+      "compiled": "4.2s",
       "adminUsersRoute": "dynamic"
     }
   ],

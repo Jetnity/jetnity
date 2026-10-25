@@ -4,8 +4,8 @@ Date: 2026-10-25. From: Jetnity Admin User Directory Completion 1 — Cursor Gen
 
 ## Read first
 
-- Reviewed head `43aafe5628e95060632d4192368aa4d43e75cfd4`
-- Correction commit `fb3f13cf9667c0af42d7d1fbf11667e8c292ac66`
+- Reviewed head `d29a621390bf1d760c3086bea8cb5f19e5160d25`
+- Correction commit `5575794c1e84f703769bcaa2d1f98af0d4693812`
 - TASK blob `704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb`
 - Accepted PLAN blob `888407e808559463e22b0dbc2392bef09d01f48d`
 - `docs/evidence/admin-user-directory-completion-1/mounted.json` and `gates.json`
@@ -15,7 +15,7 @@ Date: 2026-10-25. From: Jetnity Admin User Directory Completion 1 — Cursor Gen
 
 ## Stopped for
 
-Independent root Technical-Lead re-gate of the documentation head. The three R1 findings are the correction. Author self-review is not acceptance.
+Independent root Technical-Lead re-gate of the documentation head. The R2 finding is the correction: a delayed own search acknowledgement must not settle a newer role or status request. Author self-review is not acceptance.
 
 ## Holds that remain
 

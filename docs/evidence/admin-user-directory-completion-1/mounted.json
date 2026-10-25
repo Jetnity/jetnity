@@ -6,8 +6,8 @@
   "notProduction": true,
   "refreshIsNotAReceipt": true,
   "readAttemptIsNotCausal": true,
-  "head": "fb3f13cf9667c0af42d7d1fbf11667e8c292ac66",
-  "dirty": " M docs/evidence/admin-user-directory-completion-1/error-mobile.png\n M docs/evidence/admin-user-directory-completion-1/mobile-directory.png\n",
+  "head": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+  "dirty": "",
   "node": "v22.23.4",
   "playwright": "1.55.0",
   "faelle": [
@@ -275,6 +275,22 @@
       "ok": true,
       "search": "page=1",
       "input": "",
+      "consoleErrors": []
+    },
+    {
+      "name": "role-keeps-delayed-search-ownership",
+      "ok": true,
+      "search": "page=1&role=operator",
+      "input": "",
+      "filter": "role",
+      "consoleErrors": []
+    },
+    {
+      "name": "status-keeps-delayed-search-ownership",
+      "ok": true,
+      "search": "page=1&status=pending",
+      "input": "",
+      "filter": "status",
       "consoleErrors": []
     },
     {

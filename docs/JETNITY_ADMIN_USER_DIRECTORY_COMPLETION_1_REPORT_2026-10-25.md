@@ -2,23 +2,25 @@
 
 Date: 2026-10-25. Author: Jetnity Admin User Directory Completion 1 — Cursor Generation 1. Session `bc-cc48889b-f8c5-4cce-9892-1daa0eab7fc6`. Runtime `grok-4.7-high-fast`.
 
-## Correction for review head 43aafe56
+## Correction for review head d29a6213
 
-### D-R1.1 — default-page retry
+### R2 — delayed search acknowledgement versus a newer role or status
 
-`retry` no longer requires the live URL text to equal a rebuilt `page=1` href. It accepts the click only when `decideUsersDirectoryRead` returns a query and that query key equals the failed read. An omitted page, a trimmed ` 1 `, and an explicit `page=1` are the same valid query. Repeated parameters, non-scalars, `page=5001`, and `page=nope` stay invalid and do not refresh. The lease, draft, and open-navigation guards still return before refresh.
+`commitFilters` no longer executes `setOwnSearchAcks([])`. The role or status replace is still built from the committed query, still snaps the field to that committed query, and still goes through `dispatchNavigate`. The older search href remains in `ownSearchAcks`.
 
-Mounted receipts on `fb3f13cf`: `retry-omitted-page`, `retry-q-without-page`, `retry-padded-page`, and `retry-explicit-page` each record `refreshCalls: 1`. `retry-repeated-page-rejected` shows the invalid-address copy and zero refresh calls.
+When that older `?page=1&q=anna` address is committed, the acknowledgement is still own. The field stays empty. The open operation remains the newer filter, so the phase stays unsettled and the status stays on the previous query. The queued filter is then committed. Only that landing becomes Aktuelle Ergebnisse.
 
-### D-R1.2 — clear versus a delayed search
+`role-keeps-delayed-search-ownership` selects Rolle `operator`. `status-keeps-delayed-search-ownership` selects Status `pending`. Each case delays commits, types `anna`, selects the filter, commits the `anna` replace while the filter stays queued, and then commits the filter. Neither case drops a queued replace. Final addresses are `page=1&role=operator` and `page=1&status=pending`, both with an empty field and zero action calls.
 
-`clearFilters` no longer drops `ownSearchAcks` and no longer returns early when a clear of the current URL still has an own replace in flight. The clear is dispatched behind that replace. `clear-supersedes-delayed-search` delays commits, types `anna`, clicks Filter löschen, then commits the queued `anna` replace. The field stays empty, the status stays on the previous query, and the operation does not settle. The next queued commit is the clear, and only that landing becomes Aktuelle Ergebnisse on page 1. The test does not drop the pending `anna` replace.
+`clearFilters` is unchanged. `clear-supersedes-delayed-search` still commits the delayed `anna` replace before the clear. `goto` still clears acknowledgements on a page change. External and native Back/Forward cases stayed green.
 
-External URL changes and native Back/Forward still replace the field from the address. Those existing cases stayed green.
+## Earlier correction, still in force
 
-### D-R1.3 — keyboard
+Reviewed head `43aafe56` was corrected in `fb3f13cf` and independently accepted for its three findings:
 
-`keyboard-tab-and-activation` focuses the heading, then presses Tab. The page-1 sequence is search, Rolle, Status, Filter löschen, Nächste Seite. Disabled Erste Seite and Vorherige Seite are not focused. Enter on Nächste Seite sets `page=2`. After the error fixture, Tab skips disabled Nächste Seite and Enter on Erneut versuchen records one refresh. `css-error-layout` keeps the 390 px overflow screenshot and labels the old focus enumeration as retired.
+- Retry uses validated query identity. Literal href matching stays strict.
+- Clear keeps an in-flight search acknowledgement and still dispatches when the clear target is the current URL.
+- Keyboard proof presses Tab and Enter.
 
 ## Unchanged product rules
 
@@ -26,8 +28,8 @@ Guard, select, order, page size 20, mutation expressions, the 1…5000 ceiling, 
 
 ## Gates on this correction
 
-Focused tests 69/69. Mounted 42/42. `npm run typecheck` exit 0. `npm run lint` exit 0, 181 warnings, 0 errors. Hygiene checks exit 0. `npm run build` exit 0. `npm test` exit 1 with the 11 local PostgreSQL failures listed in `gates.json`.
+Focused tests 69/69 after `5575794c`. Mounted 44/44 on that commit, dirty empty at capture. `npm run typecheck` exit 0. `npm run lint` exit 0, 181 warnings, 0 errors. Hygiene checks exit 0. `npm run build` exit 0, compiled in 4.2s, `/admin/users` dynamic. `npm test` exit 1 with the 11 local PostgreSQL failures listed in `gates.json`.
 
 ## Database, security, cost
 
-No migration, RLS, grant, Auth, or provider change. No new dependency or monthly cost.
+No migration, RLS, grant, Auth, or provider change. No new dependency or monthly cost. Role and status mutation functions were not edited.

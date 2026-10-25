@@ -2,19 +2,26 @@
 
 Date: 2026-10-25. Author: Jetnity Admin User Directory Completion 1 — Cursor Generation 1. This review is not a Technical-Lead PASS.
 
-## R1 findings
+## R2 finding
 
-- D-R1.1 is fixed in `retry` by validated query identity. I did not loosen `usersListHrefMatches`. A unit test still expects `/admin/users` and `/admin/users?page=1` to differ as raw addresses, and `page=%201%20` to differ from `page=1`. The new helper rejects repeated, non-scalar, malformed, and above-max pages.
-- D-R1.2 is fixed by retaining own acknowledgements and dispatching the clear even when its href matches the still-current URL. The mounted case commits the delayed `anna` replace before the clear replace. I did not drop that queued request.
-- D-R1.3 replaces the `element.focus()` loop. The new case records Tab order, asserts disabled controls are absent from that order, and activates Nächste Seite and Erneut versuchen with Enter.
+The false settlement came from `commitFilters` clearing `ownSearchAcks` before the newer role or status replace. The later `anna` address then looked external: the field was restored and the open filter operation was replaced by an already settled search operation.
+
+The correction removes only that acknowledgement clear. I did not rewrite `goto`, `clearFilters`, or the URL-sync branches. The two mounted cases commit both queued replaces. After the older search lands, the input stays empty, the status contains `vorherigen Abfrage`, and the phase is not `settled`. The later filter landing is `page=1&role=operator` or `page=1&status=pending`.
+
+## R1 findings, left as accepted
+
+- Retry still uses validated query identity. `usersListHrefMatches` stays literal.
+- Clear still retains own acknowledgements and still queues when its href matches the current URL.
+- Keyboard proof still presses Tab and Enter.
 
 ## What I am not calling success
 
 - The router stub still supplies the next read. A refresh call is not a received response. A new `readAttempt` is not proof that this refresh caused it.
-- Tab coverage is the directory toolbar, pager, and retry. It does not claim a full page of row menus.
+- The mounted run is 44/44 on `5575794c` with project CSS and the lane router stub. It is not hosted Supabase, RLS, Production, or a signed-in Next router.
 - `npm test` still exits 1 because 11 local PostgreSQL proofs cannot start. 7177 other tests passed.
 - Unknown database role and status still display as the default role and `active`. That exclusion stays.
 - The historical #608 script is still outside this allowlist.
+- A same-value role or status selection during a delayed search is not the reviewed case. `commitFilters` still returns without a new replace when the href is unchanged, after snapping the field to the committed query.
 
 ## Not done
 
