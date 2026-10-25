@@ -1,0 +1,59 @@
+{
+  "author": "Jetnity Manual Journey Editor Completion 1 — Cursor Generation 1",
+  "session": "bc-02fbe98d-97ba-4c0b-a3b0-10857d784379",
+  "model": "grok-4.7-high-fast",
+  "purpose": "R105-C CODE REVIEW V4 repair rerun provenance. This file is owned by this lane. It is not written by the R103 or R104 harness.",
+  "reviewedHead": "be2c4932fc58d0bdca78e91cc7837a666201715f",
+  "reviewedTree": "4c6315603edb46937eab1982e93748a4b6558614",
+  "addendumV2": "a0106b362eb837107f43d05f307cf59cb0611e43",
+  "addendumV2Blob": "7ef1b8a9883e841b25f1df4e2f3483b26f756ede",
+  "implementationHead": "b356fd9ff1215174511bd59a0eddc27206e47f69",
+  "implementationTree": "de25e46694a26405d9e3b7635fc0caf578a14cb7",
+  "main": "43124e28f0c2ac366d25a86787f055b885b1fc00",
+  "mergeBase": "43124e28f0c2ac366d25a86787f055b885b1fc00",
+  "mainNote": "origin/main was fetched again before the evidence commit and is still 43124e28. Accepted main was integrated by a normal merge. This branch was not rebased. Before the evidence commit it is 16 ahead and 0 behind that main.",
+  "node": "v22.23.4",
+  "browser": "Chrome 148.0.7778.96 via Playwright chrome channel. Playwright Chromium chromium_headless_shell-1187 did not launch.",
+  "counting": "behaviorCount is evidence.scenarios.length, the number of named groups. It is not an execution count and not an assertion count. Three groups each execute late R1 as success, domain, and reject (9 executions) with R2 armed success. flight-pending-a-newer-b-keeps-focus executes 6 times. stay-current-owner-focus executes 3 times: success, domain, and reject while B stays closed. stay-pending-a-newer-b-keeps-focus executes 6 times: success, domain, and reject, each with B open and B closed. layoutCount 9 is separate viewport measurements.",
+  "inheritedMetadata": "R103 and R104 result.json author, session, and sessionUrl are the original harness strings. They are not this lane's author or session. This file is the rerun binding.",
+  "historicalEvidence": "sha256 of the 16 files under docs/evidence/manual-mobility-pending-draft-guard-1 and docs/evidence/organisieren-action-recovery-1 was identical before and after these reruns.",
+  "harnessNote": "Behavior and layout diagnostics stay separate. On this rerun behaviorPageErrors, behaviorBlockedRequests, layoutPageErrors, and layoutBlockedRequests are empty. suspendRenders is captured before suspendConnection and suspendFlightTrip. Port 39311. headAtRun is the implementation commit. This evidence commit does not change components, lib, or scripts.",
+  "runs": [
+    {
+      "name": "manual-journey-editor-completion-1",
+      "command": "node scripts/manual-journey-editor-completion-1/harness.mjs",
+      "output": "docs/evidence/manual-journey-editor-completion-1/result.json",
+      "headAtRun": "b356fd9ff1215174511bd59a0eddc27206e47f69",
+      "port": 39311,
+      "status": "PASS",
+      "behaviorCount": 22,
+      "behaviorCountMeaning": "named scenario groups",
+      "layoutCount": 9,
+      "behaviorPageErrors": [],
+      "behaviorBlockedRequests": [],
+      "layoutPageErrors": [],
+      "layoutBlockedRequests": [],
+      "stayCurrentOwnerExecutions": 3,
+      "staySiblingExecutions": 6,
+      "flightSiblingExecutions": 6
+    },
+    {
+      "name": "r103-manual-mobility-pending-draft-guard",
+      "command": "JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard node scripts/manual-mobility-pending-draft-guard-1/harness.mjs",
+      "output": "docs/evidence/manual-journey-editor-completion-1/r103-manual-mobility-pending-draft-guard/result.json",
+      "status": "PASS",
+      "sourceBlob": "a3b1fbac4494001daa3aef7da2b21c4106d3ceec",
+      "note": "result.json unchanged. wide-1280-pending.png changed by a few bytes. Author string is inherited."
+    },
+    {
+      "name": "r104-organisieren-action-recovery",
+      "command": "JETNITY_R105_C_EVIDENCE_DIR=docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery node scripts/organisieren-action-recovery-1/harness.mjs",
+      "output": "docs/evidence/manual-journey-editor-completion-1/r104-organisieren-action-recovery/result.json",
+      "status": "PASS",
+      "flightBlob": "a0d356466e9a28f31ae0249e42670bd099887b85",
+      "stayBlob": "72fb6146d72bb30cf796687620894a26a57dd25e",
+      "connectionHash": "75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a",
+      "note": "Author string is inherited."
+    }
+  ]
+}
