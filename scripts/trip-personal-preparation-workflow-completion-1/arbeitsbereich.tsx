@@ -62,7 +62,6 @@ function Host() {
   const [reise, setReise] = useState(() => (start.seam === 'guest' ? ausgang(start) : start.reise))
   const [kanonisch, setKanonisch] = useState<Trip | undefined>(start.kanonisch)
   const reiseRef = useRef(reise)
-  reiseRef.current = reise
   const writes = useRef(0)
   const reads = useRef(0)
   const letzte = useRef<unknown>(null)
