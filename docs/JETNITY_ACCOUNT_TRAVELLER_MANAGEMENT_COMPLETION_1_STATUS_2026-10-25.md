@@ -2,7 +2,7 @@
 
 Date: 2026-10-25
 
-State: R1 corrections, including the remaining A-R4 supplement, are on Draft PR #1008. Awaiting independent Technical-Lead re-review of this head. Not Ready. Not merged. Not a product PASS.
+State: accepted main `41844878` is merged into this branch. Draft PR #1008 awaits independent Technical-Lead re-gating of the synchronized head. Not Ready. Not merged to main. Not an A product PASS.
 
 | Field | Value |
 | --- | --- |
@@ -10,20 +10,22 @@ State: R1 corrections, including the remaining A-R4 supplement, are on Draft PR 
 | Actual runtime model | `grok-4.7-high-fast` |
 | Session | https://cursor.com/agents/bc-3b7c97c5-d9fa-4326-9000-14377b2dd939 |
 | Branch | `feat/r106-account-traveller-management-1` |
-| Accepted plan head | `27204850956b024da1d1b4cf7556c321bf6cfe66` |
-| Reviewed runtime head | `c7613bd6754b6fc2f0f62f8339dc58294e5f130c` |
-| Prior R1 fix head | `6b094021068483eee82cda7791b9fa99891c1877` |
-| Prior docs head | `3aca6036babaad1b7e8b0bd4ead28f05ca425ec7` |
-| A-R4 supplement head | `268445373d68f06cec322bcd2ad3a12724e5fb3e` |
-| `origin/main` / merge-base | `500fbe40c8c8a70a0fe0d291782289f809d5d5b3` (re-fetched before this handoff) |
+| Pre-sync head | `e2db757d502f97f0dcce48d61e0b0fd87f95caa0` |
+| Merge commit | `e761c47131bbdf0b508fa9afd6470514dca9530e` |
+| Merge parents | `e2db757d502f97f0dcce48d61e0b0fd87f95caa0` then `41844878a8437256572da3de1374fbb36fd7a516` |
+| Merge tree | `712a7cf23a135aba652173a11f871bc2c31ebcb5` |
+| `origin/main` / merge-base | `41844878a8437256572da3de1374fbb36fd7a516` |
+| Ahead / behind at the merge | 12 ahead / 0 behind |
 | TASK blob | `fab67b9438388ff876eb9f98e1796e2edd091c47` (unchanged) |
 | PLAN blob | `fe7275d6e490e97573045baf8c4b07db12e281b3` (unchanged) |
-| Ahead / behind at the supplement | 10 ahead / 0 behind |
+| Operating mode at the sync | `NORMAL` |
 
-This status file, the report, the self-review, the handoff, and the evidence for `268445373d68f06cec322bcd2ad3a12724e5fb3e` sit on the commit after that head. Re-check ahead/behind on that commit. The evidence trees for `4022bc8281e27d2d7965807f45964c9f7ab09d6d` and `6b094021068483eee82cda7791b9fa99891c1877` remain.
+This status file, the report, the self-review, the handoff, and the evidence for `e761c47131bbdf0b508fa9afd6470514dca9530e` sit on the commit after that merge. Re-check ahead/behind on that later commit. The merge itself changed no Account runtime file. The eight Account source blobs match `e2db757d` and the `26844537` evidence.
 
-The receipt-focus steal reproduced at `6b094021` is corrected. Cancel restores focus only for the form that closed. A newer focus on a historical receipt stays there. Escape again follows accepted PLAN §6.3. A-R1 through A-R5 stay corrected. None of them is an accepted residual. Server actions, schema, Auth, RLS, Trip adoption, and global continuity files are untouched.
+The merge was clean. Inherited files are the Admin operations lane already on main: `components/admin/operations/useOperationsReport.ts`, `components/admin/provider-ops/ProviderOpsBoard.tsx`, `components/admin/system-health/SystemHealthBoard.tsx`, `lib/admin/operations-*`, the Admin completion docs, and `docs/evidence/admin-operations-evidence-lifecycle-completion-1/**`. `package.json` and `package-lock.json` are unchanged. No Account behavior was edited during the sync.
 
-App run 40159657960, Auth, and the exact-head Vercel Preview succeeded on `c7613bd6`. Those results are historical and do not apply to `26844537` or to `6b094021`.
+`#751` and `#1003`, read before the merge, still showed the 11:03Z snapshot in which O's actual-main POST-MERGE was pending and this author was STOP. The later instruction on PR #1008, comment 6396969318, cites POST-MERGE PASS 6396960736 for main `41844878` and orders this sync. This author verified that `origin/main` is that commit, with parents `500fbe40` and `2e67d1b9`, and did not re-run CI 40187176784.
 
-Next actor: root Technical Lead, same session, fresh-head review. Cursor does not Ready, merge, close tracking, or start a follow-up.
+App run 40185107709 and Preview `dpl_56CgA19gxyksdweVM3sYRrCx2WxH` passed on `e2db757d`. They do not gate `e761c471` or the docs commit after it. No CI or Preview result was observed for the synchronized head.
+
+Next actor: root Technical Lead, fresh-head review. Cursor does not Ready, merge, close #1005 or #1003, write main, or start T synchronization.

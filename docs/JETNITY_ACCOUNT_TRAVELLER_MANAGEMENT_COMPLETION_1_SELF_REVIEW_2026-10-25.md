@@ -2,52 +2,40 @@
 
 Author: Jetnity Account Traveller Management Completion 1 — Cursor Generation 1
 
-Supplement head reviewed by the author: `268445373d68f06cec322bcd2ad3a12724e5fb3e`
+Merge reviewed by the author: `e761c47131bbdf0b508fa9afd6470514dca9530e`
 
-Prior R1 head: `6b094021068483eee82cda7791b9fa99891c1877`
+This review is the author's own reading of the normal main synchronization. It is not an independent Technical-Lead PASS and it does not authorize Ready or merge.
 
-This review is the author's own reading. It is not an independent Technical-Lead PASS and it does not authorize Ready or merge.
+## Synchronization
 
-## R1 findings
+The merge brings accepted main `41844878a8437256572da3de1374fbb36fd7a516` into `feat/r106-account-traveller-management-1`. There was no conflict and no Account source edit. The eight Account runtime blobs match the pre-sync head `e2db757d502f97f0dcce48d61e0b0fd87f95caa0`. TASK and PLAN blobs are unchanged. Historical Account evidence files remain.
 
-A-R1 through A-R5, including the remaining A-R4 defect reproduced at `6b094021`, are corrected on this head. None of them is recorded here as an accepted residual.
+The branch-versus-main diff stays inside the Account lane. The files added by the merge are the Admin operations lane already accepted on main. This author did not edit those files, `package.json`, the lockfile, workflows, or global continuity docs.
 
-- A-R1: saved-but-unobserved receipts expose `Erneut lesen`. The mounted click sends no second write and keeps an unrelated draft.
-- A-R2: explicit adoption advances the epoch. Late success and the `unbestaetigt` outcome cannot close or focus the adopted editor. The mounted success case moved epoch 3 to 4.
-- A-R3: clean traveller and document edits reopen with the known list values. The second mounted payloads are `Alice` / `DE` and `passport` / `DE` / empty citizenship / `2030-01-01`. Dirty drafts survive. Create forms still clear.
-- A-R4: a Cancel click restores focus after commit for citizenship create, document create, and document edit at the 12-document limit. Restoration is limited to the cancelled `form[data-registry-editor]`. A newer focus on the historical receipt repeat button stays on `Trotzdem erneut speichern`. Focus already moved to `loeschen` stays there. The late document save does not take the restored focus. Escape follows PLAN §6.3: no confirmation closes the panel and focuses `Schließen`; an open delete confirmation closes only itself. The dirty draft `Entwurf bleibt` survives that panel close.
-- A-R5: the harness rejects the deferred action promise. `320.png` is the 16px capture and `320-root-32.png` is the 32px capture on this head. The older identical pair and the `6b094021` pair are preserved. The mounted module is under `scripts/account-traveller-management-completion-1/mounted.ts`.
+## Product findings
+
+No new Account behavior was introduced. The R1 corrections, including the receipt-focus rule and PLAN §6.3 Escape behavior, remain the bytes reviewed at `e2db757d`. The mounted runner on the merge head passed 39 cases, including `Abbrechen laesst den Fokus auf dem aelteren Beleg` and `Escape schliesst die Verwaltung und behaelt den Entwurf`.
 
 ## P0
 
-None found in the owned diff.
+None found in the synchronization diff.
 
 ## P1
 
-None found in the owned diff.
+None found in the synchronization diff.
 
 ## P2
 
-No open R1 product defect remains in this review. The receipt-focus steal and the form-level Escape interceptors from `6b094021` are closed here, not deferred.
+No open Account product defect is recorded from this sync.
 
-These limits are outside the R1 findings and stay visible:
+Local `npm test` is still not the native baseline. Exit 1 on the merge head: 7152 tests, 7136 pass, 11 fail, 5 skipped, `duration_ms 123950.664347`. The 11 failures are local PostgreSQL proof suites on a machine without `initdb`. Native App/Auth and Preview on `e2db757d` do not cover this head. No CI or Preview result was observed for `e761c471`.
 
-1. Local `npm test` is not the cited native baseline. Exit 1 on `26844537`. Summary: 7129 tests, 7113 pass, 11 fail, 5 skipped, `duration_ms 104941.811037`. Every inspected failure is a disposable PostgreSQL suite at `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. The account-registry, country, and document-lifecycle tests that this lane owns or touches passed in the focused run (77 pass, 0 fail). Native CI on `c7613bd6` does not cover this head.
-
-2. Production `router.refresh()` returns `void`. The rejection path runs only when the call returns a thenable. The harness shim does. The installed Next type does not. A failed production refresh is therefore not observable here, and a completed refresh is still not a list observation. The explicit reread keeps the 4000ms local deadline and does not send a write.
+Production `router.refresh()` remains `void`. A completed refresh is not a list observation.
 
 ## P3
 
-1. Create actions still return `wert: null`. The UI cannot point at the inserted row. Editing `account-registry-aktionen.ts` is outside this lane. Recommend a later Technical-Lead task if a later slice needs the id.
-
-2. Two account tabs can still race. This client cannot see the other tab. The unknown-outcome rule does not claim exactly-once.
-
-3. The repeat control uses `aria-disabled` and still receives a click, because `beginnen` is the authority. Playwright treats `aria-disabled="true"` as not enabled, so the mounted proof uses `click({ force: true })` to reach that guard. A forced click is not a second write path. The A-R4 counterexample focuses that button without activating it.
-
-## Traveller context
-
-Several citizenships stay equal. Residence, issuer, and citizenship stay independent. An empty document-to-citizenship choice is submitted as empty and preserved. A clean reopen shows the known list, including an empty citizenship link, rather than wiping stored metadata to null. The screen does not invent visa, transit, or carrier rules. A read error does not delete a person, citizenship, or document from the draft.
+Create actions still return `wert: null`. Two account tabs can still race. Neither changed in this merge.
 
 ## Scope check
 
-The supplement diff is the card focus effect, removal of the two form Escape interceptors, and the mounted regression cases. TASK and PLAN blobs match the accepted plan head. No global continuity file was edited. The evidence directories for `4022bc82` and `6b094021` are still present.
+Owned updates after the merge are the four Account continuity docs and `docs/evidence/account-traveller-management-completion-1/run-e761c47131bbdf0b508fa9afd6470514dca9530e.json` plus its screenshots. Those docs land on a later commit than the merge the harness recorded.
