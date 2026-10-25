@@ -54,6 +54,7 @@ type IntakeIntent = {
   phase: IntakePhase
   satz: string
   warnung: boolean
+  unaufgeloest: boolean
   generation: number
 }
 
@@ -109,6 +110,8 @@ export type TripTravellerSteuerung = {
   focusTarget: string | null
   intake: TripTravellerIntakeSteuerung
 }
+
+const INTAKE_UNBEKANNT = 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.'
 
 const LEERES_INTENT: SlotIntent = {
   phase: 'idle',
@@ -611,6 +614,7 @@ export function useTripTravellerSnapshotLifecycle({
       const aktuell = bestand.current
       if (aktuell.intakeBelegt) return
       const bisher = aktuell.intakes[registryTravellerId]
+      const unaufgeloest = Boolean(bisher?.unaufgeloest || bisher?.phase === 'unproven')
       commit({
         ...aktuell,
         interaction: aktuell.interaction + 1,
@@ -618,8 +622,9 @@ export function useTripTravellerSnapshotLifecycle({
           ...aktuell.intakes,
           [registryTravellerId]: {
             phase: 'confirm',
-            satz: bisher?.phase === 'unproven' ? 'Eine erneute Übernahme kann einen weiteren Snapshot erzeugen, falls die vorherige angekommen ist.' : '',
-            warnung: bisher?.phase === 'unproven',
+            satz: unaufgeloest ? INTAKE_UNBEKANNT : '',
+            warnung: unaufgeloest,
+            unaufgeloest,
             generation: (bisher?.generation ?? 0) + 1,
           },
         },
@@ -631,13 +636,20 @@ export function useTripTravellerSnapshotLifecycle({
       if (!bisher || bisher.phase === 'pending') return
       commit({
         ...aktuell,
-        intakes: { ...aktuell.intakes, [registryTravellerId]: { ...bisher, phase: 'idle', satz: '' } },
+        intakes: {
+          ...aktuell.intakes,
+          [registryTravellerId]: bisher.unaufgeloest
+            ? { ...bisher, phase: 'idle', satz: INTAKE_UNBEKANNT, warnung: true }
+            : { ...bisher, phase: 'idle', satz: '', warnung: false },
+        },
       })
     },
     bestaetigen: (registryTravellerId) => {
       const aktuell = bestand.current
       if (aktuell.intakeBelegt) return
-      const generation = (aktuell.intakes[registryTravellerId]?.generation ?? 0) + 1
+      const vorgeschichte = aktuell.intakes[registryTravellerId]
+      const generation = (vorgeschichte?.generation ?? 0) + 1
+      const unaufgeloest = Boolean(vorgeschichte?.unaufgeloest)
       const paar = { tripId: tripRef.current, registryTravellerId }
       const writer = writerRef.current
       commit({
@@ -645,7 +657,7 @@ export function useTripTravellerSnapshotLifecycle({
         intakeBelegt: registryTravellerId,
         intakes: {
           ...aktuell.intakes,
-          [registryTravellerId]: { phase: 'pending', satz: '', warnung: false, generation },
+          [registryTravellerId]: { phase: 'pending', satz: '', warnung: unaufgeloest, unaufgeloest, generation },
         },
       })
       void (async () => {
@@ -670,7 +682,7 @@ export function useTripTravellerSnapshotLifecycle({
             intakeBelegt: null,
             intakes: {
               ...nachher.intakes,
-              [registryTravellerId]: { phase: 'unproven', satz: 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.', warnung: true, generation },
+              [registryTravellerId]: { phase: 'unproven', satz: INTAKE_UNBEKANNT, warnung: true, unaufgeloest: true, generation },
             },
           })
           return
@@ -681,7 +693,13 @@ export function useTripTravellerSnapshotLifecycle({
             intakeBelegt: null,
             intakes: {
               ...nachher.intakes,
-              [registryTravellerId]: { phase: 'accepted', satz: '', warnung: false, generation },
+              [registryTravellerId]: {
+                phase: 'accepted',
+                satz: '',
+                warnung: Boolean(nachher.intakes[registryTravellerId]?.unaufgeloest),
+                unaufgeloest: Boolean(nachher.intakes[registryTravellerId]?.unaufgeloest),
+                generation,
+              },
             },
           })
           try {
@@ -707,8 +725,9 @@ export function useTripTravellerSnapshotLifecycle({
             ...nachher.intakes,
             [registryTravellerId]: {
               phase: 'unproven',
-              satz: 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.',
+              satz: INTAKE_UNBEKANNT,
               warnung: true,
+              unaufgeloest: true,
               generation,
             },
           },
@@ -720,7 +739,7 @@ export function useTripTravellerSnapshotLifecycle({
       return {
         phase: intent?.phase ?? 'idle',
         satz: intent?.satz ?? '',
-        warnung: intent?.warnung ?? false,
+        warnung: Boolean(intent?.unaufgeloest || intent?.warnung),
       }
     },
     pending: anzeige.intakeBelegt !== null,

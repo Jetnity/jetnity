@@ -62,6 +62,7 @@ declare global {
     __START__: Start
     __MATRIX__?: Bridge
     __KONTO_AUFRUFE__?: Array<{ name: string; args: unknown[] }>
+    __ROUTER_REFRESH__?: number
     __READBACK_LEFT__?: number
     __GET_THROW_LEFT__?: number
   }

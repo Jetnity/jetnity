@@ -93,7 +93,7 @@ async function bundeln(): Promise<string> {
         setup(build) {
           const ziel: Record<string, string> = {
             'next/link': join(shims, 'link.tsx'),
-            'next/navigation': join(shims, 'navigation.tsx'),
+            'next/navigation': join(eigene, 'navigation.tsx'),
             'next/dynamic': join(shims, 'dynamic.tsx'),
             'next/image': join(shims, 'image.tsx'),
             'next/cache': join(eigene, 'cache.ts'),
@@ -531,6 +531,95 @@ describe('mounted traveller snapshot matrix', () => {
       await page.evaluate(() => window.__MATRIX__.registrySetzen({ problem: null, travellers: [] }))
       await page.getByText('Noch keine gespeicherten Reisenden.').waitFor()
       assert.equal(await page.getByRole('button', { name: 'In diese Reise übernehmen', exact: true }).count(), 0)
+    } finally {
+      await schliessen()
+    }
+  })
+
+  test('an unresolved intake keeps its duplicate warning through cancel and reopen', { timeout: 120_000 }, async () => {
+    const ada = {
+      id: 'registry-ada',
+      label: 'Ada',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH'],
+      documents: [{ documentType: 'passport' as const, issuingCountryCode: 'CH' }],
+    }
+    const reise = beispielreise({ id: 'trip-matrix-intake-warnung', travellers: 1, party: [] })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, {
+      art: 'account',
+      reise,
+      registry: { problem: null, travellers: [ada], voll: false },
+    })
+    const unbekannt = 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.'
+    const erneut = 'Eine erneute Übernahme kann einen weiteren Snapshot erzeugen, falls die vorherige angekommen ist.'
+    try {
+      await page.waitForFunction(() => window.__MATRIX__)
+      await vorbereitung(page)
+      await page.evaluate(() => window.__MATRIX__.verhalten('string'))
+      await page.getByRole('button', { name: 'In diese Reise übernehmen', exact: true }).click()
+      await page.getByRole('button', { name: 'Kopie für diese Reise erzeugen', exact: true }).click()
+      await page.getByText(unbekannt).waitFor()
+      await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Reiseplan' }).click()
+      await page.getByRole('navigation', { name: 'Reiseansicht' }).getByRole('button', { name: 'Vorbereitung' }).click()
+      await page.getByText(unbekannt).waitFor()
+      await page.getByText(erneut).waitFor()
+      await page.getByRole('button', { name: 'In diese Reise übernehmen', exact: true }).click()
+      await page.getByRole('button', { name: 'Abbrechen', exact: true }).click()
+      assert.equal(await page.getByRole('button', { name: 'Kopie für diese Reise erzeugen', exact: true }).count(), 0)
+      await page.getByText(unbekannt).waitFor()
+      await page.getByText(erneut).waitFor()
+      await page.getByRole('button', { name: 'In diese Reise übernehmen', exact: true }).click()
+      await page.getByText(unbekannt).waitFor()
+      await page.getByText(erneut).waitFor()
+      assert.equal(await page.getByRole('button', { name: 'Kopie für diese Reise erzeugen', exact: true }).count(), 1)
+      const vorher = await page.evaluate(() => window.__MATRIX__.intake.length)
+      await page.evaluate(() => window.__MATRIX__.verhalten('null'))
+      await page.getByRole('button', { name: 'Kopie für diese Reise erzeugen', exact: true }).click()
+      await page.waitForFunction((stand) => window.__MATRIX__.intake.length === stand + 1, vorher)
+      await page.waitForTimeout(100)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.intake.length), vorher + 1)
+      assert.equal((await page.evaluate(() => window.__MATRIX__.intake.at(-1))).registryTravellerId, 'registry-ada')
+    } finally {
+      await schliessen()
+    }
+  })
+
+  test('each accepted save, removal and intake requests one refresh', { timeout: 120_000 }, async () => {
+    const ada = {
+      id: 'registry-ada',
+      label: 'Ada',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH'],
+      documents: [{ documentType: 'passport' as const, issuingCountryCode: 'CH' }],
+    }
+    const reise = beispielreise({
+      id: 'trip-matrix-refresh',
+      travellers: 2,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'CH' })],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, {
+      art: 'konto',
+      reise,
+      registry: { problem: null, travellers: [ada] },
+    })
+    try {
+      await vorbereitung(page)
+      await (await karte(page, 'traveller:1')).getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await page.waitForFunction(() => window.__ROUTER_REFRESH__ === 1)
+      await page.getByText('Die Angaben wurden zum Speichern angenommen.').waitFor()
+      await page.getByRole('button', { name: 'Angaben entfernen', exact: true }).click()
+      await page.getByRole('button', { name: 'Entfernen bestätigen', exact: true }).click()
+      await page.waitForFunction(() => window.__ROUTER_REFRESH__ === 2)
+      await page.getByRole('button', { name: 'In diese Reise übernehmen', exact: true }).click()
+      await page.getByRole('button', { name: 'Kopie für diese Reise erzeugen', exact: true }).click()
+      await page.waitForFunction(() => window.__ROUTER_REFRESH__ === 3)
+      await page.getByText('Die Person wurde als eigenständiger Snapshot in diese Reise übernommen.').waitFor()
+      const aufrufe = await page.evaluate(() => window.__KONTO_AUFRUFE__ ?? [])
+      assert.equal(aufrufe.filter((eintrag) => eintrag.name === 'travellerSetzen').length, 1)
+      assert.equal(aufrufe.filter((eintrag) => eintrag.name === 'travellerEntfernen').length, 1)
+      assert.equal(aufrufe.filter((eintrag) => eintrag.name === 'registryTravellerInReiseUebernehmen').length, 1)
+      await page.waitForTimeout(100)
+      assert.equal(await page.evaluate(() => window.__ROUTER_REFRESH__ ?? 0), 3)
     } finally {
       await schliessen()
     }
