@@ -359,6 +359,7 @@ test('Prüfung, Fokus und Darstellung bleiben im Rahmen', async () => {
         return { verwaltung: ziel.scrollWidth - ziel.clientWidth, dokument: document.documentElement.scrollWidth - document.documentElement.clientWidth }
       })
       assert.ok(mass.verwaltung <= 1, `Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
+      console.log(`css ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
       await page.screenshot({ path: `${screens}/verwaltung-${breite}.png`, fullPage: false })
     }
   }
