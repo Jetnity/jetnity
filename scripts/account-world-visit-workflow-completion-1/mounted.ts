@@ -388,7 +388,7 @@ test('dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen',
   const unklar = await seite()
   await setzen(unklar, { problem: null, besuche: [], tripProblem: null })
   await anlegen(unklar)
-  await unklar.evaluate(() => { window.__visitSofort = { ok: false, meldung: SCHREIBFEHLER } })
+  await unklar.evaluate((meldung) => { window.__visitSofort = { ok: false, meldung } }, SCHREIBFEHLER)
   await unklar.locator('[data-besuch-anlage="offen"] button[type="submit"]').click()
   assert.match(await text(unklar), /unklar/)
   await rahmen(unklar, 'unbestaetigt')
