@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { execFileSync, spawn } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { createServer } from 'node:http'
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -137,6 +137,19 @@ const kind = await new Promise((resolve) => {
 })
 const statusAfter = git(['status', '--porcelain'])
 const trackedDirtyAfter = statusAfter.split('\n').filter((line) => line && !line.startsWith('??'))
+const cssSha256 = createHash('sha256').update(css).digest('hex')
+const sourceHashes = Object.fromEntries(quellen.map((datei) => [datei, sha(datei)]))
+let screenshots = []
+try {
+  screenshots = JSON.parse(readFileSync(join(screens, 'manifest.json'), 'utf8')).map((shot) => ({
+    ...shot,
+    commit: head,
+    cssSha256,
+    sources: sourceHashes,
+  }))
+} catch {
+  screenshots = []
+}
 const ergebnis = {
   status: kind.status === 0 ? 'PASS' : 'FAIL',
   author: 'Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1',
@@ -152,7 +165,11 @@ const ergebnis = {
   exit: kind.status,
   origin: harnessOrigin,
   aliasBoundary: 'esbuild aliases replace only next/navigation and lib/account/besuche-aktionen.ts. AccountBesuche, the form, the hook, copy and project CSS stay real.',
-  notClaimed: 'This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot. This receipt does not amend the earlier run-82260869d6cb.json.',
+  notClaimed: 'This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot. This receipt does not amend run-82260869d6cb.json or run-8b1e6ac0185c.json.',
+  inputMethods: {
+    requestSubmit: 'The same-turn double submit calls form.requestSubmit() twice in one turn. That is guard admission, not a keyboard Enter pair.',
+    keyboard: 'Opening the editor, cancelling it with Escape, and submitting one edit use page.keyboard.press. The cancel button uses a pointer click.',
+  },
   tracked: {
     before: statusBefore,
     beforeDirty: trackedDirtyBefore,
@@ -160,9 +177,10 @@ const ergebnis = {
     afterDirty: trackedDirtyAfter,
     cleanBefore: trackedDirtyBefore.length === 0,
   },
-  sources: Object.fromEntries(quellen.map((datei) => [datei, sha(datei)])),
+  sources: sourceHashes,
   proof: Object.fromEntries(beweise.map((datei) => [datei, sha(datei)])),
-  cssSha256: createHash('sha256').update(css).digest('hex'),
+  cssSha256,
+  screenshots,
   stdoutTail: kind.stdout.slice(-4000),
   stderrTail: kind.stderr.slice(-4000),
 }

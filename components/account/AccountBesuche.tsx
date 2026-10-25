@@ -109,20 +109,43 @@ function vorgangZeilen(vorgang: VisitVorgang, idSichtbar: boolean | null): strin
   return zeilen
 }
 
-function fokusSetzen(ziel: string, lage: { sucheAktiv: boolean; aufBody: boolean; inSurface: boolean }) {
-  if (!visitFokusErlaubt({ ...lage, entwurfEpoche: null, vorgangEpoche: null })) return
+function fokusSetzen(ziel: string, lage: {
+  sucheAktiv: boolean
+  aufBody: boolean
+  inSurface: boolean
+  entwurfEpoche?: number | null
+  vorgangEpoche?: number | null
+}) {
+  if (!visitFokusErlaubt({
+    sucheAktiv: lage.sucheAktiv,
+    aufBody: lage.aufBody,
+    inSurface: lage.inSurface,
+    entwurfEpoche: lage.entwurfEpoche ?? null,
+    vorgangEpoche: lage.vorgangEpoche ?? null,
+  })) return
   requestAnimationFrame(() => {
-    document.querySelector<HTMLElement>(`[data-fokus="${CSS.escape(ziel)}"]`)?.focus()
+    document.querySelector<HTMLElement>(`button[data-fokus="${CSS.escape(ziel)}"]`)?.focus()
   })
 }
 
-function fokusLage(): { sucheAktiv: boolean; aufBody: boolean; inSurface: boolean } {
+function fokusLage(surface?: string, vorgangEpoche: number | null = null): {
+  sucheAktiv: boolean
+  aufBody: boolean
+  inSurface: boolean
+  entwurfEpoche: number | null
+  vorgangEpoche: number | null
+} {
   const aktiv = document.activeElement
   const element = aktiv instanceof HTMLElement ? aktiv : null
+  const entwurf = element?.closest<HTMLElement>('[data-besuch-entwurf-epoche]')
+  const gelesen = entwurf ? Number(entwurf.getAttribute('data-besuch-entwurf-epoche')) : Number.NaN
+  const flaeche = element?.closest<HTMLElement>('[data-besuch-surface]')?.getAttribute('data-besuch-surface')
   return {
     sucheAktiv: element?.id === 'account-besuche-suche',
     aufBody: !element || element === document.body || element === document.documentElement,
-    inSurface: Boolean(element?.closest('[data-besuch-surface]')),
+    inSurface: surface ? flaeche === surface : Boolean(flaeche),
+    entwurfEpoche: Number.isFinite(gelesen) ? gelesen : null,
+    vorgangEpoche,
   }
 }
 
@@ -173,6 +196,13 @@ export default function AccountBesuche({
 
   function onBearbeiten(wert: { id: string; wert: BesuchFormularWert } | null) {
     workflow.bearbeiten(wert)
+  }
+
+  function editorAbbrechen(ereignisId: string) {
+    const surface = `ereignis:${ereignisId}`
+    const lage = fokusLage(surface, editor?.ereignisId === ereignisId ? editor.epoche : null)
+    workflow.bearbeiten(null)
+    fokusSetzen(`bearbeiten:${ereignisId}`, lage)
   }
 
   function hinzufuegenUmschalten() {
@@ -453,6 +483,7 @@ export default function AccountBesuche({
                 className="mt-4 scroll-mt-28"
                 data-besuch-anlage="offen"
                 data-besuch-surface="anlegen"
+                data-besuch-entwurf-epoche={workflow.stand.anlegen.epoche}
               >
                 <h2 className="sr-only">{BESUCHE_COPY.anlegenTitel}</h2>
                 <AccountBesuchFormular
@@ -564,6 +595,7 @@ export default function AccountBesuche({
                       onUebernehmen={(besuch) => workflow.uebernehmen(besuch)}
                       onEntwurfSpeichern={entwurfSpeichern}
                       onVerwerfen={() => workflow.verwerfen(`ereignis:${eintrag.id}`)}
+                      onEditorAbbrechen={editorAbbrechen}
                       idSichtbar={besuche.some((besuch) => besuch.id === eintrag.id)}
                       entwurf={editor?.ereignisId === eintrag.id ? editor : null}
                     />
@@ -714,6 +746,7 @@ function BesuchZeile({
   onUebernehmen,
   onEntwurfSpeichern,
   onVerwerfen,
+  onEditorAbbrechen,
   idSichtbar,
   entwurf,
 }: {
@@ -738,6 +771,7 @@ function BesuchZeile({
   onUebernehmen: (besuch: Besuch) => void
   onEntwurfSpeichern: (besuch: Besuch) => void
   onVerwerfen: () => void
+  onEditorAbbrechen: (id: string) => void
   idSichtbar: boolean
   entwurf: VisitEntwurf | null
 }) {
@@ -842,14 +876,14 @@ function BesuchZeile({
         )}
 
         {inBearbeitung && bearbeitet && entwurf ? (
-          <div className="mt-3" data-besuch-editor-epoche={entwurf.epoche} data-besuch-konflikt={entwurf.konflikt}>
+          <div className="mt-3" data-besuch-editor-epoche={entwurf.epoche} data-besuch-entwurf-epoche={entwurf.epoche} data-besuch-konflikt={entwurf.konflikt}>
             <AccountBesuchFormular
               titel={BESUCHE_COPY.aendernTitel}
               aktionText={BESUCHE_COPY.aendernAktion}
               wert={bearbeitet.wert}
               onWert={(wert) => onBearbeiten({ id: bearbeitet.id, wert })}
               onAbsenden={onAendern}
-              onAbbrechen={() => onBearbeiten(null)}
+              onAbbrechen={() => onEditorAbbrechen(eintrag.id)}
               laeuft={laeuft}
               zeitNebeneinander={false}
               hinweis={entwurf.lokalerHinweis}

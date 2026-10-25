@@ -1,6 +1,6 @@
 import { after, before, test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdirSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { chromium, type Browser, type Page } from 'playwright'
 
 import { besuchVerwaltungDichteFixture } from '@/lib/account/account-world-visit-management-premium-1-fixture'
@@ -79,23 +79,45 @@ async function text(page: Page): Promise<string> {
   return page.locator('body').innerText()
 }
 
-async function rahmen(page: Page, name: string) {
+type Aufnahme = {
+  file: string
+  viewport: { width: number; height: number }
+  rootFontPx: 32
+  state: string
+  scrolledTo: string
+  overflow: { verwaltung: number; dokument: number }
+}
+
+const aufnahmen: Aufnahme[] = []
+
+async function rahmen(page: Page, name: string, state: string, scrolledTo: string) {
   if (!screens) return
   mkdirSync(screens, { recursive: true })
+  const ziel = page.locator(scrolledTo).first()
   for (const breite of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width: breite, height: 900 })
     await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
     const mass = await page.evaluate(() => {
-      const ziel = document.querySelector('[data-besuch-verwaltung]') as HTMLElement
+      const verwaltung = document.querySelector('[data-besuch-verwaltung]') as HTMLElement
       return {
-        verwaltung: ziel.scrollWidth - ziel.clientWidth,
+        verwaltung: verwaltung.scrollWidth - verwaltung.clientWidth,
         dokument: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       }
     })
     assert.ok(mass.verwaltung <= 1, `${name} Verwaltung läuft bei ${breite} über: ${mass.verwaltung}`)
     console.log(`css ${name} ${breite} verwaltung=${mass.verwaltung} dokument=${mass.dokument}`)
     if (breite === 320 || breite === 1440) {
-      await page.screenshot({ path: `${screens}/${name}-${breite}.png`, fullPage: false })
+      await ziel.evaluate((element) => element.scrollIntoView({ block: 'start', inline: 'nearest' }))
+      const file = `${name}-${breite}.png`
+      await page.screenshot({ path: `${screens}/${file}`, fullPage: false })
+      aufnahmen.push({
+        file,
+        viewport: { width: breite, height: 900 },
+        rootFontPx: 32,
+        state,
+        scrolledTo,
+        overflow: mass,
+      })
     }
   }
 }
@@ -118,6 +140,7 @@ before(async () => {
 
 after(async () => {
   await browser?.close()
+  if (screens && aufnahmen.length > 0) writeFileSync(`${screens}/manifest.json`, `${JSON.stringify(aufnahmen, null, 2)}\n`)
 })
 
 test('eine lokale Lesepanne schickt nichts', async () => {
@@ -129,7 +152,7 @@ test('eine lokale Lesepanne schickt nichts', async () => {
   await page.close()
 })
 
-test('dieselbe Runde bestätigt nur einmal', async () => {
+test('dieselbe Runde bestätigt nur einmal, per requestSubmit', async () => {
   const page = await seite()
   await setzen(page, { problem: null, besuche: [], tripProblem: null })
   await anlegen(page)
@@ -369,7 +392,7 @@ test('Prüfung, Fokus und Darstellung bleiben im Rahmen', async () => {
   await page.clock.fastForward(4500)
   assert.match(await text(page), /Die Prüfung ist beendet/)
   assert.equal((await text(page)).includes('neu gelesen'), false)
-  await rahmen(page, 'lang')
+  await rahmen(page, 'lang', 'long visit label after a deferred list check', `[data-besuch="${id(1)}"]`)
   await page.close()
 })
 
@@ -380,9 +403,10 @@ test('dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen',
   const zweite = await page.locator('[data-besuch]').nth(1).getAttribute('data-besuch')
   await page.locator(`[data-besuch="${erste}"]`).getByRole('button', { name: BESUCHE_COPY.bearbeiten }).click()
   await page.locator(`[data-besuch="${zweite}"]`).getByRole('button', { name: BESUCHE_COPY.widerrufen }).click()
-  await rahmen(page, 'dichte')
+  await rahmen(page, 'editor', 'open editor on the first visible visit', '[data-besuch-editor-epoche]')
+  await rahmen(page, 'widerruf', 'open revoke confirmation on the next visible visit', '[data-besuch-bestaetigung]')
   await setzen(page, { problem: { status: 503, message: 'synthetisch' }, besuche: [], tripProblem: null })
-  await rahmen(page, 'lesefehler')
+  await rahmen(page, 'lesefehler', 'failed visit read with an empty payload', '[role="alert"]')
   await page.close()
 
   const unklar = await seite()
@@ -391,7 +415,7 @@ test('dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen',
   await unklar.evaluate((meldung) => { window.__visitSofort = { ok: false, meldung } }, SCHREIBFEHLER)
   await unklar.locator('[data-besuch-anlage="offen"] button[type="submit"]').click()
   assert.match(await text(unklar), /unklar/)
-  await rahmen(unklar, 'unbestaetigt')
+  await rahmen(unklar, 'unbestaetigt', 'unknown create outcome with Liste prüfen', '[data-besuch-art="bestaetigen"]')
   await unklar.close()
 })
 
@@ -480,6 +504,7 @@ test('Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste', asyn
   await panel.getByRole('button', { name: BESUCHE_COPY.listePruefen }).click()
   assert.equal(await fehler.evaluate(() => window.__visitRefreshes.length), refreshes + 1)
   assert.equal((await aufrufe(fehler)).length, 1)
+  await rahmen(fehler, 'wiederherstellung-aendern', 'unknown edit kept after a failed read', '[data-besuch-vorgang-haltung="eigen"] [data-besuch-art="aendern"]')
   await fehler.close()
 
   const weg = await seite()
@@ -498,6 +523,7 @@ test('Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste', asyn
   await laufend.getByText(BESUCHE_COPY.unbekannt).waitFor()
   assert.equal(await laufend.getByRole('button', { name: BESUCHE_COPY.listePruefen }).count(), 1)
   assert.equal((await aufrufe(weg)).length, 1)
+  await rahmen(weg, 'wiederherstellung-widerruf', 'unknown revoke kept after the row left a valid list', '[data-besuch-vorgang-haltung="eigen"] [data-besuch-art="widerrufen"]')
   await weg.close()
 
   const suche = await seite()
@@ -512,4 +538,57 @@ test('Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste', asyn
   assert.match(await verborgen.innerText(), /wird widerrufen/)
   assert.equal((await aufrufe(suche)).length, 1)
   await suche.close()
+})
+
+async function fokusIst(page: Page, selektor: string) {
+  await page.waitForFunction((ziel) => document.activeElement?.matches(ziel) ?? false, selektor)
+}
+
+test('Escape und Abbrechen geben den Fokus an Bearbeiten zurück', async () => {
+  const page = await seite()
+  await setzen(page, { problem: null, besuche: [besuch(1), besuch(2)], tripProblem: null })
+  const oeffner = page.locator(`[data-besuch="${id(1)}"]`).getByRole('button', { name: BESUCHE_COPY.bearbeiten })
+  await oeffner.focus()
+  await page.keyboard.press('Enter')
+  const formular = page.locator(`[data-besuch="${id(1)}"] [data-besuch-formular]`)
+  await formular.waitFor()
+  await page.locator(`[data-besuch="${id(1)}"] input[type="number"]`).first().click()
+  await page.keyboard.press('Escape')
+  await formular.waitFor({ state: 'detached' })
+  await fokusIst(page, `button[data-fokus="bearbeiten:${id(1)}"]`)
+  assert.equal((await aufrufe(page)).length, 0)
+
+  await oeffner.focus()
+  await page.keyboard.press('Enter')
+  await formular.waitFor()
+  await page.locator(`[data-besuch="${id(1)}"] input[type="number"]`).first().click()
+  await page.locator(`[data-besuch="${id(1)}"]`).getByRole('button', { name: BESUCHE_COPY.abbrechen }).click()
+  await formular.waitFor({ state: 'detached' })
+  await fokusIst(page, `button[data-fokus="bearbeiten:${id(1)}"]`)
+  assert.equal((await aufrufe(page)).length, 0)
+
+  await oeffner.focus()
+  await page.keyboard.press('Enter')
+  await formular.waitFor()
+  await page.locator('#account-besuche-suche').click()
+  await page.keyboard.press('Escape')
+  assert.equal(await formular.count(), 1)
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'account-besuche-suche')
+
+  await page.locator('[data-besuch-anlage="offen"] input[type="number"]').first().click()
+  await page.keyboard.press('Escape')
+  assert.equal(await formular.count(), 1)
+  assert.equal(await page.evaluate(() => document.activeElement?.closest('[data-besuch-surface]')?.getAttribute('data-besuch-surface')), 'anlegen')
+
+  const anderer = page.locator(`[data-besuch="${id(2)}"]`).getByRole('button', { name: BESUCHE_COPY.bearbeiten })
+  await anderer.click()
+  await page.locator(`[data-besuch="${id(2)}"] [data-besuch-formular]`).waitFor()
+  assert.equal(await formular.count(), 0)
+  await fokusIst(page, `button[data-fokus="bearbeiten:${id(2)}"]`)
+  await page.locator(`[data-besuch="${id(2)}"] input[type="number"]`).first().click()
+  await page.keyboard.press('Enter')
+  const gesendet = await aufrufe(page)
+  assert.deepEqual(gesendet.map((eintrag) => eintrag.name), ['aendern'])
+  assert.equal(gesendet[0]?.argument.id, id(2))
+  await page.close()
 })
