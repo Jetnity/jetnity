@@ -194,15 +194,21 @@ describe('TripSummary-Projektion bewahrt kanonische World-Map-Felder', () => {
 describe('reisenLaden-Select bleibt ein Pfad', () => {
   test('UEBERSICHT_SPALTEN liest die kanonischen Stage-Felder ohne zweite Abfrage', () => {
     const daten = readFileSync(join(hier, '../trips/daten.ts'), 'utf8')
+    const hilfe = readFileSync(join(hier, '../trips/reisen-uebersicht.ts'), 'utf8')
     const ladenStart = daten.indexOf('export async function reisenLaden')
     const ladenEnde = daten.indexOf('export async function reiseLaden')
     const laden = daten.slice(ladenStart, ladenEnde)
     assert.match(laden, /UEBERSICHT_SPALTEN/)
-    assert.match(daten, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
+    assert.match(laden, /uebersichtAusZeilen/)
+    assert.match(laden, /REISEN_LISTE_GRENZE/)
+    assert.match(laden, /lese</)
+    assert.match(laden, /order\('updated_at', \{ ascending: false \}\)/)
+    assert.match(hilfe, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
     assert.equal((laden.match(/\.from\('trips'\)/g) ?? []).length, 1)
     assert.equal(laden.includes('createServiceRole'), false)
     assert.equal(laden.includes("eq('user_id'"), false)
     assert.equal(daten.includes('from(\'trip_stages\')'), false)
+    assert.match(daten, /accountGraphLesen/)
   })
 })
 

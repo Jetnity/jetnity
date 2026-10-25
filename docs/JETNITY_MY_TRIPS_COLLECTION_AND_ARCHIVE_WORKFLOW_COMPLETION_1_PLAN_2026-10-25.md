@@ -1,6 +1,6 @@
 # Jetnity My Trips Collection and Archive Workflow Completion 1 — PLAN
 
-Date: 2026-10-25. **Plan only.** No implementation, test, audit, or other document change is authorized by this file.
+Date: 2026-10-25. PLAN R3 authorized implementation in the same session. This text includes the three binding navigation rules from that authorization. It is not candidate FINAL PASS, Ready, or merge approval.
 
 Lane **M** of finite batch [#1011](https://github.com/Jetnity/jetnity/issues/1011). Tracking [#1014](https://github.com/Jetnity/jetnity/issues/1014). Draft PR [#1019](https://github.com/Jetnity/jetnity/pull/1019). Branch `feat/r107-my-trips-collection-archive-workflow-1`.
 
@@ -188,7 +188,7 @@ For every authenticated response, including invalid parameters, empty account, n
 
 `lib/trips/trip-archive-workflow.ts` is a pure classifier and record updater. `components/trips/useTripArchiveWorkflow.ts` holds the imperative guard and calls the action. `KontoReiseEintrag` only passes the controller into `KontoReiseArchivAktion`. The card remains an article whose link and button are siblings. `min-h-11`, `data-reisen-aktion`, `Archivieren`, `Wiederherstellen`, and `role="alert"` stay. No `fetch(`. No nested interactive control.
 
-The same-turn mutex is `archiveInvocationRef` in the hook, a ref, not a reducer update and not `useState`. Its value is `null` or `{ operationId, tripId, collectionId }`. `collectionId` is assigned once when the controller mounts and is the mounted collection, not the URL. `begin` reads and writes the ref synchronously:
+The same-turn mutex is a ref in the hook, held as `sperre` and updated only through `sperreSetzen` / `sperreLoesen`. It is not a reducer update and not `useState`, and render does not read it. Its value is `null` or `{ operationId, tripId, collectionId }`. `collectionId` is assigned once when the controller mounts and is the mounted collection, not the URL. `ausfuehren` reads and writes the ref synchronously:
 
 1. If the ref is already set, return without calling the action. A second click in the same turn or while the call is in flight does not start.
 2. Otherwise assign the ref before `setState` and before the call.
@@ -222,7 +222,7 @@ Installed Next `16.4.1` types `AppRouterInstance.push` and `refresh` as `void` (
 
 The draft is separate state. The first render adopts the server props when their address equals the live URL. After that, the adopted list changes only for a later snapshot whose address equals the live URL. A newer snapshot for a different address stays off the list and does not release the current intent.
 
-`pendingIntentRef` is local. It is `null` or `{ intentId, address, kind, urlAtIssue, serverSnapshot, leaseDeadline }`. `kind` is `commit`, `retry`, `continue`, `clear`, `restart`, `selection`, or `url`. `selection` is the archive-filter button, not the archive write. `intentId` is a local counter so a stale timer or a stale `catch` can see that it no longer owns the ref. It is never compared with props, the URL, or a shim callback.
+The visible intent is component state, not a ref read during render. This repository treats `react-hooks/refs` as an error, so the loading guard cannot be a ref that render reads. The state is `null` or `{ intentId, address, kind, urlAtIssue, serverSnapshot, leaseDeadline }`. `kind` is `commit`, `retry`, `continue`, `clear`, `restart`, `selection`, or `url`. `selection` is the archive-filter button, not the archive write. `intentId` is a local counter so a stale timer or a stale `catch` can see that it no longer owns the intent. The catch and the timer use a functional update and clear only a matching `intentId`. The counter ref is written from the click handler and from the effect that opens a `url` intent after a history change. Render does not read it. `intentId` is never compared with props, the URL, or a shim callback.
 
 `REISEN_SAMMLUNG_NAV_LEASE_MS` is `8000`. The lease bounds the loading guard only. It is not a server timeout, not a cancelled read, and not proof that a read finished or failed. A server snapshot that arrives after the guard has dropped is still adopted when its address equals the live URL.
 
@@ -230,14 +230,20 @@ Pending begins in the click handler, before `router.push` or `router.refresh`, a
 
 1. A second `retry` of the same adopted address, while that retry's `intentId` is still current and its lease has not fired, returns without another `refresh`.
 2. Otherwise the handler stores a new `intentId`, the target address, the kind, the current URL as `urlAtIssue`, the current server-snapshot counter, and `leaseDeadline = Date.now() + REISEN_SAMMLUNG_NAV_LEASE_MS`. The loading sentence paints. The adopted rows stay.
-3. The call is in `try`. `push` and `refresh` return `void`, so there is no resolution handler. `catch` clears the ref only when `pendingIntentRef.current.intentId` is still this id. The draft and the archive records stay.
-4. The lease timer clears the ref only when the id still matches. The same id check applies to every later release.
+3. The call is in `try`. `push` and `refresh` return `void`, so there is no resolution handler. `catch` clears the intent only when its `intentId` is still this id. The draft and the archive records stay.
+4. The lease timer clears the intent only when the id still matches. The same id check applies to every later release.
 
-Release and supersession use only the observations above:
+The hook keeps the previous observed URL and updates it only after that comparison. A live URL that differs from the previous observed URL, and is not the current intent address, supersedes the intent. That includes a return to `urlAtIssue` after the URL had already moved: A (issue B) → B (URL observed, server props still the old A object) → A (URL observed again) clears B's loading intent even though A equals `urlAtIssue`. The hook does not infer why the URL changed and does not call the return a response. Old A props stay the adopted list. A later props object whose address is B, while the live URL is A, is not adopted.
 
-- A newer gesture replaces the ref before its own dispatch. The replaced id is dead. Its timer and its `catch` do not clear the new ref, and they do not change the draft or the archive records.
+The snapshot counter observes one stable server-supplied result object. It increments only when that object reference changes. Copying the object during ordinary client rendering, including a draft `setState`, is not a server observation and does not release retry. The page passes the reader result through. The collection does not clone it.
+
+`router.refresh()` reads the live URL. Continuation belongs to the adopted result that supplied its cursor. While the canonical live URL and the adopted address differ, retry and continuation are disabled. Search submit, archive-filter selection, clear, and reset stay available. When the addresses agree, retry calls `router.refresh()` for that same address and continuation pushes the adopted cursor. The hook does not refresh B while presenting that gesture as a retry of displayed A.
+
+Release otherwise uses only the observations above:
+
+- A newer gesture replaces the intent before its own dispatch. The replaced id is dead. Its timer and its `catch` do not clear the new intent, and they do not change the draft or the archive records.
 - The render that stored the intent, and every later render whose server-snapshot counter is still the stored counter, does not release. Existing props do not acknowledge a retry or a same-address click that has just started, even when the URL and the props address already equal the target.
-- A live URL that is neither `urlAtIssue` nor the intent address supersedes that intent. This is a history change or a landing other than the issued address. If the current server props already use that URL and the snapshot is newer than the adopted list, those props are adopted and no lease opens. Otherwise the hook stores a new `url` intent for the live URL, with its own id, `urlAtIssue` set to that URL, and a new lease. The old id cannot clear it.
+- If the current server props already use the newly observed URL and the snapshot is newer than the adopted list, those props are adopted and no lease opens. Otherwise, when the URL changed and no intent remains, the hook stores a new `url` intent for the live URL, with its own id, `urlAtIssue` set to that URL, and a new lease. The old id cannot clear it.
 - A live URL that equals the intent address does not by itself release the guard and does not prove which gesture landed. Release then waits for a later server snapshot whose address equals that URL, or for the lease. The same rows or the same error both release the guard. The screen does not call that render a receipt.
 - After release, a read error for the URL replaces the rows for that address. It does not render the empty-account state and does not drop archive records.
 - While the URL and the adopted list differ, the adopted rows remain and the owner line says they are the last loaded result. Editing the draft does not cancel a pending retry and does not change the adopted list.
@@ -279,7 +285,7 @@ Not edited: `lib/trips/archiv-aktionen.ts`, `lib/account/reise-archiv.ts`, `lib/
 
 ## 4. Proof plan (after acceptance only)
 
-Not run for this plan commit.
+These cases are the implementation proof. The lane report records the commands and results for the implementation head. This section remains the contract.
 
 Pure and synthetic, in the new `node:test` files:
 
@@ -295,7 +301,7 @@ Rendered proof is mandatory. M-EX2 declines a new app route and does not waive t
 - esbuild bundles the real `MyTripsCollection`, `KontoReiseEintrag`, and `KontoReiseArchivAktion`. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. Project CSS comes from the existing PostCSS/Tailwind pipeline on `styles/globals.css`. A local static server serves that bundle. There is no Next route, no `ui-audit` page, no session, and no Supabase client.
 - The navigation shim implements the installed signatures: `push`, `replace`, `refresh`, `back`, `forward`, and `prefetch` return nothing and take no arrival callback. It records calls. `useSearchParams()` changes only when the script sets the URL. Server props change only when the script passes a new props object. The shim does not manufacture an arrival generation, and the hook must not read one from it. The proof fails if `prefetch` is called or if a continuation control issues a read before the pointer or keyboard activation.
 - The action shim returns a deferred promise, an exact `{ ok: true, wert: null }`, a thrown error, a malformed fulfillment, or `{ ok: false, meldung }`. The wrapper then passes the next scripted props only when the script says a server render happened. A resolved refresh is not treated as a list observation.
-- Navigation cases, using those inputs only: A → B → A before the first URL change, where the original A props do not release the new guard and a later URL B supersedes it; a late own landing, where the URL reaches the issued address while props are still old and only a later props object for that address releases the guard; Back/Forward as a URL change with no local issue, kept apart from that landing; a same-address retry whose new props object repeats the same error and releases the guard; the same retry with no new props object, released only after Playwright advances `REISEN_SAMMLUNG_NAV_LEASE_MS`; a duplicate retry that does not call `refresh` again; a draft edit that issues no navigation, then a newer commit whose guard survives the old lease; a synchronous `push` throw that clears only that intent, leaves the draft and archive records, and whose stale `catch` does not clear a newer intent.
+- Navigation cases, using those inputs only: A → B → A before the first URL change, where the original A props do not release the new guard and a later URL B supersedes it; a late own landing, where the URL reaches the issued address while props are still old and only a later props object for that address releases the guard; the return A (issue B) → B (URL observed, props still old) → A (URL observed again), where B's intent is superseded even though A equals `urlAtIssue` and a later B props object stays off the A list; Back/Forward as a URL change with no local issue, kept apart from that landing; a same-address retry whose new props object repeats the same error and releases the guard; the same retry with no new props object, released only after Playwright advances `REISEN_SAMMLUNG_NAV_LEASE_MS`; a duplicate retry that does not call `refresh` again; a draft edit during retry that does not release the guard because the server object is unchanged; a draft edit that issues no navigation, then a newer commit whose guard survives the old lease; while the live URL and the adopted result differ, retry and continuation stay disabled and do not call `refresh`, while search, filter, clear, and reset still navigate; a synchronous `push` throw that clears only that intent, leaves the draft and archive records, and whose stale `catch` does not clear a newer intent. The shim has no arrival generation.
 - Viewports 320, 390, 768, and 1440. Root font size 32px on `documentElement`. Long title and origin. Dense page. Pending, error, and end states. `prefers-reduced-motion: reduce`.
 - Real pointer and keyboard events: commit search, clear, restart, next, Back, Forward, rapid commits, retry of the committed address, returned negative, thrown result, duplicate activation, acknowledged write beside a separate list observation, target absence, and a same-id prop update. Pagination controls must not call the action. The collection stays mounted across those transitions; the test reads the same controller instance.
 - Evidence under `docs/evidence/my-trips-collection-archive-workflow-completion-1/` records source SHA, tree, dirty state, commands, exit codes, versions, the alias boundary, and the stubs. Screenshots are sanitized fixtures. They are not hosted, authenticated, native-device, zoom, screen-reader, SQL/RLS, or Production evidence. Setting root font size is not browser zoom.
@@ -318,9 +324,9 @@ The list index does not include `id`. Tie-break correctness does not require a n
 
 Server `~*` and `reisePasstZurSuche` can disagree. Fields are `title` and `origin` only. `NULL` origin does not match. `~*` follows the database's regular-expression case rules, not `ILIKE` and not `toLocaleLowerCase('de-CH')`. `ß`/`ss`, Turkish casing, fullwidth characters, and normalization can diverge. There is no claim of NFC or of a specific hosted collation. The report and the evidence notes state those limits. The product UI does not. The collection shows the server result. The local helper stays the contract for the unchanged callers.
 
-## 7. What this plan commit does not do
+## 7. What this revision does not do
 
-No Ready, no merge, no tracking close, no write to `main`, no follow-up slice, no self-PASS. Author self-review is not Technical-Lead acceptance. A later implementation head invalidates this plan head's gate.
+No Ready, no merge, no tracking close, no write to `main`, no follow-up slice, no self-PASS. Author self-review is not Technical-Lead acceptance. PLAN PASS is not candidate FINAL PASS. A new head invalidates the plan gate.
 
 Holds left unchanged: #985/#982, #917, #913/#911, #968, #748, #626, #937/#936, Bern #934, plus #944, #585, #960, and #957 as named in the TASK.
 
@@ -354,4 +360,4 @@ A new `app/(public)/ui-audit/meine-reisen-sammlung/page.tsx` will not be added. 
 6. esbuild/Playwright script and evidence.
 7. Status, report, self-review, and handoff for that implementation head.
 
-Until that acceptance, the next action is independent Technical-Lead re-review of this exact plan head. Same session. No further Owner confirmation is required for this internal gate. Implementation, tests, and audit stay stopped.
+PLAN R3 authorized this implementation in the same session. The three navigation rules in section 2.8 are part of that implementation. The next action after the implementation head is independent Technical-Lead candidate review. No Ready, merge, or further Owner confirmation follows from this text.

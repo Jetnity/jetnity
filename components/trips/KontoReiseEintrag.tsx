@@ -7,6 +7,7 @@ import type { Route } from 'next'
 
 import KontoReiseArchivAktion from '@/components/trips/KontoReiseArchivAktion'
 import Reisekarte from '@/components/trips/Reisekarte'
+import type { ArchivSteuerung } from '@/components/trips/useTripArchiveWorkflow'
 import { kartenKanteKlasse, type KartenLage } from '@/lib/trips/my-trips-premium-hub-ux-1'
 import { cn } from '@/lib/utils'
 import type { TripSummary } from '@/types/trips'
@@ -14,9 +15,11 @@ import type { TripSummary } from '@/types/trips'
 export default function KontoReiseEintrag({
   reise,
   lage = 'ohneDatum',
+  workflow,
 }: {
   reise: TripSummary
   lage?: KartenLage
+  workflow?: ArchivSteuerung
 }) {
   return (
     <article
@@ -34,7 +37,7 @@ export default function KontoReiseEintrag({
         ueberschrift="h3"
       />
       <div className="mt-auto border-t border-line-100 bg-surface-75 px-3 py-3">
-        <KontoReiseArchivAktion reise={reise} />
+        <KontoReiseArchivAktion reise={reise} workflow={workflow} />
       </div>
     </article>
   )

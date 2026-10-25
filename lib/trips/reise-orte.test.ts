@@ -150,14 +150,14 @@ describe('reiseOrte – Sichtregel', () => {
 
 describe('reiseOrte – keine Transit-/Flight-Ziele', () => {
   test('Listen-Select und Helper lesen keine Transit-/Flight-Felder', () => {
-    const daten = quelle('daten.ts')
+    const hilfe = quelle('reisen-uebersicht.ts')
     const helper = quelle('reise-orte.ts')
     const karte = readFileSync(join(hier, '../../components/trips/Reisekarte.tsx'), 'utf8')
 
-    assert.match(daten, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
-    assert.equal(daten.includes('trip_stages(count)'), false)
+    assert.match(hilfe, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
+    assert.equal(hilfe.includes('trip_stages(count)'), false)
 
-    const listenSelect = daten.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
+    const listenSelect = hilfe.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
     assert.notEqual(listenSelect, '')
     for (const noetig of ['country_code', 'place_id', 'latitude', 'longitude']) {
       assert.equal(listenSelect.includes(noetig), true, noetig)
@@ -193,9 +193,9 @@ describe('Gast- und Konto-Abbildung', () => {
     assert.equal(tripItemCount(graph), 3)
     assert.equal(tripAlsUebersicht(graph).itemCount, 3)
 
-    const daten = quelle('daten.ts')
-    assert.match(daten, /itemCount: anzahl\(zeile\.trip_items\)/)
-    assert.match(daten, /trip_items\(count\)/)
+    const hilfe = quelle('reisen-uebersicht.ts')
+    assert.match(hilfe, /itemCount: anzahl\(zeile\.trip_items\)/)
+    assert.match(hilfe, /trip_items\(count\)/)
 
     const gast = readFileSync(join(hier, '../../components/trips/GastReisen.tsx'), 'utf8')
     assert.match(gast, /tripAlsUebersicht/)
@@ -259,8 +259,8 @@ describe('Gast- und Konto-Abbildung', () => {
     assert.equal(sicht.stages.length, 2)
     assert.equal(reiseOrte(sicht), 'Ubud · ab Zürich')
 
-    const daten = quelle('daten.ts')
-    assert.match(daten, /stageCount: stages\.length/)
-    assert.equal(daten.includes('stageCount: anzahl('), false)
+    const hilfe = quelle('reisen-uebersicht.ts')
+    assert.match(hilfe, /stageCount: stages\.length/)
+    assert.equal(hilfe.includes('stageCount: anzahl('), false)
   })
 })
