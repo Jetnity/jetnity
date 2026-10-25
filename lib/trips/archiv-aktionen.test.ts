@@ -87,20 +87,31 @@ describe('AP-4 Gast-Lifecycle bleibt unverändert', () => {
 
 describe('AP-4 lässt TW7-A-Kartenidentität unangetastet', () => {
   test('Listen-Select trägt trip_stages-Identität plus World-Map-Felder und keine Transit-/Flight-Ziele', () => {
+    const hilfe = quelle('reisen-uebersicht.ts')
     const daten = quelle('daten.ts')
-    const listenSelect = daten.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
+    const listenSelect = hilfe.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
     assert.notEqual(listenSelect, '')
     assert.match(listenSelect, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
     assert.match(listenSelect, /metadata/)
-    assert.equal(daten.includes('trip_stages(count)'), false)
-    assert.match(daten, /stageCount: stages\.length/)
-    assert.match(daten, /itemCount: anzahl\(zeile\.trip_items\)/)
-    assert.match(daten, /archivePreviousStatus: previousStatusAusMetadata/)
+    assert.equal(hilfe.includes('trip_stages(count)'), false)
+    assert.match(hilfe, /stageCount: stages\.length/)
+    assert.match(hilfe, /itemCount: anzahl\(zeile\.trip_items\)/)
+    assert.match(hilfe, /archivePreviousStatus: previousStatusAusMetadata/)
     for (const noetig of ['country_code', 'place_id', 'latitude', 'longitude']) {
       assert.equal(listenSelect.includes(noetig), true, noetig)
     }
     for (const verboten of ['origin_place', 'destination', 'flight', 'transit', 'itinerary']) {
       assert.equal(listenSelect.includes(verboten), false, verboten)
     }
+    const laden = daten.slice(daten.indexOf('export async function reisenLaden'), daten.indexOf('export async function reiseLaden'))
+    assert.match(laden, /UEBERSICHT_SPALTEN/)
+    assert.match(laden, /uebersichtAusZeilen/)
+    assert.match(laden, /REISEN_LISTE_GRENZE/)
+    assert.match(laden, /lese</)
+    assert.match(laden, /order\('updated_at', \{ ascending: false \}\)/)
+    assert.equal((laden.match(/\.from\('trips'\)/g) ?? []).length, 1)
+    assert.equal(laden.includes('createServiceRole'), false)
+    assert.equal(laden.includes("eq('user_id'"), false)
+    assert.match(daten, /accountGraphLesen/)
   })
 })

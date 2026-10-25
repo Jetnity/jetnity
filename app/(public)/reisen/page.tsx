@@ -6,21 +6,20 @@
 // Auth-Server und prüft das Token. `auth.getSession()` würde nur den Cookie
 // wiedergeben; wer serverseitig entscheidet, welche Daten er lädt, darf sich
 // darauf nicht stützen.
-//
-// Angemeldet werden die Reisen des Kontos geladen – durch RLS bereits auf das
-// eigene Konto beschränkt, ohne einen Filter im Code. Dazu die Brücke, die
-// einen Entwurf aus dem Browser übernimmt.
+// Angemeldet wird eine begrenzte Seite der Kontoreisen geladen – durch RLS
+// bereits auf das eigene Konto beschränkt, ohne einen Filter im Code. Dazu die
+// Brücke, die einen Entwurf aus dem Browser übernimmt.
 //
 // `dynamic = 'force-dynamic'`, weil die Seite von der Sitzung abhängt. Ohne die
 // Angabe könnte Next die Antwort eines Kontos an das nächste ausliefern.
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { AlertCircle, MapPin, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import { reisenLaden } from '@/lib/trips/daten'
 import {
   MEINE_REISEN_HAUPT,
   MEINE_REISEN_INNEN,
@@ -29,10 +28,12 @@ import {
   MEINE_REISEN_NEU,
   MEINE_REISEN_TITEL,
 } from '@/lib/trips/my-trips-premium-hub-ux-1'
+import type { SammlungSuchparameter } from '@/lib/trips/reisen-sammlung-abfrage'
+import { reisenSammlungAusParametern } from '@/lib/trips/reisen-sammlung-daten'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import GastReisen from '@/components/trips/GastReisen'
 import GastreiseBruecke from '@/components/trips/GastreiseBruecke'
-import KontoReisenGruppen from '@/components/trips/KontoReisenGruppen'
+import MyTripsCollection from '@/components/trips/MyTripsCollection'
 
 export const metadata: Metadata = {
   title: 'Meine Reisen',
@@ -42,10 +43,15 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-export default async function ReisenSeite() {
+export default async function ReisenSeite({
+  searchParams,
+}: {
+  searchParams?: PageRequestParam<SammlungSuchparameter>
+}) {
   const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()
   const angemeldet = Boolean(data.user)
+  const parameter = (await leseOptionalRequestParam(searchParams)) ?? {}
 
   // Dieselbe serverseitige Auth-Aussage steuert Daten und die gemeinsame
   // Account-Leiste. Gäste bleiben auf der öffentlichen Route ohne Konto-Nav.
@@ -73,69 +79,39 @@ export default async function ReisenSeite() {
             ) : null}
           </div>
 
-          {angemeldet ? <KontoReisen /> : <GastReisen />}
+          {angemeldet ? <KontoReisen parameter={parameter} /> : <GastReisen />}
         </div>
       </main>
     </>
   )
 }
 
-async function KontoReisen() {
-  const { zeilen, problem } = await reisenLaden()
+async function KontoReisen({ parameter }: { parameter: SammlungSuchparameter }) {
+  const ergebnis = await reisenSammlungAusParametern(parameter)
+  const problem = ergebnis.problem
+  const fehlerTitel = 'Deine Reisen konnten nicht geladen werden.'
+  const leerTitel = 'Noch keine Reise in deinem Konto.'
+  let fehlerHinweis = ''
 
   // Ein Fehler darf nicht wie eine leere Liste aussehen: „Du hast noch keine
   // Reise" nach einem Datenbankausfall ist die falsche Auskunft mit den
   // grössten Folgen – sie sieht aus wie Datenverlust.
   if (problem) {
-    return (
-      <>
-        <GastreiseBruecke />
-        <section
-          role="alert"
-          className="rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center sm:px-10"
-        >
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600">
-            <AlertCircle className="h-5 w-5" />
-          </span>
-          <h2 className="mt-5 text-xl font-semibold text-red-800">
-            Deine Reisen konnten nicht geladen werden.
-          </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">
-            {problem.status === 503
-              ? 'Die Datenbank war gerade nicht erreichbar. Deine Reisen sind gespeichert – bitte lade die Seite in einem Moment neu.'
-              : 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.'}
-          </p>
-        </section>
-      </>
-    )
+    fehlerHinweis =
+      problem.status === 503
+        ? 'Die Datenbank war gerade nicht erreichbar. Bitte versuche diese Ansicht erneut.'
+        : 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte versuche diese Ansicht erneut.'
   }
 
   return (
     <>
       <GastreiseBruecke />
-      {zeilen.length === 0 ? (
-        <section className="rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-            <MapPin className="h-5 w-5" />
-          </span>
-          <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">
-            Noch keine Reise in deinem Konto.
-          </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">
-            Erstelle deine erste Reise. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus
-            weiterplanen.
-          </p>
-          <Link
-            href="/planen"
-            className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-          >
-            <Plus className="h-4 w-4" />
-            Reise erstellen
-          </Link>
-        </section>
-      ) : (
-        <KontoReisenGruppen reisen={zeilen} />
-      )}
+      <MyTripsCollection
+        ergebnis={ergebnis}
+        fehlerTitel={fehlerTitel}
+        leerTitel={leerTitel}
+        fehlerHinweis={fehlerHinweis}
+      />
     </>
   )
 }

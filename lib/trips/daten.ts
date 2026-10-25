@@ -19,7 +19,6 @@
 
 import 'server-only'
 
-import { previousStatusAusMetadata } from '@/lib/account/reise-archiv'
 import { lese, type Leseantwort, type Lesung } from '@/lib/api/datenbank-lesen'
 import { accountGraphLesen } from '@/lib/trips/account-graph-read'
 import { TRIP_GRAPH_SELECT_KANONISCH, TRIP_GRAPH_SELECT_LEGACY } from '@/lib/trips/foundation-e-select'
@@ -33,55 +32,12 @@ import {
 } from '@/lib/trips/abbildung'
 import type { ReadinessZeile } from '@/lib/readiness/persistenz'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
-import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary, type TripSummaryStage } from '@/types/trips'
+import type { Reisegraph, TripSummary } from '@/types/trips'
 import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
+import { UEBERSICHT_SPALTEN, uebersichtAusZeilen, type UebersichtZeile } from '@/lib/trips/reisen-uebersicht'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
-/**
- * Spalten der Liste „Meine Reisen“.
- *
- * `trip_stages(name, position, country_code, place_id, latitude, longitude)`
- * trägt die geordnete Zielidentität (TW7-A) plus die kanonischen
- * World-Map-Felder. `stageCount` entsteht aus dieser gelesenen Menge, nicht
- * aus einem zweiten Zähler. Tage und Punkte bleiben Aggregat: PostgREST
- * beantwortet `trip_days(count)` mit `[{ count: 12 }]`. Ohne diese Form wäre
- * die Liste entweder N+1 oder eine eigene View, die dieselbe Zahl ein
- * zweites Mal definiert. Keine Transit- oder Flight-Ziele, keine zweite
- * Konto-Reiseabfrage.
- */
-const UEBERSICHT_SPALTEN =
-  'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, metadata, ' +
-  'trip_stages(name, position, country_code, place_id, latitude, longitude), trip_days(count), trip_items(count)'
-
 export type { Reisegraph }
-
-type Anzahl = { count: number }
-
-type UebersichtEtappe = {
-  name: string
-  position: number
-  country_code?: string | null
-  place_id?: string | null
-  latitude?: number | string | null
-  longitude?: number | string | null
-}
-
-type UebersichtZeile = {
-  id: string
-  title: string
-  origin: string | null
-  start_date: string | null
-  end_date: string | null
-  travellers: number
-  currency: string
-  budget_amount: number | string | null
-  status: string
-  updated_at: string
-  metadata: unknown
-  trip_stages: UebersichtEtappe[] | null
-  trip_days: Anzahl[] | null
-  trip_items: Anzahl[] | null
-}
 
 type GraphZeile = ReiseZeile & {
   trip_stages: EtappeZeile[] | null
@@ -104,35 +60,6 @@ function alsAntwort<Zeile>(abfrage: PromiseLike<unknown>): PromiseLike<Leseantwo
   return abfrage as PromiseLike<Leseantwort<Zeile>>
 }
 
-function anzahl(werte: Anzahl[] | null): number {
-  return werte?.[0]?.count ?? 0
-}
-
-function betrag(wert: number | string | null): number | null {
-  if (wert === null) return null
-  const gelesen = typeof wert === 'number' ? wert : Number(wert)
-  return Number.isFinite(gelesen) ? gelesen : null
-}
-
-function status(wert: string): TripStatus {
-  return (TRIP_STATUSES as readonly string[]).includes(wert) ? (wert as TripStatus) : 'draft'
-}
-
-function gespeicherterText(wert: string | null | undefined): string | null {
-  return typeof wert === 'string' ? wert : null
-}
-
-function etappeUebersicht(etappe: UebersichtEtappe): TripSummaryStage {
-  return {
-    name: etappe.name,
-    position: etappe.position,
-    countryCode: gespeicherterText(etappe.country_code),
-    placeId: gespeicherterText(etappe.place_id),
-    latitude: betrag(etappe.latitude ?? null),
-    longitude: betrag(etappe.longitude ?? null),
-  }
-}
-
 /**
  * Alle Reisen des angemeldeten Kontos, neueste Änderung zuerst.
  *
@@ -152,29 +79,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
 
   if (ergebnis.problem) return ergebnis
 
-  return {
-    problem: null,
-    zeilen: ergebnis.zeilen.map((zeile) => {
-      const stages = (Array.isArray(zeile.trip_stages) ? zeile.trip_stages : []).map(etappeUebersicht)
-      return {
-        id: zeile.id,
-        title: zeile.title,
-        origin: zeile.origin,
-        startDate: zeile.start_date,
-        endDate: zeile.end_date,
-        travellers: zeile.travellers,
-        currency: zeile.currency,
-        budgetAmount: betrag(zeile.budget_amount),
-        status: status(zeile.status),
-        updatedAt: zeile.updated_at,
-        archivePreviousStatus: previousStatusAusMetadata(zeile.metadata),
-        stages,
-        stageCount: stages.length,
-        dayCount: anzahl(zeile.trip_days),
-        itemCount: anzahl(zeile.trip_items),
-      }
-    }),
-  }
+  return { problem: null, zeilen: uebersichtAusZeilen(ergebnis.zeilen) }
 }
 
 function graphZeileZuReise(zeile: GraphZeile): Reisegraph {

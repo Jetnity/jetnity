@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "A-B-A vor der ersten Adressänderung",
+      "ok": true
+    },
+    {
+      "name": "späte eigene Landung",
+      "ok": true
+    },
+    {
+      "name": "Rückkehr zu A verwirft B",
+      "ok": true
+    },
+    {
+      "name": "Zurück und Vor ohne lokale Ausgabe",
+      "ok": true
+    },
+    {
+      "name": "Retry und Fortsetzung sind bei abweichender Adresse aus",
+      "ok": true
+    },
+    {
+      "name": "gleicher Fehler und stabiler Entwurf",
+      "ok": true
+    },
+    {
+      "name": "Frist und doppeltes Retry",
+      "ok": true
+    },
+    {
+      "name": "neueres Commit überlebt die alte Frist",
+      "ok": true
+    },
+    {
+      "name": "synchroner push-Fehler löscht nur die eigene Absicht",
+      "ok": true
+    },
+    {
+      "name": "Archiv trennt Schreiben und Liste",
+      "ok": true
+    },
+    {
+      "name": "Fortsetzung erst nach Aktivierung",
+      "ok": true
+    },
+    {
+      "name": "Viewports, Schrift und dichte Seite",
+      "ok": true
+    }
+  ],
+  "author": "Jetnity My Trips Collection and Archive Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-27e5e422-852b-49c7-9b67-0fc723f13175",
+  "model": "grok-4.7-high-fast",
+  "commit": "ddd1f7eace34519996ec686223d684102a933baa",
+  "tree": "b93520b622c470b208281da73092da4622e3829c",
+  "dirty": "",
+  "command": "node --import tsx --test scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+  "exit": 0,
+  "origin": "http://127.0.0.1:33799",
+  "aliasBoundary": "esbuild aliases replace only next/navigation and @/lib/trips/archiv-aktionen. Collection, card, archive button, copy and project CSS stay real. The navigation shim returns void and has no arrival generation. No deployed route, account session, or Supabase client.",
+  "fixtureBoundary": "Synthetic local Playwright. push and refresh do not change the URL or props. The script sets useSearchParams and passes a new result object only when it wants a server snapshot. A resolved refresh is not a list observation.",
+  "rootFontNote": "The 32px check sets font-size on documentElement. It is not native browser zoom, not a device, and not a screen reader.",
+  "correlationLimit": "A changed URL or a new result object is an observation. It does not identify which gesture produced the server render. The 8000ms lease is a UI guard, not a read receipt.",
+  "sources": {
+    "app/(public)/reisen/page.tsx": {
+      "sha256": "60e65e606aa35a2529c563c6d2ce8cdb721906c34451073eb9cffcc3e75bf65a",
+      "blob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a"
+    },
+    "components/trips/MyTripsCollection.tsx": {
+      "sha256": "9d546a3f46277979a9e4bf0da110cb1a509f29885f59537fb5a8b7ca6e43cc42",
+      "blob": "87b449001673169c01a385a75b6c55d4a827e1b3"
+    },
+    "components/trips/useMyTripsCollectionNavigation.ts": {
+      "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+      "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23"
+    },
+    "components/trips/useTripArchiveWorkflow.ts": {
+      "sha256": "d5f9813a3ace36fdfe8345b606da24213d2dc0bb6446560c2594f7827994a3f6",
+      "blob": "eedefb13748580e2fe968308ce8108e1c58b0949"
+    },
+    "components/trips/KontoReiseArchivAktion.tsx": {
+      "sha256": "13e4dd0571a0d336e6aac4d79e1472d6dc704cd9514ee4119a5955bd83eaa6c0",
+      "blob": "ef60cecff2704c3294c28e1e31cbc5871effa7b6"
+    },
+    "components/trips/KontoReiseEintrag.tsx": {
+      "sha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+      "blob": "a4f09d2981c79fc4246c82c7f552306cbec2dded"
+    },
+    "lib/trips/reisen-uebersicht.ts": {
+      "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+      "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a"
+    },
+    "lib/trips/reisen-sammlung-abfrage.ts": {
+      "sha256": "a86168921c57f4e3a3c21893c240651ff20d29d94c59333ab205a32e9e921b91",
+      "blob": "faf5add13e4177f1df8f8f8178a13c43c2d46556"
+    },
+    "lib/trips/reisen-sammlung-daten.ts": {
+      "sha256": "6e7437e50b630357cdfb320dda2a71149dfc56f72ff606eec2400d1ece40a535",
+      "blob": "5575a8599ead35d648ffd85f4b611520e0deffc2"
+    },
+    "lib/trips/trip-archive-workflow.ts": {
+      "sha256": "a731935e1b951d81214c2f410b83d09cf0d4f23cf052c068db423a06843d2640",
+      "blob": "e0a78b7ca6a5bc4a7b12cc0e1b108756889dd761"
+    }
+  },
+  "stdoutTail": "TAP version 13\n# Subtest: montierte Meine-Reisen-Sammlung\n    # Subtest: Navigation, Archiv und Darstellung\n    ok 1 - Navigation, Archiv und Darstellung\n      ---\n      duration_ms: 2908.691984\n      type: 'test'\n      ...\n    1..1\nok 1 - montierte Meine-Reisen-Sammlung\n  ---\n  duration_ms: 2909.26825\n  type: 'suite'\n  ...\n1..1\n# tests 1\n# suites 1\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 3307.335748\n",
+  "stderrTail": ""
+}

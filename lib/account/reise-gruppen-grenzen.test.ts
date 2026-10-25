@@ -29,7 +29,7 @@ describe('AP-3 Meine Reisen bleibt ableitend', () => {
     const seite = readFileSync(join(hier, '../../app/(public)/reisen/page.tsx'), 'utf8')
     assert.equal(seite.includes('Deine Reisen konnten nicht geladen werden.'), true)
     assert.equal(seite.includes('Noch keine Reise in deinem Konto.'), true)
-    assert.equal(seite.includes('KontoReisenGruppen'), true)
+    assert.equal(seite.includes('MyTripsCollection'), true)
     assert.equal(seite.includes('GastReisen'), true)
     assert.match(seite, /if \(problem\)/)
   })
