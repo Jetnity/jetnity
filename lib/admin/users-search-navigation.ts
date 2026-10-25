@@ -17,17 +17,38 @@ function searchParamsFrom(current: URLSearchParams | string | null | undefined):
   return new URLSearchParams(current?.toString() ?? '')
 }
 
+/**
+ * Dieselbe Obergrenze wie `USERS_DIRECTORY_MAX_PAGE`.
+ * Die Navigation darf das Abfragemodul nicht importieren, sonst entsteht ein Zyklus.
+ */
+const USERS_LIST_MAX_PAGE = 5000
+
+function clampUsersListPage(page: number): number {
+  if (!Number.isFinite(page)) return 1
+  const truncated = Math.trunc(page)
+  if (truncated < 1) return 1
+  if (truncated > USERS_LIST_MAX_PAGE) return USERS_LIST_MAX_PAGE
+  return truncated
+}
+
 /** Seite und bestätigter Filter, fremde Parameter bleiben, Sonderzeichen über URLSearchParams. */
 export function buildUsersListHref(
   current: URLSearchParams | string | null | undefined,
-  change: { q: string; page: number },
+  change: { q: string; page: number; role?: string | null; status?: string | null },
 ): string {
   const params = searchParamsFrom(current)
   const q = normalizeUserSearch(change.q)
   if (q) params.set('q', q)
   else params.delete('q')
-  const page = Number.isFinite(change.page) ? Math.max(1, Math.trunc(change.page)) : 1
-  params.set('page', String(page))
+  params.set('page', String(clampUsersListPage(change.page)))
+  if (change.role !== undefined) {
+    if (change.role) params.set('role', change.role)
+    else params.delete('role')
+  }
+  if (change.status !== undefined) {
+    if (change.status) params.set('status', change.status)
+    else params.delete('status')
+  }
   const qs = params.toString()
   return qs.length > 0 ? `/admin/users?${qs}` : '/admin/users'
 }

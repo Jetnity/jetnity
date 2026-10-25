@@ -1,6 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { USERS_DIRECTORY_MAX_PAGE } from './users-directory-query'
 import {
   USERS_SEARCH_DEBOUNCE_MS,
   buildUsersListHref,
@@ -69,9 +70,48 @@ describe('Admin-Benutzersuche Navigation', () => {
     const same = usersListHrefFromParams('source=support&page=1&q=bob')
     assert.equal(usersListHrefMatches(bob, same), true)
     assert.equal(usersListHrefMatches(bob, '/admin/users?q=bobby&page=1&source=support'), false)
+    assert.equal(usersListHrefMatches('/admin/users', '/admin/users?page=1'), false)
+    assert.equal(usersListHrefMatches('/admin/users?page=%201%20', '/admin/users?page=1'), false)
     assert.equal(userSearchHrefCarriesDraft(bob, 'bob'), true)
     assert.equal(userSearchHrefCarriesDraft(bob, ' bobby '), false)
     assert.equal(userSearchHrefCarriesDraft(bob, 'anna'), false)
+  })
+
+  test('Rolle und Status bleiben, werden gesetzt oder geloescht, fremde Schluessel bleiben', () => {
+    const preserved = new URLSearchParams(
+      buildUsersListHref('q=anna&page=2&role=admin&status=banned&source=support', { q: 'berta', page: 1 }).split('?')[1],
+    )
+    assert.equal(preserved.get('role'), 'admin')
+    assert.equal(preserved.get('status'), 'banned')
+    assert.equal(preserved.get('source'), 'support')
+    assert.equal(preserved.get('q'), 'berta')
+
+    const set = new URLSearchParams(
+      buildUsersListHref('source=support&page=4', { q: 'anna', page: 1, role: 'operator', status: 'pending' }).split('?')[1],
+    )
+    assert.equal(set.get('role'), 'operator')
+    assert.equal(set.get('status'), 'pending')
+    assert.equal(set.get('source'), 'support')
+
+    const removed = new URLSearchParams(
+      buildUsersListHref('q=anna&role=admin&status=banned&ref=case-7', {
+        q: 'anna',
+        page: 1,
+        role: null,
+        status: '',
+      }).split('?')[1],
+    )
+    assert.equal(removed.get('role'), null)
+    assert.equal(removed.get('status'), null)
+    assert.equal(removed.get('ref'), 'case-7')
+    assert.equal(removed.get('q'), 'anna')
+  })
+
+  test('eine Seite ueber 5000 wird auf die erreichbare Obergrenze geklemmt', () => {
+    const href = buildUsersListHref('q=anna&source=support', { q: 'anna', page: USERS_DIRECTORY_MAX_PAGE + 1 })
+    assert.equal(new URLSearchParams(href.split('?')[1]).get('page'), String(USERS_DIRECTORY_MAX_PAGE))
+    assert.equal(USERS_DIRECTORY_MAX_PAGE, 5000)
+    assert.equal(href.includes('page=5001'), false)
   })
 
   test('ungueltige Seite wird zu 1, gleiche Adresse bleibt vergleichbar', () => {
