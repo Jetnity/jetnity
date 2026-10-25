@@ -779,27 +779,11 @@ try {
     })
   }
 
-  await fall(browser, origin, 'css-error-and-keyboard', 'page=1', { width: 390, height: 844 }, async (page) => {
+  await fall(browser, origin, 'css-error-layout', 'page=1', { width: 390, height: 844 }, async (page) => {
     await page.evaluate(() => {
       window.__usersDirectory.setFixture({ mode: 'error', fehler: { meldung: 'Datenbank abgelehnt', wiederholbar: true } })
     })
     await page.waitForSelector('text=Erneut versuchen')
-    const reached = await page.evaluate(() => {
-      const names = []
-      const root = document.querySelector('[data-users-directory-root]')
-      const focusable = root ? [...root.querySelectorAll('input, select, button, a')] : []
-      for (const element of focusable) {
-        if (element instanceof HTMLElement) element.focus()
-        const label = element.getAttribute('aria-label') || element.textContent || ''
-        names.push(label.trim())
-      }
-      return names
-    })
-    assert.ok(reached.some((name) => name.includes('Nutzer nach Name')))
-    assert.ok(reached.some((name) => name === 'Rolle'))
-    assert.ok(reached.some((name) => name === 'Status'))
-    assert.ok(reached.some((name) => name.includes('Vorherige Seite')))
-    assert.ok(reached.some((name) => name.includes('Erneut versuchen')))
     const overflow = await page.evaluate(() => {
       const root = document.querySelector('[data-users-directory-root]')
       return root ? root.scrollWidth <= root.clientWidth + 1 : false
@@ -807,7 +791,156 @@ try {
     assert.equal(overflow, true)
     await page.screenshot({ path: join(EVIDENCE, 'error-mobile.png'), fullPage: true })
     await page.screenshot({ path: join(ARTIFACTS, 'admin-users-error-mobile.png'), fullPage: true })
-    return { reached }
+    return {
+      overflow: true,
+      retiredCheck: 'querySelector-focus-enumeration',
+      keyboardProof: 'see keyboard-tab-and-activation',
+    }
+  })
+
+  async function armError(page) {
+    await page.evaluate(() => {
+      window.__usersDirectory.follow(false)
+      window.__usersDirectory.setFixture({ mode: 'error', fehler: { meldung: 'Datenbank abgelehnt', wiederholbar: true } })
+      window.__usersDirectory.applyServer()
+    })
+    await page.waitForSelector('text=Erneut versuchen')
+  }
+
+  for (const adresse of [
+    { name: 'retry-omitted-page', search: '' },
+    { name: 'retry-q-without-page', search: 'q=anna' },
+    { name: 'retry-padded-page', search: 'page=%201%20' },
+    { name: 'retry-explicit-page', search: 'page=1' },
+  ]) {
+    await fall(browser, origin, adresse.name, adresse.search, { width: 1280, height: 800 }, async (page) => {
+      await armError(page)
+      const before = await page.evaluate(() => window.__usersDirectory.refreshCalls().length)
+      assert.equal(before, 0)
+      await page.getByRole('button', { name: 'Erneut versuchen' }).click()
+      await page.waitForFunction(() => window.__usersDirectory.refreshCalls().length === 1)
+      assert.equal(await page.getByRole('button', { name: 'Erneut versuchen' }).isDisabled(), true)
+      return { refreshCalls: 1, search: await page.evaluate(() => window.__usersDirectory.search()) }
+    })
+  }
+
+  await fall(browser, origin, 'retry-repeated-page-rejected', 'page=1&page=2', { width: 1280, height: 800 }, async (page) => {
+    const seen = await snapshot(page)
+    assert.match(seen.status, /nicht gelesen/)
+    assert.equal(await page.getByRole('button', { name: 'Erneut versuchen' }).count(), 0)
+    assert.deepEqual(seen.refreshCalls, [])
+    return { status: seen.status }
+  })
+
+  await fall(browser, origin, 'clear-supersedes-delayed-search', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await page.evaluate(() => window.__usersDirectory.delayCommits(true))
+    await page.locator(SEARCH).fill('anna')
+    await page.waitForFunction(() => window.__usersDirectory.pendingCommits().length === 1)
+    await page.getByRole('button', { name: 'Filter löschen' }).click()
+    await page.waitForFunction(() => window.__usersDirectory.input() === '' && window.__usersDirectory.pendingCommits().length === 2)
+    const held = await snapshot(page)
+    assert.equal(new URLSearchParams(held.pending[0].split('?')[1] ?? '').get('q'), 'anna')
+    assert.equal(new URLSearchParams(held.pending[1].split('?')[1] ?? '').get('q'), null)
+    const landed = await page.evaluate(() => window.__usersDirectory.commitNext())
+    assert.equal(new URLSearchParams(String(landed).split('?')[1] ?? '').get('q'), 'anna')
+    await page.waitForFunction(() => {
+      const input = window.__usersDirectory.input()
+      const status = window.__usersDirectory.status() || ''
+      return input === 'anna' || (input === '' && status.includes('vorherigen Abfrage'))
+    })
+    const afterStale = await snapshot(page)
+    assert.equal(afterStale.input, '')
+    assert.match(afterStale.status, /vorherigen Abfrage/)
+    assert.doesNotMatch(afterStale.status, /Aktuelle Ergebnisse/)
+    assert.equal(paramsOf(afterStale.search).get('q'), 'anna')
+    assert.equal(afterStale.pending.length, 1)
+    assert.notEqual(
+      await page.evaluate(() => document.querySelector('[data-users-directory-root]')?.getAttribute('data-operation-phase')),
+      'settled',
+    )
+    const corrected = await page.evaluate(() => window.__usersDirectory.commitNext())
+    assert.equal(new URLSearchParams(String(corrected).split('?')[1] ?? '').get('q'), null)
+    await page.waitForFunction(() => {
+      const params = new URLSearchParams(window.__usersDirectory.search())
+      const status = window.__usersDirectory.status() || ''
+      return params.get('q') === null && params.get('page') === '1' && window.__usersDirectory.input() === '' && status.includes('Aktuelle Ergebnisse')
+    })
+    const done = await snapshot(page)
+    assert.doesNotMatch(done.status, /vorherigen Abfrage/)
+    return { search: done.search, input: done.input }
+  })
+
+  await fall(browser, origin, 'keyboard-tab-and-activation', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    async function focusStart() {
+      await page.evaluate(() => {
+        const start = document.querySelector('h1')
+        if (!(start instanceof HTMLElement)) throw new Error('missing h1')
+        start.tabIndex = -1
+        start.focus()
+      })
+    }
+    async function tabInside(limit, stop) {
+      const sequence = []
+      for (let index = 0; index < limit; index += 1) {
+        await page.keyboard.press('Tab')
+        const info = await page.evaluate(() => {
+          const el = document.activeElement
+          const root = document.querySelector('[data-users-directory-root]')
+          const inside = Boolean(el && root && root.contains(el))
+          const disabled = el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLSelectElement
+            ? el.disabled
+            : false
+          const label = el instanceof Element
+            ? (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim()
+            : ''
+          return { inside, disabled, label, tag: el?.tagName ?? '' }
+        })
+        if (!info.inside) break
+        sequence.push(info)
+        if (stop(info.label)) break
+      }
+      return sequence
+    }
+    await focusStart()
+    const sequence = await tabInside(12, (label) => label === 'Nächste Seite')
+    assert.deepEqual(sequence.filter((item) => item.disabled), [])
+    assert.equal(sequence.some((item) => item.label.includes('Nutzer nach Name')), true)
+    assert.equal(sequence.some((item) => item.label === 'Rolle'), true)
+    assert.equal(sequence.some((item) => item.label === 'Status'), true)
+    assert.equal(sequence.some((item) => item.label.includes('Filter löschen')), true)
+    assert.equal(sequence.some((item) => item.label === 'Vorherige Seite'), false)
+    assert.equal(sequence.some((item) => item.label === 'Erste Seite'), false)
+    assert.equal(await page.getByRole('button', { name: 'Vorherige Seite' }).isDisabled(), true)
+    assert.equal(await page.getByRole('button', { name: 'Erste Seite' }).isDisabled(), true)
+    assert.equal(sequence.at(-1)?.label, 'Nächste Seite')
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Nächste Seite')
+    await page.keyboard.press('Enter')
+    await page.waitForFunction(() => new URLSearchParams(window.__usersDirectory.search()).get('page') === '2')
+    await page.evaluate(() => {
+      window.__usersDirectory.setFixture({ mode: 'error', fehler: { meldung: 'Datenbank abgelehnt', wiederholbar: true } })
+    })
+    await page.waitForSelector('text=Erneut versuchen')
+    await focusStart()
+    const errorSequence = await tabInside(12, (label) => label.includes('Erneut versuchen'))
+    assert.deepEqual(errorSequence.filter((item) => item.disabled), [])
+    assert.equal(errorSequence.some((item) => item.label === 'Nächste Seite'), false)
+    assert.equal(await page.getByRole('button', { name: 'Nächste Seite' }).isDisabled(), true)
+    assert.equal(errorSequence.at(-1)?.label.includes('Erneut versuchen'), true)
+    assert.equal(
+      await page.evaluate(() => (document.activeElement?.textContent || '').includes('Erneut versuchen')),
+      true,
+    )
+    await page.keyboard.press('Enter')
+    await page.waitForFunction(() => window.__usersDirectory.refreshCalls().length === 1)
+    assert.equal(await page.getByRole('button', { name: 'Erneut versuchen' }).isDisabled(), true)
+    return {
+      method: 'Tab and Enter',
+      skippedDisabled: ['Erste Seite', 'Vorherige Seite', 'Nächste Seite on error'],
+      sequence: sequence.map((item) => item.label),
+      errorSequence: errorSequence.map((item) => item.label),
+      activated: ['Nächste Seite', 'Erneut versuchen'],
+      refreshCalls: 1,
+    }
   })
 
   await fall(

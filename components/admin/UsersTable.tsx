@@ -30,6 +30,7 @@ import {
 import {
   decideUsersDirectoryRead,
   USERS_DIRECTORY_MAX_PAGE,
+  usersDirectoryLiveMatchesQuery,
   usersDirectoryQueryKey,
   type UsersDirectoryInvalidReason,
   type UsersDirectoryQuery,
@@ -409,10 +410,17 @@ export default function UsersTable({
 
   function clearFilters() {
     epoch.current += 1
+    cancelLease()
     setSearch('')
-    if (ownSearchAcks.length > 0) setOwnSearchAcks([])
     const href = buildUsersListHref(sp, { q: '', page: 1, role: null, status: null })
-    if (href === usersListHrefFromParams(sp)) return
+    const same = usersListHrefMatches(href, usersListHrefFromParams(sp))
+    const open = operationRef.current
+    const inFlight =
+      ownSearchAcks.length > 0 || open?.phase === 'dispatched' || open?.phase === 'acknowledged'
+    // Dieselbe Adresse ist nur dann ein No-Op, wenn keine eigene Navigation
+    // noch aussteht. Eine verspätete Suchbestätigung bleibt in ownSearchAcks,
+    // damit sie das neuere Löschen nicht als fremde Adresse überschreibt.
+    if (same && !inFlight) return
     dispatchNavigate(href)
   }
 
@@ -438,13 +446,13 @@ export default function UsersTable({
     if (leaseRef.current?.phase === 'checking') return
     if (userSearchEditChangesFilter(urlQ, searchRef.current)) return
     const live = spRef.current
+    if (!usersDirectoryLiveMatchesQuery(live, currentRead.query)) return
     const failed = buildUsersListHref(live, {
       q: currentRead.query.q,
       page: currentRead.query.page,
       role: currentRead.query.role,
       status: currentRead.query.status,
     })
-    if (!usersListHrefMatches(usersListHrefFromParams(live), failed)) return
     const open = operationRef.current
     if (open && (open.phase === 'dispatched' || open.phase === 'acknowledged')) return
     const next: RefreshLease = {

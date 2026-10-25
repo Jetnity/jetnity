@@ -70,6 +70,8 @@ describe('Admin-Benutzersuche Navigation', () => {
     const same = usersListHrefFromParams('source=support&page=1&q=bob')
     assert.equal(usersListHrefMatches(bob, same), true)
     assert.equal(usersListHrefMatches(bob, '/admin/users?q=bobby&page=1&source=support'), false)
+    assert.equal(usersListHrefMatches('/admin/users', '/admin/users?page=1'), false)
+    assert.equal(usersListHrefMatches('/admin/users?page=%201%20', '/admin/users?page=1'), false)
     assert.equal(userSearchHrefCarriesDraft(bob, 'bob'), true)
     assert.equal(userSearchHrefCarriesDraft(bob, ' bobby '), false)
     assert.equal(userSearchHrefCarriesDraft(bob, 'anna'), false)

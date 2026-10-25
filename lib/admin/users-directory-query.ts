@@ -131,6 +131,17 @@ export function usersDirectoryQueryKey(query: UsersDirectoryQuery): string {
   return `${query.page}\n${query.role ?? ''}\n${query.status ?? ''}\n${query.q}`
 }
 
+/**
+ * True only when `raw` is a valid directory address for exactly `query`.
+ * Omitted page and a trimmed canonical page are the same query. Repeated,
+ * non-scalar, and otherwise invalid parameters stay rejected.
+ */
+export function usersDirectoryLiveMatchesQuery(raw: unknown, query: UsersDirectoryQuery): boolean {
+  const decision = decideUsersDirectoryRead(raw)
+  if (decision.kind !== 'query') return false
+  return usersDirectoryQueryKey(decision.query) === usersDirectoryQueryKey(query)
+}
+
 export function decideUsersDirectoryRead(raw: unknown): UsersDirectoryDecision {
   const qField = scalarAt(raw, 'q')
   const pageField = scalarAt(raw, 'page')

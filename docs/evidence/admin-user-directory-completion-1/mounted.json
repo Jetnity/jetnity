@@ -6,8 +6,8 @@
   "notProduction": true,
   "refreshIsNotAReceipt": true,
   "readAttemptIsNotCausal": true,
-  "head": "56bb915e78a55857132c5fe02384b8a64f2b81b8",
-  "dirty": " M docs/evidence/admin-user-directory-completion-1/desktop-directory.png\n M docs/evidence/admin-user-directory-completion-1/mobile-directory.png\n",
+  "head": "43aafe5628e95060632d4192368aa4d43e75cfd4",
+  "dirty": " M components/admin/UsersTable.tsx\n M docs/evidence/admin-user-directory-completion-1/desktop-directory.png\n M docs/evidence/admin-user-directory-completion-1/error-mobile.png\n M docs/evidence/admin-user-directory-completion-1/mobile-directory.png\n M docs/evidence/admin-user-directory-completion-1/mounted.json\n M lib/admin/users-directory-query.test.ts\n M lib/admin/users-directory-query.ts\n M lib/admin/users-search-navigation.test.ts\n M scripts/admin-user-directory-completion-1/verify.mjs\n",
   "node": "v22.23.4",
   "playwright": "1.55.0",
   "faelle": [
@@ -229,17 +229,83 @@
       "consoleErrors": []
     },
     {
-      "name": "css-error-and-keyboard",
+      "name": "css-error-layout",
       "ok": true,
-      "reached": [
+      "overflow": true,
+      "retiredCheck": "querySelector-focus-enumeration",
+      "keyboardProof": "see keyboard-tab-and-activation",
+      "consoleErrors": []
+    },
+    {
+      "name": "retry-omitted-page",
+      "ok": true,
+      "refreshCalls": 1,
+      "search": "",
+      "consoleErrors": []
+    },
+    {
+      "name": "retry-q-without-page",
+      "ok": true,
+      "refreshCalls": 1,
+      "search": "q=anna",
+      "consoleErrors": []
+    },
+    {
+      "name": "retry-padded-page",
+      "ok": true,
+      "refreshCalls": 1,
+      "search": "page=%201%20",
+      "consoleErrors": []
+    },
+    {
+      "name": "retry-explicit-page",
+      "ok": true,
+      "refreshCalls": 1,
+      "search": "page=1",
+      "consoleErrors": []
+    },
+    {
+      "name": "retry-repeated-page-rejected",
+      "ok": true,
+      "status": "Diese Adresse kann nicht gelesen werden. Ein Parameter ist mehrfach angegeben.",
+      "consoleErrors": []
+    },
+    {
+      "name": "clear-supersedes-delayed-search",
+      "ok": true,
+      "search": "page=1",
+      "input": "",
+      "consoleErrors": []
+    },
+    {
+      "name": "keyboard-tab-and-activation",
+      "ok": true,
+      "method": "Tab and Enter",
+      "skippedDisabled": [
+        "Erste Seite",
+        "Vorherige Seite",
+        "Nächste Seite on error"
+      ],
+      "sequence": [
+        "Nutzer nach Name oder E-Mail suchen",
+        "Rolle",
+        "Status",
+        "Filter löschen",
+        "Nächste Seite"
+      ],
+      "errorSequence": [
         "Nutzer nach Name oder E-Mail suchen",
         "Rolle",
         "Status",
         "Filter löschen",
         "Vorherige Seite",
+        "Erneut versuchen"
+      ],
+      "activated": [
         "Nächste Seite",
         "Erneut versuchen"
       ],
+      "refreshCalls": 1,
       "consoleErrors": []
     },
     {

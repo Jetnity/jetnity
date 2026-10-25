@@ -9,6 +9,7 @@ import {
   decideUsersDirectoryRead,
   executeUsersDirectoryRead,
   normalizeDirectoryCount,
+  usersDirectoryLiveMatchesQuery,
   usersDirectoryQueryKey,
   usersDirectoryRange,
   type UsersDirectoryClient,
@@ -197,5 +198,23 @@ describe('Admin-Benutzerverzeichnis Abfrage', () => {
     const decision = decideUsersDirectoryRead({ page: '5001' })
     assert.equal(decision.kind, 'invalid')
     assert.equal('range' in decision, false)
+  })
+
+  test('dieselbe gueltige Abfrage trifft auch ohne Seite und mit umgebender Seite, ungueltige Formen nicht', () => {
+    const first = { q: '', page: 1, role: null, status: null }
+    const anna = { q: 'anna', page: 1, role: null, status: null }
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams(''), first), true)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('q=anna'), anna), true)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('page=1'), first), true)
+    const padded = new URLSearchParams()
+    padded.append('page', ' 1 ')
+    assert.equal(usersDirectoryLiveMatchesQuery(padded, first), true)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('page=1&page=1'), first), false)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('page=5001'), first), false)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('page=nope'), first), false)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('page=2'), first), false)
+    assert.equal(usersDirectoryLiveMatchesQuery(new URLSearchParams('q=berta'), anna), false)
+    assert.equal(usersDirectoryLiveMatchesQuery({ page: ['1', '2'] }, first), false)
+    assert.equal(usersDirectoryLiveMatchesQuery({ page: 1 }, first), false)
   })
 })
