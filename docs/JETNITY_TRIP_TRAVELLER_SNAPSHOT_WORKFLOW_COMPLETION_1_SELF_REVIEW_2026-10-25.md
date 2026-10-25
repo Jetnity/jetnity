@@ -2,14 +2,15 @@
 
 This review is the implementation author’s. It is not an independent Technical-Lead PASS and it does not close P1.
 
-Reviewed implementation head: `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
-Tree: `a8d9f7f938382623622f3adf5bb3500f5fd519ef`.
+Reviewed correction head: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`.
+Tree: `4f2165518fdea569afbb63d45efaef13409c276b`.
+This answers review R1 of `b443fb13db1e97e0d0d85d51814046349fd7491b`. The earlier implementation head remains `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
 TASK blob `75c59b0851d835560ff4b5562e9fcc52c395b2ad` unchanged.
 Plan blob at the authorized head remains `252ae82c9cf1aff34f7f46e16999d50178369dff`.
 
 ## What holds
 
-The mounted residence-only UUID case failed on the original editor and the same assertion passes on the fix, including in the later 15-test run. Exact-ref rejection, blank-link rejection, duplicate citizenship, removal, and explicit re-entry are in that run. Outcome classification stays conservative: a string, throw, rejection, or malformed fulfillment after the writer is entered is unproven, with no replay. Guest admission is one traveller write at a time. A usable plan-point add is still present after the later traveller save. After an unproven readback, a second slot does not write, and the frozen plan-point equality check rejects the stale graph instead of being mocked away. Only an explicit successful same-trip read clears the latch. Registry and the legacy audit stub each fire once, on one ledger.
+The mounted residence-only UUID case failed on the original editor and the same assertion passes on the fix, including in the later 18-test run. A newer edit during a held save no longer leaves Save pending. A matching later graph of that submission is consistent and does not clear the child refs. A removal confirmation opened during the hold survives the older null. Exact-ref rejection, blank-link rejection, duplicate citizenship, removal, and explicit re-entry are in that run. Outcome classification stays conservative: a string, throw, rejection, or malformed fulfillment after the writer is entered is unproven, with no replay. Guest admission is one traveller write at a time. A usable plan-point add is still present after the later traveller save. After an unproven readback, a second slot does not write, and the frozen plan-point equality check rejects the stale graph instead of being mocked away. Only an explicit successful same-trip read clears the latch. Registry and the legacy audit stub each fire once, on one ledger.
 
 T-EX1 touches only the four named helper assertions. Frozen document, storage, writer, schema, and audit-client sources are unchanged.
 
@@ -23,7 +24,9 @@ The legacy writer is registered in `useLayoutEffect`, not during render. Assigni
 
 The audit once-count is a test-bundle rewrite. The source file on disk is the frozen component.
 
-`npm test` does not execute the Playwright files. The 15-test result is only the direct command in `mounted-matrix.txt`.
+`npm test` does not execute the Playwright files. The 18-test result is only the direct command in `mounted-matrix.txt`.
+
+I first moved the draft baseline at accept time. That made a later guest prop carrying the original traveller look like a conflict and disabled Save. The baseline now moves only when a later observation matches the submitted fingerprint and the draft generation is still that submission. I would want a reviewer to check that choice: an accepted edit stays dirty until that matching observation, and a delivery that still equals the pre-edit baseline does not become a conflict.
 
 ## Not claimed
 

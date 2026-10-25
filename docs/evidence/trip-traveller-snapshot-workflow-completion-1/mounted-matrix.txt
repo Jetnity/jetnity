@@ -1,20 +1,20 @@
-R107-T mounted Workspace, registry, guest and project-CSS proof.
+R107-T mounted Workspace, registry, guest and project-CSS proof after the candidate-review correction.
 
-`npm test` and CI do not re-run this Playwright script until a later allowlisted `package.json` change. This log is local evidence only.
+`npm test` and CI do not re-run this Playwright script until a later allowlisted `package.json` change. This log is local evidence only. It is not native Node-22 CI and not hosted acceptance.
 
 command: node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts
 node: v22.23.4
 playwright: 1.55.0
-implementation head: 00ba5b9124abf1cafe26b711d50b4527f40e70a5
-implementation tree: a8d9f7f938382623622f3adf5bb3500f5fd519ef
+correction commit: a68e6b4a3690decb4b7f21373aa53e86c5f008d1
+correction tree: 4f2165518fdea569afbb63d45efaef13409c276b
 exit: 0
-tests: 15
-pass: 15
+tests: 18
+pass: 18
 fail: 0
 
-The run used the working tree captured by that implementation commit. No product file changed between the run and the commit. This documentation file is a later docs-only commit.
+The run used the working tree captured by that correction commit. No product file changed between the passing run and the commit. This documentation file is a later docs-only commit.
 
-Historical RED `mounted-residence-red.txt` stays bound to head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec and shows the original editor emitting `citizenship:CH` with `citizenshipClientRef: null`. Historical GREEN `mounted-residence-green.txt` stays bound to head 27102ebae649ceaaab5866a0df6db84f570c507a and records only the residence Enter assertion. This later run injects compiled `styles/globals.css` and repeats that same residence assertion, then the pointer-click assertion, the narrow-card assertion, and the §10.3 matrix. The residence assertion was not weakened.
+The previous 15-pass log on implementation tree a8d9f7f938382623622f3adf5bb3500f5fd519ef remains in git at b443fb13db1e97e0d0d85d51814046349fd7491b. Historical RED `mounted-residence-red.txt` stays bound to head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec. Historical GREEN `mounted-residence-green.txt` stays bound to head 27102ebae649ceaaab5866a0df6db84f570c507a.
 
 Covered here, all exit 0:
 - legacy refs, deliberate removal, relation choice, blank-country linked document, duplicate citizenship
@@ -28,13 +28,16 @@ Covered here, all exit 0:
 - usable guest plan point “Marktplatz” is kept by the later traveller save
 - unproven guest readback: second-slot save and remove do not write; an immediate plan-point add from the old React graph is rejected by the frozen `gastPlanpunktAnlegen` equality check and is not counted as a successful add; “Stand neu lesen” leaves the latch; a later add of the stored graph (“Nachlesen”) still leaves the latch; failed, malformed and wrong-trip explicit reads stay blocked; a successful explicit read does not itself write; the next deliberate save keeps the first traveller and “Nachlesen”
 - a guest prop delivery does not clear the unresolved latch
+- a newer residence edit during a held save survives null, string and throw; the submitted payload is not replayed; Save is not left pending
+- a removal confirmation opened during that hold survives the older null and does not start removal
+- an edited save whose next graph is the submitted profile is consistent, keeps the citizenship UUID and passport relation, and a later different graph conflicts with the newer edit
 - project CSS at 320, 360, 390, 768 and 1280, root font 32px at 320, without `overflow: hidden` and without `overflow-wrap: anywhere`
 
-Screenshots in this directory: `card-320.png`, `card-360.png`, `card-390.png`, `card-768.png`, `card-1280.png`, `state-rows-320.png`, `state-rows-1280.png`, `state-confirm-320.png`, `state-pending-320.png`, `state-unknown-320.png`, `state-conflict-320.png`, `state-absent-320.png`.
+Screenshots in this directory were produced by the same CSS test on this run: `card-320.png`, `card-360.png`, `card-390.png`, `card-768.png`, `card-1280.png`, `state-rows-320.png`, `state-rows-1280.png`, `state-confirm-320.png`, `state-pending-320.png`, `state-unknown-320.png`, `state-conflict-320.png`, `state-absent-320.png`.
 
 Stubs, not hosted, RLS, Auth or Production evidence:
 - account writers, router refresh and the Konto action modules are test stubs
 - the audit once-count rewrites only the test bundle string `onUebernehmen={async () => null}`; `components/trips/TripWorkspaceAuditClient.tsx` is unmodified
 - guest traveller cases use the real `gastspeicher` localStorage path in the page, with a readback shim for the unproven case
 
-Not proved: causal exactly-once readback, cross-tab atomicity, atomicity against a different in-flight guest writer, hosted SQL/RLS, a native device or a screen reader. Full unmount drops the in-memory ledger.
+Not proved: causal exactly-once readback, cross-tab atomicity, atomicity against a different in-flight guest writer, hosted SQL/RLS, a native device or a screen reader. Full unmount drops the in-memory ledger. A matching fingerprint is an observation, not a receipt that this save caused the graph.

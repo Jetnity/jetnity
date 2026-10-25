@@ -41,6 +41,16 @@ The 12 `npm test` failures are not a green gate. Eleven are local PostgreSQL pro
 
 Schema-bezug still prints the existing LOCAL/UNAPPLIED RPC notes and exits 0. `next-env.d.ts` was not left dirty.
 
+## Candidate-review correction
+
+Reviewed head `b443fb13db1e97e0d0d85d51814046349fd7491b` left two card defects. Both are corrected on `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`, tree `4f2165518fdea569afbb63d45efaef13409c276b`.
+
+A held save whose residence changes before the writer returns, or whose intent becomes a removal confirmation, no longer stays `pending` after the writer finishes. The newer draft or confirmation stays. Accepted, returned-string and thrown results are covered. The original payload is not sent again, and that path does not call refresh. On a guest trip, an entered non-null result still latches further traveller writes without replacing the newer intent.
+
+An accepted edit keeps its submitted fingerprint. A later delivery of that same fingerprint, while the draft generation is still that submission, clears the false conflict and can be shown as consistent. The draft is not rebuilt, so the citizenship UUID and passport relation stay. A delivery at or before settlement is still ignored. A later user edit drops the consistent claim. A different canonical graph then conflicts and keeps the newer fields. The match is not an exactly-once receipt.
+
+The mounted command on that tree exits 0 with 18 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` on the same tree exits 1: 7181 tests, 7164 pass, 12 fail, 5 skipped. Eleven failures are the same missing local PostgreSQL 16 binaries. One is still `lib/readiness/trip-official-evaluations-server.test.ts:384`, `1 !== 2`. That test calls `onTravellerEntfernen` and then `onUnterkunftZeitraum` directly. `onTravellerEntfernen` in `KontoArbeitsbereich` invalidates and returns `null` without `router.refresh()`. `onUnterkunftZeitraum` still refreshes. The hook refreshes through `onReadinessAktualisieren` only after an accepted result, and this test never mounts the hook. The obsolete assertion is that the traveller writer itself refreshes. The file is not allowlisted. It was not edited, waived, or suppressed. T-EX1 does not include it. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0.
+
 ## Boundaries
 
 No migration, RLS, Auth, provider, secret, payment, or new dependency. No passport number, MRZ, biometrics, health, or file field. USD 100 and noindex are unchanged. Frozen writers, `gastspeicher`, `dokument-formular.ts`, and `TripWorkspaceAuditClient.tsx` are unchanged versus `origin/main`.
