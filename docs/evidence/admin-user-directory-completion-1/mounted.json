@@ -1,0 +1,252 @@
+{
+  "mode": "mounted-UsersTable-synthetic-router",
+  "notSignedInNext": true,
+  "notHostedSupabase": true,
+  "notRls": true,
+  "notProduction": true,
+  "refreshIsNotAReceipt": true,
+  "readAttemptIsNotCausal": true,
+  "head": "a63b807a8b91437b57185d7899466a49e5440ad5",
+  "dirty": " M app/(admin)/admin/users/page.tsx\n M components/admin/UsersTable.tsx\n M lib/admin/profil-erstellt.test.ts\n M lib/admin/users-search-navigation.test.ts\n M lib/admin/users-search-navigation.ts\n M lib/next/request-api-compat.test.ts\n M next-env.d.ts\n?? docs/evidence/admin-user-directory-completion-1/\n?? lib/admin/users-directory-presentation.test.ts\n?? lib/admin/users-directory-presentation.ts\n?? lib/admin/users-directory-query.test.ts\n?? lib/admin/users-directory-query.ts\n?? lib/admin/users-directory-read.test.ts\n?? scripts/admin-user-directory-completion-1/\n",
+  "node": "v22.23.4",
+  "playwright": "1.55.0",
+  "faelle": [
+    {
+      "name": "deep-link-page-3-idle",
+      "ok": true,
+      "pageText": "Seite 3 / 3",
+      "consoleErrors": []
+    },
+    {
+      "name": "reload-remount",
+      "ok": true,
+      "pageText": "Seite 3 / 3",
+      "consoleErrors": []
+    },
+    {
+      "name": "whitespace-noop",
+      "ok": true,
+      "input": "  anna  ",
+      "consoleErrors": []
+    },
+    {
+      "name": "genuine-edit-resets-page",
+      "ok": true,
+      "search": "q=berta&page=1&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "clear-removes-q",
+      "ok": true,
+      "search": "page=1&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "punctuation-unicode",
+      "ok": true,
+      "href": "/admin/users?page=1&source=support&q=m%C3%BCller+%26+co%2F%C3%B1%3F",
+      "consoleErrors": []
+    },
+    {
+      "name": "previous-keeps-q-and-foreign-keys",
+      "ok": true,
+      "search": "q=anna&page=2&source=support&ref=case-7",
+      "consoleErrors": []
+    },
+    {
+      "name": "external-back-forward",
+      "ok": true,
+      "restored": "q=anna&page=3&source=support",
+      "forward": "q=carla&page=2&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "edit-then-external-before-timeout",
+      "ok": true,
+      "search": "q=elsa&page=2&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "page-click-discards-draft",
+      "ok": true,
+      "search": "q=anna&page=2&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "rapid-edits-commit-last",
+      "ok": true,
+      "search": "q=ber&page=1&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "unmount-cancels-timer",
+      "ok": true,
+      "search": "q=anna&page=3&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "late-own-ack-keeps-newer-draft",
+      "ok": true,
+      "search": "q=bobby&page=1&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "external-wins-over-held-search",
+      "ok": true,
+      "search": "q=elsa&page=2&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "native-back-keeps-pending-and-field",
+      "ok": true,
+      "afterBack": "q=bob&page=1&source=support&reviewHold=1",
+      "afterForward": "q=anna&page=3&source=support&reviewHold=1",
+      "consoleErrors": []
+    },
+    {
+      "name": "role-status-and-page-keep-filters",
+      "ok": true,
+      "cleared": "page=1&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "ceiling-unknown-count",
+      "ok": true,
+      "pageText": "Seite 5000",
+      "consoleErrors": []
+    },
+    {
+      "name": "ceiling-count-100001",
+      "ok": true,
+      "count": "100001 Nutzer",
+      "consoleErrors": []
+    },
+    {
+      "name": "invalid-page-5001-recovery",
+      "ok": true,
+      "href": "/admin/users?page=1&role=admin&source=support",
+      "consoleErrors": []
+    },
+    {
+      "name": "states-empty-nomatch-range-error",
+      "ok": true,
+      "range": "Seite 99 ist in dieser Abfrage nicht vorhanden.",
+      "consoleErrors": []
+    },
+    {
+      "name": "deferred-replace-before-url-ack",
+      "ok": true,
+      "settled": "Seite 2 / 3",
+      "consoleErrors": []
+    },
+    {
+      "name": "draft-cancels-refresh-before-debounce",
+      "ok": true,
+      "refreshCalls": 1,
+      "consoleErrors": []
+    },
+    {
+      "name": "filter-page-back-unmount-cancel-lease",
+      "ok": true,
+      "refreshCalls": 4,
+      "consoleErrors": []
+    },
+    {
+      "name": "same-query-refresh-and-same-error",
+      "ok": true,
+      "refreshCalls": 2,
+      "consoleErrors": []
+    },
+    {
+      "name": "lease-expires-without-new-render",
+      "ok": true,
+      "status": "Die erneute Abfrage wurde nicht bestätigt.",
+      "consoleErrors": []
+    },
+    {
+      "name": "read-controls-do-not-mutate",
+      "ok": true,
+      "calls": [],
+      "consoleErrors": []
+    },
+    {
+      "name": "editable-lower-rank-records-one-call",
+      "ok": true,
+      "calls": [
+        "setUserRole"
+      ],
+      "consoleErrors": []
+    },
+    {
+      "name": "own-row-does-not-mutate",
+      "ok": true,
+      "calls": [],
+      "consoleErrors": []
+    },
+    {
+      "name": "css-320",
+      "ok": true,
+      "box": {
+        "scrollWidth": 222,
+        "clientWidth": 222
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "css-360",
+      "ok": true,
+      "box": {
+        "scrollWidth": 310,
+        "clientWidth": 310
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "css-390",
+      "ok": true,
+      "box": {
+        "scrollWidth": 340,
+        "clientWidth": 340
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "css-768",
+      "ok": true,
+      "box": {
+        "scrollWidth": 718,
+        "clientWidth": 718
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "css-1280",
+      "ok": true,
+      "box": {
+        "scrollWidth": 1230,
+        "clientWidth": 1230
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "css-error-and-keyboard",
+      "ok": true,
+      "reached": [
+        "Nutzer nach Name oder E-Mail suchen",
+        "Rolle",
+        "Status",
+        "Filter löschen",
+        "Vorherige Seite",
+        "Nächste Seite",
+        "Erneut versuchen"
+      ],
+      "consoleErrors": []
+    },
+    {
+      "name": "reduced-motion-no-new-infinite-animation",
+      "ok": true,
+      "infinite": [],
+      "consoleErrors": []
+    }
+  ]
+}
