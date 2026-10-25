@@ -98,6 +98,16 @@ export default function EigeneReisevorbereitung({
     setTitel('')
   }
 
+  const interaktionRef = React.useRef(steuerung?.interaktion)
+  React.useEffect(() => {
+    interaktionRef.current = steuerung?.interaktion
+  })
+  React.useEffect(() => {
+    return () => {
+      interaktionRef.current?.()
+    }
+  }, [])
+
   React.useEffect(() => {
     const id = steuerung?.fokusIntentId
     if (!id) return
@@ -148,6 +158,7 @@ export default function EigeneReisevorbereitung({
         <input
           value={suche}
           onChange={(event) => setSuche(event.target.value)}
+          onFocus={() => steuerung?.interaktion()}
           className={FELD}
           data-personal-preparation-search=""
         />
@@ -159,7 +170,10 @@ export default function EigeneReisevorbereitung({
             type="button"
             aria-pressed={filter === wert}
             className={filter === wert ? PRIMAER : SEKUNDAER}
-            onClick={() => setFilter(wert)}
+            onClick={() => {
+              steuerung?.interaktion()
+              setFilter(wert)
+            }}
           >
             {label}
           </button>
@@ -181,6 +195,7 @@ export default function EigeneReisevorbereitung({
               loeschen={loeschen === item.clientRef}
               sperre={steuerung?.barrier ?? false}
               onOeffnen={() => {
+                steuerung?.interaktion()
                 const epoch = preparationEpoch(kontext, item)
                 const generation = (editoren[item.clientRef]?.generation ?? 0) + 1
                 setEditoren((vorher) => ({
@@ -232,6 +247,7 @@ export default function EigeneReisevorbereitung({
                 if (!steuerung && onEntfernen) void onEntfernen(item.clientRef)
                 setLoeschen(null)
               }}
+              onInteraktion={() => steuerung?.interaktion()}
               onErneut={() => {
                 const intent = [...intents].reverse().find((eintrag) => eintrag.clientRef === item.clientRef)
                 if (intent) steuerung?.erneut(intent.id)
@@ -292,6 +308,7 @@ export default function EigeneReisevorbereitung({
             <input
               value={feld}
               onChange={(event) => titelAendern(event.target.value)}
+              onFocus={() => steuerung?.interaktion()}
               maxLength={80}
               aria-disabled={steuerung?.barrier ? true : undefined}
               className={FELD}
@@ -336,6 +353,7 @@ function Zeile({
   onErneut,
   onVerwerfen,
   onAktualisieren,
+  onInteraktion,
 }: {
   item: ReadinessViewItem
   doppelt: boolean
@@ -353,6 +371,7 @@ function Zeile({
   onErneut: () => void
   onVerwerfen: () => void
   onAktualisieren: () => void
+  onInteraktion: () => void
 }) {
   const statusText = nutzerstandText(item.userStatus, item.currentness)
   const unterwegs = intent != null && (intent.phase === 'pending' || intent.phase === 'awaiting' || intent.phase === 'blocked')
@@ -378,7 +397,7 @@ function Zeile({
         <div className="grid gap-2">
           <label className="grid gap-1 text-sm font-medium text-brand-800">
             Titel bearbeiten
-            <input value={editor.title} onChange={(event) => onTitel(event.target.value)} maxLength={80} className={FELD} />
+            <input value={editor.title} onChange={(event) => onTitel(event.target.value)} onFocus={onInteraktion} maxLength={80} className={FELD} />
           </label>
           <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
             <Status aktiv={editor.status === 'open'} onClick={() => onStatus('open')} disabled={sperre}>Offen</Status>

@@ -9,6 +9,7 @@ import {
   entscheiden,
   entwurfGeaendert,
   gastErgebnis,
+  interaktion,
   kontoBeobachten,
   leerLedger,
   manuellLesen,
@@ -49,6 +50,7 @@ export type PersonalSteuerung = {
   erneut: (intentId: string) => void
   verwerfen: (intentId: string) => void
   aktualisieren: () => void
+  interaktion: () => void
 }
 
 export function usePersonalPreparationLifecycle({
@@ -89,19 +91,22 @@ export function usePersonalPreparationLifecycle({
   let anzeige = stand.tripId === tripId ? stand : leerLedger(tripId)
   let gesehen = stand.tripId === tripId ? beobachtet : undefined
   if (seam === 'account' && kanonisch && kanonisch !== gesehen) {
-    anzeige = kontoBeobachten(anzeige, kanonisch)
+    anzeige = { ...kontoBeobachten(anzeige, kanonisch), revision: anzeige.revision + 1 }
     gesehen = kanonisch
   }
   if (anzeige !== stand) setStand(anzeige)
   if (gesehen !== beobachtet) setBeobachtet(gesehen)
 
   const commit = React.useCallback((next: PersonalLedger) => {
-    bestand.current = next
-    setStand(next)
+    const marked = { ...next, revision: bestand.current.revision + 1 }
+    bestand.current = marked
+    setStand(marked)
   }, [])
 
   React.useEffect(() => {
-    bestand.current = stand
+    if (stand.tripId !== bestand.current.tripId || stand.revision > bestand.current.revision) {
+      bestand.current = stand
+    }
     setzenRef.current = onSetzen
     entfernenRef.current = onEntfernen
     lesenRef.current = onAktualisieren
@@ -189,6 +194,7 @@ export function usePersonalPreparationLifecycle({
     entfernen: (clientRef, filter, editorGeneration) => senden({ art: 'delete', clientRef, filter, editorGeneration }),
     erneut: (intentId) => senden({ art: 'retry', intentId }),
     verwerfen: (intentId) => senden({ art: 'discard', intentId }),
+    interaktion: () => commit(interaktion(bestand.current)),
     aktualisieren: () => {
       const lesen = lesenRef.current
       if (!lesen) return

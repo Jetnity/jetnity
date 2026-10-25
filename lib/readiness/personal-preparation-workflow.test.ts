@@ -13,15 +13,19 @@ import {
   kontoBeobachten,
   leerLedger,
   manuellLesen,
+  scheitern,
   PERSONAL_ABGESTIMMT,
   PERSONAL_AUSSTEHEND,
   PERSONAL_BARRIERE,
   PERSONAL_BESTAETIGT,
+  PERSONAL_ERST_LESEN,
   PERSONAL_KONTEXT,
+  PERSONAL_UNKLAR,
   PERSONAL_UNSICHER,
   PERSONAL_VERALTET,
   PERSONAL_VERWORFEN,
   PERSONAL_ZIEL_WEG,
+  interaktion,
   preparationEpoch,
   type PersonalIntent,
   type PersonalLedger,
@@ -66,6 +70,10 @@ function letzter(ledger: PersonalLedger): PersonalIntent {
   const intent = ledger.intents.at(-1)
   assert.ok(intent)
   return intent
+}
+
+function letzteId(ledger: PersonalLedger): string {
+  return letzter(ledger).id
 }
 
 describe('personal preparation workflow', () => {
@@ -218,6 +226,78 @@ describe('personal preparation workflow', () => {
     assert.match(PERSONAL_VERWORFEN, /nicht zurückgenommen/)
     assert.match(PERSONAL_ZIEL_WEG, /nicht neu angelegt/)
     assert.match(PERSONAL_KONTEXT, /älteren Reisekontext/)
+    assert.match(PERSONAL_ERST_LESEN, /Lies zuerst/)
+  })
+
+  test('an unclear outcome cannot write again until a later read, and a match is only reconciled', () => {
+    const reise = anlegen('Adapter')
+    const item = reise.readinessItems![0]!
+    const erste = entscheiden(leerLedger(reise.id), {
+      art: 'edit', clientRef: item.clientRef, title: 'Adapter', userStatus: 'done', boundEpoch: preparationEpoch(reise, item), editorGeneration: 1, filter: 'alle',
+    }, reise, null)
+    assert.ok(erste.auftrag)
+    let ledger = scheitern(erste.ledger, letzteId(erste.ledger), 1, PERSONAL_UNKLAR, 'unclear')
+    const retry = entscheiden(ledger, { art: 'retry', intentId: letzteId(ledger) }, reise, null)
+    assert.equal(retry.auftrag, null)
+    assert.equal(retry.ledger.hinweis, PERSONAL_ERST_LESEN)
+    const nochmal = entscheiden(retry.ledger, {
+      art: 'edit', clientRef: item.clientRef, title: 'Adapter', userStatus: 'open', boundEpoch: preparationEpoch(reise, item), editorGeneration: 2, filter: 'alle',
+    }, reise, null)
+    assert.equal(nochmal.auftrag, null)
+    const loeschen = entscheiden(nochmal.ledger, { art: 'delete', clientRef: item.clientRef, filter: 'alle', editorGeneration: 2 }, reise, null)
+    assert.equal(loeschen.auftrag, null)
+    ledger = loeschen.ledger
+    ledger = manuellLesen(ledger, { art: 'wrong_trip' }, reise.id)
+    ledger = manuellLesen(ledger, { art: 'missing' }, reise.id)
+    assert.equal(entscheiden(ledger, { art: 'retry', intentId: letzteId(ledger) }, reise, null).auftrag, null)
+    const fremd = kontoBeobachten(ledger, beispielreise({ id: 'andere-reise' }))
+    assert.equal(letzter(fremd).phase, 'unclear')
+    assert.equal(fremd.lieferung, ledger.lieferung)
+    const konfliktReise = anlegen('Anders', 'done')
+    ledger = manuellLesen(ledger, { art: 'success', reise: konfliktReise }, reise.id)
+    assert.equal(letzter(ledger).phase, 'conflict')
+    const bewusst = entscheiden(ledger, { art: 'retry', intentId: letzteId(ledger) }, reise, null)
+    assert.equal(bewusst.auftrag?.clientRef, item.clientRef)
+    assert.equal(letzter(bewusst.ledger).meldung, PERSONAL_UNSICHER)
+    const passend = anlegen('Adapter', 'done')
+    const abgestimmt = manuellLesen(scheitern(erste.ledger, letzteId(erste.ledger), 1, PERSONAL_UNKLAR, 'unclear'), { art: 'success', reise: passend }, reise.id)
+    assert.equal(letzter(abgestimmt).phase, 'reconciled')
+    assert.equal(letzter(abgestimmt).meldung, PERSONAL_ABGESTIMMT)
+    const neu = entscheiden(entwurfGeaendert({ ...abgestimmt, composerLock: true, composerRef: 'alt' }), { art: 'create', title: 'Beta', filter: 'alle' }, reise, null)
+    assert.equal(letzter(neu.ledger).phase, 'pending')
+    const spaet = manuellLesen(neu.ledger, { art: 'success', reise: passend }, reise.id)
+    assert.equal(letzter(spaet).phase, 'pending')
+    assert.equal(spaet.draft, neu.ledger.draft)
+  })
+
+  test('a later canonical snapshot recovers an accepted absence or conflict without confirming an unknown match', () => {
+    const leer = beispielreise({ id: 'konto', readinessItems: [] })
+    const erzeugt = entscheiden(leerLedger(leer.id), { art: 'create', title: 'Adapter', filter: 'alle' }, leer, null)
+    const ref = erzeugt.auftrag!.clientRef
+    let ledger = annehmen(erzeugt.ledger, letzteId(erzeugt.ledger), 1).ledger
+    ledger = kontoBeobachten(ledger, leer)
+    assert.equal(letzter(ledger).phase, 'absent_uncertain')
+    const da = anlegen('Adapter')
+    const mitPunkt = beispielreise({ id: leer.id, readinessItems: [{ ...da.readinessItems![0]!, clientRef: ref, id: ref, title: 'Adapter', userStatus: 'open' }] })
+    ledger = kontoBeobachten(ledger, mitPunkt)
+    assert.equal(letzter(ledger).phase, 'confirmed')
+    const offen = anlegen('Adapter', 'open')
+    const edit = entscheiden(leerLedger(offen.id), {
+      art: 'edit', clientRef: 'preparation-adapter', title: 'Adapter', userStatus: 'done', boundEpoch: preparationEpoch(offen, offen.readinessItems![0]!), editorGeneration: 1, filter: 'alle',
+    }, offen, offen)
+    ledger = annehmen(edit.ledger, letzteId(edit.ledger), 1).ledger
+    ledger = kontoBeobachten(ledger, offen)
+    assert.equal(letzter(ledger).phase, 'conflict')
+    ledger = kontoBeobachten(ledger, anlegen('Adapter', 'done'))
+    assert.equal(letzter(ledger).phase, 'confirmed')
+    const unklar = scheitern(erzeugt.ledger, letzteId(erzeugt.ledger), 1, PERSONAL_UNKLAR, 'unclear')
+    const gast = manuellLesen(unklar, { art: 'success', reise: mitPunkt }, leer.id)
+    assert.equal(letzter(gast).phase, 'reconciled')
+    const konto = kontoBeobachten(unklar, mitPunkt)
+    assert.equal(letzter(konto).phase, 'reconciled')
+    const weg = interaktion(annehmen(erzeugt.ledger, letzteId(erzeugt.ledger), 1).ledger)
+    const ohneFokus = gastErgebnis(weg, letzteId(weg), 1, { art: 'success', reise: mitPunkt }, leer.id)
+    assert.equal(ohneFokus.fokusIntentId, null)
   })
 
   test('the existing guest writer still rejects a 51st point and accepts an exact edit', () => {

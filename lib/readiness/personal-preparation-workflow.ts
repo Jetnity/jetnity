@@ -43,6 +43,8 @@ export const PERSONAL_KONTEXT =
   'Die Auswahl gilt für einen älteren Reisekontext. Offen ist wieder ausgewählt. Erledigt oder Nicht relevant brauchen eine neue Auswahl.'
 export const PERSONAL_UNKLAR =
   'Das Ergebnis ist unklar. Es wird nichts automatisch erneut gesendet.'
+export const PERSONAL_ERST_LESEN =
+  'Der Ausgang ist unklar. Lies zuerst den aktuellen Stand. Ein Schreibversuch bleibt gesperrt, bis diese Reise gelesen wurde.'
 
 export const PERSONAL_FILTER = [
   ['alle', 'Alle'],
@@ -106,6 +108,10 @@ export type PersonalIntent = {
   filterBeiAktion: PersonalFilter
   bereitsPassend: boolean
   fokussieren: boolean
+  /** Angenommen heißt, die Schreibantwort kam zurück. Unklar heißt, sie blieb aus. */
+  ursache: 'offen' | 'angenommen' | 'unklar'
+  beobachtetBei: number
+  fokusBei: number
 }
 
 export type PersonalLedger = {
@@ -123,6 +129,11 @@ export type PersonalLedger = {
   titelLeerenFuer: string | null
   fokusIntentId: string | null
   draft: string
+  fokusGeneration: number
+  /** Jüngerer Stand verdrängt keinen neueren Schreibversuch. */
+  revision: number
+  /** Gleiche Kennung bleibt gesperrt, bis eine spätere Lesung gelesen gesetzt hat. */
+  lesePflicht: Record<string, { seit: number; gelesen: number | null }>
 }
 
 export type PersonalAuftrag = {
@@ -202,7 +213,14 @@ export function leerLedger(tripId: string): PersonalLedger {
     titelLeerenFuer: null,
     fokusIntentId: null,
     draft: '',
+    fokusGeneration: 0,
+    revision: 0,
+    lesePflicht: {},
   }
+}
+
+export function interaktion(ledger: PersonalLedger): PersonalLedger {
+  return { ...ledger, fokusGeneration: ledger.fokusGeneration + 1, fokusIntentId: null }
 }
 
 function filterPasst(
@@ -275,6 +293,20 @@ function gesperrt(ledger: PersonalLedger): { ledger: PersonalLedger; auftrag: nu
   return { ledger: { ...ledger, hinweis: PERSONAL_BARRIERE }, auftrag: null }
 }
 
+function leseblock(ledger: PersonalLedger, clientRef: string): { ledger: PersonalLedger; auftrag: null } | null {
+  const pflicht = ledger.lesePflicht[clientRef]
+  if (!pflicht || pflicht.gelesen != null) return null
+  return { ledger: { ...ledger, hinweis: PERSONAL_ERST_LESEN }, auftrag: null }
+}
+
+function nachLesen(ledger: PersonalLedger, clientRef: string): { ledger: PersonalLedger; unsicher: boolean } {
+  const pflicht = ledger.lesePflicht[clientRef]
+  if (!pflicht || pflicht.gelesen == null) return { ledger, unsicher: false }
+  const lesePflicht = { ...ledger.lesePflicht }
+  delete lesePflicht[clientRef]
+  return { ledger: { ...ledger, lesePflicht, hinweis: PERSONAL_UNSICHER }, unsicher: true }
+}
+
 function titelGleich(beobachtet: string | null, gesendet: string | null): boolean {
   return (beobachtet ?? '') === (gesendet ?? '').trim()
 }
@@ -296,8 +328,9 @@ function passtSchon(reise: Trip | null, intent: Pick<PersonalIntent, 'art' | 'cl
 
 function anlegen(
   ledger: PersonalLedger,
-  felder: Omit<PersonalIntent, 'id' | 'lauf' | 'dispatchLieferung' | 'responseLieferung' | 'continuationUsed' | 'meldung' | 'fokussieren' | 'bereitsPassend'> & {
+  felder: Omit<PersonalIntent, 'id' | 'lauf' | 'dispatchLieferung' | 'responseLieferung' | 'continuationUsed' | 'meldung' | 'fokussieren' | 'bereitsPassend' | 'ursache' | 'beobachtetBei' | 'fokusBei'> & {
     bereitsPassend?: boolean
+    meldung?: string | null
   },
 ): { ledger: PersonalLedger; intent: PersonalIntent } {
   const intent: PersonalIntent = {
@@ -307,9 +340,12 @@ function anlegen(
     dispatchLieferung: ledger.lieferung,
     responseLieferung: null,
     continuationUsed: false,
-    meldung: null,
+    meldung: felder.meldung ?? null,
     fokussieren: false,
     bereitsPassend: felder.bereitsPassend ?? false,
+    ursache: 'offen',
+    beobachtetBei: ledger.lieferung,
+    fokusBei: ledger.fokusGeneration,
   }
   return {
     intent,
@@ -376,6 +412,8 @@ export function entscheiden(
       return { ledger, auftrag: null }
     }
     if (ledger.locks.includes(intent.clientRef)) return { ledger, auftrag: null }
+    const block = leseblock(ledger, intent.clientRef)
+    if (block) return block
     if (intent.art !== 'create') {
       const ziel = persoenlich(kontext).find((item) => item.clientRef === intent.clientRef)
       if (!ziel) return { ledger: { ...ledger, hinweis: PERSONAL_ZIEL_WEG }, auftrag: null }
@@ -384,19 +422,23 @@ export function entscheiden(
         return { ledger: { ...ledger, hinweis: PERSONAL_KONTEXT }, auftrag: null }
       }
     }
+    const gelesen = nachLesen(ledger, intent.clientRef)
     const neu: PersonalIntent = {
       ...intent,
       lauf: intent.lauf + 1,
       phase: 'pending',
       responseLieferung: null,
       continuationUsed: false,
-      meldung: null,
+      meldung: gelesen.unsicher ? PERSONAL_UNSICHER : null,
       fokussieren: false,
-      dispatchLieferung: ledger.lieferung,
+      dispatchLieferung: gelesen.ledger.lieferung,
+      beobachtetBei: gelesen.ledger.lieferung,
+      fokusBei: gelesen.ledger.fokusGeneration,
+      ursache: 'offen',
       bereitsPassend: passtSchon(kanonisch, intent),
     }
     return {
-      ledger: ersetzen({ ...ledger, locks: [...ledger.locks, neu.clientRef], hinweis: null, fokusIntentId: null }, neu),
+      ledger: ersetzen({ ...gelesen.ledger, locks: [...gelesen.ledger.locks, neu.clientRef], fokusIntentId: null }, neu),
       auftrag: auftragFuer(neu),
     }
   }
@@ -439,10 +481,14 @@ export function entscheiden(
   if (dispatch.art === 'edit' && (dispatch.userStatus === 'done' || dispatch.userStatus === 'skipped') && dispatch.boundEpoch !== epoch) {
     return { ledger: { ...ledger, hinweis: PERSONAL_KONTEXT }, auftrag: null }
   }
+  const block = leseblock(ledger, ziel.clientRef)
+  if (block) return block
+  const gelesen = nachLesen(ledger, ziel.clientRef)
   const ansicht = sicht(kontext, ziel.clientRef)
   const status = dispatch.art === 'delete' ? null : dispatch.userStatus
   const title = dispatch.art === 'delete' ? ziel.title : dispatch.title
-  const roh = anlegen(ledger, {
+  const roh = anlegen(gelesen.ledger, {
+    meldung: gelesen.unsicher ? PERSONAL_UNSICHER : null,
     art: dispatch.art === 'delete' ? 'delete' : 'edit',
     clientRef: ziel.clientRef,
     tripId: ledger.tripId,
@@ -459,7 +505,10 @@ export function entscheiden(
     filterBeiAktion: dispatch.filter,
   })
   const intent = { ...roh.intent, bereitsPassend: passtSchon(kanonisch, roh.intent) }
-  return { ledger: ersetzen({ ...roh.ledger, hinweis: null }, intent), auftrag: auftragFuer(intent) }
+  return {
+    ledger: ersetzen({ ...roh.ledger, hinweis: gelesen.unsicher ? PERSONAL_UNSICHER : null }, intent),
+    auftrag: auftragFuer(intent),
+  }
 }
 
 export function scheitern(
@@ -471,9 +520,24 @@ export function scheitern(
 ): PersonalLedger {
   const intent = ledger.intents.find((eintrag) => eintrag.id === intentId)
   if (!intent || intent.lauf !== lauf || intent.phase !== 'pending') return ledger
+  const unklar = phase === 'unclear'
   return ersetzen(
-    { ...ledger, locks: ledger.locks.filter((ref) => ref !== intent.clientRef) },
-    { ...intent, phase, meldung, fokussieren: false },
+    {
+      ...ledger,
+      locks: ledger.locks.filter((ref) => ref !== intent.clientRef),
+      hinweis: unklar && !ledger.barrier ? PERSONAL_ERST_LESEN : ledger.hinweis,
+      lesePflicht: unklar
+        ? { ...ledger.lesePflicht, [intent.clientRef]: { seit: ledger.lieferung, gelesen: null } }
+        : ledger.lesePflicht,
+    },
+    {
+      ...intent,
+      phase,
+      meldung,
+      fokussieren: false,
+      ursache: unklar ? 'unklar' : intent.ursache,
+      beobachtetBei: ledger.lieferung,
+    },
   )
 }
 
@@ -491,6 +555,8 @@ export function annehmen(
     responseLieferung: ledger.lieferung,
     continuationUsed: lesen ? true : intent.continuationUsed,
     meldung: PERSONAL_AUSSTEHEND,
+    ursache: 'angenommen',
+    beobachtetBei: ledger.lieferung,
   }
   return { ledger: ersetzen(ledger, neu), lesen }
 }
@@ -498,7 +564,8 @@ export function annehmen(
 function terminal(ledger: PersonalLedger, intent: PersonalIntent, phase: PersonalPhase, meldung: string): PersonalLedger {
   const neuerEntwurf = intent.art === 'create' && ledger.composerGeneration !== intent.composerGeneration
   const editorFremd = intent.art !== 'create' && ledger.editorStand[intent.clientRef] !== undefined && ledger.editorStand[intent.clientRef] !== intent.editorGeneration
-  const fokussieren = !neuerEntwurf && !editorFremd && (phase === 'confirmed' || phase === 'reconciled') && intent.art !== 'delete'
+  const fokusAktuell = ledger.fokusGeneration === intent.fokusBei
+  const fokussieren = fokusAktuell && !neuerEntwurf && !editorFremd && (phase === 'confirmed' || phase === 'reconciled') && intent.art !== 'delete'
   const titelLeeren =
     intent.art === 'create' &&
     phase === 'confirmed' &&
@@ -514,14 +581,37 @@ function terminal(ledger: PersonalLedger, intent: PersonalIntent, phase: Persona
       fokusIntentId: fokussieren ? intent.id : ledger.fokusIntentId,
       draft: titelLeeren ? '' : ledger.draft,
     },
-    { ...intent, phase, meldung, fokussieren },
+    { ...intent, phase, meldung, fokussieren, beobachtetBei: ledger.lieferung },
   )
+}
+
+const WEITER_LESBAR: ReadonlySet<PersonalPhase> = new Set([
+  'awaiting',
+  'absent_uncertain',
+  'conflict',
+  'stale_unconfirmed',
+  'unclear',
+  'blocked',
+])
+
+function pflichtAktualisieren(ledger: PersonalLedger): PersonalLedger {
+  let anders = false
+  const lesePflicht = { ...ledger.lesePflicht }
+  for (const [ref, eintrag] of Object.entries(lesePflicht)) {
+    if (eintrag.gelesen == null && ledger.lieferung > eintrag.seit) {
+      lesePflicht[ref] = { ...eintrag, gelesen: ledger.lieferung }
+      anders = true
+    }
+  }
+  return anders ? { ...ledger, lesePflicht } : ledger
 }
 
 function klassifizieren(ledger: PersonalLedger, intent: PersonalIntent, reise: Trip): PersonalLedger {
   const item = sicht(reise, intent.clientRef)
+  const unklar = intent.ursache === 'unklar'
   if (intent.art === 'delete') {
     if (!item) {
+      if (unklar) return terminal(ledger, intent, 'reconciled', PERSONAL_ABGESTIMMT)
       return terminal(
         ledger,
         intent,
@@ -540,8 +630,18 @@ function klassifizieren(ledger: PersonalLedger, intent: PersonalIntent, reise: T
     (item.travellerClientRef ?? null) === intent.travellerClientRef
   if (!gleich) return terminal(ledger, intent, 'conflict', PERSONAL_UNSICHER)
   if (intent.recheck && item.currentness !== 'current') return terminal(ledger, intent, 'stale_unconfirmed', PERSONAL_VERALTET)
-  if (intent.bereitsPassend) return terminal(ledger, intent, 'reconciled', PERSONAL_ABGESTIMMT)
+  if (unklar || intent.bereitsPassend) return terminal(ledger, intent, 'reconciled', PERSONAL_ABGESTIMMT)
   return terminal(ledger, intent, 'confirmed', PERSONAL_BESTAETIGT)
+}
+
+function offeneLesen(ledger: PersonalLedger, reise: Trip): PersonalLedger {
+  let next = ledger
+  for (const intent of next.intents) {
+    if (!WEITER_LESBAR.has(intent.phase)) continue
+    if (next.lieferung <= intent.beobachtetBei) continue
+    next = klassifizieren(next, intent, reise)
+  }
+  return next
 }
 
 export function gastErgebnis(
@@ -555,7 +655,8 @@ export function gastErgebnis(
   if (!intent || intent.lauf !== lauf) return ledger
   if (intent.phase !== 'awaiting' && intent.phase !== 'blocked') return ledger
   if (lesung.art === 'success' && lesung.reise.id === tripId) {
-    return klassifizieren({ ...ledger, barrier: false, hinweis: null }, { ...intent, phase: 'awaiting' }, lesung.reise)
+    const basis = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1, barrier: false, hinweis: null })
+    return offeneLesen(basis, lesung.reise)
   }
   if (lesung.art === 'props') return ledger
   return ersetzen(
@@ -565,26 +666,16 @@ export function gastErgebnis(
 }
 
 export function kontoBeobachten(ledger: PersonalLedger, reise: Trip): PersonalLedger {
-  let next: PersonalLedger = { ...ledger, lieferung: ledger.lieferung + 1 }
-  for (const intent of next.intents) {
-    if (intent.phase !== 'awaiting' || intent.responseLieferung == null) continue
-    if (next.lieferung > intent.dispatchLieferung && next.lieferung > intent.responseLieferung) {
-      next = klassifizieren(next, intent, reise)
-    }
-  }
-  return next
+  if (reise.id !== ledger.tripId) return ledger
+  const next = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1 })
+  return offeneLesen(next, reise)
 }
 
 export function manuellLesen(ledger: PersonalLedger, lesung: ReadinessAktualisierung, tripId: string): PersonalLedger {
   if (lesung.art === 'props') return ledger
   if (lesung.art === 'success' && lesung.reise.id === tripId) {
-    let next: PersonalLedger = { ...ledger, barrier: false, hinweis: null }
-    for (const intent of next.intents) {
-      if (intent.phase === 'awaiting' || intent.phase === 'blocked' || intent.phase === 'absent_uncertain' || intent.phase === 'stale_unconfirmed' || intent.phase === 'conflict') {
-        next = klassifizieren(next, { ...intent, phase: 'awaiting' }, lesung.reise)
-      }
-    }
-    return next
+    const next = pflichtAktualisieren({ ...ledger, lieferung: ledger.lieferung + 1, barrier: false, hinweis: null })
+    return offeneLesen(next, lesung.reise)
   }
   return { ...ledger, barrier: true, hinweis: PERSONAL_BARRIERE }
 }
