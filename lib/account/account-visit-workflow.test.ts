@@ -229,6 +229,61 @@ test('Prüfung beendet behauptet keinen neuen Stand und Verwerfen unterwegs blei
   assert.equal(visitEntwurfVerwerfen(unterwegs.stand, `ereignis:${original.id}`), unterwegs.stand)
 })
 
+test('eine andere Art bleibt blockiert, ein bestätigter Widerruf nicht', () => {
+  const original = besuch(1)
+  const editStart = visitAufnehmen(
+    visitEditorOeffnen(visitWorkflowAnfang(), original, felder()),
+    'edit',
+    { art: 'aendern', id: original.id, felder: felder('2011') },
+    liste([original]),
+  )
+  assert.equal(editStart.ok, true)
+  if (!editStart.ok) return
+  let stand = visitAnwenden(editStart.stand, 'edit', { art: 'unbestaetigt' }, 10)
+  assert.equal(
+    visitAufnehmen(stand, 'edit-2', { art: 'aendern', id: original.id, felder: felder('2019') }, liste([original])).ok,
+    false,
+  )
+  stand = visitBestaetigungOeffnen(stand, original, 'conf-neu')
+  const widerruf = visitAufnehmen(
+    stand,
+    'neu',
+    { art: 'widerrufen', id: original.id, bestaetigung: stand.bestaetigung! },
+    liste([original]),
+  )
+  assert.equal(widerruf.ok, true)
+  if (!widerruf.ok) return
+  assert.equal(widerruf.stand.vorgaenge.at(-1)?.art, 'widerrufen')
+  assert.notEqual(widerruf.stand.vorgaenge.at(-1)?.eingabe, felder('2011'))
+
+  const revokeStart = visitAufnehmen(
+    visitBestaetigungOeffnen(visitWorkflowAnfang(), original, 'conf-alt'),
+    'alt',
+    {
+      art: 'widerrufen',
+      id: original.id,
+      bestaetigung: visitBestaetigungOeffnen(visitWorkflowAnfang(), original, 'conf-alt').bestaetigung!,
+    },
+    liste([original]),
+  )
+  assert.equal(revokeStart.ok, true)
+  if (!revokeStart.ok) return
+  const nachWiderruf = visitEditorOeffnen(
+    visitAnwenden(revokeStart.stand, 'alt', { art: 'unbestaetigt' }, 10),
+    original,
+    felder('2019'),
+  )
+  assert.equal(
+    visitAufnehmen(
+      nachWiderruf,
+      'edit-danach',
+      { art: 'aendern', id: original.id, felder: felder('2019') },
+      liste([original]),
+    ).ok,
+    false,
+  )
+})
+
 test('die Aufrufe im Produkt bleiben die bestehenden Nutzlasten', () => {
   const besuche = readFileSync(join(hier, '../../components/account/AccountBesuche.tsx'), 'utf8')
   const formular = readFileSync(join(hier, '../../components/account/AccountBesuchFormular.tsx'), 'utf8')

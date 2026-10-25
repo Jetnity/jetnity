@@ -377,9 +377,13 @@ export function visitHinweis(stand: VisitStand, surface: VisitSurface, meldung: 
   return entwurfErsetzen(stand, { ...entwurf, lokalerHinweis: meldung })
 }
 
-function blockerOffen(stand: VisitStand, surface: VisitSurface): boolean {
+function blockerOffen(stand: VisitStand, surface: VisitSurface, art?: VisitAufnahme['art']): boolean {
   return stand.vorgaenge.some(
-    (vorgang) => vorgang.surface === surface && vorgang.phase === 'unbestaetigt' && vorgang.blockerOffen,
+    (vorgang) =>
+      vorgang.surface === surface &&
+      (art === undefined || vorgang.art === art) &&
+      vorgang.phase === 'unbestaetigt' &&
+      vorgang.blockerOffen,
   )
 }
 
@@ -397,7 +401,8 @@ export function visitAufnehmen(
 ): { ok: true; stand: VisitStand } | { ok: false; stand: VisitStand } {
   if (liste.problem) return { ok: false, stand }
   const surface: VisitSurface = aufnahme.art === 'bestaetigen' ? 'anlegen' : `ereignis:${aufnahme.id}`
-  if (!bewusst && blockerOffen(stand, surface)) return { ok: false, stand }
+  if (!bewusst && blockerOffen(stand, surface, aufnahme.art)) return { ok: false, stand }
+  if (!bewusst && aufnahme.art !== 'widerrufen' && blockerOffen(stand, surface)) return { ok: false, stand }
   if (visitSurfaceUnterwegs(stand, surface) && aufnahme.art !== 'widerrufen') return { ok: false, stand }
 
   let arbeitsstand = stand

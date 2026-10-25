@@ -15,8 +15,14 @@ const OUT = join('/tmp', 'account-world-visit-workflow-completion-1')
 mkdirSync(OUT, { recursive: true })
 mkdirSync(EVIDENCE, { recursive: true })
 
-const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8' }).trim()
-const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { cwd: REPO, encoding: 'utf8' }).trim()
+function git(args) {
+  return execFileSync('git', args, { cwd: REPO, encoding: 'utf8' }).trim()
+}
+
+const head = git(['rev-parse', 'HEAD'])
+const tree = git(['rev-parse', 'HEAD^{tree}'])
+const statusBefore = git(['status', '--porcelain'])
+const trackedDirtyBefore = statusBefore.split('\n').filter((line) => line && !line.startsWith('??'))
 const screens = join(EVIDENCE, `screens-${head.slice(0, 12)}`)
 mkdirSync(screens, { recursive: true })
 const evidenceFile = join(EVIDENCE, `run-${head.slice(0, 12)}.json`)
@@ -29,6 +35,18 @@ const quellen = [
   'lib/account/account-visit-workflow.test.ts',
   'lib/account/besuche-copy.ts',
 ]
+
+const beweise = [
+  'scripts/account-world-visit-workflow-completion-1/run.mjs',
+  'scripts/account-world-visit-workflow-completion-1/mounted.ts',
+  'scripts/account-world-visit-workflow-completion-1/mount.tsx',
+  'scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts',
+  'scripts/account-world-visit-workflow-completion-1/shims/navigation.ts',
+  'styles/globals.css',
+]
+
+const command = 'node scripts/account-world-visit-workflow-completion-1/run.mjs'
+const testCommand = 'node --import tsx --test scripts/account-world-visit-workflow-completion-1/mounted.ts'
 
 function sha(datei) {
   return createHash('sha256').update(readFileSync(join(REPO, datei))).digest('hex')
@@ -77,6 +95,11 @@ await esbuild.build({
 
 const harnessJs = readFileSync(join(OUT, 'harness.js'))
 const css = await compileCss()
+const { chromium } = require('playwright')
+const browser = await chromium.launch({ headless: true })
+const browserVersion = browser.version()
+await browser.close()
+const playwrightVersion = require('playwright/package.json').version
 const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Besuche</title><link rel="stylesheet" href="/style.css"></head><body class="bg-canvas text-ink-800"><div id="root" class="min-w-0 max-w-full"></div><script src="/harness.js"></script></body></html>`
 const server = createServer((req, res) => {
   const pfad = new URL(req.url || '/', 'http://127.0.0.1').pathname
@@ -112,18 +135,34 @@ const kind = await new Promise((resolve) => {
   child.stderr.on('data', (chunk) => { stderr += String(chunk); process.stderr.write(String(chunk)) })
   child.on('exit', (status) => resolve({ status: status ?? 1, stdout, stderr }))
 })
+const statusAfter = git(['status', '--porcelain'])
+const trackedDirtyAfter = statusAfter.split('\n').filter((line) => line && !line.startsWith('??'))
 const ergebnis = {
   status: kind.status === 0 ? 'PASS' : 'FAIL',
   author: 'Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1',
   session: 'bc-af293d35-d2af-43d8-b193-9fbaab7c351b',
   model: 'grok-4.7-high-fast',
+  command,
+  testCommand,
+  node: process.version,
+  playwright: playwrightVersion,
+  browser: browserVersion,
   commit: head,
   tree,
   exit: kind.status,
   origin: harnessOrigin,
   aliasBoundary: 'esbuild aliases replace only next/navigation and lib/account/besuche-aktionen.ts. AccountBesuche, the form, the hook, copy and project CSS stay real.',
-  notClaimed: 'This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot.',
+  notClaimed: 'This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot. This receipt does not amend the earlier run-82260869d6cb.json.',
+  tracked: {
+    before: statusBefore,
+    beforeDirty: trackedDirtyBefore,
+    after: statusAfter,
+    afterDirty: trackedDirtyAfter,
+    cleanBefore: trackedDirtyBefore.length === 0,
+  },
   sources: Object.fromEntries(quellen.map((datei) => [datei, sha(datei)])),
+  proof: Object.fromEntries(beweise.map((datei) => [datei, sha(datei)])),
+  cssSha256: createHash('sha256').update(css).digest('hex'),
   stdoutTail: kind.stdout.slice(-4000),
   stderrTail: kind.stderr.slice(-4000),
 }

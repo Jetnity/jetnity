@@ -214,7 +214,7 @@ export default function AccountBesuche({
     const bestaetigt = workflow.bestaetigung()
     const surface: VisitSurface = `ereignis:${id}`
     const vorgang = letzterVorgang(workflow.stand.vorgaenge, surface)
-    if (!bewusst && vorgang?.blockerOffen) return
+    if (!bewusst && vorgang?.art === 'widerrufen' && vorgang.blockerOffen) return
     const lokal = besuchLoeschungLesen({ id })
     if (!lokal.ok) return workflow.hinweis(surface, lokal.meldung)
     if (!bestaetigt || bestaetigt.ereignisId !== id || bestaetigt.konflikt !== 'keiner') return
@@ -224,6 +224,67 @@ export default function AccountBesuche({
       bewusst,
     )
   }
+
+  function erneutMoeglich(vorgang: VisitVorgang): boolean {
+    if (problem || workflow.unterwegs(vorgang.surface)) return false
+    if (vorgang.art === 'bestaetigen') return formularOffen
+    if (!vorgang.ereignisId) return false
+    if (vorgang.art === 'aendern') {
+      return editor?.ereignisId === vorgang.ereignisId && editor.konflikt === 'keiner'
+    }
+    return bestaetigung?.ereignisId === vorgang.ereignisId && bestaetigung.konflikt === 'keiner'
+  }
+
+  function erneutHinweis(vorgang: VisitVorgang): string | null {
+    if (vorgang.phase !== 'unbestaetigt' || !vorgang.blockerOffen || erneutMoeglich(vorgang)) return null
+    if (problem) return BESUCHE_COPY.erneutNachLesen
+    if (vorgang.art === 'aendern') {
+      if (editor?.ereignisId === vorgang.ereignisId && editor.konflikt !== 'keiner') return BESUCHE_COPY.erneutKonflikt
+      return BESUCHE_COPY.erneutNurBearbeitung
+    }
+    if (vorgang.art === 'widerrufen') return BESUCHE_COPY.erneutNurWiderruf
+    return BESUCHE_COPY.erneutNurFormular
+  }
+
+  function erneutSenden(vorgang: VisitVorgang) {
+    if (!erneutMoeglich(vorgang)) return
+    if (vorgang.art === 'bestaetigen') {
+      bestaetigen(true)
+      return
+    }
+    if (!vorgang.ereignisId) return
+    if (vorgang.art === 'aendern') {
+      if (editor?.ereignisId !== vorgang.ereignisId) return
+      aendern(true)
+      return
+    }
+    const aktuell = workflow.bestaetigung()
+    if (!aktuell || aktuell.ereignisId !== vorgang.ereignisId || aktuell.konflikt !== 'keiner') return
+    widerrufen(vorgang.ereignisId, true)
+  }
+
+  function zeileGerendert(ereignisId: string): boolean {
+    if (problem) return false
+    return ausschnitt.zeilen.some((zeile) => zeile.id === ereignisId)
+  }
+
+  function letzteVorgaenge(): VisitVorgang[] {
+    const gesehen = new Set<string>()
+    const ergebnis: VisitVorgang[] = []
+    for (let stelle = workflow.stand.vorgaenge.length - 1; stelle >= 0; stelle -= 1) {
+      const vorgang = workflow.stand.vorgaenge[stelle]
+      if (!vorgang || gesehen.has(vorgang.surface)) continue
+      gesehen.add(vorgang.surface)
+      ergebnis.push(vorgang)
+    }
+    return ergebnis
+  }
+
+  const eigenVorgaenge = letzteVorgaenge().filter((vorgang) => {
+    if (vorgangZeilen(vorgang, null).length === 0) return false
+    if (vorgang.art === 'bestaetigen') return !problem && !formularOffen
+    return !vorgang.ereignisId || !zeileGerendert(vorgang.ereignisId)
+  })
 
   function entwurfSpeichern(besuch: Besuch) {
     workflow.bewaaffnen(besuch)
@@ -304,6 +365,23 @@ export default function AccountBesuche({
           ) : null}
         </div>
 
+        {eigenVorgaenge.length > 0 ? (
+          <div className="mt-4 grid min-w-0 gap-2" data-besuch-vorgang-haltung="eigen">
+            {eigenVorgaenge.map((vorgang) => (
+              <VorgangLeiste
+                key={vorgang.id}
+                vorgang={vorgang}
+                idSichtbar={problem || !vorgang.ereignisId ? null : besuche.some((besuch) => besuch.id === vorgang.ereignisId)}
+                erneutMoeglich={erneutMoeglich(vorgang)}
+                erneutHinweis={erneutHinweis(vorgang)}
+                onLesen={() => workflow.lesen(vorgang.id)}
+                onErneut={() => erneutSenden(vorgang)}
+                onSchliessen={() => workflow.schliessen(vorgang.id)}
+              />
+            ))}
+          </div>
+        ) : null}
+
         {problem ? (
           <div
             role="alert"
@@ -320,8 +398,10 @@ export default function AccountBesuche({
               <VorgangLeiste
                 vorgang={anlegenVorgang}
                 idSichtbar={null}
+                erneutMoeglich={erneutMoeglich(anlegenVorgang)}
+                erneutHinweis={erneutHinweis(anlegenVorgang)}
                 onLesen={() => workflow.lesen(anlegenVorgang.id)}
-                onErneut={() => bestaetigen(true)}
+                onErneut={() => erneutSenden(anlegenVorgang)}
                 onSchliessen={() => workflow.schliessen(anlegenVorgang.id)}
               />
             ) : null}
@@ -390,8 +470,10 @@ export default function AccountBesuche({
                   <VorgangLeiste
                     vorgang={anlegenVorgang}
                     idSichtbar={null}
+                    erneutMoeglich={erneutMoeglich(anlegenVorgang)}
+                    erneutHinweis={erneutHinweis(anlegenVorgang)}
                     onLesen={() => workflow.lesen(anlegenVorgang.id)}
-                    onErneut={() => bestaetigen(true)}
+                    onErneut={() => erneutSenden(anlegenVorgang)}
                     onSchliessen={() => workflow.schliessen(anlegenVorgang.id)}
                   />
                 ) : null}
@@ -466,9 +548,17 @@ export default function AccountBesuche({
                       onErneutBestaetigen={() => workflow.erneutBestaetigen(eintrag.id)}
                       onLesen={(id) => workflow.lesen(id)}
                       onErneut={() => {
-                        if (editor?.ereignisId === eintrag.id) aendern(true)
-                        else widerrufen(eintrag.id, true)
+                        const ziel = letzterVorgang(workflow.stand.vorgaenge, `ereignis:${eintrag.id}`)
+                        if (ziel) erneutSenden(ziel)
                       }}
+                      erneutMoeglich={(() => {
+                        const ziel = letzterVorgang(workflow.stand.vorgaenge, `ereignis:${eintrag.id}`)
+                        return ziel ? erneutMoeglich(ziel) : false
+                      })()}
+                      erneutHinweis={(() => {
+                        const ziel = letzterVorgang(workflow.stand.vorgaenge, `ereignis:${eintrag.id}`)
+                        return ziel ? erneutHinweis(ziel) : null
+                      })()}
                       onSchliessen={(id) => workflow.schliessen(id)}
                       onAnsehen={() => workflow.ansehen()}
                       onUebernehmen={(besuch) => workflow.uebernehmen(besuch)}
@@ -548,12 +638,16 @@ function EntwurfBanner({
 function VorgangLeiste({
   vorgang,
   idSichtbar,
+  erneutMoeglich,
+  erneutHinweis,
   onLesen,
   onErneut,
   onSchliessen,
 }: {
   vorgang: VisitVorgang
   idSichtbar: boolean | null
+  erneutMoeglich: boolean
+  erneutHinweis: string | null
   onLesen: () => void
   onErneut: () => void
   onSchliessen: () => void
@@ -565,8 +659,11 @@ function VorgangLeiste({
     <div
       className="mt-3 rounded-2xl border border-line-200 bg-surface-50 px-4 py-3"
       data-besuch-vorgang={vorgang.id}
+      data-besuch-art={vorgang.art}
+      data-besuch-ereignis={vorgang.ereignisId ?? ''}
       data-besuch-phase={vorgang.phase}
       data-besuch-inhalt={vorgang.inhaltBeobachtet}
+      data-besuch-erneut={erneutMoeglich ? 'bereit' : 'gebunden'}
     >
       <p role={alarm ? 'alert' : 'status'} className="text-sm leading-6 text-brand-800">
         {zeilen.join(' ')}
@@ -578,7 +675,7 @@ function VorgangLeiste({
           </button>
           {alarm ? (
             <>
-              <button type="button" className={aktionKlasse} onClick={onErneut}>
+              <button type="button" className={aktionKlasse} disabled={!erneutMoeglich} onClick={onErneut}>
                 {BESUCHE_COPY.erneutSenden}
               </button>
               <button type="button" className={aktionKlasse} onClick={onSchliessen}>
@@ -587,6 +684,9 @@ function VorgangLeiste({
             </>
           ) : null}
         </div>
+      ) : null}
+      {erneutHinweis ? (
+        <p className="mt-2 text-xs leading-5 text-ink-700" data-besuch-erneut-hinweis="ein">{erneutHinweis}</p>
       ) : null}
     </div>
   )
@@ -607,6 +707,8 @@ function BesuchZeile({
   onErneutBestaetigen,
   onLesen,
   onErneut,
+  erneutMoeglich,
+  erneutHinweis,
   onSchliessen,
   onAnsehen,
   onUebernehmen,
@@ -629,6 +731,8 @@ function BesuchZeile({
   onErneutBestaetigen: () => void
   onLesen: (id: string) => void
   onErneut: () => void
+  erneutMoeglich: boolean
+  erneutHinweis: string | null
   onSchliessen: (id: string) => void
   onAnsehen: () => void
   onUebernehmen: (besuch: Besuch) => void
@@ -766,6 +870,8 @@ function BesuchZeile({
           <VorgangLeiste
             vorgang={vorgang}
             idSichtbar={idSichtbar}
+            erneutMoeglich={erneutMoeglich}
+            erneutHinweis={erneutHinweis}
             onLesen={() => onLesen(vorgang.id)}
             onErneut={onErneut}
             onSchliessen={() => onSchliessen(vorgang.id)}
