@@ -6,7 +6,7 @@ Lane **M** of finite batch [#1011](https://github.com/Jetnity/jetnity/issues/101
 
 Immutable TASK: `docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md`, blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777`. This plan does not modify that file.
 
-TASK seed: `195e35f07edf894ec3a4e69ba21b5bf28ae47b15`. The first plan head was `52e4b0c04a6547d3ec1461af9013fd3be5edd57c`, blob `f69ebc8ee95a2f0c0bebea78b4879deca208e3f6`. This revision answers Technical-Lead PLAN R1 (M-R1.1 through M-R1.4, M-EX1, M-EX2) on that head. The review head is the commit that contains this revision.
+TASK seed: `195e35f07edf894ec3a4e69ba21b5bf28ae47b15`. The R1 plan head was `f699fe49d2abe0129fdcfd6a89a4b1bf1dba1b3b`, blob `ec4db0d8a696d76a1b74e0444a9c5f2dec15360f`. This revision answers Technical-Lead PLAN R2 (M-R2.1) on that head. The review head is the commit that contains this revision.
 
 ## 0. Identity, mode, and drift
 
@@ -18,11 +18,11 @@ Visible rename: the session-rename API accepted that exact title and returned it
 
 Machine mode at read: `.jetnity/operating-mode.json` `mode=NORMAL`. Product work on this dispatched branch is allowed. Special Product-Owner gates remain. This plan does not change operating mode, rulesets, or continuity files.
 
-`git fetch origin main` for this R1 revision: `origin/main` is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base with the current branch is that same SHA. Before this revision commit the branch is **2 ahead / 0 behind**. No rebase, merge, or sibling cherry-pick was performed. Integration priority remains **T → S → D → W → M**.
+`git fetch origin main` for this R2 revision: `origin/main` is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base with the current branch is that same SHA. Before this revision commit the branch is **3 ahead / 0 behind**. No rebase, merge, or sibling cherry-pick was performed. Integration priority remains **T → S → D → W → M**.
 
 Required reading used for this design: the immutable TASK; `AGENTS.md`; `JETNITY_START_HERE.md` (historical pointers only; live evidence wins); `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; `docs/ACTIVE_WORK_STATUS.md` and the start-here handoff pointers (R106 is closed and is not reopened); `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`; `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`; `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`.
 
-Live issues read for this revision, not only the dispatch:
+Live issues re-read for this R2 revision. Both `updated_at` values are unchanged:
 
 - [#751](https://github.com/Jetnity/jetnity/issues/751) is open, `updated_at` `2026-10-25T16:05:30Z`. Its current section is R107 V3. D has PLAN PASS and implementation authorization. T, W, and M revise PLAN R1. S revises one remaining PLAN R2 point. This lane is the named M session, last reviewed at `52e4b0c04a6547d3ec1461af9013fd3be5edd57c`, disposition PLAN R1 CHANGES REQUIRED. Accepted main in that checkpoint remains `a74c443c6be3f064f150fcf021ab6154bda325e5`. R106 is complete. The open P1 is Trip traveller relation-loss and belongs to lane T. Holds in that index are unchanged. D's authorization does not release this lane.
 - [#1011](https://github.com/Jetnity/jetnity/issues/1011) is open, `updated_at` `2026-10-25T16:05:31Z`. The same V3 checkpoint names the five lanes, the same main, and integration order T → S → D → W → M. This lane does not take T's P1.
@@ -94,7 +94,7 @@ A committed filter change (`q` or `archiv`) builds a new address without `cursor
 
 Continuation, archive selection, clear, and restart are buttons. The click handler is the only call to `router.push`. The collection does not render `next/link` for those addresses and does not call `router.prefetch`. A viewport, hover, or idle pass therefore does not issue a page read. One explicit activation is one read of that address. There is no hidden next page and no background continuation.
 
-The visible owner line names the committed `q`, archive selection, and whether a cursor is present, and it says the unsent draft is not that query. It does not show the filter grammar. Section 2.8 is the navigation lifecycle. The collection component in section 2.6 stays mounted across those transitions.
+The visible owner line names the live URL's `q`, archive selection, and whether a cursor is present. It says the search looks at title and origin (`Suche in Titel und Herkunft.`) and, when the draft differs, `Der Entwurf ist noch nicht die Suche.` It does not show the filter grammar, case rules, or collation. When the list on screen is for a different address, it adds `Die angezeigten Reisen sind das zuletzt geladene Ergebnis.` Section 2.8 is the navigation lifecycle. The collection component in section 2.6 stays mounted across those transitions.
 
 ### 2.3 Cursor and order
 
@@ -150,7 +150,7 @@ The existing `(user_id, updated_at desc)` index is unchanged. No new index, RPC,
 
 A needle of 120 asterisks produces a filter of length 752. A needle of 120 backslashes produces a filter of length 992. Both are finite. The cursor stores the raw needle, so those filters do not lengthen the token past 626. The synthetic client records this `or` string. Hosted PostgreSQL is not executed. Jetnity's hosted PostgREST build is not read.
 
-The routine UI does not show `imatch`, backslashes, or the filter string. It says the search looks at title and origin, and that the server's case handling can differ from this device. Report and proof state the actual limits: fields are `title` and `origin` only; `NULL` origin does not match; `~*` case-insensitivity follows the database's regular-expression rules, not `ILIKE` and not `toLocaleLowerCase('de-CH')`. `ß`/`ss`, Turkish casing, fullwidth characters, and normalization can diverge. The page does not re-filter with `reisePasstZurSuche`. There is no claim of NFC or of a specific hosted collation.
+The routine UI does not show `imatch`, backslashes, the filter string, case rules, collation, or regular-expression mechanics. The search control keeps the existing wording `Reise suchen`. The owner line says the search looks at title and origin. The page does not re-filter with `reisePasstZurSuche`. Section 6 records the comparison limits.
 
 ### 2.5 Reader
 
@@ -172,7 +172,7 @@ For an authenticated valid request it calls the new reader instead of `reisenLad
 | No matches | valid first page, zero rows, needle or `offen`/`archiv` | `Keine Reise passt zur Suche.` or, when the needle is empty and only the archive selection is narrow, `Keine Reise in dieser Auswahl.` | called |
 | End of continuation | valid cursor, zero rows, no problem | Not the empty-account heading. Say this continuation step is empty. Restart stays available. | called |
 | Current page | one or more rows | Page-scoped counts. Next only when lookahead returned a row. | called |
-| Pending navigation | transition in flight | Previous committed rows remain. Controls show that a newer address is loading. | the in-flight request only |
+| Pending navigation | a local intent or a URL whose server props have not caught up, inside the lease in section 2.8 | Previous adopted rows remain. The control says `Diese Ansicht wird geladen.` The address line names the live URL. | whichever read Next issued; the client does not correlate it |
 
 The existing 503 sentence `Deine Reisen sind gespeichert` is replaced on this page because a failed read must not assert that. The error heading stays so the current source assertion still matches.
 
@@ -212,18 +212,37 @@ The current effect that clears pending on any `status` / `archivePreviousStatus`
 
 ### 2.8 Navigation and retry lifecycle
 
-`useMyTripsCollectionNavigation` keeps three things: the draft, the committed result taken from server props, and `pendingIntentRef`. The ref is set synchronously in the handler before `router.push` or `router.refresh`, to `{ generation, address, kind }` where `kind` is `commit`, `retry`, `continue`, `clear`, `restart`, or `archiv`. Generation increases on every accepted intent.
+Installed Next `16.4.1` types `AppRouterInstance.push` and `refresh` as `void` (`node_modules/next/dist/shared/lib/app-router-context.shared-runtime.d.ts`). The same interface's `bfcacheId` stays the same for `router.refresh()`, back/forward, and search-param changes. Every collection transition is one of those on `/reisen`. `bfcacheId` is not a delivery receipt, and the collection is not keyed by it. The public router contract observes the route through pathname and search params, and a refresh may reproduce the same result. Neither the reader nor the page props add an operation id. This hook does not invent one, and it does not send a generation to the server.
 
-Reducer law `sammlungAnzeige`, which the hook and its tests both follow:
+`useMyTripsCollectionNavigation` reads three production observations:
 
-- Committed rows, problem, and cursor belong to the props address. The draft never owns them. Editing the draft does not cancel a pending retry and does not change that owner.
-- Retry addresses the committed props address, not the unsent draft. A second retry gesture while a retry of that same address is pending does not call `refresh` or `push` again. When that intent completes, a later explicit retry may start one new read.
-- A new commit, archive selection, continuation, clear, or restart supersedes an older intent. An arrival whose generation is lower than the latest intent does not replace the committed result.
-- An arrival whose address equals the latest intent acknowledges it and becomes the committed owner. The same address arriving again, with the same rows or with an error, clears pending once and leaves archive records unchanged.
-- Back or Forward adopts the address in the new props as the committed owner and supersedes a pending intent that pointed elsewhere. It does not apply an older in-flight result as if it were the new commit.
-- A read error for the acknowledged address replaces the rows for that address. It does not render the empty-account state and does not drop archive records.
+- the live URL from `useSearchParams()`;
+- the server props for this render: the parsed address, rows, problem, and cursor that `app/(public)/reisen/page.tsx` just rendered;
+- a local server-snapshot counter that increments only when that props object changes. A client `setState` does not increment it. The counter means a new observed render of server props. It is not a request receipt, and the server does not know it.
 
-Pending intent is visible before the URL props match it. Until they match, the rows on screen remain the previous committed result.
+The draft is separate state. The first render adopts the server props when their address equals the live URL. After that, the adopted list changes only for a later snapshot whose address equals the live URL. A newer snapshot for a different address stays off the list and does not release the current intent.
+
+`pendingIntentRef` is local. It is `null` or `{ intentId, address, kind, urlAtIssue, serverSnapshot, leaseDeadline }`. `kind` is `commit`, `retry`, `continue`, `clear`, `restart`, `selection`, or `url`. `selection` is the archive-filter button, not the archive write. `intentId` is a local counter so a stale timer or a stale `catch` can see that it no longer owns the ref. It is never compared with props, the URL, or a shim callback.
+
+`REISEN_SAMMLUNG_NAV_LEASE_MS` is `8000`. The lease bounds the loading guard only. It is not a server timeout, not a cancelled read, and not proof that a read finished or failed. A server snapshot that arrives after the guard has dropped is still adopted when its address equals the live URL.
+
+Pending begins in the click handler, before `router.push` or `router.refresh`, and before the URL changes:
+
+1. A second `retry` of the same adopted address, while that retry's `intentId` is still current and its lease has not fired, returns without another `refresh`.
+2. Otherwise the handler stores a new `intentId`, the target address, the kind, the current URL as `urlAtIssue`, the current server-snapshot counter, and `leaseDeadline = Date.now() + REISEN_SAMMLUNG_NAV_LEASE_MS`. The loading sentence paints. The adopted rows stay.
+3. The call is in `try`. `push` and `refresh` return `void`, so there is no resolution handler. `catch` clears the ref only when `pendingIntentRef.current.intentId` is still this id. The draft and the archive records stay.
+4. The lease timer clears the ref only when the id still matches. The same id check applies to every later release.
+
+Release and supersession use only the observations above:
+
+- A newer gesture replaces the ref before its own dispatch. The replaced id is dead. Its timer and its `catch` do not clear the new ref, and they do not change the draft or the archive records.
+- The render that stored the intent, and every later render whose server-snapshot counter is still the stored counter, does not release. Existing props do not acknowledge a retry or a same-address click that has just started, even when the URL and the props address already equal the target.
+- A live URL that is neither `urlAtIssue` nor the intent address supersedes that intent. This is a history change or a landing other than the issued address. If the current server props already use that URL and the snapshot is newer than the adopted list, those props are adopted and no lease opens. Otherwise the hook stores a new `url` intent for the live URL, with its own id, `urlAtIssue` set to that URL, and a new lease. The old id cannot clear it.
+- A live URL that equals the intent address does not by itself release the guard and does not prove which gesture landed. Release then waits for a later server snapshot whose address equals that URL, or for the lease. The same rows or the same error both release the guard. The screen does not call that render a receipt.
+- After release, a read error for the URL replaces the rows for that address. It does not render the empty-account state and does not drop archive records.
+- While the URL and the adopted list differ, the adopted rows remain and the owner line says they are the last loaded result. Editing the draft does not cancel a pending retry and does not change the adopted list.
+
+`router.back` and `router.forward` stay the framework methods. The hook does not wrap them in a result callback. Their observable effect is the next `useSearchParams()` value.
 
 ## 3. File ownership
 
@@ -269,13 +288,14 @@ Pure and synthetic, in the new `node:test` files:
 - Cursor roundtrip: U+754C repeated 120 times encodes to 626 unpadded base64url characters, decodes to the same needle and the same unpadded timestamp, and is accepted. U+2028 repeated 120 times also encodes to 626 and is accepted. Separate needles of 120 `*`, 120 `%`, 120 `_`, 120 `\`, 120 `"`, and 120 `,` each roundtrip through the cursor at or under 626 and through the emitted `imatch` string in section 2.4. The 120-asterisk filter is 752 characters. The 120-backslash filter is 992 characters. Those emitted strings contain `imatch` and do not contain `ilike`. The select list is the shared constant and does not add columns.
 - `reisenLaden` regression: same mapper output, same 200 limit, same single `from('trips')` inside `reisenLaden`, no service role, no `user_id` equality. Source read of `app/account/page.tsx` and `app/account/welt/page.tsx` still shows `reisenLaden` and not the new reader. `reiseLaden` still uses `accountGraphLesen`.
 - Archive cases from section 2.7: synchronous throw, rejected promise, exact `{ ok: true, wert: null }`, `{ ok: true }` without `wert`, extra keys, `{ ok: false, meldung }`, `{ ok: false }` without `meldung`, duplicate gesture while `archiveInvocationRef` is set, and an obsolete completion after a newer operation id or after unmount. A later list snapshot updates `observation` only. No test calls the server action against a database.
-- Navigation reducer: pending intent before props acknowledgement, newer commit superseding a retry, duplicate retry suppressed, same-address success and error completion, and a stale generation that does not replace the committed owner.
+- Navigation ownership is not asserted with a response generation. The mounted proof below drives it.
 
 Rendered proof is mandatory. M-EX2 declines a new app route and does not waive this proof. After plan acceptance, `scripts/my-trips-collection-archive-workflow-completion-1/` follows the existing esbuild and Playwright pattern in `scripts/account-traveller-management-completion-1/run.mjs`:
 
 - esbuild bundles the real `MyTripsCollection`, `KontoReiseEintrag`, and `KontoReiseArchivAktion`. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. Project CSS comes from the existing PostCSS/Tailwind pipeline on `styles/globals.css`. A local static server serves that bundle. There is no Next route, no `ui-audit` page, no session, and no Supabase client.
-- The navigation shim records `push`, `refresh`, and `prefetch`. The proof fails if `prefetch` is called or if a continuation control issues a read before the pointer or keyboard activation.
-- The action shim returns a deferred promise, an exact `{ ok: true, wert: null }`, a thrown error, a malformed fulfillment, or `{ ok: false, meldung }`. The wrapper then passes the next scripted props. A resolved refresh is not treated as a list observation.
+- The navigation shim implements the installed signatures: `push`, `replace`, `refresh`, `back`, `forward`, and `prefetch` return nothing and take no arrival callback. It records calls. `useSearchParams()` changes only when the script sets the URL. Server props change only when the script passes a new props object. The shim does not manufacture an arrival generation, and the hook must not read one from it. The proof fails if `prefetch` is called or if a continuation control issues a read before the pointer or keyboard activation.
+- The action shim returns a deferred promise, an exact `{ ok: true, wert: null }`, a thrown error, a malformed fulfillment, or `{ ok: false, meldung }`. The wrapper then passes the next scripted props only when the script says a server render happened. A resolved refresh is not treated as a list observation.
+- Navigation cases, using those inputs only: A → B → A before the first URL change, where the original A props do not release the new guard and a later URL B supersedes it; a late own landing, where the URL reaches the issued address while props are still old and only a later props object for that address releases the guard; Back/Forward as a URL change with no local issue, kept apart from that landing; a same-address retry whose new props object repeats the same error and releases the guard; the same retry with no new props object, released only after Playwright advances `REISEN_SAMMLUNG_NAV_LEASE_MS`; a duplicate retry that does not call `refresh` again; a draft edit that issues no navigation, then a newer commit whose guard survives the old lease; a synchronous `push` throw that clears only that intent, leaves the draft and archive records, and whose stale `catch` does not clear a newer intent.
 - Viewports 320, 390, 768, and 1440. Root font size 32px on `documentElement`. Long title and origin. Dense page. Pending, error, and end states. `prefers-reduced-motion: reduce`.
 - Real pointer and keyboard events: commit search, clear, restart, next, Back, Forward, rapid commits, retry of the committed address, returned negative, thrown result, duplicate activation, acknowledged write beside a separate list observation, target absence, and a same-id prop update. Pagination controls must not call the action. The collection stays mounted across those transitions; the test reads the same controller instance.
 - Evidence under `docs/evidence/my-trips-collection-archive-workflow-completion-1/` records source SHA, tree, dirty state, commands, exit codes, versions, the alias boundary, and the stubs. Screenshots are sanitized fixtures. They are not hosted, authenticated, native-device, zoom, screen-reader, SQL/RLS, or Production evidence. Setting root font size is not browser zoom.
@@ -296,7 +316,7 @@ Account home and World still stop at 200 trips. Severity: product gap, not a def
 
 The list index does not include `id`. Tie-break correctness does not require a new index at this scale. Adding one would be a schema change and is not requested.
 
-Server `~*` and `reisePasstZurSuche` can disagree. The collection shows the server result and says, in ordinary language, that server case handling can differ from the device. The local helper stays the contract for the unchanged callers.
+Server `~*` and `reisePasstZurSuche` can disagree. Fields are `title` and `origin` only. `NULL` origin does not match. `~*` follows the database's regular-expression case rules, not `ILIKE` and not `toLocaleLowerCase('de-CH')`. `ß`/`ss`, Turkish casing, fullwidth characters, and normalization can diverge. There is no claim of NFC or of a specific hosted collation. The report and the evidence notes state those limits. The product UI does not. The collection shows the server result. The local helper stays the contract for the unchanged callers.
 
 ## 7. What this plan commit does not do
 
@@ -329,7 +349,7 @@ A new `app/(public)/ui-audit/meine-reisen-sammlung/page.tsx` will not be added. 
 1. Shared mapper and `reisenLaden` call-through, with the section 8.1 test retarget.
 2. Pure URL/cursor/search contract and its tests, including the 626-character cursor and the `imatch` strings.
 3. Synthetic reader and the 251-row seam.
-4. Page integration and `MyTripsCollection`, one mounted controller, no prefetch.
+4. Page integration and `MyTripsCollection`, one mounted controller, no prefetch, navigation ownership from section 2.8.
 5. Archive ref guard, classifier, and button wiring.
 6. esbuild/Playwright script and evidence.
 7. Status, report, self-review, and handoff for that implementation head.
