@@ -4,7 +4,17 @@ Date: 2026-10-25. Author: Jetnity Admin User Directory Completion 1 — Cursor G
 
 ## State
 
-Candidate re-review R2 correction is on `feat/r107-admin-user-directory-1`, Draft PR #1020. This is not a product PASS, not Ready, and not a merge. TASK blob `704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb` and accepted PLAN blob `888407e808559463e22b0dbc2392bef09d01f48d` are unchanged. Machine mode: `NORMAL`.
+Main-sync 1 is integrated on `feat/r107-admin-user-directory-1`, Draft PR #1020. This is not a product PASS, not Ready, and not a PR merge. TASK blob `704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb` and accepted PLAN blob `888407e808559463e22b0dbc2392bef09d01f48d` are unchanged. Machine mode: `NORMAL`.
+
+## Main-sync 1
+
+History-preserving merge of accepted main `747c909cccb2b18ac91b7976b5b671dc11347cf3` (tree `63acafa9716450b6b5eadbddd25b6db693abefba`) into pre-sync head `878212adf0384bba02cd1ce217041a673bfdaf84` (tree `b0e0fe9601404e0954c956b19c6bf437a32b9a1d`). Prior merge-base `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge commit `b83477489864ed357f27c7bd1bd8d8b5ee92484c`, parents those two SHAs, tree `4e9032f5c455ed54074eef379d491e349a33c0a0`. Incoming main paths 99, lane paths 29, overlap none. The commit that contains this note is the only change after that merge. Its SHA is the branch head and is reported in the PR handoff, not here.
+
+`UsersTable.tsx` stays blob `4151e01aec8d60fc61f7685af583c6037dd1c718`. User actions stay `bd30b9e108890e17f1d6dc32829c687c089958e1`. `lib/auth/roles.ts` stays `01b8290bab658bb7a8b5a2ade491e4d31737ae7d`. `package-lock.json` stays `4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe`. `mounted.json` stays blob `b72ed29e3273326597d0c97384a0a4fe5ef9e18b` and still names execution head `5575794c1e84f703769bcaa2d1f98af0d4693812`. That 44-case run was not repeated. Root's five R2 cases at `878212ad` under Node 24.22.1 stay a separate historical packet.
+
+The earlier 69 focused results are not input-identical on this tree. `kein Caller reicht eine Factory-Promise als Client weiter` and `der Kompatibilitätsalias createServerClient bleibt unbenutzt als synchrone Hintertür` walk every non-test TS/TSX file. They see these 14 incoming paths: `components/trips/GastArbeitsbereich.tsx`, `components/trips/KontoArbeitsbereich.tsx`, `components/trips/RegistryReiseUebernahme.tsx`, `components/trips/Reisevorbereitung.tsx`, `components/trips/TripWorkspace.tsx`, `components/trips/useTripTravellerSnapshotLifecycle.ts`, `lib/readiness/trip-traveller-snapshot-workflow-1.ts`, `lib/traveller/account-registry-trip-copy.ts`, `scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts`, `scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx`, `scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx`, and the three shims `cache.ts`, `headers.ts`, `navigation.tsx`. The fresh native App run is the integrated-tree gate for those tests. This note does not record that run.
+
+## Earlier correction state
 
 - Reviewed head: `d29a621390bf1d760c3086bea8cb5f19e5160d25` (tree `2dd6dac278def5c897856c544ce92b12c267269f`)
 - Correction commit: `5575794c1e84f703769bcaa2d1f98af0d4693812` (tree `2ca0dd3fea46a9a2cec88abdbba60adc2436ee49`)
@@ -32,4 +42,4 @@ Ordinary gates on the correction bytes: focused tests 69/69 after the product co
 
 ## Next actor
 
-Root Technical Lead, independent exact-head re-gate. Cursor does not Ready, merge, close #1015, write `main`, or start a follow-up.
+Root Technical Lead, after the fresh native Typecheck/Lint/Build, Auth configuration, and exact-head Preview on the pushed head. Those results are recorded in the PR handoff. Cursor does not Ready, merge, close #1015, write `main`, or start a follow-up.

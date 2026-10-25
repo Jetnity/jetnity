@@ -135,5 +135,50 @@
       "error": "subtest spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT"
     }
   ],
-  "environmentCause": "PostgreSQL 16 binaries are absent. SUPABASE_PROJECT_REF is present and the local-proof guard treats that name as a forbidden connection override. No hosted fallback was used."
+  "environmentCause": "PostgreSQL 16 binaries are absent. SUPABASE_PROJECT_REF is present and the local-proof guard treats that name as a forbidden connection override. No hosted fallback was used.",
+  "mainSync1": {
+    "kind": "history-preserving-merge",
+    "preSyncHead": "878212adf0384bba02cd1ce217041a673bfdaf84",
+    "preSyncTree": "b0e0fe9601404e0954c956b19c6bf437a32b9a1d",
+    "mergedMain": "747c909cccb2b18ac91b7976b5b671dc11347cf3",
+    "mergedMainTree": "63acafa9716450b6b5eadbddd25b6db693abefba",
+    "priorMergeBase": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+    "mergeCommit": "b83477489864ed357f27c7bd1bd8d8b5ee92484c",
+    "mergeParents": [
+      "878212adf0384bba02cd1ce217041a673bfdaf84",
+      "747c909cccb2b18ac91b7976b5b671dc11347cf3"
+    ],
+    "mergeTree": "4e9032f5c455ed54074eef379d491e349a33c0a0",
+    "incomingMainPaths": 99,
+    "lanePathsAgainstMain": 29,
+    "pathOverlap": 0,
+    "productTestRunnerHarnessScreenshotDependencyConfigChanged": false,
+    "usersTableBlob": "4151e01aec8d60fc61f7685af583c6037dd1c718",
+    "usersActionsBlob": "bd30b9e108890e17f1d6dc32829c687c089958e1",
+    "rolesBlob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+    "packageLockBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "mountedJsonBlob": "b72ed29e3273326597d0c97384a0a4fe5ef9e18b",
+    "mountedExecutionHeadUnchanged": "5575794c1e84f703769bcaa2d1f98af0d4693812",
+    "mountedNotRerun": true,
+    "rootFiveCasePacketRemainsDistinct": "executed at 878212ad under Node 24.22.1; not this 44-case receipt",
+    "focused69NotInputIdentical": true,
+    "scannerVisibleIncomingTsTsx": [
+      "components/trips/GastArbeitsbereich.tsx",
+      "components/trips/KontoArbeitsbereich.tsx",
+      "components/trips/RegistryReiseUebernahme.tsx",
+      "components/trips/Reisevorbereitung.tsx",
+      "components/trips/TripWorkspace.tsx",
+      "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+      "lib/traveller/account-registry-trip-copy.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/aktions-stub.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/matrix.tsx",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/cache.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/headers.ts",
+      "scripts/trip-traveller-snapshot-workflow-completion-1/shims/navigation.tsx"
+    ],
+    "historicalCommandsNotReexecuted": true,
+    "finalHeadReportedOutsideThisFile": true
+  }
 }

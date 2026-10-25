@@ -30,6 +30,10 @@ Guard, select, order, page size 20, mutation expressions, the 1…5000 ceiling, 
 
 Focused tests 69/69 after `5575794c`. Mounted 44/44 on that commit, dirty empty at capture. `npm run typecheck` exit 0. `npm run lint` exit 0, 181 warnings, 0 errors. Hygiene checks exit 0. `npm run build` exit 0, compiled in 4.2s, `/admin/users` dynamic. `npm test` exit 1 with the 11 local PostgreSQL failures listed in `gates.json`.
 
+## Main-sync 1
+
+No product, test, runner, harness, screenshot, dependency, or configuration file changed for the sync. The merge commit is `b83477489864ed357f27c7bd1bd8d8b5ee92484c`, tree `4e9032f5c455ed54074eef379d491e349a33c0a0`. Retained evidence still names its original execution heads. The 44-case receipt and the 69 focused results were not rerun. The two repository-wide client-factory tests are not input-identical, because they see 14 incoming non-test TS/TSX paths. The fresh native App run is their integrated-tree gate.
+
 ## Database, security, cost
 
 No migration, RLS, grant, Auth, or provider change. No new dependency or monthly cost. Role and status mutation functions were not edited.

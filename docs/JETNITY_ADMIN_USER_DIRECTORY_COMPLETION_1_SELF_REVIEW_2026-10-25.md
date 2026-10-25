@@ -23,6 +23,10 @@ The correction removes only that acknowledgement clear. I did not rewrite `goto`
 - The historical #608 script is still outside this allowlist.
 - A same-value role or status selection during a delayed search is not the reviewed case. `commitFilters` still returns without a new replace when the href is unchanged, after snapping the field to the committed query.
 
+## Main-sync 1
+
+I merged accepted main and recorded provenance only. I did not rerun the mounted packet or the 69 focused tests, and I do not call those historical results a new execution on the integrated tree. The two repository-scanning tests in `lib/next/request-api-compat.test.ts` see 14 incoming non-test TS/TSX files, so the focused set is not input-identical.
+
 ## Not done
 
 No Ready, no merge, no tracking closure, no write to `main`, no hosted read, no personal browser.
