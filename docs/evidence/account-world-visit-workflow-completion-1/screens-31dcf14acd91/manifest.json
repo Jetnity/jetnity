@@ -1,0 +1,212 @@
+[
+  {
+    "file": "lang-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "long visit label after a deferred list check",
+    "target": "[data-besuch=\"00000000-0000-4000-8000-000000000001\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "lang-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "long visit label after a deferred list check",
+    "target": "[data-besuch=\"00000000-0000-4000-8000-000000000001\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "editor-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "open editor on the first visible visit",
+    "target": "[data-besuch-editor-epoche]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "editor-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "open editor on the first visible visit",
+    "target": "[data-besuch-editor-epoche]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "widerruf-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "open revoke confirmation on the next visible visit",
+    "target": "[data-besuch-bestaetigung]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "widerruf-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "open revoke confirmation on the next visible visit",
+    "target": "[data-besuch-bestaetigung]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "lesefehler-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "failed visit read with an empty payload",
+    "target": "[role=\"alert\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "lesefehler-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "failed visit read with an empty payload",
+    "target": "[role=\"alert\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "unbestaetigt-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown create outcome with Liste prüfen",
+    "target": "[data-besuch-art=\"bestaetigen\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "unbestaetigt-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown create outcome with Liste prüfen",
+    "target": "[data-besuch-art=\"bestaetigen\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "wiederherstellung-aendern-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown edit kept after a failed read",
+    "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"aendern\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "wiederherstellung-aendern-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown edit kept after a failed read",
+    "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"aendern\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "wiederherstellung-widerruf-320.png",
+    "capture": "element",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown revoke kept after the row left a valid list",
+    "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"widerrufen\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  },
+  {
+    "file": "wiederherstellung-widerruf-1440.png",
+    "capture": "element",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "rootFontPx": 32,
+    "state": "unknown revoke kept after the row left a valid list",
+    "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"widerrufen\"]",
+    "overflow": {
+      "verwaltung": 0,
+      "dokument": 0
+    }
+  }
+]

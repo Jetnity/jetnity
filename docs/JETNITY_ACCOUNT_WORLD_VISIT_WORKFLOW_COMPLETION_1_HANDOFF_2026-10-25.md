@@ -1,0 +1,77 @@
+# R107-W — Account World Visit Workflow Completion 1 — HANDOFF
+
+Date: 2026-10-25
+
+## Main-sync1
+
+The same original session merged authorized main and stopped. Draft. Not FINAL PASS, not Ready, not merged to main.
+
+- Logical name: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1
+- Session: https://cursor.com/agents/bc-af293d35-d2af-43d8-b193-9fbaab7c351b
+- Model: `grok-4.7-high-fast`
+- Branch: `feat/r107-account-world-visit-workflow-1`
+- Draft PR: #1018
+- Sync commit: `5888614f608d9c066fbf1d289ce115fad6377e82`
+- Sync tree: `6d2f07857af87adba66687c9fd395d90d22879dc`
+- Parents: `c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa`, `30119c5affbd391cce31f2ceade2e4b068dfbcba`
+- Authorized main and its tree: `30119c5affbd391cce31f2ceade2e4b068dfbcba`, `76654739b7882f954508299721c5d40fbb4df4b0`
+- At the sync commit: 17 ahead / 0 behind
+- TASK blob: `9fb3c8f242014761af64aa342a3222cf7d15f180`
+- PLAN blob: `771313c5c3ee601598d41e83e9ad2e1b6f6b73a4`
+- Path delta against that main: this lane's 69 paths only. Path delta against `c68ef9e1`: the 128 incoming main paths only. No shared path.
+- Dense fixture SHA256: `d2771930f5392fcd5b31889857c82241220ff4d6d70a5fd401aa438aea84aa14`
+- Retained c68 CSS SHA256: `b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc`. Root CSS binding check: pending. No replay was run.
+
+The note commit that contains this section is later than the sync commit. Re-read its head, tree, and ahead/behind. Do not invent that SHA here.
+
+Next actor: root Technical Lead, fresh exact-head gates on the pushed head. Cursor does not Ready, merge, close #1013, write main, start M, or start another task.
+
+## Where the correction stood before the sync
+
+The same original session corrected the candidate re-review R2 findings and the R2 layout addendum, then stopped for a full re-gating. Those facts below are the pre-sync record.
+
+- Session: https://cursor.com/agents/bc-af293d35-d2af-43d8-b193-9fbaab7c351b
+- Model: `grok-4.7-high-fast`
+- Logical name: Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1
+- Branch: `feat/r107-account-world-visit-workflow-1`
+- Draft PR: #1018
+- Tracking: #1013. Batch: #1011
+- Re-reviewed head: `90b2bbdcea77c5da28b2d90290eaf093adbb8235`
+- Correction code head: `e4b4c0bb16a68c982a9bf65445c9aab01a4bed15`
+- Correction code tree: `fced10150f700e318b4d3cbb6b5b15554caa70cb`
+- Main and merge-base, fetched before this handoff: `a74c443c6be3f064f150fcf021ab6154bda325e5`
+- Main tree: `c1fe5a50b0da710ef425674057f782b1dff6f8bc`
+- At the correction code head: 15 ahead / 0 behind
+- TASK blob: `9fb3c8f242014761af64aa342a3222cf7d15f180`
+- PLAN blob: `771313c5c3ee601598d41e83e9ad2e1b6f6b73a4`
+- Evidence: `docs/evidence/account-world-visit-workflow-completion-1/run-e4b4c0bb16a6.json`
+
+The docs commit that adds this handoff is the next commit. Re-read its head, tree, and ahead/behind. Do not treat `e4b4c0bb` as the review head once this file exists on a later commit.
+
+## What the next review should see
+
+- The editor's **Änderung speichern** and **Abbrechen** stay inside their own card at 320, 390, 768, and 1440 with a 32px root font. At 768 and 1440 the right edge is 66px inside the card.
+- The create form still uses a row from the small breakpoint upward, and its button stays inside that form.
+- Escape and **Abbrechen** return focus to the matching Bearbeiten button and send nothing.
+- Search, the create draft, and a newer visit opener keep focus.
+- Enter opens the editor. Enter in the year field sends one edit. `requestSubmit` is still the double-submit admission and is labeled that way.
+- The editor card is captured at all four widths. Revoke and recovery screenshots remain bound element captures.
+- Lint is 181 warnings and 0 errors. None are in this lane's files.
+
+Mounted harness on `e4b4c0bb`: 15 pass. Focused regressions: 62 pass. Typecheck, the five hygiene guards, and the production build: exit 0. `npm test`: exit 1, 7162 pass, 11 PostgreSQL-only failures, 5 skipped.
+
+## Next action
+
+Root Technical Lead re-gates the exact docs head. Author self-review is not that review.
+
+If the review is CHANGES REQUIRED, the same session and the same model continue. A new head invalidates this evidence.
+
+Do not Ready. Do not merge. Do not close #1013. Do not write main. Do not rebase unless main has moved and the Technical Lead explicitly orders a same-session sync. Do not cherry-pick a sibling. Integration order remains T → S → D → W → M.
+
+## Holds that stay
+
+#985/#982, #917, #913/#911, #968, #748, #626, #937/#936, and Bern #934. No Production DB, Auth, AAL, RLS, secret, provider, payment, legal, or launch authority follows from this lane. Global continuity files were not edited.
+
+## If main moves
+
+Report the new main, the merge-base, and ahead/behind. Wait. Do not sync from this handoff alone.

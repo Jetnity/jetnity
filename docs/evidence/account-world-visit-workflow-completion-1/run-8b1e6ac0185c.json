@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "author": "Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-af293d35-d2af-43d8-b193-9fbaab7c351b",
+  "model": "grok-4.7-high-fast",
+  "command": "node scripts/account-world-visit-workflow-completion-1/run.mjs",
+  "testCommand": "node --import tsx --test scripts/account-world-visit-workflow-completion-1/mounted.ts",
+  "node": "v22.23.4",
+  "playwright": "1.55.0",
+  "browser": "140.0.7339.16",
+  "commit": "8b1e6ac0185c2ba89542793a631f95ac0bb74ae4",
+  "tree": "5df10781056b0f445a4695299683aa0bdc79ed87",
+  "exit": 0,
+  "origin": "http://127.0.0.1:37469",
+  "aliasBoundary": "esbuild aliases replace only next/navigation and lib/account/besuche-aktionen.ts. AccountBesuche, the form, the hook, copy and project CSS stay real.",
+  "notClaimed": "This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot. This receipt does not amend the earlier run-82260869d6cb.json.",
+  "tracked": {
+    "before": "",
+    "beforeDirty": [],
+    "after": "?? docs/evidence/account-world-visit-workflow-completion-1/screens-8b1e6ac0185c/",
+    "afterDirty": [],
+    "cleanBefore": true
+  },
+  "sources": {
+    "components/account/AccountBesuche.tsx": "499604b000b030e2c7786161aed7bac3f5828323a401858785b73f792537f7df",
+    "components/account/AccountBesuchFormular.tsx": "6a68095f591a41cf51dd0f9fde30c374e0a23c4248143939ad3d6221fa682abc",
+    "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+    "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+    "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+    "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+  },
+  "proof": {
+    "scripts/account-world-visit-workflow-completion-1/run.mjs": "ea97ebdcd16a03811e55f34af165c62afbd067e94d0624416b168db548fd6305",
+    "scripts/account-world-visit-workflow-completion-1/mounted.ts": "1fe2579b1444eb7024159c63cee3440428b435d7d54cb6eafe9c63ebd4c80bf4",
+    "scripts/account-world-visit-workflow-completion-1/mount.tsx": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+    "scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+    "scripts/account-world-visit-workflow-completion-1/shims/navigation.ts": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+    "styles/globals.css": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+  },
+  "cssSha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79",
+  "stdoutTail": "TAP version 13\n# Subtest: eine lokale Lesepanne schickt nichts\nok 1 - eine lokale Lesepanne schickt nichts\n  ---\n  duration_ms: 512.334113\n  type: 'test'\n  ...\n# Subtest: dieselbe Runde bestätigt nur einmal\nok 2 - dieselbe Runde bestätigt nur einmal\n  ---\n  duration_ms: 250.347572\n  type: 'test'\n  ...\n# Subtest: zurückgegebene Absagen, Wurf und Bruch bleiben unbestätigt\nok 3 - zurückgegebene Absagen, Wurf und Bruch bleiben unbestätigt\n  ---\n  duration_ms: 1973.21371\n  type: 'test'\n  ...\n# Subtest: Annahme lässt die Liste offen und wählt keine Zeile\nok 4 - Annahme lässt die Liste offen und wählt keine Zeile\n  ---\n  duration_ms: 399.635653\n  type: 'test'\n  ...\n# Subtest: ein vorher gesehener Stempel wird nicht als neu bezeichnet\nok 5 - ein vorher gesehener Stempel wird nicht als neu bezeichnet\n  ---\n  duration_ms: 829.523271\n  type: 'test'\n  ...\n# Subtest: ein sauberer Editor übernimmt, ein schmutziger nicht\nok 6 - ein sauberer Editor übernimmt, ein schmutziger nicht\n  ---\n  duration_ms: 1109.036385\n  type: 'test'\n  ...\n# Subtest: Widerruf übernimmt geänderte Felder nicht\nok 7 - Widerruf übernimmt geänderte Felder nicht\n  ---\n  duration_ms: 437.542744\n  type: 'test'\n  ...\n# Subtest: Änderung und Widerruf unterwegs bleiben nach der Annahme offen\nok 8 - Änderung und Widerruf unterwegs bleiben nach der Annahme offen\n  ---\n  duration_ms: 1170.371136\n  type: 'test'\n  ...\n# Subtest: eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\nok 9 - eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\n  ---\n  duration_ms: 785.634008\n  type: 'test'\n  ...\n# Subtest: Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\nok 10 - Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\n  ---\n  duration_ms: 31754.619619\n  type: 'test'\n  ...\n# css lang 320 verwaltung=0 dokument=0\n# css lang 390 verwaltung=0 dokument=0\n# css lang 768 verwaltung=0 dokument=0\n# css lang 1440 verwaltung=0 dokument=0\n# Subtest: Prüfung, Fokus und Darstellung bleiben im Rahmen\nok 11 - Prüfung, Fokus und Darstellung bleiben im Rahmen\n  ---\n  duration_ms: 959.159383\n  type: 'test'\n  ...\n# css dichte 320 verwaltung=0 dokument=0\n# css dichte 390 verwaltung=0 dokument=0\n# css dichte 768 verwaltung=0 dokument=0\n# css dichte 1440 verwaltung=0 dokument=0\n# css lesefehler 320 verwaltung=0 dokument=0\n# css lesefehler 390 verwaltung=0 dokument=0\n# css lesefehler 768 verwaltung=0 dokument=0\n# css lesefehler 1440 verwaltung=0 dokument=0\n# css unbestaetigt 320 verwaltung=0 dokument=0\n# css unbestaetigt 390 verwaltung=0 dokument=0\n# css unbestaetigt 768 verwaltung=0 dokument=0\n# css unbestaetigt 1440 verwaltung=0 dokument=0\n# Subtest: dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\nok 12 - dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\n  ---\n  duration_ms: 1232.93115\n  type: 'test'\n  ...\n# Subtest: Erneut senden bleibt bei der aufgezeichneten Art\nok 13 - Erneut senden bleibt bei der aufgezeichneten Art\n  ---\n  duration_ms: 2751.725261\n  type: 'test'\n  ...\n# Subtest: Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste\nok 14 - Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste\n  ---\n  duration_ms: 1119.783647\n  type: 'test'\n  ...\n1..14\n# tests 14\n# suites 0\n# pass 14\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 45865.009049\n",
+  "stderrTail": ""
+}

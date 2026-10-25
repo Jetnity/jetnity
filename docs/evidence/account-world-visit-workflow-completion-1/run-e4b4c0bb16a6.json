@@ -1,0 +1,450 @@
+{
+  "status": "PASS",
+  "author": "Jetnity Account World Visit Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-af293d35-d2af-43d8-b193-9fbaab7c351b",
+  "model": "grok-4.7-high-fast",
+  "command": "node scripts/account-world-visit-workflow-completion-1/run.mjs",
+  "testCommand": "node --import tsx --test scripts/account-world-visit-workflow-completion-1/mounted.ts",
+  "node": "v22.23.4",
+  "playwright": "1.55.0",
+  "browser": "140.0.7339.16",
+  "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+  "tree": "fced10150f700e318b4d3cbb6b5b15554caa70cb",
+  "exit": 0,
+  "origin": "http://127.0.0.1:42285",
+  "aliasBoundary": "esbuild aliases replace only next/navigation and lib/account/besuche-aktionen.ts. AccountBesuche, the form, the hook, copy and project CSS stay real.",
+  "notClaimed": "This is not hosted Account proof, not SQL or RLS proof, not a full Next.js router proof, and not a device proof. A refresh request is not causal readback. A changed stamp is not a newer database snapshot. This receipt does not amend run-82260869d6cb.json, run-8b1e6ac0185c.json, or run-31dcf14acd91.json.",
+  "inputMethods": {
+    "requestSubmit": "The same-turn double submit calls form.requestSubmit() twice in one turn. That is guard admission, not a keyboard Enter pair.",
+    "keyboard": "Opening the editor, cancelling it with Escape, and submitting one edit use page.keyboard.press. The cancel button uses a pointer click."
+  },
+  "screenshotNote": "Each PNG is an element capture of the named target after the page viewport and root font are set. It is not a viewport crop of the map. Section and document overflow are still measured on the viewport. In this Chromium, window scrollTop clamps below the visit controls when the root font is 32px, so a viewport crop stays on the map.",
+  "tracked": {
+    "before": "",
+    "beforeDirty": [],
+    "after": "?? docs/evidence/account-world-visit-workflow-completion-1/screens-e4b4c0bb16a6/",
+    "afterDirty": [],
+    "cleanBefore": true
+  },
+  "sources": {
+    "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+    "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+    "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+    "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+    "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+    "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+  },
+  "proof": {
+    "scripts/account-world-visit-workflow-completion-1/run.mjs": "631dfe6deecfb9b02b00ca20835cb5a030c32078f847e5ef40c658a26aeffb1a",
+    "scripts/account-world-visit-workflow-completion-1/mounted.ts": "04dd72d47c48432c0fe5fc203cb032b158d17dcf09eac539062000aa83ca18b9",
+    "scripts/account-world-visit-workflow-completion-1/mount.tsx": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+    "scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+    "scripts/account-world-visit-workflow-completion-1/shims/navigation.ts": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+    "styles/globals.css": "99d38553a7cb31485b6faf49fdd8c4838ebd2906293dd9f2c22cb753dc673114"
+  },
+  "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+  "screenshots": [
+    {
+      "file": "lang-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "long visit label after a deferred list check",
+      "target": "[data-besuch=\"00000000-0000-4000-8000-000000000001\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "lang-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "long visit label after a deferred list check",
+      "target": "[data-besuch=\"00000000-0000-4000-8000-000000000001\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "editor-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open editor inside its own card",
+      "target": "article:has([data-besuch-editor-epoche])",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "editor-390.png",
+      "capture": "element",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open editor inside its own card",
+      "target": "article:has([data-besuch-editor-epoche])",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "editor-768.png",
+      "capture": "element",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open editor inside its own card",
+      "target": "article:has([data-besuch-editor-epoche])",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "editor-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open editor inside its own card",
+      "target": "article:has([data-besuch-editor-epoche])",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "widerruf-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open revoke confirmation on the next visible visit",
+      "target": "[data-besuch-bestaetigung]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "widerruf-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "open revoke confirmation on the next visible visit",
+      "target": "[data-besuch-bestaetigung]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "lesefehler-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "failed visit read with an empty payload",
+      "target": "[role=\"alert\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "lesefehler-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "failed visit read with an empty payload",
+      "target": "[role=\"alert\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "unbestaetigt-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown create outcome with Liste prüfen",
+      "target": "[data-besuch-art=\"bestaetigen\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "unbestaetigt-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown create outcome with Liste prüfen",
+      "target": "[data-besuch-art=\"bestaetigen\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "wiederherstellung-aendern-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown edit kept after a failed read",
+      "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"aendern\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "wiederherstellung-aendern-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown edit kept after a failed read",
+      "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"aendern\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "wiederherstellung-widerruf-320.png",
+      "capture": "element",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown revoke kept after the row left a valid list",
+      "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"widerrufen\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    },
+    {
+      "file": "wiederherstellung-widerruf-1440.png",
+      "capture": "element",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFontPx": 32,
+      "state": "unknown revoke kept after the row left a valid list",
+      "target": "[data-besuch-vorgang-haltung=\"eigen\"] [data-besuch-art=\"widerrufen\"]",
+      "overflow": {
+        "verwaltung": 0,
+        "dokument": 0
+      },
+      "commit": "e4b4c0bb16a68c982a9bf65445c9aab01a4bed15",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sources": {
+        "components/account/AccountBesuche.tsx": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "components/account/AccountBesuchFormular.tsx": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "components/account/useAccountVisitWorkflow.ts": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "lib/account/account-visit-workflow.ts": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "lib/account/account-visit-workflow.test.ts": "ec8610afb6982e7bfa01b86bd79bff15519542a8e32e30ff576f99b7b543ea6b",
+        "lib/account/besuche-copy.ts": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207"
+      }
+    }
+  ],
+  "stdoutTail": " geänderte Felder nicht\nok 7 - Widerruf übernimmt geänderte Felder nicht\n  ---\n  duration_ms: 562.296937\n  type: 'test'\n  ...\n# Subtest: Änderung und Widerruf unterwegs bleiben nach der Annahme offen\nok 8 - Änderung und Widerruf unterwegs bleiben nach der Annahme offen\n  ---\n  duration_ms: 1349.718806\n  type: 'test'\n  ...\n# Subtest: eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\nok 9 - eine neue Widerrufsabsicht bleibt, wenn die alte Antwort kommt\n  ---\n  duration_ms: 1042.730121\n  type: 'test'\n  ...\n# Subtest: Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\nok 10 - Suche, Lesefehler, Entfernen und Karte bleiben ehrlich\n  ---\n  duration_ms: 32269.875078\n  type: 'test'\n  ...\n# css lang 320 verwaltung=0 dokument=0\n# css lang 390 verwaltung=0 dokument=0\n# css lang 768 verwaltung=0 dokument=0\n# css lang 1440 verwaltung=0 dokument=0\n# Subtest: Prüfung, Fokus und Darstellung bleiben im Rahmen\nok 11 - Prüfung, Fokus und Darstellung bleiben im Rahmen\n  ---\n  duration_ms: 1194.273725\n  type: 'test'\n  ...\n# halt editor 320 Änderung speichern ueberhangRechts=-58 breit=204 hoch=112\n# halt editor 320 Abbrechen ueberhangRechts=-58 breit=204 hoch=88\n# halt anlage 320 Besuch bestätigen ueberhangRechts=-33 breit=254 hoch=112\n# halt editor 390 Änderung speichern ueberhangRechts=-58 breit=274 hoch=112\n# halt editor 390 Abbrechen ueberhangRechts=-58 breit=274 hoch=88\n# halt anlage 390 Besuch bestätigen ueberhangRechts=-33 breit=324 hoch=88\n# halt editor 768 Änderung speichern ueberhangRechts=-66 breit=244 hoch=112\n# halt editor 768 Abbrechen ueberhangRechts=-66 breit=244 hoch=88\n# halt anlage 768 Besuch bestätigen ueberhangRechts=-388.64 breit=338 hoch=88\n# halt editor 1440 Änderung speichern ueberhangRechts=-66 breit=337 hoch=112\n# halt editor 1440 Abbrechen ueberhangRechts=-66 breit=337 hoch=88\n# halt anlage 1440 Besuch bestätigen ueberhangRechts=-1060.64 breit=338 hoch=88\n# css editor 320 verwaltung=0 dokument=0\n# css editor 390 verwaltung=0 dokument=0\n# css editor 768 verwaltung=0 dokument=0\n# css editor 1440 verwaltung=0 dokument=0\n# css widerruf 320 verwaltung=0 dokument=0\n# css widerruf 390 verwaltung=0 dokument=0\n# css widerruf 768 verwaltung=0 dokument=0\n# css widerruf 1440 verwaltung=0 dokument=0\n# css lesefehler 320 verwaltung=0 dokument=0\n# css lesefehler 390 verwaltung=0 dokument=0\n# css lesefehler 768 verwaltung=0 dokument=0\n# css lesefehler 1440 verwaltung=0 dokument=0\n# css unbestaetigt 320 verwaltung=0 dokument=0\n# css unbestaetigt 390 verwaltung=0 dokument=0\n# css unbestaetigt 768 verwaltung=0 dokument=0\n# css unbestaetigt 1440 verwaltung=0 dokument=0\n# Subtest: dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\nok 12 - dichte Liste, Widerruf, Lesefehler und unklare Antwort bleiben im Rahmen\n  ---\n  duration_ms: 2454.787729\n  type: 'test'\n  ...\n# Subtest: Erneut senden bleibt bei der aufgezeichneten Art\nok 13 - Erneut senden bleibt bei der aufgezeichneten Art\n  ---\n  duration_ms: 3272.728476\n  type: 'test'\n  ...\n# css wiederherstellung-aendern 320 verwaltung=0 dokument=0\n# css wiederherstellung-aendern 390 verwaltung=0 dokument=0\n# css wiederherstellung-aendern 768 verwaltung=0 dokument=0\n# css wiederherstellung-aendern 1440 verwaltung=0 dokument=0\n# css wiederherstellung-widerruf 320 verwaltung=0 dokument=0\n# css wiederherstellung-widerruf 390 verwaltung=0 dokument=0\n# css wiederherstellung-widerruf 768 verwaltung=0 dokument=0\n# css wiederherstellung-widerruf 1440 verwaltung=0 dokument=0\n# Subtest: Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste\nok 14 - Vorgang und Prüfung bleiben ohne Zeile und ohne erfolgreiche Liste\n  ---\n  duration_ms: 2296.126242\n  type: 'test'\n  ...\n# Subtest: Escape und Abbrechen geben den Fokus an Bearbeiten zurück\nok 15 - Escape und Abbrechen geben den Fokus an Bearbeiten zurück\n  ---\n  duration_ms: 3537.231336\n  type: 'test'\n  ...\n1..15\n# tests 15\n# suites 0\n# pass 15\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 55247.112865\n",
+  "stderrTail": ""
+}
