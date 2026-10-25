@@ -1167,14 +1167,13 @@ export function registerMounted() {
       ruhig()
     })
 
-    fall('Escape setzt den Fokus auf den bleibenden Schalter', async (page) => {
+    fall('Abbrechen setzt den Fokus auf den bleibenden Schalter', async (page) => {
       const traveller = person(1, 'Alice')
       await oeffnen(page)
       await setzen(page, liste([traveller]))
       await verwalten(page, traveller.id)
       await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
-      await page.locator('[data-registry-editor$="citizenship-anlegen"] select').first().focus()
-      await page.keyboard.press('Escape')
+      await page.locator('form[data-registry-editor$="citizenship-anlegen"]').getByRole('button', { name: REGISTRY_COPY.abbrechen }).click()
       await page.waitForFunction(
         (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
         `staat-knopf:${traveller.id}`,
@@ -1182,8 +1181,7 @@ export function registerMounted() {
       assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
 
       await page.locator(`[data-fokus="dokument-knopf:${traveller.id}"]`).click()
-      await page.locator('[data-registry-editor$="document-anlegen"] select').first().focus()
-      await page.keyboard.press('Escape')
+      await page.locator('form[data-registry-editor$="document-anlegen"]').getByRole('button', { name: REGISTRY_COPY.abbrechen }).click()
       await page.waitForFunction(
         (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
         `dokument-knopf:${traveller.id}`,
@@ -1191,13 +1189,15 @@ export function registerMounted() {
       assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
 
       await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
-      await page.evaluate(`(() => {
+      const sofort = await page.evaluate(`(() => {
         const form = document.querySelector('form[data-registry-editor$="citizenship-anlegen"]')
         const abbrechen = form && form.querySelector('button[type="button"]')
         if (abbrechen instanceof HTMLButtonElement) abbrechen.click()
         const ziel = document.querySelector('[data-fokus^="loeschen:"]')
         if (ziel instanceof HTMLElement) ziel.focus()
+        return document.activeElement?.getAttribute('data-fokus') ?? null
       })()`)
+      assert.equal(sofort, `loeschen:${traveller.id}`)
       await page.locator('form[data-registry-editor$="citizenship-anlegen"]').waitFor({ state: 'detached' })
       assert.equal((await fokus(page)).fokus, `loeschen:${traveller.id}`)
 
@@ -1211,8 +1211,7 @@ export function registerMounted() {
       await page.locator(`[data-fokus="dokument-aendern:${dokId}"]`).click()
       await senden(page, editor)
       await page.waitForFunction(() => window.__registryAufrufe.length === 1)
-      await page.locator(`form[data-registry-editor="${editor}"] select`).first().focus()
-      await page.keyboard.press('Escape')
+      await page.locator(`form[data-registry-editor="${editor}"]`).getByRole('button', { name: REGISTRY_COPY.abbrechen }).click()
       await page.waitForFunction(
         (ziel) => document.activeElement?.getAttribute('data-fokus') === ziel,
         `dokument-aendern:${dokId}`,
@@ -1229,6 +1228,68 @@ export function registerMounted() {
       assert.ok(epocheEditor > epocheBeleg)
       assert.equal(await page.locator(`form[data-registry-editor="${editor}"] select`).first().inputValue(), 'passport')
       assert.equal(await anzahl(page), 1)
+      ruhig()
+    })
+
+    fall('Abbrechen laesst den Fokus auf dem aelteren Beleg', async (page) => {
+      const traveller = person(1, 'Alice')
+      const editor = `reisender:${traveller.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Entwurf')
+      await senden(page, editor)
+      await page.waitForFunction(() => window.__registryAufrufe.length === 1)
+      await ablehnen(page, (await aufrufe(page))[0]!.id)
+      await beleg(page, editor, 'unbestaetigt').waitFor()
+      await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
+      await page.locator('form[data-registry-editor$="citizenship-anlegen"]').waitFor()
+      const sofort = await page.evaluate(`(() => {
+        const form = document.querySelector('form[data-registry-editor$="citizenship-anlegen"]')
+        const abbrechen = form && form.querySelector('button[type="button"]')
+        if (abbrechen instanceof HTMLButtonElement) abbrechen.click()
+        const wiederholen = document.querySelector('[data-registry-beleg] button')
+        if (!(wiederholen instanceof HTMLElement)) return null
+        wiederholen.focus()
+        const aktiv = document.activeElement
+        return aktiv instanceof HTMLElement ? aktiv.textContent : null
+      })()`)
+      assert.equal(typeof sofort === 'string' && sofort.includes(REGISTRY_COPY.erneutAktion), true)
+      await page.locator('form[data-registry-editor$="citizenship-anlegen"]').waitFor({ state: 'detached' })
+      const danach = await page.evaluate(() => document.activeElement?.textContent ?? '')
+      assert.equal(danach.includes(REGISTRY_COPY.erneutAktion), true)
+      assert.notEqual((await fokus(page)).fokus, `staat-knopf:${traveller.id}`)
+      assert.equal(await anzahl(page), 1)
+      ruhig()
+      return { sofort }
+    })
+
+    fall('Escape schliesst die Verwaltung und behaelt den Entwurf', async (page) => {
+      const traveller = person(1, 'Alice')
+      const editor = `reisender:${traveller.id}:aendern`
+      await oeffnen(page)
+      await setzen(page, liste([traveller]))
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).fill('Entwurf bleibt')
+      await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).press('Escape')
+      await page.waitForFunction(() => document.querySelector('[data-registry-verwaltung]') == null)
+      assert.equal((await fokus(page)).fokus, `verwalten:${traveller.id}`)
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="aendern:${traveller.id}"]`).click()
+      assert.equal(await page.locator(`[data-registry-editor="${editor}"] input:not([role="searchbox"])`).inputValue(), 'Entwurf bleibt')
+      await page.locator(`[data-fokus="staat-knopf:${traveller.id}"]`).click()
+      await page.locator('form[data-registry-editor$="citizenship-anlegen"] select').first().press('Escape')
+      await page.waitForFunction(() => document.querySelector('[data-registry-verwaltung]') == null)
+      assert.equal((await fokus(page)).fokus, `verwalten:${traveller.id}`)
+      await verwalten(page, traveller.id)
+      await page.locator(`[data-fokus="loeschen:${traveller.id}"]`).click()
+      await page.keyboard.press('Escape')
+      assert.equal(await page.locator(`[data-registry-editor="reisender:${traveller.id}:loeschen"]`).count(), 0)
+      assert.equal(await page.locator('[data-registry-verwaltung="offen"]').count(), 1)
+      assert.equal((await fokus(page)).fokus, `loeschen:${traveller.id}`)
+      assert.equal(await anzahl(page), 0)
       ruhig()
     })
 

@@ -178,7 +178,7 @@ export default function AccountReisendeKarte({
   const panelRef = useRef<HTMLDivElement>(null)
   const loeschenRef = useRef<HTMLElement>(null)
   const warOffen = useRef(false)
-  const fokusZiel = useRef<string | null>(null)
+  const fokusZiel = useRef<{ ziel: string; editor: string } | null>(null)
   const [fokusSchritt, setFokusSchritt] = useState(0)
   const heute = useSyncExternalStore(ohneKalendertagAbo, leseGeraeteKalendertag, keinServerKalendertag)
   const surface = `reisender:${traveller.id}`
@@ -222,20 +222,22 @@ export default function AccountReisendeKarte({
     if (loeschen?.offen) loeschenRef.current?.focus()
   }, [loeschen?.offen])
 
-  function fokusNachCommit(ziel: string) {
-    fokusZiel.current = ziel
+  function fokusNachCommit(ziel: string, editor: string) {
+    fokusZiel.current = { ziel, editor }
     setFokusSchritt((wert) => wert + 1)
   }
 
   useEffect(() => {
-    const ziel = fokusZiel.current
-    if (!ziel) return
+    const wunsch = fokusZiel.current
+    if (!wunsch) return
     fokusZiel.current = null
     const aktiv = document.activeElement as HTMLElement | null
     const frei = aktiv == null || aktiv === document.body || aktiv === document.documentElement
-    const imEditor = Boolean(aktiv?.closest?.('[data-registry-editor]'))
-    if (!frei && !imEditor) return
-    document.querySelector<HTMLElement>(`[data-fokus="${CSS.escape(ziel)}"]`)?.focus()
+    const imFormular = Boolean(
+      aktiv?.closest?.(`form[data-registry-editor="${CSS.escape(wunsch.editor)}"]`),
+    )
+    if (!frei && !imFormular) return
+    document.querySelector<HTMLElement>(`[data-fokus="${CSS.escape(wunsch.ziel)}"]`)?.focus()
   }, [fokusSchritt])
 
   function fokusAuf(ziel: string) {
@@ -508,13 +510,6 @@ export default function AccountReisendeKarte({
                 data-registry-editor={staatEditor}
                 data-registry-epoche={staat?.epoche ?? 0}
                 className="mt-4 flex flex-col gap-2"
-                onKeyDown={(event) => {
-                  if (event.key !== 'Escape') return
-                  event.preventDefault()
-                  event.stopPropagation()
-                  workflow.schliessen(staatEditor)
-                  fokusNachCommit(`staat-knopf:${traveller.id}`)
-                }}
                 onSubmit={(event) => {
                   event.preventDefault()
                   const land = neueStaatsbuergerschaft.trim().toUpperCase()
@@ -546,7 +541,7 @@ export default function AccountReisendeKarte({
                     className={nebenAktion}
                     onClick={() => {
                       workflow.schliessen(staatEditor)
-                      fokusNachCommit(`staat-knopf:${traveller.id}`)
+                      fokusNachCommit(`staat-knopf:${traveller.id}`, staatEditor)
                     }}
                   >
                     {REGISTRY_COPY.abbrechen}
@@ -673,15 +668,6 @@ export default function AccountReisendeKarte({
                 data-registry-editor={dokumentSlot.editor}
                 data-registry-epoche={dokumentSlot.epoche}
                 data-registry-dokument-edit={dokumentModus === 'neu' ? '' : dokumentModus}
-                onKeyDown={(event) => {
-                  if (event.key !== 'Escape') return
-                  event.preventDefault()
-                  event.stopPropagation()
-                  workflow.schliessen(dokumentSlot.editor)
-                  fokusNachCommit(
-                    dokumentModus === 'neu' ? `dokument-knopf:${traveller.id}` : `dokument-aendern:${dokumentModus}`,
-                  )
-                }}
                 onSubmit={(event) => {
                   event.preventDefault()
                   workflow.senden(dokumentSlot.editor)
@@ -752,6 +738,7 @@ export default function AccountReisendeKarte({
                       workflow.schliessen(dokumentSlot.editor)
                       fokusNachCommit(
                         dokumentModus === 'neu' ? `dokument-knopf:${traveller.id}` : `dokument-aendern:${dokumentModus}`,
+                        dokumentSlot.editor,
                       )
                     }}
                   >
