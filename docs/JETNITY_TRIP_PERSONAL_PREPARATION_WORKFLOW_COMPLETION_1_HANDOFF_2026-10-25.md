@@ -6,41 +6,41 @@ Date: 2026-10-25. Writer: **Jetnity Trip Personal Preparation Workflow Completio
 
 ## Exact git at authoring
 
-- Actual main, re-read before this docs commit: `500fbe40c8c8a70a0fe0d291782289f809d5d5b3`
+- Actual main, re-read before this docs commit: `41844878a8437256572da3de1374fbb36fd7a516`
 - Merge-base: `500fbe40c8c8a70a0fe0d291782289f809d5d5b3`
-- Reviewed R1 head: `b218c33d9d00c19f3705aba8bd208cc455272659`
-- R1 behavior head: `46ae6c153c1203f350452dd700a7651acceda2c0`
-- Lint-clean harness head: `570634e37f2d7494ffc2039668081da6cd961a8b`
-- First product proof head: `9838423eb4f0925be2b9b071e39fd627b8735220`
+- Reviewed R2 head: `80006fdf1443ca9d75d8c481246821354da16000`
+- R2 behavior head: `760afc59374c56a288925d09022688631f5dca74`
+- R1 review head, historical CI [40186336755](https://github.com/Jetnity/jetnity/actions/runs/40186336755): `80006fdf1443ca9d75d8c481246821354da16000`
 - Accepted planning head: `f0ed49ee8cda6a5805ba2c1e803b2122d68cfae7`
 - TASK blob: `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`
-- PLAN blob after T-1.1: `e58f582669793ff3b7d86727ac9130afa89eef98`
-- Behind / ahead before this docs commit: 0 / 8
-- The review head is the commit that contains this file. It updates STATUS, REPORT, SELF_REVIEW, HANDOFF, and adds `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r1/zaehlung.json`.
+- PLAN blob: `e58f582669793ff3b7d86727ac9130afa89eef98`
+- Behind / ahead before this docs commit: 12 / 10
+- The review head is the commit that contains this file. It updates STATUS, REPORT, SELF_REVIEW, HANDOFF, the nested TAP counter in `browser-lauf.mjs`, and `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r2/`.
+- No main sync. Integration remains O → A → T.
 - Mode `NORMAL`. Branch `feat/r106-trip-personal-preparation-workflow-1`.
 
 ## Ownership
 
-R1 product paths: `lib/readiness/personal-preparation-workflow.ts`, `components/trips/usePersonalPreparationLifecycle.ts`, `components/trips/EigeneReisevorbereitung.tsx`.
+R2 product paths: `lib/readiness/personal-preparation-workflow.ts`, `components/trips/EigeneReisevorbereitung.tsx`.
 
-R1 tests and harness: `lib/readiness/personal-preparation-workflow.test.ts`, `lib/readiness/personal-preparation-workflow-wiring.test.ts`, `scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts` (moved from `lib/readiness/`), `arbeitsbereich.tsx`, `arbeitsbereich.test.ts`, `browser-lauf.mjs`, and `shims/`.
+R2 tests and harness: `lib/readiness/personal-preparation-workflow.test.ts`, `scripts/trip-personal-preparation-workflow-completion-1/personal-preparation-workflow-ui.test.ts`, `arbeitsbereich.tsx`, `arbeitsbereich.test.ts`, `browser-lauf.mjs`.
 
-Unchanged from the first delivery and not rewritten by R1: `TripWorkspace.tsx`, `KontoArbeitsbereich.tsx`, `GastArbeitsbereich.tsx`, `Reisevorbereitung.tsx`, and `aktiveV3GastreiseLesen` in `lib/trips/gastspeicher.ts`. TASK and PLAN were not edited. `docs/ACTIVE_WORK_STATUS.md` was not edited.
+Unchanged by R2: `usePersonalPreparationLifecycle.ts` blob `a11b25652281e9d04be29aad7e0d9cf53c28e4e1`, `TripWorkspace.tsx`, `KontoArbeitsbereich.tsx`, `GastArbeitsbereich.tsx`, `Reisevorbereitung.tsx`, and `aktiveV3GastreiseLesen`. TASK and PLAN were not edited. `docs/ACTIVE_WORK_STATUS.md` was not edited.
 
 Frozen contracts were not rewritten: readiness actions, gast writer, bauen, schema, domain, fingerprint, status, storage writers, Official, provider, pilot, routing, migrations, Auth, package, and workflows.
 
 ## Proof
 
-On the R1 tree: native personal-preparation tests 22/22 exit 0; browser runner 19/19 exit 0 with 0 cancelled; workspace suite re-run after the lint fix 5/5; typecheck exit 0; lint exit 0 with 0 errors and 181 warnings; five hygiene guards exit 0; `npm run build` exit 0, Next.js 16.4.1. Evidence directory `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r1/`. Prior `2026-10-25-lauf-1/` was not overwritten.
+On `760afc59`: workflow, wiring, identity, and workspace tests 28/28; custom-list 15 mounted plus 1 source comparison, 16/16; workspace 6/6; typecheck exit 0; lint exit 0 with 0 errors and 181 warnings; five hygiene guards exit 0; `npm run build` exit 0, Next.js 16.4.1. Current CSS, keyboard, 32px root, and reduced motion are in `2026-10-25-r2/ablauf.json`. Browser TAP is `2026-10-25-r2/*.txt`. Prior evidence directories were not overwritten.
 
-NOT VERIFIED: hosted Account, full Next router, Supabase, RLS, Production, native zoom, a physical device, a screen reader, a fresh full `npm test`, and native App, Auth, and Preview for this head. App run 40157857026 on `b218c33d` failed because the browser file was still inside the native glob. That result is historical.
+NOT VERIFIED: hosted Account, full Next router, Supabase, RLS, Production, native zoom, a physical device, a screen reader, a fresh full local `npm test`, and native App, Auth, and Preview for this head.
 
 ## Findings
 
 - P0: none in the owned local proof.
-- P1: guest whole-trip writes remain non-atomic across tabs. The read barrier and the unclear-outcome obligation are in memory and end when TripWorkspace unmounts.
-- P2: the harness trip-id guard is not the frozen guest callback. A matching read after an unknown outcome is reconciliation, not causal confirmation. CI for this head was not observed at authoring. Local PostgreSQL 16 proofs were not re-run.
-- P3: the schwebend retry control stays clickable and is refused centrally. Narrow filter controls stack. Harness chrome is not product UI.
+- P1: guest whole-trip writes remain non-atomic across tabs. The in-memory ledger ends when TripWorkspace unmounts.
+- P2: the barrier proof calls production click handlers directly where the control is HTML-disabled. A late guest response does not cancel the write already stored. CI for this head was not observed at authoring.
+- P3: narrow filter controls stack. Harness chrome is not product UI.
 
 ## Database, production, provider, cost
 
@@ -48,4 +48,4 @@ No migration, RLS, Auth, secret, provider, payment, dependency, workflow, or tim
 
 ## Next actor
 
-Technical Lead, same author and session, for an independent exact-head re-gate of the commit that contains this file. Do not Ready, merge, close #1006, write main, or start a follow-up from this handoff. Integration remains O → A → T. A later main advance waits for an explicit sync instruction.
+Technical Lead, same author and session, for an independent exact-head re-gate of the commit that contains this file. Do not Ready, merge, close #1006, write main, or start a follow-up from this handoff. A later main advance waits for an explicit sync instruction after A actual-main PASS.

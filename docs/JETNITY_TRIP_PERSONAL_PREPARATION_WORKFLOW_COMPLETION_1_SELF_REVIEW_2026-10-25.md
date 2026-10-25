@@ -2,19 +2,16 @@
 
 Date: 2026-10-25. Writer: **Jetnity Trip Personal Preparation Workflow Completion 1 — Cursor Generation 1**. Session `bc-6bbca11e-14c9-4f1a-ac07-e729d8a54ca3`. Model `grok-4.7-high-fast`.
 
-This self-review is not Technical-Lead PASS. It does not authorize Ready or merge. R1 behavior head `46ae6c153c1203f350452dd700a7651acceda2c0`. Lint-clean harness head `570634e37f2d7494ffc2039668081da6cd961a8b`. The review head is the commit that contains this file. That commit adds the R1 record to these documents and `docs/evidence/trip-personal-preparation-workflow-completion-1/2026-10-25-r1/zaehlung.json`. It does not change runtime.
+This self-review is not Technical-Lead PASS. It does not authorize Ready or merge. R2 behavior head `760afc59374c56a288925d09022688631f5dca74`. The review head is the commit that contains this file. TASK blob `961e288a4e0ba40fa00e7ea95e920eabd6423ff2` and PLAN blob `e58f582669793ff3b7d86727ac9130afa89eef98` are unchanged.
 
 ## Checked
 
-- TASK blob remains `961e288a4e0ba40fa00e7ea95e920eabd6423ff2`. PLAN blob remains `e58f582669793ff3b7d86727ac9130afa89eef98`.
-- T-R1 is in `entscheiden`, not only on a disabled button. The schwebend create receipt can still be clicked. The click returns no writer call while the read obligation is open.
-- T-R2 reclassifies every still-unresolved phase listed in the review when a later qualified read arrives. An unknown match stays `reconciled`. Pending and confirmed intents are not reopened.
-- T-1.1 is unchanged: `continuationUsed` is set, the ledger is committed, then at most one `onReadinessAktualisieren` runs. Raw `serverReise` is still the only account observation prop.
-- T-R3 binds focus to `fokusGeneration` and protects that generation with `revision` against an older effect. Collapse does not reopen the personal `<details>`.
-- T-R4 mounts `TripWorkspace` and the real guest reader and writer. The sibling `entry-geschwister` entry check survives create, edit, status, and delete.
-- T-R5 moved the browser file out of the native glob and kept a readFileSync wiring test. The explicit runner exited 0 with 19 passes and 0 cancelled.
-- The guest barrier is still checked inside `entscheiden` before the read obligation. Discard does not clear it.
-- Official `summary.officialResult` stays `unknown`. The write payload still has no fingerprint.
+- An older canonical read of a conflicting edit does not remove the lock held by a newer pending edit of the same ref. Delete and retry of that ref return no order. A pending edit of a different ref keeps its lock while the older ref is reconciled.
+- Focusing Erledigt or Endgültig entfernen on B moves the interaction generation. A's later confirmation leaves that control focused.
+- After a named delete and a successful read with no personal ref, the body does not contain "Gespeichert und im aktuellen Stand sichtbar." Speichern is absent. The absence sentence remains.
+- Guest callback entry increments `entries` and `writes` immediately. A switched trip keeps those bytes. Releasing the late response adds no write and no read, and the new trip's draft stays empty.
+- After a wrong-trip read, discard, a typed new draft, and real mode-away/back, submit, Enter, edit, status, delete, and retry do not increase `entries` or the queue. A later successful read of the expected trip allows one deliberate save. Foreign and invalid bytes stay until the test itself restores them.
+- The current-source CSS matrix uses `.next/static` from the local build of this tree. Historical CSS evidence was not overwritten.
 
 ## Findings
 
@@ -24,15 +21,17 @@ None in the owned local proof.
 
 ### P1
 
-The guest whole-trip writer still has no compare-and-swap. The read barrier and the unclear-outcome obligation are in memory and end when TripWorkspace unmounts. Two tabs can still replace each other's whole-trip bytes.
+The guest whole-trip writer still has no compare-and-swap. The read barrier, locks, and unclear-outcome obligation live in memory and end when TripWorkspace unmounts. Two tabs can still replace each other's whole-trip bytes.
 
 ### P2
 
-The workspace harness adds its own trip-id check before a deferred `gastReadinessSetzen`. The frozen `GastArbeitsbereich` callback does not have that check. A successful read reconciles an unknown outcome. It does not prove which request produced the row, and absence does not prove a lost write will never commit. Native App, Auth, and Preview for this head were not observed at authoring. The App failure on `b218c33d` is historical. Full `npm test` was not re-run here. The earlier 11 local PostgreSQL 16 failures remain an environment limit.
+Status, save, named delete, and row retry stay HTML-disabled while the barrier is set. React does not call `onClick` for that prop. The workspace proof invokes the production `onClick` stored on the node and then counts callback entries. Submit and Enter use the real form events because that control is only `aria-disabled`. This is not a pointer click on a disabled button.
+
+A late guest response does not undo the write that already reached storage. A matching read after an unknown outcome stays reconciliation, not causal confirmation. Native App, Auth, and Preview for this head were not observed at authoring. Full local `npm test` was not re-run. The CSS matrix mounts the list and hook, not the full TripWorkspace chrome. The behavior suites are unstyled.
 
 ### P3
 
-The schwebend receipt button is not HTML-disabled during the read obligation. The central path refuses the write. Below the `sm` breakpoint the filter controls remain full-width stacked buttons. Harness chrome is not product UI.
+Below the `sm` breakpoint the filter controls remain stacked. Harness chrome is not product UI. The first absence filter hid a still-current confirmation; that attempt failed and is not the retained behavior.
 
 ## Not claimed
 

@@ -56,7 +56,7 @@ function zaehlen(tap) {
     const treffer = tap.match(new RegExp(`^# ${name} (\\d+)`, 'm'))
     return treffer ? Number(treffer[1]) : 0
   }
-  const faelle = [...tap.matchAll(/^(not )?ok \d+ - (.+)$/gm)].map((treffer) => ({
+  const faelle = [...tap.matchAll(/^[ \t]+(not )?ok \d+ - (.+)$/gm)].map((treffer) => ({
     ok: treffer[1] == null,
     name: treffer[2],
   }))
