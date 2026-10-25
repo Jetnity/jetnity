@@ -1,0 +1,196 @@
+node v22.23.4
+npm 10.9.7
+cwd for npm: disposable /tmp project containing only the byte-verified package.json and package-lock.json
+child: env -i
+allowlist: PATH, existing HOME unchanged and not printed, USER, LANG, LC_ALL=C.UTF-8, TMPDIR=disposable/tmp, NODE_ENV=development
+absent from the child: CODEX_HOME, npm_config_*, NPM_CONFIG_*, NPM_TOKEN, NODE_AUTH_TOKEN, NODE_OPTIONS, HTTP_PROXY, HTTPS_PROXY, ALL_PROXY, http_proxy, https_proxy, all_proxy, NO_PROXY
+LOGNAME was not present in the parent and was not added
+userconfig and globalconfig: zero-byte files mode 0600
+cache: empty disposable directory
+no fix, no signatures, no --force, no --global, no --prefix
+npm config was not run
+builtin npmrc was not read or printed
+disposable directory deleted after the receipts were copied
+
+FULL_LOCK_GRAPH argv:
+npm audit --json --package-lock-only --ignore-scripts --offline=false --registry=https://registry.npmjs.org --userconfig=<disposable>/empty-user.npmrc --globalconfig=<disposable>/empty-global.npmrc --cache=<disposable>/cache --audit-level=info --include=prod --include=dev --include=optional --include=peer
+exit: 1
+stderr excerpt: npm notice that a newer npm major exists. No install was run. No home path and no token were present.
+
+OMIT_DEV_LOCK_GRAPH argv:
+npm audit --json --package-lock-only --ignore-scripts --offline=false --registry=https://registry.npmjs.org --userconfig=<disposable>/empty-user.npmrc --globalconfig=<disposable>/empty-global.npmrc --cache=<disposable>/cache --audit-level=info --omit=dev --include=prod --include=optional --include=peer
+exit: 1
+stderr excerpt: empty
+
+npm view used the same child, cwd, registry, userconfig, globalconfig, cache, --ignore-scripts and --offline=false after a primary advisory named a candidate. Specs: brace-expansion@1.1.21, brace-expansion@2.1.7, brace-expansion@5.0.12, minimatch@9.0.7, picomatch@2.3.2, picomatch@4.0.4, browserslist@4.28.7, glob@10.5.0, playwright@1.55.1, postcss-selector-parser@6.1.3, postcss-selector-parser@7.1.6, source-map-js@1.2.2, ws@8.21.0, yaml@2.8.3, zod@4.6.6. All exited 0.
+
+Primary advisory fetch: curl -q, no curlrc, no --netrc, no Authorization header, Accept application/vnd.github+json, User-Agent jetnity-r107-s-readonly. 23 GHSA payloads, each curl exit 0.
+
+OSV: POST https://api.osv.dev/v1/querybatch for the 14 locked vulnerable versions. Labeled aggregator. Not a fixed-version source.
+
+Inventory: node scripts/dependency-advisory-triage-1/inventory.mjs. No npm import, no installer, no node_modules read.
+
+Worktree after the metadata children: package.json, package-lock.json and next-env.d.ts hashes matched the pre-command snapshot. No path was restored.
+
+CORRECTION_RERUN candidate review R1. The registry commands above were not repeated. No new npm audit and no new npm view.
+
+INVENTORY_RERUN
+argv: node scripts/dependency-advisory-triage-1/inventory.mjs /workspace docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json
+exit: 0
+stdout: empty
+stderr: empty
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+next-env.d.ts SHA-256 after this rerun 0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc
+The dirty next-env.d.ts bytes were not restored.
+
+MATRIX_RERUN
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 docs/evidence/dependency-advisory-triage-1/triage-matrix.json
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+same input hashes as INVENTORY_RERUN
+
+VALIDATOR_ARGV
+node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+This line is the argv prepared for the observed validator run. Its stdout and exit are appended only after that run.
+
+FIXTURE_RERUN
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+The fixture child calls validate-evidence.mjs with --during-fixture so the copied evidence is not required to already contain this receipt.
+exit: 0
+stderr: empty
+stdout:
+PASS directive after comment
+PASS directive without comment
+PASS directive not after code
+PASS clean evidence passes
+PASS empty rows fail
+PASS false version join fails
+PASS missing U floor fails
+PASS unsupported npm-view claim fails
+PASS missing expected row fails
+FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+CORRECTION_RERUN candidate review R2. No npm audit, no npm view, and no new advisory fetch.
+
+MATRIX_RERUN_R2
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 docs/evidence/dependency-advisory-triage-1/triage-matrix.json
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+FIXTURE_RERUN_R2
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+The fixture child calls validate-evidence.mjs with --during-fixture.
+exit: 0
+stderr: empty
+stdout:
+PASS directive after comment
+PASS directive without comment
+PASS directive not after code
+PASS clean evidence passes
+PASS empty rows fail
+PASS false version join fails
+PASS missing U floor fails
+PASS unsupported npm-view claim fails
+PASS missing expected row fails
+PASS raw lock version disagreement fails
+PASS deleted required fields fail
+PASS wrong-major retained candidate fails
+PASS deleted omit-dev rows fail
+FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED_R2
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+node: v22.23.4
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+CORRECTION_RERUN candidate review R3. No npm audit, no npm view, and no new advisory fetch. The retained omit-dev JSON was not edited.
+
+MATRIX_RERUN_R3
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 docs/evidence/dependency-advisory-triage-1/triage-matrix.json
+node: v22.23.4
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+FIXTURE_RERUN_R3
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+The fixture child calls validate-evidence.mjs with --during-fixture.
+exit: 0
+stderr: empty
+stdout:
+PASS directive after comment
+PASS directive without comment
+PASS directive not after code
+PASS clean evidence passes
+PASS empty rows fail
+PASS false version join fails
+PASS missing U floor fails
+PASS unsupported npm-view claim fails
+PASS missing expected row fails
+PASS raw lock version disagreement fails
+PASS deleted required fields fail
+PASS wrong-major retained candidate fails
+PASS deleted omit-dev rows fail
+PASS empty omit-dev nodes fail
+PASS mismatched omit-dev node association fails
+FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED_R3
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+node: v22.23.4
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+
+INTEGRATION_SYNC1
+Observed on merge commit 354c0093a952552956b9f5007e0e9265bde692ac before this block was added. Parents 70b609c745e1bb266f419efd722cb71690ee1a0e and 60b8e75ece16a8640d21e460380f25d627bbe700. No registry call. The inventory script was not run. Historical acquisition stays UNAVAILABLE. mainAtExecution stays a74c443c6be3f064f150fcf021ab6154bda325e5. Literal import census stays 45 server seeds, 126 client seeds, 82 package names.
+
+MATRIX_RERUN_SYNC1
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 /tmp/r107-sync-matrix.json
+node: v22.23.4
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+committed triage-matrix.json SHA-256 dc7b201dc0b0f12c34c95fcd48eb3859a93982e3749dd9ec679dbc92a7d09d47
+rebuilt file SHA-256 dc7b201dc0b0f12c34c95fcd48eb3859a93982e3749dd9ec679dbc92a7d09d47
+cmp: BYTE_EQUIVALENT
+committed matrix was not rewritten
+
+FIXTURE_RERUN_SYNC1
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+node: v22.23.4
+exit: 0
+stderr: empty
+The fifteen existing assertions passed, including empty omit-dev nodes and mismatched omit-dev node association.
+stdout ends with: FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED_SYNC1
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+node: v22.23.4
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+
+git diff --check
+exit: 0
