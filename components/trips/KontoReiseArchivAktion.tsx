@@ -10,8 +10,29 @@ import { useMemo } from 'react'
 import { previousStatusAusReise } from '@/lib/account/reise-archiv'
 import { useTripArchiveWorkflow, type ArchivSteuerung } from '@/components/trips/useTripArchiveWorkflow'
 import { reiseArchivLebenszyklus } from '@/lib/trips/archiv-aktionen'
-import { archivHinweis } from '@/lib/trips/trip-archive-workflow'
+import { archivHinweis, type ArchivVorgang } from '@/lib/trips/trip-archive-workflow'
 import type { TripSummary } from '@/types/trips'
+
+function VorgangRueckmeldung({ vorgang }: { vorgang: ArchivVorgang }) {
+  const hinweis = archivHinweis(vorgang)
+  return (
+    <div
+      data-archiv-vorgang={vorgang.operationId}
+      data-archiv-schreiben={vorgang.write}
+      data-archiv-sehen={vorgang.observation}
+      data-archiv-liste={vorgang.listenlieferung}
+    >
+      {hinweis.alarm ? (
+        <p role="alert" className="mt-2 text-sm leading-6 text-red-700">
+          {hinweis.schreiben}
+        </p>
+      ) : (
+        <p className="mt-2 text-sm leading-6 text-ink-700">{hinweis.schreiben}</p>
+      )}
+      <p className="text-sm leading-6 text-ink-700">{hinweis.sehen}</p>
+    </div>
+  )
+}
 
 export default function KontoReiseArchivAktion({
   reise,
@@ -27,13 +48,16 @@ export default function KontoReiseArchivAktion({
   const previous = previousStatusAusReise(reise)
   const vorgang = [...steuerung.vorgaenge].reverse().find((eintrag) => eintrag.tripId === reise.id)
   const laufend = vorgang?.write === 'pending'
-  const hinweis = vorgang ? archivHinweis(vorgang) : null
+  const rueckmeldung = vorgang ? <VorgangRueckmeldung vorgang={vorgang} /> : null
 
   if (archiviert && !previous) {
     return (
-      <p className="text-sm leading-6 text-ink-700">
-        Diese Reise lässt sich nicht automatisch wiederherstellen, weil der frühere Status nicht belegt ist.
-      </p>
+      <div>
+        <p className="text-sm leading-6 text-ink-700">
+          Diese Reise lässt sich nicht automatisch wiederherstellen, weil der frühere Status nicht belegt ist.
+        </p>
+        {rueckmeldung}
+      </div>
     )
   }
 
@@ -48,18 +72,7 @@ export default function KontoReiseArchivAktion({
       >
         {archiviert ? 'Wiederherstellen' : 'Archivieren'}
       </button>
-      {hinweis && vorgang ? (
-        <div data-archiv-vorgang={vorgang.operationId} data-archiv-schreiben={vorgang.write} data-archiv-sehen={vorgang.observation}>
-          {hinweis.alarm ? (
-            <p role="alert" className="mt-2 text-sm leading-6 text-red-700">
-              {hinweis.schreiben}
-            </p>
-          ) : (
-            <p className="mt-2 text-sm leading-6 text-ink-700">{hinweis.schreiben}</p>
-          )}
-          <p className="text-sm leading-6 text-ink-700">{hinweis.sehen}</p>
-        </div>
-      ) : null}
+      {rueckmeldung}
     </div>
   )
 }

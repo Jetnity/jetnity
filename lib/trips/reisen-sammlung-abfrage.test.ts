@@ -5,6 +5,8 @@ import {
   REISEN_SAMMLUNG_CURSOR_MAX,
   cursorCodieren,
   kanonischeAdresse,
+  parameterAusSuche,
+  ungueltigeAdresse,
   keysetOder,
   sammlungAnfrageAus,
   sammlungHref,
@@ -130,5 +132,12 @@ describe('Cursor und Kalender', () => {
     const bern = sammlungAnfrageAus({ q: '  Bern  ' })
     assert.equal(bern.ok && bern.q, 'Bern')
     assert.equal(bern.ok ? sammlungHref(bern) : '', '/reisen?q=Bern')
+    for (const text of ['q=a&q=b', 'archiv=offen&archiv=archiv', 'cursor=x&cursor=y']) {
+      const suche = new URLSearchParams(text)
+      const parameter = parameterAusSuche(suche)
+      assert.equal(sammlungAnfrageAus(parameter).ok, false)
+      assert.equal(kanonischeAdresse(suche), ungueltigeAdresse(parameter))
+      assert.equal(kanonischeAdresse(suche), `/reisen?${text}`)
+    }
   })
 })

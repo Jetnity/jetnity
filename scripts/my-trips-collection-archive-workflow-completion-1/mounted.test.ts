@@ -35,12 +35,33 @@ function merken(name: string, ok: boolean, detail?: string) {
 }
 
 async function oeffnen(browser: Browser): Promise<Page> {
+  return oeffnenBei(browser, '')
+}
+
+async function oeffnenBei(browser: Browser, query: string): Promise<Page> {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
   await page.clock.install({ time: new Date('2026-10-25T12:00:00Z') })
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto(origin)
+  await page.goto(query ? `${origin}/?${query}` : origin)
   await page.waitForSelector('[data-sammlung-wurzel]')
   return page
+}
+
+const ALPHA = '00000000-0000-4000-8000-000000000001'
+const UNGUELTIGE_HINWEISE = ['q=a&q=b', 'archiv=offen&archiv=archiv', 'cursor=x&cursor=y']
+
+function ungueltigeHuelle(adresse: string) {
+  return {
+    ungueltig: true,
+    zeilen: [],
+    problem: null,
+    hatWeiter: false,
+    naechsterCursor: null,
+    q: '',
+    archiv: 'alle',
+    cursor: null,
+    adresse,
+  }
 }
 
 async function lese(page: Page) {
@@ -284,6 +305,176 @@ describe('montierte Meine-Reisen-Sammlung', () => {
       merken('Fortsetzung erst nach Aktivierung', true)
 
       await neuer.close()
+
+      for (const query of UNGUELTIGE_HINWEISE) {
+        const tief = await oeffnenBei(browser, query)
+        const erste = await lese(tief)
+        assert.deepEqual(erste.ids, [])
+        assert.equal(erste.einig, '1')
+        assert.equal(erste.live, `/reisen?${query}`)
+        assert.equal(erste.uebernommen, `/reisen?${query}`)
+        assert.equal(erste.erneut, false)
+        assert.equal(await tief.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 1)
+        await ergebnis(tief, {})
+        const verworfen = await lese(tief)
+        assert.deepEqual(verworfen.ids, [])
+        assert.equal(verworfen.uebernommen, `/reisen?${query}`)
+        await tief.close()
+
+        const platz = await oeffnen(browser)
+        await adresseSetzen(platz, query)
+        const alt = await lese(platz)
+        assert.deepEqual(alt.ids, [ALPHA])
+        assert.equal(await platz.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 0)
+        await ergebnis(platz, ungueltigeHuelle(`/reisen?${query}`))
+        await platz.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).waitFor()
+        const neu = await lese(platz)
+        assert.deepEqual(neu.ids, [])
+        assert.equal(neu.einig, '1')
+        assert.equal(neu.erneut, false)
+        assert.equal(neu.uebernommen, `/reisen?${query}`)
+        await ergebnis(platz, {})
+        const bleibt = await lese(platz)
+        assert.deepEqual(bleibt.ids, [])
+        assert.equal(bleibt.uebernommen, `/reisen?${query}`)
+        await platz.close()
+      }
+      merken('Wiederholte Parameter übernehmen die ungültige Hülle', true)
+
+      const liste = await oeffnen(browser)
+      await liste.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        fenster.__sammlung.aktionZurueck()
+        fenster.__sammlung.setzeAktion(() => new Promise((resolve) => {
+          fenster.__sammlung.resolve = resolve
+        }))
+      })
+      await liste.locator('[data-reisen-aktion="archivieren"]').click()
+      await liste.getByText('Die Aktion läuft.').waitFor()
+      const vorNavigation = await liste.evaluate(() => (window as unknown as SammlungFenster).__sammlung.aktionAnzahl())
+      await adresseSetzen(liste, 'q=nur-navigation')
+      assert.equal(await liste.evaluate(() => (window as unknown as SammlungFenster).__sammlung.aktionAnzahl()), vorNavigation)
+      assert.equal(await liste.locator('[data-archiv-schreiben="pending"]').count(), 1)
+      assert.deepEqual((await lese(liste)).ids, [ALPHA])
+      await adresseSetzen(liste, 'cursor=x&cursor=y')
+      await ergebnis(liste, ungueltigeHuelle('/reisen?cursor=x&cursor=y'))
+      await liste.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).waitFor()
+      assert.equal(await liste.getByText('nicht sichtbar').count(), 0)
+      assert.equal(await liste.locator('[data-archiv-liste="nicht-gelesen"]').count(), 1)
+      assert.equal(await liste.locator('[data-archiv-sehen="unread"]').count(), 1)
+      assert.equal(await liste.locator('[data-archiv-schreiben="pending"]').count(), 1)
+      await liste.getByText('keine Liste gelesen').waitFor()
+      await ergebnis(liste, {})
+      assert.deepEqual((await lese(liste)).ids, [])
+      assert.equal((await lese(liste)).uebernommen, '/reisen?cursor=x&cursor=y')
+      const refreshVorAck = (await lese(liste)).refresh
+      await liste.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true, wert: null }))
+      await liste.getByText('Die Aktion hat Erfolg gemeldet.').waitFor()
+      assert.equal(await liste.getByText('nicht sichtbar').count(), 0)
+      assert.equal(await liste.locator('[data-archiv-schreiben="acknowledged"]').count(), 1)
+      assert.equal(await liste.locator('[data-archiv-sehen="unread"]').count(), 1)
+      assert.equal(await liste.locator('[data-archiv-liste="nicht-gelesen"]').count(), 1)
+      assert.equal((await lese(liste)).refresh, refreshVorAck + 1)
+      await liste.close()
+
+      const unklar = await oeffnen(browser)
+      await unklar.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        fenster.__sammlung.aktionZurueck()
+        fenster.__sammlung.setzeAktion(() => new Promise((resolve) => {
+          fenster.__sammlung.resolve = resolve
+        }))
+      })
+      await unklar.locator('[data-reisen-aktion="archivieren"]').click()
+      await adresseSetzen(unklar, 'cursor=x&cursor=y')
+      await ergebnis(unklar, ungueltigeHuelle('/reisen?cursor=x&cursor=y'))
+      await unklar.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true }))
+      await unklar.getByText('Das Ergebnis dieser Aktion ist unklar.').waitFor()
+      assert.equal(await unklar.getByText('nicht sichtbar').count(), 0)
+      assert.equal(await unklar.locator('[data-archiv-schreiben="unknown"]').count(), 1)
+      assert.equal(await unklar.locator('[data-archiv-liste="nicht-gelesen"]').count(), 1)
+      await unklar.close()
+      merken('Ungelesene Adresse erfindet keine Abwesenheit', true)
+
+      const herkunft = await oeffnen(browser)
+      await herkunft.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        fenster.__sammlung.aktionZurueck()
+        fenster.__sammlung.setzeAktion(() => new Promise((resolve) => {
+          fenster.__sammlung.resolve = resolve
+        }))
+      })
+      await herkunft.locator('[data-reisen-aktion="archivieren"]').click()
+      await herkunft.getByText('Die Aktion läuft.').waitFor()
+      await herkunft.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        const zeile = fenster.__sammlung.reise('00000000-0000-4000-8000-000000000001', 'Alpha', 'archived') as {
+          archivePreviousStatus: string | null
+        }
+        zeile.archivePreviousStatus = null
+        fenster.__sammlung.setErgebnis({ ...fenster.__sammlung.anfang, zeilen: [zeile] })
+      })
+      await ruhen(herkunft)
+      await herkunft.getByText('früheren Status nicht belegt').waitFor()
+      assert.equal(await herkunft.getByText('Die Aktion läuft.').count(), 1)
+      assert.equal(await herkunft.getByRole('button', { name: 'Wiederherstellen' }).count(), 0)
+      assert.equal(await herkunft.locator('[data-archiv-schreiben="pending"]').count(), 1)
+      const aktionenVorher = await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.aktionAnzahl())
+      await adresseSetzen(herkunft, 'q=nur-navigation')
+      assert.equal(await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.aktionAnzahl()), aktionenVorher)
+      assert.equal(await herkunft.locator('[data-archiv-schreiben="pending"]').count(), 1)
+      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      const refreshVorUnklar = (await lese(herkunft)).refresh
+      await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true }))
+      await herkunft.getByText('Das Ergebnis dieser Aktion ist unklar.').waitFor()
+      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      assert.equal((await lese(herkunft)).refresh, refreshVorUnklar)
+      await herkunft.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        const zeile = fenster.__sammlung.reise('00000000-0000-4000-8000-000000000001', 'Alpha', 'archived')
+        fenster.__sammlung.setErgebnis({
+          ...fenster.__sammlung.anfang,
+          zeilen: [zeile],
+          q: 'nur-navigation',
+          adresse: '/reisen?q=nur-navigation',
+          hatWeiter: false,
+          naechsterCursor: null,
+        })
+        fenster.__sammlung.setzeAktion(() => new Promise((resolve) => {
+          fenster.__sammlung.resolve = resolve
+        }))
+      })
+      await ruhen(herkunft)
+      await herkunft.getByRole('button', { name: 'Wiederherstellen' }).click()
+      await herkunft.getByText('Die Aktion läuft.').waitFor()
+      await herkunft.evaluate(() => {
+        const fenster = window as unknown as SammlungFenster
+        const zeile = fenster.__sammlung.reise('00000000-0000-4000-8000-000000000001', 'Alpha', 'archived') as {
+          archivePreviousStatus: string | null
+        }
+        zeile.archivePreviousStatus = null
+        fenster.__sammlung.setErgebnis({
+          ...fenster.__sammlung.anfang,
+          zeilen: [zeile],
+          q: 'nur-navigation',
+          adresse: '/reisen?q=nur-navigation',
+          hatWeiter: false,
+          naechsterCursor: null,
+        })
+      })
+      await ruhen(herkunft)
+      await herkunft.getByText('früheren Status nicht belegt').waitFor()
+      assert.equal(await herkunft.getByText('Die Aktion läuft.').count(), 1)
+      assert.equal(await herkunft.getByRole('button', { name: 'Wiederherstellen' }).count(), 0)
+      const refreshVorErfolg = (await lese(herkunft)).refresh
+      await herkunft.evaluate(() => (window as unknown as SammlungFenster).__sammlung.resolve?.({ ok: true, wert: null }))
+      await herkunft.getByText('Die Aktion hat Erfolg gemeldet.').waitFor()
+      assert.equal(await herkunft.getByText('früheren Status nicht belegt').count(), 1)
+      assert.equal(await herkunft.locator('[data-archiv-schreiben="acknowledged"]').count(), 1)
+      assert.equal((await lese(herkunft)).refresh, refreshVorErfolg + 1)
+      await herkunft.close()
+      merken('Fehlende Herkunft verbirgt die Aktion nicht', true)
+
       const bild = await oeffnen(browser)
       assert.equal(await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-marke'), null)
       const bildId = await bild.getAttribute('[data-sammlung-wurzel]', 'data-sammlung-id')

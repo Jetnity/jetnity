@@ -24,6 +24,7 @@ function vorgang(teil: Partial<ArchivVorgang> = {}): ArchivVorgang {
     meldung: '',
     observation: 'unread',
     observedStatus: null,
+    listenlieferung: 'keine',
     ...teil,
   }
 }
@@ -82,11 +83,31 @@ describe('Archiv-Klassifikation', () => {
     assert.equal(gesehen[0]?.write, 'acknowledged')
     const wegZeile = beobachtungAnwenden(veraltet, [], null)
     assert.equal(wegZeile[0]?.observation, 'row-absent')
+    assert.equal(wegZeile[0]?.listenlieferung, 'gelesen')
     assert.equal(wegZeile[0]?.write, 'acknowledged')
     const fehler = beobachtungAnwenden(veraltet, [], { status: 503 })
     assert.equal(fehler[0]?.observation, 'unread')
+    assert.equal(fehler[0]?.listenlieferung, 'nicht-gelesen')
     assert.equal(fehler[0]?.write, 'acknowledged')
+    const ungelesen = beobachtungAnwenden([vorgang()], [], null, 'nicht-gelesen')
+    assert.equal(ungelesen[0]?.observation, 'unread')
+    assert.equal(ungelesen[0]?.write, 'pending')
+    assert.equal(ungelesen[0]?.listenlieferung, 'nicht-gelesen')
+    const nachUngelesen = rueckmeldungAnwenden(ungelesen, {
+      mounted: true,
+      collectionId: 'sammlung',
+      operationId: 'op-1',
+      klasse: 'acknowledged',
+      meldung: '',
+    })
+    assert.equal(nachUngelesen[0]?.write, 'acknowledged')
+    assert.equal(nachUngelesen[0]?.observation, 'unread')
+    assert.equal(nachUngelesen[0]?.listenlieferung, 'nicht-gelesen')
+    assert.equal(archivHinweis(nachUngelesen[0]).sehen.includes('nicht sichtbar'), false)
+    assert.match(archivHinweis(nachUngelesen[0]).sehen, /keine Liste gelesen/)
+    assert.match(archivHinweis(nachUngelesen[0]).sehen, /noch nicht neu gelesen/)
     assert.match(archivHinweis(negativ[0]).schreiben, /Konflikt/)
     assert.match(archivHinweis(gesehen[0]).sehen, /unabhängig|Status/)
+    assert.match(archivHinweis(wegZeile[0]).sehen, /nicht sichtbar/)
   })
 })

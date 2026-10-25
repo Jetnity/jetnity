@@ -36,17 +36,18 @@ export function useTripArchiveWorkflow(
   zeilen: readonly TripSummary[],
   problem: Problem | null,
   aufrufen: ArchivAufruf = reiseArchivLebenszyklus,
+  lesung: 'gelesen' | 'nicht-gelesen' = 'gelesen',
 ): ArchivSteuerung {
   const router = useRouter()
   const collectionId = useId()
   const sperre = useRef<ArchivSperre>(null)
   const montiert = useRef(true)
   const [vorgaenge, setVorgaenge] = useState<ArchivVorgang[]>([])
-  const [beobachtet, setBeobachtet] = useState({ zeilen, problem })
+  const [beobachtet, setBeobachtet] = useState({ zeilen, problem, lesung })
 
-  if (zeilen !== beobachtet.zeilen || problem !== beobachtet.problem) {
-    setBeobachtet({ zeilen, problem })
-    setVorgaenge((aktuell) => beobachtungAnwenden(aktuell, zeilen, problem))
+  if (zeilen !== beobachtet.zeilen || problem !== beobachtet.problem || lesung !== beobachtet.lesung) {
+    setBeobachtet({ zeilen, problem, lesung })
+    setVorgaenge((aktuell) => beobachtungAnwenden(aktuell, zeilen, problem, lesung))
   }
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export function useTripArchiveWorkflow(
       meldung: '',
       observation: 'unread',
       observedStatus: null,
+      listenlieferung: 'keine',
     }
     setVorgaenge((aktuell) => [...aktuell, vorgang])
     void (async () => {

@@ -239,22 +239,34 @@ export type SammlungErgebnis = {
   adresse: string
 }
 
-export function kanonischeAdresse(suche: Pick<URLSearchParams, 'get'>): string {
-  const anfrage = sammlungAnfrageAus({
-    q: suche.get('q') ?? undefined,
-    archiv: suche.get('archiv') ?? undefined,
-    cursor: suche.get('cursor') ?? undefined,
-  })
-  if (!anfrage.ok) {
-    const roh = new URLSearchParams()
-    const q = suche.get('q')
-    const archiv = suche.get('archiv')
-    const cursor = suche.get('cursor')
-    if (q) roh.set('q', q)
-    if (archiv) roh.set('archiv', archiv)
-    if (cursor) roh.set('cursor', cursor)
-    const text = roh.toString()
-    return text ? `/reisen?${text}` : '/reisen'
+const ADRESS_NAMEN = ['q', 'archiv', 'cursor'] as const
+
+export function parameterAusSuche(suche: { getAll(name: string): string[] }): SammlungSuchparameter {
+  const parameter: SammlungSuchparameter = {}
+  for (const name of ADRESS_NAMEN) {
+    const werte = suche.getAll(name)
+    if (werte.length === 0) continue
+    parameter[name] = werte.length === 1 ? werte[0] : werte
   }
+  return parameter
+}
+
+export function ungueltigeAdresse(parameter: SammlungSuchparameter): string {
+  const suche = new URLSearchParams()
+  for (const name of ADRESS_NAMEN) {
+    const wert = parameter[name]
+    if (typeof wert === 'string' && wert.length > 0) suche.set(name, wert)
+    if (Array.isArray(wert)) {
+      for (const eintrag of wert) suche.append(name, eintrag)
+    }
+  }
+  const text = suche.toString()
+  return text ? `/reisen?${text}` : '/reisen'
+}
+
+export function kanonischeAdresse(suche: { getAll(name: string): string[] }): string {
+  const parameter = parameterAusSuche(suche)
+  const anfrage = sammlungAnfrageAus(parameter)
+  if (!anfrage.ok) return ungueltigeAdresse(parameter)
   return sammlungHref(anfrage)
 }

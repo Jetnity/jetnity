@@ -13,6 +13,7 @@ import {
   cursorCodieren,
   sammlungAnfrageAus,
   sammlungHref,
+  ungueltigeAdresse,
   type GueltigeSammlung,
   type SammlungErgebnis,
   type SammlungSuchparameter,
@@ -33,15 +34,6 @@ export type SammlungClient = {
 }
 
 function leerUngueltig(parameter: SammlungSuchparameter): SammlungErgebnis {
-  const suche = new URLSearchParams()
-  for (const name of ['q', 'archiv', 'cursor'] as const) {
-    const wert = parameter[name]
-    if (typeof wert === 'string' && wert.length > 0) suche.set(name, wert)
-    if (Array.isArray(wert)) {
-      for (const eintrag of wert) suche.append(name, eintrag)
-    }
-  }
-  const text = suche.toString()
   return {
     ungueltig: true,
     zeilen: [],
@@ -51,7 +43,7 @@ function leerUngueltig(parameter: SammlungSuchparameter): SammlungErgebnis {
     q: '',
     archiv: 'alle',
     cursor: null,
-    adresse: text ? `/reisen?${text}` : '/reisen',
+    adresse: ungueltigeAdresse(parameter),
   }
 }
 

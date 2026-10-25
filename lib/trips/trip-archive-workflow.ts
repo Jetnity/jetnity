@@ -15,6 +15,8 @@ export type ArchivSchreibstand = 'pending' | ArchivKlasse
 
 export type ArchivBeobachtung = 'unread' | 'row-status' | 'row-absent'
 
+export type Listenlieferung = 'keine' | 'gelesen' | 'nicht-gelesen'
+
 export type ArchivVorgang = {
   operationId: string
   tripId: string
@@ -27,6 +29,7 @@ export type ArchivVorgang = {
   meldung: string
   observation: ArchivBeobachtung
   observedStatus: string | null
+  listenlieferung: Listenlieferung
 }
 
 function eigeneSchluessel(wert: object): string {
@@ -74,6 +77,12 @@ export function rueckmeldungAnwenden(
   })
 }
 
+function beobachtungSatz(vorgang: ArchivVorgang): string {
+  if (vorgang.observation === 'unread') return 'Die geladene Liste ist davon unabhängig und noch nicht neu gelesen.'
+  if (vorgang.observation === 'row-absent') return 'In der geladenen Liste ist diese Reise gerade nicht sichtbar.'
+  return `In der geladenen Liste steht der Status ${vorgang.observedStatus ?? 'unbekannt'}.`
+}
+
 export function archivHinweis(vorgang: ArchivVorgang): { schreiben: string; sehen: string; alarm: boolean } {
   const schreiben =
     vorgang.write === 'pending'
@@ -83,12 +92,9 @@ export function archivHinweis(vorgang: ArchivVorgang): { schreiben: string; sehe
         : vorgang.write === 'returned-negative'
           ? vorgang.meldung
           : 'Das Ergebnis dieser Aktion ist unklar.'
+  const basis = beobachtungSatz(vorgang)
   const sehen =
-    vorgang.observation === 'unread'
-      ? 'Die geladene Liste ist davon unabhängig und noch nicht neu gelesen.'
-      : vorgang.observation === 'row-absent'
-        ? 'In der geladenen Liste ist diese Reise gerade nicht sichtbar.'
-        : `In der geladenen Liste steht der Status ${vorgang.observedStatus ?? 'unbekannt'}.`
+    vorgang.listenlieferung === 'nicht-gelesen' ? `Diese Adresse hat keine Liste gelesen. ${basis}` : basis
   return { schreiben, sehen, alarm: vorgang.write === 'returned-negative' || vorgang.write === 'unknown' }
 }
 
@@ -96,11 +102,16 @@ export function beobachtungAnwenden(
   vorgaenge: readonly ArchivVorgang[],
   zeilen: readonly { id: string; status: string }[],
   problem: unknown,
+  lesung: 'gelesen' | 'nicht-gelesen' = 'gelesen',
 ): ArchivVorgang[] {
-  if (problem) return vorgaenge.slice()
+  if (lesung !== 'gelesen' || problem) {
+    return vorgaenge.map((vorgang) => ({ ...vorgang, listenlieferung: 'nicht-gelesen' as const }))
+  }
   return vorgaenge.map((vorgang) => {
     const zeile = zeilen.find((eintrag) => eintrag.id === vorgang.tripId)
-    if (!zeile) return { ...vorgang, observation: 'row-absent' as const, observedStatus: null }
-    return { ...vorgang, observation: 'row-status' as const, observedStatus: zeile.status }
+    if (!zeile) {
+      return { ...vorgang, observation: 'row-absent' as const, observedStatus: null, listenlieferung: 'gelesen' as const }
+    }
+    return { ...vorgang, observation: 'row-status' as const, observedStatus: zeile.status, listenlieferung: 'gelesen' as const }
   })
 }

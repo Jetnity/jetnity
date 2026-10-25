@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 
 import type { Leseantwort } from '@/lib/api/datenbank-lesen'
-import { cursorCodieren, sammlungAnfrageAus, suchOder } from '@/lib/trips/reisen-sammlung-abfrage'
+import { cursorCodieren, sammlungAnfrageAus, suchOder, ungueltigeAdresse } from '@/lib/trips/reisen-sammlung-abfrage'
 import { reisenSammlungAusParametern, reisenSammlungLaden, type SammlungKette } from '@/lib/trips/reisen-sammlung-daten'
 import { UEBERSICHT_SPALTEN, type UebersichtZeile } from '@/lib/trips/reisen-uebersicht'
 
@@ -208,6 +208,9 @@ describe('Sammlung liest 49 und zeigt 48', () => {
       const zugang = client(bestand())
       const ergebnis = await reisenSammlungAusParametern(parameter, zugang)
       assert.equal(ergebnis.ungueltig, true)
+      assert.equal(ergebnis.problem, null)
+      assert.deepEqual(ergebnis.zeilen, [])
+      assert.equal(ergebnis.adresse, ungueltigeAdresse(parameter))
       assert.equal(zugang.aufrufe.filter((aufruf) => aufruf.name === 'from').length, 0)
     }
   })

@@ -2,7 +2,13 @@ import { createRoot } from 'react-dom/client'
 import { useEffect, useState } from 'react'
 
 import MyTripsCollection from '@/components/trips/MyTripsCollection'
-import type { SammlungErgebnis } from '@/lib/trips/reisen-sammlung-abfrage'
+import {
+  parameterAusSuche,
+  sammlungAnfrageAus,
+  sammlungHref,
+  ungueltigeAdresse,
+  type SammlungErgebnis,
+} from '@/lib/trips/reisen-sammlung-abfrage'
 import type { TripSummary } from '@/types/trips'
 import { aktionAnzahl, aktionZurueck, setzeAktion } from './shims/aktionen'
 import { aufrufe, flags, setzeAdresse } from './shims/navigation'
@@ -39,8 +45,28 @@ const anfang: SammlungErgebnis = {
   adresse: '/reisen',
 }
 
+function erstesErgebnis(): SammlungErgebnis {
+  const suche = new URLSearchParams(window.location.search)
+  const parameter = parameterAusSuche(suche)
+  const anfrage = sammlungAnfrageAus(parameter)
+  if (!anfrage.ok) {
+    return {
+      ungueltig: true,
+      zeilen: [],
+      problem: null,
+      hatWeiter: false,
+      naechsterCursor: null,
+      q: '',
+      archiv: 'alle',
+      cursor: null,
+      adresse: ungueltigeAdresse(parameter),
+    }
+  }
+  return { ...anfang, q: anfrage.q, archiv: anfrage.archiv, cursor: anfrage.cursor, adresse: sammlungHref(anfrage) }
+}
+
 function Harness() {
-  const [ergebnis, setErgebnis] = useState(anfang)
+  const [ergebnis, setErgebnis] = useState(erstesErgebnis)
   useEffect(() => {
     const fenster = window as Window & {
       __sammlung?: {

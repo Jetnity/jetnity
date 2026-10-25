@@ -10,7 +10,7 @@ type Aufrufe = {
 }
 
 const hoerer = new Set<() => void>()
-let parameter = new URLSearchParams()
+let parameter = new URLSearchParams(globalThis.location?.search ?? '')
 let werfen = false
 let verschachteln = false
 

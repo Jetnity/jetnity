@@ -43,7 +43,12 @@ function letzteJeReise(vorgaenge: readonly ArchivVorgang[]): ArchivVorgang[] {
 function VorgangHinweis({ vorgang }: { vorgang: ArchivVorgang }) {
   const text = archivHinweis(vorgang)
   return (
-    <div data-archiv-vorgang={vorgang.operationId} data-archiv-schreiben={vorgang.write} data-archiv-sehen={vorgang.observation}>
+    <div
+      data-archiv-vorgang={vorgang.operationId}
+      data-archiv-schreiben={vorgang.write}
+      data-archiv-sehen={vorgang.observation}
+      data-archiv-liste={vorgang.listenlieferung}
+    >
       <p className="text-sm leading-6 text-ink-700">{text.schreiben}</p>
       <p className="text-sm leading-6 text-ink-700">{text.sehen}</p>
     </div>
@@ -65,7 +70,8 @@ export default function MyTripsCollection({
   const angenommen = navigation.angenommen
   const zeilen = angenommen?.zeilen ?? LEERE_ZEILEN
   const problem = angenommen?.problem ?? null
-  const archiv = useTripArchiveWorkflow(zeilen, problem)
+  const lesung = angenommen && !angenommen.ungueltig && problem === null ? 'gelesen' : 'nicht-gelesen'
+  const archiv = useTripArchiveWorkflow(zeilen, problem, undefined, lesung)
   const [entwurf, setEntwurf] = useState('')
   const [heute, setHeute] = useState<string | null>(null)
 
