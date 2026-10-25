@@ -1,24 +1,21 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { AlertCircle, Plus, Users } from 'lucide-react'
-import { useRef, useState, useTransition, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 
-import AccountReisendeKarte from '@/components/account/AccountReisendeKarte'
+import AccountReisendeKarte, { RegistryBelege } from '@/components/account/AccountReisendeKarte'
+import { useAccountRegistryWorkflow } from '@/components/account/useAccountRegistryWorkflow'
 import LandFeld from '@/components/country/LandFeld'
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy'
-import { registryTravellerAnlegen } from '@/lib/traveller/account-registry-aktionen'
-import { registryTravellerFormularAnfang } from '@/lib/traveller/account-registry-eingabe'
 import type { AccountRegistryTraveller } from '@/lib/traveller/account-registry'
+import { registryListeKlasse } from '@/lib/traveller/account-registry-workflow'
 import {
   registryFlaecheAnlegen,
   registryFlaecheVerwalten,
   registryVerwalteteId,
   type RegistryFlaeche,
 } from '@/lib/traveller/account-travellers-premium-registry-ux-1'
-
-type Status = { art: 'erfolg' | 'fehler'; text: string } | null
 
 const feldKlasse =
   'min-h-11 w-full max-w-full scroll-mt-32 rounded-2xl border border-line-200 bg-white px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2'
@@ -29,6 +26,11 @@ const hauptAktion =
 const nebenAktion =
   'inline-flex min-h-11 w-full scroll-mt-32 items-center justify-center whitespace-normal rounded-full border border-line-200 bg-white px-4 py-2 text-center text-base font-semibold leading-tight text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60 sm:w-auto'
 
+function travellerFelder(wert: unknown): { label: string; residenceCountryCode: string } {
+  const felder = wert as { label?: string; residenceCountryCode?: string } | null
+  return { label: felder?.label ?? '', residenceCountryCode: felder?.residenceCountryCode ?? '' }
+}
+
 export default function AccountReisende({
   problem,
   travellers,
@@ -36,39 +38,44 @@ export default function AccountReisende({
   problem: Problem | null
   travellers: AccountRegistryTraveller[] | null
 }) {
-  const router = useRouter()
-  const [pending, startTransition] = useTransition()
-  const [formular, setFormular] = useState(registryTravellerFormularAnfang)
-  const [status, setStatus] = useState<Status>(null)
+  const workflow = useAccountRegistryWorkflow({ problem, travellers })
   const [flaeche, setFlaeche] = useState<RegistryFlaeche>({ art: 'uebersicht' })
   const anlegenRef = useRef<HTMLButtonElement>(null)
   const anlegenOffen = flaeche.art === 'anlegen'
   const verwaltetId = registryVerwalteteId(flaeche)
+  const klasse = registryListeKlasse({ problem, travellers })
+  const anlegenSlot = workflow.stand.slots.find((slot) => slot.editor === 'anlegen')
+  const formular = anlegenSlot?.offen ? travellerFelder(anlegenSlot.felder) : null
+  const montierteFlaechen = new Set((travellers ?? []).map((traveller) => `reisender:${traveller.id}`))
+  const belege =
+    klasse === 'gueltig'
+      ? workflow.stand.belege.filter(
+          (beleg) => beleg.surface === 'anlegen' || !montierteFlaechen.has(beleg.surface),
+        )
+      : workflow.stand.belege
+
+  function flaecheWechseln(naechster: RegistryFlaeche) {
+    if (flaeche.art === 'verwalten' && (naechster.art !== 'verwalten' || naechster.travellerId !== flaeche.travellerId)) {
+      workflow.surfaceSchliessen(`reisender:${flaeche.travellerId}`)
+    }
+    if (flaeche.art === 'anlegen' && naechster.art !== 'anlegen') workflow.schliessen('anlegen')
+    if (naechster.art === 'anlegen' && flaeche.art !== 'anlegen') {
+      workflow.oeffnen('anlegen', 'anlegen', { label: '', residenceCountryCode: '' })
+    }
+    setFlaeche(naechster)
+  }
 
   function anlegen(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    startTransition(async () => {
-      const ergebnis = await registryTravellerAnlegen({
-        label: formular.label,
-        residenceCountryCode: formular.residenceCountryCode,
-      })
-      if (!ergebnis.ok) {
-        setStatus({ art: 'fehler', text: ergebnis.meldung })
-        return
-      }
-      setFormular(registryTravellerFormularAnfang())
-      setStatus({ art: 'erfolg', text: REGISTRY_COPY.erfolgAngelegt })
-      router.refresh()
-    })
-  }
-
-  function anlegenSchliessen() {
-    setFlaeche({ art: 'uebersicht' })
-    anlegenRef.current?.focus()
+    workflow.senden('anlegen')
   }
 
   return (
-    <div className="min-w-0 [&_*]:[overflow-wrap:anywhere] [&_input]:!text-base [&_select]:!text-base">
+    <div
+      data-registry-klasse={klasse}
+      className="min-w-0 [&_*]:[overflow-wrap:anywhere] [&_input]:!text-base [&_select]:!text-base"
+      aria-busy={workflow.stand.lesen.offen}
+    >
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
         {REGISTRY_COPY.seitenEyebrow}
       </p>
@@ -78,20 +85,7 @@ export default function AccountReisende({
       <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-700">{REGISTRY_COPY.seitenLead}</p>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-700">{REGISTRY_COPY.dualAuthorityHinweis}</p>
 
-      {status ? (
-        <p
-          role={status.art === 'fehler' ? 'alert' : 'status'}
-          className={
-            status.art === 'fehler'
-              ? 'mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
-              : 'mt-6 rounded-2xl border border-brand-100 bg-surface-50 px-4 py-3 text-sm text-brand-800'
-          }
-        >
-          {status.text}
-        </p>
-      ) : null}
-
-      {problem ? (
+      {klasse !== 'gueltig' ? (
         <section
           role="alert"
           className="mt-8 rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center sm:px-10"
@@ -101,18 +95,32 @@ export default function AccountReisende({
           </span>
           <h2 className="mt-5 text-xl font-semibold text-red-800">{REGISTRY_COPY.fehlerTitel}</h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">
-            {problem.status === 503 ? REGISTRY_COPY.fehler503 : REGISTRY_COPY.fehler500}
+            {problem?.status === 503 ? REGISTRY_COPY.fehler503 : REGISTRY_COPY.fehler500}
           </p>
+          <button
+            type="button"
+            className={`${nebenAktion} mt-5`}
+            disabled={workflow.stand.lesen.offen}
+            onClick={workflow.lesen}
+          >
+            {REGISTRY_COPY.erneutLesen}
+          </button>
+          <p className="mt-2 text-sm text-red-800">{REGISTRY_COPY.erneutLesenHinweis}</p>
         </section>
-      ) : (
+      ) : null}
+
+      <RegistryBelege stand={workflow.stand} belege={belege} erneut={workflow.erneut} lesen={workflow.lesen} />
+
+      {klasse === 'gueltig' ? (
         <>
           <div className="mt-6">
             <button
               ref={anlegenRef}
               type="button"
+              data-fokus="anlegen-knopf"
               aria-expanded={anlegenOffen}
               aria-controls="registry-anlegen"
-              onClick={() => setFlaeche((aktuell) => registryFlaecheAnlegen(aktuell))}
+              onClick={() => flaecheWechseln(registryFlaecheAnlegen(flaeche))}
               className={hauptAktion}
             >
               <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -120,9 +128,12 @@ export default function AccountReisende({
             </button>
           </div>
 
-          {anlegenOffen ? (
+          {anlegenOffen && formular ? (
             <form
               id="registry-anlegen"
+              data-registry-innen="anlegen"
+              data-registry-editor="anlegen"
+              data-registry-epoche={anlegenSlot?.epoche ?? 0}
               onSubmit={anlegen}
               className="mt-4 max-w-xl rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-6"
             >
@@ -134,7 +145,9 @@ export default function AccountReisende({
                   {REGISTRY_COPY.bezeichnungLabel}
                   <input
                     value={formular.label}
-                    onChange={(event) => setFormular((aktuell) => ({ ...aktuell, label: event.target.value }))}
+                    onChange={(event) =>
+                      workflow.setzen('anlegen', { ...formular, label: event.target.value })
+                    }
                     maxLength={40}
                     autoComplete="off"
                     autoFocus
@@ -145,17 +158,34 @@ export default function AccountReisende({
                 <LandFeld
                   label={REGISTRY_COPY.wohnsitzLabel}
                   value={formular.residenceCountryCode}
-                  onChange={(residenceCountryCode) =>
-                    setFormular((aktuell) => ({ ...aktuell, residenceCountryCode }))
-                  }
+                  onChange={(residenceCountryCode) => workflow.setzen('anlegen', { ...formular, residenceCountryCode })}
                 />
               </div>
+              {anlegenSlot?.hinweis ? (
+                <p role="alert" className="mt-3 text-sm text-red-800">{anlegenSlot.hinweis}</p>
+              ) : null}
+              {anlegenSlot?.konflikt ? (
+                <div className="mt-3 grid gap-2">
+                  <p>{REGISTRY_COPY.konflikt}</p>
+                  <button type="button" className={nebenAktion} onClick={() => workflow.uebernehmen('anlegen')}>
+                    {REGISTRY_COPY.uebernehmen}
+                  </button>
+                </div>
+              ) : null}
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                <button type="submit" disabled={pending} className={hauptAktion}>
+                <button type="submit" disabled={workflow.unterwegs('anlegen')} className={hauptAktion}>
                   <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
                   {REGISTRY_COPY.anlegenAktion}
                 </button>
-                <button type="button" className={nebenAktion} onClick={anlegenSchliessen}>
+                <button
+                  type="button"
+                  className={nebenAktion}
+                  onClick={() => {
+                    workflow.schliessen('anlegen')
+                    setFlaeche({ art: 'uebersicht' })
+                    anlegenRef.current?.focus()
+                  }}
+                >
                   {REGISTRY_COPY.abbrechen}
                 </button>
               </div>
@@ -173,13 +203,7 @@ export default function AccountReisende({
               <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">{REGISTRY_COPY.leerText}</p>
             </section>
           ) : travellers ? (
-            <ul
-              className={
-                verwaltetId
-                  ? 'mt-6 grid grid-cols-1 gap-4'
-                  : 'mt-6 grid grid-cols-1 gap-4 md:grid-cols-2'
-              }
-            >
+            <ul className={verwaltetId ? 'mt-6 grid grid-cols-1 gap-4' : 'mt-6 grid grid-cols-1 gap-4 md:grid-cols-2'}>
               {travellers.map((traveller) => {
                 const verwaltet = verwaltetId === traveller.id
                 return (
@@ -187,10 +211,8 @@ export default function AccountReisende({
                     <AccountReisendeKarte
                       traveller={traveller}
                       verwaltet={verwaltet}
-                      onVerwalten={() =>
-                        setFlaeche((aktuell) => registryFlaecheVerwalten(aktuell, traveller.id))
-                      }
-                      onStatus={setStatus}
+                      workflow={workflow}
+                      onVerwalten={() => flaecheWechseln(registryFlaecheVerwalten(flaeche, traveller.id))}
                     />
                   </li>
                 )
@@ -198,7 +220,7 @@ export default function AccountReisende({
             </ul>
           ) : null}
         </>
-      )}
+      ) : null}
     </div>
   )
 }
