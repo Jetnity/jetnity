@@ -21,16 +21,20 @@ Stop for independent Technical-Lead candidate review. Do not Ready, do not merge
 - Earlier implementation head: `00ba5b9124abf1cafe26b711d50b4527f40e70a5`
 - Earlier implementation tree: `a8d9f7f938382623622f3adf5bb3500f5fd519ef`
 - Reviewed candidate this correction answers: `b443fb13db1e97e0d0d85d51814046349fd7491b`, tree `9518d8f4f73c205cfc033ea06de3667d7dc48626`
-- Correction commit: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`
-- Correction tree: `4f2165518fdea569afbb63d45efaef13409c276b`
+- Card correction commit: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`
+- Card correction tree: `4f2165518fdea569afbb63d45efaef13409c276b`
+- Addendum commit: `c589266158a4d15f90a952e370435150e45f41d7`
+- Addendum tree: `55970376c0e8c08b0bc79610854fc4898355673a`
 - `origin/main` fetched for this handoff: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - Merge-base: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - No rebase. If `main` moves later, report the drift and wait.
 
-The documentation commit after `a68e6b4a` updates this handoff, the status, the report, the self-review, and `mounted-matrix.txt`. It does not change product code. Use the pushed branch head, not `a68e6b4a`, as the review head once that docs commit is the tip.
+The documentation commit after `c5892661` updates this handoff, the status, the report, the self-review, and `mounted-matrix.txt`. It does not change product code. Use the pushed branch head, not `c5892661`, as the review head once that docs commit is the tip.
 
 ## Next step
 
-Independent exact-head re-gate of the pushed tip. P1 stays OPEN. The two review-R1 card defects are corrected on `a68e6b4a` and are not claimed accepted. The frozen refresh-count failure in `lib/readiness/trip-official-evaluations-server.test.ts` line 384 (`1 !== 2`) is still unresolved. Bounded exception, not applied: that one assertion expects `router.refresh()` inside `onTravellerEntfernen`. The preserved contract is that the writer returns `null` and the hook calls `onReadinessAktualisieren` after an accepted result. The test calls the callback directly and never mounts the hook, so the traveller callback contributes no refresh and the accommodation callback contributes the one observed refresh. The file is outside the allowlist and was not edited. T-EX1 does not cover it. Local PostgreSQL 16 proofs did not run here.
+Independent exact-head re-gate of the pushed tip. Both product P1s stay OPEN. The two review-R1 card defects are corrected on `a68e6b4a`. The registry warning and T-EX2 retarget are on `c5892661`. None of that is acceptance.
+
+T-EX2, authorized by root for this addendum, retargets only “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh” in `lib/readiness/trip-official-evaluations-server.test.ts`. The removal writer returns null without refreshing. The test then calls the forwarded `onReadinessAktualisieren` and sees one refresh. The accommodation callback supplies the second. The mounted Konto path separately shows one router refresh for an accepted save, one for an accepted removal, and one for an accepted intake. T-EX1 remains the four helper assertions. No other unlisted test was edited. Local PostgreSQL 16 proofs did not run here.
 
 Holds that remain: #985/#982, #917, #913/#911, #968, #748, #626, #937/#936, Bern #934. No Production DB, Auth, AAL, RLS, secret, provider, payment, legal, or launch action is authorized by this delivery.

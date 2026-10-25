@@ -51,6 +51,16 @@ An accepted edit keeps its submitted fingerprint. A later delivery of that same 
 
 The mounted command on that tree exits 0 with 18 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` on the same tree exits 1: 7181 tests, 7164 pass, 12 fail, 5 skipped. Eleven failures are the same missing local PostgreSQL 16 binaries. One is still `lib/readiness/trip-official-evaluations-server.test.ts:384`, `1 !== 2`. That test calls `onTravellerEntfernen` and then `onUnterkunftZeitraum` directly. `onTravellerEntfernen` in `KontoArbeitsbereich` invalidates and returns `null` without `router.refresh()`. `onUnterkunftZeitraum` still refreshes. The hook refreshes through `onReadinessAktualisieren` only after an accepted result, and this test never mounts the hook. The obsolete assertion is that the traveller writer itself refreshes. The file is not allowlisted. It was not edited, waived, or suppressed. T-EX1 does not include it. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0.
 
+## R1 addendum
+
+`c589266158a4d15f90a952e370435150e45f41d7`, tree `55970376c0e8c08b0bc79610854fc4898355673a`, adds the registry warning correction and T-EX2.
+
+An intake that returns unknown keeps that outcome on the same registry source. Cancel returns the confirmation to idle and leaves both the uncertainty sentence and the duplicate-snapshot warning. A section return does the same. The next explicit request still shows both before confirmation. Confirming calls the writer once more. Nothing retries the first attempt, and the second null is not described as proof that the first attempt did not land.
+
+Root authorized T-EX2 for the single test “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh”. The removal callback returns null and leaves the refresh count at 0. Calling `onReadinessAktualisieren` raises it to 1 and returns `{ art: 'props' }`. The accommodation callback raises it to 2. Invalidations stay 2 and the write payloads stay the same. The mounted Konto workspace counts one `router.refresh` for accepted save, one for accepted removal, and one for accepted intake, with one writer call each.
+
+The mounted command on this tree exits 0 with 20 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. The previous `1 !== 2` assertion is the retargeted T-EX2 test and now passes. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0.
+
 ## Boundaries
 
 No migration, RLS, Auth, provider, secret, payment, or new dependency. No passport number, MRZ, biometrics, health, or file field. USD 100 and noindex are unchanged. Frozen writers, `gastspeicher`, `dokument-formular.ts`, and `TripWorkspaceAuditClient.tsx` are unchanged versus `origin/main`.

@@ -2,9 +2,9 @@
 
 This review is the implementation author’s. It is not an independent Technical-Lead PASS and it does not close P1.
 
-Reviewed correction head: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`.
-Tree: `4f2165518fdea569afbb63d45efaef13409c276b`.
-This answers review R1 of `b443fb13db1e97e0d0d85d51814046349fd7491b`. The earlier implementation head remains `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
+Reviewed addendum head: `c589266158a4d15f90a952e370435150e45f41d7`.
+Tree: `55970376c0e8c08b0bc79610854fc4898355673a`.
+The card correction remains `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`. This answers review R1 of `b443fb13db1e97e0d0d85d51814046349fd7491b` and the registry/T-EX2 addendum. The earlier implementation head remains `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
 TASK blob `75c59b0851d835560ff4b5562e9fcc52c395b2ad` unchanged.
 Plan blob at the authorized head remains `252ae82c9cf1aff34f7f46e16999d50178369dff`.
 
@@ -20,11 +20,11 @@ The guest base is not a React ref. The frozen flight and accommodation wiring te
 
 The legacy writer is registered in `useLayoutEffect`, not during render. Assigning through the prop failed `react-hooks/immutability`. The mounted once-count still passes because the click is after layout. A caller that invoked the intake confirm during the same render, before the layout effect, would see no writer. No product path does that.
 
-`lib/readiness/trip-official-evaluations-server.test.ts` still fails with `1 !== 2` on the refresh count inside `onTravellerEntfernen`. I did not edit it and I did not put `router.refresh` back into the writer. `npm test` therefore exits 1. Eleven other failures are missing local PostgreSQL 16 binaries in this environment. I do not treat either class as a pass.
+T-EX2 now covers the old `1 !== 2` assertion and only that test. The writer still does not refresh. The test calls the separate refresh callback. `npm test` still exits 1 because eleven local PostgreSQL 16 proofs cannot start in this environment. I do not treat those as a pass.
 
 The audit once-count is a test-bundle rewrite. The source file on disk is the frozen component.
 
-`npm test` does not execute the Playwright files. The 18-test result is only the direct command in `mounted-matrix.txt`.
+`npm test` does not execute the Playwright files. The 20-test result is only the direct command in `mounted-matrix.txt`. An unknown intake keeps `unaufgeloest` across cancel and section return. A later accepted confirm does not claim the first attempt was absent. The duplicate warning stays with that source.
 
 I first moved the draft baseline at accept time. That made a later guest prop carrying the original traveller look like a conflict and disabled Save. The baseline now moves only when a later observation matches the submitted fingerprint and the draft generation is still that submission. I would want a reviewer to check that choice: an accepted edit stays dirty until that matching observation, and a delivery that still equals the pre-edit baseline does not become a conflict.
 

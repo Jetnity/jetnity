@@ -10,9 +10,11 @@ PLAN PASS reviewed head `781cd373fdd3fe6135039751dc8199bbb573b451`, plan blob `2
 
 Earlier implementation commit: `00ba5b9124abf1cafe26b711d50b4527f40e70a5`, tree `a8d9f7f938382623622f3adf5bb3500f5fd519ef`. Reviewed candidate that this correction answers: `b443fb13db1e97e0d0d85d51814046349fd7491b`, tree `9518d8f4f73c205cfc033ea06de3667d7dc48626`.
 
-Correction commit: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`.
-Correction tree: `4f2165518fdea569afbb63d45efaef13409c276b`.
-The mounted run in `docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt` is bound to that correction tree: 18 pass, 0 fail, exit 0. The documentation commit that records it does not change product code.
+Card correction commit: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`, tree `4f2165518fdea569afbb63d45efaef13409c276b`.
+
+Addendum commit: `c589266158a4d15f90a952e370435150e45f41d7`.
+Addendum tree: `55970376c0e8c08b0bc79610854fc4898355673a`.
+The mounted run in `docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt` is bound to that addendum tree: 20 pass, 0 fail, exit 0. The documentation commit that records it does not change product code.
 
 `origin/main` fetched again for this handoff is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base is that same commit. No rebase.
 
@@ -20,4 +22,8 @@ Draft PR #1017 stays Draft. Tracking #1012 stays open. No Ready, no merge, no ma
 
 P1, the product relation-loss on a residence-only edit, stays OPEN until an independent implementation review accepts a head. The local editor fix is not that acceptance.
 
-Review R1 on `b443fb13` required two further card corrections. A save that finishes after a newer draft edit no longer leaves the card pending. A later graph that matches the submitted profile can be described as consistent. A newer edit and a genuinely different graph stay distinct. Those corrections are local and are not acceptance.
+Review R1 on `b443fb13` required two further card corrections. A save that finishes after a newer draft edit no longer leaves the card pending. A later graph that matches the submitted profile can be described as consistent. A newer edit and a genuinely different graph stay distinct.
+
+The R1 addendum adds one registry correction. An unknown intake keeps its uncertainty and its duplicate-snapshot warning through cancel, a later request, and a section return. Confirming that later request is a new materialization. It is not an automatic retry.
+
+Root authorized T-EX2 for one assertion in `lib/readiness/trip-official-evaluations-server.test.ts`: “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh”. The traveller removal writer returns null and does not refresh. The forwarded `onReadinessAktualisieren` supplies one refresh. The accommodation callback supplies the second. Every other assertion in that file stays. T-EX1 stays limited to its four helper assertions. TASK and the accepted PLAN bytes are unchanged. These corrections are local and are not acceptance.
