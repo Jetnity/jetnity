@@ -6,7 +6,7 @@ Lane **M** of finite batch [#1011](https://github.com/Jetnity/jetnity/issues/101
 
 Immutable TASK: `docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md`, blob `eeb1f1239e07df5d9d9bc7459c4c83918b947777`. This plan does not modify that file.
 
-Parent of this plan commit: seed `195e35f07edf894ec3a4e69ba21b5bf28ae47b15`. The plan head is the commit that adds this file. Re-read that head before review; do not treat the seed as the review head.
+TASK seed: `195e35f07edf894ec3a4e69ba21b5bf28ae47b15`. The first plan head was `52e4b0c04a6547d3ec1461af9013fd3be5edd57c`, blob `f69ebc8ee95a2f0c0bebea78b4879deca208e3f6`. This revision answers Technical-Lead PLAN R1 (M-R1.1 through M-R1.4, M-EX1, M-EX2) on that head. The review head is the commit that contains this revision.
 
 ## 0. Identity, mode, and drift
 
@@ -18,9 +18,14 @@ Visible rename: the session-rename API accepted that exact title and returned it
 
 Machine mode at read: `.jetnity/operating-mode.json` `mode=NORMAL`. Product work on this dispatched branch is allowed. Special Product-Owner gates remain. This plan does not change operating mode, rulesets, or continuity files.
 
-`git fetch origin main` during this plan read: `origin/main` is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base with the seed is that same SHA. The seed is **1 ahead / 0 behind**. No rebase, merge, or sibling cherry-pick was performed. Integration priority remains **T → S → D → W → M**.
+`git fetch origin main` for this R1 revision: `origin/main` is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base with the current branch is that same SHA. Before this revision commit the branch is **2 ahead / 0 behind**. No rebase, merge, or sibling cherry-pick was performed. Integration priority remains **T → S → D → W → M**.
 
-Required reading used for this design: the immutable TASK; `AGENTS.md`; `JETNITY_START_HERE.md` (historical pointers only; live evidence wins); `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; `docs/ACTIVE_WORK_STATUS.md` and the start-here handoff pointers (R106 is closed and is not reopened); `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`; `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`; `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`. Issue bodies #751 and #1011 were not re-fetched in this plan turn beyond the dispatch that already names them binding. No new main drift was observed against the dispatched SHA.
+Required reading used for this design: the immutable TASK; `AGENTS.md`; `JETNITY_START_HERE.md` (historical pointers only; live evidence wins); `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; `docs/ACTIVE_WORK_STATUS.md` and the start-here handoff pointers (R106 is closed and is not reopened); `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`; `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`; `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`.
+
+Live issues read for this revision, not only the dispatch:
+
+- [#751](https://github.com/Jetnity/jetnity/issues/751) is open, `updated_at` `2026-10-25T16:05:30Z`. Its current section is R107 V3. D has PLAN PASS and implementation authorization. T, W, and M revise PLAN R1. S revises one remaining PLAN R2 point. This lane is the named M session, last reviewed at `52e4b0c04a6547d3ec1461af9013fd3be5edd57c`, disposition PLAN R1 CHANGES REQUIRED. Accepted main in that checkpoint remains `a74c443c6be3f064f150fcf021ab6154bda325e5`. R106 is complete. The open P1 is Trip traveller relation-loss and belongs to lane T. Holds in that index are unchanged. D's authorization does not release this lane.
+- [#1011](https://github.com/Jetnity/jetnity/issues/1011) is open, `updated_at` `2026-10-25T16:05:31Z`. The same V3 checkpoint names the five lanes, the same main, and integration order T → S → D → W → M. This lane does not take T's P1.
 
 Traveller-context check: this lane lists saved trips and archive/restore of an existing trip status. It does not read or write citizenships, travel documents, residence, or route eligibility. No traveller fact is collected. Route Truth stays untouched.
 
@@ -63,15 +68,15 @@ Constants:
 
 - `REISEN_SAMMLUNG_SEITENGROESSE = 48` displayed rows.
 - Lookahead fetch size is that constant plus one. The extra row is not rendered. There is no count query, no offset, no caller-supplied limit, and no page-number arithmetic.
-- Search raw maximum is 120 UTF-16 code units, matching the existing title/origin character cap as a hard reject before trim. A longer raw value is invalid; it is not truncated.
-- Cursor raw maximum is 512 characters.
+- Search raw maximum is 120 UTF-16 code units, matching the existing title/origin character cap as a hard reject before trim. A longer raw value is invalid; it is not truncated. U+0000 through U+001F and an unpaired surrogate are invalid. The committed needle is `trim` of an accepted raw value.
+- Cursor raw maximum is `REISEN_SAMMLUNG_CURSOR_MAX = 626` unpadded base64url characters. Section 2.3 derives that number. It is not an arbitrary 512.
 - Archive raw maximum is 16 characters.
 
 URL on the existing `/reisen` route, via `leseOptionalRequestParam` from the existing `lib/next/request-api.ts` (import only):
 
 | Param | Absent | Valid | Invalid, no database call |
 | --- | --- | --- | --- |
-| `q` | no text filter | one string, raw length ≤ 120, no NUL; committed needle is `trim` | array, NUL, raw length > 120 |
+| `q` | no text filter | one string, raw length ≤ 120, no C0 control, no unpaired surrogate; committed needle is `trim` | array, a control, an unpaired surrogate, raw length > 120 |
 | `archiv` | `alle` | one of `alle`, `offen`, `archiv` | empty, array, or any other token, including a lifecycle status such as `archived` or `draft` |
 | `cursor` | first page | one token that decodes as section 2.3 and binds to this `q` + `archiv` | array, oversized, malformed, bad version, bad timestamp, bad id, or filter mismatch |
 
@@ -85,21 +90,31 @@ Archive selection is not a new lifecycle status. It only chooses a predicate ove
 
 Date grouping is not this predicate. After a successful read, the client classifies only the returned page with `kontoReisenSichten(zeilen, '', heute)`. The empty search needle makes `reisePasstZurSuche` a pass-through. The page does not apply a second JavaScript search, so a SQL match is not dropped by `de-CH` casing. Device-calendar grouping still waits for `heutigesDatum()` and still uses the frozen date-only helpers. Group counts and the hit count are counts of this page, with visible copy that they are not the account total. A partial page is not described as the whole account.
 
-A committed filter change (`q` or `archiv`) builds a new address without `cursor`. Continuation keeps `q` and `archiv` and adds `cursor`. Addresses use `router.push` / links, not `replace`, so Back and Forward stay meaningful. The draft input is local until an explicit submit. Keystrokes do not query. Clear-search and restart are navigation to a new address; they do not call the archive action.
+A committed filter change (`q` or `archiv`) builds a new address without `cursor`. Continuation keeps `q` and `archiv` and adds `cursor`. Navigation uses `router.push`, not `replace`, so Back and Forward stay meaningful. The draft input is local until an explicit submit. Keystrokes do not query. Clear-search and restart navigate to a new address and do not call the archive action.
 
-The rows on screen are the server props for the address that produced them. The client hook does not keep its own row cache. The visible owner line names the committed `q`, archive selection, and whether a cursor is present, and it says the unsent draft is not that query. `useTransition` may mark the controls pending while a navigation is in flight; the rows stay the last committed props until the next props arrive. A newer committed address replaces those props. An older navigation result is not applied by this client because it never stores rows.
+Continuation, archive selection, clear, and restart are buttons. The click handler is the only call to `router.push`. The collection does not render `next/link` for those addresses and does not call `router.prefetch`. A viewport, hover, or idle pass therefore does not issue a page read. One explicit activation is one read of that address. There is no hidden next page and no background continuation.
+
+The visible owner line names the committed `q`, archive selection, and whether a cursor is present, and it says the unsent draft is not that query. It does not show the filter grammar. Section 2.8 is the navigation lifecycle. The collection component in section 2.6 stays mounted across those transitions.
 
 ### 2.3 Cursor and order
 
 Order is `updated_at` descending, then `id` descending. `id` is the unique tie-break. The cursor stores the exact `updated_at` string returned for the last displayed row plus that row's `id`. It is not parsed through `Date` and not rewritten with `toISOString()`, because that truncates fractional seconds and can change the offset form.
 
-Accepted timestamp shape, length ≤ 35, unquoted:
+The timestamp check reads the original string. It does not call `Date`, does not pad or strip fractional digits, and does not emit a replacement string. The cursor stores and compares that original string.
 
-`YYYY-MM-DDTHH:mm:ss` plus an optional `.` and 1–6 digits, plus `Z` or `±HH:mm`.
+Shape, entire string only: `YYYY-MM-DDTHH:mm:ss`, an optional `.` plus 1–6 digits, then `Z` or `±HH:mm`. Then semantic rejection:
 
-Accepted id: canonical UUID, the same shape as `istKontoKennung`. The token stores the lowercase form.
+- year `0001`–`9999`; month 1–12; day present in that Gregorian month, with 29 February only in a leap year (divisible by 4, and not by 100 unless also by 400);
+- hour 0–23, minute 0–59, second 0–59 (no leap second);
+- offset hour 0–15 and minute 0–59, so `+15:59` and `-15:59` pass and `+16:00`, `+15:60`, and `+24:00` fail.
 
-The token is unpadded base64url of a JSON object with only these fields: `v` (must be `1`), `q` (committed trimmed needle), `a` (`alle|offen|archiv`), `t` (exact timestamp), `i` (uuid). Extra fields, wrong types, and a `q`/`a` that differ from the URL are a mismatch. Reject before any database call.
+`2026-02-29`, `2026-04-31`, `2026-01-01T24:00:00Z`, and `2026-01-01T00:00:00.1234567Z` fail. `2024-02-29T00:00:00.1Z` and `2024-02-29T00:00:00.10Z` both pass and stay different strings.
+
+Accepted id: lowercase canonical UUID, 8-4-4-4-12 hex, the same shape as `istKontoKennung`. Uppercase hex fails. The check does not require a version nibble.
+
+The token is unpadded base64url of UTF-8 JSON from `JSON.stringify` with only these keys in this order: `v`, `q`, `a`, `t`, `i`. `v` is the number `1`. `q` is the committed trimmed needle. `a` is `alle`, `offen`, or `archiv`. `t` and `i` are strings that already passed the checks above. An array, a missing key, an extra key, a string `v`, or a `q`/`a` that differs from the URL is a mismatch. Reject before any database call.
+
+`REISEN_SAMMLUNG_CURSOR_MAX` is the length of that encoding for every accepted payload, not only one example. `JSON.stringify` on this server leaves a code unit outside U+0000–U+001F as itself, except `"` and `\`, which become two bytes. An unpaired surrogate is already rejected. A supplementary character costs 4 UTF-8 bytes and 2 code units. The maximum is therefore 3 UTF-8 bytes per accepted code unit, and 120 units are 360 bytes. U+2028 and U+2029 stay in that class in this runtime; they are not expanded to `\u2028`. The fixed envelope around that text, with `a` = `archiv`, `t` = `2026-10-25T23:59:59.123456+14:59` (32 characters, the longest accepted timestamp), and `i` = `ffffffff-ffff-ffff-ffff-ffffffffffff`, is 109 bytes. The total is 469 UTF-8 bytes and 626 unpadded base64url characters. U+754C repeated 120 times is one string in that maximum class. A shorter accepted search produces a shorter token and still passes. A token of 627 characters fails even if the rest would decode. The earlier 512 cap rejected this 120-character search (an independent fixture of the same shape was 623). C0 controls are rejected in `q` because `JSON.stringify` expands them to `\u00XX` (6 bytes) and that form would exceed 626; they are not truncated into a cursor. The roundtrip tests in section 4 cover this maximum, U+2028 at 120 units, the escaping overhead of 120 metacharacters, and impossible timestamps.
 
 The next-page predicate, ANDed with the archive and search predicates, is:
 
@@ -109,28 +124,33 @@ with both values quoted in the PostgREST `or` value so `:`, `.`, and `+` stay on
 
 Exactly-once traversal is promised only for an unchanged fixture walked through this seam. A live list can move when `updated_at` changes. Copy and the restart control say so. Refresh re-reads the current address; it is not a causal proof that a write is now visible.
 
-The existing `(user_id, updated_at desc)` index is unchanged. No new index, RPC, or migration. The `id` tie-break is a sort/filter on top of that access path. Title/origin `ILIKE` is not indexed. Both are acceptable at account scale and are not a reason to change schema.
+The existing `(user_id, updated_at desc)` index is unchanged. No new index, RPC, or migration. The `id` tie-break is a sort/filter on top of that access path. The literal title/origin filter is not indexed. Both are acceptable at account scale and are not a reason to change schema.
 
 ### 2.4 Literal title/origin search
 
-The new reader, not `textSuchfilter`, owns literal LIKE semantics.
+`textSuchfilter` cannot represent a literal asterisk. The PostgREST operator reference says `*` in `like` and `ilike` is an alias of `%` ([operators](https://docs.postgrest.org/en/stable/references/api/tables_views.html#operators)). PostgREST v13.0.7 implements that with `T.map star` on every `ilike` value, including a plain `column.ilike` value, and the map has no escape (`src/PostgREST/Query/SqlFragment.hs`; `ilike` is parsed as `OpQuant` with an empty quantifier). Its query spec treats `ilike.xy*` as a wildcard (`test/spec/Feature/Query/QuerySpec.hs`). A backslash before `*` does not survive: the quoted-value parser consumes the backslash, then `star` still rewrites the asterisk. The frozen helper always emits `.ilike.` and wraps `%…%`, so composing with it still broadens `*`. The helper stays unchanged. The user does not supply a regular expression.
 
-For a non-empty trimmed needle:
+`lib/trips/reisen-sammlung-abfrage.ts` owns the filter string. Empty needle: omit the search `or`. Otherwise:
 
-1. Escape `\` first, then `%`, then `_`, using a single backslash as the PostgreSQL `LIKE` default escape.
-2. Pass that escaped needle to the unchanged `textSuchfilter(['title','origin'], escaped)`.
-3. Apply the returned string with `.or(...)`.
+1. Walk the trimmed needle and prefix a backslash to each of `\ . + * ? ^ $ ( ) [ ] { } |`. Every other character, including `%`, `_`, comma, and non-ASCII characters, is copied. This is a closed literal encoding for PostgreSQL `~*`. It does not leave a quantifier, anchor, or character class under user control.
+2. Quote that pattern the way `zitiere` in `lib/api/suchfilter.ts` quotes a value: double each backslash, escape `"`, wrap in double quotes. Do not call `textSuchfilter`.
+3. Emit `title.imatch.<quoted>,origin.imatch.<quoted>`.
 
-Empty needle: omit the `.or` entirely.
+`imatch` is `~*`. In the same SqlFragment, `~*` is not passed through `T.map star`, so an asterisk can remain a literal. The match is unanchored, which is a substring. Worked wire strings the unit test must assert exactly:
 
-That composition is what makes `100%`, `_`, `\`, `"`, and `,` a quoted literal substring pattern rather than a wildcard or a split `or` expression. The plan does not treat the helper's existing quoting tests as proof of `%` / `_` literals. The new unit test must assert the composed string. Hosted matching remains untested.
+- `*` → `title.imatch."\\*",origin.imatch."\\*"`
+- `%` → `title.imatch."%",origin.imatch."%"`
+- `_` → `title.imatch."_",origin.imatch."_"`
+- `\` → `title.imatch."\\\\",origin.imatch."\\\\"`
+- `"` → `title.imatch."\"",origin.imatch."\""`
+- `,` → `title.imatch.",",origin.imatch.","`
+- `界` → `title.imatch."界",origin.imatch."界"`
+- `100%` → `title.imatch."100%",origin.imatch."100%"`
+- `a,b)` → `title.imatch."a,b\\)",origin.imatch."a,b\\)"`
 
-Actual matching semantics to state in the UI and the report, without claiming JavaScript equivalence:
+A needle of 120 asterisks produces a filter of length 752. A needle of 120 backslashes produces a filter of length 992. Both are finite. The cursor stores the raw needle, so those filters do not lengthen the token past 626. The synthetic client records this `or` string. Hosted PostgreSQL is not executed. Jetnity's hosted PostgREST build is not read.
 
-- Fields: `title` and `origin` only. No stage name, no destination, no metadata.
-- Server match: PostgreSQL `ILIKE` substring under the database collation, after the escapes above. `NULL` origin does not match, which agrees with optional chaining in `reisePasstZurSuche`.
-- Not the same operation as `toLocaleLowerCase('de-CH')` + `includes`. Differences include `ß`/`ss`, Turkish casing, fullwidth characters, and Unicode normalization. The collection does not re-filter with the JavaScript function.
-- No claim of NFC, of a specific hosted collation, or of identical results on PostgreSQL versus the local helper.
+The routine UI does not show `imatch`, backslashes, or the filter string. It says the search looks at title and origin, and that the server's case handling can differ from this device. Report and proof state the actual limits: fields are `title` and `origin` only; `NULL` origin does not match; `~*` case-insensitivity follows the database's regular-expression rules, not `ILIKE` and not `toLocaleLowerCase('de-CH')`. `ß`/`ss`, Turkish casing, fullwidth characters, and normalization can diverge. The page does not re-filter with `reisePasstZurSuche`. There is no claim of NFC or of a specific hosted collation.
 
 ### 2.5 Reader
 
@@ -156,7 +176,9 @@ For an authenticated valid request it calls the new reader instead of `reisenLad
 
 The existing 503 sentence `Deine Reisen sind gespeichert` is replaced on this page because a failed read must not assert that. The error heading stays so the current source assertion still matches.
 
-`components/trips/MyTripsCollection.tsx` renders the committed result, the draft form, the archive-selection links, continuation, restart, and the page-scoped group/archive sections. It uses the existing premium-hub class helpers (`hubDarstellung`, `kartenRasterKlasse`, `leistenKlasse`, section title classes) and `KontoReiseEintrag`. It does not import Workspace, readiness, visa, provider, or citizenship modules.
+For every authenticated response, including invalid parameters, empty account, no matches, end of continuation, a normal page, and a read error, the page renders one `MyTripsCollection` and does not pass a `key` built from `q`, `archiv`, `cursor`, or the error. Those transitions do not remount the controller, so an unresolved archive operation stays in that mounted state. The guest branch does not mount it. Leaving `/reisen`, or a later guest render of this route, unmounts it. That full-route unmount drops client operation state. The report states that limit. The screen does not promise that an in-flight action survives leaving the route.
+
+`components/trips/MyTripsCollection.tsx` renders the committed result, the draft form, the archive-selection buttons, continuation, restart, and the page-scoped group/archive sections. It uses the existing premium-hub class helpers (`hubDarstellung`, `kartenRasterKlasse`, `leistenKlasse`, section title classes) and `KontoReiseEintrag`. It does not import Workspace, readiness, visa, provider, or citizenship modules.
 
 `KontoReisenGruppen.tsx` stays mounted by `MeineReisenHubAudit` and keeps the current 200-cap disclosure for that in-memory fixture. The product route stops using it, so that disclosure is no longer the account-collection contract. This plan does not edit that component.
 
@@ -164,28 +186,44 @@ The existing 503 sentence `Deine Reisen sind gespeichert` is replaced on this pa
 
 `lib/trips/archiv-aktionen.ts` is not edited. The client still calls `reiseArchivLebenszyklus({ tripId, aktion })`.
 
-`lib/trips/trip-archive-workflow.ts` is a pure state machine. `components/trips/useTripArchiveWorkflow.ts` adapts it to the button and to `router.refresh()`. `KontoReiseEintrag` only passes the controller into `KontoReiseArchivAktion`. The card remains an article whose link and button are siblings. `min-h-11`, `data-reisen-aktion`, `Archivieren`, `Wiederherstellen`, and `role="alert"` stay. No `fetch(`. No nested interactive control.
+`lib/trips/trip-archive-workflow.ts` is a pure classifier and record updater. `components/trips/useTripArchiveWorkflow.ts` holds the imperative guard and calls the action. `KontoReiseEintrag` only passes the controller into `KontoReiseArchivAktion`. The card remains an article whose link and button are siblings. `min-h-11`, `data-reisen-aktion`, `Archivieren`, `Wiederherstellen`, and `role="alert"` stay. No `fetch(`. No nested interactive control.
 
-Captured at the user gesture, before the await: trip id, displayed `status`, `updatedAt`, `archivePreviousStatus`, action (`archivieren` or `wiederherstellen`), collection generation, and a monotonic operation id. Restore is not started when `previousStatusAusReise` is null; the existing fail-closed sentence stays.
+The same-turn mutex is `archiveInvocationRef` in the hook, a ref, not a reducer update and not `useState`. Its value is `null` or `{ operationId, tripId, collectionId }`. `collectionId` is assigned once when the controller mounts and is the mounted collection, not the URL. `begin` reads and writes the ref synchronously:
 
-Same-turn duplicate protection is a synchronous lock in the reducer, not `useState`, so two clicks in one turn cannot both start. A second click while `pending` does not start.
+1. If the ref is already set, return without calling the action. A second click in the same turn or while the call is in flight does not start.
+2. Otherwise assign the ref before `setState` and before the call.
+3. The call sits in `try`. `catch` records `unknown` for a synchronous throw and for a rejected promise. `finally` sets the ref back to `null` only when `ref.current.operationId` is still this operation. Feedback is applied only when the hook is still mounted, `collectionId` still matches, and the record for that trip still carries this `operationId`. Any other completion is obsolete and does not change feedback.
 
-Outcomes:
+Captured at the gesture, before the await: trip id, displayed `status`, `updatedAt`, `archivePreviousStatus`, action (`archivieren` or `wiederherstellen`), `collectionId`, and the operation id. Restore is not started when `previousStatusAusReise` is null; the existing fail-closed sentence stays.
 
-| Outcome | How it is recognized | Next state | Automatic replay |
+The frozen action's success value is `Aktionsergebnis<null>`: `{ ok: true, wert: null }`. Classification accepts a plain object only:
+
+| Class | Exact shape | What it means | What it does not mean |
 | --- | --- | --- | --- |
-| Returned rejection | `{ ok: false, meldung: string }` | `rejected`, show `meldung` | no |
-| Thrown or malformed | exception, or result whose `ok` is not boolean, or `ok: false` without a string `meldung` | `unknown` | no |
-| Acknowledged, awaiting read | `{ ok: true }` | `acknowledged-awaiting-read`, then one `router.refresh()` of the current address | no |
-| Settled visible | that same operation was acknowledged, and the later props for the same id show the expected next status | clear pending for that operation id | no |
-| Target removed | acknowledged, and the new props for the same committed query no longer contain the id while the active archive selection would exclude the expected next status | `removed`, keep a short collection-level note | no |
-| Same-id props changed first | props change before acknowledgement, or the new status is not the expected next status | do not mark success and do not clear a newer operation's feedback | no |
+| `acknowledged` | own keys exactly `ok` and `wert`, `ok === true`, `wert === null` | This call returned the success contract. One `router.refresh()` of the current address may follow. | It is not proof the list already shows the write. |
+| `returned-negative` | own keys exactly `ok` and `meldung`, `ok === false`, `meldung` a non-empty string | Show `meldung`. Do not refresh as success. | The action uses this same shape for a domain refusal, `meldungAus` after a read or write error, and the optimistic-guard miss. A negative result is not proof of rollback and not proof the row is unchanged. |
+| `unknown` | throw, non-object, array, extra key, `{ ok: true }` without `wert: null`, `{ ok: true, wert: null, extra }`, `{ ok: false }` without a non-empty string `meldung`, or any other `wert` | The outcome is unknown. No refresh-as-success. | No automatic replay. |
 
-Expected next status is `archived` for archive, and the captured `archivePreviousStatus` for restore. Absence on `alle` after an acknowledgement is `unknown`, not success, because the row should still be on an unfiltered page if nothing else moved it.
+`write` and `observation` stay separate fields on the collection record. `write` changes only from the classified call. Later props update `observation` only: `unread`, `row-status` (the row is present and its displayed status is recorded), or `row-absent`. A matching status, a different status, or absence is observed list state. None of them changes `write`, clears an acknowledgement, or counts as a transaction receipt. Copy can say that the action returned success and, separately, what the current list shows. It does not say the list proves the write. Expected status remains `archived` for archive and the captured `archivePreviousStatus` for restore, as a label for the observation, not as a commit proof.
 
-Collection-level records are keyed by trip id plus operation id. Unmounting a card because of filter, cursor, or removal does not delete the record and does not start the action again when the card remounts. A full unmount of the collection drops the records with the component state. That limit stays explicit. Navigation does not call the action.
+Collection-level records are keyed by trip id plus operation id. Unmounting a card because of filter, cursor, empty, error, or removal does not delete the record and does not start the action again when the card remounts. A full route unmount drops the records with the controller. Navigation does not call the action.
 
 The current effect that clears pending on any `status` / `archivePreviousStatus` change is removed.
+
+### 2.8 Navigation and retry lifecycle
+
+`useMyTripsCollectionNavigation` keeps three things: the draft, the committed result taken from server props, and `pendingIntentRef`. The ref is set synchronously in the handler before `router.push` or `router.refresh`, to `{ generation, address, kind }` where `kind` is `commit`, `retry`, `continue`, `clear`, `restart`, or `archiv`. Generation increases on every accepted intent.
+
+Reducer law `sammlungAnzeige`, which the hook and its tests both follow:
+
+- Committed rows, problem, and cursor belong to the props address. The draft never owns them. Editing the draft does not cancel a pending retry and does not change that owner.
+- Retry addresses the committed props address, not the unsent draft. A second retry gesture while a retry of that same address is pending does not call `refresh` or `push` again. When that intent completes, a later explicit retry may start one new read.
+- A new commit, archive selection, continuation, clear, or restart supersedes an older intent. An arrival whose generation is lower than the latest intent does not replace the committed result.
+- An arrival whose address equals the latest intent acknowledges it and becomes the committed owner. The same address arriving again, with the same rows or with an error, clears pending once and leaves archive records unchanged.
+- Back or Forward adopts the address in the new props as the committed owner and supersedes a pending intent that pointed elsewhere. It does not apply an older in-flight result as if it were the new commit.
+- A read error for the acknowledged address replaces the rows for that address. It does not render the empty-account state and does not drop archive records.
+
+Pending intent is visible before the URL props match it. Until they match, the rows on screen remain the previous committed result.
 
 ## 3. File ownership
 
@@ -227,17 +265,20 @@ Not run for this plan commit.
 Pure and synthetic, in the new `node:test` files:
 
 - 251 unchanged fixture rows, including at least three equal `updated_at` values with distinct ids, and two timestamps that differ only at microsecond precision. Walk the real page-query function against a fake client that records `from`, `select`, `order`, `limit`, `eq`/`neq`, and `or`, and returns the next slice from the fixture using the emitted cursor. Concatenated ids equal the fixture order exactly once.
-- Empty first page, empty final page, lookahead row not rendered, malformed cursor, oversized cursor, cursor/filter mismatch, repeated params, invalid timestamp, invalid id, invalid archive token, oversized search. The fake client's call count stays 0.
-- Composed search strings for title/origin, punctuation, comma, quotes, backslash, percent, underscore, and a non-ASCII needle. Assert the emitted `or` string and that the select list is the shared constant and does not add columns.
+- Empty first page, empty final page, lookahead row not rendered, malformed cursor, a 627-character cursor, cursor/filter mismatch, repeated params, impossible dates, times, and offsets from section 2.3, uppercase and malformed ids, extra JSON fields, wrong JSON types, invalid archive token, oversized search, and a C0 control in `q`. The fake client's call count stays 0.
+- Cursor roundtrip: U+754C repeated 120 times encodes to 626 unpadded base64url characters, decodes to the same needle and the same unpadded timestamp, and is accepted. U+2028 repeated 120 times also encodes to 626 and is accepted. Separate needles of 120 `*`, 120 `%`, 120 `_`, 120 `\`, 120 `"`, and 120 `,` each roundtrip through the cursor at or under 626 and through the emitted `imatch` string in section 2.4. The 120-asterisk filter is 752 characters. The 120-backslash filter is 992 characters. Those emitted strings contain `imatch` and do not contain `ilike`. The select list is the shared constant and does not add columns.
 - `reisenLaden` regression: same mapper output, same 200 limit, same single `from('trips')` inside `reisenLaden`, no service role, no `user_id` equality. Source read of `app/account/page.tsx` and `app/account/welt/page.tsx` still shows `reisenLaden` and not the new reader. `reiseLaden` still uses `accountGraphLesen`.
-- Archive reducer cases from section 2.7, including same-turn double `begin`, thrown result, malformed result, removal, same-id prop update, and query-generation change. No test calls the server action against a database.
+- Archive cases from section 2.7: synchronous throw, rejected promise, exact `{ ok: true, wert: null }`, `{ ok: true }` without `wert`, extra keys, `{ ok: false, meldung }`, `{ ok: false }` without `meldung`, duplicate gesture while `archiveInvocationRef` is set, and an obsolete completion after a newer operation id or after unmount. A later list snapshot updates `observation` only. No test calls the server action against a database.
+- Navigation reducer: pending intent before props acknowledgement, newer commit superseding a retry, duplicate retry suppressed, same-address success and error completion, and a stale generation that does not replace the committed owner.
 
-Rendered proof, only if section 8.2 is approved:
+Rendered proof is mandatory. M-EX2 declines a new app route and does not waive this proof. After plan acceptance, `scripts/my-trips-collection-archive-workflow-completion-1/` follows the existing esbuild and Playwright pattern in `scripts/account-traveller-management-completion-1/run.mjs`:
 
-- A script under `scripts/my-trips-collection-archive-workflow-completion-1/` drives the fixture route with Playwright and project CSS.
-- Viewports 320, 390, 768, and 1440. Root font size 32px. Long title and origin. Dense page. Pending, error, and end states. `prefers-reduced-motion: reduce`.
-- Real pointer and keyboard events: commit search, clear, restart, next, Back, Forward, rapid commits, retry of the committed address, archive rejection, thrown result, duplicate activation, acknowledged-awaiting-read, target removal, same-id update. Pagination controls must not call the action.
-- Evidence directory records source SHA, tree, dirty state, commands, exit codes, versions, and stubs. Screenshots are sanitized fixtures. They are not hosted, authenticated, native-device, SQL/RLS, or Production evidence.
+- esbuild bundles the real `MyTripsCollection`, `KontoReiseEintrag`, and `KontoReiseArchivAktion`. Aliases replace only `next/navigation` and `@/lib/trips/archiv-aktionen`. Project CSS comes from the existing PostCSS/Tailwind pipeline on `styles/globals.css`. A local static server serves that bundle. There is no Next route, no `ui-audit` page, no session, and no Supabase client.
+- The navigation shim records `push`, `refresh`, and `prefetch`. The proof fails if `prefetch` is called or if a continuation control issues a read before the pointer or keyboard activation.
+- The action shim returns a deferred promise, an exact `{ ok: true, wert: null }`, a thrown error, a malformed fulfillment, or `{ ok: false, meldung }`. The wrapper then passes the next scripted props. A resolved refresh is not treated as a list observation.
+- Viewports 320, 390, 768, and 1440. Root font size 32px on `documentElement`. Long title and origin. Dense page. Pending, error, and end states. `prefers-reduced-motion: reduce`.
+- Real pointer and keyboard events: commit search, clear, restart, next, Back, Forward, rapid commits, retry of the committed address, returned negative, thrown result, duplicate activation, acknowledged write beside a separate list observation, target absence, and a same-id prop update. Pagination controls must not call the action. The collection stays mounted across those transitions; the test reads the same controller instance.
+- Evidence under `docs/evidence/my-trips-collection-archive-workflow-completion-1/` records source SHA, tree, dirty state, commands, exit codes, versions, the alias boundary, and the stubs. Screenshots are sanitized fixtures. They are not hosted, authenticated, native-device, zoom, screen-reader, SQL/RLS, or Production evidence. Setting root font size is not browser zoom.
 
 Then the ordinary project gates: Typecheck, lint, the five hygiene checks (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`), production build, and `npm test`. Native App/Auth/Vercel gates run on the pushed head. Skipped work is not a pass. Local environment failures are recorded.
 
@@ -255,7 +296,7 @@ Account home and World still stop at 200 trips. Severity: product gap, not a def
 
 The list index does not include `id`. Tie-break correctness does not require a new index at this scale. Adding one would be a schema change and is not requested.
 
-Server `ILIKE` and `reisePasstZurSuche` can disagree. The collection shows the server result and says so. The local helper stays the contract for the unchanged callers.
+Server `~*` and `reisePasstZurSuche` can disagree. The collection shows the server result and says, in ordinary language, that server case handling can differ from the device. The local helper stays the contract for the unchanged callers.
 
 ## 7. What this plan commit does not do
 
@@ -263,48 +304,34 @@ No Ready, no merge, no tracking close, no write to `main`, no follow-up slice, n
 
 Holds left unchanged: #985/#982, #917, #913/#911, #968, #748, #626, #937/#936, Bern #934, plus #944, #585, #960, and #957 as named in the TASK.
 
-## 8. Narrow allowlist exceptions for Technical-Lead decision
+## 8. Allowlist decisions from PLAN R1
 
-These are not authorized by this plan. Implementation stops at the boundary until the plan review explicitly allows the listed files. No other file is requested.
+No further exception is requested. This revision does not edit the files below.
 
-### 8.1 Source assertions that cannot survive a single mapper and a page that no longer mounts `KontoReisenGruppen`
+### 8.1 M-EX1 accepted for implementation after a later PLAN PASS
 
-Required because the TASK demands one shared mapper and forbids a second copy, while these tests match source text in `lib/trips/daten.ts`:
+After that PASS, the select and mapper observation points may move to `lib/trips/reisen-uebersicht.ts` in:
 
-- `lib/trips/archiv-aktionen.test.ts` — `const UEBERSICHT_SPALTEN = ... trip_items(count)`, `stageCount: stages.length`, `itemCount: anzahl(zeile.trip_items)`, `archivePreviousStatus: previousStatusAusMetadata`.
-- `lib/trips/reise-orte.test.ts` — the same select constant and the `trip_stages(...)` field list inside `daten.ts`.
-- `lib/account/world-map.test.ts` — `UEBERSICHT_SPALTEN` and `trip_stages(name, position, country_code, place_id, latitude, longitude)` inside `daten.ts`, plus one `.from('trips')` between `reisenLaden` and `reiseLaden`.
+- `lib/trips/archiv-aktionen.test.ts`
+- `lib/trips/reise-orte.test.ts`
+- `lib/account/world-map.test.ts`
 
-Requested change: point the select/mapping assertions at `lib/trips/reisen-uebersicht.ts`, and keep asserting that `reisenLaden` uses that helper, limits with `REISEN_LISTE_GRENZE`, contains one `.from('trips')`, and contains neither service role nor `eq('user_id'`.
+Every existing field, count, provenance, and forbidden-transit assertion stays. The tests still prove `reisenLaden()` calls that one helper with one authenticated `from('trips')`, `REISEN_LISTE_GRENZE` of 200, the original `updated_at` descending order, `lese()` error behavior, no service role, and no `eq('user_id'`. `reiseLaden` and `accountGraphLesen` stay in `daten.ts` unchanged.
 
-Also:
+`lib/account/reise-gruppen-grenzen.test.ts` may expect `MyTripsCollection` on `app/(public)/reisen/page.tsx`. It still requires the guest branch, the single `getUser()`, the error heading distinct from the empty-account heading, no client status write, and no `reiseArchivLebenszyklus` on the page. The unchanged `KontoReisenGruppen.tsx` still has to carry the current 200-cap sentences. There is no broad rewrite of that suite. `lib/trips/my-trips-premium-hub-ux-1.test.ts` stays as it is while that component and the archive button's required strings stay.
 
-- `lib/account/reise-gruppen-grenzen.test.ts` asserts `app/(public)/reisen/page.tsx` includes the identifier `KontoReisenGruppen`. The product page will include `MyTripsCollection` instead. Requested change: accept `MyTripsCollection` there, and keep the assertions for the error heading, the empty-account heading, `GastReisen`, `if (problem)`, no local `status = 'archived'`, and no `reiseArchivLebenszyklus` on the page. The 200-cap sentences stay required inside the unchanged `KontoReisenGruppen.tsx`.
+### 8.2 M-EX2 declined
 
-`lib/trips/my-trips-premium-hub-ux-1.test.ts` can stay unchanged if `KontoReisenGruppen.tsx` and the archive button's required strings stay.
-
-If this exception is refused, the single-mapper extraction cannot land without breaking those tests or duplicating the mapper. This lane would stop rather than duplicate it or game the assertions with a dead copy of the select string.
-
-### 8.2 One audit-only route for the required rendered proof
-
-The TASK requires rendered project-CSS pointer and keyboard evidence. The established harness pattern is `uiAuditSeiteAktiv` (`lib/ui-audit/freigabe.ts`): production always 404, and outside production only `JETNITY_UI_AUDIT=true|1` responds. The existing `app/(public)/ui-audit/meine-reisen/page.tsx` renders `KontoReisenGruppen` fixtures and is not this collection.
-
-Requested new file only:
-
-- `app/(public)/ui-audit/meine-reisen-sammlung/page.tsx`
-
-It would call the existing `uiAuditSeiteAktiv`, `notFound()` otherwise, `robots` noindex, and render `MyTripsCollection` from synthetic props. No database, no write, no new environment variable, no change to `lib/ui-audit/freigabe.ts`.
-
-If this exception is refused, this lane will not add a fixture backdoor on the product page. Rendered CSS/pointer evidence would then be an explicit skipped limit. Unit and synthetic query proof could still run.
+A new `app/(public)/ui-audit/meine-reisen-sammlung/page.tsx` will not be added. No fixture flag will be added to the product page. The mounted proof in section 4 uses the named script and evidence directories, the real collection components, and project CSS. Declining the route does not skip that proof.
 
 ## 9. Implementation order after explicit plan acceptance
 
-1. Shared mapper and `reisenLaden` call-through, with the section 8.1 test retarget only if approved.
-2. Pure URL/cursor/search contract and its tests.
+1. Shared mapper and `reisenLaden` call-through, with the section 8.1 test retarget.
+2. Pure URL/cursor/search contract and its tests, including the 626-character cursor and the `imatch` strings.
 3. Synthetic reader and the 251-row seam.
-4. Page integration and `MyTripsCollection`, preserving guest and auth boundaries.
-5. Archive state machine and the button wiring.
-6. Rendered script and evidence, only with section 8.2.
+4. Page integration and `MyTripsCollection`, one mounted controller, no prefetch.
+5. Archive ref guard, classifier, and button wiring.
+6. esbuild/Playwright script and evidence.
 7. Status, report, self-review, and handoff for that implementation head.
 
-Until that acceptance, the next action is independent Technical-Lead review of the exact plan head. Same session. No further Owner confirmation is required for this internal gate.
+Until that acceptance, the next action is independent Technical-Lead re-review of this exact plan head. Same session. No further Owner confirmation is required for this internal gate. Implementation, tests, and audit stay stopped.
