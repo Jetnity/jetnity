@@ -1,0 +1,30 @@
+# R107-T author self-review — 2026-10-25
+
+This review is the implementation author’s. It is not an independent Technical-Lead PASS and it does not close P1.
+
+Reviewed implementation head: `00ba5b9124abf1cafe26b711d50b4527f40e70a5`.
+Tree: `a8d9f7f938382623622f3adf5bb3500f5fd519ef`.
+TASK blob `75c59b0851d835560ff4b5562e9fcc52c395b2ad` unchanged.
+Plan blob at the authorized head remains `252ae82c9cf1aff34f7f46e16999d50178369dff`.
+
+## What holds
+
+The mounted residence-only UUID case failed on the original editor and the same assertion passes on the fix, including in the later 15-test run. Exact-ref rejection, blank-link rejection, duplicate citizenship, removal, and explicit re-entry are in that run. Outcome classification stays conservative: a string, throw, rejection, or malformed fulfillment after the writer is entered is unproven, with no replay. Guest admission is one traveller write at a time. A usable plan-point add is still present after the later traveller save. After an unproven readback, a second slot does not write, and the frozen plan-point equality check rejects the stale graph instead of being mocked away. Only an explicit successful same-trip read clears the latch. Registry and the legacy audit stub each fire once, on one ledger.
+
+T-EX1 touches only the four named helper assertions. Frozen document, storage, writer, schema, and audit-client sources are unchanged.
+
+## Corrections I would want a reviewer to see
+
+The guest base is not a React ref. The frozen flight and accommodation wiring tests call `GastArbeitsbereich` as a plain function. `useRef` throws there. The base is a `WeakMap` on the `setReise` identity. That preserves the five `useState` slots those tests seed. It is instance-scoped for a stable setter, and a trip change replaces the entry. It is not cross-tab state and not a new storage API.
+
+The legacy writer is registered in `useLayoutEffect`, not during render. Assigning through the prop failed `react-hooks/immutability`. The mounted once-count still passes because the click is after layout. A caller that invoked the intake confirm during the same render, before the layout effect, would see no writer. No product path does that.
+
+`lib/readiness/trip-official-evaluations-server.test.ts` still fails with `1 !== 2` on the refresh count inside `onTravellerEntfernen`. I did not edit it and I did not put `router.refresh` back into the writer. `npm test` therefore exits 1. Eleven other failures are missing local PostgreSQL 16 binaries in this environment. I do not treat either class as a pass.
+
+The audit once-count is a test-bundle rewrite. The source file on disk is the frozen component.
+
+`npm test` does not execute the Playwright files. The 15-test result is only the direct command in `mounted-matrix.txt`.
+
+## Not claimed
+
+No hosted readback, SQL/RLS, Auth, Production, causal exactly-once, cross-tab atomicity, or native-device proof. P1 stays OPEN until an independent review accepts an exact head. Ready and merge stay with the Technical Lead.

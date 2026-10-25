@@ -1,0 +1,40 @@
+R107-T mounted Workspace, registry, guest and project-CSS proof.
+
+`npm test` and CI do not re-run this Playwright script until a later allowlisted `package.json` change. This log is local evidence only.
+
+command: node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts
+node: v22.23.4
+playwright: 1.55.0
+implementation head: 00ba5b9124abf1cafe26b711d50b4527f40e70a5
+implementation tree: a8d9f7f938382623622f3adf5bb3500f5fd519ef
+exit: 0
+tests: 15
+pass: 15
+fail: 0
+
+The run used the working tree captured by that implementation commit. No product file changed between the run and the commit. This documentation file is a later docs-only commit.
+
+Historical RED `mounted-residence-red.txt` stays bound to head 318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec and shows the original editor emitting `citizenship:CH` with `citizenshipClientRef: null`. Historical GREEN `mounted-residence-green.txt` stays bound to head 27102ebae649ceaaab5866a0df6db84f570c507a and records only the residence Enter assertion. This later run injects compiled `styles/globals.css` and repeats that same residence assertion, then the pointer-click assertion, the narrow-card assertion, and the §10.3 matrix. The residence assertion was not weakened.
+
+Covered here, all exit 0:
+- legacy refs, deliberate removal, relation choice, blank-country linked document, duplicate citizenship
+- double Enter, string, throw, rejection, malformed fulfillment, refresh throw, stale completion, focus
+- pre-settlement delivery is not treated as consistent; a strictly later match may be
+- removed saved profile needs explicit re-entry
+- Escape cancels removal; a late response does not steal a newer field
+- registry: two same-label ids, capacity during the request, string outcome is not replayed, section navigation, unmount
+- problem 503, null travellers and empty list stay distinct
+- Konto render prop invokes the stubbed writer once; the legacy audit node invokes its existing stub once
+- usable guest plan point “Marktplatz” is kept by the later traveller save
+- unproven guest readback: second-slot save and remove do not write; an immediate plan-point add from the old React graph is rejected by the frozen `gastPlanpunktAnlegen` equality check and is not counted as a successful add; “Stand neu lesen” leaves the latch; a later add of the stored graph (“Nachlesen”) still leaves the latch; failed, malformed and wrong-trip explicit reads stay blocked; a successful explicit read does not itself write; the next deliberate save keeps the first traveller and “Nachlesen”
+- a guest prop delivery does not clear the unresolved latch
+- project CSS at 320, 360, 390, 768 and 1280, root font 32px at 320, without `overflow: hidden` and without `overflow-wrap: anywhere`
+
+Screenshots in this directory: `card-320.png`, `card-360.png`, `card-390.png`, `card-768.png`, `card-1280.png`, `state-rows-320.png`, `state-rows-1280.png`, `state-confirm-320.png`, `state-pending-320.png`, `state-unknown-320.png`, `state-conflict-320.png`, `state-absent-320.png`.
+
+Stubs, not hosted, RLS, Auth or Production evidence:
+- account writers, router refresh and the Konto action modules are test stubs
+- the audit once-count rewrites only the test bundle string `onUebernehmen={async () => null}`; `components/trips/TripWorkspaceAuditClient.tsx` is unmodified
+- guest traveller cases use the real `gastspeicher` localStorage path in the page, with a readback shim for the unproven case
+
+Not proved: causal exactly-once readback, cross-tab atomicity, atomicity against a different in-flight guest writer, hosted SQL/RLS, a native device or a screen reader. Full unmount drops the in-memory ledger.
