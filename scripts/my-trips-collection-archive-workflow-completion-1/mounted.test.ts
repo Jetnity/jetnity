@@ -310,6 +310,8 @@ describe('montierte Meine-Reisen-Sammlung', () => {
         itemCount: 0,
       }))
       await ergebnis(bild, { zeilen: viele, hatWeiter: false, naechsterCursor: null })
+      assert.equal(await bild.locator('[data-reisen-kalender="wartet"]').count(), 0)
+      assert.equal(await bild.getByRole('heading', { name: 'Ohne Datum' }).count(), 1)
       await bild.evaluate(() => {
         document.documentElement.style.fontSize = '32px'
       })
