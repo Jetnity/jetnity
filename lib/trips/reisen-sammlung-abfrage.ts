@@ -255,7 +255,9 @@ export function ungueltigeAdresse(parameter: SammlungSuchparameter): string {
   const suche = new URLSearchParams()
   for (const name of ADRESS_NAMEN) {
     const wert = parameter[name]
-    if (typeof wert === 'string' && wert.length > 0) suche.set(name, wert)
+    // Ein vorhandener leerer Wert bleibt Teil der ungültigen Adresse.
+    // archiv= und cursor= sind nicht dieselbe Adresse wie /reisen.
+    if (typeof wert === 'string') suche.set(name, wert)
     if (Array.isArray(wert)) {
       for (const eintrag of wert) suche.append(name, eintrag)
     }

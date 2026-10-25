@@ -343,6 +343,50 @@ describe('montierte Meine-Reisen-Sammlung', () => {
       }
       merken('Wiederholte Parameter übernehmen die ungültige Hülle', true)
 
+      for (const query of ['archiv=', 'cursor=']) {
+        const tief = await oeffnenBei(browser, query)
+        const erste = await lese(tief)
+        assert.equal(await tief.evaluate(() => window.location.search), `?${query}`)
+        assert.deepEqual(erste.ids, [])
+        assert.equal(erste.einig, '1')
+        assert.equal(erste.live, `/reisen?${query}`)
+        assert.equal(erste.uebernommen, `/reisen?${query}`)
+        assert.notEqual(erste.uebernommen, '/reisen')
+        assert.equal(await tief.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 1)
+        await ergebnis(tief, {})
+        const verworfen = await lese(tief)
+        assert.equal(await tief.evaluate(() => window.location.search), `?${query}`)
+        assert.deepEqual(verworfen.ids, [])
+        assert.equal(verworfen.live, `/reisen?${query}`)
+        assert.equal(verworfen.uebernommen, `/reisen?${query}`)
+        assert.equal(await tief.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 1)
+        await tief.close()
+
+        const platz = await oeffnen(browser)
+        await adresseSetzen(platz, query)
+        const alt = await lese(platz)
+        assert.deepEqual(alt.ids, [ALPHA])
+        assert.equal(await platz.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 0)
+        await ergebnis(platz, ungueltigeHuelle(`/reisen?${query}`))
+        await platz.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).waitFor()
+        const neu = await lese(platz)
+        assert.deepEqual(neu.ids, [])
+        assert.equal(neu.einig, '1')
+        assert.equal(neu.live, `/reisen?${query}`)
+        assert.equal(neu.uebernommen, `/reisen?${query}`)
+        await ergebnis(platz, {})
+        const bleibt = await lese(platz)
+        assert.deepEqual(bleibt.ids, [])
+        assert.equal(bleibt.live, `/reisen?${query}`)
+        assert.equal(bleibt.uebernommen, `/reisen?${query}`)
+        assert.equal(await platz.getByRole('heading', { name: 'Diese Adresse ist keine gültige Ansicht.' }).count(), 1)
+        await platz.close()
+        merken(
+          query === 'archiv=' ? 'Leeres archiv bleibt eine eigene Adresse' : 'Leerer cursor bleibt eine eigene Adresse',
+          true,
+        )
+      }
+
       const liste = await oeffnen(browser)
       await liste.evaluate(() => {
         const fenster = window as unknown as SammlungFenster

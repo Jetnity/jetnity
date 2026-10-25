@@ -134,13 +134,17 @@ describe('Cursor und Kalender', () => {
     const bern = sammlungAnfrageAus({ q: '  Bern  ' })
     assert.equal(bern.ok && bern.q, 'Bern')
     assert.equal(bern.ok ? sammlungHref(bern) : '', '/reisen?q=Bern')
-    for (const text of ['q=a&q=b', 'archiv=offen&archiv=archiv', 'cursor=x&cursor=y']) {
+    for (const text of ['q=a&q=b', 'archiv=offen&archiv=archiv', 'cursor=x&cursor=y', 'archiv=', 'cursor=']) {
       const suche = new URLSearchParams(text)
       const parameter = parameterAusSuche(suche)
       assert.equal(sammlungAnfrageAus(parameter).ok, false)
       assert.equal(kanonischeAdresse(suche), ungueltigeAdresse(parameter))
       assert.equal(kanonischeAdresse(suche), `/reisen?${text}`)
+      assert.notEqual(kanonischeAdresse(suche), '/reisen')
     }
+    assert.equal(kanonischeAdresse(new URLSearchParams('')), '/reisen')
+    assert.equal(sammlungAnfrageAus({ q: '' }).ok, true)
+    assert.equal(kanonischeAdresse(new URLSearchParams('q=')), '/reisen')
     assert.equal(ansichtPhrase({ q: '', archiv: 'alle', fortsetzung: false }), 'ohne Suche in Alle')
     assert.equal(ansichtPhrase({ q: 'beta', archiv: 'offen', fortsetzung: true }), 'die Suche „beta“ in Offen, weitere Seite')
     assert.equal(ansichtPhrase({ q: 'beta', archiv: 'offen', fortsetzung: true }).includes('cursor'), false)

@@ -203,6 +203,8 @@ describe('Sammlung liest 49 und zeigt 48', () => {
       { q: '\u0000' },
       { cursor: cursorCodieren({ q: 'a', archiv: 'alle', zeit: '2026-02-29T00:00:00Z', id: ID }) ?? 'x' },
       { cursor: cursorCodieren({ q: '', archiv: 'alle', zeit: '2026-01-01T00:00:00Z', id: 'FFFFFFFF-ffff-ffff-ffff-ffffffffffff' }) ?? 'x' },
+      { archiv: '' },
+      { cursor: '' },
     ]
     for (const parameter of faelle) {
       const zugang = client(bestand())
@@ -213,6 +215,14 @@ describe('Sammlung liest 49 und zeigt 48', () => {
       assert.equal(ergebnis.adresse, ungueltigeAdresse(parameter))
       assert.equal(zugang.aufrufe.filter((aufruf) => aufruf.name === 'from').length, 0)
     }
+    const archivZugang = client([])
+    const cursorZugang = client([])
+    const leerArchiv = await reisenSammlungAusParametern({ archiv: '' }, archivZugang)
+    const leerCursor = await reisenSammlungAusParametern({ cursor: '' }, cursorZugang)
+    assert.equal(leerArchiv.adresse, '/reisen?archiv=')
+    assert.equal(leerCursor.adresse, '/reisen?cursor=')
+    assert.equal(archivZugang.aufrufe.filter((aufruf) => aufruf.name === 'from').length, 0)
+    assert.equal(cursorZugang.aufrufe.filter((aufruf) => aufruf.name === 'from').length, 0)
   })
 
   test('gibt die Suchzeichenfolge weiter und trennt den Lesefehler', async () => {
