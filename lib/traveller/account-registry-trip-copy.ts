@@ -21,6 +21,10 @@ export const REGISTRY_TRIP_COPY = {
   limit:
     'Diese Reise hat bereits die maximale Anzahl Reisender. Entferne zuerst ein Profil, bevor du eine gespeicherte Person übernimmst.',
   erfolg: 'Die Person wurde als eigenständiger Snapshot in diese Reise übernommen.',
+  warten: 'Die Übernahme wurde angenommen. Die Reise wird neu geladen.',
+  refreshUnklar: 'Die Übernahme wurde angenommen. Ob die Reise neu geladen wurde, ist nicht bekannt.',
+  unbekannt: 'Das Ergebnis dieser Übernahme ist nicht bekannt. Sie wird nicht von selbst wiederholt.',
+  erneut: 'Eine erneute Übernahme kann einen weiteren Snapshot erzeugen, falls die vorherige angekommen ist.',
   nichtAngemeldet: 'Für diesen Schritt ist eine Anmeldung erforderlich. Bitte melde dich erneut an.',
   eingabeUngueltig: 'Diese Übernahme ist ungültig.',
   nichtGefunden: 'Dieser gespeicherte Reisende wurde nicht gefunden.',
