@@ -1,0 +1,565 @@
+{
+  "archiveTransformation": "Documentation-only projection of existing recorded JSON. Remove only the entire dependencyInputs array; retain all 54 repositoryInputs rows and every other original key/value, including original dependencyInputCount. No execution.",
+  "originalPath": "/tmp/r107-world-r1-review/integration-1343/historical-bundle-source-binding.json",
+  "originalBytes": 606612,
+  "originalSha256": "62fe37add94c42d015a82f16cf35e05245e57cc95aecbf929c2f4a47c2a6f469",
+  "originalInputCount": 1743,
+  "retainedInputCount": 54,
+  "originalRepositoryInputCount": 54,
+  "retainedRepositoryInputCount": 54,
+  "originalDependencyInputCount": 1689,
+  "retainedDependencyInputCount": 0,
+  "removedFields": [
+    "dependencyInputs"
+  ],
+  "record": {
+    "head": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+    "tree": "d732487b09c3245c9c22e38b38bb030c8aa181cf",
+    "historicalHead": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+    "repositoryInputCount": 54,
+    "repositoryInputs": [
+      {
+        "source": "/tmp/r107-world-r1-review/lib/country/copy.ts",
+        "historicalSha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+        "actualSha256": "da2ca6179a626bb4cebfe362af7f4113ccd5e9e3c37d5777ed414262e4d4b011",
+        "matchesHistoricalBytes": true,
+        "path": "lib/country/copy.ts",
+        "expectedFinalGitBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+        "actualGitBlob": "c332e1ac11a71485c2a2610848e3346a6e4a97d5",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/country/katalog.ts",
+        "historicalSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "actualSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "matchesHistoricalBytes": true,
+        "path": "lib/country/katalog.ts",
+        "expectedFinalGitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+        "actualGitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/country/darstellung.ts",
+        "historicalSha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+        "actualSha256": "a6a1d8d2cba8cc736586a8f689f84ad41830a032c9cc4d68efe7231051df2add",
+        "matchesHistoricalBytes": true,
+        "path": "lib/country/darstellung.ts",
+        "expectedFinalGitBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+        "actualGitBlob": "9460fc8d3b4a7504dc802031a0d869045d5bd74b",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/country/land-feld.ts",
+        "historicalSha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4",
+        "actualSha256": "ae80798384bdfaf93f59670bb20d13001b20a18fb80a2e219a36b3efdba22cf4",
+        "matchesHistoricalBytes": true,
+        "path": "lib/country/land-feld.ts",
+        "expectedFinalGitBlob": "b47d4be66bfb83d95517ffe25ac5859738aae2da",
+        "actualGitBlob": "b47d4be66bfb83d95517ffe25ac5859738aae2da",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/country/LandFeld.tsx",
+        "historicalSha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b",
+        "actualSha256": "d7e9a0507613f331abb085a311e7a1a08146ecc3b411f80a26ed1338c9c4c56b",
+        "matchesHistoricalBytes": true,
+        "path": "components/country/LandFeld.tsx",
+        "expectedFinalGitBlob": "4f6894927d64e9dd05db074ae05a663cb1578b5e",
+        "actualGitBlob": "4f6894927d64e9dd05db074ae05a663cb1578b5e",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/utils.ts",
+        "historicalSha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+        "actualSha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+        "matchesHistoricalBytes": true,
+        "path": "lib/utils.ts",
+        "expectedFinalGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "actualGitBlob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/suche/Suchliste.tsx",
+        "historicalSha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352",
+        "actualSha256": "a442e99d5a599de5f1d2f40dfa83cda3863a97e4af340ca1dc79941e4ee6f352",
+        "matchesHistoricalBytes": true,
+        "path": "components/suche/Suchliste.tsx",
+        "expectedFinalGitBlob": "d69781e62dae73acde6590bde03f3533c8388b77",
+        "actualGitBlob": "d69781e62dae73acde6590bde03f3533c8388b77",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/places/domain.ts",
+        "historicalSha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c",
+        "actualSha256": "be453cce427b66b219ed2bdfb7c0f54c89e3f9563bd107e87b730b7dff9b633c",
+        "matchesHistoricalBytes": true,
+        "path": "lib/places/domain.ts",
+        "expectedFinalGitBlob": "047d902c1ddcf56e5819dedf12b7b3580331e1c0",
+        "actualGitBlob": "047d902c1ddcf56e5819dedf12b7b3580331e1c0",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/places/pruefen.ts",
+        "historicalSha256": "1e6e6bc58321ab4c02de859a121dc54754cc708d9d5bdea0f2acc490dfcf85c8",
+        "actualSha256": "1e6e6bc58321ab4c02de859a121dc54754cc708d9d5bdea0f2acc490dfcf85c8",
+        "matchesHistoricalBytes": true,
+        "path": "lib/places/pruefen.ts",
+        "expectedFinalGitBlob": "2167d2fb35fcb8c3a45a024f6cca4b8fea574769",
+        "actualGitBlob": "2167d2fb35fcb8c3a45a024f6cca4b8fea574769",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/places/auswahl.ts",
+        "historicalSha256": "6fde5c624550e09029ea8cbf9b148aa5d45a42c9d43a898b83d121f84629415e",
+        "actualSha256": "6fde5c624550e09029ea8cbf9b148aa5d45a42c9d43a898b83d121f84629415e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/places/auswahl.ts",
+        "expectedFinalGitBlob": "aea169b355fa62acc4a5c78cc43ffd47446f8f30",
+        "actualGitBlob": "aea169b355fa62acc4a5c78cc43ffd47446f8f30",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/digest.ts",
+        "historicalSha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "actualSha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/digest.ts",
+        "expectedFinalGitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+        "actualGitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+        "historicalSha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e",
+        "actualSha256": "2e0fd2776172f5634c2f288f7f4e6b134f78b65ff214d296ca16a4f781788c7e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+        "expectedFinalGitBlob": "25dafee0f06353785972efafe0fc2db90183372b",
+        "actualGitBlob": "25dafee0f06353785972efafe0fc2db90183372b",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/types/trips.ts",
+        "historicalSha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+        "actualSha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+        "matchesHistoricalBytes": true,
+        "path": "types/trips.ts",
+        "expectedFinalGitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "actualGitBlob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/day-stage-assignment.ts",
+        "historicalSha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4",
+        "actualSha256": "1783551ae7f29a54ae9c4b3b469c680c1645d4981cc98543c6e9269cb8e6c7d4",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/day-stage-assignment.ts",
+        "expectedFinalGitBlob": "9f5c84bb97b8609a2b0b0659b23bc9ac3dfac658",
+        "actualGitBlob": "9f5c84bb97b8609a2b0b0659b23bc9ac3dfac658",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/bezeichnungen.ts",
+        "historicalSha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+        "actualSha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/bezeichnungen.ts",
+        "expectedFinalGitBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+        "actualGitBlob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/buchung.ts",
+        "historicalSha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b",
+        "actualSha256": "29097af982b837bff267ca74fcf9485bf69a9b0013ed880f8070c7df445df60b",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/buchung.ts",
+        "expectedFinalGitBlob": "dd6b76fb68bc9721d1f345eb66ef18a14868cbff",
+        "actualGitBlob": "dd6b76fb68bc9721d1f345eb66ef18a14868cbff",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/mietwagen-felder.ts",
+        "historicalSha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b",
+        "actualSha256": "46b59f3e3e4b227271c1c316f5dd2061eb2b7bdde163b25178bcb7fc1d47c35b",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/mietwagen-felder.ts",
+        "expectedFinalGitBlob": "5a256b1ee8038238198a84a5870c714fcc017dcd",
+        "actualGitBlob": "5a256b1ee8038238198a84a5870c714fcc017dcd",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/mobilitaet-felder.ts",
+        "historicalSha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e",
+        "actualSha256": "134425e7f9f954aef63b8c9ccb53f4c721cd1b0f8c5643fce8ccd57bd5608b7e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/mobilitaet-felder.ts",
+        "expectedFinalGitBlob": "155f8a71aff2c4e47fdfdf2a6fa0d40f106e807d",
+        "actualGitBlob": "155f8a71aff2c4e47fdfdf2a6fa0d40f106e807d",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/tage.ts",
+        "historicalSha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
+        "actualSha256": "7d5684436f0403a0c77af0a7f4b3378e0297e41dae36775569e0c75127d17c6d",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/tage.ts",
+        "expectedFinalGitBlob": "e34eb190e86ba6ed982071fc5e77f4ab7d7631a8",
+        "actualGitBlob": "e34eb190e86ba6ed982071fc5e77f4ab7d7631a8",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/domain.ts",
+        "historicalSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "actualSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/domain.ts",
+        "expectedFinalGitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+        "actualGitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/traveller-kontext.ts",
+        "historicalSha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52",
+        "actualSha256": "a6f916ba5f0e800eee0b8b5f6a013648e24cff0ff8852c572663f51b39a7eb52",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/traveller-kontext.ts",
+        "expectedFinalGitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78",
+        "actualGitBlob": "10b5c1b87689cc1613518617ce70e324b49faa78",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/traveller-anfrage.ts",
+        "historicalSha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d",
+        "actualSha256": "6e68b1a25cc454c7da57905618fd929e772569911db2b520d41c07cf5f4f855d",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/traveller-anfrage.ts",
+        "expectedFinalGitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+        "actualGitBlob": "ce68927afb8a4a16f502570d7c8f7d0432c36b6a",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/readiness/schema.ts",
+        "historicalSha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+        "actualSha256": "4871a01f25e8e56d16ce75db86c481720927aa9a8fdb02e3df0dc4a0204c401c",
+        "matchesHistoricalBytes": true,
+        "path": "lib/readiness/schema.ts",
+        "expectedFinalGitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+        "actualGitBlob": "6aa108cdf0256ffd1ed33f79dcf636eb1f91d2c6",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/route/schema.ts",
+        "historicalSha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+        "actualSha256": "54da15b78fd123a8d32e28920078ff4e078269d466109f110e90a08913848146",
+        "matchesHistoricalBytes": true,
+        "path": "lib/route/schema.ts",
+        "expectedFinalGitBlob": "f2615a4103b2b8525d93d67695e7e15978c9b442",
+        "actualGitBlob": "f2615a4103b2b8525d93d67695e7e15978c9b442",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/trips/schema.ts",
+        "historicalSha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+        "actualSha256": "5e65844bf4cbc568192f07104528bfc36bec9c9fd193f56a95e743b30e8ded8b",
+        "matchesHistoricalBytes": true,
+        "path": "lib/trips/schema.ts",
+        "expectedFinalGitBlob": "5063ead19ed2a9e99166d7942f88434e64b62a84",
+        "actualGitBlob": "5063ead19ed2a9e99166d7942f88434e64b62a84",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/formular/feldfehler.ts",
+        "historicalSha256": "04a7b38200432cce38ee02bf05c762beaa52fb0b09fc0d745593817b96759108",
+        "actualSha256": "04a7b38200432cce38ee02bf05c762beaa52fb0b09fc0d745593817b96759108",
+        "matchesHistoricalBytes": true,
+        "path": "lib/formular/feldfehler.ts",
+        "expectedFinalGitBlob": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+        "actualGitBlob": "f2485b53fa0a61c562a90c35037464e9d9775eac",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/suche/anfrage.ts",
+        "historicalSha256": "f16fb8a8ac684b53189313b5d726c922f4543a1bea0a1f7c857b5654a257b2b1",
+        "actualSha256": "f16fb8a8ac684b53189313b5d726c922f4543a1bea0a1f7c857b5654a257b2b1",
+        "matchesHistoricalBytes": true,
+        "path": "lib/suche/anfrage.ts",
+        "expectedFinalGitBlob": "93537d9665d8f855ccb76ad64570b7676c394baa",
+        "actualGitBlob": "93537d9665d8f855ccb76ad64570b7676c394baa",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/suche/lage.ts",
+        "historicalSha256": "aaf9ae4f6e851898411fa26ae99fbeac2552231d4c16d918e7458228501941ef",
+        "actualSha256": "aaf9ae4f6e851898411fa26ae99fbeac2552231d4c16d918e7458228501941ef",
+        "matchesHistoricalBytes": true,
+        "path": "lib/suche/lage.ts",
+        "expectedFinalGitBlob": "987986b26093fed273b9aa656fc757632ef986eb",
+        "actualGitBlob": "987986b26093fed273b9aa656fc757632ef986eb",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/suche/tastatur.ts",
+        "historicalSha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394",
+        "actualSha256": "eec38ae729ce9b8e50bb55e681062dee5f100e6b5390ef23c0d0b8152b7c8394",
+        "matchesHistoricalBytes": true,
+        "path": "lib/suche/tastatur.ts",
+        "expectedFinalGitBlob": "3c4953419af69132fe094ee26100fc87cd13bf69",
+        "actualGitBlob": "3c4953419af69132fe094ee26100fc87cd13bf69",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/places/OrtSuche.tsx",
+        "historicalSha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb",
+        "actualSha256": "2422356cd58013832874d25fe9eae104e0a30f1be3f47853f1537a36d86033fb",
+        "matchesHistoricalBytes": true,
+        "path": "components/places/OrtSuche.tsx",
+        "expectedFinalGitBlob": "ddba2d97116da362ad048cdb57d08e3c0afd33b0",
+        "actualGitBlob": "ddba2d97116da362ad048cdb57d08e3c0afd33b0",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/besuche-copy.ts",
+        "historicalSha256": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207",
+        "actualSha256": "9ded686573cff825cf55f597fe7bf63950baa05f205af2a82ad3b9bb597dd207",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/besuche-copy.ts",
+        "expectedFinalGitBlob": "3f15f0b9fa677bff40fa4f2d24ca1e97ef24d20f",
+        "actualGitBlob": "3f15f0b9fa677bff40fa4f2d24ca1e97ef24d20f",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/besuche-eingabe.ts",
+        "historicalSha256": "e7e92ab4ac3907b36a0e518518655b604ad44cb832691b09065cc5e89209c29e",
+        "actualSha256": "e7e92ab4ac3907b36a0e518518655b604ad44cb832691b09065cc5e89209c29e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/besuche-eingabe.ts",
+        "expectedFinalGitBlob": "c48ed7d0eaf2ee82c0c470124d38b8602cb5e77a",
+        "actualGitBlob": "c48ed7d0eaf2ee82c0c470124d38b8602cb5e77a",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/visit-date-precision-1/zeitfeld.ts",
+        "historicalSha256": "8b6b4f21dc60ec7e36871249c3118905e345efcef5dd87f720bd750a68ba85c0",
+        "actualSha256": "8b6b4f21dc60ec7e36871249c3118905e345efcef5dd87f720bd750a68ba85c0",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/visit-date-precision-1/zeitfeld.ts",
+        "expectedFinalGitBlob": "692d6ad8f05c86cbf30fb24c20e4c2de1b91af67",
+        "actualGitBlob": "692d6ad8f05c86cbf30fb24c20e4c2de1b91af67",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/layout-c68/components/account/AccountBesuchFormular.tsx",
+        "historicalSha256": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "actualSha256": "0d0d2898921226af4311301dd59900c0e7b1ff464f98236daf9212dfb424bb30",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/AccountBesuchFormular.tsx",
+        "expectedFinalGitBlob": "ca9d6faeddce5fec8fe37feabca781f179c5f6e2",
+        "actualGitBlob": "ca9d6faeddce5fec8fe37feabca781f179c5f6e2",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/besuche.ts",
+        "historicalSha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b",
+        "actualSha256": "57366c7af27024373f0d7582886da15516e3cd513e846d7b738fcfebddc6f29b",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/besuche.ts",
+        "expectedFinalGitBlob": "eda9f25c835980b24821e2459a60b1bcc6fb37cb",
+        "actualGitBlob": "eda9f25c835980b24821e2459a60b1bcc6fb37cb",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/world-map.ts",
+        "historicalSha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+        "actualSha256": "df161ba50b6b3a678b80bd74c8ac3348e7345bbfefe9c64fb32df43d577370d5",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/world-map.ts",
+        "expectedFinalGitBlob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+        "actualGitBlob": "fddc5b76c84c3b59fd820cc2a76a4b6444b1d620",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/world-map-ansicht.ts",
+        "historicalSha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+        "actualSha256": "dc751164911e81366d19b1d8d19b0a629f230dabf021419923e19b8c8c222d27",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/world-map-ansicht.ts",
+        "expectedFinalGitBlob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+        "actualGitBlob": "c8238707fca01bb8197f63fc93105fbf7fd40fee",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/welt-laender.ts",
+        "historicalSha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1",
+        "actualSha256": "8201aaea194a61336a2984df6bb5fae6ef8ab388f58bbadb1734efa126225cb1",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/welt-laender.ts",
+        "expectedFinalGitBlob": "cd38905715a928727c41732a7d95ce35bbc9fbb3",
+        "actualGitBlob": "cd38905715a928727c41732a7d95ce35bbc9fbb3",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/account/WeltZustaende.tsx",
+        "historicalSha256": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c",
+        "actualSha256": "842d58505c54fcedc80f2a36c4894b9019ad263e6f020b47fdfbff382c34d04c",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/WeltZustaende.tsx",
+        "expectedFinalGitBlob": "9fc629d4ba236a1933a8ca164b4a63ecdffec5cc",
+        "actualGitBlob": "9fc629d4ba236a1933a8ca164b4a63ecdffec5cc",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/presentation.ts",
+        "historicalSha256": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697",
+        "actualSha256": "704779d31bbcc6481bb21487049dddb07f5f37b49c47693b844005c955e07697",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/world-explorer-1/presentation.ts",
+        "expectedFinalGitBlob": "9d81c041af57cb2d6d96361963f6d5b9d4e4c894",
+        "actualGitBlob": "9d81c041af57cb2d6d96361963f6d5b9d4e4c894",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/world-map-geografie.ts",
+        "historicalSha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+        "actualSha256": "7cc310056958268ee5313d8ece72d407a295e760e47ea5405744d79846539d8e",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/world-map-geografie.ts",
+        "expectedFinalGitBlob": "9aff68fa152c37249e680b8d78e08857141334a9",
+        "actualGitBlob": "9aff68fa152c37249e680b8d78e08857141334a9",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/world-explorer-1/viewport.ts",
+        "historicalSha256": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604",
+        "actualSha256": "c2d10dfd0b8e900167135b31209949180e22db7f20ce98356035f00dbd199604",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/world-explorer-1/viewport.ts",
+        "expectedFinalGitBlob": "b64c6449761dd49e7789d98e6cf9ee0b206a35ba",
+        "actualGitBlob": "b64c6449761dd49e7789d98e6cf9ee0b206a35ba",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerMap.tsx",
+        "historicalSha256": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb",
+        "actualSha256": "54fbba63abd7c997f16951fb2443759b60dc9df429e9a1a88d5b22b2a8b1bdeb",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/world-explorer-1/ExplorerMap.tsx",
+        "expectedFinalGitBlob": "39a33519fb25667f4436df78001746f52f4cbae5",
+        "actualGitBlob": "39a33519fb25667f4436df78001746f52f4cbae5",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/account/world-explorer-1/ExplorerDetails.tsx",
+        "historicalSha256": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8",
+        "actualSha256": "a02fd3e6a603c6363f92c82c3c959c85f652c7010855b70efabb45ac3011f8e8",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/world-explorer-1/ExplorerDetails.tsx",
+        "expectedFinalGitBlob": "e89ffc707ec6d78489679c48a40c6bb9dbc34424",
+        "actualGitBlob": "e89ffc707ec6d78489679c48a40c6bb9dbc34424",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/account/world-explorer-1/WorldExplorer.tsx",
+        "historicalSha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+        "actualSha256": "ada6bf94836c3accee6156b3c116a4d6f1566461b1c9f0a272fe1d72abed85b2",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/world-explorer-1/WorldExplorer.tsx",
+        "expectedFinalGitBlob": "e6c770f6b3c88c727039be03c23b43b7e87add33",
+        "actualGitBlob": "e6c770f6b3c88c727039be03c23b43b7e87add33",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/components/account/AccountWeltKarte.tsx",
+        "historicalSha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+        "actualSha256": "4264b3c706f58847552885939ca9a4a490e4725b5e9c42ef265fbc2bfd06149a",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/AccountWeltKarte.tsx",
+        "expectedFinalGitBlob": "bd8ffeea167883d160a2e579546e42dbd6e01870",
+        "actualGitBlob": "bd8ffeea167883d160a2e579546e42dbd6e01870",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/navigation.ts",
+        "historicalSha256": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+        "actualSha256": "0bc2005e40809b7f81a31124fba5ef7742c91f5814b0a2fd2de373737a244408",
+        "matchesHistoricalBytes": true,
+        "path": "scripts/account-world-visit-workflow-completion-1/shims/navigation.ts",
+        "expectedFinalGitBlob": "68020ab2267d57001c17cb1dae16d948145e005d",
+        "actualGitBlob": "68020ab2267d57001c17cb1dae16d948145e005d",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/core-r2-a547/lib/account/account-visit-workflow.ts",
+        "historicalSha256": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "actualSha256": "c41a8bc2e5dfb94e5cf968cf107d16170a7823f04fd61c25b73ef14bd4b7db8f",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/account-visit-workflow.ts",
+        "expectedFinalGitBlob": "ed2b5b67d7a1c255b62dea85e19c1b2e4f590e8c",
+        "actualGitBlob": "ed2b5b67d7a1c255b62dea85e19c1b2e4f590e8c",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/core-r2-a547/components/account/useAccountVisitWorkflow.ts",
+        "historicalSha256": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "actualSha256": "086b101990bb4512b167f1c441d108d1879a66704971d96877e5491b8163cb71",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/useAccountVisitWorkflow.ts",
+        "expectedFinalGitBlob": "3c7bc2a4db8b466e005c6893de8703034a29d583",
+        "actualGitBlob": "3c7bc2a4db8b466e005c6893de8703034a29d583",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/account-world-visit-management-premium-1.ts",
+        "historicalSha256": "9ef8eaac99d64b223c72c9f0f9c03dd25dc584f94519085d982fb81836622839",
+        "actualSha256": "9ef8eaac99d64b223c72c9f0f9c03dd25dc584f94519085d982fb81836622839",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/account-world-visit-management-premium-1.ts",
+        "expectedFinalGitBlob": "ba5580d757faf59916ef26f881c0ef86196f5d22",
+        "actualGitBlob": "ba5580d757faf59916ef26f881c0ef86196f5d22",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts",
+        "historicalSha256": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+        "actualSha256": "c818b19f5334311c2a026a994480ec0316bec58119576152d0a934aa9725f082",
+        "matchesHistoricalBytes": true,
+        "path": "scripts/account-world-visit-workflow-completion-1/shims/aktionen.ts",
+        "expectedFinalGitBlob": "b829b9e153d35f3c4614196fb5aee70f3a19ca97",
+        "actualGitBlob": "b829b9e153d35f3c4614196fb5aee70f3a19ca97",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/core-r2-a547/components/account/AccountBesuche.tsx",
+        "historicalSha256": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "actualSha256": "59e3631c3e2e8a51f6dba4add841e81ff9becf8c5e889d576a579872ca9e2be9",
+        "matchesHistoricalBytes": true,
+        "path": "components/account/AccountBesuche.tsx",
+        "expectedFinalGitBlob": "2552e936ddab83c81f6e45224162c43822fa1b9d",
+        "actualGitBlob": "2552e936ddab83c81f6e45224162c43822fa1b9d",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/lib/account/welt-ansicht.ts",
+        "historicalSha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0",
+        "actualSha256": "6056febf32f668cd4610a272a6fa91178f0412065854021827ea9eb09c4aa2c0",
+        "matchesHistoricalBytes": true,
+        "path": "lib/account/welt-ansicht.ts",
+        "expectedFinalGitBlob": "33eae4c21f625e6649c96d6debfa640629644676",
+        "actualGitBlob": "33eae4c21f625e6649c96d6debfa640629644676",
+        "matchesFinalTree": true
+      },
+      {
+        "source": "/tmp/r107-world-r1-review/scripts/account-world-visit-workflow-completion-1/mount.tsx",
+        "historicalSha256": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+        "actualSha256": "d0ff36d91c062ef09be9b86c6ea24dc9ad4ac084153c427582d2ce98772843b9",
+        "matchesHistoricalBytes": true,
+        "path": "scripts/account-world-visit-workflow-completion-1/mount.tsx",
+        "expectedFinalGitBlob": "bf001d28f00b1c9d069906bedaa21affe0490f88",
+        "actualGitBlob": "bf001d28f00b1c9d069906bedaa21affe0490f88",
+        "matchesFinalTree": true
+      }
+    ],
+    "dependencyInputCount": 1689,
+    "retainedBundleSha256": "f7dc37368b4329fe865d0e3f38799357f109050ab436d4c6be10e1a483e1fa31"
+  }
+}

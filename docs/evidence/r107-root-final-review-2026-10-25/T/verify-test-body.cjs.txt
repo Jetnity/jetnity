@@ -1,0 +1,23 @@
+const fs=require('node:fs'),crypto=require('node:crypto');
+const root='/tmp/r107-trip-residence-final-review';
+const ts=require(root+'/final/node_modules/typescript');
+const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const testPath='scripts/trip-traveller-snapshot-workflow-completion-1/mounted-residence.test.ts';
+const name='a residence-only save keeps the loaded citizenship UUID and its passport relation';
+const records={};
+for(const lane of ['red','final']){
+ const file=root+'/'+lane+'/'+testPath,text=fs.readFileSync(file,'utf8'),source=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true);
+ let target,fixture;
+ function visit(n){if(ts.isCallExpression(n)&&n.expression.getText(source)==='test'&&ts.isStringLiteral(n.arguments[0])&&n.arguments[0].text===name)target=n;if(ts.isFunctionDeclaration(n)&&n.name?.text==='reisender')fixture=n;ts.forEachChild(n,visit)}visit(source);
+ if(!target||!fixture)throw Error('Missing original test/fixture '+lane);
+ const testText=target.getText(source),fixtureText=fixture.getText(source),body=target.arguments[2].body;
+ const assertions=[];function collect(n){if(ts.isCallExpression(n)&&n.expression.getText(source)==='assert.equal')assertions.push(n.getText(source));ts.forEachChild(n,collect)}collect(body);
+ const interaction=testText.slice(testText.indexOf('    try {'));
+ fs.writeFileSync(root+'/'+lane+'-original-test.txt',testText+'\n');
+ records[lane]={file,fileSha256:sha(text),testSha256:sha(testText),fixtureSha256:sha(fixtureText),interactionSha256:sha(interaction),assertions,assertionSha256:sha(JSON.stringify(assertions)),testText};
+}
+const first=fs.readFileSync(root+'/historical-first-green-test.ts','utf8'),red=fs.readFileSync(root+'/red/'+testPath,'utf8');
+const summary={name,records,redEqualsHistoricalFirstGreen:red===first,fixturesEqual:records.red.fixtureSha256===records.final.fixtureSha256,interactionsAndAssertionsEqual:records.red.interactionSha256===records.final.interactionSha256,assertionsEqual:records.red.assertionSha256===records.final.assertionSha256,onlyTestBodyDifferenceIsCSSArgument:records.red.testText.replace('oeffnen(browser, bundle, reise)','oeffnen(browser, bundle, reise, css)')===records.final.testText};
+fs.writeFileSync(root+'/test-body-binding.json',JSON.stringify(summary,null,2)+'\n');
+if(!summary.redEqualsHistoricalFirstGreen||!summary.fixturesEqual||!summary.interactionsAndAssertionsEqual||!summary.assertionsEqual||!summary.onlyTestBodyDifferenceIsCSSArgument)throw Error('Original test binding mismatch');
+console.log(JSON.stringify({...summary,records:Object.fromEntries(Object.entries(records).map(([k,v])=>[k,{...v,testText:undefined}]))},null,2));

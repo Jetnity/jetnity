@@ -1,0 +1,31 @@
+{
+  "authorization": "NOT_AUTHORIZED_PENDING_ROOT_INPUT_REVIEW",
+  "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+  "sourceRoot": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "dependencyRoot": "/tmp/jetnity-r106-t-final-review/node_modules",
+  "sourceProof": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source-proof.json",
+    "sha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c"
+  },
+  "css": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/final.css",
+    "sha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67"
+  },
+  "bundle": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/harness.js",
+    "sha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc"
+  },
+  "artifactReceipt": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/artifact-receipt.json",
+    "sha256": "0882b36bf04d292d192896c16deefa4a19fab3fc19507ae771f84c5b79817a01"
+  },
+  "browserLaunch": {
+    "channel": null,
+    "executablePath": "/tmp/r106-review-browsers/chromium-1187/chrome-linux/chrome"
+  },
+  "outputDirectory": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/layout-only",
+  "proposedBrowserQualification": "Retained local Chromium for a supplemental root review, not an author Chrome-channel or native Node22 replay; explicit root execution authorization still absent.",
+  "wrapperPath": "/tmp/r107-mytrips-r3-review/integration-preparation/M-layout-only-wrapper.mjs",
+  "wrapperSha256": "d321cd70548a8fe851c0fe5918f0978165bb1e271323a63fecf8e289a27a35f8"
+}

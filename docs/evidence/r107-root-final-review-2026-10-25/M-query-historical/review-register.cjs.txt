@@ -1,0 +1,10 @@
+const Module = require('node:module');
+const path = require('node:path');
+const original = Module._resolveFilename;
+Module._resolveFilename = function(request, parent, ...rest) {
+  if (request === 'server-only') return path.join(__dirname, 'review-empty.cjs');
+  if (request === '@/lib/supabase/server' || request === path.join(__dirname, 'lib/supabase/server.ts')) {
+    return path.join(__dirname, 'review-supabase-stub.cjs');
+  }
+  return original.call(this, request, parent, ...rest);
+};

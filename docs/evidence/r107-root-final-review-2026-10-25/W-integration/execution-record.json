@@ -1,0 +1,10 @@
+{
+  "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/r107-world-r1-review/integration-1343/compile-final-css.mjs",
+  "cwd": "/tmp/r107-world-r1-review/integration-1343/css-inputs",
+  "exitCode": 0,
+  "node": "v24.22.1",
+  "postcssWarnings": [],
+  "processWarning": "Browserslist: browsers data (caniuse-lite) is 13 months old. Existing toolchain was preserved; no updater or install was run.",
+  "browserRun": false,
+  "testsRun": false
+}

@@ -1,0 +1,232 @@
+{
+  "reviewer": "/root/dependency_review, read-only helper",
+  "redHead": "318fd50821be3c83aa8ec7182ad2e6cd3a4c9dec",
+  "redTree": "8eb51910883d3b1a77ae5b6c11bb30a297c67881",
+  "finalHead": "fe434ae7ffcafedb0c2e9f7c528b84d96941fe13",
+  "finalRuntime": "669f8ec80324583adaec6dc21d5caf6d23e11c84",
+  "finalTree": "0bda1d7556dcbda64e77600a1658bf934b84b583",
+  "formalAcceptance": false,
+  "runs": {
+    "red": {
+      "observationFile": "/tmp/r107-trip-residence-final-review/red/observation-49047.json",
+      "observationSha256": "c34b36b2c0d031263035a4145d9e9622733711f0ec9424c224fd71e3ac4cf1d7",
+      "log": "/tmp/r107-trip-residence-final-review/red-run.log",
+      "logSha256": "2552b547ee69776999490216d36e6b4f3703fc3c6668397eb851c4617d4d574b",
+      "exit": 1,
+      "node": "v24.22.1",
+      "browser": "140.0.7339.16",
+      "testCounts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1
+      },
+      "originalTraveller": {
+        "id": "traveller-row-1",
+        "clientRef": "traveller:1",
+        "label": "Reisende 1",
+        "residenceCountryCode": null,
+        "citizenships": [
+          {
+            "id": "citizenship-row-1",
+            "clientRef": "a1111111-1111-4111-8111-111111111111",
+            "countryCode": "CH",
+            "createdAt": "2026-10-04T20:00:00.000Z",
+            "updatedAt": "2026-10-04T20:00:00.000Z"
+          }
+        ],
+        "documents": [
+          {
+            "id": "document-row-1",
+            "clientRef": "document:pass-1",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "citizenshipClientRef": "a1111111-1111-4111-8111-111111111111",
+            "expiresOn": "2030-01-01",
+            "createdAt": "2026-10-04T20:00:00.000Z",
+            "updatedAt": "2026-10-04T20:00:00.000Z"
+          }
+        ],
+        "createdAt": "2026-10-04T20:00:00.000Z",
+        "updatedAt": "2026-10-04T20:00:00.000Z"
+      },
+      "actualPayload": {
+        "clientRef": "traveller:1",
+        "label": "Reisende 1",
+        "residenceCountryCode": "IT",
+        "citizenships": [
+          {
+            "clientRef": "citizenship:CH",
+            "countryCode": "CH"
+          }
+        ],
+        "documents": [
+          {
+            "clientRef": "document:pass-1",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "expiresOn": "2030-01-01",
+            "citizenshipClientRef": null
+          }
+        ]
+      },
+      "payloadCount": 1,
+      "actualInputs": [
+        {
+          "type": "change",
+          "tag": "SELECT",
+          "value": "IT",
+          "trusted": false
+        },
+        {
+          "type": "keydown",
+          "key": "Enter",
+          "trusted": true,
+          "tag": "BUTTON",
+          "text": "Angaben speichern"
+        }
+      ],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "bundleSha256": "7fab4e4132e5f413e5096585b5cad8b16de5758ffc0a0669f997252fe1461268",
+      "boundBundleInputs": [
+        {
+          "path": "lib/readiness/dokument-formular.ts",
+          "gitBlob": "f3a86918df34f4e25d813e9ad3478b783ddefd5a",
+          "sha256": "205584e1c73d45f58c8fb0af9cd1f6116e33d66a1510a8090a12a4f571e95975"
+        },
+        {
+          "path": "components/trips/Reisevorbereitung.tsx",
+          "gitBlob": "6193995c22873ce3c0e66edf40a02f134b1e732c",
+          "sha256": "0702d31d02c8866d9bd427d717e21d4f45ca9f51f5dad643e665679256fb3d52"
+        },
+        {
+          "path": "components/trips/TripWorkspace.tsx",
+          "gitBlob": "6bb2268fb8f56295a01bf4fc712b1dc3592a56b1",
+          "sha256": "9d41578635f21176dd346973fc7b4b4344891690e7859120ce048ccbb40602b4"
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+          "gitBlob": "6633d268c44be1ce4582a7538d73ab65e1443942",
+          "sha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55"
+        }
+      ],
+      "sourceInputCount": 1811,
+      "documentIdentityRetained": true,
+      "passportRelationRetained": false,
+      "citizenshipUUIDRetained": false
+    },
+    "final": {
+      "observationFile": "/tmp/r107-trip-residence-final-review/final/observation-49174.json",
+      "observationSha256": "d2047a518ec941658cd7b07ea9a7c77e4ddf0ff7bdc4d4d2448cb0f476cb8e60",
+      "log": "/tmp/r107-trip-residence-final-review/final-run.log",
+      "logSha256": "c5b4b2b96d9edd8e16190aa4075124875678e9e25c8a834b30c70ee3bfe097d9",
+      "exit": 0,
+      "node": "v24.22.1",
+      "browser": "140.0.7339.16",
+      "testCounts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0
+      },
+      "originalTraveller": {
+        "id": "traveller-row-1",
+        "clientRef": "traveller:1",
+        "label": "Reisende 1",
+        "residenceCountryCode": null,
+        "citizenships": [
+          {
+            "id": "citizenship-row-1",
+            "clientRef": "a1111111-1111-4111-8111-111111111111",
+            "countryCode": "CH",
+            "createdAt": "2026-10-04T20:00:00.000Z",
+            "updatedAt": "2026-10-04T20:00:00.000Z"
+          }
+        ],
+        "documents": [
+          {
+            "id": "document-row-1",
+            "clientRef": "document:pass-1",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "citizenshipClientRef": "a1111111-1111-4111-8111-111111111111",
+            "expiresOn": "2030-01-01",
+            "createdAt": "2026-10-04T20:00:00.000Z",
+            "updatedAt": "2026-10-04T20:00:00.000Z"
+          }
+        ],
+        "createdAt": "2026-10-04T20:00:00.000Z",
+        "updatedAt": "2026-10-04T20:00:00.000Z"
+      },
+      "actualPayload": {
+        "clientRef": "traveller:1",
+        "label": "Reisende 1",
+        "residenceCountryCode": "IT",
+        "citizenships": [
+          {
+            "clientRef": "a1111111-1111-4111-8111-111111111111",
+            "countryCode": "CH"
+          }
+        ],
+        "documents": [
+          {
+            "clientRef": "document:pass-1",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "expiresOn": "2030-01-01",
+            "citizenshipClientRef": "a1111111-1111-4111-8111-111111111111"
+          }
+        ]
+      },
+      "payloadCount": 1,
+      "actualInputs": [
+        {
+          "type": "change",
+          "tag": "SELECT",
+          "value": "IT",
+          "trusted": false
+        },
+        {
+          "type": "keydown",
+          "key": "Enter",
+          "trusted": true,
+          "tag": "BUTTON",
+          "text": "Angaben speichern"
+        }
+      ],
+      "pageErrors": [],
+      "blockedRequests": [],
+      "bundleSha256": "6c43a7bd733c126f6f985ad7378a325bc59be4b4f78ce88bde939aa108505e75",
+      "boundBundleInputs": [
+        {
+          "path": "components/trips/Reisevorbereitung.tsx",
+          "gitBlob": "e39587978196ad3badbdaebdbd1f484d84da50d2",
+          "sha256": "14376753d01384f199b6946053a4a235118838f933f0e4af1ec207a50175c100"
+        },
+        {
+          "path": "lib/readiness/trip-traveller-snapshot-workflow-1.ts",
+          "gitBlob": "9e203a28fc221557e9ff7af7b388c57b6b270455",
+          "sha256": "0a842b85b967ff76c0fd4b9f8c2e4b5ea2189fc2e86729a2bceb12fcdf5d6f78"
+        },
+        {
+          "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+          "gitBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+          "sha256": "be23ee4684c56e239a2502f85b525c0dbd38b20d66aa76cff2b0916109c6bf7b"
+        },
+        {
+          "path": "components/trips/TripWorkspace.tsx",
+          "gitBlob": "16825180b4da46ea71d549f4ffc399717664f020",
+          "sha256": "f2401d6d52935ae7da2bebe6500abd7742696d8858c59b3d35936a2881ddc6bc"
+        },
+        {
+          "path": "scripts/trip-traveller-snapshot-workflow-completion-1/flaeche.tsx",
+          "gitBlob": "6633d268c44be1ce4582a7538d73ab65e1443942",
+          "sha256": "f432b1d53959e71ff36eda12ed3e292cf506eec6cecf6a2354a62fc48b5bfc55"
+        }
+      ],
+      "sourceInputCount": 1813,
+      "documentIdentityRetained": true,
+      "passportRelationRetained": true,
+      "citizenshipUUIDRetained": true
+    }
+  }
+}

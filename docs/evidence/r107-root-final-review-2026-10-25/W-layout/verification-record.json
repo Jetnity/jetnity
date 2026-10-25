@@ -1,0 +1,15 @@
+{
+  "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+  "base": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "draft": true,
+  "state": "open",
+  "postReadUpdatedAt": "2026-10-25T18:14:55Z",
+  "reviewer": "/root/dependency_review",
+  "boundedResult": "no additional finding; exact requested layout containment checks succeeded",
+  "formalAcceptance": false,
+  "taskBlob": "9fb3c8f242014761af64aa342a3222cf7d15f180",
+  "planBlob": "771313c5c3ee601598d41e83e9ad2e1b6f6b73a4",
+  "focusEvidenceReused": "/tmp/r107-world-r1-review/core-r2-a547/bounded-results.json",
+  "focusRerun": false,
+  "reason": "Sole product delta is form layout classes and footer marker; handlers and focus ownership code unchanged."
+}

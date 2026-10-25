@@ -1,0 +1,94 @@
+{
+  "kind": "actual-final-M-CSS-and-harness-input-receipt",
+  "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+  "sourceProofPath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source-proof.json",
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "sourceRoot": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "configuredCssScanCount": 1330,
+  "supportCount": 13,
+  "sourceFileCount": 1343,
+  "cssPath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/final.css",
+  "cssSha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+  "cssBytes": 129687,
+  "bundlePath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/harness.js",
+  "bundleSha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc",
+  "bundleBytes": 925400,
+  "completeBundleInputsBound": true,
+  "repositoryInputCount": 19,
+  "dependencyInputCount": 1679,
+  "dependencyRoot": "/tmp/jetnity-r106-t-final-review/node_modules",
+  "packageLockSha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+  "dependencyVersions": {
+    "postcss": "8.5.23",
+    "tailwindcss": "3.4.17",
+    "autoprefixer": "10.4.21",
+    "tailwind-scrollbar-hide": "4.0.0",
+    "tailwindcss-animate": "1.0.7",
+    "esbuild": "0.25.9",
+    "playwright": "1.55.0",
+    "tsx": "4.20.5",
+    "next": "16.4.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "allBundleDependencyFilesMatchRetainedInventory": true,
+  "bundleMetafilePath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/bundle-metafile.json",
+  "bundleMetafileSha256": "706fb3467590e3a4a4a0e8aaffa3e293de0ceaee9991eac5e04aee3c797f930f",
+  "cssCompileReceipt": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/css-compile-receipt.json",
+    "sha256": "de44ad66c2b64299411aaefdc16b64c44ed21e0d6358a4f1bfbe345815a949f1"
+  },
+  "bundleBuildReceipt": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/bundle-build-receipt.json",
+    "sha256": "bf0b7676b5c716ff0c2b300c4cdda599b4c4c272a56b773e1bcc9e2b125bf175"
+  },
+  "pipeline": "Original M compileCss: postcss([tailwindcss/nesting(),tailwindcss(exactConfig),autoprefixer()]); unmodified normal content globs; no W raw-form override",
+  "aliases": [
+    "next/navigation",
+    "@/lib/trips/archiv-aktionen"
+  ],
+  "sourceBuildOptions": "Original run.mjs esbuild options; only fresh output destination and metafile capture differ",
+  "cssCompileCount": 1,
+  "harnessBuildCount": 1,
+  "node": "v24.22.1",
+  "processExitCodes": {
+    "css": 0,
+    "bundle": 0
+  },
+  "postcssWarnings": [],
+  "processNotice": "Existing Browserslist/caniuse-lite age notice; no updater/install run",
+  "currentWOutputComparison": {
+    "path": "/tmp/r107-world-r1-review/integration-1343/final.css",
+    "sha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+    "matchesActualMGeneratedCss": true,
+    "qualification": "Current W artifact equality only. No historical M compiled CSS output/hash exists, so this is not historical M CSS identity."
+  },
+  "historicalMCompiledCssAvailable": false,
+  "historicalMCompiledCssMatch": null,
+  "historicalCssReconstructed": false,
+  "historicalEvidenceRebinding": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/evidence-rebinding.json",
+    "sha256": "0a6c170b6fa5816858bfcb447a3eaec2a436487bc72190228c6ca68d69d06582"
+  },
+  "rootIndependentSourceBuildVerification": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/root-source-and-build-verification.json",
+    "sha256": "3faee6a56a0471099ad1010ae4d361c492167da25d3b52bc4fafcabc1d74cebc"
+  },
+  "liveIdentityBefore": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/live-before.json",
+    "sha256": "111d91f4e6cc4b16dd44421b8e4fa4fb329e232814847bbec6304dd1cb946a2b"
+  },
+  "liveIdentityAfter": {
+    "path": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/live-after.json",
+    "sha256": "b1a833efcf4da7ea483cf16b20da5ce0c4668fc3b21ae5030835d0ecb922c624"
+  },
+  "recordedAtUtc": "2026-10-25T21:14:16.813571+00:00",
+  "browserRun": false,
+  "layoutRun": false,
+  "testsRun": false,
+  "formalAcceptance": false,
+  "wrapperExecutionAuthorized": false,
+  "wholeRouteQualification": "The real /reisen guest bridge transitively reaches incoming T account-registry-trip-copy.ts (four added copy constants); no whole-route source-identity claim.",
+  "scope": "Fresh actual-final CSS and harness construction only. Original author18, independent15 and query observations retain historical provenance; root native/Preview/acceptance remain separate."
+}

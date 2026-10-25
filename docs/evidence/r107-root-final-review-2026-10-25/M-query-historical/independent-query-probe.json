@@ -1,0 +1,186 @@
+{
+  "head": "863b7f3b879eaa1723cee57879eda521ecd223e9",
+  "baseline": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "node": "v24.22.1",
+  "network": "None; supplied PostgrestClient fetch is an in-process callback",
+  "cases": [
+    {
+      "name": "actual PostgREST builder preserves both independently quoted search and keyset filters",
+      "result": "satisfied",
+      "detail": {
+        "queries": 1,
+        "logicalOrParameters": 2,
+        "limit": 49,
+        "order": "updated_at.desc,id.desc"
+      }
+    },
+    {
+      "name": "251 stable rows with tie groups spanning page boundaries and distinct microseconds appear exactly once",
+      "result": "satisfied",
+      "detail": {
+        "total": 251,
+        "unique": 251,
+        "pageSizes": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          11
+        ],
+        "queries": 6,
+        "boundaryTexts": [
+          "2026-10-25T12:00:00.100001Z",
+          "2026-10-25T12:00:00.100001Z",
+          "2026-10-25T12:00:00.1Z",
+          "2026-10-25T12:00:00.1Z",
+          "2026-10-25T12:00:00.1Z"
+        ]
+      }
+    },
+    {
+      "name": "hand-crafted malformed cursor payloads and repeated parameters make zero transport calls",
+      "result": "satisfied",
+      "detail": {
+        "inputs": 26,
+        "queries": 0
+      }
+    },
+    {
+      "name": "quoted search round-trips all meta characters without introducing operators",
+      "result": "satisfied",
+      "detail": {
+        "inputs": 30,
+        "postgresExecution": false,
+        "claim": "Wire grammar and literal encoding only"
+      }
+    }
+  ],
+  "sourceBlobs": [
+    {
+      "path": "app/(public)/reisen/page.tsx",
+      "sha": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a"
+    },
+    {
+      "path": "components/trips/KontoReiseArchivAktion.tsx",
+      "sha": "ef60cecff2704c3294c28e1e31cbc5871effa7b6"
+    },
+    {
+      "path": "components/trips/KontoReiseEintrag.tsx",
+      "sha": "a4f09d2981c79fc4246c82c7f552306cbec2dded"
+    },
+    {
+      "path": "components/trips/MyTripsCollection.tsx",
+      "sha": "87b449001673169c01a385a75b6c55d4a827e1b3"
+    },
+    {
+      "path": "components/trips/useMyTripsCollectionNavigation.ts",
+      "sha": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23"
+    },
+    {
+      "path": "components/trips/useTripArchiveWorkflow.ts",
+      "sha": "eedefb13748580e2fe968308ce8108e1c58b0949"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+      "sha": "dba9065e6391031812bbf4829a79589efae7dc31"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_PLAN_2026-10-25.md",
+      "sha": "b6f139a20d179ac055842966ad6cf584a0511a30"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+      "sha": "eeb48803371adfab81bdbd008c33ec100a4db088"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+      "sha": "ba29a6b5f553f5bc3fa3a0f8f9a58256b4664ffd"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+      "sha": "ae17eb4e8c0a96b5173f50314430d1b2dae14e3d"
+    },
+    {
+      "path": "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "sha": "eeb1f1239e07df5d9d9bc7459c4c83918b947777"
+    },
+    {
+      "path": "docs/evidence/my-trips-collection-archive-workflow-completion-1/run-ddd1f7eace34519996ec686223d684102a933baa.json",
+      "sha": "f2649b70af8dab36d1bb3d052cd704e7d0ad72f7"
+    },
+    {
+      "path": "lib/account/reise-gruppen-grenzen.test.ts",
+      "sha": "4ca516ccf4fc9ad4c2a7b3bad342838b16a82b79"
+    },
+    {
+      "path": "lib/account/world-map.test.ts",
+      "sha": "82b7b2c794ad97907dcb5f8620a02bc76600ff06"
+    },
+    {
+      "path": "lib/trips/archiv-aktionen.test.ts",
+      "sha": "a787d6e5b68b17f2a5c5d272c44acaa9273198e2"
+    },
+    {
+      "path": "lib/trips/daten.ts",
+      "sha": "3f498e2b750f62348fe8edd42c904a8040f41adc"
+    },
+    {
+      "path": "lib/trips/reise-orte.test.ts",
+      "sha": "31950a1448dfff54ba0c337c2e3b8daad199023a"
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-abfrage.test.ts",
+      "sha": "c563c8515cc396c5b6860a8a5e5f58d0a319a26e"
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-abfrage.ts",
+      "sha": "faf5add13e4177f1df8f8f8178a13c43c2d46556"
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-daten.test.ts",
+      "sha": "d0fd45f21a3ab8fe12f80b6176f37fde42e22f14"
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-daten.ts",
+      "sha": "5575a8599ead35d648ffd85f4b611520e0deffc2"
+    },
+    {
+      "path": "lib/trips/reisen-uebersicht.test.ts",
+      "sha": "adeb5589f8cdf0005b6c9599ba318570251af0bf"
+    },
+    {
+      "path": "lib/trips/reisen-uebersicht.ts",
+      "sha": "dccfc4e241420fbf50d661dce82fb5d234e3432a"
+    },
+    {
+      "path": "lib/trips/trip-archive-workflow.test.ts",
+      "sha": "aa4956940b79650afec8c4492cd0e909a6efb7da"
+    },
+    {
+      "path": "lib/trips/trip-archive-workflow.ts",
+      "sha": "e0a78b7ca6a5bc4a7b12cc0e1b108756889dd761"
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+      "sha": "19ebe126e5413d8851ecf22130ab4262686481a5"
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+      "sha": "48100202d1dae0191d374d1a1169730ec536497c"
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/run.mjs",
+      "sha": "c0671bbe52adb9e27ee28edeecbd3d04c8c2b778"
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+      "sha": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b"
+    },
+    {
+      "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+      "sha": "46538b85407cd91a1ec7c0995af6959fda223884"
+    }
+  ],
+  "status": "independent checks satisfied, not Technical-Lead acceptance"
+}

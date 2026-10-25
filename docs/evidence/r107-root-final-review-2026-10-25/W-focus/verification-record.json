@@ -1,0 +1,98 @@
+{
+  "recordedAtUtc": "2026-10-25T18:07:36.374973+00:00",
+  "head": "a547366a5107e445642f980b621dff7c7b5adaa8",
+  "node": "v24.22.1",
+  "exitCode": 1,
+  "interactionCases": 7,
+  "interactionCasesPassed": true,
+  "layoutCasePassed": false,
+  "cssMatchesAuthor": true,
+  "trustedKeyEvents": true,
+  "focusedLint": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0
+  },
+  "artifacts": {
+    "REVIEW.md": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/REVIEW.md",
+      "sha256": "7ed7916f82586c137a1261242ca45861fa43defa84899bbc85c806c2d03a81d8"
+    },
+    "bounded-probe.mjs": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/bounded-probe.mjs",
+      "sha256": "fce41b13f587706b8df3cd0f31fb397031246b5d7fcc570766c0726c2ffe6e20"
+    },
+    "bounded-results.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/bounded-results.json",
+      "sha256": "720914cf7c029e9f6fda211446b983f9f3360393bd7b67ee087a66baf8b0c318"
+    },
+    "bounded.css": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/bounded.css",
+      "sha256": "7e913d744353e72444dcbbf08cb9241f34836143b0961d8703e0c26faaa85e79"
+    },
+    "bounded-bundle.js": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/bounded-bundle.js",
+      "sha256": "f233b6e625cb93bf5b070d51205e315029b963033e9327cc02fd324852d7a796"
+    },
+    "bundle-inputs.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/bundle-inputs.json",
+      "sha256": "0b2c33bb0046fd5ebab6a7558af5e9c8d52500f65a69ebecdb59618a90d3c8fa"
+    },
+    "source-manifest.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/source-manifest.json",
+      "sha256": "f301f548fe732be0e78082dfb0bb0dd18fde64ab9aba60b0d1053c3f22aa0311"
+    },
+    "source-blob-verification.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/source-blob-verification.json",
+      "sha256": "38101fe9d1ff4e4437d339e6ae3860e45c198bdf94298c97ad9d66d23604a353"
+    },
+    "receipt-source-bindings.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/receipt-source-bindings.json",
+      "sha256": "520c6b18e2c7b100013036e790d3f27b466f91bc447594af84b3f0c1576e8d46"
+    },
+    "focused-lint.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/focused-lint.json",
+      "sha256": "b0e5a8756a00590158bb64846ae7618fe4ba7838f230fdee1c99de15d9f4d996"
+    },
+    "author-image-verification.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/author-image-verification.json",
+      "sha256": "36e9704e83dc4d960d93c5c0623872bc9d74e1288e516ff74f4d4ff7f89da736"
+    },
+    "live-identity.json": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/live-identity.json",
+      "sha256": "b2ed9da41dcbbfb93928267803e6d653a1acf57930ef197962ecd6bef648f9b6"
+    },
+    "screens/editor-card-1440.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/screens/editor-card-1440.png",
+      "sha256": "6d1776fc4191ef3777020574dad438b936a2cbed0368b58ba2bab194d922351e"
+    },
+    "screens/editor-card-768.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/screens/editor-card-768.png",
+      "sha256": "97d1d34fa84f21158463c38bd91329a24fcdbea6334b6823cad8f856706ce1d0"
+    },
+    "screens/editor-viewport-1440.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/screens/editor-viewport-1440.png",
+      "sha256": "f0dd8502f04274772d8e6e26e8a2d6f051402dd582b7d5622f2e8921214db6bf"
+    },
+    "screens/editor-viewport-768.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/screens/editor-viewport-768.png",
+      "sha256": "e12a1140aaf7b5cff78a9fa3d86527282b1fc931d62bea49d4c9ee72a28e00f4"
+    },
+    "author-images/editor-1440.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/author-images/editor-1440.png",
+      "sha256": "fb5ff5bcd7719f5469f0e8af4186d05ad0f772fb3e51bc0d66ae70dd6aded606"
+    },
+    "author-images/editor-320.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/author-images/editor-320.png",
+      "sha256": "d8793d7f78791c2132ee1e4a8a2851ec9bfe9d4dd60aa724a63b3e1348713241"
+    },
+    "author-images/widerruf-1440.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/author-images/widerruf-1440.png",
+      "sha256": "84480022bfa4ca2cdfc44482c9a18ffecd246fcd38f24d2daee1d54e4dafe3dd"
+    },
+    "author-images/wiederherstellung-aendern-320.png": {
+      "path": "/tmp/r107-world-r1-review/core-r2-a547/author-images/wiederherstellung-aendern-320.png",
+      "sha256": "a550490e84423da2a4324356e94e172e69e23570286282d8012e3b7ba4ce9602"
+    }
+  }
+}

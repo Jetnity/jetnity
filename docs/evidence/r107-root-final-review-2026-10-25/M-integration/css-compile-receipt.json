@@ -1,0 +1,27 @@
+{
+  "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+  "generatedAtUtc": "2026-10-25T21:12:42.596Z",
+  "node": "v24.22.1",
+  "sourceRoot": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/r107-mytrips-r3-review/integration-final-dda52b660369/compile-final-css.mjs",
+  "cwd": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+  "compilerScriptSha256": "3497f3120ae21c37d90917f86341ae10084c4ec7a44219d0767add60102fe1d3",
+  "pipeline": "postcss([tailwindcss/nesting(), tailwindcss(exactConfig), autoprefixer()]).process(exactGlobals, {from})",
+  "configuredContent": [
+    "./app/**/*.{js,ts,jsx,tsx,md,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,md,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,md,mdx}",
+    "./content/**/*.{md,mdx}"
+  ],
+  "rawContentOverride": false,
+  "configuredScanCount": 1330,
+  "cssPath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/final.css",
+  "cssSha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+  "cssBytes": 129687,
+  "postcssWarnings": [],
+  "historicalCssOutputAvailable": false,
+  "historicalReconstruction": false,
+  "scope": "One fresh actual-final CSS compilation only; no layout/browser/tests/native acceptance"
+}

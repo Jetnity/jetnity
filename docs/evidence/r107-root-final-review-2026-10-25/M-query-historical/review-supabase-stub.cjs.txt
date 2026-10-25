@@ -1,0 +1,3 @@
+exports.createServerComponentClient = async function forbiddenRealClient() {
+  throw new Error('Independent read-only review forbids a real Supabase client');
+};

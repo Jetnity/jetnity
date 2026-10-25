@@ -1,0 +1,85 @@
+{
+  "head": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+  "files": [
+    {
+      "path": "APPLICABILITY.md",
+      "bytes": 5263,
+      "sha256": "445d4f60769f096483bb6763cd05bcfe8adc78ceabb5c4b60fc309fe2a84f1b1"
+    },
+    {
+      "path": "REVIEW.md",
+      "bytes": 6157,
+      "sha256": "836e147628009e5a404fe14d1fbea49568b14f1dbac8d286504850bcb80b862b"
+    },
+    {
+      "path": "author-receipt-binding.json",
+      "bytes": 6990,
+      "sha256": "1f53562ee8649e5123ad9580d85d327c7f69b6b405c8d7db0831f9fd6b4709e1"
+    },
+    {
+      "path": "compile-final-css.mjs",
+      "bytes": 4149,
+      "sha256": "0c17238838db7a7f666669508bd405a0fbeed213edc899964ba7fc1bbc118fbe"
+    },
+    {
+      "path": "css-comparison.json",
+      "bytes": 1728,
+      "sha256": "b12bf826ec5cc328e131c1492f647868e16bb0f4b2901944037c788683d57917"
+    },
+    {
+      "path": "css-delta.json",
+      "bytes": 1861,
+      "sha256": "d5da942bb68024ef446a199e9e0755d19a2c9b7798b60d10ee5cebc763fde465"
+    },
+    {
+      "path": "css-delta.patch",
+      "bytes": 1284,
+      "sha256": "3d69d969e1ef1713f3c0ef8ab9dccbbc181266beaf556ea465d6709f6244138e"
+    },
+    {
+      "path": "css-input-manifest.json",
+      "bytes": 605118,
+      "sha256": "104fc0c76aff5af65319d07094ce4cda8eadfb9079cd75a59308ddaa1916abce"
+    },
+    {
+      "path": "execution-record.json",
+      "bytes": 476,
+      "sha256": "798b04a80a4b392ceeeeb14361d9fe8dc55f154b3693c6e889de2f0e201da70e"
+    },
+    {
+      "path": "final.css",
+      "bytes": 129687,
+      "sha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67"
+    },
+    {
+      "path": "fixture-binding.json",
+      "bytes": 512,
+      "sha256": "a134efc93c8565b626c83caf0edec50e177b6abf067e4e3d7068750306e82bd1"
+    },
+    {
+      "path": "historical-bundle-source-binding.json",
+      "bytes": 606612,
+      "sha256": "62fe37add94c42d015a82f16cf35e05245e57cc95aecbf929c2f4a47c2a6f469"
+    },
+    {
+      "path": "historical-execution-binding.json",
+      "bytes": 875,
+      "sha256": "eea48e1eb1cdc4d85a6fc439f1115ee97e1c728c07f9b1876f455478a37f2ede"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 807,
+      "sha256": "e6cc96506879220e1d2152f81bf4b99fb56a6496f48a1791f07747d77dab9d0c"
+    },
+    {
+      "path": "lexical-applicability.json",
+      "bytes": 102251,
+      "sha256": "117b901aff6c5f85351e1ece619dc695b326421bed085e01c5466a7bd158f806"
+    },
+    {
+      "path": "root-source-verification.json",
+      "bytes": 896,
+      "sha256": "0d12766f96b23970efd6c906b61160021b97ccabd4c337c4f482a418f7549e9a"
+    }
+  ]
+}

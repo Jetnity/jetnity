@@ -1,0 +1,19 @@
+{
+  "head": "fe434ae7ffcafedb0c2e9f7c528b84d96941fe13",
+  "base": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "state": "open",
+  "draft": true,
+  "updated_at": "2026-10-25T18:23:51Z",
+  "finalTree": "0bda1d7556dcbda64e77600a1658bf934b84b583",
+  "runtime": "669f8ec80324583adaec6dc21d5caf6d23e11c84",
+  "runtimeTree": "e0b8ffcbecdbc01d64686ec886140a1c1ee79437",
+  "baseMergeBase": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "ahead": 22,
+  "behind": 0,
+  "changedFiles": 41,
+  "author": "Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1",
+  "session": "bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0",
+  "authorRuntime": "grok-4.7-high-fast",
+  "taskBlob": "75c59b0851d835560ff4b5562e9fcc52c395b2ad",
+  "planBlob": "252ae82c9cf1aff34f7f46e16999d50178369dff"
+}

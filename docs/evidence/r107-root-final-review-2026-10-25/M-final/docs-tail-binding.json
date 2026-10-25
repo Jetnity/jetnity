@@ -1,0 +1,16 @@
+{
+  "runtime": "96715e43f9c979a542a1b7bd5acc2b15ef494c5d",
+  "candidate": "444a8c254e11688120f7f2b6e49193746932a865",
+  "changedPaths": [
+    "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_HANDOFF_2026-10-25.md",
+    "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_REPORT_2026-10-25.md",
+    "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_SELF_REVIEW_2026-10-25.md",
+    "docs/JETNITY_MY_TRIPS_COLLECTION_AND_ARCHIVE_WORKFLOW_COMPLETION_1_STATUS_2026-10-25.md",
+    "docs/evidence/my-trips-collection-archive-workflow-completion-1/run-96715e43f9c979a542a1b7bd5acc2b15ef494c5d.json",
+    "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-1440.png",
+    "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-320.png",
+    "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-390.png",
+    "docs/evidence/my-trips-collection-archive-workflow-completion-1/screens-96715e43f9c979a542a1b7bd5acc2b15ef494c5d/sammlung-768.png"
+  ],
+  "productOrTestSourceChanged": false
+}

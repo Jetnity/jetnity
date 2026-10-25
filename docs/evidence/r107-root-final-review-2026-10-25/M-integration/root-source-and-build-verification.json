@@ -1,0 +1,19 @@
+{
+  "kind": "root-independent-actual-final-source-and-build-byte-verification",
+  "verifiedAtUtc": "2026-10-25T21:13:24.006260+00:00",
+  "head": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "tree": "503752c1bee097f5bba47487061415730429cc57",
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "completeConfiguredCssScan": true,
+  "scanFiles": 1330,
+  "supportFiles": 13,
+  "sourceFiles": 1343,
+  "repositoryBundleInputs": 19,
+  "dependencyBundleInputs": 1679,
+  "cssSha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+  "bundleSha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc",
+  "errors": [],
+  "browserExecuted": false,
+  "layoutAccepted": false,
+  "scope": "Root independent bytes/tree/pathset/compiler/output binding only; no browser or native acceptance."
+}

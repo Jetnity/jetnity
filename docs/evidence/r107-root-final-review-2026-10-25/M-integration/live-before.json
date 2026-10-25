@@ -1,0 +1,11 @@
+{
+  "observedAtUtc": "2026-10-25T21:11:33.971Z",
+  "pr": 1019,
+  "head": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "base": "70b878a8fbe23f0dd455175a53de74175b2b976d",
+  "state": "open",
+  "draft": true,
+  "merged": false,
+  "updatedAt": "2026-10-25T21:08:16Z",
+  "scope": "Read-only head identity before authorized local source/CSS/bundle preparation; no native gate decision"
+}

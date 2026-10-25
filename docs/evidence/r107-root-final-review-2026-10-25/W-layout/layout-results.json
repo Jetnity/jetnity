@@ -1,0 +1,960 @@
+{
+  "reviewer": "/root/dependency_review read-only helper",
+  "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+  "node": "v24.22.1",
+  "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+  "expectedAuthorCss": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+  "cssMatchesAuthor": true,
+  "bundleSha256": "f7dc37368b4329fe865d0e3f38799357f109050ab436d4c6be10e1a483e1fa31",
+  "boundary": "Current form plus unchanged a547 product files, existing CSS/config/dependencies, isolated action/navigation shims. Fully intercepted invalid-domain page. Layout-only review; no hosted/native acceptance.",
+  "priorInteractionReceipt": "/tmp/r107-world-r1-review/core-r2-a547/bounded-results.json",
+  "priorInteractionReceiptSha256": "720914cf7c029e9f6fda211446b983f9f3360393bd7b67ee087a66baf8b0c318",
+  "passed": true,
+  "actionCount": 0,
+  "visibleVisits": 12,
+  "pageErrors": [],
+  "metrics": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFont": "32px",
+      "surfaces": [
+        {
+          "name": "editor",
+          "card": {
+            "left": 0,
+            "right": 320,
+            "top": 19745.46875,
+            "bottom": 22734.46875,
+            "width": 320,
+            "height": 2989,
+            "scrollWidth": 318,
+            "clientWidth": 318,
+            "scrollHeight": 2987,
+            "clientHeight": 2987,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 25,
+            "right": 295,
+            "top": 20179.46875,
+            "bottom": 22709.46875,
+            "width": 270,
+            "height": 2530,
+            "scrollWidth": 268,
+            "clientWidth": 268,
+            "scrollHeight": 2528,
+            "clientHeight": 2528,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 58,
+            "right": 262,
+            "top": 22452.46875,
+            "bottom": 22676.46875,
+            "width": 204,
+            "height": 224,
+            "scrollWidth": 204,
+            "clientWidth": 204,
+            "scrollHeight": 224,
+            "clientHeight": 224,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "type": "submit",
+              "left": 58,
+              "right": 262,
+              "top": 22452.46875,
+              "bottom": 22564.46875,
+              "width": 204,
+              "height": 112,
+              "scrollWidth": 204,
+              "clientWidth": 204,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 82.8125,
+                  "right": 237.171875,
+                  "top": 22471.46875,
+                  "bottom": 22504.46875,
+                  "width": 154.359375,
+                  "height": 33
+                },
+                {
+                  "left": 82.71875,
+                  "right": 237.28125,
+                  "top": 22511.46875,
+                  "bottom": 22544.46875,
+                  "width": 154.5625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 58,
+              "rightInsetFromForm": 33
+            },
+            {
+              "text": "Abbrechen",
+              "type": "button",
+              "left": 58,
+              "right": 262,
+              "top": 22588.46875,
+              "bottom": 22676.46875,
+              "width": 204,
+              "height": 88,
+              "scrollWidth": 202,
+              "clientWidth": 202,
+              "scrollHeight": 86,
+              "clientHeight": 86,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 75,
+                  "right": 245.015625,
+                  "top": 22615.46875,
+                  "bottom": 22648.46875,
+                  "width": 170.015625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 58,
+              "rightInsetFromForm": 33
+            }
+          ]
+        },
+        {
+          "name": "create",
+          "card": {
+            "left": 0,
+            "right": 320,
+            "top": 17479.46875,
+            "bottom": 19713.46875,
+            "width": 320,
+            "height": 2234,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "scrollHeight": 2234,
+            "clientHeight": 2234,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 0,
+            "right": 320,
+            "top": 17479.46875,
+            "bottom": 19713.46875,
+            "width": 320,
+            "height": 2234,
+            "scrollWidth": 318,
+            "clientWidth": 318,
+            "scrollHeight": 2232,
+            "clientHeight": 2232,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 33,
+            "right": 287,
+            "top": 19568.46875,
+            "bottom": 19680.46875,
+            "width": 254,
+            "height": 112,
+            "scrollWidth": 254,
+            "clientWidth": 254,
+            "scrollHeight": 112,
+            "clientHeight": 112,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Besuch bestätigen",
+              "type": "submit",
+              "left": 33,
+              "right": 287,
+              "top": 19568.46875,
+              "bottom": 19680.46875,
+              "width": 254,
+              "height": 112,
+              "scrollWidth": 254,
+              "clientWidth": 254,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 103.265625,
+                  "right": 216.734375,
+                  "top": 19587.46875,
+                  "bottom": 19620.46875,
+                  "width": 113.46875,
+                  "height": 33
+                },
+                {
+                  "left": 75.03125,
+                  "right": 244.96875,
+                  "top": 19627.46875,
+                  "bottom": 19660.46875,
+                  "width": 169.9375,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 33,
+              "rightInsetFromForm": 33
+            }
+          ]
+        }
+      ],
+      "sectionOverflow": 0,
+      "documentOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "rootFont": "32px",
+      "surfaces": [
+        {
+          "name": "editor",
+          "card": {
+            "left": 0,
+            "right": 390,
+            "top": -992.390625,
+            "bottom": 1596.609375,
+            "width": 390,
+            "height": 2589,
+            "scrollWidth": 388,
+            "clientWidth": 388,
+            "scrollHeight": 2587,
+            "clientHeight": 2587,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 25,
+            "right": 365,
+            "top": -558.390625,
+            "bottom": 1571.609375,
+            "width": 340,
+            "height": 2130,
+            "scrollWidth": 338,
+            "clientWidth": 338,
+            "scrollHeight": 2128,
+            "clientHeight": 2128,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 58,
+            "right": 332,
+            "top": 1314.609375,
+            "bottom": 1538.609375,
+            "width": 274,
+            "height": 224,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "scrollHeight": 224,
+            "clientHeight": 224,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "type": "submit",
+              "left": 58,
+              "right": 332,
+              "top": 1314.609375,
+              "bottom": 1426.609375,
+              "width": 274,
+              "height": 112,
+              "scrollWidth": 274,
+              "clientWidth": 274,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 117.8125,
+                  "right": 272.171875,
+                  "top": 1333.609375,
+                  "bottom": 1366.609375,
+                  "width": 154.359375,
+                  "height": 33
+                },
+                {
+                  "left": 117.71875,
+                  "right": 272.28125,
+                  "top": 1373.609375,
+                  "bottom": 1406.609375,
+                  "width": 154.5625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 58,
+              "rightInsetFromForm": 33
+            },
+            {
+              "text": "Abbrechen",
+              "type": "button",
+              "left": 58,
+              "right": 332,
+              "top": 1450.609375,
+              "bottom": 1538.609375,
+              "width": 274,
+              "height": 88,
+              "scrollWidth": 272,
+              "clientWidth": 272,
+              "scrollHeight": 86,
+              "clientHeight": 86,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 109.984375,
+                  "right": 280,
+                  "top": 1477.609375,
+                  "bottom": 1510.609375,
+                  "width": 170.015625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 58,
+              "rightInsetFromForm": 33
+            }
+          ]
+        },
+        {
+          "name": "create",
+          "card": {
+            "left": 0,
+            "right": 390,
+            "top": -2962.390625,
+            "bottom": -1024.390625,
+            "width": 390,
+            "height": 1938,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "scrollHeight": 1938,
+            "clientHeight": 1938,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 0,
+            "right": 390,
+            "top": -2962.390625,
+            "bottom": -1024.390625,
+            "width": 390,
+            "height": 1938,
+            "scrollWidth": 388,
+            "clientWidth": 388,
+            "scrollHeight": 1936,
+            "clientHeight": 1936,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 33,
+            "right": 357,
+            "top": -1169.390625,
+            "bottom": -1057.390625,
+            "width": 324,
+            "height": 112,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 112,
+            "clientHeight": 112,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Besuch bestätigen",
+              "type": "submit",
+              "left": 33,
+              "right": 357,
+              "top": -1169.390625,
+              "bottom": -1057.390625,
+              "width": 324,
+              "height": 112,
+              "scrollWidth": 324,
+              "clientWidth": 324,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 138.265625,
+                  "right": 251.734375,
+                  "top": -1150.390625,
+                  "bottom": -1117.390625,
+                  "width": 113.46875,
+                  "height": 33
+                },
+                {
+                  "left": 110.03125,
+                  "right": 279.96875,
+                  "top": -1110.390625,
+                  "bottom": -1077.390625,
+                  "width": 169.9375,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 33,
+              "rightInsetFromForm": 33
+            }
+          ]
+        }
+      ],
+      "sectionOverflow": 0,
+      "documentOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "rootFont": "32px",
+      "surfaces": [
+        {
+          "name": "editor",
+          "card": {
+            "left": 0,
+            "right": 376,
+            "top": -4336.21875,
+            "bottom": -1531.21875,
+            "width": 376,
+            "height": 2805,
+            "scrollWidth": 374,
+            "clientWidth": 374,
+            "scrollHeight": 2803,
+            "clientHeight": 2803,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 25,
+            "right": 351,
+            "top": -3902.21875,
+            "bottom": -1556.21875,
+            "width": 326,
+            "height": 2346,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 2344,
+            "clientHeight": 2344,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 66,
+            "right": 310,
+            "top": -1821.21875,
+            "bottom": -1597.21875,
+            "width": 244,
+            "height": 224,
+            "scrollWidth": 244,
+            "clientWidth": 244,
+            "scrollHeight": 224,
+            "clientHeight": 224,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "type": "submit",
+              "left": 66,
+              "right": 310,
+              "top": -1821.21875,
+              "bottom": -1709.21875,
+              "width": 244,
+              "height": 112,
+              "scrollWidth": 244,
+              "clientWidth": 244,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 110.8125,
+                  "right": 265.171875,
+                  "top": -1802.21875,
+                  "bottom": -1769.21875,
+                  "width": 154.359375,
+                  "height": 33
+                },
+                {
+                  "left": 110.71875,
+                  "right": 265.28125,
+                  "top": -1762.21875,
+                  "bottom": -1729.21875,
+                  "width": 154.5625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 66,
+              "rightInsetFromForm": 41
+            },
+            {
+              "text": "Abbrechen",
+              "type": "button",
+              "left": 66,
+              "right": 310,
+              "top": -1685.21875,
+              "bottom": -1597.21875,
+              "width": 244,
+              "height": 88,
+              "scrollWidth": 242,
+              "clientWidth": 242,
+              "scrollHeight": 86,
+              "clientHeight": 86,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 102.984375,
+                  "right": 273,
+                  "top": -1658.21875,
+                  "bottom": -1625.21875,
+                  "width": 170.015625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 66,
+              "rightInsetFromForm": 41
+            }
+          ]
+        },
+        {
+          "name": "create",
+          "card": {
+            "left": 0,
+            "right": 768,
+            "top": -5602.21875,
+            "bottom": -4368.21875,
+            "width": 768,
+            "height": 1234,
+            "scrollWidth": 768,
+            "clientWidth": 768,
+            "scrollHeight": 1234,
+            "clientHeight": 1234,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 0,
+            "right": 768,
+            "top": -5602.21875,
+            "bottom": -4368.21875,
+            "width": 768,
+            "height": 1234,
+            "scrollWidth": 766,
+            "clientWidth": 766,
+            "scrollHeight": 1232,
+            "clientHeight": 1232,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 41,
+            "right": 727,
+            "top": -4497.21875,
+            "bottom": -4409.21875,
+            "width": 686,
+            "height": 88,
+            "scrollWidth": 686,
+            "clientWidth": 686,
+            "scrollHeight": 88,
+            "clientHeight": 88,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "row",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Besuch bestätigen",
+              "type": "submit",
+              "left": 41,
+              "right": 414.140625,
+              "top": -4497.21875,
+              "bottom": -4409.21875,
+              "width": 373.140625,
+              "height": 88,
+              "scrollWidth": 373,
+              "clientWidth": 373,
+              "scrollHeight": 88,
+              "clientHeight": 88,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 81,
+                  "right": 374.140625,
+                  "top": -4470.21875,
+                  "bottom": -4437.21875,
+                  "width": 293.140625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 353.859375,
+              "rightInsetFromForm": 353.859375
+            }
+          ]
+        }
+      ],
+      "sectionOverflow": 0,
+      "documentOverflow": 0
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFont": "32px",
+      "surfaces": [
+        {
+          "name": "editor",
+          "card": {
+            "left": 0,
+            "right": 469.328125,
+            "top": -900.109375,
+            "bottom": 1624.890625,
+            "width": 469.328125,
+            "height": 2525,
+            "scrollWidth": 467,
+            "clientWidth": 467,
+            "scrollHeight": 2523,
+            "clientHeight": 2523,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 25,
+            "right": 444.328125,
+            "top": -466.109375,
+            "bottom": 1599.890625,
+            "width": 419.328125,
+            "height": 2066,
+            "scrollWidth": 417,
+            "clientWidth": 417,
+            "scrollHeight": 2064,
+            "clientHeight": 2064,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 66,
+            "right": 403.328125,
+            "top": 1334.890625,
+            "bottom": 1558.890625,
+            "width": 337.328125,
+            "height": 224,
+            "scrollWidth": 337,
+            "clientWidth": 337,
+            "scrollHeight": 224,
+            "clientHeight": 224,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "column",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Änderung speichern",
+              "type": "submit",
+              "left": 66,
+              "right": 403.328125,
+              "top": 1334.890625,
+              "bottom": 1446.890625,
+              "width": 337.328125,
+              "height": 112,
+              "scrollWidth": 337,
+              "clientWidth": 337,
+              "scrollHeight": 112,
+              "clientHeight": 112,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 157.484375,
+                  "right": 311.84375,
+                  "top": 1353.890625,
+                  "bottom": 1386.890625,
+                  "width": 154.359375,
+                  "height": 33
+                },
+                {
+                  "left": 157.375,
+                  "right": 311.9375,
+                  "top": 1393.890625,
+                  "bottom": 1426.890625,
+                  "width": 154.5625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 66,
+              "rightInsetFromForm": 41
+            },
+            {
+              "text": "Abbrechen",
+              "type": "button",
+              "left": 66,
+              "right": 403.328125,
+              "top": 1470.890625,
+              "bottom": 1558.890625,
+              "width": 337.328125,
+              "height": 88,
+              "scrollWidth": 335,
+              "clientWidth": 335,
+              "scrollHeight": 86,
+              "clientHeight": 86,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 149.65625,
+                  "right": 319.671875,
+                  "top": 1497.890625,
+                  "bottom": 1530.890625,
+                  "width": 170.015625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 66,
+              "rightInsetFromForm": 41
+            }
+          ]
+        },
+        {
+          "name": "create",
+          "card": {
+            "left": 0,
+            "right": 1440,
+            "top": -2006.109375,
+            "bottom": -932.109375,
+            "width": 1440,
+            "height": 1074,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "scrollHeight": 1074,
+            "clientHeight": 1074,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "form": {
+            "left": 0,
+            "right": 1440,
+            "top": -2006.109375,
+            "bottom": -932.109375,
+            "width": 1440,
+            "height": 1074,
+            "scrollWidth": 1438,
+            "clientWidth": 1438,
+            "scrollHeight": 1072,
+            "clientHeight": 1072,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footer": {
+            "left": 41,
+            "right": 1399,
+            "top": -1061.109375,
+            "bottom": -973.109375,
+            "width": 1358,
+            "height": 88,
+            "scrollWidth": 1358,
+            "clientWidth": 1358,
+            "scrollHeight": 88,
+            "clientHeight": 88,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          "footerDirection": "row",
+          "formInsideCard": true,
+          "footerInsideForm": true,
+          "buttons": [
+            {
+              "text": "Besuch bestätigen",
+              "type": "submit",
+              "left": 41,
+              "right": 414.140625,
+              "top": -1061.109375,
+              "bottom": -973.109375,
+              "width": 373.140625,
+              "height": 88,
+              "scrollWidth": 373,
+              "clientWidth": 373,
+              "scrollHeight": 88,
+              "clientHeight": 88,
+              "overflowX": "visible",
+              "overflowY": "visible",
+              "inCard": true,
+              "inForm": true,
+              "textFits": true,
+              "textBounds": [
+                {
+                  "left": 81,
+                  "right": 374.140625,
+                  "top": -1034.109375,
+                  "bottom": -1001.109375,
+                  "width": 293.140625,
+                  "height": 33
+                }
+              ],
+              "textBoundsFit": true,
+              "neighboringIntersections": [],
+              "rightInsetFromCard": 1025.859375,
+              "rightInsetFromForm": 1025.859375
+            }
+          ]
+        }
+      ],
+      "sectionOverflow": 0,
+      "documentOverflow": 0
+    }
+  ],
+  "screens": [
+    {
+      "file": "editor-card-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "rootFont": 32,
+      "target": "article[data-besuch]:first",
+      "state": "first editor open, dense40, first12 visible",
+      "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sha256": "a551d512f3749036b979847866eed1e13af3969bf1252fd9511d95ffa3927186"
+    },
+    {
+      "file": "editor-card-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "rootFont": 32,
+      "target": "article[data-besuch]:first",
+      "state": "first editor open, dense40, first12 visible",
+      "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sha256": "8af8b50b906ab1cdd59a7229a6fda01300d9d84346db19b4bd0d82f10b4d06bf"
+    },
+    {
+      "file": "editor-card-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "rootFont": 32,
+      "target": "article[data-besuch]:first",
+      "state": "first editor open, dense40, first12 visible",
+      "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sha256": "62c02391e4a7a6fc313cee47cab9833de9d5d6274a0fdca79b2fb6de53516c82"
+    },
+    {
+      "file": "editor-card-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "rootFont": 32,
+      "target": "article[data-besuch]:first",
+      "state": "first editor open, dense40, first12 visible",
+      "head": "c68ef9e152a35fbe94f54fa753fe1f9c64ac4caa",
+      "cssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+      "sha256": "1e39bc0c62cea91f2db712a4a9bb0d242bf57d2c6635c146bf3b243c6a23025b"
+    }
+  ]
+}

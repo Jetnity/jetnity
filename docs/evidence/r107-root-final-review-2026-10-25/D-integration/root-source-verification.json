@@ -1,0 +1,21 @@
+{
+  "head": "f2a36c71cb57570d65969b800f647fed3b8cd06b",
+  "sourceBindingSHA256": "f1b375e9612b882f5f0ac404fbf99689b00e221e7592b364c9e42511c0377193",
+  "remoteRootCompareChecks": [
+    {
+      "group": "own",
+      "expectedCount": 29,
+      "actualCount": 29,
+      "mismatches": []
+    },
+    {
+      "group": "incoming",
+      "expectedCount": 99,
+      "actualCount": 99,
+      "mismatches": []
+    }
+  ],
+  "rootIndependentOwnPatchesRead": 5,
+  "newTestsOrReruns": false,
+  "scope": "Root reconciliation of helper final pins against independently fetched own29/incoming99 compare maps; historical execution rebinding only"
+}

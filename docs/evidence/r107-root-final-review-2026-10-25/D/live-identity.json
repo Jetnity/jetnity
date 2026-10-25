@@ -1,0 +1,30 @@
+{
+  "pr": 1020,
+  "head": "878212adf0384bba02cd1ce217041a673bfdaf84",
+  "base": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "state": "open",
+  "draft": true,
+  "tree": "b0e0fe9601404e0954c956b19c6bf437a32b9a1d",
+  "mergeBase": "a74c443c6be3f064f150fcf021ab6154bda325e5",
+  "ahead": 9,
+  "behind": 0,
+  "changedFiles": 29,
+  "delivery": {
+    "comment": 6400998745,
+    "updatedAt": "2026-10-25T17:53:30Z",
+    "sameSession": "bc-cc48889b-f8c5-4cce-9892-1daa0eab7fc6",
+    "author": "Jetnity Admin User Directory Completion 1 — Cursor Generation 1",
+    "runtime": "grok-4.7-high-fast",
+    "status": "Full corrected-head delivery; explicitly stopped for independent re-gating"
+  },
+  "immutableBlobs": [
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_PLAN_2026-10-25.md",
+      "sha": "888407e808559463e22b0dbc2392bef09d01f48d"
+    },
+    {
+      "path": "docs/JETNITY_ADMIN_USER_DIRECTORY_COMPLETION_1_TASK_V1_2026-10-25.md",
+      "sha": "704b63dc2f0da1df30db73988cf7e3bb4ed6cbfb"
+    }
+  ]
+}

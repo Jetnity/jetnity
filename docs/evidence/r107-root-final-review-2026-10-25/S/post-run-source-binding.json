@@ -1,0 +1,422 @@
+[
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_HANDOFF_2026-10-25.md",
+    "gitBlob": "cb708eaaec377c896e452ee9048e702db590a9c3",
+    "sha256": "53b65a5fdae63f94afe3402f78fade6e5f9dfee2016f9e5b3c8b49705ed54d4c",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_PLAN_2026-10-25.md",
+    "gitBlob": "436fc2561289baa2da9583c070662a6b8c9ad82b",
+    "sha256": "8e7adc78396653c5d2031471a8df2275da2b2bc8e237d179b4b1fad2a395ceb9",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_REPORT_2026-10-25.md",
+    "gitBlob": "2ef5ad79a5d94b9b435f36cc0ea8154cc57ff65f",
+    "sha256": "2e9b81ccb6e21749722b94b844ac1a1d27a45787ea3f102d868fcb802341f730",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_SELF_REVIEW_2026-10-25.md",
+    "gitBlob": "2dd469987efda62996edb7c71868257abc27e0a7",
+    "sha256": "91352f37502733491565bd9932cf4e40a4f8f1f0729c1c4922cd30773d06d65a",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_STATUS_2026-10-25.md",
+    "gitBlob": "790216ce5cc60f90d8c43968f1173bd220d2e347",
+    "sha256": "a677abb8c2e645327eb409da53733d3c4e65a1d699875a90d50d59eec26fed4a",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/JETNITY_DEPENDENCY_ADVISORY_TRIAGE_1_TASK_V1_2026-10-25.md",
+    "gitBlob": "4a4b686fbcc429a4041012f3d967b3f5d1767bc0",
+    "sha256": "ba66b4fd62ee5aae8bb8d19816e96a083b88ce305bf721658099ca43ed9c743b",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-23c5-xmqv-rm74.json",
+    "gitBlob": "a8fe55eac31f4c2890775060a5b578f414ea25fd",
+    "sha256": "b8879355c079a6997e0a85bde42a0ef7d2e294346fb98d678faf51bf36180c55",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3jxr-9vmj-r5cp.json",
+    "gitBlob": "db883c92205e2ba590c9eeecf0d99b8a1df20408",
+    "sha256": "243b76d36285a64eebe5505942de2401c957c3365b3a2abb9e3062f0c10f6cf9",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3ppc-4f35-3m26.json",
+    "gitBlob": "833a80ef803fa7209e86b87447ccfdcc44868d9b",
+    "sha256": "a23cf10a97db6abf1eb74c05af9bc117447787c601d5bcf5998d48643b7f2f06",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-3v7f-55p6-f55p.json",
+    "gitBlob": "936f4ac9c96fa16eb8a4383f609dfb7ab0e35886",
+    "sha256": "fb459b0a85194c62300cf44a58a1eb794d18e32bd6ae9c94c0213ffd6970bc92",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-48c2-rrv3-qjmp.json",
+    "gitBlob": "79fea88a40e9dacbe27dd1c1c075dbd0f99f5d9f",
+    "sha256": "d6c73346ebbc99789ce594e801b9184af816cf565f0068663fb27586a46e6dce",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-58qx-3vcg-4xpx.json",
+    "gitBlob": "bac67fde250baf614c5cd3aefe53e6bc1b338427",
+    "sha256": "8cb55860fa9e1ccf41f3074e4448188ba9d82a99047afa69f831d924673cc3c0",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-5j98-mcp5-4vw2.json",
+    "gitBlob": "951bbdb5ac767fc5e7cb35bc3b541ae6ab930c3e",
+    "sha256": "e9f16aa7292f7657335c224a15417b2aeaacb18746a5e915df4708e9e61996c0",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-68fv-2mgg-jv7q.json",
+    "gitBlob": "515e6aec21ad8c298a649e31034411874bd361b9",
+    "sha256": "65adb5c38cc20f2723370067654b43cefb020a45d9f714c464ccb0164b5aa0dc",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-6j4f-fj2g-mc7p.json",
+    "gitBlob": "2f228e7918a51ed2b290a26407f90e70d126fc1b",
+    "sha256": "f51d8118e37fb843f6c6dff04fd3dd2f703cf7584d45b5df30a647a8cbf7b9d4",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-73wf-gq98-2v4g.json",
+    "gitBlob": "eeae134e5cc17416f8f62d33325f68f5de92bb14",
+    "sha256": "ec5de5d27f84130ce6001b4b8b25c0c3edf7f50e52b126bfff52dd50ca4f7e81",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7mvr-c777-76hp.json",
+    "gitBlob": "e2d4875ffb3708d1a14989410434cfce4bd94fd0",
+    "sha256": "9b8aaa2fa3f4ba2eb2ce6a7a4e0534cd6d7c13f98af311ee05aa3d0739fee25e",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-7r86-cg39-jmmj.json",
+    "gitBlob": "dd99c2ead4a5232171a8953d1c33b91f775a707e",
+    "sha256": "673cdd50f7554119da48f8f2fcd4af98277039750e94e6b5c4a806f4849754f9",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-96hv-2xvq-fx4p.json",
+    "gitBlob": "44af9c053677c309ead6e6d78b54bfa6415902d9",
+    "sha256": "a3d4db1afd790f3eba1f703f2e890959fc33d2857ee9b5da1bf646418042ea12",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c2c7-rcm5-vvqj.json",
+    "gitBlob": "e5994abdc0021c7ec57505559880d7f9703af302",
+    "sha256": "e276c065bd2d84dd18ca363cace88bba72c1b0311257e3374e89a7f1106f832e",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-c83g-rgw3-j3cx.json",
+    "gitBlob": "d8e79b2637b20e13c5f9b830fa8b4e04957522ec",
+    "sha256": "378e8aa38b6aa9462148f2a2e29b0a7031ef255f36178f2378da97c96d4129a1",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-f886-m6hf-6m8v.json",
+    "gitBlob": "6c9aa7a7b358ca18efadd124d67a3d5d254c1d4f",
+    "sha256": "0478b444e48d33abeb1bb8864355a9cc27de44749afec35b2ab3c939b6ae4a29",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mh99-v99m-4gvg.json",
+    "gitBlob": "3bd478989ed1e6102c603f182d436c2bb34d3a07",
+    "sha256": "27c256d02427b01e536a66adf974a7a08b27def52b934a31e22b33ab28536cc0",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-mrhx-c7xc-m3w5.json",
+    "gitBlob": "58272ea0d840c1602e8b36c9972ef17d45d51f03",
+    "sha256": "b90531accc02567c19f5124cc33f6efcdf451e05c0bad1cde56aac6ee2cd9e3a",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-q2hr-2g5m-vwhr.json",
+    "gitBlob": "9f9caf62f101a214fd7f13c4bf9c047fefd86e19",
+    "sha256": "1e3fd47434b71a52b07c3369277e8dce5929a3aa060bac87d678199dc748618c",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-qhr7-859c-m2p7.json",
+    "gitBlob": "305d05b85a9d46c74129ca2b31fd5cd96514d3bd",
+    "sha256": "b325bb70b12f20b1b998636873f2abffe11a250c8d94d4ecdda80e205dcf9348",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rgw5-rvv9-x895.json",
+    "gitBlob": "b924d26dc0b6b0eb102c93a200b76fd7409a22bf",
+    "sha256": "7a56e0ce3d85ddb4e1ef95c3a90462b3cfb0305d590030ff918b81b74c266cc9",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-rj75-hqrm-r3gf.json",
+    "gitBlob": "57e15aff5b2eece41e1321efc9c6bf0159d2e95b",
+    "sha256": "030d3ca6a54f498d3217ce6caea3cfc299734bfbeaf31c73b5b96b20ee960b45",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/advisories/GHSA-w9m9-85wc-3x92.json",
+    "gitBlob": "9db0818645753c589e8f14cde21d518406d87f84",
+    "sha256": "547ac165226b1a9421db0f20366a81b40fb5a731569f906832208f4f9c1af3fb",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/ci-baseline-40202059080.txt",
+    "gitBlob": "bac49565d29a262bd8040b31d49b592c71c205e7",
+    "sha256": "67c9d52dffc8ec09dc72645ee84bbac092dd61eb21b43ba8b61f17ecbf9cbc33",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/commands.txt",
+    "gitBlob": "bb3777fc1f3c47210a5fd864355f815e3e796d41",
+    "sha256": "07dc2ccd8771a8c7606ea594bdac25eb2db10b86f0c388c721c7f414cc17a54b",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/input-binding.json",
+    "gitBlob": "be4123020a218303f699fd9c1bd7761ada6a942e",
+    "sha256": "c7851dc73e8a200fd78a33c4f2ea3137905de00b4390aa622813fd847156a91d",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json",
+    "gitBlob": "12606d1d2535afc6b73c7d9ce499e7841ddc9afc",
+    "sha256": "27b6a62b8a82900e6a1caa1151944a3fdf3d6a8920ad3e0d0c1cdf97b73db4d1",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile-omit-dev.json",
+    "gitBlob": "7396e61da7c4a52e1263d5cccfea102c8a7faa33",
+    "sha256": "268d5ab71c88c6721aa36bf8e7a79dddd91c5c28319f558cd77f2de85e662aee",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-audit-lockfile.json",
+    "gitBlob": "48d7e00ed91889938e133c3640039d2f5e6ef035",
+    "sha256": "c492ba87652b7f32d6b5661e2bc6e935cd240d5e76b93646c2edabf69d7eaa2b",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_1.1.21.json",
+    "gitBlob": "5d9ca6f4c9345a5a75d0ce1742e62de12e457665",
+    "sha256": "8495c401186f45761a475efdbed0cc7fe629e29dc33a2c445aa036d5b8eb9719",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_2.1.7.json",
+    "gitBlob": "27bbfee1fb936b45670321f2e86fd3fe3f363a85",
+    "sha256": "9e0fac29bbb318dbd6b6b35c0963450806c01d67240db9c57bc6555ab39cfa8d",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/brace-expansion_5.0.12.json",
+    "gitBlob": "bd3417cfff76be2e54312f093088e82e3ad07e8a",
+    "sha256": "4a66f0414bd32d1e3c2a8905da0c7bede25105661c37cc8a5c910869d5d52b3e",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/browserslist_4.28.7.json",
+    "gitBlob": "cd92120dfd7d8970fec9856de63e142c034b5c48",
+    "sha256": "b3e8a1afffd6790316c13b4291beef1d71c735b0b0c03a8d34170d78e20fc525",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/glob_10.5.0.json",
+    "gitBlob": "99535992f235ca6fc1df4a47c2ec44bd5db80a6b",
+    "sha256": "20bfe323cf700c079bf350083d177f1e95b53c6ef2a4f248fe51c04bedce51ef",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/minimatch_9.0.7.json",
+    "gitBlob": "2406c8ccbcbe5f4d87998212d340222211cc1a3b",
+    "sha256": "e8a9f0a0f8ebecc90637a1c4b714f6904c6c6734a278c07a1a6d6400bee16f54",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_2.3.2.json",
+    "gitBlob": "d1d6bada28fc49e9ca58498ff2f99f8d0b901e8f",
+    "sha256": "4555ce2788235fea59e80a428d62b5402c730514590df2f0a4e873c8bd2c5e11",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/picomatch_4.0.4.json",
+    "gitBlob": "71cbbe4a58ddde221f77662b57acf4965ba53963",
+    "sha256": "1258d97cd11e032c5f1cd71bad12a7eb372d4845b47027254c65ef49dde9aabc",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/playwright_1.55.1.json",
+    "gitBlob": "dabb7505e5abe61a0cf7b4c8d85906f0bb885479",
+    "sha256": "f57c9513eb2d4faaddb9788480b9437abc037039b9666f432277eccc2d73c3ae",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_6.1.3.json",
+    "gitBlob": "1652ff90ecb0122714101263b3de0a7e5a2038e5",
+    "sha256": "cdcb41d78473e16ece7a77b71f4762e9d75f94eb2d13ba9377bdc1d1fbc9bad0",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/postcss-selector-parser_7.1.6.json",
+    "gitBlob": "e159d742de90e3dceadb603f466fb6c1ac0bba57",
+    "sha256": "13c4057d02495e54c71689f13f39d064dace16bc4cd2c2342e655de09f409a78",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/source-map-js_1.2.2.json",
+    "gitBlob": "fdfdcfd0f9d9db2e8cb162bb8f49bf23978b0cf5",
+    "sha256": "1fc10a62bfa2794fd34f6e39b29aaa6c2879e5e870da367685639bbed77e6c34",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/ws_8.21.0.json",
+    "gitBlob": "1b7fe42fed0b6d42d1e774504a7ba75add17b037",
+    "sha256": "24894a846d217bf841a51df07135caeb6d2e65ac642a4183d33b8fd438006a1e",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/yaml_2.8.3.json",
+    "gitBlob": "530fdcf9e92fbd02b71c403591d8f5b7c16a66b1",
+    "sha256": "4f7970cacf969627237a3a677d4e06db64c3fb6f8809a8b96c2a8df52e6cdb2c",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/npm-view/zod_4.6.6.json",
+    "gitBlob": "7c5e99597a1e1417c1c376ffc065d7b68e13993a",
+    "sha256": "727837607375e66ae5b1577992f60a3d9299101e68b8dd94371a515af43d7292",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/osv-crosscheck.json",
+    "gitBlob": "b255a7b83bcc6335c741ed35e8fac9538fc899bb",
+    "sha256": "82c4a7e591ed6ddd1f10665692ad5182fb8a91dda632dbf146d165445cf6a8a0",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/triage-matrix.json",
+    "gitBlob": "5f4961c8c214ea22f79d446c3163f723ecd0b74f",
+    "sha256": "dc7b201dc0b0f12c34c95fcd48eb3859a93982e3749dd9ec679dbc92a7d09d47",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/dependency-advisory-triage-1/validation.json",
+    "gitBlob": "982a7ee971a37fc6181e2e1e2c951e6d187e697d",
+    "sha256": "d357ccb83eb9c58deb5f3d56b3b8d06150500a9a9185e69c79448b6c80b1c998",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "scripts/dependency-advisory-triage-1/build-matrix.mjs",
+    "gitBlob": "26fe13d6718d6de49de1a8229088dc5519def1ca",
+    "sha256": "f8d08c5909f1b0f99fd7594c883d4134fcf8c4ac10c3fc338e1e50d4383df95e",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "scripts/dependency-advisory-triage-1/inventory.mjs",
+    "gitBlob": "6404d1d4e5e58361da94ccbbefa62331b0be4dc5",
+    "sha256": "207fac27615eb2ba0c00063f3691efd2d135ca7cadc0b1b419b52cdd030750d2",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "scripts/dependency-advisory-triage-1/range.mjs",
+    "gitBlob": "c62615d78da39a13299d9e5b73b7f0d6f6ff7e87",
+    "sha256": "fe6821f58868ba136dfb2e35e25e669eba755e2b69c2cb402ad96050c7d12a20",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs",
+    "gitBlob": "fd8ce4365d44445f0d63f84941f48def934feea7",
+    "sha256": "c47aa844107916d5bc3ce1d41ac546fb19e072729794430f515f6eb5ecc01f45",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "scripts/dependency-advisory-triage-1/validate-evidence.mjs",
+    "gitBlob": "cea63f4d63d81f937fc916312f1a4df9326768df",
+    "sha256": "680f93287248d0ba442ed2f32258db1f51d6c4d31575a044e3ea21f5c895cb15",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "package.json",
+    "gitBlob": "e6187432cb8f224c10281b7b476bb24eb8ef1c1b",
+    "sha256": "d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c",
+    "matchesStagedHead": true,
+    "unchanged": true
+  },
+  {
+    "path": "package-lock.json",
+    "gitBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
+    "sha256": "5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de",
+    "matchesStagedHead": true,
+    "unchanged": true
+  }
+]

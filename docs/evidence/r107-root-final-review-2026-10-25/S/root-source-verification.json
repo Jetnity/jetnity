@@ -1,0 +1,7 @@
+{
+  "rootIndependentBlobCheckCount": 60,
+  "mismatches": [],
+  "matrixSha256": "dc7b201dc0b0f12c34c95fcd48eb3859a93982e3749dd9ec679dbc92a7d09d47",
+  "priorCommandsBytesRetainedAsExactPrefix": true,
+  "validatorLog": "EVIDENCE_VALID rows=42\n"
+}

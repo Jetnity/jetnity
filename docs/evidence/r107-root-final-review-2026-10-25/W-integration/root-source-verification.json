@@ -1,0 +1,21 @@
+{
+  "reviewer": "root Technical Lead",
+  "head": "1343f8b9e20e68166e2e12cc7880f7eb3cff980c",
+  "tree": "d732487b09c3245c9c22e38b38bb030c8aa181cf",
+  "remoteTreeCount": 8359,
+  "truncated": false,
+  "exactConfiguredScanSet": true,
+  "scanCount": 1319,
+  "stagedInputsRehashed": 1324,
+  "repositoryInputsRehashed": 54,
+  "dependencyInputsRehashed": 1689,
+  "receiptInputsRehashed": 12,
+  "lexicalInputsRehashed": 57,
+  "rawAddedClassTokenHits": [],
+  "bindingErrors": [],
+  "finalCssSha256": "ba1f5238e5afcbc42d134de5e6820f206143db8b175b5168123d83bce4207a67",
+  "historicalCssSha256": "b1ca9a5fdfee85f34812d64c71cb7d643ff5ae7b74ce9c89e939401d7b6586cc",
+  "nativeGate": "pending",
+  "browserReplay": false,
+  "limits": "Root read complete CSS diff, compiler, all43 nonliteral sites and retained execution separation; this record is static source/output reconciliation, not new browser execution."
+}

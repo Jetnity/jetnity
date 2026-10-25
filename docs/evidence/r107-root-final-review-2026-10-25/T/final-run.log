@@ -1,0 +1,14 @@
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+▶ mounted TripWorkspace traveller residence-only identity
+  ✔ a residence-only save keeps the loaded citizenship UUID and its passport relation (894.287142ms)
+✔ mounted TripWorkspace traveller residence-only identity (4678.792261ms)
+ℹ tests 1
+ℹ suites 1
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5437.968592

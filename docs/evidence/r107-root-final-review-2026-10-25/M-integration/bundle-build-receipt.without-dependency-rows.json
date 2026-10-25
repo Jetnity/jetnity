@@ -1,0 +1,208 @@
+{
+  "archiveTransformation": "Documentation-only projection. Remove only the entire dependencyInputs array (1679 rows); retain all19repositoryInputs rows and every other original key/value including original dependency counts. No execution.",
+  "originalPath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/bundle-build-receipt.json",
+  "originalBytes": 773293,
+  "originalSha256": "bf0b7676b5c716ff0c2b300c4cdda599b4c4c272a56b773e1bcc9e2b125bf175",
+  "transformation": {
+    "description": "Documentation-only projection. Remove only the entire dependencyInputs array (1679 rows); retain all19repositoryInputs rows and every other original key/value including original dependency counts. No execution.",
+    "removedFields": [
+      "dependencyInputs"
+    ],
+    "removedRowCount": 1679,
+    "originalRepositoryInputCount": 19,
+    "retainedRepositoryInputCount": 19,
+    "originalDependencyInputCount": 1679,
+    "retainedDependencyInputCount": 0,
+    "originalTotalInputCount": 1698,
+    "retainedTotalInputCount": 19
+  },
+  "record": {
+    "actualFinalHead": "dda52b660369a436fa1eb25ff69c0f076254661a",
+    "actualFinalTree": "503752c1bee097f5bba47487061415730429cc57",
+    "generatedAtUtc": "2026-10-25T21:12:39.726Z",
+    "node": "v24.22.1",
+    "sourceRoot": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+    "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+    "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /tmp/r107-mytrips-r3-review/integration-final-dda52b660369/build-final-harness.mjs",
+    "cwd": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source",
+    "buildScriptSha256": "5d17db371ed78dc32b413fea4d18e0b607b6af7d518a570998228d3523032279",
+    "originalRunnerPath": "scripts/my-trips-collection-archive-workflow-completion-1/run.mjs",
+    "originalRunnerSha256": "b54db4543a2ff898724d9e70fe8e7e86642a5dd6caad548ab27ba2d474d12a85",
+    "aliases": [
+      "next/navigation",
+      "@/lib/trips/archiv-aktionen"
+    ],
+    "originalOptionsPreserved": true,
+    "onlyAdditions": "metafile capture and fresh output location",
+    "bundlePath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/harness.js",
+    "bundleSha256": "e95e9023d0638e26ef10749cb3f24f15b49d939846af5d03b0ba1e50d4a691dc",
+    "bundleBytes": 925400,
+    "metafilePath": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/bundle-metafile.json",
+    "metafileSha256": "706fb3467590e3a4a4a0e8aaffa3e293de0ceaee9991eac5e04aee3c797f930f",
+    "repositoryInputCount": 19,
+    "repositoryInputs": [
+      {
+        "path": "lib/account/reise-lage.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/account/reise-lage.ts",
+        "blob": "731c0b42abb9dee72a4d2f5d8c78d379eaa980b4",
+        "sha256": "ad057bd1333e6700518904f8187fe609e257fa52ace6dc0efc32b1ae195db8ff",
+        "bytes": 3584,
+        "metafileBytes": 3584
+      },
+      {
+        "path": "lib/account/reise-archiv.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/account/reise-archiv.ts",
+        "blob": "93744e171db945477eaa9e9984c7d5847d42c6a3",
+        "sha256": "38c260a6959cbfbb293e0f910078088e1cb7381ab69f733f02c1461fa954a814",
+        "bytes": 5720,
+        "metafileBytes": 5720
+      },
+      {
+        "path": "lib/account/naechste-reise.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/account/naechste-reise.ts",
+        "blob": "9c437704fd58c83a4a6da3f1325ea6d6f3d4d685",
+        "sha256": "930e7b656fc60b0507e05de7ce7b57ffed3d3b0d63fc14e5c945bfc58608f269",
+        "bytes": 2872,
+        "metafileBytes": 2872
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/scripts/my-trips-collection-archive-workflow-completion-1/shims/navigation.ts",
+        "blob": "1a5a87498b450161678b92c52de25f27d9b654da",
+        "sha256": "96ac2503e54a53a31f7faa369d8a9917d10ad8f4fe7cf26454393fae6e47c0bf",
+        "bytes": 1785,
+        "metafileBytes": 1785
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/scripts/my-trips-collection-archive-workflow-completion-1/shims/aktionen.ts",
+        "blob": "3a60254ad7ca1866ef25a7d8f29a6994d9562b7b",
+        "sha256": "575b6d6777f7777c5652b144c12e54a55d8441f8dacd00e228ec0d09060b4e99",
+        "bytes": 405,
+        "metafileBytes": 405
+      },
+      {
+        "path": "lib/trips/trip-archive-workflow.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/trips/trip-archive-workflow.ts",
+        "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+        "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+        "bytes": 4537,
+        "metafileBytes": 4537
+      },
+      {
+        "path": "components/trips/useTripArchiveWorkflow.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/useTripArchiveWorkflow.ts",
+        "blob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+        "sha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+        "bytes": 3662,
+        "metafileBytes": 3662
+      },
+      {
+        "path": "components/trips/KontoReiseArchivAktion.tsx",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/KontoReiseArchivAktion.tsx",
+        "blob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+        "sha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+        "bytes": 2917,
+        "metafileBytes": 2917
+      },
+      {
+        "path": "types/trips.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/types/trips.ts",
+        "blob": "4a1badcfc3adbe428219ea2a959502c0e437e7ef",
+        "sha256": "f830038580542fd12ccdaef367aeffc19ddc48ebd2e905f9162c25009139f592",
+        "bytes": 17314,
+        "metafileBytes": 17314
+      },
+      {
+        "path": "lib/trips/bezeichnungen.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/trips/bezeichnungen.ts",
+        "blob": "cf58875a9a6f5b5b64ee18778113ad15964c5765",
+        "sha256": "6a4708247d0b799f84139a1d90fdf3e1d4fe720b80618c51369d67157360757e",
+        "bytes": 3840,
+        "metafileBytes": 3840
+      },
+      {
+        "path": "lib/trips/reise-orte.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/trips/reise-orte.ts",
+        "blob": "911a5bf25584c04d183f4ff38ae93d430ba3875b",
+        "sha256": "5cac9ddf123498c281ab0cbf85319c347c4aee59d3f7a71a23b933916a4684f4",
+        "bytes": 1868,
+        "metafileBytes": 1868
+      },
+      {
+        "path": "lib/utils.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/utils.ts",
+        "blob": "8b0917dce65ff5cadc370c442e8ea8541efebd48",
+        "sha256": "b4b5d73c0ae4a2e6e86c54e42327e7aad7b2ad43ce47aec6ebc6c5118766f7d2",
+        "bytes": 423,
+        "metafileBytes": 423
+      },
+      {
+        "path": "components/trips/Reisekarte.tsx",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/Reisekarte.tsx",
+        "blob": "51fbfc95d7893555e073a481d6dc74f3371433b6",
+        "sha256": "fb309c861a3b6f0ca08239b9047f141ba25a85f657c44ce0ecd01a9da334a2bb",
+        "bytes": 3742,
+        "metafileBytes": 3742
+      },
+      {
+        "path": "lib/trips/my-trips-premium-hub-ux-1.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/trips/my-trips-premium-hub-ux-1.ts",
+        "blob": "d1804e19b3d47427baac9d73a01265b71d832b06",
+        "sha256": "704cbb5bb8020f47c2e2dceeb463b0feb375d18b4e4066a350504ebae8d99307",
+        "bytes": 4482,
+        "metafileBytes": 4482
+      },
+      {
+        "path": "components/trips/KontoReiseEintrag.tsx",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/KontoReiseEintrag.tsx",
+        "blob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+        "sha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+        "bytes": 1384,
+        "metafileBytes": 1384
+      },
+      {
+        "path": "lib/trips/reisen-sammlung-abfrage.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/lib/trips/reisen-sammlung-abfrage.ts",
+        "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+        "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+        "bytes": 9827,
+        "metafileBytes": 9827
+      },
+      {
+        "path": "components/trips/useMyTripsCollectionNavigation.ts",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/useMyTripsCollectionNavigation.ts",
+        "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+        "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+        "bytes": 5168,
+        "metafileBytes": 5168
+      },
+      {
+        "path": "components/trips/MyTripsCollection.tsx",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/components/trips/MyTripsCollection.tsx",
+        "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+        "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+        "bytes": 15825,
+        "metafileBytes": 15825
+      },
+      {
+        "path": "scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+        "source": "/tmp/r107-mytrips-r3-review/integration-final-dda52b660369/source/scripts/my-trips-collection-archive-workflow-completion-1/mount.tsx",
+        "blob": "ece3f8b945f3acd520453b5aef3fcb7fc2d8c9ca",
+        "sha256": "b193d77582d0b401ac624471e856b151768f5c1beb0955d419bebd6a66dfe07e",
+        "bytes": 2983,
+        "metafileBytes": 2983
+      }
+    ],
+    "dependencyRoot": "/tmp/jetnity-r106-t-final-review/node_modules",
+    "dependencyInputCount": 1679,
+    "retainedDependencyInventory": "/tmp/r107-world-r1-review/integration-1343/historical-bundle-source-binding.json",
+    "retainedDependencyInventorySha256": "62fe37add94c42d015a82f16cf35e05245e57cc95aecbf929c2f4a47c2a6f469",
+    "retainedDependencyMatches": 1679,
+    "newlyHashedRetainedDependencyFiles": 0,
+    "completeBundleInputsBound": true,
+    "browserRun": false,
+    "testsRun": false,
+    "scope": "One actual-final harness bundle and input metadata only; historical W inventory reused solely as dependency-byte cache, no W/M test acceptance transfer"
+  }
+}

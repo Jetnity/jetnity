@@ -1,0 +1,48 @@
+const fs=require('node:fs');const path=require('node:path');const crypto=require('node:crypto');const Module=require('node:module');
+const dir=process.env.RESIDENCE_REVIEW_OUTPUT;
+if(!dir)throw Error('RESIDENCE_REVIEW_OUTPUT required');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const record={reviewer:'/root/dependency_review',cwd:process.cwd(),pid:process.pid,node:process.version,argv:process.argv,pages:[],bundles:[],blockedRequests:[],errors:[],boundary:'Original existing named test, observed without changing test body or product sources. Only local127.0.0.1 root document is allowed; other browser requests are aborted.'};
+const file=path.join(dir,'observation-'+process.pid+'.json');
+const flush=()=>fs.writeFileSync(file,JSON.stringify(record,null,2)+'\n');
+process.on('exit',flush);
+const originalLoad=Module._load;
+const wrappedModules=new WeakMap();
+Module._load=function(request,parent,isMain){
+ const loaded=originalLoad.apply(this,arguments);
+ if(request!=='esbuild'||!loaded||typeof loaded.build!=='function')return loaded;
+ if(wrappedModules.has(loaded))return wrappedModules.get(loaded);
+ const proxy=new Proxy(loaded,{get(target,key,receiver){
+  if(key!=='build')return Reflect.get(target,key,receiver);
+  return async function(options){
+   const result=await target.build({...options,metafile:true});
+   const cwd=options.absWorkingDir||process.cwd();
+   const inputs=Object.keys(result.metafile.inputs).map(p=>{const absolute=path.resolve(cwd,p),data=fs.readFileSync(absolute);return {path:absolute,sha256:sha(data),gitBlob:crypto.createHash('sha1').update(Buffer.concat([Buffer.from('blob '+data.length+'\0'),data])).digest('hex')}});
+   record.bundles.push({entryPoints:options.entryPoints,alias:options.alias,metafile:true,inputs,outfile:options.outfile,outputSha256:sha(fs.readFileSync(options.outfile))});flush();return result;
+  };
+ }});wrappedModules.set(loaded,proxy);return proxy;
+};
+const pw=require(path.join(process.cwd(),'node_modules/playwright'));
+const launch=pw.chromium.launch.bind(pw.chromium);
+pw.chromium.launch=async function(options){
+ const browser=await launch(options);record.browser=browser.version();
+ const newPage=browser.newPage.bind(browser);
+ browser.newPage=async function(options){
+  const page=await newPage(options);const pageRecord={viewport:options?.viewport,errors:[]};record.pages.push(pageRecord);
+  await page.route('**/*',route=>{
+   const u=new URL(route.request().url());
+   if(u.protocol==='http:'&&u.hostname==='127.0.0.1'&&u.pathname==='/'&&route.request().resourceType()==='document')return route.continue();
+   record.blockedRequests.push({url:route.request().url(),type:route.request().resourceType()});return route.abort();
+  });
+  await page.addInitScript(()=>{window.__REVIEW_INPUTS__=[];document.addEventListener('keydown',e=>window.__REVIEW_INPUTS__.push({type:'keydown',key:e.key,trusted:e.isTrusted,tag:e.target.tagName,text:e.target.textContent?.trim()}),true);document.addEventListener('change',e=>window.__REVIEW_INPUTS__.push({type:'change',tag:e.target.tagName,value:e.target.value,trusted:e.isTrusted}),true);});
+  page.on('pageerror',error=>pageRecord.errors.push(String(error)));
+  const close=page.close.bind(page);
+  page.close=async function(options){
+   try{pageRecord.observation=await page.evaluate(()=>({start:window.__START__,payloads:window.__SNAPSHOT__?.payloads,inputs:window.__REVIEW_INPUTS__,cardText:document.querySelector('[data-preparation-traveller="traveller:1"]')?.textContent,renderedResidence:document.querySelector('[data-preparation-traveller="traveller:1"] select[aria-label="Wohnsitzland, falls relevant"]')?.value}));}
+   catch(error){record.errors.push(String(error));}
+   flush();return close(options);
+  };
+  return page;
+ };
+ return browser;
+};

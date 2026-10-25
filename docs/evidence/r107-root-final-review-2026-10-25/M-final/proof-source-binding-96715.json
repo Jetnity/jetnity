@@ -1,0 +1,67 @@
+{
+  "candidate": "444a8c254e11688120f7f2b6e49193746932a865",
+  "runtime": "96715e43f9c979a542a1b7bd5acc2b15ef494c5d",
+  "tree": "d734a39f5f97228f076a8d12e37e02b71257a0ae",
+  "sources": [
+    {
+      "path": "app/(public)/reisen/page.tsx",
+      "sha256": "60e65e606aa35a2529c563c6d2ce8cdb721906c34451073eb9cffcc3e75bf65a",
+      "blob": "c80cd9def1591a47c53ee2ad8be77e2ccfd26a3a",
+      "matches": true
+    },
+    {
+      "path": "components/trips/MyTripsCollection.tsx",
+      "sha256": "bef5da3374f96875b017dec7c68000e0392fffb69aa2f6bfb0e96af36cd50c7b",
+      "blob": "ed5905edde21c7cd3a55b5ba8daf4ce4ee4b0554",
+      "matches": true
+    },
+    {
+      "path": "components/trips/useMyTripsCollectionNavigation.ts",
+      "sha256": "e09fd5278370ffa6824afadba91208bd5aaf98f88c957a342b2b064401cfb93f",
+      "blob": "6cbabb9d54a27b5a1ce55164fb11ff3e0f692a23",
+      "matches": true
+    },
+    {
+      "path": "components/trips/useTripArchiveWorkflow.ts",
+      "sha256": "761c818da5722c86275b6b70491f477eb49fd2027cfebc5fac56a240ea4b1cf2",
+      "blob": "9557a410dde62ea433483453aa6b66748e4d25a4",
+      "matches": true
+    },
+    {
+      "path": "components/trips/KontoReiseArchivAktion.tsx",
+      "sha256": "97bceec91742b36acee02cca2e16ce8d046b6661d04069b28c132634a9822c4f",
+      "blob": "96a4259702ad802f98c9ca45120a56fa2716776b",
+      "matches": true
+    },
+    {
+      "path": "components/trips/KontoReiseEintrag.tsx",
+      "sha256": "7d02991ccce45434f59a8c7400351da1af8ada8f7a663506dcbcb5dd590cd0b2",
+      "blob": "a4f09d2981c79fc4246c82c7f552306cbec2dded",
+      "matches": true
+    },
+    {
+      "path": "lib/trips/reisen-uebersicht.ts",
+      "sha256": "0b14e7bd785b3a8970414638d3bf77294d853afc606d5e1da4aea148ee939509",
+      "blob": "dccfc4e241420fbf50d661dce82fb5d234e3432a",
+      "matches": true
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-abfrage.ts",
+      "sha256": "ddbd5ec4a58a59918aa49a3133e6183d03a7365af8ddfc0ee598d0066d571d21",
+      "blob": "a33b7b873fa8542a10345eee66cb50e077dae403",
+      "matches": true
+    },
+    {
+      "path": "lib/trips/reisen-sammlung-daten.ts",
+      "sha256": "8c7761f44bf7146ec334d816c64b1adcacc6f68b845beeb8bcae18b07aacb582",
+      "blob": "c196b9249d905479740657c780915e1b4fe33a2f",
+      "matches": true
+    },
+    {
+      "path": "lib/trips/trip-archive-workflow.ts",
+      "sha256": "832b0005ecf15b127a27e57c4e14b485e6832b9f55cd0c9e01acfa00e695fb70",
+      "blob": "37c902f7ed88f67ffb788985d4cbbfef6ff361d2",
+      "matches": true
+    }
+  ]
+}

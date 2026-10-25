@@ -1,0 +1,43 @@
+{
+  "status": "PREPARATION_ONLY_NOT_EXECUTED",
+  "originalSource": "/tmp/r107-mytrips-r3-review/scripts/my-trips-collection-archive-workflow-completion-1/mounted.test.ts",
+  "originalSourceSha256": "d21a218b8de9f166ba74d9c6b4cb0ba710db1160f467491df50bb2843d539159",
+  "originalSourceBlob": "7b9749ab2dada55d384871f14b2772da61f98db3",
+  "layoutLines": [
+    570,
+    614
+  ],
+  "layoutDedentedSha256": "4a88b4b26560af66640346f75110630e5aca960efadf7a6b32b3f8a651b80e1e",
+  "layoutBodyChange": "indentation only; byte-equal after dedent",
+  "helpers": [
+    "oeffnen",
+    "oeffnenBei",
+    "ruhen",
+    "ergebnis"
+  ],
+  "helperTypeErasures": {
+    "browser: Browser": "browser",
+    "): Promise<Page>": ")",
+    "query: string": "query",
+    "page: Page": "page",
+    "teil: Record<string, unknown>": "teil",
+    "window as unknown as SammlungFenster": "window"
+  },
+  "originalHelpersSha256": "1bd83d82b0118cdb9a124e1df204afe925b0ac21cd0d4c17ca8e72f15a09036f",
+  "javascriptHelpersSha256": "6ccd634a2070bde6d9d4df1c4cb30bfc0ffc441fd617c955487a56e78a91e11c",
+  "wrapperSha256": "d321cd70548a8fe851c0fe5918f0978165bb1e271323a63fecf8e289a27a35f8",
+  "sourceExecution": false,
+  "syntaxExecution": false,
+  "tests": false,
+  "cssBuild": false,
+  "bundleBuild": false,
+  "browserExecution": false,
+  "staticTextReview": {
+    "layoutDedentEqualsOriginal": true,
+    "helpersEqualOriginalAfterListedTypeErasures": true,
+    "assertionStatementsInLayout": 6,
+    "assertionStatementsInWrapper": 6,
+    "sourceSha256Unchanged": true,
+    "runtimeExecution": false
+  }
+}

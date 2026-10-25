@@ -1,0 +1,51 @@
+{
+  "head": "444a8c254e11688120f7f2b6e49193746932a865",
+  "errors": [],
+  "cases": [
+    "repeated-params-deep-link-q=a&q=b",
+    "repeated-params-in-place-q=a&q=b",
+    "repeated-params-deep-link-archiv=offen&archiv=archiv",
+    "repeated-params-in-place-archiv=offen&archiv=archiv",
+    "repeated-params-deep-link-cursor=x&cursor=y",
+    "repeated-params-in-place-cursor=x&cursor=y",
+    "invalid-not-read-keeps-archive-observation",
+    "missing-provenance-keeps-ack",
+    "missing-provenance-keeps-unknown",
+    "displayed-query-ownership-copy",
+    "empty-invalid-deep-link-stays-distinct-archiv=",
+    "empty-invalid-in-place-stays-distinct-archiv=",
+    "empty-invalid-deep-link-stays-distinct-cursor=",
+    "empty-invalid-in-place-stays-distinct-cursor=",
+    "valid-empty-search-normalizes-to-reisen"
+  ],
+  "ownership": [
+    {
+      "visibleCommittedQuery": true,
+      "visibleRetainedOwner": true,
+      "visibleLiveAddress": true,
+      "draft": "separate-draft"
+    }
+  ],
+  "empty": [
+    {
+      "case": "empty-invalid-deep-link-stays-distinct-archiv=",
+      "invalidBefore": true,
+      "invalidAfter": true
+    },
+    {
+      "case": "empty-invalid-in-place-stays-distinct-archiv=",
+      "invalidBefore": true,
+      "invalidAfter": true
+    },
+    {
+      "case": "empty-invalid-deep-link-stays-distinct-cursor=",
+      "invalidBefore": true,
+      "invalidAfter": true
+    },
+    {
+      "case": "empty-invalid-in-place-stays-distinct-cursor=",
+      "invalidBefore": true,
+      "invalidAfter": true
+    }
+  ]
+}

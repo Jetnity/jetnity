@@ -1,0 +1,19 @@
+{
+  "kind": "root-independent-M-evidence-and-layout-input-verification",
+  "verifiedAtUtc": "2026-10-25T21:15:14.754699+00:00",
+  "head": "dda52b660369a436fa1eb25ff69c0f076254661a",
+  "tree": "503752c1bee097f5bba47487061415730429cc57",
+  "counts": {
+    "localHashRecords": 128,
+    "currentTreeRecords": 119
+  },
+  "metafileInputs": 1698,
+  "sourceProofSha256": "108d182cf80bced4cc1b6c16c58f2d4b7c3e55cfd3a05aa38c1aaa0ee9621e5c",
+  "artifactReceiptSha256": "0882b36bf04d292d192896c16deefa4a19fab3fc19507ae771f84c5b79817a01",
+  "evidenceRebindingSha256": "0a6c170b6fa5816858bfcb447a3eaec2a436487bc72190228c6ca68d69d06582",
+  "wrapperSha256": "d321cd70548a8fe851c0fe5918f0978165bb1e271323a63fecf8e289a27a35f8",
+  "errors": [],
+  "historicalMCompiledCssAvailable": false,
+  "browserRun": false,
+  "layoutAccepted": false
+}
