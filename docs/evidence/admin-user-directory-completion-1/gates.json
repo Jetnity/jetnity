@@ -1,5 +1,6 @@
 {
-  "boundToProductCommit": "56bb915e78a55857132c5fe02384b8a64f2b81b8",
+  "boundToProductCommit": "fb3f13cf9667c0af42d7d1fbf11667e8c292ac66",
+  "answersReview": "43aafe5628e95060632d4192368aa4d43e75cfd4",
   "commandsRanOnDirtyTreeBeforeThatCommit": true,
   "node": "v22.23.4",
   "next": "16.4.1",
@@ -26,22 +27,22 @@
     {
       "command": "node scripts/admin-user-directory-completion-1/verify.mjs",
       "exit": 0,
-      "cases": 35,
-      "authoritativeRerunHead": "56bb915e78a55857132c5fe02384b8a64f2b81b8",
-      "note": "Synthetic UsersTable, router stub and project CSS. Not a signed-in Next router."
+      "cases": 42,
+      "authoritativeRerunHead": "fb3f13cf9667c0af42d7d1fbf11667e8c292ac66",
+      "note": "Synthetic UsersTable, router stub and project CSS. Tab and Enter are real keyboard events. Not a signed-in Next router. The former querySelector focus enumeration is retired and labeled css-error-layout."
     },
     {
       "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test on the directory, navigation, profil-erstellt, request-api-compat and roles tests",
       "exit": 0,
-      "tests": 68,
-      "pass": 68,
+      "tests": 69,
+      "pass": 69,
       "fail": 0
     },
     {
       "command": "npm test",
       "exit": 1,
-      "tests": 7192,
-      "pass": 7176,
+      "tests": 7193,
+      "pass": 7177,
       "fail": 11,
       "skipped": 5,
       "failuresAreLocalPostgresEnvironment": true
