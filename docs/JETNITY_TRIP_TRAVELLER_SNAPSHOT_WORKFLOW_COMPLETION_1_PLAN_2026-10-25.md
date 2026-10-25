@@ -1,8 +1,8 @@
 # Jetnity Trip Traveller Snapshot Workflow Completion 1 — PLAN
 
-Date: 2026-10-25. Revision R1 of the plan for immutable TASK V1. This commit replaces only this file. TASK V1 stays byte-identical. No product code, test, script, or evidence is included.
+Date: 2026-10-25. Revision R2 of the plan for immutable TASK V1. This commit replaces only this file. TASK V1 stays byte-identical. No product code, test, script, or evidence is included.
 
-Reviewed head `e7be946aa36a2d98e465ce0e2b87dc9a245021f5`, reviewed plan blob `ef215bb14603b55431e03bc01984123d78cb4bec`. Technical-Lead review R1 required T-R1.1 through T-R1.6 and accepted T-EX1 for a later implementation. P1 remains OPEN. This session stops again for a full plan re-review. The new head and plan blob are in the session reply, not in this file.
+Reviewed R1 head `a13bc1684a45a7fcf23fd265b49414d3f5196027`, tree `cf622a8535f3a5b144d3b1418d3a71d72e5e6e12`, plan blob `f34f53ae5e1368adff79c4711e7d45fa4a42ed5a`. Technical-Lead review R2 keeps T-R1.1 through T-R1.6 and T-EX1, and requires T-R2.1 through T-R2.3. P1 remains OPEN. This session stops again for a full plan re-review. The new head and plan blob are in the session reply, not in this file.
 
 | Review id | Where this revision answers it |
 | --- | --- |
@@ -12,7 +12,10 @@ Reviewed head `e7be946aa36a2d98e465ce0e2b87dc9a245021f5`, reviewed plan blob `ef
 | T-R1.4 | §6.3 one guest traveller write per trip; settled-trip ref; no replay |
 | T-R1.5 | §6.4 one workspace controller, Konto render prop, audit node kept compiling |
 | T-R1.6 | §10 mounted RED against the original editor, then the same assertion GREEN |
-| T-EX1 | §8 accepted for implementation only after a later explicit PLAN PASS |
+| T-R2.1 | §6.1 exact-ref preflight; no trim, cut, fallback, or collision collapse |
+| T-R2.2 | §6.3 unresolved guest graph stays blocked until an explicit same-trip read |
+| T-R2.3 | §6.4 the legacy node's existing `onUebernehmen` is the one captured writer |
+| T-EX1 | §8 accepted for implementation only after a later explicit PLAN PASS; unchanged by R2 |
 
 ## 1. Identity
 
@@ -23,7 +26,7 @@ Reviewed head `e7be946aa36a2d98e465ce0e2b87dc9a245021f5`, reviewed plan blob `ef
 | Actual `originalModelName` | `grok-4.7-high-fast` |
 | Session | https://cursor.com/agents/bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0 |
 | Session id | `bc-5d06d92d-a371-4889-b29c-f03a9b6c85d0` |
-| UI rename | The rename tool returned the title `Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1` for this `bcId`. This revision's run-info read the same `bcId`, the same title, and `originalModelName` `grok-4.7-high-fast`. That is this session's tool result. It is not an independent Technical-Lead observation of the agents list. |
+| UI rename | The rename tool returned the title `Jetnity Trip Traveller Snapshot Workflow Completion 1 — Cursor Generation 1` for this `bcId`. The R2 run-info read the same `bcId`, the same title, and `originalModelName` `grok-4.7-high-fast`. That is this session's tool result. It is not an independent Technical-Lead observation of the agents list. |
 | Branch | `feat/r107-trip-traveller-snapshot-workflow-1` |
 | Draft PR | #1017 |
 | Tracking | #1012 |
@@ -43,11 +46,12 @@ The requested model is the attested runtime model from this same run. This revis
 | `origin/main` | `a74c443c6be3f064f150fcf021ab6154bda325e5` |
 | `origin/main` tree | `c1fe5a50b0da710ef425674057f782b1dff6f8bc` |
 | Seed head | `25d70d62d78cc44bf96d15c261ca566f03ec1268` |
-| Reviewed plan head | `e7be946aa36a2d98e465ce0e2b87dc9a245021f5` |
-| Reviewed plan blob | `ef215bb14603b55431e03bc01984123d78cb4bec` |
+| Reviewed R1 head | `a13bc1684a45a7fcf23fd265b49414d3f5196027` |
+| Reviewed R1 tree | `cf622a8535f3a5b144d3b1418d3a71d72e5e6e12` |
+| Reviewed R1 plan blob | `f34f53ae5e1368adff79c4711e7d45fa4a42ed5a` |
 | Seed parent / merge-base | `a74c443c6be3f064f150fcf021ab6154bda325e5` |
 | TASK blob | `75c59b0851d835560ff4b5562e9fcc52c395b2ad` |
-| Ahead / behind before this revision | 2 ahead / 0 behind |
+| Ahead / behind before this revision | 3 ahead / 0 behind |
 | Operating-mode blob | `1912bf56751a940acc56fad84e2bf9e6a174e0fa` |
 | Diff before this revision | TASK plus the reviewed plan only |
 
@@ -105,6 +109,7 @@ Assigned source at the seed head, re-checked against the reviewed plan head. The
 10. **A removed profile and an empty placeholder can share a ref and empty fields.** `party_loeschen` deletes one `trip_travellers` row and does not update `trips.travellers` (`supabase/migrations/20260828015304_traveller_write_contract_integrity.sql` lines 142–149). `travellerSlots` still renders that headcount. A missing party row becomes `slotAus(..., null, true)`, and `persisted` is `Boolean(traveller)` (`lib/readiness/party.ts` lines 89–108 and 120–127). Guest removal filters `party` and leaves `travellers` on the spread trip (`reisende-gast.ts` lines 29–33).
 11. **Materialization mints fresh ids. The UI must not rediscover them.** `tripSnapshotMaterialisierungErzeugen` allocates a new traveller, citizenship, and document identity and remaps by source ref (`lib/traveller/account-registry-trip.ts` lines 147–171). The action result is `{ ok: true, wert: null }` (`reisende-aktionen.ts` lines 145–148). A later party list cannot be matched by label, country, count, or order. Two registry rows may share a label; the list key is already `traveller.id` (RegistryReiseUebernahme line 118). That key must remain the intent id.
 12. **The frozen writer can drop a row or a relation and still succeed.** `travellerEingabeSchema` runs `travellerLegacyLesen` inside the transform before `superRefine` (`lib/readiness/schema.ts` lines 261–313). `travellerLegacyLesen` skips a citizenship with no readable country, skips a repeated country and a repeated document `clientRef`, and nulls a relation whose ref is not in the kept citizenship set (`lib/readiness/traveller-kontext.ts` lines 149–166 and 217–229). Checking a document against the draft refs, then omitting a blank citizenship row, lets that relation pass the draft check and be nulled by the transform. The client must reject against the refs that will actually be emitted.
+13. **The frozen reader also rewrites child refs before that drop.** `clientRefLesen` trims, cuts to 64 characters, and otherwise uses the fallback (`traveller-kontext.ts` lines 40–45). A citizenship ref falls back to `` `citizenship:${countryCode}` `` (line 151). A document ref falls back to `` `document:${documentType}:${issuing ?? 'xx'}` `` (line 189). A relation is trimmed and cut, or becomes `null` when the trimmed string is empty (lines 185–188). A padded, blank, or overlength ref can therefore collide with an exact UUID or legacy ref. The client must reject that input before the writer and must not repair it.
 
 Limits that stay: 8 citizenships and 12 documents (`TRAVELLER_CONTEXT_GRENZEN` in `lib/readiness/domain.ts`). `READINESS_GRENZEN.clientRef` is 64. Party slots max 20. No passport number, MRZ, biometrics, health, or file field exists on this surface. None is added. The account-registry UI test already forbids `citizenships[0]`, `documents[0]`, `selected`, `checked`, and `type="radio"` in the intake. Those absences stay. `REGISTRY_TRIP_COPY.erfolg` must remain a source identifier in `RegistryReiseUebernahme.tsx` because `account-registry-trip-ui.test.ts` requires that text. It is shown only for `accepted`.
 
@@ -112,7 +117,7 @@ Limits that stay: 8 citizenships and 12 documents (`TRAVELLER_CONTEXT_GRENZEN` i
 
 The repair is a trip-snapshot draft and a small intent ledger. It is not a second writer, not a change to materialization, and not a generalization of `usePersonalPreparationLifecycle`. The new module does not import the personal-preparation workflow.
 
-### 6.1 Draft rows and final emitted graph (T-R1.1)
+### 6.1 Draft rows and final emitted graph (T-R1.1, T-R2.1)
 
 A citizenship row is `{ clientRef, countryCode, origin }` where `origin` is `loaded` or `created`. A document row is the existing `DokumentFormularZeile` plus the same `origin`: stable `clientRef`, type, issuer, expiry, and `citizenshipClientRef`. `loaded` means the row was copied from the canonical traveller. `created` means this draft allocated it. A user edit does not change `loaded` into `created`.
 
@@ -121,14 +126,26 @@ A citizenship row is `{ clientRef, countryCode, origin }` where `origin` is `loa
 - The relation select's option value is that row's `clientRef`, including a still-blank created citizenship row. The visible label is `landAnzeigeText(countryCode)` when the country is readable, otherwise a non-country placeholder that is not submitted as a country. Countries are not collapsed with `new Set`. The submitted value stays the ref.
 - Deliberate removal of one citizenship row edits the draft before serialization. It sets `citizenshipClientRef` to `null` only on documents that pointed at that removed ref. A document pointing at a different ref with the same country stays pointed at that ref. The emitted `null` is that explicit draft value. The serializer does not null any other relation and does not retarget one.
 
+A supplied ref is exact only when it is a string, its length is from 1 through 64, it equals its own trim, and it therefore equals what `clientRefLesen` would return for it. The serializer compares against that result. It does not trim, cut, or substitute a fallback into the draft or the payload. `null` is an exact relation only when the draft already holds `null`, including after deliberate removal. The traveller `clientRef` submitted with the payload must be exact under `clientRefLesen(ref, '')`. Ordinary `traveller:N` slot refs already are. A padded traveller ref is `not_sent` and is not trimmed onto another profile.
+
 Serialization builds the payload in this order. It does not call the writer when it returns `not_sent`.
 
+0. **Exact-ref preflight.** For every citizenship row that is not an untouched blank `created` row, reject a missing, blank, whitespace-only, padded, or overlength `clientRef`. The same rule applies to every document row that is not an untouched blank `created` row, and to every relation that is not already `null`. A `created` ref minted by this draft is exact by construction, so an untouched blank created row can still be omitted later. A loaded or edited row that fails this check is not omitted and is not repaired. Then compute the image `clientRefLesen` would produce for every supplied citizenship ref, using `` `citizenship:${countryCode}` `` as the fallback the frozen reader uses, and for every supplied document ref, using `` `document:${documentType}:${issuing ?? 'xx'}` ``. For a non-null relation, the image is the trimmed string cut to 64 characters, or `null` when that trim is empty. If two different supplied strings share one image, the result is `not_sent`. The exact row is not kept as the survivor, and the image is not emitted. Every invalid row and relation stays visible with the supplied characters.
 1. **Classify citizenship rows.** An untouched `created` row whose country is still empty may be omitted, but only if step 3 finds no document relation still pointing at its ref. A `loaded` row with a blank or illegal country is existing or malformed persisted data: it is not omitted, the ref stays, and the result is `not_sent`. A `created` row whose country is non-empty and illegal is `not_sent`. A `created` row the user filled and then cleared is not an untouched empty row; it is `not_sent` rather than a silent omission.
-2. **Build the emitted citizenship-ref set** from the rows that will actually be in the payload. Omitted untouched blank rows are not in that set. Rows rejected in step 1 produce no payload at all.
+2. **Build the emitted citizenship-ref set** from the rows that will actually be in the payload. Omitted untouched blank rows are not in that set. Rows rejected in step 0 or step 1 produce no payload at all.
 3. **Classify documents against that emitted set.** Omit only an untouched `created` document row with no type, no issuer, no expiry, and no relation. A `loaded` document that is missing a type or is otherwise illegal is not omitted; the result is `not_sent`. A non-null `citizenshipClientRef` must be a member of the emitted set. If it points at a blank `created` citizenship that step 1 would have omitted, the result is `not_sent`: both rows and the relation stay in the draft. The serializer does not drop that citizenship, does not null the relation, and does not point the document at another row.
-4. **Then reject duplicates.** A duplicate country, a duplicate citizenship ref, or a duplicate document ref is `not_sent`. The duplicate-country sentence is the existing schema sentence `Dieselbe Staatsbürgerschaft kann nur einmal erfasst werden.` A relation that is neither `null` nor in the emitted set is `not_sent`, using the existing schema sentence `Das Dokument muss zu einer Staatsbürgerschaft derselben Person gehören.`
+4. **Then reject duplicates of already exact refs.** A duplicate country, a duplicate exact citizenship ref, or a duplicate exact document ref is `not_sent`. The duplicate-country sentence is the existing schema sentence `Dieselbe Staatsbürgerschaft kann nur einmal erfasst werden.` A relation that is neither exact `null` nor an exact member of the emitted set is `not_sent`, using the existing schema sentence `Das Dokument muss zu einer Staatsbürgerschaft derselben Person gehören.`
 
-Counterexample, required in the pure test and named in the mounted suite: the user adds a citizenship row, leaves its country empty, and sets a document's relation to that row's fresh ref. Serialization returns `not_sent`. The writer is not called. The blank row, the document, and the relation remain. The frozen transform is not given a chance to omit the row and null the relation.
+Counterexamples, required in the pure test and named in the mounted suite where a control can produce them:
+
+- The user adds a citizenship row, leaves its country empty, and sets a document's relation to that row's fresh ref. Serialization returns `not_sent`. The writer is not called. The blank row, the document, and the relation remain. The frozen transform is not given a chance to omit the row and null the relation.
+- Citizenship ref `" citizenship:CH"` beside an exact `citizenship:CH`. Both rows remain. The padded ref is not trimmed onto the legacy ref.
+- Two citizenship refs longer than 64 characters that share the same first 64 characters and differ afterwards. Neither is cut. No payload is emitted.
+- A missing or blank citizenship `clientRef` with country `CH`. The frozen reader would substitute `citizenship:CH`. The row stays blank, including when another row already has that exact legacy ref.
+- A missing document `clientRef` on a passport issued by `CH`. The frozen reader would substitute `document:passport:CH`. That substitute is not emitted.
+- A relation that is the exact citizenship ref with a leading space, or a string longer than 64 whose first 64 characters equal an emitted citizenship ref. It is not trimmed or cut into a link.
+- A whitespace-only relation. It is not emitted as `null`. An explicit `null` from deliberate removal still is.
+- An exact UUID `a1111111-1111-4111-8111-111111111111`, an exact `citizenship:CH`, and an exact `document:…` ref of length 1 through 64 with no surrounding whitespace pass unchanged.
 
 The payload still goes through the existing `travellerSetzen` or `gastTravellerSetzen`. Those functions stay the writers. The client pre-check does not replace their validation. It stops a silent drop from being shown as success. `schema.ts`, `traveller-kontext.ts`, and the RPCs stay unchanged.
 
@@ -157,7 +174,7 @@ If the canonical trip no longer has a slot for that ref at all, the draft is not
 
 Observation of a write starts only at settlement. When the callback returns `null`, the intent records `readbackAfterDelivery` as the current delivery number. A delivery whose number is less than or equal to that value is pre-settlement for this intent, even if its fields match the submitted snapshot. It does not move the intent to `consistent`. Only a later delivery may be compared. A match of membership `present` plus every submitted field on that later delivery is `consistent`. That word means the loaded slot supports the submitted snapshot. It does not mean the click caused the row, that the write happened once, or that the delivery is fresh. A later delivery that differs, while the draft generation is still the submitted one and the draft is clean, shows that the loaded slot differs and does not mark `consistent`. A dirty draft is kept, and a stale submission stays blocked until the explicit conflict choice above. A newer draft generation ignores stale success, stale error, and stale completion.
 
-### 6.3 Slot save, remove, and guest admission (T-R1.2, T-R1.4)
+### 6.3 Slot save, remove, and guest admission (T-R1.2, T-R1.4, T-R2.2)
 
 Each intent records `tripId`, traveller `clientRef`, draft generation, and operation generation. Serialization of the payload and the writer invocation sit in one synchronous try/catch/finally owned by the hook. The ref records the occupied key before any `await` and before the writer function is entered. `writerEntered` stays false until that function is actually called.
 
@@ -169,12 +186,14 @@ Account and guest do not share one concurrency rule.
 - **Account, different targets.** Another slot may have its own in-flight save or remove. `travellerSetzen` submits one traveller, and `party_schreiben` upserts that `client_ref` without deleting the other party rows. This UI does not add an account-wide queue. It also does not claim that two account writes are one transaction.
 - **Guest, any other traveller target.** The occupy key is the trip, not the slot. `gastTravellerSetzen` and `gastTravellerEntfernen` serialize the entire supplied trip. While one guest traveller save or remove is in flight, a save or remove for a different slot does not call the writer. That attempt is `not_sent` only on the clicked target. The visible sentence is that another save or removal for this trip is still finishing. The clicked draft stays. The payload is not queued and is not submitted when the first write settles. A later explicit click is a new intent.
 
-Guest settled-trip ref, inside allowlisted `GastArbeitsbereich` only. The frozen `gastreiseSpeichern` / `schreibenVersuch` / `schreibenMuss` functions stay unchanged.
+Guest settled-trip ref, inside allowlisted `GastArbeitsbereich` only. The frozen `gastreiseSpeichern`, `schreibenVersuch`, `schreibenMuss`, and `aktiveV3GastreiseLesen` functions stay unchanged. No new storage query is added.
 
-- The adapter keeps a ref of the latest settled guest trip. Every guest writer callback already in that file assigns the ref from the value it passes to `setReise`, synchronously, before it returns.
-- The traveller callbacks read that ref as the input graph. They do not close over the render `reise`. On `null`, the ref becomes the trip returned by `gastTravellerSetzen` or `gastTravellerEntfernen`, and that same object is what `setReise` receives.
-- The hook releases the guest occupy only after that callback settles, so the next explicit traveller click reads the settled return rather than the pre-click render.
-- Other guest operations are not placed behind the traveller occupy and are not proved atomic with it. The required proof is rapid different-slot traveller save/save and save/remove through this UI, with the first update still present in the second submitted graph. Cross-tab `localStorage` atomicity stays unproved and out of scope.
+- The adapter keeps a ref of the latest known-safe guest trip. Traveller callbacks read that ref. They do not close over the render `reise`.
+- The ref is replaced only in two cases. A traveller callback returned `null`: the ref becomes the trip object returned by `gastTravellerSetzen` or `gastTravellerEntfernen`, and that same object is what `setReise` receives. Or the explicit reconciliation below returned `{ art: 'success', reise }` for this same `tripId`.
+- A string, throw, rejection, or malformed fulfillment after the traveller writer was entered does not replace the ref. `schreibenVersuch` can already have executed `localStorage.setItem` before the readback fails and `schreibenMuss` throws. The hook records the trip as `unresolved`. Releasing the in-flight occupy is not re-arming. Save and remove for every slot on that trip stay blocked. The second attempt is `not_sent` on the clicked target, its draft and message stay, and its payload is not stored for later.
+- Reconciliation is one explicit control on the affected trip. It calls the existing `onReadinessAktualisieren` path, which already calls `aktiveV3GastreiseLesen(tripId)` and does not write. Only `art === 'success'` with `reise.id === tripId` replaces the ref, clears `unresolved`, and allows a later deliberate traveller click. `missing`, `invalid`, `unreadable`, `wrong_trip`, a throw, or a success for another id leaves the latch closed and leaves the ref unchanged. The read does not submit a draft. Returning to Vorbereitung does not call it, and neither that return nor this read replays a payload.
+- A later deliberate save or remove, after that successful read, uses the ref from the read. The proof requires that this graph still contains the first write's effect.
+- Other guest operations are not placed behind this latch and are not proved atomic with it. Cross-tab `localStorage` atomicity stays unproved and out of scope. Account `unproven` does not use this latch, because `party_schreiben` upserts the submitted traveller and does not replace the whole party from the React graph.
 
 Enter in the save form submits that form only. The remove control stays `type="button"` outside the save form. Remove asks for a named confirmation first. The copy names the slot label and says this deletes the saved details for this trip slot, the headcount stays, the empty slot remains, and an Account Registry person is not deleted. Cancel focuses the remove button and does not call the writer. Confirm sends the existing remove callback for that `clientRef` only. There is no `window.confirm`.
 
@@ -190,11 +209,11 @@ The callback result is classified only after the boundary knows whether the writ
 | Refresh throws after `null` | write stays `accepted`, refresh `unclear` | the write is not repeated |
 | Stale completion | no status write, no release of a newer occupy | the old result does not reset the current draft |
 
-`unproven` means the attempt is not known to be uncommitted. Account RPC strings have no client-side commit certainty. A guest string can follow `localStorage.setItem` plus a failed readback, or a throw from validation before the write. Both stay `unproven` because the UI does not infer which one happened. Registry intake `unproven` is never replayed by the ledger, by refresh, by section return, or by remount. A later explicit confirm is a new user intent. Its copy says a second takeover can create another snapshot if the first one landed, because materialization mints a new snapshot.
+`unproven` means the attempt is not known to be uncommitted. Account RPC strings have no client-side commit certainty. A guest string can follow `localStorage.setItem` plus a failed readback, or a throw from validation before the write. Both stay `unproven` because the UI does not infer which one happened. For a guest traveller write, that `unproven` result also leaves the trip graph unresolved, as specified above. Registry intake `unproven` is never replayed by the ledger, by refresh, by section return, or by remount. A later explicit confirm is a new user intent. Its copy says a second takeover can create another snapshot if the first one landed, because materialization mints a new snapshot.
 
 After `accepted`, the hook requests one refresh. Account refresh is `router.refresh()` and returns only that the refresh was requested. Guest refresh is the existing `onReadinessAktualisieren` read. That second call is outside the writer invocation. A throw there does not change `accepted` into `unproven` and does not repeat the write. The observation rule in §6.2 is the only path from `accepted` to `consistent`.
 
-### 6.4 Registry controller wiring (T-R1.5)
+### 6.4 Registry controller wiring (T-R1.5, T-R2.3)
 
 There is one intake ledger, the workspace hook. `RegistryReiseUebernahme` does not keep a second confirmation, pending, or outcome ledger when it receives the controller.
 
@@ -209,9 +228,9 @@ Product Konto uses only the render prop. It does not also pass `registryUebernah
 
 The writer function's argument is the captured pair `{ tripId, registryTravellerId }`. On click, the hook reads `tripId` and the writer ref synchronously, stores that function on the intent, and only then awaits it. Unmount and section navigation do not cancel that promise and do not start it again. Konto's writer calls `registryTravellerInReiseUebernehmen` with that captured pair and returns `null` only when the action result is `{ ok: true }`. It does not call `router.refresh()` inside that writer. A string return is `unproven`, and the component does not show `REGISTRY_TRIP_COPY.erfolg` for it. The hook requests refresh only after `accepted`.
 
-During render, `RegistryReiseUebernahme` assigns its writer function onto the controller ref. That assignment is the latest function, not a second ledger. When `steuerung` is present, the component does not use `useState` or `useTransition` for confirmation, pending, or outcome. It still renders the existing copy keys. `REGISTRY_TRIP_COPY.erfolg` remains in the source and is rendered only for ledger state `accepted`. List keys stay `traveller.id`. The same label on two rows stays two rows. No radio, no default row, no `citizenships[0]` or `documents[0]`. The existing `useState(travellers` absence stays.
+During render, `RegistryReiseUebernahme` assigns the `onUebernehmen` prop it actually received onto the controller's writer ref. That assignment replaces the previous function. It does not append a second writer and it does not call the function. When `steuerung` is present, the component does not use `useState` or `useTransition` for confirmation, pending, or outcome, so the old direct call path cannot also run. It still renders the existing copy keys. `REGISTRY_TRIP_COPY.erfolg` remains in the source and is rendered only for ledger state `accepted`. List keys stay `traveller.id`. The same label on two rows stays two rows. No radio, no default row, no `citizenships[0]` or `documents[0]`. The existing `useState(travellers` absence stays.
 
-If a caller passes the old node and not the render prop, `TripWorkspace` mounts that node once through `cloneElement`, adding the same hook `steuerung` and the workspace `tripId`. The audit harness therefore uses the one ledger. Its `onUebernehmen` is ignored while `steuerung` is present, so the audit stub and the hook cannot both record an intake. If both the render prop and the node are passed, only the render prop is mounted.
+If a caller passes the old node and not the render prop, `TripWorkspace` mounts that node once through `cloneElement`. The added props are the same hook `steuerung` and the workspace `tripId`. `onUebernehmen` is left as the function already on the element. For `TripWorkspaceAuditClient.tsx` that function is the frozen `async () => null`. The component registers that same function on the controller ref. On confirm, the hook reads the ref synchronously, stores that function on the intent, and invokes it once with the captured `{ tripId, registryTravellerId }`. The audit stub ignores the argument and returns `null`. The hook does not substitute its own writer and does not call the stub again. `TripWorkspaceAuditClient.tsx` is not edited. If both the render prop and the node are passed, only the render prop is mounted, so the product writer and the audit stub are not both called. The mounted proof counts one stub invocation on the legacy node and one product-writer invocation on the Konto path.
 
 The server orchestration remains the capacity check. The `voll` flag only blocks a new click. It does not cancel an in-flight intake and it does not convert a string into success. A second click for the same registry id does not call the action. A different registry id may be requested only after the in-flight intake settles; it is not automatically started. A registry list `problem`, or `travellers == null`, stays distinct from an empty list and does not rewrite an already `accepted` intake.
 
@@ -223,7 +242,7 @@ Each slot and each intake row has its own status region. A late completion focus
 
 `lib/traveller/account-registry-trip-copy.ts` gains only the intake sentences for waiting after `accepted`, refresh unclear, outcome not known, and no automatic repeat. The not-known sentence does not say the takeover was rejected or that nothing was stored. A later explicit confirm uses a sentence that a second takeover can create another snapshot if the earlier one landed. `erfolg`, `pending`, empty, error, and limit stay distinct. `erfolg` is shown only for `accepted`.
 
-Slot conflict, removal, membership loss, explicit re-entry, `not_sent`, and `unproven` sentences live next to the traveller card, not in the registry copy. The `unproven` sentence says the outcome is not known, the entered details stay on the card, and this attempt is not repeated by itself. It does not say "nothing was saved" and it does not say "rejected". No sentence claims a causal readback or a deleted headcount.
+Slot conflict, removal, membership loss, explicit re-entry, `not_sent`, and `unproven` sentences live next to the traveller card, not in the registry copy. The `unproven` sentence says the outcome is not known, the entered details stay on the card, and this attempt is not repeated by itself. On a guest trip it also says that another traveller save or removal stays blocked until the stored trip is loaded, and it offers that load as its own action. The load sentence does not say the blocked payload will be sent. It does not say "nothing was saved" and it does not say "rejected". No sentence claims a causal readback or a deleted headcount.
 
 ## 7. Ownership
 
@@ -232,11 +251,11 @@ Implementation, after a later explicit PLAN PASS, may change only:
 | Path | Role |
 | --- | --- |
 | `components/trips/Reisevorbereitung.tsx` | Traveller-card composition only. The card renders ledger state. Official and personal sections stay. |
-| `components/trips/RegistryReiseUebernahme.tsx` | Controlled intake when `steuerung` is present. Existing copy keys stay. No second outcome ledger on that path. |
-| `components/trips/TripWorkspace.tsx` | Mount the new hook. Pass canonical observation, the render prop, and `cloneElement` for a leftover node. No mode, plan, or personal-preparation rewrite. |
+| `components/trips/RegistryReiseUebernahme.tsx` | Controlled intake when `steuerung` is present. Register the received `onUebernehmen` on the one controller. Existing copy keys stay. No second outcome ledger and no replacement writer. |
+| `components/trips/TripWorkspace.tsx` | Mount the new hook. Pass canonical observation and the render prop. For a leftover node, `cloneElement` adds the controller and `tripId` and keeps that node's `onUebernehmen`. No mode, plan, or personal-preparation rewrite. |
 | `components/trips/useTripTravellerSnapshotLifecycle.ts` | New. React adapter: synchronous occupy, serialization and invocation in one try/catch/finally, one refresh after `accepted`, frozen callbacks. |
 | `components/trips/KontoArbeitsbereich.tsx` | Pass `registrySteuerung`. Split traveller and intake write from refresh. The intake writer receives the captured `{ tripId, registryTravellerId }`. Keep `registryTripUebernahmeGesperrt(reise)`, `registryTravellerInReiseUebernehmen`, and `router.refresh()` in this file. Keep the raw `serverReise` canonical prop. |
-| `components/trips/GastArbeitsbereich.tsx` | Settled-trip ref for traveller save/remove. Split the guest write callback from the existing guest reread. No registry UI. No new storage API. |
+| `components/trips/GastArbeitsbereich.tsx` | Safe-trip ref for traveller save/remove. Update it only on `null` or on an explicit successful same-trip read. Split that read from the write. No registry UI. No new storage API. |
 | `lib/readiness/trip-traveller-snapshot-workflow-1.ts` | New. Pure draft, final-emitted-graph, membership, conflict, and intent rules. No React, router, or server action. |
 | `lib/readiness/trip-traveller-snapshot-workflow-1.test.ts` | New. Pure cases, included by the existing `lib/**/*.test.ts` test script. |
 | `lib/traveller/account-registry-trip-copy.ts` | The new intake sentences only. |
@@ -287,11 +306,18 @@ No `package.json` exception is requested. `npm test` already loads `lib/**/*.tes
 | Untouched blank new citizenship, no document points at it | row omitted from the payload | one save if the rest is valid | success copy does not claim that blank row was stored |
 | Blank new citizenship whose ref a document still uses | both rows kept | zero, `not_sent` | relation stays; nothing is nulled or retargeted |
 | Loaded citizenship or document with a blank or illegal country or type | row kept | zero, `not_sent` | persisted malformed data is not silently omitted |
-| Invalid country, duplicate country, duplicate ref, or relation outside the emitted set | draft kept | zero, `not_sent` | error on that card |
+| Invalid country, duplicate country, duplicate exact ref, or relation outside the emitted set | draft kept | zero, `not_sent` | error on that card |
+| Padded, blank, missing, or overlength child ref or relation | supplied characters kept | zero, `not_sent` | no trim, cut, or fallback |
+| Two different supplied refs share one frozen-reader image | both rows kept | zero, `not_sent` | the exact row is not chosen as the survivor |
+| Exact UUID or exact legacy ref, length 1 through 64, already trimmed | ref unchanged | one save when the rest is valid | the payload contains that same string |
 | Blank untouched new document row plus a residence edit | blank row omitted | one save | success copy does not claim that blank row was stored |
 | Double Enter or save while remove is in flight, same slot | second intent `not_sent` | one | one pending region; the second payload is not replayed |
 | Account, two slots | independent intents | one each | one `unproven` result does not clear the other |
-| Guest, rapid save/save or save/remove on two slots | trip occupy | the first call only | the second is `not_sent` and is not written from the stale graph; a later explicit click uses the settled return |
+| Guest, rapid save/save or save/remove on two slots, first result `null` | trip occupy | the first call only | the second is `not_sent`; a later explicit click uses the returned trip |
+| Guest, first write returns a string after a possible `setItem`, then another slot saves or removes | graph `unresolved` | the first call only | the second writer is not called; the old ref is not written back |
+| Guest explicit read succeeds for this trip after that string | ref becomes the read trip; latch clears | zero during the read | no draft is submitted; a later deliberate write still contains the first effect |
+| Guest explicit read is missing, invalid, unreadable, wrong-trip, or thrown | latch stays closed | zero | traveller writes stay blocked |
+| Section return while the guest graph is unresolved | latch and drafts kept | zero | no read and no replay |
 | Local validation before the writer | `not_sent` | zero | editable; not a transport outcome |
 | Callback returns a string after the call | `unproven` | no automatic retry | outcome unknown; draft kept; not called rejected |
 | Sync throw, rejection, or malformed fulfillment after the call | `unproven` | no automatic retry | same unknown outcome |
@@ -314,6 +340,8 @@ No `package.json` exception is requested. `npm test` already loads `lib/**/*.tes
 | Registry list `problem`, or `travellers == null` | no new intake | zero | existing error copy, distinct from empty |
 | Intake `null` before refresh | `accepted`, then one refresh | no second materialization | no guessed new party row; `erfolg` only here |
 | Intake string, throw, rejection, or malformed fulfillment | `unproven` | no automatic repeat | a later explicit confirm warns that another snapshot can be created |
+| Legacy audit node confirm | the frozen `onUebernehmen` is the captured writer | that stub once | `null` is `accepted`; no second writer |
+| Konto intake confirm | the Konto writer is the captured writer | that writer once | the audit stub is not also called |
 | Cross-tab guest write | unchanged guest contract | the existing storage writer only | not atomic and not claimed to be |
 
 `party_loeschen` returns `ok` even when `deleted` is 0, and the action drops that count. The UI says the removal was accepted only when the callback returned `null`. It does not say a row count changed. A later absent membership is the observation that the profile is no longer in the party, not a second claim about that count.
@@ -336,11 +364,13 @@ Pure tests in `lib/readiness/trip-traveller-snapshot-workflow-1.test.ts`, run by
 
 - The new serializer preserves the UUID, the passport ref, and the relation on a residence-only change.
 - The blank-country-linked-document counterexample returns `not_sent`, emits no payload, and leaves the relation unchanged.
+- Padded `" citizenship:CH"` beside exact `citizenship:CH`, two overlength refs with the same 64-character prefix, a blank citizenship ref that would become `citizenship:CH`, a missing document ref that would become `document:passport:CH`, a padded or overlength relation that would match an emitted ref, and a whitespace-only relation that would become `null`. Each returns `not_sent`, emits no image, and leaves the supplied characters visible. Exact UUID and legacy refs pass unchanged.
 - A loaded blank or illegal citizenship is `not_sent` and is not omitted. An untouched created blank citizenship with no relation is omitted.
 - Legacy refs, two citizenships, two documents, deliberate removal of one citizenship, an explicit relation change, and invalid or duplicate input.
 - Field match with membership `absent` is not a clean empty draft. Explicit re-entry is a new generation. Keep-my-edits does not authorize a save after membership loss.
 - A canonical delivery at or before settlement does not become `consistent`. A later delivery with the same membership and fields does. A dirty draft still requires Neu laden or Meine Eingaben behalten before submit.
 - Double save, account different-slot independence, guest second-slot admission `not_sent` without a stored replay payload, string after a possible write, synchronous throw, rejection, malformed fulfillment, stale completion, accepted-then-refresh-throw, and intake with two same-label ids. The pure tests drive the decision function twice without waiting for React.
+- Guest decision: after a non-null result the trip stays unresolved, a second-slot save or remove does not produce a writer call, a failed or mismatched read does not clear the latch, and a successful same-trip read clears it without a stored payload. The legacy writer registry invokes the supplied function once and does not replace it.
 
 ### 10.3 Mounted workspace, controller, and CSS
 
@@ -348,14 +378,16 @@ Mounted proof in `scripts/trip-traveller-snapshot-workflow-completion-1/`, execu
 
 `node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/trip-traveller-snapshot-workflow-completion-1/*.test.ts`
 
-The harness follows the existing esbuild-plus-Playwright page used by `scripts/trip-personal-preparation-workflow-completion-1/`. It mounts the real `TripWorkspace` wiring, the real card, and the real `RegistryReiseUebernahme` through the Konto render prop. One case mounts the audit node through `cloneElement` and asserts a single ledger. It does not call private handlers as the proof of a click.
+The harness follows the existing esbuild-plus-Playwright page used by `scripts/trip-personal-preparation-workflow-completion-1/`. It mounts the real `TripWorkspace` wiring, the real card, and the real `RegistryReiseUebernahme` through the Konto render prop. One case mounts the frozen audit node, with its `onUebernehmen={async () => null}` left in place, and counts that stub. It does not call private handlers as the proof of a click.
 
 - The GREEN residence-only case from §10.1, plus a pointer click on the same button.
 - Legacy refs, two citizenships, two documents, citizenship removal, relation selection, the blank-country-linked-document case, and invalid or duplicate input through the real controls.
-- Double Enter; guest rapid different-slot save/save and save/remove, asserting the first update is still in the stored graph and the second click did not write a stale payload; returned string; synchronous throw; rejected promise; malformed return; stale completion.
+- Double Enter; guest rapid different-slot save/save and save/remove after a `null` return, asserting the first update is still in the stored graph and the second click did not write a stale payload; synchronous throw; rejected promise; malformed return; stale completion.
+- Guest `setItem` succeeds and the following readback fails, so the first callback returns a string. A second-slot save and a second-slot remove are then attempted. Neither calls the writer. An explicit read that is `unreadable`, `invalid`, `missing`, or `wrong_trip` leaves those controls blocked. A following explicit read of `{ art: 'success' }` for this trip does not submit a draft. The next deliberate second-slot save uses that read's graph and still contains the first effect. Leaving and reopening Vorbereitung does not read and does not submit.
 - Saved blank `traveller:1` removed into a placeholder: save stays disabled, keep-my-edits does not write, and only the explicit re-entry control enables a later create.
 - A canonical delivery that arrives before settlement and matches the payload does not show the consistent sentence. A delivery after settlement may.
 - Intake of two same-label sources, `voll` changing before resolve, list `problem`, `travellers == null`, empty list, `accepted` before the next props, string and thrown intake with no automatic second materialization, navigation to Reiseplan and back, and a full unmount that does not restore or replay the intent.
+- The Konto render-prop path invokes its writer once. The legacy audit node, unchanged, invokes its `async () => null` stub once through the same controller and does not invoke a second writer.
 - DOM pointer, keyboard, and form events. Tab order reaches the controls. Escape cancels removal. A late response does not move focus after a newer key.
 
 CSS, in that same runner, at widths 320, 360, 390, 768, and 1280. At the narrow width, root font size is 32px. Cases include long labels, several child rows, the confirmation, the conflict, the membership-loss state, pending, and the unknown-outcome state. `scrollWidth` must not exceed the viewport because of this surface. The page must not set `overflow: hidden` to pass. `prefers-reduced-motion: reduce` is emulated. This lane adds no new animation. Screenshots go under `docs/evidence/trip-traveller-snapshot-workflow-completion-1/` with the head, command, exit code, Node version, and Playwright version.
@@ -368,7 +400,7 @@ Also run, and record honestly: the existing traveller, registry materialization/
 
 No new dependency, provider, paid call, secret, migration, RLS change, or Auth change. No new recurring cost. The USD 100 monthly boundary is unchanged. Prelaunch and `noindex` stay.
 
-The editor still sends only the existing label, residence, citizenship country, document type, issuer, expiry, and refs. It does not add a passport number, MRZ, biometric, or health field. Service role is not used. The integrity fix is that an unrelated residence edit no longer drops a document relation, a dangling relation to an omitted blank row is rejected before the writer, and an uncertain registry intake is not repeated into a second fresh snapshot.
+The editor still sends only the existing label, residence, citizenship country, document type, issuer, expiry, and refs. It does not add a passport number, MRZ, biometric, or health field. Service role is not used. The integrity fix is that an unrelated residence edit no longer drops a document relation, a dangling relation to an omitted blank row is rejected before the writer, a ref the frozen reader would trim, cut, or replace is rejected unchanged, an uncertain guest graph is not used as the next whole-trip write, and an uncertain registry intake is not repeated into a second fresh snapshot.
 
 Not proved by this lane, even after the planned tests: hosted readback, SQL, RLS, Production data, a causal link between a `null` action result and a later prop, exactly-once writes, commit certainty of a string or a throw, guest cross-tab atomicity, atomicity between a traveller write and a different guest writer, recovery after the workspace unmounts, native device or screen-reader behavior, and the frozen `travellerLegacyLesen` drop when some other caller bypasses this UI. A schema or versioned-mutation change is not required for the UI repair. If implementation finds that a correct save cannot be expressed with the current payload, it stops at that boundary instead of editing `schema.ts` or the RPCs.
 
@@ -376,4 +408,4 @@ Not proved by this lane, even after the planned tests: hosted readback, SQL, RLS
 
 ## 12. Stop
 
-This document is the R1 plan correction. The next step is an independent full Technical-Lead re-review of the exact head that contains this file and the unchanged TASK. This session does not implement, does not add tests, does not run the RED or GREEN proof, does not collect evidence, does not edit any other document, does not mark Ready, does not merge, does not close #1012, and does not write `main`.
+This document is the R2 plan correction. The next step is an independent full Technical-Lead re-review of the exact head that contains this file and the unchanged TASK. This session does not implement, does not add tests, does not run the RED or GREEN proof, does not collect evidence, does not edit any other document, does not mark Ready, does not merge, does not close #1012, and does not write `main`.
