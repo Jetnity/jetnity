@@ -977,6 +977,47 @@ describe('mounted traveller snapshot matrix', () => {
     }
   })
 
+  test('a later canonical country drops the current-match sentence without another write', { timeout: 120_000 }, async () => {
+    const reise = beispielreise({
+      id: 'trip-consistent-spaeter',
+      travellers: 1,
+      party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'CH' })],
+    })
+    const { page, schliessen } = await oeffnen(browser, bundle, css, { art: 'account', reise })
+    const ueberein = 'Die geladenen Angaben stimmen mit der letzten Speicherung überein.'
+    try {
+      await page.waitForFunction(() => window.__MATRIX__)
+      await page.evaluate(() => window.__MATRIX__.verhalten('null'))
+      const ziel = await wohnsitz(page, 'traveller:1', 'FR')
+      await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).click()
+      await page.getByText('Die Angaben wurden zum Speichern angenommen.').waitFor()
+      const frankreich = beispielreise({
+        ...reise,
+        party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'FR' })],
+      })
+      await page.evaluate((wert) => window.__MATRIX__.kanonischSetzen(wert), frankreich)
+      await page.getByText(ueberein).waitFor()
+      assert.equal(await ziel.getAttribute('data-traveller-phase'), 'consistent')
+      const deutschland = beispielreise({
+        ...reise,
+        party: [person({ clientRef: 'traveller:1', label: 'Reisende 1', residenceCountryCode: 'DE' })],
+      })
+      await page.evaluate((wert) => window.__MATRIX__.kanonischSetzen(wert), deutschland)
+      await page.waitForFunction(() => document.querySelector('[data-preparation-traveller="traveller:1"]')?.getAttribute('data-traveller-phase') === 'accepted')
+      assert.equal(await page.getByText(ueberein).count(), 0)
+      assert.equal(await page.getByText('Die geladenen Angaben haben sich geändert.').count(), 0)
+      assert.equal(await page.getByText('Die Angaben wurden zum Speichern angenommen.').count(), 1)
+      assert.equal(await ziel.getByRole('combobox', { name: 'Wohnsitzland, falls relevant', exact: true }).inputValue(), 'DE')
+      assert.equal(await ziel.getByRole('button', { name: 'Angaben speichern', exact: true }).isDisabled(), false)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.payloads.length), 1)
+      assert.equal(await page.evaluate(() => window.__MATRIX__.refresh()), 1)
+      const payload = await page.evaluate(() => window.__MATRIX__.payloads[0])
+      assert.equal(payload.residenceCountryCode, 'FR')
+    } finally {
+      await schliessen()
+    }
+  })
+
   test('project css keeps the open traveller states inside the viewport', { timeout: 180_000 }, async () => {
     const lang = 'Reisende mit einem sehr langen Anzeigenamen der in der schmalen Karte umbrechen muss'
     const reise = beispielreise({

@@ -176,7 +176,13 @@ function beobachte(ledger: Ledger, reise: Trip): Ledger {
   for (const platz of plaetze) {
     const intent = intents[platz.clientRef]
     const entwurf = drafts[platz.clientRef]
-    if (!intent || !entwurf || intent.phase !== 'accepted' || intent.readbackAfterDelivery == null) continue
+    if (!intent || !entwurf) continue
+    const fingerprint = platz.traveller ? fingerprintAusTraveller(platz.traveller) : null
+    if (intent.phase === 'consistent' && fingerprint !== intent.submittedFingerprint) {
+      intents[platz.clientRef] = { ...intent, phase: 'accepted' }
+      continue
+    }
+    if (intent.phase !== 'accepted' || intent.readbackAfterDelivery == null) continue
     const urteil = readbackUrteil({
       readbackAfterDelivery: intent.readbackAfterDelivery,
       submittedFingerprint: intent.submittedFingerprint ?? '',
@@ -185,7 +191,7 @@ function beobachte(ledger: Ledger, reise: Trip): Ledger {
       draftDirty: entwurf.dirty,
       delivery,
       membership: entwurf.membership,
-      fingerprint: platz.traveller ? fingerprintAusTraveller(platz.traveller) : null,
+      fingerprint,
     })
     if (urteil === 'consistent') intents[platz.clientRef] = { ...intent, phase: 'consistent' }
   }
