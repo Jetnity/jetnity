@@ -31,3 +31,51 @@ OSV: POST https://api.osv.dev/v1/querybatch for the 14 locked vulnerable version
 Inventory: node scripts/dependency-advisory-triage-1/inventory.mjs. No npm import, no installer, no node_modules read.
 
 Worktree after the metadata children: package.json, package-lock.json and next-env.d.ts hashes matched the pre-command snapshot. No path was restored.
+
+CORRECTION_RERUN candidate review R1. The registry commands above were not repeated. No new npm audit and no new npm view.
+
+INVENTORY_RERUN
+argv: node scripts/dependency-advisory-triage-1/inventory.mjs /workspace docs/evidence/dependency-advisory-triage-1/lockfile-inventory.json
+exit: 0
+stdout: empty
+stderr: empty
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de
+next-env.d.ts SHA-256 after this rerun 0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc
+The dirty next-env.d.ts bytes were not restored.
+
+MATRIX_RERUN
+argv: node scripts/dependency-advisory-triage-1/build-matrix.mjs /workspace docs/evidence/dependency-advisory-triage-1 docs/evidence/dependency-advisory-triage-1/triage-matrix.json
+exit: 0
+stdout: MATRIX rows=42 {"provisional P1":40,"P2":2}
+stderr: empty
+same input hashes as INVENTORY_RERUN
+
+VALIDATOR_ARGV
+node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+This line is the argv prepared for the observed validator run. Its stdout and exit are appended only after that run.
+
+FIXTURE_RERUN
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.fixtures.mjs /workspace
+The fixture child calls validate-evidence.mjs with --during-fixture so the copied evidence is not required to already contain this receipt.
+exit: 0
+stderr: empty
+stdout:
+PASS directive after comment
+PASS directive without comment
+PASS directive not after code
+PASS clean evidence passes
+PASS empty rows fail
+PASS false version join fails
+PASS missing U floor fails
+PASS unsupported npm-view claim fails
+PASS missing expected row fails
+FIXTURE_RESULT pass
+
+VALIDATOR_OBSERVED
+argv: node scripts/dependency-advisory-triage-1/validate-evidence.mjs /workspace
+exit: 0
+stderr: empty
+stdout: EVIDENCE_VALID rows=42
+input package.json SHA-256 d564cf2944c55fad83a9797311d6abefb446ccd107023d1f007aac2c6ef5d90c
+input package-lock.json SHA-256 5f0575fdeb1750fc2316a25d01d0fc6383dd52bfea7457124f42453446d807de

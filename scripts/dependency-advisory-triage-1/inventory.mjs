@@ -7,10 +7,44 @@
  */
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { join, relative, extname, dirname } from 'node:path'
+import { join, relative, extname, dirname, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
-const root = process.argv[2]
-const outputPath = process.argv[3]
+export function leadingDirective(text) {
+  let i = 0
+  const source = String(text).replace(/^\uFEFF/, '')
+  while (i < source.length) {
+    const ch = source[i]
+    if (ch === ' ' || ch === '\t' || ch === '\r' || ch === '\n') {
+      i += 1
+      continue
+    }
+    if (source.startsWith('//', i)) {
+      const nl = source.indexOf('\n', i)
+      if (nl < 0) return null
+      i = nl + 1
+      continue
+    }
+    if (source.startsWith('/*', i)) {
+      const end = source.indexOf('*/', i + 2)
+      if (end < 0) return null
+      i = end + 2
+      continue
+    }
+    const match = /^['"]use (client|server)['"]/.exec(source.slice(i))
+    return match ? (match[1] === 'client' ? 'use-client' : 'use-server') : null
+  }
+  return null
+}
+
+const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+if (!isDirectRun) {
+  // Imported for the directive helper and fixture checks.
+} else {
+  runInventory(process.argv[2], process.argv[3])
+}
+
+function runInventory(root, outputPath) {
 if (!root || !outputPath) {
   process.stderr.write('usage: inventory.mjs <repo-root> <output.json>\n')
   process.exit(2)
@@ -167,11 +201,15 @@ function firstRootChain(start, allow) {
 const entries = []
 for (const [path, entry] of Object.entries(packages)) {
   if (!path) continue
-  const name = path.split('node_modules/').pop()
+  const pathSuffix = path.split('node_modules/').pop()
+  const canonicalName = entry.name || pathSuffix
   const { chains, chainsTruncated } = chainsToRoot(path)
   entries.push({
     path,
-    name,
+    pathSuffix,
+    canonicalName,
+    alias: pathSuffix !== canonicalName,
+    name: canonicalName,
     version: entry.version ?? null,
     devFlag: entry.dev === true,
     optional: entry.optional === true,
@@ -196,7 +234,14 @@ const inventory = {
   role: 'lockfile-inventory',
   lockfileVersion: lock.lockfileVersion,
   packageEntryCount: entries.length,
-  uniqueNameCount: new Set(entries.map((e) => e.name)).size,
+  uniquePathSuffixCount: new Set(entries.map((e) => e.pathSuffix)).size,
+  uniqueCanonicalNameCount: new Set(entries.map((e) => e.canonicalName)).size,
+  aliases: entries.filter((e) => e.alias).map((e) => ({
+    path: e.path,
+    pathSuffix: e.pathSuffix,
+    canonicalName: e.canonicalName,
+    version: e.version,
+  })),
   inputs: {
     packageJsonSha256: sha256(pkgBytes),
     packageLockSha256: sha256(lockBytes),
@@ -236,31 +281,106 @@ function scanSources(repo) {
     /\brequire\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
   ]
   const dynamicRe = /\bimport\s*\(\s*(?!['"])|\brequire\s*\(\s*(?!['"])/g
-  const byPackage = {}
+  const extensions = ['', '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
+  const indexExtensions = ['/index.ts', '/index.tsx', '/index.js', '/index.jsx', '/index.mjs']
+  const byRel = new Map()
   const dynamicNonLiteral = []
+
+  function resolveLocal(fromRel, spec) {
+    const base = spec.startsWith('@/')
+      ? join(repo, spec.slice(2))
+      : join(repo, dirname(fromRel), spec)
+    const candidates = []
+    for (const ext of extensions) candidates.push(base + ext)
+    for (const ext of indexExtensions) candidates.push(base + ext)
+    for (const candidate of candidates) {
+      const rel = relative(repo, candidate).split('\\').join('/')
+      if (byRel.has(rel)) return rel
+    }
+    return null
+  }
+
   for (const file of files) {
     const text = readFileSync(file, 'utf8')
     const rel = relative(repo, file).split('\\').join('/')
-    const directive = /^\s*['"]use client['"]/.test(text) ? 'use-client'
-      : /^\s*['"]use server['"]/.test(text) ? 'use-server'
-      : null
+    const directive = leadingDirective(text)
+    const packageImports = []
+    const localSpecs = []
     if (dynamicRe.test(text)) dynamicNonLiteral.push(rel)
     dynamicRe.lastIndex = 0
     for (const re of importRe) {
       re.lastIndex = 0
-      let m
-      while ((m = re.exec(text))) {
-        const spec = m[1]
-        if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('@/')) continue
-        const name = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0]
-        if (!byPackage[name]) byPackage[name] = []
-        byPackage[name].push({ file: rel, directive })
+      let match
+      while ((match = re.exec(text))) {
+        const spec = match[1]
+        if (spec.startsWith('.') || spec.startsWith('@/')) localSpecs.push(spec)
+        else if (!spec.startsWith('/')) {
+          const name = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0]
+          packageImports.push(name)
+        }
+      }
+    }
+    byRel.set(rel, { rel, directive, packageImports, localSpecs })
+  }
+
+  for (const record of byRel.values()) {
+    record.localImports = [...new Set(record.localSpecs.map((spec) => resolveLocal(record.rel, spec)).filter(Boolean))]
+  }
+
+  const isRoute = (rel) => /(?:^|\/)route\.(?:ts|tsx|js|jsx)$/.test(rel)
+  const serverSeeds = [...byRel.values()]
+    .filter((record) => record.rel === 'proxy.ts' || isRoute(record.rel) || record.directive === 'use-server')
+    .map((record) => record.rel)
+  const clientSeeds = [...byRel.values()].filter((record) => record.directive === 'use-client').map((record) => record.rel)
+
+  function walk(seeds, stopAtClientBoundary) {
+    const reached = new Map()
+    const queue = seeds.map((rel) => ({ rel, chain: [rel] }))
+    while (queue.length) {
+      const { rel, chain } = queue.shift()
+      if (reached.has(rel)) continue
+      const record = byRel.get(rel)
+      if (!record) continue
+      if (stopAtClientBoundary && record.directive === 'use-client' && chain.length > 1) continue
+      reached.set(rel, chain)
+      for (const next of record.localImports) {
+        if (!reached.has(next)) queue.push({ rel: next, chain: chain.concat(next) })
+      }
+    }
+    return reached
+  }
+
+  const serverReached = walk(serverSeeds, true)
+  const clientReached = walk(clientSeeds, false)
+  const byPackage = {}
+  const reachability = {}
+  for (const record of byRel.values()) {
+    for (const name of new Set(record.packageImports)) {
+      if (!byPackage[name]) byPackage[name] = []
+      byPackage[name].push({ file: record.rel, directive: record.directive })
+      if (!reachability[name]) reachability[name] = { serverChains: [], clientChains: [] }
+      if (serverReached.has(record.rel) && reachability[name].serverChains.length < 3) {
+        reachability[name].serverChains.push(serverReached.get(record.rel))
+      }
+      if (clientReached.has(record.rel) && reachability[name].clientChains.length < 3) {
+        reachability[name].clientChains.push(clientReached.get(record.rel))
       }
     }
   }
+
   return {
+    limits: [
+      'Literal import graph follows relative and @/ specifiers inside app, components, lib, hooks, scripts, proxy.ts, and the three config files.',
+      'A directive is recognized after leading comments and whitespace. A comment after other statements is not a directive.',
+      'node_modules internals are not traced. A parent import is not a call into the vulnerable function.',
+      'Non-literal dynamic import stays NOT_ASSESSED.',
+    ],
+    serverSeedCount: serverSeeds.length,
+    clientSeedCount: clientSeeds.length,
     packageCount: Object.keys(byPackage).length,
     byPackage,
+    reachability,
     dynamicNonLiteral,
   }
+}
 }

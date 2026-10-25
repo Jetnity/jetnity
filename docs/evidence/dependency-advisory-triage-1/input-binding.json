@@ -1,5 +1,7 @@
 {
   "role": "input-binding",
+  "correctionOf": "01f4f2b97b614c3b16048fa8585e1e635c93286f",
+  "correctionNote": "Candidate review R1 rebuilt the inventory, matrix, and validator from retained evidence. npm audit and npm view were not repeated.",
   "executionParent": "1fcb220a03bb895e3a6609ad81b9a9f7fedb992b",
   "executionParentTree": "d7cc9281e49c99976f9ab1df99d58a753a23e0f8",
   "planBlob": "436fc2561289baa2da9583c070662a6b8c9ad82b",
@@ -11,6 +13,12 @@
   "packageLockBlob": "4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe",
   "lockEntryCount": 611,
   "uniquePathSuffixCount": 565,
+  "uniqueCanonicalNameCount": 562,
+  "aliases": [
+    {"pathSuffix": "string-width-cjs", "canonicalName": "string-width", "version": "4.2.3"},
+    {"pathSuffix": "strip-ansi-cjs", "canonicalName": "strip-ansi", "version": "6.0.1"},
+    {"pathSuffix": "wrap-ansi-cjs", "canonicalName": "wrap-ansi", "version": "7.0.0"}
+  ],
   "installedConsistency": "UNVERIFIED",
   "node": "v22.23.4",
   "npm": "10.9.7",
@@ -36,6 +44,8 @@
     "historicalPackageCount": 11,
     "omitDevPackageCount": 3,
     "matrixRowCount": 42,
+    "supersededPrioritySummary": "The packet at 01f4f2b97b614c3b16048fa8585e1e635c93286f reported 0 provisional P0, 28 provisional P1, 12 provisional P2, and 2 P3. That summary is withdrawn.",
+    "correctedPriorityCounts": {"provisional P0": 0, "provisional P1": 40, "P2": 2, "P3": 0},
     "registryChange": "Full-lock npm package count is still 11 (2 moderate, 9 high), the same aggregate CI reported at 2026-10-25T14:24:43Z. The CI log did not name advisory ids, so an unchanged package count is not identity equality and is not a clearance.",
     "lockVersusInstalled": "CI run 40202059080 audited 533 installed packages. This lock-only audit's metadata census is 611 entries (prod 118, dev 455, optional 94, peer 1). Installed consistency is UNVERIFIED. The 611 versus 533 gap is not resolved to package names. The omit-dev command returned 3 high package rows: source-map-js, ws, zod.",
     "folding": "npm folded 23 unique GHSA ids into 11 package rows. The matrix has 42 rows because one GHSA can match more than one locked path and version."

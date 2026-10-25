@@ -1,23 +1,26 @@
 # Jetnity Dependency Advisory Triage 1 — Status
 
-Date: 2026-10-25. Lane: R107-S. State: audit packet committed for Technical-Lead candidate review. This is not candidate FINAL PASS, Ready, or merge.
+Date: 2026-10-25. Lane: R107-S. State: corrected audit packet ready for a new independent Technical-Lead candidate review. This is not candidate FINAL PASS, Ready, or merge.
 
 ## Binding
 
 - Logical agent: Jetnity Dependency Advisory Triage 1 — Cursor Generation 1.
 - Runtime: `grok-4.7-high-fast`. Session: `bc-ace2870d-6fe3-4d6f-9213-676752ad3b9b`.
-- Execution parent: `1fcb220a03bb895e3a6609ad81b9a9f7fedb992b`. PLAN blob `436fc2561289baa2da9583c070662a6b8c9ad82b`. TASK blob unchanged `4a4b686fbcc429a4041012f3d967b3f5d1767bc0`.
+- Accepted plan parent: `1fcb220a03bb895e3a6609ad81b9a9f7fedb992b`. PLAN blob `436fc2561289baa2da9583c070662a6b8c9ad82b`. TASK blob unchanged `4a4b686fbcc429a4041012f3d967b3f5d1767bc0`.
+- Corrects candidate `01f4f2b97b614c3b16048fa8585e1e635c93286f`. The delivery head is the commit that adds this revision; this file does not contain its own hash.
 - Package blobs unchanged: `e6187432cb8f224c10281b7b476bb24eb8ef1c1b`, `4c64e03d16a54ae6c648dc3e40c88d6b94c5cfbe`.
-- Main at execution: `a74c443c6be3f064f150fcf021ab6154bda325e5`. No rebase. The delivery head is the commit that adds this file; this file does not contain its own hash.
+- Main at the start of this correction: `a74c443c6be3f064f150fcf021ab6154bda325e5`. No rebase in this packet.
 - Draft PR #1021. Tracking #1016 stays open.
 
 ## Audit state
 
-`REGISTRY_AUDIT_OK` for both explicit dependency sets. `ADVISORY_PRIMARY_OK` for 23 GHSA payloads. `RANGE_DECIDED` for every matrix row. `EVIDENCE_VALID` is the validator result recorded in `docs/evidence/dependency-advisory-triage-1/validation.json` when that command exits 0.
+The registry commands were not repeated. Retained state remains `REGISTRY_AUDIT_OK` for both explicit dependency sets and `ADVISORY_PRIMARY_OK` for the 23 GHSA payloads. Every current matrix row is `RANGE_DECIDED`. `EVIDENCE_VALID` is the validator result in `docs/evidence/dependency-advisory-triage-1/validation.json` when that command exits 0.
 
-No provisional P0. Twenty-eight rows are provisional P1, twelve are provisional P2, two are P3. The production-closure provisional P1 advisories are GHSA-mrhx-c7xc-m3w5 (`zod@3.25.76`), GHSA-96hv-2xvq-fx4p and GHSA-58qx-3vcg-4xpx (`ws@8.18.3`), and GHSA-68fv-2mgg-jv7q (`source-map-js@1.2.1`).
+The numerical summary from `01f4f2b9` (0 / 28 provisional P1 / 12 provisional P2 / 2 P3) is withdrawn. The corrected matrix is 0 provisional P0, 40 provisional P1, 2 P2, and 0 P3. Bucket U is the floor on every row. Execution of the vulnerable function is `NOT_ASSESSED`. No remediation group is activated.
 
-Installed consistency: **UNVERIFIED**. Deployed selection: unknown. No package, lock, runtime, workflow, or config edit. `next-env.d.ts` stayed at its pre-command dirty bytes and is not staged.
+Four advisory ids cover three production-closure packages: GHSA-mrhx-c7xc-m3w5 (`zod@3.25.76`), GHSA-96hv-2xvq-fx4p and GHSA-58qx-3vcg-4xpx (`ws@8.18.3`), and GHSA-68fv-2mgg-jv7q (`source-map-js@1.2.1`). Those rows are an advisory-to-lock concern. They are not an exploit finding and not a deployed-bundle finding.
+
+Lock counts on the same blob: 611 entries, 565 path suffixes, 562 canonical names. Installed consistency: **UNVERIFIED**. Deployed selection: unknown. No package, lock, runtime, workflow, or config edit. `next-env.d.ts` stayed at its pre-command dirty bytes and is not staged.
 
 ## Holds
 
@@ -25,4 +28,4 @@ Installed consistency: **UNVERIFIED**. Deployed selection: unknown. No package, 
 
 ## Next step
 
-Independent Technical-Lead candidate review of this exact head. Cursor does not Ready, merge, close #1016, write `main`, or start a fix slice.
+Independent Technical-Lead re-gating of the new exact head. Cursor does not Ready, merge, close #1016, write `main`, or start a fix slice.
