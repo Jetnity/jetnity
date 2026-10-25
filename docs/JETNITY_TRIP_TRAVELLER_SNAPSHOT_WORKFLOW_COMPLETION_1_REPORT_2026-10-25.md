@@ -61,6 +61,16 @@ Root authorized T-EX2 for the single test “account forwards arrays losslessly 
 
 The mounted command on this tree exits 0 with 20 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. The previous `1 !== 2` assertion is the retargeted T-EX2 test and now passes. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0.
 
+## Focus addendum
+
+`6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`, tree `8975beab7ef622a18002692c3435527375b8c8b7`, answers the focus-ownership defect reproduced on `b443fb13`.
+
+The traveller card calls `interaktion` for a trusted focus event. Programmatic status and remove-button focus does not. Completion focus stays on the saving card only when the captured interaction is still current and `document.activeElement` is that card, or body after the disabled save button releases focus. A different card, or a target outside the traveller region, leaves the request empty. The effect depends on the focus request and the phase, not on the fresh controller object. After the status or remove button actually receives focus, `fokusVerbraucht` clears the request without incrementing the interaction count.
+
+The mounted account host holds the writer. A save with no further move focuses the accepted status paragraph. A real pointer click on the second card’s residence country search, with the value left empty, keeps that input focused after null. Tab from “Weitere Staatsbürgerschaft” into that same search does the same. The earlier Escape path and the edited-field path still pass. Konto’s own writer returns null immediately, so this hold is not the Konto product callback. The cards are the Workspace cards.
+
+The mounted command on this tree exits 0 with 21 pass / 0 fail. Node v22.23.4, Playwright 1.55.0. `npm test` exits 1: 7181 tests, 7165 pass, 11 fail, 5 skipped. All 11 failures are missing local PostgreSQL 16 binaries. `npx eslint .` exits 0 with 0 errors and 181 warnings. Typecheck, the five hygiene checks, and `npm run build` exit 0. No new file exception. T-EX1 and T-EX2 are unchanged.
+
 ## Boundaries
 
 No migration, RLS, Auth, provider, secret, payment, or new dependency. No passport number, MRZ, biometrics, health, or file field. USD 100 and noindex are unchanged. Frozen writers, `gastspeicher`, `dokument-formular.ts`, and `TripWorkspaceAuditClient.tsx` are unchanged versus `origin/main`.

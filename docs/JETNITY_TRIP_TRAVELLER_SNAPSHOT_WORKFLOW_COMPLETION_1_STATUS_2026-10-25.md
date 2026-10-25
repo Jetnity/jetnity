@@ -14,7 +14,10 @@ Card correction commit: `a68e6b4a3690decb4b7f21373aa53e86c5f008d1`, tree `4f2165
 
 Addendum commit: `c589266158a4d15f90a952e370435150e45f41d7`.
 Addendum tree: `55970376c0e8c08b0bc79610854fc4898355673a`.
-The mounted run in `docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt` is bound to that addendum tree: 20 pass, 0 fail, exit 0. The documentation commit that records it does not change product code.
+
+Focus correction commit: `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`.
+Focus correction tree: `8975beab7ef622a18002692c3435527375b8c8b7`.
+The mounted run in `docs/evidence/trip-traveller-snapshot-workflow-completion-1/mounted-matrix.txt` is bound to that focus tree: 21 pass, 0 fail, exit 0. The documentation commit that records it does not change product code. The 20-pass log stays in git on tree `55970376c0e8c08b0bc79610854fc4898355673a`.
 
 `origin/main` fetched again for this handoff is still `a74c443c6be3f064f150fcf021ab6154bda325e5`. Merge-base is that same commit. No rebase.
 
@@ -27,3 +30,5 @@ Review R1 on `b443fb13` required two further card corrections. A save that finis
 The R1 addendum adds one registry correction. An unknown intake keeps its uncertainty and its duplicate-snapshot warning through cancel, a later request, and a section return. Confirming that later request is a new materialization. It is not an automatic retry.
 
 Root authorized T-EX2 for one assertion in `lib/readiness/trip-official-evaluations-server.test.ts`: “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh”. The traveller removal writer returns null and does not refresh. The forwarded `onReadinessAktualisieren` supplies one refresh. The accommodation callback supplies the second. Every other assertion in that file stays. T-EX1 stays limited to its four helper assertions. TASK and the accepted PLAN bytes are unchanged. These corrections are local and are not acceptance.
+
+The focus addendum on `b443fb13` is corrected on `6e3ec8b5`. A trusted pointer click or Tab into another card’s country search, without a value edit, is the current focus owner. The older save’s completion does not move focus to its status paragraph. A completion that still owns the region focuses the status once, then clears the request so a later controller render cannot take it back. Escape still returns focus to “Angaben entfernen”. The deferred sequence is the account matrix host: Konto’s product writer returns null immediately and cannot hold the writer open. The cards, project CSS, and action shims are the real Workspace surface.

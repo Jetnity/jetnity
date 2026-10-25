@@ -25,15 +25,17 @@ Stop for independent Technical-Lead candidate review. Do not Ready, do not merge
 - Card correction tree: `4f2165518fdea569afbb63d45efaef13409c276b`
 - Addendum commit: `c589266158a4d15f90a952e370435150e45f41d7`
 - Addendum tree: `55970376c0e8c08b0bc79610854fc4898355673a`
+- Focus correction commit: `6e3ec8b5910cf39f342844b2ccc5198f5a4617b2`
+- Focus correction tree: `8975beab7ef622a18002692c3435527375b8c8b7`
 - `origin/main` fetched for this handoff: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - Merge-base: `a74c443c6be3f064f150fcf021ab6154bda325e5`
 - No rebase. If `main` moves later, report the drift and wait.
 
-The documentation commit after `c5892661` updates this handoff, the status, the report, the self-review, and `mounted-matrix.txt`. It does not change product code. Use the pushed branch head, not `c5892661`, as the review head once that docs commit is the tip.
+The documentation commit after `6e3ec8b5` updates this handoff, the status, the report, the self-review, and `mounted-matrix.txt`. It does not change product code. Use the pushed branch head, not `6e3ec8b5`, as the review head once that docs commit is the tip.
 
 ## Next step
 
-Independent exact-head re-gate of the pushed tip. Both product P1s stay OPEN. The two review-R1 card defects are corrected on `a68e6b4a`. The registry warning and T-EX2 retarget are on `c5892661`. None of that is acceptance.
+Independent exact-head re-gate of the pushed tip. Both product P1s stay OPEN. The two review-R1 card defects are corrected on `a68e6b4a`. The registry warning and T-EX2 retarget are on `c5892661`. The focus-ownership correction is on `6e3ec8b5`. None of that is acceptance.
 
 T-EX2, authorized by root for this addendum, retargets only “account forwards arrays losslessly on repeated renders; existing mutation callbacks refresh” in `lib/readiness/trip-official-evaluations-server.test.ts`. The removal writer returns null without refreshing. The test then calls the forwarded `onReadinessAktualisieren` and sees one refresh. The accommodation callback supplies the second. The mounted Konto path separately shows one router refresh for an accepted save, one for an accepted removal, and one for an accepted intake. T-EX1 remains the four helper assertions. No other unlisted test was edited. Local PostgreSQL 16 proofs did not run here.
 
