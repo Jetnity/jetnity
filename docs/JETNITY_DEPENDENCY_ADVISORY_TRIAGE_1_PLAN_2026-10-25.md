@@ -17,13 +17,15 @@ Date: 2026-10-25. Lane **S** of R107. Tracking [#1016](https://github.com/Jetnit
 
 Authoritative model evidence is the cloud-run field `originalModelName`. This session did not select Auto and did not substitute another model.
 
-**STOP** after this plan file is committed on `audit/r107-dependency-advisory-triage-1`. The immutable TASK stays byte-identical. No status, report, self-review, handoff, evidence directory, inventory script, test, audit command or second document is part of this delivery. Root reviews this exact plan head and authorizes this same session before any of that work.
+This revision answers Technical-Lead plan review R1 on head `b0d44c3e7f7483027bb13cb97d54c37b4e049843` / PLAN blob `c05bea9947ac9eb35365ac8bbfa875fc5856bca0`. It is the same session and the same logical agent. It changes only this PLAN.
+
+**STOP** after this revised plan is committed on `audit/r107-dependency-advisory-triage-1`. The immutable TASK stays byte-identical. No status, report, self-review, handoff, evidence directory, inventory script, test, audit command or second document is part of this delivery. Root re-reviews this exact plan head before any of that work.
 
 ## 2. Authority actually read
 
 Operating mode is `NORMAL` in `.jetnity/operating-mode.json` (updated 2026-09-21). Special Product-Owner gates remain in force. This lane is the Owner-authorized read-only advisory triage from the R107 intake [comment 6399573707](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6399573707) and the live batch [#1011](https://github.com/Jetnity/jetnity/issues/1011).
 
-Also read for this plan: `AGENTS.md`; `JETNITY_START_HERE.md`; `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; `docs/ACTIVE_WORK_STATUS.md`; `docs/JETNITY_R106_FINITE_BATCH_CLOSURE_HANDOFF_2026-10-25.md`; `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`; `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`; `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md` via the startup pointer and ADR-0204 phase order already binding in the build-order file; the TASK; `package.json`; `package-lock.json`; `.github/workflows/ci.yml`; `next.config.js`; `postcss.config.js`; `tailwind.config.js`; `vercel.json`; `scripts/pakete.mjs`; the historical Sharp/Next audit script `scripts/next-16-4-1-security-patch-p1/audit.mjs` (cited only as a script this lane will not run); and the public log lines of Actions run [40202059080](https://github.com/Jetnity/jetnity/actions/runs/40202059080).
+Also read for this plan: `AGENTS.md`; `JETNITY_START_HERE.md`; `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; `docs/ACTIVE_WORK_STATUS.md`; `docs/JETNITY_R106_FINITE_BATCH_CLOSURE_HANDOFF_2026-10-25.md`; `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`; `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`; `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md` via the startup pointer and ADR-0204 phase order already binding in the build-order file; the TASK; `package.json`; `package-lock.json`; `.github/workflows/ci.yml`; `next.config.js`; `postcss.config.js`; `tailwind.config.js`; `vercel.json`; `scripts/pakete.mjs`; the historical Sharp/Next audit script `scripts/next-16-4-1-security-patch-p1/audit.mjs` (cited only as a script this lane will not run); the public log lines of Actions run [40202059080](https://github.com/Jetnity/jetnity/actions/runs/40202059080); and, for R1, [npm audit v10](https://docs.npmjs.com/cli/v10/commands/npm-audit/), [npmrc v10](https://docs.npmjs.com/cli/v10/configuring-npm/npmrc/), [npm config v10](https://docs.npmjs.com/cli/v10/using-npm/config/), and [package-lock.json v10](https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json/).
 
 R106 is closed. O, A and T stay stopped. This plan does not reopen them. Dated blocks inside `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` that still say "current" are historical snapshots. Live evidence used here is the fetched `origin/main` and the files above.
 
@@ -40,11 +42,13 @@ Fetched `origin/main` during this session.
 | Plan parent / TASK seed | `7e5395855ca7d6215756e79f4f389d13b03e865c` |
 | Seed tree | `2c012cc208ebde23058131609178c1fe87c9d2ea` |
 | Merge-base | `a74c443c6be3f064f150fcf021ab6154bda325e5` |
-| Ahead / behind vs `origin/main` before this plan commit | **1 ahead / 0 behind** |
+| Ahead / behind before the first plan commit | **1 ahead / 0 behind** |
+| Reviewed plan head | `b0d44c3e7f7483027bb13cb97d54c37b4e049843` |
+| Ahead / behind at this R1 edit, after re-fetch | **2 ahead / 0 behind** |
 
-The seed's sole parent is `a74c443c6be3f064f150fcf021ab6154bda325e5`. The seed commit adds only the TASK. TASK blob `4a4b686fbcc429a4041012f3d967b3f5d1767bc0` matches the dispatch pin. No main drift was present at this read. If `origin/main` moves before audit execution, this session reports the new ahead/behind and waits. It does not rebase or merge.
+The seed's sole parent is `a74c443c6be3f064f150fcf021ab6154bda325e5`. The seed commit adds only the TASK. TASK blob `4a4b686fbcc429a4041012f3d967b3f5d1767bc0` matches the dispatch pin. `origin/main` was still `a74c443c6be3f064f150fcf021ab6154bda325e5` when this R1 edit was written. If `origin/main` moves before audit execution, this session reports the new ahead/behind and waits. It does not rebase or merge.
 
-The plan commit itself advances this branch by one docs commit. The user-facing delivery comment carries that new head and this file's blob. This file cannot name its own commit SHA.
+The R1 commit advances this branch by one docs commit. The user-facing delivery comment carries that new head and this file's blob. This file cannot name its own new commit SHA.
 
 ## 4. Pinned inputs
 
@@ -57,7 +61,7 @@ Confirmed at seed `7e5395855ca7d6215756e79f4f389d13b03e865c`:
 
 Lockfile format: npm lockfileVersion **3**, top-level keys `name`, `version`, `lockfileVersion`, `requires`, `packages`. There is no top-level `dependencies` map and no lockfile `overrides` entry. `requires` is true.
 
-Local tooling available for the later read-only pass: Node `v22.23.4`, npm `10.9.7`. `engines.node` is `22.x`. CI uses `actions/setup-node` with `node-version: 22.x`. No tracked `.npmrc` exists. The later commands will pass an empty temporary `--userconfig` and `--registry https://registry.npmjs.org`, and will unset `NPM_TOKEN` and `NODE_AUTH_TOKEN` in that process only. They will not print npm config, the environment, or any npmrc.
+Local tooling available for the later read-only pass: Node `v22.23.4`, npm `10.9.7`. `engines.node` is `22.x`. CI uses `actions/setup-node` with `node-version: 22.x`. No tracked `.npmrc` exists. The later metadata commands use the child boundary in §6.2. They do not print npm config, the environment, or any npmrc, and they do not acquire credentials.
 
 ## 5. Source-confirmed graph facts
 
@@ -102,7 +106,7 @@ These facts were read from the lockfile and CI log. They are not advisory classi
 | --- | --- | --- |
 | Locked / resolved | 611 lockfile entries at blob `4c64e03d` | Which optional or platform packages an installer selects |
 | GitHub Actions install on `a74c443c` | Run 40202059080, both the Typecheck job and the Auth job, at `2026-10-25T14:24:43Z`: `added 532 packages, and audited 533 packages` and `11 vulnerabilities (2 moderate, 9 high)`, followed by the stock `npm audit fix` hint. CI's only install command is `npm ci`. There is no audit step and the log does not name the 11 findings. | The advisory IDs, the omitted package names, or the Vercel deployment closure |
-| This workspace `node_modules` | `node_modules/.package-lock.json` SHA-256 `8f5840c849938dc33c5aed72d3ae26a2200526c7a5f2fd72569b095dbd78ef6c` differs from the repo lockfile SHA-256 above | A deployed runtime, and it must not be used as the audited graph |
+| Workspace install | Installed consistency is **UNVERIFIED**. npm's hidden lockfile `node_modules/.package-lock.json` has a different role and content from the repository lockfile ([hidden lockfiles](https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json/#hidden-lockfiles)). A different hash is not evidence of an inconsistent install. This plan does not investigate the installed tree. | A deployed runtime. The audited graph remains the pinned repository lockfile only. |
 
 Deployed Vercel/Production package selection is **UNKNOWN**. This lane will not probe Production, Preview, or the deployment bundle.
 
@@ -120,20 +124,47 @@ For every non-root entry it records: lock path, name, version, requested ranges 
 
 ### 6.2 Current advisory retrieval
 
-Primary aggregate, in this order, after authorization only:
+`npm audit` without `fix` or `signatures`, with `--package-lock-only`, is a public registry report of the lockfile graph. npm v10 submits that description to the configured registry's bulk advisory endpoint and does not install. `--omit` still changes which dependency types are submitted. npm's default for `omit` is `dev` when `NODE_ENV=production`, and otherwise empty. A package type named in both `include` and `omit` is included. Command-line flags outrank `npm_config_*` environment variables, which outrank project, user, global, and builtin npmrc files. An empty `npm_config_*` value is treated as true, so the child must not set an empty omit or include variable.
 
-```sh
-npm audit --json --package-lock-only --ignore-scripts \
-  --registry https://registry.npmjs.org --userconfig "$EMPTY_USERCONFIG"
-npm audit --json --package-lock-only --omit=dev --ignore-scripts \
-  --registry https://registry.npmjs.org --userconfig "$EMPTY_USERCONFIG"
+The audited graph is still the pinned repository files. The commands run in a disposable directory so they do not load a project `.npmrc` or the repository worktree. `HOME` and `CODEX_HOME` are not pointed at that directory.
+
+Disposable layout, created only under `/tmp` and rejected if its path is inside `HOME` or `CODEX_HOME`:
+
+```text
+/tmp/jetnity-r107-s-meta.<random>/
+  project/package.json          # byte copy of the pinned file
+  project/package-lock.json     # byte copy of the pinned file
+  empty-user.npmrc              # zero bytes, mode 0600
+  empty-global.npmrc            # zero bytes, mode 0600
+  cache/                        # empty directory
+  tmp/                          # empty directory
+  snapshots/                    # pre-command worktree bytes, outside the repo
 ```
 
-`npm audit --package-lock-only` is supported by the local npm `10.9.7` help text. It is a public registry metadata read of the lockfile graph. It is not `npm audit fix`, not `--force`, and not an install. Exit code 1 with parseable JSON that reports vulnerabilities is a finding result. Exit codes other than 0 or 1, non-JSON stdout, a missing network, or any write to `package.json`, `package-lock.json`, `node_modules` or `next-env.d.ts` is a tool failure: stop, restore any tracked file the command changed, and record `UNSAFE_TOOL` or `REGISTRY_UNAVAILABLE`. Do not fall through to `npm ci`, `npx`, or a second installer.
+Before the copy, SHA-256 of the repository `package.json` and `package-lock.json` must match §4. After the copy, SHA-256 of the two copies must match §4. The project directory must contain only those two names. There is no `.npmrc` beside them. If either check fails, stop with `INPUT_DRIFT` and do not invoke npm.
 
-Primary per-advisory record, unauthenticated:
+The child is started with `env -i`. The allowlist is only: `PATH`; the existing `HOME` value unchanged; `USER` and `LOGNAME` when already present; `LANG` and `LC_ALL=C.UTF-8`; `TMPDIR` set to the disposable `tmp` directory; `NODE_ENV=development`. The child does not receive `CODEX_HOME`, `npm_config_*`, `NPM_CONFIG_*`, `NPM_TOKEN`, `NODE_AUTH_TOKEN`, `NODE_OPTIONS`, `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`, `http_proxy`, `https_proxy`, `all_proxy`, or `NO_PROXY`. The parent environment is not printed. `npm config` is not run. If npm cannot run under this allowlist, record `CONFIG_BOUNDARY_UNMET` and do not retry with the ambient environment.
 
-- `GET https://api.github.com/advisories/{GHSA}` with `Accept: application/vnd.github+json` and a descriptive User-Agent, and no `Authorization` header.
+Both audit invocations use the same cwd (`project`), the same child environment, and these explicit flags: `--json`, `--package-lock-only`, `--ignore-scripts`, `--offline=false`, `--registry=https://registry.npmjs.org`, `--userconfig=<disposable>/empty-user.npmrc`, `--globalconfig=<disposable>/empty-global.npmrc`, `--cache=<disposable>/cache`, `--audit-level=info`. They do not pass `fix`, `signatures`, `--force`, `--global`, or `--prefix`.
+
+Explicit dependency sets, which are the evidence of what was submitted:
+
+| Set | Additional flags | Types submitted |
+| --- | --- | --- |
+| Full lock graph | `--include=prod --include=dev --include=optional --include=peer` and no `--omit` | prod, dev, optional, and peer |
+| Omit-dev lock graph | `--omit=dev --include=prod --include=optional --include=peer` and no `--include=dev` | prod, optional, and peer |
+
+`NODE_ENV=development` makes npm's documented omit default empty. The include flags are still required, because an inherited production omit must not define the full set. Include wins over omit, so the omit-dev command must not also include `dev`.
+
+`npm view <name>@<candidate> version dependencies peerDependencies --json` uses the same child environment, cwd, registry, userconfig, globalconfig, cache, `--ignore-scripts`, and `--offline=false`. It does not take include or omit flags, because it reads one public packument rather than a dependency set. It is not an install. It is used only after a primary advisory names a candidate version.
+
+npm's builtin npmrc, at the npm installation's own `npmrc`, has no documented replacement flag and remains loaded. This pass does not read or print it. Retained audit JSON is accepted only when it does not name a registry host other than `registry.npmjs.org`. Any other host, or a response that cannot be checked, is `CONFIG_BOUNDARY_UNMET`: discard the body, do not quote it, and stop that npm source. Ambient HTTP proxies are not forwarded; a resulting network failure is `REGISTRY_UNAVAILABLE`, not a reason to restore the proxy. The POSIX default cache is `~/.npm`. `--cache` points at the empty disposable cache instead. The disposable directory, including that cache, is deleted after the receipts are copied. It is not committed.
+
+Exit 0 or 1 with parseable JSON is `REGISTRY_AUDIT_OK`. With `--audit-level=info`, exit 1 means the JSON reports at least one vulnerability. Any other exit, non-JSON stdout, or a missing network is `REGISTRY_UNAVAILABLE` for that command. A write inside the repository worktree is `UNSAFE_TOOL` and follows §10.4. Do not fall through to `npm ci`, `npx`, or a second installer.
+
+Primary per-advisory record, unauthenticated. `curl` uses the same `env -i` allowlist, `curl -q` so it does not read a curlrc, no `--netrc`, and no `Authorization` header:
+
+- `GET https://api.github.com/advisories/{GHSA}` with `Accept: application/vnd.github+json` and a descriptive User-Agent.
 - The canonical advisory URL `https://github.com/advisories/{GHSA}`.
 - A maintainer/vendor page only when that GHSA or the package's public GitHub security listing cites it.
 - NVD only when the GHSA cites a CVE and the GHSA payload lacks the affected/fixed range.
@@ -142,7 +173,7 @@ OSV `https://api.osv.dev/v1/querybatch` is an aggregator cross-check. It is stor
 
 Each retained primary record stores the advisory id, affected range, fixed range or the explicit absence of a fix, published/updated timestamps from the payload, retrieval timestamp, and the canonical URL. Missing fields stay missing. No advisory id is invented. Historical evidence files such as `docs/evidence/next-16-4-1-security-patch-p1/residual-audit.json` are prior lockfiles' snapshots. They are not inputs to the current matrix.
 
-`npm view <name>@<candidate> version dependencies peerDependencies --json` against `registry.npmjs.org` is allowed as a metadata read when a remediation candidate needs its peer range. It is not an install.
+The `npm view` invocation specified above is the only registry metadata read used to confirm a candidate and its `peerDependencies`.
 
 ### 6.3 Version decision
 
@@ -159,8 +190,8 @@ One instance may receive more than one class. Official CVSS/severity stays in it
 | `build-ci` | The package is loaded by `postcss.config.js`, `tailwind.config.js`, `next.config.js`, ESLint, TypeScript, `package.json` scripts, or `.github/workflows/ci.yml`, or it is a Next build dependency (`postcss`, optional `sharp`, optional `@next/swc-*`). |
 | `development-only` | Every lockfile path from the root stays inside root `devDependencies`, and the build/CI class does not apply. `dev: true` supports this class and is not sufficient by itself. |
 | `type-declaration-only` | The name is `@types/*`, or the only parents are `@types/*`, and no runtime import exists. TypeScript erasure is the working assumption. It is still not a vulnerability clearance if an advisory exists. |
-| `optional-platform` | `optional: true` and any `os`/`cpu`/`libc` constraint. Record whether the constraint allows `linux x64`. The ubuntu CI aggregate did not name selected packages, so a constraint match is lockfile evidence, not an install log. |
-| `NOT_ASSESSED` | Non-literal dynamic import, code only on a held or sibling branch, deployed `.next` output, or the mismatched local `node_modules`. |
+| `optional-platform` | `optional: true` and any `os`/`cpu`/`libc` constraint. Record whether the constraint text allows `linux` and `x64`. That record is lockfile evidence. It does not prove which packages the ubuntu installer selected, and it does not by itself set priority. |
+| `NOT_ASSESSED` | Non-literal dynamic import, code only on a held or sibling branch, or deployed output. Workspace `node_modules` is not an input; installed consistency stays **UNVERIFIED**. |
 
 Absence of an application import is not absence of the package. Framework, optional and script edges stay in the matrix.
 
@@ -168,17 +199,44 @@ Held lanes are not opened: #985/#982, #917, #913/#911, #937/#936, Bern #934, and
 
 ### 6.5 Priority, kept separate from severity
 
-| Jetnity priority | Rule |
+Official severity stays in its own column. Jetnity priority is a scheduling judgment. It uses four inputs that the report states on every assessed row: the advisory's described impact, the exposure classes actually evidenced, confidence in that classification, and the uncertainties that remain. This lane does not demonstrate an exploit. Every P0 is therefore **provisional**: it asks for urgent Technical-Lead attention and states that exploitability was not shown.
+
+Impact, taken only from the primary advisory text:
+
+- `concrete`: the advisory names a confidentiality, integrity, or availability effect and the condition required for that effect.
+- `partial`: it names an effect, and this pass did not find that condition in the traced code.
+- `absent`: the retrieved primary payload does not describe an effect. Severity is not used as a substitute description.
+
+Exposure bucket, after §6.4. A row can match more than one class; the highest priority applies. `U` is a floor and never a reason to go lower.
+
+| Bucket | When it applies |
 | --- | --- |
-| P0 | Official critical or high, production lock path, and the advisory's stated precondition is present in application-server or client source that this pass actually read. Flag in PR #1021 during the audit delivery, with the advisory URL, locked version and files. This lane still does not patch it. |
-| P1 | Official high or critical on a production lock path whose class is `application-server`, `client-bundle`, or still `NOT_ASSESSED` / unresolved. Unknown production-path exposure stays P1. |
-| P2 | Official high or moderate whose classes are only `build-ci` and/or `development-only`, with every production path ruled out by the edge walk. |
-| P3 | `type-declaration-only`, or `optional-platform` whose os/cpu constraint excludes `linux x64`, after that evidence was computed. |
-| Untriaged | The row was not assessed. Missing metadata, a failed registry call, a held boundary, or a range disagreement cannot be moved to P3. |
+| A | `application-server` and/or `client-bundle` |
+| B | `build-ci`, and not A |
+| C | `development-only`, and not A or B |
+| D | `type-declaration-only`, with positive evidence that the package does not execute, and not A, B, or C |
+| U | any `NOT_ASSESSED` chain, held-lane boundary, dynamic import, unknown deployment selection, or optional/platform package whose build, development, or deployment context is still unknown |
 
-No row is called safe, no-vulnerability, or accepted. P3 is a priority for a later fix decision. It does not retire the official severity.
+| Official severity | A | B | C | D | U |
+| --- | --- | --- | --- | --- | --- |
+| critical | provisional P0 when impact is `concrete` and the advisory's required condition is present in traced shipped code; otherwise provisional P1 | provisional P1 | provisional P1 | P2 | provisional P0 when impact is `concrete`; otherwise provisional P1 |
+| high | provisional P0 under that same concrete-condition test; otherwise provisional P1 | provisional P1 | provisional P2 | P2 | provisional P1 |
+| moderate | provisional P1 | provisional P2 | provisional P2 | P3 | provisional P1 |
+| low | P2 | P3 | P3 | P3 | P2 |
+| info | P2 | P3 | P3 | P3 | P2 |
+| missing | provisional P1, severity cell left unknown | provisional P2, severity unknown | provisional P2, severity unknown | provisional P2, severity unknown | provisional P1, severity unknown |
 
-This plan flags **no** P0 or P1 package finding, because no current advisory payload was retrieved. The historical aggregate of 11 remains untriaged.
+The concrete-condition test is stricter than severity plus a production lock path plus one nearby precondition. The condition named by the advisory has to be present in the traced shipped code. A lock edge, a single import of a parent package, or an advisory sentence alone does not meet it. Those rows stay on the provisional P1 side of column A.
+
+An `os`/`cpu` constraint that excludes `linux` `x64` is recorded on the row and does not select column D or a P3 cell. While deployment is unknown, or a build or development context can still load the package, bucket U remains and the U column is the floor. P3 from a platform constraint is available only when deployment os/cpu is positively evidenced and excluded, build and development use are positively ruled out, and U is absent. This pass expects deployment to stay unknown, so that P3 gate is not expected to open.
+
+Confidence is `high` only when every parent chain was classified with the evidence in §6.4. Otherwise it is `limited`, and any unclassified chain keeps bucket U. Held reachability and unknown reachability use column U. They are not moved to D, C, or P3.
+
+A row that was not assessed stays `untriaged`. A failed registry call, a missing primary field, or a range disagreement does not move the row into the table.
+
+No row is called safe, no-vulnerability, or accepted. During the audit delivery, provisional P0 and provisional P1 are posted on PR #1021 with the advisory URL, locked version, the table cell used, the remaining unknown, and an explicit statement that exploitability was not demonstrated. This lane does not patch them.
+
+This plan flags **no** package finding. No current advisory payload was retrieved. The historical aggregate of 11 remains untriaged.
 
 ### 6.6 Minimal remediation packet
 
@@ -212,7 +270,7 @@ For each assessed affected path the report will propose one smallest next change
 
 No other path is in scope. In particular this lane does not edit `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, `ROADMAP.md`, `DECISIONS.md`, `ARCHITECTURE.md`, `DESIGN_SYSTEM.md`, `.jetnity/operating-mode.json`, `package.json`, `package-lock.json`, `next.config.js`, `vercel.json`, or `.github/workflows/ci.yml`.
 
-Pre-existing worktree fact, observed before this plan and left unstaged: `next-env.d.ts` differs by the generated import paths `./.next/types/...` versus `./.next/dev/types/...`. This lane does not stage, revert or regenerate that file. The later mutation proof treats it as an ambient dirty path and fails the audit if any command changes it further.
+Pre-existing worktree fact, observed before the first plan commit and left unstaged: `next-env.d.ts` differs by the generated import paths `./.next/types/...` versus `./.next/dev/types/...`. This lane does not stage or regenerate that file. Recovery of a command-caused change uses the byte snapshot in §10.4. A blanket `git restore` is not used, including on this already-dirty file.
 
 ## 8. Frozen contracts and reuse
 
@@ -221,7 +279,7 @@ Pre-existing worktree fact, observed before this plan and left unstaged: `next-e
 | TASK V1 blob `4a4b686f` | Scope. Not edited. |
 | Lockfile v3 `packages` graph | Sole audited package graph |
 | `scripts/pakete.mjs` | Frozen direct-dep hygiene. Not an advisory oracle |
-| `scripts/next-16-4-1-security-patch-p1/audit.mjs` | Historical `#950` control. It loads `sharp` from `node_modules` and compares `node_modules/.package-lock.json`. This workspace install does not match the lockfile. This lane will not run it and will not load `sharp`. |
+| `scripts/next-16-4-1-security-patch-p1/audit.mjs` | Historical `#950` control. It loads `sharp` and reads the hidden lockfile. This lane will not run it. Installed consistency stays **UNVERIFIED**; that script is not how this lane would verify it. |
 | CI `npm ci` on Node 22.x | Existing installation gate. The published summary lines are the historical 11-count baseline. |
 | `next@16.4.1`, `eslint-config-next@16.4.1`, `react@19.2.8`, `react-dom@19.2.8` | Coupled exact pins. A proposal that splits them must say why. |
 | Integration order T → S → D → W → M | Report-only. No sibling merge or cherry-pick. |
@@ -242,18 +300,20 @@ Multi-agent suitability remains the TASK's `MULTI_AGENT` decision. This lane's o
 | `GRAPH_PARSE_FAILED` | Lockfile JSON or required fields unreadable | Stop. No partial safe list. |
 | `REGISTRY_AUDIT_OK` | Exit 0 or 1 and parseable JSON | Primary GHSA fetch |
 | `REGISTRY_UNAVAILABLE` | Network, HTTP failure, rate limit, non-JSON | Record the gap per source. Do not invent ids. Continue only for sources that returned primary payloads. |
-| `UNSAFE_TOOL` | The audit command wrote package, lock, module or `next-env.d.ts` files | Restore tracked edits caused by the command. Stop the registry pass. |
+| `CONFIG_BOUNDARY_UNMET` | The child allowlist cannot run npm, the disposable path is inside `HOME` or `CODEX_HOME`, or the response names a non-public registry | Stop that npm source. Do not fall back to ambient config or credentials. |
+| `UNSAFE_TOOL` | A repository worktree path changed during the child command | Apply §10.4. Stop the registry pass. |
+| `RESTORE_UNATTRIBUTED` | A changed path has no pre-command byte snapshot, or the snapshot cannot be written back identically | STOP and report. Do not restore any other path. |
 | `ADVISORY_PRIMARY_OK` | GHSA payload has id, range, URL, timestamps | Version decision |
 | `ADVISORY_PRIMARY_GAP` | Payload missing a required field | Row stays unresolved for that field |
 | `RANGE_DECIDED` | Registry statement and local comparator agree | Exposure classification |
 | `RANGE_DISAGREEMENT` / `RANGE_UNPARSEABLE` | Comparator cannot confirm | Keep the instance unresolved |
 | `CONTEXT_CLASSIFIED` | At least one class in §6.4 has the evidence in that row | Priority |
-| `NOT_ASSESSED` | Held tree, dynamic import, or deployed bundle | Leave untriaged or P1 if official severity is high/critical on a production path |
+| `NOT_ASSESSED` | Held tree, dynamic import, or deployed bundle | Keep bucket U in §6.5. Do not lower priority. |
 | `REMEDIATION_PROPOSED` | Candidate version and parent named from primary evidence | Packet only. No edit. |
 | `NO_FIX_IN_PRIMARY` | Primary advisory has no fixed release | Say so. Do not guess a version. |
-| `P0_P1_FLAGGED` | Posted on PR #1021 with URLs and paths | Implementation remains unassigned |
+| `P0_P1_FLAGGED` | Provisional P0 or provisional P1 posted on PR #1021 with the §6.5 cell, URL, and the non-exploit statement | Implementation remains unassigned |
 | `EVIDENCE_VALID` | Validator exit 0 | Hand off for TL review |
-| `EVIDENCE_INVALID` | Duplicate id, hash mismatch, or unsanitized secret-shaped string | Fix the evidence set in this session. Do not relabel it valid. |
+| `EVIDENCE_INVALID` | Duplicate id, pinned-input hash disagreement, missing include/omit evidence, or an unsanitized secret-shaped string | Fix the evidence set in this session. Do not relabel it valid. |
 
 Denied or failed commands are recorded. They are not replaced with an install, a token, a Production query, or a held-lane checkout.
 
@@ -263,9 +323,26 @@ Before and after the registry commands, record:
 
 - `git rev-parse HEAD`, `git rev-parse HEAD^{tree}`, `git merge-base HEAD origin/main`, `git rev-list --left-right --count origin/main...HEAD`
 - SHA-256 and `git rev-parse HEAD:package.json HEAD:package-lock.json`
-- `git status --porcelain=v1`
-- `node --version`, `npm --version`, and the exact argv
+- `git status --porcelain=v1` and the §10.4 snapshot hashes
+- `node --version`, `npm --version`, and the exact argv, including every `--include` and `--omit`
 - exit code and a short stderr excerpt with home-directory paths and token-like strings removed
+
+### 10.4 Pre-command bytes and restoration
+
+Immediately before the child starts, and before any npm or curl process:
+
+1. Record `git status --porcelain=v1`.
+2. Copy the exact worktree bytes of every dirty tracked path, including the already-dirty `next-env.d.ts` when it is dirty, into `snapshots/` in the disposable directory. Record each snapshot's SHA-256.
+3. For the watched clean paths `package.json`, `package-lock.json`, and `next-env.d.ts` when it is clean, record the HEAD blob bytes and their SHA-256 as that path's snapshot.
+4. The watched set is the union of the dirty paths and those three paths. A path outside that set is not eligible for later restoration.
+
+After the child exits, recompute the same worktree hashes.
+
+- A path whose bytes still match its snapshot, including a still-dirty `next-env.d.ts`, is left untouched.
+- A watched path whose bytes differ is restored by writing the snapshot bytes back over that one path. The write is checked by SHA-256. This is the whole restoration. It is not `git restore`, `git checkout`, `git reset`, or a directory-wide clean.
+- A new untracked path in the repository, a change to a path that has no snapshot, or a snapshot that cannot be written back with the same SHA-256 is `RESTORE_UNATTRIBUTED`. Stop. Report the path and the before/after porcelain lines. Do not restore any other path and do not continue the registry pass.
+
+The metadata commands use the disposable project as cwd so the repository is not their output directory. A repository change is still handled only by the rules above.
 
 Evidence files under `docs/evidence/dependency-advisory-triage-1/`:
 
@@ -280,17 +357,18 @@ Evidence files under `docs/evidence/dependency-advisory-triage-1/`:
 `validate-evidence.mjs` fails unless all of the following hold:
 
 - input SHA-256 and blobs match §4, or a later authorized head whose package blobs still match §4
-- `package.json` and `package-lock.json` are unchanged in `git status`
-- every matrix row has an advisory id, lock path, version, primary https URL, retrieval time, official severity, exposure class, Jetnity priority, and confidence
+- `package.json` and `package-lock.json` match their pre-command snapshots
+- `commands.txt` shows the full set with all four `--include` values and no `--omit`, and the omit-dev set with `--omit=dev`, `--include=prod`, `--include=optional`, `--include=peer`, and no `--include=dev`
+- every matrix row has an advisory id, lock path, version, primary https URL, retrieval time, official severity, impact, exposure bucket, Jetnity priority, confidence, and remaining uncertainty
 - every id in the matrix exists in a retained primary payload
 - `(advisory id, lock path)` is unique
 - npm's aggregate count, the unique GHSA count, and the historical 11 are all present and reconciled in the three delta columns
-- no file contains `node_modules` bulk, `_authToken`, `npm_`, `ghp_`, or `github_pat`
+- no file contains `node_modules` bulk or a credential-shaped string (`_authToken=`, `Bearer `, `ghp_`, `github_pat_`). Naming an excluded variable such as `npm_config_*` in `commands.txt` is allowed; a value for it is not.
 - OSV-only rows are not labeled primary
 
-The report's triage table columns are: advisory id, canonical URL, official severity, locked name/version/path, direct or transitive, parent chain, dev/optional/peer/os/cpu, exposure classes, Jetnity priority, confidence, fixed version or `NO_FIX_IN_PRIMARY`, proposed atomic group, files a later slice would touch, residual UNKNOWN.
+The report's triage table columns are: advisory id, canonical URL, official severity, impact, locked name/version/path, direct or transitive, parent chain, dev/optional/peer/os/cpu, exposure classes, exposure bucket, Jetnity priority, provisional flag, confidence, remaining uncertainty, fixed version or `NO_FIX_IN_PRIMARY`, proposed atomic group, files a later slice would touch.
 
-Local `npm test`, lint, typecheck and `next build` are **not** evidence about this pinned graph while `node_modules/.package-lock.json` mismatches and while `next-env.d.ts` is already dirty. `next build` rewrites that generated file. Those local commands stay unrun against the pinned graph. Native PR CI, which runs `npm ci` on a clean tree, remains the installation-backed project gate for the docs branch. The local proof this lane owns is the validator plus `git diff --check`. A local project-command failure, if one is later attempted, is recorded as ambient-install evidence and is not repaired with `npm ci`.
+Local `npm test`, lint, typecheck, and `next build` stay unrun for this lane. Installed consistency is **UNVERIFIED**, and `next build` rewrites `next-env.d.ts`. Those commands are not evidence about the pinned lockfile. Native PR CI, which runs `npm ci` on a clean checkout, remains the installation-backed project gate for the docs branch. The local proof this lane owns is the validator plus `git diff --check`. A later local project-command failure is recorded as its own environment result and is not repaired with `npm ci`.
 
 The two conditional browser skips, 181 existing lint warnings, guest cross-tab non-atomicity, and full-unmount limits stay existing limits. This audit does not adopt them as new passes.
 
@@ -299,7 +377,8 @@ The two conditional browser skips, 181 existing lint warnings, guest cross-tab n
 - Cost: **USD 0**. Unauthenticated registry, GitHub Advisory, and OSV reads. No new package, host, secret, or provider.
 - The audit is about lock blob `4c64e03d` at the assessed head. Any later lockfile change invalidates it.
 - CI run 40202059080 proves an aggregate installed-tree summary on ubuntu-latest at that timestamp. It does not prove advisory identity or Production contents.
-- Deployed runtime, optional sharp/SWC selection by name, and held-lane reachability stay UNKNOWN unless the authorized pass obtains a primary source that actually answers them. This plan does not expect the pass to obtain deployed bytes.
+- Deployed runtime, optional sharp/SWC selection by name, and held-lane reachability stay UNKNOWN unless the authorized pass obtains a primary source that actually answers them. This plan does not expect the pass to obtain deployed bytes. Unknown deployment keeps exposure bucket U and does not lower priority. Workspace installed consistency stays **UNVERIFIED** and is not inferred from the hidden lockfile.
+- The builtin npmrc remains on the config search path. The child boundary does not read or print it. A response that does not stay on `registry.npmjs.org` stops that npm source.
 - No exploit, payload, or vulnerability demonstration is in scope.
 - Author self-review is not acceptance. Cursor does not Ready, merge, close #1016, write `main`, or start a follow-up slice.
 
@@ -311,4 +390,4 @@ The TASK already forbids audit-time installation and already points at the exist
 
 ## 13. Decision packet requested from the Technical Lead
 
-Review this plan head. If it is accepted, authorize this same session to execute §§6–10 only, writing only the files in §7. If `origin/main` has moved, the authorization should say whether to continue on the drifted base or to wait. No Owner confirmation is required for that internal gate. No package upgrade is authorized by acceptance of this plan.
+R1 is incorporated in §§4–11: the sanitized child environment and the explicit full and omit-dev sets, the hidden-lockfile correction, the severity/context priority table, and snapshot restoration. Re-review this plan head. If it is accepted, authorize this same session to execute §§6–10 only, writing only the files in §7. If `origin/main` has moved, the authorization should say whether to continue on the drifted base or to wait. No Owner confirmation is required for that internal gate. No package upgrade is authorized by acceptance of this plan.
