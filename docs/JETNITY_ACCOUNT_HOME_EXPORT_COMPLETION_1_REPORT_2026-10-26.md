@@ -57,6 +57,18 @@ Passed with production CSS inlined from `.next/static/chunks/2ou75wl-hqib8.css` 
 
 Screenshots: `home-320.png`, `home-390.png`, `home-768.png`, `home-1440.png`, `home-1440-200-prozent.png`, `welt-320.png`.
 
+## R1 corrections
+
+Reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`.
+
+**R1.1.** `world-map.ts` still derives the global empty sentence. Presentation replaces it only when the loaded window is at the 200 cap: the compact map description, the visible empty hint, the planned total, and the atlas empty list. A whole reader result of zero trips may still say the account has no planned places. Successful empty visits stay “Noch keine Besuche bestätigt”. A failed visit stays a failure. A failed trip stays a failure and does not become an empty map.
+
+**R1.2.** Success, HTTP failure and the deadline update `role=status` or `role=alert` and do not call `focus`. Focus moves to the message only after an explicit cancel, and only while focus is still in the export control or has dropped because that control unmounted.
+
+**R1.3.** Before `createObjectURL`, `generatedAt` must be the canonical `Date#toISOString` form the server writes. Each row must be a non-array object with one trimmed non-empty `id`, with no repeated id inside that table. That is the existing server identity check. The client does not add columns, change the route, or apply a new cap. An invalid body does not download.
+
+`WorldExplorer.tsx` was edited before it was allowlisted. Root’s R1 addendum now grants coverage, empty-state and recovery presentation in that file only. Geography, search, markers and selection are unchanged. TASK V1 was not edited.
+
 ## Limits of that proof
 
 - 200% text is `documentElement.style.fontSize = '32px'`. It is not operating-system zoom and not a real device.

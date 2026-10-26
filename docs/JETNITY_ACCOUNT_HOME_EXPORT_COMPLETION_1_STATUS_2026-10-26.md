@@ -46,6 +46,18 @@ Node `v22.23.4`.
 
 The 11 failures are existing native PostgreSQL proofs. This VM has no `/usr/lib/postgresql/16/bin/initdb`. Errors are `ENOENT`, `local_proof_connection_override_forbidden`, or `NOT_VERIFIED: local PostgreSQL binaries are required`. They are not account-home or export tests. No hosted SQL was used.
 
+## R1 on the reviewed head
+
+Reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. R1.1, R1.2 and R1.3 are corrected on this branch and not rebased onto main.
+
+`origin/main` has since moved to `68435f012f27f599a1092699f5635aa88312ea67` through S. This branch was not synchronized, rebased or merged. S acceptance is still pending. Integration stays with Root.
+
+R1 proof, same mounted harness, production CSS, synthetic data, external network aborted, zero page errors:
+
+- 200 stage-less trips and a successful empty visit history no longer say the account has no places. A complete empty account still may. Trip failure and visit failure stay separate.
+- Export success, error and timeout after newer pointer or keyboard focus stay announced and do not move that focus. Keyboard cancel focuses the message.
+- `generatedAt: 'not-a-date'`, a null row, a scalar row and an array row do not produce a download event. A valid file does, with one object URL and one revoke. A cancelled older body does not download or settle the newer request. A body after unmount does not download.
+
 ## Stop
 
-Independent Technical-Lead review of the pushed head. Cursor does not mark Ready and does not merge. No follow-up slice.
+Independent Technical-Lead review of the new pushed head. Cursor does not mark Ready and does not merge. No follow-up slice.

@@ -57,6 +57,16 @@ Real account, private export body, hosted database, real device, OS zoom, full t
 
 P0 none. P1 none. P2 and P3 are in the self-review. Special Product-Owner gates are unchanged. No new cost, provider, or migration.
 
+## R1
+
+Corrections for R1.1, R1.2 and R1.3 sit on top of reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. The exact new head is the commit that contains this updated handoff, recorded in the author block of Draft #1036 after push.
+
+`origin/main` re-read after R1, not merged: `68435f012f27f599a1092699f5635aa88312ea67`. This branch was not rebased. Siblings were not merged.
+
+Runtime re-read from Cursor Cloud run-info: `originalModelName` `grok-4.7-high-fast`, session `bc-596c12d0-a045-48c8-ba62-db7ca4ca3809`.
+
+R1 gates: typecheck, five hygiene checks, and production build passed. Lint reported 0 errors and 181 warnings, one of them an unused audit binding that was removed after that run and not linted again. `npm test`: 7250 pass, 5 skipped, 11 fail, same missing PostgreSQL 16 binaries. Mounted audit passed after that removal, including stage-less 200, complete empty, trip and visit failures, focus retention, keyboard cancel, malformed rows, download content, and a late body after cancel or unmount.
+
 ## Gate
 
 Draft. Stop for independent Technical-Lead review.

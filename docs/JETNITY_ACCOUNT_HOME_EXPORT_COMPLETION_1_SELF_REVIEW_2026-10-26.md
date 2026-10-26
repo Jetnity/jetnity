@@ -40,6 +40,14 @@ This is the author's review. It is not a Technical-Lead PASS.
 - Sibling branches' trees beyond their open draft PR titles and #751's statement that main was still `6ae344f4453b16514f9048083bb8b07396135fa2`.
 - Native CI on this head.
 
+## R1
+
+The first delivery edited `WorldExplorer.tsx` before asking. That was outside the original allowlist. Root reviewed that coverage change and granted only coverage, empty-state and recovery presentation there. R1.1 uses that grant. No marker, search or geography work was added.
+
+R1.1 through R1.3 are addressed on top of `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. Main at `68435f012f27f599a1092699f5635aa88312ea67` was not merged.
+
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, and the 11 PostgreSQL failures are the missing local `initdb`. P0 and P1: none found in this correction.
+
 ## Recommendation
 
-Stop for independent exact-head review. Do not Ready. Do not merge. Do not start a follow-up slice.
+Stop for independent exact-head review of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.
