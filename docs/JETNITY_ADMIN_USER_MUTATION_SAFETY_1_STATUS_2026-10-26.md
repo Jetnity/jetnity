@@ -11,4 +11,4 @@ The owned mutation UI now requires explicit confirmation, keeps one in-flight op
 
 Draft PR #1035. Do not mark Ready. Do not merge. Do not start a follow-up slice.
 
-Exact tip hash is the branch head after the delivery commit and is copied into the PR author block.
+Implementation commit `6a7b4c6ce4b3b8ea11184976eddd5203a2ca90b8`, tree `99f0a7b9c73cfe0c9cbecec41badf7f3a5984a2a`. The pushed tip is in the PR author block.

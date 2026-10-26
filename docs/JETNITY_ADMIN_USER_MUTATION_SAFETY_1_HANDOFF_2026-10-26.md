@@ -15,9 +15,11 @@
 - Parent: #1026
 - Main re-read: `6ae344f4453b16514f9048083bb8b07396135fa2`
 - Seed: `9bb94a9f4a092f139e6ace3eb507a8158b9847f8`
-- Merge-base at handoff authoring: `6ae344f4453b16514f9048083bb8b07396135fa2`
-- Ahead/behind before the delivery commit: 1 / 0
-- The PR author block carries `git rev-parse HEAD`, the tree, and the ahead/behind count after push. Do not treat this paragraph as a substitute for that tip.
+- Merge-base: `6ae344f4453b16514f9048083bb8b07396135fa2`
+- Implementation commit: `6a7b4c6ce4b3b8ea11184976eddd5203a2ca90b8`
+- Implementation tree: `99f0a7b9c73cfe0c9cbecec41badf7f3a5984a2a`
+- Ahead/behind of that implementation commit: 2 / 0
+- This hash line is a follow-up on the same branch. The PR author block is the pushed tip (`git rev-parse HEAD`, tree, ahead/behind).
 
 ## Changed files
 
