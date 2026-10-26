@@ -357,7 +357,22 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
       schluessel: schluessel({ ...ortBasis, ortId: etappe.placeId, countryCode: null, art: 'ort_unbestaetigt' }),
     }
   }
-  if (isoLand(etappe.countryCode) && isoLand(ort.countryCode) && etappe.countryCode !== ort.countryCode) {
+  // Der kanonische Landescode gilt nur in der bereits gespeicherten Form:
+  // zwei Grossbuchstaben, wie ein erfolgreicher Import ihn ablegt. Die Etappe
+  // füllt ihn nicht auf, und Kleinbuchstaben oder Freitext werden nicht zu einem Land.
+  if (!isoLand(ort.countryCode)) {
+    return {
+      art: 'ort_unbestaetigt',
+      schluessel: schluessel({
+        ...ortBasis,
+        ortId: ort.id,
+        countryCode: null,
+        zielTyp: ort.typ,
+        art: 'ort_unbestaetigt',
+      }),
+    }
+  }
+  if (isoLand(etappe.countryCode) && etappe.countryCode !== ort.countryCode) {
     return {
       art: 'ort_widerspruch',
       schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: null, zielTyp: ort.typ, art: 'ort_widerspruch' }),

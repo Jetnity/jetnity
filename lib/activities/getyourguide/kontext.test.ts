@@ -424,6 +424,68 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(airport.art, 'nicht_unterstuetzt')
   })
 
+  test('ein ausgewählter Tag übernimmt keinen fehlenden kanonischen Landescode von der Etappe', () => {
+    const ziele = [
+      { typ: 'city' as const, zielArt: 'stadt' as const, id: panamaStadt.id, kennung: 'synthetic-public:panama-city' },
+      { typ: 'region' as const, zielArt: 'region' as const, id: 'geonames:9003703480', kennung: 'synthetic-public:panama-region' },
+      { typ: 'island' as const, zielArt: 'insel' as const, id: 'geonames:9003703481', kennung: 'synthetic-public:panama-island' },
+    ]
+    const fehlend: Array<string | null> = [null, '', 'pa', 'INVALID']
+    for (const ziel of ziele) {
+      const abbildung: readonly GygZielabbildung[] = [
+        ...ABBILDUNG.filter(
+          (eintrag) => !(eintrag.art === 'ort' && eintrag.ortId === ziel.id && eintrag.typ === ziel.typ),
+        ),
+        { art: 'ort', ortId: ziel.id, typ: ziel.typ, kennung: ziel.kennung },
+      ]
+      const planen = (countryCode: string | null, stufe: string | null) =>
+        gygPlanen(
+          eingabe({
+            orteLesen: () =>
+              synthetisch({
+                id: ziel.id,
+                name: 'Panama-Ziel',
+                typ: ziel.typ,
+                country: countryCode === 'PA' ? 'Panama' : null,
+                countryCode,
+              }),
+            abbildung,
+            umfang: 'tag',
+            angeforderteTagId: 'day-gyg-pa',
+            reise: reise([etappe('stage-gyg-pa', ziel.id, stufe)], [tag('day-gyg-pa', 'stage-gyg-pa')]),
+          }),
+        )
+      for (const countryCode of fehlend) {
+        const plan = planen(countryCode, 'PA')
+        assert.equal(plan.art, 'ort_unbestaetigt', `${ziel.typ}:${String(countryCode)}`)
+        assert.equal('bezug' in plan, false)
+        assert.equal(JSON.stringify(plan).includes('synthetic-public'), false)
+        assert.equal(JSON.stringify(plan).includes(ziel.kennung), false)
+      }
+      const positiv = planen('PA', 'PA')
+      assert.equal(positiv.art, 'bereit', ziel.typ)
+      if (positiv.art !== 'bereit') continue
+      assert.equal(positiv.zielArt, ziel.zielArt)
+      assert.equal(positiv.bezug.oeffentlicheKennung, ziel.kennung)
+      const ohneStufe = planen('PA', null)
+      assert.equal(ohneStufe.art, 'bereit', `${ziel.typ}:ohne-stufe`)
+      if (ohneStufe.art === 'bereit') assert.equal(ohneStufe.bezug.oeffentlicheKennung, ziel.kennung)
+      const widerspruch = planen('FR', 'PA')
+      assert.equal(widerspruch.art, 'ort_widerspruch', ziel.typ)
+      assert.equal(JSON.stringify(widerspruch).includes('synthetic-public'), false)
+    }
+    const land = gygPlanen(
+      eingabe({
+        orteLesen: () =>
+          synthetisch({ id: panamaStadt.id, name: 'Panama City', typ: 'city', country: null, countryCode: null }),
+        umfang: 'land',
+        reise: reise([etappe('stage-gyg-pa', panamaStadt.id, 'PA')]),
+      }),
+    )
+    assert.equal(land.art, 'ort_unbestaetigt')
+    assert.equal(JSON.stringify(land).includes('synthetic-public:panama'), false)
+  })
+
   test('dieselbe Stadt an zwei Etappen bleibt zwei Vorkommen', () => {
     const hin = gygPlanen(
       eingabe({
