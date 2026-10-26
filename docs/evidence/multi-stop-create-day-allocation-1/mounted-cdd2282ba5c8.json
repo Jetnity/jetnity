@@ -1,0 +1,99 @@
+{
+  "status": "PASS",
+  "caseCount": 10,
+  "pass": 10,
+  "fail": 0,
+  "cases": [
+    {
+      "name": "Tastatur verteilt 3/4/7 und der Gastgraph bleibt 14 Tage",
+      "pass": true,
+      "detail": {
+        "fokusNachSchalter": "zuordnung-aktiv",
+        "tage": 14
+      }
+    },
+    {
+      "name": "die ersten drei Tage bleiben explizit und elf Tage ohne Ziel",
+      "pass": true
+    },
+    {
+      "name": "ein widersprüchlicher Tag erhält den Fokus und wird nicht gespeichert",
+      "pass": true,
+      "detail": {
+        "fokus": "zuordnung-primary-von"
+      }
+    },
+    {
+      "name": "Vertauschen erhält die Zielbindung und Zurücksetzen löscht sie",
+      "pass": true,
+      "detail": {
+        "fokus": "zuordnung-aktiv"
+      }
+    },
+    {
+      "name": "das Konto erhält dieselbe Verteilung, ohne den Gastspeicher zu beschreiben",
+      "pass": true
+    },
+    {
+      "name": "367 Tage werden am Rückreisedatum abgewiesen und nicht gespeichert",
+      "pass": true,
+      "detail": {
+        "stand": "Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.",
+        "feldfehler": "Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.",
+        "fokus": "feld-ende"
+      }
+    },
+    {
+      "name": "367 Tage lösen keinen Konto-Schreibaufruf aus",
+      "pass": true
+    },
+    {
+      "name": "366 Tage bleiben vollständig und werden als Gast gespeichert",
+      "pass": true
+    },
+    {
+      "name": "366 Tage erreichen das Konto mit dem vollständigen Zeitraum",
+      "pass": true
+    },
+    {
+      "name": "schmale, große und vergrößerte Schrift bleibt im Zuordnungsbereich",
+      "pass": true,
+      "detail": [
+        {
+          "name": "narrow-320",
+          "ueberhang": 0
+        },
+        {
+          "name": "phone-390",
+          "ueberhang": 0
+        },
+        {
+          "name": "tablet-768",
+          "ueberhang": 0
+        },
+        {
+          "name": "desktop-1280",
+          "ueberhang": 0
+        },
+        {
+          "name": "narrow-320-200",
+          "ueberhang": 0
+        },
+        {
+          "name": "desktop-1280-200",
+          "ueberhang": 0
+        }
+      ]
+    }
+  ],
+  "externalRequests": [],
+  "author": "Jetnity Multi Stop Create Day Allocation 1 — Cursor Generation 1",
+  "session": "bc-a0a82333-7855-4ba7-b641-39af97c78458",
+  "model": "grok-4.7-high-fast",
+  "commit": "cdd2282ba5c82e492ce17cd0bc741d7fc4bfa58d",
+  "exit": 0,
+  "origin": "http://127.0.0.1:42533",
+  "hostedPersistence": "not invoked",
+  "stdoutTail": "TAP version 13\n# Subtest: Gemountete Tageszuordnung\n    # Subtest: Tastatur verteilt 3/4/7 und der Gastgraph bleibt 14 Tage\n    ok 1 - Tastatur verteilt 3/4/7 und der Gastgraph bleibt 14 Tage\n      ---\n      duration_ms: 2749.419026\n      type: 'test'\n      ...\n    # Subtest: die ersten drei Tage bleiben explizit und elf Tage ohne Ziel\n    ok 2 - die ersten drei Tage bleiben explizit und elf Tage ohne Ziel\n      ---\n      duration_ms: 2193.711454\n      type: 'test'\n      ...\n    # Subtest: ein widersprüchlicher Tag erhält den Fokus und wird nicht gespeichert\n    ok 3 - ein widersprüchlicher Tag erhält den Fokus und wird nicht gespeichert\n      ---\n      duration_ms: 2707.039457\n      type: 'test'\n      ...\n    # Subtest: Vertauschen erhält die Zielbindung und Zurücksetzen löscht sie\n    ok 4 - Vertauschen erhält die Zielbindung und Zurücksetzen löscht sie\n      ---\n      duration_ms: 3684.173189\n      type: 'test'\n      ...\n    # Subtest: das Konto erhält dieselbe Verteilung, ohne den Gastspeicher zu beschreiben\n    ok 5 - das Konto erhält dieselbe Verteilung, ohne den Gastspeicher zu beschreiben\n      ---\n      duration_ms: 2192.840492\n      type: 'test'\n      ...\n    # Subtest: 367 Tage werden am Rückreisedatum abgewiesen und nicht gespeichert\n    ok 6 - 367 Tage werden am Rückreisedatum abgewiesen und nicht gespeichert\n      ---\n      duration_ms: 2242.401128\n      type: 'test'\n      ...\n    # Subtest: 367 Tage lösen keinen Konto-Schreibaufruf aus\n    ok 7 - 367 Tage lösen keinen Konto-Schreibaufruf aus\n      ---\n      duration_ms: 2547.449779\n      type: 'test'\n      ...\n    # Subtest: 366 Tage bleiben vollständig und werden als Gast gespeichert\n    ok 8 - 366 Tage bleiben vollständig und werden als Gast gespeichert\n      ---\n      duration_ms: 1216.865799\n      type: 'test'\n      ...\n    # Subtest: 366 Tage erreichen das Konto mit dem vollständigen Zeitraum\n    ok 9 - 366 Tage erreichen das Konto mit dem vollständigen Zeitraum\n      ---\n      duration_ms: 2537.259428\n      type: 'test'\n      ...\n    # Subtest: schmale, große und vergrößerte Schrift bleibt im Zuordnungsbereich\n    ok 10 - schmale, große und vergrößerte Schrift bleibt im Zuordnungsbereich\n      ---\n      duration_ms: 2404.616107\n      type: 'test'\n      ...\n    1..10\nok 1 - Gemountete Tageszuordnung\n  ---\n  duration_ms: 24678.957384\n  type: 'suite'\n  ...\n1..1\n# tests 10\n# suites 1\n# pass 10\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 25142.428952\n",
+  "stderrTail": ""
+}

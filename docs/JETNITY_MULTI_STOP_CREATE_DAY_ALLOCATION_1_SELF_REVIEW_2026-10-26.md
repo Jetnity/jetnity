@@ -41,6 +41,10 @@ The reviewed head built a capped 366-day list for 2026-11-01 through 2027-11-02 
 
 The first creator sentence said “höchstens 365 Tage” while 366 included dates are valid. The creator sentence now names 366 calendar days, including departure and return. The reader sentence was not edited. `lib/trips/tage.ts` was changed before Root authorized it. The authorization covers only the additive guard, constants, and comment.
 
+## Integration
+
+The merge of accepted main did not change the create mapping, the 366/367 predicate, or the creator sentence. `package.json` is identical to main. The historical-control diff against main is still only the authorized `lib/trips/aktionen.ts` blob. Hosted persistence remains unverified. Local PostgreSQL 16 proofs still fail closed in this session.
+
 ## Author conclusion
 
 R1.1 matches the required end state on the owned create path. Ready and merge stay with the Technical Lead after an independent exact-head review. Do not rebase onto `68435f01` until Root gives a separate integration instruction.

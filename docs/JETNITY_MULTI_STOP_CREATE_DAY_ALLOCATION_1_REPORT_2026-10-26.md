@@ -56,6 +56,12 @@ Focused Node tests also cover leap boundaries: 2024-01-01..2024-12-31 and 2024-0
 
 `origin/main` re-read: `68435f012f27f599a1092699f5635aa88312ea67`. Merge-base `6ae344f4453b16514f9048083bb8b07396135fa2`. Not rebased.
 
+## Integration
+
+Accepted main `68435f012f27f599a1092699f5635aa88312ea67` was merged with `--no-ff` as `cdd2282ba5c82e492ce17cd0bc741d7fc4bfa58d`. The product diff against that main is the owned create path plus the one authorized action-blob inventory entry. `npm ci` used that lock and did not rewrite it. Installed: ws 8.21.0, source-map-js 1.2.2, zod 3.25.76, next 16.4.1, react 19.2.8, `@supabase/supabase-js` 2.57.2. Node v22.23.4.
+
+On that install: 311 focused tests passed. Mounted harness 10/10, evidence `docs/evidence/multi-stop-create-day-allocation-1/mounted-cdd2282ba5c8.json`. Typecheck, lint (0 errors, 180 warnings), five hygiene checks, and the production build exited 0. `npm test` exit 1: 7279 tests, 7263 pass, 11 fail, 5 skipped. All 11 failures are local PostgreSQL 16 proofs.
+
 ## Boundaries
 
 No hosted SQL, migration, Auth, RLS, provider, payment, package, or global continuity edit. No new duration contract. No Ready. No merge. No follow-up slice.

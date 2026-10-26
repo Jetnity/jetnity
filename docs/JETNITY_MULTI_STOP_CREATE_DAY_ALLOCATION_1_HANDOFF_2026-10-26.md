@@ -19,7 +19,27 @@ Seed `09381574876196b4538272c28e05fceae63e87b2`, seed tree `a5173a6623f2fdb53e5e
 Original baseline and merge-base: `6ae344f4453b16514f9048083bb8b07396135fa2`.  
 Reviewed head that produced R1: `54a06423b80f7c33495f57efbcdda6f7ba31da18`.
 
-The review head is the latest commit on this branch that contains this R1 handoff. Re-read `git rev-parse HEAD`, `git rev-parse HEAD^{tree}`, `git merge-base HEAD origin/main`, and ahead/behind against both that merge-base and `origin/main` before review.
+The review head is the latest commit on this branch that contains this integrated handoff. Re-read `git rev-parse HEAD`, `git rev-parse HEAD^{tree}`, `git merge-base HEAD origin/main`, and ahead/behind before review.
+
+## Delivery git — integrated
+
+Re-read on 26 October 2026 before the merge. Mode `NORMAL`. `origin/main` was exactly the accepted pin `68435f012f27f599a1092699f5635aa88312ea67`, tree `9f05dce58c9ad800c324db014e98a8aeb5039481`. It had not moved further. The merge is an ordinary `--no-ff` merge of that commit into this branch. No rebase, reset, or force push.
+
+- Merge commit: `cdd2282ba5c82e492ce17cd0bc741d7fc4bfa58d`
+- Merge tree: `75810fb13b57c450f9d01ffd83a62fe8360ff6ff`
+- Parents: `f30c838307fa86d1409a4954b443f1a48010b4ef` and `68435f012f27f599a1092699f5635aa88312ea67`
+- After the merge, before this handoff commit: merge-base equals `origin/main`, **8 ahead / 0 behind**
+- This handoff commit is the review head. After it lands, expect **9 ahead / 0 behind** the same main. Re-read HEAD before review.
+
+Integrated mounted proof: `docs/evidence/multi-stop-create-day-allocation-1/mounted-cdd2282ba5c8.json`, 10/10 PASS, commit `cdd2282ba5c82e492ce17cd0bc741d7fc4bfa58d`, `hostedPersistence: not invoked`. The 367-day field text is `Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.` The 366-day guest case still stores 366 days.
+
+Dependency provenance after `npm ci` on this lock, which matches accepted main and was not rewritten by the install: Node v22.23.4, npm 10.9.7, ws 8.21.0, source-map-js 1.2.2, zod 3.25.76, next 16.4.1, react 19.2.8, `@supabase/supabase-js` 2.57.2. `package.json` is not in the diff against main. This lane did not take dependency ownership.
+
+Focused regressions on that install: 311 pass, 0 fail. `npm run typecheck` exit 0. `npm run lint` exit 0, 0 errors, 180 warnings. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` exit 0. `npm run build` exit 0. `npm test` exit 1: 7279 tests, 7263 pass, 11 fail, 5 skipped. The 11 failures are the existing local PostgreSQL 16 proofs (`initdb` ENOENT, `NOT_VERIFIED`, or `local_proof_connection_override_forbidden`). No PostgreSQL package was installed and no hosted database was used.
+
+The diff against accepted main is the owned create/import files, the allocation harness and evidence, the five continuity docs, immutable TASK V1, and the one authorized `lib/trips/aktionen.ts` blob in `scripts/next-16-4-1-security-patch-p1/historical-control.json` (`4833378894aeedb152e093912574a698a9701b33` to `e0c03d9ea5fc1200774727e4b790511684020c86`). No other historical-control entry moved.
+
+Hosted CI and Preview for this head are pending until GitHub and Vercel finish the push. This handoff does not wait for them and does not add a later commit only to copy their result.
 
 ## Delivery git — R1
 
@@ -33,7 +53,7 @@ Re-read on 26 October 2026 after the R1 runtime commit and before this handoff c
 - ahead/behind versus merge-base: **4 ahead / 0 behind**
 - ahead/behind versus `origin/main`: **4 ahead / 6 behind**
 
-This handoff commit is the review head. It parents `c17257ad` and adds the R1 records, the mounted evidence, and one visibility change: `zeitraumDauer` is no longer exported, because `check:exports` rejected the unused export. Behavior matches the mounted runtime commit. After it lands, expect **5 ahead / 6 behind** `origin/main`, with the same merge-base, then re-read HEAD before review.
+That handoff commit was the review head at the R1 stop. It parents `c17257ad` and adds the R1 records, the mounted evidence, and one visibility change: `zeitraumDauer` is no longer exported, because `check:exports` rejected an unused export.
 
 Earlier delivery, superseded as the review head: runtime `5f81c30c9abf282ab92dfaef4b61fb0f1b4c2e19`, review `54a06423b80f7c33495f57efbcdda6f7ba31da18`, then 3 ahead / 0 behind main `6ae344f4`.
 
@@ -99,4 +119,4 @@ CI and Preview bind whatever head GitHub builds after push. Do not treat a pendi
 
 ## Next action
 
-Independent Technical-Lead review. Do not mark Ready. Do not merge. Do not start a follow-up slice.
+Root's independent review of the integrated head. Hosted CI and Preview are pending for that head. Do not mark Ready. Do not merge. Do not start a follow-up slice.
