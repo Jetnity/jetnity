@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Next actor:** ChatGPT / Technical Lead, for an independent exact-head review of Draft PR #1036 after this integration. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
+**Next actor:** ChatGPT / Technical Lead, for a full independent re-gating of Draft PR #1036 after R2. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
 
 ## Session
 
@@ -27,6 +27,11 @@
 | Proof tree | `e50bd37d337968788c0eb64c4b2911af463f8eb8` |
 | Merge-base | `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` |
 | Ahead / behind at the proof commit | 11 / 0 |
+| R2 reviewed head | `33d2874493ffe41aef6f621fa4d2a67cd5263edf` |
+| R2 reviewed tree | `d4e7a9bac2b46165ee8f11e0ea19697eb32d5882` |
+| R2 correction | `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde` |
+| R2 correction tree | `2c7efb77605c6d6587232920997321dde2f15820` |
+| Ahead / behind at the correction | 13 / 0 |
 
 This file is updated by the documentation commit on top of the proof commit, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
 
@@ -36,7 +41,9 @@ Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@
 
 - `db09b714d4fe57459e37b672fef603853b66d0d4` — merge of accepted U main, no conflicts
 - `d5b7bf3392bca6ed4d9d675d3d1b053c87d466bd` — mounted blank id, duplicate id, and a row in all 13 tables; unused window-hint import removed
-- this documentation commit — PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
+- `33d2874493ffe41aef6f621fa4d2a67cd5263edf` — integration handoff
+- `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde` — R2: Home action labels stay inside their buttons for a valid 116-character title
+- this documentation commit — R2 in PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
 
 ## Owned diff against accepted main
 
@@ -67,8 +74,14 @@ Real account, private export body, hosted database, real device, OS zoom, full t
 
 P0 none. P1 none. P2 and P3 are in the self-review. Special Product-Owner gates are unchanged, including #917 hosted STOP, #748 personal-browser suspension, Official Truth and provider hard-off, noindex and budget. No new cost, provider, or migration.
 
+## R2
+
+The next-trip actions no longer use a shrinking `xl:w-56` column or a fixed `h-11`. A 116-character title, which is inside the existing 120-character limit, keeps “Reise fortsetzen” and “Alle Reisen” inside their link boxes at 1440 with a 16px and a 32px root. Enter still requests `/reisen/r0` once. The older 215-character fixture remains, labelled as stress outside that limit. Before screenshots are kept beside the new ones. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
+
+R2 gates on this session: production build pass; focused account tests 35 pass; mounted audit pass; lint 0 errors and 175 warnings; five hygiene checks pass. `npm test`: 7308 pass, 5 skipped, 11 fail, same missing local PostgreSQL 16. No hosted SQL.
+
 ## Gate
 
-Draft. Stop for independent Technical-Lead review. CI and Preview can be added later as a PR comment.
+Draft. Stop for Root’s full independent re-gating. CI and Preview can be added later as a PR comment.
 
 **do not mark Ready · do not merge · do not start a follow-up slice**

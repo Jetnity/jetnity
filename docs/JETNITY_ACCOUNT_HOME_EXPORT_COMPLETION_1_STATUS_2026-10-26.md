@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Status:** integrated onto accepted U main. Local proof is on this branch. Draft. No final Technical-Lead PASS. Not Ready. Not merged to main.
+**Status:** R2 Home action labels are corrected on top of the integrated head. Draft. No final Technical-Lead PASS. Not Ready. Not merged to main.
 
 ## Identity
 
@@ -68,6 +68,18 @@ The 11 failures are existing native PostgreSQL proofs. This VM has no `/usr/lib/
 
 Mounted audit, synthetic fixtures, external network aborted, zero page errors: 21 export requests, 3 downloads, 3 object-URL revokes. The valid download's file contents match one row in all 13 tables. Blank id, duplicate id, null, scalar, array and `not-a-date` produce no download.
 
+## R2
+
+Reviewed head `33d2874493ffe41aef6f621fa4d2a67cd5263edf`, tree `d4e7a9bac2b46165ee8f11e0ea19697eb32d5882`. A valid 116-character title (`('Lissabon '.repeat(13)).trim()`, inside `GRENZEN.titel` of 120) let “Reise fortsetzen” paint outside its button at 1440, at 16px and at a 32px root. The same dimensions exist on accepted main. This lane owns the Home card, so the layout is corrected here. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
+
+The action column no longer shrinks (`xl:shrink-0`, no `min-w-0`). The links use a minimum height instead of a fixed height, and the labels can wrap. The title, the labels and the destinations are unchanged. Nothing is clipped or ellipsized.
+
+Correction commit `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde`, tree `2c7efb77605c6d6587232920997321dde2f15820`, parent `33d2874493ffe41aef6f621fa4d2a67cd5263edf`, 13 ahead / 0 behind accepted main. The documentation commit on top of it is the delivery head and is named in the PR author block.
+
+The 215-character title (`repeat(24)`) stays in the audit as stress evidence only. It is outside the 120-character contract. The before screenshots are `home-1440-before-r2.png` and `home-1440-200-prozent-before-r2.png`. The valid case is `home-1440-titel-116.png` and `home-1440-titel-116-200-prozent.png`.
+
+Mounted audit on the rebuilt CSS (101,432 characters): the 116-character title at 1440 keeps both labels inside their link boxes at 16px and 32px, the links stay inside the card and do not overlap, and Enter requests `/reisen/r0` once. The same containment check passes for the 215-character stress title at 320, 390, 768 and 1440, including 32px at 1440. Export and window cases are unchanged: 21 requests, 3 downloads, 3 revokes, 0 page errors.
+
 ## Stop
 
-Independent Technical-Lead review of the pushed head. Cursor does not mark Ready and does not merge. No follow-up slice. CI and Preview may be reported later as a PR comment, not as another docs-only commit.
+Independent re-gating of the pushed head. Cursor does not mark Ready and does not merge. No follow-up slice. CI and Preview for this head are pending.

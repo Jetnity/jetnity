@@ -48,6 +48,12 @@ R1.1 through R1.3 were addressed on `c020b7cb81616d469d8021cb33395afe653ef659` a
 
 P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this head are pending. `weltMusterId` is still an unused import in `AccountWeltKarte.tsx`; it was already unused on baseline `6ae344f4453b16514f9048083bb8b07396135fa2` and was not removed here. P0 and P1: none found in this integration.
 
+## R2
+
+P2 from the integrated head: the Home action labels could paint outside their buttons when the title was a valid 116 characters. Corrected in `AccountUebersicht.tsx` only. The 215-character audit title is retained and labelled as stress, not as a valid stored title. Before screenshots are kept. No global CSS. Accepted main did not move and was not merged again.
+
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this head are pending. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
+
 ## Recommendation
 
-Stop for independent exact-head review of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.
+Stop for Root’s full independent re-gating of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.

@@ -75,6 +75,16 @@ Reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. Those corrections are 
 
 `WorldExplorer.tsx` was edited before it was allowlisted. Root’s R1 addendum now grants coverage, empty-state and recovery presentation in that file only. Geography, search, markers and selection are unchanged. TASK V1 was not edited.
 
+## R2 Home actions
+
+Reviewed head `33d2874493ffe41aef6f621fa4d2a67cd5263edf`. At `xl`, the next-trip row put a long title beside an action column of `xl:w-56` that was also `min-w-0`, so the column could shrink below the label. The links used a fixed `h-11` and did not wrap. Root measured “Reise fortsetzen” outside the dark link at 1440 for `('Lissabon '.repeat(13)).trim()` (116 characters, within `GRENZEN.titel` of 120), at 16px and at a 32px root. The same measurement exists on accepted main `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. Navigation still reached `/reisen/r0`. This was readability, and it is inside the owned Home card.
+
+The column is now `xl:w-56 xl:shrink-0` without `min-w-0`. Each link is `min-h-11` with vertical padding, and the label is a wrapping span. The visible words and the hrefs are unchanged. No ellipsis, no overflow clipping, no smaller type, no hidden action, and no change to the title limit.
+
+The audit’s older long title is `('Lissabon '.repeat(24)).trim()` (215 characters). That remains, and the protocol calls it stress evidence outside the 120-character contract. It is not described as a valid stored title. The pre-correction 1440 screenshots are `home-1440-before-r2.png` and `home-1440-200-prozent-before-r2.png`.
+
+The valid case is mounted at 1440×900 with production CSS. Text rectangles of both labels stay inside the link boxes at 16px and 32px. The links stay inside the card, do not overlap, and meet a 2.75rem minimum box. Enter on “Reise fortsetzen” requests `http://127.0.0.1:8765/reisen/r0` once. The same label check also passes on the 215-character stress fixture at 320, 390, 768 and 1440, including 32px at 1440. A page-level scrollWidth check is still present and is not treated as proof of the labels.
+
 ## Limits of that proof
 
 - 200% text is `documentElement.style.fontSize = '32px'`. It is not operating-system zoom and not a real device.

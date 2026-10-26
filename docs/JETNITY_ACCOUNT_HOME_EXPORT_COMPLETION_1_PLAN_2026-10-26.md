@@ -25,6 +25,10 @@ Source-confirmed against seed `8a9e5479337090079839629715f9a3f1a03116f9`, parent
 
 Node tests for window copy, calendar arithmetic, export validation and pagination fixtures (0/1000/1001/20000/20001, order arguments, duplicate, nonprogress, invalid id, page error). Mounted Playwright harness with project CSS, synthetic fixtures, external network aborted: midnight and offset, focus after a multi-day jump, cleanup, 320/390/768/1440, 200% root font size, keyboard, export outcomes.
 
+## R2, 26 October 2026
+
+The integrated Home card let a valid 116-character title shrink the action column until the labels left the buttons. The correction stays in `AccountUebersicht.tsx`: the column does not shrink, the links can grow and wrap, and the mounted audit measures the text rectangles. The 215-character fixture stays as labelled stress. No second merge of main.
+
 ## Integration, 26 October 2026
 
 Root accepted U at main `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. This lane merged that commit once, history preserved, and did not edit S, T, A or U files, the lock, or TASK V1. The proof on top of the merge re-runs the mounted R1 cases and adds a blank id, a within-table duplicate id, and a downloaded file with one row in all 13 tables. Details are in the status and handoff.
