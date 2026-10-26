@@ -1,0 +1,65 @@
+{
+  "synthetisch": true,
+  "liveAnbieter": false,
+  "anwendungRenderer": null,
+  "viewports": [
+    "320",
+    "390",
+    "768",
+    "1440",
+    "320-200",
+    "390-200"
+  ],
+  "netz": [
+    "http://127.0.0.1:37515/anwendung",
+    "http://127.0.0.1:37515/app.css",
+    "http://127.0.0.1:37515/anwendung.js",
+    "http://127.0.0.1:37515/pruefung",
+    "http://127.0.0.1:37515/app.css",
+    "http://127.0.0.1:37515/pruefung.js"
+  ],
+  "bericht": {
+    "laden": 7,
+    "entsorgen": 7,
+    "abgebrochen": 7,
+    "bezuege": [
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:phuket-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      },
+      {
+        "anbieter": "getyourguide",
+        "umfang": "stadt",
+        "oeffentlicheKennung": "synthetic-public:bangkok-city"
+      }
+    ]
+  },
+  "fehler": [],
+  "seitenfehler": []
+}
