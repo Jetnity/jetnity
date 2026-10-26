@@ -26,7 +26,7 @@ Passed: `npm ci`, setup check, operating-mode guard, typecheck, lint, five hygie
 
 ## Still open for Technical Lead
 
-Exact-head review of the final documentation head. Native CI and Preview on that head. The docs commit after verification does not change `package-lock.json` blob `abffddeeea0cc1f5507280f82ebf71fd56052fa8`.
+Exact-head review. GitHub Actions run 40305882452 succeeded on `87b1522b5a30033b51969afd065a9e215104030f`, including Tests and Production build. Vercel reported a completed deployment for that SHA. Neither result is a Technical-Lead PASS. `package-lock.json` blob `abffddeeea0cc1f5507280f82ebf71fd56052fa8` is unchanged.
 
 Evidence correction after Technical-Lead review of `c04dce53930092588f237644d7f20223bec71e2e`: the npm copies are `ws@8.21.0` and `source-map-js@1.2.2`. `next/dist/compiled/ws` is a separate bundle with no version field, SHA-256 `af354cb13a11abe910cdbcb70943cb450b01b24f322026ae3f88d428d148395d`, 45,840 bytes. Its version and advisory disposition stay UNKNOWN. Next `16.4.1` and `package.json` stay unchanged. Zod stays open. Registry `ws` latest `8.22.0` was not selected.
 

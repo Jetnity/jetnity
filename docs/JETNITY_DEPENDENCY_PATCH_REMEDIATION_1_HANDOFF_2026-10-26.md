@@ -70,7 +70,18 @@ Not checked: hosted DB/RLS, Production alias, real accounts, provider calls, liv
 
 ## CI / Preview
 
-At this correction, GitHub Actions run `40305436091` for head `e7ea9515` was still in progress: https://github.com/Jetnity/jetnity/actions/runs/40305436091. The earlier runs on this branch were cancelled. Vercel comments already on #1028 belong to earlier heads. CI and Preview for the correction head are not yet a Technical-Lead PASS.
+GitHub Actions run [40305882452](https://github.com/Jetnity/jetnity/actions/runs/40305882452) completed with conclusion **success** for head `87b1522b5a30033b51969afd065a9e215104030f`.
+
+| Job | Conclusion |
+| --- | --- |
+| Auth-Konfiguration gegen config.toml | success, 2026-10-26T10:16:02Z–10:16:39Z |
+| Typecheck, Lint & Build | success, 2026-10-26T10:16:02Z–10:35:45Z, including the Tests step and Production build |
+
+Earlier Actions runs on this branch were cancelled when later pushes arrived. The job log also shows existing annotation warnings (Node.js 20 action runtime deprecation, and lint notes in files this lane did not change). Those annotations did not fail the jobs.
+
+Vercel commit status on that same SHA: **success**, description "Deployment has completed", updated 2026-10-26T10:15:18Z, inspector https://vercel.com/jetnity-e1b93c82/jetnity-app/9oRvtCQdqzKihYxzD6LP1c755nPs. The check "Vercel Preview Comments" also succeeded. This is a Preview deployment for the PR head at that moment, not Production acceptance and not a Technical-Lead PASS.
+
+`origin/main` was fetched again after that run: still `6ae344f4453b16514f9048083bb8b07396135fa2`, merge-base unchanged, **0 behind / 4 ahead** at `87b1522b`. The commit that records this CI result is docs-only. The success stays bound to `87b1522b` and lock blob `abffddeeea0cc1f5507280f82ebf71fd56052fa8`. Confirm the lockfile is unchanged with `git diff 87b1522b5a30033b51969afd065a9e215104030f HEAD -- package-lock.json package.json`.
 
 ## Gate
 
