@@ -203,17 +203,15 @@ async function wartenAufAngebot(page: Page): Promise<Angebot> {
   return { bilder, links, texte, hoehe, karten }
 }
 
-function istKonkretesProdukt(url: string): boolean {
-  try {
-    const adresse = new URL(url)
-    const partner = adresse.searchParams.get('partner_id') ?? adresse.searchParams.get('partner')
-    if (partner !== '2MQHT6Z') return false
-    if (adresse.hostname.startsWith('partner.')) return false
-    if (/-t\d+/.test(adresse.pathname)) return true
-    return adresse.searchParams.has('et') && !/-l\d+\/?$/.test(adresse.pathname)
-  } catch {
-    return false
-  }
+function zielArt(url: string, text: string): 'ausfall' | 'suchliste' | 'angebot' | 'andere' {
+  if (/An error occurred|We’ll be right back|We'll be right back/i.test(text)) return 'ausfall'
+  const partner = /partner_id=2MQHT6Z|partner=2MQHT6Z/.test(url)
+  if (!partner) return 'andere'
+  const liste = /Ergebnisse|results|Aktivitäten|activities|weitere|See all|Alle Aktivitäten|\d+\s+(results|Ergebnisse)/i.test(text)
+  const einzel = /Check availability|Verfügbarkeit prüfen|In den Warenkorb|Add to cart/i.test(text)
+  if (liste) return 'suchliste'
+  if (einzel) return 'angebot'
+  return 'andere'
 }
 
 async function produktOeffnen(page: Page): Promise<{ url: string; titel: string; text: string } | null> {
@@ -352,6 +350,10 @@ async function main() {
   const vorher = netz.filter((eintrag) => eintrag.host.includes('getyourguide'))
   pruefe(vorher.length === 0, `Anbieteranfragen vor dem Anzeigen: ${vorher.length}`)
   pruefe((await page.locator('iframe').count()) === 0, 'Ein Rahmen existiert vor dem Anzeigen')
+  pruefe(
+    (await page.getByText('Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen.').count()) > 0,
+    'Der Hinweis auf eine mögliche Ergebnisliste fehlt',
+  )
 
   await page.locator('[data-szenario="nativ"]').getByRole('button', { name: 'Für diesen Tag suchen' }).click()
   await page.getByText('Synthetische Bootsfahrt').waitFor({ timeout: 8000 })
@@ -386,9 +388,10 @@ async function main() {
   )
   await page.setViewportSize({ width: 1440, height: 900 })
   const produkt = await produktOeffnen(page)
+  const art = produkt ? zielArt(produkt.url, produkt.text) : 'andere'
   pruefe(
-    Boolean(produkt && istKonkretesProdukt(produkt.url) && /€|CHF|EUR|Check availability|Verfügbarkeit/.test(produkt.text)),
-    `Die Produktaktion öffnet kein konkretes Angebot mit Partner 2MQHT6Z. Gelandet: ${produkt?.url ?? 'keine Navigation'} Titel: ${produkt?.titel ?? ''} Text: ${produkt?.text ?? ''}`,
+    art === 'suchliste' || art === 'angebot',
+    `Der Angebotsklick öffnet kein beobachtbares GetYourGuide-Ziel mit Partner 2MQHT6Z. Art: ${art}. Gelandet: ${produkt?.url ?? 'keine Navigation'} Titel: ${produkt?.titel ?? ''} Text: ${produkt?.text ?? ''}`,
   )
 
   const beschnitt = await page.evaluate(() => {
@@ -445,7 +448,9 @@ async function main() {
     produkt: produkt?.url ?? null,
     produktTitel: produkt?.titel ?? null,
     produktText: produkt?.text ?? null,
-    produktIstKonkret: Boolean(produkt && istKonkretesProdukt(produkt.url)),
+    zielArt: art,
+    v2Navigation: art === 'suchliste' || art === 'angebot',
+    v1Abschnitt93: art === 'angebot' ? 'eine beobachtete Angebotsseite, kein Abschluss von V1 9.3' : 'nicht erfüllt',
     karten: { stadt: stadt.karten, insel: insel.karten, land: land.karten },
     links: { stadt: stadt.links, insel: insel.links, land: land.links },
     anbieterVorKlick: vorher.length,

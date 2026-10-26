@@ -22,6 +22,8 @@ Implementation commit: `b2ae807ffd9e5331154a24bb469e1d480595857b`. First handoff
 
 This is not a Root PASS. Do not mark Ready. Do not merge. Do not start a follow-up slice.
 
+TASK V2 addendum `3eddc72ade423afa1dd5109f3bbd625014495f7e` is adopted. For this slice, an offer-card click that opens GetYourGuide’s own page and keeps `partner_id=2MQHT6Z` is the bounded navigation result. A search list is reported as a search list. It does not satisfy TASK V1 section 9.3 and it does not close #1023 V5. The UI says an offer click can open a result list first.
+
 ## What the next reviewer has
 
 An explicit load path for the documented manual activities widget. `data-gyg-q` is built from the confirmed public name and `landName(code, 'de')`. A country with no days uses only the country label. Place type stays in the Jetnity context key and is not sent as a provider parameter. The empty identifier map is not consulted. Partner `2MQHT6Z`, campaign `jetnity_activities`, locale `de-CH` and three items are fixed. The brand link is `https://www.getyourguide.com/`.

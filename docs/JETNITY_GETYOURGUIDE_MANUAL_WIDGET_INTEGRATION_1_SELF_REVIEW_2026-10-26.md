@@ -10,7 +10,9 @@ The search configuration never stores a search string as a GetYourGuide location
 
 `credentialless` was added after a same-context cookie was observed on the embed request. The following framed proof no longer reported that canary on iframe embed requests. `allow-same-origin` was not added. The widget still rendered offers with that attribute. An earlier parent console recorded `SecurityError` for `localStorage` inside the opaque frame; the widget still drew offers. The final proof’s parent console list was empty.
 
-## What does not hold as acceptance
+## What does not hold as V1 section 9.3
+
+TASK V2 replaces only the mandatory product-detail destination for #1040. A search list with `partner_id=2MQHT6Z` is the bounded result. The earlier Arrábida page, when it rendered, was one observed detail body at a search-shaped URL. It is not a guarantee and it does not close V5. The final saved product screenshot of the previous proof was an outage and stays an outage. The visible copy now says an offer click can open a GetYourGuide result list first.
 
 The final product-page artifact is an outage page. The URL is the specific offer URL and keeps `partner_id=2MQHT6Z`, but the body does not show the tour. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk. A reviewer should treat the product-body requirement as unproved on the delivered screenshot and should rerun the proof when GetYourGuide answers that URL again.
 

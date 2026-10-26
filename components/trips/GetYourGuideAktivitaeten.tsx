@@ -510,6 +510,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
           >
             Datenschutz von GetYourGuide
           </a>
+          {'. '}
+          Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen. Dort wählst du dein Angebot aus.
           {entfernenSichtbar
             ? ' Entfernen beendet die weitere Einbindung. Bereits gesendete Anfragen werden dadurch nicht gelöscht.'
             : ' Entfernen beendet die weitere Einbindung und löscht keine bereits gesendeten Anfragen.'}

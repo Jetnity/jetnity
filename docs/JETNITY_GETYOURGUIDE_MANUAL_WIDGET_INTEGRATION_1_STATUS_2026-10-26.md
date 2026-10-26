@@ -22,9 +22,11 @@ The delivering review head is the branch tip that contains this file. Its exact 
 
 Public Lisbon, Crete and Portugal loads showed provider images and named offers inside the isolated frame. Before the load action the proof recorded zero GetYourGuide requests. Removal, a switch to Crete, and a switch back to Lisbon did not revive the old frame. The native synthetic card stayed. A parent canary in the URL, title, DOM and storage did not appear in the embed URL, the embed HTML, or captured provider URLs. With `credentialless`, the framed embed request did not carry that cookie.
 
-## What is not shown on the final proof run
+## V2 boundary
 
-The offer click reaches `https://www.getyourguide.com/s/?et=935537&...&partner_id=2MQHT6Z&cmp=jetnity_activities`. An earlier run in this session rendered the tour “From Lisbon: Arrábida and Sesimbra Full-Day Tour” (€95, 10 hours, Check availability) at that URL. Later loads of that URL, including the final proof, rendered GetYourGuide’s outage page (“An error occurred. We’ll be right back.”) with Ray IDs `a50cf48ddecf22ce`, `a50cf514af095a3a` and `a50cf72beadbcf74`. The final `produkt-aktion.png` is that outage, not the tour. The proof script exits 1 for that reason. No purchase was made.
+TASK V2 addendum `3eddc72ade423afa1dd5109f3bbd625014495f7e` replaces only the mandatory selected-product-detail destination for this slice. A search list opened from an offer card, with `partner_id=2MQHT6Z`, is the bounded navigation result. It does not satisfy TASK V1 section 9.3 and does not close parent #1023 V5. The visible sentence is: “Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen. Dort wählst du dein Angebot aus.” An outage page stays an outage.
+
+The offer click reaches `https://www.getyourguide.com/s/?et=935537&...&partner_id=2MQHT6Z&cmp=jetnity_activities`. An earlier run in this session rendered the tour “From Lisbon: Arrábida and Sesimbra Full-Day Tour” (€95, 10 hours, Check availability) at that URL. Later loads, including the proof after the V2 copy, rendered GetYourGuide’s outage page. Ray IDs include `a50cf48ddecf22ce` and `a50d03fc3fa6ad68`. That is an outage, not a search list and not V1 section 9.3. The proof script exits 1 for that reason. No purchase was made.
 
 ## Boundaries
 
