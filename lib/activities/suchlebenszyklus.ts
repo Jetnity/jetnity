@@ -306,9 +306,11 @@ export function uebernahmeHinweisSetzen(
 
 /**
  * Eine Meldung gehört zur Operation, nicht zur gerade sichtbaren anderen Karte.
- * `karten === null` ist die untätige Tagesfläche ohne neuere Antwort: dort bleiben
- * die Meldungen dieses Tages sichtbar. Eine laufende oder fertige neuere Antwort
+ * `karten === null` ist die untätige Tagesfläche ohne neuere Antwort: dort bleibt
+ * jeder verschiedene Satz dieses Tages einmal sichtbar. Dieselbe Meldung wird
+ * nicht für jede Operation wiederholt. Eine laufende oder fertige neuere Antwort
  * zeigt eine Meldung nur neben der Karte derselben Operation.
+ * Das Schloss der Operation bleibt in beiden Fällen unberührt.
  */
 export function uebernahmeHinweisTexte(
   hinweise: Readonly<Record<string, UebernahmeHinweisEintrag>>,
@@ -331,5 +333,12 @@ export function uebernahmeHinweisTexte(
     }
     return { allgemein: [], jeKarte }
   }
-  return { allgemein: tag.map(([, eintrag]) => eintrag.text), jeKarte: {} }
+  const allgemein: string[] = []
+  const gesehen = new Set<string>()
+  for (const [, eintrag] of tag) {
+    if (gesehen.has(eintrag.text)) continue
+    gesehen.add(eintrag.text)
+    allgemein.push(eintrag.text)
+  }
+  return { allgemein, jeKarte: {} }
 }

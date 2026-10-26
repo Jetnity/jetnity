@@ -392,6 +392,23 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     assert.deepEqual(beide.allgemein, [])
     const untätig = uebernahmeHinweisTexte(bleibt, { ...tag, karten: null })
     assert.deepEqual(untätig.allgemein, [ACTIVITY_HINWEIS_GEMELDET])
+    const gleicheMeldung = uebernahmeHinweisSetzen(bleibt, 'op-c', {
+      ...tag,
+      text: ACTIVITY_HINWEIS_GEMELDET,
+      seq: 4,
+    })
+    const mitOffen = uebernahmeHinweisSetzen(gleicheMeldung, 'op-d', {
+      ...tag,
+      text: ACTIVITY_HINWEIS_UNBESTAETIGT,
+      seq: 5,
+    })
+    assert.deepEqual(uebernahmeHinweisTexte(mitOffen, { ...tag, karten: null }).allgemein, [
+      ACTIVITY_HINWEIS_GEMELDET,
+      ACTIVITY_HINWEIS_UNBESTAETIGT,
+    ])
+    const nurAndereKarte = uebernahmeHinweisTexte(mitOffen, { ...tag, karten: ['op-b'] })
+    assert.deepEqual(nurAndereKarte.allgemein, [])
+    assert.deepEqual(nurAndereKarte.jeKarte, {})
     const andererTag = uebernahmeHinweisTexte(bleibt, { ...tag, dayId: 'day-2', karten: null })
     assert.deepEqual(andererTag.allgemein, [])
     const offen = uebernahmeHinweisSetzen(bleibt, 'op-a', {
