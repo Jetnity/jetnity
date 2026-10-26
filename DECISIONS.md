@@ -5837,6 +5837,39 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0221 – GetYourGuide-Anzeige bleibt geschlossen
+
+**Datum:** 26. Oktober 2026
+**Status:** Nur Code, inaktiv. Kein Live-Anbieter, kein Widget, kein Analyzer, kein Merge-PASS. Draft PR #1039, Tracking #1038, Eltern #1023 V5. Verbindlich: `docs/JETNITY_GETYOURGUIDE_VISUAL_DISCOVERY_FOUNDATION_1_TASK_V1_2026-10-26.md`.
+
+**Entscheidung:**
+
+1. GetYourGuide erhält eine eigene Naht in der bestehenden Aktivitätsfläche. Das ist kein generisches Widget-System, kein zweites Aktivitätsschema und keine Änderung der nativen Suche.
+2. Die Anwendung bleibt geschlossen. Die Abbildung ist leer, der Renderer ist `null`, und keine Umgebungsvariable, kein URL-Parameter, kein Speicher und kein clientseitiges Kennzeichen öffnet sie.
+3. Der angeforderte Tag bleibt der angeforderte Tag. Die native Suche darf bei einer ungültigen Tag-ID weiter den ersten Tag verwenden. GetYourGuide übernimmt diesen Ersatz nicht und liest dafür keinen Ort.
+4. Ein bestätigtes Land ohne Reisetage bleibt ein Land. Eine Stadt wird nicht still zu ihrem Land. Mehrere bestätigte Länder bleiben eine Auswahl. Name, Koordinate und `stage:<id>` sind keine Zuordnung.
+5. Ein Renderer, den nur die lokale Prüfung einsetzt, erhält genau drei öffentliche Felder: Anbieter, Umfang und öffentliche Kennung. Reise-, Personen- und private Kennungen, Datum, Teilnehmer und Währung gehen nicht hinüber.
+6. Laden setzt eine offene Freigabe und eine ausdrückliche Aktion voraus. Mount, Hover und ein Wechsel des Ziels laden nicht. Ein verspäteter Abschluss gilt nur für dieselbe Generation desselben Kontextes.
+7. Das Erscheinen einer Ressource ist keine Aussage über Anzahl, leeren Katalog, Verfügbarkeit oder Buchung.
+
+**Kontext:** Der Product Owner will bildhafte Angebote von GetYourGuide in der bestehenden Aktivitätsfläche, auch als Landesidee vor festen Tagen. Die öffentliche Anbieterdokumentation legt das manuelle Markup, die Aktualisierung in einer SPA, die Länderkennung und die Analyzer-Grenze nicht fest. Dieser Schritt baut deshalb die Jetnity-Seite und lässt die echte Einbindung geschlossen.
+
+**Alternativen:** Geratenes manuelles Widget-Markup einbauen. Das automatische Widget verwenden. Eine allgemeine Einwilligungsplattform anlegen. Ortsnamen über den bestehenden GeoNames-Bestand auflösen. In diesem Slice einen gehosteten Ortsabruf ausführen.
+
+**Begründung:** Ein geratenes Markup würde eine Anbietergrenze erfinden. Ein automatisches Widget würde private Reiseinhalte absuchen. Die native Suche bleibt unangetastet, weil ihre Tag-Ersatzregel für GetYourGuide die falsche Zielwahrheit wäre. Die Prüfung benutzt synthetische lokale Inhalte und beweist das Verhalten, nicht ein lebendes Angebot.
+
+**Konsequenzen:** In der Anwendung steht, dass Bildangebote noch nicht eingerichtet sind. Eine spätere Aktivierung braucht das offiziell erzeugte manuelle Widget, die Analyzer- und Einwilligungsgrenze und eine eigene Prüfung. Dieser Schritt enthält keine Migration, keinen Anbieteraufruf, kein Secret und keine neuen laufenden Kosten.
+
+**Präzisierung am 26. Oktober 2026 nach Review R1, weiterhin nur Code und geschlossen:**
+
+1. Jede gestartete Ladung besitzt einen eigenen Knoten. Wechsel, erneutes Laden, Entzug der Berechtigung und Aushängen trennen diesen Knoten ab und entsorgen genau diese Ladung. Eine verspätete Schreibung behält nur den bereits getrennten Knoten.
+2. Der Kontextschlüssel enthält den bestätigten Ortstyp und die öffentliche Kennung. Dieselbe Orts-ID als Stadt oder Region und eine geänderte Kennung verwerfen die alte Anzeige. Eine neue Abbildung mit demselben Inhalt tut das nicht.
+3. Eine unbekannte oder widersprüchliche weitere Etappe erzeugt keine automatische Ein-Land-Entscheidung. Eine ausdrücklich gewählte, tatsächlich bestätigte Länderoption bleibt davon getrennt. Die Prüfung gilt je Vorkommen, das Lesen derselben ID nur einmal. Am ausgewählten Tag gilt der kanonische Landescode nur in der bereits gespeicherten Form aus zwei Grossbuchstaben. Null, leer, kleingeschrieben oder anders geformt bleibt unbestätigt. Die Etappe füllt diesen Code nicht auf. Ein gültiger Code, der von der Etappe abweicht, bleibt ein Widerspruch. Es gibt dafür keine neue Länderliste.
+4. Die Anwendung übergibt keinen Ortsresolver. Die Prüfnaht darf eine verspätete exakte Bestätigung annehmen. Ein synchroner oder abgelehnter Lade- oder Bestätigungsfehler wird zum bestehenden deutschen Fehlerzustand, ohne den Text der Ausnahme zu zeigen. Eine erfüllte Ablehnung entsorgt genau diese Ladung sofort. Ihr mitgelieferter Text wird nicht angezeigt. Eine erfolgreiche Anzeige behält ihren Knoten. Überschrift und eigene Aktion bleiben bei grosser Schrift im eigenen Feld lesbar, ohne die native Fläche umzubauen.
+5. Work V2 ist als Nachweis empfangen. Die Beispielkennungen sind keine Laufzeitregistrierung und kein Testangebot. Die Anwendungsabbildung, der Renderer und der Resolver bleiben leer.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

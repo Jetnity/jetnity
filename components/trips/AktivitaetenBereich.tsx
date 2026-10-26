@@ -38,6 +38,7 @@ import {
   type UebernahmeRegister,
 } from '@/lib/activities/suchlebenszyklus'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
 import { ScrollRow } from '@/components/ui/scroll-row'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
@@ -159,6 +160,7 @@ export default function AktivitaetenBereich({
   const tagId = gesteuerteTagId ?? eigeneTagId
   const setTagId = onTagWechseln ?? setEigeneTagId
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? ersterTag
+  const angeforderteTagId = gesteuerteTagId ?? eigeneTagId
 
   if (reise.days.length === 0) {
     return (
@@ -177,6 +179,7 @@ export default function AktivitaetenBereich({
           Diese Reise hat noch keine Tage. Sobald ein Zeitraum feststeht, ordnet Jetnity Aktivitäten
           dem konkreten Tag zu – nicht als beliebige Liste.
         </p>
+        <GetYourGuideAktivitaeten key={reise.id} reise={reise} angeforderteTagId={null} />
       </section>
     )
   }
@@ -185,6 +188,7 @@ export default function AktivitaetenBereich({
     <ActivityTag
       reise={reise}
       tag={tag}
+      angeforderteTagId={angeforderteTagId}
       onTagWechseln={setTagId}
       onUebernehmen={onUebernehmen}
       onUebernahmeBeobachten={onUebernahmeBeobachten}
@@ -195,12 +199,14 @@ export default function AktivitaetenBereich({
 function ActivityTag({
   reise,
   tag,
+  angeforderteTagId,
   onTagWechseln,
   onUebernehmen,
   onUebernahmeBeobachten,
 }: {
   reise: Trip
   tag: TripDay | null | undefined
+  angeforderteTagId: string
   onTagWechseln: (id: string) => void
   onUebernehmen?: (
     etappe: TripStage,
@@ -557,6 +563,8 @@ function ActivityTag({
           {text}
         </p>
       ))}
+
+      <GetYourGuideAktivitaeten key={reise.id} reise={reise} angeforderteTagId={angeforderteTagId} />
     </section>
   )
 }
