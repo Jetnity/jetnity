@@ -32,14 +32,16 @@ Visible context is the canonical stage name, day title, day date, `trip.travelle
 
 ## Adoption recovery boundary
 
-Search epoch and generation own only the visible result. The adoption operation is separate: trip, stage, day, and option content. It does not include epoch or generation.
+Search epoch and generation own only the visible result. The adoption operation is separate: trip, stage, day, and the facts the existing writer snapshot stores. Those facts are the title through 120 characters, place, duration, rating, rating count, cancellation, timeslot, price, currency, provider, and externalRef. The operation does not include epoch, generation, the client option id, description, coordinates, categories, tags, labels, reasons, or konflikt. Labels, reasons, and konflikt are derived ranking presentation. A change in only those fields is the same operation. A different title, provider, externalRef, price, timeslot, or a different trip, stage, or day is a different operation. This is a local lock, not a new provenance or domain model.
+
+The handler still sends only when the complete visible card, including ranking fields, is the current result for the captured epoch and generation. That check is separate from the operation lock.
 
 The callback remains `onUebernehmen(etappe, tag, option): Promise<string | null>`.
 
 - The claim is stored in a ref before the callback runs. The same operation cannot be dispatched twice, including in the same tick.
 - The handler sends the captured option only when that exact content is still the visible result for the captured epoch and generation. A reused id with different content does not submit the old option. A stale handler does not send the newer content.
 - `finally` closes only that operation. `null` becomes callback-accepted and stays closed for this mount. Any other outcome, including a synchronous throw and an empty string, becomes unconfirmed and stays closed. Another operation is left untouched.
-- Refresh, a relevant context change, and a guest-like graph update while the callback is still pending do not open a pending or accepted operation again. A new search is not reconciliation of an uncertain write.
+- Refresh, a relevant context change, and a guest-like insertion of the selected activity item do not open a pending, callback-accepted, or unconfirmed operation again, even when the new search returns the same snapshot with different labels, reasons, or konflikt. A new search is not reconciliation of an uncertain write.
 - Unconfirmed recovery is the explicit control “Erneut anbieten”. It does not call the writer. It does not open a pending or accepted operation. Search and prop changes do not press it.
 - `null` is only the callback’s success report. Copy tells the person to inspect the trip and does not say the write did not happen, did happen, or happened once.
 - A notice renders only for the current day. It can remain after a newer search. It does not render on another day. Leaving the workspace section hides it with the surface; settling the old work does not move focus into that hidden surface.

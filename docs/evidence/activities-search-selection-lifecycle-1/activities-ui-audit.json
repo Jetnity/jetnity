@@ -233,11 +233,11 @@
     },
     {
       "engine": "webkit",
-      "anfragen": 24
+      "anfragen": 28
     },
     {
       "engine": "webkit",
-      "anfragen": 24
+      "anfragen": 28
     },
     {
       "engine": "chromium",
@@ -441,11 +441,11 @@
     },
     {
       "engine": "chromium",
-      "anfragen": 24
+      "anfragen": 28
     },
     {
       "engine": "chromium",
-      "anfragen": 24
+      "anfragen": 28
     }
   ]
 }
