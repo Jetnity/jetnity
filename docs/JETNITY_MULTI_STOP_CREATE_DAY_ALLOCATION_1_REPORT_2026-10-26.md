@@ -38,8 +38,22 @@ Early mounted layout runs overflowed (95px at 320, then 21px, then 30px at 320 w
 
 ## Production build
 
-`npm run build` exit 0. Setup check passed, then the Next.js production build completed and listed the existing routes, including `/planen`.
+`npm run build` exit 0 on the R1 tree after `zeitraumDauer` was made private. Setup check passed, then the Next.js production build completed and listed the existing routes, including `/planen`. The same run had `check:exports`, `check:deps`, `check:api-schutz`, and `check:schema-bezug` at exit 0. `npm run typecheck` exit 0. `npm run lint` exit 0, 0 errors, 180 warnings. `check:dead` exit 0.
+
+## R1.1 — over-limit interval
+
+Reviewed head `54a06423` accepted 2026-11-01 through 2027-11-02, built 366 positions ending 2027-11-01, and the planner said the journey remained 366 days. Guest create then failed in the existing reader. Nothing was stored.
+
+`zeitraumIstZuLang` now runs before `reisetageBauen` on the create mapping, before `neueReiseSchema` builds an allocation, before `createKontoTage`, and before guest storage. The planner shows `Eine Reise dauert höchstens 365 Tage` on the return date, focuses `#feld-ende`, and does not dispatch a writer. The stand text does not count a truncated interval.
+
+Mounted proof on runtime `c17257ad04ac8bb90e6136c7b3b3f7a50f7537f2`, evidence `docs/evidence/multi-stop-create-day-allocation-1/mounted-c17257ad04ac.json`: 10/10 pass, external requests empty, `hostedPersistence: not invoked`. The previous six cases still pass, including keyboard 3/4/7, partial 3+11, contradiction focus, reorder/reset, account occurrences, and overflow 0 at 320/390/768/1280 and at 200% text. Added cases: 367-day guest rejection with empty storage and focus on `#feld-ende`; 367-day account submit with zero `reiseAnlegen` calls; 366-day guest graph stored as 366 days ending 2027-11-01 with 3 assigned and 363 unassigned; 366-day account payload keeps `endDate` `2027-11-01`.
+
+Focused Node tests also cover leap boundaries: 2024-01-01..2024-12-31 and 2024-02-29..2025-02-28 accepted at 366 days; 2024-01-01..2025-01-01 and 2023-03-01..2024-03-01 rejected. Single-destination and no-opt-in 366 stay valid. The same shapes at 367 return `ZEITRAUM_ZU_LANG` and no positions. Guest storage size stays 0 after the rejected write.
+
+`npm run typecheck` exit 0. `npm run lint` exit 0, 0 errors, 180 warnings. `check:dead` exit 0. `check:exports` failed once because `zeitraumDauer` was exported without an outside caller; it is now private. `check:deps`, `check:api-schutz`, and `check:schema-bezug` are recorded with the production build below after that visibility fix. `lib/security/next-16-3-8-security-upgrade-1.test.ts` passed. The full `npm test` suite was not re-run; the earlier PostgreSQL 16 failures remain an environment limit. `aktionen.ts` and the historical-control file were not edited in R1.
+
+`origin/main` re-read: `68435f012f27f599a1092699f5635aa88312ea67`. Merge-base `6ae344f4453b16514f9048083bb8b07396135fa2`. Not rebased.
 
 ## Boundaries
 
-No hosted SQL, migration, Auth, RLS, provider, payment, package, or global continuity edit. No Ready. No merge. No follow-up slice.
+No hosted SQL, migration, Auth, RLS, provider, payment, package, or global continuity edit. No new duration contract. No Ready. No merge. No follow-up slice.

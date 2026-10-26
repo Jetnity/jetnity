@@ -15,7 +15,7 @@ Hosted persistence of the new `stage_position` payload was not verified. The Acc
 
 Post-create Account assignment editing is still impossible through `reise_aendern`. That residual is unchanged and was not relabelled as done.
 
-`scripts/next-16-4-1-security-patch-p1/historical-control.json` is outside the owned file list. Only the git-blob sha1 of `lib/trips/aktionen.ts` changed, from `4833378894aeedb152e093912574a698a9701b33` to `e0c03d9ea5fc1200774727e4b790511684020c86`. Protected blobs, pins, and the audit script were not edited. If that inventory update is rejected, the security test fails again on this action body.
+`scripts/next-16-4-1-security-patch-p1/historical-control.json` is outside the owned file list. Root's R1 addendum authorizes only the already-landed one-entry blob for `lib/trips/aktionen.ts`, from `4833378894aeedb152e093912574a698a9701b33` to `e0c03d9ea5fc1200774727e4b790511684020c86`. R1 did not edit that file, `aktionen.ts`, or the audit script. Protected pins and every other entry stay as reviewed. This is not blanket ownership of historical controls.
 
 ## P2
 
@@ -33,6 +33,12 @@ Single-destination creation still rejects an explicit claim. No-opt-in multi-sto
 
 Local PostgreSQL proofs in `npm test` fail closed in this session because the binaries are not installed. No OS package was installed. No hosted fallback was used.
 
+## R1.1
+
+The reviewed head built a capped 366-day list for 2026-11-01 through 2027-11-02 and the new summary called that cap the whole journey. Create, the form schema, guest storage, and the planner now reject that interval first. The mounted stand text for the 367-day case is “Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.” Submit focuses `#feld-ende`. Guest storage stays empty. The account shim receives no call. A 366-day guest graph stores 366 days ending 2027-11-01. The account shim for that interval receives `endDate` `2027-11-01`.
+
+`zeitraumDauer` is module-private. It had no caller outside `tage.ts`, and `check:exports` rejects an unused export. That visibility change is on the handoff commit, after the mounted run of `c17257ad`. It does not change the predicate.
+
 ## Author conclusion
 
-The owned create behavior and the entry preflight match the task as read. Ready and merge stay with the Technical Lead after an independent exact-head review.
+R1.1 matches the required end state on the owned create path. Ready and merge stay with the Technical Lead after an independent exact-head review. Do not rebase onto `68435f01` until Root gives a separate integration instruction.

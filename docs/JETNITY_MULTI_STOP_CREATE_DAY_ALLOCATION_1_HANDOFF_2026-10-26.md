@@ -8,7 +8,7 @@ Model: `grok-4.7-high-fast`. Not Auto.
 
 ## Where to resume
 
-Read the immutable TASK V1, blob `d52e6a8e15cd554e1410b88388491d6ffcab91f6`, then PLAN, STATUS, REPORT and SELF_REVIEW dated 2026-10-26. Do not edit the TASK.
+Read the immutable TASK V1, blob `d52e6a8e15cd554e1410b88388491d6ffcab91f6`, then PLAN, STATUS, REPORT and SELF_REVIEW dated 2026-10-26, including the R1 addendum. Do not edit the TASK.
 
 Draft PR: https://github.com/Jetnity/jetnity/pull/1030  
 Tracking: https://github.com/Jetnity/jetnity/issues/1029  
@@ -16,21 +16,26 @@ Parent: https://github.com/Jetnity/jetnity/issues/1026
 Branch: `feat/r109-multi-stop-create-day-allocation-1`
 
 Seed `09381574876196b4538272c28e05fceae63e87b2`, seed tree `a5173a6623f2fdb53e5ef8aaddd56d591903625d`.  
-Baseline main and merge-base at dispatch: `6ae344f4453b16514f9048083bb8b07396135fa2`.
+Original baseline and merge-base: `6ae344f4453b16514f9048083bb8b07396135fa2`.  
+Reviewed head that produced R1: `54a06423b80f7c33495f57efbcdda6f7ba31da18`.
 
-The review head is the latest commit on this branch that contains this handoff. Re-read `git rev-parse HEAD`, `git rev-parse HEAD^{tree}`, `git merge-base HEAD origin/main`, and ahead/behind before review. The delivery section below is filled from that re-read at author stop.
+The review head is the latest commit on this branch that contains this R1 handoff. Re-read `git rev-parse HEAD`, `git rev-parse HEAD^{tree}`, `git merge-base HEAD origin/main`, and ahead/behind against both that merge-base and `origin/main` before review.
 
-## Delivery git
+## Delivery git — R1
 
-Re-read of `origin/main` on 26 October 2026, after the runtime commit and before this handoff commit.
+Re-read on 26 October 2026 after the R1 runtime commit and before this handoff commit. `origin/main` was fetched. This branch was not rebased or merged.
 
-- Runtime HEAD: `5f81c30c9abf282ab92dfaef4b61fb0f1b4c2e19`
-- Runtime tree: `d43db5b14ff9d53049343a70b3fe0b447af9581c`
-- `origin/main`: `6ae344f4453b16514f9048083bb8b07396135fa2`
-- merge-base: `6ae344f4453b16514f9048083bb8b07396135fa2`
-- ahead/behind at that re-read: **2 ahead / 0 behind**
+- R1 runtime HEAD: `c17257ad04ac8bb90e6136c7b3b3f7a50f7537f2`
+- R1 runtime tree: `82d1ee68317b87f029075495291f3e428c265efc`
+- Mounted evidence: `docs/evidence/multi-stop-create-day-allocation-1/mounted-c17257ad04ac.json`, 10/10 PASS, `hostedPersistence: not invoked`
+- `origin/main`: `68435f012f27f599a1092699f5635aa88312ea67` (S merge; actual-main acceptance was still pending)
+- merge-base with `origin/main`: `6ae344f4453b16514f9048083bb8b07396135fa2`
+- ahead/behind versus merge-base: **4 ahead / 0 behind**
+- ahead/behind versus `origin/main`: **4 ahead / 6 behind**
 
-This handoff commit is the review head. It parents the runtime commit and does not change product code. After it lands, expect **3 ahead / 0 behind** the same main, then re-read `git rev-parse HEAD` and `HEAD^{tree}` before review. Main had not moved at the re-read.
+This handoff commit is the review head. It parents `c17257ad` and adds the R1 records, the mounted evidence, and one visibility change: `zeitraumDauer` is no longer exported, because `check:exports` rejected the unused export. Behavior matches the mounted runtime commit. After it lands, expect **5 ahead / 6 behind** `origin/main`, with the same merge-base, then re-read HEAD before review.
+
+Earlier delivery, superseded as the review head: runtime `5f81c30c9abf282ab92dfaef4b61fb0f1b4c2e19`, review `54a06423b80f7c33495f57efbcdda6f7ba31da18`, then 3 ahead / 0 behind main `6ae344f4`.
 
 ## Changed files
 
@@ -68,15 +73,19 @@ Node 22.23.4. Mounted proof: Playwright Chromium via `/opt/google/chrome/chrome`
 
 Production build: `npm run build` exit 0.
 
+## R1 historical-control addendum
+
+Root authorized only the necessary mechanical inventory update already on this branch: the expected blob for owned `lib/trips/aktionen.ts` tracks `e0c03d9ea5fc1200774727e4b790511684020c86`. R1 does not edit the control file, the audit script, or `aktionen.ts`. Every protected pin and every other entry stays. This is not blanket ownership.
+
 ## Checked / not checked
 
-Checked: create mapping, guest graph, account payload object, frozen mapper positions, preflight sentinels, mounted keyboard/focus/reorder/reset/viewports.
+Checked: create mapping, guest graph, account payload object, frozen mapper positions, preflight sentinels, mounted keyboard/focus/reorder/reset/viewports, 366-day accept and 367-day reject at the mounted Guest and Account boundaries, no guest write and no account dispatch for the 367-day interval, leap-boundary unit cases.
 
-Not checked: hosted SQL, real accounts, real devices, provider calls, post-create `reise_aendern`, sibling branches, package updates.
+Not checked: hosted SQL, real accounts, real devices, provider calls, post-create `reise_aendern`, sibling branches, package updates, rebase onto `68435f01`.
 
 ## Findings
 
-P0 none. P1 hosted persistence unverified; inventory hash is outside the owned list. P2 date-input appearance and the 366-versus-1000 sum reading. P3 dropped claims stay dropped; local PostgreSQL proofs are not installed here.
+P0 none. P1 hosted persistence unverified. The one historical-control blob is the authorized inventory entry and was not expanded in R1. P2 date-input appearance and the 366-versus-1000 sum reading remain. The false 366-day summary for a 367-day interval is closed on this branch. P3 dropped claims stay dropped; local PostgreSQL proofs are not installed here. Main has drifted by the S merge and is intentionally not integrated.
 
 CI and Preview bind whatever head GitHub builds after push. Do not treat a pending Vercel comment from the seed as acceptance of this head.
 

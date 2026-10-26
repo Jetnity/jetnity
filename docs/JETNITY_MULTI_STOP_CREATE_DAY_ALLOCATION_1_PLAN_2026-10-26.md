@@ -43,3 +43,19 @@ The planner stores claims by stable row key (`primary`, `handoff-N`, extra keys)
 ## Out of scope
 
 No `reise_aendern` assignment editing, no hosted migration, no package change, no global Zod claim, no guessed hotel nights or transfers, no new itinerary model.
+
+## R1 addendum — 26 October 2026
+
+Technical Lead CHANGES REQUIRED R1.1 on reviewed head `54a06423b80f7c33495f57efbcdda6f7ba31da18`. Immutable TASK V1 stays unchanged.
+
+`reisetageBauen` still stops at 366 days. Create now refuses a longer interval before that cap is used. `zeitraumIstZuLang` uses the existing read-schema boundary: a UTC day difference above `REISEDAUER_MAXIMUM` (365, the same value as `GRENZEN.reisedauerInTagen`). That is 366 inclusive calendar days allowed and 367 rejected. The message is the existing sentence `Eine Reise dauert höchstens 365 Tage`. No new duration contract.
+
+The check runs in `createDayPositions` before `reisetageBauen`, in `neueReiseSchema` on `endDate` before allocation parsing, in `createKontoTage`, and in `gastreiseAnlegen` after the resource preflight and before any storage call. `TripPlanner` shows that sentence on Rückreise (`#feld-ende` / field key `endDate`), moves focus there on submit, and returns before `gastreiseAnlegen` and `reiseAnlegen`. The allocation stand says the interval is longer than allowed and is neither shortened nor stored. It does not announce a truncated day count as the whole journey.
+
+Valid 366-day trips stay complete, including no-opt-in unassigned days and a single destination. The same rejection applies to those shapes when the interval is 367 days. Leap cases stay on this predicate: 2024-01-01 through 2024-12-31 and 2024-02-29 through 2025-02-28 are accepted; 2024-01-01 through 2025-01-01 and 2023-03-01 through 2024-03-01 are rejected.
+
+`lib/trips/aktionen.ts` was not edited for R1. Account rejection is the existing `neueReiseSchema` gate inside `reiseAnlegen`, before place confirmation and before `reiseAusNutzlastAnlegen`.
+
+Historical control: Root authorized only the already-landed one-entry inventory update. The expected blob for the owned `lib/trips/aktionen.ts` may stay `e0c03d9ea5fc1200774727e4b790511684020c86` (previous `4833378894aeedb152e093912574a698a9701b33`). Every other pin, entry, and assertion stays. The audit script was not edited and was not weakened. This is not ownership of the historical-control file.
+
+Integration: `origin/main` advanced through S to `68435f012f27f599a1092699f5635aa88312ea67`. S actual-main acceptance was still pending at this correction. This branch was not rebased or merged onto that main. Merge-base remains `6ae344f4453b16514f9048083bb8b07396135fa2`.

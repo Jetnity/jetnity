@@ -8,11 +8,15 @@ Model: `grok-4.7-high-fast`. Not Auto.
 
 ## State
 
-Implementation is on `feat/r109-multi-stop-create-day-allocation-1`, Draft PR #1030. No TL PASS. Not Ready. Not merged.
+Implementation is on `feat/r109-multi-stop-create-day-allocation-1`, Draft PR #1030. R1.1 is implemented on runtime commit `c17257ad04ac8bb90e6136c7b3b3f7a50f7537f2` and stopped again for independent Technical-Lead review. No TL PASS. Not Ready. Not merged.
 
 Guest and Account create can assign existing calendar days to confirmed destination occurrences. Without that choice, several destinations stay unassigned and one destination stays `single_destination`. Known days follow occurrence order. Null gaps stay null. Hotel nights and transfers are not inferred.
 
+An interval longer than 366 inclusive calendar days is rejected before the capped day builder and before any create writer. The Rückreise field shows `Eine Reise dauert höchstens 365 Tage` and receives focus. The allocation summary does not describe a shortened interval as the whole journey. A real 366-day interval, including 2026-11-01 through 2027-11-01, stays complete.
+
 Create and import entry points reject oversized known collections before Zod `safeParse`. Zod is not claimed to be remediated anywhere else. Package files were not edited.
+
+`origin/main` is `68435f012f27f599a1092699f5635aa88312ea67`. This branch was not synchronized. Merge-base remains `6ae344f4453b16514f9048083bb8b07396135fa2`. At the R1 runtime commit the branch was 4 ahead of that merge-base and 6 behind `origin/main`. The handoff commit adds one more commit on this branch only.
 
 ## Not verified
 
