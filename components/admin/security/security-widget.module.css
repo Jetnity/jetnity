@@ -4,6 +4,8 @@
 
 .detail {
   max-height: 8rem;
+  min-width: 12rem;
+  max-width: 24rem;
   overflow: auto;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -14,7 +16,10 @@
   word-break: break-word;
 }
 
-.zelle {
-  overflow-wrap: anywhere;
-  word-break: break-word;
+/* IP, Typ und Nutzerkennung bleiben ein Token. Die Tabelle scrollt in der
+   vorhandenen Region, statt die Kennung zeichenweise umzubrechen. */
+.identitaet {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }

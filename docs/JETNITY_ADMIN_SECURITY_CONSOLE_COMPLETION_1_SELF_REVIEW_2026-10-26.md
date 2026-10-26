@@ -1,6 +1,6 @@
 # Jetnity Admin Security Console Completion 1 — SELF_REVIEW
 
-**26 October 2026 · author review of the R1 head · not a Technical-Lead PASS**
+**26 October 2026 · author review of the R2 head · not a Technical-Lead PASS**
 
 ## Scope check
 
@@ -8,7 +8,11 @@ Owned files are the Security widget, its local operation status and CSS module, 
 
 ## R1
 
-The reviewed gaps are corrected in the owned client. A denial now clears rows, KPIs and operation subjects together. Stale reads and older settlements do not restore them. The unlock label is gone. Long stored text no longer fails the whole list, and the widget will not submit a reason beyond the 2000-character presentation bound.
+The reviewed gaps are corrected in the owned client. A denial now clears rows, KPIs and operation subjects together. Stale reads and older settlements do not restore them. The unlock label is gone. Long stored text no longer fails the whole list, and the widget will not submit a reason beyond the 2000-character presentation bound. Root's later read of `5fedc5a11b6054462dfcc3db1fa427aec5b032b1` treated those two P2s as addressed. This author review does not replace that gate.
+
+## R2
+
+The character-level wrap on identity cells was introduced by `.zelle` and is removed for IP, type, user, time and blocklist IP. Free text still wraps inside `.detail`. I did not shorten or hide any identity to satisfy the page-width check. The action stays in the existing scroll region and is reached from the keyboard. Main `68435f012f27f599a1092699f5635aa88312ea67` was re-read and not merged.
 
 ## What I would still question
 

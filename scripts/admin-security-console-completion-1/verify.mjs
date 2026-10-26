@@ -246,6 +246,64 @@ async function explizit(page) {
   return offen[offen.length - 1]
 }
 
+async function identitaet(page, ip) {
+  return page.evaluate((adresse) => {
+    function zeilen(el) {
+      if (!el) return null
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      const tops = []
+      for (const rect of range.getClientRects()) {
+        if (rect.width < 1 || rect.height < 1) continue
+        const top = Math.round(rect.top)
+        if (!tops.some((bisher) => Math.abs(bisher - top) <= 2)) tops.push(top)
+      }
+      return {
+        lines: tops.length,
+        text: el.textContent?.trim() ?? '',
+        whiteSpace: getComputedStyle(el).whiteSpace,
+        height: Math.round(el.getBoundingClientRect().height),
+      }
+    }
+    const region = document.querySelector('[aria-label="Aufgezeichnete Ereignisse"]')
+    const ipEl = region?.querySelector(`[data-security-ip="${CSS.escape(adresse)}"]`)
+    const row = ipEl?.closest('tr')
+    const typeEl = row?.querySelector('[data-security-type]')
+    const userEl = row?.querySelector('[data-security-user]')
+    const detail = row?.querySelector('.detail')
+    const button = row?.querySelector('[data-security-block]')
+    const buttonRect = button?.getBoundingClientRect()
+    const regionRect = region?.getBoundingClientRect()
+    return {
+      ip: zeilen(ipEl),
+      type: zeilen(typeEl),
+      user: zeilen(userEl),
+      detail: detail
+        ? {
+            overflowWrap: getComputedStyle(detail).overflowWrap,
+            maxHeight: getComputedStyle(detail).maxHeight,
+          }
+        : null,
+      region: region
+        ? {
+            overflowX: getComputedStyle(region).overflowX,
+            client: region.clientWidth,
+            scroll: region.scrollWidth,
+          }
+        : null,
+      actionInRegion:
+        buttonRect && regionRect
+          ? buttonRect.right > regionRect.left &&
+            buttonRect.left < regionRect.right &&
+            buttonRect.bottom > regionRect.top &&
+            buttonRect.top < regionRect.bottom
+          : false,
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }
+  }, ip)
+}
+
 async function shot(page, name) {
   for (const target of [join(ARTIFACTS, name), join(EVIDENCE, name)]) {
     await page.screenshot({ path: target, fullPage: true })
@@ -710,6 +768,83 @@ async function main() {
       return { truncated: hinweise }
     })
 
+    await fall(browser, origin, aborted, 'narrow-identity-readable', async (page) => {
+      const ipv4 = '203.0.113.51'
+      const ipv6 = '2001:0db8:85a3:0000:0000:8a2e:0370:7334'
+      const typ = 'anomaly_rate_limit'
+      const user = '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
+      const detail = `${'freier detailtext '.repeat(24)}LANGDETAIL`
+      await ersteAntwort(
+        page,
+        payload(
+          [
+            { ...eventRow('evt-v4', ipv4, detail, typ), user_id: user },
+            eventRow('evt-v6', ipv6, 'ipv6-row', 'login_failed'),
+          ],
+          [blockRow(ipv6, `${'langer blockgrund '.repeat(40)}ENDE`)],
+        ),
+      )
+      await warteZustand(page, 'angenommen')
+      assert.equal(posts((await stand(page)).calls).length, 0)
+      const masse = []
+      for (const viewport of [
+        { width: 320, height: 700, font: '16px', name: 'identity-320' },
+        { width: 390, height: 800, font: '16px', name: 'identity-390' },
+        { width: 320, height: 700, font: '32px', name: 'identity-320-200' },
+        { width: 390, height: 800, font: '32px', name: 'identity-390-200' },
+      ]) {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height })
+        await page.evaluate((font) => {
+          document.documentElement.style.fontSize = font
+          if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+        }, viewport.font)
+        await pause(50)
+        for (const adresse of [ipv4, ipv6]) {
+          const gemessen = await identitaet(page, adresse)
+          assert.equal(gemessen.ip?.lines, 1, `${viewport.name} ${adresse} ${JSON.stringify(gemessen.ip)}`)
+          assert.equal(gemessen.ip?.text, adresse)
+          assert.equal(gemessen.ip?.whiteSpace, 'nowrap')
+          assert.equal(gemessen.type?.lines, 1, `${viewport.name} type ${JSON.stringify(gemessen.type)}`)
+          assert.ok(gemessen.type?.text === typ || gemessen.type?.text === 'login_failed')
+          assert.equal(gemessen.region?.overflowX, 'auto')
+          assert.ok(gemessen.region.scroll > gemessen.region.client, JSON.stringify(gemessen.region))
+          assert.ok(gemessen.scrollWidth <= gemessen.clientWidth + 1, JSON.stringify(gemessen))
+          if (adresse === ipv4) {
+            assert.equal(gemessen.user?.lines, 1, JSON.stringify(gemessen.user))
+            assert.equal(gemessen.user?.text, user)
+            assert.equal(gemessen.detail?.overflowWrap, 'anywhere')
+          }
+        }
+        await shot(page, `admin-security-console-${viewport.name}.png`)
+        masse.push(viewport.name)
+      }
+      await page.setViewportSize({ width: 320, height: 700 })
+      await page.evaluate(() => {
+        document.documentElement.style.fontSize = '16px'
+      })
+      let erreicht = false
+      for (let index = 0; index < 30; index += 1) {
+        await page.keyboard.press('Tab')
+        const ziel = await page.evaluate(() => document.activeElement?.getAttribute('data-security-block'))
+        if (ziel === ipv4) {
+          erreicht = true
+          break
+        }
+      }
+      assert.equal(erreicht, true)
+      assert.equal(posts((await stand(page)).calls).length, 0)
+      const sichtbar = await identitaet(page, ipv4)
+      assert.equal(sichtbar.actionInRegion, true)
+      await page.keyboard.press('Enter')
+      await page.waitForFunction(() => window.__securityAudit.calls().some((call) => call.method === 'POST'))
+      await pause(50)
+      const gesendet = posts((await stand(page)).calls)
+      assert.equal(gesendet.length, 1)
+      assert.match(gesendet[0].url, /\/api\/admin\/security\/block$/)
+      assert.deepEqual(JSON.parse(gesendet[0].body), { ip: ipv4, reason: `aus Ereignis ${typ}` })
+      return { masse, posts: gesendet.length }
+    })
+
     await fall(browser, origin, aborted, 'keyboard-and-viewports', async (page) => {
       const lang = `${'sehr-langer-detailtext '.repeat(40)}ENDE`
       await ersteAntwort(page, payload([eventRow('evt-long', '203.0.113.51', lang, 'anomaly_rate_limit')], [blockRow('203.0.113.51', 'langer grund')]))
@@ -778,6 +913,11 @@ async function main() {
           }
         })
         assert.equal(gemessen.text, true)
+        const zeichen = await identitaet(page, '203.0.113.51')
+        assert.equal(zeichen.ip?.lines, 1, `${viewport.name} ${JSON.stringify(zeichen.ip)}`)
+        assert.equal(zeichen.ip?.text, '203.0.113.51')
+        assert.equal(zeichen.type?.lines, 1, `${viewport.name} ${JSON.stringify(zeichen.type)}`)
+        assert.equal(zeichen.type?.text, 'anomaly_rate_limit')
         assert.ok(
           gemessen.scrollWidth <= gemessen.clientWidth + 1,
           `${viewport.name} ${JSON.stringify({ scroll: gemessen.scrollWidth, client: gemessen.clientWidth, region: gemessen.region, offenders: gemessen.offenders })}`,

@@ -58,3 +58,13 @@ A write refusal and a missing read permission stay different messages. Neither m
 The block route stores any trimmed reason. The reader used to reject reason or detail text longer than 2000 characters, so one accepted write or one existing row made the whole list unreadable.
 
 The reader now accepts a string of any length and still rejects a non-string, a bad row, a duplicate, a bad date and an array over 200. The view shows the first 2000 characters and states that the remainder is not visible. The manual reason field stops at 2000 characters, and `beginnVorgang` refuses a longer captured reason, so this console does not write a value it would then have to truncate. Existing longer rows still load, and Entfernen stays available.
+
+## R2 correction
+
+Technical-Lead review of `5fedc5a11b6054462dfcc3db1fa427aec5b032b1` found that `.zelle` wrapped IP and event-type cells at any character. At 320px and 390px, `203.0.113.51` occupied twelve visual lines. The horizontal region and keyboard action still worked. This correction does not change that access path.
+
+Owned CSS and markup only:
+
+- IP, event type, user id, time and blocklist IP use `.identitaet` (`white-space: nowrap`). The full token stays one line. The existing table region scrolls horizontally.
+- Detail and reason keep `.detail`: bounded height, a 12rem to 24rem measure, and wrapping for long free text.
+- No shared CSS, framework, server or taxonomy change. Main is not synchronized.

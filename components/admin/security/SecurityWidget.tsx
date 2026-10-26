@@ -372,20 +372,24 @@ export default function SecurityWidget() {
             <tbody>
               {(events ?? []).map((e) => (
                 <tr key={e.id} className="border-t">
-                  <td className={`${styles.zelle} px-4 py-2 whitespace-nowrap`}>
+                  <td className={`${styles.identitaet} px-4 py-2`}>
                     {e.created_at ? new Date(e.created_at).toLocaleString() : '—'}
                   </td>
-                  <td className={`${styles.zelle} px-4 py-2 font-mono`}>{e.ip || '—'}</td>
-                  <td className={`${styles.zelle} px-4 py-2`}>
+                  <td className={`${styles.identitaet} px-4 py-2 font-mono`} data-security-ip={e.ip || ''}>
+                    {e.ip || '—'}
+                  </td>
+                  <td className={`${styles.identitaet} px-4 py-2`}>
                     <span className="inline-flex items-center gap-1">
-                      <Globe className="h-3.5 w-3.5" />
-                      {e.type || '—'}
+                      <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      <span data-security-type={e.type || ''}>{e.type || '—'}</span>
                     </span>
                   </td>
                   <td className="px-4 py-2 max-w-[420px]">
                     <Langtext wert={e.detail} />
                   </td>
-                  <td className={`${styles.zelle} px-4 py-2 font-mono`}>{e.user_id || '—'}</td>
+                  <td className={`${styles.identitaet} px-4 py-2 font-mono`} data-security-user={e.user_id || ''}>
+                    {e.user_id || '—'}
+                  </td>
                   <td className="px-4 py-2">
                     <div className="flex justify-end">
                       {e.ip ? (
@@ -514,11 +518,13 @@ export default function SecurityWidget() {
             <tbody>
               {(data?.blocklist ?? []).map((b) => (
                 <tr key={b.ip} className="border-t">
-                  <td className={`${styles.zelle} px-4 py-2 font-mono`}>{b.ip}</td>
-                  <td className={`${styles.zelle} px-4 py-2`}>
+                  <td className={`${styles.identitaet} px-4 py-2 font-mono`} data-security-ip={b.ip}>
+                    {b.ip}
+                  </td>
+                  <td className="px-4 py-2">
                     <Langtext wert={b.reason} />
                   </td>
-                  <td className={`${styles.zelle} px-4 py-2`}>
+                  <td className={`${styles.identitaet} px-4 py-2`}>
                     {b.created_at ? (
                       <span className="inline-flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />

@@ -1,6 +1,6 @@
 # Jetnity Admin Security Console Completion 1 — HANDOFF
 
-**26 October 2026 · R1 delivered · stop for independent Technical-Lead review**
+**26 October 2026 · R2 delivered · stop for independent Technical-Lead review**
 
 ## Identity
 
@@ -15,16 +15,16 @@
 
 ## Git
 
-Re-read during this delivery:
+Re-read during this delivery, without synchronizing:
 
-- `origin/main`: `6ae344f4453b16514f9048083bb8b07396135fa2`
-- merge-base: `6ae344f4453b16514f9048083bb8b07396135fa2`
-- behind: 0
+- `origin/main`: `68435f012f27f599a1092699f5635aa88312ea67`
+- merge-base with that main: `6ae344f4453b16514f9048083bb8b07396135fa2`
+- ahead/behind versus that main after the commit that adds this handoff: 6 / 6
+- R1 delivery ancestor: `5fedc5a11b6054462dfcc3db1fa427aec5b032b1` (reviewed for R2, not the replacement head)
 - R1 code commit: `531c5fb6da505842d40d1b1eba44299141c1a89f`
-- reviewed ancestor, not the delivery head: `c239bef1059453734070fbe22cf0a8aa6015e9e2`
-- ahead after the commit that adds this handoff: 5
+- earlier reviewed ancestor: `c239bef1059453734070fbe22cf0a8aa6015e9e2`
 
-A commit cannot contain its own SHA. The author PR handoff records `git rev-parse HEAD` and `git rev-parse HEAD^{tree}` for the tip that contains this file.
+A commit cannot contain its own SHA. The author PR handoff records `git rev-parse HEAD` and `git rev-parse HEAD^{tree}` for the tip that contains this file. This branch was not rebased onto main.
 
 ## Changed files
 
@@ -47,7 +47,7 @@ A commit cannot contain its own SHA. The author PR handoff records `git rev-pars
 
 ## Checks
 
-Node `v22.23.4`. Mounted harness: 17 cases, Playwright Chromium, synthetic fixtures, external fetch aborted. No signed-in admin. No physical device. No hosted SQL. No production mutation.
+Node `v22.23.4`. Mounted harness: 18 cases, Playwright Chromium, synthetic fixtures, external fetch aborted. The new case measures 320px and 390px at 16px and 32px root text, including IPv4, full IPv6, event type and user id on one line, then Tab and one Enter. No signed-in admin. No physical device. No hosted SQL. No production mutation.
 
 Focused security tests: 35 passed. Full `npm test`: 7255 pass, 5 skip, 11 fail on missing local PostgreSQL 16 binaries. `tsc --noEmit` passed. Production build passed, including its TypeScript step. Lint passed with 0 errors and 178 pre-existing warnings. Five hygiene checks passed.
 
@@ -55,7 +55,7 @@ CI and Preview for this tip were not available yet when this handoff was written
 
 ## Findings
 
-P0 none. P1 none. The two reviewed P2 gaps are corrected on this branch and need a new exact-head review. Remaining P2: render-time KPI clock warning, preserved. P3: PostgreSQL-less test failures outside this slice.
+P0 none. P1 none. R1's two P2 gaps remain addressed on the ancestor `5fedc5a11b6054462dfcc3db1fa427aec5b032b1`. R2 replaces the character-level identity wrap from that head. Both need a new exact-head review of the replacement tip. Remaining P2: render-time KPI clock warning, preserved. P3: PostgreSQL-less test failures outside this slice.
 
 ## Gate
 

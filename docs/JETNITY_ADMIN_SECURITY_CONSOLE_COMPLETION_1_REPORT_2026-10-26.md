@@ -1,8 +1,16 @@
 # Jetnity Admin Security Console Completion 1 — REPORT
 
-**26 October 2026 · Cursor Generation 1 · R1**
+**26 October 2026 · Cursor Generation 1 · R2**
 
-## What changed
+## R2 identity readability
+
+On `5fedc5a11b6054462dfcc3db1fa427aec5b032b1`, `.zelle` set `overflow-wrap: anywhere` and `word-break: break-word` on IP, type and user cells. At 320px and 390px with 16px root text, `203.0.113.51` broke into twelve visual lines and the row became 256.5px tall. At 32px root text the same IP still occupied twelve lines. The event type fragmented the same way. The scroll region and keyboard action were already usable. That failure is preserved here as the reason for the replacement.
+
+Identity cells now use `.identitaet` and stay `nowrap`. The full IP, event type and user id remain in the cell. The existing `overflow-x-auto` region scrolls. Detail and reason stay in `.detail`, with a 12rem to 24rem measure, an 8rem height bound, and wrapping for long free text.
+
+Mounted proof added `narrow-identity-readable` and line counts on the existing 320/390 viewport case. `203.0.113.51` and `2001:0db8:85a3:0000:0000:8a2e:0370:7334` are each one line at 320px and 390px, at 16px and 32px root text. `anomaly_rate_limit`, `login_failed` and the sample user id are one line. The page width stays inside the viewport. The event region scrolls horizontally. Tab reaches Eintragen for `203.0.113.51` with zero block posts before Enter and exactly one synthetic POST afterwards, body `{ ip: "203.0.113.51", reason: "aus Ereignis anomaly_rate_limit" }`. The previous 17 R1 cases still pass, including denial, stale read, old settlement and long records. No signed-in admin, physical device or production mutation.
+
+## What changed in R1
 
 The Security console still reads `/api/admin/security/list` and posts block and unblock to the existing routes. A 200 becomes current data only after every displayed event and blocklist field passes `pruefeSecurityListenAntwort`. Unknown event types stay visible and are not reclassified.
 
@@ -20,7 +28,7 @@ On `c239bef1059453734070fbe22cf0a8aa6015e9e2`, a denied GET left the previous op
 
 Focused unit tests for the response contract, operation lifecycle, refresh order, filter honesty, coverage truth and taxonomy: 35 passed.
 
-Mounted production component, project CSS, synthetic fixtures, Playwright Chromium, external requests aborted (`example.com` blocked): 17 cases passed.
+Mounted production component, project CSS, synthetic fixtures, Playwright Chromium, external requests aborted (`example.com` blocked): 18 cases passed. The seventeenth R1 set remains, plus `narrow-identity-readable`.
 
 - valid → 401 → 503 → accepted recovery
 - valid → 403 → malformed 200

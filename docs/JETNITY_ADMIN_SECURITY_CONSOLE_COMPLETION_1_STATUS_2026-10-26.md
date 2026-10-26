@@ -1,6 +1,6 @@
 # Jetnity Admin Security Console Completion 1 — STATUS
 
-**26 October 2026 · Cursor Generation 1 · R1 correction on the draft · not a Technical-Lead PASS**
+**26 October 2026 · Cursor Generation 1 · R2 identity readability on the draft · not a Technical-Lead PASS**
 
 ## Identity
 
@@ -14,13 +14,13 @@
 
 ## State
 
-R1 is implemented on this branch. A current read or write denial hides protected rows, KPIs and operation detail. A stale GET or an older operation result does not restore them. Long reason and detail text stays list-readable, with an explicit truncation note. The manual reason field cannot submit past 2000 characters.
+R2 is implemented on this branch. IP, event type and user id stay one line inside the existing horizontal table region at 320px and 390px, including 32px root text and a full IPv6 address. Long detail and reason text stay wrapped. R1 denial clearing and long-text acceptance remain.
 
-This is not a Technical-Lead PASS, not Ready, and not merged.
+This is not a Technical-Lead PASS, not Ready, and not merged. Main was re-read and not synchronized.
 
-`origin/main` was re-read at `6ae344f4453b16514f9048083bb8b07396135fa2`. Merge-base is that same commit. The branch is 0 behind main. The R1 code commit is `531c5fb6da505842d40d1b1eba44299141c1a89f`. This status file is committed after it; the author PR handoff records the exact tip SHA and tree. Reviewed head `c239bef1059453734070fbe22cf0a8aa6015e9e2` is an ancestor, not the delivery head.
+`origin/main` is now `68435f012f27f599a1092699f5635aa88312ea67`. The merge-base with this branch remains `6ae344f4453b16514f9048083bb8b07396135fa2`. After the commit that contains this status, the branch is 6 ahead and 6 behind that main. Reviewed R2 head `5fedc5a11b6054462dfcc3db1fa427aec5b032b1` is an ancestor. The author PR handoff records the replacement tip SHA and tree.
 
-Sibling drafts #1028, #1030, #1035 and #1036 were not edited. Issue #751 remains the open Guardian index and was not edited.
+Sibling drafts were not edited. Issue #751 remains the open Guardian index and was not edited.
 
 ## Not done by this writer
 
