@@ -1,0 +1,37 @@
+{
+    "version": "1.0.0",
+    "name": "jetnity",
+    "dependencies": {
+        "@supabase/supabase-js": {
+            "version": "2.57.2",
+            "resolved": "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.57.2.tgz",
+            "overridden": false,
+            "dependencies": {
+                "@supabase/realtime-js": {
+                    "version": "2.15.5",
+                    "resolved": "https://registry.npmjs.org/@supabase/realtime-js/-/realtime-js-2.15.5.tgz",
+                    "overridden": false,
+                    "dependencies": {
+                        "ws": {
+                            "version": "8.21.0",
+                            "resolved": "https://registry.npmjs.org/ws/-/ws-8.21.0.tgz",
+                            "overridden": false
+                        }
+                    }
+                }
+            }
+        },
+        "postcss": {
+            "version": "8.5.23",
+            "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.23.tgz",
+            "overridden": false,
+            "dependencies": {
+                "source-map-js": {
+                    "version": "1.2.2",
+                    "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+                    "overridden": false
+                }
+            }
+        }
+    }
+}
