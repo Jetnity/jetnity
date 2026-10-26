@@ -42,7 +42,8 @@ import {
   transmissionLesen,
   vehicleClassLesen,
 } from '@/lib/trips/mietwagen-felder'
-import { TAGE_MAXIMUM } from '@/lib/trips/tage'
+import { createDayPositions } from '@/lib/trips/create-day-assignment'
+import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, zeitraumIstZuLang } from '@/lib/trips/tage'
 import { partySchema, readinessItemsSchema } from '@/lib/readiness/schema'
 import { flugRouteItinerarySchema } from '@/lib/route/schema'
 
@@ -559,7 +560,7 @@ export const reiseNutzlastSchema = z.object({
   currency: waehrung,
   budget_amount: betrag.nullable(),
   pace: z.enum(TRIP_PACES),
-  interests: z.array(z.enum(TRIP_INTERESTS)),
+  interests: z.array(z.enum(TRIP_INTERESTS)).max(TRIP_INTERESTS.length * 2),
   travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
   /**
    * Optionaler Client-Claim. `public.reise_anlegen()` leitet den Mode
@@ -626,6 +627,24 @@ export const neueReiseSchema = z.object({
   pace: tempo,
   interests: interessen.default([]),
   travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+  dayAllocation: z
+    .object({
+      claims: z
+        .array(
+          z.object({
+            occurrence: z
+              .number()
+              .int('Die Tageszuordnung braucht eine ganze Zielnummer.')
+              .min(1)
+              .max(GRENZEN.etappenJeReise),
+            startDate: datum,
+            endDate: datum,
+          }),
+        )
+        .max(GRENZEN.etappenJeReise),
+    })
+    .nullable()
+    .optional(),
 })
   .superRefine((reise, ctx) => {
     if (reise.endDate < reise.startDate) {
@@ -633,6 +652,27 @@ export const neueReiseSchema = z.object({
         code: z.ZodIssueCode.custom,
         path: ['endDate'],
         message: 'Die Rückreise darf nicht vor der Abreise liegen.',
+      })
+    } else if (zeitraumIstZuLang(reise.startDate, reise.endDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        message: ZEITRAUM_ZU_LANG,
+      })
+      return
+    }
+    if (!reise.dayAllocation) return
+    const zuordnung = createDayPositions({
+      stageCount: 1 + reise.weitereDestinationPlaceIds.length,
+      startDate: reise.startDate,
+      endDate: reise.endDate,
+      allocation: reise.dayAllocation,
+    })
+    if (!zuordnung.ok) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['dayAllocation'],
+        message: zuordnung.message,
       })
     }
   })

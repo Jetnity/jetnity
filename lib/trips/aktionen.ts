@@ -42,7 +42,8 @@ import { createServerActionClient } from '@/lib/supabase/server'
 import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
 import { istManuellerFlug, manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
 import type { Json } from '@/types/supabase'
-import { createZieleGraph } from '@/lib/trips/create-stages'
+import { createKontoTage, createZieleGraph } from '@/lib/trips/create-stages'
+import { rohEingabeBegrenzen } from '@/lib/trips/input-resource-bounds'
 import {
   NICHT_ANGEMELDET,
   konto,
@@ -58,7 +59,6 @@ import {
   unterkunftZeitraumSchema,
   type ReiseNutzlast,
 } from '@/lib/trips/schema'
-import { reisetageBauen } from '@/lib/trips/tage'
 import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 
 /**
@@ -69,6 +69,9 @@ import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
  * übernehmen hiesse, ihm die Struktur der Reise zu überlassen.
  */
 export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<string>> {
+  const grenze = rohEingabeBegrenzen(eingabe)
+  if (!grenze.ok) return { ok: false, meldung: grenze.meldung }
+
   const geprueft = neueReiseSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 
@@ -80,10 +83,19 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
   })
   if (!orte.ok) return orte
 
-  const graph = createZieleGraph([orte.ziel, ...orte.weitereZiele], {
-    startDate: reise.startDate,
-    endDate: reise.endDate,
-  })
+  let graph
+  try {
+    graph = createZieleGraph(
+      [orte.ziel, ...orte.weitereZiele],
+      { startDate: reise.startDate, endDate: reise.endDate },
+      reise.dayAllocation ?? null,
+    )
+  } catch (fehler) {
+    return {
+      ok: false,
+      meldung: fehler instanceof Error ? fehler.message : 'Die Tageszuordnung ist ungültig.',
+    }
+  }
 
   return reiseAusNutzlastAnlegen({
     client_ref: reise.clientRef,
@@ -108,13 +120,10 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
       longitude: etappe.longitude,
       place_id: etappe.placeId,
     })),
-    days: reisetageBauen(reise.startDate, reise.endDate).map((tag) => ({
-      day_index: tag.dayIndex,
-      day_date: tag.dayDate,
-      title: null,
-      stage_position: graph.dayStagePosition,
-      items: [],
-    })),
+    days: createKontoTage(graph, {
+      startDate: reise.startDate,
+      endDate: reise.endDate,
+    }),
     ungeplante: [],
     day_stage_assignment_mode: graph.assignmentMode,
   })
@@ -160,6 +169,9 @@ async function nutzlastOrtePruefen(nutzlast: ReiseNutzlast): Promise<Aktionserge
 }
 
 export async function gastreiseUebernehmen(nutzlast: unknown): Promise<Aktionsergebnis<string>> {
+  const grenze = rohEingabeBegrenzen(nutzlast)
+  if (!grenze.ok) return { ok: false, meldung: grenze.meldung }
+
   const geprueft = reiseNutzlastSchema.safeParse(nutzlast)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 

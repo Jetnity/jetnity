@@ -21,6 +21,7 @@ import { revalidatePath } from 'next/cache'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
 import { nutzlastOhneUnbewieseneHandelsfelder } from '@/lib/trips/handelsfelder-nutzlast'
+import { rohEingabeBegrenzen } from '@/lib/trips/input-resource-bounds'
 import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
 import { iatasAusNutzlast, reiseNutzlastRouteKanonisieren } from '@/lib/route/kanonisieren'
 import {
@@ -82,6 +83,9 @@ export async function reiseAusNutzlastAnlegen(
 ): Promise<Aktionsergebnis<string>> {
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+
+  const grenze = rohEingabeBegrenzen(nutzlast)
+  if (!grenze.ok) return { ok: false, meldung: grenze.meldung }
 
   const bereinigt = nutzlastOhneUnbewieseneHandelsfelder(nutzlast)
   const refs = await flughafenReferenzLesen(iatasAusNutzlast(bereinigt), supabase)
