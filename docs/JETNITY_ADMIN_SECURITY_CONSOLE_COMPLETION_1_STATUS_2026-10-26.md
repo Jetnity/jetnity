@@ -1,6 +1,6 @@
 # Jetnity Admin Security Console Completion 1 — STATUS
 
-**26 October 2026 · Cursor Generation 1 · R2 identity readability on the draft · not a Technical-Lead PASS**
+**26 October 2026 · Cursor Generation 1 · integrated onto accepted T main · not a Technical-Lead PASS**
 
 ## Identity
 
@@ -14,13 +14,11 @@
 
 ## State
 
-R2 is implemented on this branch. IP, event type and user id stay one line inside the existing horizontal table region at 320px and 390px, including 32px root text and a full IPv6 address. Long detail and reason text stay wrapped. R1 denial clearing and long-text acceptance remain.
+Accepted T main `0cf655a2c90f5e20315cd36a4544438737824aa0` is merged into this branch with history preserved. Merge commit `26506c4957aff6f088cb55ad9b5161e969e06314`. R1 and R2 behavior was re-run on that integrated lock and source. This is not a final integrated-head PASS, not Ready, and not merged to main.
 
-This is not a Technical-Lead PASS, not Ready, and not merged. Main was re-read and not synchronized.
+After the commit that contains this status, merge-base with `origin/main` is `0cf655a2c90f5e20315cd36a4544438737824aa0`, 8 ahead and 0 behind. The author PR handoff records the delivery tip and tree. Pre-integration reviewed head `632b458d404450ce070ae829373042aeebadf632` is the first parent of the merge.
 
-`origin/main` is now `68435f012f27f599a1092699f5635aa88312ea67`. The merge-base with this branch remains `6ae344f4453b16514f9048083bb8b07396135fa2`. After the commit that contains this status, the branch is 6 ahead and 6 behind that main. Reviewed R2 head `5fedc5a11b6054462dfcc3db1fa427aec5b032b1` is an ancestor. The author PR handoff records the replacement tip SHA and tree.
-
-Sibling drafts were not edited. Issue #751 remains the open Guardian index and was not edited.
+Sibling product files that arrived with S and T were not edited. Issue #751 remains the open Guardian index and was not edited.
 
 ## Not done by this writer
 

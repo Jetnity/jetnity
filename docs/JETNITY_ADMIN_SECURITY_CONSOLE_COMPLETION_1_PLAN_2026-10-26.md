@@ -68,3 +68,9 @@ Owned CSS and markup only:
 - IP, event type, user id, time and blocklist IP use `.identitaet` (`white-space: nowrap`). The full token stays one line. The existing table region scrolls horizontally.
 - Detail and reason keep `.detail`: bounded height, a 12rem to 24rem measure, and wrapping for long free text.
 - No shared CSS, framework, server or taxonomy change. Main is not synchronized.
+
+## Integration onto accepted T main
+
+Root accepted T at `origin/main` `0cf655a2c90f5e20315cd36a4544438737824aa0`, tree `465368f6f05a8d4029b51e15f42d151ac7b95104`. That commit and tree matched the live main read before integration. The branch was still the reviewed R2 head `632b458d404450ce070ae829373042aeebadf632`.
+
+One ordinary merge, no rebase. Merge commit `26506c4957aff6f088cb55ad9b5161e969e06314` has parents `632b458d404450ce070ae829373042aeebadf632` and `0cf655a2c90f5e20315cd36a4544438737824aa0`. No conflicts. `package.json` and `package-lock.json` are identical to that main, including installed `ws` 8.21.0 and `source-map-js` 1.2.2. Verification used `npm ci` from that lock. The diff against main stays the owned security-console files. TASK blob `68c2dfa18ea53a291a244e1e17e6262e94850167` is unchanged.

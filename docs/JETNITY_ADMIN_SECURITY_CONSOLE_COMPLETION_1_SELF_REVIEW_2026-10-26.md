@@ -1,6 +1,6 @@
 # Jetnity Admin Security Console Completion 1 — SELF_REVIEW
 
-**26 October 2026 · author review of the R2 head · not a Technical-Lead PASS**
+**26 October 2026 · author review of the integrated head · not a Technical-Lead PASS**
 
 ## Scope check
 
@@ -12,7 +12,11 @@ The reviewed gaps are corrected in the owned client. A denial now clears rows, K
 
 ## R2
 
-The character-level wrap on identity cells was introduced by `.zelle` and is removed for IP, type, user, time and blocklist IP. Free text still wraps inside `.detail`. I did not shorten or hide any identity to satisfy the page-width check. The action stays in the existing scroll region and is reached from the keyboard. Main `68435f012f27f599a1092699f5635aa88312ea67` was re-read and not merged.
+The character-level wrap on identity cells was introduced by `.zelle` and is removed for IP, type, user, time and blocklist IP. Free text still wraps inside `.detail`. I did not shorten or hide any identity to satisfy the page-width check. The action stays in the existing scroll region and is reached from the keyboard. Root later treated R2 on `632b458d404450ce070ae829373042aeebadf632` as addressed. This integration re-ran that proof. It is not a final PASS of the new head.
+
+## Integration
+
+The merge took accepted S/T as input. I did not edit those files. `package.json` and `package-lock.json` are byte-identical to main `0cf655a2c90f5e20315cd36a4544438737824aa0`. No new dependency, workflow, global CSS, API, migration or capability was added by this writer. CI and Preview for the delivery tip were not observed in this session and stay pending for Root.
 
 ## What I would still question
 

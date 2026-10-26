@@ -1,6 +1,20 @@
 # Jetnity Admin Security Console Completion 1 — REPORT
 
-**26 October 2026 · Cursor Generation 1 · R2**
+**26 October 2026 · Cursor Generation 1 · integrated onto accepted T main**
+
+## Integration
+
+Live `origin/main` matched the accepted base before the merge: `0cf655a2c90f5e20315cd36a4544438737824aa0`, tree `465368f6f05a8d4029b51e15f42d151ac7b95104`. Mode was NORMAL. The branch tip was `632b458d404450ce070ae829373042aeebadf632`.
+
+`git merge --no-ff` produced `26506c4957aff6f088cb55ad9b5161e969e06314`. No conflicts, rebase, reset or force push. `package.json` and `package-lock.json` match that main exactly. `npm ci` installed `ws` 8.21.0 and `source-map-js` 1.2.2. The diff against main is the owned security-console set listed in the handoff. TASK blob `68c2dfa18ea53a291a244e1e17e6262e94850167` is unchanged.
+
+## R1 and R2 on the integrated tree
+
+R1 stays addressed: a current denial clears protected rows, KPIs and operation detail; a stale GET and an older settlement do not restore them; long records stay usable with an explicit truncation note; recovery is a new list read. R2 stays addressed: IPv4, full IPv6, event type and user id stay one line at 320px and 390px, at 16px and 32px root text; the page stays within the viewport; the existing region scrolls; Tab reaches Eintragen with zero block posts before Enter and exactly one synthetic POST afterwards. Bounded polling, explicit recovery and unmount behavior still pass in the same mounted run.
+
+The 24-hour KPI still reads `Date.now()` during render. That limitation is unchanged.
+
+## What changed in R2
 
 ## R2 identity readability
 
@@ -49,7 +63,7 @@ Mounted production component, project CSS, synthetic fixtures, Playwright Chromi
 
 Evidence: `docs/evidence/admin-security-console-completion-1/report.json`.
 
-`npm test`: 7255 passed, 5 skipped, 11 failed. All 11 failures are local PostgreSQL 16 proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or `NOT_VERIFIED` because local PostgreSQL binaries are absent). This session has no PostgreSQL server binaries. Those tests do not import this slice.
+Integrated re-run on Node `v22.23.4` after `npm ci`: focused security tests 35 passed; mounted harness 18 passed, external probe blocked. `npm test`: 7280 passed, 5 skipped, 11 failed. The 11 failures are the same local PostgreSQL 16 proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or `NOT_VERIFIED`). This session has no PostgreSQL server binaries. Those tests do not import this slice. The pass count is higher than the pre-integration run because accepted S/T tests are now in the tree.
 
 `tsc --noEmit` passed. The production build also ran TypeScript and passed. `npm run lint` passed with 0 errors and 178 existing warnings. One warning is `Date.now()` in `SecurityWidget` during render; that clock read was already how the 24-hour KPIs were calculated. Hygiene checks `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` and `check:schema-bezug` passed. `npm run build` passed (Next.js 16.4.1). Setup check warned that no `.env` file is present. No migration ran.
 
