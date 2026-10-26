@@ -767,6 +767,15 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     merken(ergebnis?.ok === true, text)
     return ergebnis
   }
+  const freigabe = async (id, text) => {
+    const ergebnis = await page.evaluate((wert) => {
+      const steuerung = window.__jetnityActivitiesAudit
+      if (!steuerung) return { ok: false, grund: 'fehlt' }
+      return wert ? steuerung.freigeben(wert) : steuerung.freigeben()
+    }, id)
+    merken(ergebnis?.ok === true, text)
+    return ergebnis
+  }
 
   try {
     await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
@@ -900,7 +909,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'Wartet', exact: true }).waitFor({ timeout: 15000 })
     await direkteAktion('aktion', wartet.id, 'laufende Übernahme hat keinen erfassten Handler')
-    await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
+    await freigabe(null, 'laufende Übernahme hatte keinen Abschluss')
     await page.waitForTimeout(150)
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [wartet]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
@@ -959,7 +968,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
       'laufende Gastübernahme ist nach dem Rangwechsel klickbar',
     )
     await direkteAktion('aktion', gastBasis.id, 'laufende Gastübernahme hat keinen erfassten Handler')
-    await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
+    await freigabe(null, 'laufende Gastübernahme hatte keinen Abschluss')
     await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [gastKonflikt]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
@@ -1066,7 +1075,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('heading', { name: 'HinweisNeu', exact: true }).waitFor({ timeout: 15000 })
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     await page.waitForTimeout(100)
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.freigeben(id), hinweisAlt.id)
+    await freigabe(hinweisAlt.id, 'ältere Meldung hatte keinen Abschluss')
     await page.waitForTimeout(250)
     const nachAlt = await region.innerText()
     merken(!nachAlt.includes('Die Übernahme wurde gemeldet.'), 'alte Erfolgsmeldung steht auf der neueren Karte')
@@ -1081,7 +1090,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
 
     const offenAlt = karte('OffenAlt')
     const offenNeu = karte('OffenNeu')
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.freigeben(id), hinweisNeu.id)
+    await freigabe(hinweisNeu.id, 'neuere Meldung hatte keinen Abschluss')
     await page.evaluate(
       (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
       reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 2 }),
@@ -1105,7 +1114,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('haengen'))
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     await page.waitForTimeout(100)
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.freigeben(id), offenAlt.id)
+    await freigabe(offenAlt.id, 'ältere unbestätigte Meldung hatte keinen Abschluss')
     await page.waitForTimeout(250)
     const nachOffenAlt = await region.innerText()
     merken(!nachOffenAlt.includes('nicht bestätigt'), 'alte unbestätigte Meldung steht auf der neueren Karte')
@@ -1117,7 +1126,132 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await direkteAktion('aktion', offenNeu.id, 'neuere unbestätigte Meldung hat keinen erfassten Handler')
     const nachOffenHinweis = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachOffenHinweis === vorOffenHinweis + 2, `unbestätigte Altmeldung sendete ${nachOffenHinweis - vorOffenHinweis}`)
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.freigeben(id), offenNeu.id)
+    await freigabe(offenNeu.id, 'neuere unbestätigte Meldung hatte keinen Abschluss')
+    await page.waitForTimeout(150)
+
+    const idleAlt = karte('IdleAlt')
+    const idleNeu = karte('IdleNeu')
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 2 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [idleAlt]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'IdleAlt', exact: true }).waitFor({ timeout: 15000 })
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('haengen'))
+    const vorIdle = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await page.waitForTimeout(100)
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 3 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [idleNeu]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'IdleNeu', exact: true }).waitFor({ timeout: 15000 })
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await page.waitForTimeout(100)
+    const suchenVorUntaetig = anfragen
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 4 }),
+    )
+    await region.getByText('Für diese Angaben liegt noch keine Suche vor.').waitFor({ timeout: 15000 })
+    merken(anfragen === suchenVorUntaetig, 'untätige Fläche hat eine weitere Suche ausgelöst')
+    const fehlendeFreigabe = await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben('opt-fehlt'))
+    merken(fehlendeFreigabe?.ok === false, 'fehlende Freigabe gilt als abgeschlossen')
+    merken(!(await region.innerText()).includes('IdleAlt'), 'fehlende Freigabe nennt die alte Aktivität')
+    await freigabe(idleAlt.id, 'gemeldete Aktivität wurde nicht abgeschlossen')
+    await page.waitForTimeout(250)
+    const idleStatus = await region.locator('[role="status"]').allTextContents()
+    merken(
+      idleStatus.some((text) => text.includes('IdleAlt') && text.includes('Die Übernahme wurde gemeldet.')),
+      'untätige Fläche nennt die gemeldete Aktivität nicht',
+    )
+    merken(
+      idleStatus.every((text) => !text.trim().startsWith('Die Übernahme wurde gemeldet.')),
+      'untätige Fläche zeigt die Erfolgsmeldung ohne Aktivität',
+    )
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 3 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [idleNeu]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'IdleNeu', exact: true }).waitFor({ timeout: 15000 })
+    merken(
+      await region.getByRole('button', { name: 'In die Reise', exact: true }).isDisabled(),
+      'neuere Übernahme ist nach der untätigen Altmeldung offen',
+    )
+    await direkteAktion('aktion', idleNeu.id, 'untätige Altmeldung hat keinen erfassten Handler')
+    const nachIdle = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    merken(nachIdle === vorIdle + 2, `untätige Altmeldung sendete ${nachIdle - vorIdle}`)
+    await freigabe(idleNeu.id, 'neuere untätige Übernahme hatte keinen Abschluss')
+
+    const leerAlt = karte('LeerAlt')
+    const leerNeu = karte('LeerNeu')
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 2 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [leerAlt]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'LeerAlt', exact: true }).waitFor({ timeout: 15000 })
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('haengen-offen'))
+    const vorLeer = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await page.waitForTimeout(100)
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 3 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [leerNeu]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'LeerNeu', exact: true }).waitFor({ timeout: 15000 })
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('haengen'))
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await page.waitForTimeout(100)
+    const suchenVorLeer = anfragen
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 5 }),
+    )
+    await region.getByText('Für diese Angaben liegt noch keine Suche vor.').waitFor({ timeout: 15000 })
+    merken(anfragen === suchenVorLeer, 'unbestätigte untätige Fläche hat eine weitere Suche ausgelöst')
+    const fehlendeLeerFreigabe = await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben('opt-fehlt'))
+    merken(fehlendeLeerFreigabe?.ok === false, 'fehlende Freigabe gilt als unbestätigt abgeschlossen')
+    await freigabe(leerAlt.id, 'unbestätigte Aktivität wurde nicht abgeschlossen')
+    await page.waitForTimeout(250)
+    const leerStatus = await region.locator('[role="status"]').allTextContents()
+    merken(
+      leerStatus.some((text) => text.includes('LeerAlt') && text.includes('Die Übernahme ist nicht bestätigt.')),
+      'untätige Fläche nennt die unbestätigte Aktivität nicht',
+    )
+    merken(
+      leerStatus.every((text) => !text.trim().startsWith('Die Übernahme ist nicht bestätigt.')),
+      'untätige Fläche zeigt die unbestätigte Meldung ohne Aktivität',
+    )
+    await page.evaluate(
+      (wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert),
+      reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben', travellers: 3 }),
+    )
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).waitFor({ timeout: 15000 })
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [leerNeu]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('heading', { name: 'LeerNeu', exact: true }).waitFor({ timeout: 15000 })
+    merken(
+      await region.getByRole('button', { name: 'In die Reise', exact: true }).isDisabled(),
+      'neuere Übernahme ist nach der unbestätigten untätigen Meldung offen',
+    )
+    await direkteAktion('aktion', leerNeu.id, 'unbestätigte untätige Meldung hat keinen erfassten Handler')
+    const nachLeer = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    merken(nachLeer === vorLeer + 2, `unbestätigte untätige Meldung sendete ${nachLeer - vorLeer}`)
+    await freigabe(leerNeu.id, 'neuere unbestätigte untätige Übernahme hatte keinen Abschluss')
     await page.waitForTimeout(150)
 
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte('Hängt')]) }
@@ -1128,11 +1262,11 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     await page.waitForTimeout(150)
     await chips.nth(1).click()
-    await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
+    await freigabe(null, 'hängende Übernahme hatte keinen Abschluss')
     await page.waitForTimeout(200)
     merken(!(await region.innerText()).includes('Die Übernahme wurde gemeldet.'), 'alte Übernahme schreibt in den neuen Tag')
     await chips.first().click()
-    await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
+    await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').first().waitFor({ timeout: 15000 })
     const nachHang = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachHang === vorHang + 1, 'hängende Übernahme wurde wiederholt')
 
@@ -1170,7 +1304,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     const vorBereichHang = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     const flugAdoption = await flugFokussieren(page, viewport)
-    await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
+    await freigabe(null, 'verdeckte Übernahme hatte keinen Abschluss')
     await page.waitForTimeout(200)
     const adoptionVerborgen = await fokusUnveraendert(page, flugAdoption, 'Die Übernahme wurde gemeldet.')
     merken(adoptionVerborgen.gleicherFokus, 'späte Übernahme verlässt den fokussierten Flug-Schalter')

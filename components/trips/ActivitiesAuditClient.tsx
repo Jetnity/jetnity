@@ -42,7 +42,7 @@ type ActivitiesAuditSteuerung = {
   reiseSetzen: (reise: Trip) => void
   flaeche: (sichtbar: boolean) => void
   uebernahme: (art: UebernahmeArt) => void
-  freigeben: (id?: string) => void
+  freigeben: (id?: string) => AuditDirektaufruf
   aktionSichern: (id: string) => AuditDirektaufruf
   aktionAlt: () => AuditDirektaufruf
   aktion: (id: string) => AuditDirektaufruf
@@ -137,12 +137,16 @@ export default function ActivitiesAuditClient() {
       },
       freigeben: (id) => {
         if (id) {
-          warteRef.current.get(id)?.()
+          const loesen = warteRef.current.get(id)
+          if (!loesen) return { ok: false, grund: 'fehlt' }
+          loesen()
           warteRef.current.delete(id)
-          return
+          return { ok: true }
         }
+        if (warteRef.current.size === 0) return { ok: false, grund: 'fehlt' }
         for (const loesen of warteRef.current.values()) loesen()
         warteRef.current.clear()
+        return { ok: true }
       },
       aktionSichern: (id) => {
         const ausloesen = aktionenRef.current.get(id)

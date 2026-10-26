@@ -27,6 +27,7 @@ import {
   uebernahmeBeanspruchen,
   uebernahmeDarfSenden,
   uebernahmeErgebnisLesen,
+  uebernahmeHinweisBezeichnung,
   uebernahmeHinweisSetzen,
   uebernahmeHinweisText,
   uebernahmeHinweisTexte,
@@ -241,7 +242,7 @@ function ActivityTag({
   const registerRef = React.useRef(register)
   const seqRef = React.useRef(0)
   const [hinweise, setHinweise] = React.useState<
-    Record<string, { text: string; seq: number; tripId: string; stageId: string; dayId: string }>
+    Record<string, { text: string; bezeichnung: string; seq: number; tripId: string; stageId: string; dayId: string }>
   >({})
 
   const antwortSetzen = (erwartet: { epoche: number; generation: number }, antwort: ActivitySucheAntwort) => {
@@ -314,6 +315,7 @@ function ActivityTag({
       setHinweise((bisher) =>
         uebernahmeHinweisSetzen(bisher, schluessel, {
           text,
+          bezeichnung: uebernahmeHinweisBezeichnung(option),
           seq,
           tripId: erfasst.tripId,
           stageId: erfasst.stageId,

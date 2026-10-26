@@ -268,8 +268,24 @@ export function uebernahmeHinweisText(ausgang: UebernahmeAusgang): string {
   return ACTIVITY_HINWEIS_UNBESTAETIGT
 }
 
+/** Sichtbarer Name der erfassten Aktivität, damit eine Meldung ohne Karte zuordenbar bleibt. */
+export function uebernahmeHinweisBezeichnung(option: {
+  title: string
+  timeslot: { startsAt: string; endsAt: string | null } | null
+}): string {
+  const titel = option.title.replace(/[\u0000-\u001F<>]/g, '').trim().slice(0, 120)
+  const zeit = option.timeslot
+    ? `${option.timeslot.startsAt}${option.timeslot.endsAt ? `–${option.timeslot.endsAt}` : ''}`
+    : ''
+  const zeitSicher = zeit.replace(/[\u0000-\u001F<>]/g, '').trim()
+  const text = [titel, zeitSicher].filter((teil) => teil.length > 0).join(' · ')
+  return text.slice(0, 160) || 'Aktivität'
+}
+
 export type UebernahmeHinweisEintrag = {
   text: string
+  /** Erfasste Aktivität. Steht an der Meldung, wenn keine Karte sie trägt. */
+  bezeichnung: string
   seq: number
   tripId: string
   stageId: string
@@ -293,11 +309,11 @@ export function uebernahmeHinweisSetzen(
 
 /**
  * Eine Meldung gehört zur Operation, nicht zur gerade sichtbaren anderen Karte.
- * `karten === null` ist die untätige Tagesfläche ohne neuere Antwort: dort bleibt
- * jeder verschiedene Satz dieses Tages einmal sichtbar. Dieselbe Meldung wird
- * nicht für jede Operation wiederholt. Eine laufende oder fertige neuere Antwort
- * zeigt eine Meldung nur neben der Karte derselben Operation.
- * Das Schloss der Operation bleibt in beiden Fällen unberührt.
+ * Neben der Karte bleibt der Satz allein, weil die Karte die Aktivität nennt.
+ * `karten === null` ist nur die Fläche ohne aktuelle Antwort. Dort nennt jede
+ * Meldung ihre erfasste Aktivität, auch wenn eine neuere Übernahme noch läuft.
+ * Eine laufende oder fertige neuere Antwort zeigt eine Meldung nur neben der
+ * Karte derselben Operation. Das Schloss bleibt unberührt.
  */
 export function uebernahmeHinweisTexte(
   hinweise: Readonly<Record<string, UebernahmeHinweisEintrag>>,
@@ -323,9 +339,10 @@ export function uebernahmeHinweisTexte(
   const allgemein: string[] = []
   const gesehen = new Set<string>()
   for (const [, eintrag] of tag) {
-    if (gesehen.has(eintrag.text)) continue
-    gesehen.add(eintrag.text)
-    allgemein.push(eintrag.text)
+    const text = `${eintrag.bezeichnung}: ${eintrag.text}`
+    if (gesehen.has(text)) continue
+    gesehen.add(text)
+    allgemein.push(text)
   }
   return { allgemein, jeKarte: {} }
 }

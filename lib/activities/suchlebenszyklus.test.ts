@@ -439,7 +439,7 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
   })
 
   test('eine ältere Meldung spricht nicht für eine neuere Karte', () => {
-    const tag = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1' }
+    const tag = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1', bezeichnung: 'Hinweis A · 15:00–16:30' }
     const erste = uebernahmeHinweisSetzen({}, 'op-a', { ...tag, text: ACTIVITY_HINWEIS_GEMELDET, seq: 2 })
     const bleibt = uebernahmeHinweisSetzen(erste, 'op-a', { ...tag, text: 'älter', seq: 1 })
     assert.equal(bleibt['op-a']?.text, ACTIVITY_HINWEIS_GEMELDET)
@@ -451,20 +451,23 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     assert.equal(beide.jeKarte['op-b'], undefined)
     assert.deepEqual(beide.allgemein, [])
     const untätig = uebernahmeHinweisTexte(bleibt, { ...tag, karten: null })
-    assert.deepEqual(untätig.allgemein, [ACTIVITY_HINWEIS_GEMELDET])
+    assert.deepEqual(untätig.allgemein, [`Hinweis A · 15:00–16:30: ${ACTIVITY_HINWEIS_GEMELDET}`])
     const gleicheMeldung = uebernahmeHinweisSetzen(bleibt, 'op-c', {
       ...tag,
+      bezeichnung: 'Hinweis C · 18:00–19:00',
       text: ACTIVITY_HINWEIS_GEMELDET,
       seq: 4,
     })
     const mitOffen = uebernahmeHinweisSetzen(gleicheMeldung, 'op-d', {
       ...tag,
+      bezeichnung: 'Hinweis D',
       text: ACTIVITY_HINWEIS_UNBESTAETIGT,
       seq: 5,
     })
     assert.deepEqual(uebernahmeHinweisTexte(mitOffen, { ...tag, karten: null }).allgemein, [
-      ACTIVITY_HINWEIS_GEMELDET,
-      ACTIVITY_HINWEIS_UNBESTAETIGT,
+      `Hinweis A · 15:00–16:30: ${ACTIVITY_HINWEIS_GEMELDET}`,
+      `Hinweis C · 18:00–19:00: ${ACTIVITY_HINWEIS_GEMELDET}`,
+      `Hinweis D: ${ACTIVITY_HINWEIS_UNBESTAETIGT}`,
     ])
     const nurAndereKarte = uebernahmeHinweisTexte(mitOffen, { ...tag, karten: ['op-b'] })
     assert.deepEqual(nurAndereKarte.allgemein, [])
