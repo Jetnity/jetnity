@@ -76,7 +76,7 @@ export default function AktivitaetKarte({
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
         <div className="min-w-0">
-          <p className="text-xs text-ink-700">Preis zum Auswahlzeitpunkt</p>
+          <p className="text-xs text-ink-700">Preisangabe</p>
           <p className="text-lg font-semibold text-brand-800">
             {option.preis !== null && option.preisWaehrung
               ? betragLesbar(option.preis, option.preisWaehrung)

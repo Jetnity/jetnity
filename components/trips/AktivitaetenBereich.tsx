@@ -2,26 +2,49 @@
 
 // components/trips/AktivitaetenBereich.tsx
 //
-// Aktivitätsbereich im Reise-Arbeitsbereich. Kein Demo, keine Fake-Karten.
+// Aktivitätsbereich im Reise-Arbeitsbereich. Eine Suche startet nur durch eine
+// ausdrückliche Aktion. Ergebnisse und Übernahmen gehören zu Reise, Tag und
+// Generation. Kein Demo, keine Fake-Karten.
 
 import * as React from 'react'
-import { AlertCircle, Loader2, Sparkles } from 'lucide-react'
 
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 import { activitySucheFehlerAntwort, activitySucheVomClient } from '@/lib/activities/client-anfrage'
 import { ACTIVITY_ABDECKUNGSHINWEIS } from '@/lib/activities/domain'
 import { activitySucheEingabeAusReise } from '@/lib/activities/tageskontext'
+import {
+  activitySuchKontextSchluessel,
+  leeresUebernahmeRegister,
+  optionInhaltSchluessel,
+  suchAntwortAnwenden,
+  suchDispatch,
+  suchKontextWechseln,
+  suchLaufStart,
+  uebernahmeAbschliessen,
+  uebernahmeBeanspruchen,
+  uebernahmeDarfSenden,
+  uebernahmeErgebnisLesen,
+  uebernahmeHinweisNochGueltig,
+  uebernahmeHinweisText,
+  uebernahmeSchluessel,
+  type SuchLauf,
+  type UebernahmeErfassung,
+  type UebernahmeRegister,
+} from '@/lib/activities/suchlebenszyklus'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
 import { ScrollRow } from '@/components/ui/scroll-row'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
+import { AlertCircle, Loader2, Sparkles } from 'lucide-react'
 
 const kurzesDatum = new Intl.DateTimeFormat('de-CH', {
   day: '2-digit',
   month: 'short',
   timeZone: 'UTC',
 })
+
+const NETZ_MELDUNG = 'Die Aktivitätsanfrage ist gerade nicht erreichbar.'
 
 function alsDatum(wert: string) {
   return new Date(`${wert}T00:00:00Z`)
@@ -36,6 +59,53 @@ function tagTitel(tag: TripDay): string {
 function etappeFuer(reise: Trip, tag: TripDay): TripStage | null {
   if (!tag.stageId) return null
   return reise.stages.find((etappe) => etappe.id === tag.stageId) ?? null
+}
+
+function istAbbruch(fehler: unknown): boolean {
+  return (
+    (fehler instanceof DOMException && fehler.name === 'AbortError') ||
+    (fehler instanceof Error && fehler.name === 'AbortError')
+  )
+}
+
+function hinweisBucket(tripId: string, stageId: string, dayId: string): string {
+  return JSON.stringify([tripId, stageId, dayId])
+}
+
+function SuchKontext({
+  reise,
+  etappe,
+  tag,
+}: {
+  reise: Trip
+  etappe: TripStage | null
+  tag: TripDay | null
+}) {
+  const datum = tag?.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : 'Datum noch offen'
+  return (
+    <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm">
+      <div className="col-span-2 min-w-0">
+        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
+        <dd className="mt-1 break-words text-ink-800">{etappe?.name.trim() || 'Zielort fehlt'}</dd>
+      </div>
+      <div className="min-w-0">
+        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisetag</dt>
+        <dd className="mt-1 break-words text-ink-800">{tag ? tagTitel(tag) : 'Tag fehlt'}</dd>
+      </div>
+      <div className="min-w-0">
+        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Datum</dt>
+        <dd className="mt-1 break-words text-ink-800">{tag ? datum : 'Datum noch offen'}</dd>
+      </div>
+      <div className="min-w-0">
+        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisende</dt>
+        <dd className="mt-1 text-ink-800">{reise.travellers}</dd>
+      </div>
+      <div className="min-w-0">
+        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Währung</dt>
+        <dd className="mt-1 break-words text-ink-800">{reise.currency}</dd>
+      </div>
+    </dl>
+  )
 }
 
 export default function AktivitaetenBereich({
@@ -65,7 +135,6 @@ export default function AktivitaetenBereich({
 
   const tagId = gesteuerteTagId ?? eigeneTagId
   const setTagId = onTagWechseln ?? setEigeneTagId
-
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? ersterTag
 
   if (reise.days.length === 0) {
@@ -80,6 +149,7 @@ export default function AktivitaetenBereich({
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           Passend zum Reisetag
         </h2>
+        <SuchKontext reise={reise} etappe={null} tag={null} />
         <p className="mt-4 text-sm leading-6 text-ink-800">
           Diese Reise hat noch keine Tage. Sobald ein Zeitraum feststeht, ordnet Jetnity Aktivitäten
           dem konkreten Tag zu – nicht als beliebige Liste.
@@ -114,69 +184,130 @@ function ActivityTag({
   ) => Promise<string | null>
 }) {
   const etappe = tag ? etappeFuer(reise, tag) : null
-  const [laeuft, setLaeuft] = React.useState(Boolean(etappe))
-  const [uebernimmt, setUebernimmt] = React.useState(false)
-  const [antwort, setAntwort] = React.useState<ActivitySucheAntwort | null>(null)
-  const [meldung, setMeldung] = React.useState('')
-
   const eingabe = React.useMemo(() => {
-    if (!tag || !etappe) return null
+    if (!tag || !etappe || !etappe.name.trim()) return null
     return activitySucheEingabeAusReise(reise, etappe, tag)
   }, [reise, etappe, tag])
+  const anfrageSchluessel = eingabe ? JSON.stringify(eingabe) : ''
+  const kontext = activitySuchKontextSchluessel({
+    tripId: reise.id,
+    stageId: etappe?.id ?? null,
+    dayId: tag?.id ?? null,
+    anfrageSchluessel,
+  })
 
-  const eingabeSchluessel = eingabe ? JSON.stringify(eingabe) : ''
+  const [lauf, setLauf] = React.useState<SuchLauf>(() => suchLaufStart(kontext))
+  const angezeigt = lauf.kontext === kontext ? lauf : suchKontextWechseln(lauf, kontext)
+  if (lauf.kontext !== kontext) setLauf(angezeigt)
 
+  const laufRef = React.useRef(angezeigt)
+  const abortRef = React.useRef<AbortController | null>(null)
+  React.useLayoutEffect(() => {
+    laufRef.current = angezeigt
+  }, [angezeigt])
   React.useEffect(() => {
-    if (!eingabe) {
-      setLaeuft(false)
-      setAntwort(null)
-      return
-    }
-
-    const steuerung = new AbortController()
-    let aktiv = true
-    setLaeuft(true)
-    setAntwort(null)
-    setMeldung('')
-
-    void activitySucheVomClient(eingabe, { signal: steuerung.signal })
-      .then((json) => {
-        if (!aktiv) return
-        setAntwort(json)
-      })
-      .catch((fehler: unknown) => {
-        if (!aktiv || (fehler instanceof DOMException && fehler.name === 'AbortError')) return
-        if (fehler instanceof Error && fehler.name === 'AbortError') return
-        setAntwort(activitySucheFehlerAntwort('Die Aktivitätsanfrage ist gerade nicht erreichbar.'))
-      })
-      .finally(() => {
-        if (aktiv) setLaeuft(false)
-      })
-
     return () => {
-      aktiv = false
-      steuerung.abort()
+      abortRef.current?.abort()
+      abortRef.current = null
     }
-    // `eingabeSchluessel` hält den Effekt an den Inhalt, nicht an die Objektreferenz.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eingabeSchluessel])
+  }, [angezeigt.epoche])
 
-  const uebernehmen = async (option: ActivityOptionSichtbar) => {
-    if (!onUebernehmen || !etappe || !tag || uebernimmt) return
-    if (!antwort?.options.some((sichtbar) => sichtbar.id === option.id)) {
-      setMeldung('Diese Aktivitätsoption stammt nicht aus der aktuellen Suche.')
-      return
-    }
-    setUebernimmt(true)
-    setMeldung('')
-    const fehler = await onUebernehmen(etappe, tag, option)
-    setUebernimmt(false)
-    if (fehler) setMeldung(fehler)
+  const [register, setRegister] = React.useState<UebernahmeRegister>(leeresUebernahmeRegister)
+  const registerRef = React.useRef(register)
+  const seqRef = React.useRef(0)
+  const sucheMarkRef = React.useRef<Record<string, number>>({})
+  const [hinweise, setHinweise] = React.useState<Record<string, { text: string; seq: number }>>({})
+
+  const antwortSetzen = (erwartet: { epoche: number; generation: number }, antwort: ActivitySucheAntwort) => {
+    setLauf((stand) => {
+      const next = suchAntwortAnwenden(stand, erwartet, antwort)
+      laufRef.current = next
+      return next
+    })
   }
 
+  const suchen = () => {
+    if (!eingabe || !tag || !etappe) return
+    const entscheid = suchDispatch(laufRef.current)
+    if (!entscheid.angenommen) return
+    laufRef.current = entscheid.lauf
+    setLauf(entscheid.lauf)
+    const bucket = hinweisBucket(reise.id, etappe.id, tag.id)
+    sucheMarkRef.current[bucket] = ++seqRef.current
+    setHinweise((bisher) => {
+      if (!bisher[bucket]) return bisher
+      const next = { ...bisher }
+      delete next[bucket]
+      return next
+    })
+    abortRef.current?.abort()
+    const steuerung = new AbortController()
+    abortRef.current = steuerung
+    const erwartet = { epoche: entscheid.epoche, generation: entscheid.generation }
+    void activitySucheVomClient(eingabe, { signal: steuerung.signal })
+      .then((json) => antwortSetzen(erwartet, json))
+      .catch((fehler: unknown) => {
+        if (istAbbruch(fehler)) return
+        antwortSetzen(erwartet, activitySucheFehlerAntwort(NETZ_MELDUNG))
+      })
+  }
+
+  const uebernehmen = (option: ActivityOptionSichtbar, erfasst: UebernahmeErfassung) => {
+    if (!onUebernehmen || !etappe || !tag) return
+    const stand = laufRef.current
+    const inhalte =
+      stand.phase === 'fertig' && stand.antwort
+        ? stand.antwort.options.map((eintrag) => optionInhaltSchluessel(eintrag))
+        : []
+    if (
+      !uebernahmeDarfSenden(erfasst, {
+        epoche: stand.epoche,
+        generation: stand.generation,
+        inhalte,
+      })
+    ) {
+      return
+    }
+    const schluessel = uebernahmeSchluessel(erfasst)
+    const anspruch = uebernahmeBeanspruchen(registerRef.current, schluessel)
+    if (!anspruch.ok) return
+    registerRef.current = anspruch.register
+    setRegister(anspruch.register)
+    const seq = ++seqRef.current
+    const bucket = hinweisBucket(erfasst.tripId, erfasst.stageId, erfasst.dayId)
+    const etappeFest = etappe
+    const tagFest = tag
+    void (async () => {
+      let wert: unknown
+      try {
+        wert = await onUebernehmen(etappeFest, tagFest, option)
+      } catch {
+        wert = undefined
+      } finally {
+        const frei = uebernahmeAbschliessen(registerRef.current, schluessel)
+        registerRef.current = frei
+        setRegister(frei)
+      }
+      if (!uebernahmeHinweisNochGueltig(sucheMarkRef.current[bucket] ?? 0, seq)) return
+      const text = uebernahmeHinweisText(uebernahmeErgebnisLesen(wert))
+      setHinweise((bisher) => {
+        const alt = bisher[bucket]
+        if (alt && alt.seq > seq) return bisher
+        return { ...bisher, [bucket]: { text, seq } }
+      })
+    })()
+  }
+
+  const antwort = angezeigt.phase === 'fertig' ? angezeigt.antwort : null
+  const suchLaeuft = angezeigt.phase === 'loading'
   const zustand = antwort?.status
+  const kartenSichtbar = zustand === 'ok' || zustand === 'partial'
+  const suchLabel = antwort ? 'Erneut suchen' : 'Für diesen Tag suchen'
   const geplante = tag?.items ?? []
   const zeitpunkte = geplante.filter((punkt) => punkt.startsAt)
+  const bucket = etappe && tag ? hinweisBucket(reise.id, etappe.id, tag.id) : ''
+  const hinweis = bucket ? hinweise[bucket]?.text ?? '' : ''
+  const kannSuchen = Boolean(eingabe && etappe && tag)
 
   return (
     <section
@@ -198,6 +329,8 @@ function ActivityTag({
         </div>
         <Sparkles className="h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />
       </div>
+
+      {tag ? <SuchKontext reise={reise} etappe={etappe} tag={tag} /> : null}
 
       <div className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
         <p id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
@@ -233,6 +366,17 @@ function ActivityTag({
         </ScrollRow>
       </div>
 
+      {kannSuchen ? (
+        <button
+          type="button"
+          onClick={suchen}
+          disabled={suchLaeuft}
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60 sm:w-auto"
+        >
+          {suchLabel}
+        </button>
+      ) : null}
+
       <div className="mt-5 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
         <p>
           {geplante.length === 0
@@ -255,14 +399,20 @@ function ActivityTag({
       )}
 
       <div className="mt-5 min-h-[7rem]" aria-live="polite">
-        {laeuft && (
+        {!suchLaeuft && !antwort && kannSuchen && (
+          <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
+            Für diese Angaben liegt noch keine Suche vor.
+          </p>
+        )}
+
+        {suchLaeuft && (
           <p aria-busy="true" className="flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
             <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
             Jetnity prüft, welche Aktivitäten zu diesem Tag passen.
           </p>
         )}
 
-        {!laeuft && antwort && (
+        {!suchLaeuft && antwort && (
           <div className="grid gap-4">
             {zustand === 'unavailable' && (
               <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
@@ -272,6 +422,12 @@ function ActivityTag({
 
             {zustand === 'empty' && (
               <p role="status" className="rounded-2xl bg-surface-25 px-4 py-6 text-center text-sm leading-6 text-ink-800">
+                {antwort.message}
+              </p>
+            )}
+
+            {zustand === 'partial' && (
+              <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
                 {antwort.message}
               </p>
             )}
@@ -289,19 +445,35 @@ function ActivityTag({
               </p>
             )}
 
-            {antwort.options.length > 0 && (
+            {kartenSichtbar && antwort.options.length > 0 && (
               <ol className="grid min-w-0 gap-3">
-                {antwort.options.map((option) => (
-                  <li key={option.id} className="min-w-0">
-                    <AktivitaetKarte
-                      option={option}
-                      laeuft={uebernimmt}
-                      onUebernehmen={
-                        onUebernehmen && etappe && tag ? () => void uebernehmen(option) : undefined
-                      }
-                    />
-                  </li>
-                ))}
+                {antwort.options.map((option) => {
+                  const inhalt = optionInhaltSchluessel(option)
+                  const erfasst: UebernahmeErfassung = {
+                    tripId: reise.id,
+                    stageId: etappe?.id ?? '',
+                    dayId: tag?.id ?? '',
+                    epoche: angezeigt.epoche,
+                    generation: angezeigt.generation ?? 0,
+                    optionInhalt: inhalt,
+                  }
+                  const schluessel = uebernahmeSchluessel(erfasst)
+                  const gesperrt =
+                    register.laufend.includes(schluessel) || register.abgeschlossen.includes(schluessel)
+                  return (
+                    <li key={`${angezeigt.generation ?? 0}:${inhalt}`} className="min-w-0">
+                      <AktivitaetKarte
+                        option={option}
+                        laeuft={gesperrt}
+                        onUebernehmen={
+                          onUebernehmen && etappe && tag
+                            ? () => uebernehmen(option, erfasst)
+                            : undefined
+                        }
+                      />
+                    </li>
+                  )
+                })}
               </ol>
             )}
 
@@ -310,9 +482,9 @@ function ActivityTag({
         )}
       </div>
 
-      {meldung && (
-        <p role="alert" className="mt-4 rounded-2xl bg-surface-50 px-4 py-3 text-sm text-danger-600">
-          {meldung}
+      {hinweis && (
+        <p role="status" className="mt-4 rounded-2xl bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800">
+          {hinweis}
         </p>
       )}
     </section>

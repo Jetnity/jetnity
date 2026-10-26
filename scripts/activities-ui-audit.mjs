@@ -371,6 +371,12 @@ function layoutPruefen() {
 
   const scores = wurzel.textContent.includes('score') || wurzel.innerHTML.includes('"score"')
   if (scores) fehler.push('interner Score im Activities-Bereich sichtbar')
+  if (wurzel.textContent.includes('Preis zum Auswahlzeitpunkt')) {
+    fehler.push('Preis bezieht sich auf einen Auswahlzeitpunkt')
+  }
+  if (wurzel.textContent.includes('In die Reise') && !wurzel.textContent.includes('Preisangabe')) {
+    fehler.push('Preisangabe fehlt auf der Karte')
+  }
 
   const kopf = document.querySelector('header')
   const fokus = document.activeElement
@@ -419,7 +425,27 @@ async function serverStarten() {
   return kind
 }
 
-async function seiteVorbereiten(page, zustand, { delayMs = 0 } = {}) {
+const BRAUCHT_SUCHE = new Set(['loading', 'unavailable', 'empty', 'error', 'timeout', 'rate_limited', 'karten'])
+
+async function flaecheOeffnen(page) {
+  const region = page.getByRole('region', { name: 'Aktivitäten', exact: true })
+  if (await region.count()) return region
+  const detail = page.getByRole('region', { name: 'Reisedetail' })
+  const oeffnen = detail.getByRole('button', { name: 'Aktivitäten suchen', exact: true })
+  if (!(await oeffnen.count())) {
+    const nav = page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', {
+      name: 'Aktivitäten',
+      exact: true,
+    })
+    if (await nav.count()) await nav.click()
+  }
+  await oeffnen.waitFor({ timeout: 15000 })
+  await oeffnen.click()
+  await region.waitFor({ timeout: 15000 })
+  return region
+}
+
+async function seiteVorbereiten(page, zustand, { delayMs = 0, onRequest } = {}) {
   const defin = ZUSTAENDE[zustand]
   await page.addInitScript(
     ({ speicher, reise }) => {
@@ -429,6 +455,7 @@ async function seiteVorbereiten(page, zustand, { delayMs = 0 } = {}) {
   )
 
   await page.route('**/api/activities/search', async (route) => {
+    onRequest?.()
     if (defin.api === null) {
       await route.fulfill({
         status: 200,
@@ -462,14 +489,12 @@ async function zustandPruefen(browser, name, viewport, zustand) {
     hasTouch: viewport.width <= 430,
   })
   const page = await kontext.newPage()
-  await seiteVorbereiten(page, zustand)
+  let anfragen = 0
+  await seiteVorbereiten(page, zustand, { onRequest: () => { anfragen += 1 } })
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
-  if (viewport.width < 1024) {
-    const tab = page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', {
-      name: 'Aktivitäten',
-      exact: true,
-    })
-    if (await tab.count()) await tab.click()
+  const region = await flaecheOeffnen(page)
+  if (BRAUCHT_SUCHE.has(zustand)) {
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
   }
   const nachweis = ZUSTAENDE[zustand].nachweis
   try {
@@ -491,13 +516,16 @@ async function zustandPruefen(browser, name, viewport, zustand) {
     }
   }
   const layout = await page.evaluate(layoutPruefen)
+  const erwartet = BRAUCHT_SUCHE.has(zustand) ? 1 : 0
+  if (anfragen !== erwartet) layout.fehler.push(`Suchaufrufe ${anfragen}, erwartet ${erwartet}`)
   await kontext.close()
   return {
-    ok: layout.ok,
+    ok: layout.ok && anfragen === erwartet,
     engine: name,
     viewport: viewport.name,
     zustand,
     fehler: layout.fehler,
+    anfragen,
   }
 }
 
@@ -505,7 +533,6 @@ async function interaktionPruefen(browser, name) {
   const kontext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true })
   const page = await kontext.newPage()
   let anfragen = 0
-  const bodies = []
   await page.addInitScript(
     ({ speicher, reise }) => sessionStorage.setItem(speicher, JSON.stringify(reise)),
     { speicher: 'jetnity:ui-audit:reise', reise: ZUSTAENDE['viele-tage'].reise },
@@ -513,8 +540,7 @@ async function interaktionPruefen(browser, name) {
   await page.route('**/api/activities/search', async (route) => {
     anfragen += 1
     const roh = route.request().postData() || '{}'
-    bodies.push(roh)
-    await new Promise((r) => setTimeout(r, 400))
+    await new Promise((r) => setTimeout(r, 250))
     const tag = JSON.parse(roh).day?.id || 'unbekannt'
     await route.fulfill({
       status: 200,
@@ -523,18 +549,18 @@ async function interaktionPruefen(browser, name) {
     })
   })
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
-  const tab = page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', {
-    name: 'Aktivitäten',
-    exact: true,
-  })
-  if (await tab.count()) await tab.click()
-  await page.getByRole('radio').first().waitFor({ timeout: 15000 })
-  const chips = page.getByRole('radio')
+  const region = await flaecheOeffnen(page)
+  const nachOeffnen = anfragen
+  const chips = region.getByRole('radio')
+  await chips.first().waitFor({ timeout: 15000 })
   await chips.nth(1).click()
   await chips.nth(2).click()
-  await page.waitForTimeout(700)
-  const text = await page.locator('[aria-label="Aktivitäten"]').innerText()
+  await page.waitForTimeout(400)
+  const nachWechsel = anfragen
   const checked = await chips.nth(2).getAttribute('aria-checked')
+  await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+  await region.getByText('Antwort für day-3').waitFor({ timeout: 15000 })
+  const text = await region.innerText()
   await page.locator('[aria-label="Reisetage"]').focus()
   await page.keyboard.press('Tab')
   const fokusSichtbar = await page.evaluate(() => {
@@ -546,13 +572,237 @@ async function interaktionPruefen(browser, name) {
 
   await kontext.close()
   const fehler = []
-  if (!text.includes('Antwort für day-3')) fehler.push(`nach schnellem Wechsel blieb nicht die Antwort des gewählten Tags: ${text.slice(0, 180)}`)
+  if (nachOeffnen !== 0) fehler.push(`Öffnen der Fläche hat ${nachOeffnen} Suchen ausgelöst`)
+  if (nachWechsel !== 0) fehler.push(`Tagwechsel hat ${nachWechsel} Suchen ausgelöst`)
+  if (anfragen !== 1) fehler.push(`explizite Suche: ${anfragen} Aufrufe, erwartet 1`)
+  if (!text.includes('Antwort für day-3')) fehler.push(`Antwort gehört nicht zum gewählten Tag: ${text.slice(0, 180)}`)
   if (checked !== 'true') fehler.push('aria-checked des dritten Chips ist nicht true')
-  if (anfragen > 6) fehler.push(`Request-Schleife verdächtig: ${anfragen} Suchen`)
-  if (anfragen < 2) fehler.push(`zu wenige Suchen: ${anfragen}`)
   if (!fokusSichtbar) fehler.push('Fokusring nach Chip-Fokus nicht sichtbar')
   if (!nachTab) fehler.push('Tab verlässt die Tag-Gruppe nicht nachvollziehbar oder bleibt hängen')
   return { ok: fehler.length === 0, engine: name, viewport: '390-interaktion', zustand: 'tagwechsel', fehler, anfragen }
+}
+
+function karte(titel) {
+  return {
+    ...KARTEN[1],
+    id: 'opt-1',
+    title: titel,
+  }
+}
+
+async function lebenszyklusPruefen(browser, name, viewport) {
+  const kontext = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    hasTouch: viewport.touch,
+  })
+  const page = await kontext.newPage()
+  const fehler = []
+  let anfragen = 0
+  let verzoegerung = 0
+  let naechste = null
+  const basisReise = reise()
+  await page.addInitScript(() => {
+    document.documentElement.style.fontSize = '20px'
+  })
+  await page.addInitScript(
+    ({ speicher, reise }) => sessionStorage.setItem(speicher, JSON.stringify(reise)),
+    { speicher: 'jetnity:ui-audit:reise', reise: basisReise },
+  )
+  await page.route('**/api/activities/search', async (route) => {
+    anfragen += 1
+    const roh = route.request().postData() || '{}'
+    const tag = JSON.parse(roh).day?.id || 'unbekannt'
+    if (verzoegerung) await new Promise((r) => setTimeout(r, verzoegerung))
+    const koerper = naechste?.koerper || antwort('empty', `Antwort für ${tag}`)
+    const httpStatus = naechste?.httpStatus || (koerper.status === 'rate_limited' ? 429 : koerper.status === 'error' ? 500 : 200)
+    naechste = null
+    try {
+      await route.fulfill({
+        status: httpStatus,
+        contentType: 'application/json',
+        body: JSON.stringify(koerper),
+      })
+    } catch {
+      // Ein Kontextwechsel darf den Browser-Read abbrechen. Die Oberfläche
+      // darf die Antwort trotzdem nicht übernehmen, falls sie noch ankommt.
+    }
+  })
+
+  const merken = (bedingung, text) => {
+    if (!bedingung) fehler.push(text)
+  }
+
+  try {
+    await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
+    const region = await flaecheOeffnen(page)
+    merken(anfragen === 0, `Mount/Öffnen: ${anfragen} Suchen`)
+    const anfang = await region.innerText()
+    merken(anfang.includes('Für diese Angaben liegt noch keine Suche vor.'), 'Idle-Zustand fehlt')
+    merken(anfang.includes('Florenz'), 'Ziel fehlt')
+    merken(anfang.includes('Reisende'), 'Reisende fehlen')
+    merken(/\b2\b/.test(anfang), 'Teilnehmerzahl fehlt')
+    merken(anfang.includes('CHF'), 'Währung fehlt')
+    merken(anfang.includes('Datum') || anfang.includes('Sep'), 'Datum fehlt')
+
+    const chips = region.getByRole('radio')
+    await chips.nth(1).click()
+    await chips.first().click()
+    merken(anfragen === 0, `Kontextwechsel: ${anfragen} Suchen`)
+    merken((await chips.first().getAttribute('aria-checked')) === 'true', 'gemeinsame Tageswahl verliert aria-checked')
+
+    const vorher = anfragen
+    await page.evaluate(() => {
+      const knopf = [...document.querySelectorAll('button')].find((el) => el.textContent?.trim() === 'Für diesen Tag suchen')
+      knopf?.click()
+      knopf?.click()
+    })
+    await region.getByText('Antwort für day-1').waitFor({ timeout: 15000 })
+    merken(anfragen === vorher + 1, `Doppelsuche: ${anfragen - vorher} statt 1`)
+
+    verzoegerung = 700
+    const vorSpaet = anfragen
+    await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
+    await chips.nth(1).click()
+    await chips.first().click()
+    await page.waitForTimeout(900)
+    const nachSpaet = await region.innerText()
+    merken(!nachSpaet.includes('Antwort für day-1'), 'A→B→A hat die alte Antwort wiederbelebt')
+    merken(anfragen === vorSpaet + 1, `verspätete Suche: ${anfragen - vorSpaet} Aufrufe`)
+    verzoegerung = 0
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByText('Antwort für day-1').waitFor({ timeout: 15000 })
+
+    const vorReise = anfragen
+    const andereReise = reise({ id: 'trip-audit-2', clientRef: 'trip-audit-2', title: 'Gleiche Angaben' })
+    await page.evaluate((wert) => window.__jetnityActivitiesAudit.reiseSetzen(wert), andereReise)
+    await page.waitForTimeout(200)
+    merken(!(await region.innerText()).includes('Antwort für day-1'), 'gleiche Anfrage einer anderen Reise zeigt die alte Antwort')
+    merken(anfragen === vorReise, 'Reisewechsel hat eine Suche ausgelöst')
+
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte('Alt')]) }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).waitFor({ timeout: 15000 })
+    merken((await region.innerText()).includes('Preisangabe'), 'Preisangabe fehlt')
+    merken(!(await region.innerText()).includes('Preis zum Auswahlzeitpunkt'), 'alter Preiszeitpunkt sichtbar')
+
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('null'))
+    const vorNull = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
+    await page.evaluate(() => {
+      document.querySelector('button')
+      const knopf = [...document.querySelectorAll('button')].find((el) => el.textContent?.includes('In die Reise'))
+      knopf?.click()
+    })
+    const nachNull = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
+    merken(nachNull.aufrufe === vorNull + 1, `null-Übernahme ${nachNull.aufrufe - vorNull} statt 1`)
+    merken(nachNull.letzte?.title === 'Alt', `null-Übernahme sendete ${nachNull.letzte?.title}`)
+
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte('Neu')]) }
+    await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
+    await region.getByText('Neu').waitFor({ timeout: 15000 })
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('string'))
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await region.getByText('nicht bestätigt').waitFor({ timeout: 15000 })
+    const nachText = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
+    merken(nachText.letzte?.title === 'Neu', 'wiederverwendete ID sendete den alten Inhalt')
+    merken((await region.innerText()).includes('Der Punkt konnte nicht zugeordnet werden.'), 'Rückmeldetest fehlt')
+
+    for (const art of ['throw', 'reject', 'malformed']) {
+      naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte(`Karte ${art}`)]) }
+      await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
+      await region.getByText(`Karte ${art}`).waitFor({ timeout: 15000 })
+      const vor = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+      await page.evaluate((wert) => window.__jetnityActivitiesAudit.uebernahme(wert), art)
+      await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+      await region.getByText('Die Übernahme ist nicht bestätigt.').waitFor({ timeout: 15000 })
+      const stand = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
+      merken(stand.aufrufe === vor + 1, `${art}: ${stand.aufrufe - vor} Aufrufe`)
+      merken(!(await region.innerText()).includes('audit-wurf'), `${art} zeigt einen Rohfehler`)
+      merken(!(await region.innerText()).includes('gespeichert: false'), `${art} zeigt die Rohform`)
+    }
+
+    naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte('Hängt')]) }
+    await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
+    await region.getByText('Hängt').waitFor({ timeout: 15000 })
+    await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('haengen'))
+    const vorHang = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
+    await page.waitForTimeout(150)
+    await chips.nth(1).click()
+    await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
+    await page.waitForTimeout(200)
+    merken(!(await region.innerText()).includes('Die Übernahme wurde gemeldet.'), 'alte Übernahme schreibt in den neuen Tag')
+    await chips.first().click()
+    await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
+    const nachHang = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    merken(nachHang === vorHang + 1, 'hängende Übernahme wurde wiederholt')
+
+    const vorFehler = anfragen
+    naechste = {
+      httpStatus: 500,
+      koerper: antwort('ok', 'ROH-ERFOLG', [karte('Geheimkarte')]),
+    }
+    await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
+    await region.getByText('Die Aktivitätsanfrage ist fehlgeschlagen.').waitFor({ timeout: 15000 })
+    const nachFehler = await region.innerText()
+    merken(!nachFehler.includes('ROH-ERFOLG'), 'Fehlerform zeigt die Rohmeldung')
+    merken(!nachFehler.includes('Geheimkarte'), 'Fehlerform zeigt eine Karte')
+    merken(anfragen === vorFehler + 1, 'Fehlerform hat nicht genau eine Suche ausgelöst')
+
+    const vorBereich = anfragen
+    if (viewport.width >= 1024) {
+      await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Flüge', exact: true }).click()
+      await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Aktivitäten', exact: true }).click()
+    } else {
+      await page.getByRole('button', { name: 'Zur Organisation', exact: true }).click()
+      await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Aktivitäten', exact: true }).click()
+    }
+    await flaecheOeffnen(page)
+    merken(anfragen === vorBereich, 'Bereichswechsel hat eine Suche ausgelöst')
+
+    const vorDemontage = anfragen
+    const aufrufeVorDemontage = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
+    await page.evaluate(() => window.__jetnityActivitiesAudit.flaeche(false))
+    await page.evaluate(() => window.__jetnityActivitiesAudit.flaeche(true))
+    await flaecheOeffnen(page)
+    await page.waitForTimeout(200)
+    merken(anfragen === vorDemontage, 'Remount hat eine Suche ausgelöst')
+    merken(
+      (await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)) === aufrufeVorDemontage,
+      'Remount hat eine Übernahme wiederholt',
+    )
+    merken((await region.innerText()).includes('Für diese Angaben liegt noch keine Suche vor.'), 'Remount zeigt kein Idle')
+
+    const enthalten = await page.evaluate(() => {
+      const seite = document.documentElement
+      const wurzel = document.querySelector('[aria-label="Aktivitäten"]')
+      const knoepfe = [...(wurzel?.querySelectorAll('button, [role="radio"]') ?? [])]
+      const klein = knoepfe
+        .filter((el) => el.getBoundingClientRect().height + 0.5 < 44)
+        .map((el) => (el.textContent || '').trim().slice(0, 40))
+      return { overflow: seite.scrollWidth > seite.clientWidth + 1, klein }
+    })
+    merken(!enthalten.overflow, 'vergrößerte Schrift erzeugt Seiten-Overflow')
+    merken(enthalten.klein.length === 0, `Trefferfläche unter 44px: ${enthalten.klein.join(', ')}`)
+    await page.locator('[aria-label="Reisetage"]').focus()
+    await page.keyboard.press('Tab')
+    const fokus = await page.evaluate(() => document.activeElement?.matches(':focus-visible') === true)
+    merken(fokus, 'vergrößerte Schrift ohne sichtbaren Fokus')
+  } catch (error) {
+    fehler.push(error instanceof Error ? error.message : String(error))
+  } finally {
+    await kontext.close()
+  }
+
+  return {
+    ok: fehler.length === 0,
+    engine: name,
+    viewport: `${viewport.name}-lebenszyklus`,
+    zustand: 'lebenszyklus',
+    fehler: fehler.slice(0, 12),
+    anfragen,
+  }
 }
 
 async function main() {
@@ -572,6 +822,12 @@ async function main() {
           }
         }
         ergebnisse.push(await interaktionPruefen(browser, name))
+        for (const viewport of [
+          { name: '390', width: 390, height: 844, touch: true },
+          { name: '1280', width: 1280, height: 800, touch: false },
+        ]) {
+          ergebnisse.push(await lebenszyklusPruefen(browser, name, viewport))
+        }
       } finally {
         await browser.close()
       }
