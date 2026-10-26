@@ -1,7 +1,7 @@
 // lib/activities/getyourguide/freigabe.ts
 //
-// Geschlossene Anwendungsfreigabe für GetYourGuide.
-// Kein Env, kein Speicher, kein URL-Parameter, kein Renderer.
+// Anwendungsfreigabe für das dokumentierte manuelle Widget.
+// Kein Env, kein Speicher und kein URL-Parameter öffnet einen anderen Weg.
 
 export const GYG_GRUENDE = [
   'konfiguration',
@@ -21,8 +21,15 @@ const GESCHLOSSEN: GetYourGuideFreigabe = Object.freeze({
   gruende: Object.freeze([...GYG_GRUENDE]),
 })
 
-/** Die Anwendung bleibt geschlossen. Diese Funktion hat keinen offenen Zweig. */
+const OFFEN: GetYourGuideFreigabe = Object.freeze({ status: 'bereit' })
+
+/** Das dokumentierte manuelle Widget ist der freigegebene Anwendungsweg. */
 export function anwendungsFreigabe(): GetYourGuideFreigabe {
+  return OFFEN
+}
+
+/** Geschlossene Gegenprobe. Die Anwendung ruft das nicht auf. */
+export function geschlosseneFreigabe(): GetYourGuideFreigabe {
   return GESCHLOSSEN
 }
 

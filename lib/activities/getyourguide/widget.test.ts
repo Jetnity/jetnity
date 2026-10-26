@@ -19,14 +19,14 @@ const ABBILDUNG: readonly GygZielabbildung[] = [
 ]
 
 describe('GetYourGuide-Abbildung', () => {
-  test('die Anwendungsnaht ist leer und geschlossen', () => {
+  test('die Anwendungsnaht hat keine Kennungsregistrierung und lädt nicht von selbst', () => {
     assert.equal(ANWENDUNGS_NAHT.herkunft, 'anwendung')
     assert.equal(ANWENDUNGS_NAHT.orteLesen, null)
     assert.equal(ANWENDUNGS_NAHT.kanonBestaetigen, null)
     assert.equal(ANWENDUNGS_NAHT.renderer, null)
-    assert.equal(ANWENDUNGS_NAHT.abbildung, GETYOURGUIDE_ANWENDUNGS_ABBILDUNG)
+    assert.equal('abbildung' in ANWENDUNGS_NAHT, false)
     assert.equal(GETYOURGUIDE_ANWENDUNGS_ABBILDUNG.length, 0)
-    assert.equal(anwendungsFreigabe().status, 'geschlossen')
+    assert.equal(anwendungsFreigabe().status, 'bereit')
     assert.equal(gygLadenErlaubt('bereit', 'mount'), false)
     assert.equal(gygLadenErlaubt('bereit', 'hover'), false)
     assert.equal(gygLadenErlaubt('bereit', 'wechsel'), false)
