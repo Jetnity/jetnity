@@ -397,6 +397,8 @@ Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `nul
 
 Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Guest → Account nullt unbewiesene Activity-Handelsfelder (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`) analog zum Flug-Strip (ADR-0166). Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
 
+**26. Oktober 2026, nur Code, inaktiv.** Die Aktivitätsfläche kann zusätzlich einen geschlossenen GetYourGuide-Block zeigen. Die Anwendungsabbildung und der Renderer bleiben leer. Eine geschlossene Fläche lädt nichts, auch nicht bei einer ausdrücklichen Aktion. Der Block prüft die ursprünglich angeforderte Tag-ID selbst und übernimmt nicht den Ersatz durch den ersten Tag der nativen Suche. Ein Land ohne Reisetage bleibt ein Land. Das ist keine Aktivitätssuche, keine `ActivityOption` und kein Live-Angebot (ADR-0221).
+
 ### Mobilitätssuche (Foundation A)
 
 `POST /api/mobility/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `MobilityOption`, nicht einen Anbieter.
